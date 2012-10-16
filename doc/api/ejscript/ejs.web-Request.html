@@ -162,7 +162,7 @@ scriptName properties will not affect the pathInfo property.</td></tr>
    <tr><td nowrap align='center'> </td><td>reference</td><td><a href='String.html'>String</a></td><td>Request reference string. This is the portion of the Uri after the "#". Set to null if there is no reference.</td></tr>
 <a name='referrer'></a>
    <tr><td nowrap align='center'> </td><td>referrer</td><td><a href='String.html'>String</a></td><td>Name of the referring URL. This comes from the request "Referrer" Http header. Set to null if there is
-no defined referrer.</td></tr>
+no defined referrer. Note: the HTTP header is misspelt as "referer".</td></tr>
 <a name='remoteAddress'></a>
    <tr><td nowrap align='center'> </td><td>remoteAddress</td><td><a href='String.html'>String</a></td><td>IP address of the client issuing the request. </td></tr>
 <a name='responded'></a>
@@ -575,7 +575,7 @@ connection becomes "readable".</dd></dl>
 <td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A count of the bytes actually read. Returns null on EOF.</dd></dl>
+<dd>A count of the bytes actually read. Returns null on EOF or errors.</dd></dl>
 <dl><dt>Example</dt>
 <dd><pre>request.on("readable", function(event, request) {
     var data = new byteArray
@@ -786,9 +786,9 @@ A "writable" event will be issued when the stream can again absorb more data.Thi
 <div class='apiSig'>    writeFile(file: <a href='Path.html'>Path</a>): <a href='Boolean.html'>Boolean</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Send a static file back to the client. This is a high performance way to send static content to the client.
-This call must be invoked prior to sending any data or headers to the client, otherwise it will be ignored
-and the slower netConnector will be used instead.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Send a static file back to the client. This is a high performance way to send static content to the client
+by using the "sendConnector". To be effective, this call must be invoked prior to sending any data or 
+headers to the client, otherwise it will be ignored and the slower "netConnector" will be used instead.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>file: <a href='Path.html'>Path</a> </td><td>Path to the file to send back to the client.</td></tr></table></dd>

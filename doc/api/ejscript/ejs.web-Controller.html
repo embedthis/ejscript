@@ -481,7 +481,7 @@ connection becomes "readable".</dd></dl>
 <td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A count of the bytes actually read. Returns null on EOF.</dd></dl>
+<dd>A count of the bytes actually read. Returns null on EOF or errors.</dd></dl>
 <dl><dt>Example</dt>
 <dd><pre>request.on("readable", function(event, request) {
     var data = new byteArray

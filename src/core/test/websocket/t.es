@@ -1,27 +1,46 @@
 
-let ws = new WebSocket('ws://localhost:4100/websock/proto/msg', ['chat'])
+let ws = new WebSocket('ws://localhost:4100/websock/test', ['amazing', 'chat'])
+
+assert(ws.readyState == WebSocket.CONNECTING)
 
 ws.onopen = function (event) {
-    ws.send("Thanks for opening")
-    print(event.data)
+    print("t.es: open")
+    ws.send("Dear Server: Thanks for listening")
+    print("THIS", this)
+    assert(ws.readyState == WebSocket.OPEN)
+
+    ws.close()
+    assert(ws.readyState == WebSocket.CLOSING)
 }
 
 ws.onmessage = function (event) {
     /* if (event.data instanceof Blob) {
     } else {
     } */
-    print("MSG", event.data)
+    print("INSTANCEOF", e.data instanceof ByteArray)
+    print("TYPEOF", typeof e.data === "string")
+    print("t.es: got message: ", event.data)
+    assert(ws.readyState == WebSocket.OPEN)
 }
 
 ws.onclose = function (event) {
-    print("CLOSED")
+    print("t.es: closed")
+    assert(ws.readyState == WebSocket.CLOSED)
 }
 
 ws.onerror = function (event) {
-    print("Error " + event)
+    print("t.es: error " + event)
 }
 // ws.close()
 
+/*
+    Test
+        ws.binaryType == 'ByteArray'
+        readyStates
+        send with multiple args
+        send with binary
+        send with conversion to text
+ */
 /*
     ws.binaryType = 'arraybuffer'
     event.data.byteLength
@@ -30,7 +49,6 @@ ws.onerror = function (event) {
  */
 
 App.run()
-// App.waitForEvent(App.emitter, "complete", ws.http.timeout)
 
 assert(ws.readyState == WebSocket.Loaded)
 assert(ws.status == 200)

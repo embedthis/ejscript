@@ -16,7 +16,7 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn);
 static EjsHttpServer *lookupServer(Ejs *ejs, cchar *ip, int port);
 static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp);
 static void setupConnTrace(HttpConn *conn);
-static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags);
+static void stateChangeNotifier(HttpConn *conn, int event, int arg);
 
 /************************************ Code ************************************/
 /*  
@@ -569,9 +569,8 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
 
 /*
     Notification callback. This routine is called from the Http pipeline on connection state changes. 
-    Readable/writable events come with state == 0 and notifyFlags set accordingly.
  */
-static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
+static void stateChangeNotifier(HttpConn *conn, int event, int arg)
 {
     Ejs             *ejs;
     EjsRequest      *req;
@@ -582,39 +581,37 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
     if ((req = httpGetConnContext(conn)) != 0) {
         ejs = req->ejs;
     }
-    switch (state) {
-    case HTTP_STATE_BEGIN:
-        setupConnTrace(conn);
-        break;
-            
-    case HTTP_STATE_FIRST:
-        break;
-
-    case HTTP_STATE_COMPLETE:
-        if (req) {
-            if (conn->error) {
-                ejsSendRequestErrorEvent(ejs, req);
-            }
-            ejsSendRequestCloseEvent(ejs, req);
-            if (req->cloned) {
-                ejsSendRequestCloseEvent(req->ejs, req->cloned);
+    switch (event) {
+    case HTTP_EVENT_STATE:
+        if (arg == HTTP_STATE_BEGIN) {
+            setupConnTrace(conn);
+        } else if (arg == HTTP_STATE_COMPLETE) {
+            if (req) {
+                if (conn->error) {
+                    ejsSendRequestErrorEvent(ejs, req);
+                }
+                ejsSendRequestCloseEvent(ejs, req);
+                if (req->cloned) {
+                    ejsSendRequestCloseEvent(req->ejs, req->cloned);
+                }
             }
         }
         break;
 
-    case HTTP_EVENT_IO:
+    case HTTP_EVENT_READABLE:
         /*  IO event notification for the request.  */
         if (req && req->emitter) {
-            if (notifyFlags & HTTP_NOTIFY_READABLE) {
-                ejsSendEvent(ejs, req->emitter, "readable", NULL, req);
-            } 
-            if (notifyFlags & HTTP_NOTIFY_WRITABLE) {
-                ejsSendEvent(ejs, req->emitter, "writable", NULL, req);
-            }
+            ejsSendEvent(ejs, req->emitter, "readable", NULL, req);
+        } 
+        break;
+
+    case HTTP_EVENT_WRITABLE:
+        if (req && req->emitter) {
+            ejsSendEvent(ejs, req->emitter, "writable", NULL, req);
         }
         break;
 
-    case HTTP_EVENT_CLOSE:
+    case HTTP_EVENT_APP_CLOSE:
         /* Connection close */
         if (req && req->conn) {
             req->conn = 0;
@@ -659,7 +656,7 @@ static void incomingEjs(HttpQueue *q, HttpPacket *packet)
     } else {
         httpJoinPacketForService(q, packet, 0);
     }
-    HTTP_NOTIFY(q->conn, 0, HTTP_NOTIFY_READABLE);
+    HTTP_NOTIFY(q->conn, HTTP_EVENT_READABLE, 0);
 }
 
 
@@ -766,7 +763,7 @@ static void startEjsHandler(HttpQueue *q)
 
         /* Send EOF if form or upload and all content has been received.  */
         if ((rx->form || rx->upload) && rx->eof) {
-            HTTP_NOTIFY(conn, 0, HTTP_NOTIFY_READABLE);
+            HTTP_NOTIFY(conn, HTTP_EVENT_READABLE, 0);
         }
     }
 }
@@ -778,7 +775,7 @@ static void readyEjsHandler(HttpQueue *q)
     
     conn = q->conn;
     if (conn->readq->count > 0) {
-        HTTP_NOTIFY(conn, 0, HTTP_NOTIFY_READABLE);
+        HTTP_NOTIFY(conn, HTTP_EVENT_READABLE, 0);
     }
 }
 

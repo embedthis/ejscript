@@ -451,6 +451,8 @@ FUTURE & KEEP
          */
         native function off(name, observer: Function): Void
 
+        //   MOB - rename "headers" => open
+        //   MOB - rename "complete" => close
         /** 
             @duplicate Stream.on
             All events are called with the following signature.  The "this" object will be set to the instance object

@@ -11,9 +11,9 @@ assert(http.status == 200)
 
 http.get(HTTP + "/index.html")
 connection = http.header("connection")
-assert(connection == "keep-alive" || connection == "close")
+assert(connection == "Keep-Alive" || connection == "close")
 connection = http.header("Connection")
-assert(connection == "keep-alive" || connection == "close")
+assert(connection == "Keep-Alive" || connection == "close")
 
 http.get(HTTP + "/index.html?mob=1")
 assert(http.contentType == "text/html")

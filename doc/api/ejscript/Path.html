@@ -168,6 +168,7 @@ size determination failed.</td></tr>
 If the path is a directory, this call will remove all subdirectories and their contents and finally the
 directory itself.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#rename'><b>rename</b></a>(target: <a href='Path.html'>Path</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Rename a file.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#replace'><b>replace</b></a>(pattern, replacement): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Search and replace.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#replaceExt'><b>replaceExt</b></a>(ext: <a href='String.html'>String</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Replace the path extension and return a new path.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#resolve'><b>resolve</b></a>(otherPaths: <a href='Array.html'>Array</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Resolve paths in the neighborhood of this path.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#same'><b>same</b></a>(other: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Compare two paths test if they represent the same file.</td></tr>
@@ -607,6 +608,23 @@ directory itself. If the directory does not exist, this call does not error and 
 <tr class='param'><td class='param'>target: <a href='Path.html'>Path</a> </td><td>New name of the path.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>True if the file is renamed.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='replace'></a>
+<div class='api'>
+<div class='apiSig'>    replace(pattern, replacement): <a href='Path.html'>Path</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Search and replace. Search for the given pattern which can be either a string or a regular expression 
+and replace it with the replace text. If the pattern is a string, only the first occurrence is replaced.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>pattern </td><td>The regular expression or string pattern to search for.</td></tr><tr class='param'><td class='param'>replacement </td><td>The string to replace the match with or a function to generate the replacement text. The replacement string can contain special replacement patterns: "$" inserts a "$", "$&" inserts the matched substring, "$`" inserts the portion that preceeds the matched substring, "$'" inserts the portion that follows the matched substring, and "$N" inserts the Nth parenthesized substring. The replacement parameter can also be a function which will be invoked and the function return value  will be used as the resplacement text. The function will be invoked multiple times for each match to be  replaced if the regular expression is global. The function will be invoked with the signature:  function (matched, submatch_1, submatch_2, ..., matched_offset, original_string).</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Returns a new string.</dd></dl>
+<dl><dt>Specified</dt>
+<dd>ejscript-2.0</dd></dl>
 </div>
 </div>
 <hr />

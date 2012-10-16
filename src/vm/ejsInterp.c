@@ -134,6 +134,8 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
 #define THIS            FRAME->function.boundThis
 #define FILL(mark)      while (mark < FRAME->pc) { *mark++ = EJS_OP_NOP; }
 
+//MOB
+#define DEBUG_IDE 1
 #if DEBUG_IDE
     static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode);
     static int opcount[256];

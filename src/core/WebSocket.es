@@ -7,66 +7,80 @@
 module ejs {
 
     /**
-        WebSocket compatible method to retrieve HTTP data
-        This code is prototype and is not yet supported
+        WebSocket class to implement the WebSockets RFC 6455 specification for client-side communications. 
+
+        WebSockets is a technology providing interactive communication between a server and client. Normal HTML connections
+        follow a request / response paradigm and do not easily support asynchronous communications or unsolicited data
+        pushed from the server to the client. WebSockets solves this by supporting bi-directional, full-duplex
+        communications over persistent connections. A WebSocket connection is established over a standard HTTP connection
+        and is then upgraded without impacting the original connection. This means it will work with existing networking
+        infrastructure including firewalls and proxies.
         @spec ejs
-        @hide
-        @stability evolving
+        @stability prototype
+        @see Http ByteArray
      */
     class WebSocket implements Stream {
 
         use default namespace public
 
-        /** readyState value */
+        /** The $readyState value while waiting for the WebSockets open handshake to complete with the peer */
         static const CONNECTING = 0              
 
-        /** readyState value */
+        /** The $readyState value once the WebSockets open handshake is complete and ready for communications */
         static const OPEN = 1
 
-        /** readyState value */
+        /** The $readyState value when a closing handshake has commenced */
         static const CLOSING = 2
 
-        /** readyState value */
+        /** The $readyState value when the WebSockets connection is closed */
         static const CLOSED = 3
 
         /**
             Create a new WebSocket and connect to the server using the supplied URI.
             @param uri URL to connect to
-            @param protocols Optional password if authentication is required.
+            @param protocols Optional set of protocols supported by the application. These are application-level
+                protocols. This argument may be an array or a string of comma separated values.
          */
-        native function WebSocket(uri: Uri, protocols: String? = null)
-
-        function get onopen(): Function
-            null
-        function set onopen(observer: Function): Void
-            on("headers", observer)
-
-        function get onmessage(): Function
-            null
-        function set onmessage(observer: Function): Void
-            on("readable", observer)
-
-        function get onerror(): Function
-            null
-        function set onerror(observer: Function): Void
-            on("error", observer)
-
-        function get onclose(): Function
-            null
-        function set onclose(observer: Function): Void
-            on("close", observer)
+        native function WebSocket(uri: Uri, protocols = null)
 
         /**
-            Type of binary data: "blob" or "arraybuffer"
+            Event callback invoked when the WebSocket is ready to send and receive data. The $readyState will be set to OPEN.
+          */
+        var onopen: Function
+
+        /**
+            Event callback invoked when a message has been received from the server. The $readyState will be OPEN.
+          */
+        var onmessage: Function
+
+        /**
+            Event callback invoked when an error occurs.
+          */
+        var onerror: Function
+
+        /**
+            Event callback invoked when the connection is closed. The $readyState will be CLOSED.
+          */
+        var onclose: Function
+
+        /**
+            Type of binary data. Set to "ByteArray".
           */
         native function get binaryType(): String
 
         /**
-            The number of bytes of buffered send data
+            The number of bytes of buffered data to send
           */
         native function get bufferedAmount(): Number
 
-        native function close(code: Number, reason: String? = "")
+        /**
+            Send a close message and close the web socket connection
+            @param code WebSocket status code to send to the peer explaining why the connection is being closed.
+                Defaults to 1000 which means a successful, graceful closure.
+            @param reason Optional reason string to indicate why the connection was closed. Must be less than 
+                124 bytes of UTF-8 text in length.
+         */
+        native function close(code: Number, reason: String? = ""): Void
 
         /**
             Return the list of supported extensions
@@ -75,6 +89,7 @@ module ejs {
 
         /** 
             @duplicate Stream.off
+            @hide
          */
         native function off(name, observer: Function): Void
 
@@ -90,25 +105,35 @@ module ejs {
             @event complete Issued when the request completes. Complete is always issued whether the request errors or not.
             @event error Issued if the request does not complete successfully. This is not issued if the request 
                 ompletes successfully but with a non 200 Http status code.
+            @hide
          */
         native function on(name, observer: Function): Http
 
         /**
-            Return the selected protocol
+            Return the application-level protocol selected by the server. Protocols are defined when 
+            creating the $WebSocket.
           */
         native function get protocol() : String
 
         /**
-            The readystate value. This value can be compared with the WebSocket constants: Uninitialized, Open, Sent,
-            Receiving or Loaded Set to: CONNECTING = 0, OPEN = 1, CLOSING = 2, CLOSED
+            The readystate value. This value can be compared with the WebSocket constants: 
+            $CONNECTING = 0, $OPEN = 1, $CLOSING = 2, $CLOSED = 3
          */
         native function get readyState() : Number
 
         /**
             Send data with the request.
             @param content Data to send with the request.
+                If the content is a ByteArray, the message will be sent as a WebSocket Binary message.
+                Otherwise, the message is converted to a String and sent as a WebSockets UTF-8 Text message.
+               If multiple arguments are provided, each is sent as a separate message. 
          */
         native function send(...content): Void
+
+        /**
+            The URI provided to the constructor
+         */
+        native function url(): Uri
     }
 }
 

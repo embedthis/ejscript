@@ -912,8 +912,7 @@ EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **ar
     wrote = 0;
 
     for (i = 0; i < args->length; i++) {
-        vp = ejsGetProperty(ejs, args, i);
-        if (vp == 0) {
+        if ((vp = ejsGetProperty(ejs, args, i)) == 0) {
             continue;
         }
         switch (TYPE(vp)->sid) {

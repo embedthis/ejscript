@@ -6,26 +6,23 @@
 
 #include    "ejs.h"
 
-#if BIT_WEB_SOCKETS
 /*********************************** Forwards *********************************/
 
-static void sendCloseEvent(Ejs *ejs, EjsWebSocket *ws);
-static void sendErrorEvent(Ejs *ejs, EjsWebSocket *ws);
+static void relayEvent(EjsWebSocket *ws, int event, EjsAny *data);
 static EjsObj *startWebSocketRequest(Ejs *ejs, EjsWebSocket *ws);
 static bool waitTillState(EjsWebSocket *ws, int state, MprTime timeout, int throw);
-static void webSocketEvent(HttpConn *conn, int event, int arg);
 static void webSocketNotify(HttpConn *conn, int state, int notifyFlags);
 
 /************************************ Methods *********************************/
 /*  
-    function WebSocket(uri: Uri, protocols: String?)
+    function WebSocket(uri: Uri, protocols = null)
  */
 static EjsWebSocket *wsConstructor(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 {
+    assure(ejsIsPot(ejs, ws));
+
     ejsLoadHttpService(ejs);
     ws->ejs = ejs;
-
-    //  MOB - should not require http service object. Or need httpGetHttp()
 
     if ((ws->conn = httpCreateConn(MPR->httpService, NULL, ejs->dispatcher)) == 0) {
         ejsThrowMemoryError(ejs);
@@ -33,14 +30,16 @@ static EjsWebSocket *wsConstructor(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj 
     }
     httpSetAsync(ws->conn, 1);
     if (argc >= 1) {
-        ws->protocols = sclone(((EjsString*) argv[1])->value);
+        if (ejsIs(ejs, argv[1], Array)) {
+            ws->protocols = sclone((ejsToString(ejs, argv[1]))->value);
+        } else if (ejsIs(ejs, argv[1], String)) {
+            ws->protocols = sclone(((EjsString*) argv[1])->value);
+        }
     }
     ws->uri = httpUriToString(((EjsUri*) argv[0])->uri, 0);
     httpPrepClientConn(ws->conn, 0);
-    //  MOB - should get rid of
     httpSetConnNotifier(ws->conn, webSocketNotify);
     httpSetWebSocketProtocols(ws->conn, ws->protocols);
-    httpSetWebSocketNotifier(ws->conn, webSocketEvent);
     httpSetConnContext(ws->conn, ws);
     startWebSocketRequest(ejs, ws);
     return ws;
@@ -49,33 +48,45 @@ static EjsWebSocket *wsConstructor(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj 
 
 /*
     function get binaryType(): String
+    NOTE: always returns ByteArray
  */
 static EjsString *ws_binaryType(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 {
-    return ejsCreateStringFromAsc(ejs, ws->dataType == WS_MSG_TEXT ? "text" : "binary");
+    return ejsCreateStringFromAsc(ejs, "ByteArray");
 }
 
 
 /*  
     function get bufferedAmount(): Number
+
+    Returns amount of buffered send data
  */
 static EjsNumber *ws_bufferedAmount(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 {
-    //  MOB - TODO
-    return ejsCreateNumber(ejs, (MprNumber) 0);
+    return ejsCreateNumber(ejs, ws->conn->writeq->count);
 }
 
 
 /*  
-    function close(code: Number, reason: String? = ""): Void
+    function close(code: Number = 1000, reason: String? = ""): Void
  */
 static EjsObj *ws_close(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 {
-    if (ws->conn) {
-        httpFinalize(ws->conn);
-        sendCloseEvent(ejs, ws);
-        httpDestroyConn(ws->conn);
+    HttpConn    *conn;
+    char        *reason;
+    int         status;
+
+    conn = ws->conn;
+    if (conn) {
+        httpFinalize(conn);
+        status = ejsGetInt(ejs, argv[0]);
+        reason = (argv[1] != ESV(null) && argv[1] != ESV(undefined)) ? ejsToMulti(ejs, argv[1]): 0; 
+        httpSendClose(conn, status, reason);
+#if UNUSED
+        relayEvent(ws, HTTP_EVENT_APP_CLOSE, 0);
+        httpDestroyConn(conn);
         ws->conn = 0;
+#endif
     }
     return 0;
 }
@@ -115,14 +126,13 @@ static EjsWebSocket *ws_on(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
     ejsAddObserver(ejs, &ws->emitter, argv[0], observer);
 
     conn = ws->conn;
-    //  MOB - must do onopen first
     if (conn->readq && conn->readq->count > 0) {
-        ejsSendEvent(ejs, ws->emitter, "readable", NULL, ws);
+        relayEvent(ws, HTTP_EVENT_READABLE, 0);
     }
-    if (!conn->connectorComplete && 
+    if (!conn->tx->connectorComplete && 
             !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
             conn->writeq->ioCount == 0) {
-        ejsSendEvent(ejs, ws->emitter, "writable", NULL, ws);
+        relayEvent(ws, HTTP_EVENT_WRITABLE, 0);
     }
     return ws;
 }
@@ -142,32 +152,50 @@ static EjsString *ws_protocol(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **arg
  */
 static EjsNumber *ws_readyState(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 {
-    return ejsCreateNumber(ejs, (MprNumber) 0);
+    return ejsCreateNumber(ejs, (MprNumber) ws->conn->rx->webSockState);
 }
 
 
 /*  
-    function send(content): Void
+    function send(...content): Void
  */
 static EjsString *ws_send(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 {
-    ssize   nbytes;
+    EjsArray        *args;
+    EjsByteArray    *ba;
+    EjsAny          *arg;
+    ssize           nbytes;
+    int             i;
 
+    args = (EjsArray*) argv[0];
     if (ws->conn->state < HTTP_STATE_PARSED && !waitTillState(ws, HTTP_STATE_PARSED, -1, 1)) {
         return 0;
     }
-    //  MOB - is this the best thing to do?
-    ws->data = ejsCreateByteArray(ejs, -1);
-    if (ejsWriteToByteArray(ejs, ws->data, 1, &argv[0]) < 0) {
-        return 0;
-    }
-    nbytes = ejsGetByteArrayAvailableData(ws->data);
-    if ((nbytes = httpSendBlock(ws->conn, WS_MSG_BINARY, (cchar*) &ws->data->value[ws->data->readPosition], nbytes)) < 0) {
-        return 0;
+    for (i = 0; i < args->length; i++) {
+        if ((arg = ejsGetProperty(ejs, args, i)) == 0) {
+            if (ejsIs(ejs, arg, ByteArray)) {
+                ba = (EjsByteArray*) arg;
+                nbytes = ejsGetByteArrayAvailableData(ba);
+                nbytes = httpSendBlock(ws->conn, WS_MSG_BINARY, (cchar*) &ba->value[ba->readPosition], nbytes);
+            } else {
+                nbytes = httpSend(ws->conn, ejsToMulti(ejs, arg));
+            }
+            if (nbytes < 0) {
+                return 0;
+            }
+        }
     }
     return 0;
 }
 
+
+/*  
+    function get uri(): Uri
+ */
+static EjsUri *ws_uri(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
+{
+    return ejsCreateUriFromAsc(ejs, ws->uri);
+}
 
 /*********************************** Support **********************************/
 
@@ -176,7 +204,7 @@ static EjsObj *startWebSocketRequest(Ejs *ejs, EjsWebSocket *ws)
     HttpConn        *conn;
 
     conn = ws->conn;
-#if FUTURE
+#if MOB && FUTURE
     if (ws->verifyPeer || ws->certFile) {
         if (!ws->ssl) {
             ws->ssl = mprCreateSsl();
@@ -194,232 +222,141 @@ static EjsObj *startWebSocketRequest(Ejs *ejs, EjsWebSocket *ws)
         ejsThrowIOError(ejs, "Can't issue request for \"%s\"", ws->uri);
         return 0;
     }
-#if FUTURE
-    ejsSendEvent(ejs, ws->emitter, "writable", NULL, ws);
-#endif
     httpEnableConnEvents(ws->conn);
     return 0;
 }
 
 
-/*
-    WebSocket callback
- */
-static void webSocketEvent(HttpConn *conn, int event, int arg)
+void relayEvent(EjsWebSocket *ws, int event, EjsAny *data)
 {
     Ejs             *ejs;
-    EjsWebSocket    *ws;
-    EjsByteArray    *ba;
-    EjsAny          *data;
-    EjsObj          *obj;
-    char            *buf;
-    ssize           len;
-
-    ws = httpGetConnContext(conn);
-    ejs = ws->ejs;
-    
-    if (event == HTTP_NOTIFY_READABLE) {
-#if UNUSED
-        //  MOB - would be nice to have HTTP_NOTIFY_OPEN
-        if (!ws->opened) {
-            ejsSendEvent(ejs, ws->emitter, "headers", NULL, ws);
-            ws->opened = 1;
-        }
-#endif
-        /* Called once per packet unless packet is too large (LimitWebSocketPacket) */
-        print("wscontroller: READABLE format %s\n", arg == WS_MSG_TEXT ? "text" : "binary");
-        len = httpGetReadCount(conn);
-            //  MOB OPT
-        if (arg == WS_MSG_TEXT) {
-            if ((buf = mprAlloc(len + 1)) == 0) {
-                //  MOB DIAG
-                return;
-            }
-            if ((len = httpRead(conn, buf, len)) < 0) {
-                //  MOB DIAG
-                return;
-            }
-            data = ejsCreateStringFromBytes(ejs, buf, len);
-        } else {
-            if ((ba = ejsCreateByteArray(ejs, len)) == 0) {
-                //  MOB DIAG
-                return;
-            }
-            if ((len = httpRead(conn, (char*) ba->value, len)) < 0) {
-                //  MOB DIAG
-                return;
-            }
-            ejsSetByteArrayPositions(ejs, ba, -1, len);
-            data = ba;
-        }
-        obj = ejsCreateObj(ejs, ESV(Object), 1);
-        ejsSetPropertyByName(ejs, obj, EN("data"), data);
-        ejsSendEvent(ejs, ws->emitter, "readable", obj, ws);
-
-    } else if (event == HTTP_NOTIFY_CLOSED) {
-        //  MOB - inline
-        sendCloseEvent(ejs, ws);
-        //  MOB - is this required
-        httpFinalize(conn);
-
-    } else if (event == HTTP_NOTIFY_ERROR) {
-        sendErrorEvent(ejs, ws);
-        //  MOB - is this required
-        httpFinalize(conn);
-    }
-}
-
-
-static bool verifyHandshake(HttpConn *conn)
-{
+    EjsAny          *eobj;
+    EjsFunction     *fn;
     HttpRx          *rx;
-    HttpTx          *tx;
-    EjsWebSocket    *ws;
-    cchar           *key, *expected;
+    cchar           *eventName;
+    int             slot;
 
-    rx = conn->rx;
-    tx = conn->tx;
-    ws = httpGetConnContext(conn);
+    ejs = ws->ejs;
+    rx = ws->conn->rx;
+    eobj = ejsCreateObj(ejs, ESV(Object), 0);
 
-    if (rx->status != HTTP_CODE_SWITCHING) {
-        httpError(conn, HTTP_CODE_BAD_HANDSHAKE, "Bad WebSocket handshake status %d", rx->status);
-        return 0;
+    switch(event) {
+    case HTTP_EVENT_READABLE:
+        slot = ES_WebSocket_onmessage;
+        eventName = "readable";
+        assure(data);
+        ejsSetPropertyByName(ejs, eobj, EN("data"), data);
+        break;
+
+    case HTTP_EVENT_ERROR:
+        eventName = "error";
+        slot = ES_WebSocket_onerror;
+        break;
+
+    case HTTP_EVENT_APP_OPEN:
+        slot = ES_WebSocket_onopen;
+        eventName = "headers";
+        break;
+
+    case HTTP_EVENT_DESTROY:
+        if (ws->closed) {
+            break;
+        }
+        ws->closed = 1;
+        /* Fall through to close */
+
+    case HTTP_EVENT_APP_CLOSE:
+        eventName = "complete";
+        slot = ES_WebSocket_onclose;
+        ejsSetPropertyByName(ejs, eobj, EN("code"), ejsCreateNumber(ejs, rx->closeStatus));
+        ejsSetPropertyByName(ejs, eobj, EN("reason"), ejsCreateStringFromAsc(ejs, rx->closeReason));
+        ejsSetPropertyByName(ejs, eobj, EN("wasClean"), ejsCreateBoolean(ejs, rx->closeStatus != WS_STATUS_COMMS_ERROR));
+        break;
+
+    default:
+        slot = -1;
     }
-    if (!smatch(httpGetHeader(conn, "Connection"), "Upgrade")) {
-        httpError(conn, HTTP_CODE_BAD_HANDSHAKE, "Bad WebSocket Connection header");
-        return 0;
+    if (slot >= 0) {
+        if (ws->emitter) {
+            ejsSendEvent(ejs, ws->emitter, eventName, ws, data);
+        }
+        fn = ejsGetProperty(ejs, ws, slot);
+        if (ejsIsFunction(ejs, fn)) {
+            ejsRunFunction(ejs, fn, ws, 1, &eobj);
+        }
     }
-    if (!smatch(httpGetHeader(conn, "Upgrade"), "WebSocket")) {
-        httpError(conn, HTTP_CODE_BAD_HANDSHAKE, "Bad WebSocket Upgrade header");
-        return 0;
-    }
-    expected = mprGetSHABase64(sjoin(tx->webSockKey, WEB_SOCKETS_MAGIC, NULL));
-    key = httpGetHeader(conn, "Sec-WebSocket-Accept");
-    if (!smatch(key, expected)) {
-        httpError(conn, HTTP_CODE_BAD_HANDSHAKE, "Bad WebSocket handshake key\n%s\n%s", key, expected);
-        return 0;
-    }
-    ws->protocol = (char*) httpGetHeader(conn, "Sec-WebSocket-Protocol");
-    return 1;
 }
-
 
 
 /*
     Connection callback
  */
-static void webSocketNotify(HttpConn *conn, int state, int notifyFlags)
+static void webSocketNotify(HttpConn *conn, int event, int arg)
 {
     Ejs             *ejs;
     EjsWebSocket    *ws;
+    EjsByteArray    *ba;
+    EjsAny          *data;
+    char            *buf;
+    ssize           len;
 
-    ws = httpGetConnContext(conn);
+    if ((ws = httpGetConnContext(conn)) == 0) {
+        return;
+    }
     ejs = ws->ejs;
-
-    switch (state) {
-    case HTTP_STATE_BEGIN:
+    if (!ejs->service) {
+        /* Shutting down */
+        return;
+    }
+    switch (event) {
+    case HTTP_EVENT_STATE:
+        if (arg == HTTP_STATE_CONTENT) {
+            ws->protocol = (char*) httpGetHeader(conn, "Sec-WebSocket-Protocol");
+            mprLog(4, "Web socket protocol %s", ws->protocol);
+            relayEvent(ws, HTTP_EVENT_APP_OPEN, 0);
+        }
         break;
-
-    case HTTP_STATE_PARSED:
-        if (verifyHandshake(conn)) {
-            if (ws->emitter) {
-                //  MOB - should be using web sockets callback
-                //  MOB - SendEvent should allow null emitter
-                ejsSendEvent(ejs, ws->emitter, "headers", NULL, ws);
+    
+    case HTTP_EVENT_READABLE:
+        /* Called once per packet unless packet is too large (LimitWebSocketPacket) */
+        print("wscontroller: READABLE format %s\n", arg == WS_MSG_TEXT ? "text" : "binary");
+        len = httpGetReadCount(conn);
+        if (arg == WS_MSG_TEXT) {
+            if ((buf = mprAlloc(len + 1)) == 0) {
+                return;
             }
-        }
-        break;
-
-    case HTTP_STATE_READY:
-        if (ws && ws->emitter) {
-            ejsSendEvent(ejs, ws->emitter, "open", NULL, ws);
-        }
-        break;
-
-#if UNUSED
-    case HTTP_STATE_CONTENT:
-    case HTTP_STATE_RUNNING:
-        break;
-
-    case HTTP_STATE_COMPLETE:
-        if (ws->emitter) {
-            if (conn->error) {
-                sendErrorEvent(ejs, ws);
+            if ((len = httpRead(conn, buf, len)) < 0) {
+                ejsThrowIOError(ejs, "Can't read packet");
+                return;
             }
-            sendCloseEvent(ejs, ws);
-        }
-        break;
-
-    case 0:
-        if (ws && ws->emitter) {
-            if (notifyFlags & HTTP_NOTIFY_READABLE) {
-                ejsSendEvent(ejs, ws->emitter, "readable", NULL, ws);
-            } 
-            if (notifyFlags & HTTP_NOTIFY_WRITABLE) {
-                ejsSendEvent(ejs, ws->emitter, "writable", NULL, ws);
+            data = ejsCreateStringFromBytes(ejs, buf, len);
+        } else {
+            if ((ba = ejsCreateByteArray(ejs, len)) == 0) {
+                return;
             }
+            if ((len = httpRead(conn, (char*) ba->value, len)) < 0) {
+                ejsThrowIOError(ejs, "Can't read packet");
+                return;
+            }
+            ejsSetByteArrayPositions(ejs, ba, -1, len);
+            data = ba;
+        }
+        relayEvent(ws, event, data);
+        break;
+
+    case HTTP_EVENT_ERROR:
+        if (!ws->error && !ws->closed) {
+            ws->error = 1;
+            relayEvent(ws, event, 0);
         }
         break;
-#endif
-    }
-}
 
-
-#if UNUSED
-/*  
-    Read the required number of bytes into the response content buffer. Count < 0 means transfer the entire content.
-    Returns the number of bytes read.
- */ 
-static ssize readWebSocketData(Ejs *ejs, EjsWebSocket *ws, ssize count)
-{
-    MprBuf          *buf;
-    WebSocketConn   *conn;
-    ssize           len, space, nbytes;
-
-    conn = ws->conn;
-    buf = ws->responseContent;
-    mprResetBufIfEmpty(buf);
-    while (count < 0 || mprGetBufLength(buf) < count) {
-        len = (count < 0) ? HTTP_BUFSIZE : (count - mprGetBufLength(buf));
-        space = mprGetBufSpace(buf);
-        if (space < len) {
-            mprGrowBuf(buf, len - space);
+    case HTTP_EVENT_APP_CLOSE:
+        if (!ws->closed) {
+            ws->closed = 1;
+            relayEvent(ws, event, 0);
         }
-        if ((nbytes = httpRead(conn, mprGetBufEnd(buf), len)) < 0) {
-            ejsThrowIOError(ejs, "Can't read required data");
-            return MPR_ERR_CANT_READ;
-        }
-        mprAdjustBufEnd(buf, nbytes);
-        if (ws->conn->async || (nbytes == 0 && conn->state >= HTTP_STATE_COMPLETE)) {
-            break;
-        }
-    }
-    if (count < 0) {
-        return mprGetBufLength(buf);
-    }
-    return min(count, mprGetBufLength(buf));
-}
-#endif
-
-
-static void sendCloseEvent(Ejs *ejs, EjsWebSocket *ws)
-{
-    if (!ws->closed && ejs->service) {
-        ws->closed = 1;
-        if (ws->emitter) {
-            ejsSendEvent(ejs, ws->emitter, "close", NULL, ws);
-        }
-    }
-}
-
-
-static void sendErrorEvent(Ejs *ejs, EjsWebSocket *ws)
-{
-    if (!ws->error) {
-        ws->error = 1;
-        if (ws->emitter) {
-            ejsSendEvent(ejs, ws->emitter, "error", NULL, ws);
-        }
+        break;
     }
 }
 
@@ -462,7 +399,7 @@ static bool waitTillState(EjsWebSocket *ws, int state, MprTime timeout, int thro
             if (httpNeedRetry(conn, &url)) {
                 if (url) {
                     uri = httpCreateUri(url, 0);
-                    httpCompleteUri(uri, httpCreateUri(ws->uri, 0), 0);
+                    httpCompleteUri(uri, httpCreateUri(ws->uri, 0));
                     ws->uri = httpUriToString(uri, HTTP_COMPLETE_URI);
                 }
                 count--; 
@@ -528,16 +465,20 @@ static void manageWebSocket(EjsWebSocket *ws, int flags)
     if (flags & MPR_MANAGE_MARK) {
         mprMark(ws->conn);
         mprMark(ws->emitter);
+#if UNUSED
         mprMark(ws->data);
+#endif
         mprMark(ws->ssl);
         mprMark(ws->protocols);
         mprMark(ws->protocol);
         mprMark(ws->uri);
-        mprMark(TYPE(ws));
+        ejsManagePot((EjsPot*) ws, flags);
 
     } else if (flags & MPR_MANAGE_FREE) {
-        if (ws->conn) {
-            sendCloseEvent(ws->ejs, ws);
+        if (ws->conn && ws->ejs->service) {
+            if (!ws->closed) {
+                relayEvent(ws, HTTP_EVENT_APP_CLOSE, 0);
+            }
             httpDestroyConn(ws->conn);
             ws->conn = 0;
         }
@@ -551,7 +492,7 @@ void ejsConfigureWebSocketType(Ejs *ejs)
     EjsPot      *prototype;
 
     if ((type = ejsFinalizeScriptType(ejs, N("ejs", "WebSocket"), sizeof(EjsWebSocket), 
-            manageWebSocket, EJS_TYPE_OBJ)) == 0) {
+            manageWebSocket, EJS_TYPE_POT)) == 0) {
         return;
     }
     prototype = type->prototype;
@@ -565,9 +506,11 @@ void ejsConfigureWebSocketType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_WebSocket_protocol, ws_protocol);
     ejsBindMethod(ejs, prototype, ES_WebSocket_readyState, ws_readyState);
     ejsBindMethod(ejs, prototype, ES_WebSocket_send, ws_send);
+#if ES_WebSocket_uri
+    ejsBindMethod(ejs, prototype, ES_WebSocket_uri, ws_uri);
+#endif
 }
 
-#endif
 /*
     @copy   default
   

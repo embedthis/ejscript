@@ -22,8 +22,8 @@
       <type>EjsName</type>
       <name>ejsWideName</name>
       <anchorfile>group___ejs_name.html</anchorfile>
-      <anchor>ga4e347416dd84b33c4b3cdd9254ee0fe7</anchor>
-      <arglist>(struct Ejs *ejs, MprChar *space, MprChar *name)</arglist>
+      <anchor>ga44e87f616d5f0ad7103e15b057d35ee3</anchor>
+      <arglist>(struct Ejs *ejs, wchar *space, wchar *name)</arglist>
     </member>
   </compound>
   <compound kind="group">
@@ -404,8 +404,8 @@
       <type>EjsAny *</type>
       <name>ejsParse</name>
       <anchorfile>group___ejs_obj.html</anchorfile>
-      <anchor>gaf9a4c661661b986e9d6acf0b7baa0125</anchor>
-      <arglist>(Ejs *ejs, MprChar *str, int prefType)</arglist>
+      <anchor>gaa3b1c78ba5216f5315d6a681c6c4a6b0</anchor>
+      <arglist>(Ejs *ejs, wchar *str, int prefType)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
@@ -614,8 +614,8 @@
       <type>int</type>
       <name>ejsCompareWide</name>
       <anchorfile>group___ejs_string.html</anchorfile>
-      <anchor>ga36a0d2a409d562e286db4972617a033b</anchor>
-      <arglist>(Ejs *ejs, EjsString *s1, MprChar *s2, ssize len)</arglist>
+      <anchor>ga6a260927bd3df5edad13557d56808a8f</anchor>
+      <arglist>(Ejs *ejs, EjsString *s1, wchar *s2, ssize len)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
@@ -649,8 +649,8 @@
       <type>EjsString *</type>
       <name>ejsCreateString</name>
       <anchorfile>group___ejs_string.html</anchorfile>
-      <anchor>gab55a2ec920805f58db1f75cc2747d543</anchor>
-      <arglist>(Ejs *ejs, MprChar *value, ssize len)</arglist>
+      <anchor>ga8aeef72a34295c9e4df136996628c413</anchor>
+      <arglist>(Ejs *ejs, wchar *value, ssize len)</arglist>
     </member>
     <member kind="function">
       <type>EjsString *</type>
@@ -712,8 +712,8 @@
       <type>EjsString *</type>
       <name>ejsInternWide</name>
       <anchorfile>group___ejs_string.html</anchorfile>
-      <anchor>gaa77cedd9ad8782fdc5d895a637aeeca6</anchor>
-      <arglist>(struct Ejs *ejs, MprChar *value, ssize len)</arglist>
+      <anchor>ga6558ec0637c52d1350554bc302cb2d6d</anchor>
+      <arglist>(struct Ejs *ejs, wchar *value, ssize len)</arglist>
     </member>
     <member kind="function">
       <type>EjsString *</type>
@@ -1496,6 +1496,18 @@
       <anchorfile>group___ejs_http.html</anchorfile>
       <anchor>gaf24460df769dbdfc75e5cb162acf64c0</anchor>
       <arglist>(Ejs *ejs, HttpLimits *limits, EjsObj *obj, bool server)</arglist>
+    </member>
+  </compound>
+  <compound kind="group">
+    <name>EjsWebSocket</name>
+    <title>EjsWebSocket</title>
+    <filename>group___ejs_web_socket.html</filename>
+    <member kind="function">
+      <type>EjsWebSocket *</type>
+      <name>ejsCreateWebSocket</name>
+      <anchorfile>group___ejs_web_socket.html</anchorfile>
+      <anchor>ga7b78145c86d4db2408ac2c990a3d3e29</anchor>
+      <arglist>(Ejs *ejs)</arglist>
     </member>
   </compound>
   <compound kind="group">
@@ -2386,10 +2398,10 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>MprChar *</type>
+      <type>wchar *</type>
       <name>source</name>
       <anchorfile>struct_ejs_line.html</anchorfile>
-      <anchor>a9e53a26010622f479c9f7a63704fc5b9</anchor>
+      <anchor>a623f0d2c5beae37138e57ad332fb8ead</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -2540,6 +2552,13 @@
       <anchorfile>struct_ejs_service.html</anchorfile>
       <anchor>a30d979298f77408d751e031fb4eba4ec</anchor>
       <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>MprSpin *</type>
+      <name>dtoaSpin</name>
+      <anchorfile>struct_ejs_service.html</anchorfile>
+      <anchor>a70ab02d15ec19a32ed3e2f31e4b15822</anchor>
+      <arglist>[2]</arglist>
     </member>
     <member kind="variable">
       <type>Http *</type>

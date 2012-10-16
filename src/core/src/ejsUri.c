@@ -214,10 +214,10 @@ static EjsUri *uri_absolute(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
         if (uri->path && uri->path[0] != '/') {
             httpJoinUriPath(uri, baseUri, uri);
         }
-        httpCompleteUri(result->uri, baseUri, 0);
+        httpCompleteUri(result->uri, baseUri);
     } else {
         result = cloneUri(ejs, up, 0);
-        httpCompleteUri(result->uri, NULL, 0);
+        httpCompleteUri(result->uri, NULL);
     }
     httpNormalizeUri(result->uri);
     return result;
@@ -956,9 +956,9 @@ static EjsUri *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQue
         if (!includeQuery) {
             up->uri->query = NULL;
         }
-        httpCompleteUri(up->uri, NULL, /* MOB includeQuery ? HTTP_COMPLETE_URI_QUERY : */ 0);
+        httpCompleteUri(up->uri, NULL);
     } else {
-        httpCompleteUri(up->uri, missingUri->uri, /* MOB includeQuery ? HTTP_COMPLETE_URI_QUERY : */ 0);
+        httpCompleteUri(up->uri, missingUri->uri);
     }
     return up;
 }

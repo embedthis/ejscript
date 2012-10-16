@@ -456,7 +456,7 @@ In this case a "readable" event will be issued when data is available for readin
 <td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A count of the bytes actually read. Returns null on EOF.</dd></dl>
+<dd>A count of the bytes actually read. Returns null on EOF or errors.</dd></dl>
 </div>
 </div>
 <hr />
@@ -514,7 +514,7 @@ In this case a "readable" event will be issued when data is available for readin
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Reset the Http object to prepare for a new request. This will discard existing headers and security 
-credentials. It will not close the connection to TCP/IP Keep-Alive will be maintained.</dd></dl>
+credentials. It will not close the connection to TCP/IP and thus Keep-Alive will be maintained.</dd></dl>
 </div>
 </div>
 <hr />

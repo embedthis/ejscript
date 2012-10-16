@@ -12,7 +12,7 @@
 static EjsDate  *getDateHeader(Ejs *ejs, EjsHttp *hp, cchar *key);
 static EjsString *getStringHeader(Ejs *ejs, EjsHttp *hp, cchar *key);
 static void     httpIOEvent(HttpConn *conn, MprEvent *event);
-static void     httpNotify(HttpConn *conn, int state, int notifyFlags);
+static void     httpEventChange(HttpConn *conn, int event, int arg);
 static void     prepForm(Ejs *ejs, EjsHttp *hp, cchar *prefix, EjsObj *data);
 static ssize    readHttpData(Ejs *ejs, EjsHttp *hp, ssize count);
 static void     sendHttpCloseEvent(Ejs *ejs, EjsHttp *hp);
@@ -36,7 +36,7 @@ static EjsHttp *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         return 0;
     }
     httpPrepClientConn(hp->conn, 0);
-    httpSetConnNotifier(hp->conn, httpNotify);
+    httpSetConnNotifier(hp->conn, httpEventChange);
     httpSetConnContext(hp->conn, hp);
     if (argc == 1 && ejsIs(ejs, argv[0], Null)) {
         hp->uri = httpUriToString(((EjsUri*) argv[0])->uri, HTTP_COMPLETE_URI);
@@ -106,7 +106,7 @@ static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         httpDestroyConn(hp->conn);
         hp->conn = httpCreateConn(ejs->http, NULL, ejs->dispatcher);
         httpPrepClientConn(hp->conn, 0);
-        httpSetConnNotifier(hp->conn, httpNotify);
+        httpSetConnNotifier(hp->conn, httpEventChange);
         httpSetConnContext(hp->conn, hp);
     }
     return 0;
@@ -196,7 +196,7 @@ static EjsObj *http_finalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsBoolean *http_finalized(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (hp->conn) {
-        return ejsCreateBoolean(ejs, hp->conn->finalized);
+        return ejsCreateBoolean(ejs, hp->conn->tx->finalized);
     }
     return ESV(false);
 }
@@ -466,7 +466,7 @@ static EjsHttp *http_on(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (conn->readq && conn->readq->count > 0) {
         ejsSendEvent(ejs, hp->emitter, "readable", NULL, hp);
     }
-    if (!conn->connectorComplete && 
+    if (!conn->tx->connectorComplete && 
             !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
             conn->writeq->ioCount == 0) {
         ejsSendEvent(ejs, hp->emitter, "writable", NULL, hp);
@@ -967,7 +967,7 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
 }
 
 
-static void httpNotify(HttpConn *conn, int state, int notifyFlags)
+static void httpEventChange(HttpConn *conn, int event, int arg)
 {
     Ejs         *ejs;
     EjsHttp     *hp;
@@ -975,38 +975,35 @@ static void httpNotify(HttpConn *conn, int state, int notifyFlags)
     hp = httpGetConnContext(conn);
     ejs = hp->ejs;
 
-    switch (state) {
-    case HTTP_STATE_BEGIN:
-        break;
-
-    case HTTP_STATE_PARSED:
-        if (hp->emitter) {
-            ejsSendEvent(ejs, hp->emitter, "headers", NULL, hp);
-        }
-        break;
-
-    case HTTP_STATE_CONTENT:
-    case HTTP_STATE_READY:
-    case HTTP_STATE_RUNNING:
-        break;
-
-    case HTTP_STATE_COMPLETE:
-        if (hp->emitter) {
-            if (conn->error) {
-                sendHttpErrorEvent(ejs, hp);
+    switch (event) {
+    case HTTP_EVENT_STATE:
+        switch (arg) {
+        case HTTP_STATE_PARSED:
+            if (hp->emitter) {
+                ejsSendEvent(ejs, hp->emitter, "headers", NULL, hp);
             }
-            sendHttpCloseEvent(ejs, hp);
+            break;
+
+        case HTTP_STATE_COMPLETE:
+            if (hp->emitter) {
+                if (conn->error) {
+                    sendHttpErrorEvent(ejs, hp);
+                }
+                sendHttpCloseEvent(ejs, hp);
+            }
+            break;
         }
         break;
 
-    case 0:
+    case HTTP_EVENT_READABLE:
         if (hp && hp->emitter) {
-            if (notifyFlags & HTTP_NOTIFY_READABLE) {
-                ejsSendEvent(ejs, hp->emitter, "readable", NULL, hp);
-            } 
-            if (notifyFlags & HTTP_NOTIFY_WRITABLE) {
-                ejsSendEvent(ejs, hp->emitter, "writable", NULL, hp);
-            }
+            ejsSendEvent(ejs, hp->emitter, "readable", NULL, hp);
+        }
+        break;
+
+    case HTTP_EVENT_WRITABLE:
+        if (hp && hp->emitter) {
+            ejsSendEvent(ejs, hp->emitter, "writable", NULL, hp);
         }
         break;
     }
@@ -1061,7 +1058,7 @@ static ssize writeHttpData(Ejs *ejs, EjsHttp *hp)
     ba = hp->data;
     nbytes = 0;
     if (ba && (count = ejsGetByteArrayAvailableData(ba)) > 0) {
-        if (conn->finalized) {
+        if (conn->tx->finalized) {
             ejsThrowIOError(ejs, "Can't write to socket");
             return 0;
         }
@@ -1285,7 +1282,7 @@ static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
             if (httpNeedRetry(conn, &url)) {
                 if (url) {
                     uri = httpCreateUri(url, 0);
-                    httpCompleteUri(uri, httpCreateUri(hp->uri, 0), 0);
+                    httpCompleteUri(uri, httpCreateUri(hp->uri, 0));
                     hp->uri = httpUriToString(uri, HTTP_COMPLETE_URI);
                 }
                 count--; 

@@ -2031,7 +2031,7 @@ extern int ejsSendEventv(Ejs *ejs, EjsObj *emitter, cchar *name, EjsAny *thisObj
     @ingroup EjsObj
  */
 extern int ejsSendEvent(Ejs *ejs, EjsObj *emitter, cchar *name, EjsAny *thisObj, EjsAny *arg);
-    
+
 /******************************************** Function ********************************************/
 /*
     Exception flags and structure
@@ -3331,17 +3331,23 @@ extern int ejsSetupHttpTrace(Ejs *ejs, HttpTrace *trace, EjsObj *options);
     @see EjsWebSocket ejsCreateWebSocket 
  */
 typedef struct EjsWebSocket {
-    EjsObj          obj;                        /**< Base object */
+    EjsPot          pot;                        /**< Base pot */
     Ejs             *ejs;                       /**< Interp reference */
     EjsObj          *emitter;                   /**< Event emitter */
+#if UNUSED
     EjsByteArray    *data;                      /**< Buffered write data */
+#endif
     HttpConn        *conn;                      /**< Underlying HttpConn object */
     MprSsl          *ssl;                       /**< SSL configuration */
     char            *uri;                       /**< Target URI */
     char            *protocols;                 /**< Set of supported protocols */
     char            *protocol;                  /**< Protocol selected by the server */
+#if UNUSED
     int             dataType;                   /**< Receive data type */
+#endif
+#if UNUSED
     int             opened;                     /**< Wss connection is open */
+#endif
     int             closed;                     /**< Http is closed and "close" event has been issued */
     int             error;                      /**< Http errored and "error" event has been issued */
 } EjsWebSocket;
