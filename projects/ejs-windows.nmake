@@ -77,7 +77,7 @@ prep:
 	@if not exist $(CONFIG)\obj md $(CONFIG)\obj
 	@if not exist $(CONFIG)\bin md $(CONFIG)\bin
 	@if not exist $(CONFIG)\inc\bit.h copy projects\ejs-$(OS)-bit.h $(CONFIG)\inc\bit.h
-	@if not exist $(CONFIG)\bin\libmpr.def xcopy /Y /S projects\ejs-windows\*.def $(CONFIG)\bin
+	@if not exist $(CONFIG)\bin\*.def xcopy /Y /S projects\ejs-windows\*.def $(CONFIG)\bin
 
 clean:
 	-if exist $(CONFIG)\bin\libmpr.dll del /Q $(CONFIG)\bin\libmpr.dll
