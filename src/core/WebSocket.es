@@ -133,7 +133,7 @@ module ejs {
         /**
             The URI provided to the constructor
          */
-        native function url(): Uri
+        native function get url(): Uri
     }
 }
 

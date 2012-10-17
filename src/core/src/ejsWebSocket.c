@@ -190,9 +190,9 @@ static EjsString *ws_send(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 
 
 /*  
-    function get uri(): Uri
+    function get url(): Uri
  */
-static EjsUri *ws_uri(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
+static EjsUri *ws_url(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 {
     return ejsCreateUriFromAsc(ejs, ws->uri);
 }
@@ -506,8 +506,8 @@ void ejsConfigureWebSocketType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_WebSocket_protocol, ws_protocol);
     ejsBindMethod(ejs, prototype, ES_WebSocket_readyState, ws_readyState);
     ejsBindMethod(ejs, prototype, ES_WebSocket_send, ws_send);
-#if ES_WebSocket_uri
-    ejsBindMethod(ejs, prototype, ES_WebSocket_uri, ws_uri);
+#if ES_WebSocket_url
+    ejsBindMethod(ejs, prototype, ES_WebSocket_url, ws_url);
 #endif
 }
 
