@@ -1918,7 +1918,7 @@ selectTargets()
             } else {
                 safeRemove(target.path)
             }
-            run(command)
+            run(command, {excludeOutput: /Creating library /})
         }
     }
 
@@ -2003,7 +2003,7 @@ selectTargets()
             } else {
                 safeRemove(target.path)
             }
-            run(command, {excludeOutput: /has no symbols/})
+            run(command, {excludeOutput: /has no symbols|Creating library /})
         }
     }
 
