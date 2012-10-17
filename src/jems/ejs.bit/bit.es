@@ -2850,11 +2850,21 @@ global.NN = item.ns
                         } else if (generating == 'sh') {
                             genWrite('rm -rf ' + target.path.relative)
 
-                        } else if (target.path.exists) {
-                            if (options.show) {
-                                trace('Clean', target.path.relative)
+                        } else {
+                            if (target.path.exists) {
+                                if (options.show) {
+                                    trace('Clean', target.path.relative)
+                                }
+                                safeRemove(target.path)
                             }
-                            safeRemove(target.path)
+                            if (Config.OS == 'windows') {
+                                let ext = target.path.extension
+                                if (ext == bit.ext.shobj || ext == bit.ext.exe) {
+                                    target.path.replaceExt('lib').remove()
+                                    target.path.replaceExt('pdb').remove()
+                                    target.path.replaceExt('exp').remove()
+                                }
+                            }
                         }
                     }
                 }
@@ -2926,7 +2936,7 @@ global.NN = item.ns
     }
 
     public function safeRemove(dir: Path) {
-/* UNUSED
+/* UNUSED MOB
         if (dir.isAbsolute)  {
             //  Comparison with top doesn't handle C: vs c:
             if (bit.dir.top.same('/') || !dir.startsWith(bit.dir.top)) {
