@@ -707,11 +707,11 @@ typedef struct EcState {
 } EcState;
 
 
-extern int      ecEnterState(struct EcCompiler *cp);
-extern void     ecLeaveState(struct EcCompiler *cp);
-extern EcNode   *ecLeaveStateWithResult(struct EcCompiler *cp,  struct EcNode *np);
-extern int      ecResetModule(struct EcCompiler *cp, struct EcNode *np);
-extern void     ecStartBreakableStatement(struct EcCompiler *cp, int kinds);
+PUBLIC int      ecEnterState(struct EcCompiler *cp);
+PUBLIC void     ecLeaveState(struct EcCompiler *cp);
+PUBLIC EcNode   *ecLeaveStateWithResult(struct EcCompiler *cp,  struct EcNode *np);
+PUBLIC int      ecResetModule(struct EcCompiler *cp, struct EcNode *np);
+PUBLIC void     ecStartBreakableStatement(struct EcCompiler *cp, int kinds);
 
 
 /*
@@ -794,94 +794,94 @@ typedef struct EcCompiler {
 
 //  MOB -- reorder
 //  MOB DOC
-extern int          ecAddModule(EcCompiler *cp, EjsModule *mp);
-extern EcNode       *ecAppendNode(EcNode *np, EcNode *child);
-extern int          ecAstFixup(EcCompiler *cp, struct EcNode *np);
-extern EcNode       *ecChangeNode(EcCompiler *cp, EcNode *np, EcNode *oldNode, EcNode *newNode);
-extern void         ecGenConditionalCode(EcCompiler *cp, EcNode *np, EjsModule *up);
-extern int          ecCodeGen(EcCompiler *cp);
-extern int          ecCompile(EcCompiler *cp, int argc, char **path);
-extern EcCompiler   *ecCreateCompiler(struct Ejs *ejs, int flags);
-extern void         ecDestroyCompiler(EcCompiler *cp);
-extern void         ecInitLexer(EcCompiler *cp);
-extern EcNode       *ecCreateNode(EcCompiler *cp, int kind);
-extern void         ecFreeToken(EcCompiler *cp, EcToken *token);
-extern char         *ecGetErrorMessage(EcCompiler *cp);
-extern EjsString    *ecGetInputStreamName(EcCompiler *lp);
-extern int          ecGetToken(EcCompiler *cp);
-extern int          ecGetRegExpToken(EcCompiler *cp, wchar *prefix);
-extern EcNode       *ecLinkNode(EcNode *np, EcNode *child);
+PUBLIC int          ecAddModule(EcCompiler *cp, EjsModule *mp);
+PUBLIC EcNode       *ecAppendNode(EcNode *np, EcNode *child);
+PUBLIC int          ecAstFixup(EcCompiler *cp, struct EcNode *np);
+PUBLIC EcNode       *ecChangeNode(EcCompiler *cp, EcNode *np, EcNode *oldNode, EcNode *newNode);
+PUBLIC void         ecGenConditionalCode(EcCompiler *cp, EcNode *np, EjsModule *up);
+PUBLIC int          ecCodeGen(EcCompiler *cp);
+PUBLIC int          ecCompile(EcCompiler *cp, int argc, char **path);
+PUBLIC EcCompiler   *ecCreateCompiler(struct Ejs *ejs, int flags);
+PUBLIC void         ecDestroyCompiler(EcCompiler *cp);
+PUBLIC void         ecInitLexer(EcCompiler *cp);
+PUBLIC EcNode       *ecCreateNode(EcCompiler *cp, int kind);
+PUBLIC void         ecFreeToken(EcCompiler *cp, EcToken *token);
+PUBLIC char         *ecGetErrorMessage(EcCompiler *cp);
+PUBLIC EjsString    *ecGetInputStreamName(EcCompiler *lp);
+PUBLIC int          ecGetToken(EcCompiler *cp);
+PUBLIC int          ecGetRegExpToken(EcCompiler *cp, wchar *prefix);
+PUBLIC EcNode       *ecLinkNode(EcNode *np, EcNode *child);
 
-extern EjsModule    *ecLookupModule(EcCompiler *cp, EjsString *name, int minVersion, int maxVersion);
-extern int          ecLookupScope(EcCompiler *cp, EjsName name);
-extern int          ecLookupVar(EcCompiler *cp, EjsAny *vp, EjsName name);
-extern EcNode       *ecParseWarning(EcCompiler *cp, char *fmt, ...);
-extern int          ecPeekToken(EcCompiler *cp);
-extern int          ecPutSpecificToken(EcCompiler *cp, EcToken *token);
-extern int          ecPutToken(EcCompiler *cp);
-extern void         ecError(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, ...);
-extern void         ecErrorv(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, va_list args);
-extern void         ecResetInput(EcCompiler *cp);
-extern EcNode       *ecResetError(EcCompiler *cp, EcNode *np, bool eatInput);
-extern int          ecRemoveModule(EcCompiler *cp, EjsModule *mp);
-extern void         ecResetParser(EcCompiler *cp);
-extern int          ecResetModuleList(EcCompiler *cp);
-extern int          ecOpenConsoleStream(EcCompiler *cp, EcStreamGet gets, cchar *contents);
-extern int          ecOpenFileStream(EcCompiler *cp, cchar *path);
-extern int          ecOpenMemoryStream(EcCompiler *cp, cchar *contents, ssize len);
-extern void         ecCloseStream(EcCompiler *cp);
-extern void         ecSetOptimizeLevel(EcCompiler *cp, int level);
-extern void         ecSetWarnLevel(EcCompiler *cp, int level);
-extern void         ecSetStrictMode(EcCompiler *cp, int on);
-extern void         ecSetTabWidth(EcCompiler *cp, int width);
-extern void         ecSetOutputDir(EcCompiler *cp, cchar *outputDir);
-extern void         ecSetOutputFile(EcCompiler *cp, cchar *outputFile);
-extern void         ecSetCertFile(EcCompiler *cp, cchar *certFile);
-extern EcToken      *ecTakeToken(EcCompiler *cp);
-extern int          ecAstProcess(struct EcCompiler *cp);
-extern void         *ecCreateStream(EcCompiler *cp, ssize size, cchar *filename, void *manager);
-extern void         ecSetStreamBuf(EcStream *sp, cchar *contents, ssize len);
-extern EcNode       *ecParseFile(EcCompiler *cp, char *path);
-extern void         ecManageStream(EcStream *sp, int flags);
-extern void         ecMarkLocation(EcLocation *loc);
-extern void         ecSetRequire(EcCompiler *cp, MprList *modules);
+PUBLIC EjsModule    *ecLookupModule(EcCompiler *cp, EjsString *name, int minVersion, int maxVersion);
+PUBLIC int          ecLookupScope(EcCompiler *cp, EjsName name);
+PUBLIC int          ecLookupVar(EcCompiler *cp, EjsAny *vp, EjsName name);
+PUBLIC EcNode       *ecParseWarning(EcCompiler *cp, char *fmt, ...);
+PUBLIC int          ecPeekToken(EcCompiler *cp);
+PUBLIC int          ecPutSpecificToken(EcCompiler *cp, EcToken *token);
+PUBLIC int          ecPutToken(EcCompiler *cp);
+PUBLIC void         ecError(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, ...);
+PUBLIC void         ecErrorv(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, va_list args);
+PUBLIC void         ecResetInput(EcCompiler *cp);
+PUBLIC EcNode       *ecResetError(EcCompiler *cp, EcNode *np, bool eatInput);
+PUBLIC int          ecRemoveModule(EcCompiler *cp, EjsModule *mp);
+PUBLIC void         ecResetParser(EcCompiler *cp);
+PUBLIC int          ecResetModuleList(EcCompiler *cp);
+PUBLIC int          ecOpenConsoleStream(EcCompiler *cp, EcStreamGet gets, cchar *contents);
+PUBLIC int          ecOpenFileStream(EcCompiler *cp, cchar *path);
+PUBLIC int          ecOpenMemoryStream(EcCompiler *cp, cchar *contents, ssize len);
+PUBLIC void         ecCloseStream(EcCompiler *cp);
+PUBLIC void         ecSetOptimizeLevel(EcCompiler *cp, int level);
+PUBLIC void         ecSetWarnLevel(EcCompiler *cp, int level);
+PUBLIC void         ecSetStrictMode(EcCompiler *cp, int on);
+PUBLIC void         ecSetTabWidth(EcCompiler *cp, int width);
+PUBLIC void         ecSetOutputDir(EcCompiler *cp, cchar *outputDir);
+PUBLIC void         ecSetOutputFile(EcCompiler *cp, cchar *outputFile);
+PUBLIC void         ecSetCertFile(EcCompiler *cp, cchar *certFile);
+PUBLIC EcToken      *ecTakeToken(EcCompiler *cp);
+PUBLIC int          ecAstProcess(struct EcCompiler *cp);
+PUBLIC void         *ecCreateStream(EcCompiler *cp, ssize size, cchar *filename, void *manager);
+PUBLIC void         ecSetStreamBuf(EcStream *sp, cchar *contents, ssize len);
+PUBLIC EcNode       *ecParseFile(EcCompiler *cp, char *path);
+PUBLIC void         ecManageStream(EcStream *sp, int flags);
+PUBLIC void         ecMarkLocation(EcLocation *loc);
+PUBLIC void         ecSetRequire(EcCompiler *cp, MprList *modules);
 
 
 /*
     Module file creation routines.
  */
-extern void     ecAddFunctionConstants(EcCompiler *cp, EjsPot *obj, int slotNum);
-extern void     ecAddConstants(EcCompiler *cp, EjsAny *obj);
-extern int      ecAddStringConstant(EcCompiler *cp, EjsString *sp);
-extern int      ecAddCStringConstant(EcCompiler *cp, cchar *str);
-extern int      ecAddNameConstant(EcCompiler *cp, EjsName qname);
-extern int      ecAddDocConstant(EcCompiler *cp, cchar *tag, void *vp, int slotNum);
-extern int      ecAddModuleConstant(EcCompiler *cp, EjsModule *up, cchar *str);
-extern int      ecCreateModuleHeader(EcCompiler *cp);
-extern int      ecCreateModuleSection(EcCompiler *cp);
+PUBLIC void     ecAddFunctionConstants(EcCompiler *cp, EjsPot *obj, int slotNum);
+PUBLIC void     ecAddConstants(EcCompiler *cp, EjsAny *obj);
+PUBLIC int      ecAddStringConstant(EcCompiler *cp, EjsString *sp);
+PUBLIC int      ecAddCStringConstant(EcCompiler *cp, cchar *str);
+PUBLIC int      ecAddNameConstant(EcCompiler *cp, EjsName qname);
+PUBLIC int      ecAddDocConstant(EcCompiler *cp, cchar *tag, void *vp, int slotNum);
+PUBLIC int      ecAddModuleConstant(EcCompiler *cp, EjsModule *up, cchar *str);
+PUBLIC int      ecCreateModuleHeader(EcCompiler *cp);
+PUBLIC int      ecCreateModuleSection(EcCompiler *cp);
 
 
 /*
     Encoding emitter routines
  */
-extern void      ecEncodeBlock(EcCompiler *cp, cuchar *buf, int len);
-extern void      ecEncodeByte(EcCompiler *cp, int value);
-extern void      ecEncodeByteAtPos(EcCompiler *cp, int offset, int value);
-extern void      ecEncodeConst(EcCompiler *cp, EjsString *sp);
-extern void      ecEncodeDouble(EcCompiler *cp, double value);
-extern void      ecEncodeGlobal(EcCompiler *cp, EjsAny *obj, EjsName qname);
-extern void      ecEncodeInt32(EcCompiler *cp, int value);
-extern void      ecEncodeInt32AtPos(EcCompiler *cp, int offset, int value);
-extern void      ecEncodeNum(EcCompiler *cp, int64 number);
-extern void      ecEncodeName(EcCompiler *cp, EjsName qname);
-extern void      ecEncodeMulti(EcCompiler *cp, cchar *str);
-extern void      ecEncodeWideAsMulti(EcCompiler *cp, wchar *str);
-extern void      ecEncodeOpcode(EcCompiler *cp, int value);
+PUBLIC void      ecEncodeBlock(EcCompiler *cp, cuchar *buf, int len);
+PUBLIC void      ecEncodeByte(EcCompiler *cp, int value);
+PUBLIC void      ecEncodeByteAtPos(EcCompiler *cp, int offset, int value);
+PUBLIC void      ecEncodeConst(EcCompiler *cp, EjsString *sp);
+PUBLIC void      ecEncodeDouble(EcCompiler *cp, double value);
+PUBLIC void      ecEncodeGlobal(EcCompiler *cp, EjsAny *obj, EjsName qname);
+PUBLIC void      ecEncodeInt32(EcCompiler *cp, int value);
+PUBLIC void      ecEncodeInt32AtPos(EcCompiler *cp, int offset, int value);
+PUBLIC void      ecEncodeNum(EcCompiler *cp, int64 number);
+PUBLIC void      ecEncodeName(EcCompiler *cp, EjsName qname);
+PUBLIC void      ecEncodeMulti(EcCompiler *cp, cchar *str);
+PUBLIC void      ecEncodeWideAsMulti(EcCompiler *cp, wchar *str);
+PUBLIC void      ecEncodeOpcode(EcCompiler *cp, int value);
 
-extern void     ecCopyCode(EcCompiler *cp, uchar *pos, int size, int dist);
-extern uint     ecGetCodeOffset(EcCompiler *cp);
-extern int      ecGetCodeLen(EcCompiler *cp, uchar *mark);
-extern void     ecAdjustCodeLength(EcCompiler *cp, int adj);
+PUBLIC void     ecCopyCode(EcCompiler *cp, uchar *pos, int size, int dist);
+PUBLIC uint     ecGetCodeOffset(EcCompiler *cp);
+PUBLIC int      ecGetCodeLen(EcCompiler *cp, uchar *mark);
+PUBLIC void     ecAdjustCodeLength(EcCompiler *cp, int adj);
 
 #ifdef __cplusplus
 }

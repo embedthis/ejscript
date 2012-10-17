@@ -18,7 +18,7 @@ static void manageCompiler(EcCompiler *cp, int flags);
 
 /************************************ Code ************************************/
 
-EcCompiler *ecCreateCompiler(Ejs *ejs, int flags)
+PUBLIC EcCompiler *ecCreateCompiler(Ejs *ejs, int flags)
 {
     EcCompiler      *cp;
 
@@ -85,7 +85,7 @@ static void manageCompiler(EcCompiler *cp, int flags)
 }
 
 
-int ecCompile(EcCompiler *cp, int argc, char **argv)
+PUBLIC int ecCompile(EcCompiler *cp, int argc, char **argv)
 {
     Ejs     *ejs;
     int     rc, saveCompiling, paused;
@@ -227,7 +227,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
 }
 
 
-int ejsInitCompiler(EjsService *service)
+PUBLIC int ejsInitCompiler(EjsService *service)
 {
     service->loadScriptLiteral = loadScriptLiteral;
     service->loadScriptFile = loadScriptFile;
@@ -260,7 +260,7 @@ static EjsObj *loadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache)
 }
 
 
-int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags)
+PUBLIC int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags)
 {
     EcCompiler      *ec;
 
@@ -292,7 +292,7 @@ int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags)
 /*
     Load and initialize a script literal
  */
-int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
+PUBLIC int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
 {
     EcCompiler      *cp;
     cchar           *path;
@@ -335,7 +335,7 @@ int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
 /*
     One-line embedding. Evaluate a file. This will compile and interpret the given Ejscript source file.
  */
-int ejsEvalFile(cchar *path)
+PUBLIC int ejsEvalFile(cchar *path)
 {
     Ejs     *ejs;
 
@@ -362,7 +362,7 @@ int ejsEvalFile(cchar *path)
 /*
     One-line embedding. Evaluate a script. This will compile and interpret the given script.
  */
-int ejsEvalScript(cchar *script)
+PUBLIC int ejsEvalScript(cchar *script)
 {
     Ejs     *ejs;
 
@@ -399,7 +399,7 @@ static void compileError(EcCompiler *cp, cchar *fmt, ...)
 }
 
 
-void ecError(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, ...)
+PUBLIC void ecError(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, ...)
 {
     va_list     args;
 
@@ -457,7 +457,7 @@ static char *makeHighlight(EcCompiler *cp, wchar *source, int col)
 }
 
 
-void ecErrorv(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, va_list args)
+PUBLIC void ecErrorv(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, va_list args)
 {
     cchar   *appName;
     char    *pointer, *errorMsg, *msg;
@@ -483,7 +483,7 @@ void ecErrorv(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, va_l
 }
 
 
-void ecSetRequire(EcCompiler *cp, MprList *modules)
+PUBLIC void ecSetRequire(EcCompiler *cp, MprList *modules)
 {
     cp->require = modules;
 }

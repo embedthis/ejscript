@@ -23,13 +23,13 @@ static void removeHashEntry(Ejs *ejs, EjsPot *obj, EjsName qname);
 
 /************************************* Code ***********************************/
 
-EjsAny *ejsCreateEmptyPot(Ejs *ejs)
+PUBLIC EjsAny *ejsCreateEmptyPot(Ejs *ejs)
 {
     return ejsCreatePot(ejs, ESV(Object), 0);
 }
 
 
-EjsAny *ejsClonePot(Ejs *ejs, EjsAny *obj, bool deep)
+PUBLIC EjsAny *ejsClonePot(Ejs *ejs, EjsAny *obj, bool deep)
 {
     EjsPot      *dest, *src;
     EjsSlot     *dp, *sp;
@@ -91,7 +91,7 @@ EjsAny *ejsClonePot(Ejs *ejs, EjsAny *obj, bool deep)
 /*
     Fix trait type references to point to mutable types in the current interpreter. Only needed after cloning global.
  */
-void ejsFixTraits(Ejs *ejs, EjsPot *obj)
+PUBLIC void ejsFixTraits(Ejs *ejs, EjsPot *obj)
 {
     EjsSlot     *sp;
     EjsType     *type;
@@ -291,7 +291,7 @@ static int getPotPropertyCount(Ejs *ejs, EjsPot *obj)
 }
 
 
-EjsName ejsGetPotPropertyName(Ejs *ejs, EjsPot *obj, int slotNum)
+PUBLIC EjsName ejsGetPotPropertyName(Ejs *ejs, EjsPot *obj, int slotNum)
 {
     EjsName     qname;
 
@@ -314,7 +314,7 @@ EjsName ejsGetPotPropertyName(Ejs *ejs, EjsPot *obj, int slotNum)
     Only the name portion is hashed. The namespace is not included in the hash. This is used to do a one-step lookup 
     for properties regardless of the namespace.
  */
-int ejsLookupPotProperty(struct Ejs *ejs, EjsPot *obj, EjsName qname)
+PUBLIC int ejsLookupPotProperty(struct Ejs *ejs, EjsPot *obj, EjsName qname)
 {
     EjsProperties   *props;
     EjsHash         *hash;
@@ -395,7 +395,7 @@ int ejsLookupPotProperty(struct Ejs *ejs, EjsPot *obj, EjsName qname)
     Validate the supplied slot number. If set to -1, then return the next available property slot number.
     Grow the object if required and update numProp
  */
-int ejsCheckSlot(Ejs *ejs, EjsPot *obj, int slotNum)
+PUBLIC int ejsCheckSlot(Ejs *ejs, EjsPot *obj, int slotNum)
 {
     mprAssert(ejsIsPot(ejs, obj));
 
@@ -499,7 +499,7 @@ static int setPotPropertyName(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname)
 /*
     Grow and object and update numProp and numTraits if required
  */
-int ejsGrowPot(Ejs *ejs, EjsPot *obj, int numProp)
+PUBLIC int ejsGrowPot(Ejs *ejs, EjsPot *obj, int numProp)
 {
     mprAssert(ejsIsPot(ejs, obj));
 
@@ -520,7 +520,7 @@ int ejsGrowPot(Ejs *ejs, EjsPot *obj, int numProp)
     Grow the slots, traits, and names by the specified "incr". The new slots|traits|names are created at the "offset"
     Does not update numProp or numTraits.
  */
-int ejsInsertPotProperties(Ejs *ejs, EjsPot *obj, int incr, int offset)
+PUBLIC int ejsInsertPotProperties(Ejs *ejs, EjsPot *obj, int incr, int offset)
 {
     EjsSlot         *sp, *slots;
     int             i, size, mark;
@@ -642,7 +642,7 @@ static void removeSlot(Ejs *ejs, EjsPot *obj, int slotNum, int compact)
 }
 
 
-void ejsZeroSlots(Ejs *ejs, EjsSlot *slots, int count)
+PUBLIC void ejsZeroSlots(Ejs *ejs, EjsSlot *slots, int count)
 {
     EjsSlot     *sp;
 
@@ -664,7 +664,7 @@ void ejsZeroSlots(Ejs *ejs, EjsSlot *slots, int count)
 }
 
 
-void ejsCopySlots(Ejs *ejs, EjsPot *dest, int destOff, EjsPot *src, int srcOff, int count)
+PUBLIC void ejsCopySlots(Ejs *ejs, EjsPot *dest, int destOff, EjsPot *src, int srcOff, int count)
 {
     EjsSlot     *sp, *dp;
 
@@ -686,7 +686,7 @@ void ejsCopySlots(Ejs *ejs, EjsPot *dest, int destOff, EjsPot *src, int srcOff, 
     Remove a property and copy up all other properties. WARNING: This does much more than just a delete and should 
     only be used by the compiler.
  */
-int ejsRemovePotProperty(Ejs *ejs, EjsAny *vp, int slotNum)
+PUBLIC int ejsRemovePotProperty(Ejs *ejs, EjsAny *vp, int slotNum)
 {
     EjsPot      *obj;
 
@@ -746,7 +746,7 @@ static int hashSizes[] = {
 };
 
 
-int ejsGetHashSize(int numProp)
+PUBLIC int ejsGetHashSize(int numProp)
 {
     int     i;
 
@@ -816,7 +816,7 @@ static int hashProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname)
     to numInstanceProp. We currently don't allow reductions.
  */
 //  TODO MOB -- rename
-int ejsIndexProperties(Ejs *ejs, EjsPot *obj)
+PUBLIC int ejsIndexProperties(Ejs *ejs, EjsPot *obj)
 {
     EjsSlot         *sp;
     EjsHash         *oldHash, *hash;
@@ -924,7 +924,7 @@ static void removeHashEntry(Ejs *ejs, EjsPot *obj, EjsName qname)
 }
 
 
-int ejsCompactPot(Ejs *ejs, EjsPot *obj)
+PUBLIC int ejsCompactPot(Ejs *ejs, EjsPot *obj)
 {
     EjsSlot     *slots, *src, *dest;
     int         i, removed;
@@ -945,7 +945,7 @@ int ejsCompactPot(Ejs *ejs, EjsPot *obj)
 }
 
 
-bool ejsMatchName(Ejs *ejs, EjsName *a, EjsName *b)
+PUBLIC bool ejsMatchName(Ejs *ejs, EjsName *a, EjsName *b)
 {
     return a->name == b->name && a->space == b->space;
 }
@@ -958,7 +958,7 @@ bool ejsMatchName(Ejs *ejs, EjsName *a, EjsName *b)
     arg is the number of property slots to pre-allocate. It is typically zero and slots are allocated on-demand. If the 
     type creates dynamic instances, then the property slots are allocated separately and can grow. 
  */
-void *ejsCreatePot(Ejs *ejs, EjsType *type, int numProp)
+PUBLIC void *ejsCreatePot(Ejs *ejs, EjsType *type, int numProp)
 {
     EjsPot      *obj, *prototype;
 
@@ -1007,7 +1007,7 @@ void *ejsCreatePot(Ejs *ejs, EjsType *type, int numProp)
 /*
     Manage the object properties for the garbage collector
  */
-void ejsManagePot(void *ptr, int flags)
+PUBLIC void ejsManagePot(void *ptr, int flags)
 {
     EjsSlot     *sp;
     EjsPot      *obj;
@@ -1042,7 +1042,7 @@ void ejsManagePot(void *ptr, int flags)
 }
 
 
-void ejsCreatePotHelpers(Ejs *ejs)
+PUBLIC void ejsCreatePotHelpers(Ejs *ejs)
 {
     EjsHelpers      *helpers;
 

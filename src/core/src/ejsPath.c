@@ -283,7 +283,7 @@ static EjsArray *getPathComponents(Ejs *ejs, EjsPath *fp, int argc, EjsObj **arg
 }
 
 
-int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *attributes)
+PUBLIC int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *attributes)
 {
     EjsObj  *permissions;
     int     perms;
@@ -592,7 +592,7 @@ static EjsArray *getPathFiles(Ejs *ejs, EjsArray *results, cchar *dir, int flags
     Get the files in a directory and subdirectories
     function files(patterns: Array|String|Path, options: Object = null): Array
  */
-EjsArray *ejsGetPathFiles(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+PUBLIC EjsArray *ejsGetPathFiles(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprFileSystem   *fs;
     EjsAny          *vp, *fill;
@@ -1732,7 +1732,7 @@ static cchar *getPathString(Ejs *ejs, EjsObj *vp)
 
 /*********************************** Factory **********************************/
 
-EjsPath *ejsCreatePath(Ejs *ejs, EjsString *path)
+PUBLIC EjsPath *ejsCreatePath(Ejs *ejs, EjsString *path)
 {
     EjsPath     *fp;
 
@@ -1744,7 +1744,7 @@ EjsPath *ejsCreatePath(Ejs *ejs, EjsString *path)
 }
 
 
-EjsPath *ejsCreatePathFromAsc(Ejs *ejs, cchar *value)
+PUBLIC EjsPath *ejsCreatePathFromAsc(Ejs *ejs, cchar *value)
 {
     return ejsCreatePath(ejs, ejsCreateStringFromAsc(ejs, value));
 }
@@ -1759,7 +1759,7 @@ static void managePath(EjsPath *path, int flags)
 }
 
 
-void ejsCreatePathType(Ejs *ejs)
+PUBLIC void ejsCreatePathType(Ejs *ejs)
 {
     EjsType     *type;
 
@@ -1771,7 +1771,7 @@ void ejsCreatePathType(Ejs *ejs)
 }
 
 
-void ejsConfigurePathType(Ejs *ejs)
+PUBLIC void ejsConfigurePathType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

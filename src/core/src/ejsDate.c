@@ -1022,7 +1022,7 @@ static EjsObj *date_set_year(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     Create an initialized date object. Set to the current time if value is zero.
  */
 
-EjsDate *ejsCreateDate(Ejs *ejs, MprTime value)
+PUBLIC EjsDate *ejsCreateDate(Ejs *ejs, MprTime value)
 {
     EjsDate *vp;
 
@@ -1034,7 +1034,7 @@ EjsDate *ejsCreateDate(Ejs *ejs, MprTime value)
 }
 
 
-void ejsConfigureDateType(Ejs *ejs)
+PUBLIC void ejsConfigureDateType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

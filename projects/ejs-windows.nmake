@@ -77,7 +77,6 @@ prep:
 	@if not exist $(CONFIG)\obj md $(CONFIG)\obj
 	@if not exist $(CONFIG)\bin md $(CONFIG)\bin
 	@if not exist $(CONFIG)\inc\bit.h copy projects\ejs-$(OS)-bit.h $(CONFIG)\inc\bit.h
-	@if not exist $(CONFIG)\bin\*.def xcopy /Y /S projects\ejs-windows\*.def $(CONFIG)\bin
 
 clean:
 	-if exist $(CONFIG)\bin\libmpr.dll del /Q $(CONFIG)\bin\libmpr.dll
@@ -210,7 +209,7 @@ $(CONFIG)\obj\mprLib.obj: \
 $(CONFIG)\bin\libmpr.dll:  \
         $(CONFIG)\inc\mpr.h \
         $(CONFIG)\obj\mprLib.obj
-	"$(LD)" -dll -out:$(CONFIG)\bin\libmpr.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\libmpr.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\mprLib.obj $(LIBS)
+	"$(LD)" -dll -out:$(CONFIG)\bin\libmpr.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\mprLib.obj $(LIBS)
 
 $(CONFIG)\obj\mprSsl.obj: \
         src\deps\mpr\mprSsl.c \
@@ -220,7 +219,7 @@ $(CONFIG)\obj\mprSsl.obj: \
 $(CONFIG)\bin\libmprssl.dll:  \
         $(CONFIG)\bin\libmpr.dll \
         $(CONFIG)\obj\mprSsl.obj
-	"$(LD)" -dll -out:$(CONFIG)\bin\libmprssl.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\libmprssl.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\mprSsl.obj libmpr.lib $(LIBS)
+	"$(LD)" -dll -out:$(CONFIG)\bin\libmprssl.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\mprSsl.obj libmpr.lib $(LIBS)
 
 $(CONFIG)\obj\manager.obj: \
         src\deps\mpr\manager.c \
@@ -254,7 +253,7 @@ $(CONFIG)\obj\pcre.obj: \
 $(CONFIG)\bin\libpcre.dll:  \
         $(CONFIG)\inc\pcre.h \
         $(CONFIG)\obj\pcre.obj
-	"$(LD)" -dll -out:$(CONFIG)\bin\libpcre.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\libpcre.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\pcre.obj $(LIBS)
+	"$(LD)" -dll -out:$(CONFIG)\bin\libpcre.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\pcre.obj $(LIBS)
 
 $(CONFIG)\inc\http.h: 
 	-if exist $(CONFIG)\inc\http.h del /Q $(CONFIG)\inc\http.h
@@ -270,7 +269,7 @@ $(CONFIG)\bin\libhttp.dll:  \
         $(CONFIG)\bin\libpcre.dll \
         $(CONFIG)\inc\http.h \
         $(CONFIG)\obj\httpLib.obj
-	"$(LD)" -dll -out:$(CONFIG)\bin\libhttp.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\libhttp.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\httpLib.obj libpcre.lib libmpr.lib $(LIBS)
+	"$(LD)" -dll -out:$(CONFIG)\bin\libhttp.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\httpLib.obj libpcre.lib libmpr.lib $(LIBS)
 
 $(CONFIG)\obj\http.obj: \
         src\deps\http\http.c \
@@ -294,7 +293,7 @@ $(CONFIG)\obj\sqlite3.obj: \
 $(CONFIG)\bin\libsqlite3.dll:  \
         $(CONFIG)\inc\sqlite3.h \
         $(CONFIG)\obj\sqlite3.obj
-	"$(LD)" -dll -out:$(CONFIG)\bin\libsqlite3.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\libsqlite3.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite3.obj $(LIBS)
+	"$(LD)" -dll -out:$(CONFIG)\bin\libsqlite3.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite3.obj $(LIBS)
 
 $(CONFIG)\obj\sqlite.obj: \
         src\deps\sqlite\sqlite.c \
@@ -318,7 +317,7 @@ $(CONFIG)\obj\zlib.obj: \
 $(CONFIG)\bin\libzlib.dll:  \
         $(CONFIG)\inc\zlib.h \
         $(CONFIG)\obj\zlib.obj
-	"$(LD)" -dll -out:$(CONFIG)\bin\libzlib.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\libzlib.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\zlib.obj $(LIBS)
+	"$(LD)" -dll -out:$(CONFIG)\bin\libzlib.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\zlib.obj $(LIBS)
 
 $(CONFIG)\inc\ejs.cache.local.slots.h: 
 	-if exist $(CONFIG)\inc\ejs.cache.local.slots.h del /Q $(CONFIG)\inc\ejs.cache.local.slots.h
@@ -726,7 +725,7 @@ $(CONFIG)\bin\libejs.dll:  \
         $(CONFIG)\obj\ejsModule.obj \
         $(CONFIG)\obj\ejsScope.obj \
         $(CONFIG)\obj\ejsService.obj
-	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\libejs.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ecAst.obj $(CONFIG)\obj\ecCodeGen.obj $(CONFIG)\obj\ecCompiler.obj $(CONFIG)\obj\ecLex.obj $(CONFIG)\obj\ecModuleWrite.obj $(CONFIG)\obj\ecParser.obj $(CONFIG)\obj\ecState.obj $(CONFIG)\obj\dtoa.obj $(CONFIG)\obj\ejsApp.obj $(CONFIG)\obj\ejsArray.obj $(CONFIG)\obj\ejsBlock.obj $(CONFIG)\obj\ejsBoolean.obj $(CONFIG)\obj\ejsByteArray.obj $(CONFIG)\obj\ejsCache.obj $(CONFIG)\obj\ejsCmd.obj $(CONFIG)\obj\ejsConfig.obj $(CONFIG)\obj\ejsDate.obj $(CONFIG)\obj\ejsDebug.obj $(CONFIG)\obj\ejsError.obj $(CONFIG)\obj\ejsFile.obj $(CONFIG)\obj\ejsFileSystem.obj $(CONFIG)\obj\ejsFrame.obj $(CONFIG)\obj\ejsFunction.obj $(CONFIG)\obj\ejsGC.obj $(CONFIG)\obj\ejsGlobal.obj $(CONFIG)\obj\ejsHttp.obj $(CONFIG)\obj\ejsIterator.obj $(CONFIG)\obj\ejsJSON.obj $(CONFIG)\obj\ejsLocalCache.obj $(CONFIG)\obj\ejsMath.obj $(CONFIG)\obj\ejsMemory.obj $(CONFIG)\obj\ejsMprLog.obj $(CONFIG)\obj\ejsNamespace.obj $(CONFIG)\obj\ejsNull.obj $(CONFIG)\obj\ejsNumber.obj $(CONFIG)\obj\ejsObject.obj $(CONFIG)\obj\ejsPath.obj $(CONFIG)\obj\ejsPot.obj $(CONFIG)\obj\ejsRegExp.obj $(CONFIG)\obj\ejsSocket.obj $(CONFIG)\obj\ejsString.obj $(CONFIG)\obj\ejsSystem.obj $(CONFIG)\obj\ejsTimer.obj $(CONFIG)\obj\ejsType.obj $(CONFIG)\obj\ejsUri.obj $(CONFIG)\obj\ejsVoid.obj $(CONFIG)\obj\ejsWebSocket.obj $(CONFIG)\obj\ejsWorker.obj $(CONFIG)\obj\ejsXML.obj $(CONFIG)\obj\ejsXMLList.obj $(CONFIG)\obj\ejsXMLLoader.obj $(CONFIG)\obj\ejsByteCode.obj $(CONFIG)\obj\ejsException.obj $(CONFIG)\obj\ejsHelper.obj $(CONFIG)\obj\ejsInterp.obj $(CONFIG)\obj\ejsLoader.obj $(CONFIG)\obj\ejsModule.obj $(CONFIG)\obj\ejsScope.obj $(CONFIG)\obj\ejsService.obj libhttp.lib $(LIBS) libpcre.lib libmpr.lib
+	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ecAst.obj $(CONFIG)\obj\ecCodeGen.obj $(CONFIG)\obj\ecCompiler.obj $(CONFIG)\obj\ecLex.obj $(CONFIG)\obj\ecModuleWrite.obj $(CONFIG)\obj\ecParser.obj $(CONFIG)\obj\ecState.obj $(CONFIG)\obj\dtoa.obj $(CONFIG)\obj\ejsApp.obj $(CONFIG)\obj\ejsArray.obj $(CONFIG)\obj\ejsBlock.obj $(CONFIG)\obj\ejsBoolean.obj $(CONFIG)\obj\ejsByteArray.obj $(CONFIG)\obj\ejsCache.obj $(CONFIG)\obj\ejsCmd.obj $(CONFIG)\obj\ejsConfig.obj $(CONFIG)\obj\ejsDate.obj $(CONFIG)\obj\ejsDebug.obj $(CONFIG)\obj\ejsError.obj $(CONFIG)\obj\ejsFile.obj $(CONFIG)\obj\ejsFileSystem.obj $(CONFIG)\obj\ejsFrame.obj $(CONFIG)\obj\ejsFunction.obj $(CONFIG)\obj\ejsGC.obj $(CONFIG)\obj\ejsGlobal.obj $(CONFIG)\obj\ejsHttp.obj $(CONFIG)\obj\ejsIterator.obj $(CONFIG)\obj\ejsJSON.obj $(CONFIG)\obj\ejsLocalCache.obj $(CONFIG)\obj\ejsMath.obj $(CONFIG)\obj\ejsMemory.obj $(CONFIG)\obj\ejsMprLog.obj $(CONFIG)\obj\ejsNamespace.obj $(CONFIG)\obj\ejsNull.obj $(CONFIG)\obj\ejsNumber.obj $(CONFIG)\obj\ejsObject.obj $(CONFIG)\obj\ejsPath.obj $(CONFIG)\obj\ejsPot.obj $(CONFIG)\obj\ejsRegExp.obj $(CONFIG)\obj\ejsSocket.obj $(CONFIG)\obj\ejsString.obj $(CONFIG)\obj\ejsSystem.obj $(CONFIG)\obj\ejsTimer.obj $(CONFIG)\obj\ejsType.obj $(CONFIG)\obj\ejsUri.obj $(CONFIG)\obj\ejsVoid.obj $(CONFIG)\obj\ejsWebSocket.obj $(CONFIG)\obj\ejsWorker.obj $(CONFIG)\obj\ejsXML.obj $(CONFIG)\obj\ejsXMLList.obj $(CONFIG)\obj\ejsXMLLoader.obj $(CONFIG)\obj\ejsByteCode.obj $(CONFIG)\obj\ejsException.obj $(CONFIG)\obj\ejsHelper.obj $(CONFIG)\obj\ejsInterp.obj $(CONFIG)\obj\ejsLoader.obj $(CONFIG)\obj\ejsModule.obj $(CONFIG)\obj\ejsScope.obj $(CONFIG)\obj\ejsService.obj libhttp.lib $(LIBS) libpcre.lib libmpr.lib
 
 $(CONFIG)\obj\ejs.obj: \
         src\cmd\ejs.c \
@@ -836,7 +835,7 @@ $(CONFIG)\bin\ejs.zlib.dll:  \
         $(CONFIG)\bin\ejs.zlib.mod \
         $(CONFIG)\bin\libzlib.dll \
         $(CONFIG)\obj\ejsZlib.obj
-	"$(LD)" -dll -out:$(CONFIG)\bin\ejs.zlib.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\ejs.zlib.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsZlib.obj libzlib.lib libejs.lib $(LIBS) libhttp.lib libpcre.lib libmpr.lib
+	"$(LD)" -dll -out:$(CONFIG)\bin\ejs.zlib.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsZlib.obj libzlib.lib libejs.lib $(LIBS) libhttp.lib libpcre.lib libmpr.lib
 
 $(CONFIG)\bin\bit.exe:  \
         $(CONFIG)\bin\libejs.dll \
@@ -908,7 +907,7 @@ $(CONFIG)\bin\ejs.db.sqlite.dll:  \
         $(CONFIG)\bin\ejs.db.sqlite.mod \
         $(CONFIG)\bin\libsqlite3.dll \
         $(CONFIG)\obj\ejsSqlite.obj
-	"$(LD)" -dll -out:$(CONFIG)\bin\ejs.db.sqlite.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\ejs.db.sqlite.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsSqlite.obj libsqlite3.lib libejs.lib libmpr.lib $(LIBS) libhttp.lib libpcre.lib
+	"$(LD)" -dll -out:$(CONFIG)\bin\ejs.db.sqlite.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsSqlite.obj libsqlite3.lib libejs.lib libmpr.lib $(LIBS) libhttp.lib libpcre.lib
 
 $(CONFIG)\bin\ejs.web.mod:  \
         $(CONFIG)\bin\ejsc.exe \
@@ -948,7 +947,7 @@ $(CONFIG)\bin\ejs.web.dll:  \
         $(CONFIG)\obj\ejsRequest.obj \
         $(CONFIG)\obj\ejsSession.obj \
         $(CONFIG)\obj\ejsWeb.obj
-	"$(LD)" -dll -out:$(CONFIG)\bin\ejs.web.dll -entry:$(ENTRY) -def:$(CONFIG)\bin\ejs.web.def $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsHttpServer.obj $(CONFIG)\obj\ejsRequest.obj $(CONFIG)\obj\ejsSession.obj $(CONFIG)\obj\ejsWeb.obj libejs.lib $(LIBS) libhttp.lib libpcre.lib libmpr.lib
+	"$(LD)" -dll -out:$(CONFIG)\bin\ejs.web.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsHttpServer.obj $(CONFIG)\obj\ejsRequest.obj $(CONFIG)\obj\ejsSession.obj $(CONFIG)\obj\ejsWeb.obj libejs.lib $(LIBS) libhttp.lib libpcre.lib libmpr.lib
 
 $(CONFIG)\bin\www: 
 	cd src\jems\ejs.web

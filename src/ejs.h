@@ -370,7 +370,7 @@ typedef struct EjsName {
     @param qname Qualified name reference
     @ingroup EjsName
  */
-extern void ejsMarkName(EjsName *qname);
+PUBLIC void ejsMarkName(EjsName *qname);
 
 /**
     Initialize a Qualified Name structure
@@ -381,7 +381,7 @@ extern void ejsMarkName(EjsName *qname);
     @return A reference to the qname structure
     @ingroup EjsName
  */
-extern EjsName ejsName(struct Ejs *ejs, cchar *space, cchar *name);
+PUBLIC EjsName ejsName(struct Ejs *ejs, cchar *space, cchar *name);
 
 /**
     Initialize a Qualified Name structure using a wide namespace and name
@@ -392,13 +392,13 @@ extern EjsName ejsName(struct Ejs *ejs, cchar *space, cchar *name);
     @return A reference to the qname structure
     @ingroup EjsName
  */
-extern EjsName ejsWideName(struct Ejs *ejs, wchar *space, wchar *name);
+PUBLIC EjsName ejsWideName(struct Ejs *ejs, wchar *space, wchar *name);
 
 /*
     Internal
  */
-extern EjsName ejsEmptyWideName(struct Ejs *ejs, wchar *name);
-extern EjsName ejsEmptyName(struct Ejs *ejs, cchar *name);
+PUBLIC EjsName ejsEmptyWideName(struct Ejs *ejs, wchar *name);
+PUBLIC EjsName ejsEmptyName(struct Ejs *ejs, cchar *name);
 
 //  MOB -- NAMING
 #define WEN(name) ejsEmptyWideName(ejs, name)
@@ -564,7 +564,7 @@ typedef struct Ejs {
     @returns Returns the actual slot number allocated for the object
     @ingroup Ejs
  */
-extern int ejsAddImmutable(struct Ejs *ejs, int slotNum, EjsName qname, EjsAny *obj);
+PUBLIC int ejsAddImmutable(struct Ejs *ejs, int slotNum, EjsName qname, EjsAny *obj);
 
 /**
     Get an immutable object. 
@@ -575,7 +575,7 @@ extern int ejsAddImmutable(struct Ejs *ejs, int slotNum, EjsName qname, EjsAny *
     @return obj Immutable object found at the given slotNum.
     @ingroup Ejs
  */
-extern EjsAny *ejsGetImmutable(struct Ejs *ejs, int slotNum);
+PUBLIC EjsAny *ejsGetImmutable(struct Ejs *ejs, int slotNum);
 
 /**
     Get an immutable object by name 
@@ -586,7 +586,7 @@ extern EjsAny *ejsGetImmutable(struct Ejs *ejs, int slotNum);
     @return obj Immutable object found at the given slotNum.
     @ingroup Ejs
  */
-extern EjsAny *ejsGetImmutableByName(struct Ejs *ejs, EjsName qname);
+PUBLIC EjsAny *ejsGetImmutableByName(struct Ejs *ejs, EjsName qname);
 
 /**
     Block garbage collection
@@ -598,7 +598,7 @@ extern EjsAny *ejsGetImmutableByName(struct Ejs *ejs, EjsName qname);
     @return The previous GC blocked state
     @ingroup Ejs
  */
-extern int ejsBlockGC(Ejs *ejs);
+PUBLIC int ejsBlockGC(Ejs *ejs);
 
 /**
     Unblock garbage collection
@@ -607,7 +607,7 @@ extern int ejsBlockGC(Ejs *ejs);
     @param blocked Blocked state to re-establish
     @ingroup Ejs
  */
-extern void ejsUnblockGC(Ejs *ejs, int blocked);
+PUBLIC void ejsUnblockGC(Ejs *ejs, int blocked);
 
 /************************************ EjsPool *********************************/
 /**
@@ -643,7 +643,7 @@ typedef struct EjsPool {
     @returns Allocated pool object
     @ingroup EjsPool
  */
-extern EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScript, cchar *startScriptPath, char *home);
+PUBLIC EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScript, cchar *startScriptPath, char *home);
 
 /**
     Allocate a VM from the pool
@@ -652,7 +652,7 @@ extern EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startSc
     @returns Returns an Ejs VM instance
     @ingroup EjsPool
  */
-extern Ejs *ejsAllocPoolVM(EjsPool *pool, int flags);
+PUBLIC Ejs *ejsAllocPoolVM(EjsPool *pool, int flags);
 
 /**
     Free a VM back to the pool
@@ -660,7 +660,7 @@ extern Ejs *ejsAllocPoolVM(EjsPool *pool, int flags);
     @param ejs Ejs reference returned from #ejsCreateVM
     @ingroup EjsPool
  */
-extern void ejsFreePoolVM(EjsPool *pool, Ejs *ejs);
+PUBLIC void ejsFreePoolVM(EjsPool *pool, Ejs *ejs);
 
 /************************************ EjsObj **********************************/
 /**
@@ -692,7 +692,7 @@ typedef struct EjsObj {
         of the variable.
     @ingroup EjsObj
  */
-extern EjsAny *ejsAlloc(Ejs *ejs, struct EjsType *type, ssize extra);
+PUBLIC EjsAny *ejsAlloc(Ejs *ejs, struct EjsType *type, ssize extra);
 
 /** 
     Cast a variable to a new type
@@ -704,7 +704,7 @@ extern EjsAny *ejsAlloc(Ejs *ejs, struct EjsType *type, ssize extra);
         of the variable.
     @ingroup EjsObj
  */
-extern EjsAny *ejsCastType(Ejs *ejs, EjsAny *obj, struct EjsType *type);
+PUBLIC EjsAny *ejsCastType(Ejs *ejs, EjsAny *obj, struct EjsType *type);
 
 /** 
     Clone a variable
@@ -718,7 +718,7 @@ extern EjsAny *ejsCastType(Ejs *ejs, EjsAny *obj, struct EjsType *type);
         of the variable.
     @ingroup EjsObj
  */
-extern EjsAny *ejsClone(Ejs *ejs, EjsAny *obj, bool deep);
+PUBLIC EjsAny *ejsClone(Ejs *ejs, EjsAny *obj, bool deep);
 
 /** 
     Create a new variable instance 
@@ -731,7 +731,7 @@ extern EjsAny *ejsClone(Ejs *ejs, EjsAny *obj, bool deep);
         of the variable.
     @ingroup EjsObj
  */
-extern EjsAny *ejsCreateInstance(Ejs *ejs, struct EjsType *type, int argc, void *argv);
+PUBLIC EjsAny *ejsCreateInstance(Ejs *ejs, struct EjsType *type, int argc, void *argv);
 
 /** 
     Create a variable
@@ -743,7 +743,7 @@ extern EjsAny *ejsCreateInstance(Ejs *ejs, struct EjsType *type, int argc, void 
         of the variable.
     @ingroup EjsObj
  */
-extern EjsAny *ejsCreateObj(Ejs *ejs, struct EjsType *type, int numSlots);
+PUBLIC EjsAny *ejsCreateObj(Ejs *ejs, struct EjsType *type, int numSlots);
 
 /** 
     Define a property
@@ -759,7 +759,7 @@ extern EjsAny *ejsCreateObj(Ejs *ejs, struct EjsType *type, int numSlots);
     @return A postitive slot number or a negative MPR error code.
     @ingroup EjsObj
  */
-extern int ejsDefineProperty(Ejs *ejs, EjsAny *obj, int slotNum, EjsName qname, struct EjsType *type, int64 attributes, 
+PUBLIC int ejsDefineProperty(Ejs *ejs, EjsAny *obj, int slotNum, EjsName qname, struct EjsType *type, int64 attributes, 
     EjsAny *value);
 
 /** 
@@ -772,7 +772,7 @@ extern int ejsDefineProperty(Ejs *ejs, EjsAny *obj, int slotNum, EjsName qname, 
     @return Zero if successful, otherwise a negative MPR error code.
     @ingroup EjsObj
  */
-extern int ejsDeleteProperty(Ejs *ejs, EjsAny *obj, int slotNum);
+PUBLIC int ejsDeleteProperty(Ejs *ejs, EjsAny *obj, int slotNum);
 
 /** 
     Delete a property by name
@@ -785,7 +785,7 @@ extern int ejsDeleteProperty(Ejs *ejs, EjsAny *obj, int slotNum);
     @return Zero if successful, otherwise a negative MPR error code.
     @ingroup EjsObj
  */
-extern int ejsDeletePropertyByName(Ejs *ejs, EjsAny *obj, EjsName qname);
+PUBLIC int ejsDeletePropertyByName(Ejs *ejs, EjsAny *obj, EjsName qname);
 
 /** 
     Get a property
@@ -796,7 +796,7 @@ extern int ejsDeletePropertyByName(Ejs *ejs, EjsAny *obj, EjsName qname);
     @return The variable property stored at the nominated slot.
     @ingroup EjsObj
  */
-extern EjsAny *ejsGetProperty(Ejs *ejs, EjsAny *obj, int slotNum);
+PUBLIC EjsAny *ejsGetProperty(Ejs *ejs, EjsAny *obj, int slotNum);
 
 /** 
     Get a count of properties in a variable
@@ -806,7 +806,7 @@ extern EjsAny *ejsGetProperty(Ejs *ejs, EjsAny *obj, int slotNum);
     @return A positive integer count of the properties stored by the variable. 
     @ingroup EjsObj
  */
-extern int ejsGetLength(Ejs *ejs, EjsAny *obj);
+PUBLIC int ejsGetLength(Ejs *ejs, EjsAny *obj);
 
 /** 
     Get a variable property's name
@@ -817,7 +817,7 @@ extern int ejsGetLength(Ejs *ejs, EjsAny *obj);
     @return The qualified property name including namespace and name. Caller must not free.
     @ingroup EjsObj
  */
-extern EjsName ejsGetPropertyName(Ejs *ejs, EjsAny *obj, int slotNum);
+PUBLIC EjsName ejsGetPropertyName(Ejs *ejs, EjsAny *obj, int slotNum);
 
 /** 
     Get a property by name
@@ -828,7 +828,7 @@ extern EjsName ejsGetPropertyName(Ejs *ejs, EjsAny *obj, int slotNum);
     @return The variable property stored at the nominated slot.
     @ingroup EjsObj
  */
-extern EjsAny *ejsGetPropertyByName(Ejs *ejs, EjsAny *obj, EjsName qname);
+PUBLIC EjsAny *ejsGetPropertyByName(Ejs *ejs, EjsAny *obj, EjsName qname);
 
 /** 
     Get a property's traits
@@ -840,7 +840,7 @@ extern EjsAny *ejsGetPropertyByName(Ejs *ejs, EjsAny *obj, EjsName qname);
     @return A trait structure reference for the property.
     @ingroup EjsObj
  */
-extern struct EjsTrait *ejsGetPropertyTraits(Ejs *ejs, EjsAny *obj, int slotNum);
+PUBLIC struct EjsTrait *ejsGetPropertyTraits(Ejs *ejs, EjsAny *obj, int slotNum);
 
 /** 
     Invoke an opcode on a native type.
@@ -853,7 +853,7 @@ extern struct EjsTrait *ejsGetPropertyTraits(Ejs *ejs, EjsAny *obj, int slotNum)
     @return The result of the op code or NULL if the opcode does not require a result.
     @ingroup EjsObj
  */
-extern EjsAny *ejsInvokeOperator(Ejs *ejs, EjsAny *obj, int opCode, EjsAny *rhs);
+PUBLIC EjsAny *ejsInvokeOperator(Ejs *ejs, EjsAny *obj, int opCode, EjsAny *rhs);
 
 //  MOB rename
 /** 
@@ -866,7 +866,7 @@ extern EjsAny *ejsInvokeOperator(Ejs *ejs, EjsAny *obj, int opCode, EjsAny *rhs)
     @return The result of the op code or NULL if the opcode does not require a result.
     @ingroup EjsObj
  */
-extern EjsAny *ejsInvokeOperatorDefault(Ejs *ejs, EjsAny *obj, int opCode, EjsAny *rhs);
+PUBLIC EjsAny *ejsInvokeOperatorDefault(Ejs *ejs, EjsAny *obj, int opCode, EjsAny *rhs);
 
 /** 
     Lookup a property by name
@@ -878,7 +878,7 @@ extern EjsAny *ejsInvokeOperatorDefault(Ejs *ejs, EjsAny *obj, int opCode, EjsAn
         use ejsGetPropertyByName to lookup and retrieve in one step.
     @ingroup EjsObj
  */
-extern int ejsLookupProperty(Ejs *ejs, EjsAny *obj, EjsName qname);
+PUBLIC int ejsLookupProperty(Ejs *ejs, EjsAny *obj, EjsName qname);
 
 /** 
     Set a property's value
@@ -890,7 +890,7 @@ extern int ejsLookupProperty(Ejs *ejs, EjsAny *obj, EjsName qname);
     @return The slot number of the property updated.
     @ingroup EjsObj
  */
-extern int ejsSetProperty(Ejs *ejs, void *obj, int slotNum, void *value);
+PUBLIC int ejsSetProperty(Ejs *ejs, void *obj, int slotNum, void *value);
 
 /** 
     Set a property's value 
@@ -902,7 +902,7 @@ extern int ejsSetProperty(Ejs *ejs, void *obj, int slotNum, void *value);
     @return The slot number of the property updated.
     @ingroup EjsObj
  */
-extern int ejsSetPropertyByName(Ejs *ejs, void *obj, EjsName qname, void *value);
+PUBLIC int ejsSetPropertyByName(Ejs *ejs, void *obj, EjsName qname, void *value);
 
 /** 
     Set a property's name 
@@ -916,7 +916,7 @@ extern int ejsSetPropertyByName(Ejs *ejs, void *obj, EjsName qname, void *value)
     @return The slot number of the property updated.
     @ingroup EjsObj
  */
-extern int ejsSetPropertyName(Ejs *ejs, EjsAny *obj, int slotNum, EjsName qname);
+PUBLIC int ejsSetPropertyName(Ejs *ejs, EjsAny *obj, int slotNum, EjsName qname);
 
 /** 
     Set a property's traits
@@ -929,7 +929,7 @@ extern int ejsSetPropertyName(Ejs *ejs, EjsAny *obj, int slotNum, EjsName qname)
     @return The slot number of the property updated.
     @ingroup EjsObj
  */
-extern int ejsSetPropertyTraits(Ejs *ejs, EjsAny *obj, int slotNum, struct EjsType *type, int attributes);
+PUBLIC int ejsSetPropertyTraits(Ejs *ejs, EjsAny *obj, int slotNum, struct EjsType *type, int attributes);
 
 /**
     Deserialize a JSON encoded string
@@ -939,7 +939,7 @@ extern int ejsSetPropertyTraits(Ejs *ejs, EjsAny *obj, int slotNum, struct EjsTy
     @returns Returns an allocated object equivalent to the supplied JSON encoding
     @ingroup EjsObj
  */
-extern EjsAny *ejsDeserialize(Ejs *ejs, struct EjsString *str);
+PUBLIC EjsAny *ejsDeserialize(Ejs *ejs, struct EjsString *str);
 
 /**
     Parse a string 
@@ -950,7 +950,7 @@ extern EjsAny *ejsDeserialize(Ejs *ejs, struct EjsString *str);
     @returns Returns an allocated object. Returns undefined if the input cannot be parsed.
     @ingroup EjsObj
  */
-extern EjsAny *ejsParse(Ejs *ejs, wchar *str,  int prefType);
+PUBLIC EjsAny *ejsParse(Ejs *ejs, wchar *str,  int prefType);
 
 /************************************ EjsPot **********************************/
 /** 
@@ -1056,8 +1056,8 @@ typedef struct EjsPot {
 #define ejsIsPot(ejs, obj) (obj && POT(obj))
 #endif
 
-extern void ejsZeroSlots(Ejs *ejs, EjsSlot *slots, int count);
-extern void ejsCopySlots(Ejs *ejs, EjsPot *dest, int destOff, EjsPot *src, int srcOff, int count);
+PUBLIC void ejsZeroSlots(Ejs *ejs, EjsSlot *slots, int count);
+PUBLIC void ejsCopySlots(Ejs *ejs, EjsPot *dest, int destOff, EjsPot *src, int srcOff, int count);
 
 /** 
     Create an empty property object
@@ -1066,7 +1066,7 @@ extern void ejsCopySlots(Ejs *ejs, EjsPot *dest, int destOff, EjsPot *src, int s
     @return A new object instance
     @ingroup EjsObj
  */
-extern EjsAny *ejsCreateEmptyPot(Ejs *ejs);
+PUBLIC EjsAny *ejsCreateEmptyPot(Ejs *ejs);
 
 /** 
     Create an object instance of the specified type
@@ -1078,7 +1078,7 @@ extern EjsAny *ejsCreateEmptyPot(Ejs *ejs);
     @return A new object instance
     @ingroup EjsObj
  */
-extern EjsAny *ejsCreatePot(Ejs *ejs, struct EjsType *type, int size);
+PUBLIC EjsAny *ejsCreatePot(Ejs *ejs, struct EjsType *type, int size);
 
 /**
     Compact an object
@@ -1088,7 +1088,7 @@ extern EjsAny *ejsCreatePot(Ejs *ejs, struct EjsType *type, int size);
     @returns The number of properties in the object.
     @ingroup EjsObj
  */
-extern int ejsCompactPot(Ejs *ejs, EjsPot *obj);
+PUBLIC int ejsCompactPot(Ejs *ejs, EjsPot *obj);
 
 /**
     Insert properties
@@ -1101,7 +1101,7 @@ extern int ejsCompactPot(Ejs *ejs, EjsPot *obj);
     @ingroup EjsPot
     @internal
  */
-extern int ejsInsertPotProperties(Ejs *ejs, EjsPot *pot, int numSlots, int offset);
+PUBLIC int ejsInsertPotProperties(Ejs *ejs, EjsPot *pot, int numSlots, int offset);
 
 /**
     Make or remake a property index
@@ -1112,7 +1112,7 @@ extern int ejsInsertPotProperties(Ejs *ejs, EjsPot *pot, int numSlots, int offse
     @returns Zero if successful, otherwise a negative MPR error code.
     @ingroup EjsPot
  */
-extern int ejsIndexProperties(Ejs *ejs, EjsPot *obj);
+PUBLIC int ejsIndexProperties(Ejs *ejs, EjsPot *obj);
 
 /**
     Test a property's traits
@@ -1125,7 +1125,7 @@ extern int ejsIndexProperties(Ejs *ejs, EjsPot *obj);
     @returns A mask of the selected attributes. Returns zero if none match.
     @ingroup EjsPot
  */
-extern int ejsPropertyHasTrait(Ejs *ejs, EjsAny *obj, int slotNum, int attributes);
+PUBLIC int ejsPropertyHasTrait(Ejs *ejs, EjsAny *obj, int slotNum, int attributes);
 
 /**
     Remove a property
@@ -1137,7 +1137,7 @@ extern int ejsPropertyHasTrait(Ejs *ejs, EjsAny *obj, int slotNum, int attribute
     @ingroup EjsPot
     @internal
  */
-extern int ejsRemovePotProperty(Ejs *ejs, EjsAny *obj, int slotNum);
+PUBLIC int ejsRemovePotProperty(Ejs *ejs, EjsAny *obj, int slotNum);
 
 /**
     Lookup a property in a Pot
@@ -1148,7 +1148,7 @@ extern int ejsRemovePotProperty(Ejs *ejs, EjsAny *obj, int slotNum);
     @ingroup EjsPot
     @internal
  */
-extern int ejsLookupPotProperty(Ejs *ejs, EjsPot *obj, EjsName qname);
+PUBLIC int ejsLookupPotProperty(Ejs *ejs, EjsPot *obj, EjsName qname);
 
 /**
     Get a property name
@@ -1160,7 +1160,7 @@ extern int ejsLookupPotProperty(Ejs *ejs, EjsPot *obj, EjsName qname);
     @ingroup EjsPot
     @internal
  */
-extern EjsName ejsGetPotPropertyName(Ejs *ejs, EjsPot *obj, int slotNum);
+PUBLIC EjsName ejsGetPotPropertyName(Ejs *ejs, EjsPot *obj, int slotNum);
 
 /** 
     Copy an object
@@ -1173,7 +1173,7 @@ extern EjsName ejsGetPotPropertyName(Ejs *ejs, EjsPot *obj, int slotNum);
     @return A newly allocated object. Caller must not free as the GC will manage the lifecycle of the variable.
     @ingroup EjsObj
  */
-extern EjsAny *ejsClonePot(Ejs *ejs, EjsAny *src, bool deep);
+PUBLIC EjsAny *ejsClonePot(Ejs *ejs, EjsAny *src, bool deep);
 
 
 /**
@@ -1185,7 +1185,7 @@ extern EjsAny *ejsClonePot(Ejs *ejs, EjsAny *src, bool deep);
     @ingroup EjsPot
     @internal
  */
-extern void ejsFixTraits(Ejs *ejs, EjsPot *obj);
+PUBLIC void ejsFixTraits(Ejs *ejs, EjsPot *obj);
 
 /** 
     Grow a pot object
@@ -1198,7 +1198,7 @@ extern void ejsFixTraits(Ejs *ejs, EjsPot *obj);
     @return Zero if successful
     @ingroup EjsObj
  */
-extern int ejsGrowPot(Ejs *ejs, EjsPot *obj, int numSlots);
+PUBLIC int ejsGrowPot(Ejs *ejs, EjsPot *obj, int numSlots);
 
 /** 
     Mark an object as currently in use.
@@ -1208,7 +1208,7 @@ extern int ejsGrowPot(Ejs *ejs, EjsPot *obj, int numSlots);
     @param flags manager flags
     @ingroup EjsObj
  */
-extern void ejsManagePot(void *obj, int flags);
+PUBLIC void ejsManagePot(void *obj, int flags);
 
 /**
     Check the slot
@@ -1219,7 +1219,7 @@ extern void ejsManagePot(void *obj, int flags);
     @returns The slotNum if successful, otherwise a negative MPR error code.
     @ingroup EjsPot
  */
-extern int ejsCheckSlot(Ejs *ejs, EjsPot *obj, int slotNum);
+PUBLIC int ejsCheckSlot(Ejs *ejs, EjsPot *obj, int slotNum);
 
 /**
     Cast the operands as required by the operation code.
@@ -1230,7 +1230,7 @@ extern int ejsCheckSlot(Ejs *ejs, EjsPot *obj, int slotNum);
     @returns Zero if successful, otherwise a negative MPR error code.
     @ingroup EjsPot
  */
-extern EjsAny *ejsCoerceOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs);
+PUBLIC EjsAny *ejsCoerceOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs);
 
 /**
     Get the preferred hash size
@@ -1238,7 +1238,7 @@ extern EjsAny *ejsCoerceOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs)
     @returns A positive hash size integer
     @ingroup EjsPot
  */
-extern int ejsGetHashSize(int numProp);
+PUBLIC int ejsGetHashSize(int numProp);
 
 /**
     Create the Pot helpers 
@@ -1246,7 +1246,7 @@ extern int ejsGetHashSize(int numProp);
     @ingroup EjsPot
     @internal
  */
-extern void ejsCreatePotHelpers(Ejs *ejs);
+PUBLIC void ejsCreatePotHelpers(Ejs *ejs);
 
 /**
     Method proc for conversion to a string.
@@ -1258,7 +1258,7 @@ extern void ejsCreatePotHelpers(Ejs *ejs);
     @returns Zero if successful, otherwise a negative MPR error code.
     @ingroup EjsPot
  */
-extern struct EjsString *ejsObjToString(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv);
+PUBLIC struct EjsString *ejsObjToString(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv);
 
 /**
     Method proc for conversion to a JSON string.
@@ -1270,7 +1270,7 @@ extern struct EjsString *ejsObjToString(Ejs *ejs, EjsObj *obj, int argc, EjsObj 
     @returns Zero if successful, otherwise a negative MPR error code.
     @ingroup EjsPot
  */
-extern struct EjsString *ejsObjToJSON(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv);
+PUBLIC struct EjsString *ejsObjToJSON(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv);
 
 /*
     ejsBlendObject flags
@@ -1307,7 +1307,7 @@ extern struct EjsString *ejsObjToJSON(Ejs *ejs, EjsObj *obj, int argc, EjsObj **
     @returns Zero if successful, otherwise a negative MPR error code.
     @ingroup EjsPot
  */
-extern int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags);
+PUBLIC int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags);
 
 /**
     Test if two names match
@@ -1318,7 +1318,7 @@ extern int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags);
     @returns True if the names are equivalent
     @ingroup EjsPot
  */
-extern bool ejsMatchName(Ejs *ejs, EjsName *a, EjsName *b);
+PUBLIC bool ejsMatchName(Ejs *ejs, EjsName *a, EjsName *b);
 
 /********************************************** String ********************************************/
 /** 
@@ -1356,7 +1356,7 @@ typedef struct EjsString {
     @return A string object
     @ingroup EjsString
  */
-extern EjsString *ejsCreateString(Ejs *ejs, wchar *value, ssize len);
+PUBLIC EjsString *ejsCreateString(Ejs *ejs, wchar *value, ssize len);
 
 /**
     Create a string from a module string constant
@@ -1367,7 +1367,7 @@ extern EjsString *ejsCreateString(Ejs *ejs, wchar *value, ssize len);
     @ingroup EjsString
     @internal
  */
-extern EjsString *ejsCreateStringFromConst(Ejs *ejs, struct EjsModule *mp, int index);
+PUBLIC EjsString *ejsCreateStringFromConst(Ejs *ejs, struct EjsModule *mp, int index);
 
 /**
     Create a string from ascii
@@ -1376,7 +1376,7 @@ extern EjsString *ejsCreateStringFromConst(Ejs *ejs, struct EjsModule *mp, int i
     @returns Allocated string. These are references into the interned string pool.
     @ingroup EjsString
  */
-extern EjsString *ejsCreateStringFromAsc(Ejs *ejs, cchar *value);
+PUBLIC EjsString *ejsCreateStringFromAsc(Ejs *ejs, cchar *value);
 
 /**
     Create a string from an ascii block
@@ -1386,7 +1386,7 @@ extern EjsString *ejsCreateStringFromAsc(Ejs *ejs, cchar *value);
     @returns Allocated string. These are references into the interned string pool.
     @ingroup EjsString
  */
-extern EjsString *ejsCreateStringFromBytes(Ejs *ejs, cchar *value, ssize len);
+PUBLIC EjsString *ejsCreateStringFromBytes(Ejs *ejs, cchar *value, ssize len);
 
 /**
     Create a string from UTF-8 multibyte string
@@ -1396,7 +1396,7 @@ extern EjsString *ejsCreateStringFromBytes(Ejs *ejs, cchar *value, ssize len);
     @returns Allocated string. These are references into the interned string pool.
     @ingroup EjsString
  */
-extern EjsString *ejsCreateStringFromMulti(Ejs *ejs, cchar *value, ssize len);
+PUBLIC EjsString *ejsCreateStringFromMulti(Ejs *ejs, cchar *value, ssize len);
 
 /** 
     Create an empty string object. This creates an uninitialized string object of the requrired size. Once initialized,
@@ -1406,7 +1406,7 @@ extern EjsString *ejsCreateStringFromMulti(Ejs *ejs, cchar *value, ssize len);
     @return A string object
     @ingroup EjsString
  */
-extern EjsString *ejsCreateBareString(Ejs *ejs, ssize len);
+PUBLIC EjsString *ejsCreateBareString(Ejs *ejs, ssize len);
 
 /** 
     Intern a string object. 
@@ -1417,7 +1417,7 @@ extern EjsString *ejsCreateBareString(Ejs *ejs, ssize len);
         was already present in the intern pool.
     @ingroup EjsString
  */
-extern EjsString *ejsInternString(EjsString *sp);
+PUBLIC EjsString *ejsInternString(EjsString *sp);
 
 /** 
     Intern a string object from a UTF-8 string. 
@@ -1428,7 +1428,7 @@ extern EjsString *ejsInternString(EjsString *sp);
     @return The internalized string object.
     @ingroup EjsString
  */
-extern EjsString *ejsInternMulti(struct Ejs *ejs, cchar *value, ssize len);
+PUBLIC EjsString *ejsInternMulti(struct Ejs *ejs, cchar *value, ssize len);
 
 /** 
     Intern a string object from an Ascii string.
@@ -1439,7 +1439,7 @@ extern EjsString *ejsInternMulti(struct Ejs *ejs, cchar *value, ssize len);
     @return The internalized string object.
     @ingroup EjsString
  */
-extern EjsString *ejsInternAsc(struct Ejs *ejs, cchar *value, ssize len);
+PUBLIC EjsString *ejsInternAsc(struct Ejs *ejs, cchar *value, ssize len);
 
 /** 
     Intern a string object from a UTF-16 string. 
@@ -1450,14 +1450,14 @@ extern EjsString *ejsInternAsc(struct Ejs *ejs, cchar *value, ssize len);
     @return The internalized string object.
     @ingroup EjsString
  */
-extern EjsString *ejsInternWide(struct Ejs *ejs, wchar *value, ssize len);
+PUBLIC EjsString *ejsInternWide(struct Ejs *ejs, wchar *value, ssize len);
 
 /** 
     Destroy the intern string cache
     @param intern Reference to the intern object
     @ingroup EjsString
  */
-extern void ejsDestroyIntern(struct EjsIntern *intern);
+PUBLIC void ejsDestroyIntern(struct EjsIntern *intern);
 
 /** 
     Parse a string and convert to an integer
@@ -1467,7 +1467,7 @@ extern void ejsDestroyIntern(struct EjsIntern *intern);
     @return Integer representation of the string 
     @ingroup EjsString
  */
-extern int ejsAtoi(Ejs *ejs, EjsString *sp, int radix);
+PUBLIC int ejsAtoi(Ejs *ejs, EjsString *sp, int radix);
 
 /** 
     Join two strings
@@ -1477,7 +1477,7 @@ extern int ejsAtoi(Ejs *ejs, EjsString *sp, int radix);
     @return A new string representing the joined strings
     @ingroup EjsString
  */
-extern EjsString *ejsJoinString(Ejs *ejs, EjsString *s1, EjsString *s2);
+PUBLIC EjsString *ejsJoinString(Ejs *ejs, EjsString *s1, EjsString *s2);
 
 /** 
     Join strings
@@ -1487,7 +1487,7 @@ extern EjsString *ejsJoinString(Ejs *ejs, EjsString *s1, EjsString *s2);
     @return A new string representing the joined strings
     @ingroup EjsString
  */
-extern EjsString *ejsJoinStrings(Ejs *ejs, EjsString *src, ...);
+PUBLIC EjsString *ejsJoinStrings(Ejs *ejs, EjsString *src, ...);
 
 /** 
     Get a substring 
@@ -1499,7 +1499,7 @@ extern EjsString *ejsJoinStrings(Ejs *ejs, EjsString *src, ...);
     @return The substring
     @ingroup EjsString
  */
-extern EjsString *ejsSubstring(Ejs *ejs, EjsString *src, ssize offset, ssize len);
+PUBLIC EjsString *ejsSubstring(Ejs *ejs, EjsString *src, ssize offset, ssize len);
 
 /** 
     Compare two strings
@@ -1509,7 +1509,7 @@ extern EjsString *ejsSubstring(Ejs *ejs, EjsString *src, ssize offset, ssize len
     @return Return zero if the strings are identical. Return -1 if s1 is less than s2. Otherwise return 1.
     @ingroup EjsString
  */
-extern int ejsCompareString(Ejs *ejs, EjsString *s1, EjsString *s2);
+PUBLIC int ejsCompareString(Ejs *ejs, EjsString *s1, EjsString *s2);
 
 /** 
     Compare a substring
@@ -1522,7 +1522,7 @@ extern int ejsCompareString(Ejs *ejs, EjsString *s1, EjsString *s2);
     @return Return zero if the strings are identical. Return -1 if s1 is less than s2. Otherwise return 1.
     @ingroup EjsString
  */
-extern int ejsCompareSubstring(Ejs *ejs, EjsString *s1, EjsString *s2, ssize offset, ssize len);
+PUBLIC int ejsCompareSubstring(Ejs *ejs, EjsString *s1, EjsString *s2, ssize offset, ssize len);
 
 /** 
     Convert a string to lower case
@@ -1531,7 +1531,7 @@ extern int ejsCompareSubstring(Ejs *ejs, EjsString *s1, EjsString *s2, ssize off
     @return A lower case version of the input string
     @ingroup EjsString
  */
-extern EjsString *ejsToLower(Ejs *ejs, EjsString *sp);
+PUBLIC EjsString *ejsToLower(Ejs *ejs, EjsString *sp);
 
 /** 
     Convert a string to upper case
@@ -1540,7 +1540,7 @@ extern EjsString *ejsToLower(Ejs *ejs, EjsString *sp);
     @return A upper case version of the input string
     @ingroup EjsString
  */
-extern EjsString *ejsToUpper(Ejs *ejs, EjsString *sp);
+PUBLIC EjsString *ejsToUpper(Ejs *ejs, EjsString *sp);
 
 /** 
     Truncate a string
@@ -1551,7 +1551,7 @@ extern EjsString *ejsToUpper(Ejs *ejs, EjsString *sp);
     @return The substring
     @ingroup EjsString
  */
-extern EjsString *ejsTruncateString(Ejs *ejs, EjsString *src, ssize len);
+PUBLIC EjsString *ejsTruncateString(Ejs *ejs, EjsString *src, ssize len);
 
 /** 
     Compare a string with a multibyte string
@@ -1561,7 +1561,7 @@ extern EjsString *ejsTruncateString(Ejs *ejs, EjsString *src, ssize len);
     @return Return zero if the strings are identical. Return -1 if s1 is less than s2. Otherwise return 1.
     @ingroup EjsString
  */
-extern int ejsCompareAsc(Ejs *ejs, EjsString *s1, cchar *s2);
+PUBLIC int ejsCompareAsc(Ejs *ejs, EjsString *s1, cchar *s2);
 
 /** 
     Compare a string with a wide string
@@ -1572,7 +1572,7 @@ extern int ejsCompareAsc(Ejs *ejs, EjsString *s1, cchar *s2);
     @return Return zero if the strings are identical. Return -1 if s1 is less than s2. Otherwise return 1.
     @ingroup EjsString
  */
-extern int ejsCompareWide(Ejs *ejs, EjsString *s1, wchar *s2, ssize len);
+PUBLIC int ejsCompareWide(Ejs *ejs, EjsString *s1, wchar *s2, ssize len);
 
 /** 
     Test if a string contains a character
@@ -1582,7 +1582,7 @@ extern int ejsCompareWide(Ejs *ejs, EjsString *s1, wchar *s2, ssize len);
     @return The index in the string where the character was found. Otherwise return -1.
     @ingroup EjsString
  */
-extern int ejsContainsChar(Ejs *ejs, EjsString *sp, int charPat);
+PUBLIC int ejsContainsChar(Ejs *ejs, EjsString *sp, int charPat);
 
 /** 
     Test if a string contains an ascii substring
@@ -1592,7 +1592,7 @@ extern int ejsContainsChar(Ejs *ejs, EjsString *sp, int charPat);
     @return The index in the string where the pattern was found. Otherwise return -1.
     @ingroup EjsString
  */
-extern int ejsContainsAsc(Ejs *ejs, EjsString *sp, cchar *pat);
+PUBLIC int ejsContainsAsc(Ejs *ejs, EjsString *sp, cchar *pat);
 
 /** 
     Test if a string contains another string
@@ -1602,7 +1602,7 @@ extern int ejsContainsAsc(Ejs *ejs, EjsString *sp, cchar *pat);
     @return The index in the string where the pattern was found. Otherwise return -1.
     @ingroup EjsString
  */
-extern int ejsContainsString(Ejs *ejs, EjsString *sp, EjsString *pat);
+PUBLIC int ejsContainsString(Ejs *ejs, EjsString *sp, EjsString *pat);
 
 /** 
     Test if a string starts with an ascii pattern
@@ -1612,7 +1612,7 @@ extern int ejsContainsString(Ejs *ejs, EjsString *sp, EjsString *pat);
     @return The index in the string where the pattern was found. Otherwise return -1.
     @ingroup EjsString
  */
-extern int ejsStartsWithAsc(Ejs *ejs, EjsString *sp, cchar *pat);
+PUBLIC int ejsStartsWithAsc(Ejs *ejs, EjsString *sp, cchar *pat);
 
 /** 
     Convert an object to a UTF-8 string representation
@@ -1622,7 +1622,7 @@ extern int ejsStartsWithAsc(Ejs *ejs, EjsString *sp, cchar *pat);
     @return A multibyte UTF-8 representation.
     @ingroup EjsString
  */
-extern char *ejsToMulti(Ejs *ejs, void *obj);
+PUBLIC char *ejsToMulti(Ejs *ejs, void *obj);
 
 //  MOB - rename ejsFormat
 /** 
@@ -1633,7 +1633,7 @@ extern char *ejsToMulti(Ejs *ejs, void *obj);
     @return A formatted string 
     @ingroup EjsString
  */
-extern EjsString *ejsSprintf(Ejs *ejs, cchar *fmt, ...);
+PUBLIC EjsString *ejsSprintf(Ejs *ejs, cchar *fmt, ...);
 
 /**
     Convert a variable to a string in JSON format
@@ -1643,7 +1643,7 @@ extern EjsString *ejsSprintf(Ejs *ejs, cchar *fmt, ...);
     @return A string object
     @ingroup EjsString
  */
-extern EjsString *ejsToJSON(Ejs *ejs, EjsAny *obj, EjsObj *options);
+PUBLIC EjsString *ejsToJSON(Ejs *ejs, EjsAny *obj, EjsObj *options);
 
 /*
     Serialization flags
@@ -1671,7 +1671,7 @@ extern EjsString *ejsToJSON(Ejs *ejs, EjsAny *obj, EjsObj *options);
     @return A string object
     @ingroup EjsString
  */
-extern EjsString *ejsSerialize(Ejs *ejs, EjsAny *obj, int flags);
+PUBLIC EjsString *ejsSerialize(Ejs *ejs, EjsAny *obj, int flags);
 
 /**
     Serialize a variable into JSON format
@@ -1690,7 +1690,7 @@ extern EjsString *ejsSerialize(Ejs *ejs, EjsAny *obj, int flags);
     @return A string object
     @ingroup EjsString
  */
-extern EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *obj, EjsObj *options);
+PUBLIC EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *obj, EjsObj *options);
 
 /** 
     Cast a variable to a string
@@ -1699,7 +1699,7 @@ extern EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *obj, EjsObj *options
     @return A string object
     @ingroup MOB
  */
-extern EjsString *ejsToString(Ejs *ejs, EjsAny *obj);
+PUBLIC EjsString *ejsToString(Ejs *ejs, EjsAny *obj);
 
 /**
     Convert a string to a literal string style representation
@@ -1709,12 +1709,12 @@ extern EjsString *ejsToString(Ejs *ejs, EjsAny *obj);
     @param obj Object to convert
     @return A string representation of the object
  */
-extern EjsString *ejsToLiteralString(Ejs *ejs, EjsObj *obj);
+PUBLIC EjsString *ejsToLiteralString(Ejs *ejs, EjsObj *obj);
 
 /*
     Internal
  */
-extern void ejsManageString(struct EjsString *sp, int flags);
+PUBLIC void ejsManageString(struct EjsString *sp, int flags);
 
 /******************************************** EjsArray ********************************************/
 /** 
@@ -1746,7 +1746,7 @@ typedef struct EjsArray {
     @return Zero if successful, otherwise a negative MPR error code.
     @ingroup EjsArray
  */
-extern int ejsAppendArray(Ejs *ejs, EjsArray *dest, EjsArray *src);
+PUBLIC int ejsAppendArray(Ejs *ejs, EjsArray *dest, EjsArray *src);
 
 /** 
     Create an array
@@ -1755,7 +1755,7 @@ extern int ejsAppendArray(Ejs *ejs, EjsArray *dest, EjsArray *src);
     @return A new array object
     @ingroup EjsArray
  */
-extern EjsArray *ejsCreateArray(Ejs *ejs, int size);
+PUBLIC EjsArray *ejsCreateArray(Ejs *ejs, int size);
 
 /** 
     Clone an array
@@ -1769,7 +1769,7 @@ extern EjsArray *ejsCreateArray(Ejs *ejs, int size);
     @return A new array.
     @ingroup EjsArray
  */
-extern EjsArray *ejsCloneArray(Ejs *ejs, EjsArray *ap, bool deep);
+PUBLIC EjsArray *ejsCloneArray(Ejs *ejs, EjsArray *ap, bool deep);
 
 /** 
     Add an item to the array
@@ -1780,7 +1780,7 @@ extern EjsArray *ejsCloneArray(Ejs *ejs, EjsArray *ap, bool deep);
     @return The item index in the array.
     @ingroup EjsArray
  */
-extern int ejsAddItem(Ejs *ejs, EjsArray *ap, EjsAny *item);
+PUBLIC int ejsAddItem(Ejs *ejs, EjsArray *ap, EjsAny *item);
 
 /** 
     Clear an array and remove all items
@@ -1788,7 +1788,7 @@ extern int ejsAddItem(Ejs *ejs, EjsArray *ap, EjsAny *item);
     @param ap Source array to modify
     @ingroup EjsArray
  */
-extern void ejsClearArray(Ejs *ejs, EjsArray *ap);
+PUBLIC void ejsClearArray(Ejs *ejs, EjsArray *ap);
 
 /** 
     Get an item from an array
@@ -1799,7 +1799,7 @@ extern void ejsClearArray(Ejs *ejs, EjsArray *ap);
     @return The item
     @ingroup EjsArray
  */
-extern EjsAny *ejsGetItem(Ejs *ejs, EjsArray *ap, int index);
+PUBLIC EjsAny *ejsGetItem(Ejs *ejs, EjsArray *ap, int index);
 
 /** 
     Get the first item from an array
@@ -1808,7 +1808,7 @@ extern EjsAny *ejsGetItem(Ejs *ejs, EjsArray *ap, int index);
     @return The item
     @ingroup EjsArray
  */
-extern EjsAny *ejsGetFirstItem(Ejs *ejs, EjsArray *ap);
+PUBLIC EjsAny *ejsGetFirstItem(Ejs *ejs, EjsArray *ap);
 
 /** 
     Get the last item from an array
@@ -1817,7 +1817,7 @@ extern EjsAny *ejsGetFirstItem(Ejs *ejs, EjsArray *ap);
     @return The item
     @ingroup EjsArray
  */
-extern EjsAny *ejsGetLastItem(Ejs *ejs, EjsArray *ap);
+PUBLIC EjsAny *ejsGetLastItem(Ejs *ejs, EjsArray *ap);
 
 /** 
     Get the next item from an array
@@ -1829,7 +1829,7 @@ extern EjsAny *ejsGetLastItem(Ejs *ejs, EjsArray *ap);
     @return The item
     @ingroup EjsArray
  */
-extern EjsAny *ejsGetNextItem(Ejs *ejs, EjsArray *ap, int *next);
+PUBLIC EjsAny *ejsGetNextItem(Ejs *ejs, EjsArray *ap, int *next);
 
 /** 
     Get the previous item from an array
@@ -1841,7 +1841,7 @@ extern EjsAny *ejsGetNextItem(Ejs *ejs, EjsArray *ap, int *next);
     @return The item
     @ingroup EjsArray
  */
-extern EjsAny *ejsGetPrevItem(Ejs *ejs, EjsArray *ap, int *prev);
+PUBLIC EjsAny *ejsGetPrevItem(Ejs *ejs, EjsArray *ap, int *prev);
 
 /** 
     Insert an item
@@ -1854,7 +1854,7 @@ extern EjsAny *ejsGetPrevItem(Ejs *ejs, EjsArray *ap, int *prev);
     @return The index.
     @ingroup EjsArray
  */
-extern int ejsInsertItem(Ejs *ejs, EjsArray *ap, int index, EjsAny *item);
+PUBLIC int ejsInsertItem(Ejs *ejs, EjsArray *ap, int index, EjsAny *item);
 
 /** 
     Join an array
@@ -1865,7 +1865,7 @@ extern int ejsInsertItem(Ejs *ejs, EjsArray *ap, int index, EjsAny *item);
     @return The result string
     @ingroup EjsArray
  */
-extern EjsString *ejsJoinArray(Ejs *ejs, EjsArray *ap, EjsString *join);
+PUBLIC EjsString *ejsJoinArray(Ejs *ejs, EjsArray *ap, EjsString *join);
 
 /** 
     Lookup an item in the array
@@ -1877,7 +1877,7 @@ extern EjsString *ejsJoinArray(Ejs *ejs, EjsArray *ap, EjsString *join);
     @return A positive array element index. Otherwise return MPR_ERR_CANT_FIND.
     @ingroup EjsArray
  */
-extern int ejsLookupItem(Ejs *ejs, EjsArray *ap, EjsAny *item);
+PUBLIC int ejsLookupItem(Ejs *ejs, EjsArray *ap, EjsAny *item);
 
 /** 
     Remove an item from the array
@@ -1889,7 +1889,7 @@ extern int ejsLookupItem(Ejs *ejs, EjsArray *ap, EjsAny *item);
     @return The index where the item was found. Otherwise return MPR_ERR_CANT_FIND.
     @ingroup EjsArray
  */
-extern int ejsRemoveItem(Ejs *ejs, EjsArray *ap, EjsAny *item, int compact);
+PUBLIC int ejsRemoveItem(Ejs *ejs, EjsArray *ap, EjsAny *item, int compact);
 
 /** 
     Remove the last item from the array
@@ -1899,7 +1899,7 @@ extern int ejsRemoveItem(Ejs *ejs, EjsArray *ap, EjsAny *item, int compact);
     @return The index where the item was found. Otherwise return MPR_ERR_CANT_FIND.
     @ingroup EjsArray
  */
-extern int ejsRemoveLastItem(Ejs *ejs, EjsArray *ap);
+PUBLIC int ejsRemoveLastItem(Ejs *ejs, EjsArray *ap);
 
 /** 
     Remove an item at a given index from the array
@@ -1911,12 +1911,12 @@ extern int ejsRemoveLastItem(Ejs *ejs, EjsArray *ap);
     @return The index where the item was found. Otherwise return MPR_ERR_CANT_FIND.
     @ingroup EjsArray
  */
-extern int ejsRemoveItemAtPos(Ejs *ejs, EjsArray *ap, int index, int compact);
+PUBLIC int ejsRemoveItemAtPos(Ejs *ejs, EjsArray *ap, int index, int compact);
 
 /*
     Internal
  */
-extern EjsArray *ejsSortArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv);
+PUBLIC EjsArray *ejsSortArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv);
 
 /************************************************ Block ********************************************************/
 /** 
@@ -1963,14 +1963,14 @@ typedef struct EjsBlock {
     These are an internal APIs. Native types should probably not be using these routines. Speak up if you find
     you need these routines in your code.
  */
-extern int ejsAddNamespaceToBlock(Ejs *ejs, EjsBlock *blockRef, struct EjsNamespace *nsp);
-extern EjsBlock *ejsCloneBlock(Ejs *ejs, EjsBlock *src, bool deep);
-extern EjsBlock *ejsCreateBlock(Ejs *ejs, int numSlots);
-extern void ejsCreateBlockHelpers(Ejs *ejs);
-extern int ejsGetNamespaceCount(EjsBlock *block);
-extern void ejsManageBlock(EjsBlock *block, int flags);
-extern void ejsPopBlockNamespaces(EjsBlock *block, int count);
-extern void ejsResetBlockNamespaces(Ejs *ejs, EjsBlock *block);
+PUBLIC int ejsAddNamespaceToBlock(Ejs *ejs, EjsBlock *blockRef, struct EjsNamespace *nsp);
+PUBLIC EjsBlock *ejsCloneBlock(Ejs *ejs, EjsBlock *src, bool deep);
+PUBLIC EjsBlock *ejsCreateBlock(Ejs *ejs, int numSlots);
+PUBLIC void ejsCreateBlockHelpers(Ejs *ejs);
+PUBLIC int ejsGetNamespaceCount(EjsBlock *block);
+PUBLIC void ejsManageBlock(EjsBlock *block, int flags);
+PUBLIC void ejsPopBlockNamespaces(EjsBlock *block, int count);
+PUBLIC void ejsResetBlockNamespaces(Ejs *ejs, EjsBlock *block);
 
 #if BIT_DEBUG
     #define ejsSetBlockLocation(block, loc) block->line = loc
@@ -1991,7 +1991,7 @@ extern void ejsResetBlockNamespaces(Ejs *ejs, EjsBlock *block);
     @return Zero if successful.
     @ingroup EjsObj
  */
-extern int ejsAddObserver(Ejs *ejs, EjsObj **emitterPtr, EjsObj *name, struct EjsFunction *observer);
+PUBLIC int ejsAddObserver(Ejs *ejs, EjsObj **emitterPtr, EjsObj *name, struct EjsFunction *observer);
 
 /** 
     Remove an observer 
@@ -2002,7 +2002,7 @@ extern int ejsAddObserver(Ejs *ejs, EjsObj **emitterPtr, EjsObj *name, struct Ej
     @return Zero if successful.
     @ingroup EjsObj
  */
-extern int ejsRemoveObserver(Ejs *ejs, EjsObj *emitter, EjsObj *name, struct EjsFunction *observer);
+PUBLIC int ejsRemoveObserver(Ejs *ejs, EjsObj *emitter, EjsObj *name, struct EjsFunction *observer);
 
 /** 
     Send an event to observers
@@ -2017,7 +2017,7 @@ extern int ejsRemoveObserver(Ejs *ejs, EjsObj *emitter, EjsObj *name, struct Ejs
     @return Zero if successful, otherwise a negative MPR error code.
     @ingroup EjsObj
  */
-extern int ejsSendEventv(Ejs *ejs, EjsObj *emitter, cchar *name, EjsAny *thisObj, int argc, void *argv);
+PUBLIC int ejsSendEventv(Ejs *ejs, EjsObj *emitter, cchar *name, EjsAny *thisObj, int argc, void *argv);
 
 /** 
     Send an event to observers
@@ -2030,7 +2030,7 @@ extern int ejsSendEventv(Ejs *ejs, EjsObj *emitter, cchar *name, EjsAny *thisObj
     @return Zero if successful, otherwise a negative MPR error code.
     @ingroup EjsObj
  */
-extern int ejsSendEvent(Ejs *ejs, EjsObj *emitter, cchar *name, EjsAny *thisObj, EjsAny *arg);
+PUBLIC int ejsSendEvent(Ejs *ejs, EjsObj *emitter, cchar *name, EjsAny *thisObj, EjsAny *arg);
 
 /******************************************** Function ********************************************/
 /*
@@ -2102,10 +2102,10 @@ typedef struct EjsDebug {
 /*
     Internal
  */
-extern EjsDebug *ejsCreateDebug(Ejs *ejs, int length);
-extern int ejsAddDebugLine(Ejs *ejs, EjsDebug **debug, int offset, wchar *source);
-extern EjsLine *ejsGetDebugLine(Ejs *ejs, struct EjsFunction *fun, uchar *pc);
-extern int ejsGetDebugInfo(Ejs *ejs, struct EjsFunction *fun, uchar *pc, char **path, int *lineNumber, wchar **source);
+PUBLIC EjsDebug *ejsCreateDebug(Ejs *ejs, int length);
+PUBLIC int ejsAddDebugLine(Ejs *ejs, EjsDebug **debug, int offset, wchar *source);
+PUBLIC EjsLine *ejsGetDebugLine(Ejs *ejs, struct EjsFunction *fun, uchar *pc);
+PUBLIC int ejsGetDebugInfo(Ejs *ejs, struct EjsFunction *fun, uchar *pc, char **path, int *lineNumber, wchar **source);
 
 /** 
     Byte code
@@ -2245,7 +2245,7 @@ typedef struct EjsFunction {
     @return Zero if successful, otherwise a negative MPR error code.
     @ingroup EjsType
  */
-extern int ejsBindFunction(Ejs *ejs, EjsAny *obj, int slotNum, void *fun);
+PUBLIC int ejsBindFunction(Ejs *ejs, EjsAny *obj, int slotNum, void *fun);
 
 /** 
     Clone a function
@@ -2259,7 +2259,7 @@ extern int ejsBindFunction(Ejs *ejs, EjsAny *obj, int slotNum, void *fun);
     @return The allocated activation object
     @ingroup EjsFunction
  */
-extern EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *fun, int deep);
+PUBLIC EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *fun, int deep);
 
 //  MOB - refactor into several functions
 /** 
@@ -2280,7 +2280,7 @@ extern EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *fun, int deep);
     @return An initialized function object
     @ingroup EjsFunction
  */
-extern EjsFunction *ejsCreateFunction(Ejs *ejs, EjsString *name, cuchar *code, int codeLen, int numArgs, int numDefault,
+PUBLIC EjsFunction *ejsCreateFunction(Ejs *ejs, EjsString *name, cuchar *code, int codeLen, int numArgs, int numDefault,
     int numExceptions, struct EjsType *returnType, int attributes, struct EjsModule *module, EjsBlock *scope, 
     int strict);
 
@@ -2304,7 +2304,7 @@ extern EjsFunction *ejsCreateFunction(Ejs *ejs, EjsString *name, cuchar *code, i
     @return An initialized function object
     @ingroup EjsFunction
  */
-extern int ejsInitFunction(Ejs *ejs, EjsFunction *fun, EjsString *name, cuchar *code, int codeLen, int numArgs, 
+PUBLIC int ejsInitFunction(Ejs *ejs, EjsFunction *fun, EjsString *name, cuchar *code, int codeLen, int numArgs, 
     int numDefault, int numExceptions, struct EjsType *returnType, int attributes, struct EjsModule *module, 
     EjsBlock *scope, int strict);
 
@@ -2317,7 +2317,7 @@ extern int ejsInitFunction(Ejs *ejs, EjsFunction *fun, EjsString *name, cuchar *
     @return The allocated function
     @ingroup EjsFunction
  */
-extern EjsFunction *ejsCreateBareFunction(Ejs *ejs, EjsString *name, int attributes);
+PUBLIC EjsFunction *ejsCreateBareFunction(Ejs *ejs, EjsString *name, int attributes);
 
 /** 
     Create an activation record for a function
@@ -2329,7 +2329,7 @@ extern EjsFunction *ejsCreateBareFunction(Ejs *ejs, EjsString *name, int attribu
     @return The allocated activation object
     @ingroup EjsFunction
  */
-extern EjsPot *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numSlots);
+PUBLIC EjsPot *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numSlots);
 
 /** 
     Remove a constructor function from a type.
@@ -2337,7 +2337,7 @@ extern EjsPot *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numSlots);
     @param type Type reference
     @ingroup EjsFunction
  */
-extern void ejsRemoveConstructor(Ejs *ejs, struct EjsType *type);
+PUBLIC void ejsRemoveConstructor(Ejs *ejs, struct EjsType *type);
 
 /** 
     Run the initializer for a module
@@ -2347,7 +2347,7 @@ extern void ejsRemoveConstructor(Ejs *ejs, struct EjsType *type);
     @return The last expression result of global code executed
     @ingroup EjsFunction
  */
-extern EjsObj *ejsRunInitializer(Ejs *ejs, struct EjsModule *module);
+PUBLIC EjsObj *ejsRunInitializer(Ejs *ejs, struct EjsModule *module);
 
 /** 
     Run a function
@@ -2361,7 +2361,7 @@ extern EjsObj *ejsRunInitializer(Ejs *ejs, struct EjsModule *module);
         will be set to the exception object.
     @ingroup EjsFunction
  */
-extern EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fn, EjsAny *thisObj, int argc, void *argv);
+PUBLIC EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fn, EjsAny *thisObj, int argc, void *argv);
 
 /** 
     Run a function by slot number
@@ -2377,7 +2377,7 @@ extern EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fn, EjsAny *thisObj, int ar
         will be set to the exception object.
     @ingroup EjsFunction
  */
-extern EjsAny *ejsRunFunctionBySlot(Ejs *ejs, EjsAny *obj, int slotNum, int argc, void *argv);
+PUBLIC EjsAny *ejsRunFunctionBySlot(Ejs *ejs, EjsAny *obj, int slotNum, int argc, void *argv);
 
 /** 
     Run a function by name
@@ -2392,7 +2392,7 @@ extern EjsAny *ejsRunFunctionBySlot(Ejs *ejs, EjsAny *obj, int slotNum, int argc
         will be set to the exception object.
     @ingroup EjsFunction
  */
-extern EjsAny *ejsRunFunctionByName(Ejs *ejs, EjsAny *container, EjsName qname, EjsAny *thisObj, int argc, void *argv);
+PUBLIC EjsAny *ejsRunFunctionByName(Ejs *ejs, EjsAny *container, EjsName qname, EjsAny *thisObj, int argc, void *argv);
 
 /** 
     Add an exception record
@@ -2412,7 +2412,7 @@ extern EjsAny *ejsRunFunctionByName(Ejs *ejs, EjsAny *container, EjsName qname, 
     @ingroup EjsFunction
     @internal
  */
-extern EjsEx *ejsAddException(Ejs *ejs, EjsFunction *fun, uint tryStart, uint tryEnd, struct EjsType *catchType,
+PUBLIC EjsEx *ejsAddException(Ejs *ejs, EjsFunction *fun, uint tryStart, uint tryEnd, struct EjsType *catchType,
     uint handlerStart, uint handlerEnd, int numBlocks, int numStack, int flags, int preferredIndex);
 
 /** 
@@ -2427,7 +2427,7 @@ extern EjsEx *ejsAddException(Ejs *ejs, EjsFunction *fun, uint tryStart, uint tr
     @ingroup EjsFunction
     @internal
  */
-extern int ejsSetFunctionCode(Ejs *ejs, EjsFunction *fun, struct EjsModule *module, cuchar *byteCode, ssize len, 
+PUBLIC int ejsSetFunctionCode(Ejs *ejs, EjsFunction *fun, struct EjsModule *module, cuchar *byteCode, ssize len, 
     EjsDebug *debug);
 
 /*
@@ -2446,10 +2446,10 @@ extern int ejsSetFunctionCode(Ejs *ejs, EjsFunction *fun, struct EjsModule *modu
     @ingroup EjsFunction
     @internal
  */
-extern EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, struct EjsModule *module, cuchar *byteCode, ssize len, 
+PUBLIC EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, struct EjsModule *module, cuchar *byteCode, ssize len, 
     EjsDebug *debug);
-extern void ejsManageFunction(EjsFunction *fun, int flags);
-extern void ejsShowOpFrequency(Ejs *ejs);
+PUBLIC void ejsManageFunction(EjsFunction *fun, int flags);
+PUBLIC void ejsShowOpFrequency(Ejs *ejs);
 
 /******************************************** Frame ***********************************************/
 /**
@@ -2487,10 +2487,10 @@ typedef struct EjsFrame {
 /*
     Internal
  */
-extern EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *src, EjsObj *thisObj, int argc, EjsObj **argv);
-extern EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *src);
-extern EjsBlock *ejsPopBlock(Ejs *ejs);
-extern EjsBlock *ejsPushBlock(Ejs *ejs, EjsBlock *block);
+PUBLIC EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *src, EjsObj *thisObj, int argc, EjsObj **argv);
+PUBLIC EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *src);
+PUBLIC EjsBlock *ejsPopBlock(Ejs *ejs);
+PUBLIC EjsBlock *ejsPushBlock(Ejs *ejs, EjsBlock *block);
 
 /******************************************** Boolean *********************************************/
 /** 
@@ -2519,7 +2519,7 @@ typedef struct EjsBoolean {
     @param value Desired boolean value. Set to 1 for true and zero for false.
     @ingroup EjsBoolean
  */
-extern EjsBoolean *ejsCreateBoolean(Ejs *ejs, int value);
+PUBLIC EjsBoolean *ejsCreateBoolean(Ejs *ejs, int value);
 #else
 #define ejsCreateBoolean(ejs, v) ((v) ? ESV(true) : ESV(false))
 #endif
@@ -2531,7 +2531,7 @@ extern EjsBoolean *ejsCreateBoolean(Ejs *ejs, int value);
     @return True or false
     @ingroup EjsBoolean
  */
-extern bool ejsGetBoolean(Ejs *ejs, EjsAny *obj);
+PUBLIC bool ejsGetBoolean(Ejs *ejs, EjsAny *obj);
 
 /** 
     Cast a variable to a boolean 
@@ -2541,7 +2541,7 @@ extern bool ejsGetBoolean(Ejs *ejs, EjsAny *obj);
     @return A new boolean object
     @ingroup EjsBoolean
  */
-extern EjsBoolean *ejsToBoolean(Ejs *ejs, EjsAny *obj);
+PUBLIC EjsBoolean *ejsToBoolean(Ejs *ejs, EjsAny *obj);
 
 /******************************************** ByteArray *******************************************/
 /** 
@@ -2595,7 +2595,7 @@ typedef struct EjsByteArray {
     @return A new byte array instance
     @ingroup EjsByteArray
  */
-extern EjsByteArray *ejsCreateByteArray(Ejs *ejs, ssize size);
+PUBLIC EjsByteArray *ejsCreateByteArray(Ejs *ejs, ssize size);
 
 /** 
     Set the I/O byte array positions
@@ -2608,7 +2608,7 @@ extern EjsByteArray *ejsCreateByteArray(Ejs *ejs, ssize size);
     @param writePosition New write position to set
     @ingroup EjsByteArray
  */
-extern void ejsSetByteArrayPositions(Ejs *ejs, EjsByteArray *ba, ssize readPosition, ssize writePosition);
+PUBLIC void ejsSetByteArrayPositions(Ejs *ejs, EjsByteArray *ba, ssize readPosition, ssize writePosition);
 
 /** 
     Copy data into a byte array
@@ -2621,7 +2621,7 @@ extern void ejsSetByteArrayPositions(Ejs *ejs, EjsByteArray *ba, ssize readPosit
     @return Count of bytes written or negative MPR error code.
     @ingroup EjsByteArray
  */
-extern ssize ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, ssize offset, cchar *data, ssize length);
+PUBLIC ssize ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, ssize offset, cchar *data, ssize length);
 
 /** 
     Reset the byte
@@ -2630,7 +2630,7 @@ extern ssize ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, ssize offset, cchar 
     @param ba Byte array to modify
     @ingroup EjsByteArray
  */
-extern void ejsResetByteArray(Ejs *ejs, EjsByteArray *ba);
+PUBLIC void ejsResetByteArray(Ejs *ejs, EjsByteArray *ba);
 
 /**
     Get the number of available bytes
@@ -2638,7 +2638,7 @@ extern void ejsResetByteArray(Ejs *ejs, EjsByteArray *ba);
     @return The number of bytes of data available to read
     @ingroup EjsByteArray
  */
-extern ssize ejsGetByteArrayAvailableData(EjsByteArray *ba);
+PUBLIC ssize ejsGetByteArrayAvailableData(EjsByteArray *ba);
 
 /**
     Determine the spare room in the byte array for more data
@@ -2646,7 +2646,7 @@ extern ssize ejsGetByteArrayAvailableData(EjsByteArray *ba);
     @return The number of bytes the byte array can fit without growing
     @ingroup EjsByteArray
  */
-extern ssize ejsGetByteArrayRoom(EjsByteArray *ba);
+PUBLIC ssize ejsGetByteArrayRoom(EjsByteArray *ba);
 
 /**
     Grow the byte array
@@ -2656,7 +2656,7 @@ extern ssize ejsGetByteArrayRoom(EjsByteArray *ba);
     @return The new size of the byte array. Otherwise EJS_ERROR if the memory cannot be allocated.
     @ingroup EjsByteArray
  */
-extern ssize ejsGrowByteArray(Ejs *ejs, EjsByteArray *ba, ssize size);
+PUBLIC ssize ejsGrowByteArray(Ejs *ejs, EjsByteArray *ba, ssize size);
 
 /**
     Make room in the byte array for data
@@ -2668,7 +2668,7 @@ extern ssize ejsGrowByteArray(Ejs *ejs, EjsByteArray *ba, ssize size);
     @return The number of bytes of data available to read
     @ingroup EjsByteArray
  */
-extern bool ejsMakeRoomInByteArray(Ejs *ejs, EjsByteArray *ba, ssize require);
+PUBLIC bool ejsMakeRoomInByteArray(Ejs *ejs, EjsByteArray *ba, ssize require);
 
 /**
     Write data to the byte array
@@ -2681,7 +2681,7 @@ extern bool ejsMakeRoomInByteArray(Ejs *ejs, EjsByteArray *ba, ssize require);
     @return The number of bytes of data written (EjsNumber)
     @ingroup EjsByteArray
  */
-extern struct EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ba, int argc, EjsObj **argv);
+PUBLIC struct EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ba, int argc, EjsObj **argv);
 
 /******************************************* Cache ************************************************/
 /**
@@ -2699,7 +2699,7 @@ extern struct EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ba, int arg
     @return Returns Null
     @ingroup EjsCache
  */
-extern EjsAny *ejsCacheExpire(Ejs *ejs, EjsObj *cache, struct EjsString *key, struct EjsDate *when);
+PUBLIC EjsAny *ejsCacheExpire(Ejs *ejs, EjsObj *cache, struct EjsString *key, struct EjsDate *when);
 
 /** 
     Read an item from the cache
@@ -2710,7 +2710,7 @@ extern EjsAny *ejsCacheExpire(Ejs *ejs, EjsObj *cache, struct EjsString *key, st
     @return String cache item
     @ingroup EjsCache
  */
-extern EjsAny *ejsCacheRead(Ejs *ejs, EjsObj *cache, struct EjsString *key, EjsObj *options);
+PUBLIC EjsAny *ejsCacheRead(Ejs *ejs, EjsObj *cache, struct EjsString *key, EjsObj *options);
 
 /** 
     Read an object from the cache
@@ -2722,7 +2722,7 @@ extern EjsAny *ejsCacheRead(Ejs *ejs, EjsObj *cache, struct EjsString *key, EjsO
     @return Cache item object.
     @ingroup EjsCache
  */
-extern EjsAny *ejsCacheReadObj(Ejs *ejs, EjsObj *cache, struct EjsString *key, EjsObj *options);
+PUBLIC EjsAny *ejsCacheReadObj(Ejs *ejs, EjsObj *cache, struct EjsString *key, EjsObj *options);
 
 /** 
     Read an item from the cache
@@ -2732,7 +2732,7 @@ extern EjsAny *ejsCacheReadObj(Ejs *ejs, EjsObj *cache, struct EjsString *key, E
     @return String cache item
     @ingroup EjsCache
  */
-extern EjsBoolean *ejsCacheRemove(Ejs *ejs, EjsObj *cache, struct EjsString *key);
+PUBLIC EjsBoolean *ejsCacheRemove(Ejs *ejs, EjsObj *cache, struct EjsString *key);
 
 //  MOB - rename ejsSetCacheLimits
 /** 
@@ -2752,7 +2752,7 @@ extern EjsBoolean *ejsCacheRemove(Ejs *ejs, EjsObj *cache, struct EjsString *key
     @return String cache item
     @ingroup EjsCache
  */
-extern EjsAny *ejsCacheSetLimits(Ejs *ejs, EjsObj *cache, EjsObj *limits);
+PUBLIC EjsAny *ejsCacheSetLimits(Ejs *ejs, EjsObj *cache, EjsObj *limits);
 
 /** 
     Write an item to the cache
@@ -2773,7 +2773,7 @@ extern EjsAny *ejsCacheSetLimits(Ejs *ejs, EjsObj *cache, EjsObj *limits);
     @return String cache item
     @ingroup EjsCache
  */
-extern struct EjsNumber *ejsCacheWrite(Ejs *ejs, EjsObj *cache, struct EjsString *key, struct EjsString *value, 
+PUBLIC struct EjsNumber *ejsCacheWrite(Ejs *ejs, EjsObj *cache, struct EjsString *key, struct EjsString *value, 
     EjsObj *options);
 
 /** 
@@ -2795,7 +2795,7 @@ extern struct EjsNumber *ejsCacheWrite(Ejs *ejs, EjsObj *cache, struct EjsString
     @return String cache item
     @ingroup EjsCache
  */
-extern struct EjsNumber *ejsCacheWriteObj(Ejs *ejs, EjsObj *cache, struct EjsString *key, EjsAny *value, EjsObj *options);
+PUBLIC struct EjsNumber *ejsCacheWriteObj(Ejs *ejs, EjsObj *cache, struct EjsString *key, EjsAny *value, EjsObj *options);
 
 /******************************************** Cmd *************************************************/
 /** 
@@ -2842,7 +2842,7 @@ typedef struct EjsDate {
     @return An initialized date instance
     @ingroup EjsDate
  */
-extern EjsDate *ejsCreateDate(Ejs *ejs, MprTime value);
+PUBLIC EjsDate *ejsCreateDate(Ejs *ejs, MprTime value);
 
 #if DOXYGEN
     /** 
@@ -2897,7 +2897,7 @@ typedef EjsPot EjsError;
     @return Error object
     @ingroup EjsError
  */
-extern EjsError *ejsCreateError(Ejs *ejs, struct EjsType *type, EjsObj *message);
+PUBLIC EjsError *ejsCreateError(Ejs *ejs, struct EjsType *type, EjsObj *message);
 
 /**
     Capture the execution stack
@@ -2906,7 +2906,7 @@ extern EjsError *ejsCreateError(Ejs *ejs, struct EjsType *type, EjsObj *message)
     @return Array of stack records.
     @ingroup EjsError
  */
-extern EjsArray *ejsCaptureStack(Ejs *ejs, int skip);
+PUBLIC EjsArray *ejsCaptureStack(Ejs *ejs, int skip);
 
 /** 
     Get the interpreter error message
@@ -2916,7 +2916,7 @@ extern EjsArray *ejsCaptureStack(Ejs *ejs, int skip);
     @return A string containing the error message. The caller must not free.
     @ingroup EjsError
  */
-extern cchar *ejsGetErrorMsg(Ejs *ejs, int withStack);
+PUBLIC cchar *ejsGetErrorMsg(Ejs *ejs, int withStack);
 
 /**
     Get the Ejs exception object for this interpreter
@@ -2924,7 +2924,7 @@ extern cchar *ejsGetErrorMsg(Ejs *ejs, int withStack);
     @return The exception object if one exists, otherwise NULL.
     @ingroup EjsError
  */
-extern EjsObj *ejsGetException(Ejs *ejs);
+PUBLIC EjsObj *ejsGetException(Ejs *ejs);
 
 /** 
     Determine if an exception has been thrown
@@ -2932,7 +2932,7 @@ extern EjsObj *ejsGetException(Ejs *ejs);
     @return True if an exception has been thrown
     @ingroup EjsError
  */
-extern bool ejsHasException(Ejs *ejs);
+PUBLIC bool ejsHasException(Ejs *ejs);
 
 /** 
     Throw an argument exception
@@ -2941,7 +2941,7 @@ extern bool ejsHasException(Ejs *ejs);
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowArgError(Ejs *ejs, cchar *fmt, ...);
+PUBLIC EjsError *ejsThrowArgError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an assertion exception
@@ -2950,7 +2950,7 @@ extern EjsError *ejsThrowArgError(Ejs *ejs, cchar *fmt, ...);
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowAssertError(Ejs *ejs, cchar *fmt, ...);
+PUBLIC EjsError *ejsThrowAssertError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an math exception
@@ -2959,7 +2959,7 @@ extern EjsError *ejsThrowAssertError(Ejs *ejs, cchar *fmt, ...);
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowArithmeticError(Ejs *ejs, cchar *fmt, ...);
+PUBLIC EjsError *ejsThrowArithmeticError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an instruction code exception
@@ -2968,7 +2968,7 @@ extern EjsError *ejsThrowArithmeticError(Ejs *ejs, cchar *fmt, ...);
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowInstructionError(Ejs *ejs, cchar *fmt, ...);
+PUBLIC EjsError *ejsThrowInstructionError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an general error exception
@@ -2977,7 +2977,7 @@ extern EjsError *ejsThrowInstructionError(Ejs *ejs, cchar *fmt, ...);
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowError(Ejs *ejs, cchar *fmt, ...);
+PUBLIC EjsError *ejsThrowError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an internal error exception
@@ -2986,7 +2986,7 @@ extern EjsError *ejsThrowError(Ejs *ejs, cchar *fmt, ...);
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowInternalError(Ejs *ejs, cchar *fmt, ...);
+PUBLIC EjsError *ejsThrowInternalError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an IO exception
@@ -2995,14 +2995,14 @@ extern EjsError *ejsThrowInternalError(Ejs *ejs, cchar *fmt, ...);
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowIOError(Ejs *ejs, cchar *fmt, ...);
+PUBLIC EjsError *ejsThrowIOError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an Memory depletion exception
     @param ejs Ejs reference returned from #ejsCreateVM
     @ingroup EjsError
  */
-extern EjsError *ejsThrowMemoryError(Ejs *ejs);
+PUBLIC EjsError *ejsThrowMemoryError(Ejs *ejs);
 
 /** 
     Throw an out of bounds exception
@@ -3011,7 +3011,7 @@ extern EjsError *ejsThrowMemoryError(Ejs *ejs);
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowOutOfBoundsError(Ejs *ejs, cchar *fmt, ...);
+PUBLIC EjsError *ejsThrowOutOfBoundsError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an reference exception
@@ -3020,7 +3020,7 @@ extern EjsError *ejsThrowOutOfBoundsError(Ejs *ejs, cchar *fmt, ...);
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowReferenceError(Ejs *ejs, cchar *fmt, ...);
+PUBLIC EjsError *ejsThrowReferenceError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an resource exception
@@ -3029,7 +3029,7 @@ extern EjsError *ejsThrowReferenceError(Ejs *ejs, cchar *fmt, ...);
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowResourceError(Ejs *ejs, cchar *fmt, ...);
+PUBLIC EjsError *ejsThrowResourceError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an state exception
@@ -3038,14 +3038,14 @@ extern EjsError *ejsThrowResourceError(Ejs *ejs, cchar *fmt, ...);
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowStateError(Ejs *ejs, cchar *fmt, ...);
+PUBLIC EjsError *ejsThrowStateError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an stop iteration exception
     @param ejs Ejs reference returned from #ejsCreateVM
     @ingroup EjsError
  */
-extern EjsObj *ejsThrowStopIteration(Ejs *ejs);
+PUBLIC EjsObj *ejsThrowStopIteration(Ejs *ejs);
 
 /** 
     Throw a string message. This will not capture the stack as part of the exception message.
@@ -3054,7 +3054,7 @@ extern EjsObj *ejsThrowStopIteration(Ejs *ejs);
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsString *ejsThrowString(Ejs *ejs, cchar *fmt, ...);
+PUBLIC EjsString *ejsThrowString(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an syntax error exception
@@ -3063,7 +3063,7 @@ extern EjsString *ejsThrowString(Ejs *ejs, cchar *fmt, ...);
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowSyntaxError(Ejs *ejs, cchar *fmt, ...);
+PUBLIC EjsError *ejsThrowSyntaxError(Ejs *ejs, cchar *fmt, ...);
 
 /** 
     Throw an type error exception
@@ -3072,7 +3072,7 @@ extern EjsError *ejsThrowSyntaxError(Ejs *ejs, cchar *fmt, ...);
     @param ... Message arguments
     @ingroup EjsError
  */
-extern EjsError *ejsThrowTypeError(Ejs *ejs, cchar *fmt, ...);
+PUBLIC EjsError *ejsThrowTypeError(Ejs *ejs, cchar *fmt, ...);
 
 /******************************************** File ************************************************/
 /** 
@@ -3110,7 +3110,7 @@ typedef struct EjsFile {
     @return A new file object
     @ingroup EjsFile
  */
-extern EjsFile *ejsCreateFile(Ejs *ejs, cchar *filename);
+PUBLIC EjsFile *ejsCreateFile(Ejs *ejs, cchar *filename);
 
 /**
     Create a file object from an O/S file descriptor
@@ -3121,7 +3121,7 @@ extern EjsFile *ejsCreateFile(Ejs *ejs, cchar *filename);
     @return A new file object
     @ingroup EjsFile
  */
-extern EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode);
+PUBLIC EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode);
 
 /******************************************** Path ************************************************/
 /**
@@ -3152,7 +3152,7 @@ typedef struct EjsPath {
     @return A new Path object
     @ingroup EjsPath
  */
-extern EjsPath *ejsCreatePath(Ejs *ejs, EjsString *path);
+PUBLIC EjsPath *ejsCreatePath(Ejs *ejs, EjsString *path);
 
 /** 
     Create a Path object
@@ -3162,7 +3162,7 @@ extern EjsPath *ejsCreatePath(Ejs *ejs, EjsString *path);
     @return A new Path object
     @ingroup EjsPath
  */
-extern EjsPath *ejsCreatePathFromAsc(Ejs *ejs, cchar *path);
+PUBLIC EjsPath *ejsCreatePathFromAsc(Ejs *ejs, cchar *path);
 
 /** 
     Convert the object to a Path
@@ -3172,7 +3172,7 @@ extern EjsPath *ejsCreatePathFromAsc(Ejs *ejs, cchar *path);
     @return A new Path object
     @ingroup EjsPath
  */
-extern EjsPath *ejsToPath(Ejs *ejs, EjsAny *obj);
+PUBLIC EjsPath *ejsToPath(Ejs *ejs, EjsAny *obj);
 
 /** 
     Set the owner, group and permissions of a file.
@@ -3187,7 +3187,7 @@ extern EjsPath *ejsToPath(Ejs *ejs, EjsAny *obj);
     @ingroup EjsPath
     @internal
  */
-extern int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *options);
+PUBLIC int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *options);
 
 /**
     Get files below a path. 
@@ -3198,7 +3198,7 @@ extern int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *options);
     @param argv Args array. (Set to an array with a single element)
     @return Array of matching paths
   */
-extern EjsArray *ejsGetPathFiles(Ejs *ejs, EjsPath *path, int argc, EjsObj **argv);
+PUBLIC EjsArray *ejsGetPathFiles(Ejs *ejs, EjsPath *path, int argc, EjsObj **argv);
 
 /******************************************** FileSystem*******************************************/
 /** 
@@ -3223,14 +3223,14 @@ typedef struct EjsFileSystem {
     @return A new file system object
     @ingroup EjsPath
  */
-extern EjsFileSystem *ejsCreateFileSystem(Ejs *ejs, cchar *path);
+PUBLIC EjsFileSystem *ejsCreateFileSystem(Ejs *ejs, cchar *path);
 
 /*
     Internal
  */
-extern void ejsFreezeGlobal(Ejs *ejs);
-extern void ejsCreateGlobalNamespaces(Ejs *ejs);
-extern void ejsDefineGlobalNamespaces(Ejs *ejs);
+PUBLIC void ejsFreezeGlobal(Ejs *ejs);
+PUBLIC void ejsCreateGlobalNamespaces(Ejs *ejs);
+PUBLIC void ejsDefineGlobalNamespaces(Ejs *ejs);
 
 /******************************************** Http ************************************************/
 /** 
@@ -3279,7 +3279,7 @@ typedef struct EjsHttp {
     @return a new Http object
     @ingroup EjsHttp
  */
-extern EjsHttp *ejsCreateHttp(Ejs *ejs);
+PUBLIC EjsHttp *ejsCreateHttp(Ejs *ejs);
 
 /**
     Get a Http limits 
@@ -3290,7 +3290,7 @@ extern EjsHttp *ejsCreateHttp(Ejs *ejs);
     @ingroup EjsHttp
     @internal
  */
-extern void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, bool server);
+PUBLIC void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, bool server);
 
 /** 
     Load the Http service
@@ -3298,7 +3298,7 @@ extern void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, bool ser
     @ingroup EjsPath
     @internal
  */
-extern void ejsLoadHttpService(Ejs *ejs);
+PUBLIC void ejsLoadHttpService(Ejs *ejs);
 
 /**
     Set a Http limits 
@@ -3309,7 +3309,7 @@ extern void ejsLoadHttpService(Ejs *ejs);
     @ingroup EjsHttp
     @internal
  */
-extern void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, bool server);
+PUBLIC void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, bool server);
 
 /** 
     Setup tracing for Http transactions
@@ -3320,7 +3320,7 @@ extern void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, bool ser
     @ingroup EjsPath
     @internal
  */
-extern int ejsSetupHttpTrace(Ejs *ejs, HttpTrace *trace, EjsObj *options);
+PUBLIC int ejsSetupHttpTrace(Ejs *ejs, HttpTrace *trace, EjsObj *options);
 
 /******************************************** WebSocket ************************************************/
 /** 
@@ -3358,7 +3358,7 @@ typedef struct EjsWebSocket {
     @return a new WebSocket object
     @ingroup EjsWebSocket
  */
-extern EjsWebSocket *ejsCreateWebSocket(Ejs *ejs);
+PUBLIC EjsWebSocket *ejsCreateWebSocket(Ejs *ejs);
 
 #if UNUSED
 /**
@@ -3370,7 +3370,7 @@ extern EjsWebSocket *ejsCreateWebSocket(Ejs *ejs);
     @ingroup EjsWebSocket
     @internal
  */
-extern void ejsGetWebSocketLimits(Ejs *ejs, EjsObj *obj, WebSocketLimits *limits, bool server);
+PUBLIC void ejsGetWebSocketLimits(Ejs *ejs, EjsObj *obj, WebSocketLimits *limits, bool server);
 
 /** 
     Load the WebSocket service
@@ -3378,7 +3378,7 @@ extern void ejsGetWebSocketLimits(Ejs *ejs, EjsObj *obj, WebSocketLimits *limits
     @ingroup EjsPath
     @internal
  */
-extern void ejsLoadWebSocketService(Ejs *ejs);
+PUBLIC void ejsLoadWebSocketService(Ejs *ejs);
 
 /**
     Set a WebSocket limits 
@@ -3389,7 +3389,7 @@ extern void ejsLoadWebSocketService(Ejs *ejs);
     @ingroup EjsWebSocket
     @internal
  */
-extern void ejsSetWebSocketLimits(Ejs *ejs, WebSocketLimits *limits, EjsObj *obj, bool server);
+PUBLIC void ejsSetWebSocketLimits(Ejs *ejs, WebSocketLimits *limits, EjsObj *obj, bool server);
 
 /** 
     Setup tracing for WebSocket transactions
@@ -3400,7 +3400,7 @@ extern void ejsSetWebSocketLimits(Ejs *ejs, WebSocketLimits *limits, EjsObj *obj
     @ingroup EjsPath
     @internal
  */
-extern int ejsSetupWebSocketTrace(Ejs *ejs, WebSocketTrace *trace, EjsObj *options);
+PUBLIC int ejsSetupWebSocketTrace(Ejs *ejs, WebSocketTrace *trace, EjsObj *options);
 #endif
 
 /******************************************** Iterator ********************************************/
@@ -3434,7 +3434,7 @@ typedef struct EjsIterator {
     @return A new EjsIterator object
     @ingroup EjsIterator
  */
-extern EjsIterator *ejsCreateIterator(Ejs *ejs, EjsAny *target, int length, void *next, bool deep, EjsArray *namespaces);
+PUBLIC EjsIterator *ejsCreateIterator(Ejs *ejs, EjsAny *target, int length, void *next, bool deep, EjsArray *namespaces);
 
 /******************************************** Namespace *******************************************/
 /** 
@@ -3456,7 +3456,7 @@ typedef struct EjsNamespace {
     @return A new namespace object
     @ingroup EjsNamespace
  */
-extern EjsNamespace *ejsCreateNamespace(Ejs *ejs, EjsString *name);
+PUBLIC EjsNamespace *ejsCreateNamespace(Ejs *ejs, EjsString *name);
 
 /** 
     Create a reserved namespace
@@ -3466,7 +3466,7 @@ extern EjsNamespace *ejsCreateNamespace(Ejs *ejs, EjsString *name);
     @return A new namespace object
     @ingroup EjsNamespace
  */
-extern EjsNamespace *ejsCreateReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *name);
+PUBLIC EjsNamespace *ejsCreateReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *name);
 
 /** 
     Define a reserved namespace on a block
@@ -3478,7 +3478,7 @@ extern EjsNamespace *ejsCreateReservedNamespace(Ejs *ejs, EjsName *typeName, Ejs
     @return A new namespace object
     @ingroup EjsNamespace
  */
-extern EjsNamespace *ejsDefineReservedNamespace(Ejs *ejs, EjsBlock *block, EjsName *typeName, cchar *name);
+PUBLIC EjsNamespace *ejsDefineReservedNamespace(Ejs *ejs, EjsBlock *block, EjsName *typeName, cchar *name);
 
 /** 
     Format a reserved namespace name to create a unique namespace. 
@@ -3495,7 +3495,7 @@ extern EjsNamespace *ejsDefineReservedNamespace(Ejs *ejs, EjsBlock *block, EjsNa
     @return A string containing the formatted name
     @ingroup EjsNamespace
  */
-extern EjsString *ejsFormatReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *spaceName);
+PUBLIC EjsString *ejsFormatReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *spaceName);
 
 /******************************************** Null ************************************************/
 /** 
@@ -3516,7 +3516,7 @@ typedef EjsObj EjsNull;
     @ingroup EjsNull
     @internal
  */
-extern EjsNull *ejsCreateNull(Ejs *ejs);
+PUBLIC EjsNull *ejsCreateNull(Ejs *ejs);
 
 /******************************************** Number **********************************************/
 /** 
@@ -3540,7 +3540,7 @@ typedef struct EjsNumber {
     @return A number object
     @ingroup EjsNumber
  */
-extern EjsNumber *ejsCreateNumber(Ejs *ejs, MprNumber value);
+PUBLIC EjsNumber *ejsCreateNumber(Ejs *ejs, MprNumber value);
 
 /** 
     Get the numeric value stored in a EjsNumber object
@@ -3549,7 +3549,7 @@ extern EjsNumber *ejsCreateNumber(Ejs *ejs, MprNumber value);
     @return A double value
     @ingroup EjsNumber
  */
-extern double ejsGetDouble(Ejs *ejs, EjsAny *obj);
+PUBLIC double ejsGetDouble(Ejs *ejs, EjsAny *obj);
 
 /** 
     Get the numeric value stored in a EjsNumber object
@@ -3558,7 +3558,7 @@ extern double ejsGetDouble(Ejs *ejs, EjsAny *obj);
     @return An integer value
     @ingroup EjsNumber
  */
-extern int ejsGetInt(Ejs *ejs, EjsAny *obj);
+PUBLIC int ejsGetInt(Ejs *ejs, EjsAny *obj);
 
 /** 
     Get an 64 bit integer value equivalent to that stored in an EjsNumber object
@@ -3567,7 +3567,7 @@ extern int ejsGetInt(Ejs *ejs, EjsAny *obj);
     @return A 64 bit integer value
     @ingroup EjsNumber
  */
-extern int64 ejsGetInt64(Ejs *ejs, EjsAny *obj);
+PUBLIC int64 ejsGetInt64(Ejs *ejs, EjsAny *obj);
 
 /** 
     Get the numeric value stored in a EjsNumber object
@@ -3576,7 +3576,7 @@ extern int64 ejsGetInt64(Ejs *ejs, EjsAny *obj);
     @return A numeric value
     @ingroup EjsNumber
  */
-extern MprNumber ejsGetNumber(Ejs *ejs, EjsAny *obj);
+PUBLIC MprNumber ejsGetNumber(Ejs *ejs, EjsAny *obj);
 
 /** 
     Test if a number is infinite
@@ -3584,7 +3584,7 @@ extern MprNumber ejsGetNumber(Ejs *ejs, EjsAny *obj);
     @return True if the number is infinite
     @ingroup EjsNumber
  */
-extern bool ejsIsInfinite(MprNumber n);
+PUBLIC bool ejsIsInfinite(MprNumber n);
 
 #if DOXYGEN
     /** 
@@ -3609,7 +3609,7 @@ extern bool ejsIsInfinite(MprNumber n);
     @return A number object
     @ingroup EjsNumber
  */
-extern struct EjsNumber *ejsToNumber(Ejs *ejs, EjsAny *obj);
+PUBLIC struct EjsNumber *ejsToNumber(Ejs *ejs, EjsAny *obj);
 
 /******************************************** RegExp **********************************************/
 /** 
@@ -3640,7 +3640,7 @@ typedef struct EjsRegExp {
     @return a EjsRegExp object
     @ingroup EjsRegExp
  */
-extern EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern);
+PUBLIC EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern);
 
 /** 
     Get a string representation of a regular expression
@@ -3649,7 +3649,7 @@ extern EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern);
     @return A string representation of a regular expression. The result will be of the format: "/PATTERN/suffixes"
     @ingroup EjsRegExp
  */
-EjsString *ejsRegExpToString(Ejs *ejs, EjsRegExp *rp);
+PUBLIC EjsString *ejsRegExpToString(Ejs *ejs, EjsRegExp *rp);
 
 /******************************************** Socket **********************************************/
 /**
@@ -3680,7 +3680,7 @@ typedef struct EjsSocket {
     @return a new Socket object
     @ingroup EjsSocket
  */
-extern EjsSocket *ejsCreateSocket(Ejs *ejs, MprSocket *sock, bool async);
+PUBLIC EjsSocket *ejsCreateSocket(Ejs *ejs, MprSocket *sock, bool async);
 
 /******************************************** Timer ***********************************************/
 /** 
@@ -3725,7 +3725,7 @@ typedef struct EjsUri {
     @return A new Uri object
     @ingroup EjsUri
  */
-extern EjsUri *ejsCreateUri(Ejs *ejs, EjsString *uri);
+PUBLIC EjsUri *ejsCreateUri(Ejs *ejs, EjsString *uri);
 
 /** 
     Create a URI from an ascii path
@@ -3734,7 +3734,7 @@ extern EjsUri *ejsCreateUri(Ejs *ejs, EjsString *uri);
     @return A new URI object
     @ingroup EjsUri
  */
-extern EjsUri *ejsCreateUriFromAsc(Ejs *ejs, cchar *uri);
+PUBLIC EjsUri *ejsCreateUriFromAsc(Ejs *ejs, cchar *uri);
 
 /** 
     @description This call constructs a URI from the given parts. Various URI parts can be omitted by setting to null.
@@ -3750,7 +3750,7 @@ extern EjsUri *ejsCreateUriFromAsc(Ejs *ejs, cchar *uri);
     @return A new URI 
     @ingroup EjsUri
  */
-extern EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, 
+PUBLIC EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, 
         cchar *reference, int flags);
 
 /** 
@@ -3761,7 +3761,7 @@ extern EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int p
     @return A new URI object
     @ingroup EjsUri
  */
-extern EjsUri *ejsToUri(Ejs *ejs, EjsAny *obj);
+PUBLIC EjsUri *ejsToUri(Ejs *ejs, EjsAny *obj);
 
 /******************************************** Worker **********************************************/
 /** 
@@ -3797,7 +3797,7 @@ typedef struct EjsWorker {
     @return A new worker object
     @ingroup EjsWorker
  */
-extern EjsWorker *ejsCreateWorker(Ejs *ejs);
+PUBLIC EjsWorker *ejsCreateWorker(Ejs *ejs);
 
 /** 
     Remove workers before exiting
@@ -3805,7 +3805,7 @@ extern EjsWorker *ejsCreateWorker(Ejs *ejs);
     @ingroup EjsWorker
     @internal
  */
-extern void ejsRemoveWorkers(Ejs *ejs);
+PUBLIC void ejsRemoveWorkers(Ejs *ejs);
 
 /******************************************** Void ************************************************/
 /** 
@@ -3827,7 +3827,7 @@ typedef EjsObj EjsVoid;
     @ingroup EjsVoid
     @internal
  */
-extern EjsVoid *ejsCreateUndefined(Ejs *ejs);
+PUBLIC EjsVoid *ejsCreateUndefined(Ejs *ejs);
 
 /******************************************** XML *************************************************/
 /*  
@@ -3929,7 +3929,7 @@ typedef struct EjsXML {
     @return A new XML object
     @ingroup EjsXML
  */
-extern int ejsAppendAttributeToXML(Ejs *ejs, EjsXML *parent, EjsXML *attribute);
+PUBLIC int ejsAppendAttributeToXML(Ejs *ejs, EjsXML *parent, EjsXML *attribute);
 
 /** 
     Append a node
@@ -3939,7 +3939,7 @@ extern int ejsAppendAttributeToXML(Ejs *ejs, EjsXML *parent, EjsXML *attribute);
     @return The dest node
     @ingroup EjsXML
  */
-extern EjsXML *ejsAppendToXML(Ejs *ejs, EjsXML *dest, EjsXML *node);
+PUBLIC EjsXML *ejsAppendToXML(Ejs *ejs, EjsXML *dest, EjsXML *node);
 
 /** 
     Create an XML node object
@@ -3952,7 +3952,7 @@ extern EjsXML *ejsAppendToXML(Ejs *ejs, EjsXML *dest, EjsXML *node);
     @return A new XML object
     @ingroup EjsXML
  */
-extern EjsXML *ejsCreateXML(Ejs *ejs, int kind, EjsName name, EjsXML *parent, EjsString *value);
+PUBLIC EjsXML *ejsCreateXML(Ejs *ejs, int kind, EjsName name, EjsXML *parent, EjsString *value);
 
 /** 
     Create an XML list object
@@ -3962,7 +3962,7 @@ extern EjsXML *ejsCreateXML(Ejs *ejs, int kind, EjsName name, EjsXML *parent, Ej
     @return A new XML list object
     @ingroup EjsXML
  */
-extern EjsXML *ejsCreateXMLList(Ejs *ejs, EjsXML *targetObject, EjsName targetProperty);
+PUBLIC EjsXML *ejsCreateXMLList(Ejs *ejs, EjsXML *targetObject, EjsName targetProperty);
 
 /** 
     Get the descendants of an XML node that match the given name
@@ -3972,7 +3972,7 @@ extern EjsXML *ejsCreateXMLList(Ejs *ejs, EjsXML *targetObject, EjsName targetPr
     @return An XML node with elements for the descendants.
     @ingroup EjsXML
  */
-extern EjsXML *ejsGetXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName qname);
+PUBLIC EjsXML *ejsGetXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName qname);
 
 /** 
     Load an XML document
@@ -3981,7 +3981,7 @@ extern EjsXML *ejsGetXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName qname);
     @param xmlString String containing XML data to parse
     @ingroup EjsXML
  */
-extern void ejsLoadXMLString(Ejs *ejs, EjsXML *xml, EjsString *xmlString);
+PUBLIC void ejsLoadXMLString(Ejs *ejs, EjsXML *xml, EjsString *xmlString);
 
 /** 
     Load an XML document from an Ascii string
@@ -3991,7 +3991,7 @@ extern void ejsLoadXMLString(Ejs *ejs, EjsXML *xml, EjsString *xmlString);
     @return A new XML object
     @ingroup EjsXML
  */
-extern void ejsLoadXMLAsc(Ejs *ejs, EjsXML *xml, cchar *xmlString);
+PUBLIC void ejsLoadXMLAsc(Ejs *ejs, EjsXML *xml, cchar *xmlString);
 
 /** 
     Set an indexed element to a value
@@ -4002,7 +4002,7 @@ extern void ejsLoadXMLAsc(Ejs *ejs, EjsXML *xml, cchar *xmlString);
     @return The xml node
     @ingroup EjsXML
  */
-extern EjsXML *ejsSetXMLElement(Ejs *ejs, EjsXML *xml, int index, EjsXML *node);
+PUBLIC EjsXML *ejsSetXMLElement(Ejs *ejs, EjsXML *xml, int index, EjsXML *node);
 
 /** 
     Convert an xml node to string representation in a buffer 
@@ -4013,14 +4013,14 @@ extern EjsXML *ejsSetXMLElement(Ejs *ejs, EjsXML *xml, int index, EjsXML *node);
     @return Zero if successful, otherwise a negative MPR error code.
     @ingroup EjsXML
  */
-extern int ejsXMLToBuf(Ejs *ejs, MprBuf *buf, EjsXML *xml, int indentLevel);
+PUBLIC int ejsXMLToBuf(Ejs *ejs, MprBuf *buf, EjsXML *xml, int indentLevel);
 
 /*  
     Internal
  */
-extern EjsXML *ejsConfigureXML(Ejs *ejs, EjsXML *xml, int kind, EjsString *name, EjsXML *parent, EjsString *value);
-extern void ejsManageXML(EjsXML *xml, int flags);
-extern MprXml *ejsCreateXmlParser(Ejs *ejs, EjsXML *xml, cchar *filename);
+PUBLIC EjsXML *ejsConfigureXML(Ejs *ejs, EjsXML *xml, int kind, EjsString *name, EjsXML *parent, EjsString *value);
+PUBLIC void ejsManageXML(EjsXML *xml, int flags);
+PUBLIC MprXml *ejsCreateXmlParser(Ejs *ejs, EjsXML *xml, cchar *filename);
 
 /******************************************** Type ************************************************/
 /** 
@@ -4160,7 +4160,7 @@ typedef struct EjsType {
     @return Zero if successful, otherwise a negative MPR error code.
     @ingroup EjsType
  */
-extern int ejsBindAccess(Ejs *ejs, EjsAny *obj, int slotNum, void *getter, void *setter);
+PUBLIC int ejsBindAccess(Ejs *ejs, EjsAny *obj, int slotNum, void *getter, void *setter);
 
 /** 
     Bind a constructor
@@ -4171,7 +4171,7 @@ extern int ejsBindAccess(Ejs *ejs, EjsAny *obj, int slotNum, void *getter, void 
     @return Zero if successful, otherwise a negative MPR error code.
     @ingroup EjsType
  */
-extern void ejsBindConstructor(Ejs *ejs, EjsType *type, void *constructor);
+PUBLIC void ejsBindConstructor(Ejs *ejs, EjsType *type, void *constructor);
 
 /** 
     Bind a native C function to a method property
@@ -4185,7 +4185,7 @@ extern void ejsBindConstructor(Ejs *ejs, EjsType *type, void *constructor);
     @return Zero if successful, otherwise a negative MPR error code.
     @ingroup EjsType
  */
-extern int ejsBindMethod(Ejs *ejs, EjsAny *obj, int slotNum, void *fn);
+PUBLIC int ejsBindMethod(Ejs *ejs, EjsAny *obj, int slotNum, void *fn);
 
 /** 
     Configure a type
@@ -4201,7 +4201,7 @@ extern int ejsBindMethod(Ejs *ejs, EjsAny *obj, int slotNum, void *fn);
     @ingroup EjsType
     @internal
  */
-extern EjsType *ejsConfigureType(Ejs *ejs, EjsType *type, struct EjsModule *up, EjsType *baseType, 
+PUBLIC EjsType *ejsConfigureType(Ejs *ejs, EjsType *type, struct EjsModule *up, EjsType *baseType, 
     int numTypeProp, int numInstanceProp, int64 attributes);
 
 /** 
@@ -4214,7 +4214,7 @@ extern EjsType *ejsConfigureType(Ejs *ejs, EjsType *type, struct EjsModule *up, 
     @ingroup EjsType
     @internal
  */
-extern EjsType *ejsCreateArchetype(Ejs *ejs, struct EjsFunction *fun, EjsPot *prototype);
+PUBLIC EjsType *ejsCreateArchetype(Ejs *ejs, struct EjsFunction *fun, EjsPot *prototype);
 
 /** 
     Create a core type object
@@ -4231,7 +4231,7 @@ extern EjsType *ejsCreateArchetype(Ejs *ejs, struct EjsFunction *fun, EjsPot *pr
     @ingroup EjsType
     @internal
  */
-extern EjsType *ejsCreateCoreType(Ejs *ejs, EjsName qname, int size, int slotNum, int numTypeProp, void *manager, 
+PUBLIC EjsType *ejsCreateCoreType(Ejs *ejs, EjsName qname, int size, int slotNum, int numTypeProp, void *manager, 
         int64 attributes);
 
 /** 
@@ -4244,7 +4244,7 @@ extern EjsType *ejsCreateCoreType(Ejs *ejs, EjsName qname, int size, int slotNum
     @ingroup EjsType
     @internal
  */
-extern EjsObj *ejsCreatePrototype(Ejs *ejs, EjsType *type, int numProp);
+PUBLIC EjsObj *ejsCreatePrototype(Ejs *ejs, EjsType *type, int numProp);
 
 /** 
     Create a new type object
@@ -4264,7 +4264,7 @@ extern EjsObj *ejsCreatePrototype(Ejs *ejs, EjsType *type, int numProp);
     @return The created type
     @ingroup EjsType EjsType
  */
-extern EjsType *ejsCreateType(Ejs *ejs, EjsName name, struct EjsModule *up, EjsType *baseType, EjsPot *prototype,
+PUBLIC EjsType *ejsCreateType(Ejs *ejs, EjsName name, struct EjsModule *up, EjsType *baseType, EjsPot *prototype,
     int slotNum, int numTypeProp, int numInstanceProp, int size, void *manager, int64 attributes);
 
 /** 
@@ -4275,7 +4275,7 @@ extern EjsType *ejsCreateType(Ejs *ejs, EjsName name, struct EjsModule *up, EjsT
         create the function/method definitions. Then use #ejsBindMethod to associate a C function with a property.
     @ingroup EjsType
  */
-extern int ejsDefineGlobalFunction(Ejs *ejs, EjsString *name, EjsProc fn);
+PUBLIC int ejsDefineGlobalFunction(Ejs *ejs, EjsString *name, EjsProc fn);
 
 /** 
     Define an instance property
@@ -4293,7 +4293,7 @@ extern int ejsDefineGlobalFunction(Ejs *ejs, EjsString *name, EjsProc fn);
     @return The slot number used for the property.
     @ingroup EjsType
  */
-extern int ejsDefineInstanceProperty(Ejs *ejs, EjsType *type, int slotNum, EjsName name, EjsType *propType, 
+PUBLIC int ejsDefineInstanceProperty(Ejs *ejs, EjsType *type, int slotNum, EjsName name, EjsType *propType, 
     int attributes, EjsAny *value);
 
 /** 
@@ -4303,7 +4303,7 @@ extern int ejsDefineInstanceProperty(Ejs *ejs, EjsType *type, int slotNum, EjsNa
     @return Prototype object for the given object
     @ingroup EjsType
  */
-extern EjsPot *ejsGetPrototype(Ejs *ejs, EjsAny *obj);
+PUBLIC EjsPot *ejsGetPrototype(Ejs *ejs, EjsAny *obj);
 
 /** 
     Get a type
@@ -4317,7 +4317,7 @@ extern EjsPot *ejsGetPrototype(Ejs *ejs, EjsAny *obj);
     @return A type object if successful or zero if the type could not be found
     @ingroup EjsType
  */
-extern EjsType  *ejsGetType(Ejs *ejs, int slotNum);
+PUBLIC EjsType  *ejsGetType(Ejs *ejs, int slotNum);
 
 /** 
     Get a type given its name
@@ -4327,7 +4327,7 @@ extern EjsType  *ejsGetType(Ejs *ejs, int slotNum);
     @return The type object
     @ingroup EjsType
  */
-extern EjsType *ejsGetTypeByName(Ejs *ejs, EjsName qname);
+PUBLIC EjsType *ejsGetTypeByName(Ejs *ejs, EjsName qname);
 
 /** 
     Finalize a core type
@@ -4338,7 +4338,7 @@ extern EjsType *ejsGetTypeByName(Ejs *ejs, EjsName qname);
     @ingroup EjsType
     @internal
  */
-extern EjsType *ejsFinalizeCoreType(Ejs *ejs, EjsName qname);
+PUBLIC EjsType *ejsFinalizeCoreType(Ejs *ejs, EjsName qname);
 
 /** 
     Finalize a script type
@@ -4352,7 +4352,7 @@ extern EjsType *ejsFinalizeCoreType(Ejs *ejs, EjsName qname);
     @ingroup EjsType
     @internal
  */
-extern EjsType *ejsFinalizeScriptType(Ejs *ejs, EjsName qname, int size, void *manager, int64 attributes);
+PUBLIC EjsType *ejsFinalizeScriptType(Ejs *ejs, EjsName qname, int size, void *manager, int64 attributes);
 
 /** 
     Get the type name of an object
@@ -4362,7 +4362,7 @@ extern EjsType *ejsFinalizeScriptType(Ejs *ejs, EjsName qname, int size, void *m
     @ingroup EjsType
     @internal
  */
-extern EjsString *ejsGetTypeName(struct Ejs *ejs, EjsAny *obj);
+PUBLIC EjsString *ejsGetTypeName(struct Ejs *ejs, EjsAny *obj);
 
 /** 
     TypeOf operator
@@ -4373,7 +4373,7 @@ extern EjsString *ejsGetTypeName(struct Ejs *ejs, EjsAny *obj);
     @ingroup EjsType
     @internal
  */
-extern EjsString *ejsGetTypeOf(struct Ejs *ejs, EjsAny *obj);
+PUBLIC EjsString *ejsGetTypeOf(struct Ejs *ejs, EjsAny *obj);
 
 /*
     WARNING: this macros assumes an "ejs" variable in scope. This is done because it is such a pervasive idiom, the
@@ -4426,7 +4426,7 @@ extern EjsString *ejsGetTypeOf(struct Ejs *ejs, EjsAny *obj);
     @return True if target is an instance of "type" or an instance of a subclass of "type".
     @ingroup EjsType
  */
-extern bool ejsIsA(Ejs *ejs, EjsAny *target, EjsType *type);
+PUBLIC bool ejsIsA(Ejs *ejs, EjsAny *target, EjsType *type);
 
 /** 
     Test if a type is a derived type of a given base type.
@@ -4437,100 +4437,100 @@ extern bool ejsIsA(Ejs *ejs, EjsAny *target, EjsType *type);
     @return True if target is a "baseType" or a subclass of "baseType".
     @ingroup EjsType
  */
-extern bool ejsIsTypeSubType(Ejs *ejs, EjsType *target, EjsType *baseType);
+PUBLIC bool ejsIsTypeSubType(Ejs *ejs, EjsType *target, EjsType *baseType);
 
 /*
     Internal
  */
 #define VSPACE(space) space "-" BIT_VNUM
 #define ejsGetVType(ejs, space, name) ejsGetTypeByName(ejs, space "-" BIT_VNUM, name)
-extern void     ejsDefineTypeNamespaces(Ejs *ejs, EjsType *type);
-extern int      ejsFixupType(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom);
-extern int      ejsGetTypeSize(Ejs *ejs, EjsType *type);
-extern void     ejsInitializeBlockHelpers(EjsHelpers *helpers);
-extern int64    ejsSetTypeAttributes(EjsType *type, int size, MprManager manager, int64 attributes);
-extern void     ejsSetTypeHelpers(EjsType *type, int64 attributes);
-extern void     ejsSetTypeName(Ejs *ejs, EjsType *type, EjsName qname);
-extern void     ejsTypeNeedsFixup(Ejs *ejs, EjsType *type);
+PUBLIC void     ejsDefineTypeNamespaces(Ejs *ejs, EjsType *type);
+PUBLIC int      ejsFixupType(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom);
+PUBLIC int      ejsGetTypeSize(Ejs *ejs, EjsType *type);
+PUBLIC void     ejsInitializeBlockHelpers(EjsHelpers *helpers);
+PUBLIC int64    ejsSetTypeAttributes(EjsType *type, int size, MprManager manager, int64 attributes);
+PUBLIC void     ejsSetTypeHelpers(EjsType *type, int64 attributes);
+PUBLIC void     ejsSetTypeName(Ejs *ejs, EjsType *type, EjsName qname);
+PUBLIC void     ejsTypeNeedsFixup(Ejs *ejs, EjsType *type);
 
 /******************************** Internal Prototypes *********************************/
 
-extern int      ejsCreateBootstrapTypes(Ejs *ejs);
-extern void     ejsInitBlockType(Ejs *ejs, EjsType *type);
-extern void     ejsInitNullType(Ejs *ejs, EjsType *type);
-extern void     ejsInitStringType(Ejs *ejs, EjsType *type);
-extern void     ejsInitTypeType(Ejs *ejs, EjsType *type);
+PUBLIC int      ejsCreateBootstrapTypes(Ejs *ejs);
+PUBLIC void     ejsInitBlockType(Ejs *ejs, EjsType *type);
+PUBLIC void     ejsInitNullType(Ejs *ejs, EjsType *type);
+PUBLIC void     ejsInitStringType(Ejs *ejs, EjsType *type);
+PUBLIC void     ejsInitTypeType(Ejs *ejs, EjsType *type);
 
-extern void     ejsCreateArrayType(Ejs *ejs);
-extern void     ejsCreateBooleanType(Ejs *ejs);
-extern void     ejsCreateConfigType(Ejs *ejs);
-extern void     ejsCreateErrorType(Ejs *ejs);
-extern void     ejsCreateFrameType(Ejs *ejs);
-extern void     ejsCreateFunctionType(Ejs *ejs);
-extern void     ejsCreateIteratorType(Ejs *ejs);
-extern void     ejsCreateNamespaceType(Ejs *ejs);
-extern void     ejsCreateNumberType(Ejs *ejs);
-extern void     ejsCreateObjectType(Ejs *ejs);
-extern void     ejsCreatePathType(Ejs *ejs);
-extern void     ejsCreateRegExpType(Ejs *ejs);
-extern void     ejsCreateVoidType(Ejs *ejs);
-extern void     ejsCreateXMLType(Ejs *ejs);
-extern void     ejsCreateXMLListType(Ejs *ejs);
+PUBLIC void     ejsCreateArrayType(Ejs *ejs);
+PUBLIC void     ejsCreateBooleanType(Ejs *ejs);
+PUBLIC void     ejsCreateConfigType(Ejs *ejs);
+PUBLIC void     ejsCreateErrorType(Ejs *ejs);
+PUBLIC void     ejsCreateFrameType(Ejs *ejs);
+PUBLIC void     ejsCreateFunctionType(Ejs *ejs);
+PUBLIC void     ejsCreateIteratorType(Ejs *ejs);
+PUBLIC void     ejsCreateNamespaceType(Ejs *ejs);
+PUBLIC void     ejsCreateNumberType(Ejs *ejs);
+PUBLIC void     ejsCreateObjectType(Ejs *ejs);
+PUBLIC void     ejsCreatePathType(Ejs *ejs);
+PUBLIC void     ejsCreateRegExpType(Ejs *ejs);
+PUBLIC void     ejsCreateVoidType(Ejs *ejs);
+PUBLIC void     ejsCreateXMLType(Ejs *ejs);
+PUBLIC void     ejsCreateXMLListType(Ejs *ejs);
 
 /*  
     Native type configuration
  */
-extern void     ejsConfigureAppType(Ejs *ejs);
-extern void     ejsConfigureArrayType(Ejs *ejs);
-extern void     ejsConfigureBlockType(Ejs *ejs);
-extern void     ejsConfigureBooleanType(Ejs *ejs);
-extern void     ejsConfigureByteArrayType(Ejs *ejs);
-extern void     ejsConfigureCmdType(Ejs *ejs);
-extern void     ejsConfigureDateType(Ejs *ejs);
-extern void     ejsConfigureSqliteTypes(Ejs *ejs);
-extern void     ejsConfigureDebugType(Ejs *ejs);
-extern void     ejsConfigureErrorType(Ejs *ejs);
-extern void     ejsConfigureEventType(Ejs *ejs);
-extern void     ejsConfigureFrameType(Ejs *ejs);
-extern void     ejsConfigureGCType(Ejs *ejs);
-extern void     ejsConfigureGlobalBlock(Ejs *ejs);
-extern void     ejsConfigureFileType(Ejs *ejs);
-extern void     ejsConfigureFileSystemType(Ejs *ejs);
-extern void     ejsConfigureFunctionType(Ejs *ejs);
-extern void     ejsConfigureHttpType(Ejs *ejs);
-extern void     ejsConfigureIteratorType(Ejs *ejs);
-extern void     ejsConfigureJSONType(Ejs *ejs);
-extern void     ejsConfigureLocalCacheType(Ejs *ejs);
-extern void     ejsConfigureMprLogType(Ejs *ejs);
-extern void     ejsConfigureNamespaceType(Ejs *ejs);
-extern void     ejsConfigureMemoryType(Ejs *ejs);
-extern void     ejsConfigureMathType(Ejs *ejs);
-extern void     ejsConfigureNumberType(Ejs *ejs);
-extern void     ejsConfigureNullType(Ejs *ejs);
-extern void     ejsConfigureObjectType(Ejs *ejs);
-extern void     ejsConfigurePathType(Ejs *ejs);
-extern void     ejsConfigureReflectType(Ejs *ejs);
-extern void     ejsConfigureRegExpType(Ejs *ejs);
-extern void     ejsConfigureStringType(Ejs *ejs);
-extern void     ejsConfigureSocketType(Ejs *ejs);
-extern void     ejsConfigureSystemType(Ejs *ejs);
-extern void     ejsConfigureTimerType(Ejs *ejs);
-extern void     ejsConfigureTypes(Ejs *ejs);
-extern void     ejsConfigureUriType(Ejs *ejs);
-extern void     ejsConfigureVoidType(Ejs *ejs);
-extern void     ejsConfigureWorkerType(Ejs *ejs);
-extern void     ejsConfigureXMLType(Ejs *ejs);
-extern void     ejsConfigureXMLListType(Ejs *ejs);
-extern void     ejsConfigureWebSocketType(Ejs *ejs);
+PUBLIC void     ejsConfigureAppType(Ejs *ejs);
+PUBLIC void     ejsConfigureArrayType(Ejs *ejs);
+PUBLIC void     ejsConfigureBlockType(Ejs *ejs);
+PUBLIC void     ejsConfigureBooleanType(Ejs *ejs);
+PUBLIC void     ejsConfigureByteArrayType(Ejs *ejs);
+PUBLIC void     ejsConfigureCmdType(Ejs *ejs);
+PUBLIC void     ejsConfigureDateType(Ejs *ejs);
+PUBLIC void     ejsConfigureSqliteTypes(Ejs *ejs);
+PUBLIC void     ejsConfigureDebugType(Ejs *ejs);
+PUBLIC void     ejsConfigureErrorType(Ejs *ejs);
+PUBLIC void     ejsConfigureEventType(Ejs *ejs);
+PUBLIC void     ejsConfigureFrameType(Ejs *ejs);
+PUBLIC void     ejsConfigureGCType(Ejs *ejs);
+PUBLIC void     ejsConfigureGlobalBlock(Ejs *ejs);
+PUBLIC void     ejsConfigureFileType(Ejs *ejs);
+PUBLIC void     ejsConfigureFileSystemType(Ejs *ejs);
+PUBLIC void     ejsConfigureFunctionType(Ejs *ejs);
+PUBLIC void     ejsConfigureHttpType(Ejs *ejs);
+PUBLIC void     ejsConfigureIteratorType(Ejs *ejs);
+PUBLIC void     ejsConfigureJSONType(Ejs *ejs);
+PUBLIC void     ejsConfigureLocalCacheType(Ejs *ejs);
+PUBLIC void     ejsConfigureMprLogType(Ejs *ejs);
+PUBLIC void     ejsConfigureNamespaceType(Ejs *ejs);
+PUBLIC void     ejsConfigureMemoryType(Ejs *ejs);
+PUBLIC void     ejsConfigureMathType(Ejs *ejs);
+PUBLIC void     ejsConfigureNumberType(Ejs *ejs);
+PUBLIC void     ejsConfigureNullType(Ejs *ejs);
+PUBLIC void     ejsConfigureObjectType(Ejs *ejs);
+PUBLIC void     ejsConfigurePathType(Ejs *ejs);
+PUBLIC void     ejsConfigureReflectType(Ejs *ejs);
+PUBLIC void     ejsConfigureRegExpType(Ejs *ejs);
+PUBLIC void     ejsConfigureStringType(Ejs *ejs);
+PUBLIC void     ejsConfigureSocketType(Ejs *ejs);
+PUBLIC void     ejsConfigureSystemType(Ejs *ejs);
+PUBLIC void     ejsConfigureTimerType(Ejs *ejs);
+PUBLIC void     ejsConfigureTypes(Ejs *ejs);
+PUBLIC void     ejsConfigureUriType(Ejs *ejs);
+PUBLIC void     ejsConfigureVoidType(Ejs *ejs);
+PUBLIC void     ejsConfigureWorkerType(Ejs *ejs);
+PUBLIC void     ejsConfigureXMLType(Ejs *ejs);
+PUBLIC void     ejsConfigureXMLListType(Ejs *ejs);
+PUBLIC void     ejsConfigureWebSocketType(Ejs *ejs);
 
-extern void     ejsCreateCoreNamespaces(Ejs *ejs);
-extern int      ejsCopyCoreTypes(Ejs *ejs);
-extern int      ejsDefineCoreTypes(Ejs *ejs);
-extern int      ejsDefineErrorTypes(Ejs *ejs);
-extern void     ejsInheritBaseClassNamespaces(Ejs *ejs, EjsType *type, EjsType *baseType);
-extern void     ejsSetSqliteMemCtx(MprThreadLocal *tls);
-extern void     ejsSetSqliteTls(MprThreadLocal *tls);
-extern void     ejsDefineConfigProperties(Ejs *ejs);
+PUBLIC void     ejsCreateCoreNamespaces(Ejs *ejs);
+PUBLIC int      ejsCopyCoreTypes(Ejs *ejs);
+PUBLIC int      ejsDefineCoreTypes(Ejs *ejs);
+PUBLIC int      ejsDefineErrorTypes(Ejs *ejs);
+PUBLIC void     ejsInheritBaseClassNamespaces(Ejs *ejs, EjsType *type, EjsType *baseType);
+PUBLIC void     ejsSetSqliteMemCtx(MprThreadLocal *tls);
+PUBLIC void     ejsSetSqliteTls(MprThreadLocal *tls);
+PUBLIC void     ejsDefineConfigProperties(Ejs *ejs);
 
 #if BIT_PACK_SQLITE
     extern int   ejs_db_sqlite_Init(Ejs *ejs, MprModule *mp);
@@ -4538,14 +4538,14 @@ extern void     ejsDefineConfigProperties(Ejs *ejs);
 #if BIT_PACK_ZLIB
     MPR_EXPORT int   ejs_zlib_Init(Ejs *ejs, MprModule *mp);
 #endif
-extern int       ejs_web_Init(Ejs *ejs, MprModule *mp);
+PUBLIC int       ejs_web_Init(Ejs *ejs, MprModule *mp);
 
 /* 
     Move some ejsWeb.h declarations here so handlers can just include ejs.h whether they are using the
     all-in-one ejs.h or the pure ejs.h
  */
-extern HttpStage *ejsAddWebHandler(Http *http, MprModule *module);
-extern int ejsHostHttpServer(HttpConn *conn);
+PUBLIC HttpStage *ejsAddWebHandler(Http *http, MprModule *module);
+PUBLIC int ejsHostHttpServer(HttpConn *conn);
 
 /******************************************** VM **************************************************/
 /**
@@ -4634,10 +4634,10 @@ typedef struct EjsService {
 /*
    Internal
  */
-extern EjsIntern *ejsCreateIntern(EjsService *sp);
-extern int ejsInitCompiler(EjsService *sp);
-extern void ejsAttention(Ejs *ejs);
-extern void ejsClearAttention(Ejs *ejs);
+PUBLIC EjsIntern *ejsCreateIntern(EjsService *sp);
+PUBLIC int ejsInitCompiler(EjsService *sp);
+PUBLIC void ejsAttention(Ejs *ejs);
+PUBLIC void ejsClearAttention(Ejs *ejs);
 
 /*********************************** Prototypes *******************************/
 /**
@@ -4654,7 +4654,7 @@ extern void ejsClearAttention(Ejs *ejs);
     @return A new interpreter
     @ingroup Ejs
  */
-extern Ejs *ejsCreateVM(int argc, cchar **argv, int flags);
+PUBLIC Ejs *ejsCreateVM(int argc, cchar **argv, int flags);
 
 /**
     Clone an ejs virtual machine 
@@ -4664,20 +4664,20 @@ extern Ejs *ejsCreateVM(int argc, cchar **argv, int flags);
     @return A new interpreter
     @ingroup Ejs
  */
-extern Ejs *ejsCloneVM(Ejs *ejs);
+PUBLIC Ejs *ejsCloneVM(Ejs *ejs);
 
 /**
     Set the MPR dispatcher to use for an interpreter.
     @description Interpreters serialize event activity within a dispatcher.
     @ingroup Ejs
  */
-extern void ejsSetDispatcher(Ejs *ejs, MprDispatcher *dispatcher);
+PUBLIC void ejsSetDispatcher(Ejs *ejs, MprDispatcher *dispatcher);
 
 /**
     Destroy an interpreter
     @param ejs Interpreter to destroy
  */
-extern void ejsDestroyVM(Ejs *ejs);
+PUBLIC void ejsDestroyVM(Ejs *ejs);
 
 /**
     Evaluate a file
@@ -4686,7 +4686,7 @@ extern void ejsDestroyVM(Ejs *ejs);
     @return Return zero on success. Otherwise return a negative Mpr error code.
     @ingroup Ejs
  */
-extern int ejsEvalFile(cchar *path);
+PUBLIC int ejsEvalFile(cchar *path);
 
 /*
     Flags for LoadScript and compiling
@@ -4720,7 +4720,7 @@ extern int ejsEvalFile(cchar *path);
     @return Zero if successful, otherwise a negative MPR error code.
     @ingroup Ejs
  */
-extern int ejsLoadScriptFile(Ejs *ejs, cchar *script, cchar *cache, int flags);
+PUBLIC int ejsLoadScriptFile(Ejs *ejs, cchar *script, cchar *cache, int flags);
 
 //  MOB - rename ejsLoadScriptString
 /** 
@@ -4743,7 +4743,7 @@ extern int ejsLoadScriptFile(Ejs *ejs, cchar *script, cchar *cache, int flags);
     @return Zero if successful, otherwise a negative MPR error code.
     @ingroup Ejs
  */
-extern int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags);
+PUBLIC int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags);
 
 /**
     Evaluate a module
@@ -4752,7 +4752,7 @@ extern int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int f
     @return Return zero on success. Otherwise return a negative Mpr error code.
     @ingroup Ejs
  */
-extern int ejsEvalModule(cchar *path);
+PUBLIC int ejsEvalModule(cchar *path);
 
 /**
     Evaluate a script
@@ -4761,7 +4761,7 @@ extern int ejsEvalModule(cchar *path);
     @return Return zero on success. Otherwise return a negative Mpr error code.
     @ingroup Ejs
  */
-extern int ejsEvalScript(cchar *script);
+PUBLIC int ejsEvalScript(cchar *script);
 
 /**
     Instruct the interpreter to exit.
@@ -4770,7 +4770,7 @@ extern int ejsEvalScript(cchar *script);
     @param status Reserved and ignored
     @ingroup Ejs
  */
-extern void ejsExit(Ejs *ejs, int status);
+PUBLIC void ejsExit(Ejs *ejs, int status);
 
 /**
     Get the hosting handle
@@ -4780,7 +4780,7 @@ extern void ejsExit(Ejs *ejs, int status);
     @return Hosting handle
     @ingroup Ejs
  */
-extern void *ejsGetHandle(Ejs *ejs);
+PUBLIC void *ejsGetHandle(Ejs *ejs);
 
 //  MOB - variable is the wrong name. ejsGetPropByName?
 /** 
@@ -4793,7 +4793,7 @@ extern void *ejsGetHandle(Ejs *ejs);
     @return The variable 
     @ingroup Ejs
  */
-extern EjsAny *ejsGetVarByName(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup);
+PUBLIC EjsAny *ejsGetVarByName(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup);
 
 /** 
     Lookup a variable using the current scope
@@ -4804,7 +4804,7 @@ extern EjsAny *ejsGetVarByName(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *l
     @return Zero if successful, otherwise a negative MPR error code.
     @ingroup Ejs
  */
-extern int ejsLookupScope(Ejs *ejs, EjsName name, EjsLookup *lookup);
+PUBLIC int ejsLookupScope(Ejs *ejs, EjsName name, EjsLookup *lookup);
 
 /** 
     Lookup a variable
@@ -4817,7 +4817,7 @@ extern int ejsLookupScope(Ejs *ejs, EjsName name, EjsLookup *lookup);
     @return Zero if successful, otherwise a negative MPR error code.
     @ingroup Ejs
  */
-extern int ejsLookupVar(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup);
+PUBLIC int ejsLookupVar(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup);
 
 /** 
     Lookup a variable in an object (only)
@@ -4830,7 +4830,7 @@ extern int ejsLookupVar(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup);
     @return Zero if successful, otherwise a negative MPR error code.
     @ingroup Ejs
  */
-extern int ejsLookupVarWithNamespaces(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup);
+PUBLIC int ejsLookupVarWithNamespaces(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup);
 
 /**
     Run a script
@@ -4839,7 +4839,7 @@ extern int ejsLookupVarWithNamespaces(Ejs *ejs, EjsAny *obj, EjsName name, EjsLo
     @return Zero if successful, otherwise a non-zero Mpr error code.
     @ingroup Ejs
  */
-extern int ejsRun(Ejs *ejs);
+PUBLIC int ejsRun(Ejs *ejs);
 
 /** 
     Run a program.
@@ -4851,7 +4851,7 @@ extern int ejsRun(Ejs *ejs);
     @return Zero if successful, otherwise a negative MPR error code.
     @ingroup EjsType
  */
-extern int ejsRunProgram(Ejs *ejs, cchar *className, cchar *methodName);
+PUBLIC int ejsRunProgram(Ejs *ejs, cchar *className, cchar *methodName);
 
 /**
     Throw an exception
@@ -4861,7 +4861,7 @@ extern int ejsRunProgram(Ejs *ejs, cchar *className, cchar *methodName);
     @return The exception argument for chaining.
     @ingroup Ejs
  */
-extern EjsAny *ejsThrowException(Ejs *ejs, EjsAny *error);
+PUBLIC EjsAny *ejsThrowException(Ejs *ejs, EjsAny *error);
 
 /** 
     Clear an exception
@@ -4869,7 +4869,7 @@ extern EjsAny *ejsThrowException(Ejs *ejs, EjsAny *error);
     @ingroup Ejs
     @internal
  */
-extern void ejsClearException(Ejs *ejs);
+PUBLIC void ejsClearException(Ejs *ejs);
 
 /**
     Report an error message using the MprLog error channel
@@ -4880,7 +4880,7 @@ extern void ejsClearException(Ejs *ejs);
     @param ... Arguments for fmt
     @ingroup Ejs
  */
-extern void ejsReportError(Ejs *ejs, char *fmt, ...);
+PUBLIC void ejsReportError(Ejs *ejs, char *fmt, ...);
 
 /** 
     Enter a message into the log file
@@ -4888,30 +4888,30 @@ extern void ejsReportError(Ejs *ejs, char *fmt, ...);
     @param fmt Message format string
     @ingroup Ejs
  */
-extern void ejsLog(Ejs *ejs, cchar *fmt, ...);
+PUBLIC void ejsLog(Ejs *ejs, cchar *fmt, ...);
 
 /*
     Internal
  */
-extern void ejsApplyObjHelpers(EjsService *sp, EjsType *type);
-extern void ejsApplyPotHelpers(EjsService *sp, EjsType *type);
-extern void ejsApplyBlockHelpers(EjsService *sp, EjsType *type);
-extern EjsAny *ejsCastOperands(Ejs *ejs, EjsAny *lhs, int opcode, EjsAny *rhs);
-extern int ejsCheckModuleLoaded(Ejs *ejs, cchar *name);
-extern EjsAny *ejsCreateException(Ejs *ejs, int slot, cchar *fmt, va_list fmtArgs);
-extern void ejsClearExiting(Ejs *ejs);
-extern void ejsCreateObjHelpers(Ejs *ejs);
-extern void ejsLockService();
-extern void ejsLockVm(Ejs *ejs);
-extern int  ejsParseModuleVersion(cchar *name);
-extern int  ejsRedirectLogging(cchar *logSpec);
-extern void ejsRedirectLoggingToFile(MprFile *file, int level);
-extern void ejsSetHandle(Ejs *ejs, void *handle);
-extern void ejsShowCurrentScope(Ejs *ejs);
-extern void ejsShowStack(Ejs *ejs, EjsFunction *fp);
-extern void ejsShowBlockScope(Ejs *ejs, EjsBlock *block);
-extern void ejsUnlockService();
-extern void ejsUnlockVm(Ejs *ejs);
+PUBLIC void ejsApplyObjHelpers(EjsService *sp, EjsType *type);
+PUBLIC void ejsApplyPotHelpers(EjsService *sp, EjsType *type);
+PUBLIC void ejsApplyBlockHelpers(EjsService *sp, EjsType *type);
+PUBLIC EjsAny *ejsCastOperands(Ejs *ejs, EjsAny *lhs, int opcode, EjsAny *rhs);
+PUBLIC int ejsCheckModuleLoaded(Ejs *ejs, cchar *name);
+PUBLIC EjsAny *ejsCreateException(Ejs *ejs, int slot, cchar *fmt, va_list fmtArgs);
+PUBLIC void ejsClearExiting(Ejs *ejs);
+PUBLIC void ejsCreateObjHelpers(Ejs *ejs);
+PUBLIC void ejsLockService();
+PUBLIC void ejsLockVm(Ejs *ejs);
+PUBLIC int  ejsParseModuleVersion(cchar *name);
+PUBLIC int  ejsRedirectLogging(cchar *logSpec);
+PUBLIC void ejsRedirectLoggingToFile(MprFile *file, int level);
+PUBLIC void ejsSetHandle(Ejs *ejs, void *handle);
+PUBLIC void ejsShowCurrentScope(Ejs *ejs);
+PUBLIC void ejsShowStack(Ejs *ejs, EjsFunction *fp);
+PUBLIC void ejsShowBlockScope(Ejs *ejs, EjsBlock *block);
+PUBLIC void ejsUnlockService();
+PUBLIC void ejsUnlockVm(Ejs *ejs);
 
 /******************************************* Module **************************************************/
 /*
@@ -5192,9 +5192,9 @@ typedef struct EjsModule {
 /*
     Internal
  */
-extern int ejsCreateConstants(Ejs *ejs, EjsModule *mp, int count, ssize size, char *pool);
-extern int ejsGrowConstants(Ejs *ejs, EjsModule *mp, ssize size);
-extern int ejsAddConstant(Ejs *ejs, EjsModule *mp, cchar *str);
+PUBLIC int ejsCreateConstants(Ejs *ejs, EjsModule *mp, int count, ssize size, char *pool);
+PUBLIC int ejsGrowConstants(Ejs *ejs, EjsModule *mp, ssize size);
+PUBLIC int ejsAddConstant(Ejs *ejs, EjsModule *mp, cchar *str);
 
 /**
     Native module initialization callback
@@ -5273,7 +5273,7 @@ struct EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *searchPath);
     @return A postitive slot number or a negative MPR error code.
     @ingroup EjsModule
  */
-extern int ejsLoadModule(Ejs *ejs, EjsString *name, int minVer, int maxVer, int flags);
+PUBLIC int ejsLoadModule(Ejs *ejs, EjsString *name, int minVer, int maxVer, int flags);
 
 /**
     Load modules into an interpreter
@@ -5288,7 +5288,7 @@ extern int ejsLoadModule(Ejs *ejs, EjsString *name, int minVer, int maxVer, int 
     @return Zero if successful, otherwise return a negative MPR error code.
     @ingroup EjsModule
  */
-extern int ejsLoadModules(Ejs *ejs, cchar *search, MprList *require);
+PUBLIC int ejsLoadModules(Ejs *ejs, cchar *search, MprList *require);
 
 /**
     Search for a module in the module search path.
@@ -5301,7 +5301,7 @@ extern int ejsLoadModules(Ejs *ejs, cchar *search, MprList *require);
     @return Path name to the module
     @ingroup EjsModule
  */
-extern char *ejsSearchForModule(Ejs *ejs, cchar *name, int minVer, int maxVer);
+PUBLIC char *ejsSearchForModule(Ejs *ejs, cchar *name, int minVer, int maxVer);
 
 /**
     Set the module search path
@@ -5321,43 +5321,43 @@ extern char *ejsSearchForModule(Ejs *ejs, cchar *name, int minVer, int maxVer);
     @param search Array of search paths
     @ingroup EjsModule
  */
-extern void ejsSetSearchPath(Ejs *ejs, struct EjsArray *search);
+PUBLIC void ejsSetSearchPath(Ejs *ejs, struct EjsArray *search);
 
 /*
     Internal
  */
-extern int ejsAddModule(Ejs *ejs, EjsModule *up);
-extern int ejsAddNativeModule(Ejs *ejs, cchar *name, EjsNativeCallback callback, int checksum, int flags);
-extern EjsModule *ejsCloneModule(Ejs *ejs, EjsModule *mp);
-extern EjsDoc *ejsCreateDoc(Ejs *ejs, cchar *tag, void *vp, int slotNum, EjsString *docString);
-extern EjsModule *ejsCreateModule(Ejs *ejs, EjsString *name, int version, EjsConstants *constants);
-extern double ejsDecodeDouble(Ejs *ejs, uchar **pp);
-extern int ejsDecodeInt32(Ejs *ejs, uchar **pp);
-extern int64 ejsDecodeNum(Ejs *ejs, uchar **pp);
-extern int ejsEncodeByteAtPos(Ejs *ejs, uchar *pos, int value);
-extern int ejsEncodeDouble(Ejs *ejs, uchar *pos, double number);
-extern int ejsEncodeInt32(Ejs *ejs, uchar *pos, int number);
-extern int ejsEncodeNum(Ejs *ejs, uchar *pos, int64 number);
-extern int ejsEncodeInt32AtPos(Ejs *ejs, uchar *pos, int value);
-extern char *ejsGetDocKey(Ejs *ejs, EjsBlock *block, int slotNum, char *buf, int bufsize);
-extern EjsModule *ejsLookupModule(Ejs *ejs, EjsString *name, int minVersion, int maxVersion);
-extern EjsNativeModule *ejsLookupNativeModule(Ejs *ejs, cchar *name);
-extern void ejsModuleReadBlock(Ejs *ejs, EjsModule *module, char *buf, int len);
-extern int ejsModuleReadByte(Ejs *ejs, EjsModule *module);
-extern EjsString *ejsModuleReadConst(Ejs *ejs, EjsModule *module);
-extern int ejsModuleReadInt(Ejs *ejs, EjsModule *module);
-extern int ejsModuleReadInt32(Ejs *ejs, EjsModule *module);
-extern EjsName ejsModuleReadName(Ejs *ejs, EjsModule *module);
-extern int64 ejsModuleReadNum(Ejs *ejs, EjsModule *module);
-extern char *ejsModuleReadMulti(Ejs *ejs, EjsModule *mp);
-extern wchar *ejsModuleReadMultiAsWide(Ejs *ejs, EjsModule *mp);
-extern int ejsModuleReadType(Ejs *ejs, EjsModule *module, EjsType **typeRef, EjsTypeFixup **fixup, EjsName *typeName, 
+PUBLIC int ejsAddModule(Ejs *ejs, EjsModule *up);
+PUBLIC int ejsAddNativeModule(Ejs *ejs, cchar *name, EjsNativeCallback callback, int checksum, int flags);
+PUBLIC EjsModule *ejsCloneModule(Ejs *ejs, EjsModule *mp);
+PUBLIC EjsDoc *ejsCreateDoc(Ejs *ejs, cchar *tag, void *vp, int slotNum, EjsString *docString);
+PUBLIC EjsModule *ejsCreateModule(Ejs *ejs, EjsString *name, int version, EjsConstants *constants);
+PUBLIC double ejsDecodeDouble(Ejs *ejs, uchar **pp);
+PUBLIC int ejsDecodeInt32(Ejs *ejs, uchar **pp);
+PUBLIC int64 ejsDecodeNum(Ejs *ejs, uchar **pp);
+PUBLIC int ejsEncodeByteAtPos(Ejs *ejs, uchar *pos, int value);
+PUBLIC int ejsEncodeDouble(Ejs *ejs, uchar *pos, double number);
+PUBLIC int ejsEncodeInt32(Ejs *ejs, uchar *pos, int number);
+PUBLIC int ejsEncodeNum(Ejs *ejs, uchar *pos, int64 number);
+PUBLIC int ejsEncodeInt32AtPos(Ejs *ejs, uchar *pos, int value);
+PUBLIC char *ejsGetDocKey(Ejs *ejs, EjsBlock *block, int slotNum, char *buf, int bufsize);
+PUBLIC EjsModule *ejsLookupModule(Ejs *ejs, EjsString *name, int minVersion, int maxVersion);
+PUBLIC EjsNativeModule *ejsLookupNativeModule(Ejs *ejs, cchar *name);
+PUBLIC void ejsModuleReadBlock(Ejs *ejs, EjsModule *module, char *buf, int len);
+PUBLIC int ejsModuleReadByte(Ejs *ejs, EjsModule *module);
+PUBLIC EjsString *ejsModuleReadConst(Ejs *ejs, EjsModule *module);
+PUBLIC int ejsModuleReadInt(Ejs *ejs, EjsModule *module);
+PUBLIC int ejsModuleReadInt32(Ejs *ejs, EjsModule *module);
+PUBLIC EjsName ejsModuleReadName(Ejs *ejs, EjsModule *module);
+PUBLIC int64 ejsModuleReadNum(Ejs *ejs, EjsModule *module);
+PUBLIC char *ejsModuleReadMulti(Ejs *ejs, EjsModule *mp);
+PUBLIC wchar *ejsModuleReadMultiAsWide(Ejs *ejs, EjsModule *mp);
+PUBLIC int ejsModuleReadType(Ejs *ejs, EjsModule *module, EjsType **typeRef, EjsTypeFixup **fixup, EjsName *typeName, 
         int *slotNum);
-extern void ejsRemoveModule(Ejs *ejs, EjsModule *up);
-extern void ejsRemoveModuleFromAll(EjsModule *up);
-extern double ejsSwapDouble(Ejs *ejs, double a);
-extern int ejsSwapInt32(Ejs *ejs, int word);
-extern int64 ejsSwapInt64(Ejs *ejs, int64 word);
+PUBLIC void ejsRemoveModule(Ejs *ejs, EjsModule *up);
+PUBLIC void ejsRemoveModuleFromAll(EjsModule *up);
+PUBLIC double ejsSwapDouble(Ejs *ejs, double a);
+PUBLIC int ejsSwapInt32(Ejs *ejs, int word);
+PUBLIC int64 ejsSwapInt64(Ejs *ejs, int64 word);
 
 #ifdef __cplusplus
 }

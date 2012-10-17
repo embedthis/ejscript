@@ -131,7 +131,7 @@ static void putBackChar(EcStream *stream, int c);
 
 /************************************ Code ************************************/
 
-void ecInitLexer(EcCompiler *cp)
+PUBLIC void ecInitLexer(EcCompiler *cp)
 {
     ReservedWord    *rp;
     int             size;
@@ -175,7 +175,7 @@ static EcToken *getLexToken(EcCompiler *cp)
 }
 
 
-int ecGetToken(EcCompiler *cp)
+PUBLIC int ecGetToken(EcCompiler *cp)
 {
     EcToken     *tp;
     EcStream    *stream;
@@ -529,7 +529,7 @@ int ecGetToken(EcCompiler *cp)
 }
 
 
-int ecGetRegExpToken(EcCompiler *cp, wchar *prefix)
+PUBLIC int ecGetRegExpToken(EcCompiler *cp, wchar *prefix)
 {
     EcToken     *token, *tp;
     EcStream    *stream;
@@ -594,7 +594,7 @@ int ecGetRegExpToken(EcCompiler *cp, wchar *prefix)
 /*
     Put back the current lexer token
  */
-int ecPutToken(EcCompiler *cp)
+PUBLIC int ecPutToken(EcCompiler *cp)
 {
     ecPutSpecificToken(cp, cp->token);
     cp->token = 0;
@@ -605,7 +605,7 @@ int ecPutToken(EcCompiler *cp)
 /*
     Put the given (specific) token back on the input queue. The current input token is unaffected.
  */
-int ecPutSpecificToken(EcCompiler *cp, EcToken *tp)
+PUBLIC int ecPutSpecificToken(EcCompiler *cp, EcToken *tp)
 {
     mprAssert(tp);
     mprAssert(tp->tokenId > 0);
@@ -616,7 +616,7 @@ int ecPutSpecificToken(EcCompiler *cp, EcToken *tp)
 }
 
 
-EcToken *ecTakeToken(EcCompiler *cp)
+PUBLIC EcToken *ecTakeToken(EcCompiler *cp)
 {
     EcToken *token;
 
@@ -1027,7 +1027,7 @@ static void putBackChar(EcStream *stream, int c)
 }
 
 
-void ecManageStream(EcStream *sp, int flags) 
+PUBLIC void ecManageStream(EcStream *sp, int flags) 
 {
     if (flags & MPR_MANAGE_MARK) {
         ecMarkLocation(&sp->loc);
@@ -1037,7 +1037,7 @@ void ecManageStream(EcStream *sp, int flags)
 }
 
 
-void *ecCreateStream(EcCompiler *cp, ssize size, cchar *path, void *manager)
+PUBLIC void *ecCreateStream(EcCompiler *cp, ssize size, cchar *path, void *manager)
 {
     EcLocation  *loc;
     EcStream    *sp;
@@ -1058,7 +1058,7 @@ void *ecCreateStream(EcCompiler *cp, ssize size, cchar *path, void *manager)
 }
 
 
-void ecSetStreamBuf(EcStream *sp, cchar *contents, ssize len)
+PUBLIC void ecSetStreamBuf(EcStream *sp, cchar *contents, ssize len)
 {
     wchar       *buf;
 
@@ -1079,7 +1079,7 @@ void ecSetStreamBuf(EcStream *sp, cchar *contents, ssize len)
 }
 
 
-void manageFileStream(EcFileStream *fs, int flags) 
+PUBLIC void manageFileStream(EcFileStream *fs, int flags) 
 {
     if (flags & MPR_MANAGE_MARK) {
         ecManageStream((EcStream*) fs, flags);
@@ -1091,7 +1091,7 @@ void manageFileStream(EcFileStream *fs, int flags)
 }
 
 
-int ecOpenFileStream(EcCompiler *cp, cchar *path)
+PUBLIC int ecOpenFileStream(EcCompiler *cp, cchar *path)
 {
     EcFileStream    *fs;
     MprPath         info;
@@ -1121,7 +1121,7 @@ int ecOpenFileStream(EcCompiler *cp, cchar *path)
 }
 
 
-int ecOpenMemoryStream(EcCompiler *cp, cchar *contents, ssize len)
+PUBLIC int ecOpenMemoryStream(EcCompiler *cp, cchar *contents, ssize len)
 {
     EcMemStream     *ms;
 
@@ -1133,7 +1133,7 @@ int ecOpenMemoryStream(EcCompiler *cp, cchar *contents, ssize len)
 }
 
 
-int ecOpenConsoleStream(EcCompiler *cp, EcStreamGet getInput, cchar *contents)
+PUBLIC int ecOpenConsoleStream(EcCompiler *cp, EcStreamGet getInput, cchar *contents)
 {
     EcConsoleStream     *cs;
 
@@ -1146,7 +1146,7 @@ int ecOpenConsoleStream(EcCompiler *cp, EcStreamGet getInput, cchar *contents)
 }
 
 
-void ecCloseStream(EcCompiler *cp)
+PUBLIC void ecCloseStream(EcCompiler *cp)
 {
     cp->stream = 0;
 }

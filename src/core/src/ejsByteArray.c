@@ -884,7 +884,7 @@ static EjsString *ba_toString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **arg
     Write data to the array. Data is written to the current write $position pointer.
     function write(...data): Number
  */
-EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+PUBLIC EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     EjsArray        *args;
     EjsByteArray    *bp;
@@ -1114,7 +1114,7 @@ static int flushByteArray(Ejs *ejs, EjsByteArray *ap)
     Grow the byte array up to the given length, but not over the maximum. Return the length or an error code.
     This routine always throws an exception.
  */
-ssize ejsGrowByteArray(Ejs *ejs, EjsByteArray *ap, ssize len)
+PUBLIC ssize ejsGrowByteArray(Ejs *ejs, EjsByteArray *ap, ssize len)
 {
     if (len > ap->size) {
         if (!ap->resizable) {
@@ -1155,7 +1155,7 @@ static ssize getInput(Ejs *ejs, EjsByteArray *ap, ssize required)
 }
 
 
-bool ejsMakeRoomInByteArray(Ejs *ejs, EjsByteArray *ap, ssize require)
+PUBLIC bool ejsMakeRoomInByteArray(Ejs *ejs, EjsByteArray *ap, ssize require)
 {
     ssize   newLen;
 
@@ -1289,7 +1289,7 @@ static int putString(EjsByteArray *ap, EjsString *str, ssize len)
 
 /********************************* Public Support API *****************************/
 
-void ejsResetByteArray(Ejs *ejs, EjsByteArray *ba)
+PUBLIC void ejsResetByteArray(Ejs *ejs, EjsByteArray *ba)
 {
     if (ba->writePosition == ba->readPosition) {
         ba->writePosition = ba->readPosition = 0;
@@ -1298,7 +1298,7 @@ void ejsResetByteArray(Ejs *ejs, EjsByteArray *ba)
 }
 
 
-void ejsSetByteArrayPositions(Ejs *ejs, EjsByteArray *ba, ssize readPosition, ssize writePosition)
+PUBLIC void ejsSetByteArrayPositions(Ejs *ejs, EjsByteArray *ba, ssize readPosition, ssize writePosition)
 {
     if (readPosition >= 0) {
         ba->readPosition = readPosition;
@@ -1309,7 +1309,7 @@ void ejsSetByteArrayPositions(Ejs *ejs, EjsByteArray *ba, ssize readPosition, ss
 }
 
 
-ssize ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, ssize offset, cchar *data, ssize length)
+PUBLIC ssize ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, ssize offset, cchar *data, ssize length)
 {
     int     i;
 
@@ -1333,20 +1333,20 @@ ssize ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, ssize offset, cchar *data, 
 }
 
 
-ssize ejsGetByteArrayAvailableData(EjsByteArray *ba)
+PUBLIC ssize ejsGetByteArrayAvailableData(EjsByteArray *ba)
 {
     return availableBytes(ba);
 }
 
 
-ssize ejsGetByteArrayRoom(EjsByteArray *ba)
+PUBLIC ssize ejsGetByteArrayRoom(EjsByteArray *ba)
 {
     return room(ba);
 }
 
 /*********************************** Factory **********************************/
 
-EjsByteArray *ejsCreateByteArray(Ejs *ejs, ssize size)
+PUBLIC EjsByteArray *ejsCreateByteArray(Ejs *ejs, ssize size)
 {
     EjsByteArray    *ap;
 
@@ -1381,7 +1381,7 @@ static void manageByteArray(EjsByteArray *ap, int flags)
 }
 
 
-void ejsConfigureByteArrayType(Ejs *ejs)
+PUBLIC void ejsConfigureByteArrayType(Ejs *ejs)
 {
     EjsType     *type;
     EjsHelpers  *helpers;

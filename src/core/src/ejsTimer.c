@@ -203,7 +203,7 @@ static void manageTimer(EjsTimer *tp, int flags)
 
 /*********************************** Factory **********************************/
 
-void ejsConfigureTimerType(Ejs *ejs)
+PUBLIC void ejsConfigureTimerType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

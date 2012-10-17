@@ -10,7 +10,7 @@
 
 /*********************************** Helpers **********************************/
 
-EjsBlock *ejsCloneBlock(Ejs *ejs, EjsBlock *src, bool deep)
+PUBLIC EjsBlock *ejsCloneBlock(Ejs *ejs, EjsBlock *src, bool deep)
 {
     EjsBlock    *dest;
 
@@ -26,20 +26,20 @@ EjsBlock *ejsCloneBlock(Ejs *ejs, EjsBlock *src, bool deep)
 
 /********************************* Namespaces *******************************/
 
-void ejsResetBlockNamespaces(Ejs *ejs, EjsBlock *block)
+PUBLIC void ejsResetBlockNamespaces(Ejs *ejs, EjsBlock *block)
 {
     mprClearList(&block->namespaces);
 }
 
 
-int ejsGetNamespaceCount(EjsBlock *block)
+PUBLIC int ejsGetNamespaceCount(EjsBlock *block)
 {
     mprAssert(block);
     return block->namespaces.length;
 }
 
 
-void ejsPopBlockNamespaces(EjsBlock *block, int count)
+PUBLIC void ejsPopBlockNamespaces(EjsBlock *block, int count)
 {
     mprAssert(block);
     mprAssert(block->namespaces.length >= count);
@@ -48,7 +48,7 @@ void ejsPopBlockNamespaces(EjsBlock *block, int count)
 }
 
 
-int ejsAddNamespaceToBlock(Ejs *ejs, EjsBlock *block, EjsNamespace *nsp)
+PUBLIC int ejsAddNamespaceToBlock(Ejs *ejs, EjsBlock *block, EjsNamespace *nsp)
 {
     mprAssert(block);
 
@@ -64,7 +64,7 @@ int ejsAddNamespaceToBlock(Ejs *ejs, EjsBlock *block, EjsNamespace *nsp)
 /*
     Inherit namespaces from base types. Only inherit protected.
  */
-void ejsInheritBaseClassNamespaces(Ejs *ejs, EjsType *type, EjsType *baseType)
+PUBLIC void ejsInheritBaseClassNamespaces(Ejs *ejs, EjsType *type, EjsType *baseType)
 {
     EjsNamespace    *nsp, *existing;
     EjsBlock        *block;
@@ -96,7 +96,7 @@ void ejsInheritBaseClassNamespaces(Ejs *ejs, EjsType *type, EjsType *baseType)
 
 /*************************************** Factory ***********************************/
 
-EjsBlock *ejsCreateBlock(Ejs *ejs, int size)
+PUBLIC EjsBlock *ejsCreateBlock(Ejs *ejs, int size)
 {
     EjsBlock        *block;
 
@@ -110,7 +110,7 @@ EjsBlock *ejsCreateBlock(Ejs *ejs, int size)
 }
 
 
-void ejsManageBlock(EjsBlock *block, int flags)
+PUBLIC void ejsManageBlock(EjsBlock *block, int flags)
 {
     EjsObj          *item;
     EjsBlock        *b;
@@ -150,7 +150,7 @@ void ejsManageBlock(EjsBlock *block, int flags)
 }
 
 
-void ejsCreateBlockHelpers(Ejs *ejs)
+PUBLIC void ejsCreateBlockHelpers(Ejs *ejs)
 {
     EjsHelpers      *helpers;
 
@@ -160,14 +160,14 @@ void ejsCreateBlockHelpers(Ejs *ejs)
 }
 
 
-void ejsInitBlockType(Ejs *ejs, EjsType *type)
+PUBLIC void ejsInitBlockType(Ejs *ejs, EjsType *type)
 {
     type->constructor.block.pot.shortScope = 1;
     ejsAddImmutable(ejs, S_commaProt, EN(",protected"), ejsCreateStringFromAsc(ejs, ",protected"));
 }
 
 
-void ejsConfigureBlockType(Ejs *ejs)
+PUBLIC void ejsConfigureBlockType(Ejs *ejs)
 {
     EjsType     *type;
     

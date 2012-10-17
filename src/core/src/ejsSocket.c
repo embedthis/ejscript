@@ -32,7 +32,7 @@ static EjsSocket *sock_Socket(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 /*
     function accept(): Socket
  */
-EjsSocket *sock_accept(Ejs *ejs, EjsSocket *listen, int argc, EjsObj **argv)
+PUBLIC EjsSocket *sock_accept(Ejs *ejs, EjsSocket *listen, int argc, EjsObj **argv)
 {
     MprSocket   *sock;
     EjsSocket   *sp;
@@ -56,7 +56,7 @@ EjsSocket *sock_accept(Ejs *ejs, EjsSocket *listen, int argc, EjsObj **argv)
 /*
     function get address(): String
  */
-EjsString *sock_address(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
+PUBLIC EjsString *sock_address(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     return ejsCreateStringFromAsc(ejs, sp->address);
 }
@@ -65,7 +65,7 @@ EjsString *sock_address(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 /*
     function get async(): Boolean
  */
-EjsBoolean *sock_async(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
+PUBLIC EjsBoolean *sock_async(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     return (sp->async) ? ESV(true) : ESV(false);
 }
@@ -74,7 +74,7 @@ EjsBoolean *sock_async(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 /*
     function set async(enable: Boolean): Void
  */
-EjsObj *sock_set_async(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
+PUBLIC EjsObj *sock_set_async(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     sp->async = (argv[0] == ESV(true));
     return 0;
@@ -198,7 +198,7 @@ static EjsObj *sock_off(Ejs *ejs, EjsSocket *sp, int argc, EjsAny **argv)
 /*
     function on(name: [String|Array], observer: Function): Socket
  */
-EjsSocket *sock_on(Ejs *ejs, EjsSocket *sp, int argc, EjsAny **argv)
+PUBLIC EjsSocket *sock_on(Ejs *ejs, EjsSocket *sp, int argc, EjsAny **argv)
 {
     ejsAddObserver(ejs, &sp->emitter, argv[0], argv[1]);
     return sp;
@@ -395,7 +395,7 @@ static void manageSocket(EjsSocket *sp, int flags)
 }
 
 
-EjsSocket *ejsCreateSocket(Ejs *ejs, MprSocket *sock, bool async)
+PUBLIC EjsSocket *ejsCreateSocket(Ejs *ejs, MprSocket *sock, bool async)
 {
     EjsSocket   *sp;
 
@@ -407,7 +407,7 @@ EjsSocket *ejsCreateSocket(Ejs *ejs, MprSocket *sock, bool async)
 }
 
 
-void ejsConfigureSocketType(Ejs *ejs)
+PUBLIC void ejsConfigureSocketType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

@@ -30,7 +30,7 @@ static EjsXML *createXml(Ejs *ejs, EjsType *type, int size)
 }
 
 
-EjsAny *cloneXml(Ejs *ejs, EjsXML *xml, bool deep)
+PUBLIC EjsAny *cloneXml(Ejs *ejs, EjsXML *xml, bool deep)
 {
     EjsXML      *root, *elt;
     int         next;
@@ -590,7 +590,7 @@ static bool deepCompare(EjsXML *lhs, EjsXML *rhs)
 }
 
 
-EjsXML *ejsGetXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName qname)
+PUBLIC EjsXML *ejsGetXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName qname)
 {
     EjsXML          *item, *result;
     int             next;
@@ -861,7 +861,7 @@ static EjsObj *xml_parent(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 /*
     Set an indexed element to an XML value
  */
-EjsXML *ejsSetXMLElement(Ejs *ejs, EjsXML *xml, int index, EjsXML *node)
+PUBLIC EjsXML *ejsSetXMLElement(Ejs *ejs, EjsXML *xml, int index, EjsXML *node)
 {
     EjsXML      *old;
 
@@ -886,7 +886,7 @@ EjsXML *ejsSetXMLElement(Ejs *ejs, EjsXML *xml, int index, EjsXML *node)
 }
 
 
-EjsXML *ejsAppendToXML(Ejs *ejs, EjsXML *xml, EjsXML *node)
+PUBLIC EjsXML *ejsAppendToXML(Ejs *ejs, EjsXML *xml, EjsXML *node)
 {
     EjsXML      *elt;
     int         next;
@@ -917,7 +917,7 @@ EjsXML *ejsAppendToXML(Ejs *ejs, EjsXML *xml, EjsXML *node)
 }
 
 
-int ejsAppendAttributeToXML(Ejs *ejs, EjsXML *parent, EjsXML *node)
+PUBLIC int ejsAppendAttributeToXML(Ejs *ejs, EjsXML *parent, EjsXML *node)
 {
     if (parent->attributes == 0) {
         parent->attributes = mprCreateList(-1, 0);
@@ -974,7 +974,7 @@ static bool allDigitsForXml(EjsString *name)
 
 /*********************************** Factory **********************************/
 
-EjsXML *ejsCreateXML(Ejs *ejs, int kind, EjsName qname, EjsXML *parent, EjsString *value)
+PUBLIC EjsXML *ejsCreateXML(Ejs *ejs, int kind, EjsName qname, EjsXML *parent, EjsString *value)
 {
     EjsXML      *xml;
 
@@ -993,7 +993,7 @@ EjsXML *ejsCreateXML(Ejs *ejs, int kind, EjsName qname, EjsXML *parent, EjsStrin
 }
 
 
-EjsXML *ejsConfigureXML(Ejs *ejs, EjsXML *xml, int kind, EjsString *name, EjsXML *parent, EjsString *value)
+PUBLIC EjsXML *ejsConfigureXML(Ejs *ejs, EjsXML *xml, int kind, EjsString *name, EjsXML *parent, EjsString *value)
 {
     xml->qname.name = name;
     xml->kind = kind;
@@ -1008,7 +1008,7 @@ EjsXML *ejsConfigureXML(Ejs *ejs, EjsXML *xml, int kind, EjsString *name, EjsXML
 /*
     Support routine. Not an class method
  */
-void ejsLoadXMLString(Ejs *ejs, EjsXML *xml, EjsString *xmlString)
+PUBLIC void ejsLoadXMLString(Ejs *ejs, EjsXML *xml, EjsString *xmlString)
 {
     EjsXmlState *parser;
     MprXml      *xp;
@@ -1025,13 +1025,13 @@ void ejsLoadXMLString(Ejs *ejs, EjsXML *xml, EjsString *xmlString)
 }
 
 
-void ejsLoadXMLAsc(Ejs *ejs, EjsXML *xml, cchar *xmlString)
+PUBLIC void ejsLoadXMLAsc(Ejs *ejs, EjsXML *xml, cchar *xmlString)
 {
     ejsLoadXMLString(ejs, xml, ejsCreateStringFromAsc(ejs, xmlString));
 }
 
 
-void ejsManageXML(EjsXML *xml, int flags)
+PUBLIC void ejsManageXML(EjsXML *xml, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         mprMark(xml->parent);
@@ -1046,7 +1046,7 @@ void ejsManageXML(EjsXML *xml, int flags)
 }
 
 
-void ejsCreateXMLType(Ejs *ejs)
+PUBLIC void ejsCreateXMLType(Ejs *ejs)
 {
     EjsType     *type;
 
@@ -1069,7 +1069,7 @@ void ejsCreateXMLType(Ejs *ejs)
 }
 
 
-void ejsConfigureXMLType(Ejs *ejs)
+PUBLIC void ejsConfigureXMLType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

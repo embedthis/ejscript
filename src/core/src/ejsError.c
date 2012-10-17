@@ -73,7 +73,7 @@ static EjsArray *error_capture(Ejs *ejs, EjsError *error, int argc,  EjsObj **ar
 
 /************************************ Factory *********************************/
 
-EjsError *ejsCreateError(Ejs *ejs, EjsType *type, EjsObj *msg) 
+PUBLIC EjsError *ejsCreateError(Ejs *ejs, EjsType *type, EjsObj *msg) 
 {
     EjsError    *error;
 
@@ -99,7 +99,7 @@ static EjsType *defineType(Ejs *ejs, cchar *name, int id)
 }
 
 
-void ejsCreateErrorType(Ejs *ejs)
+PUBLIC void ejsCreateErrorType(Ejs *ejs)
 {
     defineType(ejs, "Error", S_Error);
     defineType(ejs, "ArgError", ES_ArgError);
@@ -131,7 +131,7 @@ static void configureType(Ejs *ejs, cchar *name)
 }
 
 
-void ejsConfigureErrorType(Ejs *ejs)
+PUBLIC void ejsConfigureErrorType(Ejs *ejs)
 {
     //  OPT simplify
     configureType(ejs, "Error");

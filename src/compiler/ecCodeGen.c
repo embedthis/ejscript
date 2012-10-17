@@ -111,7 +111,7 @@ static void     setStack(EcCompiler *cp, int count);
 /*
     Generate code for evaluating conditional compilation directives
  */
-void ecGenConditionalCode(EcCompiler *cp, EcNode *np, EjsModule *mp)
+PUBLIC void ecGenConditionalCode(EcCompiler *cp, EcNode *np, EjsModule *mp)
 {
     ENTER(cp);
 
@@ -132,7 +132,7 @@ void ecGenConditionalCode(EcCompiler *cp, EcNode *np, EjsModule *mp)
 /*
     Top level for code generation. Loop through the AST nodes recursively.
  */
-int ecCodeGen(EcCompiler *cp)
+PUBLIC int ecCodeGen(EcCompiler *cp)
 {
     EjsModule   *mp;
     EcNode      *np;
@@ -4351,7 +4351,7 @@ static void emitNamespace(EcCompiler *cp, EjsNamespace *nsp)
 /*
     Aggregate the allowable kinds of jumps
  */
-void ecStartBreakableStatement(EcCompiler *cp, int kinds)
+PUBLIC void ecStartBreakableStatement(EcCompiler *cp, int kinds)
 {
     EcState     *state;
 

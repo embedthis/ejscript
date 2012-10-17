@@ -85,7 +85,7 @@ static EjsObj *gc_verify(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 }
 
 
-void ejsConfigureGCType(Ejs *ejs)
+PUBLIC void ejsConfigureGCType(Ejs *ejs)
 {
     EjsType         *type;
 

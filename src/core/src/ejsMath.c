@@ -256,7 +256,7 @@ static EjsNumber *math_tan(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 /*********************************** Factory **********************************/
 
-void ejsConfigureMathType(Ejs *ejs)
+PUBLIC void ejsConfigureMathType(Ejs *ejs)
 {
     EjsType     *type;
 

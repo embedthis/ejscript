@@ -124,7 +124,7 @@ static EjsFile *lf_redirect(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 /*********************************** Factory **********************************/
 
-void ejsConfigureMprLogType(Ejs *ejs)
+PUBLIC void ejsConfigureMprLogType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

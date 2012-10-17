@@ -133,7 +133,7 @@ static EjsObj *printStats(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 
 /******************************** Initialization ******************************/
 
-void ejsConfigureMemoryType(Ejs *ejs)
+PUBLIC void ejsConfigureMemoryType(Ejs *ejs)
 {
     EjsType     *type;
 

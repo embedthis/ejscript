@@ -397,7 +397,7 @@ static EjsObj *numberToString(Ejs *ejs, EjsNumber *vp, int argc, EjsObj **argv)
 /*********************************** Support **********************************/
 
 #ifndef ejsIsNan
-int ejsIsNan(double f)
+PUBLIC int ejsIsNan(double f)
 {
 #if BIT_WIN_LIKE
     return _isnan(f);
@@ -410,7 +410,7 @@ int ejsIsNan(double f)
 #endif
 
 
-bool ejsIsInfinite(MprNumber f)
+PUBLIC bool ejsIsInfinite(MprNumber f)
 {
 #if BIT_WIN_LIKE
     return !_finite(f);
@@ -422,7 +422,7 @@ bool ejsIsInfinite(MprNumber f)
 }
 
 
-void ejsLockDtoa(int n)
+PUBLIC void ejsLockDtoa(int n)
 {
     EjsService  *es;
     
@@ -431,7 +431,7 @@ void ejsLockDtoa(int n)
 }
 
 
-void ejsUnlockDtoa(int n)
+PUBLIC void ejsUnlockDtoa(int n)
 {
     EjsService  *es;
     
@@ -583,7 +583,7 @@ static char *ntoa(double value, int ndigits, int mode, int flags)
     Create an initialized number
  */
 
-EjsNumber *ejsCreateNumber(Ejs *ejs, MprNumber value)
+PUBLIC EjsNumber *ejsCreateNumber(Ejs *ejs, MprNumber value)
 {
     EjsNumber   *vp;
 
@@ -601,7 +601,7 @@ EjsNumber *ejsCreateNumber(Ejs *ejs, MprNumber value)
 }
 
 
-void ejsCreateNumberType(Ejs *ejs)
+PUBLIC void ejsCreateNumberType(Ejs *ejs)
 {
     EjsNumber   *np;
     EjsType     *type;
@@ -648,7 +648,7 @@ void ejsCreateNumberType(Ejs *ejs)
 }
 
 
-void ejsConfigureNumberType(Ejs *ejs)
+PUBLIC void ejsConfigureNumberType(Ejs *ejs)
 {
     EjsType    *type;
     EjsPot     *prototype;

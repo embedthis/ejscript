@@ -186,7 +186,7 @@ static EjsBoolean *regex_test(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 }
 
 
-EjsString *ejsRegExpToString(Ejs *ejs, EjsRegExp *rp)
+PUBLIC EjsString *ejsRegExpToString(Ejs *ejs, EjsRegExp *rp)
 {
     return (EjsString*) castRegExp(ejs, rp, ESV(String));
 }
@@ -196,7 +196,7 @@ EjsString *ejsRegExpToString(Ejs *ejs, EjsRegExp *rp)
     Create an initialized regular expression object. The pattern should include
     the slash delimiters. For example: /abc/ or /abc/g
  */
-EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
+PUBLIC EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
 {
     EjsRegExp   *rp;
     cchar       *errMsg;
@@ -319,7 +319,7 @@ static void manageRegExp(EjsRegExp *rp, int flags)
 }
 
 
-void ejsCreateRegExpType(Ejs *ejs)
+PUBLIC void ejsCreateRegExpType(Ejs *ejs)
 {
     EjsType     *type;
 
@@ -329,7 +329,7 @@ void ejsCreateRegExpType(Ejs *ejs)
 }
 
 
-void ejsConfigureRegExpType(Ejs *ejs)
+PUBLIC void ejsConfigureRegExpType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

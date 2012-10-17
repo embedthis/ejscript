@@ -557,7 +557,7 @@ static EjsLocalCache *cloneLocalCache(Ejs *ejs, EjsLocalCache *src, bool deep)
 }
 
 
-void ejsConfigureLocalCacheType(Ejs *ejs)
+PUBLIC void ejsConfigureLocalCacheType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

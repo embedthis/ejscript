@@ -176,13 +176,13 @@ static EjsObj *getNullProperty(Ejs *ejs, EjsNull *unused, int slotNum)
     We dont actually allocate any nulls. We just reuse the singleton instance.
     OPT - macro
  */
-EjsNull *ejsCreateNull(Ejs *ejs)
+PUBLIC EjsNull *ejsCreateNull(Ejs *ejs)
 {
     return ESV(null);
 }
 
 
-void ejsInitNullType(Ejs *ejs, EjsType *type)
+PUBLIC void ejsInitNullType(Ejs *ejs, EjsType *type)
 {
     type->helpers.cast             = (EjsCastHelper) castNull;
     type->helpers.getProperty      = (EjsGetPropertyHelper) getNullProperty;
@@ -190,7 +190,7 @@ void ejsInitNullType(Ejs *ejs, EjsType *type)
 }
 
 
-void ejsConfigureNullType(Ejs *ejs)
+PUBLIC void ejsConfigureNullType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

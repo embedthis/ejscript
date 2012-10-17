@@ -38,6 +38,7 @@
     #ifndef     _WIN32_WINNT
         #define _WIN32_WINNT 0x501
     #endif
+    #define ZLIB_DLL
 #endif
 
 #ifndef ZLIB_INTERNAL

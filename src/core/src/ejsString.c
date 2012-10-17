@@ -1522,7 +1522,7 @@ static EjsString *toCamel(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 /*
     Convert a string to a literal string representation. Wrap in quotes and backquote any quotes or backquotes.
  */
-EjsString *ejsToLiteralString(Ejs *ejs, EjsObj *vp)
+PUBLIC EjsString *ejsToLiteralString(Ejs *ejs, EjsObj *vp)
 {
     EjsString   *sp;
     MprBuf      *buf;
@@ -1880,7 +1880,7 @@ static ssize indexof(wchar *str, ssize len, EjsString *pattern, ssize patternLen
 
 /******************************************** String API *******************************************/
 
-int ejsAtoi(Ejs *ejs, EjsString *sp, int radix)
+PUBLIC int ejsAtoi(Ejs *ejs, EjsString *sp, int radix)
 {
     int     num, i;
 
@@ -1892,7 +1892,7 @@ int ejsAtoi(Ejs *ejs, EjsString *sp, int radix)
 }
 
 
-EjsString *ejsJoinString(Ejs *ejs, EjsString *s1, EjsString *s2)
+PUBLIC EjsString *ejsJoinString(Ejs *ejs, EjsString *s1, EjsString *s2)
 {
     EjsString   *result;
     ssize       len;
@@ -1918,7 +1918,7 @@ EjsString *ejsJoinString(Ejs *ejs, EjsString *s1, EjsString *s2)
     Join a set of unicode string arguments onto another.
     TODO - rename to join
  */
-EjsString *ejsJoinStrings(Ejs *ejs, EjsString *src, ...)
+PUBLIC EjsString *ejsJoinStrings(Ejs *ejs, EjsString *src, ...)
 {
     EjsString   *sp, *result;
     va_list     args;
@@ -1944,7 +1944,7 @@ EjsString *ejsJoinStrings(Ejs *ejs, EjsString *src, ...)
 }
 
 
-int ejsStartsWithAsc(Ejs *ejs, EjsString *sp, cchar *pat)
+PUBLIC int ejsStartsWithAsc(Ejs *ejs, EjsString *sp, cchar *pat)
 {
     ssize   i;
 
@@ -1966,7 +1966,7 @@ int ejsStartsWithAsc(Ejs *ejs, EjsString *sp, cchar *pat)
 }
 
 
-int ejsCompareAsc(Ejs *ejs, EjsString *sp, cchar *str)
+PUBLIC int ejsCompareAsc(Ejs *ejs, EjsString *sp, cchar *str)
 {
     wchar       *s1;
     cchar       *s2;
@@ -2003,7 +2003,7 @@ int ejsCompareAsc(Ejs *ejs, EjsString *sp, cchar *str)
 /*
     Compare interned strings
  */
-int ejsCompareString(Ejs *ejs, EjsString *sp1, EjsString *sp2)
+PUBLIC int ejsCompareString(Ejs *ejs, EjsString *sp1, EjsString *sp2)
 {
     wchar       *s1;
     wchar       *s2;
@@ -2035,7 +2035,7 @@ int ejsCompareString(Ejs *ejs, EjsString *sp1, EjsString *sp2)
 }
 
 
-int ejsCompareSubstring(Ejs *ejs, EjsString *sp1, EjsString *sp2, ssize offset, ssize len)
+PUBLIC int ejsCompareSubstring(Ejs *ejs, EjsString *sp1, EjsString *sp2, ssize offset, ssize len)
 {
     mprAssert(0 <= len && len < MAXINT);
 
@@ -2046,7 +2046,7 @@ int ejsCompareSubstring(Ejs *ejs, EjsString *sp1, EjsString *sp2, ssize offset, 
 }
 
 
-int ejsCompareWide(Ejs *ejs, EjsString *sp1, wchar *sp2, ssize len)
+PUBLIC int ejsCompareWide(Ejs *ejs, EjsString *sp1, wchar *sp2, ssize len)
 {
     wchar       *s1;
     wchar       *s2;
@@ -2085,7 +2085,7 @@ int ejsCompareWide(Ejs *ejs, EjsString *sp1, wchar *sp2, ssize len)
 /*
     Return the index in a unicode string of a given unicode character code. Return -1 if not found.
  */
-int ejsContainsChar(Ejs *ejs, EjsString *sp, int charPat)
+PUBLIC int ejsContainsChar(Ejs *ejs, EjsString *sp, int charPat)
 {
     int     i;
 
@@ -2104,7 +2104,7 @@ int ejsContainsChar(Ejs *ejs, EjsString *sp, int charPat)
 /*
     Return TRUE if a unicode string contains a given unicode string after doing a case insensitive comparison.
  */
-int ejsContainsStringAnyCase(Ejs *ejs, EjsString *sp, EjsString *pat)
+PUBLIC int ejsContainsStringAnyCase(Ejs *ejs, EjsString *sp, EjsString *pat)
 {
     int     i, j;
 
@@ -2128,7 +2128,7 @@ int ejsContainsStringAnyCase(Ejs *ejs, EjsString *sp, EjsString *pat)
 #endif
 
 
-int ejsContainsAsc(Ejs *ejs, EjsString *sp, cchar *pat)
+PUBLIC int ejsContainsAsc(Ejs *ejs, EjsString *sp, cchar *pat)
 {
     ssize   len;
     int     i, j, k;
@@ -2155,7 +2155,7 @@ int ejsContainsAsc(Ejs *ejs, EjsString *sp, cchar *pat)
 }
 
 
-int ejsContainsString(Ejs *ejs, EjsString *sp, EjsString *pat)
+PUBLIC int ejsContainsString(Ejs *ejs, EjsString *sp, EjsString *pat)
 {
     int     i, j, k;
 
@@ -2180,7 +2180,7 @@ int ejsContainsString(Ejs *ejs, EjsString *sp, EjsString *pat)
 }
 
 
-char *ejsToMulti(Ejs *ejs, EjsAny *ev)
+PUBLIC char *ejsToMulti(Ejs *ejs, EjsAny *ev)
 {
     if (ev == 0) {
         ev = ESV(empty);
@@ -2206,7 +2206,7 @@ char *ejsToMulti(Ejs *ejs, EjsAny *ev)
 }
 
 
-EjsString *ejsSprintf(Ejs *ejs, cchar *fmt, ...)
+PUBLIC EjsString *ejsSprintf(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     ap;
     char        *result;
@@ -2224,7 +2224,7 @@ EjsString *ejsSprintf(Ejs *ejs, cchar *fmt, ...)
     Get a substring from "src" starting at "start" of length "len"
     If len < 0, use entire string.
  */
-EjsString *ejsSubstring(Ejs *ejs, EjsString *src, ssize start, ssize len)
+PUBLIC EjsString *ejsSubstring(Ejs *ejs, EjsString *src, ssize start, ssize len)
 {
     EjsString   *result;
 
@@ -2247,7 +2247,7 @@ EjsString *ejsSubstring(Ejs *ejs, EjsString *src, ssize start, ssize len)
 }
 
 
-EjsString *ejsToLower(Ejs *ejs, EjsString *sp)
+PUBLIC EjsString *ejsToLower(Ejs *ejs, EjsString *sp)
 {
     EjsString   *result;
     int         i;
@@ -2263,7 +2263,7 @@ EjsString *ejsToLower(Ejs *ejs, EjsString *sp)
 }
 
 
-EjsString *ejsToUpper(Ejs *ejs, EjsString *sp)
+PUBLIC EjsString *ejsToUpper(Ejs *ejs, EjsString *sp)
 {
     EjsString   *result;
     int         i;
@@ -2280,7 +2280,7 @@ EjsString *ejsToUpper(Ejs *ejs, EjsString *sp)
 
 
 #if UNUSED && KEEP
-EjsString *ejsTrimString(Ejs *ejs, EjsString *sp, cchar *pat, int flags)
+PUBLIC EjsString *ejsTrimString(Ejs *ejs, EjsString *sp, cchar *pat, int flags)
 {
     EjsString   *result;
     wchar       *start, *end;
@@ -2327,7 +2327,7 @@ EjsString *ejsTrimString(Ejs *ejs, EjsString *sp, cchar *pat, int flags)
 #endif
 
 
-EjsString *ejsTruncateString(Ejs *ejs, EjsString *sp, ssize len)
+PUBLIC EjsString *ejsTruncateString(Ejs *ejs, EjsString *sp, ssize len)
 {
     EjsString   *result;
 
@@ -2344,7 +2344,7 @@ EjsString *ejsTruncateString(Ejs *ejs, EjsString *sp, ssize len)
 /*
     Intern a unicode string. Lookup a string and return an interned string (this may be an existing interned string)
  */
-EjsString *ejsInternString(EjsString *str)
+PUBLIC EjsString *ejsInternString(EjsString *str)
 {
     EjsString   *head, *sp;
     EjsIntern   *ip;
@@ -2399,7 +2399,7 @@ EjsString *ejsInternString(EjsString *str)
 /*
     Intern a wide C string and return an interned wide string
  */
-EjsString *ejsInternWide(Ejs *ejs, wchar *value, ssize len)
+PUBLIC EjsString *ejsInternWide(Ejs *ejs, wchar *value, ssize len)
 {
     EjsString   *head, *sp;
     EjsIntern   *ip;
@@ -2452,7 +2452,7 @@ EjsString *ejsInternWide(Ejs *ejs, wchar *value, ssize len)
 }
 
 
-EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
+PUBLIC EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
 {
     EjsString   *head, *sp;
     EjsIntern   *ip;
@@ -2514,14 +2514,14 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
 
 
 #if BIT_CHAR_LEN == 1
-EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
+PUBLIC EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
 {
     return ejsInternAsc(ejs, value, len);
 }
 
 #else /* BIT_CHAR_LEN > 1 */
 
-EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
+PUBLIC EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
 {
     EjsString   *head, *sp, src;
     ssize       i, end;
@@ -2667,7 +2667,7 @@ static void unlinkString(EjsString *sp)
 
 /*********************************** Factory **********************************/
 
-EjsString *ejsCreateString(Ejs *ejs, wchar *value, ssize len)
+PUBLIC EjsString *ejsCreateString(Ejs *ejs, wchar *value, ssize len)
 {
     if (value == 0) {
         return ESV(empty);
@@ -2679,7 +2679,7 @@ EjsString *ejsCreateString(Ejs *ejs, wchar *value, ssize len)
 }
 
 
-EjsString *ejsCreateStringFromAsc(Ejs *ejs, cchar *value)
+PUBLIC EjsString *ejsCreateStringFromAsc(Ejs *ejs, cchar *value)
 {
     if (value == NULL) {
         value = "";
@@ -2688,7 +2688,7 @@ EjsString *ejsCreateStringFromAsc(Ejs *ejs, cchar *value)
 }
 
 
-EjsString *ejsCreateStringFromMulti(Ejs *ejs, cchar *value, ssize len)
+PUBLIC EjsString *ejsCreateStringFromMulti(Ejs *ejs, cchar *value, ssize len)
 {
     mprAssert(0 <= len && len < MAXINT);
     if (value == 0 || len < 0) {
@@ -2698,7 +2698,7 @@ EjsString *ejsCreateStringFromMulti(Ejs *ejs, cchar *value, ssize len)
 }
 
 
-EjsString *ejsCreateStringFromBytes(Ejs *ejs, cchar *value, ssize len)
+PUBLIC EjsString *ejsCreateStringFromBytes(Ejs *ejs, cchar *value, ssize len)
 {
     mprAssert(0 <= len && len < MAXINT);
     return ejsInternAsc(ejs, value, len);
@@ -2708,7 +2708,7 @@ EjsString *ejsCreateStringFromBytes(Ejs *ejs, cchar *value, ssize len)
 /*
     Create an empty string object and do not intern. Caller's should call ejsInternString when the string value is defined.
  */
-EjsString *ejsCreateBareString(Ejs *ejs, ssize len)
+PUBLIC EjsString *ejsCreateBareString(Ejs *ejs, ssize len)
 {
     EjsString   *sp;
     
@@ -2723,7 +2723,7 @@ EjsString *ejsCreateBareString(Ejs *ejs, ssize len)
 
 
 #if UNUSED && KEEP
-EjsString *ejsCreateNonInternedString(Ejs *ejs, wchar *value, ssize len)
+PUBLIC EjsString *ejsCreateNonInternedString(Ejs *ejs, wchar *value, ssize len)
 {
     EjsString   *sp;
     
@@ -2738,7 +2738,7 @@ EjsString *ejsCreateNonInternedString(Ejs *ejs, wchar *value, ssize len)
 #endif
 
 
-void ejsManageString(EjsString *sp, int flags)
+PUBLIC void ejsManageString(EjsString *sp, int flags)
 {
     EjsIntern   *ip;
 
@@ -2755,7 +2755,7 @@ void ejsManageString(EjsString *sp, int flags)
 }
 
 
-EjsIntern *ejsCreateIntern(EjsService *sp)
+PUBLIC EjsIntern *ejsCreateIntern(EjsService *sp)
 {
     EjsIntern   *intern;
     
@@ -2766,7 +2766,7 @@ EjsIntern *ejsCreateIntern(EjsService *sp)
 }
 
 
-void ejsDestroyIntern(EjsIntern *ip)
+PUBLIC void ejsDestroyIntern(EjsIntern *ip)
 {
     EjsString   *sp, *head, *next;
     int         i;
@@ -2799,7 +2799,7 @@ static void manageIntern(EjsIntern *intern, int flags)
 }
 
 
-void ejsInitStringType(Ejs *ejs, EjsType *type)
+PUBLIC void ejsInitStringType(Ejs *ejs, EjsType *type)
 {
     type->helpers.cast = (EjsCastHelper) castString;
     type->helpers.clone = (EjsCloneHelper) cloneString;
@@ -2810,7 +2810,7 @@ void ejsInitStringType(Ejs *ejs, EjsType *type)
 }
 
 
-void ejsConfigureStringType(Ejs *ejs)
+PUBLIC void ejsConfigureStringType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

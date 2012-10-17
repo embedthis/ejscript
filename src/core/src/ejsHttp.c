@@ -735,7 +735,7 @@ static void setupTrace(Ejs *ejs, HttpTrace *trace, int dir, EjsObj *options)
 }
 
 
-int ejsSetupHttpTrace(Ejs *ejs, HttpTrace *trace, EjsObj *options)
+PUBLIC int ejsSetupHttpTrace(Ejs *ejs, HttpTrace *trace, EjsObj *options)
 {
     EjsObj      *rx, *tx;
 
@@ -1365,7 +1365,7 @@ static bool waitForResponseHeaders(EjsHttp *hp)
 /*
     Get limits:  obj[*] = limits
  */
-void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, bool server) 
+PUBLIC void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, bool server) 
 {
     ejsSetPropertyByName(ejs, obj, EN("chunk"), ejsCreateNumber(ejs, (MprNumber) limits->chunkSize));
     ejsSetPropertyByName(ejs, obj, EN("connReuse"), ejsCreateNumber(ejs, limits->keepAliveMax));
@@ -1405,7 +1405,7 @@ static int64 setLimit(Ejs *ejs, EjsObj *obj, cchar *field, int factor)
 }
 
 
-void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, bool server) 
+PUBLIC void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, bool server) 
 {
     limits->chunkSize = (ssize) setLimit(ejs, obj, "chunk", 1);
     limits->inactivityTimeout = (int) setLimit(ejs, obj, "inactivityTimeout", MPR_TICKS_PER_SEC);
@@ -1489,7 +1489,7 @@ static void manageHttp(EjsHttp *http, int flags)
 }
 
 
-void ejsConfigureHttpType(Ejs *ejs)
+PUBLIC void ejsConfigureHttpType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;
