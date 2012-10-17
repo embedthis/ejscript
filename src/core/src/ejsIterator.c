@@ -25,7 +25,7 @@ static EjsObj *nextIterator(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 }
 
 
-EjsObj *ejsThrowStopIteration(Ejs *ejs)
+PUBLIC EjsObj *ejsThrowStopIteration(Ejs *ejs)
 {
 #if FUTURE
     ejs->exception = ejs->iterator;
@@ -63,7 +63,7 @@ static EjsObj *iteratorConstructor(Ejs *ejs, EjsIterator *ip, int argc, EjsObj *
 /*
     Create an iterator.
  */
-EjsIterator *ejsCreateIterator(Ejs *ejs, EjsAny *obj, int length, void *nativeNext, bool deep, EjsArray *namespaces)
+PUBLIC EjsIterator *ejsCreateIterator(Ejs *ejs, EjsAny *obj, int length, void *nativeNext, bool deep, EjsArray *namespaces)
 {
     EjsIterator     *ip;
 
@@ -93,7 +93,7 @@ static void manageIterator(EjsIterator *ip, int flags)
 /*
     Create the Iterator and StopIteration types
  */
-void ejsCreateIteratorType(Ejs *ejs)
+PUBLIC void ejsCreateIteratorType(Ejs *ejs)
 {
     ejsCreateCoreType(ejs, N(EJS_ITERATOR_NAMESPACE, "Iterator"), sizeof(EjsIterator), S_Iterator,  
         ES_iterator_Iterator_NUM_CLASS_PROP, manageIterator, EJS_TYPE_OBJ);
@@ -102,7 +102,7 @@ void ejsCreateIteratorType(Ejs *ejs)
 }
 
 
-void ejsConfigureIteratorType(Ejs *ejs)
+PUBLIC void ejsConfigureIteratorType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

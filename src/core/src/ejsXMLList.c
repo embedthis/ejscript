@@ -774,7 +774,7 @@ static EjsObj *setLength(Ejs *ejs, EjsXMLList *xml, int argc, EjsObj **argv)
 
 /*********************************** Factory **********************************/
 
-EjsXML *ejsCreateXMLList(Ejs *ejs, EjsXML *targetObject, EjsName targetProperty)
+PUBLIC EjsXML *ejsCreateXMLList(Ejs *ejs, EjsXML *targetObject, EjsName targetProperty)
 {
     EjsXML      *list;
 
@@ -792,7 +792,7 @@ EjsXML *ejsCreateXMLList(Ejs *ejs, EjsXML *targetObject, EjsName targetProperty)
 }
 
 
-void ejsCreateXMLListType(Ejs *ejs)
+PUBLIC void ejsCreateXMLListType(Ejs *ejs)
 {
     EjsType     *type;
 
@@ -815,7 +815,7 @@ void ejsCreateXMLListType(Ejs *ejs)
 }
 
 
-void ejsConfigureXMLListType(Ejs *ejs)
+PUBLIC void ejsConfigureXMLListType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

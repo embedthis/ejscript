@@ -153,7 +153,7 @@
 
 #endif /* VXWORKS */
 
-#if WINDOWS
+#if _WIN32
 /*
     Force winsock2 rather than winsock
  */
@@ -167,6 +167,20 @@
 #if !CYGWIN
 extern int usleep(unsigned int msec);
 #endif
+
+
+#ifndef SQLITE_API
+    #if _WIN32
+        #define SQLITE_API extern __declspec(dllexport)
+    #else
+        #define SQLITE_API extern
+    #endif
+    #define SQLITE_EXTERN
+#endif
+
+//#ifndef SQLITE_EXTERN
+//# define SQLITE_EXTERN extern
+//#endif
 
 #endif /* EMBEDTHIS_MODIFICATION */
 
@@ -224,7 +238,8 @@ extern "C" {
 #endif
 
 #ifndef SQLITE_API
-# define SQLITE_API
+//# define SQLITE_API
+#define SQLITE_API extern __declspec(dllexport)
 #endif
 
 

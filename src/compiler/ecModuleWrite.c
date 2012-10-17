@@ -30,7 +30,7 @@ static int sumString(EjsString *name);
 /*
     Write out the module file header
  */
-int ecCreateModuleHeader(EcCompiler *cp)
+PUBLIC int ecCreateModuleHeader(EcCompiler *cp)
 {
     EjsModuleHdr    hdr;
 
@@ -45,7 +45,7 @@ int ecCreateModuleHeader(EcCompiler *cp)
 /*
     Create a module section. This writes all classes, functions, variables and blocks contained by the module.
  */
-int ecCreateModuleSection(EcCompiler *cp)
+PUBLIC int ecCreateModuleSection(EcCompiler *cp)
 {
     EjsConstants    *constants;
     EjsModule       *mp;
@@ -636,7 +636,7 @@ static void createDocSection(EcCompiler *cp, cchar *tag, EjsPot *block, int slot
     Add a constant to the constant pool. Grow if required and return the
     constant string offset into the pool.
  */
-int ecAddStringConstant(EcCompiler *cp, EjsString *sp)
+PUBLIC int ecAddStringConstant(EcCompiler *cp, EjsString *sp)
 {
     Ejs     *ejs;
     int     offset;
@@ -655,7 +655,7 @@ int ecAddStringConstant(EcCompiler *cp, EjsString *sp)
 }
 
 
-int ecAddCStringConstant(EcCompiler *cp, cchar *str)
+PUBLIC int ecAddCStringConstant(EcCompiler *cp, cchar *str)
 {
     int    offset;
 
@@ -672,7 +672,7 @@ int ecAddCStringConstant(EcCompiler *cp, cchar *str)
 }
 
 
-int ecAddNameConstant(EcCompiler *cp, EjsName qname)
+PUBLIC int ecAddNameConstant(EcCompiler *cp, EjsName qname)
 {
     if (ecAddStringConstant(cp, qname.name) < 0 || ecAddStringConstant(cp, qname.space) < 0) {
         return EJS_ERR;
@@ -681,7 +681,7 @@ int ecAddNameConstant(EcCompiler *cp, EjsName qname)
 }
 
 
-void ecAddFunctionConstants(EcCompiler *cp, EjsPot *obj, int slotNum)
+PUBLIC void ecAddFunctionConstants(EcCompiler *cp, EjsPot *obj, int slotNum)
 {
     EjsFunction     *fun;
 
@@ -699,7 +699,7 @@ void ecAddFunctionConstants(EcCompiler *cp, EjsPot *obj, int slotNum)
 }
 
 
-void ecAddConstants(EcCompiler *cp, EjsAny *block)
+PUBLIC void ecAddConstants(EcCompiler *cp, EjsAny *block)
 {
     Ejs         *ejs;
     EjsName     qname;
@@ -735,7 +735,7 @@ void ecAddConstants(EcCompiler *cp, EjsAny *block)
 }
 
 
-int ecAddDocConstant(EcCompiler *cp, cchar *tag, void *vp, int slotNum)
+PUBLIC int ecAddDocConstant(EcCompiler *cp, cchar *tag, void *vp, int slotNum)
 {
     Ejs         *ejs;
     EjsDoc      *doc;
@@ -762,7 +762,7 @@ int ecAddDocConstant(EcCompiler *cp, cchar *tag, void *vp, int slotNum)
 /*
     Add a constant and encode the offset.
  */
-int ecAddModuleConstant(EcCompiler *cp, EjsModule *mp, cchar *str)
+PUBLIC int ecAddModuleConstant(EcCompiler *cp, EjsModule *mp, cchar *str)
 {
     EjsConstants    *constants;
     MprKey          *kp;
@@ -809,7 +809,7 @@ static void encodeTypeName(EcCompiler *cp, EjsString *name, int flags)
     Encode a global variable (usually a type). The encoding is untyped: 0, bound type: slot number, unbound or 
     unresolved type: name.
  */
-void ecEncodeGlobal(EcCompiler *cp, EjsAny *obj, EjsName qname)
+PUBLIC void ecEncodeGlobal(EcCompiler *cp, EjsAny *obj, EjsName qname)
 {
     Ejs         *ejs;
     int         slotNum;
@@ -864,7 +864,7 @@ static int reserveRoom(EcCompiler *cp, int room)
 /*
     Encode an Ejscript instruction operation code
  */
-void ecEncodeOpcode(EcCompiler *cp, int code)
+PUBLIC void ecEncodeOpcode(EcCompiler *cp, int code)
 {
     mprAssert(code < 240);
     mprAssert(cp);
@@ -877,7 +877,7 @@ void ecEncodeOpcode(EcCompiler *cp, int code)
 /*
     Encode a <name><namespace> pair
  */
-void ecEncodeName(EcCompiler *cp, EjsName qname)
+PUBLIC void ecEncodeName(EcCompiler *cp, EjsName qname)
 {
     mprAssert(qname.name);
 
@@ -886,7 +886,7 @@ void ecEncodeName(EcCompiler *cp, EjsName qname)
 }
 
 
-void ecEncodeConst(EcCompiler *cp, EjsString *sp)
+PUBLIC void ecEncodeConst(EcCompiler *cp, EjsString *sp)
 {
     Ejs     *ejs;
     cchar   *str;
@@ -910,7 +910,7 @@ void ecEncodeConst(EcCompiler *cp, EjsString *sp)
 }
 
 
-void ecEncodeByte(EcCompiler *cp, int value)
+PUBLIC void ecEncodeByte(EcCompiler *cp, int value)
 {
     EcCodeGen   *code;
     uchar       *pc;
@@ -927,7 +927,7 @@ void ecEncodeByte(EcCompiler *cp, int value)
 }
 
 
-void ecEncodeMulti(EcCompiler *cp, cchar *str)
+PUBLIC void ecEncodeMulti(EcCompiler *cp, cchar *str)
 {
     int    len;
 
@@ -940,7 +940,7 @@ void ecEncodeMulti(EcCompiler *cp, cchar *str)
 }
 
 
-void ecEncodeWideAsMulti(EcCompiler *cp, wchar *str)
+PUBLIC void ecEncodeWideAsMulti(EcCompiler *cp, wchar *str)
 {
     char    *mstr;
     ssize   len;
@@ -956,7 +956,7 @@ void ecEncodeWideAsMulti(EcCompiler *cp, wchar *str)
 }
 
 
-void ecEncodeNum(EcCompiler *cp, int64 number)
+PUBLIC void ecEncodeNum(EcCompiler *cp, int64 number)
 {
     MprBuf      *buf;
     int         len;
@@ -971,7 +971,7 @@ void ecEncodeNum(EcCompiler *cp, int64 number)
 }
 
 
-void ecEncodeDouble(EcCompiler *cp, double value)
+PUBLIC void ecEncodeDouble(EcCompiler *cp, double value)
 {
     MprBuf      *buf;
     int         len;
@@ -989,7 +989,7 @@ void ecEncodeDouble(EcCompiler *cp, double value)
 /*
     Encode a 32-bit number. Always emit exactly 4 bytes.
  */
-void ecEncodeInt32(EcCompiler *cp, int number)
+PUBLIC void ecEncodeInt32(EcCompiler *cp, int number)
 {
     MprBuf      *buf;
     int         len;
@@ -1006,13 +1006,13 @@ void ecEncodeInt32(EcCompiler *cp, int number)
 }
 
 
-void ecEncodeByteAtPos(EcCompiler *cp, int offset, int value)
+PUBLIC void ecEncodeByteAtPos(EcCompiler *cp, int offset, int value)
 {
     ejsEncodeByteAtPos(cp->ejs, (uchar*) mprGetBufStart(cp->state->code->buf) + offset, value);
 }
 
 
-void ecEncodeInt32AtPos(EcCompiler *cp, int offset, int value)
+PUBLIC void ecEncodeInt32AtPos(EcCompiler *cp, int offset, int value)
 {
     if (abs(value) > EJS_ENCODE_MAX_WORD) {
         mprError("Code generation error. Word %d exceeds maximum %d", value, EJS_ENCODE_MAX_WORD);
@@ -1023,7 +1023,7 @@ void ecEncodeInt32AtPos(EcCompiler *cp, int offset, int value)
 }
 
 
-void ecEncodeBlock(EcCompiler *cp, cuchar *buf, int len)
+PUBLIC void ecEncodeBlock(EcCompiler *cp, cuchar *buf, int len)
 {
     EcCodeGen   *code;
 
@@ -1047,7 +1047,7 @@ uint ecGetCodeOffset(EcCompiler *cp)
 }
 
 
-int ecGetCodeLen(EcCompiler *cp, uchar *mark)
+PUBLIC int ecGetCodeLen(EcCompiler *cp, uchar *mark)
 {
     EcCodeGen   *code;
 
@@ -1059,13 +1059,13 @@ int ecGetCodeLen(EcCompiler *cp, uchar *mark)
 /*
     Copy the code at "pos" of length "size" the distance specified by "dist". Dist may be postitive or negative.
  */
-void ecCopyCode(EcCompiler *cp, uchar *pos, int size, int dist)
+PUBLIC void ecCopyCode(EcCompiler *cp, uchar *pos, int size, int dist)
 {
     mprMemcpy((char*) &pos[dist], size, (char*) pos, size);
 }
 
 
-void ecAdjustCodeLength(EcCompiler *cp, int adj)
+PUBLIC void ecAdjustCodeLength(EcCompiler *cp, int adj)
 {
     EcCodeGen   *code;
 

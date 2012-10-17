@@ -168,12 +168,12 @@ static EcNode   *parseVariableInitialisation(EcCompiler *cp);
 static int       parseVersion(EcCompiler *cp, int parseMax);
 static EcNode   *parseWhileStatement(EcCompiler *cp);
 static EcNode   *parseWithStatement(EcCompiler *cp);
-struct EcNode   *parseXMLAttribute(EcCompiler *cp, EcNode *np);
-struct EcNode   *parseXMLAttributes(EcCompiler *cp, EcNode *np);
-struct EcNode   *parseXMLElement(EcCompiler *cp, EcNode *np);
-struct EcNode   *parseXMLElementContent(EcCompiler *cp, EcNode *np);
-struct EcNode   *parseXMLTagContent(EcCompiler *cp, EcNode *np);
-struct EcNode   *parseXMLTagName(EcCompiler *cp, EcNode *np);
+PUBLIC struct EcNode   *parseXMLAttribute(EcCompiler *cp, EcNode *np);
+PUBLIC struct EcNode   *parseXMLAttributes(EcCompiler *cp, EcNode *np);
+PUBLIC struct EcNode   *parseXMLElement(EcCompiler *cp, EcNode *np);
+PUBLIC struct EcNode   *parseXMLElementContent(EcCompiler *cp, EcNode *np);
+PUBLIC struct EcNode   *parseXMLTagContent(EcCompiler *cp, EcNode *np);
+PUBLIC struct EcNode   *parseXMLTagName(EcCompiler *cp, EcNode *np);
 static EcNode   *parseYieldExpression(EcCompiler *cp);
 static int      peekAheadToken(EcCompiler *cp, int ahead);
 static EcToken  *peekAheadTokenStruct(EcCompiler *cp, int ahead);
@@ -458,7 +458,7 @@ static EcNode *compileInput(EcCompiler *cp, cchar *path)
     Compile a source file and parse all directives into the given nodes reference.
     This may be called with the input stream already setup to parse a script.
  */
-EcNode *ecParseFile(EcCompiler *cp, char *path)
+PUBLIC EcNode *ecParseFile(EcCompiler *cp, char *path)
 {
     EcNode  *np;
     int     opened;
@@ -488,7 +488,7 @@ EcNode *ecParseFile(EcCompiler *cp, char *path)
     This allows the caller to provide -1, -1 to match all versions.
     If both are equal, then only that version is acceptable.
  */
-EjsModule *ecLookupModule(EcCompiler *cp, EjsString *name, int minVersion, int maxVersion)
+PUBLIC EjsModule *ecLookupModule(EcCompiler *cp, EjsString *name, int minVersion, int maxVersion)
 {
     EjsModule   *mp, *best;
     int         next;
@@ -510,21 +510,21 @@ EjsModule *ecLookupModule(EcCompiler *cp, EjsString *name, int minVersion, int m
 }
 
 
-int ecAddModule(EcCompiler *cp, EjsModule *mp)
+PUBLIC int ecAddModule(EcCompiler *cp, EjsModule *mp)
 {
     mprAssert(cp->modules);
     return mprAddItem(cp->modules, mp);
 }
 
 
-int ecRemoveModule(EcCompiler *cp, EjsModule *mp)
+PUBLIC int ecRemoveModule(EcCompiler *cp, EjsModule *mp)
 {
     mprAssert(cp->modules);
     return mprRemoveItem(cp->modules, mp);
 }
 
 
-int ecResetModuleList(EcCompiler *cp)
+PUBLIC int ecResetModuleList(EcCompiler *cp)
 {
     cp->modules = mprCreateList(-1, 0);
     if (cp->modules == 0) {
@@ -534,7 +534,7 @@ int ecResetModuleList(EcCompiler *cp)
 }
 
 
-void ecResetParser(EcCompiler *cp)
+PUBLIC void ecResetParser(EcCompiler *cp)
 {
     cp->token = 0;
 }
@@ -1943,7 +1943,7 @@ static EcNode *parseForInExpression(EcCompiler *cp)
     AST
         Add data to literal.data buffer
  */
-struct EcNode *parseXMLInitializer(EcCompiler *cp)
+PUBLIC struct EcNode *parseXMLInitializer(EcCompiler *cp)
 {
     Ejs         *ejs;
     EcNode      *np;
@@ -2008,7 +2008,7 @@ struct EcNode *parseXMLInitializer(EcCompiler *cp)
         Text
     AST
  */
-struct EcNode *parseXMLElementContent(EcCompiler *cp, EcNode *np)
+PUBLIC struct EcNode *parseXMLElementContent(EcCompiler *cp, EcNode *np)
 {
     ENTER(cp);
 
@@ -2064,7 +2064,7 @@ struct EcNode *parseXMLElementContent(EcCompiler *cp, EcNode *np)
     AST
         Add data to literal.data buffer
  */
-struct EcNode *parseXMLElement(EcCompiler *cp, EcNode *np)
+PUBLIC struct EcNode *parseXMLElement(EcCompiler *cp, EcNode *np)
 {
     ENTER(cp);
 
@@ -2115,7 +2115,7 @@ struct EcNode *parseXMLElement(EcCompiler *cp, EcNode *np)
     AST
         Add data to literal.data buffer
  */
-struct EcNode *parseXMLTagContent(EcCompiler *cp, EcNode *np)
+PUBLIC struct EcNode *parseXMLTagContent(EcCompiler *cp, EcNode *np)
 {
     ENTER(cp);
 
@@ -2141,7 +2141,7 @@ struct EcNode *parseXMLTagContent(EcCompiler *cp, EcNode *np)
     AST
         Add data to literal.data buffer
  */
-struct EcNode *parseXMLTagName(EcCompiler *cp, EcNode *np)
+PUBLIC struct EcNode *parseXMLTagName(EcCompiler *cp, EcNode *np)
 {
     ENTER(cp);
 
@@ -2171,7 +2171,7 @@ struct EcNode *parseXMLTagName(EcCompiler *cp, EcNode *np)
     AST
         Add data to literal.data buffer
  */
-struct EcNode *parseXMLAttributes(EcCompiler *cp, EcNode *np)
+PUBLIC struct EcNode *parseXMLAttributes(EcCompiler *cp, EcNode *np)
 {
     int         tid;
 
@@ -2208,7 +2208,7 @@ struct EcNode *parseXMLAttributes(EcCompiler *cp, EcNode *np)
     AST
         Add data to literal.data buffer
  */
-struct EcNode *parseXMLAttribute(EcCompiler *cp, EcNode *np)
+PUBLIC struct EcNode *parseXMLAttribute(EcCompiler *cp, EcNode *np)
 {
     ENTER(cp);
 
@@ -9359,7 +9359,7 @@ static EcNode *parseSuper(EcCompiler *cp)
 /*
     Recover from a parse error to allow parsing to continue.
  */
-EcNode *ecResetError(EcCompiler *cp, EcNode *np, bool eatInput)
+PUBLIC EcNode *ecResetError(EcCompiler *cp, EcNode *np, bool eatInput)
 {
     int     tid;
 
@@ -9475,7 +9475,7 @@ static int peekAheadToken(EcCompiler *cp, int ahead)
 }
 
 
-int ecPeekToken(EcCompiler *cp)
+PUBLIC int ecPeekToken(EcCompiler *cp)
 {
     return peekAheadToken(cp, 1);
 }
@@ -9620,7 +9620,7 @@ static void copyDocString(EcCompiler *cp, EcNode *np, EcNode *from)
     This is used outside the parser. It must reset the line number as the
     node will not correspond to any actual source code line;
  */
-EcNode *ecCreateNode(EcCompiler *cp, int kind)
+PUBLIC EcNode *ecCreateNode(EcCompiler *cp, int kind)
 {
     EcNode  *node;
 
@@ -9658,7 +9658,7 @@ static EcNode *createNamespaceNode(EcCompiler *cp, EjsString *name, bool isDefau
 /*
     This is used outside the parser.
  */
-EcNode *ecLinkNode(EcNode *np, EcNode *child)
+PUBLIC EcNode *ecLinkNode(EcNode *np, EcNode *child)
 {
     return linkNode(np, child);
 }
@@ -9721,13 +9721,13 @@ static EcNode *appendNode(EcNode *np, EcNode *child)
 }
 
 
-EcNode *ecAppendNode(EcNode *np, EcNode *child)
+PUBLIC EcNode *ecAppendNode(EcNode *np, EcNode *child)
 {
     return appendNode(np, child);
 }
 
 
-EcNode *ecChangeNode(EcCompiler *cp, EcNode *np, EcNode *oldNode, EcNode *newNode)
+PUBLIC EcNode *ecChangeNode(EcCompiler *cp, EcNode *np, EcNode *oldNode, EcNode *newNode)
 {
     EcNode      *child;
     int         next;
@@ -9942,7 +9942,7 @@ static void addAscToLiteral(EcCompiler *cp, EcNode *np, cchar *str, ssize count)
 /*
     Reset the input. Eat all tokens, clear errors, exceptions and the result value. Used by ejs for console input.
  */
-void ecResetInput(EcCompiler *cp)
+PUBLIC void ecResetInput(EcCompiler *cp)
 {
     Ejs         *ejs;
     EcToken     *tp;
@@ -9958,31 +9958,31 @@ void ecResetInput(EcCompiler *cp)
 }
 
 
-void ecSetOptimizeLevel(EcCompiler *cp, int level)
+PUBLIC void ecSetOptimizeLevel(EcCompiler *cp, int level)
 {
     cp->optimizeLevel = level;
 }
 
 
-void ecSetWarnLevel(EcCompiler *cp, int level)
+PUBLIC void ecSetWarnLevel(EcCompiler *cp, int level)
 {
     cp->warnLevel = level;
 }
 
 
-void ecSetStrictMode(EcCompiler *cp, int enabled)
+PUBLIC void ecSetStrictMode(EcCompiler *cp, int enabled)
 {
     cp->strict = enabled;
 }
 
 
-void ecSetTabWidth(EcCompiler *cp, int width)
+PUBLIC void ecSetTabWidth(EcCompiler *cp, int width)
 {
     cp->tabWidth = width;
 }
 
 
-void ecSetOutputFile(EcCompiler *cp, cchar *outputFile)
+PUBLIC void ecSetOutputFile(EcCompiler *cp, cchar *outputFile)
 {
     if (outputFile) {
         //  UNICODE
@@ -9991,7 +9991,7 @@ void ecSetOutputFile(EcCompiler *cp, cchar *outputFile)
 }
 
 
-void ecSetOutputDir(EcCompiler *cp, cchar *outputDir)
+PUBLIC void ecSetOutputDir(EcCompiler *cp, cchar *outputDir)
 {
     if (outputDir) {
         //  UNICODE
@@ -10000,7 +10000,7 @@ void ecSetOutputDir(EcCompiler *cp, cchar *outputDir)
 }
 
 
-void ecSetCertFile(EcCompiler *cp, cchar *certFile)
+PUBLIC void ecSetCertFile(EcCompiler *cp, cchar *certFile)
 {
     //  UNICODE
     cp->certFile = sclone(certFile);
@@ -10019,7 +10019,7 @@ static EjsString *tokenString(EcCompiler *cp)
 }
 
 
-void ecMarkLocation(EcLocation *loc)
+PUBLIC void ecMarkLocation(EcLocation *loc)
 {
     mprMark(loc->source);
     mprMark(loc->filename);
@@ -10313,7 +10313,7 @@ static EcNode *createNode(EcCompiler *cp, int kind, EjsString *name)
 /*
     Report an error. Return a null EcNode so callers can report an error and return the null in one statement.
  */
-EcNode *parseError(EcCompiler *cp, cchar *fmt, ...)
+static EcNode *parseError(EcCompiler *cp, cchar *fmt, ...)
 {
     EcToken     *tp;
     va_list     args;
@@ -10333,7 +10333,7 @@ EcNode *parseError(EcCompiler *cp, cchar *fmt, ...)
 
 
 #if UNUSED
-EcNode *ecParseWarning(EcCompiler *cp, cchar *fmt, ...)
+PUBLIC EcNode *ecParseWarning(EcCompiler *cp, cchar *fmt, ...)
 {
     EcToken     *tp;
     va_list     args;

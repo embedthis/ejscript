@@ -227,7 +227,7 @@ static EjsObj *startWebSocketRequest(Ejs *ejs, EjsWebSocket *ws)
 }
 
 
-void relayEvent(EjsWebSocket *ws, int event, EjsAny *data)
+static void relayEvent(EjsWebSocket *ws, int event, EjsAny *data)
 {
     Ejs             *ejs;
     EjsAny          *eobj;
@@ -486,7 +486,7 @@ static void manageWebSocket(EjsWebSocket *ws, int flags)
 }
 
 
-void ejsConfigureWebSocketType(Ejs *ejs)
+PUBLIC void ejsConfigureWebSocketType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

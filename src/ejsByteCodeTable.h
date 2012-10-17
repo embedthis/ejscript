@@ -259,7 +259,7 @@ EjsOptable ejsOptable[] = {
 };
 #endif /* EJS_DEFINE_OPTABLE */
 
-extern EjsOptable *ejsGetOptable();
+PUBLIC EjsOptable *ejsGetOptable();
 
 #ifdef __cplusplus
 }

@@ -657,7 +657,7 @@ static EjsObj *getFileSize(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 /*  
     function truncate(size: Number): Void
  */
-EjsObj *truncateFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
+PUBLIC EjsObj *truncateFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     int     size;
 
@@ -673,7 +673,7 @@ EjsObj *truncateFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     Write data to the file
     function write(data: Object): Number
  */
-EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
+PUBLIC EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     EjsArray        *args;
     EjsByteArray    *ap;
@@ -842,7 +842,7 @@ static int mapMode(cchar *mode)
 
 /*********************************** Factory **********************************/
 
-EjsFile *ejsCreateFile(Ejs *ejs, cchar *path)
+PUBLIC EjsFile *ejsCreateFile(Ejs *ejs, cchar *path)
 {
     EjsFile     *fp;
     EjsObj      *arg;
@@ -859,7 +859,7 @@ EjsFile *ejsCreateFile(Ejs *ejs, cchar *path)
 }
 
 
-EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode)
+PUBLIC EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode)
 {
     EjsFile     *fp;
 
@@ -906,7 +906,7 @@ static void manageFile(void *ptr, int flags)
 }
 
 
-void ejsConfigureFileType(Ejs *ejs)
+PUBLIC void ejsConfigureFileType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

@@ -204,7 +204,7 @@ static void manageFileSystem(EjsFileSystem *fs, int flags)
 }
 
 
-EjsFileSystem *ejsCreateFileSystem(Ejs *ejs, cchar *path)
+PUBLIC EjsFileSystem *ejsCreateFileSystem(Ejs *ejs, cchar *path)
 {
     EjsFileSystem   *fs;
     EjsObj          *arg;
@@ -219,7 +219,7 @@ EjsFileSystem *ejsCreateFileSystem(Ejs *ejs, cchar *path)
 }
 
 
-void ejsConfigureFileSystemType(Ejs *ejs)
+PUBLIC void ejsConfigureFileSystemType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

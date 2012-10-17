@@ -71,7 +71,7 @@ static EjsAny *castArray(Ejs *ejs, EjsArray *vp, EjsType *type)
 }
 
 
-EjsArray *ejsCloneArray(Ejs *ejs, EjsArray *ap, bool deep)
+PUBLIC EjsArray *ejsCloneArray(Ejs *ejs, EjsArray *ap, bool deep)
 {
     EjsArray    *newArray;
     EjsObj      **dest, **src;
@@ -1232,7 +1232,7 @@ static int partition(Ejs *ejs, EjsArray *array, EjsFunction *compare, int direct
 }
 
 
-void quickSort(Ejs *ejs, EjsArray *ap, EjsFunction *compare, int direction, int p, int r)
+PUBLIC void quickSort(Ejs *ejs, EjsArray *ap, EjsFunction *compare, int direction, int p, int r)
 {
     int     q;
 
@@ -1252,7 +1252,7 @@ void quickSort(Ejs *ejs, EjsArray *ap, EjsFunction *compare, int direction, int 
     Where compare is defined as:
         function compare(a,b): Number
  */
-EjsArray *ejsSortArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+PUBLIC EjsArray *ejsSortArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
     EjsFunction     *compare;
     int             direction;
@@ -1540,7 +1540,7 @@ static int growArray(Ejs *ejs, EjsArray *ap, int len)
 
 /*********************************** C Array API  *****************************/
 
-int ejsAddItem(Ejs *ejs, EjsArray *ap, EjsAny *item)
+PUBLIC int ejsAddItem(Ejs *ejs, EjsArray *ap, EjsAny *item)
 {
     int     index;
 
@@ -1552,7 +1552,7 @@ int ejsAddItem(Ejs *ejs, EjsArray *ap, EjsAny *item)
 }
 
 
-int ejsAppendArray(Ejs *ejs, EjsArray *dest, EjsArray *src)
+PUBLIC int ejsAppendArray(Ejs *ejs, EjsArray *dest, EjsArray *src)
 {
     int     next;
 
@@ -1565,19 +1565,19 @@ int ejsAppendArray(Ejs *ejs, EjsArray *dest, EjsArray *src)
 }
 
 
-void ejsClearArray(Ejs *ejs, EjsArray *ap)
+PUBLIC void ejsClearArray(Ejs *ejs, EjsArray *ap)
 {
     ap->length = 0;
 }
 
 
-EjsAny *ejsGetItem(Ejs *ejs, EjsArray *ap, int index)
+PUBLIC EjsAny *ejsGetItem(Ejs *ejs, EjsArray *ap, int index)
 {
     return ejsGetProperty(ejs, ap, index);
 }
 
 
-EjsAny *ejsGetFirstItem(Ejs *ejs, EjsArray *ap)
+PUBLIC EjsAny *ejsGetFirstItem(Ejs *ejs, EjsArray *ap)
 {
     mprAssert(ap);
 
@@ -1588,7 +1588,7 @@ EjsAny *ejsGetFirstItem(Ejs *ejs, EjsArray *ap)
 }
 
 
-EjsAny *ejsGetLastItem(Ejs *ejs, EjsArray *ap)
+PUBLIC EjsAny *ejsGetLastItem(Ejs *ejs, EjsArray *ap)
 {
     mprAssert(ap);
 
@@ -1599,7 +1599,7 @@ EjsAny *ejsGetLastItem(Ejs *ejs, EjsArray *ap)
 }
 
 
-EjsAny *ejsGetNextItem(Ejs *ejs, EjsArray *ap, int *next)
+PUBLIC EjsAny *ejsGetNextItem(Ejs *ejs, EjsArray *ap, int *next)
 {
     EjsAny  *item;
     int     index;
@@ -1620,7 +1620,7 @@ EjsAny *ejsGetNextItem(Ejs *ejs, EjsArray *ap, int *next)
 }
 
 
-EjsAny *ejsGetPrevItem(Ejs *ejs, EjsArray *ap, int *next)
+PUBLIC EjsAny *ejsGetPrevItem(Ejs *ejs, EjsArray *ap, int *next)
 {
     int     index;
 
@@ -1646,7 +1646,7 @@ EjsAny *ejsGetPrevItem(Ejs *ejs, EjsArray *ap, int *next)
     Insert an item to the list at a specified position. We insert before the item at "index".
     ie. The inserted item will go into the "index" location and the other elements will be moved up.
  */
-int ejsInsertItem(Ejs *ejs, EjsArray *ap, int index, EjsAny *item)
+PUBLIC int ejsInsertItem(Ejs *ejs, EjsArray *ap, int index, EjsAny *item)
 {
     if (insertArray(ejs, ap, index, item) == 0) {
         /* Should never fail - only for memory errors */
@@ -1656,13 +1656,13 @@ int ejsInsertItem(Ejs *ejs, EjsArray *ap, int index, EjsAny *item)
 }
 
 
-EjsString *ejsJoinArray(Ejs *ejs, EjsArray *ap, EjsString *join)
+PUBLIC EjsString *ejsJoinArray(Ejs *ejs, EjsArray *ap, EjsString *join)
 {
     return joinArray(ejs, ap, 1, (EjsObj**) &join);
 }
 
 
-int ejsLookupItem(Ejs *ejs, EjsArray *ap, EjsAny *item)
+PUBLIC int ejsLookupItem(Ejs *ejs, EjsArray *ap, EjsAny *item)
 {
     int     i;
 
@@ -1677,7 +1677,7 @@ int ejsLookupItem(Ejs *ejs, EjsArray *ap, EjsAny *item)
 }
 
 
-int ejsRemoveItem(Ejs *ejs, EjsArray *ap, EjsAny *item, int compact)
+PUBLIC int ejsRemoveItem(Ejs *ejs, EjsArray *ap, EjsAny *item, int compact)
 {
     int     i;
 
@@ -1694,7 +1694,7 @@ int ejsRemoveItem(Ejs *ejs, EjsArray *ap, EjsAny *item, int compact)
 }
 
 
-int ejsRemoveLastItem(Ejs *ejs, EjsArray *ap)
+PUBLIC int ejsRemoveLastItem(Ejs *ejs, EjsArray *ap)
 {
     mprAssert(ap);
 
@@ -1705,7 +1705,7 @@ int ejsRemoveLastItem(Ejs *ejs, EjsArray *ap)
 }
 
 
-int ejsRemoveItemAtPos(Ejs *ejs, EjsArray *ap, int index, int compact)
+PUBLIC int ejsRemoveItemAtPos(Ejs *ejs, EjsArray *ap, int index, int compact)
 {
     int     rc;
 
@@ -1724,7 +1724,7 @@ int ejsRemoveItemAtPos(Ejs *ejs, EjsArray *ap, int index, int compact)
 
 /*********************************** Factory **********************************/
 
-EjsArray *ejsCreateArray(Ejs *ejs, int size)
+PUBLIC EjsArray *ejsCreateArray(Ejs *ejs, int size)
 {
     EjsArray    *ap;
 
@@ -1761,7 +1761,7 @@ static void manageArray(EjsArray *ap, int flags)
 }
 
 
-void ejsCreateArrayType(Ejs *ejs)
+PUBLIC void ejsCreateArrayType(Ejs *ejs)
 {
     EjsType         *type;
     EjsHelpers      *helpers;
@@ -1788,7 +1788,7 @@ void ejsCreateArrayType(Ejs *ejs)
 }
 
 
-void ejsConfigureArrayType(Ejs *ejs)
+PUBLIC void ejsConfigureArrayType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

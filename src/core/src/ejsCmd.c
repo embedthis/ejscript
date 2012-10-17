@@ -663,7 +663,7 @@ static void manageEjsCmd(EjsCmd *cmd, int flags)
 }
 
 
-void ejsConfigureCmdType(Ejs *ejs)
+PUBLIC void ejsConfigureCmdType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

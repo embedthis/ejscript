@@ -10,7 +10,7 @@
 
 /************************************* Code ***********************************/
 
-EjsAny *ejsCacheExpire(Ejs *ejs, EjsObj *cache, EjsString *key, EjsDate *when)
+PUBLIC EjsAny *ejsCacheExpire(Ejs *ejs, EjsObj *cache, EjsString *key, EjsDate *when)
 {
     EjsAny  *argv[3];
     int     prior;
@@ -24,7 +24,7 @@ EjsAny *ejsCacheExpire(Ejs *ejs, EjsObj *cache, EjsString *key, EjsDate *when)
 }
 
 
-EjsAny *ejsCacheRead(Ejs *ejs, EjsObj *cache, EjsString *key, EjsObj *options)
+PUBLIC EjsAny *ejsCacheRead(Ejs *ejs, EjsObj *cache, EjsString *key, EjsObj *options)
 {
     EjsAny  *argv[3], *result;
     int     prior;
@@ -38,7 +38,7 @@ EjsAny *ejsCacheRead(Ejs *ejs, EjsObj *cache, EjsString *key, EjsObj *options)
 }
 
 
-EjsAny *ejsCacheReadObj(Ejs *ejs, EjsObj *cache, EjsString *key, EjsObj *options)
+PUBLIC EjsAny *ejsCacheReadObj(Ejs *ejs, EjsObj *cache, EjsString *key, EjsObj *options)
 {
     EjsAny  *value, *argv[3], *result;
     int     prior;
@@ -55,7 +55,7 @@ EjsAny *ejsCacheReadObj(Ejs *ejs, EjsObj *cache, EjsString *key, EjsObj *options
 }
 
 
-EjsBoolean *ejsCacheRemove(Ejs *ejs, EjsObj *cache, EjsString *key)
+PUBLIC EjsBoolean *ejsCacheRemove(Ejs *ejs, EjsObj *cache, EjsString *key)
 {
     EjsAny  *argv[3], *result;
     int     prior;
@@ -68,7 +68,7 @@ EjsBoolean *ejsCacheRemove(Ejs *ejs, EjsObj *cache, EjsString *key)
 }
 
 
-EjsAny *ejsCacheSetLimits(Ejs *ejs, EjsObj *cache, EjsObj *limits)
+PUBLIC EjsAny *ejsCacheSetLimits(Ejs *ejs, EjsObj *cache, EjsObj *limits)
 {
     EjsAny  *argv[2], *result;
     int     prior;
@@ -81,7 +81,7 @@ EjsAny *ejsCacheSetLimits(Ejs *ejs, EjsObj *cache, EjsObj *limits)
 }
 
 
-EjsNumber *ejsCacheWrite(Ejs *ejs, EjsObj *cache, EjsString *key, EjsString *value, EjsObj *options)
+PUBLIC EjsNumber *ejsCacheWrite(Ejs *ejs, EjsObj *cache, EjsString *key, EjsString *value, EjsObj *options)
 {
     EjsAny  *argv[3], *result;
     int     prior;
@@ -96,7 +96,7 @@ EjsNumber *ejsCacheWrite(Ejs *ejs, EjsObj *cache, EjsString *key, EjsString *val
 }
 
 
-EjsNumber *ejsCacheWriteObj(Ejs *ejs, EjsObj *cache, EjsString *key, EjsAny *value, EjsObj *options)
+PUBLIC EjsNumber *ejsCacheWriteObj(Ejs *ejs, EjsObj *cache, EjsString *key, EjsAny *value, EjsObj *options)
 {
     EjsAny  *argv[3], *result;
     int     prior;

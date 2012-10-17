@@ -66,7 +66,7 @@ static EjsString *system_ipaddr(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
 
 /************************************ Factory *********************************/
 
-void ejsConfigureSystemType(Ejs *ejs)
+PUBLIC void ejsConfigureSystemType(Ejs *ejs)
 {
     EjsType         *type;
 

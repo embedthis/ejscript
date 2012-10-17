@@ -187,7 +187,7 @@ static bool checkTagName(char *name)
 #endif
 
 
-int ejsXMLToBuf(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
+PUBLIC int ejsXMLToBuf(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
 {
     EjsXML      *xml, *child, *attribute, *elt;
     int         sawElements, next;

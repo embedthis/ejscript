@@ -1122,7 +1122,7 @@ static EjsObj *encodeURIComponent(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
 
 /*********************************** Factory **********************************/
 
-EjsUri *ejsCreateUri(Ejs *ejs, EjsString *path)
+PUBLIC EjsUri *ejsCreateUri(Ejs *ejs, EjsString *path)
 {
     EjsUri      *up;
 
@@ -1134,7 +1134,7 @@ EjsUri *ejsCreateUri(Ejs *ejs, EjsString *path)
 }
 
 
-EjsUri *ejsCreateUriFromAsc(Ejs *ejs, cchar *path)
+PUBLIC EjsUri *ejsCreateUriFromAsc(Ejs *ejs, cchar *path)
 {
     EjsUri      *up;
     EjsObj      *arg;
@@ -1148,7 +1148,7 @@ EjsUri *ejsCreateUriFromAsc(Ejs *ejs, cchar *path)
 }
 
 
-EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, cchar *reference, 
+PUBLIC EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, cchar *reference, 
     int flags)
 {
     EjsUri      *up;
@@ -1169,7 +1169,7 @@ static void manageUri(EjsUri *up, int flags)
 }
 
 
-void ejsConfigureUriType(Ejs *ejs)
+PUBLIC void ejsConfigureUriType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

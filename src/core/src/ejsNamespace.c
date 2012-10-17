@@ -67,7 +67,7 @@ static EjsAny *invokeNamespaceOperator(Ejs *ejs, EjsNamespace *lhs, int opCode, 
 /*
     Define a reserved namespace in a block.
  */
-EjsNamespace *ejsDefineReservedNamespace(Ejs *ejs, EjsBlock *block, EjsName *typeName, cchar *spaceName)
+PUBLIC EjsNamespace *ejsDefineReservedNamespace(Ejs *ejs, EjsBlock *block, EjsName *typeName, cchar *spaceName)
 {
     EjsNamespace    *namespace;
 
@@ -88,7 +88,7 @@ EjsNamespace *ejsDefineReservedNamespace(Ejs *ejs, EjsBlock *block, EjsName *typ
     Example:
         [debug::Shape,public] where Shape was declared as "debug class Shape"
  */
-EjsString *ejsFormatReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *spaceName)
+PUBLIC EjsString *ejsFormatReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *spaceName)
 {
     EjsString   *namespace;
 
@@ -109,7 +109,7 @@ EjsString *ejsFormatReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *sp
 /*
     Create a namespace with the given name as its definition value.
  */
-EjsNamespace *ejsCreateNamespace(Ejs *ejs, EjsString *name)
+PUBLIC EjsNamespace *ejsCreateNamespace(Ejs *ejs, EjsString *name)
 {
     EjsNamespace    *np;
 
@@ -125,7 +125,7 @@ EjsNamespace *ejsCreateNamespace(Ejs *ejs, EjsString *name)
 /*
     Create a reserved namespace. Format the package, type and space names to create a unique namespace.
  */
-EjsNamespace *ejsCreateReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *spaceName)
+PUBLIC EjsNamespace *ejsCreateReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *spaceName)
 {
     EjsString       *formattedName;
 
@@ -148,7 +148,7 @@ static void manageNamespace(EjsNamespace *ns, int flags)
 }
 
 
-void ejsCreateNamespaceType(Ejs *ejs)
+PUBLIC void ejsCreateNamespaceType(Ejs *ejs)
 {
     EjsType     *type;
 
@@ -159,7 +159,7 @@ void ejsCreateNamespaceType(Ejs *ejs)
 }
 
 
-void ejsConfigureNamespaceType(Ejs *ejs)
+PUBLIC void ejsConfigureNamespaceType(Ejs *ejs)
 {
     EjsType     *type;
 

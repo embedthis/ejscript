@@ -122,7 +122,7 @@ static int astProcess(EcCompiler *cp, EcNode *np)
 }
 
 
-int ecAstProcess(EcCompiler *cp)
+PUBLIC int ecAstProcess(EcCompiler *cp)
 {
     EcNode      *np;
     int         phase, i, count;
@@ -3768,7 +3768,7 @@ static EjsNamespace *lookupNamespace(Ejs *ejs, EjsString *nspace)
     otherwise the set of open namespaces will be used. The lookup structure will contain details about the location 
     of the variable.
  */
-int ecLookupScope(EcCompiler *cp, EjsName name)
+PUBLIC int ecLookupScope(EcCompiler *cp, EjsName name)
 {
     Ejs             *ejs;
     EjsFunction     *fun;
@@ -3847,7 +3847,7 @@ int ecLookupScope(EcCompiler *cp, EjsName name)
 }
 
 
-int ecLookupVar(EcCompiler *cp, EjsAny *obj, EjsName name)
+PUBLIC int ecLookupVar(EcCompiler *cp, EjsAny *obj, EjsName name)
 {
     Ejs         *ejs;
     EjsLookup   *lookup;

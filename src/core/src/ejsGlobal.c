@@ -177,7 +177,7 @@ static EjsString *g_md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     things). The blending is done at the primitive property level. If overwrite is true, the property is replaced. If
     overwrite is false, the property will be added if it does not already exist
  */
-int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
+PUBLIC int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
 {
     EjsTrait    *trait;
     EjsObj      *vp, *dp, *item;
@@ -422,7 +422,7 @@ static EjsObj *g_printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-void ejsFreezeGlobal(Ejs *ejs)
+PUBLIC void ejsFreezeGlobal(Ejs *ejs)
 {
     EjsTrait    *trait;
     int         i;
@@ -435,7 +435,7 @@ void ejsFreezeGlobal(Ejs *ejs)
 }
 
 
-void ejsCreateGlobalNamespaces(Ejs *ejs)
+PUBLIC void ejsCreateGlobalNamespaces(Ejs *ejs)
 {
     ejsAddImmutable(ejs, S_iteratorSpace, EN("iterator"), 
         ejsCreateNamespace(ejs, ejsCreateStringFromAsc(ejs, EJS_ITERATOR_NAMESPACE)));
@@ -448,7 +448,7 @@ void ejsCreateGlobalNamespaces(Ejs *ejs)
 }
 
 
-void ejsDefineGlobalNamespaces(Ejs *ejs)
+PUBLIC void ejsDefineGlobalNamespaces(Ejs *ejs)
 {
     /*  
         Order matters here. This is the (reverse) order of lookup.
@@ -461,7 +461,7 @@ void ejsDefineGlobalNamespaces(Ejs *ejs)
 }
 
 
-void ejsConfigureGlobalBlock(Ejs *ejs)
+PUBLIC void ejsConfigureGlobalBlock(Ejs *ejs)
 {
     EjsBlock    *block;
 

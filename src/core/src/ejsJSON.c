@@ -43,7 +43,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json);
 /*
     function deserialize(obj: String, options: Object): Object
  */
-EjsObj *g_deserialize(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+PUBLIC EjsObj *g_deserialize(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     mprAssert(argc >=1);
     return ejsDeserialize(ejs, (EjsString*) argv[0]);
@@ -61,7 +61,7 @@ static EjsString *g_serialize(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 //  MOB - convert to use MPR json parser
 
-EjsAny *ejsDeserialize(Ejs *ejs, EjsString *str)
+PUBLIC EjsAny *ejsDeserialize(Ejs *ejs, EjsString *str)
 {
     EjsObj      *obj;
     JsonState   js;
@@ -406,7 +406,7 @@ static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
     This will look for a "toJSON" function on the specified object. Use ejsSerialize for low level JSON.
     @return Returns a string variable or null if an exception is thrown.
  */
-EjsString *ejsToJSON(Ejs *ejs, EjsAny *vp, EjsObj *options)
+PUBLIC EjsString *ejsToJSON(Ejs *ejs, EjsAny *vp, EjsObj *options)
 {
     EjsFunction     *fn;
     EjsString       *result;
@@ -425,7 +425,7 @@ EjsString *ejsToJSON(Ejs *ejs, EjsAny *vp, EjsObj *options)
 }
 
 
-EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *vp, EjsObj *options)
+PUBLIC EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *vp, EjsObj *options)
 {
     Json        json;
     EjsObj      *arg;
@@ -487,7 +487,7 @@ EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *vp, EjsObj *options)
 }
 
 
-EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, int flags)
+PUBLIC EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, int flags)
 {
     Json    json;
 
@@ -655,7 +655,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
 }
 
 
-void ejsConfigureJSONType(Ejs *ejs)
+PUBLIC void ejsConfigureJSONType(Ejs *ejs)
 {
     ejsFinalizeScriptType(ejs, N("ejs", "JSON"), sizeof(EjsPot), ejsManagePot, EJS_TYPE_POT);
     ejsBindFunction(ejs, ejs->global, ES_deserialize, g_deserialize);

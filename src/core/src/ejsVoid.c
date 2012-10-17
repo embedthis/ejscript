@@ -173,13 +173,13 @@ static EjsObj *getVoidProperty(Ejs *ejs, EjsVoid *unused, int slotNum)
 /*
     We don't actually create any instances. We just use a reference to the undefined singleton instance.
  */
-EjsVoid *ejsCreateUndefined(Ejs *ejs)
+PUBLIC EjsVoid *ejsCreateUndefined(Ejs *ejs)
 {
     return (EjsVoid*) ESV(undefined);
 }
 
 
-void ejsCreateVoidType(Ejs *ejs)
+PUBLIC void ejsCreateVoidType(Ejs *ejs)
 {
     EjsType     *type;
 
@@ -195,7 +195,7 @@ void ejsCreateVoidType(Ejs *ejs)
 }
 
 
-void ejsConfigureVoidType(Ejs *ejs)
+PUBLIC void ejsConfigureVoidType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

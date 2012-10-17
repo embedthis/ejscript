@@ -218,7 +218,7 @@ static EjsBoolean *booleanConstructor(Ejs *ejs, EjsBoolean *bp, int argc, EjsObj
 
 /*********************************** Factory **********************************/
 
-void ejsCreateBooleanType(Ejs *ejs)
+PUBLIC void ejsCreateBooleanType(Ejs *ejs)
 {
     EjsType     *type;
     EjsBoolean  *vp;
@@ -241,7 +241,7 @@ void ejsCreateBooleanType(Ejs *ejs)
 }
 
 
-void ejsConfigureBooleanType(Ejs *ejs)
+PUBLIC void ejsConfigureBooleanType(Ejs *ejs)
 {
     EjsType     *type;
 

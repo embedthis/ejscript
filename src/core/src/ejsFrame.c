@@ -46,7 +46,7 @@ static EjsFrame *allocFrame(Ejs *ejs, int numProp)
 /*
     Create a frame object just for the compiler
  */
-EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *fun)
+PUBLIC EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *fun)
 {
     EjsFrame    *fp;
 
@@ -65,7 +65,7 @@ EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *fun)
 }
 
 
-EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, EjsObj **argv)
+PUBLIC EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     EjsFrame    *frame;
     EjsPot      *obj, *activation;
@@ -139,7 +139,7 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
 }
 
 
-void ejsCreateFrameType(Ejs *ejs)
+PUBLIC void ejsCreateFrameType(Ejs *ejs)
 {
     EjsType     *type;
 
@@ -151,7 +151,7 @@ void ejsCreateFrameType(Ejs *ejs)
 }
 
 
-void ejsConfigureFrameType(Ejs *ejs)
+PUBLIC void ejsConfigureFrameType(Ejs *ejs)
 {
     EjsType     *type;
 

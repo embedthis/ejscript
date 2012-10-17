@@ -301,7 +301,7 @@ static EjsNumber *app_uid(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 /*********************************** Factory **********************************/
 
-void ejsConfigureAppType(Ejs *ejs)
+PUBLIC void ejsConfigureAppType(Ejs *ejs)
 {
     EjsType     *type;
 

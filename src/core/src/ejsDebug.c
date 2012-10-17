@@ -49,7 +49,7 @@ static EjsObj *debug_set_mode(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 /************************************ Factory *********************************/
 
-void ejsConfigureDebugType(Ejs *ejs)
+PUBLIC void ejsConfigureDebugType(Ejs *ejs)
 {
     EjsType         *type;
 

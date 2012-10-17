@@ -725,7 +725,7 @@ static EjsBoolean *obj_propertyIsEnumerable(Ejs *ejs, EjsObj *obj, int argc, Ejs
 
     function toJSON(options: Object = null): String
  */
-EjsString *ejsObjToJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
+PUBLIC EjsString *ejsObjToJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
     return ejsSerializeWithOptions(ejs, vp, (argc == 1) ? argv[0] : NULL);
 }
@@ -744,7 +744,7 @@ static EjsString *toLocaleString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 #endif
 
 
-EjsString *ejsObjToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
+PUBLIC EjsString *ejsObjToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
     if (ejsIs(ejs, vp, String)) {
         return (EjsString*) vp;
@@ -806,7 +806,7 @@ static EjsType *obj_getType(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 /*
     Return the name of the type of an object. If the obj is a type, get the base type.
  */
-EjsString *ejsGetTypeName(Ejs *ejs, EjsAny *obj)
+PUBLIC EjsString *ejsGetTypeName(Ejs *ejs, EjsAny *obj)
 {
     EjsType     *type;
 
@@ -864,7 +864,7 @@ static EjsString *obj_typeOf(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 /*
     Get the ecma "typeof" value for an object. Unfortunately, typeof is pretty lame.
  */
-EjsString *ejsGetTypeOf(Ejs *ejs, EjsAny *vp)
+PUBLIC EjsString *ejsGetTypeOf(Ejs *ejs, EjsAny *vp)
 {
     cchar   *word;
 
@@ -894,7 +894,7 @@ EjsString *ejsGetTypeOf(Ejs *ejs, EjsAny *vp)
 }
 
 
-void ejsConfigureObjectType(Ejs *ejs)
+PUBLIC void ejsConfigureObjectType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

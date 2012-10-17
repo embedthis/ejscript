@@ -182,7 +182,7 @@ static void removeWorker(EjsWorker *worker)
 /*
     Called when destroying ejs
  */
-void ejsRemoveWorkers(Ejs *ejs)
+PUBLIC void ejsRemoveWorkers(Ejs *ejs)
 {
     EjsWorker   *worker;
     int         next;
@@ -821,7 +821,7 @@ static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int thro
 }
 
 
-EjsWorker *ejsCreateWorker(Ejs *ejs)
+PUBLIC EjsWorker *ejsCreateWorker(Ejs *ejs)
 {
     return ejsCreateObj(ejs, ESV(Worker), 0);
 }
@@ -852,7 +852,7 @@ static void manageWorker(EjsWorker *worker, int flags)
 }
 
 
-void ejsConfigureWorkerType(Ejs *ejs)
+PUBLIC void ejsConfigureWorkerType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

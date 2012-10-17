@@ -54,7 +54,7 @@ static EjsAny *castFunction(Ejs *ejs, EjsFunction *vp, EjsType *type)
 }
 
 
-EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep)
+PUBLIC EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep)
 {
     EjsFunction     *dest;
 
@@ -246,7 +246,7 @@ static EjsObj *fun_setScope(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 
 /*************************************************************************************************************/
 
-void ejsRemoveConstructor(Ejs *ejs, EjsType *type)
+PUBLIC void ejsRemoveConstructor(Ejs *ejs, EjsType *type)
 {
     EjsFunction     *fun;
 
@@ -293,13 +293,13 @@ static void setFunctionAttributes(EjsFunction *fun, int attributes)
 }
 
 
-void ejsSetFunctionName(Ejs *ejs, EjsFunction *fun, EjsString *name)
+PUBLIC void ejsSetFunctionName(Ejs *ejs, EjsFunction *fun, EjsString *name)
 {
     fun->name = name;
 }
 
 
-EjsEx *ejsAddException(Ejs *ejs, EjsFunction *fun, uint tryStart, uint tryEnd, EjsType *catchType, uint handlerStart,
+PUBLIC EjsEx *ejsAddException(Ejs *ejs, EjsFunction *fun, uint tryStart, uint tryEnd, EjsType *catchType, uint handlerStart,
         uint handlerEnd, int numBlocks, int numStack, int flags, int preferredIndex)
 {
     EjsEx           *exception;
@@ -342,7 +342,7 @@ EjsEx *ejsAddException(Ejs *ejs, EjsFunction *fun, uint tryStart, uint tryEnd, E
 
 
 #if UNUSED
-void ejsOffsetExceptions(EjsFunction *fun, int offset)
+PUBLIC void ejsOffsetExceptions(EjsFunction *fun, int offset)
 {
     EjsEx           *ex;
     int             i;
@@ -380,7 +380,7 @@ static void manageCode(EjsCode *code, int flags)
 }
 
 
-EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *byteCode, ssize len, 
+PUBLIC EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *byteCode, ssize len, 
     EjsDebug *debug)
 {
     EjsCode     *code;
@@ -407,7 +407,7 @@ EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *by
 /*
     Set the byte code for a script function
  */
-int ejsSetFunctionCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *byteCode, ssize len, EjsDebug *debug)
+PUBLIC int ejsSetFunctionCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *byteCode, ssize len, EjsDebug *debug)
 {
     mprAssert(fun);
     mprAssert(byteCode);
@@ -426,7 +426,7 @@ static EjsObj *nopFunction(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 
 
 #if UNUSED
-void ejsUseActivation(Ejs *ejs, EjsFunction *fun)
+PUBLIC void ejsUseActivation(Ejs *ejs, EjsFunction *fun)
 {
     EjsPot  *activation;
     int     numProp;
@@ -444,7 +444,7 @@ void ejsUseActivation(Ejs *ejs, EjsFunction *fun)
 #endif
 
 
-EjsPot *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numProp)
+PUBLIC EjsPot *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numProp)
 {
     EjsPot  *activation;
 
@@ -455,7 +455,7 @@ EjsPot *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numProp)
 
 /********************************** Factory **********************************/
 
-EjsFunction *ejsCreateBareFunction(Ejs *ejs, EjsString *name, int attributes)
+PUBLIC EjsFunction *ejsCreateBareFunction(Ejs *ejs, EjsString *name, int attributes)
 {
     EjsFunction     *fun;
 
@@ -475,7 +475,7 @@ EjsFunction *ejsCreateBareFunction(Ejs *ejs, EjsString *name, int attributes)
     Create a script function. This defines the method traits. It does not create a  method slot. ResultType may
     be null to indicate untyped. NOTE: untyped functions may return a result at their descretion.
  */
-EjsFunction *ejsCreateFunction(Ejs *ejs, EjsString *name, cuchar *byteCode, int codeLen, int numArgs, int numDefault, 
+PUBLIC EjsFunction *ejsCreateFunction(Ejs *ejs, EjsString *name, cuchar *byteCode, int codeLen, int numArgs, int numDefault, 
     int numExceptions, EjsType *resultType, int attributes, EjsModule *module, EjsBlock *scope, int strict)
 {
     EjsFunction     *fun;
@@ -492,7 +492,7 @@ EjsFunction *ejsCreateFunction(Ejs *ejs, EjsString *name, cuchar *byteCode, int 
 /*
     Init function to initialize constructors inside types
  */
-int ejsInitFunction(Ejs *ejs, EjsFunction *fun, EjsString *name, cuchar *byteCode, int codeLen, int numArgs, 
+PUBLIC int ejsInitFunction(Ejs *ejs, EjsFunction *fun, EjsString *name, cuchar *byteCode, int codeLen, int numArgs, 
     int numDefault, int numExceptions, EjsType *resultType, int attributes, EjsModule *module, EjsBlock *scope, int strict)
 {
     if (scope) {
@@ -515,7 +515,7 @@ int ejsInitFunction(Ejs *ejs, EjsFunction *fun, EjsString *name, cuchar *byteCod
 }
 
 
-void ejsManageFunction(EjsFunction *fun, int flags)
+PUBLIC void ejsManageFunction(EjsFunction *fun, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         ejsManageBlock((EjsBlock*) fun, flags);
@@ -533,7 +533,7 @@ void ejsManageFunction(EjsFunction *fun, int flags)
 }
 
 
-void ejsCreateFunctionType(Ejs *ejs)
+PUBLIC void ejsCreateFunctionType(Ejs *ejs)
 {
     EjsType         *type;
     EjsHelpers      *helpers;
@@ -553,7 +553,7 @@ void ejsCreateFunctionType(Ejs *ejs)
 }
 
 
-void ejsConfigureFunctionType(Ejs *ejs)
+PUBLIC void ejsConfigureFunctionType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;

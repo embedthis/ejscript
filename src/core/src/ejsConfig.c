@@ -10,7 +10,7 @@
 
 /*********************************** Methods **********************************/
 
-void ejsCreateConfigType(Ejs *ejs)
+PUBLIC void ejsCreateConfigType(Ejs *ejs)
 {
     /*
         The Config object may be used by conditional compilation, so the type must exist without loading ejs.mod
@@ -21,7 +21,7 @@ void ejsCreateConfigType(Ejs *ejs)
 }
 
 
-void ejsDefineConfigProperties(Ejs *ejs)
+PUBLIC void ejsDefineConfigProperties(Ejs *ejs)
 {
     EjsType     *type;
     char        version[16];
