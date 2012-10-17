@@ -30,6 +30,7 @@
 
 #include "bit.h"
 
+#if EMBEDTHIS || 1
 #if _WIN32
     #undef      _CRT_SECURE_NO_DEPRECATE
     #define     _CRT_SECURE_NO_DEPRECATE 1
@@ -39,6 +40,7 @@
         #define _WIN32_WINNT 0x501
     #endif
     #define ZLIB_DLL
+#endif
 #endif
 
 #ifndef ZLIB_INTERNAL
