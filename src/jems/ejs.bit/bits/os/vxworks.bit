@@ -71,6 +71,7 @@ Bit.load({
         },
     },
     rules: {
+        'c->c':   '${packs.compiler.path} -E ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
         'c->o':   '${packs.compiler.path} -c -o ${OUT} ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
         'cpp->o': '${packs.compiler.path} -c -o ${OUT} ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
         'shlib':  '${packs.compiler.path} -r -o ${OUT} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS}'

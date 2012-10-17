@@ -56,7 +56,8 @@ public class Bit {
     private var posix = ['macosx', 'linux', 'unix', 'freebsd', 'solaris']
     private var windows = ['windows', 'wince']
     private var start: Date
-    private var targetsToBuildByDefault = { exe: true, file: true, lib: true, obj: true, build: true }
+//  MOB - removed objects because don't want selectTargets to add all objects
+    private var targetsToBuildByDefault = { exe: true, file: true, lib: true, /* MOB ZZ obj: true, */ build: true }
     private var targetsToBlend = { exe: true, lib: true, obj: true, action: true, build: true, clean: true }
     private var targetsToClean = { exe: true, file: true, lib: true, obj: true, build: true }
 
@@ -81,6 +82,7 @@ public class Bit {
             nocross: {},
             pre: { range: String, separator: Array },
             platform: { range: String, separator: Array },
+            pre: { },
             prefix: { range: String, separator: Array },
             profile: { range: String },
             rebuild: { alias: 'r'},
@@ -119,6 +121,7 @@ public class Bit {
             '    --nocross                          # Build natively\n' +
             '    --out path                         # Save output to a file\n' +
             '    --platform os-arch                 # Build for specified platform\n' +
+            '    --pre                              # Pre-process a source file to stdout\n' +
             '    --profile [debug|release|...]      # Use the build profile\n' +
             '    --quiet                            # Quiet operation. Suppress trace \n' +
             '    --set [feature=value]              # Enable and a feature\n' +
@@ -146,9 +149,9 @@ public class Bit {
                     break
                 }
                 if (bit.usage) {
-                    print('Feature Selection: ')
+                    print('Feature Selection:')
                     for (let [item,msg] in bit.usage) {
-                        print('  --set %-14s %s' % [item + '=value', msg])
+                        print('    --set %-28s # %s' % [item + '=value', msg])
                     }
                     print('')
                 }
@@ -922,6 +925,7 @@ public class Bit {
                 Blend internal for only the targets in this file
              */
             if (o.internal) {
+                runTargetScript({scripts: o.internal.scripts}, 'preblend')
                 blend(target, o.internal, {combine: true})
             }
             if (target.inherit) {
@@ -1291,10 +1295,14 @@ public class Bit {
         makeConstGlobals()
         makeDirGlobals()
         enableTargets()
-        selectTargets()
+/*
+    Moved later to allow users to select objects as targets
+ */
+//MOBZZ selectTargets()
         blendDefaults()
         resolveDependencies()
         expandWildcards()
+selectTargets()
         castTargetTypes()
         setDefaultTargetPath()
         inlineStatic()
@@ -1387,7 +1395,14 @@ public class Bit {
                 }
             }
             if (!bit.targets[name] && add.length == 0) {
-                throw 'Unknown target ' + name
+                for each (target in bit.targets) {
+                    if (target.name.endsWith(name) || Path(target.name).trimExt().endsWith(name)) {
+                        add.push(target.name)
+                    }
+                }
+                if (add.length == 0) {
+                    throw 'Unknown target ' + name
+                }
             }
             selectedTargets += add
         }
@@ -1449,18 +1464,32 @@ public class Bit {
                 let resolved = []
                 let includes = []
                 let defines = []
-                for each (dname in getDepends(target).unique()) {
-                    let dep = bit.targets[dname]
-                    if (dep && dep.type == 'lib' && dep.enable) {
-                        target.files += dep.files
-                        resolved.push(dname.replace(/^lib/g, ''))
-                        includes += dep.includes
-                        defines += dep.defines
+                if (target.type == 'exe') {
+                    for each (dname in getDepends(target).unique()) {
+                        let dep = bit.targets[dname]
+                        if (dep && dep.type == 'lib' && dep.enable) {
+                            /* Add the dependent files to the target executables */
+                            target.files += dep.files
+    //  MOB -- ZZ
+    /* UNUSED
+    if (dep.static) {
+        print("INLINE STATIC for", dep.name, dep.path.relativeTo(App.dir))
+                            resolved.push(dep.path.relativeTo(App.dir))
+        print("RESOLVED", resolved)
+    } else {
+    }
+    */
+                            resolved.push(dname.replace(/^lib/g, ''))
+                            includes += dep.includes
+                            defines += dep.defines
+                        }
                     }
                 }
                 target.libraries -= resolved
                 target.includes += includes
                 target.defines += defines
+                target.includes = target.includes.unique()
+                target.defines = target.defines.unique()
             }
         }
     }
@@ -1516,7 +1545,16 @@ public class Bit {
                     target.libraries
                     target.libraries ||= []
                     /* Put dependent libraries first so system libraries are last (matters on linux) */
-                    target.libraries = [dname.replace(/^lib/, '')] + target.libraries
+//  MOB ZZ
+                    if (dep.static) {
+                        target.libraries = [Path(dname).joinExt(bit.ext.lib)] + target.libraries
+                    } else {
+                        if (dname.startsWith('lib')) {
+                            target.libraries = [dname.replace(/^lib/, '')] + target.libraries
+                        } else {
+                            target.libraries = [Path(dname).joinExt(bit.ext.shlib, true)] + target.libraries
+                        }
+                    }
                     for each (lib in dep.libraries) {
                         if (!target.libraries.contains(lib)) {
                             target.libraries.push(lib)
@@ -1674,6 +1712,10 @@ public class Bit {
                     delete target.libpaths 
                     delete target.libraries 
                 }
+            }
+            if (target.type == 'lib' && target.static == null) {
+//  MOB ZZ - rename bit.settings.static (need default to be shared)
+                target.static = bit.settings.static
             }
         }
     }
@@ -2011,6 +2053,9 @@ public class Bit {
         for each (file in target.files) {
             target.vars.IN = file.relative
             let transition = file.extension + '->' + target.path.extension
+            if (options.pre) {
+                transition = 'c->c'
+            }
             let rule = target.rule || bit.rules[transition]
             if (!rule) {
                 rule = bit.rules[target.path.extension]
@@ -2381,7 +2426,7 @@ public class Bit {
                 throw 'Target ' + target.name + ' has no input files or sources'
             }
             tv.IN = target.files.map(function(p) p.relativeTo(base)).join(' ')
-            tv.LIBS = mapLibs(target.libraries)
+            tv.LIBS = mapLibs(target.libraries, target.static)
             tv.LDFLAGS = (target.linker) ? target.linker.join(' ') : ''
 
         } else if (target.type == 'lib') {
@@ -2390,8 +2435,9 @@ public class Bit {
             }
             tv.IN = target.files.map(function(p) p.relativeTo(base)).join(' ')
             tv.LIBNAME = target.path.basename
+            //  MOB unused
             tv.DEF = Path(target.path.relativeTo(base).toString().replace(/dll$/, 'def'))
-            tv.LIBS = mapLibs(target.libraries)
+            tv.LIBS = mapLibs(target.libraries, target.static)
             tv.LDFLAGS = (target.linker) ? target.linker.join(' ') : ''
 
         } else if (target.type == 'obj') {
@@ -2506,7 +2552,7 @@ global.NN = item.ns
     /*
         Map libraries into the appropriate O/S dependant format
      */
-    public function mapLibs(libs: Array): Array {
+    public function mapLibs(libs: Array, static = null): Array {
         if (bit.platform.os == 'windows') {
             libs = libs.clone()
             for (let [i,name] in libs) {
@@ -2532,7 +2578,19 @@ global.NN = item.ns
                 }
             }
         } else {
-            libs = libs.map(function(e) '-l' + Path(e).trimExt().relative.toString().replace(/^lib/, ''))
+//  MOB ZZ
+            let mapped = []
+            for each (let lib:Path in libs) {
+                if (lib.extension) {
+                    mapped.push(bit.dir.lib.relativeTo(App.dir).join(lib))
+                } else {
+                    mapped.push('-l' + lib.trimExt().relative.toString().replace(/^lib/, ''))
+                }
+            }
+            libs = mapped
+/* MOB OLD
+                libs = libs.map(function(e) '-l' + Path(e).trimExt().relative.toString().replace(/^lib/, ''))
+ */
         }
         return libs
     }
@@ -3049,8 +3107,8 @@ public function run(command, options = {})
 public function safeRemove(dir: Path)
     b.safeRemove(dir)
 
-public function mapLibs(libs: Array)
-    b.mapLibs(libs)
+public function mapLibs(libs: Array, static = null)
+    b.mapLibs(libs, static)
 
 public function setRuleVars(target, dir = App.dir)
     b.setRuleVars(target, dir)

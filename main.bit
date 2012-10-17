@@ -59,7 +59,8 @@ Bit.load({
 
     usage: {
         assert: 'Enable program assertions (true|false)',
-        tune: 'Optimize (size|speed|balanced)',
+        static: 'Build with static linking (true|false)',
+        tune:   'Optimize (size|speed|balanced)',
     },
 
     profiles: {

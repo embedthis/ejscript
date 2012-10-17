@@ -80,6 +80,7 @@ Bit.load({
     },
 
     rules: {
+        'c->c':     '"${packs.compiler.path}" -E -Fd${PDB} ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
         'c->obj':   '"${packs.compiler.path}" -c -Fo${OUT} -Fd${PDB} ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
         'cpp->obj': '"${packs.compiler.path}" -c -Fo${OUT} -Fd${PDB} ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
         'shlib':    '"${packs.link.path}" -dll -out:${OUT} -entry:${ENTRY} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS}',
