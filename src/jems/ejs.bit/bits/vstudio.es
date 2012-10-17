@@ -33,10 +33,12 @@ public function vstudio(base: Path) {
         bit.globals[n] = bit.globals[n].relativeTo(base)
     }
     let projects = []
-    /* Create a temporary prep target as the first target */
+/* UNUSED
     if (bit.dir.bin.files('*.def').length > 0) {
         PREP += 'if not exist "$(BinDir)\\libmpr.def" xcopy /Y /S *.def "$(BinDir)"'
     }
+ */
+    /* Create a temporary prep target as the first target */
     prepTarget = {
         type: 'vsprep',
         path: Path('always'),
@@ -446,6 +448,7 @@ function projResources(base, target) {
 
 //  TODO - rename. Does more than just link. Also does 'files' and 'scripts'
 function projLink(base, target) {
+/* UNUSED
     if (target.type == 'lib') {
         let def = base.join(target.path.basename.toString().replace(/dll$/, 'def'))
         let newdef = Path(target.path.toString().replace(/dll$/, 'def'))
@@ -465,6 +468,7 @@ function projLink(base, target) {
             trace('Warn', 'Missing ' + def)
         }
     }
+*/
     bit.LIBS = target.libraries ? mapLibs(target.libraries - bit.defaults.libraries).join(';') : ''
     bit.LIBPATHS = target.libpaths ? target.libpaths.map(function(p) wpath(p)).join(';') : ''
     output('

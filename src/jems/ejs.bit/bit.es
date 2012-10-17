@@ -1176,8 +1176,10 @@ public class Bit {
         genout.writeLine('\t@if not exist $(CONFIG)\\bin md $(CONFIG)\\bin')
         genout.writeLine('\t@if not exist $(CONFIG)\\inc\\bit.h ' +
             'copy projects\\' + bit.settings.product + '-$(OS)-bit.h $(CONFIG)\\inc\\bit.h')
+/* UNUSED
         genout.writeLine('\t@if not exist $(CONFIG)\\bin\\*.def ' +
             'xcopy /Y /S projects\\' + bit.settings.product + '-windows\\*.def $(CONFIG)\\bin\n')
+ */
         genout.writeLine('clean:')
         action('cleanTargets')
         genout.writeLine('')
@@ -1887,7 +1889,7 @@ public class Bit {
             App.log.debug(3, "Target => " + serialize(target, {pretty: true, commas: true, indent: 4, quotes: false}))
         }
         runTargetScript(target, 'prebuild')
-        buildSym(target)
+        //UNUSED buildSym(target)
         let transition = target.rule || 'shlib'
         let rule = bit.rules[transition]
         if (!rule) {
@@ -1930,7 +1932,6 @@ public class Bit {
             App.log.debug(3, "Target => " + serialize(target, {pretty: true, commas: true, indent: 4, quotes: false}))
         }
         runTargetScript(target, 'prebuild')
-        //MOB buildSym(target)
         let transition = target.rule || 'lib'
         let rule = bit.rules[transition]
         if (!rule) {
