@@ -239,6 +239,8 @@ static void relayEvent(EjsWebSocket *ws, int event, EjsAny *data)
     ejs = ws->ejs;
     rx = ws->conn->rx;
     eobj = ejsCreateObj(ejs, ESV(Object), 0);
+    slot = -1;
+    eventName = 0;
 
     switch(event) {
     case HTTP_EVENT_READABLE:
@@ -272,9 +274,6 @@ static void relayEvent(EjsWebSocket *ws, int event, EjsAny *data)
         ejsSetPropertyByName(ejs, eobj, EN("reason"), ejsCreateStringFromAsc(ejs, rx->closeReason));
         ejsSetPropertyByName(ejs, eobj, EN("wasClean"), ejsCreateBoolean(ejs, rx->closeStatus != WS_STATUS_COMMS_ERROR));
         break;
-
-    default:
-        slot = -1;
     }
     if (slot >= 0) {
         if (ws->emitter) {
