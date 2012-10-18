@@ -686,13 +686,16 @@ function targetDependencies(base: Path) {
 
 function prepareSettings(base, o, debug: Boolean) {
     let options = {}
-
     if (!o.linker) {
         return ''
     }
     let libs = []
     for each (lname in o.libraries) {
         dep = bit.targets['lib' + lname]
+        if (dep && dep.type == 'lib') {
+            continue
+        }
+        dep = bit.targets[lname.replace(/\.dylib/, '')]
         if (dep && dep.type == 'lib') {
             continue
         }
@@ -707,11 +710,25 @@ function prepareSettings(base, o, debug: Boolean) {
         }
         o.linker.compact()
     }
+    let static = o.target && o.target.static
     let flags = o.linker.filter(function(e) e != '-g') + 
-        libs.map(function(lib) '-l' + Path(lib).trimExt().toString().replace(/^lib/, ''))
+        libs.map(function(lib: Path) {
+            if (lib.extension == 'a') {
+                return lib
+            } else {
+                return '-l' + lib.trimExt().toString().replace(/^lib/, '')
+            }
+        })
     if (flags.length > 0) {
-        options.linker = '\n\t\t\t\tOTHER_LDFLAGS = (\n' + 
-            flags.map(function(f) '\t\t\t\t\t"' + f + '",').join('\n') + '\n\t\t\t\t\t"$(inherited)"\n\t\t\t\t);\n'
+        if (static) {
+            options.linker = '\n\t\t\t\tOTHER_LDFLAGS = (\n' + 
+                flags.map(function(f) '\t\t\t\t\t"' + f + '",').join('\n') + '\n\t\t\t\t\t);\n'
+        } else {
+            options.linker = '\n\t\t\t\tOTHER_LDFLAGS = (\n' + 
+                flags.map(function(f) '\t\t\t\t\t"' + f + '",').join('\n') + '\n\t\t\t\t\t"$(inherited)"\n\t\t\t\t);\n'
+        }
+    } else if (static) {
+        options.linker = '\n\t\t\t\tOTHER_LDFLAGS = ();\n'
     }
     if (o.includes.length > 0) {
         options.includes = '\n\t\t\t\tHEADER_SEARCH_PATHS = (\n' + 
@@ -736,6 +753,9 @@ function prepareSettings(base, o, debug: Boolean) {
     if (options.defines) result += options.defines
     if (options.libpaths) result += options.libpaths
     if (options.linker) result += options.linker
+    if (static) {
+        result += '\n\t\t\t\tMACH_O_TYPE = staticlib;\n'
+    }
     return result.trimStart('\n')
 }
 
@@ -875,6 +895,7 @@ ${RELEASE_SETTINGS}
             target[n] ||= []
         }
         let ts = {
+            target: target,
             compiler: target.compiler - bit.defaults.compiler,
             defines: target.defines - bit.defaults.defines,
             includes: target.includes - bit.defaults.includes,

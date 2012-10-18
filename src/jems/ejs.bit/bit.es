@@ -90,6 +90,7 @@ public class Bit {
             quiet: { alias: 'q' },
             'set': { range: String, separator: Array },
             show: { alias: 's'},
+            static: { },
             unicode: {},
             unset: { range: String, separator: Array },
             verbose: { alias: 'v' },
@@ -320,6 +321,10 @@ public class Bit {
         if (options.depth) {
             poptions.enable ||= []
             poptions.enable.push('depth=' + options.depth)
+        }
+        if (options.static) {
+            poptions.enable ||= []
+            poptions.enable.push('static=true')
         }
         if (options.unicode) {
             poptions.enable ||= []

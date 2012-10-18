@@ -4620,10 +4620,10 @@ fi";
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-lejs.zlib",
 					"-lpam",
-					"$(inherited)"
-				);
+					);
+
+				MACH_O_TYPE = staticlib;
 
 			};
 			name = Debug;
@@ -4634,10 +4634,10 @@ fi";
 				PRODUCT_NAME = bit;
 
 				OTHER_LDFLAGS = (
-					"-lejs.zlib",
 					"-lpam",
-					"$(inherited)"
-				);
+					);
+
+				MACH_O_TYPE = staticlib;
 
 			};
 			name = Release;
