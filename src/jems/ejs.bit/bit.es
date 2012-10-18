@@ -1304,11 +1304,10 @@ public class Bit {
 /*
     Moved later to allow users to select objects as targets
  */
-//MOBZZ selectTargets()
         blendDefaults()
         resolveDependencies()
         expandWildcards()
-selectTargets()
+        selectTargets()
         castTargetTypes()
         setDefaultTargetPath()
         inlineStatic()
@@ -1476,15 +1475,6 @@ selectTargets()
                         if (dep && dep.type == 'lib' && dep.enable) {
                             /* Add the dependent files to the target executables */
                             target.files += dep.files
-    //  MOB -- ZZ
-    /* UNUSED
-    if (dep.static) {
-        print("INLINE STATIC for", dep.name, dep.path.relativeTo(App.dir))
-                            resolved.push(dep.path.relativeTo(App.dir))
-        print("RESOLVED", resolved)
-    } else {
-    }
-    */
                             resolved.push(dname.replace(/^lib/g, ''))
                             includes += dep.includes
                             defines += dep.defines
@@ -1551,7 +1541,6 @@ selectTargets()
                     target.libraries
                     target.libraries ||= []
                     /* Put dependent libraries first so system libraries are last (matters on linux) */
-//  MOB ZZ
                     if (dep.static) {
                         target.libraries = [Path(dname).joinExt(bit.ext.lib)] + target.libraries
                     } else {
@@ -1720,7 +1709,6 @@ selectTargets()
                 }
             }
             if (target.type == 'lib' && target.static == null) {
-//  MOB ZZ - rename bit.settings.static (need default to be shared)
                 target.static = bit.settings.static
             }
         }
@@ -2175,7 +2163,7 @@ selectTargets()
                 }
 
             } else {
-                trace('Copy', target.path.relativeTo('.'))
+                trace('Copy', target.path.portable.relativeTo('.'))
                 if (target.active && bit.platform.like == 'windows') {
                     let active = target.path.relative.replaceExt('old')
                     trace('Preserve', 'Active target ' + target.path.relative + ' as ' + active)
