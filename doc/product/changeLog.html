@@ -55,6 +55,7 @@
             <h2 class="section">Changes in 2.0.1</h2>
             <h3>Minor Features</h3>
             <ul>
+                <li>Added static build support (configure --static)</li>
                 <li>Changed default for type annotations to not allow nulls. Use Type? to permit nulls</li>
             </ul>
             <h3>Fixes</h3>
@@ -65,6 +66,8 @@
                 <li>Http: PUT method response to include Etag and Location</li>
                 <li>Http: Consuming body of failed requests to preserve keep-alive</li>
                 <li>Http: Remove Content-Length in 304 (NotModified) responses</li>
+                <li>Remove *def files on windows. Use PUBLIC export decoration</li>
+                <li>Rename T() to UT() to avoid winnt.h clash</li>
             </ul>
             </ul>
             <a id="r200"></a>
