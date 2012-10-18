@@ -126,6 +126,7 @@ public class Bit {
             '    --quiet                            # Quiet operation. Suppress trace \n' +
             '    --set [feature=value]              # Enable and a feature\n' +
             '    --show                             # Show commands executed\n' +
+            '    --static                           # Make static without shared libraries\n' +
             '    --rebuild                          # Rebuild all specified targets\n' +
             '    --release                          # Same as --profile release\n' +
             '    --unicode                          # Set char size to wide (unicode)\n' +

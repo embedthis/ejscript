@@ -19,14 +19,15 @@ bit \- Build It! -- Utility to build and manage programs
 .RS 4
 [\fI--nocross\fR]
 [\fI--out path\fR]
-[\fI--profile [debug|release|...]\fR]
-[\fI--pre sourcefile\fR]
 [\fI--platform os-arch\fR]
+[\fI--pre sourcefile\fR]
+[\fI--profile [debug|release|...]\fR]
 .RE
 .RS 4
 [\fI--quiet\fR]
 [\fI--set [feature=value]\fR]
 [\fI--show\fR]
+[\fI--static\fR]
 [\fI--rebuild\fR]
 [\fI--release\fR]
 [\fI--unset feature\fR]
@@ -362,6 +363,10 @@ Use this when running 'bit configure' to persist your changes in the configurati
 .TP
 \fB\--show\fR
 Show the actual commands executed by bit.
+
+.TP
+\fB\--static\fR
+Build using static linking instead of shared libraries. Same as --set static=true.
 
 .TP
 \fB\--rebuild\fR
