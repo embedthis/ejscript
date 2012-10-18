@@ -3260,7 +3260,9 @@ typedef struct EjsHttp {
     char            *certFile;                  /**< SSL certificate file */
     int             closed;                     /**< Http is closed and "close" event has been issued */
     int             error;                      /**< Http errored and "error" event has been issued */
+#if UNUSED
     int             verifyPeer;                 /**< Verify peer certificate (default to true) */
+#endif
     ssize           readCount;                  /**< Count of body bytes read */
     ssize           requestContentCount;        /**< Count of bytes written from requestContent */
     ssize           writeCount;                 /**< Count of bytes written via write() */

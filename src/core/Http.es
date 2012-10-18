@@ -708,14 +708,14 @@ FUTURE & KEEP
         native function set uri(newUri: Uri): Void
 
         /**
-            Verify server certificates
+            Verify peer certificates
          */
         native function get verify(): Boolean
         native function set verify(enable: Boolean): Void
 
         /** 
             Wait for a request to complete. This will call $finalize() if in sync mode and the request is not already 
-            finalized.
+                finalized.
             @param timeout Timeout in milliseconds to wait for the request to complete. A timeout of zero means don't block.
             A timeout of < 0 (default), means use the default request timeout.
             @return True if the request successfully completes.

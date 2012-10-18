@@ -820,7 +820,7 @@ static EjsObj *http_set_uri(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsBoolean *http_verify(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (!hp->ssl) {
-        hp->ssl = mprCreateSsl();
+        hp->ssl = mprCreateSsl(0);
     }
     return hp->ssl->verifyPeer ?  ESV(false) : ESV(true);
 }
@@ -835,7 +835,7 @@ static EjsObj *http_set_verify(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
     verify = (argv[0] == ESV(true));
     if (!hp->ssl) {
-        hp->ssl = mprCreateSsl();
+        hp->ssl = mprCreateSsl(0);
     }
     mprVerifySslIssuer(hp->ssl, verify);
     mprVerifySslPeer(hp->ssl, verify);
@@ -931,14 +931,16 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
         ejsThrowArgError(ejs, "HTTP Method is not defined");
         return 0;
     }
-    if (hp->verifyPeer || hp->certFile) {
+    if (/* UNUSED hp->verifyPeer || */ hp->certFile) {
         if (!hp->ssl) {
-            hp->ssl = mprCreateSsl();
+            hp->ssl = mprCreateSsl(0);
         }
     }
     if (hp->ssl) {
+#if UNUSED
         mprVerifySslPeer(hp->ssl, hp->verifyPeer);
         mprVerifySslIssuer(hp->ssl, hp->verifyPeer);
+#endif
         if (hp->certFile) {
             mprSetSslCertFile(hp->ssl, hp->certFile);
         }

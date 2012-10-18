@@ -354,7 +354,7 @@ static EjsObj *hs_secure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     cchar       *token;
     int         mask, protoMask, i;
 
-    if (sp->ssl == 0 && ((sp->ssl = mprCreateSsl(sp)) == 0)) {
+    if (sp->ssl == 0 && ((sp->ssl = mprCreateSsl(1)) == 0)) {
         return 0;
     }
     if (!ejsIs(ejs, argv[0], Null)) {
