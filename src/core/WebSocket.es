@@ -80,7 +80,7 @@ module ejs {
             @param reason Optional reason string to indicate why the connection was closed. Must be less than 
                 124 bytes of UTF-8 text in length.
          */
-        native function close(code: Number, reason: String? = ""): Void
+        native function close(code: Number = 1000, reason: String? = ""): Void
 
         /**
             Return the list of supported extensions

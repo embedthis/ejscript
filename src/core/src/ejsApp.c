@@ -256,7 +256,7 @@ static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     do {
         rc = mprWaitForEvent(ejs->dispatcher, remaining); 
         remaining = mprGetRemainingTime(mark, timeout);
-    } while (!oneEvent && !ejs->exiting && remaining > 0 && !mprIsStopping());
+    } while (!ejs->exception && !oneEvent && !ejs->exiting && remaining > 0 && !mprIsStopping());
     return (rc == 0) ? ESV(true) : ESV(false);
 }
 

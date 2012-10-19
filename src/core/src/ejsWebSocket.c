@@ -78,14 +78,19 @@ static EjsObj *ws_close(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 
     conn = ws->conn;
     if (conn) {
-        httpFinalize(conn);
-        status = ejsGetInt(ejs, argv[0]);
+        status = argc == 0 ? WS_STATUS_OK : ejsGetInt(ejs, argv[0]);
+        if (status <= 999 || status >= WS_STATUS_MAX || status == WS_STATUS_NO_STATUS || status == WS_STATUS_COMMS_ERROR) {
+            ejsThrowArgError(ejs, "Bad status");
+            return 0;
+        }
         reason = (argv[1] != ESV(null) && argv[1] != ESV(undefined)) ? ejsToMulti(ejs, argv[1]): 0; 
+        if (slen(reason) >= 124) {
+            ejsThrowArgError(ejs, "Close reason is too long. Must be less than 124 bytes");
+            return 0;
+        }
         httpSendClose(conn, status, reason);
 #if UNUSED
-        relayEvent(ws, HTTP_EVENT_APP_CLOSE, 0);
-        httpDestroyConn(conn);
-        ws->conn = 0;
+        httpFinalize(conn);
 #endif
     }
     return 0;
@@ -172,11 +177,11 @@ static EjsString *ws_send(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
         return 0;
     }
     for (i = 0; i < args->length; i++) {
-        if ((arg = ejsGetProperty(ejs, args, i)) == 0) {
+        if ((arg = ejsGetProperty(ejs, args, i)) != 0) {
             if (ejsIs(ejs, arg, ByteArray)) {
                 ba = (EjsByteArray*) arg;
                 nbytes = ejsGetByteArrayAvailableData(ba);
-                nbytes = httpSendBlock(ws->conn, WS_MSG_BINARY, (cchar*) &ba->value[ba->readPosition], nbytes);
+                nbytes = httpSendBlock(ws->conn, WS_MSG_BINARY, (cchar*) &ba->value[ba->readPosition], nbytes, 1);
             } else {
                 nbytes = httpSend(ws->conn, ejsToMulti(ejs, arg));
             }
@@ -280,7 +285,7 @@ static void relayEvent(EjsWebSocket *ws, int event, EjsAny *data)
             ejsSendEvent(ejs, ws->emitter, eventName, ws, data);
         }
         fn = ejsGetProperty(ejs, ws, slot);
-        if (ejsIsFunction(ejs, fn)) {
+        if (ejsIsFunction(ejs, fn) && !ejs->exception) {
             ejsRunFunction(ejs, fn, ws, 1, &eobj);
         }
     }
@@ -296,7 +301,8 @@ static void webSocketNotify(HttpConn *conn, int event, int arg)
     EjsWebSocket    *ws;
     EjsByteArray    *ba;
     EjsAny          *data;
-    char            *buf;
+    HttpPacket      *packet;
+    MprBuf          *content;
     ssize           len;
 
     if ((ws = httpGetConnContext(conn)) == 0) {
@@ -318,7 +324,8 @@ static void webSocketNotify(HttpConn *conn, int event, int arg)
     
     case HTTP_EVENT_READABLE:
         /* Called once per packet unless packet is too large (LimitWebSocketPacket) */
-        print("wscontroller: READABLE format %s\n", arg == WS_MSG_TEXT ? "text" : "binary");
+#if OLD && UNUSED
+        mprLog(4, "webSocketNotify: READABLE event format %s\n", arg == WS_MSG_TEXT ? "text" : "binary");
         len = httpGetReadCount(conn);
         if (arg == WS_MSG_TEXT) {
             if ((buf = mprAlloc(len + 1)) == 0) {
@@ -340,6 +347,23 @@ static void webSocketNotify(HttpConn *conn, int event, int arg)
             ejsSetByteArrayPositions(ejs, ba, -1, len);
             data = ba;
         }
+#else
+        packet = httpGetPacket(conn->readq);
+        content = packet->content;
+        mprLog(4, "webSocketNotify: READABLE event format %s\n", packet->type == WS_MSG_TEXT ? "text" : "binary");
+        if (packet->type == WS_MSG_TEXT) {
+            data = ejsCreateStringFromBytes(ejs, mprGetBufStart(content), mprGetBufLength(content));
+        } else {
+            len = httpGetPacketLength(packet);
+            assure(len > 0);
+            if ((ba = ejsCreateByteArray(ejs, len)) == 0) {
+                return;
+            }
+            memcpy(ba->value, mprGetBufStart(content), len);
+            ejsSetByteArrayPositions(ejs, ba, -1, len);
+            data = ba;
+        }
+#endif
         relayEvent(ws, event, data);
         break;
 
@@ -347,6 +371,8 @@ static void webSocketNotify(HttpConn *conn, int event, int arg)
         if (!ws->error && !ws->closed) {
             ws->error = 1;
             relayEvent(ws, event, 0);
+            ws->closed = 1;
+            relayEvent(ws, HTTP_EVENT_APP_CLOSE, 0);
         }
         break;
 
