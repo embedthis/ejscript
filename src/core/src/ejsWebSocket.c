@@ -29,12 +29,18 @@ static EjsWebSocket *wsConstructor(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj 
         return 0;
     }
     httpSetAsync(ws->conn, 1);
-    if (argc >= 1) {
+    if (argc >= 2) {
         if (ejsIs(ejs, argv[1], Array)) {
             ws->protocols = sclone((ejsToString(ejs, argv[1]))->value);
         } else if (ejsIs(ejs, argv[1], String)) {
             ws->protocols = sclone(((EjsString*) argv[1])->value);
         }
+    } else {
+        ws->protocols = sclone("chat");
+    }
+    if (*ws->protocols == '\0') {
+        ejsThrowArgError(ejs, "Bad protocol");
+        return 0;
     }
     ws->uri = httpUriToString(((EjsUri*) argv[0])->uri, 0);
     httpPrepClientConn(ws->conn, 0);

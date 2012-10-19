@@ -207,6 +207,7 @@ module embedthis.doc {
         str = str.replace(/listitem>/g, 'li>')
         str = str.replace(/<linebreak\/>/g, "<br/>")
         str = str.replace(/bold>/g, "b>")
+        str = str.replace(/preformatted>/g, "pre>")
         str = str.replace(/<row>/g, "<tr>")
         str = str.replace(/<entry thead="no">/g, "<td>")
         str = str.replace(/<table rows=[^>]*>/g, "<table class='info'>")

@@ -650,7 +650,6 @@ public function apidoc(dox: Path, headers, title: String, tags) {
     if (!bit.options.keep) {
         doxtmp.remove()
     }
-
     trace('Process', name.toPascal() + ' documentation (may take a while)')
     let files = [api.join('xml/' + name + '_8h.xml')]
     files += ls(api.join('xml/group*')) + ls(api.join('xml/struct_*.xml'))
