@@ -1067,7 +1067,7 @@ void ejsLoadHttpService(Ejs *ejs)
 {
     ejsLockService();
     if (mprGetMpr()->httpService == 0) {
-        httpCreate();
+        httpCreate(HTTP_CLIENT_SIDE | HTTP_SERVER_SIDE);
     }
     ejs->http = ejs->service->http = mprGetMpr()->httpService;
     if (ejs->http == 0) {

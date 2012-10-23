@@ -1277,8 +1277,8 @@ static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
     success = count = 0;
     mark = mprGetTime();
     remaining = timeout;
-    while (conn->state < state && count <= conn->retries && redirectCount < 16 && 
-           !conn->error && !ejs->exiting && !mprIsStopping(conn)) {
+    while (conn->state < state && count <= conn->retries && redirectCount < 16 && !conn->error && !ejs->exiting && 
+            !mprIsStopping(conn)) {
         count++;
         if ((rc = httpWait(conn, HTTP_STATE_PARSED, remaining)) == 0) {
             if (httpNeedRetry(conn, &url)) {
@@ -1303,7 +1303,7 @@ static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
             } else {
                 httpFormatError(conn, HTTP_CODE_NO_RESPONSE, "Client request error");
             }
-            break;
+            /* Retry */
         }
         rx = conn->rx;
         if (rx) {

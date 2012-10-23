@@ -988,7 +988,7 @@ static EjsObj *req_autoFinalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **ar
     /* If writeBuffer is set, HttpServer is capturning output for caching */
     if (req->conn && !req->dontAutoFinalize) {
         if (!req->writeBuffer) {
-            httpFinalize(req->conn);
+            httpComplete(req->conn);
         }
         req->finalized = 1;
     }
@@ -1003,7 +1003,7 @@ static EjsObj *req_close(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
     if (req->conn) {
         if (!req->writeBuffer) {
-            httpFinalize(req->conn);
+            httpComplete(req->conn);
         }
         req->finalized = 1;
         httpCloseRx(req->conn);
@@ -1372,7 +1372,7 @@ static EjsObj *req_writeFile(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     tx->length = tx->entityLength = info->size;
     httpSetSendConnector(req->conn, path->value);
     httpPutForService(conn->writeq, packet, 0);
-    httpFinalize(req->conn);
+    httpComplete(req->conn);
     req->finalized = 1;
     return ESV(true);
 }

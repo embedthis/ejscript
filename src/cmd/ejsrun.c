@@ -109,12 +109,6 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     }
     mprLog(2, "Load script \"%s\"", path);
     flags = EC_FLAGS_BIND | EC_FLAGS_DEBUG | EC_FLAGS_NO_OUT | EC_FLAGS_THROW;
-#if UNUSED
-    if (ejsLoadScriptFile(ejs, path, NULL, flags) < 0) {
-        ejsReportError(ejs, "Error in script");
-        err = MPR_ERR;
-    }
-#else
     if ((ec = ecCreateCompiler(ejs, flags)) == 0) {
         return MPR_ERR_MEMORY;
     }
@@ -134,7 +128,6 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             err = MPR_ERR;
         }
     }
-#endif
     if (!err) {
         err = mpr->exitStatus;
     }

@@ -9,7 +9,7 @@ server = new HttpServer
 server.listen(HTTP)
 load("../utils.es")
 
-var events
+var events = {}
 
 server.on("readable", function (event, request: Request) {
 
@@ -34,7 +34,7 @@ server.on("readable", function (event, request: Request) {
 
     case "/error":
         //  The finalize may fail due to a lost connection
-        Timer(200, function() { try { finalize() } catch {} }).start()
+        Timer(200, function() { try { finalize() } catch { } }).start()
         break
 
     default:
@@ -73,10 +73,11 @@ events = {}
 let http = new Http
 http.post(HTTP + "/error")
 http.write("Some")
-http.flush()
+// http.flush()
+http.finalize()
 http.close()
 
-for (i = 0; i < 10 && !events.close; i++) { App.run(1000, 1); }
+for (i = 0; i < 100 && !events.close; i++) { App.run(1000, 1); }
 assert(events.close && events.readable && events.writable)
 
 server.close()
