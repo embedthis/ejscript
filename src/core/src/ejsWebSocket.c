@@ -69,7 +69,7 @@ static EjsString *ws_binaryType(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **a
  */
 static EjsNumber *ws_bufferedAmount(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 {
-    return ejsCreateNumber(ejs, ws->conn->writeq->count);
+    return ejsCreateNumber(ejs, (MprNumber) ws->conn->writeq->count);
 }
 
 
