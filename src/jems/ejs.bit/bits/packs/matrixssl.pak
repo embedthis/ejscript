@@ -45,7 +45,7 @@ if (bit.platform.os == 'windows') {
         path: lib,
         defines: [ '-DPOSIX', '-DMATRIX_USE_FILE_SYSTEM' ],
         includes: [ incdir, incdir.parent ],
-        libraries: [ 'libmatrixssl.dylib' ],
+        libraries: [ 'matrixssl' ],
         libpaths: [ lib.parent ],
         imports: [ lib ]
     }
@@ -61,7 +61,7 @@ if (bit.platform.os == 'windows') {
         path: lib,
         defines: [ '-DPOSIX', '-DMATRIX_USE_FILE_SYSTEM' ],
         includes: [ incdir, incdir.parent ],
-        libraries: [ 'libmatrixssl.so' ],
+        libraries: [ 'matrixssl' ],
         libpaths: [ lib.parent ],
         imports: [ lib ],
     }
