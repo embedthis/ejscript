@@ -8,7 +8,7 @@
 
 /*********************************** Forwards *********************************/
 
-static void relayEvent(EjsWebSocket *ws, int event, EjsAny *data);
+static void onWebSocketEvent(EjsWebSocket *ws, int event, EjsAny *data);
 static EjsObj *startWebSocketRequest(Ejs *ejs, EjsWebSocket *ws);
 static bool waitTillState(EjsWebSocket *ws, int state, MprTime timeout, int throw);
 static void webSocketNotify(HttpConn *conn, int state, int notifyFlags);
@@ -89,15 +89,12 @@ static EjsObj *ws_close(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
             ejsThrowArgError(ejs, "Bad status");
             return 0;
         }
-        reason = (argv[1] != ESV(null) && argv[1] != ESV(undefined)) ? ejsToMulti(ejs, argv[1]): 0; 
+        reason = (argc >= 1) ? ejsToMulti(ejs, argv[1]): 0; 
         if (slen(reason) >= 124) {
             ejsThrowArgError(ejs, "Close reason is too long. Must be less than 124 bytes");
             return 0;
         }
         httpSendClose(conn, status, reason);
-#if UNUSED
-        httpFinalize(conn);
-#endif
     }
     return 0;
 }
@@ -138,12 +135,12 @@ static EjsWebSocket *ws_on(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 
     conn = ws->conn;
     if (conn->readq && conn->readq->count > 0) {
-        relayEvent(ws, HTTP_EVENT_READABLE, 0);
+        onWebSocketEvent(ws, HTTP_EVENT_READABLE, 0);
     }
     if (!conn->tx->connectorComplete && 
             !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
             conn->writeq->ioCount == 0) {
-        relayEvent(ws, HTTP_EVENT_WRITABLE, 0);
+        onWebSocketEvent(ws, HTTP_EVENT_WRITABLE, 0);
     }
     return ws;
 }
@@ -238,14 +235,14 @@ static EjsObj *startWebSocketRequest(Ejs *ejs, EjsWebSocket *ws)
 }
 
 
-static void relayEvent(EjsWebSocket *ws, int event, EjsAny *data)
+static void onWebSocketEvent(EjsWebSocket *ws, int event, EjsAny *data)
 {
     Ejs             *ejs;
     EjsAny          *eobj;
     EjsFunction     *fn;
     HttpRx          *rx;
-    cchar           *eventName;
-    int             slot;
+    cchar           *eventName, *reason;
+    int             slot, status;
 
     ejs = ws->ejs;
     rx = ws->conn->rx;
@@ -281,9 +278,11 @@ static void relayEvent(EjsWebSocket *ws, int event, EjsAny *data)
     case HTTP_EVENT_APP_CLOSE:
         eventName = "complete";
         slot = ES_WebSocket_onclose;
-        ejsSetPropertyByName(ejs, eobj, EN("code"), ejsCreateNumber(ejs, rx->closeStatus));
-        ejsSetPropertyByName(ejs, eobj, EN("reason"), ejsCreateStringFromAsc(ejs, rx->closeReason));
-        ejsSetPropertyByName(ejs, eobj, EN("wasClean"), ejsCreateBoolean(ejs, rx->closeStatus != WS_STATUS_COMMS_ERROR));
+        status = rx ? rx->closeStatus: WS_STATUS_COMMS_ERROR;
+        reason = rx ? rx->closeReason: 0;
+        ejsSetPropertyByName(ejs, eobj, EN("code"), ejsCreateNumber(ejs, status));
+        ejsSetPropertyByName(ejs, eobj, EN("reason"), ejsCreateStringFromAsc(ejs, reason));
+        ejsSetPropertyByName(ejs, eobj, EN("wasClean"), ejsCreateBoolean(ejs, status != WS_STATUS_COMMS_ERROR));
         break;
     }
     if (slot >= 0) {
@@ -324,36 +323,12 @@ static void webSocketNotify(HttpConn *conn, int event, int arg)
         if (arg == HTTP_STATE_CONTENT) {
             ws->protocol = (char*) httpGetHeader(conn, "Sec-WebSocket-Protocol");
             mprLog(4, "Web socket protocol %s", ws->protocol);
-            relayEvent(ws, HTTP_EVENT_APP_OPEN, 0);
+            onWebSocketEvent(ws, HTTP_EVENT_APP_OPEN, 0);
         }
         break;
     
     case HTTP_EVENT_READABLE:
         /* Called once per packet unless packet is too large (LimitWebSocketPacket) */
-#if OLD && UNUSED
-        mprLog(4, "webSocketNotify: READABLE event format %s\n", arg == WS_MSG_TEXT ? "text" : "binary");
-        len = httpGetReadCount(conn);
-        if (arg == WS_MSG_TEXT) {
-            if ((buf = mprAlloc(len + 1)) == 0) {
-                return;
-            }
-            if ((len = httpRead(conn, buf, len)) < 0) {
-                ejsThrowIOError(ejs, "Can't read packet");
-                return;
-            }
-            data = ejsCreateStringFromBytes(ejs, buf, len);
-        } else {
-            if ((ba = ejsCreateByteArray(ejs, len)) == 0) {
-                return;
-            }
-            if ((len = httpRead(conn, (char*) ba->value, len)) < 0) {
-                ejsThrowIOError(ejs, "Can't read packet");
-                return;
-            }
-            ejsSetByteArrayPositions(ejs, ba, -1, len);
-            data = ba;
-        }
-#else
         packet = httpGetPacket(conn->readq);
         content = packet->content;
         mprLog(4, "webSocketNotify: READABLE event format %s\n", packet->type == WS_MSG_TEXT ? "text" : "binary");
@@ -369,23 +344,22 @@ static void webSocketNotify(HttpConn *conn, int event, int arg)
             ejsSetByteArrayPositions(ejs, ba, -1, len);
             data = ba;
         }
-#endif
-        relayEvent(ws, event, data);
+        onWebSocketEvent(ws, event, data);
         break;
 
     case HTTP_EVENT_ERROR:
         if (!ws->error && !ws->closed) {
             ws->error = 1;
-            relayEvent(ws, event, 0);
+            onWebSocketEvent(ws, event, 0);
             ws->closed = 1;
-            relayEvent(ws, HTTP_EVENT_APP_CLOSE, 0);
+            onWebSocketEvent(ws, HTTP_EVENT_APP_CLOSE, 0);
         }
         break;
 
     case HTTP_EVENT_APP_CLOSE:
         if (!ws->closed) {
             ws->closed = 1;
-            relayEvent(ws, event, 0);
+            onWebSocketEvent(ws, event, 0);
         }
         break;
     }
@@ -496,9 +470,6 @@ static void manageWebSocket(EjsWebSocket *ws, int flags)
     if (flags & MPR_MANAGE_MARK) {
         mprMark(ws->conn);
         mprMark(ws->emitter);
-#if UNUSED
-        mprMark(ws->data);
-#endif
         mprMark(ws->ssl);
         mprMark(ws->protocols);
         mprMark(ws->protocol);
@@ -508,7 +479,7 @@ static void manageWebSocket(EjsWebSocket *ws, int flags)
     } else if (flags & MPR_MANAGE_FREE) {
         if (ws->conn && ws->ejs->service) {
             if (!ws->closed) {
-                relayEvent(ws, HTTP_EVENT_APP_CLOSE, 0);
+                onWebSocketEvent(ws, HTTP_EVENT_APP_CLOSE, 0);
             }
             httpDestroyConn(ws->conn);
             ws->conn = 0;
