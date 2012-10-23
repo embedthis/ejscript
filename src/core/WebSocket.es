@@ -134,6 +134,21 @@ module ejs {
             The URI provided to the constructor
          */
         native function get url(): Uri
+
+        /** 
+            Wait for the WebSocket to achieve a desired state. 
+            @param state Desired ready state value
+            @param timeout Timeout in milliseconds to wait for the desired state. A timeout of zero means don't block.
+            A timeout of < 0 (default), means wait forever.
+            @return True if the desired state was achieved
+         */
+        function wait(state: Number, timeout: Number = -1): Boolean {
+           if (timeout < 0) timeout = Number.MaxInt32
+           for (let mark = new Date; readyState != state && mark.elapsed < timeout; ) {
+               App.run(timeout - mark.elapsed, true)
+           }
+           return readyState == state
+        }
     }
 }
 
