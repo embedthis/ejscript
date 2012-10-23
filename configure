@@ -6,6 +6,6 @@
 
 if ! type bit >/dev/null 2>&1 ; then
     echo "Bootstrap build using make first." >&2
-    echo
+    exit 255
 fi
 bit configure $*
