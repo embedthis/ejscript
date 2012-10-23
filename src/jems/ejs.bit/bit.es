@@ -17,6 +17,8 @@ public class Bit {
     private static const START: Path = Path('start.bit')
     private static const supportedOS = ['freebsd', 'linux', 'macosx', 'solaris', 'vxworks', 'windows']
     private static const supportedArch = ['arm', 'i64', 'mips', 'sparc', 'x64', 'x86']
+    private static const minimalCflags = [ 
+        '-w', '-g', '-Wall', '-Wno-deprecated-declarations', '-Wno-unused-result', '-Wshorten-64-to-32']
 
     /*
         Filter for files that look like temp files and should not be installed
@@ -1111,7 +1113,10 @@ public class Bit {
         genout.writeLine('PROFILE  ?= ' + bit.platform.profile)
         genout.writeLine('CONFIG   ?= $(OS)-$(ARCH)-$(PROFILE)\n')
 
-        let cflags = gen.compiler.replace(/ *-Wall| *-Wno-unused-result| *-Wshorten-64-to-32| -g/g, '')
+        let cflags = gen.compiler
+        for each (word in minimalCflags) {
+            cflags = cflags.replace(word, '')
+        }
         cflags += ' -w'
         genout.writeLine('CFLAGS   += ' + cflags.trim())
         genout.writeLine('DFLAGS   += ' + gen.defines.replace(/-DBIT_DEBUG/, ''))
@@ -2280,6 +2285,10 @@ public class Bit {
             if (bit.packs.rc) {
                 command = command.replace(bit.packs.rc.path, '$(RC)')
             }
+            for each (word in minimalCflags) {
+                command = command.replace(word, '')
+            }
+
         } else if (generating == 'sh') {
             command = command.replace(gen.linker, '${LDFLAGS}')
             command = command.replace(gen.linker, '${LDFLAGS}')
