@@ -478,9 +478,12 @@ static void manageWebSocket(EjsWebSocket *ws, int flags)
 
     } else if (flags & MPR_MANAGE_FREE) {
         if (ws->conn && ws->ejs->service) {
+#if UNUSED
+            /* No references means it is a waste of time notifying */
             if (!ws->closed) {
                 onWebSocketEvent(ws, HTTP_EVENT_APP_CLOSE, 0);
             }
+#endif
             httpDestroyConn(ws->conn);
             ws->conn = 0;
         }
