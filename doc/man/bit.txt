@@ -10,10 +10,10 @@ SYNOPSIS
        [--diagnose] [--dump]
            [--file file.bit] [--force] [--gen  [make|sh|vs|xcode]]  [--import]
            [--keep] [--log logSpec]
-           [--nocross]  [--out  path]  [--profile [debug|release|...]]  [--pre
-           sourcefile] [--platform os-arch]
-           [--quiet] [--set [feature=value]] [--show] [--rebuild]  [--release]
-           [--unset feature] [--version]
+           [--nocross]  [--out  path]  [--platform os-arch] [--pre sourcefile]
+           [--profile [debug|release|...]]
+           [--quiet] [--set [feature=value]] [--show]  [--static]  [--rebuild]
+           [--release] [--unset feature] [--version]
            [--verbose] [--with PACK[=PATH]] [--without PACK] [targets|actions]
 
 DESCRIPTION
@@ -396,6 +396,11 @@ OPTIONS
        --show Show the actual commands executed by bit.
 
 
+       --static
+              Build  using static linking instead of shared libraries. Same as
+              --set static=true.
+
+
        --rebuild
               Rebuild the specified targets. Can also use 'bit rebuild'.
 
@@ -405,7 +410,7 @@ OPTIONS
 
 
        --unset key=value
-              Clear  a  settings property.  Use this when running 'bit config-
+              Clear a settings property.  Use this when running  'bit  config-
               ure' to persist your changes in the configuration bit file.
 
 
@@ -418,9 +423,9 @@ OPTIONS
 
 
        --with PACK[=path]
-              Build with the named pack located at the optional path.  If  the
-              path  is ommitted, a search is performed for the pack at default
-              locations. Packs must have a  pack  description  file  installed
+              Build  with  the named pack located at the optional path. If the
+              path is ommitted, a search is performed for the pack at  default
+              locations.  Packs  must  have  a pack description file installed
               under 'bits/packs' in the bit installation.
 
 
@@ -433,7 +438,7 @@ REPORTING BUGS
        Report bugs to dev@embedthis.com.
 
 COPYRIGHT
-       Copyright  (C)  2004-2012  Embedthis  Software.  Bit and Ejscript are a
+       Copyright (C) 2004-2012 Embedthis Software.  Bit  and  Ejscript  are  a
        trademarks of Embedthis Software.
 
 SEE ALSO

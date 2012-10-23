@@ -215,7 +215,7 @@
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_string_1ga708e6a95d92ab7af1861baba3897b54c" class="nameRef">ejsCompareAsc</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_string" class="ref">EjsString</a> *s1, <a href="mpr.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *s2)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Compare a string with a multibyte string.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_string_1gaf28e0939340fb995a9bd04a75a2900f2" class="nameRef">ejsCompareString</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_string" class="ref">EjsString</a> *s1, <a href="#group___ejs_string" class="ref">EjsString</a> *s2)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Compare two strings.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_string_1ga4e12fe4a6a110a8f00f8e122aba83df4" class="nameRef">ejsCompareSubstring</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_string" class="ref">EjsString</a> *s1, <a href="#group___ejs_string" class="ref">EjsString</a> *s2, <a href="mpr.html#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" class="ref">ssize</a> offset, <a href="mpr.html#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" class="ref">ssize</a> len)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Compare a substring.</td></tr>
-<tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_string_1ga6a260927bd3df5edad13557d56808a8f" class="nameRef">ejsCompareWide</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_string" class="ref">EjsString</a> *s1, wchar *s2, <a href="mpr.html#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" class="ref">ssize</a> len)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Compare a string with a wide string.</td></tr>
+<tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_string_1ga6a260927bd3df5edad13557d56808a8f" class="nameRef">ejsCompareWide</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_string" class="ref">EjsString</a> *s1, <a href="mpr.html#mpr_8h_1ad5f5c40c5a4a2e88c69a886ff0d69b1d" class="ref">wchar</a> *s2, <a href="mpr.html#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" class="ref">ssize</a> len)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Compare a string with a wide string.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_type" class="ref">EjsType*</a></td><td><a href="#group___ejs_type_1ga5b2e89d60086f10116f1b0f8c4214c62" class="nameRef">ejsConfigureType</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_type" class="ref">EjsType</a> *type, struct EjsModule *up, <a href="#group___ejs_type" class="ref">EjsType</a> *baseType, int numTypeProp, int numInstanceProp, <a href="mpr.html#mpr_8h_1a168afaa12b2c08e4ae1d11ea4c296e64" class="ref">int64</a> attributes)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Configure a type.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_string_1ga5d5cca539016553a28e76ac08d55257e" class="nameRef">ejsContainsAsc</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_string" class="ref">EjsString</a> *sp, <a href="mpr.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *pat)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Test if a string contains an ascii substring.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_string_1ga7a74bde1b88538e1bb746a5a1ce2bb53" class="nameRef">ejsContainsChar</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_string" class="ref">EjsString</a> *sp, int charPat)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Test if a string contains a character.</td></tr>
@@ -255,7 +255,7 @@
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_namespace" class="ref">EjsNamespace*</a></td><td><a href="#group___ejs_namespace_1ga3514b104e530e365f97c03f4bc9f9b5c" class="nameRef">ejsCreateReservedNamespace</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_name" class="ref">EjsName</a> *typeName, <a href="#group___ejs_string" class="ref">EjsString</a> *name)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create a reserved namespace.</td></tr>
 <tr class="apiDef"><td class="apiType">struct EjsArray*</td><td><a href="#group___ejs_module_1ga2074536c4ebc6f82689d783ec5cde5bf" class="nameRef">ejsCreateSearchPath</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="mpr.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *searchPath)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create a search path array.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_socket" class="ref">EjsSocket*</a></td><td><a href="#group___ejs_socket_1ga96fc0527a264a6190f8b9384280a1d3f" class="nameRef">ejsCreateSocket</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="mpr.html#group___mpr_socket" class="ref">MprSocket</a> *sock, <a href="mpr.html#mpr_8h_1ad5c9d4ba3dc37783a528b0925dc981a0" class="ref">bool</a> async)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create a new Socket object.</td></tr>
-<tr class="apiDef"><td class="apiType"><a href="#group___ejs_string" class="ref">EjsString*</a></td><td><a href="#group___ejs_string_1ga8aeef72a34295c9e4df136996628c413" class="nameRef">ejsCreateString</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, wchar *value, <a href="mpr.html#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" class="ref">ssize</a> len)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create a string object.</td></tr>
+<tr class="apiDef"><td class="apiType"><a href="#group___ejs_string" class="ref">EjsString*</a></td><td><a href="#group___ejs_string_1ga8aeef72a34295c9e4df136996628c413" class="nameRef">ejsCreateString</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="mpr.html#mpr_8h_1ad5f5c40c5a4a2e88c69a886ff0d69b1d" class="ref">wchar</a> *value, <a href="mpr.html#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" class="ref">ssize</a> len)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create a string object.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_string" class="ref">EjsString*</a></td><td><a href="#group___ejs_string_1gab1fbea44cd70dc28d8a49b70d0de0556" class="nameRef">ejsCreateStringFromAsc</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="mpr.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *value)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create a string from ascii.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_string" class="ref">EjsString*</a></td><td><a href="#group___ejs_string_1ga905a81a7379527321346e86ffacea04b" class="nameRef">ejsCreateStringFromBytes</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="mpr.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *value, <a href="mpr.html#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" class="ref">ssize</a> len)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create a string from an ascii block.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_string" class="ref">EjsString*</a></td><td><a href="#group___ejs_string_1ga25f6078b7d29fdcfdcd8b9353589906a" class="nameRef">ejsCreateStringFromConst</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, struct EjsModule *mp, int index)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create a string from a module string constant.</td></tr>
@@ -334,7 +334,7 @@
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_string" class="ref">EjsString*</a></td><td><a href="#group___ejs_string_1ga379df95eb6203fed78a5ef432ba7376f" class="nameRef">ejsInternAsc</a>(struct Ejs *ejs, <a href="mpr.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *value, <a href="mpr.html#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" class="ref">ssize</a> len)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Intern a string object from an Ascii string.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_string" class="ref">EjsString*</a></td><td><a href="#group___ejs_string_1gac34c3f60b9801b24289e1414d6d9a230" class="nameRef">ejsInternMulti</a>(struct Ejs *ejs, <a href="mpr.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *value, <a href="mpr.html#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" class="ref">ssize</a> len)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Intern a string object from a UTF-8 string.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_string" class="ref">EjsString*</a></td><td><a href="#group___ejs_string_1ga634237154071579455c008c164c39553" class="nameRef">ejsInternString</a>(<a href="#group___ejs_string" class="ref">EjsString</a> *sp)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Intern a string object.</td></tr>
-<tr class="apiDef"><td class="apiType"><a href="#group___ejs_string" class="ref">EjsString*</a></td><td><a href="#group___ejs_string_1ga6558ec0637c52d1350554bc302cb2d6d" class="nameRef">ejsInternWide</a>(struct Ejs *ejs, wchar *value, <a href="mpr.html#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" class="ref">ssize</a> len)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Intern a string object from a UTF-16 string.</td></tr>
+<tr class="apiDef"><td class="apiType"><a href="#group___ejs_string" class="ref">EjsString*</a></td><td><a href="#group___ejs_string_1ga6558ec0637c52d1350554bc302cb2d6d" class="nameRef">ejsInternWide</a>(struct Ejs *ejs, <a href="mpr.html#mpr_8h_1ad5f5c40c5a4a2e88c69a886ff0d69b1d" class="ref">wchar</a> *value, <a href="mpr.html#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" class="ref">ssize</a> len)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Intern a string object from a UTF-16 string.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny*</a></td><td><a href="#group___ejs_obj_1ga0566fd5299746e61ae95de3cbaf54fa2" class="nameRef">ejsInvokeOperator</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj, int opCode, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *rhs)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Invoke an opcode on a native type.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny*</a></td><td><a href="#group___ejs_obj_1ga0bf24478466ec195d8f8d191d0f2b7dd" class="nameRef">ejsInvokeOperatorDefault</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj, int opCode, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *rhs)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Default implementation for operator invoke.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="mpr.html#mpr_8h_1ad5c9d4ba3dc37783a528b0925dc981a0" class="ref">bool</a></td><td><a href="#group___ejs_type_1ga1600b777743e90dca32ea8b2541c7763" class="nameRef">ejsIs</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj, void *name)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Test the type of an object.</td></tr>
@@ -377,7 +377,7 @@
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_name" class="ref">EjsName</a></td><td><a href="#group___ejs_name_1ga6c8e3b296ee0bbbcc1516dcc4209003d" class="nameRef">ejsName</a>(struct Ejs *ejs, <a href="mpr.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *space, <a href="mpr.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *name)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Initialize a Qualified Name structure.</td></tr>
 <tr class="apiDef"><td class="apiType">struct EjsString*</td><td><a href="#group___ejs_pot_1ga9bb73f82b6822e9367ff7f9d72146f67" class="nameRef">ejsObjToJSON</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_obj" class="ref">EjsObj</a> *obj, int argc, <a href="#group___ejs_obj" class="ref">EjsObj</a> **argv)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Method proc for conversion to a JSON string.</td></tr>
 <tr class="apiDef"><td class="apiType">struct EjsString*</td><td><a href="#group___ejs_pot_1ga947e94c75e5b8ec9e4bd28ab12822a65" class="nameRef">ejsObjToString</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_obj" class="ref">EjsObj</a> *obj, int argc, <a href="#group___ejs_obj" class="ref">EjsObj</a> **argv)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Method proc for conversion to a string.</td></tr>
-<tr class="apiDef"><td class="apiType"><a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny*</a></td><td><a href="#group___ejs_obj_1gaa3b1c78ba5216f5315d6a681c6c4a6b0" class="nameRef">ejsParse</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, wchar *str, int prefType)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Parse a string.</td></tr>
+<tr class="apiDef"><td class="apiType"><a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny*</a></td><td><a href="#group___ejs_obj_1gaa3b1c78ba5216f5315d6a681c6c4a6b0" class="nameRef">ejsParse</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="mpr.html#mpr_8h_1ad5f5c40c5a4a2e88c69a886ff0d69b1d" class="ref">wchar</a> *str, int prefType)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Parse a string.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_pot_1ga2d807d21c0f77cc77a5dbd782b23a91a" class="nameRef">ejsPropertyHasTrait</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj, int slotNum, int attributes)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Test a property&apos;s traits.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_string" class="ref">EjsString*</a></td><td><a href="#group___ejs_reg_exp_1ga638a01b979b00f6ee16a8254cd998d4d" class="nameRef">ejsRegExpToString</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_reg_exp" class="ref">EjsRegExp</a> *rp)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get a string representation of a regular expression.</td></tr>
 <tr class="apiDef"><td class="apiType">void</td><td><a href="#group___ejs_function_1gaef490e640f5b309ffb75596134f40ac0" class="nameRef">ejsRemoveConstructor</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, struct EjsType *type)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Remove a constructor function from a type.</td></tr>
@@ -445,7 +445,7 @@
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_uri" class="ref">EjsUri*</a></td><td><a href="#group___ejs_uri_1gae9febc6fc7e1e4040866f4e6c0e524c3" class="nameRef">ejsToUri</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Convert an object to a URI.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_string" class="ref">EjsString*</a></td><td><a href="#group___ejs_string_1ga4497cce6148677baa8e35887c6baee45" class="nameRef">ejsTruncateString</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_string" class="ref">EjsString</a> *src, <a href="mpr.html#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" class="ref">ssize</a> len)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Truncate a string.</td></tr>
 <tr class="apiDef"><td class="apiType">void</td><td><a href="#group___ejs_1gab461a266bf2f25cea1055152c7422cea" class="nameRef">ejsUnblockGC</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, int blocked)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Unblock garbage collection.</td></tr>
-<tr class="apiDef"><td class="apiType"><a href="#group___ejs_name" class="ref">EjsName</a></td><td><a href="#group___ejs_name_1ga44e87f616d5f0ad7103e15b057d35ee3" class="nameRef">ejsWideName</a>(struct Ejs *ejs, wchar *space, wchar *name)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Initialize a Qualified Name structure using a wide namespace and name.</td></tr>
+<tr class="apiDef"><td class="apiType"><a href="#group___ejs_name" class="ref">EjsName</a></td><td><a href="#group___ejs_name_1ga44e87f616d5f0ad7103e15b057d35ee3" class="nameRef">ejsWideName</a>(struct Ejs *ejs, <a href="mpr.html#mpr_8h_1ad5f5c40c5a4a2e88c69a886ff0d69b1d" class="ref">wchar</a> *space, <a href="mpr.html#mpr_8h_1ad5f5c40c5a4a2e88c69a886ff0d69b1d" class="ref">wchar</a> *name)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Initialize a Qualified Name structure using a wide namespace and name.</td></tr>
 <tr class="apiDef"><td class="apiType">struct EjsNumber*</td><td><a href="#group___ejs_byte_array_1ga3b2aac807171ed5c62fd35c43e5289d5" class="nameRef">ejsWriteToByteArray</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_byte_array" class="ref">EjsByteArray</a> *ba, int argc, <a href="#group___ejs_obj" class="ref">EjsObj</a> **argv)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Write data to the byte array This implements the ByteArray.write function.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_x_m_l_1ga585079d3c5054298dc0d6a2bc5aea973" class="nameRef">ejsXMLToBuf</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="mpr.html#group___mpr_buf" class="ref">MprBuf</a> *buf, <a href="#group___ejs_x_m_l" class="ref">EjsXML</a> *xml, int indentLevel)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Convert an xml node to string representation in a buffer.</td></tr>
 </table>
@@ -3748,9 +3748,6 @@ SSL configuration.
     <tr><td class="param">char *</td><td><td>uri</td><td>
 Target uri.
 </td>
-    <tr><td class="param">int</td><td><td>verifyPeer</td><td>
-Verify peer certificate (default to true).
-</td>
     <tr><td class="param"><a class="ref" href="#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" >ssize</a></td><td><td>writeCount</td><td>
 Count of bytes written via write().
 </td>
@@ -4250,7 +4247,7 @@ Property namespace.
   <div class="prototype">
     <a href="#group___ejs_name" class="ref">EjsName</a>
     ejsWideName
-(struct Ejs *ejs, wchar *space, wchar *name)
+(struct Ejs *ejs, <a href="mpr.html#mpr_8h_1ad5f5c40c5a4a2e88c69a886ff0d69b1d" class="ref">wchar</a> *space, <a href="mpr.html#mpr_8h_1ad5f5c40c5a4a2e88c69a886ff0d69b1d" class="ref">wchar</a> *name)
   </div>
   <div class="apiDetail">
 <p>Initialize a Qualified Name structure using a wide namespace and name.</p>
@@ -5102,7 +5099,7 @@ xtype: typeBits | dynamic &lt;&lt; 1 | visited.
   <div class="prototype">
     <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *
     ejsParse
-(<a href="#group___ejs" class="ref">Ejs</a> *ejs, wchar *str, int prefType)
+(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="mpr.html#mpr_8h_1ad5f5c40c5a4a2e88c69a886ff0d69b1d" class="ref">wchar</a> *str, int prefType)
   </div>
   <div class="apiDetail">
 <p>Parse a string.</p>
@@ -6438,7 +6435,7 @@ String value.
   <div class="prototype">
     int
     ejsCompareWide
-(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_string" class="ref">EjsString</a> *s1, wchar *s2, <a href="mpr.html#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" class="ref">ssize</a> len)
+(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_string" class="ref">EjsString</a> *s1, <a href="mpr.html#mpr_8h_1ad5f5c40c5a4a2e88c69a886ff0d69b1d" class="ref">wchar</a> *s2, <a href="mpr.html#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" class="ref">ssize</a> len)
   </div>
   <div class="apiDetail">
 <p>Compare a string with a wide string.</p>
@@ -6539,7 +6536,7 @@ This creates an uninitialized string object of the requrired size. Once initiali
   <div class="prototype">
     <a href="#group___ejs_string" class="ref">EjsString</a> *
     ejsCreateString
-(<a href="#group___ejs" class="ref">Ejs</a> *ejs, wchar *value, <a href="mpr.html#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" class="ref">ssize</a> len)
+(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="mpr.html#mpr_8h_1ad5f5c40c5a4a2e88c69a886ff0d69b1d" class="ref">wchar</a> *value, <a href="mpr.html#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" class="ref">ssize</a> len)
   </div>
   <div class="apiDetail">
 <p>Create a string object.</p>
@@ -6716,7 +6713,7 @@ This creates an uninitialized string object of the requrired size. Once initiali
   <div class="prototype">
     <a href="#group___ejs_string" class="ref">EjsString</a> *
     ejsInternWide
-(struct Ejs *ejs, wchar *value, <a href="mpr.html#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" class="ref">ssize</a> len)
+(struct Ejs *ejs, <a href="mpr.html#mpr_8h_1ad5f5c40c5a4a2e88c69a886ff0d69b1d" class="ref">wchar</a> *value, <a href="mpr.html#mpr_8h_1a7d08ccc1e981eb4d5a238641ac4ccfc1" class="ref">ssize</a> len)
   </div>
   <div class="apiDetail">
 <p>Intern a string object from a UTF-16 string.</p>
@@ -7838,12 +7835,6 @@ Http is closed and &quot;close&quot; event has been issued.
     <tr><td class="param">HttpConn *</td><td><td>conn</td><td>
 Underlying HttpConn object.
 </td>
-    <tr><td class="param">EjsByteArray *</td><td><td>data</td><td>
-Buffered write data.
-</td>
-    <tr><td class="param">int</td><td><td>dataType</td><td>
-Receive data type.
-</td>
     <tr><td class="param">Ejs *</td><td><td>ejs</td><td>
 Interp reference.
 </td>
@@ -7852,9 +7843,6 @@ Event emitter.
 </td>
     <tr><td class="param">int</td><td><td>error</td><td>
 Http errored and &quot;error&quot; event has been issued.
-</td>
-    <tr><td class="param">int</td><td><td>opened</td><td>
-Wss connection is open.
 </td>
     <tr><td class="param">EjsPot</td><td><td>pot</td><td>
 Base pot.

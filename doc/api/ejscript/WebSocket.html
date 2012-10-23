@@ -71,6 +71,8 @@ creating the <a href='#WebSocket'>WebSocket</a>. </td></tr>
 <a name='readyState'></a>
    <tr><td nowrap align='center'> get </td><td>readyState</td><td><a href='Number.html'>Number</a></td><td>The readystate value. This value can be compared with the WebSocket constants: 
 <a href='#CONNECTING'>CONNECTING</a> = 0, <a href='#OPEN'>OPEN</a> = 1, <a href='#CLOSING'>CLOSING</a> = 2, <a href='#CLOSED'>CLOSED</a> = 3.</td></tr>
+<a name='url'></a>
+   <tr><td nowrap align='center'> get </td><td>url</td><td><a href='Uri.html'>Uri</a></td><td>The URI provided to the constructor. </td></tr>
 </table>
 
 <p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
@@ -90,7 +92,7 @@ creating the <a href='#WebSocket'>WebSocket</a>. </td></tr>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#WebSocket'><b>WebSocket</b></a>(uri: <a href='Uri.html'>Uri</a>, protocols = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new WebSocket and connect to the server using the supplied URI.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#close'><b>close</b></a>(code: <a href='Number.html'>Number</a>, reason: <a href='String.html'>String</a> = ): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a close message and close the web socket connection.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#close'><b>close</b></a>(code: <a href='Number.html'>Number</a> = 1000, reason: <a href='String.html'>String</a> = ): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a close message and close the web socket connection.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#send'><b>send</b></a>(content: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send data with the request.</td></tr>
 </table>
 
@@ -112,18 +114,14 @@ creating the <a href='#WebSocket'>WebSocket</a>. </td></tr>
 <hr />
 <a name='close'></a>
 <div class='api'>
-<div class='apiSig'>    close(code: <a href='Number.html'>Number</a>, reason: <a href='String.html'>String</a> = ): <a href='Void.html'>Void</a>
+<div class='apiSig'>    close(code: <a href='Number.html'>Number</a> = 1000, reason: <a href='String.html'>String</a> = ): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Send a close message and close the web socket connection. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>code: <a href='Number.html'>Number</a> </td><td>WebSocket status code to send to the peer explaining why the connection is being closed. Defaults to 1000 which means a successful, graceful closure.</td></tr><tr class='param'><td class='param'>reason: <a href='String.html'>String</a> </td><td>Optional reason string to indicate why the connection was closed. Must be less than  124 bytes of UTF-8 text in length. [default: ]</td></tr></table></dd>
-</dl><dl><dt>See Also</dt>
-<dd>
-<a href='readyState.html'>readyState</a>
-</dd></dl>
-</div>
+<tr class='param'><td class='param'>code: <a href='Number.html'>Number</a> </td><td>WebSocket status code to send to the peer explaining why the connection is being closed. Defaults to 1000 which means a successful, graceful closure. [default: 1000]</td></tr><tr class='param'><td class='param'>reason: <a href='String.html'>String</a> </td><td>Optional reason string to indicate why the connection was closed. Must be less than  124 bytes of UTF-8 text in length. [default: ]</td></tr></table></dd>
+</dl></div>
 </div>
 <hr />
 <a name='send'></a>

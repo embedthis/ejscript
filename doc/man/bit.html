@@ -9,10 +9,10 @@ BIT(1)                           User Commands                          BIT(1)
        [<I>--diagnose</I>] [<I>--dump</I>]
            [<I>--file file.bit</I>] [<I>--force</I>] [<I>--gen  [make|sh|vs|xcode]</I>]  [<I>--import</I>]
            [<I>--keep</I>] [<I>--log logSpec</I>]
-           [<I>--nocross</I>]  [<I>--out  path</I>]  [<I>--profile [debug|release|...]</I>]  [<I>--pre</I>
-           <I>sourcefile</I>] [<I>--platform os-arch</I>]
-           [<I>--quiet</I>] [<I>--set [feature=value]</I>] [<I>--show</I>] [<I>--rebuild</I>]  [<I>--release</I>]
-           [<I>--unset feature</I>] [<I>--version</I>]
+           [<I>--nocross</I>]  [<I>--out  path</I>]  [<I>--platform os-arch</I>] [<I>--pre sourcefile</I>]
+           [<I>--profile [debug|release|...]</I>]
+           [<I>--quiet</I>] [<I>--set [feature=value]</I>] [<I>--show</I>]  [<I>--static</I>]  [<I>--rebuild</I>]
+           [<I>--release</I>] [<I>--unset feature</I>] [<I>--version</I>]
            [<I>--verbose</I>] [<I>--with PACK[=PATH]</I>] [<I>--without PACK</I>] [targets|actions]
 
 <B>DESCRIPTION</B>
@@ -360,6 +360,10 @@ BIT(1)                           User Commands                          BIT(1)
 
        <B>--show </B>Show the actual commands executed by bit.
 
+       <B>--static</B>
+              Build  using static linking instead of shared libraries. Same as
+              --set static=true.
+
        <B>--rebuild</B>
               Rebuild the specified targets. Can also use 'bit rebuild'.
 
@@ -367,7 +371,7 @@ BIT(1)                           User Commands                          BIT(1)
               Select the release profile. Same as --profile release.
 
        <B>--unset key=value</B>
-              Clear  a  settings property.  Use this when running 'bit config-
+              Clear a settings property.  Use this when running  'bit  config-
               ure' to persist your changes in the configuration bit file.
 
        <B>--version</B>
@@ -377,9 +381,9 @@ BIT(1)                           User Commands                          BIT(1)
               Run in verbose mode with more trace about Bit activities.
 
        <B>--with PACK[=path]</B>
-              Build with the named pack located at the optional path.  If  the
-              path  is ommitted, a search is performed for the pack at default
-              locations. Packs must have a  pack  description  file  installed
+              Build  with  the named pack located at the optional path. If the
+              path is ommitted, a search is performed for the pack at  default
+              locations.  Packs  must  have  a pack description file installed
               under 'bits/packs' in the bit installation.
 
        <B>--without PACK</B>
@@ -389,7 +393,7 @@ BIT(1)                           User Commands                          BIT(1)
        Report bugs to dev@embedthis.com.
 
 <B>COPYRIGHT</B>
-       Copyright  (C)  2004-2012  Embedthis  Software.  Bit and Ejscript are a
+       Copyright (C) 2004-2012 Embedthis Software.  Bit  and  Ejscript  are  a
        trademarks of Embedthis Software.
 
 <B>SEE ALSO</B>

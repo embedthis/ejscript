@@ -9,7 +9,7 @@ LD       ?= /usr/bin/ld
 PROFILE  ?= debug
 CONFIG   ?= $(OS)-$(ARCH)-$(PROFILE)
 
-CFLAGS   += -Wno-deprecated-declarations -w
+CFLAGS   += -w
 DFLAGS   += 
 IFLAGS   += -I$(CONFIG)/inc
 LDFLAGS  += '-Wl,-rpath,@executable_path/' '-Wl,-rpath,@loader_path/'
@@ -296,7 +296,7 @@ $(CONFIG)/obj/sqlite3.o: \
         src/deps/sqlite/sqlite3.c \
         $(CONFIG)/inc/bit.h \
         $(CONFIG)/inc/sqlite3.h
-	$(CC) -c -o $(CONFIG)/obj/sqlite3.o -arch x86_64 -Wno-deprecated-declarations -g -Wno-unused-result -w -w $(DFLAGS) -I$(CONFIG)/inc src/deps/sqlite/sqlite3.c
+	$(CC) -c -o $(CONFIG)/obj/sqlite3.o -arch x86_64 -w $(DFLAGS) -I$(CONFIG)/inc src/deps/sqlite/sqlite3.c
 
 $(CONFIG)/bin/libsqlite3.dylib:  \
         $(CONFIG)/inc/sqlite3.h \

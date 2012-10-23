@@ -610,7 +610,6 @@ setup: {
         </ul> 
         <p>When specifying a name that is a target, these must match the target name property. When specifying an action,
             these must match a target type property.</p>
-
         <a id="buildEvents"></a>
         <h3>Build Events</h3>
         <p>When building, Bit will fire events that may trigger scripts to run. Here is a list of events:</p>
@@ -694,20 +693,17 @@ targets: {
         <p>Note that the <em>build</em> and <em>action</em> scripts translate under-the-hood into the same long form.
         The action script becomes a target with a type of <em>action</em> and an event of <em>build</em>. A build script
         becomes a target with a type of <em>build</em> and an event of <em>build</em>.</p>
-
         <a id="debugging"></a>
         <h2>Debugging</h2>
         <p>With Make and other build tools, it is difficult to determine why a target is or is not being built. Bit
         provides a <em>--why</em> command line switch to diagnose problematic build sequences. This switch displays the
         reason why each target was or was not built.</p>
-
         <p>In a complex project containing many Bit files, it can be helpful to see the entire bit configuration in one
         file. Use the <em>--dump</em> switch to save a copy of the entire configuration. In the dump, 
             build defaults are fully expanded to each target contains the expanded configuration that will be used to build
             the target.</p> <p>By default, Bit builds relatively quietly and stops on the first build error. To see the
             commands Bit is issuing, use the <em>--show</em> switch. To build totally quietly, use the <em>--quiet</em>
             switch. To continue building despite build errors, use the <em>--continue</em> switch.</p>
-
         <a id="commandOptions"></a>
         <h2>Command Options</h2>
         <p>Bit command line options can be prefixed with either a single or double minus, i.e. <em>-switch</em> or
