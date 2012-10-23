@@ -2135,6 +2135,7 @@ typedef struct EjsCode {
     @param argv Array of arguments.
     @returns Returns a result variable or NULL on errors and exceptions.
     @stability Evolving.
+    @ingroup EjsFunction
  */
 typedef struct EjsObj *(*EjsProc)(Ejs *ejs, EjsAny *thisObj, int argc, struct EjsObj **argv);
 
@@ -4275,6 +4276,9 @@ PUBLIC EjsType *ejsCreateType(Ejs *ejs, EjsName name, struct EjsModule *up, EjsT
         to define a public global function. The more typical paradigm to define functions is to create a script file
         of native method definitions and and compile it. This results in a mod file that can be loaded which will
         create the function/method definitions. Then use #ejsBindMethod to associate a C function with a property.
+    @param ejs Interpreter instance returned from #ejsCreateVM
+    @param name Function name
+    @param fn C function that implements the function
     @ingroup EjsType
  */
 PUBLIC int ejsDefineGlobalFunction(Ejs *ejs, EjsString *name, EjsProc fn);
