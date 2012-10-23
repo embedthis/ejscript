@@ -20,7 +20,7 @@ if (!Path("/bin").exists || Config.OS == 'windows') {
     //  Test with RE match
     let cmds = Cmd.ps(re)
     assert(cmds)
-}
+
     assert(cmds.length > 0)
     assert(cmds[0].pid > 0)
     assert(cmds[0].command.contains(program))
