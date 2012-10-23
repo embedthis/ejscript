@@ -25,6 +25,7 @@ Bit.load({
             platforms: [ 'local' ],
         },
 
+/* UNUSED
         'utest.es': {
             path: '${BIN}/utest.es',
             files: [ 'utest.es' ],
@@ -43,6 +44,7 @@ Bit.load({
             depends: ['ejsrun'],
             platforms: [ 'local' ],
         },
+*/
 
         bits: {
             path: '${LIB}/bits',

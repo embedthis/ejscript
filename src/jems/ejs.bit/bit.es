@@ -58,8 +58,7 @@ public class Bit {
     private var posix = ['macosx', 'linux', 'unix', 'freebsd', 'solaris']
     private var windows = ['windows', 'wince']
     private var start: Date
-//  MOB - removed objects because don't want selectTargets to add all objects
-    private var targetsToBuildByDefault = { exe: true, file: true, lib: true, /* MOB ZZ obj: true, */ build: true }
+    private var targetsToBuildByDefault = { exe: true, file: true, lib: true, build: true }
     private var targetsToBlend = { exe: true, lib: true, obj: true, action: true, build: true, clean: true }
     private var targetsToClean = { exe: true, file: true, lib: true, obj: true, build: true }
 
@@ -1306,9 +1305,6 @@ public class Bit {
         makeConstGlobals()
         makeDirGlobals()
         enableTargets()
-/*
-    Moved later to allow users to select objects as targets
- */
         blendDefaults()
         resolveDependencies()
         expandWildcards()
@@ -1480,9 +1476,15 @@ public class Bit {
                         if (dep && dep.type == 'lib' && dep.enable) {
                             /* Add the dependent files to the target executables */
                             target.files += dep.files
-                            resolved.push(dname.replace(/^lib/g, ''))
                             includes += dep.includes
                             defines += dep.defines
+                            if (dep.static) {
+                                resolved.push(Path(dname).joinExt(bit.ext.lib, true))
+                            } else if (dname.startsWith('lib')) {
+                                resolved.push(dname.replace(/^lib/g, ''))
+                            } else {
+                                resolved.push(Path(dname).joinExt(bit.ext.shlib, true))
+                            }
                         }
                     }
                 }
@@ -2581,7 +2583,6 @@ global.NN = item.ns
                 }
             }
         } else {
-//  MOB ZZ
             let mapped = []
             for each (let lib:Path in libs) {
                 if (lib.extension) {
@@ -2591,9 +2592,6 @@ global.NN = item.ns
                 }
             }
             libs = mapped
-/* MOB OLD
-                libs = libs.map(function(e) '-l' + Path(e).trimExt().relative.toString().replace(/^lib/, ''))
- */
         }
         return libs
     }
