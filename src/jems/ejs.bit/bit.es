@@ -2585,11 +2585,12 @@ global.NN = item.ns
         } else {
             let mapped = []
             for each (let lib:Path in libs) {
+                /* MOB UNUSED
                 if (lib.extension) {
                     mapped.push(bit.dir.lib.relativeTo(App.dir).join(lib))
-                } else {
+                } else
+                */
                     mapped.push('-l' + lib.trimExt().relative.toString().replace(/^lib/, ''))
-                }
             }
             libs = mapped
         }

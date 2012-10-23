@@ -911,7 +911,7 @@ static int loadDocSection(Ejs *ejs, EjsModule *mp)
 static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
 {
     MprModule   *native;
-    char        *bare, *path, *moduleName, initName[MPR_MAX_PATH], *cp;
+    char        *base, *bare, *path, *moduleName, initName[MPR_MAX_PATH], *cp;
 
     /*
         Replace ".mod" with ".so", ".dll" or ".dylib"
@@ -920,13 +920,16 @@ static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
     if ((cp = strrchr(bare, '.')) != 0 && strcmp(cp, EJS_MODULE_EXT) == 0) {
         *cp = '\0';
     }
-    path = sjoin(bare, BIT_SHOBJ, NULL);
-
+    base = mprGetPathBase(bare);
+    if (!sstarts(base, "lib")) {
+        path = mprJoinPath(mprGetPathDir(bare), sjoin("lib", base, BIT_SHOBJ, NULL));
+    } else {
+        path = sjoin(bare, BIT_SHOBJ, NULL);
+    }
     if (! mprPathExists(path, R_OK)) {
         mprError("Native module not found %s", path);
         return MPR_ERR_CANT_ACCESS;
     }
-
     /*
         Build the DSO entry point name. Format is "Name_ModuleInit" where Name has "." converted to "_"
         Typical name: ejs_io_Init or com_acme_rockets_Init

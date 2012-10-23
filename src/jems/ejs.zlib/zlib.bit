@@ -16,7 +16,7 @@ Bit.load({
             depends: [ 'ejsc', 'ejs.mod' ],
         },
 
-        'ejs.zlib': {
+        'libejs.zlib': {
             type: 'lib',
             sources: [ '*.c' ],
             depends: [ 'libejs', 'ejs.mod', 'ejs.zlib.mod', 'libzlib' ],

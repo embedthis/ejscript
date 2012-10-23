@@ -6,9 +6,6 @@
  */
 
 /* Settings */
-#ifndef BIT_ASSERT
-    #define BIT_ASSERT 1
-#endif
 #ifndef BIT_BUILD_NUMBER
     #define BIT_BUILD_NUMBER "0"
 #endif
@@ -17,9 +14,6 @@
 #endif
 #ifndef BIT_COMPANY
     #define BIT_COMPANY "Embedthis"
-#endif
-#ifndef BIT_DEBUG
-    #define BIT_DEBUG 1
 #endif
 #ifndef BIT_DEPTH
     #define BIT_DEPTH 1
@@ -142,13 +136,13 @@
 
 /* Profile */
 #ifndef BIT_CONFIG_CMD
-    #define BIT_CONFIG_CMD "bit -q -configure . -profile debug"
+    #define BIT_CONFIG_CMD "bit -d -q -platform macosx-x64 -without own -profile xcode -configure . -gen xcode"
 #endif
 #ifndef BIT_EJS_PRODUCT
     #define BIT_EJS_PRODUCT 1
 #endif
 #ifndef BIT_PROFILE
-    #define BIT_PROFILE "debug"
+    #define BIT_PROFILE "xcode"
 #endif
 
 /* Miscellaneous */
@@ -170,10 +164,10 @@
     #define BIT_PACK_CC 1
 #endif
 #ifndef BIT_PACK_DOXYGEN
-    #define BIT_PACK_DOXYGEN 1
+    #define BIT_PACK_DOXYGEN 0
 #endif
 #ifndef BIT_PACK_DSI
-    #define BIT_PACK_DSI 1
+    #define BIT_PACK_DSI 0
 #endif
 #ifndef BIT_PACK_LIB
     #define BIT_PACK_LIB 1
@@ -182,13 +176,13 @@
     #define BIT_PACK_LINK 1
 #endif
 #ifndef BIT_PACK_MAN
-    #define BIT_PACK_MAN 1
+    #define BIT_PACK_MAN 0
 #endif
 #ifndef BIT_PACK_MAN2HTML
-    #define BIT_PACK_MAN2HTML 1
+    #define BIT_PACK_MAN2HTML 0
 #endif
 #ifndef BIT_PACK_MATRIXSSL
-    #define BIT_PACK_MATRIXSSL 1
+    #define BIT_PACK_MATRIXSSL 0
 #endif
 #ifndef BIT_PACK_OPENSSL
     #define BIT_PACK_OPENSSL 1

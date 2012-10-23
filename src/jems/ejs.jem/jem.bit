@@ -30,7 +30,6 @@ Bit.load({
             type: 'exe',
             path: '${BIN}/jem${EXE}',
             sources: [ '${SRC}/src/cmd/ejsrun.c' ],
-            static: true,
             depends: ['libejs', 'jem.es'],
             platforms: [ 'local' ],
         },

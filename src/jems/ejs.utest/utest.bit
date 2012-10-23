@@ -31,7 +31,6 @@ Bit.load({
             type: 'exe',
             path: '${BIN}/utest${EXE}',
             sources: [ '${SRC}/src/cmd/ejsrun.c' ],
-            static: true,
             depends: ['libejs', 'utest.es', 'utest.worker'],
             platforms: [ 'local' ],
         },

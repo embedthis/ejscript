@@ -33,7 +33,6 @@ Bit.load({
             sources: [
                 '${SRC}/src/cmd/ejsrun.c',
             ],
-            static: true,
             active: true,
             precious: true,
             depends: ['libejs', 'mvc.es'],
