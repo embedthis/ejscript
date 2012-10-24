@@ -1238,37 +1238,36 @@
 #define ES_Http_header                                                 18
 #define ES_Http_headers                                                19
 #define ES_Http_isSecure                                               20
-#define ES_Http_key                                                    21
-#define ES_Http_lastModified                                           22
-#define ES_Http_limits                                                 23
-#define ES_Http_method                                                 24
-#define ES_Http_off                                                    25
-#define ES_Http_on                                                     26
-#define ES_Http_post                                                   27
-#define ES_Http_put                                                    28
-#define ES_Http_read                                                   29
-#define ES_Http_readString                                             30
-#define ES_Http_readLines                                              31
-#define ES_Http_readXml                                                32
-#define ES_Http_reset                                                  33
-#define ES_Http_response                                               34
-#define ES_Http_retries                                                35
-#define ES_Http_sessionCookie                                          36
-#define ES_Http_setCookie                                              37
-#define ES_Http_setCredentials                                         38
-#define ES_Http_setHeader                                              39
-#define ES_Http_setHeaders                                             40
-#define ES_Http_setLimits                                              41
-#define ES_Http_status                                                 42
-#define ES_Http_statusMessage                                          43
-#define ES_Http_success                                                44
-#define ES_Http_trace                                                  45
-#define ES_Http_upload                                                 46
-#define ES_Http_uri                                                    47
-#define ES_Http_verify                                                 48
-#define ES_Http_wait                                                   49
-#define ES_Http_write                                                  50
-#define ES_Http_NUM_INSTANCE_PROP                                      51
+#define ES_Http_lastModified                                           21
+#define ES_Http_limits                                                 22
+#define ES_Http_method                                                 23
+#define ES_Http_off                                                    24
+#define ES_Http_on                                                     25
+#define ES_Http_post                                                   26
+#define ES_Http_put                                                    27
+#define ES_Http_read                                                   28
+#define ES_Http_readString                                             29
+#define ES_Http_readLines                                              30
+#define ES_Http_readXml                                                31
+#define ES_Http_reset                                                  32
+#define ES_Http_response                                               33
+#define ES_Http_retries                                                34
+#define ES_Http_sessionCookie                                          35
+#define ES_Http_setCookie                                              36
+#define ES_Http_setCredentials                                         37
+#define ES_Http_setHeader                                              38
+#define ES_Http_setHeaders                                             39
+#define ES_Http_setLimits                                              40
+#define ES_Http_status                                                 41
+#define ES_Http_statusMessage                                          42
+#define ES_Http_success                                                43
+#define ES_Http_trace                                                  44
+#define ES_Http_upload                                                 45
+#define ES_Http_uri                                                    46
+#define ES_Http_verify                                                 47
+#define ES_Http_wait                                                   48
+#define ES_Http_write                                                  49
+#define ES_Http_NUM_INSTANCE_PROP                                      50
 #define ES_Http_NUM_INHERITED_PROP                                     0
 
 
@@ -2193,16 +2192,18 @@
 #define ES_WebSocket_onclose                                           3
 #define ES_WebSocket_binaryType                                        4
 #define ES_WebSocket_bufferedAmount                                    5
-#define ES_WebSocket_close                                             6
-#define ES_WebSocket_extensions                                        7
-#define ES_WebSocket_off                                               8
-#define ES_WebSocket_on                                                9
-#define ES_WebSocket_protocol                                          10
-#define ES_WebSocket_readyState                                        11
-#define ES_WebSocket_send                                              12
-#define ES_WebSocket_url                                               13
-#define ES_WebSocket_wait                                              14
-#define ES_WebSocket_NUM_INSTANCE_PROP                                 15
+#define ES_WebSocket_certificate                                       6
+#define ES_WebSocket_close                                             7
+#define ES_WebSocket_extensions                                        8
+#define ES_WebSocket_off                                               9
+#define ES_WebSocket_on                                                10
+#define ES_WebSocket_protocol                                          11
+#define ES_WebSocket_readyState                                        12
+#define ES_WebSocket_send                                              13
+#define ES_WebSocket_verify                                            14
+#define ES_WebSocket_url                                               15
+#define ES_WebSocket_wait                                              16
+#define ES_WebSocket_NUM_INSTANCE_PROP                                 17
 #define ES_WebSocket_NUM_INHERITED_PROP                                0
 
 
@@ -2384,6 +2385,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1491447
+#define _ES_CHECKSUM_ejs   1495139
 
 #endif

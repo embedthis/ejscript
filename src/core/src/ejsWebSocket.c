@@ -47,6 +47,14 @@ static EjsWebSocket *wsConstructor(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj 
     httpSetConnNotifier(ws->conn, webSocketNotify);
     httpSetWebSocketProtocols(ws->conn, ws->protocols);
     httpSetConnContext(ws->conn, ws);
+
+    //  MOB DEBUG
+    if (sstarts(ws->uri, "wss")) {
+        ws->ssl = mprCreateSsl(0);
+        mprVerifySslIssuer(ws->ssl, 0);
+        mprVerifySslPeer(ws->ssl, 0);
+    }
+
     startWebSocketRequest(ejs, ws);
     return ws;
 }
@@ -70,6 +78,28 @@ static EjsString *ws_binaryType(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **a
 static EjsNumber *ws_bufferedAmount(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 {
     return ejsCreateNumber(ejs, (MprNumber) ws->conn->writeq->count);
+}
+
+
+/*
+    function get certificate(): String
+ */
+static EjsString *ws_certificate(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
+{
+    if (ws->certFile) {
+        return ejsCreateStringFromAsc(ejs, ws->certFile);
+    }
+    return ESV(null);
+}
+
+
+/*  
+    function set setCertificate(value: String): Void
+ */
+static EjsObj *ws_set_certificate(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
+{
+    ws->certFile = ejsToMulti(ejs, argv[0]);
+    return 0;
 }
 
 
@@ -198,6 +228,35 @@ static EjsString *ws_send(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 
 
 /*  
+    function get verify(): Boolean
+ */
+static EjsBoolean *ws_verify(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
+{
+    if (!ws->ssl) {
+        ws->ssl = mprCreateSsl(0);
+    }
+    return ws->ssl->verifyPeer ?  ESV(false) : ESV(true);
+}
+
+
+/*  
+    function set verify(on: Boolean): Void
+ */
+static EjsObj *ws_set_verify(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
+{
+    int     verify;
+
+    verify = (argv[0] == ESV(true));
+    if (!ws->ssl) {
+        ws->ssl = mprCreateSsl(0);
+    }
+    mprVerifySslIssuer(ws->ssl, verify);
+    mprVerifySslPeer(ws->ssl, verify);
+    return 0;
+}
+
+
+/*  
     function get url(): Uri
  */
 static EjsUri *ws_url(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
@@ -212,20 +271,12 @@ static EjsObj *startWebSocketRequest(Ejs *ejs, EjsWebSocket *ws)
     HttpConn        *conn;
 
     conn = ws->conn;
-#if MOB && FUTURE
-    if (ws->verifyPeer || ws->certFile) {
+    if (ws->certFile) {
         if (!ws->ssl) {
-            ws->ssl = mprCreateSsl();
+            ws->ssl = mprCreateSsl(0);
         }
+        mprSetSslCertFile(ws->ssl, ws->certFile);
     }
-    if (ws->ssl) {
-        mprVerifySslPeer(ws->ssl, ws->verifyPeer);
-        mprVerifySslIssuer(ws->ssl, ws->verifyPeer);
-        if (ws->certFile) {
-            mprSetSslCertFile(ws->ssl, ws->certFile);
-        }
-    }
-#endif
     if (httpConnect(conn, "GET", ws->uri, ws->ssl) < 0) {
         ejsThrowIOError(ejs, "Can't issue request for \"%s\"", ws->uri);
         return 0;
@@ -471,6 +522,7 @@ static void manageWebSocket(EjsWebSocket *ws, int flags)
         mprMark(ws->conn);
         mprMark(ws->emitter);
         mprMark(ws->ssl);
+        mprMark(ws->certFile);
         mprMark(ws->protocols);
         mprMark(ws->protocol);
         mprMark(ws->uri);
@@ -504,6 +556,9 @@ PUBLIC void ejsConfigureWebSocketType(Ejs *ejs)
     ejsBindConstructor(ejs, type, wsConstructor);
     ejsBindMethod(ejs, prototype, ES_WebSocket_bufferedAmount, ws_bufferedAmount);
     ejsBindMethod(ejs, prototype, ES_WebSocket_binaryType, ws_binaryType);
+#if ES_WebSocket_certificate
+    ejsBindAccess(ejs, prototype, ES_WebSocket_certificate, ws_certificate, ws_set_certificate);
+#endif
     ejsBindMethod(ejs, prototype, ES_WebSocket_close, ws_close);
     ejsBindMethod(ejs, prototype, ES_WebSocket_extensions, ws_extensions);
     ejsBindMethod(ejs, prototype, ES_WebSocket_off, ws_off);
@@ -511,9 +566,10 @@ PUBLIC void ejsConfigureWebSocketType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_WebSocket_protocol, ws_protocol);
     ejsBindMethod(ejs, prototype, ES_WebSocket_readyState, ws_readyState);
     ejsBindMethod(ejs, prototype, ES_WebSocket_send, ws_send);
-#if ES_WebSocket_url
-    ejsBindMethod(ejs, prototype, ES_WebSocket_url, ws_url);
+#if ES_WebSocket_verify
+    ejsBindAccess(ejs, prototype, ES_WebSocket_verify, ws_verify, ws_set_verify);
 #endif
+    ejsBindMethod(ejs, prototype, ES_WebSocket_url, ws_url);
 }
 
 /*

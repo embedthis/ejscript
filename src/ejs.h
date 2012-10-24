@@ -3261,9 +3261,6 @@ typedef struct EjsHttp {
     char            *certFile;                  /**< SSL certificate file */
     int             closed;                     /**< Http is closed and "close" event has been issued */
     int             error;                      /**< Http errored and "error" event has been issued */
-#if UNUSED
-    int             verifyPeer;                 /**< Verify peer certificate (default to true) */
-#endif
     ssize           readCount;                  /**< Count of body bytes read */
     ssize           requestContentCount;        /**< Count of bytes written from requestContent */
     ssize           writeCount;                 /**< Count of bytes written via write() */
@@ -3337,20 +3334,12 @@ typedef struct EjsWebSocket {
     EjsPot          pot;                        /**< Base pot */
     Ejs             *ejs;                       /**< Interp reference */
     EjsObj          *emitter;                   /**< Event emitter */
-#if UNUSED
-    EjsByteArray    *data;                      /**< Buffered write data */
-#endif
     HttpConn        *conn;                      /**< Underlying HttpConn object */
     MprSsl          *ssl;                       /**< SSL configuration */
+    char            *certFile;                  /**< SSL certificate file */
     char            *uri;                       /**< Target URI */
     char            *protocols;                 /**< Set of supported protocols */
     char            *protocol;                  /**< Protocol selected by the server */
-#if UNUSED
-    int             dataType;                   /**< Receive data type */
-#endif
-#if UNUSED
-    int             opened;                     /**< Wss connection is open */
-#endif
     int             closed;                     /**< Http is closed and "close" event has been issued */
     int             error;                      /**< Http errored and "error" event has been issued */
 } EjsWebSocket;
@@ -3363,48 +3352,6 @@ typedef struct EjsWebSocket {
  */
 PUBLIC EjsWebSocket *ejsCreateWebSocket(Ejs *ejs);
 
-#if UNUSED
-/**
-    Get a WebSocket limits 
-    @param ejs Ejs reference returned from #ejsCreateVM
-    @param obj Object to contain the limits properties
-    @param limits The WebSocketLimits object 
-    @param server Set to true if defining server side limits
-    @ingroup EjsWebSocket
-    @internal
- */
-PUBLIC void ejsGetWebSocketLimits(Ejs *ejs, EjsObj *obj, WebSocketLimits *limits, bool server);
-
-/** 
-    Load the WebSocket service
-    @param ejs Ejs reference returned from #ejsCreateVM
-    @ingroup EjsPath
-    @internal
- */
-PUBLIC void ejsLoadWebSocketService(Ejs *ejs);
-
-/**
-    Set a WebSocket limits 
-    @param ejs Ejs reference returned from #ejsCreateVM
-    @param limits The WebSocketLimits object receiving the limit settings
-    @param obj Object containing the limits values
-    @param server Set to true if defining server side limits
-    @ingroup EjsWebSocket
-    @internal
- */
-PUBLIC void ejsSetWebSocketLimits(Ejs *ejs, WebSocketLimits *limits, EjsObj *obj, bool server);
-
-/** 
-    Setup tracing for WebSocket transactions
-    @param ejs Ejs reference returned from #ejsCreateVM
-    @param trace WebSocketTrace object
-    @param options Trace options
-    @return Zero if successful, otherwise a negative MPR error code.
-    @ingroup EjsPath
-    @internal
- */
-PUBLIC int ejsSetupWebSocketTrace(Ejs *ejs, WebSocketTrace *trace, EjsObj *options);
-#endif
 
 /******************************************** Iterator ********************************************/
 /** 
@@ -5148,9 +5095,6 @@ typedef struct EjsModule {
     EjsString       *name;                  /**< Name of this module - basename of the filename without .mod extension */
     //  MOB - document the version format
     EjsString       *vname;                 /**< Versioned name - name with optional version suffix */
-#if UNUSED
-    MprList         *vms;                   /**< List of VMs referencing the module */
-#endif
     MprMutex        *mutex;                 /**< Multithread locking */
     int             version;                /**< Made with EJS_MAKE_VERSION */
     int             minVersion;             /**< Minimum version when used as a dependency */
