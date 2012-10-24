@@ -242,9 +242,7 @@ module ejs {
         native function connect(method: String, uri: Uri? = null, ...data): Void
 
         /** 
-            Filename of the certificate file for this HTTP object. The certificate is only used if secure
-            communications are in use. Currently not implemented.
-            @hide
+            Filename of the file of certificates used to verify server certificates.
          */
         native function get certificate(): Path
         native function set certificate(certFile: Path): Void
@@ -405,14 +403,6 @@ FUTURE & KEEP
             @return True if the connection is using SSL.
          */
         native function get isSecure(): Boolean
-
-        /** 
-            Private key file for this Https object. NOT currently supported.
-            @return The file name.
-            @hide
-         */
-        native function get key(): Path
-        native function set key(keyFile: Path): Void
 
         /** 
             When the response content was last modified. Set to the the value of the response Http Last-Modified header.
