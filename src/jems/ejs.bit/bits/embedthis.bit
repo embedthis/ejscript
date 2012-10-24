@@ -167,7 +167,7 @@ Bit.load({
             ",
         },
 
-        utest: {
+        unit_test: {
             /* This target is used if the product doesn't supply a 'test' target */
             type: 'test',
             action: "
