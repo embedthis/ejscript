@@ -3085,7 +3085,7 @@ public function probe(file: Path, options = {}): Path {
 /*
     Resolve a program. Name can be either a path or a basename with optional extension
  */
-public function program(name: Path, description = null) {
+public function program(name: Path, description = null): Path {
     let path = bit.packs[name.trimExt()].path || name
     let packs = {}
     let cfg = {description: description}
@@ -3096,6 +3096,7 @@ public function program(name: Path, description = null) {
         throw e
     }
     Bit.load({packs: packs})
+    return cfg.path
 }
 
 public function action(command: String, options = null)
