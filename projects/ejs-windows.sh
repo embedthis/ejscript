@@ -274,25 +274,20 @@ cd - >/dev/null
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.zlib.mod
 "${CC}" -c -Fo${CONFIG}/obj/ejsZlib.obj -Fd${CONFIG}/obj/ejsZlib.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/jems/ejs.zlib/ejsZlib.c
 
-"${LD}" -dll -out:${CONFIG}/bin/ejs.zlib.dll -entry:_DllMainCRTStartup@12 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsZlib.obj libzlib.lib libejs.lib ${LIBS} libhttp.lib libpcre.lib libmpr.lib
+"${LD}" -dll -out:${CONFIG}/bin/libejs.zlib.dll -entry:_DllMainCRTStartup@12 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsZlib.obj libzlib.lib libejs.lib ${LIBS} libhttp.lib libpcre.lib libmpr.lib
 
-"${LD}" -out:${CONFIG}/bin/bit.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsrun.obj ${CONFIG}/obj/mprLib.obj ${CONFIG}/obj/pcre.obj ${CONFIG}/obj/httpLib.obj ${CONFIG}/obj/ecAst.obj ${CONFIG}/obj/ecCodeGen.obj ${CONFIG}/obj/ecCompiler.obj ${CONFIG}/obj/ecLex.obj ${CONFIG}/obj/ecModuleWrite.obj ${CONFIG}/obj/ecParser.obj ${CONFIG}/obj/ecState.obj ${CONFIG}/obj/dtoa.obj ${CONFIG}/obj/ejsApp.obj ${CONFIG}/obj/ejsArray.obj ${CONFIG}/obj/ejsBlock.obj ${CONFIG}/obj/ejsBoolean.obj ${CONFIG}/obj/ejsByteArray.obj ${CONFIG}/obj/ejsCache.obj ${CONFIG}/obj/ejsCmd.obj ${CONFIG}/obj/ejsConfig.obj ${CONFIG}/obj/ejsDate.obj ${CONFIG}/obj/ejsDebug.obj ${CONFIG}/obj/ejsError.obj ${CONFIG}/obj/ejsFile.obj ${CONFIG}/obj/ejsFileSystem.obj ${CONFIG}/obj/ejsFrame.obj ${CONFIG}/obj/ejsFunction.obj ${CONFIG}/obj/ejsGC.obj ${CONFIG}/obj/ejsGlobal.obj ${CONFIG}/obj/ejsHttp.obj ${CONFIG}/obj/ejsIterator.obj ${CONFIG}/obj/ejsJSON.obj ${CONFIG}/obj/ejsLocalCache.obj ${CONFIG}/obj/ejsMath.obj ${CONFIG}/obj/ejsMemory.obj ${CONFIG}/obj/ejsMprLog.obj ${CONFIG}/obj/ejsNamespace.obj ${CONFIG}/obj/ejsNull.obj ${CONFIG}/obj/ejsNumber.obj ${CONFIG}/obj/ejsObject.obj ${CONFIG}/obj/ejsPath.obj ${CONFIG}/obj/ejsPot.obj ${CONFIG}/obj/ejsRegExp.obj ${CONFIG}/obj/ejsSocket.obj ${CONFIG}/obj/ejsString.obj ${CONFIG}/obj/ejsSystem.obj ${CONFIG}/obj/ejsTimer.obj ${CONFIG}/obj/ejsType.obj ${CONFIG}/obj/ejsUri.obj ${CONFIG}/obj/ejsVoid.obj ${CONFIG}/obj/ejsWebSocket.obj ${CONFIG}/obj/ejsWorker.obj ${CONFIG}/obj/ejsXML.obj ${CONFIG}/obj/ejsXMLList.obj ${CONFIG}/obj/ejsXMLLoader.obj ${CONFIG}/obj/ejsByteCode.obj ${CONFIG}/obj/ejsException.obj ${CONFIG}/obj/ejsHelper.obj ${CONFIG}/obj/ejsInterp.obj ${CONFIG}/obj/ejsLoader.obj ${CONFIG}/obj/ejsModule.obj ${CONFIG}/obj/ejsScope.obj ${CONFIG}/obj/ejsService.obj ${CONFIG}/obj/zlib.obj ${CONFIG}/obj/ejsZlib.obj ejs.zlib.lib ${LIBS}
-
-#  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/utest.es
-rm -rf ${CONFIG}/bin/utest.exe
-cp -r ${CONFIG}/bin/ejsrun.exe ${CONFIG}/bin/utest.exe
+"${LD}" -out:${CONFIG}/bin/bit.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsrun.obj ${CONFIG}/obj/mprLib.obj ${CONFIG}/obj/pcre.obj ${CONFIG}/obj/httpLib.obj ${CONFIG}/obj/ecAst.obj ${CONFIG}/obj/ecCodeGen.obj ${CONFIG}/obj/ecCompiler.obj ${CONFIG}/obj/ecLex.obj ${CONFIG}/obj/ecModuleWrite.obj ${CONFIG}/obj/ecParser.obj ${CONFIG}/obj/ecState.obj ${CONFIG}/obj/dtoa.obj ${CONFIG}/obj/ejsApp.obj ${CONFIG}/obj/ejsArray.obj ${CONFIG}/obj/ejsBlock.obj ${CONFIG}/obj/ejsBoolean.obj ${CONFIG}/obj/ejsByteArray.obj ${CONFIG}/obj/ejsCache.obj ${CONFIG}/obj/ejsCmd.obj ${CONFIG}/obj/ejsConfig.obj ${CONFIG}/obj/ejsDate.obj ${CONFIG}/obj/ejsDebug.obj ${CONFIG}/obj/ejsError.obj ${CONFIG}/obj/ejsFile.obj ${CONFIG}/obj/ejsFileSystem.obj ${CONFIG}/obj/ejsFrame.obj ${CONFIG}/obj/ejsFunction.obj ${CONFIG}/obj/ejsGC.obj ${CONFIG}/obj/ejsGlobal.obj ${CONFIG}/obj/ejsHttp.obj ${CONFIG}/obj/ejsIterator.obj ${CONFIG}/obj/ejsJSON.obj ${CONFIG}/obj/ejsLocalCache.obj ${CONFIG}/obj/ejsMath.obj ${CONFIG}/obj/ejsMemory.obj ${CONFIG}/obj/ejsMprLog.obj ${CONFIG}/obj/ejsNamespace.obj ${CONFIG}/obj/ejsNull.obj ${CONFIG}/obj/ejsNumber.obj ${CONFIG}/obj/ejsObject.obj ${CONFIG}/obj/ejsPath.obj ${CONFIG}/obj/ejsPot.obj ${CONFIG}/obj/ejsRegExp.obj ${CONFIG}/obj/ejsSocket.obj ${CONFIG}/obj/ejsString.obj ${CONFIG}/obj/ejsSystem.obj ${CONFIG}/obj/ejsTimer.obj ${CONFIG}/obj/ejsType.obj ${CONFIG}/obj/ejsUri.obj ${CONFIG}/obj/ejsVoid.obj ${CONFIG}/obj/ejsWebSocket.obj ${CONFIG}/obj/ejsWorker.obj ${CONFIG}/obj/ejsXML.obj ${CONFIG}/obj/ejsXMLList.obj ${CONFIG}/obj/ejsXMLLoader.obj ${CONFIG}/obj/ejsByteCode.obj ${CONFIG}/obj/ejsException.obj ${CONFIG}/obj/ejsHelper.obj ${CONFIG}/obj/ejsInterp.obj ${CONFIG}/obj/ejsLoader.obj ${CONFIG}/obj/ejsModule.obj ${CONFIG}/obj/ejsScope.obj ${CONFIG}/obj/ejsService.obj ${CONFIG}/obj/zlib.obj ${CONFIG}/obj/ejsZlib.obj ${LIBS}
 
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.unix.mod
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/jem.es
-rm -rf ${CONFIG}/bin/jem.exe
-cp -r ${CONFIG}/bin/ejsrun.exe ${CONFIG}/bin/jem.exe
+"${LD}" -out:${CONFIG}/bin/jem.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsrun.obj libejs.lib ${LIBS} libhttp.lib libpcre.lib libmpr.lib
 
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.db.mod
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.db.mapper.mod
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.db.sqlite.mod
 "${CC}" -c -Fo${CONFIG}/obj/ejsSqlite.obj -Fd${CONFIG}/obj/ejsSqlite.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/jems/ejs.db.sqlite/ejsSqlite.c
 
-"${LD}" -dll -out:${CONFIG}/bin/ejs.db.sqlite.dll -entry:_DllMainCRTStartup@12 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsSqlite.obj libsqlite3.lib libejs.lib libmpr.lib ${LIBS} libhttp.lib libpcre.lib
+"${LD}" -dll -out:${CONFIG}/bin/libejs.db.sqlite.dll -entry:_DllMainCRTStartup@12 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsSqlite.obj libsqlite3.lib libejs.lib libmpr.lib ${LIBS} libhttp.lib libpcre.lib
 
 cd src/jems/ejs.web >/dev/null ;\
 ../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.web.mod --debug --optimize 9 *.es ;\
@@ -309,7 +304,7 @@ cd - >/dev/null
 
 "${CC}" -c -Fo${CONFIG}/obj/ejsWeb.obj -Fd${CONFIG}/obj/ejsWeb.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsWeb.c
 
-"${LD}" -dll -out:${CONFIG}/bin/ejs.web.dll -entry:_DllMainCRTStartup@12 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsHttpServer.obj ${CONFIG}/obj/ejsRequest.obj ${CONFIG}/obj/ejsSession.obj ${CONFIG}/obj/ejsWeb.obj libejs.lib ${LIBS} libhttp.lib libpcre.lib libmpr.lib
+"${LD}" -dll -out:${CONFIG}/bin/libejs.web.dll -entry:_DllMainCRTStartup@12 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsHttpServer.obj ${CONFIG}/obj/ejsRequest.obj ${CONFIG}/obj/ejsSession.obj ${CONFIG}/obj/ejsWeb.obj libejs.lib ${LIBS} libhttp.lib libpcre.lib libmpr.lib
 
 cd src/jems/ejs.web >/dev/null ;\
 rm -fr ../../../${CONFIG}/bin/www ;\
@@ -319,11 +314,13 @@ cd - >/dev/null
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.template.mod
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.tar.mod
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/mvc.es
-rm -rf ${CONFIG}/bin/mvc.exe
-cp -r ${CONFIG}/bin/ejsrun.exe ${CONFIG}/bin/mvc.exe
+"${LD}" -out:${CONFIG}/bin/mvc.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsrun.obj libejs.lib ${LIBS} libhttp.lib libpcre.lib libmpr.lib
 
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.mvc.mod
+#  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/utest.es
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/utest.worker
+"${LD}" -out:${CONFIG}/bin/utest.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsrun.obj libejs.lib ${LIBS} libhttp.lib libpcre.lib libmpr.lib
+
 "${CC}" -c -Fo${CONFIG}/obj/removeFiles.obj -Fd${CONFIG}/obj/removeFiles.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc package/windows/removeFiles.c
 
 "${LD}" -out:${CONFIG}/bin/removeFiles.exe -entry:WinMainCRTStartup -subsystem:Windows ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/removeFiles.obj libmpr.lib ${LIBS}

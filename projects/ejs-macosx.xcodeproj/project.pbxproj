@@ -4370,24 +4370,10 @@ fi";
 			buildSettings = {
 				PRODUCT_NAME = libmprssl;
 
-				HEADER_SEARCH_PATHS = (
-					"../../packages-macosx-x64/openssl/openssl-1.0.1c/include",
-					"$(inherited)"
-				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"BIT_DEBUG",
 					"$(inherited)"
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"../../packages-macosx-x64/openssl/openssl-1.0.1c",
-					"$(inherited)"
-				);
-				OTHER_LDFLAGS = (
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
-
 			};
 			name = Debug;
 		};
@@ -4396,20 +4382,6 @@ fi";
 			buildSettings = {
 				PRODUCT_NAME = libmprssl;
 
-				HEADER_SEARCH_PATHS = (
-					"../../packages-macosx-x64/openssl/openssl-1.0.1c/include",
-					"$(inherited)"
-				);
-
-				LIBRARY_SEARCH_PATHS = (
-					"../../packages-macosx-x64/openssl/openssl-1.0.1c",
-					"$(inherited)"
-				);
-				OTHER_LDFLAGS = (
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
 
 			};
 			name = Release;

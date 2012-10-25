@@ -214,12 +214,12 @@ $(CONFIG)/obj/mprSsl.o: \
         src/deps/mpr/mprSsl.c \
         $(CONFIG)/inc/bit.h \
         $(CONFIG)/inc/mpr.h
-	$(CC) -c -o $(CONFIG)/obj/mprSsl.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -I../packages-macosx-x64/openssl/openssl-1.0.1c/include src/deps/mpr/mprSsl.c
+	$(CC) -c -o $(CONFIG)/obj/mprSsl.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/mpr/mprSsl.c
 
 $(CONFIG)/bin/libmprssl.dylib:  \
         $(CONFIG)/bin/libmpr.dylib \
         $(CONFIG)/obj/mprSsl.o
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libmprssl.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.0.1 -current_version 2.0.1 -compatibility_version 2.0.1 -current_version 2.0.1 $(LIBPATHS) -L../packages-macosx-x64/openssl/openssl-1.0.1c -install_name @rpath/libmprssl.dylib $(CONFIG)/obj/mprSsl.o -lmpr $(LIBS) -lssl -lcrypto
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libmprssl.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.0.1 -current_version 2.0.1 -compatibility_version 2.0.1 -current_version 2.0.1 $(LIBPATHS) -install_name @rpath/libmprssl.dylib $(CONFIG)/obj/mprSsl.o -lmpr $(LIBS)
 
 $(CONFIG)/obj/manager.o: \
         src/deps/mpr/manager.c \
