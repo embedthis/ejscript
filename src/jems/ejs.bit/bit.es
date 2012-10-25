@@ -1037,7 +1037,6 @@ public class Bit {
                 f.copy(bit.dir.src.join('projects', bit.settings.product + '-windows', f.basename))
             }
         }
-
         let base = bit.dir.proj.join(bit.settings.product + '-' + bit.platform.os)
         for each (item in options.gen) {
             generating = item
@@ -1051,6 +1050,12 @@ public class Bit {
                 generateVstudio(base)
             } else if (generating == 'xcode') {
                 generateXcode(base)
+            } else if (generating == 'xcode-full') {
+                let dir = bit.dir.proj.join(bit.settings.product + '-' + bit.platform.os + '-full')
+                generateXcode(dir)
+            } else if (generating == 'vs-full') {
+                let dir = bit.dir.proj.join(bit.settings.product + '-' + bit.platform.os + '-full')
+                generateVstudio(dir)
             } else {
                 throw 'Unknown generation format: ' + generating
             }

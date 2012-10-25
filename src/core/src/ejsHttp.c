@@ -944,7 +944,8 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
         return 0;
     }
     if (mprGetBufLength(hp->requestContent) > 0) {
-        nbytes = httpWriteBlock(conn->writeq, mprGetBufStart(hp->requestContent), mprGetBufLength(hp->requestContent));
+        nbytes = httpWriteBlock(conn->writeq, mprGetBufStart(hp->requestContent), mprGetBufLength(hp->requestContent),
+            HTTP_BLOCK);
         if (nbytes < 0) {
             ejsThrowIOError(ejs, "Can't write request data for \"%s\"", hp->uri);
             return 0;
@@ -1058,7 +1059,8 @@ static ssize writeHttpData(Ejs *ejs, EjsHttp *hp)
             ejsThrowIOError(ejs, "Can't write to socket");
             return 0;
         }
-        nbytes = httpWriteBlock(conn->writeq, (cchar*) &ba->value[ba->readPosition], count);
+        //  MOB - or should this be non-blocking
+        nbytes = httpWriteBlock(conn->writeq, (cchar*) &ba->value[ba->readPosition], count, HTTP_BLOCK);
         if (nbytes < 0) {
             ejsThrowIOError(ejs, "Can't write to socket");
             return 0;

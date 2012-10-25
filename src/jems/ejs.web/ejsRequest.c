@@ -1268,7 +1268,8 @@ static ssize writeResponseData(Ejs *ejs, EjsRequest *req, cchar *buf, ssize len)
         httpSetResponded(req->conn);
         return written;
     } else {
-        return httpWriteBlock(req->conn->writeq, buf, len);
+        //  MOB - or should this be non-blocking
+        return httpWriteBlock(req->conn->writeq, buf, len, HTTP_BLOCK);
     }
 }
 

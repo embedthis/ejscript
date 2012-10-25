@@ -30,15 +30,7 @@ Bit.load({
                         formats = '-gen sh,make'
                     }
                     trace('Generate', bit.settings.product + '-' + name.replace(/-.*/, '') + ' projects')
-                    if (name == 'windows-x86' && Config.OS == 'windows') {
-                        /* Windows must do a build to get current *.def files */
-                        trace('Build', 'Full build to generate def files')
-                        run(bitcmd + ' -d -without all -configure .', bit.target.runopt)
-                        run(bitcmd + ' -d ', bit.target.runopt)
-                        run(bitcmd + ' -d ' + formats, bit.target.runopt)
-                    } else {
-                        run(bitcmd + ' -d -q -platform ' + name + ' -without all -configure . ' + formats, bit.target.runopt)
-                    }
+                    run(bitcmd + ' -d -q -platform ' + name + ' -without all -configure . ' + formats, bit.target.runopt)
                     /* Xcode and VS use separate profiles */
                     if (name == 'macosx-x64') {
                         run(bitcmd + ' -d -q -platform ' + name + ' -without all -profile xcode -configure . -gen xcode',
@@ -60,55 +52,18 @@ Bit.load({
         },
 
         /*
-            Target for just own platform projects
+            Target to build local projects with a full configuration
          */
-        'own-projects': {
+        'projects-full': {
             action: "
                 let bitcmd = Cmd.locate('bit')
-                for each (name in ['linux-x86', 'macosx-x64', 'solaris-x86', 'windows-x86']) {
-                    if (name != bit.platform.name) continue
-                    let formats
-                    if (name == 'windows-x86') {
-                        formats = '-gen sh,nmake'
-                    } else if (name == 'macosx-x64') {
-                        formats = '-gen sh,make'
-                    } else {
-                        formats = '-gen sh,make'
-                    }
-                    trace('Generate', bit.settings.product + '-' + name.replace(/-.*/, '') + ' projects')
-                    if (name == 'windows-x86' && Config.OS == 'windows') {
-                        /* Windows must do a build to get current *.def files */
-                        trace('Build', 'Full build to generate def files')
-                        run(bitcmd + ' -d -without own -configure .', bit.target.runopt)
-                        run(bitcmd + ' -d ', bit.target.runopt)
-                        run(bitcmd + ' -d ' + formats, bit.target.runopt)
-                    } else {
-                        run(bitcmd + ' -d -q -platform ' + name + ' -without own -configure . ' + formats, bit.target.runopt)
-                    }
-                    /* Xcode and VS use separate profiles */
-                    if (name == 'macosx-x64') {
-                        run(bitcmd + ' -d -q -platform ' + name + ' -without own -profile xcode -configure . -gen xcode',
-                            bit.target.runopt)
-                        rmdir(bit.dir.top.join(name + '-xcode'))
-                    } else if (name == 'windows-x86') {
-                        run(bitcmd + ' -d -q -platform ' + name + ' -without own -profile vs -configure . -gen vs',
-                            bit.target.runopt)
-                        rmdir(bit.dir.top.join(name + '-vs'))
-                    }
-                    if (name != bit.platform.name) {
-                        rm(bit.dir.top.join(name + '.bit'))
-                        rmdir(bit.dir.top.join(name + '-debug'))
-                    }
-                }
-                trace('Restore', 'Restore prior configuration')
-                run(bitcmd + ' -q -configure . -profile ' + bit.platform.profile, bit.target.runopt)
-                if (bit.platform.os == 'macosx') {
-                    let top = bit.dir.top
-                    let bin = bit.dir.bin
-                    let xcode = top.join('macosx-' + bit.platform.arch + '-xcode/bin')
-                    mkdir(xcode)
-                    cp([bin.join('libphp5.dylib'), bin.join('*libssl*'), bin.join('*crypto*'), 
-                        bin.join('*libmatrixssl*')], xcode)
+                /* Xcode and VS use separate profiles */
+                if (bit.platform.name == 'macosx-x64') {
+                    run(bitcmd + ' -d -q -gen xcode-full', bit.target.runopt)
+                    rmdir(bit.dir.top.join(bit.platform.name + '-xcode-full'))
+                } else if (bit.platform.name == 'windows-x86') {
+                    run(bitcmd + ' -d -q -gen vs-full', bit.target.runopt)
+                    rmdir(bit.dir.top.join(bit.platform.name + '-vs-full'))
                 }
             ",
         },
