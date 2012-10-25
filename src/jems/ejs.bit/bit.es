@@ -256,8 +256,8 @@ public class Bit {
         if (args.rest.contains('import')) {
             options.import = true
         }
-        if (options.profile && !options.configure) {
-            App.log.error('Can only set profile when configuring via --configure dir')
+        if (options.profile && !(options.configure || options.gen)) {
+            App.log.error('Can only set profile when configuring or generating')
             usage()
         }
         localPlatform =  Config.OS + '-' + Config.CPU
@@ -1010,6 +1010,18 @@ public class Bit {
     function generate() {
         platforms = bit.platforms = [localPlatform]
         makeBit(localPlatform, localPlatform + '.bit')
+        bit.original = {
+            dir: bit.dir.clone(),
+            platform: bit.platform.clone(),
+        }
+        if (options.profile) {
+            bit.platform.profile = options.profile
+            bit.platform.configuration = bit.platform.name + '-' + bit.platform.profile
+            for (d in bit.dir) {
+                if (d == 'bits') continue
+                bit.dir[d] = bit.dir[d].replace(bit.original.platform.configuration, bit.platform.configuration)
+            }
+        }
         bit.platform.last = true
         prepBuild()
         generateProjects()
@@ -1027,19 +1039,23 @@ public class Bit {
             libpaths:       mapLibPaths(bit.defaults.libpaths)
             libraries:      mapLibs(bit.defaults.libraries).join(' ')
         }
-        let path = bit.dir.inc.join('bit.h')
-        let hfile = bit.dir.src.join('projects', bit.settings.product + '-' + bit.platform.os + '-bit.h')
-        path.copy(hfile)
-        trace('Generate', 'project header: ' + hfile.relative)
+        /*
         if (Config.OS == 'windows') {
             trace('Copy', 'Export *.def files')
             for each (f in bit.dir.bin.files('*.def')) {
                 f.copy(bit.dir.src.join('projects', bit.settings.product + '-windows', f.basename))
             }
         }
-        let base = bit.dir.proj.join(bit.settings.product + '-' + bit.platform.os)
+        */
         for each (item in options.gen) {
             generating = item
+            let base = bit.dir.proj.join(bit.settings.product + '-' + bit.platform.os + '-' + bit.platform.profile)
+            // base.makeDir()
+            let path = bit.original.dir.inc.join('bit.h')
+            let hfile = bit.dir.src.join('projects', 
+                    bit.settings.product + '-' + bit.platform.os + '-' + bit.platform.profile + '-bit.h')
+            path.copy(hfile)
+            trace('Generate', 'project header: ' + hfile.relative)
             if (generating == 'sh') {
                 generateShell(base)
             } else if (generating == 'make') {
@@ -1050,12 +1066,6 @@ public class Bit {
                 generateVstudio(base)
             } else if (generating == 'xcode') {
                 generateXcode(base)
-            } else if (generating == 'xcode-full') {
-                let dir = bit.dir.proj.join(bit.settings.product + '-' + bit.platform.os + '-full')
-                generateXcode(dir)
-            } else if (generating == 'vs-full') {
-                let dir = bit.dir.proj.join(bit.settings.product + '-' + bit.platform.os + '-full')
-                generateVstudio(dir)
             } else {
                 throw 'Unknown generation format: ' + generating
             }
@@ -1214,7 +1224,6 @@ public class Bit {
     }
 
     function generateXcode(base: Path) {
-        // mkdir(base)
         global.load(bit.dir.bits.join('xcode.es'))
         xcode(base)
     }

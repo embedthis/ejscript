@@ -52,18 +52,19 @@ Bit.load({
         },
 
         /*
-            Target to build local projects with a full configuration
+            Target to build a personal project for the current configuration
          */
-        'projects-full': {
+        'mine': {
             action: "
                 let bitcmd = Cmd.locate('bit')
                 /* Xcode and VS use separate profiles */
                 if (bit.platform.name == 'macosx-x64') {
-                    run(bitcmd + ' -d -q -gen xcode-full', bit.target.runopt)
-                    rmdir(bit.dir.top.join(bit.platform.name + '-xcode-full'))
+                    run(bitcmd + ' -d -q -profile mine -gen xcode', bit.target.runopt)
+                    rmdir(bit.dir.top.join(bit.platform.name + '-mine'))
+
                 } else if (bit.platform.name == 'windows-x86') {
-                    run(bitcmd + ' -d -q -gen vs-full', bit.target.runopt)
-                    rmdir(bit.dir.top.join(bit.platform.name + '-vs-full'))
+                    run(bitcmd + ' -d -q -profile mine -gen vs', bit.target.runopt)
+                    rmdir(bit.dir.top.join(bit.platform.name + '-mine'))
                 }
             ",
         },
