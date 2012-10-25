@@ -142,11 +142,9 @@ public function packageComboFiles() {
     install('package/ejs-flat.bit', pkg.join('src/deps/ejs/ejs.bit'))
     install('package/Makefile-flat', pkg.join('src/deps/ejs/Makefile'))
     install('package/start-flat.bit', pkg.join('src/deps/ejs/start.bit'))
-    let filter = /^#inc.*ejs.*$|^#inc.*mpr.*$|^#inc.*ec.*$|^#inc.*http.*$|^#inc.*customize.*$|#include.*zlib.h.*$|#inc.*ejs.zlib.slots.h.*/mg
+    let filter = /^#inc.*ejs.*$|^#inc.*ec.*$|^#inc.*customize.*$|#include.*zlib.h.*$|#inc.*ejs.zlib.slots.h.*/mg
 
     install([
-        'src/deps/mpr/mpr.h', 
-        'src/deps/http/http.h', 
         'src/deps/zlib/zlib.h', 
         'src/ejsByteCode.h', 
         'src/ejsByteCodeTable.h',
@@ -159,6 +157,8 @@ public function packageComboFiles() {
         header: '#include \"ejs.slots.h\"',
         title: bit.settings.title + ' Library Source',
     })
+    install('src/deps/mpr/mpr.h', pkg.join('src/deps/ejs/mpr.h'))
+    install('src/deps/http/http.h', pkg.join('src/deps/ejs/http.h'))
     install('src/vm/ejsByteGoto.h', pkg.join('src/deps/ejs/ejsByteGoto.h'))
     install(bit.dir.inc.join('ejs*.slots.h'), pkg.join('src/deps/ejs/ejs.slots.h'), {
         cat: true, filter: filter,

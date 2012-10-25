@@ -1536,6 +1536,7 @@ public class Bit {
         if (target.resolved) {
             return
         }
+        runTargetScript(target, 'preresolve')
         target.resolved = true
         for each (dname in target.depends) {
             let dep = bit.targets[dname]
