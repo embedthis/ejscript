@@ -1214,7 +1214,7 @@ public class Bit {
     }
 
     function generateXcode(base: Path) {
-        mkdir(base)
+        // mkdir(base)
         global.load(bit.dir.bits.join('xcode.es'))
         xcode(base)
     }
