@@ -54,7 +54,6 @@ static EjsWebSocket *wsConstructor(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj 
         mprVerifySslIssuer(ws->ssl, 0);
         mprVerifySslPeer(ws->ssl, 0);
     }
-
     startWebSocketRequest(ejs, ws);
     return ws;
 }
