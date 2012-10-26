@@ -59,12 +59,9 @@ Bit.load({
                 let bitcmd = Cmd.locate('bit')
                 /* Xcode and VS use separate profiles */
                 if (bit.platform.name == 'macosx-x64') {
-                    run(bitcmd + ' -d -q -profile mine -gen xcode', bit.target.runopt)
-                    rmdir(bit.dir.top.join(bit.platform.name + '-mine'))
-
+                    run(bitcmd + ' -d -profile mine -configure . -gen xcode', bit.target.runopt)
                 } else if (bit.platform.name == 'windows-x86') {
-                    run(bitcmd + ' -d -q -profile mine -gen vs', bit.target.runopt)
-                    rmdir(bit.dir.top.join(bit.platform.name + '-mine'))
+                    run(bitcmd + ' -d -profile mine -configure . -gen vs', bit.target.runopt)
                 }
             ",
         },
