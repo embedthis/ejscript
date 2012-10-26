@@ -138,7 +138,7 @@ public function packageComboFiles() {
     let pkg = src.join(s.product + '-' + s.version)
     safeRemove(pkg)
     pkg.makeDir()
-    install('projects/ejs-' + bit.platform.os + '-bit.h', pkg.join('src/deps/ejs/bit.h'))
+    install('projects/ejs-' + bit.platform.os + '-debug-bit.h', pkg.join('src/deps/ejs/bit.h'))
     install('package/ejs-flat.bit', pkg.join('src/deps/ejs/ejs.bit'))
     install('package/Makefile-flat', pkg.join('src/deps/ejs/Makefile'))
     install('package/start-flat.bit', pkg.join('src/deps/ejs/start.bit'))
