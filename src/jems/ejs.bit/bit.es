@@ -1083,7 +1083,7 @@ public class Bit {
         genout.writeLine('#\n#   ' + path.basename + ' -- Build It Shell Script to build ' + bit.settings.title + '\n#\n')
         genEnv()
         genout.writeLine('ARCH="' + bit.platform.arch + '"')
-        genout.writeLine('ARCH="$(shell uname -m | sed \'s/i.86/x86/;s/x86_64/x64/\')"')
+        genout.writeLine('ARCH="`uname -m | sed \'s/i.86/x86/;s/x86_64/x64/\'`"')
         genout.writeLine('OS="' + bit.platform.os + '"')
         genout.writeLine('PROFILE="' + bit.platform.profile + '"')
         genout.writeLine('CONFIG="${OS}-${ARCH}-${PROFILE}' + '"')
@@ -1101,10 +1101,10 @@ public class Bit {
         genout.writeLine('[ ! -x ${CONFIG}/inc ] && ' + 
             'mkdir -p ${CONFIG}/inc ${CONFIG}/obj ${CONFIG}/lib ${CONFIG}/bin\n')
         genout.writeLine('[ ! -f ${CONFIG}/inc/bit.h ] && ' + 
-            'cp projects/' + bit.settings.product + '-${OS}-bit.h ${CONFIG}/inc/bit.h')
+            'cp projects/' + bit.settings.product + '-${OS}-${PROFILE}-bit.h ${CONFIG}/inc/bit.h')
         genout.writeLine('if ! diff ${CONFIG}/inc/bit.h projects/' + bit.settings.product + 
-            '-${OS}-bit.h >/dev/null ; then')
-        genout.writeLine('\tcp projects/' + bit.settings.product + '-${OS}-bit.h ${CONFIG}/inc/bit.h')
+            '-${OS}-${PROFILE}-bit.h >/dev/null ; then')
+        genout.writeLine('\tcp projects/' + bit.settings.product + '-${OS}-${PROFILE}-bit.h ${CONFIG}/inc/bit.h')
         genout.writeLine('fi\n')
         build()
         genout.close()
@@ -1155,13 +1155,12 @@ public class Bit {
         genout.writeLine('\t@[ ! -x $(CONFIG)/inc ] && ' + 
             'mkdir -p $(CONFIG)/inc $(CONFIG)/obj $(CONFIG)/lib $(CONFIG)/bin ; true')
         genout.writeLine('\t@[ ! -f $(CONFIG)/inc/bit.h ] && ' + 
-            'cp projects/' + bit.settings.product + '-$(OS)-bit.h $(CONFIG)/inc/bit.h ; true')
+            'cp projects/' + bit.settings.product + '-$(OS)-$(PROFILE)-bit.h $(CONFIG)/inc/bit.h ; true')
         genout.writeLine('\t@if ! diff $(CONFIG)/inc/bit.h projects/' + bit.settings.product + 
-            '-$(OS)-bit.h >/dev/null ; then\\')
+            '-$(OS)-$(PROFILE)-bit.h >/dev/null ; then\\')
         genout.writeLine('\t\techo cp projects/' + bit.settings.product + 
-            '-$(OS)-bit.h $(CONFIG)/inc/bit.h  ; \\')
-        genout.writeLine('\t\tcp projects/' + bit.settings.product + 
-            '-$(OS)-bit.h $(CONFIG)/inc/bit.h  ; \\')
+            '-$(OS)-$(PROFILE)-bit.h $(CONFIG)/inc/bit.h  ; \\')
+        genout.writeLine('\t\tcp projects/' + bit.settings.product + '-$(OS)-$(PROFILE)-bit.h $(CONFIG)/inc/bit.h  ; \\')
         genout.writeLine('\tfi; true\n')
         genout.writeLine('clean:')
         action('cleanTargets')
@@ -1204,7 +1203,7 @@ public class Bit {
         genout.writeLine('\t@if not exist $(CONFIG)\\obj md $(CONFIG)\\obj')
         genout.writeLine('\t@if not exist $(CONFIG)\\bin md $(CONFIG)\\bin')
         genout.writeLine('\t@if not exist $(CONFIG)\\inc\\bit.h ' +
-            'copy projects\\' + bit.settings.product + '-$(OS)-bit.h $(CONFIG)\\inc\\bit.h')
+            'copy projects\\' + bit.settings.product + '-$(OS)-$(PROFILE)-bit.h $(CONFIG)\\inc\\bit.h')
 /* UNUSED
         genout.writeLine('\t@if not exist $(CONFIG)\\bin\\*.def ' +
             'xcopy /Y /S projects\\' + bit.settings.product + '-windows\\*.def $(CONFIG)\\bin\n')
