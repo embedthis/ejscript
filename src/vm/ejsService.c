@@ -210,7 +210,7 @@ void ejsDestroyVM(Ejs *ejs)
             mprDestroyDispatcher(ejs->dispatcher);
         }
     }
-    mprLog(5, "ejs: destroy VM");
+    mprLog(6, "ejs: destroy VM");
 }
 
 
