@@ -55,6 +55,8 @@ infrastructure including firewalls and proxies.</p>
    <tr><td nowrap align='center'> get </td><td>binaryType</td><td><a href='String.html'>String</a></td><td>Type of binary data. Set to "ByteArray".</td></tr>
 <a name='bufferedAmount'></a>
    <tr><td nowrap align='center'> get </td><td>bufferedAmount</td><td><a href='Number.html'>Number</a></td><td>The number of bytes of buffered data to send. </td></tr>
+<a name='certificate'></a>
+   <tr><td nowrap align='center'> get set </td><td>certificate</td><td><a href='Path.html'>Path</a></td><td>Filename of the file of certificates used to verify server certificates. </td></tr>
 <a name='extensions'></a>
    <tr><td nowrap align='center'> get </td><td>extensions</td><td><a href='String.html'>String</a></td><td>Return the list of supported extensions. </td></tr>
 <a name='onclose'></a>
@@ -73,6 +75,8 @@ creating the <a href='#WebSocket'>WebSocket</a>. </td></tr>
 <a href='#CONNECTING'>CONNECTING</a> = 0, <a href='#OPEN'>OPEN</a> = 1, <a href='#CLOSING'>CLOSING</a> = 2, <a href='#CLOSED'>CLOSED</a> = 3.</td></tr>
 <a name='url'></a>
    <tr><td nowrap align='center'> get </td><td>url</td><td><a href='Uri.html'>Uri</a></td><td>The URI provided to the constructor. </td></tr>
+<a name='verify'></a>
+   <tr><td nowrap align='center'> get set </td><td>verify</td><td><a href='Boolean.html'>Boolean</a></td><td>Verify peer certificates. </td></tr>
 </table>
 
 <p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
@@ -94,6 +98,7 @@ creating the <a href='#WebSocket'>WebSocket</a>. </td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#WebSocket'><b>WebSocket</b></a>(uri: <a href='Uri.html'>Uri</a>, protocols = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new WebSocket and connect to the server using the supplied URI.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#close'><b>close</b></a>(code: <a href='Number.html'>Number</a> = 1000, reason: <a href='String.html'>String</a> = ): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a close message and close the web socket connection.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#send'><b>send</b></a>(content: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send data with the request.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#wait'><b>wait</b></a>(state: <a href='Number.html'>Number</a>, timeout: <a href='Number.html'>Number</a> = -1): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Wait for the WebSocket to achieve a desired state.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
@@ -134,6 +139,20 @@ creating the <a href='#WebSocket'>WebSocket</a>. </td></tr>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>content: <a href='Array.html'>Array</a> </td><td>Data to send with the request. If the content is a ByteArray, the message will be sent as a WebSocket Binary message. Otherwise, the message is converted to a String and sent as a WebSockets UTF-8 Text message. If multiple arguments are provided, each is sent as a separate message.</td></tr></table></dd>
 </dl></div>
+</div>
+<hr />
+<a name='wait'></a>
+<div class='api'>
+<div class='apiSig'>    wait(state: <a href='Number.html'>Number</a>, timeout: <a href='Number.html'>Number</a> = -1): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Wait for the WebSocket to achieve a desired state. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>state: <a href='Number.html'>Number</a> </td><td>Desired ready state value.</td></tr><tr class='param'><td class='param'>timeout: <a href='Number.html'>Number</a> </td><td>Timeout in milliseconds to wait for the desired state. A timeout of zero means don't block. A timeout of < 0 (default), means wait forever. [default: -1]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the desired state was achieved.</dd></dl>
+</div>
 </div>
 <hr />
 <div class="terms">

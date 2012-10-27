@@ -7310,6 +7310,12 @@ Properties are not stored in slots[].
   <div class="apiDetail">
 <p>Define a global function.</p>
     <dl><dt><b>Description</b>:</dt><dd>Define a global public function and bind it to the C native function. This is a simple one liner to define a public global function. The more typical paradigm to define functions is to create a script file of native method definitions and and compile it. This results in a mod file that can be loaded which will create the function/method definitions. Then use <a class="ref" href="#group___ejs_type_1gae3fdfd951bab3f60fd44b3159ab3669d">ejsBindMethod</a> to associate a C function with a property.</dd></dl>
+    <dl><dt>Parameters:</dt><dd>
+    <table class="parameters" title="Parameters">
+    <tr><td class="param">ejs</td><td>Interpreter instance returned from <a class="ref" href="#group___ejs_1ga98a567fe16481c6bf5368749d831ae77">ejsCreateVM</a></td>
+    <tr><td class="param">name</td><td>Function name.</td>
+    <tr><td class="param">fn</td><td>C function that implements the function.</td>
+    </table></dd></dl>
     <dl><dt>See Also:</dt><dd>
     <a href="#group___ejs_type" class="ref">EjsType</a>, <a href="#group___ejs_type_1ga0923eb604d83e90cb978cf1afc8d7c19" class="ref">ejsBindAccess</a>, <a href="#group___ejs_type_1ga1fbb37b8cd620690300e79d4287a9bf5" class="ref">ejsBindConstructor</a>, <a href="#group___ejs_type_1gae3fdfd951bab3f60fd44b3159ab3669d" class="ref">ejsBindMethod</a>, <a href="#group___ejs_type_1ga6044774cef4008019a48116e586f6b69" class="ref">ejsCast</a>, <a href="#group___ejs_type_1ga5b2e89d60086f10116f1b0f8c4214c62" class="ref">ejsConfigureType</a>, <a href="#group___ejs_type_1gab6cd4d40c0bb6f23b47d7d6a00963c51" class="ref">ejsCreateArchetype</a>, <a href="#group___ejs_type_1gafd299306ea4a293b211f1c4ad3fe2bfd" class="ref">ejsCreateCoreType</a>, <a href="#group___ejs_type_1gae81e1e66c98088b4e2f64dc9b4429c8e" class="ref">ejsCreatePrototype</a>, <a href="#group___ejs_type_1ga993c24f92f1da5b0f3140d1561fc408e" class="ref">ejsCreateType</a>, <a href="#group___ejs_type_1ga7db7fe9549a45074b1cd21d3a34942a5" class="ref">ejsDefineInstanceProperty</a>, <a href="#group___ejs_type_1gaf99eb55efe267646184e8d86681ed920" class="ref">ejsFinalizeCoreType</a>, <a href="#group___ejs_type_1ga0840b30591223888dd85303414e0ff2d" class="ref">ejsFinalizeScriptType</a>, <a href="#group___ejs_type_1gaf52df85c9a82b20346d92c1de0a95371" class="ref">ejsGetPrototype</a>, <a href="#group___ejs_type_1gaf41edbabce385e7cb73ed6526aa2cf22" class="ref">ejsGetType</a>, <a href="#group___ejs_type_1gacd5d078d0fca337295cd898a1ad3f2be" class="ref">ejsGetTypeByName</a>, <a href="#group___ejs_type_1ga1600b777743e90dca32ea8b2541c7763" class="ref">ejsIs</a>, <a href="#group___ejs_type_1ga9ca081fd373eaca45ddcd175bb512ddd" class="ref">ejsIsA</a>, <a href="#group___ejs_type_1gafa6d80b3cc4887289d331cde7975f890" class="ref">ejsIsDefined</a>, <a href="#group___ejs_type_1gab7d43b404ca6cfb96ea7c17bdbfd9ae1" class="ref">ejsIsType</a>, <a href="#group___ejs_type_1ga1c07c5c5908c4a6db4b35f765efa31ca" class="ref">ejsIsTypeSubType</a></dd></dl>
   </div>
@@ -7773,6 +7779,9 @@ Decoded URI.
     <a href="#group___ejs_web_socket_1ga7b78145c86d4db2408ac2c990a3d3e29" class="ref">ejsCreateWebSocket</a></dd></dl>
     <dl><dt>Fields:</dt><dd>
     <table class="parameters" title="Parameters">
+    <tr><td class="param">char *</td><td><td>certFile</td><td>
+SSL certificate file.
+</td>
     <tr><td class="param">int</td><td><td>closed</td><td>
 Http is closed and &quot;close&quot; event has been issued.
 </td>
