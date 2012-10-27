@@ -755,10 +755,13 @@ static void startEjsHandler(HttpQueue *q)
     } else {
         ejs = sp->ejs;
     }
+    assure(!conn->tx->complete);
     if (conn->notifier == 0) {
         httpSetConnNotifier(conn, stateChangeNotifier);
+        assure(!conn->tx->complete);
     }
     if ((req = createRequest(sp, conn)) != 0) {
+        assure(!conn->tx->complete);
         ejsSendEvent(ejs, sp->emitter, "readable", req, req);
 
         /* Send EOF if form or upload and all content has been received.  */

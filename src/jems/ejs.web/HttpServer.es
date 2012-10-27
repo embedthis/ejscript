@@ -568,7 +568,7 @@ server.listen("127.0.0.1:7777")
             try {
                 let w: Worker?
                 let route: Route = router.route(request)
-                if (route.threaded) {
+                if (route.workers) {
                     if ((w = getWorker()) == null) {
                         request.writeError(Http.ServiceUnavailable, "Server busy")
                         return

@@ -16,10 +16,9 @@ for (i in 20) {
     let now = new Date()
     http.get(HTTP + "/index.ejs")
     assert(http.status == 200)
-    assert(now.elapsed < 2000)
+    assert(now.elapsed < 5000)
 }
 http.close()
-
 
 //  Wait for nap request
 assert(nap.status == 200)

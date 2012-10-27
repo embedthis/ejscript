@@ -744,7 +744,7 @@ module ejs.web {
             If true, requests should execute using a worker thread if possible. The worker thread will be pooled when
             the request completes and be available for use by subsequent requests.
          */
-        var workers: Boolean~
+        var workers: Boolean?
 
         /**
             Key tokens in the route template

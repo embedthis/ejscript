@@ -1048,7 +1048,9 @@ static EjsObj *req_finalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
     if (req->conn) {
         if (!req->writeBuffer || req->writeBuffer == ESV(null)) {
-            httpFinalize(req->conn);
+            //  MOB - should separate these 
+            // httpFinalize(req->conn);
+            httpComplete(req->conn);
         } else {
             httpSetResponded(req->conn);
         }
