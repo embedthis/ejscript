@@ -1382,7 +1382,7 @@ PUBLIC void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, bool ser
         ejsSetPropertyByName(ejs, obj, EN("header"), ejsCreateNumber(ejs, (MprNumber) limits->headerSize));
         ejsSetPropertyByName(ejs, obj, EN("headers"), ejsCreateNumber(ejs, (MprNumber) limits->headerMax));
         ejsSetPropertyByName(ejs, obj, EN("requests"), ejsCreateNumber(ejs, (MprNumber) limits->requestMax));
-        ejsSetPropertyByName(ejs, obj, EN("stageBuffer"), ejsCreateNumber(ejs, (MprNumber) limits->stageBufferSize));
+        ejsSetPropertyByName(ejs, obj, EN("stageBuffer"), ejsCreateNumber(ejs, (MprNumber) limits->bufferSize));
         ejsSetPropertyByName(ejs, obj, EN("uri"), ejsCreateNumber(ejs, (MprNumber) limits->uriSize));
     }
 }
@@ -1423,9 +1423,9 @@ PUBLIC void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, bool ser
         limits->sessionTimeout = MPR_MAX_TIMEOUT;
     }
     if (server) {
+        limits->bufferSize = (ssize) setLimit(ejs, obj, "stageBuffer", 1);
         limits->clientMax = (int) setLimit(ejs, obj, "clients", 1);
         limits->requestMax = (int) setLimit(ejs, obj, "requests", 1);
-        limits->stageBufferSize = (ssize) setLimit(ejs, obj, "stageBuffer", 1);
         limits->uriSize = (ssize) setLimit(ejs, obj, "uri", 1);
         limits->headerMax = (int) setLimit(ejs, obj, "headers", 1);
         limits->headerSize = (ssize) setLimit(ejs, obj, "header", 1);

@@ -189,7 +189,7 @@ static EjsString *ws_protocol(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **arg
  */
 static EjsNumber *ws_readyState(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 {
-    return ejsCreateNumber(ejs, (MprNumber) ws->conn->rx->webSockState);
+    return ejsCreateNumber(ejs, (MprNumber) ws->conn->rx->webSocket->state);
 }
 
 
@@ -213,7 +213,7 @@ static EjsString *ws_send(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
             if (ejsIs(ejs, arg, ByteArray)) {
                 ba = (EjsByteArray*) arg;
                 nbytes = ejsGetByteArrayAvailableData(ba);
-                nbytes = httpSendBlock(ws->conn, WS_MSG_BINARY, (cchar*) &ba->value[ba->readPosition], nbytes, 1);
+                nbytes = httpSendBlock(ws->conn, WS_MSG_BINARY, (cchar*) &ba->value[ba->readPosition], nbytes, HTTP_BLOCK);
             } else {
                 nbytes = httpSend(ws->conn, ejsToMulti(ejs, arg));
             }
@@ -328,8 +328,8 @@ static void onWebSocketEvent(EjsWebSocket *ws, int event, EjsAny *data)
     case HTTP_EVENT_APP_CLOSE:
         eventName = "complete";
         slot = ES_WebSocket_onclose;
-        status = rx ? rx->closeStatus: WS_STATUS_COMMS_ERROR;
-        reason = rx ? rx->closeReason: 0;
+        status = rx ? rx->webSocket->closeStatus: WS_STATUS_COMMS_ERROR;
+        reason = rx ? rx->webSocket->closeReason: 0;
         ejsSetPropertyByName(ejs, eobj, EN("code"), ejsCreateNumber(ejs, status));
         ejsSetPropertyByName(ejs, eobj, EN("reason"), ejsCreateStringFromAsc(ejs, reason));
         ejsSetPropertyByName(ejs, eobj, EN("wasClean"), ejsCreateBoolean(ejs, status != WS_STATUS_COMMS_ERROR));
