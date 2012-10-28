@@ -4486,7 +4486,7 @@ PUBLIC void     ejsSetSqliteTls(MprThreadLocal *tls);
 PUBLIC void     ejsDefineConfigProperties(Ejs *ejs);
 
 #if BIT_PACK_SQLITE
-    extern int   ejs_db_sqlite_Init(Ejs *ejs, MprModule *mp);
+    PUBLIC int   ejs_db_sqlite_Init(Ejs *ejs, MprModule *mp);
 #endif
 #if BIT_PACK_ZLIB
     PUBLIC int   ejs_zlib_Init(Ejs *ejs, MprModule *mp);
