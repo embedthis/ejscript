@@ -10,6 +10,9 @@ if (bit.packs.ssl && bit.packs.ssl.enable == false) {
 let cfg
 let path: Path? = bit.packs.openssl.path
 if (!path) {
+    /*
+        If path not set, look in the standard packages directory: ../packages-OS-ARCH
+     */
     let vers = bit.dir.packs.join('openssl').files('openssl-*').sort().reverse()
     path = vers[0]
     if (!path) {
@@ -55,7 +58,7 @@ if (bit.platform.os == 'windows') {
 } else {
     let search = [path]
     if (bit.platform.arch == 'x64') {
-        search = ['/usr/lib64', '/lib64']
+        search += ['/usr/lib64', '/lib64']
     }
     search += ['/usr/lib', '/lib' ]
     search += Path('/usr/lib').files('*-linux-gnu') + Path('/lib').files('*-linux-gnu')
