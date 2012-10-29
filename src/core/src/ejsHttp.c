@@ -196,7 +196,7 @@ static EjsObj *http_finalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsBoolean *http_finalized(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (hp->conn) {
-        return ejsCreateBoolean(ejs, hp->conn->tx->finalized);
+        return ejsCreateBoolean(ejs, hp->conn->tx->finalizedOutput);
     }
     return ESV(false);
 }
@@ -468,7 +468,7 @@ static EjsHttp *http_on(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (conn->readq && conn->readq->count > 0) {
         ejsSendEvent(ejs, hp->emitter, "readable", NULL, hp);
     }
-    if (!conn->tx->connectorComplete && 
+    if (!conn->tx->finalizedConnector && 
             !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
             conn->writeq->ioCount == 0) {
         ejsSendEvent(ejs, hp->emitter, "writable", NULL, hp);
@@ -1055,7 +1055,7 @@ static ssize writeHttpData(Ejs *ejs, EjsHttp *hp)
     ba = hp->data;
     nbytes = 0;
     if (ba && (count = ejsGetByteArrayAvailableData(ba)) > 0) {
-        if (conn->tx->finalized) {
+        if (conn->tx->finalizedOutput) {
             ejsThrowIOError(ejs, "Can't write to socket");
             return 0;
         }

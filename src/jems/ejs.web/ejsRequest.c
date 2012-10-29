@@ -988,7 +988,7 @@ static EjsObj *req_autoFinalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **ar
     /* If writeBuffer is set, HttpServer is capturning output for caching */
     if (req->conn && !req->dontAutoFinalize) {
         if (!req->writeBuffer) {
-            httpComplete(req->conn);
+            httpFinalize(req->conn);
         }
         req->finalized = 1;
     }
@@ -1003,7 +1003,7 @@ static EjsObj *req_close(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
     if (req->conn) {
         if (!req->writeBuffer) {
-            httpComplete(req->conn);
+            httpFinalize(req->conn);
         }
         req->finalized = 1;
         httpCloseRx(req->conn);
@@ -1050,7 +1050,7 @@ static EjsObj *req_finalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         if (!req->writeBuffer || req->writeBuffer == ESV(null)) {
             //  MOB - should separate these 
             // httpFinalize(req->conn);
-            httpComplete(req->conn);
+            httpFinalize(req->conn);
         } else {
             httpSetResponded(req->conn);
         }
@@ -1065,7 +1065,7 @@ static EjsObj *req_finalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
  */
 static EjsBoolean *req_finalized(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    return ejsCreateBoolean(ejs, req->conn == 0 || req->finalized || req->conn->tx->finalized);
+    return ejsCreateBoolean(ejs, req->conn == 0 || req->finalized || req->conn->tx->finalizedOutput);
 }
 
 
@@ -1136,7 +1136,7 @@ static EjsRequest *req_on(Ejs *ejs, EjsRequest *req, int argc, EjsAny **argv)
     if (conn->readq->count > 0) {
         ejsSendEvent(ejs, req->emitter, "readable", NULL, req);
     }
-    if (!conn->tx->connectorComplete && 
+    if (!conn->tx->finalizedConnector && 
             !conn->error && HTTP_STATE_CONNECTED <= conn->state && 
             conn->state < HTTP_STATE_COMPLETE &&
             conn->writeq->ioCount == 0) {
@@ -1293,7 +1293,7 @@ static EjsNumber *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     int             err, i;
 
     conn = req->conn;
-    if (!connOk(ejs, req, 1) || httpIsFinalized(conn)) {
+    if (!connOk(ejs, req, 1) || httpIsOutputFinalized(conn)) {
         return 0;
     }
     err = 0;
@@ -1335,7 +1335,7 @@ static EjsNumber *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         req->written += written;
         total += written;
     }
-    if (!conn->tx->connectorComplete && 
+    if (!conn->tx->finalizedConnector && 
             !conn->error && HTTP_STATE_CONNECTED <= conn->state && 
             conn->state < HTTP_STATE_COMPLETE &&
             conn->writeq->ioCount == 0) {
@@ -1375,7 +1375,7 @@ static EjsObj *req_writeFile(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     tx->length = tx->entityLength = info->size;
     httpSetSendConnector(req->conn, path->value);
     httpPutForService(conn->writeq, packet, 0);
-    httpComplete(req->conn);
+    httpFinalize(req->conn);
     req->finalized = 1;
     return ESV(true);
 }

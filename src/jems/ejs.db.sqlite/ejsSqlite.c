@@ -453,7 +453,7 @@ static int configureSqliteTypes(Ejs *ejs)
 /*
     Module load entry point. This must be idempotent as it will be called for each new interpreter created.
  */
-int ejs_db_sqlite_Init(Ejs *ejs, MprModule *mp)
+PUBLIC int ejs_db_sqlite_Init(Ejs *ejs, MprModule *mp)
 {
     return ejsAddNativeModule(ejs, "ejs.db.sqlite", configureSqliteTypes, _ES_CHECKSUM_ejs_db_sqlite, EJS_LOADER_ETERNAL);
 }
