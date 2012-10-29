@@ -7244,7 +7244,7 @@ PUBLIC ssize httpRead(HttpConn *conn, char *buf, ssize size)
     mprAssert(size >= 0);
     VERIFY_QUEUE(q);
 
-    while (q->count <= 0 && !conn->async && !conn->tx->finalized && conn->sock && (conn->state <= HTTP_STATE_CONTENT)) {
+    while (q->count <= 0 && !conn->async && !conn->error && conn->sock && (conn->state <= HTTP_STATE_CONTENT)) {
         httpServiceQueues(conn);
         if (conn->sock) {
             httpWait(conn, 0, MPR_TIMEOUT_NO_BUSY);
@@ -12427,7 +12427,7 @@ PUBLIC int httpWait(HttpConn *conn, int state, MprTime timeout)
             break;
         }
         remaining = mprGetRemainingTime(mark, timeout);
-    } while (!justOne && !conn->tx->finalized && conn->state < state && remaining > 0);
+    } while (!justOne && !conn->error && conn->state < state && remaining > 0);
 
     conn->async = saveAsync;
     if (conn->sock == 0 || conn->error) {
