@@ -375,7 +375,7 @@ module ejs {
             @param timeout Timeout in milliseconds
          */
         static function waitForEvent(obj: *, events: Object, timeout: Number = Number.MaxInt32): Boolean {
-            let done
+            let done = false
             function callback(event) done = true
             obj.on(events, callback)
             for (let mark = new Date; !done && mark.elapsed < timeout; )

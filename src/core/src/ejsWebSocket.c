@@ -166,7 +166,7 @@ static EjsWebSocket *ws_on(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
     if (conn->readq && conn->readq->count > 0) {
         onWebSocketEvent(ws, HTTP_EVENT_READABLE, 0);
     }
-    if (!conn->tx->connectorComplete && 
+    if (!conn->tx->finalizedConnector && 
             !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
             conn->writeq->ioCount == 0) {
         onWebSocketEvent(ws, HTTP_EVENT_WRITABLE, 0);
@@ -441,7 +441,7 @@ static bool waitTillState(EjsWebSocket *ws, int state, MprTime timeout, int thro
         return 0;
     }
     if (!conn->async) {
-        httpFinalize(conn);
+        httpFinalizeOutput(conn);
     }
     redirectCount = 0;
     success = count = 0;
@@ -497,7 +497,7 @@ static bool waitTillState(EjsWebSocket *ws, int state, MprTime timeout, int thro
             return 0;
         }
         if (!conn->async) {
-            httpFinalize(conn);
+            httpFinalizeOutput(conn);
         }
     }
     if (!success) {

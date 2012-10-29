@@ -101,7 +101,7 @@ static EjsNumber *http_available(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (hp->conn) {
-        httpFinalize(hp->conn);
+        httpFinalizeOutput(hp->conn);
         sendHttpCloseEvent(ejs, hp);
         httpDestroyConn(hp->conn);
         hp->conn = httpCreateConn(ejs->http, NULL, ejs->dispatcher);
@@ -184,7 +184,7 @@ static EjsDate *http_date(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsObj *http_finalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (hp->conn) {
-        httpFinalize(hp->conn);
+        httpFinalizeOutput(hp->conn);
     }
     return 0;
 }
@@ -196,7 +196,7 @@ static EjsObj *http_finalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsBoolean *http_finalized(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (hp->conn) {
-        return ejsCreateBoolean(ejs, hp->conn->tx->finalized);
+        return ejsCreateBoolean(ejs, hp->conn->tx->finalizedOutput);
     }
     return ESV(false);
 }
@@ -275,7 +275,7 @@ static EjsObj *http_get(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     startHttpRequest(ejs, hp, "GET", argc, argv);
     if (hp->conn) {
-        httpFinalize(hp->conn);
+        httpFinalizeOutput(hp->conn);
     }
     return 0;
 }
@@ -468,7 +468,7 @@ static EjsHttp *http_on(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (conn->readq && conn->readq->count > 0) {
         ejsSendEvent(ejs, hp->emitter, "readable", NULL, hp);
     }
-    if (!conn->tx->connectorComplete && 
+    if (!conn->tx->finalizedConnector && 
             !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
             conn->writeq->ioCount == 0) {
         ejsSendEvent(ejs, hp->emitter, "writable", NULL, hp);
@@ -954,7 +954,7 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
             mprAdjustBufStart(hp->requestContent, nbytes);
             hp->requestContentCount += nbytes;
         }
-        httpFinalize(conn);
+        httpFinalizeOutput(conn);
     }
     ejsSendEvent(ejs, hp->emitter, "writable", NULL, hp);
     if (conn->async) {
@@ -1055,7 +1055,7 @@ static ssize writeHttpData(Ejs *ejs, EjsHttp *hp)
     ba = hp->data;
     nbytes = 0;
     if (ba && (count = ejsGetByteArrayAvailableData(ba)) > 0) {
-        if (conn->tx->finalized) {
+        if (conn->tx->finalizedOutput) {
             ejsThrowIOError(ejs, "Can't write to socket");
             return 0;
         }
@@ -1267,7 +1267,7 @@ static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
         return 0;
     }
     if (!conn->async) {
-        httpFinalize(conn);
+        httpFinalizeOutput(conn);
     }
     redirectCount = 0;
     success = count = 0;
@@ -1331,7 +1331,7 @@ static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
             return 0;
         }
         if (!conn->async) {
-            httpFinalize(conn);
+            httpFinalizeOutput(conn);
         }
     }
     if (!success) {
