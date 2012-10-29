@@ -441,7 +441,7 @@ static bool waitTillState(EjsWebSocket *ws, int state, MprTime timeout, int thro
         return 0;
     }
     if (!conn->async) {
-        httpFinalizeOutput(conn);
+        httpFinalize(conn);
     }
     redirectCount = 0;
     success = count = 0;
@@ -497,7 +497,7 @@ static bool waitTillState(EjsWebSocket *ws, int state, MprTime timeout, int thro
             return 0;
         }
         if (!conn->async) {
-            httpFinalizeOutput(conn);
+            httpFinalize(conn);
         }
     }
     if (!success) {

@@ -101,7 +101,7 @@ static EjsNumber *http_available(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (hp->conn) {
-        httpFinalizeOutput(hp->conn);
+        httpFinalize(hp->conn);
         sendHttpCloseEvent(ejs, hp);
         httpDestroyConn(hp->conn);
         hp->conn = httpCreateConn(ejs->http, NULL, ejs->dispatcher);
@@ -184,7 +184,7 @@ static EjsDate *http_date(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsObj *http_finalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (hp->conn) {
-        httpFinalizeOutput(hp->conn);
+        httpFinalize(hp->conn);
     }
     return 0;
 }
@@ -275,7 +275,7 @@ static EjsObj *http_get(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     startHttpRequest(ejs, hp, "GET", argc, argv);
     if (hp->conn) {
-        httpFinalizeOutput(hp->conn);
+        httpFinalize(hp->conn);
     }
     return 0;
 }
@@ -954,7 +954,7 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
             mprAdjustBufStart(hp->requestContent, nbytes);
             hp->requestContentCount += nbytes;
         }
-        httpFinalizeOutput(conn);
+        httpFinalize(conn);
     }
     ejsSendEvent(ejs, hp->emitter, "writable", NULL, hp);
     if (conn->async) {
@@ -1267,7 +1267,7 @@ static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
         return 0;
     }
     if (!conn->async) {
-        httpFinalizeOutput(conn);
+        httpFinalize(conn);
     }
     redirectCount = 0;
     success = count = 0;
@@ -1331,7 +1331,7 @@ static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
             return 0;
         }
         if (!conn->async) {
-            httpFinalizeOutput(conn);
+            httpFinalize(conn);
         }
     }
     if (!success) {
