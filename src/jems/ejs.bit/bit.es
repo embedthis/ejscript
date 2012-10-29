@@ -747,7 +747,9 @@ public class Bit {
                     break
                 }
             }
-            path ||= Cmd.locate(file)
+            if (!control.nopath) {
+                path ||= Cmd.locate(file)
+            }
         }
         if (!path) {
             if (options.why) {
