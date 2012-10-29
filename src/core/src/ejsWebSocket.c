@@ -10,7 +10,8 @@
 
 static void onWebSocketEvent(EjsWebSocket *ws, int event, EjsAny *data);
 static EjsObj *startWebSocketRequest(Ejs *ejs, EjsWebSocket *ws);
-static bool waitTillState(EjsWebSocket *ws, int state, MprTime timeout, int throw);
+static bool waitForHttpState(EjsWebSocket *ws, int state, MprTime timeout, int throw);
+static bool waitForReadyState(EjsWebSocket *ws, int state, MprTime timeout, int throw);
 static void webSocketNotify(HttpConn *conn, int state, int notifyFlags);
 
 /************************************ Methods *********************************/
@@ -103,7 +104,7 @@ static EjsObj *ws_set_certificate(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj *
 
 
 /*  
-    function close(code: Number = 1000, reason: String? = ""): Void
+    function close(status: Number = 1000, reason: String? = ""): Void
  */
 static EjsObj *ws_close(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 {
@@ -189,6 +190,7 @@ static EjsString *ws_protocol(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **arg
  */
 static EjsNumber *ws_readyState(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 {
+    //  MOB - should have API for this
     return ejsCreateNumber(ejs, (MprNumber) ws->conn->rx->webSocket->state);
 }
 
@@ -205,7 +207,7 @@ static EjsString *ws_send(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
     int             i;
 
     args = (EjsArray*) argv[0];
-    if (ws->conn->state < HTTP_STATE_PARSED && !waitTillState(ws, HTTP_STATE_PARSED, -1, 1)) {
+    if (ws->conn->state < HTTP_STATE_PARSED && !waitForHttpState(ws, HTTP_STATE_PARSED, -1, 1)) {
         return 0;
     }
     for (i = 0; i < args->length; i++) {
@@ -255,12 +257,35 @@ static EjsObj *ws_set_verify(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv
 }
 
 
-/*  
+/*
     function get url(): Uri
  */
 static EjsUri *ws_url(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 {
     return ejsCreateUriFromAsc(ejs, ws->uri);
+}
+
+
+/*
+    Wait for a request to complete. Timeout is in msec. Timeout < 0 means use default inactivity and request timeouts.
+    Timeout of zero means no timeout.
+
+    function wait(state: Number, timeout: Number = -1): Boolean
+ */
+static EjsUri *ws_wait(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
+{
+    MprTime     timeout;
+    int         state;
+
+    state = argc >= 1 ? ejsGetInt(ejs, argv[0]) : WS_STATE_CLOSED;
+    timeout = argc >= 2 ? ejsGetInt(ejs, argv[1]) : -1;
+    if (timeout == 0) {
+        timeout = MPR_MAX_TIMEOUT;
+    }
+    if (!waitForReadyState(ws, state, timeout, 0)) {
+        return ESV(false);
+    }
+    return ESV(true);
 }
 
 /*********************************** Support **********************************/
@@ -416,7 +441,7 @@ static void webSocketNotify(HttpConn *conn, int event, int arg)
 }
 
 
-static bool waitTillState(EjsWebSocket *ws, int state, MprTime timeout, int throw)
+static bool waitForHttpState(EjsWebSocket *ws, int state, MprTime timeout, int throw)
 {
     Ejs             *ejs;
     MprTime         mark, remaining;
@@ -476,8 +501,7 @@ static bool waitTillState(EjsWebSocket *ws, int state, MprTime timeout, int thro
             break;
         }
         if (conn->rx) {
-            if (conn->rx->status == HTTP_CODE_REQUEST_TOO_LARGE || 
-                    conn->rx->status == HTTP_CODE_REQUEST_URL_TOO_LARGE) {
+            if (conn->rx->status == HTTP_CODE_REQUEST_TOO_LARGE || conn->rx->status == HTTP_CODE_REQUEST_URL_TOO_LARGE) {
                 /* No point retrying */
                 break;
             }
@@ -507,6 +531,50 @@ static bool waitTillState(EjsWebSocket *ws, int state, MprTime timeout, int thro
         return 0;
     }
     return 1;
+}
+
+
+static bool waitForReadyState(EjsWebSocket *ws, int state, MprTime timeout, int throw)
+{
+    Ejs             *ejs;
+    HttpConn        *conn;
+    HttpRx          *rx;
+    MprTime         mark, remaining, inactivityTimeout;
+    int             eventMask;
+
+    ejs = ws->ejs;
+    conn = ws->conn;
+    rx = conn->rx;
+    mprAssert(conn->state >= HTTP_STATE_CONNECTED);
+
+    if (!rx || !rx->webSocket) {
+        return 0;
+    }
+    eventMask = MPR_READABLE;
+    if (!conn->tx->finalizedConnector) {
+        eventMask |= MPR_WRITABLE;
+    }
+    if (rx->webSocket->state < state) {
+        httpSetupWaitHandler(conn, eventMask);
+    }
+    if (mprGetDebugMode()) {
+        inactivityTimeout = timeout = MPR_MAX_TIMEOUT;
+    } else {
+        inactivityTimeout = timeout < 0 ? conn->limits->inactivityTimeout : MPR_MAX_TIMEOUT;
+    }
+    if (timeout < 0) {
+        timeout = conn->limits->requestTimeout;
+    }
+    mark = mprGetTime();
+    remaining = timeout;
+    while (conn->state < HTTP_STATE_CONTENT || rx->webSocket->state < state) {
+        if (conn->error || ejs->exiting || mprIsStopping(conn) || remaining < 0) {
+            break;
+        }
+        mprWaitForEvent(conn->dispatcher, min(inactivityTimeout, remaining));
+        remaining = mprGetRemainingTime(mark, timeout);
+    }
+    return rx->webSocket->state >= state;
 }
 
 
@@ -555,9 +623,7 @@ PUBLIC void ejsConfigureWebSocketType(Ejs *ejs)
     ejsBindConstructor(ejs, type, wsConstructor);
     ejsBindMethod(ejs, prototype, ES_WebSocket_bufferedAmount, ws_bufferedAmount);
     ejsBindMethod(ejs, prototype, ES_WebSocket_binaryType, ws_binaryType);
-#if ES_WebSocket_certificate
     ejsBindAccess(ejs, prototype, ES_WebSocket_certificate, ws_certificate, ws_set_certificate);
-#endif
     ejsBindMethod(ejs, prototype, ES_WebSocket_close, ws_close);
     ejsBindMethod(ejs, prototype, ES_WebSocket_extensions, ws_extensions);
     ejsBindMethod(ejs, prototype, ES_WebSocket_off, ws_off);
@@ -565,10 +631,9 @@ PUBLIC void ejsConfigureWebSocketType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_WebSocket_protocol, ws_protocol);
     ejsBindMethod(ejs, prototype, ES_WebSocket_readyState, ws_readyState);
     ejsBindMethod(ejs, prototype, ES_WebSocket_send, ws_send);
-#if ES_WebSocket_verify
     ejsBindAccess(ejs, prototype, ES_WebSocket_verify, ws_verify, ws_set_verify);
-#endif
     ejsBindMethod(ejs, prototype, ES_WebSocket_url, ws_url);
+    ejsBindMethod(ejs, prototype, ES_WebSocket_wait, ws_wait);
 }
 
 /*

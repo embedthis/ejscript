@@ -154,13 +154,7 @@ module ejs {
             A timeout of < 0 (default), means wait forever.
             @return True if the desired state was achieved
          */
-        function wait(state: Number, timeout: Number = -1): Boolean {
-           if (timeout < 0) timeout = Number.MaxInt32
-           for (let mark = new Date; readyState != state && readyState != CLOSED && mark.elapsed < timeout; ) {
-               App.run(timeout - mark.elapsed, true)
-           }
-           return readyState == state
-        }
+        native function wait(state: Number, timeout: Number = -1): Boolean
     }
 }
 
