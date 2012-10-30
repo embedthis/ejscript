@@ -17,7 +17,7 @@ const XID = '{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}'
 var PREP = 'if not exist "$(ObjDir)" md "$(ObjDir)"
 if not exist "$(BinDir)" md "$(BinDir)"
 if not exist "$(IncDir)" md "$(IncDir)"
-if not exist "$(IncDir)\\bit.h" copy "..\\${settings.product}-${platform.os}-bit.h" "$(IncDir)\\bit.h"
+if not exist "$(IncDir)\\bit.h" copy "..\\${settings.product}-${platform.os}-${platform.profile}-bit.h" "$(IncDir)\\bit.h"
 '
 var prepTarget
 var Base 
