@@ -1103,7 +1103,6 @@ PUBLIC int ecOpenFileStream(EcCompiler *cp, cchar *path)
     if ((fs->file = mprOpenFile(path, O_RDONLY | O_BINARY, 0666)) == 0) {
         return MPR_ERR_CANT_OPEN;
     }
-print("FD %d\n", fs->file->fd);
     if (mprGetPathInfo(path, &info) < 0 || info.size < 0) {
         mprCloseFile(fs->file);
         return MPR_ERR_CANT_ACCESS;
