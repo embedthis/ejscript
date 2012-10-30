@@ -101,7 +101,7 @@ static EjsAny *sl_expire(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv
 
     if (cache->shared) {
         cache = cache->shared;
-        mprAssert(cache == shared);
+        assure(cache == shared);
     }
     key = argv[0];
     expires = argv[1];
@@ -134,7 +134,7 @@ static EjsAny *sl_inc(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv)
 
     if (cache->shared) {
         cache = cache->shared;
-        mprAssert(cache == shared);
+        assure(cache == shared);
     }
     key = argv[0];
     amount = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : 1;
@@ -171,7 +171,7 @@ static EjsPot *sl_limits(Ejs *ejs, EjsLocalCache *cache, int argc, EjsObj **argv
 
     if (cache->shared) {
         cache = cache->shared;
-        mprAssert(cache == shared);
+        assure(cache == shared);
     }
     result = ejsCreateEmptyPot(ejs);
     ejsSetPropertyByName(ejs, result, EN("keys"), 
@@ -197,7 +197,7 @@ static EjsAny *sl_read(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv)
 
     if (cache->shared) {
         cache = cache->shared;
-        mprAssert(cache == shared);
+        assure(cache == shared);
     }
     key = argv[0];
     getVersion = 0;
@@ -246,7 +246,7 @@ static EjsBoolean *sl_remove(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **
 
     if (cache->shared) {
         cache = cache->shared;
-        mprAssert(cache == shared);
+        assure(cache == shared);
     }
     key = argv[0];
     lock(cache);
@@ -280,7 +280,7 @@ static void setLocalLimits(Ejs *ejs, EjsLocalCache *cache, EjsPot *options)
     }
     if (cache->shared) {
         cache = cache->shared;
-        mprAssert(cache == shared);
+        assure(cache == shared);
     }
     if ((vp = ejsGetPropertyByName(ejs, options, EN("keys"))) != 0) {
         cache->maxKeys = (ssize) ejsGetInt64(ejs, vp);
@@ -313,7 +313,7 @@ static EjsVoid *sl_setLimits(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **
 {
     if (cache->shared) {
         cache = cache->shared;
-        mprAssert(cache == shared);
+        assure(cache == shared);
     }
     setLocalLimits(ejs, cache, argv[0]);
     return 0;
@@ -337,7 +337,7 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
 
     if (cache->shared) {
         cache = cache->shared;
-        mprAssert(cache == shared);
+        assure(cache == shared);
     }
     checkVersion = exists = add = prepend = append = throw = 0;
     set = 1;
@@ -474,7 +474,7 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
                 removeItem(cache, item);
             }
         }
-        mprAssert(cache->usedMem >= 0);
+        assure(cache->usedMem >= 0);
 
         /*
             If too many keys or too much memory used, prune keys expiring first.
@@ -495,7 +495,7 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
                 }
             }
         }
-        mprAssert(cache->usedMem >= 0);
+        assure(cache->usedMem >= 0);
 
         if (mprGetHashLength(cache->store) == 0) {
             mprRemoveEvent(event);

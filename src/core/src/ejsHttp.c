@@ -528,7 +528,7 @@ static EjsNumber *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         ejsSetByteArrayPositions(ejs, buffer, 0, 0);
     }
     if ((count = readHttpData(ejs, hp, count)) < 0) {
-        mprAssert(ejs->exception);
+        assure(ejs->exception);
         return 0;
     } 
     hp->readCount += count;
@@ -555,7 +555,7 @@ static EjsString *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv
         return 0;
     }
     if ((count = readHttpData(ejs, hp, count)) < 0) {
-        mprAssert(ejs->exception);
+        assure(ejs->exception);
         return 0;
     }
     //  UNICODE ENCODING
@@ -642,7 +642,7 @@ static EjsObj *http_setHeader(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     cchar       *key, *value;
     bool        overwrite;
 
-    mprAssert(argc >= 2);
+    assure(argc >= 2);
 
     conn = hp->conn;
     if (conn->state >= HTTP_STATE_CONNECTED) {
@@ -919,7 +919,7 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
             written = ejsWriteToByteArray(ejs, data, 1, &argv[1]);
             mprPutBlockToBuf(hp->requestContent, (char*) data->value, (int) written->value);
             mprAddNullToBuf(hp->requestContent);
-            mprAssert(written > 0);
+            assure(written > 0);
         }
     }
     if (hp->uri == 0) {
@@ -950,7 +950,7 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
             ejsThrowIOError(ejs, "Can't write request data for \"%s\"", hp->uri);
             return 0;
         } else if (nbytes > 0) {
-            mprAssert(nbytes == mprGetBufLength(hp->requestContent));
+            assure(nbytes == mprGetBufLength(hp->requestContent));
             mprAdjustBufStart(hp->requestContent, nbytes);
             hp->requestContentCount += nbytes;
         }
@@ -1080,7 +1080,7 @@ static void httpIOEvent(HttpConn *conn, MprEvent *event)
     EjsHttp     *hp;
     Ejs         *ejs;
 
-    mprAssert(conn->async);
+    assure(conn->async);
 
     hp = conn->context;
     ejs = hp->ejs;
@@ -1251,11 +1251,11 @@ static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
     char            *url;
     int             count, redirectCount, success, rc;
 
-    mprAssert(state >= HTTP_STATE_PARSED);
+    assure(state >= HTTP_STATE_PARSED);
 
     ejs = hp->ejs;
     conn = hp->conn;
-    mprAssert(conn->state >= HTTP_STATE_CONNECTED);
+    assure(conn->state >= HTTP_STATE_CONNECTED);
 
     if (conn->state >= state) {
         return 1;

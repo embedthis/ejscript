@@ -2308,7 +2308,7 @@ PUBLIC void httpSetTimestamp(MprTime period);
 /**
     Setup a wait handler for the connection to wait for desired events
     @param conn HttpConn object created via #httpCreateConn
-    @param mask Mask of events. MPR_READABLE | MPR_WRITABLE
+    @param eventMask Mask of events. MPR_READABLE | MPR_WRITABLE
     @ingroup HttpConn
  */
 PUBLIC void httpSetupWaitHandler(HttpConn *conn, int eventMask);
@@ -5571,6 +5571,14 @@ PUBLIC ssize httpGetWebSocketMessageLength(HttpConn *conn);
     @stability Prototype
  */
 PUBLIC char *httpGetWebSocketProtocol(HttpConn *conn);
+
+/**
+    Get the WebSocket state
+    @return The web socket state. Will be WS_STATE_CONNECTING, WS_STATE_OPEN, WS_STATE_CLOSING or WS_STATE_CLOSED.
+    @ingroup HttpWebSocket
+    @stability Prototype
+ */
+PUBLIC ssize httpGetWebSocketState(HttpConn *conn);
 
 /**
     Send a UTF-8 text message to the web socket peer

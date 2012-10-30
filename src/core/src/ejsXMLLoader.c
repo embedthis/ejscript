@@ -32,7 +32,7 @@ MprXml *ejsCreateXmlParser(Ejs *ejs, EjsXML *xml, cchar *filename)
     MprXml      *xp;
     
     xp = mprXmlOpen(MPR_BUFSIZE, EJS_XML_BUF_MAX);
-    mprAssert(xp);
+    assure(xp);
 
     /*
         Create the parser stack
@@ -84,10 +84,10 @@ static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, 
     xml = tos->obj;
     value = ejsCreateStringFromAsc(ejs, str);
     
-    mprAssert(xml);
+    assure(xml);
 
-    mprAssert(state >= 0);
-    mprAssert(tagName && *tagName);
+    assure(state >= 0);
+    assure(tagName && *tagName);
 
     switch (state) {
     case MPR_XML_PI:
@@ -130,7 +130,7 @@ static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, 
             //  TODO - rc
             ejsAppendToXML(ejs, parent, xml);
             parser->topOfStack--;
-            mprAssert(parser->topOfStack >= 0);
+            assure(parser->topOfStack >= 0);
             tos = &parser->nodeStack[parser->topOfStack];
         }
         break;
@@ -157,7 +157,7 @@ static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, 
          */
         if (parser->topOfStack > 0) {
             parser->topOfStack--;
-            mprAssert(parser->topOfStack >= 0);
+            assure(parser->topOfStack >= 0);
             tos = &parser->nodeStack[parser->topOfStack];
         }
         break;
@@ -165,7 +165,7 @@ static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, 
     default:
         ejsThrowSyntaxError(ejs, "XML error in %s at %d\nDetails %s", parser->filename, mprXmlGetLineNumber(xp), 
             mprXmlGetErrorMsg(xp));
-        mprAssert(0);
+        assure(0);
         return MPR_ERR_BAD_SYNTAX;
     }
     return 0;
@@ -203,7 +203,7 @@ PUBLIC int ejsXMLToBuf(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
         }
         return 0;
     }
-    mprAssert(ejsIsXML(ejs, node));
+    assure(ejsIsXML(ejs, node));
     xml = (EjsXML*) node;
     
     switch (xml->kind) {

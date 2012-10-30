@@ -231,7 +231,7 @@ static void manageMod(EjsMod *mp, int flags)
 
 static void require(MprList *list, cchar *name) 
 {
-    mprAssert(list);
+    assure(list);
 
     if (name && *name) {
         mprAddItem(list, name);

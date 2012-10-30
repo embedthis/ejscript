@@ -112,8 +112,8 @@ static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **arg
  */
 static int sqliteClose(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
 {
-    mprAssert(ejs);
-    mprAssert(db);
+    assure(ejs);
+    assure(db);
 
     if (db->sdb && !db->memory) {
         sqlite3_close(db->sdb);
@@ -140,8 +140,8 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
     cchar           *tail, *colName, *cmd, *value, *defaultTableName;
     int             i, ncol, rc, retries, rowNum, len;
 
-    mprAssert(ejs);
-    mprAssert(db);
+    assure(ejs);
+    assure(db);
 
     cmd = ejsToMulti(ejs, argv[0]);
     retries = 0;
@@ -365,13 +365,13 @@ static void leaveMutex(sqlite3_mutex *mutex)
 
 
 static int mutexIsHeld(sqlite3_mutex *mutex) { 
-    mprAssert(0); 
+    assure(0); 
     return 0; 
 }
 
 
 static int mutexIsNotHeld(sqlite3_mutex *mutex) { 
-    mprAssert(0); 
+    assure(0); 
     return 0; 
 }
 

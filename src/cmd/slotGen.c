@@ -44,7 +44,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
     char        *path, slotsName[MPR_MAX_FNAME], moduleName[MPR_MAX_FNAME];
     char        *cp, *sp, *dp;
 
-    mprAssert(bp);
+    assure(bp);
 
     path = 0;
     localFile = 0;
@@ -188,9 +188,9 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
     EjsName         qname, lqname;
     int             slotNum, i, methodHeader, count, offset;
 
-    mprAssert(bp);
-    mprAssert(type);
-    mprAssert(ejsIsType(ejs, type));
+    assure(bp);
+    assure(type);
+    assure(ejsIsType(ejs, type));
 
     ejs = bp->ejs;
     lastClassSlot = max(firstClassSlot, lastClassSlot);

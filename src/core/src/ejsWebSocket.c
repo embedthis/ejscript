@@ -450,11 +450,11 @@ static bool waitForHttpState(EjsWebSocket *ws, int state, MprTime timeout, int t
     char            *url;
     int             count, redirectCount, success, rc;
 
-    mprAssert(state >= HTTP_STATE_PARSED);
+    assure(state >= HTTP_STATE_PARSED);
 
     ejs = ws->ejs;
     conn = ws->conn;
-    mprAssert(conn->state >= HTTP_STATE_CONNECTED);
+    assure(conn->state >= HTTP_STATE_CONNECTED);
 
     if (conn->state >= state) {
         return 1;
@@ -545,7 +545,7 @@ static bool waitForReadyState(EjsWebSocket *ws, int state, MprTime timeout, int 
     ejs = ws->ejs;
     conn = ws->conn;
     rx = conn->rx;
-    mprAssert(conn->state >= HTTP_STATE_CONNECTED);
+    assure(conn->state >= HTTP_STATE_CONNECTED);
 
     if (!rx || !rx->webSocket) {
         return 0;

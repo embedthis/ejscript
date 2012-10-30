@@ -361,7 +361,7 @@ static void manageApp(App *app, int flags)
 
 static void require(cchar *name) 
 {
-    mprAssert(app->modules);
+    assure(app->modules);
     if (name && *name) {
         mprAddItem(app->modules, sclone(name));
     }

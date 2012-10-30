@@ -63,7 +63,7 @@ int ejsLoadModule(Ejs *ejs, EjsString *path, int minVersion, int maxVersion, int
     char    *trimmedPath, *name;
     int     status, version;
 
-    mprAssert(path);
+    assure(path);
 
     /*
         Note the cannonical name for a module is the basename of the module without extension
@@ -134,7 +134,7 @@ static char *search(Ejs *ejs, cchar *filename, int minVersion, int maxVersion)
 {
     char        *path;
 
-    mprAssert(filename && *filename);
+    assure(filename && *filename);
 
     if ((path = ejsSearchForModule(ejs, filename, minVersion, maxVersion)) == 0) {
         mprLog(2, "Can't find module file \"%s\"", filename);
@@ -172,7 +172,7 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
             return MPR_ERR_CANT_LOAD;
         }
         mprLog(9, "Load section type %d", sectionType);
-        mprAssert(mp == NULL || mp->scope == NULL || mp->scope != mp->scope->scope);
+        assure(mp == NULL || mp->scope == NULL || mp->scope != mp->scope->scope);
 
         rc = 0;
         switch (sectionType) {
@@ -284,7 +284,7 @@ static EjsModule *loadModuleSection(Ejs *ejs, MprFile *file, EjsModuleHdr *hdr, 
     char            *pool;
     int             version, checksum, poolSize, poolCount, nameToken;
 
-    mprAssert(created);
+    assure(created);
 
     *created = 0;
     checksum = 0;
@@ -305,7 +305,7 @@ static EjsModule *loadModuleSection(Ejs *ejs, MprFile *file, EjsModuleHdr *hdr, 
         return 0;
     }
     if (nameToken < 0 || nameToken >= poolSize) {
-        mprAssert(0);
+        assure(0);
         return 0;
     }
     if ((pool = mprAlloc(poolSize)) == 0) {
@@ -347,7 +347,7 @@ static int loadEndModuleSection(Ejs *ejs, EjsModule *mp)
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_MODULE_END, mp);
     }
-    mprAssert(mprGetListLength(mp->current) == 1);
+    assure(mprGetListLength(mp->current) == 1);
     mp->current = 0;
     mp->file = 0;
     return 0;
@@ -361,8 +361,8 @@ static int loadDependencySection(Ejs *ejs, EjsModule *mp)
     void        *saveCallback;
     int         next, rc, minVersion, maxVersion, checksum, nextModule;
 
-    mprAssert(ejs);
-    mprAssert(mp);
+    assure(ejs);
+    assure(mp);
 
     name = ejsModuleReadConst(ejs, mp);
     checksum  = ejsModuleReadInt(ejs, mp);
@@ -629,9 +629,9 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
             block = ((EjsType*) currentType)->prototype;
         }
     }
-    mprAssert(block);
-    mprAssert(numArgs >= 0 && numArgs < EJS_MAX_ARGS);
-    mprAssert(numExceptions >= 0 && numExceptions < EJS_MAX_EXCEPTIONS);
+    assure(block);
+    assure(numArgs >= 0 && numArgs < EJS_MAX_ARGS);
+    assure(numExceptions >= 0 && numExceptions < EJS_MAX_EXCEPTIONS);
 
     mprLog(9, "Loading function %N at slot %d", qname, slotNum);
 
@@ -664,7 +664,7 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
             fun = (EjsFunction*) block;
             ejsInitFunction(ejs, fun, qname.name, code, codeLen, numArgs, numDefault, numExceptions, returnType, 
                 attributes, mp, NULL, strict);
-            mprAssert(fun->isConstructor);
+            assure(fun->isConstructor);
         } else {
             fun = ejsCreateFunction(ejs, qname.name, code, codeLen, numArgs, numDefault, numExceptions, returnType, 
                 attributes, mp, mp->scope, strict);
@@ -672,8 +672,8 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
         if (fun == 0) {
             return MPR_ERR_MEMORY;
         }
-        mprAssert(fun->block.pot.isBlock);
-        mprAssert(fun->block.pot.isFunction);
+        assure(fun->block.pot.isBlock);
+        assure(fun->block.pot.isFunction);
         if (numProp > 0) {
             fun->activation = ejsCreateActivation(ejs, fun, numProp);
         }
@@ -688,7 +688,7 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
             }
         }
         if (fixup) {
-            mprAssert(returnType == 0);
+            assure(returnType == 0);
             if (addFixup(ejs, mp, EJS_FIXUP_RETURN_TYPE, (EjsObj*) fun, -1, fixup) < 0) {
                 ejsThrowMemoryError(ejs);
                 return MPR_ERR_MEMORY;
@@ -706,11 +706,11 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
         if ((slotNum = ejsDefineProperty(ejs, block, slotNum, qname, EST(Function), attributes, fun)) < 0) {
             return MPR_ERR_MEMORY;
         }
-        mprAssert(fun->endFunction);
-        mprAssert(mprGetFilePosition(mp->file) <= fun->endFunction);
+        assure(fun->endFunction);
+        assure(mprGetFilePosition(mp->file) <= fun->endFunction);
         mprSeekFile(mp->file, SEEK_SET, fun->endFunction);
     }
-    mprAssert(fun);
+    assure(fun);
     mp->currentMethod = fun;
     pushScope(mp, ejsIsType(ejs, fun) ? NULL : fun, fun->activation);
     if (ejs->loaderCallback) {
@@ -742,12 +742,12 @@ static int loadDebugSection(Ejs *ejs, EjsModule *mp)
     int             size;
 
     fun = mp->currentMethod;
-    mprAssert(fun);
+    assure(fun);
 
     /* 
         Note the location in the file and skip over
      */
-    mprAssert(!fun->isNativeProc);
+    assure(!fun->isNativeProc);
     size = ejsModuleReadInt32(ejs, mp);
     fun->body.code->debugOffset = (int) mprGetFilePosition(mp->file);
     mprSeekFile(mp->file, SEEK_CUR, size);
@@ -768,7 +768,7 @@ static int loadExceptionSection(Ejs *ejs, EjsModule *mp)
     int             tryStart, tryEnd, handlerStart, handlerEnd, numBlocks, numStack, flags, i;
 
     fun = mp->currentMethod;
-    mprAssert(fun);
+    assure(fun);
 
     flags = 0;
     code = fun->body.code;
@@ -788,9 +788,9 @@ static int loadExceptionSection(Ejs *ejs, EjsModule *mp)
         ex = ejsAddException(ejs, fun, tryStart, tryEnd, catchType, handlerStart, handlerEnd, numBlocks, 
             numStack, flags, i);
         if (fixup) {
-            mprAssert(catchType == 0);
+            assure(catchType == 0);
             if (addFixup(ejs, mp, EJS_FIXUP_EXCEPTION, (EjsObj*) ex, 0, fixup) < 0) {
-                mprAssert(0);
+                assure(0);
                 return MPR_ERR_MEMORY;
             }
         }
@@ -865,13 +865,13 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
         if (ejsIsFunction(ejs, current)) {
             fixupKind = EJS_FIXUP_LOCAL;
         } else if (ejsIsType(ejs, current) && !(attributes & EJS_PROP_STATIC) && current != ejs->global) {
-            mprAssert(((EjsType*) current)->prototype);
+            assure(((EjsType*) current)->prototype);
             current = (EjsObj*) ((EjsType*) current)->prototype;
             fixupKind = EJS_FIXUP_INSTANCE_PROPERTY;
         } else {
             fixupKind = EJS_FIXUP_TYPE_PROPERTY;
         }
-        mprAssert(type == 0);
+        assure(type == 0);
         if (addFixup(ejs, mp, fixupKind, current, slotNum, fixup) < 0) {
             ejsThrowMemoryError(ejs);
             return MPR_ERR_MEMORY;
@@ -959,8 +959,8 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
     char            *path;
     int             next, status, firstModule;
 
-    mprAssert(filename && *filename);
-    mprAssert(ejs->exception == 0);
+    assure(filename && *filename);
+    assure(ejs->exception == 0);
 
     if ((path = search(ejs, filename, minVersion, maxVersion)) == 0) {
         return MPR_ERR_CANT_ACCESS;
@@ -1024,7 +1024,7 @@ static int fixupTypes(Ejs *ejs, MprList *list)
         if (fixup->typeSlotNum >= 0) {
             type = ejsGetProperty(ejs, ejs->global, fixup->typeSlotNum);
         } else if (fixup->typeName.name) {
-            mprAssert(fixup->typeSlotNum < 0);
+            assure(fixup->typeSlotNum < 0);
             type = ejsGetPropertyByName(ejs, ejs->global, fixup->typeName);
         } else {
             continue;
@@ -1038,7 +1038,7 @@ static int fixupTypes(Ejs *ejs, MprList *list)
         }
         switch (fixup->kind) {
         case EJS_FIXUP_BASE_TYPE:
-            mprAssert(fixup->target);
+            assure(fixup->target);
             targetType = (EjsType*) fixup->target;
             targetType->needFixup = 1;
             ejsFixupType(ejs, targetType, type, 0);
@@ -1053,48 +1053,48 @@ static int fixupTypes(Ejs *ejs, MprList *list)
             break;
 
         case EJS_FIXUP_RETURN_TYPE:
-            mprAssert(fixup->target);
+            assure(fixup->target);
             targetFunction = (EjsFunction*) fixup->target;
             targetFunction->resultType = type;
             break;
 
         case EJS_FIXUP_TYPE_PROPERTY:
-            mprAssert(fixup->target);
+            assure(fixup->target);
             trait = ejsGetPropertyTraits(ejs, fixup->target, fixup->slotNum);
-            mprAssert(trait);
+            assure(trait);
             if (trait) {
                 trait->type = type;
             }
             break;
 
         case EJS_FIXUP_INSTANCE_PROPERTY:
-            mprAssert(fixup->target);
-            mprAssert(ejsIsBlock(ejs, fixup->target));
-            mprAssert(((EjsPot*) fixup->target)->isPrototype);
+            assure(fixup->target);
+            assure(ejsIsBlock(ejs, fixup->target));
+            assure(((EjsPot*) fixup->target)->isPrototype);
             trait = ejsGetPropertyTraits(ejs, fixup->target, fixup->slotNum);
-            mprAssert(trait);
+            assure(trait);
             if (trait) {
                 trait->type = type;
             }
             break;
 
         case EJS_FIXUP_LOCAL:
-            mprAssert(fixup->target);
+            assure(fixup->target);
             trait = ejsGetPropertyTraits(ejs, fixup->target, fixup->slotNum);
-            mprAssert(trait);
+            assure(trait);
             if (trait) {
                 trait->type = type;
             }
             break;
 
         case EJS_FIXUP_EXCEPTION:
-            mprAssert(fixup->target);
+            assure(fixup->target);
             targetException = (EjsEx*) fixup->target;
             targetException->catchType = type;
             break;
 
         default:
-            mprAssert(0);
+            assure(0);
         }
     }
     return 0;
@@ -1172,8 +1172,8 @@ static char *probe(Ejs *ejs, cchar *path, int minVersion, int maxVersion)
     char            *dir, *base, *ext;
     int             next, nameLen, version, bestVersion;
 
-    mprAssert(ejs);
-    mprAssert(path);
+    assure(ejs);
+    assure(path);
 
     mprLog(7, "Probe for file %s", path);
 
@@ -1235,7 +1235,7 @@ static char *searchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int ma
     char        *withDotMod, *path, *filename, *basename, *cp, *slash, *name, *bootSearch, *tok, *searchDir;
     int         i;
 
-    mprAssert(moduleName && *moduleName);
+    assure(moduleName && *moduleName);
 
     slash = 0;
     if (maxVersion <= 0) {
@@ -1348,7 +1348,7 @@ char *ejsSearchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int maxVer
 {
     char        *path, *withDotMod, *name;
 
-    mprAssert(moduleName && *moduleName);
+    assure(moduleName && *moduleName);
 
     if (maxVersion <= 0) {
         maxVersion = MAXINT;
@@ -1425,9 +1425,9 @@ int ejsModuleReadType(Ejs *ejs, EjsModule *mp, EjsType **typeRef, EjsTypeFixup *
     EjsName         qname;
     int             t, slot;
 
-    mprAssert(mp);
-    mprAssert(typeRef);
-    mprAssert(fixup);
+    assure(mp);
+    assure(typeRef);
+    assure(fixup);
 
     *typeRef = 0;
     *fixup = 0;
@@ -1511,7 +1511,7 @@ static EjsTypeFixup *createFixup(Ejs *ejs, EjsModule *mp, EjsName qname, int slo
 {
     EjsTypeFixup    *fixup;
 
-    mprAssert(mp->loadState->typeFixups);
+    assure(mp->loadState->typeFixups);
 
     /*
         Managed by manageLoadState
@@ -1529,9 +1529,9 @@ static int addFixup(Ejs *ejs, EjsModule *mp, int kind, EjsObj *target, int slotN
 {
     int     index;
 
-    mprAssert(ejs);
-    mprAssert(fixup);
-    mprAssert(mp->loadState->typeFixups);
+    assure(ejs);
+    assure(fixup);
+    assure(mp->loadState->typeFixups);
 
     fixup->kind = kind;
     fixup->target = target;
@@ -1606,10 +1606,10 @@ static EjsObj *getCurrentBlock(EjsModule *mp)
 static void pushScope(EjsModule *mp, EjsAny *block, EjsAny *obj)
 {
     if (block) {
-        mprAssert(block != mp->scope);
+        assure(block != mp->scope);
         ((EjsBlock*) block)->scope = mp->scope;
         mp->scope = block;
-        mprAssert(mp->scope != mp->scope->scope);
+        assure(mp->scope != mp->scope->scope);
     }
     mprPushItem(mp->current, obj);
 }
@@ -1619,7 +1619,7 @@ static void popScope(EjsModule *mp, int keepScope)
 {
     mprPopItem(mp->current);
     if (!keepScope) {
-        mprAssert(mp->scope != mp->scope->scope);
+        assure(mp->scope != mp->scope->scope);
         mp->scope = mp->scope->scope;
     }
 }

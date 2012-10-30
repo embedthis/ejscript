@@ -34,15 +34,15 @@ PUBLIC void ejsResetBlockNamespaces(Ejs *ejs, EjsBlock *block)
 
 PUBLIC int ejsGetNamespaceCount(EjsBlock *block)
 {
-    mprAssert(block);
+    assure(block);
     return block->namespaces.length;
 }
 
 
 PUBLIC void ejsPopBlockNamespaces(EjsBlock *block, int count)
 {
-    mprAssert(block);
-    mprAssert(block->namespaces.length >= count);
+    assure(block);
+    assure(block->namespaces.length >= count);
 
     block->namespaces.length = count;
 }
@@ -50,7 +50,7 @@ PUBLIC void ejsPopBlockNamespaces(EjsBlock *block, int count)
 
 PUBLIC int ejsAddNamespaceToBlock(Ejs *ejs, EjsBlock *block, EjsNamespace *nsp)
 {
-    mprAssert(block);
+    assure(block);
 
     if (nsp == 0) {
         ejsThrowTypeError(ejs, "Not a namespace");
@@ -84,7 +84,7 @@ PUBLIC void ejsInheritBaseClassNamespaces(Ejs *ejs, EjsType *type, EjsType *base
                     }
                 }
                 //  OPT -- debug to see if duplicates found 
-                mprAssert(existing == NULL);
+                assure(existing == NULL);
                 if (existing == NULL) {
                     mprInsertItemAtPos(&block->namespaces, next - 1, nsp);
                 }

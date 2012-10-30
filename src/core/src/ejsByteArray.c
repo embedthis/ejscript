@@ -233,7 +233,7 @@ static EjsAny *invokeByteArrayOperator(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
         ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
-    mprAssert(0);
+    assure(0);
 }
 
 
@@ -267,7 +267,7 @@ static EjsByteArray *ba_ByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj *
     bool    resizable;
     int     size;
 
-    mprAssert(0 <= argc && argc <= 2);
+    assure(0 <= argc && argc <= 2);
 
     size = (argc >= 1) ? ejsGetInt(ejs, argv[0]) : MPR_BUFSIZE;
     if (size <= 0) {
@@ -281,7 +281,7 @@ static EjsByteArray *ba_ByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj *
         return 0;
     }
     ap->resizable = resizable;
-    mprAssert(ap->value);
+    assure(ap->value);
     return ap;
 }
 
@@ -326,7 +326,7 @@ static EjsObj *ba_close(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
  */
 static EjsObj *ba_compact(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 0);
+    assure(argc == 0);
 
     if (ap->writePosition == ap->readPosition) {
         ap->writePosition = ap->readPosition = 0;
@@ -427,7 +427,7 @@ static EjsObj *setEndian(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     int     endian;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Number));
 
     endian = ejsGetInt(ejs, argv[0]);
     if (endian != 0 && endian != 1) {
@@ -539,8 +539,8 @@ static EjsNumber *ba_getLength(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **ar
  */
 static EjsObj *ba_setLength(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
-    mprAssert(ejsIs(ejs, ap, ByteArray));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Number));
+    assure(ejsIs(ejs, ap, ByteArray));
 
     ap->size = ejsGetInt(ejs, argv[0]);
     if (ap->readPosition >= ap->size) {
@@ -578,7 +578,7 @@ static EjsNumber *ba_read(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     ssize           offset, count;
     int             i;
 
-    mprAssert(1 <= argc && argc <= 3);
+    assure(1 <= argc && argc <= 3);
 
     buffer = (EjsByteArray*) argv[0];
     offset = (argc == 2) ? ejsGetInt(ejs, argv[1]) : 0;
@@ -754,7 +754,7 @@ static EjsObj *ba_setReadPosition(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj *
 {
     int     pos;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Number));
 
     pos = ejsGetInt(ejs, argv[0]);
     if (pos < 0 || pos > ap->size) {
@@ -893,7 +893,7 @@ PUBLIC EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsO
     ssize           len, wrote;
     int             i;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     /*
         Unwrap nested arrays
@@ -1077,7 +1077,7 @@ static EjsObj *ba_setWritePosition(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj 
 {
     int     pos;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Number));
 
     pos = ejsGetInt(ejs, argv[0]);
     if (pos < 0 || pos > ap->size) {
@@ -1313,8 +1313,8 @@ PUBLIC ssize ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, ssize offset, cchar 
 {
     int     i;
 
-    mprAssert(ba);
-    mprAssert(data);
+    assure(ba);
+    assure(data);
 
     if (offset < 0) {
         offset = ba->writePosition;

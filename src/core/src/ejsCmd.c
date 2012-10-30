@@ -189,7 +189,7 @@ static EjsNumber *cmd_read(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     EjsByteArray    *buffer;
     ssize           offset, count, nbytes;
 
-    mprAssert(1 <= argc && argc <= 3);
+    assure(1 <= argc && argc <= 3);
 
     buffer = (EjsByteArray*) argv[0];
     offset = (argc == 2) ? ejsGetInt(ejs, argv[1]) : 0;
@@ -242,7 +242,7 @@ static EjsString *cmd_readString(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     EjsString   *result;
     ssize       nbytes, count;
     
-    mprAssert(0 <= argc && argc <= 1);
+    assure(0 <= argc && argc <= 1);
     
     count = (argc >= 1) ? ejsGetInt(ejs, argv[0]) : -1;
     if (count < 0) {
@@ -304,7 +304,7 @@ static ssize cmdIOCallback(MprCmd *mc, int channel, void *data)
         }
         space = mprGetBufSpace(buf);
     }
-    mprAssert(mc->files[channel].fd >= 0);
+    assure(mc->files[channel].fd >= 0);
     len = mprReadCmd(mc, channel, mprGetBufEnd(buf), space);
     if (len <= 0) {
         if (len == 0 || (len < 0 && !(errno == EAGAIN || errno == EWOULDBLOCK))) {
@@ -470,13 +470,13 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         return 0;
     }
     if (!(flags & MPR_CMD_DETACH)) {
-        mprAssert(cmd->mc);
+        assure(cmd->mc);
         mprFinalizeCmd(cmd->mc);
         if (mprWaitForCmd(cmd->mc, cmd->timeout) < 0) {
             ejsThrowStateError(ejs, "Timeout %d msec waiting for command to complete: %s", cmd->timeout, cmd->argv[0]);
             return 0;
         }
-        mprAssert(cmd->mc);
+        assure(cmd->mc);
         if (cmd->throw) {
             status = mprGetCmdExitStatus(cmd->mc);
             if (status != 0) {
@@ -579,7 +579,7 @@ static EjsNumber *cmd_write(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     ssize           len, wrote;
     int             i;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     /*
         Unwrap nested arrays

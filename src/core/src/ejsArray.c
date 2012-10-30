@@ -106,7 +106,7 @@ PUBLIC EjsArray *ejsCloneArray(Ejs *ejs, EjsArray *ap, bool deep)
 static int deleteArrayProperty(Ejs *ejs, EjsArray *ap, int slot)
 {
     if (slot >= ap->length) {
-        mprAssert(0);
+        assure(0);
         return EJS_ERR;
     }
     if (ejsSetProperty(ejs, ap, slot, ESV(undefined)) < 0) {
@@ -319,7 +319,7 @@ static EjsAny *invokeArrayOperator(Ejs *ejs, EjsAny *lhs, int opcode, EjsAny *rh
         ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
-    mprAssert(0);
+    assure(0);
 }
 
 
@@ -500,7 +500,7 @@ static EjsArray *arrayConstructor(Ejs *ejs, EjsArray *ap, int argc, EjsObj **arg
     EjsObj      *arg0, **src, **dest;
     int         size, i;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = (EjsArray*) argv[0];
     if (args->length == 0) {
@@ -574,7 +574,7 @@ static EjsArray *cloneArrayMethod(Ejs *ejs, EjsArray *ap, int argc, EjsObj **arg
 {
     bool    deep;
 
-    mprAssert(argc == 0 || ejsIs(ejs, argv[0], Boolean));
+    assure(argc == 0 || ejsIs(ejs, argv[0], Boolean));
 
     deep = (argc == 1) ? ((EjsBoolean*) argv[0])->value : 0;
     return ejsCloneArray(ejs, ap, deep);
@@ -620,7 +620,7 @@ static EjsArray *concatArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     EjsObj          *vp, **src, **dest;
     int         i, k, next;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = ((EjsArray*) argv[0]);
 
@@ -680,7 +680,7 @@ static EjsNumber *nextArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
 
     for (; ip->index < ip->length; ip->index++) {
         vp = data[ip->index];
-        mprAssert(vp);
+        assure(vp);
         if (ejsIs(ejs, vp, Void)) {
             continue;
         }
@@ -720,7 +720,7 @@ static EjsObj *nextArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv
     data = ap->data;
     for (; ip->index < ip->length; ip->index++) {
         vp = data[ip->index];
-        mprAssert(vp);
+        assure(vp);
         if (ejsIs(ejs, vp, Void)) {
             continue;
         }
@@ -766,7 +766,7 @@ static EjsObj *findAll(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     EjsArray    *elements;
     int         i;
 
-    mprAssert(argc == 1 && ejsIsFunction(ejs, argv[0]));
+    assure(argc == 1 && ejsIsFunction(ejs, argv[0]));
 
     elements = ejsCreateArray(ejs, 0);
     if (elements == 0) {
@@ -821,7 +821,7 @@ static EjsNumber *indexOfArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     EjsObj      *element;
     int     i, start;
 
-    mprAssert(argc == 1 || argc == 2);
+    assure(argc == 1 || argc == 2);
 
     element = argv[0];
     start = (argc == 2) ? (int) ((EjsNumber*) argv[1])->value : 0;
@@ -856,7 +856,7 @@ static EjsArray *insertArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     EjsObj          **src, **dest;
     int         i, pos, delta, endInsert;
 
-    mprAssert(argc == 2 && ejsIs(ejs, argv[1], Array));
+    assure(argc == 2 && ejsIs(ejs, argv[1], Array));
 
     pos = ejsGetInt(ejs, argv[0]);
     if (pos < 0) {
@@ -933,7 +933,7 @@ static EjsNumber *lastArrayIndexOf(Ejs *ejs, EjsArray *ap, int argc, EjsObj **ar
     EjsObj      *element;
     int     i, start;
 
-    mprAssert(argc == 1 || argc == 2);
+    assure(argc == 1 || argc == 2);
 
     element = argv[0];
     start = ((argc == 2) ? (int) ((EjsNumber*) argv[1])->value : ap->length - 1);
@@ -977,8 +977,8 @@ static EjsObj *setArrayLength(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     EjsObj      **data, **dest;
     int     length;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
-    mprAssert(ejsIs(ejs, ap, Array));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Number));
+    assure(ejsIs(ejs, ap, Array));
 
     length = (int) ((EjsNumber*) argv[0])->value;
     if (length < 0) {
@@ -1025,7 +1025,7 @@ static EjsNumber *pushArray(Ejs *ejs, EjsArray *ap, int argc, EjsAny **argv)
     EjsObj      **src, **dest;
     int         i, oldLen;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = (EjsArray*) argv[0];
     oldLen = ap->length;
@@ -1114,7 +1114,7 @@ static EjsArray *sliceArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     EjsObj          **src, **dest;
     int         start, end, step, i, j, len, size;
 
-    mprAssert(1 <= argc && argc <= 3);
+    assure(1 <= argc && argc <= 3);
 
     start = ejsGetInt(ejs, argv[0]);
     if (argc >= 2) {
@@ -1286,7 +1286,7 @@ static EjsArray *spliceArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     EjsObj          **data, **dest, **items;
     int         start, deleteCount, i, delta, endInsert, oldLen;
 
-    mprAssert(1 <= argc && argc <= 3);
+    assure(1 <= argc && argc <= 3);
     
     start = ejsGetInt(ejs, argv[0]);
     deleteCount = ejsGetInt(ejs, argv[1]);
@@ -1457,7 +1457,7 @@ static EjsArray *unshiftArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     EjsObj          **src, **dest;
     int         i, delta, endInsert;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = (EjsArray*) argv[0];
     if (args->length <= 0) {
@@ -1488,7 +1488,7 @@ static int growArray(Ejs *ejs, EjsArray *ap, int len)
     ssize       size, factor, count;
     int         i;
 
-    mprAssert(ap);
+    assure(ap);
 
     if (len <= 0) {
         return 0;
@@ -1515,13 +1515,13 @@ static int growArray(Ejs *ejs, EjsArray *ap, int len)
         //  OPT - this is currently 16
         count = EJS_PROP_ROUNDUP(count);
         if (ap->data == 0) {
-            mprAssert(ap->length == 0);
-            mprAssert(count > 0);
+            assure(ap->length == 0);
+            assure(count > 0);
             if ((ap->data = mprAllocZeroed(sizeof(EjsObj*) * count)) == 0) {
                 return EJS_ERR;
             }
         } else {
-            mprAssert(size > 0);
+            assure(size > 0);
             if ((ap->data = mprRealloc(ap->data, sizeof(EjsObj*) * count)) == 0) {
                 return EJS_ERR;
             }
@@ -1579,7 +1579,7 @@ PUBLIC EjsAny *ejsGetItem(Ejs *ejs, EjsArray *ap, int index)
 
 PUBLIC EjsAny *ejsGetFirstItem(Ejs *ejs, EjsArray *ap)
 {
-    mprAssert(ap);
+    assure(ap);
 
     if (ap == 0 || ap->length == 0) {
         return 0;
@@ -1590,7 +1590,7 @@ PUBLIC EjsAny *ejsGetFirstItem(Ejs *ejs, EjsArray *ap)
 
 PUBLIC EjsAny *ejsGetLastItem(Ejs *ejs, EjsArray *ap)
 {
-    mprAssert(ap);
+    assure(ap);
 
     if (ap == 0 || ap->length == 0) {
         return 0;
@@ -1604,8 +1604,8 @@ PUBLIC EjsAny *ejsGetNextItem(Ejs *ejs, EjsArray *ap, int *next)
     EjsAny  *item;
     int     index;
 
-    mprAssert(next);
-    mprAssert(*next >= 0);
+    assure(next);
+    assure(*next >= 0);
 
     if (ap == 0) {
         return 0;
@@ -1624,7 +1624,7 @@ PUBLIC EjsAny *ejsGetPrevItem(Ejs *ejs, EjsArray *ap, int *next)
 {
     int     index;
 
-    mprAssert(next);
+    assure(next);
 
     if (ap == 0) {
         return 0;
@@ -1666,7 +1666,7 @@ PUBLIC int ejsLookupItem(Ejs *ejs, EjsArray *ap, EjsAny *item)
 {
     int     i;
 
-    mprAssert(ap);
+    assure(ap);
     
     for (i = 0; i < ap->length; i++) {
         if (ap->data[i] == item) {
@@ -1696,7 +1696,7 @@ PUBLIC int ejsRemoveItem(Ejs *ejs, EjsArray *ap, EjsAny *item, int compact)
 
 PUBLIC int ejsRemoveLastItem(Ejs *ejs, EjsArray *ap)
 {
-    mprAssert(ap);
+    assure(ap);
 
     if (ap->length <= 0) {
         return MPR_ERR_CANT_FIND;
@@ -1709,7 +1709,7 @@ PUBLIC int ejsRemoveItemAtPos(Ejs *ejs, EjsArray *ap, int index, int compact)
 {
     int     rc;
 
-    mprAssert(ap);
+    assure(ap);
 
     if (ap->length <= 0) {
         return MPR_ERR_CANT_FIND;
