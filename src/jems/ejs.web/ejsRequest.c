@@ -36,7 +36,7 @@ static void defineParam(Ejs *ejs, EjsObj *params, cchar *key, cchar *svalue)
     char        *subkey, *nextkey;
     int         slotNum;
 
-    mprAssert(params);
+    assure(params);
 
     value = ejsCreateStringFromAsc(ejs, svalue);
 
@@ -64,7 +64,7 @@ static void defineParam(Ejs *ejs, EjsObj *params, cchar *key, cchar *svalue)
             params = vp;
             subkey = stok(NULL, ".", &nextkey);
         }
-        mprAssert(params);
+        assure(params);
         qname = ejsName(ejs, "", subkey);
         ejsSetPropertyByName(ejs, params, qname, value);
     }
@@ -443,7 +443,7 @@ static char *makeRelativeHome(Ejs *ejs, EjsRequest *req)
     }
     rx = req->conn->rx;
     path = rx->pathInfo;
-    mprAssert(path && *path == '/');
+    assure(path && *path == '/');
     end = &path[strlen(path)];
     if (path[1]) {
         for (levels = 1, sp = &path[1]; sp < end; sp++) {
@@ -1174,7 +1174,7 @@ static EjsNumber *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "Read count is negative");
         return 0;
     }
-    mprAssert(count > 0);
+    assure(count > 0);
     nbytes = httpRead(req->conn, (char*) &ba->value[offset], count);
     if (nbytes < 0) {
         ejsThrowIOError(ejs, "Can't read from socket");
@@ -1435,9 +1435,9 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
     EjsType         *type;
     HttpRx          *rx;
 
-    mprAssert(server);
-    mprAssert(conn);
-    mprAssert(dir && *dir);
+    assure(server);
+    assure(conn);
+    assure(dir && *dir);
 
     type = ejsGetTypeByName(ejs, N("ejs.web", "Request"));
     if (type == NULL || (req = ejsCreateObj(ejs, type, 0)) == NULL) {
@@ -1453,7 +1453,7 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
     } else {
         req->dir = ejsCreatePathFromAsc(ejs, mprGetRelPath(dir, 0));
     }
-    mprAssert(!VISITED(req->dir));
+    assure(!VISITED(req->dir));
     //  OPT -- why replicate these two
     req->pathInfo = ejsCreateStringFromAsc(ejs, rx->pathInfo);
     req->scriptName = ejsCreateStringFromAsc(ejs, rx->scriptName);

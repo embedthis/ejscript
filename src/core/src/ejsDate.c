@@ -257,7 +257,7 @@ static EjsDate *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
     struct tm   tm;
     int         year;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = (EjsArray*) argv[0];
 

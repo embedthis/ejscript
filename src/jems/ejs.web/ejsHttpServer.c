@@ -105,7 +105,7 @@ static EjsObj *hs_limits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     if (sp->limits == 0) {
         sp->limits = ejsCreateEmptyPot(ejs);
         limits = (sp->endpoint) ? sp->endpoint->limits : ejs->http->serverLimits;
-        mprAssert(limits);
+        assure(limits);
         ejsGetHttpLimits(ejs, sp->limits, limits, 1);
     }
     return sp->limits;
@@ -123,7 +123,7 @@ static EjsObj *hs_setLimits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
     if (sp->limits == 0) {
         sp->limits = ejsCreateEmptyPot(ejs);
         limits = (sp->endpoint) ? sp->endpoint->limits : ejs->http->serverLimits;
-        mprAssert(limits);
+        assure(limits);
         ejsGetHttpLimits(ejs, sp->limits, limits, 1);
     }
     ejsBlendObject(ejs, sp->limits, argv[0], EJS_BLEND_OVERWRITE);
@@ -459,7 +459,7 @@ static void receiveRequest(EjsRequest *req, MprEvent *event)
     
     conn = req->conn;
     ejs = req->ejs;
-    mprAssert(ejs);
+    assure(ejs);
 
     onrequest = ejsGetProperty(ejs, req->server, ES_ejs_web_HttpServer_onrequest);
     if (!ejsIsFunction(ejs, onrequest)) {
@@ -524,7 +524,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
     cchar           *name;
     int             i;
 
-    mprAssert(sp->endpoint);
+    assure(sp->endpoint);
     http = sp->endpoint->http;
     host = mprGetFirstItem(sp->endpoint->hosts);
     route = mprGetFirstItem(host->routes);
@@ -575,7 +575,7 @@ static void stateChangeNotifier(HttpConn *conn, int event, int arg)
     Ejs             *ejs;
     EjsRequest      *req;
 
-    mprAssert(conn);
+    assure(conn);
 
     ejs = 0;
     if ((req = httpGetConnContext(conn)) != 0) {
@@ -790,7 +790,7 @@ HttpStage *ejsAddWebHandler(Http *http, MprModule *module)
 {
     HttpStage   *handler;
 
-    mprAssert(http);
+    assure(http);
     if ((handler = http->ejsHandler) == 0) {
         if ((handler = httpCreateHandler(http, "ejsHandler", module)) == 0) {
             return 0;

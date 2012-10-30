@@ -19,14 +19,14 @@ static EjsBoolean *g_assert(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     wchar           *source;
     EjsBoolean      *b;
 
-    mprAssert(argc == 1);
+    assure(argc == 1);
 
     if (!ejsIs(ejs, argv[0], Boolean)) {
         b = (EjsBoolean*) ejsCast(ejs, argv[0], Boolean);
     } else {
         b = (EjsBoolean*) argv[0];
     }
-    mprAssert(b);
+    assure(b);
 
     if (b == 0 || !b->value) {
         fp = ejs->state->fp;
@@ -79,7 +79,7 @@ static EjsObj *g_cloneBase(Ejs *ejs, EjsObj *ignored, int argc, EjsObj **argv)
 {
     EjsType     *type;
     
-    mprAssert(argc == 1);
+    assure(argc == 1);
     
     type = (EjsType*) argv[0];
     type->baseType = ejsClone(ejs, type->baseType, 0);
@@ -114,7 +114,7 @@ static EjsObj *g_eval(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsNumber *g_hashcode(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 1);
+    assure(argc == 1);
     return ejsCreateNumber(ejs, (MprNumber) PTOL(argv[0]));
 }
 
@@ -399,7 +399,7 @@ static EjsObj *g_printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     cchar       *data;
     int         i, count;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = argv[0];
     count = ejsGetLength(ejs, args);
@@ -466,7 +466,7 @@ PUBLIC void ejsConfigureGlobalBlock(Ejs *ejs)
     EjsBlock    *block;
 
     block = (EjsBlock*) ejs->global;
-    mprAssert(block);
+    assure(block);
     
     ejsSetProperty(ejs, ejs->global, ES_global, ejs->global);
     ejsSetProperty(ejs, ejs->global, ES_void, ESV(Void));

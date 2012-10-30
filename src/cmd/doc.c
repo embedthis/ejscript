@@ -844,7 +844,7 @@ static void generateClassPageHeader(EjsMod *mp, EjsObj *obj, EjsName qname, EjsT
 
     ejs = mp->ejs;
 
-    mprAssert(ejsIsBlock(ejs, obj));
+    assure(ejsIsBlock(ejs, obj));
 
     if (!ejsIsType(ejs, obj)) {
         generateContentHeader(mp, "Global Functions and Variables");
@@ -1133,7 +1133,7 @@ static void buildMethodList(EjsMod *mp, MprList *methods, EjsObj *obj, EjsObj *o
     if (ejsIsType(ejs, owner) && !ejsIsPrototype(ejs, obj) && ((EjsType*) owner)->hasConstructor) {
         type = (EjsType*) owner;
         slotNum = ejsLookupProperty(ejs, ejs->global, ownerName);
-        mprAssert(slotNum >= 0);
+        assure(slotNum >= 0);
         fp = mprAlloc(sizeof(FunRec));
         fp->fun = (EjsFunction*) type;
         fp->obj = ejs->global;
@@ -1406,7 +1406,7 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
 
     type = ejsIsType(ejs, obj) ? (EjsType*) obj : 0;
     fun = (EjsFunction*) ejsGetProperty(ejs, obj, slotNum);
-    mprAssert(ejsIsFunction(ejs, fun));
+    assure(ejsIsFunction(ejs, fun));
 
     qname = ejsGetPropertyName(ejs, obj, slotNum);
     trait = ejsGetPropertyTraits(ejs, obj, slotNum);
@@ -1783,8 +1783,8 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
     doc->description = wjoin(doc->description, thisDescription, NULL);
     mtrim(doc->brief, " \t\r\n", MPR_TRIM_BOTH);
     mtrim(doc->description, " \t\r\n", MPR_TRIM_BOTH);
-    mprAssert(doc->brief);
-    mprAssert(doc->description);
+    assure(doc->brief);
+    assure(doc->description);
 
     /*
         This is what we are parsing:
@@ -2080,7 +2080,7 @@ static wchar *wikiFormat(Ejs *ejs, wchar *start)
             }
             klass = snclone(klass, len);
             sentence = (klass[wlen(klass) - 1] == '.');
-            mprAssert(strcmp(klass, "ejs.web::Request") != 0);
+            assure(strcmp(klass, "ejs.web::Request") != 0);
 
             if (scontains(klass, "::")) {
                 space = stok(klass, "::", &klass);
@@ -2349,8 +2349,8 @@ static bool match(wchar *last, cchar *key)
 {
     int     len;
 
-    mprAssert(last);
-    mprAssert(key && *key);
+    assure(last);
+    assure(key && *key);
 
     len = (int) strlen(key);
     return mncmp(last, key, len) == 0;

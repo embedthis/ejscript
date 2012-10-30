@@ -381,7 +381,7 @@ static EjsObj *setFilePosition(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     MprOff      pos;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Number));
     pos = ejsGetInt(ejs, argv[0]);
 
     if (fp->file == 0) {
@@ -495,7 +495,7 @@ static EjsObj *readFileBytes(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowArgError(ejs, "Bad args");
         return 0;
     } else {
-        mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
+        assure(argc == 1 && ejsIs(ejs, argv[0], Number));
         count = ejsGetInt(ejs, argv[0]);
     }
     if (fp->file == 0) {
@@ -514,7 +514,7 @@ static EjsObj *readFileBytes(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         } else {
             count = MPR_BUFSIZE;
         }
-        mprAssert(count >= 0);
+        assure(count >= 0);
     }
     result = ejsCreateByteArray(ejs, count);
     if (result == 0) {
@@ -551,7 +551,7 @@ static EjsString *readFileString(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowArgError(ejs, "Bad args");
         return 0;
     } else {
-        mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
+        assure(argc == 1 && ejsIs(ejs, argv[0], Number));
         count = ejsGetInt(ejs, argv[0]);
     }
     if (fp->file == 0) {
@@ -570,7 +570,7 @@ static EjsString *readFileString(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         } else {
             count = MPR_BUFSIZE;
         }
-        mprAssert(count >= 0);
+        assure(count >= 0);
     }
     if ((result = ejsCreateBareString(ejs, count)) == NULL) {
         ejsThrowMemoryError(ejs);
@@ -595,7 +595,7 @@ static EjsNumber *readFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     MprPath         info;
     ssize           offset, count, totalRead;
 
-    mprAssert(1 <= argc && argc <= 3);
+    assure(1 <= argc && argc <= 3);
 
     buffer = (EjsByteArray*) argv[0];
     offset = (argc >= 2) ? ejsGetInt(ejs, argv[1]): 0;
@@ -626,7 +626,7 @@ static EjsNumber *readFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         } else {
             count = MPR_BUFSIZE;
         }
-        mprAssert(count >= 0);
+        assure(count >= 0);
     }
     totalRead = readData(ejs, fp, buffer, offset, count);
     if (totalRead < 0) {
@@ -683,7 +683,7 @@ PUBLIC EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     ssize           len, written;
     int             i;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = (EjsArray*) argv[0];
 
@@ -695,7 +695,7 @@ PUBLIC EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 
     for (i = 0; i < args->length; i++) {
         vp = ejsGetProperty(ejs, (EjsObj*) args, i);
-        mprAssert(vp);
+        assure(vp);
         switch (TYPE(vp)->sid) {
         case S_ByteArray:
             ap = (EjsByteArray*) vp;
@@ -847,7 +847,7 @@ PUBLIC EjsFile *ejsCreateFile(Ejs *ejs, cchar *path)
     EjsFile     *fp;
     EjsObj      *arg;
 
-    mprAssert(path && *path);
+    assure(path && *path);
 
     fp = ejsCreateObj(ejs, ESV(File), 0);
     if (fp == 0) {
@@ -863,8 +863,8 @@ PUBLIC EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode)
 {
     EjsFile     *fp;
 
-    mprAssert(fd >= 0);
-    mprAssert(name);
+    assure(fd >= 0);
+    assure(name);
 
     if ((fp = ejsCreateObj(ejs, ESV(File), 0)) == NULL) {
         return NULL;

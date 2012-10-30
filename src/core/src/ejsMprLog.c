@@ -22,7 +22,7 @@ static EjsNumber *lf_emit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     ssize           len, written;
     int             i, level, paused;
 
-    mprAssert(argc >= 2 && ejsIs(ejs, argv[1], Array));
+    assure(argc >= 2 && ejsIs(ejs, argv[1], Array));
 
     level = ejsGetInt(ejs, argv[0]);
     args = (EjsArray*) argv[1];
@@ -32,7 +32,7 @@ static EjsNumber *lf_emit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
     for (i = 0; i < args->length; i++) {
         vp = ejsGetProperty(ejs, args, i);
-        mprAssert(vp);
+        assure(vp);
         switch (TYPE(vp)->sid) {
         case S_ByteArray:
             ap = (EjsByteArray*) vp;

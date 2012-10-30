@@ -25,10 +25,10 @@ int ejsLookupScope(Ejs *ejs, EjsName name, EjsLookup *lookup)
     EjsBlock        *bp;
     int             slotNum;
 
-    mprAssert(ejs);
-    mprAssert(name.name);
-    mprAssert(name.space);
-    mprAssert(lookup);
+    assure(ejs);
+    assure(name.name);
+    assure(name.space);
+    assure(lookup);
 
     memset(lookup, 0, sizeof(*lookup));
 
@@ -58,10 +58,10 @@ static int lookupVarInBlock(Ejs *ejs, EjsBlock *bp, EjsName name, EjsLookup *loo
     EjsPot          *prototype;
     int             slotNum, nthBase;
 
-    mprAssert(ejs);
-    mprAssert(name.name);
-    mprAssert(name.space);
-    mprAssert(lookup);
+    assure(ejs);
+    assure(name.name);
+    assure(name.space);
+    assure(lookup);
 
     state = ejs->state;
     slotNum = -1;
@@ -133,8 +133,8 @@ int ejsLookupVar(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup)
     EjsPot      *prototype;
     int         slotNum, nthBase;
 
-    mprAssert(obj);
-    mprAssert(lookup);
+    assure(obj);
+    assure(lookup);
 
     memset(lookup, 0, sizeof(*lookup));
 
@@ -180,10 +180,10 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *l
     MprList         *globalSpaces;
     int             next, slotNum;
 
-    mprAssert(obj);
-    mprAssert(name.name);
-    mprAssert(name.space);
-    mprAssert(lookup);
+    assure(obj);
+    assure(name.name);
+    assure(name.space);
+    assure(lookup);
 
     b = (EjsBlock*) ejs->global;
     globalSpaces = &b->namespaces;
@@ -276,7 +276,7 @@ EjsAny *ejsGetVarByName(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup)
     EjsObj  *result;
     int     slotNum;
 
-    mprAssert(ejs);
+    assure(ejs);
 
     //  OPT - really nice to remove this
     //  OPT -- perhaps delegate the logic below down into a getPropertyByName?

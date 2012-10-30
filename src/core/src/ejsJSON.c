@@ -45,7 +45,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json);
  */
 PUBLIC EjsObj *g_deserialize(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    mprAssert(argc >=1);
+    assure(argc >=1);
     return ejsDeserialize(ejs, (EjsString*) argv[0]);
 }
 
@@ -97,7 +97,7 @@ PUBLIC EjsAny *ejsDeserialize(Ejs *ejs, EjsString *str)
 
 static EjsObj *parseLiteral(Ejs *ejs, JsonState *js)
 {
-    mprAssert(js);
+    assure(js);
 
     return parseLiteralInner(ejs, mprCreateBuf(0, 0), js);
 }
@@ -338,17 +338,17 @@ static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
         if (tid == TOK_LBRACKET) {
             /* For array values */
             vp = parseLiteral(ejs, js);
-            mprAssert(vp);
+            assure(vp);
             
         } else if (tid == TOK_LBRACE) {
             /* For object values */
             vp = parseLiteral(ejs, js);
-            mprAssert(vp);
+            assure(vp);
             
         } else if (isArray) {
             tid = getNextJsonToken(buf, &value, js);
             vp = ejsParse(ejs, value, (tid == TOK_QID) ? S_String: -1);
-            mprAssert(vp);
+            assure(vp);
             
         } else {
             getNextJsonToken(buf, &key, js);
@@ -374,7 +374,7 @@ static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
                         vp = ejsParse(ejs, value, -1);
                     }
                 }
-                mprAssert(vp);
+                assure(vp);
             } else {
                 getNextJsonToken(buf, &value, js);
                 js->error = js->next;

@@ -129,7 +129,7 @@ Ejs *ejsCloneVM(Ejs *master)
     int         next;
 
     if (master) {
-        mprAssert(!master->empty);
+        assure(!master->empty);
         if ((ejs = ejsCreateVM(master->argc, master->argv, master ? master->flags : 0)) == 0) {
             return 0;
         }
@@ -157,7 +157,7 @@ int ejsLoadModules(Ejs *ejs, cchar *search, MprList *require)
     EjsService      *sp;
 
     sp = ejs->service;
-    mprAssert(mprGetListLength(ejs->modules) == 0);
+    assure(mprGetListLength(ejs->modules) == 0);
 
     ejs->empty = !(require == 0 || mprGetListLength(require));
     if (search) {
@@ -178,7 +178,7 @@ int ejsLoadModules(Ejs *ejs, cchar *search, MprList *require)
         ejsDestroyVM(ejs);
         return MPR_ERR_MEMORY;
     }
-    mprAssert(!ejs->exception);
+    assure(!ejs->exception);
     return 0;
 }
 
@@ -195,7 +195,7 @@ void ejsDestroyVM(Ejs *ejs)
         while ((mp = mprGetFirstItem(ejs->modules)) != 0) {
             ejsRemoveModule(ejs, mp);
         }
-        mprAssert(ejs->modules->length == 0);
+        assure(ejs->modules->length == 0);
         ejsRemoveWorkers(ejs);
         state = ejs->state;
         if (state && state->stackBase) {
@@ -326,7 +326,7 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
     EjsString   *script;
     int         paused;
 
-    mprAssert(pool);
+    assure(pool);
 
     if ((ejs = mprPopItem(pool->list)) == 0) {
         if (pool->count >= pool->max) {
@@ -399,9 +399,9 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
 
 void ejsFreePoolVM(EjsPool *pool, Ejs *ejs)
 {
-    mprAssert(pool);
-    mprAssert(ejs);
-    mprAssert(!ejs->exception);
+    assure(pool);
+    assure(ejs);
+    assure(!ejs->exception);
 
     ejs->exception = 0;
     pool->lastActivity = mprGetTime();
@@ -494,8 +494,8 @@ static void cloneProperties(Ejs *ejs, Ejs *master)
     EjsTrait    *trait;
     int         i, immutable, numProp;
 
-    mprAssert(ejs);
-    mprAssert(master);
+    assure(ejs);
+    assure(master);
 
     /*
         For subsequent VMs, copy global references to immutable types and functions.
@@ -642,9 +642,9 @@ static void initSearchPath(Ejs *ejs, cchar *search)
 
 void ejsSetSearchPath(Ejs *ejs, EjsArray *paths)
 {
-    mprAssert(ejs);
-    mprAssert(paths && paths);
-    mprAssert(ejsIs(ejs, paths, Array));
+    assure(ejs);
+    assure(paths && paths);
+    assure(ejsIs(ejs, paths, Array));
 
     ejs->search = paths;
 }
@@ -724,7 +724,7 @@ static int runProgram(Ejs *ejs, MprEvent *event)
 
 int ejsRunProgram(Ejs *ejs, cchar *className, cchar *methodName)
 {
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
+    assure(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
 
     if (className) {
         ejs->className = sclone(className);
@@ -906,8 +906,8 @@ static int searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn)
     int         globalCount, slotNum, methodCount;
     int         methodSlot;
 
-    mprAssert(methodName && *methodName);
-    mprAssert(typeReturn);
+    assure(methodName && *methodName);
+    assure(typeReturn);
 
     global = ejs->global;
     globalCount = ejsGetLength(ejs, global);
@@ -962,7 +962,7 @@ int ejsBlockGC(Ejs *ejs)
 
 void ejsUnblockGC(Ejs *ejs, int paused)
 {
-    mprAssert(paused != -1);
+    assure(paused != -1);
     if (paused != -1) {
         ejs->state->paused = paused;
     }
@@ -1081,7 +1081,7 @@ int ejsAddImmutable(Ejs *ejs, int slotNum, EjsName qname, EjsAny *value)
 {
     int     foundSlot;
 
-    mprAssert((ejsIsType(ejs, value) && !((EjsType*) value)->mutable) ||
+    assure((ejsIsType(ejs, value) && !((EjsType*) value)->mutable) ||
               (!ejsIsType(ejs, value) && !TYPE(value)->mutableInstances));
     
     if ((foundSlot = ejsLookupProperty(ejs, ejs->service->immutable, qname)) >= 0) {

@@ -38,7 +38,7 @@ PUBLIC EjsAny *ejsClonePot(Ejs *ejs, EjsAny *obj, bool deep)
     int         numProp, i;
 
     if (!ejsIsPot(ejs, obj)) {
-        mprAssert(ejsIsPot(ejs, obj));
+        assure(ejsIsPot(ejs, obj));
         return NULL;
     }
     src = (EjsPot*) obj;
@@ -106,11 +106,11 @@ PUBLIC void ejsFixTraits(Ejs *ejs, EjsPot *obj)
     
     for (i = 0; i < numProp; i++, sp++) {
         if (sp->trait.type && sp->trait.type->mutable) {
-            mprAssert(sp->trait.type->qname.name);
+            assure(sp->trait.type->qname.name);
             if ((type = ejsGetPropertyByName(ejs, ejs->global, sp->trait.type->qname)) != 0) {
                 sp->trait.type = type;
             } else {
-                mprAssert(0);
+                assure(0);
             }
         }
         if (ejsIsPot(ejs, sp->value.ref)) {
@@ -164,9 +164,9 @@ static int definePotProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname, 
     EjsFunction     *fun;
     int             priorSlot;
 
-    mprAssert(ejs);
-    mprAssert(ejsIsPot(ejs, obj));
-    mprAssert(slotNum >= -1);
+    assure(ejs);
+    assure(ejsIsPot(ejs, obj));
+    assure(slotNum >= -1);
 
     if (attributes & (EJS_TRAIT_GETTER | EJS_TRAIT_SETTER) && !ejsIsFunction(ejs, value)) {
         ejsThrowTypeError(ejs, "Property \"%@\" is not a function", qname.name);
@@ -180,7 +180,7 @@ static int definePotProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname, 
             slotNum = priorSlot;
         }
     }
-    mprAssert(priorSlot < 0 || priorSlot == slotNum);
+    assure(priorSlot < 0 || priorSlot == slotNum);
 
     if (slotNum >= obj->numProp && !DYNAMIC(obj)) {
         if (obj->properties == 0 || slotNum >= obj->properties->size) {
@@ -233,9 +233,9 @@ static int deletePotProperty(Ejs *ejs, EjsPot *obj, int slotNum)
     EjsName     qname;
     EjsSlot     *sp;
 
-    mprAssert(obj);
-    mprAssert(ejsIsPot(ejs, obj));
-    mprAssert(slotNum >= 0);
+    assure(obj);
+    assure(ejsIsPot(ejs, obj));
+    assure(slotNum >= 0);
 
     if (slotNum < 0 || slotNum >= obj->numProp) {
         ejsThrowReferenceError(ejs, "Invalid property slot to delete");
@@ -257,7 +257,7 @@ static int deletePotPropertyByName(Ejs *ejs, EjsPot *obj, EjsName qname)
 {
     int     slotNum;
 
-    mprAssert(ejsIsPot(ejs, obj));
+    assure(ejsIsPot(ejs, obj));
 
     slotNum = ejsLookupPotProperty(ejs, obj, qname);
     if (slotNum < 0) {
@@ -270,9 +270,9 @@ static int deletePotPropertyByName(Ejs *ejs, EjsPot *obj, EjsName qname)
 
 static EjsPot *getPotProperty(Ejs *ejs, EjsPot *obj, int slotNum)
 {
-    mprAssert(ejsIsPot(ejs, obj));
-    mprAssert(obj);
-    mprAssert(slotNum >= 0);
+    assure(ejsIsPot(ejs, obj));
+    assure(obj);
+    assure(slotNum >= 0);
 
     if (slotNum < 0 || slotNum >= obj->numProp) {
         ejsThrowReferenceError(ejs, "Property at slot \"%d\" is not found", slotNum);
@@ -284,8 +284,8 @@ static EjsPot *getPotProperty(Ejs *ejs, EjsPot *obj, int slotNum)
 
 static int getPotPropertyCount(Ejs *ejs, EjsPot *obj)
 {
-    mprAssert(obj);
-    mprAssert(ejsIsPot(ejs, obj));
+    assure(obj);
+    assure(ejsIsPot(ejs, obj));
 
     return obj->numProp;
 }
@@ -295,9 +295,9 @@ PUBLIC EjsName ejsGetPotPropertyName(Ejs *ejs, EjsPot *obj, int slotNum)
 {
     EjsName     qname;
 
-    mprAssert(obj);
-    mprAssert(ejsIsPot(ejs, obj));
-    mprAssert(slotNum >= 0);
+    assure(obj);
+    assure(ejsIsPot(ejs, obj));
+    assure(slotNum >= 0);
 
     if (slotNum < 0 || slotNum >= obj->numProp) {
         qname.name = 0;
@@ -321,8 +321,8 @@ PUBLIC int ejsLookupPotProperty(struct Ejs *ejs, EjsPot *obj, EjsName qname)
     EjsSlot         *slots, *sp, *np;
     int             slotNum, index, prior;
 
-    mprAssert(qname.name);
-    mprAssert(ejsIsPot(ejs, obj));
+    assure(qname.name);
+    assure(ejsIsPot(ejs, obj));
 
     if ((props = obj->properties) == 0 || obj->numProp == 0) {
         return -1;
@@ -358,12 +358,12 @@ PUBLIC int ejsLookupPotProperty(struct Ejs *ejs, EjsPot *obj, EjsName qname)
             We assume that names rarely clash with different namespaces. We do this so variable lookup and do a one
             hash probe and find matching names. Lookup will then pick the right namespace.
          */
-        mprAssert(props->hash);
-        mprAssert(props->hash->size > 0);
+        assure(props->hash);
+        assure(props->hash->size > 0);
         index = whash(qname.name->value, qname.name->length) % props->hash->size;
         if (qname.space) {
-            mprAssert(hash->buckets);
-            mprAssert(index < hash->size);
+            assure(hash->buckets);
+            assure(index < hash->size);
             for (slotNum = hash->buckets[index]; slotNum >= 0; slotNum = slots[slotNum].hashChain) {
                 sp = &slots[slotNum];
                 if (CMP_QNAME(&sp->qname, &qname)) {
@@ -397,7 +397,7 @@ PUBLIC int ejsLookupPotProperty(struct Ejs *ejs, EjsPot *obj, EjsName qname)
  */
 PUBLIC int ejsCheckSlot(Ejs *ejs, EjsPot *obj, int slotNum)
 {
-    mprAssert(ejsIsPot(ejs, obj));
+    assure(ejsIsPot(ejs, obj));
 
     //  TODO - should this be here or only in the VM. probably only in the VM.
     //  TODO -- or move this routine to the VM
@@ -426,7 +426,7 @@ PUBLIC int ejsCheckSlot(Ejs *ejs, EjsPot *obj, int slotNum)
         }
         obj->numProp++;
     }
-    mprAssert(obj->numProp <= obj->properties->size);
+    assure(obj->numProp <= obj->properties->size);
     return slotNum;
 }
 
@@ -438,16 +438,16 @@ PUBLIC int ejsCheckSlot(Ejs *ejs, EjsPot *obj, int slotNum)
  */
 static int setPotProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsObj *value)
 {
-    mprAssert(ejs);
-    mprAssert(obj);
-    mprAssert(ejsIsPot(ejs, obj));
-    mprAssert(value);
+    assure(ejs);
+    assure(obj);
+    assure(ejsIsPot(ejs, obj));
+    assure(value);
 
     if ((slotNum = ejsCheckSlot(ejs, obj, slotNum)) < 0) {
         return EJS_ERR;
     }
-    mprAssert(slotNum < obj->numProp);
-    mprAssert(obj->numProp <= obj->properties->size);
+    assure(slotNum < obj->numProp);
+    assure(obj->numProp <= obj->properties->size);
     obj->properties->slots[slotNum].value.ref = value;
     return slotNum;
 }
@@ -462,15 +462,15 @@ static int setPotPropertyName(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname)
 {
     EjsProperties   *props;
 
-    mprAssert(obj);
-    mprAssert(ejsIsPot(ejs, obj));
-    mprAssert(qname.name);
-    mprAssert(qname.space);
+    assure(obj);
+    assure(ejsIsPot(ejs, obj));
+    assure(qname.name);
+    assure(qname.space);
 
     if ((slotNum = ejsCheckSlot(ejs, obj, slotNum)) < 0) {
         return EJS_ERR;
     }
-    mprAssert(slotNum < obj->numProp);
+    assure(slotNum < obj->numProp);
     props = obj->properties;
 
     /* Remove the old hash entry if the name will change */
@@ -482,8 +482,8 @@ static int setPotPropertyName(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname)
     }
     props->slots[slotNum].qname = qname;
     
-    mprAssert(slotNum < obj->numProp);
-    mprAssert(obj->numProp <= props->size);
+    assure(slotNum < obj->numProp);
+    assure(obj->numProp <= props->size);
     
     if (props->hash || obj->numProp > EJS_HASH_MIN_PROP) {
         if (hashProperty(ejs, obj, slotNum, qname) < 0) {
@@ -501,7 +501,7 @@ static int setPotPropertyName(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname)
  */
 PUBLIC int ejsGrowPot(Ejs *ejs, EjsPot *obj, int numProp)
 {
-    mprAssert(ejsIsPot(ejs, obj));
+    assure(ejsIsPot(ejs, obj));
 
     if (obj->properties == 0 || numProp > obj->properties->size) {
         if (growSlots(ejs, obj, numProp) < 0) {
@@ -525,9 +525,9 @@ PUBLIC int ejsInsertPotProperties(Ejs *ejs, EjsPot *obj, int incr, int offset)
     EjsSlot         *sp, *slots;
     int             i, size, mark;
 
-    mprAssert(obj);
-    mprAssert(ejsIsPot(ejs, obj));
-    mprAssert(incr >= 0);
+    assure(obj);
+    assure(ejsIsPot(ejs, obj));
+    assure(incr >= 0);
 
     if (incr <= 0) {
         return 0;
@@ -539,7 +539,7 @@ PUBLIC int ejsInsertPotProperties(Ejs *ejs, EjsPot *obj, int incr, int offset)
         }
     }
     obj->numProp += incr;
-    mprAssert(obj->numProp <= obj->properties->size);
+    assure(obj->numProp <= obj->properties->size);
     slots = obj->properties->slots;
     for (mark = offset + incr, i = obj->numProp - 1; i >= mark; i--) {
         sp = &slots[i - mark];
@@ -562,10 +562,10 @@ static int growSlots(Ejs *ejs, EjsPot *obj, int slotCount)
     ssize           size;
     int             factor, oldSize;
 
-    mprAssert(obj);
-    mprAssert(ejsIsPot(ejs, obj));
-    mprAssert(slotCount > 0);
-    mprAssert(obj->properties == 0 || slotCount > obj->properties->size);
+    assure(obj);
+    assure(ejsIsPot(ejs, obj));
+    assure(slotCount > 0);
+    assure(obj->properties == 0 || slotCount > obj->properties->size);
 
     props = obj->properties;
     oldSize = props ? props->size : 0;
@@ -579,8 +579,8 @@ static int growSlots(Ejs *ejs, EjsPot *obj, int slotCount)
         size = sizeof(EjsProperties) + (sizeof(EjsSlot) * slotCount);
 
         if (props == 0) {
-            mprAssert(obj->numProp == 0);
-            mprAssert(slotCount > 0);
+            assure(obj->numProp == 0);
+            assure(slotCount > 0);
             if ((props = mprAllocZeroed(size)) == 0) {
                 return EJS_ERR;
             }
@@ -589,7 +589,7 @@ static int growSlots(Ejs *ejs, EjsPot *obj, int slotCount)
             obj->separateSlots = 1;
         } else {
             if (obj->separateSlots) {
-                mprAssert(props->size > 0);
+                assure(props->size > 0);
                 props = mprRealloc(props, size);
             } else {
                 if ((props = mprAlloc(size)) != 0) {
@@ -606,7 +606,7 @@ static int growSlots(Ejs *ejs, EjsPot *obj, int slotCount)
         }
         props->size = slotCount;
     }
-    mprAssert(obj->numProp <= props->size);
+    assure(obj->numProp <= props->size);
     return 0;
 }
 
@@ -620,10 +620,10 @@ static void removeSlot(Ejs *ejs, EjsPot *obj, int slotNum, int compact)
     EjsSlot     *slots;
     int         i;
 
-    mprAssert(obj);
-    mprAssert(ejsIsPot(ejs, obj));
-    mprAssert(slotNum >= 0);
-    mprAssert(compact);
+    assure(obj);
+    assure(ejsIsPot(ejs, obj));
+    assure(slotNum >= 0);
+    assure(compact);
 
     if (obj->properties) {
         slots = obj->properties->slots;
@@ -646,8 +646,8 @@ PUBLIC void ejsZeroSlots(Ejs *ejs, EjsSlot *slots, int count)
 {
     EjsSlot     *sp;
 
-    mprAssert(slots);
-    mprAssert(count >= 0);
+    assure(slots);
+    assure(count >= 0);
 
     if (slots) {
         //  TODO OPT. If hashChans were biased by +1 and NULL was allowed for names, then a simple zero would suffice.
@@ -668,10 +668,10 @@ PUBLIC void ejsCopySlots(Ejs *ejs, EjsPot *dest, int destOff, EjsPot *src, int s
 {
     EjsSlot     *sp, *dp;
 
-    mprAssert(dest->properties);
-    mprAssert(src->properties);
-    mprAssert(srcOff < src->numProp);
-    mprAssert(destOff < dest->numProp);
+    assure(dest->properties);
+    assure(src->properties);
+    assure(srcOff < src->numProp);
+    assure(destOff < dest->numProp);
 
     for (sp = &src->properties->slots[srcOff], dp = &dest->properties->slots[destOff]; count > 0; count--) {
         *dp = *sp;
@@ -690,15 +690,15 @@ PUBLIC int ejsRemovePotProperty(Ejs *ejs, EjsAny *vp, int slotNum)
 {
     EjsPot      *obj;
 
-    mprAssert(ejsIsPot(ejs, vp));
+    assure(ejsIsPot(ejs, vp));
 
     if (!ejsIsPot(ejs, vp)) {
         ejsThrowTypeError(ejs, "Object is not configurable");
         return EJS_ERR;
     }
     obj = vp;
-    mprAssert(ejs);
-    mprAssert(obj);
+    assure(ejs);
+    assure(obj);
     if (slotNum < 0 || slotNum >= obj->numProp) {
         return EJS_ERR;
     }
@@ -711,7 +711,7 @@ PUBLIC int ejsRemovePotProperty(Ejs *ejs, EjsAny *vp, int slotNum)
 
 static EjsTrait *getPotPropertyTraits(Ejs *ejs, EjsPot *obj, int slotNum)
 {
-    mprAssert(ejsIsPot(ejs, obj));
+    assure(ejsIsPot(ejs, obj));
     if (slotNum < 0 || slotNum >= obj->numProp) {
         return NULL;
     }
@@ -721,8 +721,8 @@ static EjsTrait *getPotPropertyTraits(Ejs *ejs, EjsPot *obj, int slotNum)
 
 static int setPotPropertyTraits(Ejs *ejs, EjsPot *obj, int slotNum, EjsType *type, int attributes)
 {
-    mprAssert(ejsIsPot(ejs, obj));
-    mprAssert(slotNum >= 0);
+    assure(ejsIsPot(ejs, obj));
+    assure(slotNum >= 0);
 
     if ((slotNum = ejsCheckSlot(ejs, obj, slotNum)) < 0) {
         return EJS_ERR;
@@ -767,7 +767,7 @@ static int hashProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname)
     EjsSlot         *slots;
     int             chainSlotNum, lastSlot, index;
 
-    mprAssert(ejsIsPot(ejs, obj));
+    assure(ejsIsPot(ejs, obj));
 
     props = obj->properties;
     if (props == NULL || props->hash == NULL || props->hash->size < obj->numProp) {
@@ -781,23 +781,23 @@ static int hashProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname)
     /* Scan the collision chain */
     lastSlot = -1;
     chainSlotNum = hash->buckets[index];
-    mprAssert(chainSlotNum < obj->numProp);
-    mprAssert(chainSlotNum < props->size);
+    assure(chainSlotNum < obj->numProp);
+    assure(chainSlotNum < props->size);
 
     while (chainSlotNum >= 0) {
         slotName = &slots[chainSlotNum].qname;
         if (CMP_QNAME(slotName, &qname)) {
             return 0;
         }
-        mprAssert(lastSlot != chainSlotNum);
+        assure(lastSlot != chainSlotNum);
         lastSlot = chainSlotNum;
-        mprAssert(chainSlotNum != slots[chainSlotNum].hashChain);
+        assure(chainSlotNum != slots[chainSlotNum].hashChain);
         chainSlotNum = slots[chainSlotNum].hashChain;
-        mprAssert(0 <= lastSlot && lastSlot < props->size);
+        assure(0 <= lastSlot && lastSlot < props->size);
     }
     if (lastSlot >= 0) {
-        mprAssert(lastSlot < obj->numProp);
-        mprAssert(lastSlot != slotNum);
+        assure(lastSlot < obj->numProp);
+        assure(lastSlot != slotNum);
         slots[lastSlot].hashChain = slotNum;
 
     } else {
@@ -822,8 +822,8 @@ PUBLIC int ejsIndexProperties(Ejs *ejs, EjsPot *obj)
     EjsHash         *oldHash, *hash;
     int             i, newHashSize;
 
-    mprAssert(obj);
-    mprAssert(ejsIsPot(ejs, obj));
+    assure(obj);
+    assure(ejsIsPot(ejs, obj));
 
     if (obj->properties == 0) {
         return 0;
@@ -844,12 +844,12 @@ PUBLIC int ejsIndexProperties(Ejs *ejs, EjsPot *obj)
         }
         hash->buckets = (int*) (((char*) hash) + sizeof(EjsHash));
         hash->size = newHashSize;
-        mprAssert(newHashSize > 0);
+        assure(newHashSize > 0);
         obj->properties->hash = hash;
         obj->separateHash = 1;
     }
     hash = obj->properties->hash;
-    mprAssert(hash);
+    assure(hash);
     memset(hash->buckets, -1, hash->size * sizeof(int));
 
     /*
@@ -879,7 +879,7 @@ static void removeHashEntry(Ejs *ejs, EjsPot *obj, EjsName qname)
     EjsName     *nextName;
     int         index, slotNum, lastSlot, *buckets;
 
-    mprAssert(ejsIsPot(ejs, obj));
+    assure(ejsIsPot(ejs, obj));
 
     if (obj->properties->hash == 0) {
         /*
@@ -895,7 +895,7 @@ static void removeHashEntry(Ejs *ejs, EjsPot *obj, EjsName qname)
                 return;
             }
         }
-        mprAssert(0);
+        assure(0);
         return;
     }
     index = whash(qname.name->value, qname.name->length) % obj->properties->hash->size;
@@ -920,7 +920,7 @@ static void removeHashEntry(Ejs *ejs, EjsPot *obj, EjsName qname)
         lastSlot = slotNum;
         slotNum = obj->properties->slots[slotNum].hashChain;
     }
-    mprAssert(0);
+    assure(0);
 }
 
 
@@ -929,7 +929,7 @@ PUBLIC int ejsCompactPot(Ejs *ejs, EjsPot *obj)
     EjsSlot     *slots, *src, *dest;
     int         i, removed;
 
-    mprAssert(ejsIsPot(ejs, obj));
+    assure(ejsIsPot(ejs, obj));
 
     src = dest = slots = obj->properties->slots;
     for (removed = i = 0; i < obj->numProp; i++, src++) {
@@ -962,7 +962,7 @@ PUBLIC void *ejsCreatePot(Ejs *ejs, EjsType *type, int numProp)
 {
     EjsPot      *obj, *prototype;
 
-    mprAssert(type);
+    assure(type);
     
     prototype = type->prototype;
     if (type->hasInstanceVars) {
