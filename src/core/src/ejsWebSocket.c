@@ -94,30 +94,6 @@ static EjsNumber *ws_bufferedAmount(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj
 }
 
 
-#if UNUSED
-/*
-    function get certificate(): String
- */
-static EjsString *ws_certificate(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
-{
-    if (ws->certFile) {
-        return ejsCreateStringFromAsc(ejs, ws->certFile);
-    }
-    return ESV(null);
-}
-
-
-/*  
-    function set setCertificate(value: String): Void
- */
-static EjsObj *ws_set_certificate(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
-{
-    ws->certFile = ejsToMulti(ejs, argv[0]);
-    return 0;
-}
-#endif
-
-
 /*  
     function close(status: Number = 1000, reason: String? = ""): Void
  */
@@ -241,37 +217,6 @@ static EjsString *ws_send(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
     }
     return 0;
 }
-
-
-#if UNUSED
-/*  
-    function get verify(): Boolean
- */
-static EjsBoolean *ws_verify(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
-{
-    if (!ws->ssl) {
-        ws->ssl = mprCreateSsl(0);
-    }
-    return ws->ssl->verifyPeer ?  ESV(false) : ESV(true);
-}
-
-
-/*  
-    function set verify(on: Boolean): Void
- */
-static EjsObj *ws_set_verify(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
-{
-    int     verify;
-
-    verify = (argv[0] == ESV(true));
-    if (!ws->ssl) {
-        ws->ssl = mprCreateSsl(0);
-    }
-    mprVerifySslIssuer(ws->ssl, verify);
-    mprVerifySslPeer(ws->ssl, verify);
-    return 0;
-}
-#endif
 
 
 /*
@@ -614,12 +559,6 @@ static void manageWebSocket(EjsWebSocket *ws, int flags)
 
     } else if (flags & MPR_MANAGE_FREE) {
         if (ws->conn && ws->ejs->service) {
-#if UNUSED
-            /* No references means it is a waste of time notifying */
-            if (!ws->closed) {
-                onWebSocketEvent(ws, HTTP_EVENT_APP_CLOSE, 0);
-            }
-#endif
             httpDestroyConn(ws->conn);
             ws->conn = 0;
         }
@@ -640,9 +579,6 @@ PUBLIC void ejsConfigureWebSocketType(Ejs *ejs)
     ejsBindConstructor(ejs, type, wsConstructor);
     ejsBindMethod(ejs, prototype, ES_WebSocket_bufferedAmount, ws_bufferedAmount);
     ejsBindMethod(ejs, prototype, ES_WebSocket_binaryType, ws_binaryType);
-#if UNUSED
-    ejsBindAccess(ejs, prototype, ES_WebSocket_certificate, ws_certificate, ws_set_certificate);
-#endif
     ejsBindMethod(ejs, prototype, ES_WebSocket_close, ws_close);
     ejsBindMethod(ejs, prototype, ES_WebSocket_extensions, ws_extensions);
     ejsBindMethod(ejs, prototype, ES_WebSocket_off, ws_off);
@@ -650,9 +586,6 @@ PUBLIC void ejsConfigureWebSocketType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_WebSocket_protocol, ws_protocol);
     ejsBindMethod(ejs, prototype, ES_WebSocket_readyState, ws_readyState);
     ejsBindMethod(ejs, prototype, ES_WebSocket_send, ws_send);
-#if UNUSED
-    ejsBindAccess(ejs, prototype, ES_WebSocket_verify, ws_verify, ws_set_verify);
-#endif
     ejsBindMethod(ejs, prototype, ES_WebSocket_url, ws_url);
     ejsBindMethod(ejs, prototype, ES_WebSocket_wait, ws_wait);
 }

@@ -79,13 +79,6 @@ module ejs {
           */
         native function get bufferedAmount(): Number
 
-        /*  UNUSED
-            Filename of the file of certificates used to verify server certificates.
-
-            native function get certificate(): Path
-            native function set certificate(certFile: Path): Void
-         */
-
         /**
             Send a close message and close the web socket connection
             @param code WebSocket status code to send to the peer explaining why the connection is being closed.
@@ -142,13 +135,6 @@ module ejs {
                If multiple arguments are provided, each is sent as a separate message. 
          */
         native function send(...content): Void
-
-        /*  UNUSED
-            Verify peer certificates
-
-            native function get verify(): Boolean
-            native function set verify(enable: Boolean): Void
-         */
 
         /**
             The URI provided to the constructor
