@@ -51,7 +51,6 @@ static EjsWorker *initWorker(Ejs *ejs, EjsWorker *worker, Ejs *baseVM, cchar *na
         worker->name = sfmt("worker-%d", workerSeqno++);
         unlock(ejs);
     }
-
     /*
         Create a new interpreter and an "inside" worker object and pair it with the current "outside" worker.
         The worker interpreter gets a new dispatcher
