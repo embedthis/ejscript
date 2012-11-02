@@ -128,6 +128,9 @@ try {
                 '#include <stdio.h>\nint main() { void *ptr = 0; __sync_bool_compare_and_swap(&ptr, ptr, ptr); return 0; }')
             settings.hasUnnamedUnions = compile(cc, '', 
                 '#include <stdio.h>\nint main() { struct test { union { int x; int y; };}; return 0; }')
+            let littleEndian = compile(cc, '', 
+                '#include <stdio.h>\nint main() { int test=1; char *probe = (char*) &test; return (*probe == 1);}')
+            settings.endian = littleEndian ? 1 : 2
         }
     }
 } catch {}
