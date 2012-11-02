@@ -205,7 +205,7 @@
     #define ULong uint32_t
 #if BIT_CPU_ARCH == MPR_CPU_PPC
     #define IEEE_MC68k 1
-#else
+#elif BIT_ENDIAN == MPR_LITTLE_ENDIAN
     #define IEEE_8087 1
 #endif
 #if VXWORKS
