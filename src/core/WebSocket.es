@@ -40,8 +40,14 @@ module ejs {
             @param uri URL to connect to
             @param protocols Optional set of protocols supported by the application. These are application-level
                 protocols. This argument may be an array or a string of comma separated values.
+            @param options
+            @options certificate Path|String Optional path to file containing certificates to validate the 
+                server certificate.
+            @options verify Boolean Set to true to verify the server certificate. 
+                The certificate is verified and the issuer chain is verified. Defaults to true.
+                Set to false to accept a self-signed certificate.
          */
-        native function WebSocket(uri: Uri, protocols = null)
+        native function WebSocket(uri: Uri, protocols = null, options = null)
 
         /**
             Event callback invoked when the WebSocket is ready to send and receive data. The $readyState will be set to OPEN.
@@ -73,11 +79,12 @@ module ejs {
           */
         native function get bufferedAmount(): Number
 
-        /** 
+        /*  UNUSED
             Filename of the file of certificates used to verify server certificates.
+
+            native function get certificate(): Path
+            native function set certificate(certFile: Path): Void
          */
-        native function get certificate(): Path
-        native function set certificate(certFile: Path): Void
 
         /**
             Send a close message and close the web socket connection
@@ -117,7 +124,7 @@ module ejs {
 
         /**
             Return the application-level protocol selected by the server. Protocols are defined when 
-            creating the $WebSocket.
+            creating the $WebSocket
           */
         native function get protocol() : String
 
@@ -136,11 +143,12 @@ module ejs {
          */
         native function send(...content): Void
 
-        /**
+        /*  UNUSED
             Verify peer certificates
+
+            native function get verify(): Boolean
+            native function set verify(enable: Boolean): Void
          */
-        native function get verify(): Boolean
-        native function set verify(enable: Boolean): Void
 
         /**
             The URI provided to the constructor
