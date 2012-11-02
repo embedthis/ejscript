@@ -2192,18 +2192,16 @@
 #define ES_WebSocket_onclose                                           3
 #define ES_WebSocket_binaryType                                        4
 #define ES_WebSocket_bufferedAmount                                    5
-#define ES_WebSocket_certificate                                       6
-#define ES_WebSocket_close                                             7
-#define ES_WebSocket_extensions                                        8
-#define ES_WebSocket_off                                               9
-#define ES_WebSocket_on                                                10
-#define ES_WebSocket_protocol                                          11
-#define ES_WebSocket_readyState                                        12
-#define ES_WebSocket_send                                              13
-#define ES_WebSocket_verify                                            14
-#define ES_WebSocket_url                                               15
-#define ES_WebSocket_wait                                              16
-#define ES_WebSocket_NUM_INSTANCE_PROP                                 17
+#define ES_WebSocket_close                                             6
+#define ES_WebSocket_extensions                                        7
+#define ES_WebSocket_off                                               8
+#define ES_WebSocket_on                                                9
+#define ES_WebSocket_protocol                                          10
+#define ES_WebSocket_readyState                                        11
+#define ES_WebSocket_send                                              12
+#define ES_WebSocket_url                                               13
+#define ES_WebSocket_wait                                              14
+#define ES_WebSocket_NUM_INSTANCE_PROP                                 15
 #define ES_WebSocket_NUM_INHERITED_PROP                                0
 
 
@@ -2385,6 +2383,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1494711
+#define _ES_CHECKSUM_ejs   1490427
 
 #endif
