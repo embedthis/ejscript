@@ -85,10 +85,12 @@ module ejs {
             In this case a "readable" event will be issued when data is available for reading.
             @param buffer Destination byte array for read data.
             @param offset Offset in the byte array to place the data. If the offset is -1, then data is
-                appended to the buffer write $position which is then updated. 
+                appended to the buffer write $position which is then updated. If offset is >= 0, the data is read 
+                to the offset and the read pointer is set to the offset and the write pointer to one past the end of 
+                the data just read.
             @param count Read up to this number of bytes. If -1, read as much as the buffer will hold up. If the 
                 stream is of fixed and known length (such as a file) and the buffer is of sufficient size or is growable, 
-                read the entire stream. 
+                read the entire stream. If the buffer is of a fixed size, ready only what will fit into the buffer.
             @returns a count of the bytes actually read. Returns null on EOF or errors.
             @event readable Issued when there is new read data available.
             @event writable Issued when the stream becomes empty.
