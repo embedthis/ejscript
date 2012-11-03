@@ -19,12 +19,14 @@ static EjsBoolean *g_assert(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     wchar           *source;
     EjsBoolean      *b;
 
-    assure(argc == 1);
-
-    if (!ejsIs(ejs, argv[0], Boolean)) {
-        b = (EjsBoolean*) ejsCast(ejs, argv[0], Boolean);
+    if (argc == 0) {
+        b = ESV(false);
     } else {
-        b = (EjsBoolean*) argv[0];
+        if (!ejsIs(ejs, argv[0], Boolean)) {
+            b = (EjsBoolean*) ejsCast(ejs, argv[0], Boolean);
+        } else {
+            b = (EjsBoolean*) argv[0];
+        }
     }
     assure(b);
 
