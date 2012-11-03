@@ -498,6 +498,10 @@ static EjsObj *http_put(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 /*  
     function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
     Returns a count of bytes read. Non-blocking if a callback is defined. Otherwise, blocks.
+
+    Offset: -1 then read to the buffer write position, >= 0 then read to that offset
+    count: -1 then read as much as the buffer will hold. If buffer is growable, read all content. If not growable, 
+        read the buffer size. If count >= 0, then read that number of bytes.
  */
 static EjsNumber *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
@@ -521,19 +525,25 @@ static EjsNumber *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     }
     if (offset < 0) {
         offset = buffer->writePosition;
-    } else if (offset >= buffer->size) {
+    } else if (offset < buffer->size) {
+        ejsSetByteArrayPositions(ejs, buffer, offset, offset);
+    } else {
         ejsThrowOutOfBoundsError(ejs, "Bad read offset value");
         return 0;
-    } else {
-        ejsSetByteArrayPositions(ejs, buffer, 0, 0);
+    }
+    if (count < 0 && !buffer->resizable) {
+        count = buffer->size - offset;
     }
     if ((count = readHttpData(ejs, hp, count)) < 0) {
         assure(ejs->exception);
         return 0;
-    } 
+    } else if (count == 0 && conn->state > HTTP_STATE_CONTENT) {
+        return ESV(null);
+    }
     hp->readCount += count;
-    //  MOB - should use RC Value (== count)
-    ejsCopyToByteArray(ejs, buffer, buffer->writePosition, (char*) mprGetBufStart(hp->responseContent), count);
+    if (ejsCopyToByteArray(ejs, buffer, offset, (char*) mprGetBufStart(hp->responseContent), count) != count) {
+        ejsThrowMemoryError(ejs);
+    }
     ejsSetByteArrayPositions(ejs, buffer, -1, buffer->writePosition + count);
     mprAdjustBufStart(hp->responseContent, count);
     mprResetBufIfEmpty(hp->responseContent);
@@ -557,6 +567,8 @@ static EjsString *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv
     if ((count = readHttpData(ejs, hp, count)) < 0) {
         assure(ejs->exception);
         return 0;
+    } else if (count == 0 && hp->conn->state > HTTP_STATE_CONTENT) {
+        return ESV(null);
     }
     //  UNICODE ENCODING
     result = ejsCreateStringFromMulti(ejs, mprGetBufStart(hp->responseContent), count);
@@ -582,10 +594,15 @@ static EjsObj *http_reset(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsString *http_response(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
+    EjsAny  *response;
+
     if (hp->responseCache) {
         return hp->responseCache;
     }
-    hp->responseCache = http_readString(ejs, hp, argc, argv);
+    if ((response = http_readString(ejs, hp, argc, argv)) == ESV(null)) {
+        return ESV(empty);
+    }
+    hp->responseCache = (EjsString*) response;
     return hp->responseCache;
 }
 
@@ -1009,7 +1026,7 @@ static void httpEventChange(HttpConn *conn, int event, int arg)
 
 /*  
     Read the required number of bytes into the response content buffer. Count < 0 means transfer the entire content.
-    Returns the number of bytes read.
+    Returns the number of bytes read. Returns null on EOF.
  */ 
 static ssize readHttpData(Ejs *ejs, EjsHttp *hp, ssize count)
 {
@@ -1031,7 +1048,7 @@ static ssize readHttpData(Ejs *ejs, EjsHttp *hp, ssize count)
             return MPR_ERR_CANT_READ;
         }
         mprAdjustBufEnd(buf, nbytes);
-        if (hp->conn->async || (nbytes == 0 && conn->state >= HTTP_STATE_COMPLETE)) {
+        if (hp->conn->async || (nbytes == 0 && conn->state > HTTP_STATE_CONTENT)) {
             break;
         }
     }

@@ -304,7 +304,7 @@ module ejs {
         }
 
         /** 
-            Signals the end of any write data and flushes any buffered write data to the client. 
+            Signals the end of any write data and flushes any buffered write data to the server. 
          */
         native function finalize(): Void 
 
@@ -315,8 +315,8 @@ module ejs {
         native function get finalized(): Boolean 
 
         /** 
-            Flush request data. Calling $flush(Sream.WRITE) or $finalize() is required to ensure write data is sent to 
-            the server.
+            Flush request data. 
+            Flush will force buffered request data to be sent immediately to the server. 
             @duplicate Stream.flush
          */
         native function flush(dir: Number = Stream.WRITE): Void
