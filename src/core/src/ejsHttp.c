@@ -468,8 +468,9 @@ static EjsHttp *http_on(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (conn->readq && conn->readq->count > 0) {
         ejsSendEvent(ejs, hp->emitter, "readable", NULL, hp);
     }
+    //  MOB - don't need to test finalizedConnector
     if (!conn->tx->finalizedConnector && 
-            !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
+            !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_FINALIZED &&
             conn->writeq->ioCount == 0) {
         ejsSendEvent(ejs, hp->emitter, "writable", NULL, hp);
     }
@@ -876,7 +877,7 @@ static EjsBoolean *http_wait(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (timeout == 0) {
         timeout = MPR_MAX_TIMEOUT;
     }
-    if (!waitForState(hp, HTTP_STATE_COMPLETE, timeout, 0)) {
+    if (!waitForState(hp, HTTP_STATE_FINALIZED, timeout, 0)) {
         return ESV(false);
     }
     return ESV(true);
@@ -998,7 +999,7 @@ static void httpEventChange(HttpConn *conn, int event, int arg)
             }
             break;
 
-        case HTTP_STATE_COMPLETE:
+        case HTTP_STATE_FINALIZED:
             if (hp->emitter) {
                 if (conn->error) {
                     sendHttpErrorEvent(ejs, hp);

@@ -585,7 +585,7 @@ static void stateChangeNotifier(HttpConn *conn, int event, int arg)
     case HTTP_EVENT_STATE:
         if (arg == HTTP_STATE_BEGIN) {
             setupConnTrace(conn);
-        } else if (arg == HTTP_STATE_COMPLETE) {
+        } else if (arg == HTTP_STATE_FINALIZED) {
             if (req) {
                 if (conn->error) {
                     ejsSendRequestErrorEvent(ejs, req);

@@ -158,8 +158,9 @@ static EjsWebSocket *ws_on(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
     if (conn->readq && conn->readq->count > 0) {
         onWebSocketEvent(ws, HTTP_EVENT_READABLE, 0);
     }
+    //  MOB - don't need to test finalizedConnector
     if (!conn->tx->finalizedConnector && 
-            !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
+            !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_FINALIZED &&
             conn->writeq->ioCount == 0) {
         onWebSocketEvent(ws, HTTP_EVENT_WRITABLE, 0);
     }

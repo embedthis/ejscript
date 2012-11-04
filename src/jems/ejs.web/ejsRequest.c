@@ -1136,9 +1136,9 @@ static EjsRequest *req_on(Ejs *ejs, EjsRequest *req, int argc, EjsAny **argv)
     if (conn->readq->count > 0) {
         ejsSendEvent(ejs, req->emitter, "readable", NULL, req);
     }
+    //  MOB - should not ned to test finalizedConnector
     if (!conn->tx->finalizedConnector && 
-            !conn->error && HTTP_STATE_CONNECTED <= conn->state && 
-            conn->state < HTTP_STATE_COMPLETE &&
+            !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_FINALIZED &&
             conn->writeq->ioCount == 0) {
         ejsSendEvent(ejs, req->emitter, "writable", NULL, req);
     }
@@ -1335,9 +1335,9 @@ static EjsNumber *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         req->written += written;
         total += written;
     }
+    //  MOB should not need to test finalizedConnector
     if (!conn->tx->finalizedConnector && 
-            !conn->error && HTTP_STATE_CONNECTED <= conn->state && 
-            conn->state < HTTP_STATE_COMPLETE &&
+            !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_FINALIZED &&
             conn->writeq->ioCount == 0) {
         ejsSendEvent(ejs, req->emitter, "writable", NULL, req);
     }
