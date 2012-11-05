@@ -91,7 +91,7 @@ Ejs *ejsCreateVM(int argc, cchar **argv, int flags)
     ejs->argc = argc;
     ejs->argv = argv;
     ejs->name = sfmt("ejs-%d", sp->seqno++);
-    ejs->dispatcher = mprCreateDispatcher(ejs->name, 1);
+    ejs->dispatcher = mprCreateDispatcher(ejs->name, MPR_DISPATCHER_ENABLED);
     ejs->mutex = mprCreateLock(ejs);
     ejs->dontExit = sp->dontExit;
     ejs->flags |= (flags & (EJS_FLAG_NO_INIT | EJS_FLAG_DOC | EJS_FLAG_HOSTED));
@@ -207,7 +207,7 @@ void ejsDestroyVM(Ejs *ejs)
         ejs->service = 0;
         ejs->result = 0;
         if (ejs->dispatcher) {
-            mprDestroyDispatcher(ejs->dispatcher);
+            mprDisableDispatcher(ejs->dispatcher);
         }
     }
     mprLog(6, "ejs: destroy VM");
