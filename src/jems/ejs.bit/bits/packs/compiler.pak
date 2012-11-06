@@ -116,6 +116,8 @@ try {
         settings.warn64to32 = compile(cc, '-Wshorten-64-to-32', 'int main() { return 0;}')
 
         if (platform.os != 'vxworks') {
+            settings.hasLibRt = compile(cc, '',
+                '#define _GNU_SOURCE\n#include <time.h>\nint main() { struct timespec tv; clock_gettime(CLOCK_REALTIME, &tv); return 0; }')
             settings.hasDynLoad = compile(cc, '',
                 '#include <stdio.h>\n#include <dlfcn.h>\nint main() { dlopen(\"test.so\", 0); return 0; }')
             settings.hasLibEdit = compile(cc, '',
@@ -177,6 +179,7 @@ function getDefaultSettings(platform) {
         settings = {
             hasDynLoad: true,
             hasLibEdit: false,
+            hasLibRt: false,
             hasMmu: true,
             hasUnnamedUnions: true,
         }
@@ -185,6 +188,7 @@ function getDefaultSettings(platform) {
             hasDoubleBraces: false,
             hasDynLoad: true,
             hasLibEdit: false,
+            hasLibRt: true,
             hasMmu: true,
             hasMtune: true,
             hasPam: false,
@@ -199,6 +203,7 @@ function getDefaultSettings(platform) {
         settings = {
             hasDoubleBraces: true,
             hasLibEdit: true,
+            hasLibRt: false,
             hasDynLoad: true,
             hasMmu: true,
             hasMtune: true,
@@ -214,6 +219,7 @@ function getDefaultSettings(platform) {
         settings = {
             hasDoubleBraces: true,
             hasLibEdit: false,
+            hasLibRt: false,
             hasDynLoad: true,
             hasMmu: true,
             hasMtune: true,

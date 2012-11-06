@@ -26,6 +26,9 @@ Bit.load({
                     defaults.defines.push('-DPIC')
                     defaults.libraries += ['pthread', 'm']
                 }
+                if (bit.settings.hasLibRt) {
+                    defaults.libraries += ['rt']
+                }
                 if (bit.settings.hasDynLoad) {
                     defaults.libraries += ['dl']
                 }
