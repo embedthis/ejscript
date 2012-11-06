@@ -890,7 +890,7 @@ static EjsObj *date_setUTCSeconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv
  */
 static EjsNumber *date_ticks(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
 {
-    return ejsCreateNumber(ejs, mprGetTicks());
+    return ejsCreateNumber(ejs, mprGetHiResTime());
 }
 
 

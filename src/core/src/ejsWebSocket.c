@@ -10,8 +10,8 @@
 
 static void onWebSocketEvent(EjsWebSocket *ws, int event, EjsAny *data);
 static EjsObj *startWebSocketRequest(Ejs *ejs, EjsWebSocket *ws);
-static bool waitForHttpState(EjsWebSocket *ws, int state, MprTime timeout, int throw);
-static bool waitForReadyState(EjsWebSocket *ws, int state, MprTime timeout, int throw);
+static bool waitForHttpState(EjsWebSocket *ws, int state, MprTicks timeout, int throw);
+static bool waitForReadyState(EjsWebSocket *ws, int state, MprTicks timeout, int throw);
 static void webSocketNotify(HttpConn *conn, int state, int notifyFlags);
 
 /************************************ Methods *********************************/
@@ -237,7 +237,7 @@ static EjsUri *ws_url(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
  */
 static EjsUri *ws_wait(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 {
-    MprTime     timeout;
+    MprTicks    timeout;
     int         state;
 
     state = argc >= 1 ? ejsGetInt(ejs, argv[0]) : WS_STATE_CLOSED;
@@ -404,10 +404,10 @@ static void webSocketNotify(HttpConn *conn, int event, int arg)
 }
 
 
-static bool waitForHttpState(EjsWebSocket *ws, int state, MprTime timeout, int throw)
+static bool waitForHttpState(EjsWebSocket *ws, int state, MprTicks timeout, int throw)
 {
     Ejs             *ejs;
-    MprTime         mark, remaining;
+    MprTicks        mark, remaining;
     HttpConn        *conn;
     HttpUri         *uri;
     char            *url;
@@ -433,7 +433,7 @@ static bool waitForHttpState(EjsWebSocket *ws, int state, MprTime timeout, int t
     }
     redirectCount = 0;
     success = count = 0;
-    mark = mprGetTime();
+    mark = mprGetTicks();
     remaining = timeout;
     while (conn->state < state && count <= conn->retries && redirectCount < 16 && 
            !conn->error && !ejs->exiting && !mprIsStopping(conn)) {
@@ -497,12 +497,12 @@ static bool waitForHttpState(EjsWebSocket *ws, int state, MprTime timeout, int t
 }
 
 
-static bool waitForReadyState(EjsWebSocket *ws, int state, MprTime timeout, int throw)
+static bool waitForReadyState(EjsWebSocket *ws, int state, MprTicks timeout, int throw)
 {
     Ejs             *ejs;
     HttpConn        *conn;
     HttpRx          *rx;
-    MprTime         mark, remaining, inactivityTimeout;
+    MprTicks        mark, remaining, inactivityTimeout;
     int             eventMask;
 
     ejs = ws->ejs;
@@ -528,7 +528,7 @@ static bool waitForReadyState(EjsWebSocket *ws, int state, MprTime timeout, int 
     if (timeout < 0) {
         timeout = conn->limits->requestTimeout;
     }
-    mark = mprGetTime();
+    mark = mprGetTicks();
     remaining = timeout;
     while (conn->state < HTTP_STATE_CONTENT || rx->webSocket->state < state) {
         if (conn->error || ejs->exiting || mprIsStopping(conn) || remaining < 0) {

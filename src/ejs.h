@@ -617,7 +617,7 @@ PUBLIC void ejsUnblockGC(Ejs *ejs, int blocked);
   */
 typedef struct EjsPool {
     MprList     *list;                      /**< Free list */
-    MprTime     lastActivity;               /**< When a VM was last used */
+    MprTicks    lastActivity;               /**< When a VM was last used */
     MprEvent    *timer;                     /**< VM prune timer */
     MprMutex    *mutex;                     /**< Multithread lock */
     int         count;                      /**< Count of allocated VMs */
@@ -2818,7 +2818,7 @@ typedef struct EjsCmd {
     int             argc;               /**< Length of argv */
     int             async;              /**< Async mode */
     int             throw;              /**< Set to true if the command should throw exceptions for failures */
-    MprTime         timeout;            /**< Command timeout in milliseconds */
+    MprTicks        timeout;            /**< Command timeout in milliseconds */
 } EjsCmd;
 
 /******************************************** Date ************************************************/

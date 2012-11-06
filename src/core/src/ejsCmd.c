@@ -552,7 +552,7 @@ static EjsObj *cmd_set_timeout(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
  */
 static EjsObj *cmd_wait(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
-    MprTime     timeout;
+    MprTicks    timeout;
 
     timeout = argc > 0 ? ejsGetInt(ejs, argv[0]) : cmd->timeout;
     if (cmd->mc == 0) {

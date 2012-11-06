@@ -157,7 +157,7 @@ typedef struct EjsSession {
     EjsString   *key;               /* Session ID key */
     EjsObj      *cache;             /* Cache store reference */
     EjsObj      *options;           /* Default write options */
-    MprTime     timeout;            /* Session inactivity timeout (msecs) */
+    MprTicks    timeout;            /* Session inactivity timeout (msecs) */
     int         ready;              /* Data cached from store into pot */
 } EjsSession;
 
@@ -170,7 +170,7 @@ typedef struct EjsSession {
     @returns A new session object.
     @ingroup EjsSession
 */
-extern EjsSession *ejsGetSession(Ejs *ejs, EjsString *key, MprTime timeout, int create);
+extern EjsSession *ejsGetSession(Ejs *ejs, EjsString *key, MprTicks timeout, int create);
 
 /** 
     Destroy as session. This destroys the session object so that subsequent requests will need to establish a new session.
@@ -187,7 +187,7 @@ extern int ejsDestroySession(Ejs *ejs, EjsSession *session);
     @param lifespan Lifespan in milliseconds
     @ingroup EjsSession
 */
-extern void ejsSetSessionTimeout(Ejs *ejs, EjsSession *sp, MprTime lifespan);
+extern void ejsSetSessionTimeout(Ejs *ejs, EjsSession *sp, MprTicks lifespan);
 
 /******************************* Internal APIs ********************************/
 

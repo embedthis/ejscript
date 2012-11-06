@@ -19,7 +19,7 @@ static void     sendHttpCloseEvent(Ejs *ejs, EjsHttp *hp);
 static void     sendHttpErrorEvent(Ejs *ejs, EjsHttp *hp);
 static EjsObj   *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, EjsObj **argv);
 static bool     waitForResponseHeaders(EjsHttp *hp);
-static bool     waitForState(EjsHttp *hp, int state, MprTime timeout, int throw);
+static bool     waitForState(EjsHttp *hp, int state, MprTicks timeout, int throw);
 static ssize    writeHttpData(Ejs *ejs, EjsHttp *hp);
 
 /************************************ Methods *********************************/
@@ -871,7 +871,7 @@ static EjsObj *http_set_verify(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsBoolean *http_wait(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    MprTime     timeout;
+    MprTicks    timeout;
 
     timeout = (argc >= 1) ? ejsGetInt(ejs, argv[0]) : -1;
     if (timeout == 0) {
@@ -1259,10 +1259,10 @@ static bool expired(EjsHttp *hp)
     Timeout is in msec. Timeout of zero means don't wait. Timeout of < 0 means use standard inactivity and 
     duration timeouts.
  */
-static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
+static bool waitForState(EjsHttp *hp, int state, MprTicks timeout, int throw)
 {
     Ejs             *ejs;
-    MprTime         mark, remaining;
+    MprTicks        mark, remaining;
     HttpConn        *conn;
     HttpUri         *uri;
     HttpRx          *rx;
@@ -1289,7 +1289,7 @@ static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
     }
     redirectCount = 0;
     success = count = 0;
-    mark = mprGetTime();
+    mark = mprGetTicks();
     remaining = timeout;
     while (conn->state < state && count <= conn->retries && redirectCount < 16 && !conn->error && !ejs->exiting && 
             !mprIsStopping(conn)) {
@@ -1332,7 +1332,7 @@ static bool waitForState(EjsHttp *hp, int state, MprTime timeout, int throw)
             break;
         }
         if (timeout > 0) {
-            remaining = mprGetRemainingTime(mark, timeout);
+            remaining = mprGetRemainingTicks(mark, timeout);
             if (count > 0 && remaining <= 0) {
                 break;
             }

@@ -15,7 +15,7 @@ static int getSessionState(Ejs *ejs, EjsSession *sp);
 
 /************************************* Code ***********************************/
 
-static EjsSession *initSession(Ejs *ejs, EjsSession *sp, EjsString *key, MprTime timeout)
+static EjsSession *initSession(Ejs *ejs, EjsSession *sp, EjsString *key, MprTicks timeout)
 {
     EjsObj      *app;
 
@@ -46,7 +46,7 @@ static EjsString *makeKey(Ejs *ejs, EjsSession *sp)
     Get (create) a session object using the supplied key. If the key has expired or is NULL, then generate a new key if
     create is true. The timeout is in msec.
  */
-EjsSession *ejsGetSession(Ejs *ejs, EjsString *key, MprTime timeout, int create)
+EjsSession *ejsGetSession(Ejs *ejs, EjsString *key, MprTicks timeout, int create)
 {
     EjsSession  *sp;
     EjsType     *type;
@@ -170,7 +170,7 @@ static int setSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum, EjsAny *val
 /*
     The timeout arg is a number of ticks to add to the current time
  */
-void ejsSetSessionTimeout(Ejs *ejs, EjsSession *sp, MprTime timeout)
+void ejsSetSessionTimeout(Ejs *ejs, EjsSession *sp, MprTicks timeout)
 {
     ejsCacheExpire(ejs, sp->cache, sp->key, ejsCreateDate(ejs, mprGetTime() + timeout));
 }
@@ -185,7 +185,7 @@ static EjsSession *sess_constructor(Ejs *ejs, EjsSession *sp, int argc, EjsAny *
 {
     EjsAny      *vp;
     EjsPot      *options;
-    MprTime     timeout;
+    MprTicks    timeout;
 
     timeout = 0;
     if (argc > 0) {
