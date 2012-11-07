@@ -55,8 +55,6 @@ infrastructure including firewalls and proxies.</p>
    <tr><td nowrap align='center'> get </td><td>binaryType</td><td><a href='String.html'>String</a></td><td>Type of binary data. Set to "ByteArray".</td></tr>
 <a name='bufferedAmount'></a>
    <tr><td nowrap align='center'> get </td><td>bufferedAmount</td><td><a href='Number.html'>Number</a></td><td>The number of bytes of buffered data to send. </td></tr>
-<a name='certificate'></a>
-   <tr><td nowrap align='center'> get set </td><td>certificate</td><td><a href='Path.html'>Path</a></td><td>Filename of the file of certificates used to verify server certificates. </td></tr>
 <a name='extensions'></a>
    <tr><td nowrap align='center'> get </td><td>extensions</td><td><a href='String.html'>String</a></td><td>Return the list of supported extensions. </td></tr>
 <a name='onclose'></a>
@@ -75,8 +73,6 @@ creating the <a href='#WebSocket'>WebSocket</a>. </td></tr>
 <a href='#CONNECTING'>CONNECTING</a> = 0, <a href='#OPEN'>OPEN</a> = 1, <a href='#CLOSING'>CLOSING</a> = 2, <a href='#CLOSED'>CLOSED</a> = 3.</td></tr>
 <a name='url'></a>
    <tr><td nowrap align='center'> get </td><td>url</td><td><a href='Uri.html'>Uri</a></td><td>The URI provided to the constructor. </td></tr>
-<a name='verify'></a>
-   <tr><td nowrap align='center'> get set </td><td>verify</td><td><a href='Boolean.html'>Boolean</a></td><td>Verify peer certificates. </td></tr>
 </table>
 
 <p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
@@ -95,7 +91,7 @@ creating the <a href='#WebSocket'>WebSocket</a>. </td></tr>
 <h2 class='classSection'>WebSocket Instance Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'></td><td><a href='#WebSocket'><b>WebSocket</b></a>(uri: <a href='Uri.html'>Uri</a>, protocols = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new WebSocket and connect to the server using the supplied URI.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#WebSocket'><b>WebSocket</b></a>(uri: <a href='Uri.html'>Uri</a>, protocols = null, options = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new WebSocket and connect to the server using the supplied URI.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#close'><b>close</b></a>(code: <a href='Number.html'>Number</a> = 1000, reason: <a href='String.html'>String</a> = ): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a close message and close the web socket connection.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#send'><b>send</b></a>(content: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send data with the request.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#wait'><b>wait</b></a>(state: <a href='Number.html'>Number</a>, timeout: <a href='Number.html'>Number</a> = -1): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Wait for the WebSocket to achieve a desired state.</td></tr>
@@ -107,13 +103,18 @@ creating the <a href='#WebSocket'>WebSocket</a>. </td></tr>
 <h2>Method Detail</h2>
 <a name='WebSocket'></a>
 <div class='api'>
-<div class='apiSig'>    WebSocket(uri: <a href='Uri.html'>Uri</a>, protocols = null)
+<div class='apiSig'>    WebSocket(uri: <a href='Uri.html'>Uri</a>, protocols = null, options = null)
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Create a new WebSocket and connect to the server using the supplied URI. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>uri: <a href='Uri.html'>Uri</a> </td><td>URL to connect to.</td></tr><tr class='param'><td class='param'>protocols </td><td>Optional set of protocols supported by the application. These are application-level protocols. This argument may be an array or a string of comma separated values. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>uri: <a href='Uri.html'>Uri</a> </td><td>URL to connect to.</td></tr><tr class='param'><td class='param'>protocols </td><td>Optional set of protocols supported by the application. These are application-level protocols. This argument may be an array or a string of comma separated values. [default: null]</td></tr><tr class='param'><td class='param'>options </td><td>null [default: null]</td></tr><tr class='param'><td class='param'>options </td><td>null [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>certificate</td><td>Path|String Optional path to file containing certificates to validate the  server certificate.</td></tr>
+<td class='param'>verify</td><td>Boolean Set to true to verify the server certificate.  The certificate is verified and the issuer chain is verified. Defaults to true. Set to false to accept a self-signed certificate.</td></tr>
+</table></dd>
 </dl></div>
 </div>
 <hr />

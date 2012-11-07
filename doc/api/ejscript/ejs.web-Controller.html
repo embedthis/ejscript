@@ -52,13 +52,13 @@ call finalize at the conclusion of the request.
 Applications that wish to keep the request open to the client can suppress auto-finalization by 
 setting autoFinalizing to false or by calling dontAutoFinalize(). This property defaults to true.</td></tr>
 <a name='cacheIndex'></a>
-   <tr><td nowrap align='center'></td><td>cacheIndex</td><td><a href='String.html'>String</a></td><td>null </td></tr>
+   <tr><td nowrap align='center'></td><td>cacheIndex</td><td><a href='String.html'>String</a></td><td> #T. </td></tr>
 <a name='cacheItem'></a>
-   <tr><td nowrap align='center'></td><td>cacheItem</td><td><a href='Object.html'>Object</a></td><td>null </td></tr>
+   <tr><td nowrap align='center'></td><td>cacheItem</td><td><a href='Object.html'>Object</a></td><td>à"T. </td></tr>
 <a name='cacheName'></a>
    <tr><td nowrap align='center'></td><td>cacheName</td><td><a href='String.html'>String</a></td><td>null </td></tr>
 <a name='cacheOptions'></a>
-   <tr><td nowrap align='center'></td><td>cacheOptions</td><td><a href='Object.html'>Object</a></td><td>null </td></tr>
+   <tr><td nowrap align='center'></td><td>cacheOptions</td><td><a href='Object.html'>Object</a></td><td>`#T. </td></tr>
 <a name='config'></a>
    <tr><td nowrap align='center'></td><td>config</td><td><a href='Object.html'>Object</a></td><td>Configuration settings. This is a reference to <a href='ejs.web-Request.html#config.'>Request.config</a>. </td></tr>
 <a name='controllerName'></a>
@@ -474,7 +474,7 @@ data has been read. To read data in these situations, register an observer funct
 connection becomes "readable".</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>buffer: <a href='ByteArray.html'>ByteArray</a> </td><td>Destination byte array for read data.</td></tr><tr class='param'><td class='param'>offset: <a href='Number.html'>Number</a> </td><td>Offset in the byte array to place the data. If the offset is -1, then data is appended to the buffer write <a href='#position'>position</a> which is then updated.</td></tr><tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>Read up to this number of bytes. If -1, read as much as the buffer will hold up. If the  stream is of fixed and known length (such as a file) and the buffer is of sufficient size or is growable,  read the entire stream. [default: -1]</td></tr></table></dd>
+<tr class='param'><td class='param'>buffer: <a href='ByteArray.html'>ByteArray</a> </td><td>Destination byte array for read data.</td></tr><tr class='param'><td class='param'>offset: <a href='Number.html'>Number</a> </td><td>Offset in the byte array to place the data. If the offset is -1, then data is appended to the buffer write <a href='#position'>position</a> which is then updated. If offset is >= 0, the data is read  to the offset and the read pointer is set to the offset and the write pointer to one past the end of  the data just read.</td></tr><tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>Read up to this number of bytes. If -1, read as much as the buffer will hold up. If the  stream is of fixed and known length (such as a file) and the buffer is of sufficient size or is growable,  read the entire stream. If the buffer is of a fixed size, ready only what will fit into the buffer. [default: -1]</td></tr></table></dd>
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>readable</td><td>Issued when there is new read data available.</td></tr>

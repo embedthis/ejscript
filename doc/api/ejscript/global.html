@@ -160,7 +160,7 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#UploadFile'><b>UploadFile</b></a>()</tr>   <tr class='apiDef'><td class='apiType'> </td><td><a href='#Uri'><b>Uri</b></a>(uri: <a href='Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create and parse a Uri object.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#UrlMap'><b>UrlMap</b></a>(map, options): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Directory content handler.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#View'><b>View</b></a>(request: <a href='Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Constructor method to initialize a new View.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#WebSocket'><b>WebSocket</b></a>(uri: <a href='Uri.html'>Uri</a>, protocols = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new WebSocket and connect to the server using the supplied URI.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#WebSocket'><b>WebSocket</b></a>(uri: <a href='Uri.html'>Uri</a>, protocols = null, options = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new WebSocket and connect to the server using the supplied URI.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Worker'><b>Worker</b></a>(script: <a href='Path.html'>Path</a> = null, options: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new Worker instance.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#XML'><b>XML</b></a>(value: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>XML Constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#assert'><b>assert</b></a>(condition: <a href='Boolean.html'>Boolean</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Assert a condition is true.</td></tr>
@@ -1283,13 +1283,18 @@ the client is redirected to a URL equal to the pathInfo with a "/" appended.</dd
 <hr />
 <a name='WebSocket'></a>
 <div class='api'>
-<div class='apiSig'>    WebSocket(uri: <a href='Uri.html'>Uri</a>, protocols = null)
+<div class='apiSig'>    WebSocket(uri: <a href='Uri.html'>Uri</a>, protocols = null, options = null)
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Create a new WebSocket and connect to the server using the supplied URI. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>uri: <a href='Uri.html'>Uri</a> </td><td>URL to connect to.</td></tr><tr class='param'><td class='param'>protocols </td><td>Optional set of protocols supported by the application. These are application-level protocols. This argument may be an array or a string of comma separated values. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>uri: <a href='Uri.html'>Uri</a> </td><td>URL to connect to.</td></tr><tr class='param'><td class='param'>protocols </td><td>Optional set of protocols supported by the application. These are application-level protocols. This argument may be an array or a string of comma separated values. [default: null]</td></tr><tr class='param'><td class='param'>options </td><td>null [default: null]</td></tr><tr class='param'><td class='param'>options </td><td>null [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>certificate</td><td>Path|String Optional path to file containing certificates to validate the  server certificate.</td></tr>
+<td class='param'>verify</td><td>Boolean Set to true to verify the server certificate.  The certificate is verified and the issuer chain is verified. Defaults to true. Set to false to accept a self-signed certificate.</td></tr>
+</table></dd>
 </dl></div>
 </div>
 <hr />

@@ -261,7 +261,7 @@
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_name" class="ref">EjsName</a></td><td><a href="#group___ejs_obj_1ga39e47e460f99340d355cb4c37135c6a0" class="nameRef">ejsGetPropertyName</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj, int slotNum)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get a variable property&apos;s name.</td></tr>
 <tr class="apiDef"><td class="apiType">struct EjsTrait*</td><td><a href="#group___ejs_obj_1gaaba9b399c9cb11564755d224b9954b2d" class="nameRef">ejsGetPropertyTraits</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj, int slotNum)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get a property&apos;s traits.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_pot" class="ref">EjsPot*</a></td><td><a href="#group___ejs_type_1gaf52df85c9a82b20346d92c1de0a95371" class="nameRef">ejsGetPrototype</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get the prototype object for an object.</td></tr>
-<tr class="apiDef"><td class="apiType"><a href="#group___ejs_session" class="ref">EjsSession*</a></td><td><a href="#group___ejs_session_1ga3d66f176047eb8d0d27509d74fbea6ec" class="nameRef">ejsGetSession</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_string" class="ref">EjsString</a> *key, <a href="mprBare.html#group___mpr_time" class="ref">MprTime</a> timeout, int create)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get a session object for a given key.</td></tr>
+<tr class="apiDef"><td class="apiType"><a href="#group___ejs_session" class="ref">EjsSession*</a></td><td><a href="#group___ejs_session_1gacfdf3f7f5fee5eea23b1152b089a3135" class="nameRef">ejsGetSession</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_string" class="ref">EjsString</a> *key, <a href="mprBare.html#mpr_8h_1aae0f83992c78df80c90bec757fc5723f" class="ref">MprTicks</a> timeout, int create)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get a session object for a given key.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_type" class="ref">EjsType*</a></td><td><a href="#group___ejs_type_1gaf41edbabce385e7cb73ed6526aa2cf22" class="nameRef">ejsGetType</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, int slotNum)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get a type.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_type" class="ref">EjsType*</a></td><td><a href="#group___ejs_type_1gacd5d078d0fca337295cd898a1ad3f2be" class="nameRef">ejsGetTypeByName</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_name" class="ref">EjsName</a> qname)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get a type given its name.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_string" class="ref">EjsString*</a></td><td><a href="#group___ejs_type_1gaafdf35287cba548cc03605f1617694c5" class="nameRef">ejsGetTypeName</a>(struct Ejs *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get the type name of an object.</td></tr>
@@ -354,7 +354,7 @@
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_obj_1gafb4a386b0f091bde2cb1a966a07ae4e8" class="nameRef">ejsSetPropertyName</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj, int slotNum, <a href="#group___ejs_name" class="ref">EjsName</a> qname)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Set a property&apos;s name.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_obj_1gaff9be67192a49b10ed04ab7c2dc7fbea" class="nameRef">ejsSetPropertyTraits</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj, int slotNum, struct EjsType *type, int attributes)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Set a property&apos;s traits.</td></tr>
 <tr class="apiDef"><td class="apiType">void</td><td><a href="#group___ejs_module_1gace4f9f6ccb7c748e5a4a03f4378eca7d" class="nameRef">ejsSetSearchPath</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, struct EjsArray *search)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Set the module search path.</td></tr>
-<tr class="apiDef"><td class="apiType">void</td><td><a href="#group___ejs_session_1ga2dca539af9c047e86689efaf7daf6de7" class="nameRef">ejsSetSessionTimeout</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_session" class="ref">EjsSession</a> *sp, <a href="mprBare.html#group___mpr_time" class="ref">MprTime</a> lifespan)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Set a session timeout.</td></tr>
+<tr class="apiDef"><td class="apiType">void</td><td><a href="#group___ejs_session_1gaa9b6ddd0a43f3d73e869f759f6aa9117" class="nameRef">ejsSetSessionTimeout</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_session" class="ref">EjsSession</a> *sp, <a href="mprBare.html#mpr_8h_1aae0f83992c78df80c90bec757fc5723f" class="ref">MprTicks</a> lifespan)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Set a session timeout.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_x_m_l" class="ref">EjsXML*</a></td><td><a href="#group___ejs_x_m_l_1ga80d04a5a44c4ce6d2150dba5fefa1d28" class="nameRef">ejsSetXMLElement</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_x_m_l" class="ref">EjsXML</a> *xml, int index, <a href="#group___ejs_x_m_l" class="ref">EjsXML</a> *node)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Set an indexed element to a value.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_path_1gaad418e9cce3ebf26addcddf7c6355a3a" class="nameRef">ejsSetupHttpTrace</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="httpBare.html#struct_http_trace" class="ref">HttpTrace</a> *trace, <a href="#group___ejs_obj" class="ref">EjsObj</a> *options)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Setup tracing for Http transactions.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_string" class="ref">EjsString*</a></td><td><a href="#group___ejs_string_1ga4806e79a09974744c3e1fad813239b4f" class="nameRef">ejsSprintf</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="mprBare.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *fmt, ...)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Format arguments.</td></tr>
@@ -2496,7 +2496,7 @@ Stdout from the command.
     <tr><td class="param">int</td><td><td>throw</td><td>
 Set to true if the command should throw exceptions for failures.
 </td>
-    <tr><td class="param">MprTime</td><td><td>timeout</td><td>
+    <tr><td class="param"><a class="ref" href="#mpr_8h_1aae0f83992c78df80c90bec757fc5723f" external="mpr.dtags">MprTicks</a></td><td><td>timeout</td><td>
 Command timeout in milliseconds.
 </td>
     </table></dd></dl>
@@ -5397,7 +5397,7 @@ Count of allocated VMs.
     <tr><td class="param">char *</td><td><td>hostedHome</td><td>
 Home directory for hosted HttpServer.
 </td>
-    <tr><td class="param">MprTime</td><td><td>lastActivity</td><td>
+    <tr><td class="param"><a class="ref" href="#mpr_8h_1aae0f83992c78df80c90bec757fc5723f" external="mpr.dtags">MprTicks</a></td><td><td>lastActivity</td><td>
 When a VM was last used.
 </td>
     <tr><td class="param">MprList *</td><td><td>list</td><td>
@@ -6129,7 +6129,7 @@ Create a new request object associated with the given Http connection
     <dl><dt><b>Description</b>:</dt><dd></dd></dl>
     <dl><dt><b>API</b> Stability:</dt><dd>Prototype.</dd></dl>
     <dl><dt>See Also:</dt><dd>
-    <a href="#group___ejs_session_1gaceee664902b7431cacd92456152c3478" class="ref">ejsDestroySession</a>, <a href="#group___ejs_session_1ga3d66f176047eb8d0d27509d74fbea6ec" class="ref">ejsGetSession</a></dd></dl>
+    <a href="#group___ejs_session_1gaceee664902b7431cacd92456152c3478" class="ref">ejsDestroySession</a>, <a href="#group___ejs_session_1gacfdf3f7f5fee5eea23b1152b089a3135" class="ref">ejsGetSession</a></dd></dl>
     <dl><dt>Fields:</dt><dd>
     <table class="parameters" title="Parameters">
     </table></dd></dl>
@@ -6148,18 +6148,18 @@ This destroys the session object so that subsequent requests will need to establ
     <dl><dt>Parameters:</dt><dd>
     <table class="parameters" title="Parameters">
     <tr><td class="param">ejs</td><td>Ejs interpreter handle returned from $ejsCreate.</td>
-    <tr><td class="param">session</td><td>Session object created via <a class="ref" href="#group___ejs_session_1ga3d66f176047eb8d0d27509d74fbea6ec">ejsGetSession()</a></td>
+    <tr><td class="param">session</td><td>Session object created via <a class="ref" href="#group___ejs_session_1gacfdf3f7f5fee5eea23b1152b089a3135">ejsGetSession()</a></td>
     </table></dd></dl>
     <dl><dt>See Also:</dt><dd>
-    <a href="#group___ejs_session" class="ref">EjsSession</a>, <a href="#group___ejs_session_1ga3d66f176047eb8d0d27509d74fbea6ec" class="ref">ejsGetSession</a></dd></dl>
+    <a href="#group___ejs_session" class="ref">EjsSession</a>, <a href="#group___ejs_session_1gacfdf3f7f5fee5eea23b1152b089a3135" class="ref">ejsGetSession</a></dd></dl>
   </div>
 </div>
-<a name="group___ejs_session_1ga3d66f176047eb8d0d27509d74fbea6ec"></a>
+<a name="group___ejs_session_1gacfdf3f7f5fee5eea23b1152b089a3135"></a>
 <div class="api">
   <div class="prototype">
     <a href="#group___ejs_session" class="ref">EjsSession</a> *
     ejsGetSession
-(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_string" class="ref">EjsString</a> *key, <a href="mprBare.html#group___mpr_time" class="ref">MprTime</a> timeout, int create)
+(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_string" class="ref">EjsString</a> *key, <a href="mprBare.html#mpr_8h_1aae0f83992c78df80c90bec757fc5723f" class="ref">MprTicks</a> timeout, int create)
   </div>
   <div class="apiDetail">
 <p>Get a session object for a given key.</p>
@@ -6176,12 +6176,12 @@ This will create a session if the given key is NULL or has expired
     <a href="#group___ejs_session" class="ref">EjsSession</a>, <a href="#group___ejs_session_1gaceee664902b7431cacd92456152c3478" class="ref">ejsDestroySession</a></dd></dl>
   </div>
 </div>
-<a name="group___ejs_session_1ga2dca539af9c047e86689efaf7daf6de7"></a>
+<a name="group___ejs_session_1gaa9b6ddd0a43f3d73e869f759f6aa9117"></a>
 <div class="api">
   <div class="prototype">
     void
     ejsSetSessionTimeout
-(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_session" class="ref">EjsSession</a> *sp, <a href="mprBare.html#group___mpr_time" class="ref">MprTime</a> lifespan)
+(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_session" class="ref">EjsSession</a> *sp, <a href="mprBare.html#mpr_8h_1aae0f83992c78df80c90bec757fc5723f" class="ref">MprTicks</a> lifespan)
   </div>
   <div class="apiDetail">
 <p>Set a session timeout.</p>
@@ -6192,7 +6192,7 @@ This will create a session if the given key is NULL or has expired
     <tr><td class="param">lifespan</td><td>Lifespan in milliseconds.</td>
     </table></dd></dl>
     <dl><dt>See Also:</dt><dd>
-    <a href="#group___ejs_session" class="ref">EjsSession</a>, <a href="#group___ejs_session_1gaceee664902b7431cacd92456152c3478" class="ref">ejsDestroySession</a>, <a href="#group___ejs_session_1ga3d66f176047eb8d0d27509d74fbea6ec" class="ref">ejsGetSession</a></dd></dl>
+    <a href="#group___ejs_session" class="ref">EjsSession</a>, <a href="#group___ejs_session_1gaceee664902b7431cacd92456152c3478" class="ref">ejsDestroySession</a>, <a href="#group___ejs_session_1gacfdf3f7f5fee5eea23b1152b089a3135" class="ref">ejsGetSession</a></dd></dl>
   </div>
 </div>
 <h1>EjsSocket</h1>

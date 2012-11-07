@@ -2085,15 +2085,15 @@
       <type>EjsSession *</type>
       <name>ejsGetSession</name>
       <anchorfile>group___ejs_session.html</anchorfile>
-      <anchor>ga3d66f176047eb8d0d27509d74fbea6ec</anchor>
-      <arglist>(Ejs *ejs, EjsString *key, MprTime timeout, int create)</arglist>
+      <anchor>gacfdf3f7f5fee5eea23b1152b089a3135</anchor>
+      <arglist>(Ejs *ejs, EjsString *key, MprTicks timeout, int create)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>ejsSetSessionTimeout</name>
       <anchorfile>group___ejs_session.html</anchorfile>
-      <anchor>ga2dca539af9c047e86689efaf7daf6de7</anchor>
-      <arglist>(Ejs *ejs, EjsSession *sp, MprTime lifespan)</arglist>
+      <anchor>gaa9b6ddd0a43f3d73e869f759f6aa9117</anchor>
+      <arglist>(Ejs *ejs, EjsSession *sp, MprTicks lifespan)</arglist>
     </member>
   </compound>
   <compound kind="struct">
