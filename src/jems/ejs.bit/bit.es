@@ -72,6 +72,7 @@ public class Bit {
             depth: { range: Number},
             diagnose: { alias: 'd' },
             dump: { },
+            endian: { range: ['little', 'big'] },
             file: { range: String },
             force: {},
             gen: { range: String, separator: Array, commas: true },
@@ -113,6 +114,7 @@ public class Bit {
             '    --depth                            # Set utest depth\n' +
             '    --diagnose                         # Emit diagnostic trace \n' +
             '    --dump                             # Dump the full project bit file\n' +
+            '    --endian [big|little]              # Define the CPU endianness\n' +
             '    --file file.bit                    # Use the specified bit file\n' +
             '    --force                            # Override warnings\n' +
             '    --gen [make|nmake|sh|vs|xcode]     # Generate project file\n' + 
@@ -455,8 +457,10 @@ public class Bit {
 
     function writeDefinitions(f: TextStream, platform) {
         let settings = bit.settings.clone()
+        if (options.endian) {
+            settings.endian = options.endian == 'little' ? 1 : 2
+        }
         Object.sortProperties(settings)
-
         f.writeLine('/* Settings */')
         for (let [key,value] in settings) {
             if (key.match(/[a-z]/)) {
