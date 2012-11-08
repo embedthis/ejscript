@@ -3682,7 +3682,7 @@ PUBLIC int mprAtomicCas(void * volatile *addr, void *expected, cvoid *value)
     #else
         mprGlobalLock();
         if (*addr == expected) {
-            *addr = value;
+            *addr = (void*) value;
             mprGlobalUnlock();
             return 1;
         }
@@ -24284,9 +24284,12 @@ PUBLIC MprTicks mprGetTicks()
         lastTicks = mprGetTime();
     }
     result = mprGetTime() + adjustTicks;
-    if ((diff = (result < lastTicks)) < 0) {
+    /*
+        Handle time reversals. Don't handle jumps forward. Sorry.
+     */
+    if ((diff = (result - lastTicks)) < 0) {
         adjustTicks += diff;
-        result += diff;
+        result -= diff;
     }
     lastTicks = result;
     return result;
