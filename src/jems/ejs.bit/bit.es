@@ -124,7 +124,7 @@ public class Bit {
             '    --log logSpec                      # Save errors to a log file\n' +
             '    --nocross                          # Build natively\n' +
             '    --out path                         # Save output to a file\n' +
-            '    --platform os-arch                 # Build for specified platform\n' +
+            '    --platform os-arch[-cpu]           # Build for specified platform\n' +
             '    --pre                              # Pre-process a source file to stdout\n' +
             '    --profile [debug|release|...]      # Use the build profile\n' +
             '    --quiet                            # Quiet operation. Suppress trace \n' +
@@ -2400,14 +2400,18 @@ public class Bit {
      */
     public function makeConstGlobals() {
         let g = bit.globals
+        g.PLATFORM = bit.platform.name
+        g.OS = bit.platform.os
+        g.CPU = bit.platform.cpu || 'generic'
         g.ARCH = bit.platform.arch
-        g.GCC_ARCH = gccArch(bit.platform.arch)
+        /* Apple gcc only */
+        if (bit.ccArch) {
+            g.CC_ARCH = bit.ccArch[bit.platform.arch] || bit.platform.arch
+        }
         g.CONFIG = bit.platform.configuration
         g.EXE = bit.ext.dotexe
         g.LIKE = bit.platform.like
         g.O = bit.ext.doto
-        g.OS = bit.platform.os
-        g.PLATFORM = bit.platform.name
         g.SHOBJ = bit.ext.dotshobj
         g.SHLIB = bit.ext.dotshlib
     }
@@ -2553,16 +2557,6 @@ global.NN = item.ns
         cmd.start([shell, "-c", command.toString().trimEnd('\n')], {noio: true})
         if (cmd.status != 0 && !options['continue']) {
             throw 'Command failure: ' + command + '\nError: ' + cmd.error
-        }
-    }
-
-    function gccArch(arch: String) {
-        if (arch == 'x86') {
-            return 'i686'
-        } else if (arch == 'x64') {
-            return 'x86_64'
-        } else {
-            return arch
         }
     }
 
@@ -2975,7 +2969,7 @@ global.NN = item.ns
         Make a bit object. This may optionally load a bit file over the initialized object
      */
     function makeBit(platform: String, bitfile: Path) {
-        let [os, arch] = platform.split('-') 
+        let [os, arch, cpu] = platform.split('-') 
         let kind = like(os)
         global.bit = bit = makeBareBit()
         bit.dir.src = options.configure || Path('.')
@@ -2991,13 +2985,16 @@ global.NN = item.ns
         let profile = options.profile || 'debug'
         bit.platform = { 
             name: platform, 
-            os: os, 
-            arch: arch, 
+            os: os,
+            arch: arch,
             like: kind, 
             dist: dist(os),
             profile: profile,
             configuration: platform + '-' + profile,
             dev: localPlatform,
+        }
+        if (cpu) {
+            bit.platform.cpu = cpu
         }
         loadBitFile(bit.dir.bits.join('standard.bit'))
         loadBitFile(bit.dir.bits.join('os/' + bit.platform.os + '.bit'))
