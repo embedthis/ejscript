@@ -58,13 +58,20 @@ Bit.load({
                 } else if (arch.match(/^i.86$|^x86$/)) {
                     cpu = 'PENTIUM'
                 } else {
+                    /* Set to compiles don't fail */
                     cpu = arch.toUpper()
+                    if (arch == 'mips') {
+                        cpu = 'mips32'
+                    } else if (arch == 'arm') {
+                        cpu = 'ARM7TDMI'
+                    }
                 }
+                cpu = bit.platform.cpu || cpu
+                defaults.defines.push('-DCPU=' + cpu.toUpper())
                 if (arch.match(/mips/)) {
                     /* Don't use mips global pointer */
                     defaults.compiler.push('-G 0')
                 }
-                defaults.defines.push('-DCPU=' + cpu)
                 defaults.includes += bit.packs.vxworks.includes
                 defaults.libpaths.push(bit.dir.lib)
             ",
