@@ -341,12 +341,12 @@ static int reapJoins(Ejs *ejs, EjsObj *workers)
 
 static int join(Ejs *ejs, EjsObj *workers, int timeout)
 {
-    MprTime     mark;
+    MprTicks    mark;
     int         result, remaining;
 
     LOG(5, "Worker.join: joining %d", ejs->joining);
     
-    mark = mprGetTime();
+    mark = mprGetTicks();
     remaining = timeout;
     do {
         ejs->joining = !reapJoins(ejs, workers);
@@ -360,7 +360,7 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
         mprWaitForEvent(ejs->dispatcher, remaining);
         assure(ejs->dispatcher->magic == MPR_DISPATCHER_MAGIC);
 
-        remaining = (int) mprGetRemainingTime(mark, timeout);
+        remaining = (int) mprGetRemainingTicks(mark, timeout);
     } while (remaining > 0 && !ejs->exception);
 
     if (ejs->exception) {
@@ -743,21 +743,20 @@ static EjsObj *workerTerminate(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **a
  */
 static EjsBoolean *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
-    MprTime     mark;
-    MprTime     remaining;
+    MprTicks    mark, remaining;
     int         timeout;
 
     timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]): MAXINT;
     if (timeout < 0) {
         timeout = MAXINT;
     }
-    mark = mprGetTime();
+    mark = mprGetTicks();
     remaining = timeout;
 
     worker->gotMessage = 0;
     do {
         mprWaitForEvent(ejs->dispatcher, (int) remaining);
-        remaining = mprGetRemainingTime(mark, timeout);
+        remaining = mprGetRemainingTicks(mark, timeout);
     } while (!worker->gotMessage && remaining > 0 && !ejs->exception);
 
     if (worker->gotMessage) {

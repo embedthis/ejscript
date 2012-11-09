@@ -20,7 +20,7 @@ typedef struct EjsLocalCache
     MprHash         *store;             /* Key/value store */
     MprMutex        *mutex;             /* Cache lock*/
     MprEvent        *timer;             /* Pruning timer */
-    MprTime         lifespan;           /* Default lifespan (msec) */
+    MprTicks        lifespan;           /* Default lifespan (msec) */
     int             resolution;         /* Frequence for pruner */
     ssize           usedMem;            /* Memory in use for keys and data */
     ssize           maxKeys;            /* Max number of keys */
@@ -35,7 +35,7 @@ typedef struct CacheItem
     EjsString   *key;                   /* Original key */
     EjsString   *data;                  /* Cache data */
     MprTime     expires;                /* Fixed expiry date. If zero, key is imortal. */
-    MprTime     lifespan;               /* Lifespan after each access to key (msec) */
+    MprTicks    lifespan;               /* Lifespan after each access to key (msec) */
     int64       version;
 } CacheItem;
 
