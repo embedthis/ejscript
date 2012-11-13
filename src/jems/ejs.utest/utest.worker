@@ -58,7 +58,7 @@ enumerable public class Test {
  */
 function assert(cond: Boolean?, message: String? = null): Void {
     if (cond) {
-        postMessage({ passed: true })
+        postMessage({ passed: true, msg: message })
     } else {
         throw new AssertError(message.toString())
     }

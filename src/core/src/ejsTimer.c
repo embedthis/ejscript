@@ -175,7 +175,7 @@ static EjsTimer *timer_start(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 static EjsObj *timer_stop(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     if (tp->event) {
-        mprRemoveEvent(tp->event);
+        mprStopContinuousEvent(tp->event);
         mprRemoveRoot(tp);
         tp->event = 0;
     }

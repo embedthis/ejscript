@@ -4312,6 +4312,13 @@ PUBLIC void mprResetBufIfEmpty(MprBuf *bp)
 }
 
 
+PUBLIC char *mprBufToString(MprBuf *bp)
+{
+    mprAddNullToBuf(bp);
+    return sclone(mprGetBufStart(bp));
+}
+
+
 #if BIT_CHAR_LEN > 1 && UNUSED
 PUBLIC void mprAddNullToWideBuf(MprBuf *bp)
 {
@@ -4887,7 +4894,7 @@ static void manageCacheItem(CacheItem *item, int flags)
 
 static int blendEnv(MprCmd *cmd, cchar **env, int flags);
 static void closeFiles(MprCmd *cmd);
-static ssize cmdCallback(MprCmd *cmd, int channel, void *data);
+static void defaultCmdCallback(MprCmd *cmd, int channel, void *data);
 static int makeChannel(MprCmd *cmd, int index);
 static int makeCmdIO(MprCmd *cmd);
 static void manageCmdService(MprCmdService *cmd, int flags);
@@ -5061,11 +5068,13 @@ static void vxCmdManager(MprCmd *cmd)
 PUBLIC void mprDestroyCmd(MprCmd *cmd)
 {
     assure(cmd);
+    slock(cmd);
     resetCmd(cmd);
     if (cmd->signal) {
         mprRemoveSignalHandler(cmd->signal);
         cmd->signal = 0;
     }
+    sunlock(cmd);
 }
 
 
@@ -5146,8 +5155,8 @@ PUBLIC void mprCloseCmdFd(MprCmd *cmd, int channel)
                 }
             }
         }
+        mprLog(6, "Close channel %d eof %d/%d, pid %d", channel, cmd->eofCount, cmd->requiredEof, cmd->pid);
     }
-    mprLog(6, "Close channel %d eof %d/%d, pid %d", channel, cmd->eofCount, cmd->requiredEof, cmd->pid);
 }
 
 
@@ -5230,7 +5239,7 @@ PUBLIC int mprRunCmdV(MprCmd *cmd, int argc, cchar **argv, cchar **envp, char **
     if (flags & MPR_CMD_ERR) {
         cmd->stderrBuf = mprCreateBuf(MPR_BUFSIZE, -1);
     }
-    mprSetCmdCallback(cmd, cmdCallback, NULL);
+    mprSetCmdCallback(cmd, defaultCmdCallback, NULL);
     rc = mprStartCmd(cmd, argc, argv, envp, flags);
 
     /*
@@ -5472,6 +5481,29 @@ PUBLIC ssize mprWriteCmd(MprCmd *cmd, int channel, char *buf, ssize bufsize)
 }
 
 
+PUBLIC bool mprAreCmdEventsEnabled(MprCmd *cmd, int channel)
+{
+    MprWaitHandler  *wp;
+
+    int mask = (channel == MPR_CMD_STDIN) ? MPR_WRITABLE : MPR_READABLE;
+    return ((wp = cmd->handlers[channel]) != 0) && (wp->desiredMask & mask);
+}
+
+
+PUBLIC void mprEnableCmdOutputEvents(MprCmd *cmd, bool on)
+{
+    int     mask;
+
+    mask = on ? MPR_READABLE : 0;
+    if (cmd->handlers[MPR_CMD_STDOUT]) {
+        mprWaitOn(cmd->handlers[MPR_CMD_STDOUT], mask);
+    }
+    if (cmd->handlers[MPR_CMD_STDERR]) {
+        mprWaitOn(cmd->handlers[MPR_CMD_STDERR], mask);
+    }
+}
+
+
 PUBLIC void mprEnableCmdEvents(MprCmd *cmd, int channel)
 {
     int mask = (channel == MPR_CMD_STDIN) ? MPR_WRITABLE : MPR_READABLE;
@@ -5492,58 +5524,53 @@ PUBLIC void mprDisableCmdEvents(MprCmd *cmd, int channel)
 #if BIT_WIN_LIKE && !WINCE
 /*
     Windows only routine to wait for I/O on the channels to the gateway and the child process.
-    NamedPipes can't use WaitForMultipleEvents (can use overlapped I/O)
-    WARNING: this should not be called from a dispatcher other than cmd->dispatcher. If so, then the calls to
-    mprWaitForEvent may occur after the event has been processed.
+    This will queue events on the dispatcher queue when I/O occurs or the process dies.
+    NOTE: NamedPipes can't use WaitForMultipleEvents, so we dedicate a thread to polling.
+    WARNING: this should not be called from a dispatcher other than cmd->dispatcher. 
  */
-static void waitForWinEvent(MprCmd *cmd, MprTicks timeout)
+PUBLIC void mprPollWinCmd(MprCmd *cmd, MprTicks timeout)
 {
-    MprTicks    mark, remaining, delay;
-    int         i, rc, nbytes;
+    MprTicks        mark, delay;
+    MprWaitHandler  *wp;
+    int             i, rc, nbytes;
 
     mark = mprGetTicks();
     if (cmd->stopped) {
         timeout = 0;
     }
+    slock(cmd);
     for (i = MPR_CMD_STDOUT; i < MPR_CMD_MAX_PIPE; i++) {
         if (cmd->files[i].handle) {
-            rc = PeekNamedPipe(cmd->files[i].handle, NULL, 0, NULL, &nbytes, NULL);
-            if (rc && nbytes > 0 || cmd->process == 0) {
-                mprQueueIOEvent(cmd->handlers[i]);
-                mprWaitForEvent(cmd->dispatcher, timeout);
-                return;
+            wp = cmd->handlers[i];
+            if (wp && wp->desiredMask & MPR_READABLE) {
+                rc = PeekNamedPipe(cmd->files[i].handle, NULL, 0, NULL, &nbytes, NULL);
+                if (rc && nbytes > 0 || cmd->process == 0) {
+                    mprQueueIOEvent(wp);
+                }
             }
         }
     }
     if (cmd->files[MPR_CMD_STDIN].handle) {
-        /* Not finalized */
-        mprQueueIOEvent(cmd->handlers[MPR_CMD_STDIN]);
-        mprWaitForEvent(cmd->dispatcher, timeout);
-        return;
+        wp = cmd->handlers[MPR_CMD_STDIN];
+        if (wp && wp->desiredMask & MPR_WRITABLE) {
+            mprQueueIOEvent(wp);
+        }
     }
     if (cmd->process) {
         delay = (cmd->eofCount == cmd->requiredEof && cmd->files[MPR_CMD_STDIN].handle == 0) ? timeout : 0;
-        mprYield(MPR_YIELD_STICKY);
-        if (WaitForSingleObject(cmd->process, (DWORD) delay) == WAIT_OBJECT_0) {
-            mprResetYield();
-            reapCmd(cmd, 0);
-            return;
-        }
-        mprResetYield();
-        if (cmd->eofCount == cmd->requiredEof) {
-            remaining = mprGetRemainingTicks(mark, timeout);
+        do {
             mprYield(MPR_YIELD_STICKY);
-            rc = WaitForSingleObject(cmd->process, (DWORD) remaining);
-            mprResetYield();
-            if (rc == WAIT_OBJECT_0) {
+            if (WaitForSingleObject(cmd->process, (DWORD) delay) == WAIT_OBJECT_0) {
+                mprResetYield();
                 reapCmd(cmd, 0);
-                return;
+                break;
+            } else {
+                mprResetYield();
             }
-            mprError("Error waiting CGI I/O, error %d", mprGetOsError());
-        }
+            delay = mprGetRemainingTicks(mark, timeout);
+        } while (cmd->eofCount == cmd->requiredEof);
     }
-    /* Stop busy waiting */
-    mprSleep(10);
+    sunlock(cmd);
 }
 #endif
 
@@ -5576,8 +5603,9 @@ PUBLIC int mprWaitForCmd(MprCmd *cmd, MprTicks timeout)
         if (mprShouldAbortRequests()) {
             break;
         }
-#if BIT_WIN_LIKE
-        waitForWinEvent(cmd, remaining);
+#if BIT_WIN_LIKE && !WINCE
+        mprPollWinCmd(cmd, remaining);
+        mprWaitForEvent(cmd->dispatcher, 10);
 #else
         mprWaitForEvent(cmd->dispatcher, remaining);
 #endif
@@ -5716,7 +5744,7 @@ static void reapCmd(MprCmd *cmd, MprSignal *sp)
     Default callback routine for the mprRunCmd routines. Uses may supply their own callback instead of this routine. 
     The callback is run whenever there is I/O to read/write to the CGI gateway.
  */
-static ssize cmdCallback(MprCmd *cmd, int channel, void *data)
+static void defaultCmdCallback(MprCmd *cmd, int channel, void *data)
 {
     MprBuf      *buf;
     ssize       len, space;
@@ -5727,7 +5755,7 @@ static ssize cmdCallback(MprCmd *cmd, int channel, void *data)
     buf = 0;
     switch (channel) {
     case MPR_CMD_STDIN:
-        return 0;
+        return;
     case MPR_CMD_STDOUT:
         buf = cmd->stdoutBuf;
         break;
@@ -5736,7 +5764,7 @@ static ssize cmdCallback(MprCmd *cmd, int channel, void *data)
         break;
     default:
         /* Child death notification */
-        return 0;
+        return;
     }
     /*
         Read and aggregate the result into a single string
@@ -5745,24 +5773,23 @@ static ssize cmdCallback(MprCmd *cmd, int channel, void *data)
     if (space < (MPR_BUFSIZE / 4)) {
         if (mprGrowBuf(buf, MPR_BUFSIZE) < 0) {
             mprCloseCmdFd(cmd, channel);
-            return 0;
+            return;
         }
         space = mprGetBufSpace(buf);
     }
     len = mprReadCmd(cmd, channel, mprGetBufEnd(buf), space);
-    mprLog(6, "cmdCallback channel %d, read len %d, pid %d, eof %d/%d", channel, len, cmd->pid, cmd->eofCount, 
+    mprLog(6, "defaultCmdCallback channel %d, read len %d, pid %d, eof %d/%d", channel, len, cmd->pid, cmd->eofCount, 
         cmd->requiredEof);
     if (len <= 0) {
         if (len == 0 || (len < 0 && !(errno == EAGAIN || errno == EWOULDBLOCK))) {
             mprCloseCmdFd(cmd, channel);
-            return len;
+            return;
         }
     } else {
         mprAdjustBufEnd(buf, len);
     }
     mprAddNullToBuf(buf);
     mprEnableCmdEvents(cmd, channel);
-    return len;
 }
 
 
@@ -8225,6 +8252,9 @@ static bool serviceDispatcher(MprDispatcher *dp);
 #define isReady(dispatcher) (dispatcher->parent == dispatcher->service->readyQ)
 #define isWaiting(dispatcher) (dispatcher->parent == dispatcher->service->waitQ)
 #define isEmpty(dispatcher) (dispatcher->eventQ->next == dispatcher->eventQ)
+#if KEEP
+static int dqlen(MprDispatcher *dq);
+#endif
 
 /************************************* Code ***********************************/
 /*
@@ -8310,6 +8340,7 @@ PUBLIC MprDispatcher *mprCreateDispatcher(cchar *name, int flags)
     dispatcher->magic = MPR_DISPATCHER_MAGIC;
     es = dispatcher->service = MPR->eventService;
     dispatcher->eventQ = mprCreateEventQueue();
+    dispatcher->currentQ = mprCreateEventQueue();
     if (flags & MPR_DISPATCHER_ENABLED) {
         queueDispatcher(es->idleQ, dispatcher);
     } else {
@@ -8339,14 +8370,9 @@ static void mprDestroyDispatcher(MprDispatcher *dispatcher)
                 mprRemoveEvent(event);
             }
         }
-#if UNUSED
-        if (dispatcher->parent != es->runQ) {
-#endif
-            dequeueDispatcher(dispatcher);
-            assure(dispatcher->parent == dispatcher);
-#if UNUSED
-        }
-#endif
+        dequeueDispatcher(dispatcher);
+        assure(dispatcher->parent == dispatcher);
+
         dispatcher->flags = MPR_DISPATCHER_DESTROYED;
         dispatcher->owner = 0;
         dispatcher->magic = MPR_DISPATCHER_FREE;
@@ -8365,7 +8391,7 @@ static void manageDispatcher(MprDispatcher *dispatcher, int flags)
     if (flags & MPR_MANAGE_MARK) {
         mprMark(dispatcher->name);
         mprMark(dispatcher->eventQ);
-        mprMark(dispatcher->current);
+        mprMark(dispatcher->currentQ);
         mprMark(dispatcher->cond);
         mprMark(dispatcher->parent);
         mprMark(dispatcher->service);
@@ -8374,6 +8400,11 @@ static void manageDispatcher(MprDispatcher *dispatcher, int flags)
         //  MOB - is this lock needed?  Surely all threads are stopped.
         lock(es);
         q = dispatcher->eventQ;
+        for (event = q->next; event != q; event = event->next) {
+            assure(event->magic == MPR_EVENT_MAGIC);
+            mprMark(event);
+        }
+        q = dispatcher->currentQ;
         for (event = q->next; event != q; event = event->next) {
             assure(event->magic == MPR_EVENT_MAGIC);
             mprMark(event);
@@ -8520,9 +8551,9 @@ PUBLIC int mprServiceEvents(MprTicks timeout, int flags)
 
 
 /*
-    Wait for an event to occur. Expect the event to signal the cond var.
-    WARNING: this will enable GC while sleeping
+    Wait for an event to occur and dispatch the event. This is the primary event dispatch routine.
     Return Return 0 if an event was signalled. Return MPR_ERR_TIMEOUT if no event was seen before the timeout.
+    WARNING: this will enable GC while sleeping
  */
 PUBLIC int mprWaitForEvent(MprDispatcher *dispatcher, MprTicks timeout)
 {
@@ -8563,7 +8594,7 @@ PUBLIC int mprWaitForEvent(MprDispatcher *dispatcher, MprTicks timeout)
     }
     unlock(es);
 
-    while (es->now < expires && !mprIsStoppingCore()) {
+    while (es->now <= expires && !mprIsStoppingCore()) {
         assure(!(dispatcher->flags & MPR_DISPATCHER_DESTROYED));
         if (runEvents) {
             makeRunnable(dispatcher);
@@ -8762,20 +8793,22 @@ static int dispatchEvents(MprDispatcher *dispatcher)
     assure(dispatcher->flags & MPR_DISPATCHER_ENABLED);
     for (count = 0; (dispatcher->flags & MPR_DISPATCHER_ENABLED) && (event = mprGetNextEvent(dispatcher)) != 0; count++) {
         assure(event->magic == MPR_EVENT_MAGIC);
-        /* Hold for GC */
-        dispatcher->current = event;
+        unlock(es);
+
+        LOG(7, "Call event %s", event->name);
+        assure(event->proc);
+        (event->proc)(event->data, event);
+
+        lock(es);
         if (event->continuous) {
             /* Reschedule if continuous */
             event->timestamp = dispatcher->service->now;
             event->due = event->timestamp + (event->period ? event->period : 1);
             mprQueueEvent(dispatcher, event);
+        } else {
+            /* Remove from currentQ - GC can then collect */
+            mprDequeueEvent(event);
         }
-        assure(event->proc);
-        unlock(es);
-        LOG(7, "Call event %s", event->name);
-        (event->proc)(event->data, event);
-        dispatcher->current = 0;
-        lock(es);
     }
     unlock(es);
     if (count && es->waiting) {
@@ -9060,6 +9093,21 @@ static int makeRunnable(MprDispatcher *dispatcher)
     unlock(es);
     return wasRunning;
 }
+
+
+#if KEEP
+static int dqlen(MprDispatcher *dq)
+{
+    MprDispatcher   *dp;
+    int             count;
+
+    count = 0;
+    for (dp = dq->next; dp != dq; dp = dp->next) {
+        count++;
+    }
+    return count;
+}
+#endif
 
 
 #if UNUSED && KEEP
@@ -9724,7 +9772,6 @@ PUBLIC void stubMmprEpoll() {}
 
 /***************************** Forward Declarations ***************************/
 
-static void dequeueEvent(MprEvent *event);
 static void initEvent(MprDispatcher *dispatcher, MprEvent *event, cchar *name, MprTicks period, void *proc, 
         void *data, int flgs);
 static void initEventQ(MprEvent *q);
@@ -9854,12 +9901,11 @@ PUBLIC void mprQueueEvent(MprDispatcher *dispatcher, MprEvent *event)
             break;
         }
     }
-    assure(event->next == 0);
-    assure(event->prev == 0);
     assure(prior->next);
     assure(prior->prev);
     
     queueEvent(prior, event);
+    event->dispatcher = dispatcher;
     es->eventCount++;
     if (dispatcher->flags & MPR_DISPATCHER_ENABLED) {
         mprScheduleDispatcher(dispatcher);
@@ -9878,7 +9924,7 @@ PUBLIC void mprRemoveEvent(MprEvent *event)
         es = dispatcher->service;
         lock(es);
         if (event->next) {
-            dequeueEvent(event);
+            mprDequeueEvent(event);
         }
         if (dispatcher->flags & MPR_DISPATCHER_ENABLED && 
                 event->due == es->willAwake && dispatcher->eventQ->next != dispatcher->eventQ) {
@@ -9948,7 +9994,7 @@ PUBLIC MprEvent *mprGetNextEvent(MprDispatcher *dispatcher)
     if (next != dispatcher->eventQ) {
         if (next->due <= es->now) {
             event = next;
-            dequeueEvent(event);
+            queueEvent(dispatcher->currentQ, event);
             assure(event->magic == MPR_EVENT_MAGIC);
         }
     }
@@ -10000,7 +10046,7 @@ static void queueEvent(MprEvent *prior, MprEvent *event)
     assure(event->dispatcher == 0 || event->dispatcher->magic == MPR_DISPATCHER_MAGIC);
 
     if (event->next) {
-        dequeueEvent(event);
+        mprDequeueEvent(event);
     }
     event->prev = prior;
     event->next = prior->next;
@@ -10012,13 +10058,13 @@ static void queueEvent(MprEvent *prior, MprEvent *event)
 /*
     Remove an event. Must be locked when called.
  */
-static void dequeueEvent(MprEvent *event)
+PUBLIC void mprDequeueEvent(MprEvent *event)
 {
     assure(event);
-    assure(event->next);
     assure(event->magic == MPR_EVENT_MAGIC);
     assure(event->dispatcher == 0 || event->dispatcher->magic == MPR_DISPATCHER_MAGIC);
 
+    /* If a continuous event is removed, next may already be null */
     if (event->next) {
         event->next->prev = event->prev;
         event->prev->next = event->next;

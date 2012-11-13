@@ -298,7 +298,8 @@ typedef struct Http {
     struct HttpStage *cacheFilter;          /**< Cache filter */
     struct HttpStage *cacheHandler;         /**< Cache filter */
     struct HttpStage *chunkFilter;          /**< Chunked transfer encoding filter */
-    struct HttpStage *cgiHandler;           /**< CGI listing handler */
+    struct HttpStage *cgiHandler;           /**< CGI handler */
+    struct HttpStage *cgiConnector;         /**< CGI connector */
     struct HttpStage *clientHandler;        /**< Client-side handler (dummy) */
     struct HttpStage *dirHandler;           /**< Directory listing handler */
     struct HttpStage *egiHandler;           /**< Embedded Gateway Interface (EGI) handler */
@@ -328,6 +329,7 @@ typedef struct Http {
     int             nextAuth;               /**< Auth object version vector */
     int             connCount;              /**< Count of connections */
     int             sessionCount;           /**< Count of sessions */
+    int             underAttack;            /**< Under DOS attack */
     void            *context;               /**< Embedding context */
     MprTicks        currentTime;            /**< When currentDate was last calculated (ticks) */
     char            *currentDate;           /**< Date string for HTTP response headers */
@@ -987,24 +989,25 @@ typedef void (*HttpQueueService)(struct HttpQueue *q);
     @stability Evolving
     @defgroup HttpQueue HttpQueue
     @see HttpConn HttpPacket HttpQueue httpDisableQueue httpDiscardQueueData httpEnableQueue httpFlushQueue httpGetQueueRoom
-        httpIsEof httpIsPacketTooBig httpIsQueueEmpty httpJoinPacketForService httpJoinPackets
+        httpIsEof httpIsPacketTooBig httpIsQueueEmpty httpIsQueueSuspended httpJoinPacketForService httpJoinPackets
         httpPutBackPacket httpPutForService httpPutPacket httpPutPacketToNext httpRemoveQueue httpResizePacket
         httpResumeQueue httpScheduleQueue httpServiceQueue httpSetQueueLimits httpSuspendQueue
         httpWillNextQueueAcceptPacket httpWillNextQueueAcceptSize httpWrite httpWriteBlock httpWriteBody httpWriteString 
  */
 typedef struct HttpQueue {
-    cchar               *owner;                 /**< Name of owning stage */
+    /* Ordered for debugging */
+    cchar               *name;                  /**< Queue name for debugging */
     ssize               count;                  /**< Bytes in queue (Does not include virt packet data) */
+    int                 flags;                  /**< Queue flags */
+    struct HttpQueue    *nextQ;                 /**< Downstream queue for next stage */
+    HttpPacket          *first;                 /**< First packet in queue (singly linked) */
+    struct HttpConn     *conn;                  /**< Connection owning this queue */
     ssize               max;                    /**< Maxiumum queue size */
     ssize               low;                    /**< Low water mark for flow control */
     ssize               packetSize;             /**< Maximum acceptable packet size */
-    int                 flags;                  /**< Queue flags */
-    HttpPacket          *first;                 /**< First packet in queue (singly linked) */
     HttpPacket          *last;                  /**< Last packet in queue (tail pointer) */
-    struct HttpQueue    *nextQ;                 /**< Downstream queue for next stage */
     struct HttpQueue    *prevQ;                 /**< Upstream queue for prior stage */
     struct HttpStage    *stage;                 /**< Stage owning this queue */
-    struct HttpConn     *conn;                  /**< Connection owning this queue */
     HttpQueueOpen       open;                   /**< Open the queue */
     HttpQueueClose      close;                  /**< Close the queue */
     HttpQueueStart      start;                  /**< Start the queue */
@@ -1105,6 +1108,14 @@ PUBLIC bool httpIsPacketTooBig(struct HttpQueue *q, HttpPacket *packet);
     @ingroup HttpQueue
  */
 PUBLIC bool httpIsQueueEmpty(HttpQueue *q);
+
+/** 
+    Test if a queue is suspended.
+    @param q Queue reference
+    @return true if the queue is suspended.
+    @ingroup HttpQueue
+ */
+PUBLIC bool httpIsQueueSuspended(HttpQueue *q);
 
 /**
     Join the packets together
@@ -1266,6 +1277,18 @@ PUBLIC bool httpVerifyQueue(HttpQueue *q);
     @ingroup HttpQueue
  */
 PUBLIC bool httpWillNextQueueAcceptPacket(HttpQueue *q, HttpPacket *packet);
+
+/** 
+    Determine if the given queue will accept this packet.
+    @description Test if the queue will accept a packet. The packet will be resized, if split is true, in an
+        attempt to get the downstream queue to accept it. 
+    @param q Queue reference
+    @param packet Packet to put
+    @param split Set to true to split the packet if required to fit into the queue.
+    @return "True" if the queue will accept the packet. 
+    @ingroup HttpQueue
+ */
+PUBLIC bool httpWillQueueAcceptPacket(HttpQueue *q, HttpPacket *packet, bool split);
 
 /** 
     Determine if the downstream queue will accept a certain amount of data.
@@ -1781,36 +1804,30 @@ PUBLIC void httpSetIOCallback(struct HttpConn *conn, HttpIOCallback fn);
 typedef struct HttpConn {
     /*  Ordered for debugability */
 
-    struct HttpRx *rx;                      /**< Rx object */
-    struct HttpTx *tx;                      /**< Tx object */
-    struct HttpEndpoint *endpoint;          /**< Endpoint object (if set - indicates server-side) */
-    struct HttpHost *host;                  /**< Host object (if relevant) */
-
     int             state;                  /**< Connection state */
     int             error;                  /**< A request error has occurred */
     int             connError;              /**< A connection error has occurred */
     int             pumping;                /**< Rre-entrancy prevention for httpPumpRequest() */
 
+    struct HttpRx   *rx;                    /**< Rx object */
+    struct HttpTx   *tx;                    /**< Tx object */
+    HttpQueue       *readq;                 /**< End of the read pipeline */
+    HttpQueue       *writeq;                /**< Start of the write pipeline */
+
+    MprSocket       *sock;                  /**< Underlying socket handle */
     HttpLimits      *limits;                /**< Service limits */
     Http            *http;                  /**< Http service object  */
-#if UNUSED
-    MprHash         *stages;                /**< Stages in pipeline */
-#endif
     MprDispatcher   *dispatcher;            /**< Event dispatcher */
     MprDispatcher   *newDispatcher;         /**< New dispatcher if using a worker thread */
     MprDispatcher   *oldDispatcher;         /**< Original dispatcher if using a worker thread */
     HttpNotifier    notifier;               /**< Connection Http state change notification callback */
-#if UNUSED
-    MprWaitHandler  *waitHandler;           /**< I/O wait handler */
-#endif
-    MprSocket       *sock;                  /**< Underlying socket handle */
 
     struct HttpQueue *serviceq;             /**< List of queues that require service for request pipeline */
     struct HttpQueue *currentq;             /**< Current queue being serviced (just for GC) */
+    struct HttpEndpoint *endpoint;          /**< Endpoint object (if set - indicates server-side) */
+    struct HttpHost *host;                  /**< Host object (if relevant) */
 
     HttpPacket      *input;                 /**< Header packet */
-    HttpQueue       *readq;                 /**< End of the read pipeline */
-    HttpQueue       *writeq;                /**< Start of the write pipeline */
     HttpQueue       *connectorq;            /**< Connector write queue */
     MprTicks        started;                /**< When the connection started (ticks) */
     MprTicks        lastActivity;           /**< Last activity on the connection */
@@ -1829,9 +1846,6 @@ typedef struct HttpConn {
     char            *protocol;              /**< HTTP protocol */
     char            *protocols;             /**< Supported web socket protocols (clients) */
     int             async;                  /**< Connection is in async mode (non-blocking) */
-#if UNUSED
-    int             canProceed;             /**< State machine should continue to process the request */
-#endif
     int             followRedirects;        /**< Follow redirects for client requests */
     int             keepAliveCount;         /**< Count of remaining Keep-Alive requests for this connection */
     int             http10;                 /**< Using legacy HTTP/1.0 */
@@ -3156,37 +3170,6 @@ PUBLIC int httpAddRouteCondition(HttpRoute *route, cchar *name, cchar *details, 
     @ingroup HttpRoute
  */
 PUBLIC void httpAddRouteErrorDocument(HttpRoute *route, int status, cchar *uri);
-
-#if UNUSED
-/**
-    Cache response content in the client by extension.
-    @description This configures default caching lifespans for documents with various extensions. This call causes
-        a Cache-Control header to be sent with the response instructing the client to cache the response content.
-        This is most useful for client caching static web content. For example: to cache "png" graphic files, use: 
-        httpAddRouteExpiry(route, when, "png");
-    @param route Route to modify
-    @param when Time to expire the item. Use mprGetTime() + milliseconds.
-    @param extensions Space or comma separated list of request extensions for which the content should be 
-        cached in the client.
-    @ingroup HttpRoute
- */
-PUBLIC void httpAddRouteExpiry(HttpRoute *route, MprTime when, cchar *extensions);
-
-/**
-    Cache response content in the client by mime type.
-    Add client cache expiry definitions to the route.
-    @description This configures default caching lifespans for documents with various mime types. The call causes
-        a Cache-Control header to be sent with the response instructing the client to cache the response content.
-        It is most useful for client caching static web content. For example: to cache "png" graphic files, use: 
-        httpAddRouteExpiry(route, when, "png");
-    @param route Route to modify
-    @param when Time to expire the item. Use mprGetTime() + milliseconds.
-    @param mimeTypes Space or command separated list of response mime types for which the content should be cached 
-        in the client.
-    @ingroup HttpRoute
- */
-PUBLIC void httpAddRouteExpiryByType(HttpRoute *route, MprTime when, cchar *mimeTypes);
-#endif
 
 /**
     Add a route filter
@@ -4588,25 +4571,23 @@ PUBLIC void httpProcessWriteEvent(HttpConn *conn);
  */
 typedef struct HttpTx {
     /* Ordered for debugging */
+    int             finalized;              /**< Request response generated and handler processing is complete */
+    int             pendingFinalize;        /**< Call httpFinalize again once the Tx pipeline is created */
+    int             finalizedConnector;     /**< Connector has finished sending the response */
+    int             finalizedOutput;        /**< Handler or surrogate has finished writing output response */
+    char            *filename;              /**< Name of a real file being served (typically pathInfo mapped) */
+    int             flags;                  /**< Response flags */
+    int             status;                 /**< HTTP response status */
+    int             responded;              /**< The request has started to respond. Some output has been initiated. */
+    int             started;                /**< Handler has started */
     MprOff          bytesWritten;           /**< Bytes written including headers */
     MprOff          entityLength;           /**< Original content length before range subsetting */
     ssize           chunkSize;              /**< Chunk size to use when using transfer encoding. Zero for unchunked. */
     cchar           *ext;                   /**< Filename extension */
     char            *etag;                  /**< Unique identifier tag */
-    char            *filename;              /**< Name of a real file being served (typically pathInfo mapped) */
     HttpStage       *handler;               /**< Final handler serving the request */
     MprOff          length;                 /**< Transmission content length */
-
-    int             flags;                  /**< Response flags */
-    int             finalized;              /**< Request response generated and handler processing is complete */
-    int             pendingFinalize;        /**< Call httpFinalize again once the Tx pipeline is created */
-    int             finalizedConnector;     /**< Connector has finished sending the response */
-    int             finalizedOutput;        /**< Handler or surrogate has finished writing output response */
-    int             responded;              /**< The request has started to respond. Some output has been initiated. */
-    int             started;                /**< Handler has started */
-    int             status;                 /**< HTTP response status */
     int             writeBlocked;           /**< Transmission writing is blocked */
-
     HttpUri         *parsedUri;             /**< Client request uri */
     char            *method;                /**< Client request method GET, HEAD, POST, DELETE, OPTIONS, PUT, TRACE */
 

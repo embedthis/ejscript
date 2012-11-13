@@ -264,7 +264,7 @@ static EjsString *cmd_readString(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 }
 
 
-static ssize cmdIOCallback(MprCmd *mc, int channel, void *data)
+static void cmdIOCallback(MprCmd *mc, int channel, void *data)
 {
     EjsCmd          *cmd;
     EjsByteArray    *ba;
@@ -281,7 +281,7 @@ static ssize cmdIOCallback(MprCmd *mc, int channel, void *data)
     case MPR_CMD_STDIN:
         ejsSendEvent(cmd->ejs, cmd->emitter, "writable", NULL, cmd);
         mprEnableCmdEvents(mc, channel);
-        return 0;
+        return;
     case MPR_CMD_STDOUT:
         buf = cmd->stdoutBuf;
         break;
@@ -290,7 +290,7 @@ static ssize cmdIOCallback(MprCmd *mc, int channel, void *data)
         break;
     default:
         /* Child death */
-        return 0;
+        return;
     }
     /*
         Read and aggregate the result into a single string
@@ -300,7 +300,7 @@ static ssize cmdIOCallback(MprCmd *mc, int channel, void *data)
     if (space < (MPR_BUFSIZE / 4)) {
         if (mprGrowBuf(buf, MPR_BUFSIZE) < 0) {
             mprCloseCmdFd(mc, channel);
-            return 0;
+            return;
         }
         space = mprGetBufSpace(buf);
     }
@@ -341,7 +341,6 @@ static ssize cmdIOCallback(MprCmd *mc, int channel, void *data)
             }
         }
     }
-    return len;
 }
 
 
