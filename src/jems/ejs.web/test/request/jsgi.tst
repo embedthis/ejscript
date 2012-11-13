@@ -28,4 +28,5 @@ server.on("readable", function (event, request: Request) {
 let http = new Http
 http.get(HTTP + "/index.html?a=b")
 http.wait()
+http.close()
 server.close()

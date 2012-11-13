@@ -46,5 +46,6 @@ http.close()
 let http = fetch(HTTP + "/redirect/relative", Http.MovedTemporarily)
 assert(http.status == Http.MovedTemporarily)
 assert(http.header("Location") == (HTTP + "/absolute/dir.html"))
+http.close()
 
 server.close()

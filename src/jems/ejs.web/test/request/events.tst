@@ -64,7 +64,6 @@ let http = new Http
 http.post(HTTP + "/post", "Some Data")
 http.wait()
 for (i = 0; i < 1000 && !events.close; i++) App.run(10, 1)
-dump(events)
 assert(events.close && events.readable && events.writable)
 assert(!(events.error))
 http.close()

@@ -104,6 +104,7 @@ static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         httpFinalize(hp->conn);
         sendHttpCloseEvent(ejs, hp);
         httpDestroyConn(hp->conn);
+        //  TODO OPT - Better to do this on demand. This consumes a conn until GC.
         hp->conn = httpCreateConn(ejs->http, NULL, ejs->dispatcher);
         httpPrepClientConn(hp->conn, 0);
         httpSetConnNotifier(hp->conn, httpEventChange);
@@ -1269,12 +1270,8 @@ static bool waitForState(EjsHttp *hp, int state, MprTicks timeout, int throw)
     char            *url;
     int             count, redirectCount, success, rc;
 
-    assure(state >= HTTP_STATE_PARSED);
-
     ejs = hp->ejs;
     conn = hp->conn;
-    assure(conn->state >= HTTP_STATE_CONNECTED);
-
     if (conn->state >= state) {
         return 1;
     }
