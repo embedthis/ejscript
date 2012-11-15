@@ -16,7 +16,7 @@ server.on("readable", function (event, request: Request) {
     case "/init":
         assert(l)
         assert(l.chunk > 1024)
-        assert(l.connReuse == 100)
+        assert(l.connReuse == 200)
         assert(l.inactivityTimeout == 60)
         assert(l.receive > 1024 * 1024)
         assert(l.requestTimeout > 1000000)
