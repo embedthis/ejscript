@@ -248,7 +248,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         if (ejsIs(ejs, documents, Path)) {
             httpSetRouteDir(route, documents->value);
         }
-#if UNUSED && KEEP
+#if KEEP
         //  MOB -- what to do with home?
         //  MOB - if removed, then the "home" property should be removed?
         home = ejsGetProperty(ejs, sp, ES_ejs_web_HttpServer_home);
