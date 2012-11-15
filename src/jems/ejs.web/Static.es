@@ -70,7 +70,7 @@ module ejs.web {
                     match = false
                 }
             }
-            if (match) {
+            if (!match) {
                 status = Http.PrecondFailed
                 /* Keep going to allow If-Modified-Since to be analysed */
             }
