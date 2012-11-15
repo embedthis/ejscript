@@ -1,6 +1,5 @@
-
 /*
- *	Basic exception handling
+  	Basic exception handling
  */
 
 state = 0

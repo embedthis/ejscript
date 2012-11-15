@@ -25,7 +25,7 @@ static EjsObj *nextIterator(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 }
 
 
-EjsObj *ejsThrowStopIteration(Ejs *ejs)
+PUBLIC EjsObj *ejsThrowStopIteration(Ejs *ejs)
 {
 #if FUTURE
     ejs->exception = ejs->iterator;
@@ -52,7 +52,7 @@ static EjsObj *iteratorConstructor(Ejs *ejs, EjsIterator *ip, int argc, EjsObj *
     }
     ip->target = argv[0];
     ip->next = (EjsFunction*) argv[1];
-    mprAssert(ip->nativeNext == 0);
+    assure(ip->nativeNext == 0);
 
     return ip;
 }
@@ -63,7 +63,7 @@ static EjsObj *iteratorConstructor(Ejs *ejs, EjsIterator *ip, int argc, EjsObj *
 /*
     Create an iterator.
  */
-EjsIterator *ejsCreateIterator(Ejs *ejs, EjsAny *obj, int length, void *nativeNext, bool deep, EjsArray *namespaces)
+PUBLIC EjsIterator *ejsCreateIterator(Ejs *ejs, EjsAny *obj, int length, void *nativeNext, bool deep, EjsArray *namespaces)
 {
     EjsIterator     *ip;
 
@@ -93,7 +93,7 @@ static void manageIterator(EjsIterator *ip, int flags)
 /*
     Create the Iterator and StopIteration types
  */
-void ejsCreateIteratorType(Ejs *ejs)
+PUBLIC void ejsCreateIteratorType(Ejs *ejs)
 {
     ejsCreateCoreType(ejs, N(EJS_ITERATOR_NAMESPACE, "Iterator"), sizeof(EjsIterator), S_Iterator,  
         ES_iterator_Iterator_NUM_CLASS_PROP, manageIterator, EJS_TYPE_OBJ);
@@ -102,7 +102,7 @@ void ejsCreateIteratorType(Ejs *ejs)
 }
 
 
-void ejsConfigureIteratorType(Ejs *ejs)
+PUBLIC void ejsConfigureIteratorType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;
@@ -123,28 +123,12 @@ void ejsConfigureIteratorType(Ejs *ejs)
     @copy   default
 
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

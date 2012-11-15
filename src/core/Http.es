@@ -242,9 +242,7 @@ module ejs {
         native function connect(method: String, uri: Uri? = null, ...data): Void
 
         /** 
-            Filename of the certificate file for this HTTP object. The certificate is only used if secure
-            communications are in use. Currently not implemented.
-            @hide
+            Filename of the file of certificates used to verify server certificates.
          */
         native function get certificate(): Path
         native function set certificate(certFile: Path): Void
@@ -287,7 +285,7 @@ module ejs {
                 will be finalized. If not set to null, $finalize() must be called after writing all data.
             @param callback Optional function to invoke on completion of the request.
           */
-        function fetch(method: String, uri: Uri, data: *, callback: Function = null) {
+        function fetch(method: String, uri: Uri, data: *, callback: Function? = null) {
             let xh = XMLHttp(this)
             xh.open(method, uri)
             xh.send(data)
@@ -306,7 +304,7 @@ module ejs {
         }
 
         /** 
-            Signals the end of any write data and flushes any buffered write data to the client. 
+            Signals the end of any write data and flushes any buffered write data to the server. 
          */
         native function finalize(): Void 
 
@@ -317,8 +315,8 @@ module ejs {
         native function get finalized(): Boolean 
 
         /** 
-            Flush request data. Calling $flush(Sream.WRITE) or $finalize() is required to ensure write data is sent to 
-            the server.
+            Flush request data. 
+            Flush will force buffered request data to be sent immediately to the server. 
             @duplicate Stream.flush
          */
         native function flush(dir: Number = Stream.WRITE): Void
@@ -391,7 +389,7 @@ FUTURE & KEEP
             @param key Header key value to lookup. The lookup is caseless, i.e. the key can be any case of mix of case.
             @return The header field value as a string or null if not known.
          */
-        native function header(key: String): String
+        native function header(key: String): String?
 
         /** 
             Response headers. Use $header() to retrieve a single header value.
@@ -407,18 +405,10 @@ FUTURE & KEEP
         native function get isSecure(): Boolean
 
         /** 
-            Private key file for this Https object. NOT currently supported.
-            @return The file name.
-            @hide
-         */
-        native function get key(): Path
-        native function set key(keyFile: Path): Void
-
-        /** 
             When the response content was last modified. Set to the the value of the response Http Last-Modified header.
             Set to null if not known.
          */
-        native function get lastModified(): Date
+        native function get lastModified(): Date?
 
         /**
             Resource limits for requests.
@@ -451,6 +441,8 @@ FUTURE & KEEP
          */
         native function off(name, observer: Function): Void
 
+        //   MOB - rename "headers" => open
+        //   MOB - rename "complete" => close
         /** 
             @duplicate Stream.on
             All events are called with the following signature.  The "this" object will be set to the instance object
@@ -464,7 +456,7 @@ FUTURE & KEEP
             @event error Issued if the request does not complete successfully. This is not issued if the request 
                 ompletes successfully but with a non 200 Http status code.
          */
-        native function on(name, observer: Function): Void
+        native function on(name, observer: Function): Http
 
         /** 
             Initiate a POST request. This call initiates a POST request. It does not wait for the request to complete. 
@@ -476,7 +468,7 @@ FUTURE & KEEP
             @param data Data objects to send with the post request. Data is written raw and is not encoded or converted. 
             @throws IOError if the request cannot be issued to the remote server.
          */
-        native function post(uri: Uri, ...data): Void
+        native function post(uri: Uri?, ...data): Void
 
         /** 
             Commence a PUT request for the current uri. See $connect() for connection details.
@@ -490,12 +482,12 @@ FUTURE & KEEP
             @param data Optional object hash of key value pairs to use as the post data.
             @throws IOError if the request cannot be issued to the remote server.
          */
-        native function put(uri: Uri, ...data): Void
+        native function put(uri: Uri?, ...data): Void
 
         /** 
             @duplicate Stream.read
          */
-        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
+        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number?
 
         /** 
             Read the response as a string. This call will block and should not be used in async mode.
@@ -503,7 +495,7 @@ FUTURE & KEEP
             @returns a string of $count characters beginning at the start of the response data.
             @throws IOError if an I/O error occurs.
          */
-        native function readString(count: Number = -1): String
+        native function readString(count: Number = -1): String?
 
         /** 
             Read the request response as an array of lines. This call will block and should not be used in async mode.
@@ -511,7 +503,7 @@ FUTURE & KEEP
             @returns an array of strings
             @throws IOError if an I/O error occurs.
          */
-        function readLines(count: Number = -1): Array {
+        function readLines(count: Number = -1): Array? {
             let stream: TextStream = TextStream(this)
             result = stream.readLines()
             return result
@@ -522,12 +514,12 @@ FUTURE & KEEP
             @returns the response content as an XML object 
             @throws IOError if an I/O error occurs.
          */
-        function readXml(): XML
+        function readXml(): XML?
             XML(response)
 
         /**
             Reset the Http object to prepare for a new request. This will discard existing headers and security 
-            credentials. It will not close the connection to TCP/IP Keep-Alive will be maintained.
+            credentials. It will not close the connection to TCP/IP and thus Keep-Alive will be maintained.
          */
         native function reset(): Void
 
@@ -553,11 +545,12 @@ FUTURE & KEEP
             Ejscript sessions are identified by a client cookie which when transmitted with subsequent requests will 
             permit the server to locate the relevant session state store for the server-side application. 
             Use: setCookie(cookie) to transmit the cookie on subsquent requests.
+            Will be a string or null if there is no session cookie defined.
          */
-        function get sessionCookie() {
+        function get sessionCookie(): String? {
             let cookie = header("Set-Cookie")
             if (cookie) {
-                return cookie.match(/(-ejs-session-=.*);/)[1]
+                return cookie.match(/(-ejs-session-=[^;]*);/)[1]
             }
             return null
         }
@@ -572,9 +565,9 @@ FUTURE & KEEP
         /** 
             Set the user credentials to use if the request requires authentication.
             @param username String user name to use. If null, then reset the current credentials.
-            @param password Un-encrypted string password to use 
+            @param password Un-encrypted string password to use. Set to null to reset the current credentials.
          */
-        native function setCredentials(username: String, password: String): Void
+        native function setCredentials(username: String?, password: String?): Void
 
         /** 
             Set a request header. Use setHeaders() to set all the headers. Use $getRequestHeaders() to retrieve and examine
@@ -608,7 +601,7 @@ FUTURE & KEEP
             Http response status code from the Http response status line, e.g. 200. Set to null if unknown.
             This command will block until the request completes.
          */
-        native function get status(): Number
+        native function get status(): Number?
 
         /** 
             Descriptive status message for the Http response. This message may come from either the HTTP response status
@@ -701,12 +694,18 @@ FUTURE & KEEP
         /** 
             The current Uri for this Http object. The Uri is used for the request URL when making a $connect call.
          */
-        native function get uri(): Uri
+        native function get uri(): Uri?
         native function set uri(newUri: Uri): Void
+
+        /**
+            Verify peer certificates
+         */
+        native function get verify(): Boolean
+        native function set verify(enable: Boolean): Void
 
         /** 
             Wait for a request to complete. This will call $finalize() if in sync mode and the request is not already 
-            finalized.
+                finalized.
             @param timeout Timeout in milliseconds to wait for the request to complete. A timeout of zero means don't block.
             A timeout of < 0 (default), means use the default request timeout.
             @return True if the request successfully completes.
@@ -787,7 +786,7 @@ FUTURE & KEEP
             @deprecated 1.0.0
          */
         # Config.Legacy
-        function get contentEncoding(): String
+        function get contentEncoding(): String?
             header("content-encoding")
 
         /** 
@@ -857,31 +856,15 @@ FUTURE & KEEP
 
 /*
     @copy   default
-    
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
-    
+
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire 
-    a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
-    this software for full details.
-    
-    This software is open source; you can redistribute it and/or modify it 
-    under the terms of the GNU General Public License as published by the 
-    Free Software Foundation; either version 2 of the License, or (at your 
-    option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
-    
-    This program is distributed WITHOUT ANY WARRANTY; without even the 
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
-    
-    This GPL license does NOT permit incorporating this software into 
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses 
-    for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
-    
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
+
     Local variables:
     tab-width: 4
     c-basic-offset: 4

@@ -29,13 +29,13 @@ static void zeroSlots(Ejs *ejs, EjsPot *obj, int count, EjsAny *null);
 /*
     Handcraft the Object, Type, Null, String, and Block types.
  */
-int ejsCreateBootstrapTypes(Ejs *ejs)
+PUBLIC int ejsCreateBootstrapTypes(Ejs *ejs)
 {
     EjsObj      *null;
     EjsPot      *immutable;
     EjsType     *blockType, *nullType, *objectType, *stringType, *typeType;
 
-    mprAssert(ejs);
+    assure(ejs);
 
     ejsCreateObjHelpers(ejs);
     ejsCreatePotHelpers(ejs);
@@ -92,7 +92,7 @@ static EjsType *createBootType(Ejs *ejs, EjsType *baseType, int slotNum, int siz
 {
     EjsType     *type;
 
-    mprAssert(0 <= slotNum && slotNum < EJS_MAX_SPECIAL);
+    assure(0 <= slotNum && slotNum < EJS_MAX_SPECIAL);
 
     if ((type = createTypeVar(ejs, NULL, 0)) == NULL) {
         return 0;
@@ -125,13 +125,13 @@ static void finishBootType(Ejs *ejs, int slotNum, EjsName qname, EjsType *type)
     returned EjsType will be an instance of EjsType. numTypeProp and numInstanceProp should be set to the number
     of non-inherited properties.
  */
-EjsType *ejsCreateType(Ejs *ejs, EjsName qname, EjsModule *up, EjsType *baseType, EjsPot *prototype, 
+PUBLIC EjsType *ejsCreateType(Ejs *ejs, EjsName qname, EjsModule *up, EjsType *baseType, EjsPot *prototype, 
         int sid, int numTypeProp, int numInstanceProp, int size, void *manager, int64 attributes)
 {
     EjsType     *type;
     
-    mprAssert(ejs);
-    mprAssert(size >= 0);
+    assure(ejs);
+    assure(size >= 0);
     
     if ((type = createTypeVar(ejs, ESV(Type), numTypeProp)) == 0) {
         return 0;
@@ -169,14 +169,14 @@ EjsType *ejsCreateType(Ejs *ejs, EjsName qname, EjsModule *up, EjsType *baseType
 /*
     Create a native built-in type. This is used for the core native classes of the language.
  */
-EjsType *ejsCreateCoreType(Ejs *ejs, EjsName qname, int size, int sid, int numTypeProp, void *manager, int64 attributes)
+PUBLIC EjsType *ejsCreateCoreType(Ejs *ejs, EjsName qname, int size, int sid, int numTypeProp, void *manager, int64 attributes)
 {
     EjsType     *type;
 
 #if BIT_DEBUG
     if (attributes & EJS_TYPE_POT) {
         if (size > sizeof(EjsPot)) {
-            mprAssert(attributes & EJS_TYPE_DYNAMIC_INSTANCES);
+            assure(attributes & EJS_TYPE_DYNAMIC_INSTANCES);
             attributes |= EJS_TYPE_DYNAMIC_INSTANCES;
         }
     }
@@ -192,7 +192,7 @@ EjsType *ejsCreateCoreType(Ejs *ejs, EjsName qname, int size, int sid, int numTy
 }
 
 
-EjsType *ejsFinalizeCoreType(Ejs *ejs, EjsName qname)
+PUBLIC EjsType *ejsFinalizeCoreType(Ejs *ejs, EjsName qname)
 {
     EjsType     *type;
 
@@ -211,7 +211,7 @@ EjsType *ejsFinalizeCoreType(Ejs *ejs, EjsName qname)
 /*
     Returns false if the type has already been finalized
  */
-EjsType *ejsFinalizeScriptType(Ejs *ejs, EjsName qname, int size, void *manager, int64 attributes)
+PUBLIC EjsType *ejsFinalizeScriptType(Ejs *ejs, EjsName qname, int size, void *manager, int64 attributes)
 {
     EjsType     *type;
 
@@ -235,7 +235,7 @@ EjsType *ejsFinalizeScriptType(Ejs *ejs, EjsName qname, int size, void *manager,
 }
 
 
-EjsType *ejsConfigureType(Ejs *ejs, EjsType *type, EjsModule *up, EjsType *baseType, int numTypeProp, int numInstanceProp, 
+PUBLIC EjsType *ejsConfigureType(Ejs *ejs, EjsType *type, EjsModule *up, EjsType *baseType, int numTypeProp, int numInstanceProp, 
     int64 attributes)
 {
     type->module = up;
@@ -259,7 +259,7 @@ EjsType *ejsConfigureType(Ejs *ejs, EjsType *type, EjsModule *up, EjsType *baseT
 
 
 
-EjsType *ejsCreateArchetype(Ejs *ejs, EjsFunction *fun, EjsPot *prototype)
+PUBLIC EjsType *ejsCreateArchetype(Ejs *ejs, EjsFunction *fun, EjsPot *prototype)
 {
     EjsName     qname;
     EjsType     *type, *baseType;
@@ -327,7 +327,7 @@ static int64 setDefaultAttributes(EjsType *type, int size, int64 attributes)
 }
 
 
-int64 ejsSetTypeAttributes(EjsType *type, int size, MprManager manager, int64 attributes)
+PUBLIC int64 ejsSetTypeAttributes(EjsType *type, int size, MprManager manager, int64 attributes)
 {
     if (attributes & EJS_TYPE_POT) {
         type->isPot = 1;
@@ -389,7 +389,7 @@ int64 ejsSetTypeAttributes(EjsType *type, int size, MprManager manager, int64 at
         type->hasInitializer = 1;
     }
     if (attributes & EJS_TYPE_MUTABLE) {
-        mprAssert(type->mutable == 0);
+        assure(type->mutable == 0);
         type->mutable = 1;
     }
     /* IMMUTABLE takes precedence */
@@ -410,7 +410,7 @@ int64 ejsSetTypeAttributes(EjsType *type, int size, MprManager manager, int64 at
 }
 
 
-void ejsSetTypeHelpers(EjsType *type, int64 attributes)
+PUBLIC void ejsSetTypeHelpers(EjsType *type, int64 attributes)
 {
     if (attributes & EJS_TYPE_BLOCK) {
         ejsApplyBlockHelpers(MPR->ejsService, type);
@@ -427,7 +427,7 @@ void ejsSetTypeHelpers(EjsType *type, int64 attributes)
 }
 
 
-EjsType *ejsGetType(Ejs *ejs, int slotNum)
+PUBLIC EjsType *ejsGetType(Ejs *ejs, int slotNum)
 {
     EjsType     *type;
 
@@ -442,13 +442,13 @@ EjsType *ejsGetType(Ejs *ejs, int slotNum)
 }
 
 
-EjsPot *ejsGetPrototype(Ejs *ejs, EjsAny *obj)
+PUBLIC EjsPot *ejsGetPrototype(Ejs *ejs, EjsAny *obj)
 {
     return TYPE(obj)->prototype;
 }
 
 
-EjsType *ejsGetTypeByName(Ejs *ejs, EjsName qname)
+PUBLIC EjsType *ejsGetTypeByName(Ejs *ejs, EjsName qname)
 {
     return ejsGetPropertyByName(ejs, ejs->global, qname);
 }
@@ -461,13 +461,13 @@ static int inheritProperties(Ejs *ejs, EjsType *type, EjsPot *obj, int destOffse
     EjsObj          *vp;
     int             i;
 
-    mprAssert(obj);
-    mprAssert(baseBlock);
-    mprAssert(count > 0);
-    mprAssert(destOffset < obj->numProp);
-    mprAssert((destOffset + count) <= obj->numProp);
-    mprAssert(srcOffset < baseBlock->numProp);
-    mprAssert((srcOffset + count) <= baseBlock->numProp);
+    assure(obj);
+    assure(baseBlock);
+    assure(count > 0);
+    assure(destOffset < obj->numProp);
+    assure((destOffset + count) <= obj->numProp);
+    assure(srcOffset < baseBlock->numProp);
+    assure((srcOffset + count) <= baseBlock->numProp);
 
     ejsCopySlots(ejs, obj, destOffset, baseBlock, srcOffset, count);
     
@@ -512,11 +512,11 @@ static void fixInstanceSize(Ejs *ejs, EjsType *type)
     property types may not yet be defined (ie. forward references. Consequently, it must fixup the type and its 
     counts of inherited properties. It must also copy inherited slots and traits.
  */
-int ejsFixupType(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom)
+PUBLIC int ejsFixupType(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom)
 {
-    mprAssert(ejs);
-    mprAssert(type);
-    mprAssert(type != baseType);
+    assure(ejs);
+    assure(type);
+    assure(type != baseType);
 
     type->needFixup = 0;
     type->baseType = baseType;
@@ -558,8 +558,8 @@ static int fixupTypeImplements(Ejs *ejs, EjsType *type, int makeRoom)
     EjsNamespace    *nsp;
     int             next, offset, itotal, icount, nextNsp;
 
-    mprAssert(type);
-    mprAssert(type->implements);
+    assure(type);
+    assure(type->implements);
 
     itotal = 0;
     for (next = 0; ((iface = mprGetNextItem(type->implements, &next)) != 0); ) {
@@ -604,15 +604,15 @@ static int fixupPrototypeProperties(Ejs *ejs, EjsType *type, EjsType *baseType, 
     EjsPot      *basePrototype;
     int         count, offset, next;
 
-    mprAssert(type != baseType);
-    mprAssert(type->prototype);
-    mprAssert(baseType->prototype);
+    assure(type != baseType);
+    assure(type->prototype);
+    assure(baseType->prototype);
     
     basePrototype = baseType->prototype;
 
     if (makeRoom) {
         count = 0;
-        mprAssert(basePrototype);
+        assure(basePrototype);
         /* Must inherit if the type has instance vars */
         if (basePrototype && baseType->hasInstanceVars) {
             count = basePrototype->numProp;
@@ -628,7 +628,7 @@ static int fixupPrototypeProperties(Ejs *ejs, EjsType *type, EjsType *baseType, 
     }
     offset = 0;
     if (baseType->hasInstanceVars) {
-        mprAssert(type->prototype->numProp >= basePrototype->numProp);
+        assure(type->prototype->numProp >= basePrototype->numProp);
         if (inheritProperties(ejs, type, type->prototype, offset, basePrototype, 0, basePrototype->numProp, 0) < 0) {
             return EJS_ERR;
         }
@@ -659,13 +659,13 @@ static int fixupPrototypeProperties(Ejs *ejs, EjsType *type, EjsType *baseType, 
 /*
     Set the native method function for a function property
  */
-int ejsBindMethod(Ejs *ejs, EjsAny *obj, int slotNum, void *nativeProc)
+PUBLIC int ejsBindMethod(Ejs *ejs, EjsAny *obj, int slotNum, void *nativeProc)
 {
     return ejsBindFunction(ejs, obj, slotNum, nativeProc);
 }
 
 
-int ejsBindAccess(Ejs *ejs, void *obj, int slotNum, void *getter, void *setter)
+PUBLIC int ejsBindAccess(Ejs *ejs, void *obj, int slotNum, void *getter, void *setter)
 {
     EjsFunction     *fun;
 
@@ -696,7 +696,7 @@ int ejsBindAccess(Ejs *ejs, void *obj, int slotNum, void *getter, void *setter)
 /*
     Set the native method function for a function property
  */
-int ejsBindFunction(Ejs *ejs, EjsAny *obj, int slotNum, void *nativeProc)
+PUBLIC int ejsBindFunction(Ejs *ejs, EjsAny *obj, int slotNum, void *nativeProc)
 {
     EjsFunction     *fun;
 
@@ -707,7 +707,7 @@ int ejsBindFunction(Ejs *ejs, EjsAny *obj, int slotNum, void *nativeProc)
     }
     fun = ejsGetProperty(ejs, obj, slotNum);
     if (fun == 0 || !ejsIsFunction(ejs, fun)) {
-        mprAssert(fun);
+        assure(fun);
         ejs->hasError = 1;
         mprError("Attempt to bind non-existant function for slot %d in \"%s\"", slotNum, mprGetName(obj));
         return EJS_ERR;
@@ -716,20 +716,20 @@ int ejsBindFunction(Ejs *ejs, EjsAny *obj, int slotNum, void *nativeProc)
         mprError("Setting a native method on a non-native function \"%@\" in \"%s\"", fun->name, mprGetName(obj));
         ejs->hasError = 1;
     }
-    mprAssert(fun->body.proc == 0);
+    assure(fun->body.proc == 0);
     fun->body.proc = nativeProc;
     fun->isNativeProc = 1;
     return 0;
 }
 
 
-void ejsBindConstructor(Ejs *ejs, EjsType *type, void *nativeProc)
+PUBLIC void ejsBindConstructor(Ejs *ejs, EjsType *type, void *nativeProc)
 {
-    mprAssert(type->hasConstructor);
-    mprAssert(type->constructor.isConstructor);
-    mprAssert(type->constructor.block.pot.isBlock);
-    mprAssert(type->constructor.block.pot.isFunction);
-    mprAssert(type->constructor.body.proc == 0);
+    assure(type->hasConstructor);
+    assure(type->constructor.isConstructor);
+    assure(type->constructor.block.pot.isBlock);
+    assure(type->constructor.block.pot.isFunction);
+    assure(type->constructor.body.proc == 0);
 
     type->constructor.body.proc = nativeProc;
     type->constructor.isNativeProc = 1;
@@ -739,7 +739,7 @@ void ejsBindConstructor(Ejs *ejs, EjsType *type, void *nativeProc)
 /*
     Define a global public function. Returns a positive slot number, otherwise a negative MPR error.
  */
-int ejsDefineGlobalFunction(Ejs *ejs, EjsString *name, EjsProc fn)
+PUBLIC int ejsDefineGlobalFunction(Ejs *ejs, EjsString *name, EjsProc fn)
 {
     EjsFunction *fun;
     EjsName     qname;
@@ -758,9 +758,9 @@ int ejsDefineGlobalFunction(Ejs *ejs, EjsString *name, EjsProc fn)
 /*
     Return true if target is an instance of type or a sub class of it.
  */
-bool ejsIsA(Ejs *ejs, EjsAny *target, EjsType *type)
+PUBLIC bool ejsIsA(Ejs *ejs, EjsAny *target, EjsType *type)
 {
-    mprAssert(type);
+    assure(type);
 
     if (!ejsIsType(ejs, type) || target == 0) {
         return 0;
@@ -772,13 +772,13 @@ bool ejsIsA(Ejs *ejs, EjsAny *target, EjsType *type)
 /*
     Return true if "target" is a "type", subclass of "type" or implements "type".
  */
-bool ejsIsTypeSubType(Ejs *ejs, EjsType *target, EjsType *type)
+PUBLIC bool ejsIsTypeSubType(Ejs *ejs, EjsType *target, EjsType *type)
 {
     EjsType     *tp, *iface;
     int         next;
 
-    mprAssert(target);
-    mprAssert(type);
+    assure(target);
+    assure(type);
     
     if (!ejsIsType(ejs, target) || !ejsIsType(ejs, type)) {
         return 0;
@@ -812,7 +812,7 @@ bool ejsIsTypeSubType(Ejs *ejs, EjsType *target, EjsType *type)
 /*
     This call is currently only used to update the type namespace after resolving a run-time namespace.
  */
-void ejsSetTypeName(Ejs *ejs, EjsType *type, EjsName qname)
+PUBLIC void ejsSetTypeName(Ejs *ejs, EjsType *type, EjsName qname)
 {
     type->qname = qname;
 }
@@ -821,7 +821,7 @@ void ejsSetTypeName(Ejs *ejs, EjsType *type, EjsName qname)
 /*
     Define namespaces for a class. Inherit the protected and internal namespaces from all base classes.
  */
-void ejsDefineTypeNamespaces(Ejs *ejs, EjsType *type)
+PUBLIC void ejsDefineTypeNamespaces(Ejs *ejs, EjsType *type)
 {
     if (type->baseType) {
         /*
@@ -839,8 +839,8 @@ static void zeroSlots(Ejs *ejs, EjsPot *obj, int count, EjsAny *null)
 {
     EjsSlot     *slots, *sp;
 
-    mprAssert(obj);
-    mprAssert(count >= 0);
+    assure(obj);
+    assure(count >= 0);
 
     slots = obj->properties->slots;
     for (sp = &slots[count - 1]; sp >= slots; sp--) {
@@ -914,7 +914,7 @@ static EjsType *createTypeVar(Ejs *ejs, EjsType *typeType, int numProp)
     ssize       typeSize;
     int         sizeHash, dynamic;
 
-    mprAssert(ejs);
+    assure(ejs);
     
     /*
         If the compiler is building itself (empty mode), then the types themselves must be dynamic. Otherwise, the type
@@ -940,7 +940,7 @@ static EjsType *createTypeVar(Ejs *ejs, EjsType *typeType, int numProp)
         return 0;
     }
     mprSetManager(type, (MprManager) manageType);
-    mprInitList(&type->constructor.block.namespaces);
+    mprInitList(&type->constructor.block.namespaces, MPR_LIST_OWN);
     obj = (EjsPot*) type;
     SET_TYPE(obj, typeType);
     SET_DYNAMIC(obj, dynamic);
@@ -968,7 +968,7 @@ static EjsType *createTypeVar(Ejs *ejs, EjsType *typeType, int numProp)
             memset(obj->properties->hash->buckets, -1, sizeHash * sizeof(int));
             start += sizeof(EjsHash) + sizeof(int) * sizeHash;
         }
-        mprAssert((start - (char*) type) <= typeSize);
+        assure((start - (char*) type) <= typeSize);
     }
     return type;
 }
@@ -992,7 +992,7 @@ static void manageDefault(EjsObj *ev, int flags)
 {
 #if BIT_DEBUG
     if (flags & MPR_MANAGE_MARK) {
-        mprAssert(!TYPE(ev)->isPot);
+        assure(!TYPE(ev)->isPot);
     }
 #endif
 }
@@ -1014,7 +1014,7 @@ static void manageType(EjsType *type, int flags)
 }
 
 
-void ejsInitTypeType(Ejs *ejs, EjsType *type)
+PUBLIC void ejsInitTypeType(Ejs *ejs, EjsType *type)
 {
     type->helpers.clone        = (EjsCloneHelper) cloneTypeVar;
     type->helpers.create       = (EjsCreateHelper) createTypeVar;
@@ -1026,28 +1026,12 @@ void ejsInitTypeType(Ejs *ejs, EjsType *type)
     @copy   default
 
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

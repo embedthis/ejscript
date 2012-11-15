@@ -45,7 +45,7 @@ server.on("readable", function (event, request: Request) {
     assert(reference == null)
     assert(referrer == null)
     assert(remoteAddress == "127.0.0.1")
-    assert(responseHeaders && responseHeaders.Server)
+    assert(responseHeaders)
     assert(route == null)
     assert(scheme == "http")
     assert(scriptName == "")
@@ -59,4 +59,5 @@ server.on("readable", function (event, request: Request) {
 let http = new Http
 http.get(HTTP + "/index.html")
 http.wait()
+http.close()
 server.close()

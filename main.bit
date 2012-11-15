@@ -9,6 +9,7 @@ Bit.load({
         'src/deps/pcre/pcre.bit',
         'src/deps/http/http.bit',
         'src/deps/sqlite/sqlite.bit',
+        'src/deps/zlib/zlib.bit',
 
         'src/libejs.bit',
         'src/cmd/cmd.bit',
@@ -22,8 +23,8 @@ Bit.load({
         'src/jems/ejs.db.sqlite/sqlite.bit',
         'src/jems/ejs.web/web.bit',
         'src/jems/ejs.template/template.bit',
-        'src/jems/ejs.tar/tar.bit',
         'src/jems/ejs.zlib/zlib.bit',
+        'src/jems/ejs.tar/tar.bit',
         'src/jems/ejs.mvc/mvc.bit',
         'src/jems/ejs.utest/utest.bit',
         'package/package.bit',
@@ -43,21 +44,24 @@ Bit.load({
         product: 'ejs',
         title: 'Embedthis Ejscript',
         company: 'Embedthis',
-        version: '2.0.0',
+        version: '2.1.0',
         buildNumber: '0',
-        sync: ['http', 'mpr', 'pcre', 'sqlite'],
+        sync: ['http', 'mpr', 'pcre', 'sqlite', 'zlib'],
         packs: [ 'bits/packs' ],
         /* Must build locally to build tools */
         platforms: [ 'local' ],
         manager: 'ejsman',
-        '+optional': [ 'doxygen', 'dsi', 'man', 'man2html', 'openssl', 'matrixssl', 'pmaker', 'sqlite', 'ssl', 'zlib', 'zip' ],
-        '+required': [ 'pcre' ]
-        'without-all': ['doxygen', 'dsi', 'man', 'man2html', 'ssl', 'zlib'],
+        ciphers: "HIGH:MEDIUM",
+        '+optional': [ 'doxygen', 'dsi', 'man', 'man2html', 'openssl', 'matrixssl', 'pmaker', 'sqlite', 'ssl', 'zip' ],
+        '+required': [ 'pcre', 'zlib' ]
+        'without-all': ['doxygen', 'dsi', 'man', 'man2html', 'ssl', 'matrixssl', 'openssl'],
+        'without-own': ['doxygen', 'dsi', 'man', 'man2html', 'matrixssl'],
     },
 
     usage: {
         assert: 'Enable program assertions (true|false)',
-        tune: 'Optimize (size|speed|balanced)',
+        static: 'Build with static linking (true|false)',
+        tune:   'Optimize (size|speed|balanced)',
     },
 
     profiles: {

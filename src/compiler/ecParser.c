@@ -29,7 +29,7 @@
 /***************************** Forward Declarations ***************************/
 
 static void     addAscToLiteral(EcCompiler *cp, EcNode *np, cchar *str, ssize len);
-static void     addCharsToLiteral(EcCompiler *cp, EcNode *np, MprChar *str, ssize len);
+static void     addCharsToLiteral(EcCompiler *cp, EcNode *np, wchar *str, ssize len);
 static void     addTokenToLiteral(EcCompiler *cp, EcNode *np);
 static void     appendDocString(EcCompiler *cp, EcNode *np, EcNode *parameter, EcNode *value);
 static EcNode   *appendNode(EcNode *top, EcNode *np);
@@ -168,12 +168,12 @@ static EcNode   *parseVariableInitialisation(EcCompiler *cp);
 static int       parseVersion(EcCompiler *cp, int parseMax);
 static EcNode   *parseWhileStatement(EcCompiler *cp);
 static EcNode   *parseWithStatement(EcCompiler *cp);
-struct EcNode   *parseXMLAttribute(EcCompiler *cp, EcNode *np);
-struct EcNode   *parseXMLAttributes(EcCompiler *cp, EcNode *np);
-struct EcNode   *parseXMLElement(EcCompiler *cp, EcNode *np);
-struct EcNode   *parseXMLElementContent(EcCompiler *cp, EcNode *np);
-struct EcNode   *parseXMLTagContent(EcCompiler *cp, EcNode *np);
-struct EcNode   *parseXMLTagName(EcCompiler *cp, EcNode *np);
+PUBLIC struct EcNode   *parseXMLAttribute(EcCompiler *cp, EcNode *np);
+PUBLIC struct EcNode   *parseXMLAttributes(EcCompiler *cp, EcNode *np);
+PUBLIC struct EcNode   *parseXMLElement(EcCompiler *cp, EcNode *np);
+PUBLIC struct EcNode   *parseXMLElementContent(EcCompiler *cp, EcNode *np);
+PUBLIC struct EcNode   *parseXMLTagContent(EcCompiler *cp, EcNode *np);
+PUBLIC struct EcNode   *parseXMLTagName(EcCompiler *cp, EcNode *np);
 static EcNode   *parseYieldExpression(EcCompiler *cp);
 static int      peekAheadToken(EcCompiler *cp, int ahead);
 static EcToken  *peekAheadTokenStruct(EcCompiler *cp, int ahead);
@@ -425,7 +425,7 @@ static EcNode *compileInput(EcCompiler *cp, cchar *path)
 {
     EcNode      *np;
 
-    mprAssert(cp);
+    assure(cp);
 
     if (ecEnterState(cp) < 0) {
         return 0;
@@ -443,7 +443,7 @@ static EcNode *compileInput(EcCompiler *cp, cchar *path)
         putToken(cp);
     }
     np = parseProgram(cp, path);
-    mprAssert(np || cp->error);
+    assure(np || cp->error);
     np = ecLeaveStateWithResult(cp, np);
     cp->fileState = 0;
 
@@ -458,12 +458,12 @@ static EcNode *compileInput(EcCompiler *cp, cchar *path)
     Compile a source file and parse all directives into the given nodes reference.
     This may be called with the input stream already setup to parse a script.
  */
-EcNode *ecParseFile(EcCompiler *cp, char *path)
+PUBLIC EcNode *ecParseFile(EcCompiler *cp, char *path)
 {
     EcNode  *np;
     int     opened;
 
-    mprAssert(path);
+    assure(path);
 
     opened = 0;
     path = mprNormalizePath(path);
@@ -488,7 +488,7 @@ EcNode *ecParseFile(EcCompiler *cp, char *path)
     This allows the caller to provide -1, -1 to match all versions.
     If both are equal, then only that version is acceptable.
  */
-EjsModule *ecLookupModule(EcCompiler *cp, EjsString *name, int minVersion, int maxVersion)
+PUBLIC EjsModule *ecLookupModule(EcCompiler *cp, EjsString *name, int minVersion, int maxVersion)
 {
     EjsModule   *mp, *best;
     int         next;
@@ -510,21 +510,21 @@ EjsModule *ecLookupModule(EcCompiler *cp, EjsString *name, int minVersion, int m
 }
 
 
-int ecAddModule(EcCompiler *cp, EjsModule *mp)
+PUBLIC int ecAddModule(EcCompiler *cp, EjsModule *mp)
 {
-    mprAssert(cp->modules);
+    assure(cp->modules);
     return mprAddItem(cp->modules, mp);
 }
 
 
-int ecRemoveModule(EcCompiler *cp, EjsModule *mp)
+PUBLIC int ecRemoveModule(EcCompiler *cp, EjsModule *mp)
 {
-    mprAssert(cp->modules);
+    assure(cp->modules);
     return mprRemoveItem(cp->modules, mp);
 }
 
 
-int ecResetModuleList(EcCompiler *cp)
+PUBLIC int ecResetModuleList(EcCompiler *cp)
 {
     cp->modules = mprCreateList(-1, 0);
     if (cp->modules == 0) {
@@ -534,7 +534,7 @@ int ecResetModuleList(EcCompiler *cp)
 }
 
 
-void ecResetParser(EcCompiler *cp)
+PUBLIC void ecResetParser(EcCompiler *cp)
 {
     cp->token = 0;
 }
@@ -652,7 +652,7 @@ static EcNode *parseXMLMarkup(EcCompiler *cp, EcNode *np)
  */
 static EcNode *parseXMLText(EcCompiler *cp, EcNode *np)
 {
-    MprChar *p;
+    wchar   *p;
     int     count;
 
     //  TODO This is discarding text white space. Need a low level getXmlToken routine
@@ -936,7 +936,7 @@ static EcNode *parseQualifiedNameIdentifier(EcCompiler *cp)
             np = createNode(cp, N_QNAME, NULL);
             vp = ejsParse(cp->ejs, cp->token->text, -1);
             //  cant set literal.var in a QNAME. clashes with "name" union structure. Not marked.
-            mprAssert(0);
+            assure(0);
             np->literal.var = vp;
             break;
 
@@ -1411,7 +1411,7 @@ static EcNode *parseFunctionExpression(EcCompiler *cp)
     /*
         The function must get linked into the top var block. It must not get processed inline at this point in the AST tree.
      */
-    mprAssert(cp->state->topVarBlockNode);
+    assure(cp->state->topVarBlockNode);
     appendNode(cp->state->topVarBlockNode, np);
 
     /*
@@ -1452,7 +1452,7 @@ static EcNode *parseFunctionExpressionBody(EcCompiler *cp)
         np = appendNode(np, ret);
     }
     if (np) {
-        mprAssert(np->kind == N_DIRECTIVES);
+        assure(np->kind == N_DIRECTIVES);
     }
     np = appendNode(np, createNode(cp, N_END_FUNCTION, NULL));
     return LEAVE(cp, np);
@@ -1579,7 +1579,7 @@ static EcNode *parseLiteralField(EcCompiler *cp)
          */
         fp->qname.name = ejsSprintf(cp->ejs, "--fun_%d-%d--", fp->seqno, (int) mprGetTime());
         fp->qname.space = cp->fileState->nspace;
-        mprAssert(cp->state->topVarBlockNode);
+        assure(cp->state->topVarBlockNode);
         appendNode(cp->state->topVarBlockNode, fp);
         /*
             Must clear the getter|setter attributes so it can be loaded without invoking the accessor.
@@ -1799,7 +1799,7 @@ static EcNode *parseElementList(EcCompiler *cp, EcNode *np)
             break;
         } else {
             if ((elt = parseLiteralElement(cp)) != 0) {
-                mprAssert(elt->kind == N_FIELD);
+                assure(elt->kind == N_FIELD);
                 elt->field.index = index;
                 if (peekToken(cp) != T_COMMA && cp->peekToken->tokenId != T_RBRACKET) {
                     getToken(cp);
@@ -1889,7 +1889,7 @@ static EcNode *parseForInExpressionList(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -1910,7 +1910,7 @@ static EcNode *parseForInExpression(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 #endif
@@ -1943,7 +1943,7 @@ static EcNode *parseForInExpression(EcCompiler *cp)
     AST
         Add data to literal.data buffer
  */
-struct EcNode *parseXMLInitializer(EcCompiler *cp)
+PUBLIC struct EcNode *parseXMLInitializer(EcCompiler *cp)
 {
     Ejs         *ejs;
     EcNode      *np;
@@ -2008,7 +2008,7 @@ struct EcNode *parseXMLInitializer(EcCompiler *cp)
         Text
     AST
  */
-struct EcNode *parseXMLElementContent(EcCompiler *cp, EcNode *np)
+PUBLIC struct EcNode *parseXMLElementContent(EcCompiler *cp, EcNode *np)
 {
     ENTER(cp);
 
@@ -2064,7 +2064,7 @@ struct EcNode *parseXMLElementContent(EcCompiler *cp, EcNode *np)
     AST
         Add data to literal.data buffer
  */
-struct EcNode *parseXMLElement(EcCompiler *cp, EcNode *np)
+PUBLIC struct EcNode *parseXMLElement(EcCompiler *cp, EcNode *np)
 {
     ENTER(cp);
 
@@ -2115,7 +2115,7 @@ struct EcNode *parseXMLElement(EcCompiler *cp, EcNode *np)
     AST
         Add data to literal.data buffer
  */
-struct EcNode *parseXMLTagContent(EcCompiler *cp, EcNode *np)
+PUBLIC struct EcNode *parseXMLTagContent(EcCompiler *cp, EcNode *np)
 {
     ENTER(cp);
 
@@ -2141,7 +2141,7 @@ struct EcNode *parseXMLTagContent(EcCompiler *cp, EcNode *np)
     AST
         Add data to literal.data buffer
  */
-struct EcNode *parseXMLTagName(EcCompiler *cp, EcNode *np)
+PUBLIC struct EcNode *parseXMLTagName(EcCompiler *cp, EcNode *np)
 {
     ENTER(cp);
 
@@ -2171,7 +2171,7 @@ struct EcNode *parseXMLTagName(EcCompiler *cp, EcNode *np)
     AST
         Add data to literal.data buffer
  */
-struct EcNode *parseXMLAttributes(EcCompiler *cp, EcNode *np)
+PUBLIC struct EcNode *parseXMLAttributes(EcCompiler *cp, EcNode *np)
 {
     int         tid;
 
@@ -2208,7 +2208,7 @@ struct EcNode *parseXMLAttributes(EcCompiler *cp, EcNode *np)
     AST
         Add data to literal.data buffer
  */
-struct EcNode *parseXMLAttribute(EcCompiler *cp, EcNode *np)
+PUBLIC struct EcNode *parseXMLAttribute(EcCompiler *cp, EcNode *np)
 {
     ENTER(cp);
 
@@ -2476,7 +2476,7 @@ static EcNode *parseRegularExpression(EcCompiler *cp)
 {
     EcNode      *np;
     EjsObj      *vp;
-    MprChar     *prefix;
+    wchar       *prefix;
     int         id;
 
     ENTER(cp);
@@ -2816,7 +2816,7 @@ static EcNode *parseSliceExpression(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 #endif
@@ -3360,7 +3360,7 @@ static EcNode *parseMultiplicativeExpression(EcCompiler *cp)
             return LEAVE(cp, np);
         }
     }
-    mprAssert(cp > 0);
+    assure(cp > 0);
     return LEAVE(cp, np);
 }
 
@@ -3878,7 +3878,7 @@ static EcNode *parseLetBindingList(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -3899,7 +3899,7 @@ static EcNode *parseNonemptyLetBindingList(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 #endif
@@ -3920,7 +3920,7 @@ static EcNode *parseYieldExpression(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -4079,7 +4079,7 @@ static EcNode *parseCompoundAssignmentOperator(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 #endif
@@ -4103,7 +4103,7 @@ static EcNode *parseListExpression(EcCompiler *cp)
     ENTER(cp);
 
     np = createNode(cp, N_EXPRESSIONS, NULL);
-    mprAssert(np);
+    assure(np);
     do {
         np = appendNode(np, parseAssignmentExpression(cp));
     } while (np && getToken(cp) == T_COMMA);
@@ -4373,32 +4373,10 @@ static EcNode *parseTypedPattern(EcCompiler *cp)
 
     ENTER(cp);
 
-    switch (peekToken(cp)) {
-#if UNUSED
-    case T_LBRACKET:
-        np = parseArrayPattern(cp);
-        if (peekToken(cp) == T_COLON) {
-            getToken(cp);
-            np->typeNode = linkNode(np, parseTypeExpression(cp));
-        }
-        break;
-
-    case T_LBRACE:
-        np = parseObjectPattern(cp);
-        if (peekToken(cp) == T_COLON) {
-            getToken(cp);
-            np->typeNode = linkNode(np, parseTypeExpression(cp));
-        }
-        break;
-#endif
-
-    default:
-        np = parseSimplePattern(cp);
-        if (peekToken(cp) == T_COLON) {
-            getToken(cp);
-            np->typeNode = linkNode(np, parseNullableTypeExpression(cp));
-        }
-        break;
+    np = parseSimplePattern(cp);
+    if (peekToken(cp) == T_COLON) {
+        getToken(cp);
+        np->typeNode = linkNode(np, parseNullableTypeExpression(cp));
     }
     if (np && np->kind != N_QNAME) {
         return LEAVE(cp, unexpected(cp));
@@ -4436,13 +4414,19 @@ static EcNode *parseNullableTypeExpression(EcCompiler *cp)
     default:
         np = parseTypeExpression(cp);
         if (peekToken(cp) == T_QUERY) {
+            /* Allow Nulls */
             getToken(cp);
         } else if (cp->peekToken->tokenId == T_LOGICAL_NOT) {
+            /* Don't allow nulls */
             getToken(cp);
             np->attributes |= EJS_TRAIT_THROW_NULLS;
         } else if (cp->peekToken->tokenId == T_TILDE) {
+            /* Cast nulls to type */
             getToken(cp);
             np->attributes |= EJS_TRAIT_CAST_NULLS;
+        } else {
+            /* Default is same as Type! */
+            np->attributes |= EJS_TRAIT_THROW_NULLS;
         }
         break;
     }
@@ -4535,7 +4519,7 @@ static EcNode *parseFunctionType(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -4558,7 +4542,7 @@ static EcNode *parseFunctionSignatureType(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -4578,7 +4562,7 @@ static EcNode *parseParametersType(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -4599,7 +4583,7 @@ static EcNode *parseNonemptyParametersType(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -4619,7 +4603,7 @@ static EcNode *parseParameterInitType(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -4640,7 +4624,7 @@ static EcNode *parseRestParameterType(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -4660,7 +4644,7 @@ static EcNode *parseUnionType(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -4680,7 +4664,7 @@ static EcNode *parseRecordType(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -4700,7 +4684,7 @@ static EcNode *parseFieldTypeList(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -4720,7 +4704,7 @@ static EcNode *parseNonemptyFieldTypeList(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -4739,7 +4723,7 @@ static EcNode *parseFieldType(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 #endif
@@ -4791,7 +4775,7 @@ static EcNode *parseElementTypeList(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -4812,7 +4796,7 @@ static EcNode *parseTypeExpressionList(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 #endif
@@ -5168,7 +5152,7 @@ static EcNode *parseSemicolon(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 #endif
@@ -5458,7 +5442,7 @@ static EcNode *parseCaseElementsPrefix(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 #endif
@@ -5518,7 +5502,7 @@ static EcNode *parseTypeCaseElements(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -5538,7 +5522,7 @@ static EcNode *parseTypeCaseElement(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 #endif
@@ -5770,14 +5754,14 @@ static EcNode *parseForStatement(EcCompiler *cp)
         if (each) {
             return LEAVE(cp, parseError(cp, "\"for each\" can only be used with \"for .. in\""));
         }
-        mprAssert(np != body);
+        assure(np != body);
         np->forLoop.body = linkNode(np, body);
     }
 
     /*
         Now make the for loop node a child of the outer block. Block will initially be a child of np, so must re-parent first
      */
-    mprAssert(block != np);
+    assure(block != np);
     np = appendNode(block, np);
     return LEAVE(cp, np);
 }
@@ -5800,7 +5784,7 @@ static EcNode *parseForInitializer(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -5820,7 +5804,7 @@ static EcNode *parseForInBinding(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 #endif
@@ -5866,7 +5850,7 @@ static EcNode *parseLetStatement(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -6121,11 +6105,11 @@ static EcNode *parseCatchClause(EcCompiler *cp)
             return LEAVE(cp, unexpected(cp));
         }
         if (varDef) {
-            mprAssert(varDef->kind == N_VAR_DEFINITION);
+            assure(varDef->kind == N_VAR_DEFINITION);
             varDef->def.varKind = KIND_LET;
             arg = varDef->left;
             removeNode(varDef, arg);
-            mprAssert(arg->kind == N_QNAME);
+            assure(arg->kind == N_QNAME);
             arg->kind = N_VAR;
             arg->name.varKind = KIND_LET;
             arg->kindName = "n_var";
@@ -6959,7 +6943,7 @@ static EcNode *parseNamespaceAttribute(EcCompiler *cp)
             /*
                 This is a N_DOT expression compile-time constant expression.
              */
-            mprAssert(0);
+            assure(0);
 #if UNUSED
             np->qualifierNode = linkNode(np, qualifier);
 #endif
@@ -7123,7 +7107,7 @@ static EcNode *parseVariableBinding(EcCompiler *cp, EcNode *np, EcNode *attribut
     case T_LBRACE:
         initialize = parsePattern(cp);
         for (next = 0; (elt = mprGetNextItem(initialize->children, &next)) != 0 && !cp->error; ) {
-            mprAssert(elt->kind == N_FIELD);
+            assure(elt->kind == N_FIELD);
             if (elt->field.expr->kind != N_QNAME) {
                 return LEAVE(cp, parseError(cp, "Bad destructuring variable declaration"));
             }
@@ -7144,11 +7128,10 @@ static EcNode *parseVariableBinding(EcCompiler *cp, EcNode *np, EcNode *attribut
         break;
 
     default:
-        var = parseTypedIdentifier(cp);
-        if (var == 0) {
+        if ((var = parseTypedIdentifier(cp)) == 0) {
             return LEAVE(cp, var);
         }
-        mprAssert(var->qname.name);
+        assure(var->qname.name);
         if (var->kind != N_QNAME) {
             return LEAVE(cp, parseError(cp, "Bad variable name"));
         }
@@ -7529,7 +7512,7 @@ static EcNode *parseFunctionSignature(EcCompiler *cp, EcNode *np)
         return np;
     }
     ENTER(cp);
-    mprAssert(np->kind == N_FUNCTION);
+    assure(np->kind == N_FUNCTION);
 
     if (getToken(cp) != T_LPAREN) {
         return LEAVE(cp, parseError(cp, "Expecting \"(\""));
@@ -7576,7 +7559,7 @@ static EcNode *parseTypeParameters(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -7596,7 +7579,7 @@ static EcNode *parseTypeParameterList(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 #endif
@@ -7684,7 +7667,7 @@ static EcNode *parseParameterInit(EcCompiler *cp, EcNode *args)
          */
         assignOp = createNode(cp, N_ASSIGN_OP, NULL);
         assignOp = appendNode(assignOp, np->left);
-        mprAssert(mprGetListLength(np->children) == 1);
+        assure(mprGetListLength(np->children) == 1);
 
         mprRemoveItemAtPos(np->children, 0);
         assignOp = appendNode(assignOp, parseNonAssignmentExpression(cp));
@@ -7789,10 +7772,10 @@ static EcNode *parseRestParameter(EcCompiler *cp)
                 varNode = np->left->left;
             } else {
                 varNode = 0;
-                mprAssert(0);
+                assure(0);
             }
             if (varNode) {
-                mprAssert(varNode->kind == N_QNAME);
+                assure(varNode->kind == N_QNAME);
                 varNode->name.isRest = 1;
             }
         }
@@ -7864,7 +7847,7 @@ static EcNode *parseConstructorSignature(EcCompiler *cp, EcNode *np)
     }
     ENTER(cp);
 
-    mprAssert(np->kind == N_FUNCTION);
+    assure(np->kind == N_FUNCTION);
 
     if (getToken(cp) != T_LPAREN) {
         return LEAVE(cp, parseError(cp, "Expecting \"(\""));
@@ -7931,7 +7914,7 @@ static EcNode *parseInitializerList(EcCompiler *cp, EcNode *np)
 {
     ENTER(cp);
 
-    mprAssert(np && np->kind == N_DIRECTIVES);
+    assure(np && np->kind == N_DIRECTIVES);
 
     while (1) {
         np = appendNode(np, parseInitializer(cp));
@@ -8275,7 +8258,7 @@ static EcNode *parseClassBody(EcCompiler *cp)
     np = parseBlock(cp);
     if (np) {
         np = np->left;
-        mprAssert(np->kind == N_DIRECTIVES);
+        assure(np->kind == N_DIRECTIVES);
     }
     return LEAVE(cp, np);
 }
@@ -8394,7 +8377,7 @@ static EcNode *parseInterfaceBody(EcCompiler *cp)
     np = parseBlock(cp);
     if (np) {
         np = np->left;
-        mprAssert(np->kind == N_DIRECTIVES);
+        assure(np->kind == N_DIRECTIVES);
     }
 
     return LEAVE(cp, np);
@@ -8434,7 +8417,7 @@ static EcNode *parseNamespaceDefinition(EcCompiler *cp, EcNode *attributeNode)
     if ((varNode = parseIdentifier(cp)) == 0) {
         return LEAVE(cp, varNode);
     }
-    mprAssert(varNode->kind == N_QNAME);
+    assure(varNode->kind == N_QNAME);
     varNode->kind = N_VAR;
     varNode->kindName = "n_var";
     varNode->name.varKind = KIND_VAR;
@@ -8551,7 +8534,7 @@ static EcNode *parseTypeInitialisation(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -8608,7 +8591,7 @@ static EcNode *parseModuleDefinition(EcCompiler *cp)
         isDefault = 1;
         nspace = cp->fileState->nspace;
     }
-    mprAssert(nspace);
+    assure(nspace);
     
     if (isDefault) {
         /*
@@ -8636,7 +8619,7 @@ static EcNode *parseModuleDefinition(EcCompiler *cp)
     for (next = 0; (name = mprGetNextItem(cp->require, &next)) != 0; ) {
         body = insertNode(body, createNamespaceNode(cp, ejsCreateStringFromAsc(cp->ejs, name), 0, 1), pos++);
     }
-    mprAssert(body->kind == N_BLOCK);
+    assure(body->kind == N_BLOCK);
     np = appendNode(np, body);
     return LEAVE(cp, np);
 }
@@ -8815,7 +8798,7 @@ static EcNode *parseRequireItems(EcCompiler *cp, EcNode *np)
  */
 static int parseVersion(EcCompiler *cp, int parseMax)
 {
-    MprChar     *str, *p, *next;
+    wchar       *str, *p, *next;
     int         major, minor, patch;
 
     if (parseMax) {
@@ -9005,7 +8988,7 @@ static EcNode *parsePragmaItem(EcCompiler *cp)
             } else {
                 ns = parsePrimaryName(cp);
                 if (ns) {
-                    mprAssert(ns->qname.name);
+                    assure(ns->qname.name);
                     np = createNode(cp, N_USE_NAMESPACE, ns->qname.name);
                 }
             }
@@ -9141,7 +9124,7 @@ static EcNode *parseProgram(EcCompiler *cp, cchar *path)
         np->qname.name = ejsCreateStringFromAsc(cp->ejs, EJS_INTERNAL_NAMESPACE);
     }
     state->nspace = np->qname.name;
-    mprAssert(state->nspace);
+    assure(state->nspace);
         
     cp->fileState->nspace = state->nspace;
 
@@ -9202,7 +9185,7 @@ static EcNode *parseBreak(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -9213,7 +9196,7 @@ static EcNode *parseContinue(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -9224,7 +9207,7 @@ static EcNode *parseDo(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -9235,7 +9218,7 @@ static EcNode *parseFor(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -9246,7 +9229,7 @@ static EcNode *parseIf(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -9257,7 +9240,7 @@ static EcNode *parseLet(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -9268,7 +9251,7 @@ static EcNode *parseReturn(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -9279,7 +9262,7 @@ static EcNode *parseSwitch(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -9299,7 +9282,7 @@ static EcNode *parseTry(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -9310,7 +9293,7 @@ static EcNode *parseWhile(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -9321,7 +9304,7 @@ static EcNode *parseWith(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -9332,7 +9315,7 @@ static EcNode *parseVarDefinition(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -9343,7 +9326,7 @@ static EcNode *parseFunctionDefinition(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 
@@ -9354,7 +9337,7 @@ static EcNode *parseInclude(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 #endif
@@ -9367,7 +9350,7 @@ static EcNode *parseSuper(EcCompiler *cp)
 
     ENTER(cp);
     np = 0;
-    mprAssert(0);
+    assure(0);
     return LEAVE(cp, np);
 }
 #endif
@@ -9376,11 +9359,11 @@ static EcNode *parseSuper(EcCompiler *cp)
 /*
     Recover from a parse error to allow parsing to continue.
  */
-EcNode *ecResetError(EcCompiler *cp, EcNode *np, bool eatInput)
+PUBLIC EcNode *ecResetError(EcCompiler *cp, EcNode *np, bool eatInput)
 {
     int     tid;
 
-    mprAssert(cp->error);
+    assure(cp->error);
 
     if (cp->error) {
         if (!cp->fatalError && cp->errorCount < EC_MAX_ERRORS) {
@@ -9426,7 +9409,7 @@ static char *detab(EcCompiler *cp, char *src)
 
     dest = ejsAlloc(cp->ejs, strlen(src) + 1 + (tabCount * cp->tabWidth));
     if (dest == 0) {
-        mprAssert(dest);
+        assure(dest);
         return src;
     }
     for (p = dest; *src; src++) {
@@ -9449,7 +9432,7 @@ static char *detab(EcCompiler *cp, char *src)
 #if BIT_DEBUG
 static void updateDebug(EcCompiler *cp)
 {
-    mprAssert(cp);
+    assure(cp);
 
     if (cp->token) {
         cp->token->name = tokenNames[cp->token->tokenId];
@@ -9492,7 +9475,7 @@ static int peekAheadToken(EcCompiler *cp, int ahead)
 }
 
 
-int ecPeekToken(EcCompiler *cp)
+PUBLIC int ecPeekToken(EcCompiler *cp)
 {
     return peekAheadToken(cp, 1);
 }
@@ -9506,7 +9489,7 @@ static EcToken *peekAheadTokenStruct(EcCompiler *cp, int ahead)
     EcToken     *token, *currentToken, *tokens[EC_MAX_LOOK_AHEAD];
     int         i;
 
-    mprAssert(ahead > 0 && ahead <= EC_MAX_LOOK_AHEAD);
+    assure(ahead > 0 && ahead <= EC_MAX_LOOK_AHEAD);
     if (ahead == 1) {
         /* Fast look ahead of one token.  */
         if (cp->putback) {
@@ -9521,7 +9504,7 @@ static EcToken *peekAheadTokenStruct(EcCompiler *cp, int ahead)
     currentToken = ecTakeToken(cp);
     for (i = 0; i < ahead; i++) {
         if (ecGetToken(cp) < 0) {
-            mprAssert(0);
+            assure(0);
             return 0;
         }
         tokens[i] = ecTakeToken(cp);
@@ -9601,11 +9584,11 @@ static void appendDocString(EcCompiler *cp, EcNode *np, EcNode *parameter, EcNod
     }
     if (np->doc) {
         found = 0;
-        mprSprintf(arg, sizeof(arg), "@param %@ ", parameter->qname.name);
+        fmt(arg, sizeof(arg), "@param %@ ", parameter->qname.name);
         if (ejsContainsAsc(ejs, np->doc, arg) >= 0 || ejsContainsAsc(ejs, np->doc, "@duplicate") >= 0) {
             found++;
         } else {
-            mprSprintf(arg, sizeof(arg), "@params %@ ", parameter->qname.name);
+            fmt(arg, sizeof(arg), "@params %@ ", parameter->qname.name);
             if (ejsContainsAsc(ejs, np->doc, arg) >= 0) {
                 found++;
             }
@@ -9637,7 +9620,7 @@ static void copyDocString(EcCompiler *cp, EcNode *np, EcNode *from)
     This is used outside the parser. It must reset the line number as the
     node will not correspond to any actual source code line;
  */
-EcNode *ecCreateNode(EcCompiler *cp, int kind)
+PUBLIC EcNode *ecCreateNode(EcCompiler *cp, int kind)
 {
     EcNode  *node;
 
@@ -9675,7 +9658,7 @@ static EcNode *createNamespaceNode(EcCompiler *cp, EjsString *name, bool isDefau
 /*
     This is used outside the parser.
  */
-EcNode *ecLinkNode(EcNode *np, EcNode *child)
+PUBLIC EcNode *ecLinkNode(EcNode *np, EcNode *child)
 {
     return linkNode(np, child);
 }
@@ -9686,9 +9669,9 @@ EcNode *ecLinkNode(EcNode *np, EcNode *child)
  */
 static EcNode *createBinaryNode(EcCompiler *cp, EcNode *lhs, EcNode *rhs, EcNode *parent)
 {
-    mprAssert(cp);
-    mprAssert(lhs);
-    mprAssert(parent);
+    assure(cp);
+    assure(lhs);
+    assure(parent);
 
     /*
         appendNode will return the parent if no error
@@ -9702,9 +9685,9 @@ static EcNode *createBinaryNode(EcCompiler *cp, EcNode *lhs, EcNode *rhs, EcNode
 
 static EcNode *createAssignNode(EcCompiler *cp, EcNode *lhs, EcNode *rhs, EcNode *parent)
 {
-    mprAssert(cp);
-    mprAssert(lhs);
-    mprAssert(parent);
+    assure(cp);
+    assure(lhs);
+    assure(parent);
 
     return appendNode(appendNode(parent, lhs), rhs);
 }
@@ -9722,7 +9705,7 @@ static EcNode *appendNode(EcNode *np, EcNode *child)
     if (child == 0 || np == 0) {
         return 0;
     }
-    mprAssert(np != child);
+    assure(np != child);
     list = np->children;
 
     if ((index = mprAddItem(np->children, child)) < 0) {
@@ -9738,13 +9721,13 @@ static EcNode *appendNode(EcNode *np, EcNode *child)
 }
 
 
-EcNode *ecAppendNode(EcNode *np, EcNode *child)
+PUBLIC EcNode *ecAppendNode(EcNode *np, EcNode *child)
 {
     return appendNode(np, child);
 }
 
 
-EcNode *ecChangeNode(EcCompiler *cp, EcNode *np, EcNode *oldNode, EcNode *newNode)
+PUBLIC EcNode *ecChangeNode(EcCompiler *cp, EcNode *np, EcNode *oldNode, EcNode *newNode)
 {
     EcNode      *child;
     int         next;
@@ -9761,7 +9744,7 @@ EcNode *ecChangeNode(EcCompiler *cp, EcNode *np, EcNode *oldNode, EcNode *newNod
             return np;
         }
     }
-    mprAssert(0);
+    assure(0);
     return 0;
 }
 
@@ -9819,7 +9802,7 @@ static EcNode *removeNode(EcNode *np, EcNode *child)
         return 0;
     }
     index = mprRemoveItem(np->children, child);
-    mprAssert(index >= 0);
+    assure(index >= 0);
 
     if (index == 0) {
         np->left = np->right;
@@ -9888,7 +9871,7 @@ static void applyAttributes(EcCompiler *cp, EcNode *np, EcNode *attributeNode, E
             nspace = cp->blockState->nspace;
         }
     }
-    mprAssert(nspace);
+    assure(nspace);
 
     if (state->inFunction) {
         ;
@@ -9906,11 +9889,11 @@ static void applyAttributes(EcCompiler *cp, EcNode *np, EcNode *attributeNode, E
             nspace = cp->fileState->nspace;
         }
     }
-    mprAssert(nspace);
+    assure(nspace);
     np->qname.space = nspace;
 
     mprLog(7, "Parser apply attributes namespace = \"%@\", current line %w", nspace, np->loc.source);
-    mprAssert(np->qname.space);
+    assure(np->qname.space);
     np->attributes |= attributes;
 }
 
@@ -9921,19 +9904,19 @@ static void addTokenToLiteral(EcCompiler *cp, EcNode *np)
 
     if (np) {
         buf = np->literal.data;
-        mprPutBlockToBuf(buf, (char*) cp->token->text, cp->token->length * sizeof(MprChar));
+        mprPutBlockToBuf(buf, (char*) cp->token->text, cp->token->length * sizeof(wchar));
         mprAddNullToBuf(buf);
     }
 }
 
 
-static void addCharsToLiteral(EcCompiler *cp, EcNode *np, MprChar *str, ssize count)
+static void addCharsToLiteral(EcCompiler *cp, EcNode *np, wchar *str, ssize count)
 {
     MprBuf      *buf;
 
     if (np) {
         buf = np->literal.data;
-        mprPutBlockToBuf(buf, (char*) str, count * sizeof(MprChar));
+        mprPutBlockToBuf(buf, (char*) str, count * sizeof(wchar));
         mprAddNullToBuf(buf);
     }
 }
@@ -9942,14 +9925,14 @@ static void addCharsToLiteral(EcCompiler *cp, EcNode *np, MprChar *str, ssize co
 static void addAscToLiteral(EcCompiler *cp, EcNode *np, cchar *str, ssize count)
 {
     MprBuf      *buf;
-    MprChar     c;
+    wchar       c;
     int         i;
 
     if (np) {
         buf = np->literal.data;
         for (i = 0; i < count; i++) {
             c = (uchar) str[i];
-            mprPutBlockToBuf(buf, (char*) &c, sizeof(MprChar));
+            mprPutBlockToBuf(buf, (char*) &c, sizeof(wchar));
         }
         mprAddNullToBuf(buf);
     }
@@ -9959,7 +9942,7 @@ static void addAscToLiteral(EcCompiler *cp, EcNode *np, cchar *str, ssize count)
 /*
     Reset the input. Eat all tokens, clear errors, exceptions and the result value. Used by ejs for console input.
  */
-void ecResetInput(EcCompiler *cp)
+PUBLIC void ecResetInput(EcCompiler *cp)
 {
     Ejs         *ejs;
     EcToken     *tp;
@@ -9975,31 +9958,31 @@ void ecResetInput(EcCompiler *cp)
 }
 
 
-void ecSetOptimizeLevel(EcCompiler *cp, int level)
+PUBLIC void ecSetOptimizeLevel(EcCompiler *cp, int level)
 {
     cp->optimizeLevel = level;
 }
 
 
-void ecSetWarnLevel(EcCompiler *cp, int level)
+PUBLIC void ecSetWarnLevel(EcCompiler *cp, int level)
 {
     cp->warnLevel = level;
 }
 
 
-void ecSetStrictMode(EcCompiler *cp, int enabled)
+PUBLIC void ecSetStrictMode(EcCompiler *cp, int enabled)
 {
     cp->strict = enabled;
 }
 
 
-void ecSetTabWidth(EcCompiler *cp, int width)
+PUBLIC void ecSetTabWidth(EcCompiler *cp, int width)
 {
     cp->tabWidth = width;
 }
 
 
-void ecSetOutputFile(EcCompiler *cp, cchar *outputFile)
+PUBLIC void ecSetOutputFile(EcCompiler *cp, cchar *outputFile)
 {
     if (outputFile) {
         //  UNICODE
@@ -10008,7 +9991,7 @@ void ecSetOutputFile(EcCompiler *cp, cchar *outputFile)
 }
 
 
-void ecSetOutputDir(EcCompiler *cp, cchar *outputDir)
+PUBLIC void ecSetOutputDir(EcCompiler *cp, cchar *outputDir)
 {
     if (outputDir) {
         //  UNICODE
@@ -10017,7 +10000,7 @@ void ecSetOutputDir(EcCompiler *cp, cchar *outputDir)
 }
 
 
-void ecSetCertFile(EcCompiler *cp, cchar *certFile)
+PUBLIC void ecSetCertFile(EcCompiler *cp, cchar *certFile)
 {
     //  UNICODE
     cp->certFile = sclone(certFile);
@@ -10036,7 +10019,7 @@ static EjsString *tokenString(EcCompiler *cp)
 }
 
 
-void ecMarkLocation(EcLocation *loc)
+PUBLIC void ecMarkLocation(EcLocation *loc)
 {
     mprMark(loc->source);
     mprMark(loc->filename);
@@ -10269,7 +10252,7 @@ static void manageNode(EcNode *node, int flags)
             break;
 
         default:
-            mprAssert(0);
+            assure(0);
         }
     }
 }
@@ -10286,7 +10269,7 @@ static EcNode *createNode(EcCompiler *cp, int kind, EjsString *name)
     EcNode      *np;
     EcToken     *token;
 
-    mprAssert(cp->state);
+    assure(cp->state);
 
     if ((np = mprAllocObj(EcNode, manageNode)) == 0) {
         return 0;
@@ -10330,7 +10313,7 @@ static EcNode *createNode(EcCompiler *cp, int kind, EjsString *name)
 /*
     Report an error. Return a null EcNode so callers can report an error and return the null in one statement.
  */
-EcNode *parseError(EcCompiler *cp, cchar *fmt, ...)
+static EcNode *parseError(EcCompiler *cp, cchar *fmt, ...)
 {
     EcToken     *tp;
     va_list     args;
@@ -10350,7 +10333,7 @@ EcNode *parseError(EcCompiler *cp, cchar *fmt, ...)
 
 
 #if UNUSED
-EcNode *ecParseWarning(EcCompiler *cp, cchar *fmt, ...)
+PUBLIC EcNode *ecParseWarning(EcCompiler *cp, cchar *fmt, ...)
 {
     EcToken     *tp;
     va_list     args;
@@ -10379,7 +10362,7 @@ static void dummy(int junk) { }
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
     a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
+    by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details.
 
     This software is open source; you can redistribute it and/or modify it

@@ -28,7 +28,7 @@ Bit.load({
 
     settings: {
         /* Order matters */
-        '+required': [ 'vxworks', 'compiler', 'link' ],
+        '+required': [ 'vxworks', 'compiler', 'lib', 'link' ],
     },
 
     defaults: {
@@ -58,23 +58,32 @@ Bit.load({
                 } else if (arch.match(/^i.86$|^x86$/)) {
                     cpu = 'PENTIUM'
                 } else {
+                    /* Set to compiles don't fail */
                     cpu = arch.toUpper()
+                    if (arch == 'mips') {
+                        cpu = 'mips32'
+                    } else if (arch == 'arm') {
+                        cpu = 'ARM7TDMI'
+                    }
                 }
+                cpu = bit.platform.cpu || cpu
+                defaults.defines.push('-DCPU=' + cpu.toUpper())
                 if (arch.match(/mips/)) {
                     /* Don't use mips global pointer */
                     defaults.compiler.push('-G 0')
                 }
-                defaults.defines.push('-DCPU=' + cpu)
                 defaults.includes += bit.packs.vxworks.includes
                 defaults.libpaths.push(bit.dir.lib)
             ",
         },
     },
     rules: {
-        'c->o': '${packs.compiler.path} -c -o ${OUT} ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
+        'c->c':   '${packs.compiler.path} -E ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
+        'c->o':   '${packs.compiler.path} -c -o ${OUT} ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
         'cpp->o': '${packs.compiler.path} -c -o ${OUT} ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
-        'lib':  '${packs.compiler.path} -r -o ${OUT} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS}'
-        'exe':  '${packs.compiler.path} -o ${OUT} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS} ${LDFLAGS}'
-        'gui':  '${packs.compiler.path} -o ${OUT} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS} ${LDFLAGS}'
+        'shlib':  '${packs.compiler.path} -r -o ${OUT} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS}'
+        'lib':    '${packs.lib.path} -cr ${OUT} ${IN}'
+        'exe':    '${packs.compiler.path} -o ${OUT} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS} ${LDFLAGS}'
+        'gui':    '${packs.compiler.path} -o ${OUT} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS} ${LDFLAGS}'
     },
 })

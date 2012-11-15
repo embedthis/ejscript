@@ -20,7 +20,7 @@ typedef struct EjsLocalCache
     MprHash         *store;             /* Key/value store */
     MprMutex        *mutex;             /* Cache lock*/
     MprEvent        *timer;             /* Pruning timer */
-    MprTime         lifespan;           /* Default lifespan (msec) */
+    MprTicks        lifespan;           /* Default lifespan (msec) */
     int             resolution;         /* Frequence for pruner */
     ssize           usedMem;            /* Memory in use for keys and data */
     ssize           maxKeys;            /* Max number of keys */
@@ -35,7 +35,7 @@ typedef struct CacheItem
     EjsString   *key;                   /* Original key */
     EjsString   *data;                  /* Cache data */
     MprTime     expires;                /* Fixed expiry date. If zero, key is imortal. */
-    MprTime     lifespan;               /* Lifespan after each access to key (msec) */
+    MprTicks    lifespan;               /* Lifespan after each access to key (msec) */
     int64       version;
 } CacheItem;
 
@@ -101,7 +101,7 @@ static EjsAny *sl_expire(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv
 
     if (cache->shared) {
         cache = cache->shared;
-        mprAssert(cache == shared);
+        assure(cache == shared);
     }
     key = argv[0];
     expires = argv[1];
@@ -134,7 +134,7 @@ static EjsAny *sl_inc(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv)
 
     if (cache->shared) {
         cache = cache->shared;
-        mprAssert(cache == shared);
+        assure(cache == shared);
     }
     key = argv[0];
     amount = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : 1;
@@ -171,7 +171,7 @@ static EjsPot *sl_limits(Ejs *ejs, EjsLocalCache *cache, int argc, EjsObj **argv
 
     if (cache->shared) {
         cache = cache->shared;
-        mprAssert(cache == shared);
+        assure(cache == shared);
     }
     result = ejsCreateEmptyPot(ejs);
     ejsSetPropertyByName(ejs, result, EN("keys"), 
@@ -197,7 +197,7 @@ static EjsAny *sl_read(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv)
 
     if (cache->shared) {
         cache = cache->shared;
-        mprAssert(cache == shared);
+        assure(cache == shared);
     }
     key = argv[0];
     getVersion = 0;
@@ -246,7 +246,7 @@ static EjsBoolean *sl_remove(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **
 
     if (cache->shared) {
         cache = cache->shared;
-        mprAssert(cache == shared);
+        assure(cache == shared);
     }
     key = argv[0];
     lock(cache);
@@ -280,7 +280,7 @@ static void setLocalLimits(Ejs *ejs, EjsLocalCache *cache, EjsPot *options)
     }
     if (cache->shared) {
         cache = cache->shared;
-        mprAssert(cache == shared);
+        assure(cache == shared);
     }
     if ((vp = ejsGetPropertyByName(ejs, options, EN("keys"))) != 0) {
         cache->maxKeys = (ssize) ejsGetInt64(ejs, vp);
@@ -313,7 +313,7 @@ static EjsVoid *sl_setLimits(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **
 {
     if (cache->shared) {
         cache = cache->shared;
-        mprAssert(cache == shared);
+        assure(cache == shared);
     }
     setLocalLimits(ejs, cache, argv[0]);
     return 0;
@@ -337,7 +337,7 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
 
     if (cache->shared) {
         cache = cache->shared;
-        mprAssert(cache == shared);
+        assure(cache == shared);
     }
     checkVersion = exists = add = prepend = append = throw = 0;
     set = 1;
@@ -437,7 +437,7 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
     }
     unlock(cache);
     //  UNICODE
-    return ejsCreateNumber(ejs, len);
+    return ejsCreateNumber(ejs, (MprNumber) len);
 }
 
 
@@ -474,7 +474,7 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
                 removeItem(cache, item);
             }
         }
-        mprAssert(cache->usedMem >= 0);
+        assure(cache->usedMem >= 0);
 
         /*
             If too many keys or too much memory used, prune keys expiring first.
@@ -495,7 +495,7 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
                 }
             }
         }
-        mprAssert(cache->usedMem >= 0);
+        assure(cache->usedMem >= 0);
 
         if (mprGetHashLength(cache->store) == 0) {
             mprRemoveEvent(event);
@@ -557,7 +557,7 @@ static EjsLocalCache *cloneLocalCache(Ejs *ejs, EjsLocalCache *src, bool deep)
 }
 
 
-void ejsConfigureLocalCacheType(Ejs *ejs)
+PUBLIC void ejsConfigureLocalCacheType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;
@@ -586,28 +586,12 @@ void ejsConfigureLocalCacheType(Ejs *ejs)
     @copy   default
 
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

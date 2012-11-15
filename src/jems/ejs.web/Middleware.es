@@ -12,7 +12,7 @@ module ejs.web {
         @spec ejs
         @stability prototype
      */
-    function Middleware(app: Function, middleware: Array = null): Function {
+    function Middleware(app: Function, middleware: Array? = null): Function {
         for each (mid in middleware) {
             app = mid[i](app)
         }
@@ -30,7 +30,7 @@ module ejs.web {
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 
     a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
+    by the terms of either license. Consult the LICENSE.md distributed with 
     this software for full details.
     
     This software is open source; you can redistribute it and/or modify it 

@@ -27,9 +27,6 @@ module ejs.web {
             dirs: {
                 cache: Path("cache"),
                 layouts: Path("layouts"),
-/*
-                views: Path("views"),
- */
             },
             extensions: {
                 es:  "es",
@@ -92,7 +89,7 @@ module ejs.web {
             @returns A string containing the address in dot notation. Returns the empty string if listening on all
             interfaces and returns null if the server is not bound (listening) to any address.
          */
-        native function get address(): String 
+        native function get address(): String?
 
         /** 
             @duplicate Stream.async
@@ -315,7 +312,7 @@ server.listen("127.0.0.1:7777")
             Get a worker for a multithreaded request. This will clone a worker from the workerImage and will
             enforce the configured limits.workers value.
          */
-        private function getWorker(): Worker {
+        private function getWorker(): Worker? {
             let w = idleWorkers.pop()
             if (w == undefined) {
                 if (limits.workers && activeWorkers.length >= limits.workers) {
@@ -384,7 +381,7 @@ server.listen("127.0.0.1:7777")
                 value of "this" to the request regardless of whether the function has a bound "this" value.
             @event close Issued when server is being closed.
          */
-        native function on(name, observer: Function): Void
+        native function on(name, observer: Function): HttpServer
 
         /**
             Pass a request into a worker VM. The onrequest callback receives the request. This routine clones stub 
@@ -557,7 +554,7 @@ server.listen("127.0.0.1:7777")
             @param ciphers Optional array of ciphers to use when negotiating the SSL connection. Not yet supported.
             @throws ArgError for invalid arguments
          */
-        native function secure(keyFile: Path, certFile: Path!, protocols: Array = null, ciphers: Array = null): Void
+        native function secure(keyFile: Path?, certFile: Path!, protocols: Array? = null, ciphers: Array? = null): Void
 
         /** 
             Serve a web request. Convenience function to route, load and start a web application. 
@@ -569,9 +566,9 @@ server.listen("127.0.0.1:7777")
         function serve(request: Request, router: Router = Router()): Void {
             request.mark = new Date
             try {
-                let w: Worker
+                let w: Worker?
                 let route: Route = router.route(request)
-                if (route.threaded) {
+                if (route.workers) {
                     if ((w = getWorker()) == null) {
                         request.writeError(Http.ServiceUnavailable, "Server busy")
                         return
@@ -657,7 +654,7 @@ server.listen("127.0.0.1:7777")
                 Use this if you have a single certificate or a bundle of certificates.
                 Set to null if you are using $caCertPath.
          */
-        native function verifyClients(caCertPath: Path, caCertFile: Path): Void
+        native function verifyClients(caCertPath: Path?, caCertFile: Path?): Void
 
         /**
             Convenience routine to create a web server. This will start a routing web server that will serve a 
@@ -674,7 +671,7 @@ server.listen("127.0.0.1:7777")
                 hosted, the $home property will be defined by the web server.
             @option routes Route table to use. Defaults to Router.Top
          */
-        static function create(address: String, options: Object = {}): Void {
+        static function create(address: String?, options: Object = {}): Void {
             let server: HttpServer = new HttpServer(options)
             let routes = options.routes || Router.Top
             var router = Router(routes)
@@ -696,7 +693,7 @@ server.listen("127.0.0.1:7777")
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 
     a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
+    by the terms of either license. Consult the LICENSE.md distributed with 
     this software for full details.
     
     This software is open source; you can redistribute it and/or modify it 

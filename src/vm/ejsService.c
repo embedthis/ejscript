@@ -44,6 +44,8 @@ static EjsService *createService()
     sp->vmlist = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
     sp->vmpool = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
     sp->intern = ejsCreateIntern(sp);
+    sp->dtoaSpin[0] = mprCreateSpinLock();
+    sp->dtoaSpin[1] = mprCreateSpinLock();
     ejsInitCompiler(sp);
     mprGlobalUnlock();
     return sp;
@@ -60,6 +62,8 @@ static void manageEjsService(EjsService *sp, int flags)
         mprMark(sp->nativeModules);
         mprMark(sp->intern);
         mprMark(sp->immutable);
+        mprMark(sp->dtoaSpin[0]);
+        mprMark(sp->dtoaSpin[1]);
 
     } else if (flags & MPR_MANAGE_FREE) {
         ejsDestroyIntern(sp->intern);
@@ -87,7 +91,7 @@ Ejs *ejsCreateVM(int argc, cchar **argv, int flags)
     ejs->argc = argc;
     ejs->argv = argv;
     ejs->name = sfmt("ejs-%d", sp->seqno++);
-    ejs->dispatcher = mprCreateDispatcher(ejs->name, 1);
+    ejs->dispatcher = mprCreateDispatcher(ejs->name, MPR_DISPATCHER_ENABLED);
     ejs->mutex = mprCreateLock(ejs);
     ejs->dontExit = sp->dontExit;
     ejs->flags |= (flags & (EJS_FLAG_NO_INIT | EJS_FLAG_DOC | EJS_FLAG_HOSTED));
@@ -125,7 +129,7 @@ Ejs *ejsCloneVM(Ejs *master)
     int         next;
 
     if (master) {
-        mprAssert(!master->empty);
+        assure(!master->empty);
         if ((ejs = ejsCreateVM(master->argc, master->argv, master ? master->flags : 0)) == 0) {
             return 0;
         }
@@ -153,7 +157,7 @@ int ejsLoadModules(Ejs *ejs, cchar *search, MprList *require)
     EjsService      *sp;
 
     sp = ejs->service;
-    mprAssert(mprGetListLength(ejs->modules) == 0);
+    assure(mprGetListLength(ejs->modules) == 0);
 
     ejs->empty = !(require == 0 || mprGetListLength(require));
     if (search) {
@@ -174,7 +178,7 @@ int ejsLoadModules(Ejs *ejs, cchar *search, MprList *require)
         ejsDestroyVM(ejs);
         return MPR_ERR_MEMORY;
     }
-    mprAssert(!ejs->exception);
+    assure(!ejs->exception);
     return 0;
 }
 
@@ -191,7 +195,7 @@ void ejsDestroyVM(Ejs *ejs)
         while ((mp = mprGetFirstItem(ejs->modules)) != 0) {
             ejsRemoveModule(ejs, mp);
         }
-        mprAssert(ejs->modules->length == 0);
+        assure(ejs->modules->length == 0);
         ejsRemoveWorkers(ejs);
         state = ejs->state;
         if (state && state->stackBase) {
@@ -203,10 +207,10 @@ void ejsDestroyVM(Ejs *ejs)
         ejs->service = 0;
         ejs->result = 0;
         if (ejs->dispatcher) {
-            mprDestroyDispatcher(ejs->dispatcher);
+            mprDisableDispatcher(ejs->dispatcher);
         }
     }
-    mprLog(5, "ejs: destroy VM");
+    mprLog(6, "ejs: destroy VM");
 }
 
 
@@ -322,7 +326,7 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
     EjsString   *script;
     int         paused;
 
-    mprAssert(pool);
+    assure(pool);
 
     if ((ejs = mprPopItem(pool->list)) == 0) {
         if (pool->count >= pool->max) {
@@ -395,9 +399,9 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
 
 void ejsFreePoolVM(EjsPool *pool, Ejs *ejs)
 {
-    mprAssert(pool);
-    mprAssert(ejs);
-    mprAssert(!ejs->exception);
+    assure(pool);
+    assure(ejs);
+    assure(!ejs->exception);
 
     ejs->exception = 0;
     pool->lastActivity = mprGetTime();
@@ -473,13 +477,12 @@ static void defineSharedTypes(Ejs *ejs)
     ejsCreateGlobalNamespaces(ejs);
     ejsAddNativeModule(ejs, "ejs", configureEjs, _ES_CHECKSUM_ejs, 0);
 
-#if UNUSED
-#if BIT_FEATURE_EJSRIPT_ALL_IN_ONE
-#if BIT_FEATURE_SQLITE
-    ejs_db_sqlite_Init(ejs, NULL);
-#endif
+#if BIT_EJS_ONE_MODULE
+    #if BIT_PACK_SQLITE
+        ejs_db_sqlite_Init(ejs, NULL);
+    #endif
     ejs_web_Init(ejs, NULL);
-#endif
+    ejs_zlib_Init(ejs, NULL);
 #endif
 }
 
@@ -491,8 +494,8 @@ static void cloneProperties(Ejs *ejs, Ejs *master)
     EjsTrait    *trait;
     int         i, immutable, numProp;
 
-    mprAssert(ejs);
-    mprAssert(master);
+    assure(ejs);
+    assure(master);
 
     /*
         For subsequent VMs, copy global references to immutable types and functions.
@@ -579,9 +582,9 @@ static int configureEjs(Ejs *ejs)
         ejsConfigureWorkerType(ejs);
         ejsConfigureXMLType(ejs);
         ejsConfigureXMLListType(ejs);
+        ejsConfigureWebSocketType(ejs);
         ejs->service->immutableInitialized = 1;
     }
-
     /*
         These types have global properties that must be initialized for all interpreters
      */
@@ -589,7 +592,6 @@ static int configureEjs(Ejs *ejs)
     ejsConfigureDebugType(ejs);
     ejsConfigureJSONType(ejs);
     ejsConfigureUriType(ejs);
-
     /*
         Configure mutables
      */
@@ -640,9 +642,9 @@ static void initSearchPath(Ejs *ejs, cchar *search)
 
 void ejsSetSearchPath(Ejs *ejs, EjsArray *paths)
 {
-    mprAssert(ejs);
-    mprAssert(paths && paths);
-    mprAssert(ejsIs(ejs, paths, Array));
+    assure(ejs);
+    assure(paths && paths);
+    assure(ejsIs(ejs, paths, Array));
 
     ejs->search = paths;
 }
@@ -722,7 +724,7 @@ static int runProgram(Ejs *ejs, MprEvent *event)
 
 int ejsRunProgram(Ejs *ejs, cchar *className, cchar *methodName)
 {
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
+    assure(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
 
     if (className) {
         ejs->className = sclone(className);
@@ -904,8 +906,8 @@ static int searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn)
     int         globalCount, slotNum, methodCount;
     int         methodSlot;
 
-    mprAssert(methodName && *methodName);
-    mprAssert(typeReturn);
+    assure(methodName && *methodName);
+    assure(typeReturn);
 
     global = ejs->global;
     globalCount = ejsGetLength(ejs, global);
@@ -960,7 +962,7 @@ int ejsBlockGC(Ejs *ejs)
 
 void ejsUnblockGC(Ejs *ejs, int paused)
 {
-    mprAssert(paused != -1);
+    assure(paused != -1);
     if (paused != -1) {
         ejs->state->paused = paused;
     }
@@ -992,13 +994,12 @@ static void allocNotifier(int flags, uint size)
             ejsRunFunction(ejs, ejs->memoryCallback, thisObj, 2, argv);
         }
         if (!ejs->exception) {
-            mprSprintf(msg, sizeof(msg), "Low memory condition. Total mem: %d. Request for %d bytes granted.", 
-                total, size);
+            fmt(msg, sizeof(msg), "Low memory condition. Total mem: %d. Request for %d bytes granted.", total, size);
             ejsCreateException(ejs, ES_MemoryError, msg, dummy);
         }
     } else {
         if (!ejs->exception) {
-            mprSprintf(msg, sizeof(msg), "Memory depleted. Total mem: %d. Request for %d bytes denied.", total, size);
+            fmt(msg, sizeof(msg), "Memory depleted. Total mem: %d. Request for %d bytes denied.", total, size);
             ejsCreateException(ejs, ES_MemoryError, msg, dummy);
         }
     }
@@ -1066,7 +1067,7 @@ void ejsLoadHttpService(Ejs *ejs)
 {
     ejsLockService();
     if (mprGetMpr()->httpService == 0) {
-        httpCreate();
+        httpCreate(HTTP_CLIENT_SIDE | HTTP_SERVER_SIDE);
     }
     ejs->http = ejs->service->http = mprGetMpr()->httpService;
     if (ejs->http == 0) {
@@ -1080,7 +1081,7 @@ int ejsAddImmutable(Ejs *ejs, int slotNum, EjsName qname, EjsAny *value)
 {
     int     foundSlot;
 
-    mprAssert((ejsIsType(ejs, value) && !((EjsType*) value)->mutable) ||
+    assure((ejsIsType(ejs, value) && !((EjsType*) value)->mutable) ||
               (!ejsIsType(ejs, value) && !TYPE(value)->mutableInstances));
     
     if ((foundSlot = ejsLookupProperty(ejs, ejs->service->immutable, qname)) >= 0) {
@@ -1117,30 +1118,14 @@ void ejsDisableExit(Ejs *ejs)
 
 /*
     @copy   default
- 
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

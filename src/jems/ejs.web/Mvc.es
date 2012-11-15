@@ -72,7 +72,7 @@ module ejs.web {
             @param config Default configuration for the application
             @return An Mvc application object
           */
-        public static function load(request: Request, dir: Path = ".", config = App.config): Mvc {
+        public static function load(request: Request?, dir: Path = ".", config = App.config): Mvc {
             if ((mvc = Mvc.apps[dir]) == null) {
                 App.log.debug(2, "Load MVC application from \"" + dir + "\"")
                 mvc = Mvc.apps[dir] = new Mvc(dir, config)
@@ -257,7 +257,7 @@ module ejs.web {
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 
     a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
+    by the terms of either license. Consult the LICENSE.md distributed with 
     this software for full details.
     
     This software is open source; you can redistribute it and/or modify it 

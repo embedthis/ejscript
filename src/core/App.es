@@ -78,6 +78,7 @@ module ejs {
             },
             init: { },
             uris: { },
+            test: {},
         }
 
         /**
@@ -205,7 +206,7 @@ module ejs {
             @param name The name of the environment variable to retrieve.
             @return The value of the environment variable or null if not found.
          */
-        native static function getenv(name: String): String
+        native static function getenv(name: String): String?
 
         /**
             The group ID of the user account running the application. Only supported on Unix.
@@ -374,7 +375,7 @@ module ejs {
             @param timeout Timeout in milliseconds
          */
         static function waitForEvent(obj: *, events: Object, timeout: Number = Number.MaxInt32): Boolean {
-            let done
+            let done = false
             function callback(event) done = true
             obj.on(events, callback)
             for (let mark = new Date; !done && mark.elapsed < timeout; )
@@ -451,31 +452,15 @@ module ejs {
 
 /*
     @copy   default
-    
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
-    
+
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire 
-    a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
-    this software for full details.
-    
-    This software is open source; you can redistribute it and/or modify it 
-    under the terms of the GNU General Public License as published by the 
-    Free Software Foundation; either version 2 of the License, or (at your 
-    option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
-    
-    This program is distributed WITHOUT ANY WARRANTY; without even the 
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
-    
-    This GPL license does NOT permit incorporating this software into 
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses 
-    for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
-    
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
+
     Local variables:
     tab-width: 4
     c-basic-offset: 4

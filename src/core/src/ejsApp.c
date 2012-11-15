@@ -43,7 +43,7 @@ static EjsObj *app_chdir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     cchar   *path;
 
-    mprAssert(argc == 1);
+    assure(argc == 1);
 
     if (ejsIs(ejs, argv[0], Path)) {
         path = ((EjsPath*) argv[0])->value;
@@ -239,7 +239,7 @@ static EjsNumber *app_pid(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    MprTime     mark, remaining;
+    MprTicks    mark, remaining;
     int         rc, oneEvent, timeout;
 
     timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]) : MAXINT;
@@ -251,12 +251,12 @@ static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     if (timeout < 0) {
         timeout = MAXINT;
     }
-    mark = mprGetTime();
+    mark = mprGetTicks();
     remaining = timeout;
     do {
         rc = mprWaitForEvent(ejs->dispatcher, remaining); 
-        remaining = mprGetRemainingTime(mark, timeout);
-    } while (!oneEvent && !ejs->exiting && remaining > 0 && !mprIsStopping());
+        remaining = mprGetRemainingTicks(mark, timeout);
+    } while (!ejs->exception && !oneEvent && !ejs->exiting && remaining > 0 && !mprIsStopping());
     return (rc == 0) ? ESV(true) : ESV(false);
 }
 
@@ -269,18 +269,18 @@ static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsObj *app_sleep(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    MprTime     mark, remaining;
+    MprTicks    mark, remaining;
     int         timeout;
 
     timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]) : MAXINT;
     if (timeout < 0) {
         timeout = MAXINT;
     }
-    mark = mprGetTime();
+    mark = mprGetTicks();
     remaining = timeout;
     do {
         mprWaitForEvent(ejs->dispatcher, (int) remaining); 
-        remaining = mprGetRemainingTime(mark, timeout);
+        remaining = mprGetRemainingTicks(mark, timeout);
     } while (!ejs->exiting && remaining > 0 && !mprIsStopping());
     return 0;
 }
@@ -301,7 +301,7 @@ static EjsNumber *app_uid(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 /*********************************** Factory **********************************/
 
-void ejsConfigureAppType(Ejs *ejs)
+PUBLIC void ejsConfigureAppType(Ejs *ejs)
 {
     EjsType     *type;
 
@@ -339,28 +339,12 @@ void ejsConfigureAppType(Ejs *ejs)
     @copy   default
 
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

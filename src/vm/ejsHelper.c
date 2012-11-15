@@ -10,8 +10,8 @@
 
 /****************************** Forward Declarations **************************/
 
-static MprNumber parseNumber(Ejs *ejs, MprChar *str);
-static bool      parseBoolean(Ejs *ejs, MprChar *s);
+static MprNumber parseNumber(Ejs *ejs, wchar *str);
+static bool      parseBoolean(Ejs *ejs, wchar *s);
 
 /************************************* Code ***********************************/
 
@@ -19,8 +19,8 @@ EjsAny *ejsAlloc(Ejs *ejs, EjsType *type, ssize extra)
 {
     EjsObj      *vp;
 
-    mprAssert(type);
-    mprAssert(extra >= 0);
+    assure(type);
+    assure(extra >= 0);
 
     //  OPT could have dedicated ejsAlloc as a macro when assign is zero
     if ((vp = mprAllocBlock(type->instanceSize + extra, MPR_ALLOC_MANAGER | MPR_ALLOC_ZERO)) == NULL) {
@@ -29,7 +29,7 @@ EjsAny *ejsAlloc(Ejs *ejs, EjsType *type, ssize extra)
     //  OPT can do direct assign
     SET_TYPE(vp, type);
     ejsSetMemRef(vp);
-    mprAssert(type->manager);
+    assure(type->manager);
     //  OPT inline here
     mprSetManager(vp, type->manager);
     return vp;
@@ -44,9 +44,9 @@ EjsAny *ejsCastType(Ejs *ejs, EjsAny *vp, EjsType *targetType)
 {
     EjsType     *type;
 
-    mprAssert(ejs);
-    mprAssert(vp);
-    mprAssert(targetType);
+    assure(ejs);
+    assure(vp);
+    assure(targetType);
 
     type = TYPE(vp);
     if (type == targetType) {
@@ -73,7 +73,7 @@ EjsAny *ejsCreateObj(Ejs *ejs, EjsType *type, int numSlots)
         return 0;
     }
 #endif
-    mprAssert(type->helpers.create);
+    assure(type->helpers.create);
     return (type->helpers.create)(ejs, type, numSlots);
 }
 
@@ -93,7 +93,7 @@ EjsAny *ejsClone(Ejs *ejs, EjsAny *src, bool deep)
         return 0;
     }
 cloneCopy++;
-    mprAssert(TYPE(src)->helpers.clone);
+    assure(TYPE(src)->helpers.clone);
     if (VISITED(src) == 0) {
         SET_VISITED(src, 1);
         dest = (TYPE(src)->helpers.clone)(ejs, src, deep);
@@ -112,8 +112,8 @@ cloneCopy++;
  */
 int ejsDefineProperty(Ejs *ejs, EjsAny *vp, int slotNum, EjsName name, EjsType *propType, int64 attributes, EjsAny *value)
 {
-    mprAssert(name.name);
-    mprAssert(name.space);
+    assure(name.name);
+    assure(name.space);
 
     return (TYPE(vp)->helpers.defineProperty)(ejs, vp, slotNum, name, propType, attributes, value);
 }
@@ -127,10 +127,10 @@ int ejsDeleteProperty(Ejs *ejs, EjsAny *vp, int slotNum)
 {
     EjsType     *type;
 
-    mprAssert(slotNum >= 0);
+    assure(slotNum >= 0);
     
     type = TYPE(vp);
-    mprAssert(type->helpers.deleteProperty);
+    assure(type->helpers.deleteProperty);
     return (type->helpers.deleteProperty)(ejs, vp, slotNum);
 }
 
@@ -144,8 +144,8 @@ int ejsDeletePropertyByName(Ejs *ejs, EjsAny *vp, EjsName qname)
     EjsLookup   lookup;
     int         slotNum;
 
-    mprAssert(qname.name);
-    mprAssert(qname.space);
+    assure(qname.name);
+    assure(qname.space);
     
     if (TYPE(vp)->helpers.deletePropertyByName) {
         return (TYPE(vp)->helpers.deletePropertyByName)(ejs, vp, qname);
@@ -168,11 +168,11 @@ void *ejsGetProperty(Ejs *ejs, EjsAny *vp, int slotNum)
 {
     EjsType     *type;
 
-    mprAssert(ejs);
-    mprAssert(vp);
+    assure(ejs);
+    assure(vp);
 
     type = TYPE(vp);
-    mprAssert(type->helpers.getProperty);
+    assure(type->helpers.getProperty);
     return (type->helpers.getProperty)(ejs, vp, slotNum);
 }
 
@@ -182,8 +182,8 @@ void *ejsGetPropertyByName(Ejs *ejs, EjsAny *vp, EjsName name)
     EjsType     *type;
     int         slotNum;
 
-    mprAssert(ejs);
-    mprAssert(vp);
+    assure(ejs);
+    assure(vp);
 
     type = TYPE(vp);
 
@@ -207,7 +207,7 @@ void *ejsGetPropertyByName(Ejs *ejs, EjsAny *vp, EjsName name)
 
 EjsTrait *ejsGetPropertyTraits(Ejs *ejs, EjsAny *vp, int slotNum)
 {
-    mprAssert(TYPE(vp)->helpers.getPropertyTraits);
+    assure(TYPE(vp)->helpers.getPropertyTraits);
     return (TYPE(vp)->helpers.getPropertyTraits)(ejs, vp, slotNum);
 }
 
@@ -218,7 +218,7 @@ EjsTrait *ejsGetPropertyTraits(Ejs *ejs, EjsAny *vp, int slotNum)
  */
 int ejsGetLength(Ejs *ejs, EjsAny *vp)
 {
-    mprAssert(TYPE(vp)->helpers.getPropertyCount);
+    assure(TYPE(vp)->helpers.getPropertyCount);
     return (TYPE(vp)->helpers.getPropertyCount)(ejs, vp);
 }
 
@@ -232,7 +232,7 @@ EjsName ejsGetPropertyName(Ejs *ejs, EjsAny *vp, int slotNum)
     EjsType     *type;
 
     type = TYPE(vp);
-    mprAssert(type->helpers.getPropertyName);
+    assure(type->helpers.getPropertyName);
     return (type->helpers.getPropertyName)(ejs, vp, slotNum);
 }
 
@@ -241,7 +241,7 @@ int ejsPropertyHasTrait(Ejs *ejs, EjsAny *vp, int slotNum, int attributes)
 {
     EjsTrait    *trait;
 
-    mprAssert((attributes & EJS_TRAIT_MASK) == attributes);
+    assure((attributes & EJS_TRAIT_MASK) == attributes);
 
     if ((trait = ejsGetPropertyTraits(ejs, vp, slotNum)) != 0) {
         return trait->attributes & attributes;
@@ -257,11 +257,11 @@ int ejsPropertyHasTrait(Ejs *ejs, EjsAny *vp, int slotNum, int attributes)
  */
 int ejsLookupProperty(Ejs *ejs, EjsAny *vp, EjsName name)
 {
-    mprAssert(ejs);
-    mprAssert(vp);
-    mprAssert(name.name);
+    assure(ejs);
+    assure(vp);
+    assure(name.name);
 
-    mprAssert(TYPE(vp)->helpers.lookupProperty);
+    assure(TYPE(vp)->helpers.lookupProperty);
     return (TYPE(vp)->helpers.lookupProperty)(ejs, vp, name);
 }
 
@@ -273,9 +273,9 @@ int ejsLookupProperty(Ejs *ejs, EjsAny *vp, EjsName name)
  */
 EjsAny *ejsInvokeOperator(Ejs *ejs, EjsAny *vp, int opCode, EjsAny *rhs)
 {
-    mprAssert(vp);
+    assure(vp);
 
-    mprAssert(TYPE(vp)->helpers.invokeOperator);
+    assure(TYPE(vp)->helpers.invokeOperator);
     return (TYPE(vp)->helpers.invokeOperator)(ejs, vp, opCode, rhs);
 }
 
@@ -285,9 +285,9 @@ EjsAny *ejsInvokeOperator(Ejs *ejs, EjsAny *vp, int opCode, EjsAny *rhs)
  */
 int ejsSetProperty(Ejs *ejs, EjsAny *vp, int slotNum, EjsAny *value)
 {
-    mprAssert(vp);
+    assure(vp);
 
-    mprAssert(TYPE(vp)->helpers.setProperty);
+    assure(TYPE(vp)->helpers.setProperty);
     return (TYPE(vp)->helpers.setProperty)(ejs, vp, slotNum, value);
 }
 
@@ -299,8 +299,8 @@ int ejsSetPropertyByName(Ejs *ejs, EjsAny *vp, EjsName qname, EjsAny *value)
 {
     int     slotNum;
 
-    mprAssert(ejs);
-    mprAssert(vp);
+    assure(ejs);
+    assure(vp);
 
     /*
         WARNING: Not all types implement this
@@ -338,14 +338,14 @@ int ejsSetPropertyByName(Ejs *ejs, EjsAny *vp, EjsName qname, EjsAny *value)
  */
 int ejsSetPropertyName(Ejs *ejs, EjsAny *vp, int slot, EjsName qname)
 {
-    mprAssert(TYPE(vp)->helpers.setPropertyName);
+    assure(TYPE(vp)->helpers.setPropertyName);
     return (TYPE(vp)->helpers.setPropertyName)(ejs, vp, slot, qname);
 }
 
 
 int ejsSetPropertyTraits(Ejs *ejs, EjsAny *vp, int slot, EjsType *type, int attributes)
 {
-    mprAssert(TYPE(vp)->helpers.setPropertyTraits);
+    assure(TYPE(vp)->helpers.setPropertyTraits);
     return (TYPE(vp)->helpers.setPropertyTraits)(ejs, vp, slot, type, attributes);
 }
 
@@ -430,7 +430,7 @@ EjsAny *ejsCreateInstance(Ejs *ejs, EjsType *type, int argc, void *argv)
 {
     EjsAny  *vp;
 
-    mprAssert(type);
+    assure(type);
 
     vp = ejsCreateObj(ejs, type, 0);
     if (vp == 0) {
@@ -462,7 +462,7 @@ static EjsAny *castObj(Ejs *ejs, EjsObj *obj, EjsType *type)
     EjsObj          *result;
     EjsLookup       lookup;
     
-    mprAssert(ejsIsType(ejs, type));
+    assure(ejsIsType(ejs, type));
 
     if (type->hasMeta) {
         return ejsRunFunctionByName(ejs, type, N(EJS_META_NAMESPACE, "cast"), type, 1, &obj);
@@ -616,7 +616,7 @@ EjsAny *ejsInvokeOperatorDefault(Ejs *ejs, EjsAny *lhs, int opcode, EjsAny *rhs)
         ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
-    mprAssert(0);
+    assure(0);
 }
 
 
@@ -748,7 +748,7 @@ EjsName ejsEmptyName(Ejs *ejs, cchar *name)
 }
 
 
-EjsName ejsEmptyWideName(Ejs *ejs, MprChar *name)
+EjsName ejsEmptyWideName(Ejs *ejs, wchar *name)
 {
     EjsName     n;
 
@@ -768,7 +768,7 @@ EjsName ejsName(Ejs *ejs, cchar *space, cchar *name)
 }
 
 
-EjsName ejsWideName(Ejs *ejs, MprChar *space, MprChar *name)
+EjsName ejsWideName(Ejs *ejs, wchar *space, wchar *name)
 {
     EjsName     n;
 
@@ -786,12 +786,12 @@ EjsName ejsWideName(Ejs *ejs, MprChar *space, MprChar *name)
         [(+|-)][DIGITS]
         [+|-][DIGITS][.][DIGITS][(e|E)[+|-]DIGITS]
  */
-EjsAny *ejsParse(Ejs *ejs, MprChar *str, int preferredType)
+EjsAny *ejsParse(Ejs *ejs, wchar *str, int preferredType)
 {
-    MprChar     *buf;
+    wchar       *buf;
     int         sid;
 
-    mprAssert(str);
+    assure(str);
 
     buf = str;
     sid = preferredType;
@@ -839,7 +839,7 @@ EjsAny *ejsParse(Ejs *ejs, MprChar *str, int preferredType)
     case S_Boolean:
         return ejsCreateBoolean(ejs, parseBoolean(ejs, buf));
 
-#if BIT_FEATURE_PCRE
+#if BIT_PACK_PCRE
     case S_RegExp:
         return ejsCreateRegExp(ejs, ejsCreateStringFromAsc(ejs, buf));
 #endif
@@ -860,7 +860,7 @@ EjsAny *ejsParse(Ejs *ejs, MprChar *str, int preferredType)
 /*
     Convert the variable to a number type. Only works for primitive types.
  */
-static bool parseBoolean(Ejs *ejs, MprChar *s)
+static bool parseBoolean(Ejs *ejs, wchar *s)
 {
     if (s == 0 || *s == '\0') {
         return 0;
@@ -875,15 +875,15 @@ static bool parseBoolean(Ejs *ejs, MprChar *s)
 /*
     Convert the string buffer to a Number.
  */
-static MprNumber parseNumber(Ejs *ejs, MprChar *str)
+static MprNumber parseNumber(Ejs *ejs, wchar *str)
 {
     MprNumber   n;
-    MprChar     *cp, *sp;
+    wchar       *cp, *sp;
     int64       num;
     char        nbuf[32], *dp;
     int         radix, c, negative;
 
-    mprAssert(str);
+    assure(str);
 
     num = 0;
     negative = 0;
@@ -968,65 +968,65 @@ static MprNumber parseNumber(Ejs *ejs, MprChar *str)
 
 MprNumber ejsGetNumber(Ejs *ejs, EjsAny *vp)
 {
-    mprAssert(vp);
+    assure(vp);
     if (!ejsIs(ejs, vp, Number)) {
         if ((vp = ejsCast(ejs, vp, Number)) == 0) {
             return 0;
         }
     }
-    mprAssert(ejsIs(ejs, vp, Number));
+    assure(ejsIs(ejs, vp, Number));
     return (vp) ? ((EjsNumber*) (vp))->value: 0;
 }
 
 
 bool ejsGetBoolean(Ejs *ejs, EjsAny *vp)
 {
-    mprAssert(vp);
+    assure(vp);
     if (!ejsIs(ejs, vp, Boolean)) {
         if ((vp = ejsCast(ejs, vp, Boolean)) == 0) {
             return 0;
         }
     }
-    mprAssert(ejsIs(ejs, vp, Boolean));
+    assure(ejsIs(ejs, vp, Boolean));
     return (vp) ? ((EjsBoolean*) (vp))->value: 0;
 }
 
 
 int ejsGetInt(Ejs *ejs, EjsAny *vp)
 {
-    mprAssert(vp);
+    assure(vp);
     if (!ejsIs(ejs, vp, Number)) {
         if ((vp = ejsCast(ejs, vp, Number)) == 0) {
             return 0;
         }
     }
-    mprAssert(ejsIs(ejs, vp, Number));
+    assure(ejsIs(ejs, vp, Number));
     return (vp) ? ((int) (((EjsNumber*) (vp))->value)): 0;
 }
 
 
 int64 ejsGetInt64(Ejs *ejs, EjsAny *vp)
 {
-    mprAssert(vp);
+    assure(vp);
     if (!ejsIs(ejs, vp, Number)) {
         if ((vp = ejsCast(ejs, vp, Number)) == 0) {
             return 0;
         }
     }
-    mprAssert(ejsIs(ejs, vp, Number));
+    assure(ejsIs(ejs, vp, Number));
     return (vp) ? ((int64) (((EjsNumber*) (vp))->value)): 0;
 }
 
 
 double ejsGetDouble(Ejs *ejs, EjsAny *vp)
 {
-    mprAssert(vp);
+    assure(vp);
     if (!ejsIs(ejs, vp, Number)) {
         if ((vp = ejsCast(ejs, vp, Number)) == 0) {
             return 0;
         }
     }
-    mprAssert(ejsIs(ejs, vp, Number));
+    assure(ejsIs(ejs, vp, Number));
     return (vp) ? ((double) (((EjsNumber*) (vp))->value)): 0;
 }
 
@@ -1042,28 +1042,12 @@ void ejsMarkName(EjsName *qname)
     @copy   default
 
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

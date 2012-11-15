@@ -1,6 +1,5 @@
-
 /*
- *  Test nested exception blocks
+    Test nested exception blocks
  */
 var state = 0
 

@@ -27,6 +27,6 @@ assert(r.link({
 
 r = new Request("http://example.com/Product/update")
 assert(r.link("abc") == "/Product/abc")
-assert(r.link("") == "/Product")
+assert(r.link("") == "/Product/update")
 assert(r.link(".") == "/Product/")
 

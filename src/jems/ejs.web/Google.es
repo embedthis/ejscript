@@ -107,7 +107,7 @@ module ejs.web {
         //  TODO - must support Ejs options: columns, kind, onClick, refresh, style, visible
         //  TODO - use @options
 
-        function chart(grid: Array, options: Object): Void {
+        function chart(grid: Array?, options: Object): Void {
             var id: String = "GoogleChart_" + nextId++
 
             if (grid == null || grid.length == 0) {
@@ -194,7 +194,7 @@ module ejs.web {
    This software is distributed under commercial and open source licenses.
    You may use the GPL open source license described below or you may acquire 
    a commercial license from Embedthis Software. You agree to be fully bound 
-   by the terms of either license. Consult the LICENSE.TXT distributed with 
+   by the terms of either license. Consult the LICENSE.md distributed with 
    this software for full details.
    
    This software is open source; you can redistribute it and/or modify it 

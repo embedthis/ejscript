@@ -51,7 +51,6 @@ static EjsWorker *initWorker(Ejs *ejs, EjsWorker *worker, Ejs *baseVM, cchar *na
         worker->name = sfmt("worker-%d", workerSeqno++);
         unlock(ejs);
     }
-
     /*
         Create a new interpreter and an "inside" worker object and pair it with the current "outside" worker.
         The worker interpreter gets a new dispatcher
@@ -138,14 +137,14 @@ static EjsWorker *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsOb
  */
 static void addWorker(Ejs *ejs, EjsWorker *worker) 
 {
-    mprAssert(ejs == worker->ejs);
-    mprAssert(worker);
-    mprAssert(worker->state == EJS_WORKER_BEGIN);
-    mprAssert(!worker->inside);
+    assure(ejs == worker->ejs);
+    assure(worker);
+    assure(worker->state == EJS_WORKER_BEGIN);
+    assure(!worker->inside);
 
     //  OPT - locking not needed
     lock(ejs);
-    mprAssert(ejs->workers->length < 10);
+    assure(ejs->workers->length < 10);
     mprAddItem(ejs->workers, worker);
     unlock(ejs);
 }
@@ -155,8 +154,8 @@ static void removeWorker(EjsWorker *worker)
 {
     Ejs     *ejs;
 
-    mprAssert(!worker->inside);
-    mprAssert(worker);
+    assure(!worker->inside);
+    assure(worker);
 
     ejs = worker->ejs;
     if (ejs) {
@@ -182,7 +181,7 @@ static void removeWorker(EjsWorker *worker)
 /*
     Called when destroying ejs
  */
-void ejsRemoveWorkers(Ejs *ejs)
+PUBLIC void ejsRemoveWorkers(Ejs *ejs)
 {
     EjsWorker   *worker;
     int         next;
@@ -203,12 +202,12 @@ static EjsObj *startWorker(Ejs *ejs, EjsWorker *outsideWorker, int timeout)
     Ejs         *inside;
     EjsString   *result;
 
-    mprAssert(ejs);
-    mprAssert(outsideWorker);
-    mprAssert(!outsideWorker->inside);
-    mprAssert(outsideWorker->state == EJS_WORKER_BEGIN);
-    mprAssert(outsideWorker->pair);
-    mprAssert(outsideWorker->pair->ejs);
+    assure(ejs);
+    assure(outsideWorker);
+    assure(!outsideWorker->inside);
+    assure(outsideWorker->state == EJS_WORKER_BEGIN);
+    assure(outsideWorker->pair);
+    assure(outsideWorker->pair->ejs);
 
     LOG(5, "Worker.startWorker");
 
@@ -217,8 +216,8 @@ static EjsObj *startWorker(Ejs *ejs, EjsWorker *outsideWorker, int timeout)
         return 0;
     }
     insideWorker = outsideWorker->pair;
-    mprAssert(insideWorker->inside);
-    mprAssert(insideWorker->state == EJS_WORKER_BEGIN);
+    assure(insideWorker->inside);
+    assure(insideWorker->state == EJS_WORKER_BEGIN);
     inside = insideWorker->ejs;
 
     outsideWorker->state = EJS_WORKER_STARTED;
@@ -269,7 +268,7 @@ static EjsObj *workerEval(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
     int     timeout;
 
-    mprAssert(ejsIs(ejs, argv[0], String));
+    assure(ejsIs(ejs, argv[0], String));
 
     worker->scriptLiteral = (EjsString*) argv[0];
     timeout = argc == 2 ? ejsGetInt(ejs, argv[1]): MAXINT;
@@ -342,18 +341,15 @@ static int reapJoins(Ejs *ejs, EjsObj *workers)
 
 static int join(Ejs *ejs, EjsObj *workers, int timeout)
 {
-    MprTime     mark;
+    MprTicks    mark;
     int         result, remaining;
 
     LOG(5, "Worker.join: joining %d", ejs->joining);
-    mprAssert(!MPR->marking);
     
-    mark = mprGetTime();
+    mark = mprGetTicks();
     remaining = timeout;
     do {
-        mprAssert(!MPR->marking);
         ejs->joining = !reapJoins(ejs, workers);
-        mprAssert(!MPR->marking);
         if (!ejs->joining) {
             break;
         }
@@ -362,13 +358,10 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
             break;
         }
         mprWaitForEvent(ejs->dispatcher, remaining);
-        mprAssert(ejs->dispatcher->magic == MPR_DISPATCHER_MAGIC);
+        assure(ejs->dispatcher->magic == MPR_DISPATCHER_MAGIC);
 
-        mprAssert(!MPR->marking);
-        remaining = (int) mprGetRemainingTime(mark, timeout);
-        mprAssert(!MPR->marking);
+        remaining = (int) mprGetRemainingTicks(mark, timeout);
     } while (remaining > 0 && !ejs->exception);
-    mprAssert(!MPR->marking);
 
     if (ejs->exception) {
         return 0;
@@ -390,7 +383,6 @@ static EjsObj *workerJoin(Ejs *ejs, EjsWorker *unused, int argc, EjsObj **argv)
 
     workers = (argc > 0) ? argv[0] : NULL;
     timeout = (argc == 2) ? ejsGetInt(ejs, argv[1]) : MAXINT;
-    mprAssert(!MPR->marking);
 
     return (join(ejs, workers, timeout) == 0) ? ESV(true): ESV(false);
 }
@@ -404,8 +396,8 @@ static void loadFile(EjsWorker *worker, cchar *path)
     Ejs         *ejs;
     cchar       *cp;
 
-    mprAssert(worker->inside);
-    mprAssert(worker->pair && worker->pair->ejs);
+    assure(worker->inside);
+    assure(worker->pair && worker->pair->ejs);
 
     ejs = worker->ejs;
     if ((cp = strrchr(path, '.')) != NULL && strcmp(cp, EJS_MODULE_EXT) != 0) {
@@ -429,7 +421,7 @@ static EjsObj *workerLoad(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
     int     timeout;
 
-    mprAssert(argc == 0 || ejsIs(ejs, argv[0], Path));
+    assure(argc == 0 || ejsIs(ejs, argv[0], Path));
 
     worker->scriptFile = sclone(((EjsPath*) argv[0])->value);
     timeout = argc == 2 ? ejsGetInt(ejs, argv[1]): 0;
@@ -490,7 +482,7 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
         break;
             
     default:
-        mprAssert(msg->callbackSlot == 0);
+        assure(msg->callbackSlot == 0);
         return 0;
     }
     worker->event = event;
@@ -529,7 +521,7 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
         ejsRunFunction(ejs, callback, worker, 1, argv);
     }
     if (msg->callbackSlot == ES_Worker_onclose) {
-        mprAssert(!worker->inside);
+        assure(!worker->inside);
         worker->state = EJS_WORKER_COMPLETE;
         LOG(5, "Worker.doMessage: complete");
         /* Worker and insider interpreter are now eligible for garbage collection */
@@ -551,14 +543,14 @@ static EjsObj *workerPreeval(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **arg
     EjsWorker   *insideWorker;
     EjsString   *result;
 
-    mprAssert(!worker->inside);
+    assure(!worker->inside);
 
     if (worker->state > EJS_WORKER_BEGIN) {
         ejsThrowStateError(ejs, "Worker has already started");
         return 0;
     }
     insideWorker = worker->pair;
-    mprAssert(insideWorker->inside);
+    assure(insideWorker->inside);
     inside = insideWorker->ejs;
 
     (inside->service->loadScriptLiteral)(inside, (EjsString*) argv[0], NULL);
@@ -584,15 +576,15 @@ static EjsObj *workerPreload(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **arg
     EjsWorker   *insideWorker;
     EjsString   *result;
 
-    mprAssert(argc > 0 && ejsIs(ejs, argv[0], Path));
-    mprAssert(!worker->inside);
+    assure(argc > 0 && ejsIs(ejs, argv[0], Path));
+    assure(!worker->inside);
 
     if (worker->state > EJS_WORKER_BEGIN) {
         ejsThrowStateError(ejs, "Worker has already started");
         return 0;
     }
     insideWorker = worker->pair;
-    mprAssert(insideWorker->inside);
+    assure(insideWorker->inside);
     inside = insideWorker->ejs;
 
     loadFile(worker->pair, ((EjsPath*) argv[0])->value);
@@ -674,10 +666,10 @@ static int workerMain(EjsWorker *insideWorker, MprEvent *event)
     MprDispatcher   *dispatcher;
     Message         *msg;
 
-    mprAssert(insideWorker->inside);
+    assure(insideWorker->inside);
     outsideWorker = insideWorker->pair;
-    mprAssert(!outsideWorker->inside);
-    mprAssert(insideWorker->state == EJS_WORKER_BEGIN);
+    assure(!outsideWorker->inside);
+    assure(insideWorker->state == EJS_WORKER_BEGIN);
 
     outside = outsideWorker->ejs;
     inside = insideWorker->ejs;
@@ -738,7 +730,7 @@ static EjsObj *workerTerminate(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **a
     /*
         Switch to the inside worker if called from outside
      */
-    mprAssert(worker->pair && worker->pair->ejs);
+    assure(worker->pair && worker->pair->ejs);
     ejs = (!worker->inside) ? worker->pair->ejs : ejs;
     ejs->exiting = 1;
     mprSignalDispatcher(ejs->dispatcher);
@@ -751,21 +743,20 @@ static EjsObj *workerTerminate(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **a
  */
 static EjsBoolean *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
-    MprTime     mark;
-    MprTime     remaining;
+    MprTicks    mark, remaining;
     int         timeout;
 
     timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]): MAXINT;
     if (timeout < 0) {
         timeout = MAXINT;
     }
-    mark = mprGetTime();
+    mark = mprGetTicks();
     remaining = timeout;
 
     worker->gotMessage = 0;
     do {
         mprWaitForEvent(ejs->dispatcher, (int) remaining);
-        remaining = mprGetRemainingTime(mark, timeout);
+        remaining = mprGetRemainingTicks(mark, timeout);
     } while (!worker->gotMessage && remaining > 0 && !ejs->exception);
 
     if (worker->gotMessage) {
@@ -787,9 +778,9 @@ static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int thro
     MprDispatcher   *dispatcher;
     Message         *msg;
 
-    mprAssert(!worker->inside);
-    mprAssert(exception);
-    mprAssert(ejs == worker->ejs);
+    assure(!worker->inside);
+    assure(exception);
+    assure(ejs == worker->ejs);
 
     ejsBlockGC(ejs);
     if ((msg = createMessage()) == 0) {
@@ -828,7 +819,7 @@ static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int thro
 }
 
 
-EjsWorker *ejsCreateWorker(Ejs *ejs)
+PUBLIC EjsWorker *ejsCreateWorker(Ejs *ejs)
 {
     return ejsCreateObj(ejs, ESV(Worker), 0);
 }
@@ -859,7 +850,7 @@ static void manageWorker(EjsWorker *worker, int flags)
 }
 
 
-void ejsConfigureWorkerType(Ejs *ejs)
+PUBLIC void ejsConfigureWorkerType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;
@@ -889,31 +880,15 @@ void ejsConfigureWorkerType(Ejs *ejs)
 
 /*
     @copy   default
-    
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
-    
+
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire 
-    a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
-    this software for full details.
-    
-    This software is open source; you can redistribute it and/or modify it 
-    under the terms of the GNU General Public License as published by the 
-    Free Software Foundation; either version 2 of the License, or (at your 
-    option) any later version. See the GNU General Public License for more 
-    details at: http://embedthis.com/downloads/gplLicense.html
-    
-    This program is distributed WITHOUT ANY WARRANTY; without even the 
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
-    
-    This GPL license does NOT permit incorporating this software into 
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses 
-    for this software and support services are available from Embedthis 
-    Software at http://embedthis.com 
-    
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
+
     Local variables:
     tab-width: 4
     c-basic-offset: 4
@@ -922,4 +897,3 @@ void ejsConfigureWorkerType(Ejs *ejs)
 
     @end
  */
-

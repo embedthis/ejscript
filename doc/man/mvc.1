@@ -3,7 +3,6 @@
 mvc \- Ejscript Application Generator for Server-Side JavaScript Web Applications.
 .SH SYNOPSIS
 .B mvc
-[\fI--apply]\fR] 
 [\fI--database DB]\fR] 
 [\fI--full\fR]
 [\fI--keep\fR]
@@ -108,8 +107,6 @@ specified field of the requested type. The valid database types are: binary, boo
 float, integer, number, string, text, time, timestamp.
 The scaffold will include an edit action and view that provides add and edit capability. The list action and view, 
 provides the ability to list the database table rows and select an entry to edit.
-.PP
-You can use the --apply switch to apply the database migration to upgrade the database.
 .SH GENERATING MIGRATIONS
 Database migrations are scripts which modify the database schema or content. You can create database migrations 
 by the \fBmvc generate migration\fR command. This command generates a migration
@@ -127,7 +124,7 @@ will generate add column code in the migration script. If the --reverse switch i
 will be generated. To change the type or name of a column, remove then re-add the column. 
 .PP
 .SH APPLYING MIGRATIONS
-Migration scripts can be run via the \fBmvc migrate\fR command. With not other parameters, the command will run
+Migration scripts can be run via the \fBmvc migrate\fR command. With no other parameters, the command will run
 all migrations that have not yet been applied to the database. You can also use \fBmvc migrate forward\fR to apply
 apply the next unapplied migration. Similarly \fBmvc migrate backward\fR will reverse the last applied migration.
 You can also use \fBmvc migrate NNN\fR to migrate forward or backward to a specific migration. NNN is the migration 

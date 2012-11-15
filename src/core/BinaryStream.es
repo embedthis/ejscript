@@ -18,12 +18,12 @@ module ejs {
         /** 
             Big endian byte order 
          */
-        static const BigEndian: Number = ByteArray.BigEndian
+        static const BigEndian: Number = 0
 
         /** 
             Little endian byte order 
          */
-        static const LittleEndian: Number = ByteArray.LittleEndian
+        static const LittleEndian: Number = 1
 
         /* 
             Data input and output buffers. The buffers are used to marshall the data for encoding and decoding. The inbuf 
@@ -32,6 +32,7 @@ module ejs {
         private var inbuf: ByteArray
         private var outbuf: ByteArray
         private var nextStream: Stream
+        private var emitter: Emitter
 
         /** 
             Create a new BinaryStream
@@ -59,20 +60,15 @@ module ejs {
         /** 
             @duplicate Stream.async 
          */
-        native function get async(): Boolean
+        function get async(): Boolean
+            false
 
         /** 
             @duplicate Stream.async 
          */
-        native function set async(enable: Boolean): Void
-
-        /** 
-            The number of bytes available to read without blocking. This is the number of bytes internally buffered
-            in the binary stream and does not include any data buffered downstream.
-            @return the number of available bytes
-         */
-        function get available(): Number
-            inbuf.available
+        function set async(enable: Boolean): Void {
+            throw "async mode not implemented for BinaryStreams"
+        }
 
         /** 
             @duplicate Stream.close 
@@ -129,14 +125,26 @@ module ejs {
         }
 
         /** 
+            The number of bytes available to read without blocking. This is the number of bytes internally buffered
+            in the binary stream and does not include any data buffered downstream.
+            @return the number of available bytes
+         */
+        function get length(): Number
+            inbuf.length
+
+        /** 
             @duplicate Stream.on 
          */
-        native function on(name, observer: Function): Void
+        function on(name, observer: Function): BinaryStream {
+            emitter ||= new Emitter
+            emitter.on(name, observer)
+            return this
+        }
 
         /** 
             @duplicate Stream.read
          */
-        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
+        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number?
             inbuf.read(buffer, offset, count)
 
         /** 
@@ -144,7 +152,7 @@ module ejs {
             @returns a boolean. Returns null on EOF.
             @throws IOError if an I/O error occurs.
          */
-        function readBoolean(): Boolean
+        function readBoolean(): Boolean?
             inbuf.readBoolean()
 
         /** 
@@ -152,7 +160,7 @@ module ejs {
             @returns a byte. Returns -1 on EOF.
             @throws IOError if an I/O error occurs.
          */
-        function readByte(): Number
+        function readByte(): Number?
             inbuf.readByte()
 
         /** 
@@ -160,7 +168,7 @@ module ejs {
             @returns a date
             @throws IOError if an I/O error occurs or premature EOF
          */
-        function readDate(): Date
+        function readDate(): Date?
             inbuf.readDate()
 
         /** 
@@ -168,7 +176,7 @@ module ejs {
             @returns a double
             @throws IOError if an I/O error occurs or premature EOF
          */
-        function readDouble(): Double
+        function readDouble(): Double?
             inbuf.readDouble()
 
         /** 
@@ -176,7 +184,7 @@ module ejs {
             @returns an 32-bitinteger
             @throws IOError if an I/O error occurs or premature EOF
          */
-        function readInteger(): Number
+        function readInteger(): Number?
             inbuf.readInteger()
 
         /** 
@@ -184,7 +192,7 @@ module ejs {
             @returns a 64-bit long number
             @throws IOError if an I/O error occurs or premature EOF
          */
-        function readLong(): Number
+        function readLong(): Number?
             inbuf.readInteger()
 
         /** 
@@ -193,7 +201,7 @@ module ejs {
             @returns a string
             @throws IOError if an I/O error occurs or premature EOF.
          */
-        function readString(count: Number = -1): String 
+        function readString(count: Number = -1): String ?
             inbuf.readString(count)
 
         /** 
@@ -201,10 +209,10 @@ module ejs {
             @returns an XML document
             @throws IOError if an I/O error occurs or premature EOF
          */
-        function readXML(): XML {
+        function readXML(): XML? {
             var data: String = ""
             while (1) {
-                var s: String = inbuf.readString()
+                var s: String? = inbuf.readString()
                 if (s == null && data.length == 0) {
                     return null
                 }
@@ -219,7 +227,9 @@ module ejs {
         /** 
             @duplicate Stream.off 
          */
-        native function off(name, observer: Function): Void
+        function off(name, observer: Function): Void {
+            if (emitter) emitter.off(name, observer)
+        }
 
         /** 
             Return the space available for write data. This call can be used to prevent write from blocking or 
@@ -292,31 +302,15 @@ module ejs {
 
 /*
     @copy   default
-    
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
-    
+
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire 
-    a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
-    this software for full details.
-    
-    This software is open source; you can redistribute it and/or modify it 
-    under the terms of the GNU General Public License as published by the 
-    Free Software Foundation; either version 2 of the License, or (at your 
-    option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
-    
-    This program is distributed WITHOUT ANY WARRANTY; without even the 
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
-    
-    This GPL license does NOT permit incorporating this software into 
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses 
-    for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
-    
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
+
     Local variables:
     tab-width: 4
     c-basic-offset: 4

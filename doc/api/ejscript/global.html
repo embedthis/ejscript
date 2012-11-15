@@ -139,7 +139,7 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Request'><b>Request</b></a>(uri: <a href='Uri.html'>Uri</a>, dir: <a href='Path.html'>Path</a> = .)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Construct the a Request object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#ResourceError'><b>ResourceError</b></a>(message: <a href='String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>ResourceError constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Route'><b>Route</b></a>(template: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a>, router: <a href='ejs.web-Router.html'>Router</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new Route instance.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Router'><b>Router</b></a>(routeSet: <a href='String.html'>String</a> = Top, options: <a href='Object.html'>Object</a> = expression)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a Router instance and initialize routes.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Router'><b>Router</b></a>(routeSet: <a href='String.html'>String</a> = Restful, options: <a href='Object.html'>Object</a> = expression)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a Router instance and initialize routes.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#ScriptApp'><b>ScriptApp</b></a>(request: <a href='ejs.web-Request.html'>Request</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Run a script app.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#ScriptBuilder'><b>ScriptBuilder</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Script builder to create a function to serve a script request (*..es).</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Session'><b>Session</b></a>(key, options: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new session state object.</td></tr>
@@ -160,6 +160,7 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#UploadFile'><b>UploadFile</b></a>()</tr>   <tr class='apiDef'><td class='apiType'> </td><td><a href='#Uri'><b>Uri</b></a>(uri: <a href='Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create and parse a Uri object.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#UrlMap'><b>UrlMap</b></a>(map, options): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Directory content handler.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#View'><b>View</b></a>(request: <a href='Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Constructor method to initialize a new View.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#WebSocket'><b>WebSocket</b></a>(uri: <a href='Uri.html'>Uri</a>, protocols = null, options = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new WebSocket and connect to the server using the supplied URI.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Worker'><b>Worker</b></a>(script: <a href='Path.html'>Path</a> = null, options: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new Worker instance.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#XML'><b>XML</b></a>(value: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>XML Constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#assert'><b>assert</b></a>(condition: <a href='Boolean.html'>Boolean</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Assert a condition is true.</td></tr>
@@ -934,13 +935,13 @@ Route("/User/login", {name: "login" })</pre></dd></dl>
 <hr />
 <a name='Router'></a>
 <div class='api'>
-<div class='apiSig'>  ejs.web  Router(routeSet: <a href='String.html'>String</a> = Top, options: <a href='Object.html'>Object</a> = expression)
+<div class='apiSig'>  ejs.web  Router(routeSet: <a href='String.html'>String</a> = Restful, options: <a href='Object.html'>Object</a> = expression)
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Create a Router instance and initialize routes. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>routeSet: <a href='String.html'>String</a> </td><td>Optional name of the route set to add. Supports sets include: Router.Top and Router.Restful. The Top routes provide top level routes for pages with extensions ".ejs",  and ".es" as well as for static content (see <a href='#addHandlers'>addHandlers</a> addCatchall). The Restful routes provide  default Controller/Action routes according to a RESTful paradigm (see addRestful). The routeSet can also be set to null to add not routes. This is useful for creating a bare Router instance. Defaults  to Top. [default: Top]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Options to apply to all routes. [default: expression]</td></tr></table></dd>
+<tr class='param'><td class='param'>routeSet: <a href='String.html'>String</a> </td><td>Optional name of the route set to add. Supports sets include: Router.Top and Router.Restful. The Top routes provide top level routes for pages with extensions ".ejs",  and ".es" as well as for static content (see <a href='#addHandlers'>addHandlers</a> addCatchall). The Restful routes provide  default Controller/Action routes according to a RESTful paradigm (see addRestful). The routeSet can also be set to null to add not routes. This is useful for creating a bare Router instance. Defaults  to Top. [default: Restful]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Options to apply to all routes. [default: expression]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>workers</td><td>Boolean If true, requests should be execute in a worker thread if possible. The worker thread  will be pooled when the request completes and will be available for subsequent requests.</td></tr>
@@ -1277,6 +1278,23 @@ the client is redirected to a URL equal to the pathInfo with a "/" appended.</dd
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>request: <a href='Object.html'>Object</a> </td><td>Request object.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='WebSocket'></a>
+<div class='api'>
+<div class='apiSig'>    WebSocket(uri: <a href='Uri.html'>Uri</a>, protocols = null, options = null)
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Create a new WebSocket and connect to the server using the supplied URI. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>uri: <a href='Uri.html'>Uri</a> </td><td>URL to connect to.</td></tr><tr class='param'><td class='param'>protocols </td><td>Optional set of protocols supported by the application. These are application-level protocols. This argument may be an array or a string of comma separated values. [default: null]</td></tr><tr class='param'><td class='param'>options </td><td>null [default: null]</td></tr><tr class='param'><td class='param'>options </td><td>null [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>certificate</td><td>Path|String Optional path to file containing certificates to validate the  server certificate.</td></tr>
+<td class='param'>verify</td><td>Boolean Set to true to verify the server certificate.  The certificate is verified and the issuer chain is verified. Defaults to true. Set to false to accept a self-signed certificate.</td></tr>
+</table></dd>
 </dl></div>
 </div>
 <hr />
@@ -2108,7 +2126,7 @@ until all properties are rendered.  NOTE: the maxDepth, all and base properties 
 <dl><dt>Description</dt></dd><dd>Convert a singular word to its plural form. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>word: <a href='String.html'>String</a> </td><td>Word to transform.</td></tr><tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>null [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>word: <a href='String.html'>String</a> </td><td>Word to transform.</td></tr><tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>Set to a number greater than 1 to force a plural. [default: null]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>The plural form of a word.</dd></dl>
 </div>

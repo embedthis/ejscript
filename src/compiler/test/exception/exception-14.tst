@@ -1,6 +1,5 @@
-
 /*
- *	Test exception nested inside an if 
+  	Test exception nested inside an if 
  */
 
 var counter = 0

@@ -16,10 +16,10 @@
  */
 static EjsTimer *timer_constructor(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    mprAssert(argc >= 2);
-    mprAssert(ejsIs(ejs, argv[0], Number));
-    mprAssert(ejsIsFunction(ejs, argv[1]));
-    mprAssert(ejsIs(ejs, argv[2], Array));
+    assure(argc >= 2);
+    assure(ejsIs(ejs, argv[0], Number));
+    assure(ejsIsFunction(ejs, argv[1]));
+    assure(ejsIs(ejs, argv[2], Array));
 
     tp->period = ejsGetInt(ejs, argv[0]);
     tp->callback = (EjsFunction*) argv[1];
@@ -36,7 +36,7 @@ static EjsTimer *timer_constructor(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **ar
  */
 static EjsBoolean *timer_get_drift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 0);
+    assure(argc == 0);
     return ejsCreateBoolean(ejs, tp->drift);
 }
 
@@ -46,7 +46,7 @@ static EjsBoolean *timer_get_drift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **ar
  */
 static EjsObj *timer_set_drift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Boolean));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Boolean));
     tp->drift = ejsGetBoolean(ejs, argv[0]);
     return 0;
 }
@@ -57,7 +57,7 @@ static EjsObj *timer_set_drift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
  */
 static EjsFunction *timer_get_onerror(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 0);
+    assure(argc == 0);
     return tp->onerror;
 }
 
@@ -77,7 +77,7 @@ static EjsObj *timer_set_onerror(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv
  */
 static EjsNumber *timer_get_period(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 0);
+    assure(argc == 0);
     return ejsCreateNumber(ejs, tp->period);
 }
 
@@ -87,7 +87,7 @@ static EjsNumber *timer_get_period(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **ar
  */
 static EjsObj *timer_set_period(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Number));
 
     tp->period = ejsGetInt(ejs, argv[0]);
     return 0;
@@ -99,7 +99,7 @@ static EjsObj *timer_set_period(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
  */
 static EjsBoolean *timer_get_repeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 0);
+    assure(argc == 0);
     return ejsCreateBoolean(ejs, tp->repeat);
 }
 
@@ -109,7 +109,7 @@ static EjsBoolean *timer_get_repeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **a
  */
 static EjsObj *timer_set_repeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Boolean));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Boolean));
 
     tp->repeat = ejsGetBoolean(ejs, argv[0]);
     if (tp->event) {
@@ -124,9 +124,9 @@ static int timerCallback(EjsTimer *tp, MprEvent *e)
     Ejs         *ejs;
     EjsObj      *thisObj, *error;
 
-    mprAssert(tp);
-    mprAssert(tp->args);
-    mprAssert(tp->callback);
+    assure(tp);
+    assure(tp->args);
+    assure(tp->callback);
 
     ejs = tp->ejs;
     thisObj = (tp->callback->boundThis) ? tp->callback->boundThis : tp;
@@ -175,7 +175,7 @@ static EjsTimer *timer_start(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 static EjsObj *timer_stop(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     if (tp->event) {
-        mprRemoveEvent(tp->event);
+        mprStopContinuousEvent(tp->event);
         mprRemoveRoot(tp);
         tp->event = 0;
     }
@@ -203,7 +203,7 @@ static void manageTimer(EjsTimer *tp, int flags)
 
 /*********************************** Factory **********************************/
 
-void ejsConfigureTimerType(Ejs *ejs)
+PUBLIC void ejsConfigureTimerType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;
@@ -227,28 +227,12 @@ void ejsConfigureTimerType(Ejs *ejs)
     @copy   default
 
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

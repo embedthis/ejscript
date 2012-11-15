@@ -96,19 +96,33 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
         vtrace('Combine', dest.relative + ' += ' + src.relative)
         if (!dest.exists) {
             if (options.title) {
-                dest.write('/*\n' +
-                           '    ' + dest.basename + ' -- ' + options.title + '\n\n' +
-                           '    This file is a catenation of all the source code. Amalgamating into a\n' +
-                           '    single file makes embedding simpler and the resulting application faster.\n */\n\n')
+                if (options.textfile) {
+                    dest.write('#\n' +
+                       '#   ' + dest.basename + ' -- ' + options.title + '\n' + 
+                       '#\n')
+                } else {
+                    dest.write('/*\n' +
+                       '    ' + dest.basename + ' -- ' + options.title + '\n\n' +
+                       '    This file is a catenation of all the source code. Amalgamating into a\n' +
+                       '    single file makes embedding simpler and the resulting application faster.\n\n' + 
+                       '    Prepared by: ' + System.hostname + '\n */\n\n')
+                }
             }
             if (options.header) {
                 dest.append(options.header + '\n')
             }
         }
-        dest.append('\n' +
-           '/************************************************************************/\n' +
-           '/*\n    Start of file \"' + src.relative + '\"\n */\n' +
-           '/************************************************************************/\n\n')
+        if (options.textfile) {
+            dest.append('\n' +
+               '#\n' +
+               '#   Start of file \"' + src.relative + '\"\n' +
+               '#\n')
+        } else {
+            dest.append('\n' +
+               '/************************************************************************/\n' +
+               '/*\n    Start of file \"' + src.relative + '\"\n */\n' +
+               '/************************************************************************/\n\n')
+        }
         let data = src.readString()
         if (options.filter) {
             data = data.replace(options.filter, '')
@@ -143,7 +157,7 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
         dest.write(dest.readString().expand(o, {fill: '${}'}))
         dest.setAttributes(attributes)
     }
-    if (options.fold && bit.platform.like == 'windows') {
+    if (options.fold) {
         vtrace('Fold', dest)
         foldLines(dest, options)
         dest.setAttributes(attributes)
@@ -162,7 +176,10 @@ function installCallback(src: Path, dest: Path, options = {}): Boolean {
         dest.remove()
     }
     if (App.uid == 0 && dest.extension == 'so' && Config.OS == 'linux' && options.task == 'install') {
-        Cmd.run('ldconfig ' + dest)
+        let ldconfig = Cmd.locate('ldconfig')
+        if (ldconfig) {
+            Cmd.run('ldconfig ' + dest)
+        }
     }
     return true
 }
@@ -531,7 +548,7 @@ function packageUbuntu(pkg: Path, options) {
     let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os, bit.platform.arch].join('-')
     let outfile = bit.dir.rel.join(base).joinExt('deb', true)
     trace('Package', outfile)
-    run(bit.packs.pmaker.path + ' --build ' + DEBIAN.dirname + ' ' + outfile)
+    run(bit.packs.pmaker.path + ' --build ' + DEBIAN.dirname + ' ' + outfile, {noshow: true})
     bit.dir.rel.join('md5-' + base).joinExt('deb.txt', true).write(md5(outfile.readString()))
 }
 
@@ -543,7 +560,7 @@ function packageWindows(pkg: Path, options) {
     let rel = bit.dir.rel
     let opak = Path('package/' + bit.platform.os.toUpper())
 
-    install(opak.join('LICENSE.TXT'), pkg)
+    install(bit.dir.top.join('LICENSE.md'), pkg)
     let iss = pkg.join('install.iss')
     install(opak.join('install.iss'), iss, {expand: true})
     let contents = pkg.join(s.product + '-' + s.version + '-' + s.buildNumber, 'contents')
@@ -563,7 +580,7 @@ function packageWindows(pkg: Path, options) {
     cp.close()
     let base = [s.product, s.version, s.buildNumber, bit.platform.dist, bit.platform.os, bit.platform.arch].join('-')
     let outfile = bit.dir.rel.join(base).joinExt('exe', true)
-    run([bit.packs.pmaker.path, iss])
+    run([bit.packs.pmaker.path, iss], {noshow: true})
     pkg.join('Output/setup.exe').copy(outfile)
 
     /* Wrap in a zip archive */
@@ -633,7 +650,6 @@ public function apidoc(dox: Path, headers, title: String, tags) {
     if (!bit.options.keep) {
         doxtmp.remove()
     }
-
     trace('Process', name.toPascal() + ' documentation (may take a while)')
     let files = [api.join('xml/' + name + '_8h.xml')]
     files += ls(api.join('xml/group*')) + ls(api.join('xml/struct_*.xml'))
@@ -665,7 +681,7 @@ public function apiwrap(patterns) {
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
     a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
+    by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details.
   
     This software is open source; you can redistribute it and/or modify it

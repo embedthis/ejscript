@@ -3,7 +3,7 @@
  */
 
 pack('vxworks', 'VxWorks SDK')
-let path: Path = bit.packs.vxworks.path
+let path: Path? = bit.packs.vxworks.path
 if (!path) {
     /*
         Search for WorkBench/Tornado in common places

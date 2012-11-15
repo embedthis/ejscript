@@ -56,7 +56,7 @@ module ejs {
             to write all data but will return immediately. Defaults to Stream.WRITE.
             @param dir direction to flush. Set to $READ, $WRITE or $BOTH.
          */
-        function flush(dir: Number): Void 
+        function flush(dir: Number = BOTH): Void 
 
         /** 
             Remove an observer from the stream. 
@@ -75,7 +75,7 @@ module ejs {
             @event writable Issued when the stream becomes writable.
             @event close Issued when stream is being closed.
          */
-        function on(name, observer: Function): Void
+        function on(name, observer: Function): Stream
 
         /** 
             Read a data from the stream. 
@@ -85,15 +85,17 @@ module ejs {
             In this case a "readable" event will be issued when data is available for reading.
             @param buffer Destination byte array for read data.
             @param offset Offset in the byte array to place the data. If the offset is -1, then data is
-                appended to the buffer write $position which is then updated. 
+                appended to the buffer write $position which is then updated. If offset is >= 0, the data is read 
+                to the offset and the read pointer is set to the offset and the write pointer to one past the end of 
+                the data just read.
             @param count Read up to this number of bytes. If -1, read as much as the buffer will hold up. If the 
                 stream is of fixed and known length (such as a file) and the buffer is of sufficient size or is growable, 
-                read the entire stream. 
-            @returns a count of the bytes actually read. Returns null on EOF.
+                read the entire stream. If the buffer is of a fixed size, ready only what will fit into the buffer.
+            @returns a count of the bytes actually read. Returns null on EOF or errors.
             @event readable Issued when there is new read data available.
             @event writable Issued when the stream becomes empty.
          */
-        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
+        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number? 
 
         /** 
             Write data to the stream.
@@ -110,36 +112,27 @@ module ejs {
          */
         function write(...data): Number
     }
+
+    /*
+        Workaround for Interface constants
+     */
+    Stream.READ = 0x1
+    Stream.WRITE = 0x2
+    Stream.BOTH = 0x3
 }
 
 
 /*
     @copy   default
-    
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
-    
+
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire 
-    a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
-    this software for full details.
-    
-    This software is open source; you can redistribute it and/or modify it 
-    under the terms of the GNU General Public License as published by the 
-    Free Software Foundation; either version 2 of the License, or (at your 
-    option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
-    
-    This program is distributed WITHOUT ANY WARRANTY; without even the 
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
-    
-    This GPL license does NOT permit incorporating this software into 
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses 
-    for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
-    
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
+
     Local variables:
     tab-width: 4
     c-basic-offset: 4

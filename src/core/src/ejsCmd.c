@@ -141,9 +141,9 @@ static EjsObj *cmd_kill(Ejs *ejs, EjsAny *unused, int argc, EjsObj **argv)
 
 
 /**
-    function get on(name, observer: Function): Void
+    function on(name, observer: Function): Cmd
  */
-static EjsObj *cmd_on(Ejs *ejs, EjsCmd *cmd, int argc, EjsAny **argv)
+static EjsCmd *cmd_on(Ejs *ejs, EjsCmd *cmd, int argc, EjsAny **argv)
 {
     EjsFunction     *observer;
 
@@ -155,7 +155,7 @@ static EjsObj *cmd_on(Ejs *ejs, EjsCmd *cmd, int argc, EjsAny **argv)
     if (!cmd->async) {
         cmd->async = 1;
     }
-    return 0;
+    return cmd;
 }
 
 
@@ -189,30 +189,30 @@ static EjsNumber *cmd_read(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     EjsByteArray    *buffer;
     ssize           offset, count, nbytes;
 
-    mprAssert(1 <= argc && argc <= 3);
+    assure(1 <= argc && argc <= 3);
 
     buffer = (EjsByteArray*) argv[0];
     offset = (argc == 2) ? ejsGetInt(ejs, argv[1]) : 0;
-    count = (argc == 3) ? ejsGetInt(ejs, argv[2]) : (int) buffer->length;
+    count = (argc == 3) ? ejsGetInt(ejs, argv[2]) : (int) buffer->size;
 
     if (count < 0) {
-        count = buffer->length;
+        count = buffer->size;
     }
     if (offset < 0) {
         offset = buffer->writePosition;
-    } else if (offset >= buffer->length) {
+    } else if (offset >= buffer->size) {
         ejsThrowOutOfBoundsError(ejs, "Bad read offset value");
         return 0;
     } else {
         buffer->readPosition = 0;
         buffer->writePosition = 0;
     }
-    count = buffer->length - buffer->writePosition;
+    count = buffer->size - buffer->writePosition;
     if (count <= 0) {
         if (ejsGrowByteArray(ejs, buffer, MPR_BUFSIZE) < 0) {
             return 0;
         }
-        count = buffer->length - buffer->writePosition;
+        count = buffer->size - buffer->writePosition;
     }
     nbytes = mprGetBufLength(cmd->stdoutBuf);
     if (nbytes == 0 && !cmd->async && cmd->mc) {
@@ -242,7 +242,7 @@ static EjsString *cmd_readString(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     EjsString   *result;
     ssize       nbytes, count;
     
-    mprAssert(0 <= argc && argc <= 1);
+    assure(0 <= argc && argc <= 1);
     
     count = (argc >= 1) ? ejsGetInt(ejs, argv[0]) : -1;
     if (count < 0) {
@@ -264,7 +264,7 @@ static EjsString *cmd_readString(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 }
 
 
-static ssize cmdIOCallback(MprCmd *mc, int channel, void *data)
+static void cmdIOCallback(MprCmd *mc, int channel, void *data)
 {
     EjsCmd          *cmd;
     EjsByteArray    *ba;
@@ -281,7 +281,7 @@ static ssize cmdIOCallback(MprCmd *mc, int channel, void *data)
     case MPR_CMD_STDIN:
         ejsSendEvent(cmd->ejs, cmd->emitter, "writable", NULL, cmd);
         mprEnableCmdEvents(mc, channel);
-        return 0;
+        return;
     case MPR_CMD_STDOUT:
         buf = cmd->stdoutBuf;
         break;
@@ -290,7 +290,7 @@ static ssize cmdIOCallback(MprCmd *mc, int channel, void *data)
         break;
     default:
         /* Child death */
-        return 0;
+        return;
     }
     /*
         Read and aggregate the result into a single string
@@ -300,11 +300,11 @@ static ssize cmdIOCallback(MprCmd *mc, int channel, void *data)
     if (space < (MPR_BUFSIZE / 4)) {
         if (mprGrowBuf(buf, MPR_BUFSIZE) < 0) {
             mprCloseCmdFd(mc, channel);
-            return 0;
+            return;
         }
         space = mprGetBufSpace(buf);
     }
-    mprAssert(mc->files[channel].fd >= 0);
+    assure(mc->files[channel].fd >= 0);
     len = mprReadCmd(mc, channel, mprGetBufEnd(buf), space);
     if (len <= 0) {
         if (len == 0 || (len < 0 && !(errno == EAGAIN || errno == EWOULDBLOCK))) {
@@ -341,7 +341,6 @@ static ssize cmdIOCallback(MprCmd *mc, int channel, void *data)
             }
         }
     }
-    return len;
 }
 
 
@@ -455,7 +454,9 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     flags = parseOptions(ejs, cmd);
 
     if ((rc = mprStartCmd(cmd->mc, cmd->argc, cmd->argv, env, flags)) < 0) {
-        if (rc == MPR_ERR_CANT_ACCESS) {
+        if (rc == MPR_ERR_BAD_ARGS) {
+            err = "Bad command arguments";
+        } else if (rc == MPR_ERR_CANT_ACCESS) {
             err = "Can't access command";
         } else if (MPR_ERR_CANT_OPEN) {
             err = "Can't open standard I/O for command";
@@ -468,13 +469,13 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         return 0;
     }
     if (!(flags & MPR_CMD_DETACH)) {
-        mprAssert(cmd->mc);
+        assure(cmd->mc);
         mprFinalizeCmd(cmd->mc);
         if (mprWaitForCmd(cmd->mc, cmd->timeout) < 0) {
             ejsThrowStateError(ejs, "Timeout %d msec waiting for command to complete: %s", cmd->timeout, cmd->argv[0]);
             return 0;
         }
-        mprAssert(cmd->mc);
+        assure(cmd->mc);
         if (cmd->throw) {
             status = mprGetCmdExitStatus(cmd->mc);
             if (status != 0) {
@@ -550,7 +551,7 @@ static EjsObj *cmd_set_timeout(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
  */
 static EjsObj *cmd_wait(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
-    MprTime     timeout;
+    MprTicks    timeout;
 
     timeout = argc > 0 ? ejsGetInt(ejs, argv[0]) : cmd->timeout;
     if (cmd->mc == 0) {
@@ -577,7 +578,7 @@ static EjsNumber *cmd_write(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     ssize           len, wrote;
     int             i;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     /*
         Unwrap nested arrays
@@ -661,7 +662,7 @@ static void manageEjsCmd(EjsCmd *cmd, int flags)
 }
 
 
-void ejsConfigureCmdType(Ejs *ejs)
+PUBLIC void ejsConfigureCmdType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;
@@ -699,28 +700,12 @@ void ejsConfigureCmdType(Ejs *ejs)
     @copy   default
 
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

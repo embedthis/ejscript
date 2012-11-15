@@ -24,14 +24,10 @@ enumerable class Test {
         Parsed args
         MOB - don't need to store separate to options.
      */
-    var _cfg: Path                          // Path to configuration outputs directory
+    var _cfg: Path?                         // Path to configuration outputs directory
     var _bin: Path                          // Path to bin directory
-    var _cross: Boolean                     // Cross compiling
     var _depth: Number = 1                  // Test level. Higher levels mean deeper testing.
-    var _hostOs: String                     // Host operating system
-    var _hostSystem: String                 // Host system details
     var _lib: Path                          // Path to lib directory
-    var _os: String                         // Operating system
     var _top: Path                          // Path to top of source tree
 
     var continueOnErrors: Boolean = false   // Continue on errors 
@@ -49,7 +45,7 @@ enumerable class Test {
     var originalHome: Path                  // Original home directory for utest
     var second: Boolean = false             // Second instance. Bypass some initializations
     var skipTest: Boolean = false           // Skip a test
-    var skippedMsg: String                  // Test skipped message
+    var skippedMsg: String?                 // Test skipped message
     var step: Boolean = false               // Single step tests 
     var testName: String                    // Set test name 
     var testDirs: Array = [ "." ]           // Test directories to run
@@ -164,9 +160,6 @@ enumerable class Test {
         if (options.name) {
             testName = options.name
         }
-        if (options.os) {
-            _os = options.os
-        }
         if (options.step) {
             step = true
         }
@@ -203,23 +196,14 @@ enumerable class Test {
 
         _cfg = _top.join('out')
         if (!_cfg.join('inc/bit.h').exists) {
-            _cfg = Path(_top).files(Config.OS + '-' + Config.CPU + '-*').sort()[0]
+            //  MOB - not accurate if multiple configurations exist
+            _cfg = _top.files(Config.OS + '-' + Config.CPU + '-*').sort()[0]
         }
         if (!_cfg) {
             throw 'Can\'t locate configure files, run configure'
         }
         parseBuildConfig(_cfg.join('inc/bit.h'))
-
         _bin = _lib = _cfg.join('bin')
-/* UNUSED
-        //  MOB - these are currently being set to the ejs bin and lib
-        _bin = App.exeDir
-        // _lib = _bin.join("../lib")
-        _lib = _bin
-        if (!_lib.exists) {
-            _lib = _bin
-        }
-*/
     }
 
     /*
@@ -307,7 +291,7 @@ enumerable class Test {
         }
     }
 
-    function runTest(file: Path, phase: String = null): Void {
+    function runTest(file: Path, phase: String? = null): Void {
         skipTest = false
         let home = App.dir
         try {
@@ -363,11 +347,7 @@ enumerable class Test {
             test.lib = Path(data.lib)
             test.env = data.env
             test.features = data.features
-            test.os = data.os
             test.phase = data.phase
-            test.cross = data.cross
-            test.hostOs = data.hostOs
-            test.hostSystem = data.hostSystem
             test.session = data.session
             test.threads = data.threads
             test.top = Path(data.top)
@@ -378,19 +358,15 @@ enumerable class Test {
         ')
     }
 
-    function startWorker(file: Path, phase: String = null): Worker {
+    function startWorker(file: Path, phase: String? = null): Worker {
         let export = { 
             cfg: _cfg, 
             bin: _bin, 
-            cross: _cross,
             depth: _depth, 
             dir: file.dirname,
-            hostOs: _hostOs, 
-            hostSystem: _hostSystem, 
             env: env,
             features: features,
             lib: _lib, 
-            os: _os, 
             phase: phase,
             session: session,
             threads: threads, 
@@ -512,7 +488,7 @@ enumerable class Test {
         }
     }
         
-    function getKey(data: String, key: String): String {
+    function getKey(data: String, key: String): String? {
         r = RegExp(key + "=(.*)")
         match = data.match(r)
         if (match) {
@@ -523,21 +499,16 @@ enumerable class Test {
 
     function parseBuildConfig(path: Path) {
         let data = Path(path).readString()
-        _os = getKey(data, "BIT_BUILD_OS")
-        _cross = getKey(data, "BIT_CROSS") == "1"
-        _hostOs = getKey(data, "BIT_HOST_OS")
-        _hostSystem = getKey(data, "BIT_HOST_SYSTEM")
         features = {}
-        features["bld_debug"] = getKey(data, "BIT_DEBUG")
-        let str = data.match(/BIT_FEATURE.*|BIT_HTTP_PORT.*|BIT_SSL_PORT.*/g)
+        let str = data.match(/BIT_.*/g)
         for each (item in str) {
             let [key, value] = item.split(" ")
-            key = key.replace(/BIT_FEATURE_/, "")
+            key = key.replace(/BIT_PACK_/, "")
             key = key.replace(/BIT_/, "").toLowerCase()
             if (value == "1" || value == "0") {
                 value = value cast Number
             }
-            features["bld_" + key] = value
+            features["bit_" + key] = value
         }
         str = data.match(/export.*/g)
         env = {}
@@ -551,7 +522,7 @@ enumerable class Test {
         }
     }
 
-    function searchUp(path: Path): Path {
+    function searchUp(path: Path): Path? {
         if (path.exists) {
             return path
         }
@@ -609,7 +580,7 @@ test.exit()
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
     a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
+    by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details.
 
     This software is open source; you can redistribute it and/or modify it

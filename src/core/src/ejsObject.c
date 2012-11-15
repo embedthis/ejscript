@@ -40,7 +40,7 @@ static EjsAny *obj_prototype(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
     EjsPot          *prototype;
 
     if (ejs->compiling) {
-        mprAssert(0);
+        assure(0);
         prototype = ESV(undefined);
         
     } else if (ejsIsType(ejs, obj)) {
@@ -71,7 +71,7 @@ static EjsObj *obj_set_prototype(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
     EjsFunction     *fun;
 
     if (ejs->compiling) {
-        mprAssert(0);
+        assure(0);
         return ESV(undefined);
     }
     prototype = (EjsPot*) argv[0];
@@ -176,7 +176,7 @@ static EjsObj *obj_defineProperty(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
     EjsName         qname;
     int             attributes, slotNum;
 
-    mprAssert(argc == 3);
+    assure(argc == 3);
 
     obj = argv[0];
     if (!ejsIsPot(ejs, obj)) {
@@ -252,7 +252,7 @@ static EjsObj *obj_defineProperty(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
             attributes |= EJS_TRAIT_READONLY;
         }
     }
-    mprAssert((attributes & EJS_TRAIT_MASK) == attributes);
+    assure((attributes & EJS_TRAIT_MASK) == attributes);
     if (ejsDefineProperty(ejs, obj, -1, qname, type, attributes, value) < 0) {
         ejsThrowTypeError(ejs, "Can't define property %@", qname.name);
     }
@@ -338,10 +338,8 @@ static EjsObj *nextObjectValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
 {
     EjsObj      *obj;
     EjsTrait    *trait;
-    int         numProp;
 
     obj = ip->target;
-    numProp = ejsGetLength(ejs, obj);
     for (; ip->index < ip->length; ip->index++) {
         trait = ejsGetPropertyTraits(ejs, obj, ip->index);
         if (trait && trait->attributes & 
@@ -710,7 +708,7 @@ static EjsBoolean *obj_propertyIsEnumerable(Ejs *ejs, EjsObj *obj, int argc, Ejs
     EjsLookup   lookup;
     int         slotNum;
 
-    mprAssert(argc == 1 || argc == 2);
+    assure(argc == 1 || argc == 2);
 
     qname.space = ESV(empty);
     qname.name = (EjsString*) argv[0];
@@ -727,7 +725,7 @@ static EjsBoolean *obj_propertyIsEnumerable(Ejs *ejs, EjsObj *obj, int argc, Ejs
 
     function toJSON(options: Object = null): String
  */
-EjsString *ejsObjToJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
+PUBLIC EjsString *ejsObjToJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
     return ejsSerializeWithOptions(ejs, vp, (argc == 1) ? argv[0] : NULL);
 }
@@ -746,7 +744,7 @@ static EjsString *toLocaleString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 #endif
 
 
-EjsString *ejsObjToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
+PUBLIC EjsString *ejsObjToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
     if (ejsIs(ejs, vp, String)) {
         return (EjsString*) vp;
@@ -808,7 +806,7 @@ static EjsType *obj_getType(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 /*
     Return the name of the type of an object. If the obj is a type, get the base type.
  */
-EjsString *ejsGetTypeName(Ejs *ejs, EjsAny *obj)
+PUBLIC EjsString *ejsGetTypeName(Ejs *ejs, EjsAny *obj)
 {
     EjsType     *type;
 
@@ -828,7 +826,7 @@ EjsString *ejsGetTypeName(Ejs *ejs, EjsAny *obj)
  */
 static EjsString *obj_getTypeName(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
-    mprAssert(argc >= 1);
+    assure(argc >= 1);
     return ejsGetTypeName(ejs, argv[0]);
 }
 
@@ -858,7 +856,7 @@ static EjsString *obj_getName(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsString *obj_typeOf(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
-    mprAssert(argc >= 1);
+    assure(argc >= 1);
     return ejsGetTypeName(ejs, argv[0]);
 }
 
@@ -866,7 +864,7 @@ static EjsString *obj_typeOf(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 /*
     Get the ecma "typeof" value for an object. Unfortunately, typeof is pretty lame.
  */
-EjsString *ejsGetTypeOf(Ejs *ejs, EjsAny *vp)
+PUBLIC EjsString *ejsGetTypeOf(Ejs *ejs, EjsAny *vp)
 {
     cchar   *word;
 
@@ -896,7 +894,7 @@ EjsString *ejsGetTypeOf(Ejs *ejs, EjsAny *vp)
 }
 
 
-void ejsConfigureObjectType(Ejs *ejs)
+PUBLIC void ejsConfigureObjectType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;
@@ -954,28 +952,12 @@ void ejsConfigureObjectType(Ejs *ejs)
     @copy   default
 
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

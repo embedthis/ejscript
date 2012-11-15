@@ -7,8 +7,8 @@ NAME
        Applications.
 
 SYNOPSIS
-       mvc [--apply]] [--database DB]] [--full] [--keep] [--layout layoutPage]
-       [--listen port[--min[--overwrite[--quiet[--verbose] [commands ...]
+       mvc [--database DB]] [--full] [--keep] [--layout layoutPage]  [--listen
+       port[--min[--overwrite[--quiet[--verbose] [commands ...]
 
 DESCRIPTION
        The  mvc command generates, manages and runs Ejscript web applications.
@@ -110,47 +110,44 @@ GENERATING SCAFFOLDS
        and view, provides the ability to list  the  database  table  rows  and
        select an entry to edit.
 
-       You  can  use  the  --apply  switch  to apply the database migration to
-       upgrade the database.
-
 GENERATING MIGRATIONS
-       Database migrations are scripts which modify  the  database  schema  or
-       content.  You can create database migrations by the mvc generate migra-
-       tion command. This command generates a migration for a  specific  model
+       Database  migrations  are  scripts  which modify the database schema or
+       content. You can create database migrations by the mvc generate  migra-
+       tion  command.  This command generates a migration for a specific model
        by creating or removing tables and columns. To generate a migration:
 
              mvc generate migration description MODEL [field:type ...]
 
-       This  will create a migration script under the db/migrations directory.
-       Migration scripts filenames are timestamped and use the description  is
+       This will create a migration script under the db/migrations  directory.
+       Migration  scripts filenames are timestamped and use the description is
        used as part of the filename for the migration script (so keep it short
        and sweet).
 
-       For each specified field:type pair, mvc will generate add  column  code
-       in  the  migration  script.  If the --reverse switch is specified, then
-       remove column code will be generated. To change the type or name  of  a
+       For  each  specified field:type pair, mvc will generate add column code
+       in the migration script. If the --reverse  switch  is  specified,  then
+       remove  column  code will be generated. To change the type or name of a
        column, remove then re-add the column.
 
 
 APPLYING MIGRATIONS
-       Migration  scripts  can  be  run  via the mvc migrate command. With not
-       other parameters, the command will run all migrations that have not yet
-       been  applied  to the database. You can also use mvc migrate forward to
-       apply apply the next unapplied migration. Similarly mvc  migrate  back-
-       ward  will  reverse  the  last applied migration.  You can also use mvc
-       migrate NNN to migrate forward or backward to a specific migration. NNN
-       is  the  migration  sequence number which is the number at the start of
-       the migration script file name.
+       Migration scripts can be run via the mvc migrate command. With no other
+       parameters,  the command will run all migrations that have not yet been
+       applied to the database. You can also use mvc migrate forward to  apply
+       apply the next unapplied migration. Similarly mvc migrate backward will
+       reverse the last applied migration.  You can also use mvc  migrate  NNN
+       to  migrate  forward  or  backward  to a specific migration. NNN is the
+       migration sequence number which is the  number  at  the  start  of  the
+       migration script file name.
 
 
 COMPILING
        Ejscript compiles models, views and controllers into Ejscript byte-code
-       modules.  These  are  then  loaded  and  run by Ejscript in response to
-       incoming client requests. Code is compiled only once  but  can  be  run
+       modules. These are then loaded and  run  by  Ejscript  in  response  to
+       incoming  client  requests.  Code  is compiled only once but can be run
        many times to service incoming requests.
 
-       In  development  mode, Ejscript will automatically compile the relevant
-       portions of the application if the source  code  is  modified.  It  can
+       In development mode, Ejscript will automatically compile  the  relevant
+       portions  of  the  application  if  the source code is modified. It can
        intelligently recompile views, actions, controllers and database models
        as required. However, you can also explicilty recompile portions or the
        complete appliction.
@@ -159,11 +156,11 @@ COMPILING
 
              mvc compile
 
-       This  will  compile  each  controller  and  view and also recompile the
-       application and module source code. Module  files  for  each  component
+       This will compile each controller  and  view  and  also  recompile  the
+       application  and  module  source  code. Module files for each component
        will be generated.
 
-       Mvc  also  provides options for you to individually compile controllers
+       Mvc also provides options for you to individually  compile  controllers
        and views. To recompile named views or controllers:
 
              mvc compile view NAMES ...
@@ -184,7 +181,7 @@ COMPILING
 
              mvc compile path/name.ejs....
 
-       When  compiling  views,  you  can use the --keep switch to preserve the
+       When compiling views, you can use the --keep  switch  to  preserve  the
        intermediate generated Ejscript source file.
 
 RUNNING
@@ -192,7 +189,7 @@ RUNNING
 
              mvc run
 
-       This requires that your config/config.ecf file be  modified  to  define
+       This  requires  that  your config/config.ecf file be modified to define
        command to run your web server.
 
 CLEANING
@@ -204,7 +201,7 @@ OPTIONS
        Mvc has the following command usage patterns:
 
              mvc clean
-             mvc  compile  [all  | app | controller names | model names | view
+             mvc compile [all | app | controller names | model  names  |  view
             names]
              mvc compile path/name.ejs ...
              mvc generate [app name | controller name [action [, action] ...]|
@@ -213,38 +210,38 @@ OPTIONS
              mvc run
 
        --database connector
-             Select  a database connector to use. Currently this switch is not
+             Select a database connector to use. Currently this switch is  not
              implemented and sqlite is the only connector supported.
 
        --keep
-             Preserve generated  intermediate  Ejscript  source  files.  These
+             Preserve  generated  intermediate  Ejscript  source  files. These
              files are generated when blending views with layout pages.
 
        --layout layoutPage
-             Change  the  name  of  the default layout page if a view does not
+             Change the name of the default layout page if  a  view  does  not
              explicitly specify a layout page.
 
        --overwrite
-             Overwrite existing files. Mvc normally will not overwrite  exist-
-             ing  files. This is to preserve user changes to previously gener-
+             Overwrite  existing files. Mvc normally will not overwrite exist-
+             ing files. This is to preserve user changes to previously  gener-
              ated files.
 
 
        --search ejsPath
-             Set the module search path. The module search path is  a  set  of
+             Set  the  module  search path. The module search path is a set of
              directories that the mvc command will use when locating and load-
              ing Ejscript modules.  The search path will always have some sys-
-             tem  directories  appended to the end. These include paths speci-
-             fied via the  EJSPATH environment variable and key system  direc-
-             tories  such  as  the  Ejscript  system  module directory and the
+             tem directories appended to the end. These include  paths  speci-
+             fied  via the  EJSPATH environment variable and key system direc-
+             tories such as the  Ejscript  system  module  directory  and  the
              directory containing the mvc command.
 
-             The search path value is similar in format  to  the  system  PATH
-             variable  format.  On windows, path segments are separated by ";"
-             and on Linux, Unix, FreeBSD and MAC, the path segments are  sepa-
+             The  search  path  value  is similar in format to the system PATH
+             variable format.  On windows, path segments are separated by  ";"
+             and  on Linux, Unix, FreeBSD and MAC, the path segments are sepa-
              rated by ":" delimiters.
 
-             Given  a  module named "a.b.c" in a script, mvc will use the fol-
+             Given a module named "a.b.c" in a script, mvc will use  the  fol-
              lowing search strategy to locate the module:
 
              1. Search for a module file named "a.b.c.mod"

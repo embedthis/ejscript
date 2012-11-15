@@ -24,19 +24,19 @@ module ejs.db.mapper {
         
 
         static var  _assocName: String          //  Name for use in associations. Lower case class name
-        static var  _belongsTo: Array = null    //  List of belonging associations
+        static var  _belongsTo: Array? = null    //  List of belonging associations
 
         /*
             Queries to cache. Indexed by model name and optionally query string. Contains cache options for this model.
             Created on demand if cache() is called.
          */
         static var _cacheOptions: Object = {}
-        static var _caching: Boolean
+        static var _caching: Boolean?
 
         static var  _className: String          //  Model class name
         static var  _columns: Object            //  List of columns in this database table
-        static var  _hasOne: Array = null       //  List of 1-1 containment associations
-        static var  _hasMany: Array = null      //  List of 1-many containment  associations
+        static var  _hasOne: Array? = null      //  List of 1-1 containment associations
+        static var  _hasMany: Array? = null     //  List of 1-many containment  associations
 
         static var  _db: Database               //  Hosting database
         static var  _foreignId: String          //  Camel case class name with "Id". (userCartId))
@@ -44,13 +44,13 @@ module ejs.db.mapper {
         static var  _model: Type                //  Model class
         static var  _tableName: String          //  Name of the database table. Plural, PascalCase
         static var  _trace: Boolean             //  Trace database SQL statements
-        static var  _validations: Array = null
+        static var  _validations: Array? = null
 
-        static var  _beforeFilters: Array = null//  Filters that run before saving data
-        static var  _afterFilters: Array = null //  Filters that run after saving data
-        static var  _wrapFilters: Array = null  //  Filters that run before and after saving data
+        static var  _beforeFilters: Array? = null//  Filters that run before saving data
+        static var  _afterFilters: Array? = null //  Filters that run after saving data
+        static var  _wrapFilters: Array? = null  //  Filters that run before and after saving data
 
-        var _keyValue: Object                   //  Record key column value
+        var _keyValue: Object?                  //  Record key column value
         var _errors: Object                     //  Error message aggregation
         var _cacheAssoc: Object                 //  Cached association data
         var _imodel: Type                       //  Model class
@@ -197,7 +197,7 @@ module ejs.db.mapper {
         private static function getCacheIndex(model: String): String
             "::ejs.db.mapper::" + model
 
-        private static function getCacheName(name: String, options: Object, query: String): String {
+        private static function getCacheName(name: String, options: Object?, query: String?): String {
             if (options && options.query && query) {
                 name += "::" + query
             }
@@ -255,7 +255,7 @@ module ejs.db.mapper {
          */
         private function coerceToEjsTypes(): Void {
             for (let field: String in this) {
-                let col: Column = _imodel._columns[field]
+                let col: Column? = _imodel._columns[field]
                 if (col == undefined) {
                     continue
                 }
@@ -385,7 +385,7 @@ var before = Memory.resident
             Fetch cached data from the cache if present
             @return a response object
          */
-        private static function fetchCachedResponse(query: String = null): Object {
+        private static function fetchCachedResponse(query: String? = null): Object? {
             let cacheIndex = getCacheIndex(_className)
             let options = _cacheOptions[cacheIndex]
             if (options) {
@@ -431,7 +431,7 @@ var before = Memory.resident
             @option readonly
             @option lock
          */
-        static function find(key: Object, options: Object = {}): Object {
+        static function find(key: Object?, options: Object = {}): Object? {
             let grid: Array = innerFind(key, 1, options)
             if (grid.length >= 1) {
                 let results = createRecord(grid[0], options)
@@ -470,7 +470,7 @@ var before = Memory.resident
             @example
                 rec = findOneWhere("cost < 200")
          */
-        static function findOneWhere(where: String): Object {
+        static function findOneWhere(where: String): Object? {
             let grid: Array = innerFind(null, 1, { conditions: [where]})
             if (grid.length >= 1) {
                 return createRecord(grid[0])
@@ -654,13 +654,13 @@ var before = Memory.resident
         /*
             Common find implementation. See find/findAll for doc.
          */
-        static private function innerFind(key: Object, limit: Number? = null, options: Object = {}): Array {
+        static private function innerFind(key: Object?, limit: Number? = null, options: Object? = {}): Array {
             let cmd: String
             let columns: Array
             let from: String
             let conditions: String
             let where: Boolean
-            let results: Array
+            let results: Array?
 
             if (!_columns) _model.getSchema()
             if (_caching && (results = fetchCachedResponse())) {
@@ -836,7 +836,7 @@ var before = Memory.resident
         /*
             Make a getter function to lazily (on-demand) read associated records (belongsTo)
          */
-        private static function makeLazyReader(rec: Record, field: String, model, key: String, 
+        private static function makeLazyReader(rec: Record, field: String, model, key: String?, 
                 options: Object = {}): Function {
             // print("Make lazy reader for " + _tableName + "[" + field + "] for " + model._tableName + "[" + key + "]")
             var lazyReader: Function = function(): Object {
@@ -848,7 +848,7 @@ var before = Memory.resident
 
         private static function mapSqlTypeToEjs(sqlType: String): Type {
             sqlType = sqlType.replace(/\(.*/, "")
-            let ejsType: Type = _db.sqlTypeToEjsType(sqlType)
+            let ejsType: Type? = _db.sqlTypeToEjsType(sqlType)
             if (ejsType == undefined) {
                 throw new Error("Unsupported SQL type: \"" + sqlType + "\"")
             }
@@ -858,8 +858,8 @@ var before = Memory.resident
         /*
             Prepare a value to be written to the database
          */
-        private static function prepareValue(field: String, value: Object): String {
-            let col: Column = _columns[field]
+        private static function prepareValue(field: String, value: Object?): String {
+            let col: Column? = _columns[field]
             if (col == undefined) {
                 return undefined
             }
@@ -1019,7 +1019,7 @@ var before = Memory.resident
         /*
             Save the output from a database query for future reuse
          */
-        private static function saveQuery(results, query: String = null): Void {
+        private static function saveQuery(results, query: String? = null): Void {
             let cacheIndex = getCacheIndex(_className)
             let options = _cacheOptions[cacheIndex]
             if (options) {
@@ -1214,7 +1214,7 @@ var before = Memory.resident
             @deprecated 1.0.0B2
          */
         # Config.Legacy
-        function constructor(fields: Object = null): Void {
+        function constructor(fields: Object? = null): Void {
             initialize(fields)
         }
     }
@@ -1277,7 +1277,7 @@ var before = Memory.resident
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 
     a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
+    by the terms of either license. Consult the LICENSE.md distributed with 
     this software for full details.
     
     This software is open source; you can redistribute it and/or modify it 

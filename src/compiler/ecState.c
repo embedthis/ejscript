@@ -38,7 +38,7 @@ static void manageState(EcState *state, int flags)
     Enter a new level. For the parser, this is a new production rule. For the ASP processor or code generator, 
     it is a new AST node. Push old state and setup a new production state
  */
-int ecEnterState(EcCompiler *cp)
+PUBLIC int ecEnterState(EcCompiler *cp)
 {
     EcState     *state;
 
@@ -55,7 +55,7 @@ int ecEnterState(EcCompiler *cp)
 }
 
 
-void ecLeaveState(EcCompiler *cp)
+PUBLIC void ecLeaveState(EcCompiler *cp)
 {
     cp->state = cp->state->next;
 }
@@ -64,7 +64,7 @@ void ecLeaveState(EcCompiler *cp)
 /*
     Leave a level. Pop the state and pass back the current node.
  */
-EcNode *ecLeaveStateWithResult(EcCompiler *cp, EcNode *np)
+PUBLIC EcNode *ecLeaveStateWithResult(EcCompiler *cp, EcNode *np)
 {
     ecLeaveState(cp);
     if (cp->fatalError || cp->error) {
@@ -83,7 +83,7 @@ EcNode *ecLeaveStateWithResult(EcCompiler *cp, EcNode *np)
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
     a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
+    by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details.
 
     This software is open source; you can redistribute it and/or modify it

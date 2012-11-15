@@ -162,7 +162,7 @@ scriptName properties will not affect the pathInfo property.</td></tr>
    <tr><td nowrap align='center'> </td><td>reference</td><td><a href='String.html'>String</a></td><td>Request reference string. This is the portion of the Uri after the "#". Set to null if there is no reference.</td></tr>
 <a name='referrer'></a>
    <tr><td nowrap align='center'> </td><td>referrer</td><td><a href='String.html'>String</a></td><td>Name of the referring URL. This comes from the request "Referrer" Http header. Set to null if there is
-no defined referrer.</td></tr>
+no defined referrer. Note: the HTTP header is misspelt as "referer".</td></tr>
 <a name='remoteAddress'></a>
    <tr><td nowrap align='center'> </td><td>remoteAddress</td><td><a href='String.html'>String</a></td><td>IP address of the client issuing the request. </td></tr>
 <a name='responded'></a>
@@ -245,7 +245,7 @@ not the actual number of bytes sent to the network connection.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#matchContent'><b>matchContent</b></a>(formats: <a href='Array.html'>Array</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Select the response content type based on the request "Accept" header.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#notify'><b>notify</b></a>(key: <a href='String.html'>String</a>, msg: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a transient flash notification message.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#off'><b>off</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='ejs.web-Request.html'>Request</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ByteArray.html'>ByteArray</a>, offset: <a href='Number.html'>Number</a> = 0, count: <a href='Number.html'>Number</a> = -1): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.If the request is posting a form, i.e.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#redirect'><b>redirect</b></a>(target: <a href='Object.html'>Object</a>, status: <a href='Number.html'>Number</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Redirect the client to a new URL.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#setCookie'><b>setCookie</b></a>(name: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Define a cookie header to send with the response.</td></tr>
@@ -261,7 +261,7 @@ not the actual number of bytes sent to the network connection.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#writeError'><b>writeError</b></a>(status: <a href='Number.html'>Number</a>, msgs: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write an error message back to the user and finalize the request.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#writeFile'><b>writeFile</b></a>(file: <a href='Path.html'>Path</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a static file back to the client.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#writeResponse'><b>writeResponse</b></a>(response: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a response to the client.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#writeSafe'><b>writeSafe</b></a>(data: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write safely.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#writeSafe'><b>writeSafe</b></a>(data: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write safely.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
@@ -532,7 +532,7 @@ will call setupFlash and finalizeFlash automatically.</dd></dl>
 <hr />
 <a name='on'></a>
 <div class='api'>
-<div class='apiSig'>    on(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>    on(name, observer: <a href='Function.html'>Function</a>): <a href='ejs.web-Request.html'>Request</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Add an observer to the stream for the named events. </dd></dl>
@@ -568,14 +568,14 @@ data has been read. To read data in these situations, register an observer funct
 connection becomes "readable".</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>buffer: <a href='ByteArray.html'>ByteArray</a> </td><td>Destination byte array for read data.</td></tr><tr class='param'><td class='param'>offset: <a href='Number.html'>Number</a> </td><td>Offset in the byte array to place the data. If the offset is -1, then data is appended to the buffer write <a href='#position'>position</a> which is then updated. [default: 0]</td></tr><tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>Read up to this number of bytes. If -1, read as much as the buffer will hold up. If the  stream is of fixed and known length (such as a file) and the buffer is of sufficient size or is growable,  read the entire stream. [default: -1]</td></tr></table></dd>
+<tr class='param'><td class='param'>buffer: <a href='ByteArray.html'>ByteArray</a> </td><td>Destination byte array for read data.</td></tr><tr class='param'><td class='param'>offset: <a href='Number.html'>Number</a> </td><td>Offset in the byte array to place the data. If the offset is -1, then data is appended to the buffer write <a href='#position'>position</a> which is then updated. If offset is >= 0, the data is read  to the offset and the read pointer is set to the offset and the write pointer to one past the end of  the data just read. [default: 0]</td></tr><tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>Read up to this number of bytes. If -1, read as much as the buffer will hold up. If the  stream is of fixed and known length (such as a file) and the buffer is of sufficient size or is growable,  read the entire stream. If the buffer is of a fixed size, ready only what will fit into the buffer. [default: -1]</td></tr></table></dd>
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>readable</td><td>Issued when there is new read data available.</td></tr>
 <td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A count of the bytes actually read. Returns null on EOF.</dd></dl>
+<dd>A count of the bytes actually read. Returns null on EOF or errors.</dd></dl>
 <dl><dt>Example</dt>
 <dd><pre>request.on("readable", function(event, request) {
     var data = new byteArray
@@ -786,9 +786,9 @@ A "writable" event will be issued when the stream can again absorb more data.Thi
 <div class='apiSig'>    writeFile(file: <a href='Path.html'>Path</a>): <a href='Boolean.html'>Boolean</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Send a static file back to the client. This is a high performance way to send static content to the client.
-This call must be invoked prior to sending any data or headers to the client, otherwise it will be ignored
-and the slower netConnector will be used instead.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Send a static file back to the client. This is a high performance way to send static content to the client
+by using the "sendConnector". To be effective, this call must be invoked prior to sending any data or 
+headers to the client, otherwise it will be ignored and the slower "netConnector" will be used instead.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>file: <a href='Path.html'>Path</a> </td><td>Path to the file to send back to the client.</td></tr></table></dd>
@@ -816,7 +816,7 @@ body properties. The respond method replaces previously defined status and heade
 <hr />
 <a name='writeSafe'></a>
 <div class='api'>
-<div class='apiSig'>    writeSafe(data: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>    writeSafe(data: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Write safely. Write HTML escaped data back to the client.</dd></dl>

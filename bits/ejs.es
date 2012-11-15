@@ -37,8 +37,15 @@ public function packageBinaryFiles(formats = ['tar', 'native']) {
         install('doc/product/README.TXT', pkg, {fold: true, expand: true})
         install('package/install.sh', pkg.join('install'), {permissions: 0755, expand: true})
         install('package/uninstall.sh', pkg.join('uninstall'), {permissions: 0755, expand: true})
-
-        install('LICENSE.md', p.product, {fold: true, expand: true})
+        if (bit.platform.os == 'windows') {
+            install('package/windows/LICENSE.TXT', bin, {fold: true, expand: true})
+        }
+        install(['doc/licenses/*.txt'], p.product.join('LICENSE.TXT'), {
+            cat: true,
+            textfile: true,
+            fold: true,
+            title: bit.settings.title + ' Licenses',
+        })
         install('doc/product/README.TXT', p.product, {fold: true, expand: true})
         install('package/uninstall.sh', p.bin.join('uninstall'), {permissions: 0755, expand: true})
         install('package/linkup', p.bin, {permissions: 0755})
@@ -71,10 +78,12 @@ public function packageBinaryFiles(formats = ['tar', 'native']) {
     }
     if (!bit.cross) {
         if (bit.platform.os == 'windows') {
-            if (bit.platform.arch == 'x86_64') {
-                install(bit.packs.compiler.dir.join('VC/redist/x64/Microsoft.VC100.CRT/msvcr100.dll'), p.bin)
+            let version = bit.packs.compiler.version.replace('.', '')
+            if (bit.platform.arch == 'x64') {
+                install(bit.packs.compiler.dir.join('VC/redist/x64/Microsoft.VC' +
+                    version + '.CRT/msvcr' + version + '.dll'), p.bin)                                     
             } else {
-                install(bit.packs.compiler.dir.join('VC/redist/x86/Microsoft.VC100.CRT/msvcr100.dll'), p.bin)
+                install(bit.packs.compiler.dir.join('VC/redist/x86/Microsoft.VC100.CRT/msvcr' + version + '.dll'), p.bin)
             }
             /*
                 install(bit.packs.compiler.path.join('../../lib/msvcrt.lib'), p.bin)
@@ -129,15 +138,14 @@ public function packageComboFiles() {
     let pkg = src.join(s.product + '-' + s.version)
     safeRemove(pkg)
     pkg.makeDir()
-    install('projects/ejs-' + bit.platform.os + '-bit.h', pkg.join('src/deps/ejs/bit.h'))
+    install('projects/ejs-' + bit.platform.os + '-debug-bit.h', pkg.join('src/deps/ejs/bit.h'))
     install('package/ejs-flat.bit', pkg.join('src/deps/ejs/ejs.bit'))
     install('package/Makefile-flat', pkg.join('src/deps/ejs/Makefile'))
     install('package/start-flat.bit', pkg.join('src/deps/ejs/start.bit'))
-    let filter = /^#inc.*ejs.*$|^#inc.*mpr.*$|^#inc.*ec.*$|^#inc.*http.*$|^#inc.*customize.*$/mg
+    let filter = /^#inc.*ejs.*$|^#inc.*ec.*$|^#inc.*customize.*$|#include.*zlib.h.*$|#inc.*ejs.zlib.slots.h.*/mg
 
     install([
-        'src/deps/mpr/mpr.h', 
-        'src/deps/http/http.h', 
+        'src/deps/zlib/zlib.h', 
         'src/ejsByteCode.h', 
         'src/ejsByteCodeTable.h',
         'src/ejs.h', 
@@ -146,9 +154,11 @@ public function packageComboFiles() {
         'src/deps/pcre/pcre.h'
         ], pkg.join('src/deps/ejs/ejs.h'), {
         cat: true, filter: filter,
-        header: '#include \"ejs.slots.h\"',
+        header: '#include \"bit.h\"\n#include \"mpr.h\"\n#include \"http.h\"\n#include \"ejs.slots.h\"',
         title: bit.settings.title + ' Library Source',
     })
+    install('src/deps/mpr/mpr.h', pkg.join('src/deps/ejs/mpr.h'))
+    install('src/deps/http/http.h', pkg.join('src/deps/ejs/http.h'))
     install('src/vm/ejsByteGoto.h', pkg.join('src/deps/ejs/ejsByteGoto.h'))
     install(bit.dir.inc.join('ejs*.slots.h'), pkg.join('src/deps/ejs/ejs.slots.h'), {
         cat: true, filter: filter,
@@ -158,7 +168,7 @@ public function packageComboFiles() {
     install(['src/deps/**.c'], pkg.join('src/deps/ejs/deps.c'), {
         cat: true,
         filter: filter,
-        exclude: /pcre|makerom|http\.c|sqlite|manager/,
+        exclude: /pcre|makerom|http\.c|sqlite|manager|zlib/,
         header: '#include \"ejs.h\"',
         title: bit.settings.title + ' Library Source',
     })
@@ -169,14 +179,15 @@ public function packageComboFiles() {
     install(['src/**.c'], pkg.join('src/deps/ejs/ejsLib.c'), {
         cat: true,
         filter: filter,
-        exclude: /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|deps|ejs.debugger|samples|utils/,
+        /* Include deps/zlib */
+        exclude: /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|mpr|http|pcre|\/sqlite|ejs.debugger|samples|utils/,
         header: '#define EJS_DEFINE_OPTABLE 1\n#include \"ejs.h\"',
         title: bit.settings.title + ' Library Source',
     })
-    install(['src/**.es'], pkg.join('src/deps/ejs/ejs.es'), {
+    install(['src/core/**.es', 'src/jems/**.es'], pkg.join('src/deps/ejs/ejs.es'), {
         cat: true,
         filter: filter,
-        exclude: /ejs.bit|ejs.debugger|test|sample|ejs.jem|ejs.mvc/,
+        exclude: /ejs.bit|ejs.debugger|test|sample|ejspage.es|ejs.jem|ejs.mvc/,
         title: bit.settings.title + ' Script Library',
     })
     install('src/cmd/ejs.c', pkg.join('src/deps/ejs/ejs.c'), {
@@ -304,7 +315,7 @@ function updateLatestLink() {
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
     a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
+    by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details.
   
     This software is open source; you can redistribute it and/or modify it

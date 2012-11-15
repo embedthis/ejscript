@@ -1,6 +1,5 @@
-
 /*
- *	Test throw
+  	Test throw
  */
 
 state = 1

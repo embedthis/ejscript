@@ -8,7 +8,7 @@ module embedthis.doc {
 
     var all: Boolean
     var bare: Boolean
-    var out: File
+    var out: File?
     var outPath: Path
     var symbols = {}
     var reserved = {"int": true, "char": true, "long": true, "void": true, "...": true, "va_list": true, "struct": true,
@@ -207,6 +207,7 @@ module embedthis.doc {
         str = str.replace(/listitem>/g, 'li>')
         str = str.replace(/<linebreak\/>/g, "<br/>")
         str = str.replace(/bold>/g, "b>")
+        str = str.replace(/preformatted>/g, "pre>")
         str = str.replace(/<row>/g, "<tr>")
         str = str.replace(/<entry thead="no">/g, "<td>")
         str = str.replace(/<table rows=[^>]*>/g, "<table class='info'>")
@@ -596,7 +597,7 @@ module embedthis.doc {
     }
 
 
-    function emitStructDetail(def: XML, fields: XML) {
+    function emitStructDetail(def: XML, fields: XML?) {
         let name = def.compoundname
         if (!all && def.briefdescription == '' && def.detaileddescription == '') {
             return
@@ -824,7 +825,7 @@ module embedthis.doc {
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 
     a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
+    by the terms of either license. Consult the LICENSE.md distributed with 
     this software for full details.
     
     This software is open source; you can redistribute it and/or modify it 

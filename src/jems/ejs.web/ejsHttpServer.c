@@ -16,7 +16,7 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn);
 static EjsHttpServer *lookupServer(Ejs *ejs, cchar *ip, int port);
 static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp);
 static void setupConnTrace(HttpConn *conn);
-static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags);
+static void stateChangeNotifier(HttpConn *conn, int event, int arg);
 
 /************************************ Code ************************************/
 /*  
@@ -105,7 +105,7 @@ static EjsObj *hs_limits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     if (sp->limits == 0) {
         sp->limits = ejsCreateEmptyPot(ejs);
         limits = (sp->endpoint) ? sp->endpoint->limits : ejs->http->serverLimits;
-        mprAssert(limits);
+        assure(limits);
         ejsGetHttpLimits(ejs, sp->limits, limits, 1);
     }
     return sp->limits;
@@ -123,7 +123,7 @@ static EjsObj *hs_setLimits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
     if (sp->limits == 0) {
         sp->limits = ejsCreateEmptyPot(ejs);
         limits = (sp->endpoint) ? sp->endpoint->limits : ejs->http->serverLimits;
-        mprAssert(limits);
+        assure(limits);
         ejsGetHttpLimits(ejs, sp->limits, limits, 1);
     }
     ejsBlendObject(ejs, sp->limits, argv[0], EJS_BLEND_OVERWRITE);
@@ -311,13 +311,13 @@ static EjsObj *hs_off(Ejs *ejs, EjsHttpServer *sp, int argc, EjsAny **argv)
 
 
 /*  
-    function on(name: [String|Array], observer: Function): Void
+    function on(name: [String|Array], observer: Function): HttpServer
  */
-static EjsObj *hs_on(Ejs *ejs, EjsHttpServer *sp, int argc, EjsAny **argv)
+static EjsHttpServer *hs_on(Ejs *ejs, EjsHttpServer *sp, int argc, EjsAny **argv)
 {
     //  TODO -- should fire if currently readable / writable (also socket etc)
     ejsAddObserver(ejs, &sp->emitter, argv[0], argv[1]);
-    return 0;
+    return sp;
 }
 
 
@@ -345,20 +345,16 @@ static EjsVoid *hs_run(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 
 
 /*  
-    function secure(keyFile: Path, certFile: Path!, protocols: Array = null, ciphers: Array = null): Void
+    function secure(keyFile: Path, certFile: Path!, protocols: Array? = null, ciphers: Array? = null): Void
  */
 static EjsObj *hs_secure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-#if BIT_FEATURE_SSL
+#if BIT_PACK_SSL
     EjsArray    *protocols;
     cchar       *token;
     int         mask, protoMask, i;
 
-    if (sp->ssl == 0 && ((sp->ssl = mprCreateSsl(sp)) == 0)) {
-        return 0;
-    }
-    if (httpLoadSsl(ejs->http) < 0) {
-        ejsThrowStateError(ejs, "Can't load SSL provider");
+    if (sp->ssl == 0 && ((sp->ssl = mprCreateSsl(1)) == 0)) {
         return 0;
     }
     if (!ejsIs(ejs, argv[0], Null)) {
@@ -379,19 +375,19 @@ static EjsObj *hs_secure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
             } else if (*token == '+') {
                 token++;
             }
-            if (scasecmp(token, "SSLv2") == 0) {
+            if (scaselesscmp(token, "SSLv2") == 0) {
                 protoMask &= ~(MPR_PROTO_SSLV2 & ~mask);
                 protoMask |= (MPR_PROTO_SSLV2 & mask);
 
-            } else if (scasecmp(token, "SSLv3") == 0) {
+            } else if (scaselesscmp(token, "SSLv3") == 0) {
                 protoMask &= ~(MPR_PROTO_SSLV3 & ~mask);
                 protoMask |= (MPR_PROTO_SSLV3 & mask);
 
-            } else if (scasecmp(token, "TLSv1") == 0) {
+            } else if (scaselesscmp(token, "TLSv1") == 0) {
                 protoMask &= ~(MPR_PROTO_TLSV1 & ~mask);
                 protoMask |= (MPR_PROTO_TLSV1 & mask);
 
-            } else if (scasecmp(token, "ALL") == 0) {
+            } else if (scaselesscmp(token, "ALL") == 0) {
                 protoMask &= ~(MPR_PROTO_ALL & ~mask);
                 protoMask |= (MPR_PROTO_ALL & mask);
             }
@@ -401,7 +397,6 @@ static EjsObj *hs_secure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     if (argc >= 4 && ejsIs(ejs, argv[3], Array)) {
         mprSetSslCiphers(sp->ssl, ejsToMulti(ejs, argv[3]));
     }
-    mprConfigureSsl(sp->ssl);
 #else
     ejsThrowReferenceError(ejs, "SSL support was not included in the build");
 #endif
@@ -464,7 +459,7 @@ static void receiveRequest(EjsRequest *req, MprEvent *event)
     
     conn = req->conn;
     ejs = req->ejs;
-    mprAssert(ejs);
+    assure(ejs);
 
     onrequest = ejsGetProperty(ejs, req->server, ES_ejs_web_HttpServer_onrequest);
     if (!ejsIsFunction(ejs, onrequest)) {
@@ -529,7 +524,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
     cchar           *name;
     int             i;
 
-    mprAssert(sp->endpoint);
+    assure(sp->endpoint);
     http = sp->endpoint->http;
     host = mprGetFirstItem(sp->endpoint->hosts);
     route = mprGetFirstItem(host->routes);
@@ -574,58 +569,49 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
 
 /*
     Notification callback. This routine is called from the Http pipeline on connection state changes. 
-    Readable/writable events come with state == 0 and notifyFlags set accordingly.
  */
-static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
+static void stateChangeNotifier(HttpConn *conn, int event, int arg)
 {
     Ejs             *ejs;
     EjsRequest      *req;
 
-    mprAssert(conn);
+    assure(conn);
 
     ejs = 0;
     if ((req = httpGetConnContext(conn)) != 0) {
         ejs = req->ejs;
     }
-    switch (state) {
-    case HTTP_STATE_BEGIN:
-        setupConnTrace(conn);
-        break;
-            
-    case HTTP_STATE_FIRST:
-#if UNUSED
-        if (!(conn->rx->flags & (HTTP_OPTIONS | HTTP_TRACE))) {
-            //  MOB - is this required with new routing?
-            conn->tx->handler = (conn->error) ? conn->http->passHandler : conn->http->ejsHandler;
-        }
-#endif
-        break;
-
-    case HTTP_STATE_COMPLETE:
-        if (req) {
-            if (conn->error) {
-                ejsSendRequestErrorEvent(ejs, req);
-            }
-            ejsSendRequestCloseEvent(ejs, req);
-            if (req->cloned) {
-                ejsSendRequestCloseEvent(req->ejs, req->cloned);
+    switch (event) {
+    case HTTP_EVENT_STATE:
+        if (arg == HTTP_STATE_BEGIN) {
+            setupConnTrace(conn);
+        } else if (arg == HTTP_STATE_FINALIZED) {
+            if (req) {
+                if (conn->error) {
+                    ejsSendRequestErrorEvent(ejs, req);
+                }
+                ejsSendRequestCloseEvent(ejs, req);
+                if (req->cloned) {
+                    ejsSendRequestCloseEvent(req->ejs, req->cloned);
+                }
             }
         }
         break;
 
-    case HTTP_EVENT_IO:
+    case HTTP_EVENT_READABLE:
         /*  IO event notification for the request.  */
         if (req && req->emitter) {
-            if (notifyFlags & HTTP_NOTIFY_READABLE) {
-                ejsSendEvent(ejs, req->emitter, "readable", NULL, req);
-            } 
-            if (notifyFlags & HTTP_NOTIFY_WRITABLE) {
-                ejsSendEvent(ejs, req->emitter, "writable", NULL, req);
-            }
+            ejsSendEvent(ejs, req->emitter, "readable", NULL, req);
+        } 
+        break;
+
+    case HTTP_EVENT_WRITABLE:
+        if (req && req->emitter) {
+            ejsSendEvent(ejs, req->emitter, "writable", NULL, req);
         }
         break;
 
-    case HTTP_EVENT_CLOSE:
+    case HTTP_EVENT_APP_CLOSE:
         /* Connection close */
         if (req && req->conn) {
             req->conn = 0;
@@ -670,7 +656,7 @@ static void incomingEjs(HttpQueue *q, HttpPacket *packet)
     } else {
         httpJoinPacketForService(q, packet, 0);
     }
-    HTTP_NOTIFY(q->conn, 0, HTTP_NOTIFY_READABLE);
+    HTTP_NOTIFY(q->conn, HTTP_EVENT_READABLE, 0);
 }
 
 
@@ -679,9 +665,12 @@ static void setupConnTrace(HttpConn *conn)
     EjsHttpServer   *sp;
     int             i;
 
-    if ((sp = httpGetEndpointContext(conn->endpoint)) != 0) {
-        for (i = 0; i < HTTP_TRACE_MAX_DIR; i++) {
-            conn->trace[i] = sp->trace[i];
+    assure(conn->endpoint);
+    if (conn->endpoint) {
+        if ((sp = httpGetEndpointContext(conn->endpoint)) != 0) {
+            for (i = 0; i < HTTP_TRACE_MAX_DIR; i++) {
+                conn->trace[i] = sp->trace[i];
+            }
         }
     }
 }
@@ -766,15 +755,18 @@ static void startEjsHandler(HttpQueue *q)
     } else {
         ejs = sp->ejs;
     }
+    assure(!conn->tx->finalized);
     if (conn->notifier == 0) {
         httpSetConnNotifier(conn, stateChangeNotifier);
+        assure(!conn->tx->finalized);
     }
     if ((req = createRequest(sp, conn)) != 0) {
+        assure(!conn->tx->finalized);
         ejsSendEvent(ejs, sp->emitter, "readable", req, req);
 
         /* Send EOF if form or upload and all content has been received.  */
         if ((rx->form || rx->upload) && rx->eof) {
-            HTTP_NOTIFY(conn, 0, HTTP_NOTIFY_READABLE);
+            HTTP_NOTIFY(conn, HTTP_EVENT_READABLE, 0);
         }
     }
 }
@@ -786,7 +778,7 @@ static void readyEjsHandler(HttpQueue *q)
     
     conn = q->conn;
     if (conn->readq->count > 0) {
-        HTTP_NOTIFY(conn, 0, HTTP_NOTIFY_READABLE);
+        HTTP_NOTIFY(conn, HTTP_EVENT_READABLE, 0);
     }
 }
 
@@ -798,9 +790,9 @@ HttpStage *ejsAddWebHandler(Http *http, MprModule *module)
 {
     HttpStage   *handler;
 
-    mprAssert(http);
+    assure(http);
     if ((handler = http->ejsHandler) == 0) {
-        if ((handler = httpCreateHandler(http, "ejsHandler", HTTP_STAGE_ALL, module)) == 0) {
+        if ((handler = httpCreateHandler(http, "ejsHandler", module)) == 0) {
             return 0;
         }
     }
@@ -955,30 +947,14 @@ void ejsConfigureHttpServerType(Ejs *ejs)
 
 /*
     @copy   default
- 
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

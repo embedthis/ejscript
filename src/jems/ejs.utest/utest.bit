@@ -27,11 +27,11 @@ Bit.load({
             platforms: [ 'local' ],
         },
 
-        'utest.exe': {
-            type: 'file',
+        utest: {
+            type: 'exe',
             path: '${BIN}/utest${EXE}',
-            files: [ '${BIN}/ejsrun${EXE}' ],
-            depends: ['ejsrun'],
+            sources: [ '${SRC}/src/cmd/ejsrun.c' ],
+            depends: ['libejs', 'utest.es', 'utest.worker'],
             platforms: [ 'local' ],
         },
 	},

@@ -12,9 +12,9 @@ var out: Stream             //  Project output file stream
 
 const PREP_CODE = 
 "[ ! -x ${INC_DIR} ] && mkdir -p ${INC_DIR} ${OBJ_DIR} ${LIB_DIR} ${BIN_DIR}
-[ ! -f ${INC_DIR}/bit.h ] && cp ${settings.product}-macosx-bit.h ${INC_DIR}/bit.h
-if ! diff ${INC_DIR}/bit.h ${settings.product}-macosx-bit.h >/dev/null ; then
-    cp ${settings.product}-macosx-bit.h ${INC_DIR}/bit.h
+[ ! -f ${INC_DIR}/bit.h ] && cp ${settings.product}-macosx-${platform.profile}-bit.h ${INC_DIR}/bit.h
+if ! diff ${INC_DIR}/bit.h ${settings.product}-macosx-${platform.profile}-bit.h >/dev/null ; then
+    cp ${settings.product}-macosx-${platform.profile}-bit.h ${INC_DIR}/bit.h
 fi"
 
 var ids = {}                //  IDs stores the set of unique IDs used by generated Xcode projects. 
@@ -171,7 +171,7 @@ function init(base, name) {
      */
     let code = PREP_CODE
     for each (target in bit.targets) {
-        if (target.type == 'lib') {
+        if (target.type == 'lib' || target.type == 'exe') {
             for each (let hdr in target.depends) {
                 let dep = bit.targets[hdr]
                 if (dep && dep.type == 'header') {
@@ -686,13 +686,16 @@ function targetDependencies(base: Path) {
 
 function prepareSettings(base, o, debug: Boolean) {
     let options = {}
-
     if (!o.linker) {
         return ''
     }
     let libs = []
     for each (lname in o.libraries) {
         dep = bit.targets['lib' + lname]
+        if (dep && dep.type == 'lib') {
+            continue
+        }
+        dep = bit.targets[lname.replace(/\.dylib/, '')]
         if (dep && dep.type == 'lib') {
             continue
         }
@@ -707,11 +710,25 @@ function prepareSettings(base, o, debug: Boolean) {
         }
         o.linker.compact()
     }
+    let static = o.target && o.target.static
     let flags = o.linker.filter(function(e) e != '-g') + 
-        libs.map(function(lib) '-l' + Path(lib).trimExt().toString().replace(/^lib/, ''))
+        libs.map(function(lib: Path) {
+            if (lib.extension == 'a') {
+                return lib
+            } else {
+                return '-l' + lib.trimExt().toString().replace(/^lib/, '')
+            }
+        })
     if (flags.length > 0) {
-        options.linker = '\n\t\t\t\tOTHER_LDFLAGS = (\n' + 
-            flags.map(function(f) '\t\t\t\t\t"' + f + '",').join('\n') + '\n\t\t\t\t\t"$(inherited)"\n\t\t\t\t);\n'
+        if (static) {
+            options.linker = '\n\t\t\t\tOTHER_LDFLAGS = (\n' + 
+                flags.map(function(f) '\t\t\t\t\t"' + f + '",').join('\n') + '\n\t\t\t\t\t);\n'
+        } else {
+            options.linker = '\n\t\t\t\tOTHER_LDFLAGS = (\n' + 
+                flags.map(function(f) '\t\t\t\t\t"' + f + '",').join('\n') + '\n\t\t\t\t\t"$(inherited)"\n\t\t\t\t);\n'
+        }
+    } else if (static) {
+        options.linker = '\n\t\t\t\tOTHER_LDFLAGS = ();\n'
     }
     if (o.includes.length > 0) {
         options.includes = '\n\t\t\t\tHEADER_SEARCH_PATHS = (\n' + 
@@ -721,16 +738,24 @@ function prepareSettings(base, o, debug: Boolean) {
         options.libpaths = '\n\t\t\t\tLIBRARY_SEARCH_PATHS = (\n' + 
             o.libpaths.map(function(f) '\t\t\t\t\t"' + f.relativeTo(base) + '",').join('\n') + '\n\t\t\t\t\t"$(inherited)"\n\t\t\t\t);'
     }
-    let defines = debug ? o.defines : o.defines.clone().removeElements('-DDEBUG')
+    let defines = o.defines.clone()
+    if (debug) {
+        defines.push('-DBIT_DEBUG')
+    } else {
+        defines.removeElements('-DDEBUG')
+    }
     if (defines.length > 0) {
-        options.defines = '\n\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = (\n' + 
-            defines.map(function(f) '\t\t\t\t\t"' + f.replace('-D', '') + '",').join('\n') + '\n\t\t\t\t\t\t"$(inherited)"\n\t\t\t\t);'
+        options.defines = '\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = (\n' + 
+            defines.map(function(f) '\t\t\t\t\t"' + f.replace('-D', '') + '",').join('\n') + '\n\t\t\t\t\t"$(inherited)"\n\t\t\t\t);'
     }
     let result = ''
     if (options.includes) result += options.includes
     if (options.defines) result += options.defines
     if (options.libpaths) result += options.libpaths
     if (options.linker) result += options.linker
+    if (static) {
+        result += '\n\t\t\t\tMACH_O_TYPE = staticlib;\n'
+    }
     return result.trimStart('\n')
 }
 
@@ -870,6 +895,7 @@ ${RELEASE_SETTINGS}
             target[n] ||= []
         }
         let ts = {
+            target: target,
             compiler: target.compiler - bit.defaults.compiler,
             defines: target.defines - bit.defaults.defines,
             includes: target.includes - bit.defaults.includes,
@@ -977,7 +1003,7 @@ function getmakeid(src) {
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
     a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
+    by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details.
   
     This software is open source; you can redistribute it and/or modify it

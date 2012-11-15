@@ -112,6 +112,8 @@ PUT, DELETE, OPTIONS, and TRACE. It also supports Keep-Alive and SSL connections
    <tr><td nowrap align='center'> static const </td><td>VersionNotSupported</td><td><a href='Number.html'>Number</a></td><td>HTTP Http Version Not Supported Status (505). </td></tr>
 <a name='async'></a>
    <tr><td nowrap align='center'> get set </td><td>async</td><td><a href='Boolean.html'>Boolean</a></td><td>The current async mode. Set to true if the stream is in async mode.</td></tr>
+<a name='certificate'></a>
+   <tr><td nowrap align='center'> get set </td><td>certificate</td><td><a href='Path.html'>Path</a></td><td>Filename of the file of certificates used to verify server certificates. </td></tr>
 <a name='contentLength'></a>
    <tr><td nowrap align='center'> get </td><td>contentLength</td><td><a href='Number.html'>Number</a></td><td>Response content body length. Set to the length of the response body in bytes or -1 if no body or not known.
 To set the request body Content-Length, use setHeader("Content-Length", Length).</td></tr>
@@ -143,10 +145,11 @@ PUT, DELETE and TRACE.</td></tr>
 and buffered.  Don't use this property in async mode as it will block. Set to the response as a string of 
 characters. If the response has no body content, the empty string will be returned.</td></tr>
 <a name='sessionCookie'></a>
-   <tr><td nowrap align='center'> get </td><td>sessionCookie</td><td>&nbsp;</td><td>Get the ejs session cookie. This call extracts the ejs session cookie from the Http response headers.
+   <tr><td nowrap align='center'> get </td><td>sessionCookie</td><td><a href='String.html'>String</a></td><td>Get the ejs session cookie. This call extracts the ejs session cookie from the Http response headers.
 Ejscript sessions are identified by a client cookie which when transmitted with subsequent requests will 
 permit the server to locate the relevant session state store for the server-side application. 
-Use: setCookie(cookie) to transmit the cookie on subsquent requests.</td></tr>
+Use: setCookie(cookie) to transmit the cookie on subsquent requests.
+Will be a string or null if there is no session cookie defined.</td></tr>
 <a name='status'></a>
    <tr><td nowrap align='center'> get </td><td>status</td><td><a href='Number.html'>Number</a></td><td>Http response status code from the Http response status line, e.g. 200. Set to null if unknown.
 This command will block until the request completes.</td></tr>
@@ -155,6 +158,8 @@ This command will block until the request completes.</td></tr>
 line or from a local error message if the response fails to parse.</td></tr>
 <a name='uri'></a>
    <tr><td nowrap align='center'> get set </td><td>uri</td><td><a href='Uri.html'>Uri</a></td><td>The current Uri for this Http object. The Uri is used for the request URL when making a <a href='#connect'>connect</a> call.</td></tr>
+<a name='verify'></a>
+   <tr><td nowrap align='center'> get set </td><td>verify</td><td><a href='Boolean.html'>Boolean</a></td><td>Verify peer certificates. </td></tr>
 </table>
 
 <p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
@@ -177,7 +182,7 @@ line or from a local error message if the response fails to parse.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#close'><b>close</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.This immediately closes any open network connection and resets the http object to be ready for another 
 connection.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#connect'><b>connect</b></a>(method: <a href='String.html'>String</a>, uri: <a href='Uri.html'>Uri</a> = null, data: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a HTTP request for the current method and uri.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#finalize'><b>finalize</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Signals the end of any write data and flushes any buffered write data to the client.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#finalize'><b>finalize</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Signals the end of any write data and flushes any buffered write data to the server.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#flush'><b>flush</b></a>(dir: <a href='Number.html'>Number</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.Flush request data.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#form'><b>form</b></a>(uri: <a href='Uri.html'>Uri</a>, data: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a POST request with www-url encoded key=value data.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#get'><b>get</b></a>(uri: <a href='Uri.html'>Uri</a> = null, data: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a GET request for the current uri.</td></tr>
@@ -185,7 +190,7 @@ connection.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#head'><b>head</b></a>(uri: <a href='Uri.html'>Uri</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a HEAD request for the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#header'><b>header</b></a>(key: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the value of a single response header.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#off'><b>off</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.All events are called with the following signature.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='Http.html'>Http</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.All events are called with the following signature.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#post'><b>post</b></a>(uri: <a href='Uri.html'>Uri</a>, data: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Initiate a POST request.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#put'><b>put</b></a>(uri: <a href='Uri.html'>Uri</a>, data: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a PUT request for the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ByteArray.html'>ByteArray</a>, offset: <a href='Number.html'>Number</a>, count: <a href='Number.html'>Number</a> = -1): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.</td></tr>
@@ -266,7 +271,7 @@ the request headers.</dd></dl>
 <div class='apiSig'>    finalize(): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Signals the end of any write data and flushes any buffered write data to the client. </dd></dl>
+<dl><dt>Description</dt></dd><dd>Signals the end of any write data and flushes any buffered write data to the server. </dd></dl>
 </div>
 </div>
 <hr />
@@ -279,8 +284,7 @@ the request headers.</dd></dl>
 If direction is set to Stream.READ, then all read data is discarded. If direction is set to Stream.WRITE, 
 any buffered data is written. Stream.BOTH will cause both directions to be flushed. If the stream is in 
 sync mode, this call will block until all data is written. If the stream is in async mode, it will attempt 
-to write all data but will return immediately. Defaults to Stream.WRITE.Calling flush(Sream.WRITE) or <a href='#finalize'>finalize()</a> is required to ensure write data is sent to 
-the server.</dd></dl>
+to write all data but will return immediately. Defaults to Stream.WRITE.Flush will force buffered request data to be sent immediately to the server.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>dir: <a href='Number.html'>Number</a> </td><td>Direction to flush. Set to <a href='#READ'>READ</a> <a href='#WRITE'>WRITE</a> or <a href='#BOTH'>BOTH</a>. [default: expression]</td></tr></table></dd>
@@ -377,7 +381,7 @@ headers or header(key) to get a single response header.</dd></dl>
 <hr />
 <a name='on'></a>
 <div class='api'>
-<div class='apiSig'>    on(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>    on(name, observer: <a href='Function.html'>Function</a>): <a href='Http.html'>Http</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Add an observer to the stream for the named events.All events are called with the following signature. The "this" object will be set to the instance object
@@ -446,14 +450,14 @@ If no data is available and the stream is in async mode, the call will not block
 In this case a "readable" event will be issued when data is available for reading.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>buffer: <a href='ByteArray.html'>ByteArray</a> </td><td>Destination byte array for read data.</td></tr><tr class='param'><td class='param'>offset: <a href='Number.html'>Number</a> </td><td>Offset in the byte array to place the data. If the offset is -1, then data is appended to the buffer write <a href='#position'>position</a> which is then updated.</td></tr><tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>Read up to this number of bytes. If -1, read as much as the buffer will hold up. If the  stream is of fixed and known length (such as a file) and the buffer is of sufficient size or is growable,  read the entire stream. [default: -1]</td></tr></table></dd>
+<tr class='param'><td class='param'>buffer: <a href='ByteArray.html'>ByteArray</a> </td><td>Destination byte array for read data.</td></tr><tr class='param'><td class='param'>offset: <a href='Number.html'>Number</a> </td><td>Offset in the byte array to place the data. If the offset is -1, then data is appended to the buffer write <a href='#position'>position</a> which is then updated. If offset is >= 0, the data is read  to the offset and the read pointer is set to the offset and the write pointer to one past the end of  the data just read.</td></tr><tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>Read up to this number of bytes. If -1, read as much as the buffer will hold up. If the  stream is of fixed and known length (such as a file) and the buffer is of sufficient size or is growable,  read the entire stream. If the buffer is of a fixed size, ready only what will fit into the buffer. [default: -1]</td></tr></table></dd>
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>readable</td><td>Issued when there is new read data available.</td></tr>
 <td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A count of the bytes actually read. Returns null on EOF.</dd></dl>
+<dd>A count of the bytes actually read. Returns null on EOF or errors.</dd></dl>
 </div>
 </div>
 <hr />
@@ -511,7 +515,7 @@ In this case a "readable" event will be issued when data is available for readin
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Reset the Http object to prepare for a new request. This will discard existing headers and security 
-credentials. It will not close the connection to TCP/IP Keep-Alive will be maintained.</dd></dl>
+credentials. It will not close the connection to TCP/IP and thus Keep-Alive will be maintained.</dd></dl>
 </div>
 </div>
 <hr />
@@ -535,7 +539,7 @@ credentials. It will not close the connection to TCP/IP Keep-Alive will be maint
 <dl><dt>Description</dt></dd><dd>Set the user credentials to use if the request requires authentication. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>username: <a href='String.html'>String</a> </td><td>String user name to use. If null, then reset the current credentials.</td></tr><tr class='param'><td class='param'>password: <a href='String.html'>String</a> </td><td>Un-encrypted string password to use.</td></tr></table></dd>
+<tr class='param'><td class='param'>username: <a href='String.html'>String</a> </td><td>String user name to use. If null, then reset the current credentials.</td></tr><tr class='param'><td class='param'>password: <a href='String.html'>String</a> </td><td>Un-encrypted string password to use. Set to null to reset the current credentials.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

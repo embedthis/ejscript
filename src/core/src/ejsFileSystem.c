@@ -48,10 +48,10 @@ static EjsFileSystem *fileSystemConstructor(Ejs *ejs, EjsFileSystem *fp, int arg
     cchar   *path;
 
 #if UNUSED
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
+    assure(argc == 1 && ejsIs(ejs, argv[0], String));
     path = ejsToMulti(ejs, argv[0]);
 #else
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Path));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Path));
     path = ((EjsPath*) argv[0])->value;
 #endif
     fp->path = mprNormalizePath(path);
@@ -141,7 +141,7 @@ static EjsObj *setNewline(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
     cchar   *nl;
 
-    mprAssert(ejsIs(ejs, argv[0], String));
+    assure(ejsIs(ejs, argv[0], String));
     nl = ejsToMulti(ejs, (EjsString*) argv[0]);
     mprSetPathNewline(fp->path, nl);
     return 0;
@@ -180,7 +180,7 @@ static EjsString *getSeparators(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **
  */
 static EjsObj *setSeparators(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
+    assure(argc == 1 && ejsIs(ejs, argv[0], String));
     mprSetPathSeparators(fp->path, ejsToMulti(ejs, argv[0]));
     return 0;
 }
@@ -204,7 +204,7 @@ static void manageFileSystem(EjsFileSystem *fs, int flags)
 }
 
 
-EjsFileSystem *ejsCreateFileSystem(Ejs *ejs, cchar *path)
+PUBLIC EjsFileSystem *ejsCreateFileSystem(Ejs *ejs, cchar *path)
 {
     EjsFileSystem   *fs;
     EjsObj          *arg;
@@ -219,7 +219,7 @@ EjsFileSystem *ejsCreateFileSystem(Ejs *ejs, cchar *path)
 }
 
 
-void ejsConfigureFileSystemType(Ejs *ejs)
+PUBLIC void ejsConfigureFileSystemType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;
@@ -253,28 +253,12 @@ void ejsConfigureFileSystemType(Ejs *ejs)
     @copy   default
 
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

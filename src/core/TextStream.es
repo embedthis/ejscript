@@ -27,7 +27,7 @@ module ejs {
         private var inbuf: ByteArray
 
         /** @hide */
-        private var format: String = Locale.textEncoding
+        private var format: String = "utf-8"
 
         /* 
             Provider Stream
@@ -38,7 +38,7 @@ module ejs {
             Create a text filter stream. A Text filter stream must be stacked upon a stream source such as a File.
             @param stream stream data source/sink to stack upon.
          */
-        function TextStream(stream: Stream) {
+        function TextStream(stream: Stream?) {
             if (stream == null) {
                 throw new ArgError("Must supply a Stream argument")
             }
@@ -63,18 +63,10 @@ module ejs {
         }
 
         /** 
-            The number of bytes available to read without blocking. This is the number of bytes buffered internally
-            by this stream. It does not include any data buffered downstream.
-            @return the number of available bytes
-         */
-        function get available(): Number
-            inbuf.available
-
-        /** 
             @duplicate Stream.close
          */
         function close(): Void {
-            inbuf.flush(Stream.WRITE)
+            inbuf.flush(2 /* MOB Stream.WRITE */)
             nextStream.close()
         }
 
@@ -100,7 +92,7 @@ module ejs {
             Fill the input buffer from upstream
             @returns The number of new characters added to the input bufer
          */
-        function fill(): Number {
+        function fill(): Number? {
             inbuf.compact()
             return nextStream.read(inbuf, -1)
         }
@@ -117,6 +109,14 @@ module ejs {
         }
 
         /** 
+            The number of bytes available to read without blocking. This is the number of bytes buffered internally
+            by this stream. It does not include any data buffered downstream.
+            @return the number of available bytes
+         */
+        function get length(): Number
+            inbuf.length
+
+        /** 
             @duplicate Stream.off
          */
         function off(name, observer: Function): Void {
@@ -126,8 +126,9 @@ module ejs {
         /** 
             @duplicate Stream.on 
          */
-        function on(name, observer: Function): Void {
+        function on(name, observer: Function): TextStream {
             throw new ArgError("Observers are not supported")
+            return this
         }
 
         /** 
@@ -139,22 +140,19 @@ module ejs {
             @returns a count of characters actually read
             @throws IOError if an I/O error occurs.
          */
-        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number {
+        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number? {
             let total = 0
-            if (buffer == undefined) {
-                throw new ArgError("Insufficient args")
-            }
             if (count < 0) {
                 count = Number.MaxValue
             }
             if (offset < 0) {
                 buffer.reset()
             } else {
-                buffer.flush(Stream.READ)
+                buffer.flush(1 /* MOB Stream.READ */)
             }
             let where = buffer.writePosition
             while (count > 0) {
-                if (inbuf.available == 0) {
+                if (inbuf.length == 0) {
                     if (fill() <= 0) {
                         if (total == 0) {
                             return null
@@ -162,8 +160,8 @@ module ejs {
                         break
                     }
                 }
-                let len = count.min(inbuf.available)
-                len = len.min(buffer.length - where)
+                let len = count.min(inbuf.length)
+                len = len.min(buffer.size - where)
                 if (len == 0) break
                 len = buffer.copyIn(where, inbuf, inbuf.readPosition, len)
                 inbuf.readPosition += len
@@ -180,8 +178,8 @@ module ejs {
             @returns A string containing the next line without newline characters ("\r", "\n"). Return null on EOF.
             @throws IOError if an I/O error occurs.
          */
-        function readLine(): String {
-            if (inbuf.available == 0 && fill() <= 0) {
+        function readLine(): String? {
+            if (inbuf.length == 0 && fill() <= 0) {
                 return null
             }
             //  All systems strip both \n and \r\n to normalize text lines
@@ -205,8 +203,8 @@ module ejs {
                 }
                 if (fill() <= 0) {
                     /* Missing a line terminator, so return any last portion of text */
-                    if (inbuf.available) {
-                        return inbuf.readString(inbuf.available)
+                    if (inbuf.length) {
+                        return inbuf.readString(inbuf.length)
                     }
                 }
             }
@@ -220,7 +218,7 @@ module ejs {
             Return null on EOF.
             @throws IOError if an I/O error occurs.
          */
-        function readLines(numLines: Number = -1): Array {
+        function readLines(numLines: Number = -1): Array? {
             var result: Array
             if (numLines <= 0) {
                 result = new Array
@@ -246,7 +244,7 @@ module ejs {
             @returns a string or null on EOF.
             @throws IOError if an I/O error occurs.
          */
-        function readString(count: Number = -1): String
+        function readString(count: Number = -1): String?
             inbuf.readString(count)
 
         /** 
@@ -282,31 +280,15 @@ module ejs {
 
 /*
     @copy   default
-    
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
-    
+
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire 
-    a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
-    this software for full details.
-    
-    This software is open source; you can redistribute it and/or modify it 
-    under the terms of the GNU General Public License as published by the 
-    Free Software Foundation; either version 2 of the License, or (at your 
-    option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
-    
-    This program is distributed WITHOUT ANY WARRANTY; without even the 
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
-    
-    This GPL license does NOT permit incorporating this software into 
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses 
-    for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
-    
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
+
     Local variables:
     tab-width: 4
     c-basic-offset: 4

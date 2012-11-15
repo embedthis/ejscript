@@ -1,11 +1,11 @@
 /**
- *  genbyte.c - Program to generate various forms of the byte code definition files
- *
- *  Generates: ejsByteCode.h, ejsGoto.h
- *
- *  Interactive shell that interprets interactive sessions and command files.
- *
- *  Copyright (c) All Rights Reserved. See details at the end of the file.
+    genbyte.c - Program to generate various forms of the byte code definition files
+  
+    Generates: ejsByteCode.h, ejsGoto.h
+  
+    Interactive shell that interprets interactive sessions and command files.
+  
+    Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
 /********************************** Includes **********************************/
@@ -120,7 +120,7 @@ static void footer(MprFile *file)
  *  This software is distributed under commercial and open source licenses.\n\
  *  You may use the GPL open source license described below or you may acquire\n\
  *  a commercial license from Embedthis Software. You agree to be fully bound\n\
- *  by the terms of either license. Consult the LICENSE.TXT distributed with\n\
+ *  by the terms of either license. Consult the LICENSE.md distributed with\n\
  *  this software for full details.\n\
  *\n\
  *  This software is open source; you can redistribute it and/or modify it\n\
@@ -140,3 +140,22 @@ static void footer(MprFile *file)
  */\n");
 }
 
+/*
+    @copy   default
+
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
+
+    Local variables:
+    tab-width: 4
+    c-basic-offset: 4
+    End:
+    vim: sw=4 ts=4 expandtab
+
+    @end
+ */

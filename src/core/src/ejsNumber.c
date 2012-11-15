@@ -8,9 +8,36 @@
 
 #include    "ejs.h"
 
+/********************************** Defines ***********************************/
+/*
+   Mode values for nota
+ */
+#define DTOA_ALL_DIGITS         0       /**< Return all digits */
+#define DTOA_N_DIGITS           2       /**< Return total N digits */
+#define DTOA_N_FRACTION_DIGITS  3       /**< Return total fraction digits */
+
+/*
+    Flags for mprDtoa
+ */
+#define DTOA_EXPONENT_FORM      0x10    /**< Result in exponent form (N.NNNNe+NN) */
+#define DTOA_FIXED_FORM         0x20    /**< Emit in fixed form (NNNN.MMMM)*/
+
+/**
+    Convert a double to ascii
+    @param value Value to convert
+    @param ndigits Number of digits to render
+    @param mode Modes are:
+         0   Shortest string,
+         1   Like 0, but with Steele & White stopping rule,
+         2   Return ndigits of result,
+         3   Number of digits applies after the decimal point.
+    @param flags Format flags
+ */
+extern char *mprDtoa(double value, int ndigits, int mode, int flags);
 /**************************** Forward Declarations ****************************/
 
 #define fixed(n) ((int64) (floor(n)))
+static char *ntoa(double value, int ndigits, int mode, int flags);
 
 /******************************************************************************/
 /*
@@ -23,8 +50,8 @@ static EjsAny *castNumber(Ejs *ejs, EjsNumber *vp, EjsType *type)
         return ((vp->value && !ejsIsNan(vp->value)) ? ESV(true) : ESV(false));
 
     case S_String:
-        //  OPT. mprDtoa does a sclone.
-        return ejsCreateStringFromAsc(ejs, mprDtoa(vp->value, 0, 0, 0));
+        //  OPT. ntoa does a clone
+        return ejsCreateStringFromAsc(ejs, ntoa(vp->value, 0, 0, 0));
 
     case S_Number:
         return vp;
@@ -112,7 +139,7 @@ static EjsAny *invokeNumberOperator(Ejs *ejs, EjsNumber *lhs, int opcode, EjsNum
 {
     EjsObj      *result;
 
-    mprAssert(lhs);
+    assure(lhs);
     
     if (rhs == 0 || TYPE(lhs) != TYPE(rhs)) {
         if (!ejsIs(ejs, lhs, Number) || !ejsIs(ejs, rhs, Number)) {
@@ -222,7 +249,7 @@ static EjsNumber *numberConstructor(Ejs *ejs, EjsNumber *np, int argc, EjsObj **
 {
     EjsNumber   *num;
 
-    mprAssert(argc == 0 || argc == 1);
+    assure(argc == 0 || argc == 1);
 
     if (argc == 1) {
         num = ejsToNumber(ejs, argv[0]);
@@ -309,7 +336,7 @@ static EjsString *toExponential(Ejs *ejs, EjsNumber *np, int argc, EjsObj **argv
     int     ndigits;
     
     ndigits = (argc > 0) ? ejsGetInt(ejs, argv[0]): 0;
-    result = mprDtoa(np->value, ndigits, MPR_DTOA_N_DIGITS, MPR_DTOA_EXPONENT_FORM);
+    result = ntoa(np->value, ndigits, DTOA_N_DIGITS, DTOA_EXPONENT_FORM);
     return ejsCreateStringFromAsc(ejs, result);
 }
 
@@ -325,7 +352,7 @@ static EjsString *toFixed(Ejs *ejs, EjsNumber *np, int argc, EjsObj **argv)
     int     ndigits;
     
     ndigits = (argc > 0) ? ejsGetInt(ejs, argv[0]) : 0;
-    result = mprDtoa(np->value, ndigits, MPR_DTOA_N_FRACTION_DIGITS, MPR_DTOA_FIXED_FORM);
+    result = ntoa(np->value, ndigits, DTOA_N_FRACTION_DIGITS, DTOA_FIXED_FORM);
     return ejsCreateStringFromAsc(ejs, result);
 }
 
@@ -341,7 +368,7 @@ static EjsString *toPrecision(Ejs *ejs, EjsNumber *np, int argc, EjsObj **argv)
     int     ndigits;
     
     ndigits = (argc > 0) ? ejsGetInt(ejs, argv[0]) : 0;
-    result = mprDtoa(np->value, ndigits, MPR_DTOA_N_DIGITS, 0);
+    result = ntoa(np->value, ndigits, DTOA_N_DIGITS, 0);
     return ejsCreateStringFromAsc(ejs, result);
 }
 
@@ -370,7 +397,7 @@ static EjsObj *numberToString(Ejs *ejs, EjsNumber *vp, int argc, EjsObj **argv)
 /*********************************** Support **********************************/
 
 #ifndef ejsIsNan
-int ejsIsNan(double f)
+PUBLIC int ejsIsNan(double f)
 {
 #if BIT_WIN_LIKE
     return _isnan(f);
@@ -383,7 +410,7 @@ int ejsIsNan(double f)
 #endif
 
 
-bool ejsIsInfinite(MprNumber f)
+PUBLIC bool ejsIsInfinite(MprNumber f)
 {
 #if BIT_WIN_LIKE
     return !_finite(f);
@@ -394,12 +421,169 @@ bool ejsIsInfinite(MprNumber f)
 #endif
 }
 
+
+PUBLIC void ejsLockDtoa(int n)
+{
+    EjsService  *es;
+    
+    es = MPR->ejsService;
+    mprSpinLock(es->dtoaSpin[n]);
+}
+
+
+PUBLIC void ejsUnlockDtoa(int n)
+{
+    EjsService  *es;
+    
+    es = MPR->ejsService;
+    mprSpinUnlock(es->dtoaSpin[n]);
+}
+
+
+/*
+    Convert a double to ascii. Caller must free the result. This uses the JavaScript ECMA-262 spec for formatting rules.
+ */
+static char *ntoa(double value, int ndigits, int mode, int flags)
+{
+    MprBuf  *buf;
+    char    *intermediate, *ip;
+    int     period, sign, len, exponentForm, fixedForm, exponent, count, totalDigits, npad;
+
+    buf = mprCreateBuf(64, -1);
+    intermediate = 0;
+    exponentForm = 0;
+    fixedForm = 0;
+
+    if (mprIsNan(value)) {
+        mprPutStringToBuf(buf, "NaN");
+
+    } else if (mprIsInfinite(value)) {
+        if (value < 0) {
+            mprPutStringToBuf(buf, "-Infinity");
+        } else {
+            mprPutStringToBuf(buf, "Infinity");
+        }
+    } else if (value == 0) {
+        mprPutCharToBuf(buf, '0');
+
+    } else {
+        if (ndigits <= 0) {
+            if (!(flags & DTOA_FIXED_FORM)) {
+                mode = DTOA_ALL_DIGITS;
+            }
+            ndigits = 0;
+
+        } else if (mode == DTOA_ALL_DIGITS) {
+            mode = DTOA_N_DIGITS;
+        }
+        if (flags & DTOA_EXPONENT_FORM) {
+            exponentForm = 1;
+            if (ndigits > 0) {
+                ndigits++;
+            } else {
+                ndigits = 0;
+                mode = DTOA_ALL_DIGITS;
+            }
+        } else if (flags & DTOA_FIXED_FORM) {
+            fixedForm = 1;
+        }
+
+        /*
+            Convert to an intermediate string representation. Period is the offset of the decimal point. NOTE: the
+            intermediate representation may have less digits than period.
+            Note: ndigits < 0 seems to trim N digits from the end with rounding.
+         */
+        ip = intermediate = dtoa(value, mode, ndigits, &period, &sign, NULL);
+        len = (int) slen(intermediate);
+        exponent = period - 1;
+
+        if (mode == DTOA_ALL_DIGITS && ndigits == 0) {
+            ndigits = len;
+        }
+        if (!fixedForm) {
+            if (period <= -6 || period > 21) {
+                exponentForm = 1;
+            }
+        }
+        if (sign) {
+            mprPutCharToBuf(buf, '-');
+        }
+        if (exponentForm) {
+            mprPutCharToBuf(buf, ip[0] ? ip[0] : '0');
+            if (len > 1) {
+                mprPutCharToBuf(buf, '.');
+                mprPutSubStringToBuf(buf, &ip[1], (ndigits == 0) ? len - 1: ndigits);
+            }
+            mprPutCharToBuf(buf, 'e');
+            mprPutCharToBuf(buf, (period < 0) ? '-' : '+');
+            mprPutFmtToBuf(buf, "%d", (exponent < 0) ? -exponent: exponent);
+
+        } else {
+            if (mode == DTOA_N_FRACTION_DIGITS) {
+                /* Count of digits */
+                if (period <= 0) {
+                    /* Leading fractional zeros required */
+                    mprPutStringToBuf(buf, "0.");
+                    mprPutPadToBuf(buf, '0', -period);
+                    mprPutStringToBuf(buf, ip);
+                    npad = ndigits - len + period;
+                    if (npad > 0) {
+                        mprPutPadToBuf(buf, '0', npad);
+                    }
+
+                } else {
+                    count = min(len, period);
+                    /* Leading integral digits */
+                    mprPutSubStringToBuf(buf, ip, count);
+                    /* Trailing zero pad */
+                    if (period > len) {
+                        mprPutPadToBuf(buf, '0', period - len);
+                    }
+                    totalDigits = count + ndigits;
+                    if (period < totalDigits) {
+                        count = totalDigits + sign - (int) mprGetBufLength(buf);
+                        mprPutCharToBuf(buf, '.');
+                        mprPutSubStringToBuf(buf, &ip[period], count);
+                        mprPutPadToBuf(buf, '0', count - slen(&ip[period]));
+                    }
+                }
+
+            } else if (len <= period && period <= 21) {
+                /* data shorter than period */
+                mprPutStringToBuf(buf, ip);
+                mprPutPadToBuf(buf, '0', period - len);
+
+            } else if (0 < period && period <= 21) {
+                /* Period shorter than data */
+                mprPutSubStringToBuf(buf, ip, period);
+                mprPutCharToBuf(buf, '.');
+                mprPutStringToBuf(buf, &ip[period]);
+
+            } else if (-6 < period && period <= 0) {
+                /* Small negative exponent */
+                mprPutStringToBuf(buf, "0.");
+                mprPutPadToBuf(buf, '0', -period);
+                mprPutStringToBuf(buf, ip);
+
+            } else {
+                assure(0);
+            }
+        }
+    }
+    mprAddNullToBuf(buf);
+    if (intermediate) {
+        freedtoa(intermediate);
+    }
+    return sclone(mprGetBufStart(buf));
+}
+
+
 /*********************************** Factory **********************************/
 /*
     Create an initialized number
  */
 
-EjsNumber *ejsCreateNumber(Ejs *ejs, MprNumber value)
+PUBLIC EjsNumber *ejsCreateNumber(Ejs *ejs, MprNumber value)
 {
     EjsNumber   *vp;
 
@@ -417,7 +601,7 @@ EjsNumber *ejsCreateNumber(Ejs *ejs, MprNumber value)
 }
 
 
-void ejsCreateNumberType(Ejs *ejs)
+PUBLIC void ejsCreateNumberType(Ejs *ejs)
 {
     EjsNumber   *np;
     EjsType     *type;
@@ -464,7 +648,7 @@ void ejsCreateNumberType(Ejs *ejs)
 }
 
 
-void ejsConfigureNumberType(Ejs *ejs)
+PUBLIC void ejsConfigureNumberType(Ejs *ejs)
 {
     EjsType    *type;
     EjsPot     *prototype;
@@ -495,28 +679,12 @@ void ejsConfigureNumberType(Ejs *ejs)
     @copy   default
 
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

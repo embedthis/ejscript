@@ -6,7 +6,7 @@ NewRequest {
         function finalize(): Void 
         function getResponseHeaders(): Object
         function header(key: String): String
-        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
+        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number?
         function redirect(url: String, code: Number = 302): Void 
         function sendResponse(response: Object): Void 
         function setCookie(name: String, options: Object) 
@@ -88,7 +88,7 @@ NewRequest {
         function mail(nameText: String, address: String, options: Object = {}): Void  
         function progress(initialData: Object, options: Object = {}): Void 
         function radio(field: String, choices: Object, options: Object = {}): Void 
-        function script(url: Object, options: Object = {}): Void 
+        function script(url: Object?, options: Object = {}): Void 
         function status(initialData: Object, options: Object = {}): Void 
         function stylesheet(url: Object, options: Object = {}): Void 
         function table(data, options: Object = {}): Void 
@@ -161,7 +161,7 @@ NewRequest {
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 
     a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
+    by the terms of either license. Consult the LICENSE.md distributed with 
     this software for full details.
     
     This software is open source; you can redistribute it and/or modify it 

@@ -5,7 +5,6 @@
 Bit.load({
     defaults: {
         '+compiler': [ '-Wall' ],
-        /* '+defines':  [ '-D_REENTRANT', '-DCPU=' + '${ARCH}'.toUpper() ], */
         '+defines':  [ '-D_REENTRANT' ],
         '+libraries':[],
         '+libpaths':[],
@@ -26,6 +25,9 @@ Bit.load({
                     defaults.defines.push('-DPIC')
                     defaults.libraries += ['pthread', 'm']
                 }
+                if (bit.settings.hasLibRt) {
+                    defaults.libraries += ['rt']
+                }
                 if (bit.settings.hasDynLoad) {
                     defaults.libraries += ['dl']
                 }
@@ -40,7 +42,7 @@ Bit.load({
                 } else if (bit.settings.tune == 'size') {
                     defaults.compiler.push('-Os')
                 } else {
-                    defaults.compiler.push('-O3')
+                    defaults.compiler.push('-O2')
                 }
                 if (bit.settings.warnUnused) {
                     defaults.compiler.push('-Wno-unused-result')
@@ -50,10 +52,10 @@ Bit.load({
                 }
                 if (arch.startsWith('arm')) {
                     defaults.compiler.push('-mno-sched-prolog')
-
                 } else if (arch.startsWith('ppc')) {
                     defaults.defines.push('-D_GNU_TOOL')
                 }
+                /* UNUSED
                 let tunesw = bit.settings.hasMtune ? '-mtune' : '-mcpu'
                 let targ = arch
                 if (arch == 'x86' || arch == 'x64') {
@@ -62,15 +64,22 @@ Bit.load({
                     targ = 'common'
                 }
                 defaults.compiler.push(tunesw + '=' + targ)
+                */
             ",
         },
     },
     rules: {
-        'c->o': '${packs.compiler.path} -c -o ${OUT} ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
-        'cpp->o': '${packs.compiler.path} -c -o ${OUT} ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
-        'lib':  '${packs.compiler.path} -shared -o ${OUT} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS}'
-        'exe':  '${packs.compiler.path} -o ${OUT} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS} ${LDFLAGS}'
-        'gui':  '${packs.compiler.path} -o ${OUT} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS} ${LDFLAGS}'
-        'res':  '${packs.rc.path} -o ${OUT} ${IN}',
+        'c->c':   '${packs.compiler.path} -E ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
+        'c->o':   '${packs.compiler.path} -c -o ${OUT} -mtune=${CPU} ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
+        'cpp->o': '${packs.compiler.path} -c -o ${OUT} -arch ${CC_ARCH} -mtune=${CPU} ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
+        'shlib':  '${packs.compiler.path} -shared -o ${OUT} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS}',
+        'lib':    '${packs.lib.path} -cr ${OUT} ${IN}',
+        'exe':    '${packs.compiler.path} -o ${OUT} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS} ${LDFLAGS}',
+        'gui':    '${packs.compiler.path} -o ${OUT} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS} ${LDFLAGS}',
+        'res':    '${packs.rc.path} -o ${OUT} ${IN}',
+    },
+    ccArch: {
+        x86: 'i686',
+        x64: 'x86_64',
     },
 })

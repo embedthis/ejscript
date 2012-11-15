@@ -82,9 +82,9 @@ module ejs {
             @param codeReader Optional function to provide script code to use instead of reading from the path. 
             @return a hash of exported properties
          */
-        public static function load(id: String, path: Path, config = App.config, codeReader: Function = null): Object {
+        public static function load(id: String, path: Path, config = App.config, codeReader: Function? = null): Object {
             let initializer, code
-            let cache: Path = cached(id, config)
+            let cache: Path? = cached(id, config)
             if (path) {
                 if (cache && cache.exists && (!config.cache.app.reload || cache.modified > path.modified)) {
                     /* Cache mod file exists and is current */
@@ -138,16 +138,11 @@ module ejs {
             }
             signatures[path] = exports = {}
             initializer(require, exports, {id: id, path: path}, null)
-    /* UNUSED
-            if (exports.app.bound == this) {
-                exports.app.bind(null)
-            }
-    */
             return exports
         }
 
         /** @hide */
-        public static function cached(id: Path, config = App.config, cachedir: Path = null): Path {
+        public static function cached(id: Path, config = App.config, cachedir: Path? = null): Path? {
             config ||= App.config
             if (id && config.cache.app.enable) {
                 let dir = cachedir || Path(config.dirs.cache) || Path("cache")
@@ -198,3 +193,24 @@ module ejs {
             config = newConfig
     }
 }
+
+
+/*
+    @copy   default
+
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
+
+    Local variables:
+    tab-width: 4
+    c-basic-offset: 4
+    End:
+    vim: sw=4 ts=4 expandtab
+
+    @end
+ */

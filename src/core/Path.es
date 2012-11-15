@@ -55,7 +55,7 @@ module ejs {
         /**
             When the file represented by the path was last accessed. Set to null if the file does not exist.
          */
-        native function get accessed(): Date 
+        native function get accessed(): Date?
 
         /**
             Append data to a file.
@@ -129,7 +129,7 @@ module ejs {
         /**
             When the file represented by the path was created. Set to null if the file does not exist.
          */
-        native function get created(): Date 
+        native function get created(): Date?
 
         /**
             The directory portion of a file. The directory portion is the leading portion including all 
@@ -160,7 +160,7 @@ module ejs {
             TODO - should do pattern matching
             @hide
          */
-        function findAbove(name: String): Path {
+        function findAbove(name: String): Path? {
             let dir: Path = this
             do {
                 if (dir.join(name).exists) {
@@ -171,26 +171,6 @@ module ejs {
             return null
         }
 
-        /*
-            DEPRECATED UNUSED
-            Get a list of files in a directory or subdirectory.
-            Use the $glob method for shell style wild card support.
-            @param options If set to true, then files will include sub-directories in the returned list of files.
-            @option basenames Set to true to include only the basename portion of filenames in the results. If selected,
-                any "include" or "exclude" patterns will only match the basename and not the full path.
-            @option depthFirst Do a depth first traversal. Default is in-order traversal.
-            @option descend Descend into subdirectories
-            @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path unless
-                "basenames" is selected.
-            @option files Include only files in the results. The default is to include directories.
-            @option hidden Show hidden files starting with "."
-            @option include Regular expression pattern of files to include in the results. Matches the entire returned path
-                unless "basenames" is selected.
-            @option missing Report missing directories by throwing an exception.
-            @return An Array of Path objects for each file in the directory.
-        native function files(options: Object = null): Array 
-         */
-        
         /**
             Do Posix glob style file matching.
             @param patterns Pattern to match files. This can be a String, Path or array of String/Paths. 
@@ -216,7 +196,7 @@ module ejs {
             @option relative Return paths relative to the Path, otherwise result entries include the Path. Defaults to false.
             @return An Array of Path objects for each file in the directory.
          */
-        native function files(patterns: Object! = '*', options: Object = null): Array 
+        native function files(patterns: Object! = '*', options: Object? = null): Array 
 
         /**
             The file system containing this Path 
@@ -304,7 +284,7 @@ module ejs {
             The target pointed to if this path is a symbolic link. Not available on some platforms such as Windows and 
             VxWorks. If the path is not a symbolic link, it is set to null.
          */
-        native function get linkTarget(): Path
+        native function get linkTarget(): Path?
 
         /**
             Make a new directory and all required intervening directories. If the directory already exists, 
@@ -350,7 +330,7 @@ module ejs {
             @param pattern The regular expression pattern to search for
             @return Returns an array of matching substrings in the path
          */
-        function match(pattern: RegExp): Array
+        function match(pattern: RegExp): Array?
             this.toString().match(pattern)
 
         /** 
@@ -363,7 +343,7 @@ module ejs {
         /**
             When the file represented by the path was last modified. Set to null if the file does not exist.
          */
-        native function get modified(): Date 
+        native function get modified(): Date?
 
         /**
             Name of the Path as a string. This is the same as $toString().
@@ -439,7 +419,7 @@ module ejs {
             The file permissions of a path. This number contains the Posix style permissions value or null if the file 
             does not exist. NOTE: this is not a string representation of an octal posix mask. 
          */
-        native function get perms(): Number
+        native function get perms(): Number?
         native function set perms(perms: Number): Void
 
         /**
@@ -456,7 +436,7 @@ module ejs {
             @example:
                 var b: ByteArray = Path("/tmp/a.txt").readBytes()
          */
-        function readBytes(): ByteArray {
+        function readBytes(): ByteArray? {
             let file: File = File(this).open()
             result = file.readBytes()
             file.close()
@@ -471,7 +451,7 @@ module ejs {
             @example:
                 data = Path("/tmp/a.json").readJson()
          */
-        function readJSON(): Object {
+        function readJSON(): Object? {
             let file: File = open(this)
             result = file.readString()
             file.close()
@@ -486,7 +466,7 @@ module ejs {
             @example:
                 for each (line in Path("/tmp/a.txt").readLines())
          */
-        function readLines(): Array {
+        function readLines(): Array? {
             let stream: TextStream = TextStream(open(this))
             result = stream.readLines()
             stream.close()
@@ -500,7 +480,7 @@ module ejs {
             @example:
                 data = Path("/tmp/a.txt").readString()
          */
-        function readString(): String {
+        function readString(): String? {
             let file: File = open(this)
             result = file.readString()
             file.close()
@@ -512,7 +492,7 @@ module ejs {
             @return An XML object
             @throws IOError if the file cannot be read
          */
-        function readXML(): XML {
+        function readXML(): XML? {
             let file: File = open(this)
             let data = file.readString()
             file.close()
@@ -533,7 +513,7 @@ module ejs {
                 If origin is null, the current working directory is used as the origin.
             @return A new relative path
          */
-        native function relativeTo(origin: Path = null): Path
+        native function relativeTo(origin: Path? = null): Path
 
         /**
             Delete the file associated with the Path object. If this is a directory without contents it will be removed.
@@ -591,6 +571,25 @@ module ejs {
             }
             return this.trimExt() + ext
         }
+
+        /**
+            Search and replace. Search for the given pattern which can be either a string or a regular expression 
+            and replace it with the replace text. If the pattern is a string, only the first occurrence is replaced.
+            @param pattern The regular expression or string pattern to search for.
+            @param replacement The string to replace the match with or a function to generate the replacement text. The
+                replacement string can contain special replacement patterns: "$$" inserts a "\$", "\$&" inserts the
+                matched substring, "\$`" inserts the portion that preceeds the matched substring, "\$'" inserts the
+                portion that follows the matched substring, and "\$N" inserts the Nth parenthesized substring.
+                The replacement parameter can also be a function which will be invoked and the function return value 
+                will be used as the resplacement text. The function will be invoked multiple times for each match to be 
+                replaced if the regular expression is global. The function will be invoked with the signature:
+
+                function (matched, submatch_1, submatch_2, ..., matched_offset, original_string)
+            @return Returns a new string.
+            @spec ejs
+         */
+        function replace(pattern, replacement): Path
+            Path(name.replace(pattern, replacement))
 
         /**
             Resolve paths in the neighborhood of this path. Resolve operates like join, except that it joins the 
@@ -762,31 +761,15 @@ module ejs {
 
 /*
     @copy   default
-    
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
-    
+
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire 
-    a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
-    this software for full details.
-    
-    This software is open source; you can redistribute it and/or modify it 
-    under the terms of the GNU General Public License as published by the 
-    Free Software Foundation; either version 2 of the License, or (at your 
-    option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
-    
-    This program is distributed WITHOUT ANY WARRANTY; without even the 
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
-    
-    This GPL license does NOT permit incorporating this software into 
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses 
-    for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
-    
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
+
     Local variables:
     tab-width: 4
     c-basic-offset: 4

@@ -10,8 +10,7 @@ module ejs {
         @example
             events.on(event, function (event, ...args) {
                 //  Do something
-            })
-            events.fire("topic", 1, 2, 3)
+            }).fire("topic", 1, 2, 3)
         @stability prototype
      */
     class Emitter {
@@ -98,7 +97,7 @@ module ejs {
             @param thisObj Object to use for "this" when running the callback. This overrides any bound values for "this"
             @param args Args to pass to the observer callback
          */
-        function fireThis(name: String, thisObj: Object, ...args): Void {
+        function fireThis(name: String, thisObj: Object?, ...args): Void {
             let observers: Array? = endpoints[name]
             if (observers) {
                 for each (var e: Endpoint in observers) {
@@ -139,7 +138,7 @@ module ejs {
             The name can be a string or an array of event strings.
             @param callback Function to call when the event is received.
          */
-        function on(name: Object!, callback: Function!): Void {
+        function on(name: Object!, callback: Function!): Emitter {
             if (name is String) {
                 addOneObserver(name, callback)
             } else if (name is Array) {
@@ -149,9 +148,10 @@ module ejs {
             } else {
                 throw new Error("Bad name type for observe: " + typeOf(name))
             }
+            return this
         }
 
-        private function removeOneObserver(name: String!, callback: Function): Void {
+        private function removeOneObserver(name: String!, callback: Function?): Void {
             var observers: Array? = endpoints[name]
             for (let i in observers) {
                 var e: Endpoint = observers[i]
@@ -168,7 +168,7 @@ module ejs {
             @param callback Callback function used when the observer was added. If null is supplied, all callbacks 
                 will be removed.
          */
-        function off(name: Object!, callback: Function): Void {
+        function off(name: Object!, callback: Function?): Void {
             if (name is String) {
                 removeOneObserver(name, callback)
             } else if (name is Array) {
@@ -189,7 +189,7 @@ module ejs {
         public var callback: Function
         public var name: String
         public var active: Boolean
-        public var pending: Array
+        public var pending: Array?
         function Endpoint(callback: Function, name: String) {
             this.callback = callback
             this.name = name
@@ -200,31 +200,15 @@ module ejs {
 
 /*
     @copy   default
-    
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
-    
+
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire 
-    a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
-    this software for full details.
-    
-    This software is open source; you can redistribute it and/or modify it 
-    under the terms of the GNU General Public License as published by the 
-    Free Software Foundation; either version 2 of the License, or (at your 
-    option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
-    
-    This program is distributed WITHOUT ANY WARRANTY; without even the 
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
-    
-    This GPL license does NOT permit incorporating this software into 
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses 
-    for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
-    
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
+
     Local variables:
     tab-width: 4
     c-basic-offset: 4

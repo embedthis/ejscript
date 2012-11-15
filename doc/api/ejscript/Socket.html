@@ -73,7 +73,7 @@ is not bound.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#flush'><b>flush</b></a>(dir: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#listen'><b>listen</b></a>(address): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Listen on a socket for client connections.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#off'><b>off</b></a>(name: <a href='Object.html'>Object</a>, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='Socket.html'>Socket</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ByteArray.html'>ByteArray</a>, offset: <a href='Number.html'>Number</a>, count: <a href='Number.html'>Number</a> = -1): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#write'><b>write</b></a>(data: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.</td></tr>
 </table>
@@ -188,7 +188,7 @@ client connections will be notified via "accept" events.</dd></dl>
 <hr />
 <a name='on'></a>
 <div class='api'>
-<div class='apiSig'>    on(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>    on(name, observer: <a href='Function.html'>Function</a>): <a href='Socket.html'>Socket</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Add an observer to the stream for the named events. </dd></dl>
@@ -216,14 +216,14 @@ If no data is available and the stream is in async mode, the call will not block
 In this case a "readable" event will be issued when data is available for reading.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>buffer: <a href='ByteArray.html'>ByteArray</a> </td><td>Destination byte array for read data.</td></tr><tr class='param'><td class='param'>offset: <a href='Number.html'>Number</a> </td><td>Offset in the byte array to place the data. If the offset is -1, then data is appended to the buffer write <a href='#position'>position</a> which is then updated.</td></tr><tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>Read up to this number of bytes. If -1, read as much as the buffer will hold up. If the  stream is of fixed and known length (such as a file) and the buffer is of sufficient size or is growable,  read the entire stream. [default: -1]</td></tr></table></dd>
+<tr class='param'><td class='param'>buffer: <a href='ByteArray.html'>ByteArray</a> </td><td>Destination byte array for read data.</td></tr><tr class='param'><td class='param'>offset: <a href='Number.html'>Number</a> </td><td>Offset in the byte array to place the data. If the offset is -1, then data is appended to the buffer write <a href='#position'>position</a> which is then updated. If offset is >= 0, the data is read  to the offset and the read pointer is set to the offset and the write pointer to one past the end of  the data just read.</td></tr><tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>Read up to this number of bytes. If -1, read as much as the buffer will hold up. If the  stream is of fixed and known length (such as a file) and the buffer is of sufficient size or is growable,  read the entire stream. If the buffer is of a fixed size, ready only what will fit into the buffer. [default: -1]</td></tr></table></dd>
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>readable</td><td>Issued when there is new read data available.</td></tr>
 <td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A count of the bytes actually read. Returns null on EOF.</dd></dl>
+<dd>A count of the bytes actually read. Returns null on EOF or errors.</dd></dl>
 </div>
 </div>
 <hr />

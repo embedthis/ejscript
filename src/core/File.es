@@ -77,7 +77,7 @@ module ejs {
             File I/O is currently unbuffered
             @hide
          */
-        function flush(dir: Number = Stream.BOTH): Void {}
+        function flush(dir: Number = Stream.BOTH): Void { }
 
         /** 
             Iterate over the positions in a file. This will get an iterator for this file to be used by 
@@ -109,7 +109,7 @@ module ejs {
             @duplicate Stream.on 
             @hide
          */
-        native function on(name, observer: Function): Void
+        native function on(name, observer: Function): File
 
         //  MOB - would it be better not to throw?
         /**  
@@ -139,7 +139,7 @@ module ejs {
         /** 
             The name of the file associated with this File object or null if there is no associated file.
          */
-        native function get path(): Path 
+        native function get path(): Path?
 
         /** 
             The current read/write I/O position in the file.
@@ -166,15 +166,15 @@ module ejs {
             @return A count of the bytes actually read. Returns null on end of file.
             @throws IOError if the file could not be read.
          */
-        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
+        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number?
 
         /** 
             Read data bytes from a file and return a byte array containing the data.
-            @param count Number of bytes to read. If null, read the entire file.
+            @param count Number of bytes to read. If -1, read the entire file.
             @return A byte array containing the read data. Returns an empty array on end of file.
             @throws IOError if the file could not be read.
          */
-        native function readBytes(count: Number = -1): ByteArray
+        native function readBytes(count: Number = -1): ByteArray?
 
         //  MOB UNICODE encoding. Should this do UTF-8 to Unicode-16?
         /** 
@@ -183,7 +183,7 @@ module ejs {
             @return A string containing the read data. Returns an empty string on end of file.
             @throws IOError if the file could not be read.
          */
-        native function readString(count: Number = -1): String
+        native function readString(count: Number = -1): String?
 
         /** 
             Remove a file
@@ -221,33 +221,18 @@ module ejs {
     }
 }
 
+
 /*
     @copy   default
-    
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
-    
+
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire 
-    a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
-    this software for full details.
-    
-    This software is open source; you can redistribute it and/or modify it 
-    under the terms of the GNU General Public License as published by the 
-    Free Software Foundation; either version 2 of the License, or (at your 
-    option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
-    
-    This program is distributed WITHOUT ANY WARRANTY; without even the 
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
-    
-    This GPL license does NOT permit incorporating this software into 
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses 
-    for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
-    
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
+
     Local variables:
     tab-width: 4
     c-basic-offset: 4

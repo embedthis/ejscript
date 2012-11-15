@@ -31,6 +31,7 @@ module ejs.web {
          */ 
         native enumerable var absHome: Uri
 
+        //  MOB - update
         /** 
             Authentication group. This property is set to the value of the authentication group header. 
             This field is read-only.
@@ -41,14 +42,14 @@ module ejs.web {
             Authentication method if authorization is being used (basic or digest). Set to null if not using authentication. 
             This field is read-only.
          */
-        native enumerable var authType: String
+        native enumerable var authType: String?
 
         /** 
             Authentication user name. This property is set to the value of the authentication user header. Set to null if
             not yet defined.
             This field is read-only.
          */
-        native enumerable var authUser: String
+        native enumerable var authUser: String?
 
         /** 
             Control whether auto-finalizing will be used for the request. If autoFinalizing is false, a request must
@@ -68,7 +69,7 @@ module ejs.web {
         /** 
             Associated Controller object. Set to null if no associated controller.
          */
-        native enumerable var controller: Controller
+        native enumerable var controller: Controller?
 
         /** 
             Get the request content length. This is the length of body data sent by the client with the request. 
@@ -81,7 +82,7 @@ module ejs.web {
             The request content type as specified by the "Content-Type" Http request header. This is set to null 
             if not defined. This is the content type of the request body content sent with the request.
          */
-        native enumerable var contentType: String
+        native enumerable var contentType: String?
 
         /** 
             Cookie headers. Cookies are sent by the client browser via the Set-Cookie Http header. They are typically 
@@ -127,7 +128,7 @@ module ejs.web {
             error: Negative errors (Warnings and errors), inform: Informational / postitive feedback (note),
             warn: Negative feedback (Warnings and errors), *: Other feedback (reminders, suggestions...)
         */
-        public var flash: Object
+        public var flash: Object?
 
         /** 
             The request form parameters as a string. This parameters are www-url decoded from the POST request body data. 
@@ -200,7 +201,7 @@ module ejs.web {
             the client is stored in this property and the method property reflects the newly defined value. If method is
             not overridden, originalMethod will be null.
          */
-        native enumerable var originalMethod: String
+        native enumerable var originalMethod: String?
 
         /**
             The original request URI supplied by the client. This is the Uri path supplied by the client on the first
@@ -236,18 +237,18 @@ module ejs.web {
         /** 
             Request query string. This is the portion of the Uri after the "?". Set to null if there is no query.
          */
-        native enumerable var query: String
+        native enumerable var query: String?
 
         /** 
             Request reference string. This is the portion of the Uri after the "#". Set to null if there is no reference.
          */
-        native enumerable var reference: String
+        native enumerable var reference: String?
 
         /** 
             Name of the referring URL. This comes from the request "Referrer" Http header. Set to null if there is
-            no defined referrer.
+            no defined referrer. Note: the HTTP header is misspelt as "referer"
          */
-        native enumerable var referrer: String
+        native enumerable var referrer: String?
 
         /** 
             IP address of the client issuing the request. 
@@ -311,7 +312,7 @@ module ejs.web {
         /** 
             Current session ID. Index into the $sessions object. Set to null if no session is defined.
          */
-        native enumerable var sessionID: String
+        native enumerable var sessionID: String?
 
         /** 
             Set to the (proposed) Http response status code.
@@ -328,7 +329,7 @@ module ejs.web {
         /**
             Write buffer when capturing output
          */
-        var writeBuffer: ByteArray
+        var writeBuffer: ByteArray?
 
         /*************************************** Methods ******************************************/
         /**
@@ -605,6 +606,9 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}
                 target.scriptName = scriptName
                 target = Uri.template(target.template, target).path
             }
+            if (!(target is String)) {
+                target.path ||= "/"
+            }
             return uri.local.resolve(target).normalize
         }
 
@@ -681,7 +685,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}
             All events are called with the signature:
             function (event: String, http: Http): Void
          */
-        native function on(name, observer: Function): Void
+        native function on(name, observer: Function): Request
 
 //  MOB - should there be a blocking read option?
         /** 
@@ -704,7 +708,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}
                     }
                 })
          */
-        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
+        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number?
 
         /** 
             Redirect the client to a new URL. This call redirects the client's browser to a new target specified 
@@ -920,7 +924,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}
 
          */
         # FUTURE
-        native function writeBlock(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
+        native function writeBlock(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number?
 
         /**
 MOB - DEBUG
@@ -978,9 +982,9 @@ MOB - DEBUG
         }
 
         /**
-            Send a static file back to the client. This is a high performance way to send static content to the client.
-            This call must be invoked prior to sending any data or headers to the client, otherwise it will be ignored
-            and the slower netConnector will be used instead.
+            Send a static file back to the client. This is a high performance way to send static content to the client
+            by using the "sendConnector". To be effective, this call must be invoked prior to sending any data or 
+            headers to the client, otherwise it will be ignored and the slower "netConnector" will be used instead.
             @param file Path to the file to send back to the client
             @return True if the Send connector can successfully be used. 
          */
@@ -1009,7 +1013,7 @@ MOB - DEBUG
             Write safely. Write HTML escaped data back to the client.
             @param data Objects to HTML encode and write back to the client.
          */
-        function writeSafe(...data): Void
+        function writeSafe(...data): Number
             write(html(...data))
 
         /**
@@ -1095,7 +1099,7 @@ MOB - DEBUG
             @deprecated 2.0.0
           */
         # Config.Legacy
-        function get authAcl(): String {
+        function get authAcl(): String? {
             throw new Error("Not supported")
             return null
         }
@@ -1195,7 +1199,7 @@ MOB - DEBUG
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 
     a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
+    by the terms of either license. Consult the LICENSE.md distributed with 
     this software for full details.
     
     This software is open source; you can redistribute it and/or modify it 

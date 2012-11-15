@@ -17,6 +17,6 @@ assert(!http.header("Transfer-Encoding"))
 
 //  Should not be a transfer-encoding header
 assert(http.header("transfer-encoding") == null)
-assert(http.header("connection") == "keep-alive")
+assert(http.header("connection") == "Keep-Alive")
 assert(http.response)
 http.close()

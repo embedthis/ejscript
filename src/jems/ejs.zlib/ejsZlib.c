@@ -8,10 +8,8 @@
 
 #include    "ejs.h"
 
-#if BIT_FEATURE_ZLIB
-
-    #include    "zlib.h"
-    #include    "ejs.zlib.slots.h"
+#include    "zlib.h"
+#include    "ejs.zlib.slots.h"
 
 #define     ZBUFSIZE (16 * 1024)
 
@@ -112,7 +110,7 @@ static EjsObj *zlib_compressBytes(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
     int             level, flush;
 
     in = (EjsByteArray*) argv[0];
-    if ((out = ejsCreateByteArray(ejs, in->length)) == 0) {
+    if ((out = ejsCreateByteArray(ejs, in->size)) == 0) {
         return 0;
     }
     zs.zalloc = Z_NULL;
@@ -136,7 +134,7 @@ static EjsObj *zlib_compressBytes(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
             }
             out->writePosition += nbytes;
         } while (zs.avail_out == 0);
-        mprAssert(zs.avail_in == 0);
+        assure(zs.avail_in == 0);
     } while (flush != Z_FINISH);
     deflateEnd(&zs);
     return (EjsObj*) out;
@@ -155,7 +153,7 @@ static EjsObj *zlib_uncompressBytes(Ejs *ejs, EjsObj *unused, int argc, EjsObj *
     int             rc;
 
     in = (EjsByteArray*) argv[0];
-    if ((out = ejsCreateByteArray(ejs, in->length)) == 0) {
+    if ((out = ejsCreateByteArray(ejs, in->size)) == 0) {
         return 0;
     }
     if ((size = (int) ejsGetByteArrayAvailableData(in)) == 0) {
@@ -192,7 +190,7 @@ static EjsObj *zlib_uncompressBytes(Ejs *ejs, EjsObj *unused, int argc, EjsObj *
             }
             out->writePosition += nbytes;
         } while (zs.avail_out == 0);
-        mprAssert(zs.avail_in == 0);
+        assure(zs.avail_in == 0);
     } while (rc != Z_STREAM_END);
 
     deflateEnd(&zs);
@@ -239,7 +237,7 @@ static EjsString *zlib_compressString(Ejs *ejs, EjsObj *unused, int argc, EjsObj
                 return 0;
             }
         } while (zs.avail_out == 0);
-        mprAssert(zs.avail_in == 0);
+        assure(zs.avail_in == 0);
     } while (flush != Z_FINISH);
 
     deflateEnd(&zs);
@@ -296,7 +294,7 @@ static EjsString *zlib_uncompressString(Ejs *ejs, EjsObj *unused, int argc, EjsO
                 return 0;
             }
         } while (zs.avail_out == 0);
-        mprAssert(zs.avail_in == 0);
+        assure(zs.avail_in == 0);
     } while (rc != Z_STREAM_END);
 
     deflateEnd(&zs);
@@ -341,38 +339,21 @@ static int configureZlibTypes(Ejs *ejs)
 /*
     Module load entry point. This must be idempotent as it will be called for each new interpreter created.
  */
-MPR_EXPORT int ejs_zlib_Init(Ejs *ejs, MprModule *mp)
+PUBLIC int ejs_zlib_Init(Ejs *ejs, MprModule *mp)
 {
     return ejsAddNativeModule(ejs, "ejs.zlib", configureZlibTypes, _ES_CHECKSUM_ejs_zlib, EJS_LOADER_ETERNAL);
 }
 
-#endif /* BIT_FEATURE_ZLIB */
 /*
     @copy   default
 
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

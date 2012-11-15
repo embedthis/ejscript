@@ -131,7 +131,7 @@ static void putBackChar(EcStream *stream, int c);
 
 /************************************ Code ************************************/
 
-void ecInitLexer(EcCompiler *cp)
+PUBLIC void ecInitLexer(EcCompiler *cp)
 {
     ReservedWord    *rp;
     int             size;
@@ -175,7 +175,7 @@ static EcToken *getLexToken(EcCompiler *cp)
 }
 
 
-int ecGetToken(EcCompiler *cp)
+PUBLIC int ecGetToken(EcCompiler *cp)
 {
     EcToken     *tp;
     EcStream    *stream;
@@ -337,7 +337,7 @@ int ecGetToken(EcCompiler *cp)
                  */
                 if (cp->doc) {
                     if (tp->text && tp->text[0] == '*' && tp->text[1] != '*') {
-                        cp->docToken = mprMemdup(tp->text, tp->length * sizeof(MprChar));;
+                        cp->docToken = mprMemdup(tp->text, tp->length * sizeof(wchar));
                     }
                 }
                 initializeToken(tp, stream);
@@ -529,16 +529,16 @@ int ecGetToken(EcCompiler *cp)
 }
 
 
-int ecGetRegExpToken(EcCompiler *cp, MprChar *prefix)
+PUBLIC int ecGetRegExpToken(EcCompiler *cp, wchar *prefix)
 {
     EcToken     *token, *tp;
     EcStream    *stream;
-    MprChar     *pp;
+    wchar       *pp;
     int         c;
 
     stream = cp->stream;
     tp = token = cp->token;
-    mprAssert(tp != 0);
+    assure(tp != 0);
 
     initializeToken(tp, stream);
 
@@ -594,7 +594,7 @@ int ecGetRegExpToken(EcCompiler *cp, MprChar *prefix)
 /*
     Put back the current lexer token
  */
-int ecPutToken(EcCompiler *cp)
+PUBLIC int ecPutToken(EcCompiler *cp)
 {
     ecPutSpecificToken(cp, cp->token);
     cp->token = 0;
@@ -605,10 +605,10 @@ int ecPutToken(EcCompiler *cp)
 /*
     Put the given (specific) token back on the input queue. The current input token is unaffected.
  */
-int ecPutSpecificToken(EcCompiler *cp, EcToken *tp)
+PUBLIC int ecPutSpecificToken(EcCompiler *cp, EcToken *tp)
 {
-    mprAssert(tp);
-    mprAssert(tp->tokenId > 0);
+    assure(tp);
+    assure(tp->tokenId > 0);
 
     tp->next = cp->putback;
     cp->putback = tp;
@@ -616,7 +616,7 @@ int ecPutSpecificToken(EcCompiler *cp, EcToken *tp)
 }
 
 
-EcToken *ecTakeToken(EcCompiler *cp)
+PUBLIC EcToken *ecTakeToken(EcCompiler *cp)
 {
     EcToken *token;
 
@@ -790,7 +790,7 @@ static int makeQuotedToken(EcCompiler *cp, EcToken *tp, int c)
         }
         addCharToToken(tp, c);
     }
-    mprAssert(tp->text);
+    assure(tp->text);
     setTokenID(tp, T_STRING, -1, 0);
     return finalizeToken(tp);
 }
@@ -909,7 +909,7 @@ static int initializeToken(EcToken *tp, EcStream *stream)
     tp->tokenId = 0;
     if (tp->text == 0) {
         tp->size = EC_TOKEN_INCR;
-        if ((tp->text = mprAlloc(tp->size * sizeof(MprChar))) == 0) {
+        if ((tp->text = mprAlloc(tp->size * sizeof(wchar))) == 0) {
             return MPR_ERR_MEMORY;
         }
         tp->text[0] = '\0';
@@ -931,7 +931,7 @@ static int addCharToToken(EcToken *tp, int c)
 {
     if (tp->length >= (tp->size - 1)) {
         tp->size += EC_TOKEN_INCR;
-        if ((tp->text = mprRealloc(tp->text, tp->size * sizeof(MprChar))) == 0) {
+        if ((tp->text = mprRealloc(tp->text, tp->size * sizeof(wchar))) == 0) {
             return MPR_ERR_MEMORY;
         }
     }
@@ -972,7 +972,7 @@ static int addFormattedStringToToken(EcToken *tp, char *fmt, ...)
 
 static int setTokenID(EcToken *tp, int tokenId, int subId, int groupMask)
 {
-    mprAssert(tp);
+    assure(tp);
 
     tp->tokenId = tokenId;
     tp->subId = subId;
@@ -983,7 +983,7 @@ static int setTokenID(EcToken *tp, int tokenId, int subId, int groupMask)
 
 static int getNextChar(EcStream *stream)
 {
-    MprChar     c, *next, *start;
+    wchar       c, *next, *start;
 
     if (stream->nextChar >= stream->end && stream->getInput) {
         if (stream->getInput(stream) < 0) {
@@ -1015,19 +1015,19 @@ static void putBackChar(EcStream *stream, int c)
 {
     if (stream->buf < stream->nextChar && c) {
         stream->nextChar--;
-        mprAssert(c == (int) *stream->nextChar);
+        assure(c == (int) *stream->nextChar);
         if (c == '\n') {
             stream->loc = stream->lastLoc;
             stream->loc.column = 0;
         } else {
             stream->loc.column--;
         }
-        mprAssert(stream->loc.column >= 0);
+        assure(stream->loc.column >= 0);
     }
 }
 
 
-void ecManageStream(EcStream *sp, int flags) 
+PUBLIC void ecManageStream(EcStream *sp, int flags) 
 {
     if (flags & MPR_MANAGE_MARK) {
         ecMarkLocation(&sp->loc);
@@ -1037,7 +1037,7 @@ void ecManageStream(EcStream *sp, int flags)
 }
 
 
-void *ecCreateStream(EcCompiler *cp, ssize size, cchar *path, void *manager)
+PUBLIC void *ecCreateStream(EcCompiler *cp, ssize size, cchar *path, void *manager)
 {
     EcLocation  *loc;
     EcStream    *sp;
@@ -1058,15 +1058,15 @@ void *ecCreateStream(EcCompiler *cp, ssize size, cchar *path, void *manager)
 }
 
 
-void ecSetStreamBuf(EcStream *sp, cchar *contents, ssize len)
+PUBLIC void ecSetStreamBuf(EcStream *sp, cchar *contents, ssize len)
 {
-    MprChar     *buf;
+    wchar       *buf;
 
     if (contents) {
 #if BIT_CHAR_LEN > 1
         buf = amtow(cp, contents, &len);
 #else
-        buf = (MprChar*) contents;
+        buf = (wchar*) contents;
         if (len <= 0) {
             len = strlen(buf);
         }
@@ -1079,7 +1079,7 @@ void ecSetStreamBuf(EcStream *sp, cchar *contents, ssize len)
 }
 
 
-void manageFileStream(EcFileStream *fs, int flags) 
+PUBLIC void manageFileStream(EcFileStream *fs, int flags) 
 {
     if (flags & MPR_MANAGE_MARK) {
         ecManageStream((EcStream*) fs, flags);
@@ -1091,7 +1091,7 @@ void manageFileStream(EcFileStream *fs, int flags)
 }
 
 
-int ecOpenFileStream(EcCompiler *cp, cchar *path)
+PUBLIC int ecOpenFileStream(EcCompiler *cp, cchar *path)
 {
     EcFileStream    *fs;
     MprPath         info;
@@ -1117,11 +1117,13 @@ int ecOpenFileStream(EcCompiler *cp, cchar *path)
     }
     contents[info.size] = '\0';
     ecSetStreamBuf((EcStream*) fs, contents, (ssize) info.size);
+    mprCloseFile(fs->file);
+    fs->file = 0;
     return 0;
 }
 
 
-int ecOpenMemoryStream(EcCompiler *cp, cchar *contents, ssize len)
+PUBLIC int ecOpenMemoryStream(EcCompiler *cp, cchar *contents, ssize len)
 {
     EcMemStream     *ms;
 
@@ -1133,7 +1135,7 @@ int ecOpenMemoryStream(EcCompiler *cp, cchar *contents, ssize len)
 }
 
 
-int ecOpenConsoleStream(EcCompiler *cp, EcStreamGet getInput, cchar *contents)
+PUBLIC int ecOpenConsoleStream(EcCompiler *cp, EcStreamGet getInput, cchar *contents)
 {
     EcConsoleStream     *cs;
 
@@ -1146,7 +1148,7 @@ int ecOpenConsoleStream(EcCompiler *cp, EcStreamGet getInput, cchar *contents)
 }
 
 
-void ecCloseStream(EcCompiler *cp)
+PUBLIC void ecCloseStream(EcCompiler *cp)
 {
     cp->stream = 0;
 }
@@ -1161,7 +1163,7 @@ void ecCloseStream(EcCompiler *cp)
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
     a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
+    by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details.
 
     This software is open source; you can redistribute it and/or modify it

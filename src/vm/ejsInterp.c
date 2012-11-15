@@ -19,6 +19,8 @@
     top and decrement top ptr.
  */
 #define top                     (*state->stack)
+
+//  MOB - ejs arg not used
 #define pop(ejs)                (*state->stack--)
 
 #define push(value)             (*(++(state->stack))) = ((EjsObj*) (value))
@@ -59,7 +61,7 @@ static MPR_INLINE void getPropertyFromSlot(Ejs *ejs, EjsAny *thisObj, EjsAny *ob
             /* Function extraction. Bind the "thisObj" into a clone of the function */
             fun = ejsCloneFunction(ejs, fun, 0);
             fun->boundThis = thisObj;
-            mprAssert(fun->boundThis != ejs->global);
+            assure(fun->boundThis != ejs->global);
         }
     }
     pushOutside(ejs, value);
@@ -90,7 +92,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
                 /* OPT - this is slow in the a case: a.b.fn */
                 fun = ejsCloneFunction(ejs, fun, 0);
                 fun->boundThis = thisObj;
-                mprAssert(fun->boundThis != ejs->global);
+                assure(fun->boundThis != ejs->global);
                 value = fun;
             }
         }
@@ -132,6 +134,8 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
 #define THIS            FRAME->function.boundThis
 #define FILL(mark)      while (mark < FRAME->pc) { *mark++ = EJS_OP_NOP; }
 
+//MOB
+#define DEBUG_IDE 1
 #if DEBUG_IDE
     static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode);
     static int opcount[256];
@@ -139,7 +143,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
     #define traceCode(ejs, opcode) opcode
 #endif
 
-#if BIT_UNIX_LIKE || (VXWORKS && !BIT_CC_DIAB)
+#if BIT_UNIX_LIKE || (VXWORKS && !BIT_DIAB)
     #define CASE(opcode) opcode
     #define BREAK goto *opcodeJump[opcode = traceCode(ejs, GET_BYTE())]
 #else
@@ -197,16 +201,16 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     EjsString   *str;
     int         i, offset, count, opcode, attributes, paused;
 
-#if BIT_UNIX_LIKE || (VXWORKS && !BIT_CC_DIAB)
+#if BIT_UNIX_LIKE || (VXWORKS && !BIT_DIAB)
     /*
         Direct threading computed goto processing. Include computed goto jump table.
      */
     #include    "ejsByteGoto.h"
 #endif
-    mprAssert(ejs);
-    mprAssert(!mprHasMemError(ejs));
-    mprAssert(!ejs->exception);
-    mprAssert(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);
+    assure(ejs);
+    assure(!mprHasMemError(ejs));
+    assure(!ejs->exception);
+    assure(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);
 
     MPR_VERIFY_MEM();
 
@@ -221,10 +225,10 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     ejs->state = state;
 
     callFunction(ejs, fun, otherThis, argc, stackAdjust);
-    mprAssert(state->fp);
+    assure(state->fp);
     FRAME->caller = 0;
 
-#if BIT_UNIX_LIKE || (VXWORKS && !BIT_CC_DIAB)
+#if BIT_UNIX_LIKE || (VXWORKS && !BIT_DIAB)
     /*
         Direct threading computed goto processing. Include computed goto jump table.
      */
@@ -441,7 +445,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         [RegExp]
          */
         CASE (EJS_OP_LOAD_REGEXP):
-#if BIT_FEATURE_PCRE
+#if BIT_PACK_PCRE
             str = GET_STRING();
             v1 = (EjsObj*) ejsCreateRegExp(ejs, str);
             push(v1);
@@ -1347,9 +1351,9 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 BREAK;
             }
             type = TYPE(vp);
-            mprAssert(type);
+            assure(type);
             if (type && type->constructor.block.pot.isFunction) {
-                mprAssert(type->prototype);
+                assure(type->prototype);
                 callFunction(ejs, (EjsFunction*) type, vp, argc, 0);
                 state->stack[0] = ejs->result;
             }
@@ -1370,7 +1374,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             if (type == 0) {
                 ejsThrowReferenceError(ejs, "Can't find constructor %@", qname.name);
             } else {
-                mprAssert(type->constructor.block.pot.isFunction);
+                assure(type->constructor.block.pot.isFunction);
                 callFunction(ejs, (EjsFunction*) type, THIS, argc, 0);
             }
             BREAK;
@@ -1481,7 +1485,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 ejsThrowReferenceError(ejs, "Reference is not a function");
             } else {
                 //  TODO -- fullScope is always true if DEFINE_FUNCTION is emitted
-                mprAssert(f1->fullScope);
+                assure(f1->fullScope);
                 if (f1->fullScope) {
                     //  TODO - why exception for global
                     if (lookup.obj != ejs->global) {
@@ -1493,8 +1497,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                     if (FRAME->function.boundThis != ejs->global) {
                         f2->boundThis = FRAME->function.boundThis;
                     }
-                    mprAssert(f2->boundThis != ejs->global);
-                    mprAssert(!ejsIsPrototype(ejs, lookup.obj));
+                    assure(f2->boundThis != ejs->global);
+                    assure(!ejsIsPrototype(ejs, lookup.obj));
                     //  OPT - don't do this for global functions (if f2 == f1 and boundThis not updated (== global))
                     ejsSetProperty(ejs, lookup.obj, lookup.slotNum, f2);
                 }
@@ -1505,22 +1509,34 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
         /* Exception Handling -------------------------------------------- */
 
         /*
-            Invoke finally blocks before acting on: return, returnValue and break (goto) opcodes.
-            Injected by the compiler prior to break, continue and return statements. Also at the end of a try block
-            if there is a finally block.
+            Invoke finally blocks before acting on: return, returnValue and break/continue (goto) opcodes.
+            These are injected by the compiler.
         
-                finally
+                call_finally
          */
-        CASE (EJS_OP_FINALLY):
+        CASE (EJS_OP_CALL_FINALLY):
+            if ((ex = findExceptionHandler(ejs, EJS_EX_FINALLY)) != 0) {
+                uchar   *savePC;
+                if (FRAME->function.inCatch) {
+                    popExceptionBlock(ejs);
+                }
+                savePC = FRAME->pc;
+                createExceptionBlock(ejs, ex, EJS_EX_FINALLY);
+                BLOCK->restartAddress = savePC;
+            }
+            BREAK;
+
+        /*
+            Invoke finally blocks before leaving try block. These are injected by the compiler.
+        
+                goto_finally
+         */
+        CASE (EJS_OP_GOTO_FINALLY):
             if ((ex = findExceptionHandler(ejs, EJS_EX_FINALLY)) != 0) {
                 if (FRAME->function.inCatch) {
                     popExceptionBlock(ejs);
-                    push(FRAME->pc);
-                    createExceptionBlock(ejs, ex, EJS_EX_FINALLY);
-                    BLOCK->breakCatch = 1;
-                } else {
-                    createExceptionBlock(ejs, ex, EJS_EX_FINALLY);
                 }
+                createExceptionBlock(ejs, ex, EJS_EX_FINALLY);
             }
             BREAK;
 
@@ -1532,10 +1548,10 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             if (FRAME->function.inException) {
                 FRAME->function.inCatch = 0;
                 FRAME->function.inException = 0;
-                if (BLOCK->breakCatch) {
-                    /* Restart the original instruction (return, break, continue) */
+                if (BLOCK->restartAddress) {
+                    uchar *savePC = BLOCK->restartAddress;
                     popExceptionBlock(ejs);
-                    SET_PC(FRAME, pop(ejs));
+                    SET_PC(FRAME, savePC);
                 } else {
                     offset = findEndException(ejs);
                     SET_PC(FRAME, &FRAME->function.body.code->byteCode[offset]);
@@ -1560,10 +1576,10 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
          */
         CASE (EJS_OP_ATTENTION):
             CHECK_GC();
-            mprAssert(FRAME->attentionPc);
+            assure(FRAME->attentionPc);
             if (FRAME->attentionPc) {
                 FRAME->pc = FRAME->attentionPc;
-                mprAssert(FRAME->pc);
+                assure(FRAME->pc);
                 FRAME->attentionPc = 0;
             }
             if (mprHasMemError(ejs) && !ejs->exception) {
@@ -1589,7 +1605,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
          */
         CASE (EJS_OP_POP):
             ejs->result = pop(ejs);
-            mprAssert(ejs->exception || ejs->result);
+            assure(ejs->exception || ejs->result);
             BREAK;
 
         /*
@@ -2085,7 +2101,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
         binaryExpression:
             v2 = pop(ejs);
             v1 = pop(ejs);
-            mprAssert(v1);
+            assure(v1);
             ejs->result = evalBinaryExpr(ejs, v1, opcode, v2);
             push(ejs->result);
             BREAK;
@@ -2397,10 +2413,10 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             Unimplemented op codes
          */
         CASE (EJS_OP_BREAKPOINT):
-            mprAssert(0);
+            assure(0);
             BREAK;
 
-#if !BIT_UNIX_LIKE && !(VXWORKS && !BIT_CC_DIAB)
+#if !BIT_UNIX_LIKE && !(VXWORKS && !BIT_DIAB)
         }
     }
 #endif
@@ -2411,7 +2427,7 @@ done:
         ejsShowOpFrequency(ejs);
     }
 #endif
-    mprAssert(FRAME == 0 || FRAME->attentionPc == 0);
+    assure(FRAME == 0 || FRAME->attentionPc == 0);
     ejs->state = ejs->state->prev;
     if (ejs->exception) {
         ejsAttention(ejs);
@@ -2428,7 +2444,7 @@ static void storePropertyToSlot(Ejs *ejs, EjsObj *thisObj, EjsAny *obj, int slot
     EjsObj          *vp;
     EjsTrait        *trait;
 
-    mprAssert(value);
+    assure(value);
 
     if (slotNum < 0 && !DYNAMIC(obj)) {
         ejsThrowTypeError(ejs, "Object is not extendable");
@@ -2439,9 +2455,9 @@ static void storePropertyToSlot(Ejs *ejs, EjsObj *thisObj, EjsAny *obj, int slot
         if (trait->attributes & EJS_TRAIT_SETTER) {
             pushOutside(ejs, value);
             fun = ejsGetProperty(ejs, obj, slotNum);
-            mprAssert(fun);
+            assure(fun);
             fun = fun->setter;
-            mprAssert(fun);
+            assure(fun);
             callFunction(ejs, fun, thisObj, 1, 0);
             return;
         }
@@ -2492,8 +2508,8 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsAny *vp, EjsName qname, 
     EjsPot          *pot;
     int             slotNum;
 
-    mprAssert(qname.name);
-    mprAssert(vp);
+    assure(qname.name);
+    assure(vp);
 
     //  ONLY XML requires this.  NOTE: this bypasses ES5 traits
     //  Alternatively push this whole function down into ejsObject and have all go via setPropertyByName
@@ -2513,7 +2529,7 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsAny *vp, EjsName qname, 
             } else if (ejsIsPrototype(ejs, lookup.obj) || trait->attributes & EJS_TRAIT_GETTER) {
                 if (TYPE(vp)->hasInstanceVars) {
                     /* The prototype properties have been inherited */
-                    mprAssert(ejsIsPot(ejs, vp));
+                    assure(ejsIsPot(ejs, vp));
                     slotNum = ejsCheckSlot(ejs, vp, slotNum);
                     pot = (EjsPot*) vp;
                     pot->properties->slots[slotNum].trait = ((EjsPot*) lookup.obj)->properties->slots[slotNum].trait;
@@ -2564,11 +2580,11 @@ static void storePropertyToScope(Ejs *ejs, EjsName qname, EjsObj *value)
 
             } else if (TYPE(vp)->hasInstanceVars && ejsIsPot(ejs, vp)) {
                 /* The prototype properties have been inherited */
-                mprAssert(ejsIsPot(ejs, vp));
+                assure(ejsIsPot(ejs, vp));
                 slotNum = ejsCheckSlot(ejs, (EjsPot*) vp, slotNum);
                 obj = (EjsPot*) vp;
-                mprAssert(slotNum < obj->numProp);
-                mprAssert(slotNum < ((EjsPot*) lookup.obj)->numProp);
+                assure(slotNum < obj->numProp);
+                assure(slotNum < ((EjsPot*) lookup.obj)->numProp);
                 obj->properties->slots[slotNum].trait = ((EjsPot*) lookup.obj)->properties->slots[slotNum].trait;
                 obj->properties->slots[slotNum].value = ((EjsPot*) lookup.obj)->properties->slots[slotNum].value;
                 slotNum = ejsSetPropertyName(ejs, vp, slotNum, qname);
@@ -2645,10 +2661,10 @@ EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, vo
 {
     int     i;
     
-    mprAssert(ejs);
-    mprAssert(fun);
-    mprAssert(ejsIsFunction(ejs, fun));
-    mprAssert(ejs->exception == 0);
+    assure(ejs);
+    assure(fun);
+    assure(ejsIsFunction(ejs, fun));
+    assure(ejs->exception == 0);
     MPR_VERIFY_MEM();
 
     if (ejs->exception) {
@@ -2738,12 +2754,12 @@ EjsAny *ejsRunFunctionByName(Ejs *ejs, EjsAny *container, EjsName qname, EjsAny 
 
 
 
-static void badArgType(Ejs *ejs, EjsPot *activation, EjsTrait *trait, int index)
+static void badArgType(Ejs *ejs, EjsFunction *fun, EjsPot *activation, EjsTrait *trait, int index)
 {
     EjsName     qname;
 
     qname = ejsGetPropertyName(ejs, activation, index);
-    ejsThrowTypeError(ejs, "Unacceptable null or undefined value for argument \"%@\" (index: %d)", qname.name, index);
+    ejsThrowTypeError(ejs, "Unacceptable null or undefined value for argument \"%@\" in function \"%@\"", qname.name, fun->name);
 }
 
 
@@ -2760,8 +2776,8 @@ static int validateArgs(Ejs *ejs, EjsFunction *fun, int argc, void *args)
     EjsObj      *newArg, **argv;
     int         nonDefault, i, limit, numRest;
 
-    mprAssert(ejs->exception == 0);
-    mprAssert(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);
+    assure(ejs->exception == 0);
+    assure(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);
 
     argv = (EjsObj**) args;
     activation = fun->activation;
@@ -2821,7 +2837,7 @@ static int validateArgs(Ejs *ejs, EjsFunction *fun, int argc, void *args)
         if (!ejsIsA(ejs, argv[i], type)) {
             if ((argv[i] == ESV(null) || argv[i] == ESV(undefined))) {
                 if (trait->attributes & EJS_TRAIT_THROW_NULLS) {
-                    badArgType(ejs, activation, trait, i);
+                    badArgType(ejs, fun, activation, trait, i);
                     return EJS_ERR;
                 }
                 if (!(trait->attributes & EJS_TRAIT_CAST_NULLS)) {
@@ -2831,7 +2847,7 @@ static int validateArgs(Ejs *ejs, EjsFunction *fun, int argc, void *args)
             newArg = ejsCastType(ejs, argv[i], trait->type);
             if (ejs->exception) {
                 ejsClearException(ejs);
-                badArgType(ejs, activation, trait, i);
+                badArgType(ejs, fun, activation, trait, i);
                 return EJS_ERR;
             }
             argv[i] = newArg;
@@ -2868,7 +2884,7 @@ EjsBlock *ejsPushBlock(Ejs *ejs, EjsBlock *original)
 {
     EjsBlock    *block;
 
-    mprAssert(!ejsIsFunction(ejs, original));
+    assure(!ejsIsFunction(ejs, original));
 
     block = ejsCloneBlock(ejs, original, 0);
     block->scope = ejs->state->bp;
@@ -2893,7 +2909,7 @@ EjsBlock *ejsPopBlock(Ejs *ejs)
 
 
 /*
-    Pop an exception block.
+    Pop an exception block
  */
 static EjsBlock *popExceptionBlock(Ejs *ejs)
 {
@@ -2963,7 +2979,7 @@ static EjsEx *findExceptionHandler(Ejs *ejs, int kind)
             if (ejsIsType(ejs, ejs->exception) && ((EjsType*) ejs->exception)->sid == S_StopIteration) {
                 return ex;
             }
-            mprAssert(ex->catchType);
+            assure(ex->catchType);
             if (kind == EJS_EX_FINALLY || ex->catchType->sid == S_Void) {
                 return ex;
             }
@@ -3034,7 +3050,7 @@ static uint findEndException(Ejs *ejs)
             }
         }
     }
-    mprAssert(offset);
+    assure(offset);
     return offset;
 }
 
@@ -3112,7 +3128,7 @@ static void createExceptionBlock(Ejs *ejs, EjsEx *ex, int flags)
 
     state = ejs->state;
     fp = state->fp;
-    mprAssert(ex);
+    assure(ex);
 
     ejsClearAttention(ejs);
 
@@ -3127,27 +3143,26 @@ static void createExceptionBlock(Ejs *ejs, EjsEx *ex, int flags)
     }
 
     /*
-        Discard all lexical blocks defined inside the try block
+        Discard all try lexical blocks when running a catch block
      */
-    if (!fp->function.inCatch) {
+    if (flags & EJS_EX_CATCH) {
         for (count = 0, block = state->bp; block != (EjsBlock*) state->fp; block = block->prev) {
             count++;
         }
         count -= ex->numBlocks;
-        mprAssert(count >= 0);
+        assure(count >= 0);
         for (i = 0; i < count && count > 0; i++) {
             ejsPopBlock(ejs);
         }
         count = (int) (state->stack - fp->stackBase);
         state->stack -= (count - ex->numStack);
-        mprAssert(state->stack >= fp->stackReturn);
+        assure(state->stack >= fp->stackReturn);
     }
     
     /*
         Allocate a new frame in which to execute the handler
      */
-    block = ejsCreateBlock(ejs, 0);
-    if (block == 0) {
+    if ((block = ejsCreateBlock(ejs, 0)) == 0) {
         /*  Exception will continue to bubble up */
         return;
     }
@@ -3359,7 +3374,7 @@ static EjsObj *getGlobalArg(Ejs *ejs, EjsFrame *fp)
      */
     switch (t & EJS_ENCODE_GLOBAL_MASK) {
     default:
-        mprAssert(0);
+        assure(0);
         return 0;
 
     case EJS_ENCODE_GLOBAL_NOREF:
@@ -3375,7 +3390,7 @@ static EjsObj *getGlobalArg(Ejs *ejs, EjsFrame *fp)
     case EJS_ENCODE_GLOBAL_NAME:
         qname.name = getString(ejs, fp, t >> 2);
         if (qname.name == 0) {
-            mprAssert(0);
+            assure(0);
             return 0;
         }
         qname.space = getStringArg(ejs, fp);
@@ -3421,9 +3436,9 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
     EjsObj          **sp;
     int             count, i, fstate;
 
-    mprAssert(fun);
-    mprAssert(ejs->exception == 0);
-    mprAssert(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);  
+    assure(fun);
+    assure(ejs->exception == 0);
+    assure(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);  
 
     state = ejs->state;
 
@@ -3456,7 +3471,7 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
         } 
     } 
     if (fun->boundArgs) {
-        mprAssert(ejsIs(ejs, fun->boundArgs, Array));
+        assure(ejsIs(ejs, fun->boundArgs, Array));
         count = fun->boundArgs->length;
         sp = &state->stack[1 - argc];
         for (i = argc - 1; i >= 0; i--) {
@@ -3469,7 +3484,7 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
         argc += count;
     }
     
-    mprAssert(ejs->spreadArgs == 0);
+    assure(ejs->spreadArgs == 0);
     argc += ejs->spreadArgs;
     ejs->spreadArgs = 0;
     
@@ -3502,9 +3517,9 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
 
     } else {
         if (fun->body.code && fun->body.code->debug) {
-            mprAssert(fun->body.code->debug->magic == EJS_DEBUG_MAGIC);
+            assure(fun->body.code->debug->magic == EJS_DEBUG_MAGIC);
         }
-        mprAssert(thisObj);
+        assure(thisObj);
         if ((fp = ejsCreateFrame(ejs, fun, thisObj, argc, argv)) == 0) {
             return;
         }
@@ -3516,7 +3531,7 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
         state->bp = (EjsBlock*) fp;
         ejsClearAttention(ejs);
     }
-    mprAssert(ejs->state->fp);
+    assure(ejs->state->fp);
 }
 
 
@@ -3581,8 +3596,8 @@ static EjsAny *getNthBlock(Ejs *ejs, int nth)
 {
     EjsBlock    *block;
 
-    mprAssert(ejs);
-    mprAssert(nth >= 0);
+    assure(ejs);
+    assure(nth >= 0);
 
     for (block = ejs->state->bp; block && --nth >= 0; ) {
         /* TODO - this is done for loading scripts into ejs. Really the compiler should remove these blocks */
@@ -3601,14 +3616,14 @@ void ejsLog(Ejs *ejs, cchar *fmt, ...)
     char        buf[MPR_MAX_LOG];
 
     va_start(args, fmt);
-    mprSprintfv(buf, sizeof(buf) - 1, fmt, args);
+    fmtv(buf, sizeof(buf) - 1, fmt, args);
     va_end(args);
     mprLog(0, "%s", buf);
 }
 
 
 #if FUTURE
-#if BIT_CC_EDITLINE
+#if BIT_HAS_LIB_EDIT
 static History  *cmdHistory;
 static EditLine *eh; 
 static cchar    *prompt;
@@ -3715,7 +3730,7 @@ static void bkpt(Ejs *ejs)
     if (stop && once++ == 0) {
         mprNap(0);
     }
-    mprAssert(state->stack >= fp->stackReturn);
+    assure(state->stack >= fp->stackReturn);
 }
 #endif
 
@@ -3738,12 +3753,11 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
 #endif
 
     MPR_VERIFY_MEM();
-    mprAssert(!MPR->marking);
     state = ejs->state;
 
     fp = state->fp;
     opcount[opcode]++;
-    mprAssert(ejs->exception || (state->stack >= fp->stackReturn));
+    assure(ejs->exception || (state->stack >= fp->stackReturn));
 
     if (1 || (ejs->initialized && doDebug)) {
         offset = (int) (fp->pc - fp->function.body.code->byteCode) - 1;
@@ -3757,7 +3771,7 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
             ejsShowOpFrequency(ejs);
         }
 #endif
-        mprAssert(ejs->exception || (state->stack >= fp->stackReturn));
+        assure(ejs->exception || (state->stack >= fp->stackReturn));
     }
     ejsOpCount++;
     return opcode;
@@ -3816,28 +3830,12 @@ void ejsShowOpFrequency(Ejs *ejs)
     @copy   default
 
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

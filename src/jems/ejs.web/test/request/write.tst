@@ -29,4 +29,6 @@ http.wait()
 
 //  Validate output
 assert(http.response == "1234, a string, 1234, from byte array, &lt;p&gt;html&lt;/p&gt;")
+
+http.close()
 server.close()

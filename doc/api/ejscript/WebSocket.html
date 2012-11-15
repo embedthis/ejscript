@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title>Class WebSocket</title>
+
+   <link rel="stylesheet" type="text/css" href="doc.css" />
+</head>
+
+<body>
+<div class='body'>
+
+<div class="content">
+
+<a name='top'></a>
+<h1 class='className'>WebSocket</h1>
+<div class='classBlock'>
+<table class='classHead' summary='WebSocket'>
+   <tr><td><strong>Module</strong></td><td>ejs</td></tr>
+   <tr><td><strong>Definition</strong></td><td> class WebSocket</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>WebSocket <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.0</td></tr>
+<tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
+       </td></tr>
+</table>
+
+<p class='classBrief'>WebSocket class to implement the WebSockets RFC 6455 specification for client-side communications.</p>
+
+<p class='classDescription'>WebSockets is a technology providing interactive communication between a server and client. Normal HTML connections
+follow a request / response paradigm and do not easily support asynchronous communications or unsolicited data
+pushed from the server to the client. WebSockets solves this by supporting bi-directional, full-duplex
+communications over persistent connections. A WebSocket connection is established over a standard HTTP connection
+and is then upgraded without impacting the original connection. This means it will work with existing networking
+infrastructure including firewalls and proxies.</p>
+
+<h3>See Also</h3><p class='detail'>
+<a href='Http.html'>Http</a>, 
+<a href='ByteArray.html'>ByteArray</a>
+</p>
+</div>
+
+
+<hr />
+<a name='Properties'></a>
+<h2 class='classSection'>Properties</h2>
+<table class='itemTable' summary='properties'>
+   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='CLOSED'></a>
+   <tr><td nowrap align='center'> static const </td><td>CLOSED</td><td>&nbsp;</td><td>The <a href='#readyState'>readyState</a> value when the WebSockets connection is closed. </td></tr>
+<a name='CLOSING'></a>
+   <tr><td nowrap align='center'> static const </td><td>CLOSING</td><td>&nbsp;</td><td>The <a href='#readyState'>readyState</a> value when a closing handshake has commenced. </td></tr>
+<a name='CONNECTING'></a>
+   <tr><td nowrap align='center'> static const </td><td>CONNECTING</td><td>&nbsp;</td><td>The <a href='#readyState'>readyState</a> value while waiting for the WebSockets open handshake to complete with the peer. </td></tr>
+<a name='OPEN'></a>
+   <tr><td nowrap align='center'> static const </td><td>OPEN</td><td>&nbsp;</td><td>The <a href='#readyState'>readyState</a> value once the WebSockets open handshake is complete and ready for communications. </td></tr>
+<a name='binaryType'></a>
+   <tr><td nowrap align='center'> get </td><td>binaryType</td><td><a href='String.html'>String</a></td><td>Type of binary data. Set to "ByteArray".</td></tr>
+<a name='bufferedAmount'></a>
+   <tr><td nowrap align='center'> get </td><td>bufferedAmount</td><td><a href='Number.html'>Number</a></td><td>The number of bytes of buffered data to send. </td></tr>
+<a name='extensions'></a>
+   <tr><td nowrap align='center'> get </td><td>extensions</td><td><a href='String.html'>String</a></td><td>Return the list of supported extensions. </td></tr>
+<a name='onclose'></a>
+   <tr><td nowrap align='center'> </td><td>onclose</td><td><a href='Function.html'>Function</a></td><td>Event callback invoked when the connection is closed. The <a href='#readyState'>readyState</a> will be CLOSED.</td></tr>
+<a name='onerror'></a>
+   <tr><td nowrap align='center'> </td><td>onerror</td><td><a href='Function.html'>Function</a></td><td>Event callback invoked when an error occurs. </td></tr>
+<a name='onmessage'></a>
+   <tr><td nowrap align='center'> </td><td>onmessage</td><td><a href='Function.html'>Function</a></td><td>Event callback invoked when a message has been received from the server. The <a href='#readyState'>readyState</a> will be OPEN.</td></tr>
+<a name='onopen'></a>
+   <tr><td nowrap align='center'> </td><td>onopen</td><td><a href='Function.html'>Function</a></td><td>Event callback invoked when the WebSocket is ready to send and receive data. The <a href='#readyState'>readyState</a> will be set to OPEN.</td></tr>
+<a name='protocol'></a>
+   <tr><td nowrap align='center'> get </td><td>protocol</td><td><a href='String.html'>String</a></td><td>Return the application-level protocol selected by the server. Protocols are defined when 
+creating the <a href='#WebSocket'>WebSocket</a>. </td></tr>
+<a name='readyState'></a>
+   <tr><td nowrap align='center'> get </td><td>readyState</td><td><a href='Number.html'>Number</a></td><td>The readystate value. This value can be compared with the WebSocket constants: 
+<a href='#CONNECTING'>CONNECTING</a> = 0, <a href='#OPEN'>OPEN</a> = 1, <a href='#CLOSING'>CLOSING</a> = 2, <a href='#CLOSED'>CLOSED</a> = 3.</td></tr>
+<a name='url'></a>
+   <tr><td nowrap align='center'> get </td><td>url</td><td><a href='Uri.html'>Uri</a></td><td>The URI provided to the constructor. </td></tr>
+</table>
+
+<p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
+
+<hr />
+<a name='ClassMethods'></a>
+<h2 class='classSection'>WebSocket Class Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <p>(No own class methods defined)</p></table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<a name='InstanceMethods'></a>
+<h2 class='classSection'>WebSocket Instance Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#WebSocket'><b>WebSocket</b></a>(uri: <a href='Uri.html'>Uri</a>, protocols = null, options = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new WebSocket and connect to the server using the supplied URI.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#close'><b>close</b></a>(code: <a href='Number.html'>Number</a> = 1000, reason: <a href='String.html'>String</a> = ): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a close message and close the web socket connection.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#send'><b>send</b></a>(content: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send data with the request.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#wait'><b>wait</b></a>(state: <a href='Number.html'>Number</a>, timeout: <a href='Number.html'>Number</a> = -1): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Wait for the WebSocket to achieve a desired state.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<h2>Method Detail</h2>
+<a name='WebSocket'></a>
+<div class='api'>
+<div class='apiSig'>    WebSocket(uri: <a href='Uri.html'>Uri</a>, protocols = null, options = null)
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Create a new WebSocket and connect to the server using the supplied URI. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>uri: <a href='Uri.html'>Uri</a> </td><td>URL to connect to.</td></tr><tr class='param'><td class='param'>protocols </td><td>Optional set of protocols supported by the application. These are application-level protocols. This argument may be an array or a string of comma separated values. [default: null]</td></tr><tr class='param'><td class='param'>options </td><td>null [default: null]</td></tr><tr class='param'><td class='param'>options </td><td>null [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>certificate</td><td>Path|String Optional path to file containing certificates to validate the  server certificate.</td></tr>
+<td class='param'>verify</td><td>Boolean Set to true to verify the server certificate.  The certificate is verified and the issuer chain is verified. Defaults to true. Set to false to accept a self-signed certificate.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='close'></a>
+<div class='api'>
+<div class='apiSig'>    close(code: <a href='Number.html'>Number</a> = 1000, reason: <a href='String.html'>String</a> = ): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Send a close message and close the web socket connection. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>code: <a href='Number.html'>Number</a> </td><td>WebSocket status code to send to the peer explaining why the connection is being closed. Defaults to 1000 which means a successful, graceful closure. [default: 1000]</td></tr><tr class='param'><td class='param'>reason: <a href='String.html'>String</a> </td><td>Optional reason string to indicate why the connection was closed. Must be less than  124 bytes of UTF-8 text in length. [default: ]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='send'></a>
+<div class='api'>
+<div class='apiSig'>    send(content: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Send data with the request. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>content: <a href='Array.html'>Array</a> </td><td>Data to send with the request. If the content is a ByteArray, the message will be sent as a WebSocket Binary message. Otherwise, the message is converted to a String and sent as a WebSockets UTF-8 Text message. If multiple arguments are provided, each is sent as a separate message.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='wait'></a>
+<div class='api'>
+<div class='apiSig'>    wait(state: <a href='Number.html'>Number</a>, timeout: <a href='Number.html'>Number</a> = -1): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Wait for the WebSocket to achieve a desired state. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>state: <a href='Number.html'>Number</a> </td><td>Desired ready state value.</td></tr><tr class='param'><td class='param'>timeout: <a href='Number.html'>Number</a> </td><td>Timeout in milliseconds to wait for the desired state. A timeout of zero means don't block. A timeout of < 0 (default), means wait forever. [default: -1]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the desired state was achieved.</dd></dl>
+</div>
+</div>
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2012. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>

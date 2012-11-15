@@ -15,7 +15,7 @@ static int getSessionState(Ejs *ejs, EjsSession *sp);
 
 /************************************* Code ***********************************/
 
-static EjsSession *initSession(Ejs *ejs, EjsSession *sp, EjsString *key, MprTime timeout)
+static EjsSession *initSession(Ejs *ejs, EjsSession *sp, EjsString *key, MprTicks timeout)
 {
     EjsObj      *app;
 
@@ -37,7 +37,7 @@ static EjsString *makeKey(Ejs *ejs, EjsSession *sp)
     static int  nextSession = 0;
 
     /* Thread race here on nextSession++ not critical */
-    mprSprintf(idBuf, sizeof(idBuf), "%08x%08x%d", PTOI(ejs) + PTOI(sp), (int) mprGetTime(), nextSession++);
+    fmt(idBuf, sizeof(idBuf), "%08x%08x%d", PTOI(ejs) + PTOI(sp), (int) mprGetTime(), nextSession++);
     return ejsCreateStringFromAsc(ejs, mprGetMD5WithPrefix(idBuf, sizeof(idBuf), "::ejs.web.session::"));
 }
 
@@ -46,7 +46,7 @@ static EjsString *makeKey(Ejs *ejs, EjsSession *sp)
     Get (create) a session object using the supplied key. If the key has expired or is NULL, then generate a new key if
     create is true. The timeout is in msec.
  */
-EjsSession *ejsGetSession(Ejs *ejs, EjsString *key, MprTime timeout, int create)
+EjsSession *ejsGetSession(Ejs *ejs, EjsString *key, MprTicks timeout, int create)
 {
     EjsSession  *sp;
     EjsType     *type;
@@ -170,7 +170,7 @@ static int setSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum, EjsAny *val
 /*
     The timeout arg is a number of ticks to add to the current time
  */
-void ejsSetSessionTimeout(Ejs *ejs, EjsSession *sp, MprTime timeout)
+void ejsSetSessionTimeout(Ejs *ejs, EjsSession *sp, MprTicks timeout)
 {
     ejsCacheExpire(ejs, sp->cache, sp->key, ejsCreateDate(ejs, mprGetTime() + timeout));
 }
@@ -185,7 +185,7 @@ static EjsSession *sess_constructor(Ejs *ejs, EjsSession *sp, int argc, EjsAny *
 {
     EjsAny      *vp;
     EjsPot      *options;
-    MprTime     timeout;
+    MprTicks    timeout;
 
     timeout = 0;
     if (argc > 0) {
@@ -245,30 +245,14 @@ void ejsConfigureSessionType(Ejs *ejs)
 
 /*
     @copy   default
- 
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

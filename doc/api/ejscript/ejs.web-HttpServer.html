@@ -95,7 +95,7 @@ function onrequest(request: Request): Void.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#close'><b>close</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#listen'><b>listen</b></a>(endpoint: <a href='String.html'>String</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Listen for client connections.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#off'><b>off</b></a>(name: <a href='Object.html'>Object</a>, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the server.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer for server events.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='ejs.web-HttpServer.html'>HttpServer</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer for server events.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#passRequest'><b>passRequest</b></a>(request: <a href='ejs.web-Request.html'>Request</a>, worker: <a href='Worker.html'>Worker</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Pass a request into a worker VM.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#process'><b>process</b></a>(app: <a href='Function.html'>Function</a>, request: <a href='ejs.web-Request.html'>Request</a>, finalize: <a href='Boolean.html'>Boolean</a> = true): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Process a web request.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#pruneWorkers'><b>pruneWorkers</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Prune idle worker threads.</td></tr>
@@ -259,7 +259,7 @@ server.listen("80")</pre></dd></dl>
 <hr />
 <a name='on'></a>
 <div class='api'>
-<div class='apiSig'>    on(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>    on(name, observer: <a href='Function.html'>Function</a>): <a href='ejs.web-HttpServer.html'>HttpServer</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Add an observer for server events. </dd></dl>

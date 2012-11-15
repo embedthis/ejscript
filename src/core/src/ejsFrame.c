@@ -12,7 +12,7 @@
 
 static void manageFrame(EjsFrame *frame, int flags)
 {
-    mprAssert(frame);
+    assure(frame);
     if (frame) {
         if (flags & MPR_MANAGE_MARK) {
             ejsManageFunction((EjsFunction*) frame, flags);
@@ -29,7 +29,7 @@ static EjsFrame *allocFrame(Ejs *ejs, int numProp)
     EjsObj      *obj;
     ssize       size;
 
-    mprAssert(ejs);
+    assure(ejs);
 
     size = sizeof(EjsFrame) + sizeof(EjsProperties) + numProp * sizeof(EjsSlot);
     if ((obj = mprAllocBlock(size, MPR_ALLOC_MANAGER | MPR_ALLOC_ZERO)) == 0) {
@@ -46,7 +46,7 @@ static EjsFrame *allocFrame(Ejs *ejs, int numProp)
 /*
     Create a frame object just for the compiler
  */
-EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *fun)
+PUBLIC EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *fun)
 {
     EjsFrame    *fp;
 
@@ -65,7 +65,7 @@ EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *fun)
 }
 
 
-EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, EjsObj **argv)
+PUBLIC EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     EjsFrame    *frame;
     EjsPot      *obj, *activation;
@@ -97,7 +97,6 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     frame->function.block.namespaces = fun->block.namespaces;
     frame->function.block.scope = fun->block.scope;
     frame->function.block.prev = fun->block.prev;
-    frame->function.block.breakCatch = fun->block.breakCatch;
     frame->function.block.nobind = fun->block.nobind;
 
     //  OPT
@@ -122,7 +121,7 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     frame->function.resultType = fun->resultType;
     frame->function.body = fun->body;
     frame->pc = fun->body.code->byteCode;
-    mprAssert(frame->pc);
+    assure(frame->pc);
 
     if (argc > 0) {
         frame->argc = argc;
@@ -140,7 +139,7 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
 }
 
 
-void ejsCreateFrameType(Ejs *ejs)
+PUBLIC void ejsCreateFrameType(Ejs *ejs)
 {
     EjsType     *type;
 
@@ -152,7 +151,7 @@ void ejsCreateFrameType(Ejs *ejs)
 }
 
 
-void ejsConfigureFrameType(Ejs *ejs)
+PUBLIC void ejsConfigureFrameType(Ejs *ejs)
 {
     EjsType     *type;
 
@@ -166,28 +165,12 @@ void ejsConfigureFrameType(Ejs *ejs)
     @copy   default
 
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

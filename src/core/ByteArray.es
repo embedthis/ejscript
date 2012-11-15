@@ -6,8 +6,6 @@
 module ejs {
 
     // use strict
-
-    //  MOB - consider switching length =>  size, available => length
     //  MOB - add indexOf(byteValue)
 
     /** 
@@ -18,12 +16,12 @@ module ejs {
         extract bytes. The index operator [] can be used to access individual bytes and the copyIn and copyOut methods 
         can be used to get and put blocks of data. In this mode, the $readPosition and $writePosition properties are ignored.
 
-        Access to the byte array is from index zero up to the size defined by the length property. When constructed, 
+        Access to the byte array is from index zero up to the size defined by the $size property. When constructed, 
         the ByteArray can be designated as resizable, in which case the initial size will grow as required to accomodate 
-        data and the length property will be updated accordingly.
+        data and the $size property will be updated accordingly.
         
         ByteArrays provide additional write methods to store data at the location specified by the $writePosition 
-        property and read methods to read from the $readPosition property. The $available property indicates how much 
+        property and read methods to read from the $readPosition property. The $length property indicates how much 
         data is available between the read and write position pointers. The $reset method can reset the pointers to 
         the start of the array.  When used with for/in, ByteArrays will iterate or enumerate over the available 
         data between the read and write pointers.
@@ -60,12 +58,6 @@ module ejs {
             @param resizable Set to true to automatically grow the array as required to fit written data.
          */
         native function ByteArray(size: Number = -1, resizable: Boolean = true)
-
-        /** 
-            Number of bytes that are currently available for reading. This consists of the bytes available
-            from the current $readPosition up to the current $writePosition.
-         */
-        native function get available(): Number 
 
         /** @duplicate Stream.async */
         native function get async(): Boolean
@@ -168,8 +160,9 @@ module ejs {
         override iterator native function getValues(): Iterator
 
         /** 
-            Length of the byte array. This is not the amount of read or write data, but is the size of the total 
-            array storage. Use $available to get the amount of data between the read and write positions.
+            Number of bytes that are currently available for reading. This consists of the bytes available
+            from the current $readPosition up to the current $writePosition. To get the total size of the ByteArray
+            use $size.
          */
         native function get length(): Number
 
@@ -177,6 +170,7 @@ module ejs {
             An MD5 checksum for the buffer contents
          */
         function get MD5(): String {
+            //  OPT - don't close. Just safe read/write position
             let buf: ByteArray = this.clone()
             return md5(buf.readString())
         }
@@ -185,7 +179,7 @@ module ejs {
         native function off(name: Object, observer: Function): Void
 
         /** @duplicate Stream.on */
-        native function on(name: Object, observer: Function): Void
+        native function on(name: Object, observer: Function): ByteArray
 
         /** 
             @duplicate Stream.read
@@ -195,7 +189,7 @@ module ejs {
             read position is set to the specified offset and data is stored at this offset. The write position is set to
             one past the last byte read.
          */
-        native function read(buffer: ByteArray!, offset: Number = 0, count: Number = -1): Number
+        native function read(buffer: ByteArray!, offset: Number = 0, count: Number = -1): Number?
 
         /** 
             Read a boolean from the array. Data is read from the current read $position pointer.
@@ -205,7 +199,7 @@ module ejs {
             @returns a boolean or null on EOF.
             @throws IOError if an I/O error occurs or premature EOF.
          */
-        native function readBoolean(): Boolean
+        native function readBoolean(): Boolean?
 
         /** 
             Read a byte from the array. Data is read from the current read $position pointer.
@@ -214,7 +208,7 @@ module ejs {
             will return return null indicating EOF.
             @throws IOError if an I/O error occurs or premature EOF.
          */
-        native function readByte(): Number
+        native function readByte(): Number?
 
         /** 
             Read a date from the array. Data is read from the current read $position pointer.
@@ -223,7 +217,7 @@ module ejs {
             will return return null indicating EOF.
             @throws IOError if an I/O error occurs or premature EOF.
          */
-        native function readDate(): Date
+        native function readDate(): Date?
 
         /** 
             Read a double from the array. The data will be decoded according to the endian property. Data is read 
@@ -233,7 +227,7 @@ module ejs {
             @returns a double or null on EOF.
             @throws IOError if an I/O error occurs or premature EOF.
          */
-        native function readDouble(): Number
+        native function readDouble(): Number?
 
         /** 
             Read an 32-bit integer from the array. The data will be decoded according to the endian property.
@@ -243,7 +237,7 @@ module ejs {
             will return return null indicating EOF.
             @throws IOError if an I/O error occurs or premature EOF.
          */
-        native function readInteger(): Number
+        native function readInteger(): Number?
 
         /** 
             Read a 64-bit long from the array.The data will be decoded according to the endian property.
@@ -253,12 +247,12 @@ module ejs {
             will return return null indicating EOF.
             @throws IOError if an I/O error occurs or premature EOF.
          */
-        native function readLong(): Number
+        native function readLong(): Number?
 
         /** 
             Current read position offset
          */
-        native function get readPosition(): Number
+        native function get readPosition(): Number?
 
         /** 
             Set the current read position offset
@@ -275,25 +269,25 @@ module ejs {
             @returns a short int or null on EOF.
             @throws IOError if an I/O error occurs or premature EOF.
          */
-        native function readShort(): Number
+        native function readShort(): Number?
 
         /** 
             Read a data from the array as a string. Read data from the $readPosition to a string up to the $writePosition,
             but not more than count characters. If insufficient data, a "writable" event will be issued indicating that 
             the byte array is writable. This enables observers to write data into the byte array.  If there is no data 
-            available, the call will return return null indicating EOF. If there is insufficient data @param count of bytes 
-            to read. If -1, convert the data up to the $writePosition.
+            available, the call will return return null indicating EOF. If there is insufficient data 
+            @param count of bytes to read. If -1, convert the data up to the $writePosition.
             @returns a string or null on EOF.
             @throws IOError if an I/O error occurs or a premature EOF.
          */
-        native function readString(count: Number = -1): String
+        native function readString(count: Number = -1): String?
 
         /**
             Read an XML document from the array. Data is read from the current read $position pointer.
             @returns an XML document
             @throws IOError if an I/O error occurs or a premature end of file.
          */
-        function readXML(): XML
+        function readXML(): XML?
             XML(readString())
 
         /** 
@@ -306,6 +300,12 @@ module ejs {
             Number of data bytes that the array can store from the $writePosition till the end of the array.
          */
         native function get room(): Number 
+
+        /** 
+            Size of the byte array. This is not the amount of read or write data, but is the size of the total 
+            array storage. Use $length to get the amount of data between the read and write positions.
+         */
+        native function get size(): Number 
 
         /** 
             Convert the data in the byte array between the $readPosition and writePosition.
@@ -396,7 +396,7 @@ module ejs {
             @deprecated 1.0.0B3
         */
         # Config.Legacy
-        function get input(): Function { return null; }
+        function get input(): Function? { return null; }
 
         /**  
             @hide
@@ -417,7 +417,7 @@ module ejs {
             @deprecated 1.0.0B3
          */
         # Config.Legacy
-        function get output(): Function { return null; } 
+        function get output(): Function? { return null; } 
 
         # Config.Legacy
         function set output(callback: Function): Void {
@@ -431,31 +431,15 @@ module ejs {
 
 /*
     @copy   default
-    
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
-    
+
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire 
-    a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
-    this software for full details.
-    
-    This software is open source; you can redistribute it and/or modify it 
-    under the terms of the GNU General Public License as published by the 
-    Free Software Foundation; either version 2 of the License, or (at your 
-    option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
-    
-    This program is distributed WITHOUT ANY WARRANTY; without even the 
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
-    
-    This GPL license does NOT permit incorporating this software into 
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses 
-    for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
-    
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
+
     Local variables:
     tab-width: 4
     c-basic-offset: 4

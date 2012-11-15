@@ -15,7 +15,7 @@ module ejs.web {
         @example:
             export.app = Cascade(app1, app2, app3)
      */
-    function Cascade(...apps): Object {
+    function Cascade(...apps): Object? {
         return function(request) {
             for each (app in apps) {
                 let response = app(request)
@@ -37,7 +37,7 @@ module ejs.web {
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 
     a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
+    by the terms of either license. Consult the LICENSE.md distributed with 
     this software for full details.
     
     This software is open source; you can redistribute it and/or modify it 
