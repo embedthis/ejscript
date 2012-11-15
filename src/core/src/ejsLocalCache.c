@@ -10,6 +10,8 @@
 
 /************************************ Locals **********************************/
 
+//  MOB - should this be refactored to use MprCache?
+
 #define CACHE_TIMER_PERIOD  (60 * MPR_TICKS_PER_SEC)
 #define CACHE_HASH_SIZE     257
 #define CACHE_LIFESPAN      (86400 * MPR_TICKS_PER_SEC)
@@ -18,7 +20,7 @@ typedef struct EjsLocalCache
 {
     EjsObj          obj;                /* Object base */
     MprHash         *store;             /* Key/value store */
-    MprMutex        *mutex;             /* Cache lock*/
+    MprMutex        *mutex;             /* Cache lock */
     MprEvent        *timer;             /* Pruning timer */
     MprTicks        lifespan;           /* Default lifespan (msec) */
     int             resolution;         /* Frequence for pruner */
@@ -217,7 +219,7 @@ static EjsAny *sl_read(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv)
         return ESV(null);
     }
 #if UNUSED && FUTURE
-    //  MOB - reading should not refresh cache
+    //  MOB - should reading refresh cache
     //  Perhaps option "read-refresh"
     if (item->lifespan) {
         item->expires = mprGetTime() + item->lifespan;
@@ -463,9 +465,12 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
 
     if (mprTryLock(cache->mutex)) {
         when = mprGetTime();
+        /*
+            Prune keys expiring first.
+         */
         for (kp = 0; (kp = mprGetNextKey(cache->store, kp)) != 0; ) {
             item = (CacheItem*) kp->data;
-#if UNUSED && KEEP
+#if KEEP
             mprLog(6, "LocalCache: \"%@\" lifespan %d, expires in %d secs", item->key, 
                     item->lifespan / 1000, (item->expires - when) / 1000);
 #endif
@@ -477,21 +482,24 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
         assure(cache->usedMem >= 0);
 
         /*
-            If too many keys or too much memory used, prune keys expiring first.
+            If too many keys or too much memory used. Prune oldest first.
          */
         if (cache->maxKeys < MAXSSIZE || cache->maxMem < MAXSSIZE) {
             excessKeys = mprGetHashLength(cache->store) - cache->maxKeys;
-            while (excessKeys > 0 || cache->usedMem > cache->maxMem) {
-                for (factor = 3600; excessKeys > 0 && factor < (86400 * 1000); factor *= 4) {
+            for (factor = 3600; factor < (86400 * 1000); factor *= 4) {
+                if (excessKeys > 0 || cache->usedMem > cache->maxMem) {
                     for (kp = 0; (kp = mprGetNextKey(cache->store, kp)) != 0; ) {
                         item = (CacheItem*) kp->data;
                         if (item->expires && item->expires <= when) {
                             mprLog(5, "LocalCache too big execess keys %Ld, mem %Ld, prune key %s", 
                                     excessKeys, (cache->maxMem - cache->usedMem), kp->key);
                             removeItem(cache, item);
+                            excessKeys--;
                         }
                     }
                     when += factor;
+                } else {
+                    break;
                 }
             }
         }
