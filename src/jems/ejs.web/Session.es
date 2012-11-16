@@ -20,7 +20,7 @@ module ejs.web {
             @param options
             @option lifespan Lifespan in seconds for the session
          */
-        native function Session(key, options: Object = null)
+        native function Session(key, options: Object? = null)
 
         /**
             Get the session ID key for a session. This is a static method so as to not clash with session properties.
@@ -48,7 +48,7 @@ module ejs.web {
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 
     a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
+    by the terms of either license. Consult the LICENSE.md distributed with 
     this software for full details.
     
     This software is open source; you can redistribute it and/or modify it 

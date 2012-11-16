@@ -1,18 +1,23 @@
 /*
     compiler.pak - Compile package for Bit
  */
+
 pack('compiler', "C/C++ Compiler")
 
-let cc: Path
+let cc: Path?
 let platform = bit.platform
-let path: Path = bit.packs.compiler.path
+let path: Path? = bit.packs.compiler.path
 let settings = getDefaultSettings(platform)
 
 try {
     if (platform.like == 'posix') {
         path ||= (platform.os == 'macosx') ? 'clang' : 'gcc'
-        cc = probe(path, {fullpath: true})
-        Bit.load({packs: { compiler: { path: cc }}})
+        if (platform.os == Config.OS) {
+            cc = probe(path, {fullpath: true})
+            Bit.load({packs: { compiler: { path: cc }}})
+        } else {
+            Bit.load({packs: { compiler: { path: 'gcc' }}})
+        }
 
     } else if (platform.like == 'windows') {
         let search
@@ -43,12 +48,14 @@ try {
             }
         }
         let vv: Path = Path('$(VS)')
-        let vsbin, vslib
+        let vsbin, vslib, defs, version
         if (Config.OS != 'windows') {
             cc = 'cl.exe'
             vsdir = vv
             vsbin = vsdir.join('VC/Bin'),
             vslib = vsdir.join('VC/lib')
+            defs = []
+            version = 0
         } else {
             path ||= 'cl.exe'
             cc = probe(path, {fullpath: true, search: search})
@@ -58,9 +65,10 @@ try {
             } else {
                 vslib = vsbin.join('../lib').normalize
             }
+            version = vsdir.name.match(/\d*\.\d/)[0]
+            defs = [ '-DBIT_VISUAL_STUDIO_VERSION="' + version + '"']
         }
-        Bit.load({packs: { compiler: { path: cc, dir: vsdir, search: search }}})
-
+        Bit.load({packs: { compiler: { path: cc, dir: vsdir, search: search, definitions: defs, version: version }}})
         bit.env.PATH += [
             vsbin,
             vsdir.join('Common7/IDE'),
@@ -98,7 +106,7 @@ try {
         Bit.load({packs: { compiler: { path: cc, name: path.basename }}})
     }
 
-    if (platform.os == Config.OS && (platform.like == 'posix' || platform.os == 'vxworks')) {
+    if (platform.like == 'posix' || (platform.os == 'vxworks' && Config.OS == 'linux')) {
         settings.hasDoubleBraces = compile(cc, '', '#include <stdarg.h>\nva_list d = {{0}};')
         settings.hasMtune = compile(cc, '-mtune=generic', 'int main() { return 0;}')
         settings.hasStackProtector = compile(cc, '-fno-stack-protector', 'int main() { return 0;}')
@@ -108,6 +116,8 @@ try {
         settings.warn64to32 = compile(cc, '-Wshorten-64-to-32', 'int main() { return 0;}')
 
         if (platform.os != 'vxworks') {
+            settings.hasLibRt = compile(cc, '',
+                '#define _GNU_SOURCE\n#include <time.h>\nint main() { struct timespec tv; clock_gettime(CLOCK_REALTIME, &tv); return 0; }')
             settings.hasDynLoad = compile(cc, '',
                 '#include <stdio.h>\n#include <dlfcn.h>\nint main() { dlopen(\"test.so\", 0); return 0; }')
             settings.hasLibEdit = compile(cc, '',
@@ -120,6 +130,12 @@ try {
                 '#include <stdio.h>\nint main() { void *ptr = 0; __sync_bool_compare_and_swap(&ptr, ptr, ptr); return 0; }')
             settings.hasUnnamedUnions = compile(cc, '', 
                 '#include <stdio.h>\nint main() { struct test { union { int x; int y; };}; return 0; }')
+/*
+            UNUSED
+            let littleEndian = compile(cc, '', 
+                '#include <stdio.h>\nint main() { int test=1; char *probe = (char*) &test; return (*probe == 1);}')
+            settings.endian = littleEndian ? 1 : 2
+ */
         }
     }
 } catch {}
@@ -166,6 +182,7 @@ function getDefaultSettings(platform) {
         settings = {
             hasDynLoad: true,
             hasLibEdit: false,
+            hasLibRt: false,
             hasMmu: true,
             hasUnnamedUnions: true,
         }
@@ -174,6 +191,7 @@ function getDefaultSettings(platform) {
             hasDoubleBraces: false,
             hasDynLoad: true,
             hasLibEdit: false,
+            hasLibRt: true,
             hasMmu: true,
             hasMtune: true,
             hasPam: false,
@@ -188,10 +206,11 @@ function getDefaultSettings(platform) {
         settings = {
             hasDoubleBraces: true,
             hasLibEdit: true,
+            hasLibRt: false,
             hasDynLoad: true,
             hasMmu: true,
             hasMtune: true,
-            hasPam: true,
+            hasPam: false,
             hasStackProtector: true,
             hasSync: true,
             hasSyncCas: true,
@@ -203,6 +222,7 @@ function getDefaultSettings(platform) {
         settings = {
             hasDoubleBraces: true,
             hasLibEdit: false,
+            hasLibRt: false,
             hasDynLoad: true,
             hasMmu: true,
             hasMtune: true,

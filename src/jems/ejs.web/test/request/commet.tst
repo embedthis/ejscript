@@ -52,6 +52,7 @@ assert(http.status == 200)
 assert(http.response == "Hello World")
 assert(commetData.toString().contains("0001 abc"))
 assert(commetData.toString().contains("0099 abc"))
-assert(commetData.available == 70000)
+assert(commetData.length == 70000)
+http.close()
 
 server.close()

@@ -14,7 +14,7 @@ assert(u.host == "www.example.com")
 u.host = "example.net"
 assert(u.host == "example.net")
 
-assert(u.port == 443)
+assert(u.port == null)
 u.port = 4443
 assert(u.port == 4443)
 assert(u == "https://example.net:4443/short/path#ref?pri=high")
@@ -24,4 +24,3 @@ assert(u == "short/path")
 assert(u.path == "short/path")
 assert(u.host === null)
 assert(u.port === null)
-

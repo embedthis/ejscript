@@ -175,7 +175,7 @@ module ejs.unix {
         @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
         @return An Array of Path objects for each matching file.
      */
-    function ls(patterns = "*", options: Object = null): Array {
+    function ls(patterns = "*", options: Object? = null): Array {
         if (!(patterns is Array)) {
             patterns = [patterns]
         }
@@ -283,7 +283,7 @@ module ejs.unix {
         @deprecated 2.0.0
      */
     # Config.Legacy
-    function read(file: File, count: Number): ByteArray
+    function read(file: File, count: Number): ByteArray?
         file.read(count)
 
     /**
@@ -386,7 +386,7 @@ module ejs.unix {
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 
     a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
+    by the terms of either license. Consult the LICENSE.md distributed with 
     this software for full details.
     
     This software is open source; you can redistribute it and/or modify it 

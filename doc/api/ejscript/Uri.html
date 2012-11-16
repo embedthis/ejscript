@@ -38,17 +38,18 @@
    <tr><td nowrap align='center'> get </td><td>address</td><td><a href='String.html'>String</a></td><td>Return the TCP/IP address of the URI. This is the IP:PORT portion.</td></tr>
 <a name='basename'></a>
    <tr><td nowrap align='center'> get </td><td>basename</td><td><a href='Uri.html'>Uri</a></td><td>The base of portion of the URI. The base portion is the trailing portion of the path without any directory 
-elements.</td></tr>
+elements. Set to null if the Uri has no path.</td></tr>
 <a name='components'></a>
    <tr><td nowrap align='center'> get </td><td>components</td><td><a href='Object.html'>Object</a></td><td>Break a URI into its components by converting the URI to an absolute URI and breaking into components. The components are: scheme, host, port, path, reference and query.</td></tr>
 <a name='dirname'></a>
    <tr><td nowrap align='center'> get </td><td>dirname</td><td><a href='Uri.html'>Uri</a></td><td>The directory portion of a URI path. The directory portion is the leading portion including all directory 
-elements of the URI path excluding the base name.</td></tr>
+elements of the URI path excluding the base name. Set to null if the Uri has no path.</td></tr>
 <a name='extension'></a>
-   <tr><td nowrap align='center'> get set </td><td>extension</td><td><a href='String.html'>String</a></td><td>The URI extension portion of the path. Set to a String containing the URI extension without the "." or set
-to null if there is no extension.</td></tr>
+   <tr><td nowrap align='center'> get set </td><td>extension</td><td><a href='String.html'>String</a></td><td>The URI extension portion of the path. Set to a String containing the URI extension without the ".".
+Set to null if no extension. If this is modified, the path property will be updated accordingly.</td></tr>
 <a name='filename'></a>
-   <tr><td nowrap align='center'> get </td><td>filename</td><td><a href='Path.html'>Path</a></td><td>null </td></tr>
+   <tr><td nowrap align='center'> get </td><td>filename</td><td><a href='Path.html'>Path</a></td><td>Set to a Path type corresponding to the Uri path property. The Path is relative to the current directory.
+i.e. this removes the leading "/" from the path property.</td></tr>
 <a name='hasExtension'></a>
    <tr><td nowrap align='center'> get </td><td>hasExtension</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI has an explicit extension. </td></tr>
 <a name='hasHost'></a>
@@ -76,22 +77,25 @@ NOTE: this only tests the URI and not any physical resource associated with the 
 <a name='local'></a>
    <tr><td nowrap align='center'> get </td><td>local</td><td><a href='Uri.html'>Uri</a></td><td>Create a local URI. A local URI has no scheme, host or port components.</td></tr>
 <a name='mimeType'></a>
-   <tr><td nowrap align='center'> get </td><td>mimeType</td><td><a href='String.html'>String</a></td><td>The mime type of the URI. This is set to a mime type string by examining the URI extension. Set to null if
-the URI has no extension.</td></tr>
+   <tr><td nowrap align='center'> get </td><td>mimeType</td><td><a href='String.html'>String</a></td><td>The mime type of the URI. This is set to a mime type string by examining the URI extension. 
+Set to "text/html" if the mime type cannot be determined from the extension. 
+Set to null if the URI has no extension.</td></tr>
 <a name='normalize'></a>
    <tr><td nowrap align='center'> get </td><td>normalize</td><td><a href='Uri.html'>Uri</a></td><td>Normalized URI by removing all redundant and invalid URI components. Set to a URI with "segment/.." 
 and "./" components removed. The value will not be converted to an absolute URI nor will it map character case.</td></tr>
 <a name='path'></a>
-   <tr><td nowrap align='center'> get set </td><td>path</td><td><a href='String.html'>String</a></td><td>The URI path portion after the hostname. </td></tr>
+   <tr><td nowrap align='center'> get set </td><td>path</td><td><a href='String.html'>String</a></td><td>The URI path portion after the hostname
+Set to null if there is no path. </td></tr>
 <a name='port'></a>
-   <tr><td nowrap align='center'> get set </td><td>port</td><td><a href='Number.html'>Number</a></td><td>The port number of the URI. Set ot 80 if the URI does not have an explicit port.</td></tr>
+   <tr><td nowrap align='center'> get set </td><td>port</td><td><a href='Number.html'>Number</a></td><td>The port number of the URI. Set to null if the URI does not have an explicit port.</td></tr>
 <a name='query'></a>
-   <tr><td nowrap align='center'> get set </td><td>query</td><td><a href='String.html'>String</a></td><td>The URI query string. The query string is the fragment after a "?" character in the URI.</td></tr>
+   <tr><td nowrap align='center'> get set </td><td>query</td><td><a href='String.html'>String</a></td><td>The URI query string. The query string is the fragment after a "?" character in the URI.
+Set to null if there is no query.</td></tr>
 <a name='reference'></a>
    <tr><td nowrap align='center'> get set </td><td>reference</td><td><a href='String.html'>String</a></td><td>The URI reference portion. The reference portion is sometimes called the "anchor" and is the the fragment 
-after a "#" character in the URI.</td></tr>
+after a "#" character in the URI.  Set to null if there is no reference.</td></tr>
 <a name='scheme'></a>
-   <tr><td nowrap align='center'> get set </td><td>scheme</td><td><a href='String.html'>String</a></td><td>The URI protocol scheme. Set to "http" by default.</td></tr>
+   <tr><td nowrap align='center'> get set </td><td>scheme</td><td><a href='String.html'>String</a></td><td>The URI protocol scheme. Set to null if no scheme defined.</td></tr>
 <a name='uri'></a>
    <tr><td nowrap align='center'> get set </td><td>uri</td><td><a href='String.html'>String</a></td><td>The full URI as a string. </td></tr>
 </table>

@@ -100,7 +100,7 @@ module ejs.tar {
                 if (options.chdir) {
                     App.chdir(options.chdir)
                 }
-                let data: ByteArray
+                let data: ByteArray?
                 while ((data = archive.readBytes(BlockSize)) != null && data[0]) {
                     let header = new TarHeader(options)
                     header.parse(data)
@@ -118,11 +118,11 @@ module ejs.tar {
                                 len -= count
                             }
                             fp.close()
-                            if (App.uid == 0) {
-                                path.setAttributes(header.attributes)
-                            } else {
-//  MOB
-                            }
+                            try {
+                                if (App.uid == 0) {
+                                    path.setAttributes(header.attributes)
+                                }
+                            } catch {}
 
                         } else if (operation == Info) {
                             result.push({
@@ -187,8 +187,8 @@ module ejs.tar {
         var type: Number            /* Type flag */
         var linkName: String        /* Link target name. Up to 100 characters. Null terminate if room */
         var magic: String           /* Set to 'ustar' null terminated */
-        var user: String            /* User name. Up to 32 chars, null terminated */
-        var group: String           /* Group name. Up to 32 chars, null terminated */
+        var user: String?           /* User name. Up to 32 chars, null terminated */
+        var group: String?          /* Group name. Up to 32 chars, null terminated */
         var major: Number           /* Device major (octal) */
         var magic: String           /* Magic string */
         var minor: Number           /* Device minor (octal) */
@@ -265,7 +265,7 @@ module ejs.tar {
         }
 
         function show(ba) {
-            for (i = 0; i < ba.available; i += 16) {
+            for (i = 0; i < ba.length; i += 16) {
                 stdout.write(['%07o    ' % [i]])
                 for (j in 16) {
                     stdout.write(['%02X  ' % ba[i+j]])
@@ -361,7 +361,7 @@ module ejs.tar {
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 
     a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
+    by the terms of either license. Consult the LICENSE.md distributed with 
     this software for full details.
     
     This software is open source; you can redistribute it and/or modify it 

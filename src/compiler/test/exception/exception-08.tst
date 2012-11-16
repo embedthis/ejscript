@@ -1,6 +1,5 @@
-
 /*
- *	Test re-throw
+  	Test re-throw
  */
 
 state = 1

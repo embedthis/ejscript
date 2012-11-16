@@ -20,8 +20,7 @@
    <tr><td><strong>Inheritance</strong></td><td>Emitter <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
 <tr><td><strong>Example</strong></td><td><pre>events.on(event, function (event, ...args) {
     //  Do something
-})
-events.fire("topic", 1, 2, 3)
+}).fire("topic", 1, 2, 3)
 @stability prototype</pre></td></tr>
        </td></tr>
 </table>
@@ -60,7 +59,7 @@ registration of observers who want to subscribe to events of interest.</p>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#getObservers'><b>getObservers</b></a>(name: <a href='String.html'>String</a>): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return the observers for this emitter.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#hasObservers'><b>hasObservers</b></a>(): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Determine if the emitter has any observers.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#off'><b>off</b></a>(name: <a href='Object.html'>Object</a>, callback: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Turn off and remove a registered observer.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#on'><b>on</b></a>(name: <a href='Object.html'>Object</a>, callback: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer for a set of named event.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#on'><b>on</b></a>(name: <a href='Object.html'>Object</a>, callback: <a href='Function.html'>Function</a>): <a href='Emitter.html'>Emitter</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer for a set of named event.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
@@ -151,7 +150,7 @@ registration of observers who want to subscribe to events of interest.</p>
 <hr />
 <a name='on'></a>
 <div class='api'>
-<div class='apiSig'>    on(name: <a href='Object.html'>Object</a>, callback: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>    on(name: <a href='Object.html'>Object</a>, callback: <a href='Function.html'>Function</a>): <a href='Emitter.html'>Emitter</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Add an observer for a set of named event. The callback will be invoked when the requested event is fired by calling Emitter.fire. When the callback 

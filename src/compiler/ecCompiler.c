@@ -18,7 +18,7 @@ static void manageCompiler(EcCompiler *cp, int flags);
 
 /************************************ Code ************************************/
 
-EcCompiler *ecCreateCompiler(Ejs *ejs, int flags)
+PUBLIC EcCompiler *ecCreateCompiler(Ejs *ejs, int flags)
 {
     EcCompiler      *cp;
 
@@ -85,7 +85,7 @@ static void manageCompiler(EcCompiler *cp, int flags)
 }
 
 
-int ecCompile(EcCompiler *cp, int argc, char **argv)
+PUBLIC int ecCompile(EcCompiler *cp, int argc, char **argv)
 {
     Ejs     *ejs;
     int     rc, saveCompiling, paused;
@@ -144,7 +144,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
      */
     for (i = 0; i < argc && !cp->fatalError; i++) {
         ext = mprGetPathExt(argv[i]);
-        if (scasecmp(ext, "mod") == 0 || scasecmp(ext, BIT_SHOBJ) == 0) {
+        if (scaselesscmp(ext, "mod") == 0 || scaselesscmp(ext, BIT_SHOBJ) == 0) {
             nextModule = mprGetListLength(ejs->modules);
             lflags = cp->strict ? EJS_LOADER_STRICT : 0;
             if ((rc = ejsLoadModule(cp->ejs, ejsCreateStringFromAsc(ejs, argv[i]), -1, -1, lflags)) < 0) {
@@ -171,14 +171,12 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
             }
             mprAddItem(nodes, 0);
         } else  {
-            mprAssert(!MPR->marking);
             paused = ejsBlockGC(ejs);
             mprAddItem(nodes, ecParseFile(cp, argv[i]));
             ejsUnblockGC(ejs, paused);
         }
-        mprAssert(!MPR->marking);
     }
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
+    assure(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
 
 
     /*
@@ -211,7 +209,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
         }
     }
     ejsPopBlock(ejs);
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
+    assure(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
 
     /*
         Add compiled modules to the interpreter
@@ -224,12 +222,12 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     if (!paused) {
         mprYield(0);
     }
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
+    assure(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
     return (cp->errorCount > 0) ? EJS_ERR: 0;
 }
 
 
-int ejsInitCompiler(EjsService *service)
+PUBLIC int ejsInitCompiler(EjsService *service)
 {
     service->loadScriptLiteral = loadScriptLiteral;
     service->loadScriptFile = loadScriptFile;
@@ -262,7 +260,7 @@ static EjsObj *loadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache)
 }
 
 
-int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags)
+PUBLIC int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags)
 {
     EcCompiler      *ec;
 
@@ -294,7 +292,7 @@ int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags)
 /*
     Load and initialize a script literal
  */
-int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
+PUBLIC int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
 {
     EcCompiler      *cp;
     cchar           *path;
@@ -337,7 +335,7 @@ int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
 /*
     One-line embedding. Evaluate a file. This will compile and interpret the given Ejscript source file.
  */
-int ejsEvalFile(cchar *path)
+PUBLIC int ejsEvalFile(cchar *path)
 {
     Ejs     *ejs;
 
@@ -364,7 +362,7 @@ int ejsEvalFile(cchar *path)
 /*
     One-line embedding. Evaluate a script. This will compile and interpret the given script.
  */
-int ejsEvalScript(cchar *script)
+PUBLIC int ejsEvalScript(cchar *script)
 {
     Ejs     *ejs;
 
@@ -401,7 +399,7 @@ static void compileError(EcCompiler *cp, cchar *fmt, ...)
 }
 
 
-void ecError(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, ...)
+PUBLIC void ecError(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, ...)
 {
     va_list     args;
 
@@ -414,9 +412,9 @@ void ecError(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, ...)
 /*
     Create a line of spaces with an "^" pointer at the current parse error.
  */
-static char *makeHighlight(EcCompiler *cp, MprChar *source, int col)
+static char *makeHighlight(EcCompiler *cp, wchar *source, int col)
 {
-    MprChar     *up, *sp;
+    wchar       *up, *sp;
     char        *dest, *dp;
     int         tabCount, len, i;
 
@@ -435,7 +433,7 @@ static char *makeHighlight(EcCompiler *cp, MprChar *source, int col)
         Allow for "^" to be after the last char, plus one null.
      */
     if ((dest = mprAlloc(len + 2)) == NULL) {
-        mprAssert(dest);
+        assure(dest);
         return 0;
     }
     for (i = 0, dp = dest, sp = source; *sp; sp++, i++) {
@@ -459,7 +457,7 @@ static char *makeHighlight(EcCompiler *cp, MprChar *source, int col)
 }
 
 
-void ecErrorv(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, va_list args)
+PUBLIC void ecErrorv(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, va_list args)
 {
     cchar   *appName;
     char    *pointer, *errorMsg, *msg;
@@ -485,7 +483,7 @@ void ecErrorv(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, va_l
 }
 
 
-void ecSetRequire(EcCompiler *cp, MprList *modules)
+PUBLIC void ecSetRequire(EcCompiler *cp, MprList *modules)
 {
     cp->require = modules;
 }
@@ -499,7 +497,7 @@ void ecSetRequire(EcCompiler *cp, MprList *modules)
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
     a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
+    by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details.
 
     This software is open source; you can redistribute it and/or modify it

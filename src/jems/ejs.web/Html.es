@@ -164,7 +164,7 @@ module ejs.web {
             write('<span' + getAttributes(options) + '>' +  text + '</span>\r\n')
         }
 
-        function list(name: String, choices: Object, defaultValue: String, options: Object): Void {
+        function list(name: String, choices: Object, defaultValue: String?, options: Object): Void {
             let selected
             write('    <select name="' + name + '" ' + getAttributes(options) + '>\r\n')
             if (choices is Array) {
@@ -261,7 +261,7 @@ module ejs.web {
             write('    <img src="' + on + '" data-on="' + on + '" data-off="' + off + '" class="-ejs-refresh" />')
         }
 
-        function script(uri: String, options: Object): Void {
+        function script(uri: String?, options: Object): Void {
             if (uri == null) {
                 if (options.minified == undefined) {
                     options.minified = true
@@ -285,7 +285,7 @@ module ejs.web {
             write('    <meta name="' + Request.SecurityTokenName + '" content="' + request.securityToken + '" />\r\n')
         }
 
-        function stylesheet(uri: String, options: Object): Void {
+        function stylesheet(uri: String?, options: Object): Void {
             if (uri == null) {
                 /* MVC directory */
                 let dirs = request.config.dirs
@@ -554,7 +554,7 @@ module ejs.web {
             @returns a string containing the HTML attributes to emit. Will return an empty string or a string with a 
                 leading space (and not trailing space)
          */
-        function getAttributes(options: Object, exclude: Object = null): String {
+        function getAttributes(options: Object, exclude: Object? = null): String {
             if (options.hasError) {
                 options.style = append(options.style, "-ejs-field-error")
             }
@@ -626,7 +626,7 @@ module ejs.web {
         /*
             Map options to an HTML attribute string
          */
-        private function mapAttributes(options: Object, exclude: Object = null): String {
+        private function mapAttributes(options: Object, exclude: Object? = null): String {
             let result: String = ""
             if (options.method) {
                 options.method = options.method.toUpperCase();
@@ -696,7 +696,7 @@ module ejs.web {
             request.write(str)
 
         //  TODO OPT
-        private function append(str: String, suffix: String): String {
+        private function append(str: String?, suffix: String?): String {
             if (suffix) {
                 return (str) ? (str + " " + suffix) : suffix
             }
@@ -715,7 +715,7 @@ module ejs.web {
    This software is distributed under commercial and open source licenses.
    You may use the GPL open source license described below or you may acquire 
    a commercial license from Embedthis Software. You agree to be fully bound 
-   by the terms of either license. Consult the LICENSE.TXT distributed with 
+   by the terms of either license. Consult the LICENSE.md distributed with 
    this software for full details.
    
    This software is open source; you can redistribute it and/or modify it 

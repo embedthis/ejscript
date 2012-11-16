@@ -12,7 +12,9 @@ var cookie
 
 public function fetch(url: String, status: Number = Http.Ok): Http {
     let http = new Http
-    http.setCookie(cookie)
+    if (cookie) {
+        http.setCookie(cookie)
+    }
     http.get(url)
     http.wait(WAIT_TIMEOUT)
     if (http.status != status) {

@@ -62,7 +62,7 @@ server.on("readable", function (event, request: Request) {
     assert(referrer == null)
     assert(remoteAddress == "127.0.0.1")
 
-    assert(responseHeaders && responseHeaders.Server)
+    assert(responseHeaders)
     responseHeaders["New-Header"] = "abc"
     assert(responseHeaders["New-Header"] == "abc")
 
@@ -94,4 +94,5 @@ server.on("readable", function (event, request: Request) {
 let http = new Http
 http.get(HTTP + "/index.html")
 http.wait()
+http.close()
 server.close()

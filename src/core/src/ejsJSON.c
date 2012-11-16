@@ -11,10 +11,10 @@
 /*********************************** Locals ***********************************/
 
 typedef struct JsonState {
-    MprChar    *data;
-    MprChar    *end;
-    MprChar    *next;
-    MprChar    *error;
+    wchar      *data;
+    wchar      *end;
+    wchar      *next;
+    wchar      *error;
 } JsonState;
 
 typedef struct Json {
@@ -43,9 +43,9 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json);
 /*
     function deserialize(obj: String, options: Object): Object
  */
-EjsObj *g_deserialize(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+PUBLIC EjsObj *g_deserialize(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    mprAssert(argc >=1);
+    assure(argc >=1);
     return ejsDeserialize(ejs, (EjsString*) argv[0]);
 }
 
@@ -59,7 +59,9 @@ static EjsString *g_serialize(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-EjsAny *ejsDeserialize(Ejs *ejs, EjsString *str)
+//  MOB - convert to use MPR json parser
+
+PUBLIC EjsAny *ejsDeserialize(Ejs *ejs, EjsString *str)
 {
     EjsObj      *obj;
     JsonState   js;
@@ -95,7 +97,7 @@ EjsAny *ejsDeserialize(Ejs *ejs, EjsString *str)
 
 static EjsObj *parseLiteral(Ejs *ejs, JsonState *js)
 {
-    mprAssert(js);
+    assure(js);
 
     return parseLiteralInner(ejs, mprCreateBuf(0, 0), js);
 }
@@ -115,7 +117,7 @@ typedef enum Token {
 } Token;
 
 
-static MprChar *skipComments(MprChar *cp, MprChar *end)
+static wchar *skipComments(wchar *cp, wchar *end)
 {
     int     inComment;
 
@@ -158,10 +160,10 @@ static MprChar *skipComments(MprChar *cp, MprChar *end)
 }
 
 
-Token getNextJsonToken(MprBuf *buf, MprChar **token, JsonState *js)
+Token getNextJsonToken(MprBuf *buf, wchar **token, JsonState *js)
 {
-    MprChar     *start, *cp, *end, *next;
-    MprChar     *src, *dest;
+    wchar       *start, *cp, *end, *next;
+    wchar       *src, *dest;
     int         quote, tid, c;
 
     if (buf) {
@@ -263,7 +265,7 @@ Token getNextJsonToken(MprBuf *buf, MprChar **token, JsonState *js)
         next = cp;
 
         if (buf) {
-            for (dest = src = (MprChar*) buf->start; src < (MprChar*) buf->end; ) {
+            for (dest = src = (wchar*) buf->start; src < (wchar*) buf->end; ) {
                 c = *src++;
                 if (c == '\\') {
                     c = *src++;
@@ -278,7 +280,7 @@ Token getNextJsonToken(MprBuf *buf, MprChar **token, JsonState *js)
                 *dest++ = c;
             }
             *dest = '\0';
-            *token = (MprChar*) mprGetBufStart(buf);
+            *token = (wchar*) mprGetBufStart(buf);
         }
     }
     js->next = next;
@@ -301,7 +303,7 @@ static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
 {
     EjsAny      *obj, *vp;
     MprBuf      *valueBuf;
-    MprChar     *token, *key, *value;
+    wchar       *token, *key, *value;
     int         tid, isArray;
 
     isArray = 0;
@@ -336,17 +338,17 @@ static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
         if (tid == TOK_LBRACKET) {
             /* For array values */
             vp = parseLiteral(ejs, js);
-            mprAssert(vp);
+            assure(vp);
             
         } else if (tid == TOK_LBRACE) {
             /* For object values */
             vp = parseLiteral(ejs, js);
-            mprAssert(vp);
+            assure(vp);
             
         } else if (isArray) {
             tid = getNextJsonToken(buf, &value, js);
             vp = ejsParse(ejs, value, (tid == TOK_QID) ? S_String: -1);
-            mprAssert(vp);
+            assure(vp);
             
         } else {
             getNextJsonToken(buf, &key, js);
@@ -372,7 +374,7 @@ static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
                         vp = ejsParse(ejs, value, -1);
                     }
                 }
-                mprAssert(vp);
+                assure(vp);
             } else {
                 getNextJsonToken(buf, &value, js);
                 js->error = js->next;
@@ -404,7 +406,7 @@ static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
     This will look for a "toJSON" function on the specified object. Use ejsSerialize for low level JSON.
     @return Returns a string variable or null if an exception is thrown.
  */
-EjsString *ejsToJSON(Ejs *ejs, EjsAny *vp, EjsObj *options)
+PUBLIC EjsString *ejsToJSON(Ejs *ejs, EjsAny *vp, EjsObj *options)
 {
     EjsFunction     *fn;
     EjsString       *result;
@@ -423,7 +425,7 @@ EjsString *ejsToJSON(Ejs *ejs, EjsAny *vp, EjsObj *options)
 }
 
 
-EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *vp, EjsObj *options)
+PUBLIC EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *vp, EjsObj *options)
 {
     Json        json;
     EjsObj      *arg;
@@ -485,7 +487,7 @@ EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *vp, EjsObj *options)
 }
 
 
-EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, int flags)
+PUBLIC EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, int flags)
 {
     Json    json;
 
@@ -508,7 +510,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
     EjsString   *result, *sv;
     EjsTrait    *trait;
     EjsObj      *pp, *obj, *replacerArgs[2];
-    MprChar     *cp;
+    wchar       *cp;
     cchar       *key;
     int         c, isArray, i, count, slotNum, quotes;
 
@@ -623,7 +625,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                     /* function replacer(key: String, value: String): String */
                     sv = ejsRunFunction(ejs, json->replacer, obj, 2, (EjsObj**) replacerArgs);
                 }
-                mprPutBlockToBuf(json->buf, sv->value, sv->length * sizeof(MprChar));
+                mprPutBlockToBuf(json->buf, sv->value, sv->length * sizeof(wchar));
             }
             if ((slotNum + 1) < count || json->commas) {
                 mprPutCharToWideBuf(json->buf, ',');
@@ -644,7 +646,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
     mprAddNullToWideBuf(json->buf);
 
     if (--json->nest == 0) {
-        result = ejsCreateString(ejs, mprGetBufStart(json->buf), mprGetBufLength(json->buf) / sizeof(MprChar));
+        result = ejsCreateString(ejs, mprGetBufStart(json->buf), mprGetBufLength(json->buf) / sizeof(wchar));
         mprRemoveRoot(json->buf);
     } else {
         result = 0;
@@ -653,7 +655,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
 }
 
 
-void ejsConfigureJSONType(Ejs *ejs)
+PUBLIC void ejsConfigureJSONType(Ejs *ejs)
 {
     ejsFinalizeScriptType(ejs, N("ejs", "JSON"), sizeof(EjsPot), ejsManagePot, EJS_TYPE_POT);
     ejsBindFunction(ejs, ejs->global, ES_deserialize, g_deserialize);
@@ -663,28 +665,20 @@ void ejsConfigureJSONType(Ejs *ejs)
 
 /*
     @copy   default
- 
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
+    Local variables:
+    tab-width: 4
+    c-basic-offset: 4
+    End:
+    vim: sw=4 ts=4 expandtab
 
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    @end
  */

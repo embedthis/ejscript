@@ -1,11 +1,16 @@
 #!/bin/sh
 #
-#   configure -- Configure for building on Unix systems
+#   configure -- Configure for building
 #
-#   This simply invokes bit to do the work
+MIN_BIT=2.0.1
 
 if ! type bit >/dev/null 2>&1 ; then
-    echo "Bootstrap build using make first." >&2
-    echo
+    echo "Bootstrap build using \"make\" first." >&2
+    exit 255
+fi
+ver=`(echo $MIN_BIT ; bit -V) | sort -r | head -n 1`
+if [ "${MIN_BIT}" = "${ver}" ] ; then
+    echo "Bootstrap build using \"make\" first to upgrade \"bit\"." >&2
+    exit 255
 fi
 bit configure $*

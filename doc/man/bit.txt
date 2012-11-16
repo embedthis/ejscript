@@ -10,10 +10,10 @@ SYNOPSIS
        [--diagnose] [--dump]
            [--file file.bit] [--force] [--gen  [make|sh|vs|xcode]]  [--import]
            [--keep] [--log logSpec]
-           [--nocross]  [--out  path]  [--profile [debug|release|...]]  [--pre
-           sourcefile] [--platform os-arch]
-           [--quiet] [--set [feature=value]] [--show] [--rebuild]  [--release]
-           [--unset feature] [--version]
+           [--nocross]  [--out  path]  [--platform os-arch] [--pre sourcefile]
+           [--profile [debug|release|...]]
+           [--quiet] [--set [feature=value]] [--show]  [--static]  [--rebuild]
+           [--release] [--unset feature] [--version]
            [--verbose] [--with PACK[=PATH]] [--without PACK] [targets|actions]
 
 DESCRIPTION
@@ -354,27 +354,29 @@ OPTIONS
               system.  This is useful when configuring for a platform that can
               build and run natively on the development system.  For  example:
               Linux  64-bit  systems  can  run  32-bit  applications,  so 'bit
-              --nocross --platform linux-x86 configure'  can  directly  target
-              the 32-bit platform without cross-building.
+              --nocross  --platform  linux-x86  configure'  may  be  able   to
+              directly  target  the  32-bit  platform  without cross-building.
+              Note: Products that require the building and execution of  local
+              tools MUST be able to run those tools on the development system.
 
 
        --out path
-              Save  Bit  trace  output  to a file instead of displaying to the
+              Save Bit trace output to a file instead  of  displaying  to  the
               console.
 
 
        --platform os-arch
-              Add a platform to build for  cross-compilation.  Multiple  plat-
-              forms  can be added. You may use 'local' for the local platform.
-              Options specified after the platform apply to  the  prior  plat-
+              Add  a  platform  to build for cross-compilation. Multiple plat-
+              forms can be added. You may use 'local' for the local  platform.
+              Options  specified  after  the platform apply to the prior plat-
               form. For example:
 
-                  bit  --platform linux-x86 --without all --platform linux-arm
+                  bit --platform linux-x86 --without all --platform  linux-arm
               --with ejscript configure
 
 
        --profile [debug|release|...]
-              Use the specified profile when building. This  options  is  pro-
+              Use  the  specified  profile when building. This options is pro-
               vided once when configuring and the result is saved in the plat-
               form.profile property in the configuration bit file. Custom pro-
               files can be added to the main.bit or start.bit files.
@@ -386,12 +388,17 @@ OPTIONS
 
        --set key=value
               Set a settings property to a given value. For example: 'bit -set
-              version=1.0' will update  the  settings.version  property.   Use
+              version=1.0'  will  update  the  settings.version property.  Use
               this when running 'bit configure' to persist your changes in the
               configuration bit file.
 
 
        --show Show the actual commands executed by bit.
+
+
+       --static
+              Build  using static linking instead of shared libraries. Same as
+              --set static=true.
 
 
        --rebuild

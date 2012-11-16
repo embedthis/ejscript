@@ -38,8 +38,8 @@ terminators. TextStreams can be stacked upon other Streams such as files, byte a
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
 <a name='async'></a>
    <tr><td nowrap align='center'> get set </td><td>async</td><td><a href='Boolean.html'>Boolean</a></td><td>The current async mode. Set to true if the stream is in async mode.</td></tr>
-<a name='available'></a>
-   <tr><td nowrap align='center'> get </td><td>available</td><td><a href='Number.html'>Number</a></td><td>The number of bytes available to read without blocking. This is the number of bytes buffered internally
+<a name='length'></a>
+   <tr><td nowrap align='center'> get </td><td>length</td><td><a href='Number.html'>Number</a></td><td>The number of bytes available to read without blocking. This is the number of bytes buffered internally
 by this stream. It does not include any data buffered downstream.</td></tr>
 </table>
 
@@ -64,7 +64,7 @@ by this stream. It does not include any data buffered downstream.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#fill'><b>fill</b></a>(): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Fill the input buffer from upstream.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#flush'><b>flush</b></a>(dir: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#off'><b>off</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='TextStream.html'>TextStream</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ByteArray.html'>ByteArray</a>, offset: <a href='Number.html'>Number</a> = 0, count: <a href='Number.html'>Number</a> = -1): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read characters from the stream into the supplied byte array.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readLine'><b>readLine</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a line from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readLines'><b>readLines</b></a>(numLines: <a href='Number.html'>Number</a> = -1): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a required number of lines of data from the stream.</td></tr>
@@ -143,7 +143,7 @@ to write all data but will return immediately. Defaults to Stream.WRITE.</dd></d
 <hr />
 <a name='on'></a>
 <div class='api'>
-<div class='apiSig'>    on(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>    on(name, observer: <a href='Function.html'>Function</a>): <a href='TextStream.html'>TextStream</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Add an observer to the stream for the named events. </dd></dl>

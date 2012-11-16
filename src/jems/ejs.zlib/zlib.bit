@@ -3,10 +3,8 @@
  */
 
 Bit.load({
-
     targets: {
         'ejs.zlib.mod': {
-            enable: 'bit.packs.zlib.enable',
             path: '${LIB}/ejs.zlib.mod',
             files: [ '*.es' ],
             precious: true,
@@ -18,13 +16,10 @@ Bit.load({
             depends: [ 'ejsc', 'ejs.mod' ],
         },
 
-        'ejs.zlib': {
-            enable: 'bit.packs.zlib.enable',
+        'libejs.zlib': {
             type: 'lib',
-            sources: [ 
-                '*.c',
-            ],
-            depends: [ 'libmpr', 'libejs', 'ejs.mod', 'ejs.zlib.mod', 'zlib' ],
+            sources: [ '*.c' ],
+            depends: [ 'libejs', 'ejs.mod', 'ejs.zlib.mod', 'libzlib' ],
         },
 	},
 })

@@ -23,7 +23,7 @@ Bit.load({
             depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
         },
 
-        'ejs.db.sqlite': {
+        'libejs.db.sqlite': {
             type: 'lib',
             sources: [ 
                 '*.c',

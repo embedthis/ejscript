@@ -88,7 +88,7 @@ module ejs {
             @param search Optional additional search paths to use before using PATH
             @return Located path or null
          */
-        static function locate(program: Path, search = []): Path {
+        static function locate(program: Path, search = []): Path? {
             search += App.getenv("PATH").split(App.SearchSeparator)
             for each (dir in App.getenv("PATH").split(App.SearchSeparator)) {
                 let path = Path(dir).join(program)
@@ -119,7 +119,7 @@ module ejs {
             All events are called with the signature:
             function (event: String, cmd: Cmd): Void
          */
-        native function on(name, observer: Function): Void
+        native function on(name, observer: Function): Cmd
 
         /** 
             This call is not supported.
@@ -138,7 +138,7 @@ module ejs {
             @duplicate Stream.read
             If no observer has been defined via $on(), this call will block if there is no data to be read.
          */
-        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
+        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number?
 
         /**
             Read the data from the command output as a string. This reads from the command's standard output. 
@@ -146,7 +146,7 @@ module ejs {
             @returns a string of $count characters beginning at the start of the output data.
             @throws IOError if an I/O error occurs.
          */
-        native function readString(count: Number = -1): String
+        native function readString(count: Number = -1): String?
 
         /**
             Read the data from the command as an array of lines. This reads from the command's standard output.
@@ -154,7 +154,7 @@ module ejs {
             @returns a string containing count lines of data starting with the first line of output data
             @throws IOError if an I/O error occurs.
          */
-        function readLines(count: Number = -1): Array {
+        function readLines(count: Number = -1): Array? {
             let stream: TextStream = TextStream(this)
             result = stream.readLines()
             return result
@@ -165,14 +165,14 @@ module ejs {
             @returns the output content as an XML object 
             @throws IOError if an I/O error occurs.
          */
-        function readXml(): XML
+        function readXml(): XML?
             XML(readString())
 
         /**
             Command output data as a string. This is an alias for $readString() but it will cache the 
                 output data and may be called multiple times. This reads from the command's standard output.
          */
-        function get response(): String {
+        function get response(): String? {
             if (!_response) {
                 _response = readString()
             }
@@ -249,7 +249,7 @@ module ejs {
             @param options Command options. Sames as options in $Cmd
             @throws IOError if the request was cannot be issued to the remote server.
          */
-        native static function exec(cmdline: String = null, options: Object = {}): Void
+        native static function exec(cmdline: String? = null, options: Object = {}): Void
 
         /**
             Kill the specified process.
@@ -267,15 +267,12 @@ module ejs {
             the processes command line. Note: this command does not throw exceptions if a matching process cannot be
             killed. Use kill() for reliable process execution.
             @param pattern of processes to kill. This can be a string name or a regular expression to match with.
-            @param signal Signal number to send to the processes to kill. If the signal is null, then the system default
-                signal is sent (SIGTERM).
+            @param signal Signal number to send to the processes to kill. If the signal is not supplied, then the system
+            default signal is sent (SIGTERM).
             @param preserve Optional set of process IDs to preserve
             @hide 
          */
-        static function killall(pattern: Object, signal: Number, ...preserve): Void {
-            if (!(signal is Number)) {
-                signal = 15
-            }
+        static function killall(pattern: Object, signal: Number = 15, ...preserve): Void {
             let cmd = new Cmd
             if (Config.OS == "windows" || Config.OS == "cygwin") {
                 cmd.start('cmd /A /C "WMIC PROCESS get Processid,Commandline /format:csv"')
@@ -443,31 +440,15 @@ module ejs {
 
 /*
     @copy   default
-    
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
-    
+
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire 
-    a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
-    this software for full details.
-    
-    This software is open source; you can redistribute it and/or modify it 
-    under the terms of the GNU General Public License as published by the 
-    Free Software Foundation; either version 2 of the License, or (at your 
-    option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
-    
-    This program is distributed WITHOUT ANY WARRANTY; without even the 
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
-    
-    This GPL license does NOT permit incorporating this software into 
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses 
-    for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
-    
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
+
     Local variables:
     tab-width: 4
     c-basic-offset: 4

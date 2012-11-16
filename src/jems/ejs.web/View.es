@@ -98,7 +98,7 @@ module ejs.web {
         private var connectors: Object = {}
 
         /* Current record being used inside a form */
-        private var currentRecord: Object
+        private var currentRecord: Object?
 
         /* Data value presentation formats */
         public var formats: Object
@@ -294,7 +294,7 @@ MOB - review?
                 <% flash() %>
                 <% flash(["error", "warning"]) %>
          */
-        function flash(kinds: Object = null, options: Object = {}): Void {
+        function flash(kinds: Object? = null, options: Object = {}): Void {
             options = getOptions(options)
             let cflash ||= request.flash
             if (cflash == null || cflash.length == 0) {
@@ -314,7 +314,7 @@ MOB - review?
             }
             let connector = getConnector("flash", options)
             for (kind in msgs) {
-                let msg: String = msgs[kind]
+                let msg = msgs[kind]
                 if (msg && msg != "") {
                     connector.flash(kind, msg, options.clone())
                 }
@@ -542,7 +542,7 @@ MOB -- much more doc here
             @option minified If the target is null, a minified option will determine if compressed (minifed) 
                 or uncompressed versions of the scripts will be used.
          */
-        function script(target: Object, options: Object = {}): Void {
+        function script(target: Object?, options: Object = {}): Void {
             let connector = getConnector("script", options)
             if (target is Array) {
                 for each (uri in target) {
@@ -575,7 +575,7 @@ MOB -- much more doc here
                 default set of stylesheets.
             @param options Optional extra options. See $View for a list of the standard options.
          */
-        function stylesheet(target: Object, options: Object = {}): Void {
+        function stylesheet(target: Object?, options: Object = {}): Void {
             let connector = getConnector("stylesheet", options)
             if (target is Array) {
                 for each (uri in target) {
@@ -713,10 +713,10 @@ MOB -- much more doc here
             getConnector("tree", options).tree(data, options)
         }
 
+//MOB -- review and rethink this
         /**
             Render a partial view. This creates an HTML element with the required options. It is useful to generate
                 a dynamically refreshing division.
-MOB -- review and rethink this
             @param viewPath (String|Object) If a string, it is a view template name or the name of an action. If an object,
                 it should have properties: controller and action. Action can be the name of a view template.
             @param options Optional extra options. See $View for a list of the standard options.
@@ -731,7 +731,6 @@ MOB -- review and rethink this
                 if (viewPath.controller) {
                     cname = viewPath.controller
                 }
-//MOB - reivew
                 if (viewPath.action) {
                     action = viewPath.action
                 }
@@ -810,7 +809,7 @@ MOB -- review and rethink this
                 data type.
             @return The formatted data.
          */
-        function formatValue(value: Object, options: Object): String {
+        function formatValue(value: Object?, options: Object): String {
             if (value == undefined) {
                 value = ""
             }
@@ -979,7 +978,7 @@ MOB -- review and rethink this
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String 
+        function makeUrl(action: String, id: String? = null, options: Object = {}, query: Object? = null): String
             request.makeUrl(action, id, options, query)
 
         /** 
@@ -1002,7 +1001,7 @@ MOB -- review and rethink this
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 
     a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
+    by the terms of either license. Consult the LICENSE.md distributed with 
     this software for full details.
     
     This software is open source; you can redistribute it and/or modify it 

@@ -135,7 +135,7 @@ void emListingLoadCallback(Ejs *ejs, int kind, ...)
         break;
 
     default:
-        mprAssert(0);
+        assure(0);
     }
     lst->kind = kind;
     mprAddItem(mp->lstRecords, lst);
@@ -195,7 +195,7 @@ static void lstClose(EjsMod *mp, MprList *modules, int firstModule)
             default:
             case EJS_SECT_START:
             case EJS_SECT_END:
-                mprAssert(0);
+                assure(0);
                 break;
             }
         }
@@ -212,7 +212,7 @@ static int lstOpen(EjsMod *mp, char *moduleFilename, EjsModuleHdr *hdr)
 {
     char    *path, *name, *ext;
 
-    mprAssert(mp);
+    assure(mp);
 
     name = mprGetPathBase(moduleFilename);
     if ((ext = strstr(name, EJS_MODULE_EXT)) != 0) {
@@ -277,7 +277,7 @@ static void lstEndModule(EjsMod *mp, EjsModule *module)
     ssize   size;
     int     i;
 
-    mprAssert(mp);
+    assure(mp);
 
     mprFprintf(mp->file,
         "\n----------------------------------------------------------------------------------------------\n");
@@ -456,7 +456,7 @@ static void lstProperty(EjsMod *mp, EjsModule *module, EjsObj *block, int slotNu
         } else {
             propType = 0;
         }
-        mprAssert(mp->currentBlock && ejsIsBlock(ejs, mp->currentBlock));
+        assure(mp->currentBlock && ejsIsBlock(ejs, mp->currentBlock));
         slotNum = ejsDefineProperty(ejs, (EjsObj*) mp->currentBlock, -1, qname, propType, attributes, 0);
     }
 }
@@ -505,76 +505,76 @@ static int decodeOperands(EjsMod *mp, EjsOptable *opt, char *argbuf, int argbufL
 
         case EBC_BYTE:
             ival = getByte(mp);
-            mprSprintf(bufp, buflen,  "<%d> ", ival);
+            fmt(bufp, buflen,  "<%d> ", ival);
             break;
 
         case EBC_DOUBLE:
             dval = getDouble(mp);
-            mprSprintf(bufp, buflen,  "<%f> ", dval);
+            fmt(bufp, buflen,  "<%f> ", dval);
             break;
 
         case EBC_ARGC:
         case EBC_ARGC2:
             ival = (int) getNum(mp);
-            mprSprintf(bufp, buflen,  "<argc: %d> ", ival);
+            fmt(bufp, buflen,  "<argc: %d> ", ival);
             break;
 
         case EBC_ARGC3:
             ival = (int) getNum(mp);
-            mprSprintf(bufp, buflen,  "<argc: %d> ", ival);
+            fmt(bufp, buflen,  "<argc: %d> ", ival);
             break;
 
         case EBC_NEW_ARRAY:
             ival = (int) getNum(mp);     /* argc */
-            mprSprintf(bufp, buflen,  "<argc: %d>", ival);
+            fmt(bufp, buflen,  "<argc: %d>", ival);
             bufp += strlen(bufp);
             *stackEffect -= (ival * 2);
             break;
 
         case EBC_NEW_OBJECT:
             ival = (int) getNum(mp);     /* argc */
-            mprSprintf(bufp, buflen,  "<argc: %d> <att: ", ival);
+            fmt(bufp, buflen,  "<argc: %d> <att: ", ival);
             bufp += strlen(bufp);
             for (j = 0; j < ival; j++) {
                 /* Discard attributes */ getNum(mp);
-                mprSprintf(bufp, buflen,  "%d ", ival);
+                fmt(bufp, buflen,  "%d ", ival);
                 len = (int) strlen(bufp);
                 bufp += len;
                 buflen -= len;
             }
-            mprSprintf(bufp, buflen,  ">", ival);
+            fmt(bufp, buflen,  ">", ival);
             *stackEffect -= (ival * 3);
             break;
 
         case EBC_SLOT:
             ival = (int) getNum(mp);
-            mprSprintf(bufp, buflen,  "<slot: %d> ", ival);
+            fmt(bufp, buflen,  "<slot: %d> ", ival);
             break;
 
         case EBC_NUM:
             ival = (int) getNum(mp);
-            mprSprintf(bufp, buflen,  "<%d> ", ival);
+            fmt(bufp, buflen,  "<%d> ", ival);
             break;
 
         case EBC_JMP8:
             ival = getByte(mp);
-            mprSprintf(bufp, buflen,  "<addr: %d> ", ((char) ival) + address + 1);
+            fmt(bufp, buflen,  "<addr: %d> ", ((char) ival) + address + 1);
             break;
 
         case EBC_JMP:
             ival = getInt32(mp);
-            mprSprintf(bufp, buflen,  "<addr: %d> ", ival + address + 4);
+            fmt(bufp, buflen,  "<addr: %d> ", ival + address + 4);
             break;
 
         case EBC_INIT_DEFAULT8:
             numEntries = getByte(mp);
-            mprSprintf(bufp, buflen,  "<%d> ", numEntries);
+            fmt(bufp, buflen,  "<%d> ", numEntries);
             len = (int) strlen(bufp);
             bufp += len;
             buflen -= len;
             for (j = 0; j < numEntries; j++) {
                 ival = getByte(mp);
-                mprSprintf(bufp, buflen,  "<%d> ", ival + 2);
+                fmt(bufp, buflen,  "<%d> ", ival + 2);
                 len = (int) strlen(bufp);
                 bufp += len;
                 buflen -= len;
@@ -583,13 +583,13 @@ static int decodeOperands(EjsMod *mp, EjsOptable *opt, char *argbuf, int argbufL
 
         case EBC_INIT_DEFAULT:
             numEntries = getByte(mp);
-            mprSprintf(bufp, buflen,  "<%d> ", numEntries);
+            fmt(bufp, buflen,  "<%d> ", numEntries);
             len = (int) strlen(bufp);
             bufp += len;
             buflen -= len;
             for (j = 0; j < numEntries; j++) {
                 ival = getInt32(mp);
-                mprSprintf(bufp, buflen,  "<%d> ", ival + 2);
+                fmt(bufp, buflen,  "<%d> ", ival + 2);
                 len = (int) strlen(bufp);
                 bufp += len;
                 buflen -= len;
@@ -598,8 +598,8 @@ static int decodeOperands(EjsMod *mp, EjsOptable *opt, char *argbuf, int argbufL
 
         case EBC_STRING:
             sval = getString(mp->ejs, mp);
-            mprAssert(sval);
-            mprSprintf(bufp, buflen,  "<%@> ", sval);
+            assure(sval);
+            fmt(bufp, buflen,  "<%@> ", sval);
             break;
 
         case EBC_GLOBAL:
@@ -636,15 +636,15 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
 {
     EjsOptable  *optable, *opt;
     EjsCode     *code;
-    MprChar     *currentLine;
+    wchar       *currentLine;
     uchar       *start;
     char        argbuf[MPR_MAX_STRING], lineInfo[MPR_MAX_STRING], name[MPR_MAX_STRING];
     char        *currentFile, *src, *dest;
     int         maxOp, opcode, lineNumber, stack, codeLen, address, stackEffect, nbytes, i, lastLine;
 
-    mprAssert(mp);
-    mprAssert(module);
-    mprAssert(fun);
+    assure(mp);
+    assure(module);
+    assure(fun);
 
     /*
         Store so that getNum and getString can easily read instructions
@@ -723,7 +723,7 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
         }
         ejsGetDebugInfo(mp->ejs, fun, mp->pc, &currentFile, &lineNumber, &currentLine);
         if (currentFile && currentLine && *currentLine && lineNumber != lastLine) {
-            mprSprintf(lineInfo, sizeof(lineInfo), "%s:%d", currentFile, lineNumber);
+            fmt(lineInfo, sizeof(lineInfo), "%s:%d", currentFile, lineNumber);
             mprFprintf(mp->file, "\n    # %-25s %w\n\n", lineInfo, currentLine);
             lastLine = lineNumber;
         }
@@ -736,8 +736,8 @@ static void lstVarSlot(EjsMod *mp, EjsModule *module, EjsName *qname, EjsTrait *
     Ejs         *ejs;
     EjsString   *space;
 
-    mprAssert(slotNum >= 0);
-    mprAssert(qname);
+    assure(slotNum >= 0);
+    assure(qname);
 
     ejs = mp->ejs;
     space = mapSpace(ejs, qname->space);
@@ -774,8 +774,8 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
     EjsName         qname;
     int             i, numInherited, count;
 
-    mprAssert(obj);
-    mprAssert(module);
+    assure(obj);
+    assure(module);
 
     ejs = mp->ejs;
     if (VISITED(obj)) {
@@ -816,7 +816,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
                 if (qname.name == 0) {
                     continue;
                 }
-                mprAssert(trait);
+                assure(trait);
                 lstVarSlot(mp, module, &qname, trait, i);
             }
         }
@@ -831,7 +831,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
 
             for (i = 0; i < count; i++) {
                 trait = ejsGetPropertyTraits(ejs, obj, i);
-                mprAssert(trait);
+                assure(trait);
                 qname = ejsGetPropertyName(ejs, obj, i);
                 lstVarSlot(mp, module, &qname, trait, i);
             }
@@ -850,7 +850,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
         count = ejsGetLength(ejs, (EjsObj*) type);
         for (i = 0; i < count; i++) {
             trait = ejsGetPropertyTraits(ejs, (EjsObj*) type, i);
-            mprAssert(trait);
+            assure(trait);
             qname = ejsGetPropertyName(ejs, obj, i);
             lstVarSlot(mp, module, &qname, trait, i);
         }
@@ -870,7 +870,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
             count = ejsGetLength(ejs, prototype);
             for (i = 0; i < count; i++) {
                 trait = ejsGetPropertyTraits(ejs, prototype, i);
-                mprAssert(trait);
+                assure(trait);
                 qname = ejsGetPropertyName(ejs, prototype, i);
                 if (qname.name) {
                     lstVarSlot(mp, module, &qname, trait, i);
@@ -891,7 +891,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
             count = ejsGetLength(ejs, obj);
             for (i = 0; i < count; i++) {
                 trait = ejsGetPropertyTraits(ejs, obj, i);
-                mprAssert(trait);
+                assure(trait);
                 qname = ejsGetPropertyName(ejs, obj, i);
                 lstVarSlot(mp, module, &qname, trait, i);
             }
@@ -1049,7 +1049,7 @@ static EjsString *getString(Ejs *ejs, EjsMod *mp)
 
     number = (int) getNum(mp);
     if (number < 0) {
-        mprAssert(number >= 0);
+        assure(number >= 0);
         return 0;
     }
     return ejsCreateStringFromConst(ejs, mp->module, number);
@@ -1070,13 +1070,13 @@ static void getGlobal(EjsMod *mp, char *buf, int buflen)
     vp = 0;
 
     if ((t = (int) getNum(mp)) < 0) {
-        mprSprintf(buf, buflen,  "<can't read code>");
+        fmt(buf, buflen,  "<can't read code>");
         return;
     }
 
     switch (t & EJS_ENCODE_GLOBAL_MASK) {
     default:
-        mprAssert(0);
+        assure(0);
         return;
 
     case EJS_ENCODE_GLOBAL_NOREF:
@@ -1091,7 +1091,7 @@ static void getGlobal(EjsMod *mp, char *buf, int buflen)
             vp = ejsGetProperty(ejs, ejs->global, slotNum);
         }
         if (vp && ejsIsType(ejs, vp)) {
-            mprSprintf(buf, buflen, "<type: 0x%x,  %N> ", t, ((EjsType*) vp)->qname);
+            fmt(buf, buflen, "<type: 0x%x,  %N> ", t, ((EjsType*) vp)->qname);
         }
         break;
 
@@ -1101,23 +1101,23 @@ static void getGlobal(EjsMod *mp, char *buf, int buflen)
          */
         qname.name = ejsCreateStringFromConst(ejs, mp->module, t >> 2);
         if (qname.name == 0) {
-            mprAssert(0);
-            mprSprintf(buf, buflen,  "<var: 0x%x,  missing name> ", t);
+            assure(0);
+            fmt(buf, buflen,  "<var: 0x%x,  missing name> ", t);
             return;
         }
         if ((qname.space = getString(mp->ejs, mp)) == 0) {
-            mprSprintf(buf, buflen,  "<var: 0x%x,  missing namespace> ", t);
+            fmt(buf, buflen,  "<var: 0x%x,  missing namespace> ", t);
             return;
         }
         if (qname.name) {
             vp = ejsGetPropertyByName(ejs, ejs->global, qname);
         }
-        mprSprintf(buf, buflen, "<var: 0x%x,  %N> ", t, qname);
+        fmt(buf, buflen, "<var: 0x%x,  %N> ", t, qname);
         break;
     }
 
     if (vp == 0) {
-        mprSprintf(buf, buflen, "<var: %d,  cannot resolve var/typ at slot e> ", t);
+        fmt(buf, buflen, "<var: %d,  cannot resolve var/typ at slot e> ", t);
     }
 }
 
@@ -1141,28 +1141,12 @@ static EjsString *mapSpace(Ejs *ejs, EjsString *space)
     @copy   default
 
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

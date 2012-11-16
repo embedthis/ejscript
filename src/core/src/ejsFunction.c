@@ -54,7 +54,7 @@ static EjsAny *castFunction(Ejs *ejs, EjsFunction *vp, EjsType *type)
 }
 
 
-EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep)
+PUBLIC EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep)
 {
     EjsFunction     *dest;
 
@@ -103,9 +103,9 @@ static EjsFunction *fun_Function(Ejs *ejs, EjsFunction *fun, int argc, void *arg
     cchar           *body, *param, *script;
     int             i, count;
     
-    mprAssert(argc > 1);
+    assure(argc > 1);
     args = (EjsArray*) argv[1];
-    mprAssert(ejsIs(ejs, args, Array));
+    assure(ejsIs(ejs, args, Array));
 
     if (args->length <= 0) {
         ejsThrowArgError(ejs, "Missing function body");
@@ -148,9 +148,9 @@ static EjsObj *fun_applyFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **
     EjsArray    *args;
     EjsObj      *save, *result, *thisObj;
     
-    mprAssert(argc > 1);
+    assure(argc > 1);
     args = (EjsArray*) argv[1];
-    mprAssert(ejsIs(ejs, args, Array));
+    assure(ejsIs(ejs, args, Array));
 
     save = fun->boundThis;
     thisObj = argv[0];
@@ -170,13 +170,13 @@ static EjsObj *fun_bindFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **a
 {
     EjsAny      *thisObj;
 
-    mprAssert(argc >= 1);
+    assure(argc >= 1);
 
     thisObj = argv[0];
     fun->boundThis = ejsIsDefined(ejs, thisObj) ? thisObj : 0;
     if (argc == 2) {
         fun->boundArgs = (EjsArray*) argv[1];
-        mprAssert(ejsIs(ejs, fun->boundArgs, Array));
+        assure(ejsIs(ejs, fun->boundArgs, Array));
     }
     return 0;
 }
@@ -196,7 +196,7 @@ static EjsAny *fun_bound(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
  */
 static EjsObj *fun_call(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 {
-    mprAssert(argc > 1);
+    assure(argc > 1);
     return fun_applyFunction(ejs, fun, argc, argv);
 }
 
@@ -246,7 +246,7 @@ static EjsObj *fun_setScope(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 
 /*************************************************************************************************************/
 
-void ejsRemoveConstructor(Ejs *ejs, EjsType *type)
+PUBLIC void ejsRemoveConstructor(Ejs *ejs, EjsType *type)
 {
     EjsFunction     *fun;
 
@@ -293,24 +293,24 @@ static void setFunctionAttributes(EjsFunction *fun, int attributes)
 }
 
 
-void ejsSetFunctionName(Ejs *ejs, EjsFunction *fun, EjsString *name)
+PUBLIC void ejsSetFunctionName(Ejs *ejs, EjsFunction *fun, EjsString *name)
 {
     fun->name = name;
 }
 
 
-EjsEx *ejsAddException(Ejs *ejs, EjsFunction *fun, uint tryStart, uint tryEnd, EjsType *catchType, uint handlerStart,
+PUBLIC EjsEx *ejsAddException(Ejs *ejs, EjsFunction *fun, uint tryStart, uint tryEnd, EjsType *catchType, uint handlerStart,
         uint handlerEnd, int numBlocks, int numStack, int flags, int preferredIndex)
 {
     EjsEx           *exception;
     EjsCode         *code;
     int             size;
 
-    mprAssert(fun);
+    assure(fun);
 
     /* Managed by manageCode */
     if ((exception = mprAllocZeroed(sizeof(EjsEx))) == 0) {
-        mprAssert(0);
+        assure(0);
         return 0;
     }
     exception->flags = flags;
@@ -330,7 +330,7 @@ EjsEx *ejsAddException(Ejs *ejs, EjsFunction *fun, uint tryStart, uint tryEnd, E
         size = code->sizeHandlers + EJS_EX_INC;
         code->handlers = mprRealloc(code->handlers, size * sizeof(EjsEx));
         if (code->handlers == 0) {
-            mprAssert(0);
+            assure(0);
             return 0;
         }
         memset(&code->handlers[code->sizeHandlers], 0, EJS_EX_INC * sizeof(EjsEx)); 
@@ -342,12 +342,12 @@ EjsEx *ejsAddException(Ejs *ejs, EjsFunction *fun, uint tryStart, uint tryEnd, E
 
 
 #if UNUSED
-void ejsOffsetExceptions(EjsFunction *fun, int offset)
+PUBLIC void ejsOffsetExceptions(EjsFunction *fun, int offset)
 {
     EjsEx           *ex;
     int             i;
 
-    mprAssert(fun);
+    assure(fun);
 
     for (i = 0; i < fun->body.code->numHandlers; i++) {
         ex = fun->body.code->handlers[i];
@@ -364,9 +364,9 @@ static void manageCode(EjsCode *code, int flags)
 {
     int     i;
 
-    mprAssert(code->magic == EJS_CODE_MAGIC);
+    assure(code->magic == EJS_CODE_MAGIC);
     if (flags & MPR_MANAGE_MARK) {
-        mprAssert(code->debug == 0 || code->debug->magic == EJS_DEBUG_MAGIC);        
+        assure(code->debug == 0 || code->debug->magic == EJS_DEBUG_MAGIC);        
         mprMark(code->module);
         mprMark(code->debug);
         if (code->handlers) {
@@ -380,16 +380,16 @@ static void manageCode(EjsCode *code, int flags)
 }
 
 
-EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *byteCode, ssize len, 
+PUBLIC EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *byteCode, ssize len, 
     EjsDebug *debug)
 {
     EjsCode     *code;
 
-    mprAssert(fun);
-    mprAssert(module);
-    mprAssert(byteCode);
-    mprAssert(len >= 0);
-    mprAssert(debug == 0 || debug->magic == EJS_DEBUG_MAGIC);
+    assure(fun);
+    assure(module);
+    assure(byteCode);
+    assure(len >= 0);
+    assure(debug == 0 || debug->magic == EJS_DEBUG_MAGIC);
 
     if ((code = mprAllocBlock(sizeof(EjsCode) + len, MPR_ALLOC_ZERO | MPR_ALLOC_MANAGER)) == 0) {
         return NULL;
@@ -407,12 +407,12 @@ EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *by
 /*
     Set the byte code for a script function
  */
-int ejsSetFunctionCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *byteCode, ssize len, EjsDebug *debug)
+PUBLIC int ejsSetFunctionCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *byteCode, ssize len, EjsDebug *debug)
 {
-    mprAssert(fun);
-    mprAssert(byteCode);
-    mprAssert(len >= 0);
-    mprAssert(debug == 0 || debug->magic == EJS_DEBUG_MAGIC);
+    assure(fun);
+    assure(byteCode);
+    assure(len >= 0);
+    assure(debug == 0 || debug->magic == EJS_DEBUG_MAGIC);
 
     fun->body.code = ejsCreateCode(ejs, fun, module, byteCode, len, debug);
     return 0;
@@ -426,7 +426,7 @@ static EjsObj *nopFunction(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 
 
 #if UNUSED
-void ejsUseActivation(Ejs *ejs, EjsFunction *fun)
+PUBLIC void ejsUseActivation(Ejs *ejs, EjsFunction *fun)
 {
     EjsPot  *activation;
     int     numProp;
@@ -444,7 +444,7 @@ void ejsUseActivation(Ejs *ejs, EjsFunction *fun)
 #endif
 
 
-EjsPot *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numProp)
+PUBLIC EjsPot *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numProp)
 {
     EjsPot  *activation;
 
@@ -455,7 +455,7 @@ EjsPot *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numProp)
 
 /********************************** Factory **********************************/
 
-EjsFunction *ejsCreateBareFunction(Ejs *ejs, EjsString *name, int attributes)
+PUBLIC EjsFunction *ejsCreateBareFunction(Ejs *ejs, EjsString *name, int attributes)
 {
     EjsFunction     *fun;
 
@@ -475,7 +475,7 @@ EjsFunction *ejsCreateBareFunction(Ejs *ejs, EjsString *name, int attributes)
     Create a script function. This defines the method traits. It does not create a  method slot. ResultType may
     be null to indicate untyped. NOTE: untyped functions may return a result at their descretion.
  */
-EjsFunction *ejsCreateFunction(Ejs *ejs, EjsString *name, cuchar *byteCode, int codeLen, int numArgs, int numDefault, 
+PUBLIC EjsFunction *ejsCreateFunction(Ejs *ejs, EjsString *name, cuchar *byteCode, int codeLen, int numArgs, int numDefault, 
     int numExceptions, EjsType *resultType, int attributes, EjsModule *module, EjsBlock *scope, int strict)
 {
     EjsFunction     *fun;
@@ -492,7 +492,7 @@ EjsFunction *ejsCreateFunction(Ejs *ejs, EjsString *name, cuchar *byteCode, int 
 /*
     Init function to initialize constructors inside types
  */
-int ejsInitFunction(Ejs *ejs, EjsFunction *fun, EjsString *name, cuchar *byteCode, int codeLen, int numArgs, 
+PUBLIC int ejsInitFunction(Ejs *ejs, EjsFunction *fun, EjsString *name, cuchar *byteCode, int codeLen, int numArgs, 
     int numDefault, int numExceptions, EjsType *resultType, int attributes, EjsModule *module, EjsBlock *scope, int strict)
 {
     if (scope) {
@@ -515,7 +515,7 @@ int ejsInitFunction(Ejs *ejs, EjsFunction *fun, EjsString *name, cuchar *byteCod
 }
 
 
-void ejsManageFunction(EjsFunction *fun, int flags)
+PUBLIC void ejsManageFunction(EjsFunction *fun, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         ejsManageBlock((EjsBlock*) fun, flags);
@@ -533,7 +533,7 @@ void ejsManageFunction(EjsFunction *fun, int flags)
 }
 
 
-void ejsCreateFunctionType(Ejs *ejs)
+PUBLIC void ejsCreateFunctionType(Ejs *ejs)
 {
     EjsType         *type;
     EjsHelpers      *helpers;
@@ -553,7 +553,7 @@ void ejsCreateFunctionType(Ejs *ejs)
 }
 
 
-void ejsConfigureFunctionType(Ejs *ejs)
+PUBLIC void ejsConfigureFunctionType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;
@@ -577,28 +577,12 @@ void ejsConfigureFunctionType(Ejs *ejs)
     @copy   default
 
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

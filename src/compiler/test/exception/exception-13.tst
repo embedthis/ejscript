@@ -1,6 +1,5 @@
-
 /*
- *	Test exception nested inside a switch
+  	Test exception nested inside a switch
  */
 
 var counter = 0

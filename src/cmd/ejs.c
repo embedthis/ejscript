@@ -10,7 +10,7 @@
 
 #include    "ejsCompiler.h"
 
-#if BIT_CC_EDITLINE
+#if BIT_HAS_LIB_EDIT
   #include  <histedit.h>
 #endif
 
@@ -27,7 +27,7 @@ typedef struct App {
 
 static App *app;
 
-#if BIT_CC_EDITLINE
+#if BIT_HAS_LIB_EDIT
 static History  *cmdHistory;
 static EditLine *eh; 
 static cchar    *prompt;
@@ -237,7 +237,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             mprSetCmdlineLogging(1);
 
         } else if (smatch(argp, "--version") || smatch(argp, "-V")) {
-            mprPrintfError("%s %s-%s\n", BIT_NAME, BIT_VERSION, BIT_NUMBER);
+            mprPrintf("%s-%s\n", BIT_VERSION, BIT_BUILD_NUMBER);
             return 0;
 
         } else if (smatch(argp, "--warn")) {
@@ -378,7 +378,7 @@ static int interpretFiles(EcCompiler *cp, MprList *files, int argc, char **argv,
 {
     Ejs     *ejs;
 
-    mprAssert(files);
+    assure(files);
 
     MPR_VERIFY_MEM();
     ejs = cp->ejs;
@@ -386,7 +386,7 @@ static int interpretFiles(EcCompiler *cp, MprList *files, int argc, char **argv,
         mprRawLog(0, "%s\n", cp->errorMsg);
         return EJS_ERR;
     }
-    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
+    assure(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
 
     if (cp->errorCount == 0) {
         if (ejsRunProgram(ejs, className, method) < 0) {
@@ -452,7 +452,7 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
 
 
 /************************************************* Command line History **************************************/
-#if BIT_CC_EDITLINE
+#if BIT_HAS_LIB_EDIT
 
 static cchar *issuePrompt(EditLine *e) 
 {
@@ -505,19 +505,20 @@ static char *readline(cchar *msg)
     return NULL; 
 } 
 
-#else /* BIT_CC_EDITLINE */
+#else /* BIT_HAS_LIB_EDIT */
 
 static char *readline(cchar *msg)
 {
     char    buf[MPR_MAX_STRING];
 
     printf("%s", msg);
+    fflush(stdout);
     if (fgets(buf, sizeof(buf) - 1, stdin) == 0) {
         return NULL;
     }
     return strdup(buf);
 }
-#endif /* BIT_CC_EDITLINE */
+#endif /* BIT_HAS_LIB_EDIT */
 
 
 /*  
@@ -532,7 +533,7 @@ static int consoleGets(EcStream *stream)
         return 0;
     }
     level = stream->compiler->state ? stream->compiler->state->blockNestCount : 0;
-    mprSprintf(prompt, sizeof(prompt), "%s-%d> ", EJS_NAME, level);
+    fmt(prompt, sizeof(prompt), "%s-%d> ", EJS_NAME, level);
 
     mprYield(MPR_YIELD_STICKY);
     line = readline(prompt);
@@ -561,7 +562,7 @@ static int commandGets(EcStream *stream)
         stream->eof = 1;
         return -1;
     }
-    mprAssert(0);
+    assure(0);
     return (int) (stream->end - stream->nextChar);
 }
 
@@ -575,30 +576,14 @@ static void require(cchar *name)
 
 /*
     @copy   default
- 
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

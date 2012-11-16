@@ -19,16 +19,15 @@ assert(!f.canWrite)
 bytes = f.readBytes(1024)
 assert(f.options.mode == "r")
 assert(f.options.permissions == 0664)
-assert(bytes.length == 1024)
-assert(bytes.available == TestLength)
+assert(bytes.size == 1024)
+assert(bytes.length == TestLength)
 
 
 //	position
 
 f.position = 0
 again = f.readBytes(1024)
-assert(again.length == bytes.length)
-assert(again.available == TestLength)
+assert(again.length == TestLength)
 
 
 //	write

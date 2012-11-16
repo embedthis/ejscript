@@ -17,15 +17,15 @@ Bit.load({
             path: '${BIN}/bit${EXE}',
             sources: [ 
                 '${SRC}/src/cmd/ejsrun.c',
-                '${SRC}/src/jems/ejs.zlib/*.c' 
             ],
             static: true,
             active: true,
             precious: true,
-            depends: ['libejs',  'zlib', 'bits', 'bit.es'],
+            depends: ['libejs', 'bits', 'bit.es', 'libejs.zlib'],
             platforms: [ 'local' ],
         },
 
+/* UNUSED
         'utest.es': {
             path: '${BIN}/utest.es',
             files: [ 'utest.es' ],
@@ -44,6 +44,7 @@ Bit.load({
             depends: ['ejsrun'],
             platforms: [ 'local' ],
         },
+*/
 
         bits: {
             path: '${LIB}/bits',

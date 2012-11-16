@@ -16,7 +16,7 @@ enumerable public class Test {
     public var depth: Number
     public var dir: Path
     public var multithread: Boolean
-    public var phase: String
+    public var phase: String?
     public var session: Object
     public var threads: Number
     public var top: Path
@@ -34,7 +34,7 @@ enumerable public class Test {
         return str
     }
 
-    function searchUp(path: Path): String {
+    function searchUp(path: Path): String? {
         if (exists(path))
             return path
         path = Path(path).relative
@@ -56,9 +56,9 @@ enumerable public class Test {
 /*
     Global functions
  */
-function assert(cond: Boolean, message: String = null): Void {
+function assert(cond: Boolean?, message: String? = null): Void {
     if (cond) {
-        postMessage({ passed: true })
+        postMessage({ passed: true, msg: message })
     } else {
         throw new AssertError(message.toString())
     }
@@ -114,7 +114,9 @@ public function startService(cmdline: String, options): Void {
     let connected
     for (i in 50) {
         try {
-            Socket().connect(address.host + ":" + address.port)
+            let sock = new Socket
+            sock.connect(address.host + ":" + address.port)
+            sock.close()
             connected = true
             break
         } catch (e) { 

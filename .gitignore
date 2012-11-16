@@ -166,4 +166,11 @@ releases
 xcuserdata
 *.dmp
 project.xcworkspace
-start.bit
+/start.bit
+*-xcode
+*-vsdebug
+dtoa.original
+ejsZlib.miniz
+t.es
+projects/*macosx-full.xcodeproj
+*-mine*

@@ -1,6 +1,5 @@
-
 /*
- *	Exception in finally
+  	Exception in finally
  */
 
 state = 1

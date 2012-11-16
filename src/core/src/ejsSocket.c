@@ -32,7 +32,7 @@ static EjsSocket *sock_Socket(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 /*
     function accept(): Socket
  */
-EjsSocket *sock_accept(Ejs *ejs, EjsSocket *listen, int argc, EjsObj **argv)
+PUBLIC EjsSocket *sock_accept(Ejs *ejs, EjsSocket *listen, int argc, EjsObj **argv)
 {
     MprSocket   *sock;
     EjsSocket   *sp;
@@ -56,7 +56,7 @@ EjsSocket *sock_accept(Ejs *ejs, EjsSocket *listen, int argc, EjsObj **argv)
 /*
     function get address(): String
  */
-EjsString *sock_address(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
+PUBLIC EjsString *sock_address(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     return ejsCreateStringFromAsc(ejs, sp->address);
 }
@@ -65,7 +65,7 @@ EjsString *sock_address(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 /*
     function get async(): Boolean
  */
-EjsBoolean *sock_async(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
+PUBLIC EjsBoolean *sock_async(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     return (sp->async) ? ESV(true) : ESV(false);
 }
@@ -74,7 +74,7 @@ EjsBoolean *sock_async(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 /*
     function set async(enable: Boolean): Void
  */
-EjsObj *sock_set_async(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
+PUBLIC EjsObj *sock_set_async(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     sp->async = (argv[0] == ESV(true));
     return 0;
@@ -196,12 +196,12 @@ static EjsObj *sock_off(Ejs *ejs, EjsSocket *sp, int argc, EjsAny **argv)
 
 
 /*
-    function on(name: [String|Array], observer: Function): Void
+    function on(name: [String|Array], observer: Function): Socket
  */
-EjsObj *sock_on(Ejs *ejs, EjsSocket *sp, int argc, EjsAny **argv)
+PUBLIC EjsSocket *sock_on(Ejs *ejs, EjsSocket *sp, int argc, EjsAny **argv)
 {
     ejsAddObserver(ejs, &sp->emitter, argv[0], argv[1]);
-    return 0;
+    return sp;
 }
 
 
@@ -234,14 +234,14 @@ static EjsNumber *sock_read(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
         offset = ba->writePosition;
     }
     if (count < 0) {
-        count = ba->length - offset;
+        count = ba->size - offset;
     }
-    if (count < 0) {
+    if (count <= 0) {
         return ESV(zero);
     }
     nbytes = mprReadSocket(sp->sock, &ba->value[offset], count);
-    if (nbytes <= 0) {
-        /* If async, Caller must test "eof" to determine if no data or eof */
+    if (nbytes < 0) {
+        /* If async, Caller must test "isEof" to determine if eof or error */
         return ESV(null);
     }
     ba->writePosition += nbytes;
@@ -331,7 +331,7 @@ static void enableSocketEvents(EjsSocket *sp, int (*proc)(EjsSocket *sp, MprEven
     Ejs     *ejs;
 
     ejs = sp->ejs;
-    mprAssert(sp->sock);
+    assure(sp->sock);
     
     if (sp->sock->handler == 0) {
         mprAddSocketHandler(sp->sock, sp->mask, ejs->dispatcher, (MprEventProc) proc, sp, 0);
@@ -395,7 +395,7 @@ static void manageSocket(EjsSocket *sp, int flags)
 }
 
 
-EjsSocket *ejsCreateSocket(Ejs *ejs, MprSocket *sock, bool async)
+PUBLIC EjsSocket *ejsCreateSocket(Ejs *ejs, MprSocket *sock, bool async)
 {
     EjsSocket   *sp;
 
@@ -407,7 +407,7 @@ EjsSocket *ejsCreateSocket(Ejs *ejs, MprSocket *sock, bool async)
 }
 
 
-void ejsConfigureSocketType(Ejs *ejs)
+PUBLIC void ejsConfigureSocketType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;
@@ -435,30 +435,14 @@ void ejsConfigureSocketType(Ejs *ejs)
 
 /*
     @copy   default
- 
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

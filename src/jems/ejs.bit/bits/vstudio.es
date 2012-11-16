@@ -14,11 +14,10 @@ const TOOLS_VERSION = '4.0'
 const PROJECT_FILE_VERSION = 10.0.30319.1
 const SOL_VERSION = '11.00'
 const XID = '{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}'
-const PREP = 'if not exist "$(ObjDir)" md "$(ObjDir)"\r
-if not exist "$(BinDir)" md "$(BinDir)"\r
-if not exist "$(IncDir)" md "$(IncDir)"\r
-if not exist "$(IncDir)\\bit.h" copy "..\\${settings.product}-${platform.os}-bit.h" "$(IncDir)\\bit.h"\r
-if not exist "$(BinDir)\\libmpr.def" xcopy /Y /S *.def "$(BinDir)"\r
+var PREP = 'if not exist "$(ObjDir)" md "$(ObjDir)"
+if not exist "$(BinDir)" md "$(BinDir)"
+if not exist "$(IncDir)" md "$(IncDir)"
+if not exist "$(IncDir)\\bit.h" copy "..\\${settings.product}-${platform.os}-${platform.profile}-bit.h" "$(IncDir)\\bit.h"
 '
 var prepTarget
 var Base 
@@ -34,6 +33,11 @@ public function vstudio(base: Path) {
         bit.globals[n] = bit.globals[n].relativeTo(base)
     }
     let projects = []
+/* UNUSED
+    if (bit.dir.bin.files('*.def').length > 0) {
+        PREP += 'if not exist "$(BinDir)\\libmpr.def" xcopy /Y /S *.def "$(BinDir)"'
+    }
+ */
     /* Create a temporary prep target as the first target */
     prepTarget = {
         type: 'vsprep',
@@ -153,7 +157,7 @@ function debugPropBuild(base: Path) {
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <Cfg>debug</Cfg>
+    <Cfg>vsdebug</Cfg>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -185,7 +189,7 @@ function releasePropBuild(base: Path) {
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <Cfg>release</Cfg>
+    <Cfg>vsrelease</Cfg>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -444,11 +448,13 @@ function projResources(base, target) {
 
 //  TODO - rename. Does more than just link. Also does 'files' and 'scripts'
 function projLink(base, target) {
+/* UNUSED
     if (target.type == 'lib') {
         let def = base.join(target.path.basename.toString().replace(/dll$/, 'def'))
         let newdef = Path(target.path.toString().replace(/dll$/, 'def'))
         if (newdef.exists) {
             cp(newdef, def)
+            trace('Copy', def)
         }
         if (def.exists) {
             bit.DEF = wpath(def.relativeTo(base))
@@ -462,6 +468,7 @@ function projLink(base, target) {
             trace('Warn', 'Missing ' + def)
         }
     }
+*/
     bit.LIBS = target.libraries ? mapLibs(target.libraries - bit.defaults.libraries).join(';') : ''
     bit.LIBPATHS = target.libpaths ? target.libpaths.map(function(p) wpath(p)).join(';') : ''
     output('
@@ -543,8 +550,13 @@ function exportHeaders(base, target) {
         if (!dep || dep.type != 'header') continue
         for each (file in dep.files) {
             /* Use the directory in the destination so Xcopy won't ask if file or directory */
-            cmd += 'xcopy /Y /S /D ' + wpath(file.relativeTo(target.home)) + ' ' + 
-                wpath(dep.path.relativeTo(base).parent) + '\r\n'
+            if (file.isDir) {
+                cmd += 'xcopy /Y /S /D ' + wpath(file.relativeTo(target.home)) + ' ' + 
+                    wpath(dep.path.relativeTo(base).parent) + '\n'
+            } else {
+                cmd += '\tcopy /Y ' + wpath(file.relativeTo(target.home)) + ' ' + 
+                    wpath(dep.path.relativeTo(base).parent) + '\n'
+            }
         }
     }
     return cmd
@@ -607,7 +619,7 @@ function wpath(path): Path {
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
     a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
+    by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details.
   
     This software is open source; you can redistribute it and/or modify it

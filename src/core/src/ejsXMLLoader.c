@@ -32,7 +32,7 @@ MprXml *ejsCreateXmlParser(Ejs *ejs, EjsXML *xml, cchar *filename)
     MprXml      *xp;
     
     xp = mprXmlOpen(MPR_BUFSIZE, EJS_XML_BUF_MAX);
-    mprAssert(xp);
+    assure(xp);
 
     /*
         Create the parser stack
@@ -84,10 +84,10 @@ static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, 
     xml = tos->obj;
     value = ejsCreateStringFromAsc(ejs, str);
     
-    mprAssert(xml);
+    assure(xml);
 
-    mprAssert(state >= 0);
-    mprAssert(tagName && *tagName);
+    assure(state >= 0);
+    assure(tagName && *tagName);
 
     switch (state) {
     case MPR_XML_PI:
@@ -130,7 +130,7 @@ static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, 
             //  TODO - rc
             ejsAppendToXML(ejs, parent, xml);
             parser->topOfStack--;
-            mprAssert(parser->topOfStack >= 0);
+            assure(parser->topOfStack >= 0);
             tos = &parser->nodeStack[parser->topOfStack];
         }
         break;
@@ -157,7 +157,7 @@ static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, 
          */
         if (parser->topOfStack > 0) {
             parser->topOfStack--;
-            mprAssert(parser->topOfStack >= 0);
+            assure(parser->topOfStack >= 0);
             tos = &parser->nodeStack[parser->topOfStack];
         }
         break;
@@ -165,7 +165,7 @@ static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, 
     default:
         ejsThrowSyntaxError(ejs, "XML error in %s at %d\nDetails %s", parser->filename, mprXmlGetLineNumber(xp), 
             mprXmlGetErrorMsg(xp));
-        mprAssert(0);
+        assure(0);
         return MPR_ERR_BAD_SYNTAX;
     }
     return 0;
@@ -187,7 +187,7 @@ static bool checkTagName(char *name)
 #endif
 
 
-int ejsXMLToBuf(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
+PUBLIC int ejsXMLToBuf(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
 {
     EjsXML      *xml, *child, *attribute, *elt;
     int         sawElements, next;
@@ -203,7 +203,7 @@ int ejsXMLToBuf(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
         }
         return 0;
     }
-    mprAssert(ejsIsXML(ejs, node));
+    assure(ejsIsXML(ejs, node));
     xml = (EjsXML*) node;
     
     switch (xml->kind) {
@@ -281,31 +281,15 @@ static void indent(MprBuf *bp, int level)
 
 /*
     @copy   default
-    
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
-    
+
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire 
-    a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
-    this software for full details.
-    
-    This software is open source; you can redistribute it and/or modify it 
-    under the terms of the GNU General Public License as published by the 
-    Free Software Foundation; either version 2 of the License, or (at your 
-    option) any later version. See the GNU General Public License for more 
-    details at: http://embedthis.com/downloads/gplLicense.html
-    
-    This program is distributed WITHOUT ANY WARRANTY; without even the 
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
-    
-    This GPL license does NOT permit incorporating this software into 
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses 
-    for this software and support services are available from Embedthis 
-    Software at http://embedthis.com 
-    
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
+
     Local variables:
     tab-width: 4
     c-basic-offset: 4

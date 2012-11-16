@@ -14,13 +14,13 @@ if (!Path("/bin").exists) {
         data.write(i + ": aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
     }
     let finalized
-    let count = data.available
+    let count = data.length
     cmd = new Cmd
     cmd.start("cat", {detach: true})
     cmd.on("writable", function(event, cmd) {
         let len = cmd.write(data)
         data.readPosition += len
-        if (data.available == 0) {
+        if (data.length == 0) {
             cmd.finalize()
             finalized = true
         }

@@ -16,17 +16,19 @@
 static EjsBoolean *g_assert(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
     EjsFrame        *fp;
-    MprChar         *source;
+    wchar           *source;
     EjsBoolean      *b;
 
-    mprAssert(argc == 1);
-
-    if (!ejsIs(ejs, argv[0], Boolean)) {
-        b = (EjsBoolean*) ejsCast(ejs, argv[0], Boolean);
+    if (argc == 0) {
+        b = ESV(false);
     } else {
-        b = (EjsBoolean*) argv[0];
+        if (!ejsIs(ejs, argv[0], Boolean)) {
+            b = (EjsBoolean*) ejsCast(ejs, argv[0], Boolean);
+        } else {
+            b = (EjsBoolean*) argv[0];
+        }
     }
-    mprAssert(b);
+    assure(b);
 
     if (b == 0 || !b->value) {
         fp = ejs->state->fp;
@@ -79,7 +81,7 @@ static EjsObj *g_cloneBase(Ejs *ejs, EjsObj *ignored, int argc, EjsObj **argv)
 {
     EjsType     *type;
     
-    mprAssert(argc == 1);
+    assure(argc == 1);
     
     type = (EjsType*) argv[0];
     type->baseType = ejsClone(ejs, type->baseType, 0);
@@ -114,7 +116,7 @@ static EjsObj *g_eval(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsNumber *g_hashcode(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 1);
+    assure(argc == 1);
     return ejsCreateNumber(ejs, (MprNumber) PTOL(argv[0]));
 }
 
@@ -177,7 +179,7 @@ static EjsString *g_md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     things). The blending is done at the primitive property level. If overwrite is true, the property is replaced. If
     overwrite is false, the property will be added if it does not already exist
  */
-int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
+PUBLIC int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
 {
     EjsTrait    *trait;
     EjsObj      *vp, *dp, *item;
@@ -399,7 +401,7 @@ static EjsObj *g_printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     cchar       *data;
     int         i, count;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = argv[0];
     count = ejsGetLength(ejs, args);
@@ -422,7 +424,7 @@ static EjsObj *g_printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-void ejsFreezeGlobal(Ejs *ejs)
+PUBLIC void ejsFreezeGlobal(Ejs *ejs)
 {
     EjsTrait    *trait;
     int         i;
@@ -435,7 +437,7 @@ void ejsFreezeGlobal(Ejs *ejs)
 }
 
 
-void ejsCreateGlobalNamespaces(Ejs *ejs)
+PUBLIC void ejsCreateGlobalNamespaces(Ejs *ejs)
 {
     ejsAddImmutable(ejs, S_iteratorSpace, EN("iterator"), 
         ejsCreateNamespace(ejs, ejsCreateStringFromAsc(ejs, EJS_ITERATOR_NAMESPACE)));
@@ -448,7 +450,7 @@ void ejsCreateGlobalNamespaces(Ejs *ejs)
 }
 
 
-void ejsDefineGlobalNamespaces(Ejs *ejs)
+PUBLIC void ejsDefineGlobalNamespaces(Ejs *ejs)
 {
     /*  
         Order matters here. This is the (reverse) order of lookup.
@@ -461,12 +463,12 @@ void ejsDefineGlobalNamespaces(Ejs *ejs)
 }
 
 
-void ejsConfigureGlobalBlock(Ejs *ejs)
+PUBLIC void ejsConfigureGlobalBlock(Ejs *ejs)
 {
     EjsBlock    *block;
 
     block = (EjsBlock*) ejs->global;
-    mprAssert(block);
+    assure(block);
     
     ejsSetProperty(ejs, ejs->global, ES_global, ejs->global);
     ejsSetProperty(ejs, ejs->global, ES_void, ESV(Void));
@@ -498,30 +500,14 @@ void ejsConfigureGlobalBlock(Ejs *ejs)
 
 /*
     @copy   default
- 
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

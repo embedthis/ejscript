@@ -25,7 +25,7 @@ module ejs {
     class Cache {
         use default namespace public
 
-        private var adapter: Object
+        private var adapter: Object?
 
         /**
             Cache constructor.
@@ -43,7 +43,7 @@ module ejs {
                 class is derived from the adapter name with "Cache" appended. The first letter of the adapter is converted
                 to uppercase. For example, if the adapter was "mem", the class would be inferred to be "MemCache".
          */
-        function Cache(adapter: String = null, options: Object = {}) {
+        function Cache(adapter: String? = null, options: Object = {}) {
             let adapterClass, modname
             if (adapter == null || adapter == "local") {
                 options = blend({shared: true}, options)
@@ -76,7 +76,7 @@ module ejs {
             @param when Date at which to expire the data. Set to null to never expire.
             @return True if the key's expiry can be updated. 
          */
-        function expire(key: String, when: Date): Boolean
+        function expire(key: String, when: Date?): Boolean
             adapter.expire(key, when)
 
         /**
@@ -114,7 +114,7 @@ module ejs {
                 specified "version == true", return an object with the properties "data" for the key data and 
                 "version" for the CAS version identifier.
          */
-        function read(key: String, options: Object = null): String
+        function read(key: String, options: Object = null): String?
             adapter.read(key, options)
 
         /**
@@ -128,7 +128,7 @@ module ejs {
                 an atomic CAS (check and swap) operation.
             @return Null if the key is not present. Otherwise return key data as an object.
          */
-        function readObj(key: String, options: Object = null): Object {
+        function readObj(key: String, options: Object = null): Object? {
             let data = adapter.read(key, options)
             if (data) {
                 return deserialize(data)
@@ -170,7 +170,7 @@ module ejs {
             @return The number of bytes written, returns null if the write failed due to an updated version identifier for
                 the key.
          */
-        function write(key: String, value: String, options: Object = null): Number
+        function write(key: String, value: String, options: Object = null): Number?
             adapter.write(key, value, options)
 
         /**
@@ -191,7 +191,7 @@ module ejs {
             @return The number of bytes written, returns null if the write failed due to an updated version identifier for
                 the key.
          */
-        function writeObj(key: String, value: Object, options: Object = null): Number
+        function writeObj(key: String, value: Object, options: Object = null): Number?
             adapter.write(key, serialize(value), options)
     }
 
@@ -200,30 +200,14 @@ module ejs {
 
 /*
     @copy   default
-    
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
-    
+
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire 
-    a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
-    this software for full details.
-    
-    This software is open source; you can redistribute it and/or modify it 
-    under the terms of the GNU General Public License as published by the 
-    Free Software Foundation; either version 2 of the License, or (at your 
-    option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
-    
-    This program is distributed WITHOUT ANY WARRANTY; without even the 
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
-    
-    This GPL license does NOT permit incorporating this software into 
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses 
-    for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

@@ -8,7 +8,7 @@ if (bit.packs.ssl && bit.packs.ssl.enable == false) {
     throw "SSL has been disabled"
 }
 
-let path: Path = bit.packs.matrixssl.path
+let path: Path? = bit.packs.matrixssl.path
 if (!path) {
     let vers = bit.dir.packs.join('matrixssl').files('matrixssl-3*').sort().reverse()
     if (!vers.length || vers.length == 0) {
@@ -45,7 +45,7 @@ if (bit.platform.os == 'windows') {
         path: lib,
         defines: [ '-DPOSIX', '-DMATRIX_USE_FILE_SYSTEM' ],
         includes: [ incdir, incdir.parent ],
-        libraries: [ 'libmatrixssl.dylib' ],
+        libraries: [ 'matrixssl' ],
         libpaths: [ lib.parent ],
         imports: [ lib ]
     }
@@ -61,7 +61,7 @@ if (bit.platform.os == 'windows') {
         path: lib,
         defines: [ '-DPOSIX', '-DMATRIX_USE_FILE_SYSTEM' ],
         includes: [ incdir, incdir.parent ],
-        libraries: [ 'libmatrixssl.so' ],
+        libraries: [ 'matrixssl' ],
         libpaths: [ lib.parent ],
         imports: [ lib ],
     }

@@ -180,25 +180,23 @@ module ejs {
             Insert a child object into an XML object immediately after a specified marker object. If the marker 
             object is null then the new object is inserted at the beginning. If the marker object is not found 
             then the insertion is not made.
-            TODO - if marker is null, should it insert at the beginning or end?
             @param marker Insert the new element after this one.
             @param child Child element to be inserted.
             @return This XML object - modified or not.
          */
         # FUTURE
-        native function insertChildAfter(marker: Object, child: Object): XML
+        native function insertChildAfter(marker: Object?, child: Object): XML
 
         /**
             Insert a child object into an XML object immediately before a specified marker object. If the marker 
             object is null then the new object is inserted at the end. If the marker object is not found then the
             insertion is not made.
-            TODO - if marker is null, should it insert at the beginning?
             @param marker Insert the new element before this one.
             @param child Child element to be inserted.
             @return This XML object - modified or not.
          */
         # FUTURE
-        native function insertChildBefore(marker: Object, child: Object): XML
+        native function insertChildBefore(marker: Object?, child: Object): XML
 
         /**
             Return the length of an XML object in elements. NOTE: this is a method and must be invoked with ().
@@ -379,30 +377,15 @@ module ejs {
 
 /*
     @copy   default
-    
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    
+
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire 
-    a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
-    this software for full details.
-    
-    This software is open source; you can redistribute it and/or modify it 
-    under the terms of the GNU General Public License as published by the 
-    Free Software Foundation; either version 2 of the License, or (at your 
-    option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
-    
-    This program is distributed WITHOUT ANY WARRANTY; without even the 
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
-    
-    This GPL license does NOT permit incorporating this software into 
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses 
-    for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
-    
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
+
     Local variables:
     tab-width: 4
     c-basic-offset: 4
@@ -411,4 +394,3 @@ module ejs {
 
     @end
  */
-

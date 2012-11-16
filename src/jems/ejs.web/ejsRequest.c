@@ -36,7 +36,7 @@ static void defineParam(Ejs *ejs, EjsObj *params, cchar *key, cchar *svalue)
     char        *subkey, *nextkey;
     int         slotNum;
 
-    mprAssert(params);
+    assure(params);
 
     value = ejsCreateStringFromAsc(ejs, svalue);
 
@@ -64,7 +64,7 @@ static void defineParam(Ejs *ejs, EjsObj *params, cchar *key, cchar *svalue)
             params = vp;
             subkey = stok(NULL, ".", &nextkey);
         }
-        mprAssert(params);
+        assure(params);
         qname = ejsName(ejs, "", subkey);
         ejsSetPropertyByName(ejs, params, qname, value);
     }
@@ -443,7 +443,7 @@ static char *makeRelativeHome(Ejs *ejs, EjsRequest *req)
     }
     rx = req->conn->rx;
     path = rx->pathInfo;
-    mprAssert(path && *path == '/');
+    assure(path && *path == '/');
     end = &path[strlen(path)];
     if (path[1]) {
         for (levels = 1, sp = &path[1]; sp < end; sp++) {
@@ -506,7 +506,7 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return createString(ejs, conn ? conn->authType : NULL);
 
     case ES_ejs_web_Request_authUser:
-        return createString(ejs, conn ? conn->authUser : NULL);
+        return createString(ejs, conn ? conn->username : NULL);
 
     case ES_ejs_web_Request_autoFinalizing:
         return ejsCreateBoolean(ejs, !req->dontAutoFinalize);
@@ -651,7 +651,7 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return createString(ejs, conn ? conn->ip : NULL);
 
     case ES_ejs_web_Request_responded:
-        return ejsCreateBoolean(ejs, conn->responded);
+        return ejsCreateBoolean(ejs, conn->tx->responded);
 
     case ES_ejs_web_Request_responseHeaders:
         return createResponseHeaders(ejs, req);
@@ -844,7 +844,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         break;
 
     case ES_ejs_web_Request_responded:
-        req->conn->responded = (value == ESV(true));
+        req->conn->tx->responded = (value == ESV(true));
         break;
 
     case ES_ejs_web_Request_responseHeaders:
@@ -1048,6 +1048,8 @@ static EjsObj *req_finalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
     if (req->conn) {
         if (!req->writeBuffer || req->writeBuffer == ESV(null)) {
+            //  MOB - should separate these 
+            // httpFinalize(req->conn);
             httpFinalize(req->conn);
         } else {
             httpSetResponded(req->conn);
@@ -1063,7 +1065,7 @@ static EjsObj *req_finalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
  */
 static EjsBoolean *req_finalized(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    return ejsCreateBoolean(ejs, req->conn == 0 || req->finalized || req->conn->finalized);
+    return ejsCreateBoolean(ejs, req->conn == 0 || req->finalized || req->conn->tx->finalizedOutput);
 }
 
 
@@ -1101,7 +1103,7 @@ static EjsObj *req_header(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         count = ejsGetLength(ejs, req->headers);
         for (i = 0; i < count; i++) {
             qname = ejsGetPropertyName(ejs, req->headers, i);
-            if (mcasecmp(qname.name->value, key) == 0) {
+            if (mcaselesscmp(qname.name->value, key) == 0) {
                 value = ejsGetProperty(ejs, req->headers, i);
                 break;
             }
@@ -1122,9 +1124,9 @@ static EjsObj *req_off(Ejs *ejs, EjsRequest *req, int argc, EjsAny **argv)
 
 
 /*  
-    function on(name: [String|Array], listener: Function): Void
+    function on(name: [String|Array], listener: Function): Request
  */
-static EjsObj *req_on(Ejs *ejs, EjsRequest *req, int argc, EjsAny **argv)
+static EjsRequest *req_on(Ejs *ejs, EjsRequest *req, int argc, EjsAny **argv)
 {
     HttpConn    *conn;
     
@@ -1134,18 +1136,18 @@ static EjsObj *req_on(Ejs *ejs, EjsRequest *req, int argc, EjsAny **argv)
     if (conn->readq->count > 0) {
         ejsSendEvent(ejs, req->emitter, "readable", NULL, req);
     }
-    if (!conn->connectorComplete && 
-            !conn->error && HTTP_STATE_CONNECTED <= conn->state && 
-            conn->state < HTTP_STATE_COMPLETE &&
+    //  MOB - should not ned to test finalizedConnector
+    if (!conn->tx->finalizedConnector && 
+            !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_FINALIZED &&
             conn->writeq->ioCount == 0) {
         ejsSendEvent(ejs, req->emitter, "writable", NULL, req);
     }
-    return 0;
+    return req;
 }
 
 
 /*  
-    function read(buffer, offset, count): Number
+    function read(buffer, offset, count): Number?
  */
 static EjsNumber *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
@@ -1166,13 +1168,13 @@ static EjsNumber *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         offset = ba->writePosition;
     }
     if (count < 0) {
-        count = ba->length - offset;
+        count = ba->size - offset;
     }
     if (count < 0) {
         ejsThrowStateError(ejs, "Read count is negative");
         return 0;
     }
-    mprAssert(count > 0);
+    assure(count > 0);
     nbytes = httpRead(req->conn, (char*) &ba->value[offset], count);
     if (nbytes < 0) {
         ejsThrowIOError(ejs, "Can't read from socket");
@@ -1204,6 +1206,12 @@ static EjsObj *req_setHeader(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     value = (EjsString*) argv[1];
     overwrite = argc < 3 || argv[2] == ESV(true);
     createResponseHeaders(ejs, req);
+    if (scaselessmatch(key, "content-length")) {
+        httpSetContentLength(req->conn, ejsGetInt(ejs, value));
+    } else if (scaselessmatch(key, "x-chunk-size")) {
+        /* Just until we have filters - to disable chunk filtering */
+        httpSetChunkSize(req->conn, ejsGetInt(ejs, value));
+    }
     if (!overwrite) {
         if ((old = ejsGetPropertyByName(ejs, req->responseHeaders, EN(key))) != 0) {
             value = ejsSprintf(ejs, "%@, %@", old, value);
@@ -1211,10 +1219,6 @@ static EjsObj *req_setHeader(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     }
     ejsSetPropertyByName(ejs, req->responseHeaders, EN(key), value);
 
-    /* Just until we have filters - to disable chunk filtering */
-    if (strcmp(key, "x-chunk-size") == 0) {
-        httpSetChunkSize(req->conn, ejsGetInt(ejs, value));
-    }
     return 0;
 }
 
@@ -1266,7 +1270,8 @@ static ssize writeResponseData(Ejs *ejs, EjsRequest *req, cchar *buf, ssize len)
         httpSetResponded(req->conn);
         return written;
     } else {
-        return httpWriteBlock(req->conn->writeq, buf, len);
+        //  MOB - or should this be non-blocking
+        return httpWriteBlock(req->conn->writeq, buf, len, HTTP_BLOCK);
     }
 }
 
@@ -1288,7 +1293,7 @@ static EjsNumber *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     int             err, i;
 
     conn = req->conn;
-    if (!connOk(ejs, req, 1) || httpIsFinalized(conn)) {
+    if (!connOk(ejs, req, 1) || httpIsOutputFinalized(conn)) {
         return 0;
     }
     err = 0;
@@ -1330,13 +1335,13 @@ static EjsNumber *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         req->written += written;
         total += written;
     }
-    if (!conn->connectorComplete && 
-            !conn->error && HTTP_STATE_CONNECTED <= conn->state && 
-            conn->state < HTTP_STATE_COMPLETE &&
+    //  MOB should not need to test finalizedConnector
+    if (!conn->tx->finalizedConnector && 
+            !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_FINALIZED &&
             conn->writeq->ioCount == 0) {
         ejsSendEvent(ejs, req->emitter, "writable", NULL, req);
     }
-    return ejsCreateNumber(ejs, total);
+    return ejsCreateNumber(ejs, (MprNumber) total);
 }
 
 
@@ -1430,9 +1435,9 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
     EjsType         *type;
     HttpRx          *rx;
 
-    mprAssert(server);
-    mprAssert(conn);
-    mprAssert(dir && *dir);
+    assure(server);
+    assure(conn);
+    assure(dir && *dir);
 
     type = ejsGetTypeByName(ejs, N("ejs.web", "Request"));
     if (type == NULL || (req = ejsCreateObj(ejs, type, 0)) == NULL) {
@@ -1448,7 +1453,7 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
     } else {
         req->dir = ejsCreatePathFromAsc(ejs, mprGetRelPath(dir, 0));
     }
-    mprAssert(!VISITED(req->dir));
+    assure(!VISITED(req->dir));
     //  OPT -- why replicate these two
     req->pathInfo = ejsCreateStringFromAsc(ejs, rx->pathInfo);
     req->scriptName = ejsCreateStringFromAsc(ejs, rx->scriptName);
@@ -1565,31 +1570,15 @@ void ejsConfigureRequestType(Ejs *ejs)
 
 /*
     @copy   default
- 
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
- 
+
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
- 
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
- 
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- 
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
- 
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
+
     Local variables:
     tab-width: 4
     c-basic-offset: 4

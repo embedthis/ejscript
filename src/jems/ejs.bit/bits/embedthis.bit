@@ -23,22 +23,46 @@ Bit.load({
                 for each (name in ['linux-x86', 'macosx-x64', 'solaris-x86', 'windows-x86']) {
                     let formats
                     if (name == 'windows-x86') {
-                        formats = 'sh,nmake,vs'
+                        formats = '-gen sh,nmake'
                     } else if (name == 'macosx-x64') {
-                        formats = 'sh,make,xcode'
+                        formats = '-gen sh,make'
                     } else {
-                        formats = 'sh,make'
+                        formats = '-gen sh,make'
                     }
                     trace('Generate', bit.settings.product + '-' + name.replace(/-.*/, '') + ' projects')
-                    run(bitcmd + ' -d -q -platform ' + name + ' -without all -configure . -gen ' + 
-                        formats, bit.target.runopt)
+                    run(bitcmd + ' -d -q -platform ' + name + ' -without all -configure . ' + formats, bit.target.runopt)
+                    /* Xcode and VS use separate profiles */
+                    if (name == 'macosx-x64') {
+                        run(bitcmd + ' -d -q -platform ' + name + ' -without all -profile xcode -configure . -gen xcode',
+                            bit.target.runopt)
+                        rmdir(bit.dir.top.join(name + '-xcode'))
+                    } else if (name == 'windows-x86') {
+                        run(bitcmd + ' -d -q -platform ' + name + ' -without all -profile vs -configure . -gen vs',
+                            bit.target.runopt)
+                        rmdir(bit.dir.top.join(name + '-vs'))
+                    }
                     if (name != bit.platform.name) {
                         rm(bit.dir.top.join(name + '.bit'))
                         rmdir(bit.dir.top.join(name + '-debug'))
                     }
                 }
-                /* Leave a normal configuration */ 
-                run(bitcmd + ' -q -configure . -' + bit.platform.profile, bit.target.runopt)
+                trace('Restore', 'Restore prior configuration')
+                run(bitcmd + ' -q -configure . -profile ' + bit.platform.profile, bit.target.runopt)
+            ",
+        },
+
+        /*
+            Target to build a personal project for the current configuration
+         */
+        'mine': {
+            action: "
+                let bitcmd = Cmd.locate('bit')
+                /* Xcode and VS use separate profiles */
+                if (bit.platform.name == 'macosx-x64') {
+                    run(bitcmd + ' -d -profile mine -configure . -gen xcode', bit.target.runopt)
+                } else if (bit.platform.name == 'windows-x86') {
+                    run(bitcmd + ' -d -profile mine -configure . -gen vs', bit.target.runopt)
+                }
             ",
         },
 
@@ -96,7 +120,7 @@ Bit.load({
             ",
         },
 
-        utest: {
+        unit_test: {
             /* This target is used if the product doesn't supply a 'test' target */
             type: 'test',
             action: "
@@ -105,7 +129,9 @@ Bit.load({
                     utest = Cmd.locate('utest', [bit.dir.top.join(bit.platform.configuration, 'bin/utest'), App.exeDir])
                 }
                 if (utest) {
-                    run([utest, '-v', '-d', bit.settings.depth], {noio: true, dir: bit.dir.src.join('src')})
+                    if (bit.dir.src.join('src').exists) {
+                        run([utest, '-v', '-d', bit.settings.depth], {noio: true, dir: bit.dir.src.join('src')})
+                    }
                 } else {
                     trace('Test', 'The utest program cannot be located')
                 }
@@ -136,7 +162,7 @@ Bit.load({
                 for each (file in ls(['${SRC}/doc/man/*.1', '${SRC}/doc/man/*.3'])) {
                     let name = file.basename
                     trace('Generate', 'Manual page for ' + name)
-                    let response = run('man ' + file, {})
+                    let response = run('man ' + file, {noshow: true})
                     file.replaceExt('txt').write(response.replace(/.\b/g, ''))
                     let cmd = Cmd('man2html -u', {detach: true})
                     cmd.write(response)

@@ -381,7 +381,7 @@ static EjsObj *setFilePosition(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     MprOff      pos;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Number));
     pos = ejsGetInt(ejs, argv[0]);
 
     if (fp->file == 0) {
@@ -495,7 +495,7 @@ static EjsObj *readFileBytes(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowArgError(ejs, "Bad args");
         return 0;
     } else {
-        mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
+        assure(argc == 1 && ejsIs(ejs, argv[0], Number));
         count = ejsGetInt(ejs, argv[0]);
     }
     if (fp->file == 0) {
@@ -514,7 +514,7 @@ static EjsObj *readFileBytes(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         } else {
             count = MPR_BUFSIZE;
         }
-        mprAssert(count >= 0);
+        assure(count >= 0);
     }
     result = ejsCreateByteArray(ejs, count);
     if (result == 0) {
@@ -551,7 +551,7 @@ static EjsString *readFileString(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowArgError(ejs, "Bad args");
         return 0;
     } else {
-        mprAssert(argc == 1 && ejsIs(ejs, argv[0], Number));
+        assure(argc == 1 && ejsIs(ejs, argv[0], Number));
         count = ejsGetInt(ejs, argv[0]);
     }
     if (fp->file == 0) {
@@ -570,7 +570,7 @@ static EjsString *readFileString(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         } else {
             count = MPR_BUFSIZE;
         }
-        mprAssert(count >= 0);
+        assure(count >= 0);
     }
     if ((result = ejsCreateBareString(ejs, count)) == NULL) {
         ejsThrowMemoryError(ejs);
@@ -595,7 +595,7 @@ static EjsNumber *readFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     MprPath         info;
     ssize           offset, count, totalRead;
 
-    mprAssert(1 <= argc && argc <= 3);
+    assure(1 <= argc && argc <= 3);
 
     buffer = (EjsByteArray*) argv[0];
     offset = (argc >= 2) ? ejsGetInt(ejs, argv[1]): 0;
@@ -609,7 +609,7 @@ static EjsNumber *readFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "File not opened for reading");
         return 0;
     }
-    if (offset >= buffer->length) {
+    if (offset >= buffer->size) {
         ejsThrowOutOfBoundsError(ejs, "Bad read offset value");
         return 0;
     }
@@ -626,7 +626,7 @@ static EjsNumber *readFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         } else {
             count = MPR_BUFSIZE;
         }
-        mprAssert(count >= 0);
+        assure(count >= 0);
     }
     totalRead = readData(ejs, fp, buffer, offset, count);
     if (totalRead < 0) {
@@ -657,7 +657,7 @@ static EjsObj *getFileSize(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 /*  
     function truncate(size: Number): Void
  */
-EjsObj *truncateFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
+PUBLIC EjsObj *truncateFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     int     size;
 
@@ -673,7 +673,7 @@ EjsObj *truncateFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     Write data to the file
     function write(data: Object): Number
  */
-EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
+PUBLIC EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     EjsArray        *args;
     EjsByteArray    *ap;
@@ -683,7 +683,7 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     ssize           len, written;
     int             i;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Array));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = (EjsArray*) argv[0];
 
@@ -695,7 +695,7 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 
     for (i = 0; i < args->length; i++) {
         vp = ejsGetProperty(ejs, (EjsObj*) args, i);
-        mprAssert(vp);
+        assure(vp);
         switch (TYPE(vp)->sid) {
         case S_ByteArray:
             ap = (EjsByteArray*) vp;
@@ -742,10 +742,10 @@ static ssize readData(Ejs *ejs, EjsFile *fp, EjsByteArray *ap, ssize offset, ssi
     if (count <= 0) {
         return 0;
     }
-    room = ap->length - offset;
+    room = ap->size - offset;
     if (room < count) {
         if (ap->resizable) {
-            ejsGrowByteArray(ejs, ap, ap->length + (count - room));
+            ejsGrowByteArray(ejs, ap, ap->size + (count - room));
         } else {
             count = min(room, count);
         }
@@ -842,12 +842,12 @@ static int mapMode(cchar *mode)
 
 /*********************************** Factory **********************************/
 
-EjsFile *ejsCreateFile(Ejs *ejs, cchar *path)
+PUBLIC EjsFile *ejsCreateFile(Ejs *ejs, cchar *path)
 {
     EjsFile     *fp;
     EjsObj      *arg;
 
-    mprAssert(path && *path);
+    assure(path && *path);
 
     fp = ejsCreateObj(ejs, ESV(File), 0);
     if (fp == 0) {
@@ -859,12 +859,12 @@ EjsFile *ejsCreateFile(Ejs *ejs, cchar *path)
 }
 
 
-EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode)
+PUBLIC EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode)
 {
     EjsFile     *fp;
 
-    mprAssert(fd >= 0);
-    mprAssert(name);
+    assure(fd >= 0);
+    assure(name);
 
     if ((fp = ejsCreateObj(ejs, ESV(File), 0)) == NULL) {
         return NULL;
@@ -906,7 +906,7 @@ static void manageFile(void *ptr, int flags)
 }
 
 
-void ejsConfigureFileType(Ejs *ejs)
+PUBLIC void ejsConfigureFileType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;
@@ -943,28 +943,12 @@ void ejsConfigureFileType(Ejs *ejs)
     @copy   default
 
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

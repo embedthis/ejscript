@@ -44,7 +44,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
     char        *path, slotsName[MPR_MAX_FNAME], moduleName[MPR_MAX_FNAME];
     char        *cp, *sp, *dp;
 
-    mprAssert(bp);
+    assure(bp);
 
     path = 0;
     localFile = 0;
@@ -56,7 +56,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
             *cp = '_';
         }
     }
-    mprSprintf(slotsName, sizeof(slotsName), "%@Slots", mp->name);
+    fmt(slotsName, sizeof(slotsName), "%@Slots", mp->name);
     slotsName[0] = toupper((uchar) slotsName[0]);
     for (dp = sp = slotsName; *sp; sp++) {
         if (*sp == '.') {
@@ -131,10 +131,10 @@ static void defineSlot(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, 
     if (nameStr[0] != '\0') {
         funSep = (char*) ((*funStr && *typeStr) ? "_" : "");
         if (*typeStr == '\0' && *funStr == '\0') {
-            mprSprintf(nameBuf, sizeof(nameBuf), "#define ES_%s", nameStr);
+            fmt(nameBuf, sizeof(nameBuf), "#define ES_%s", nameStr);
         } else {
             if (!(nameStr[0] == '_' && nameStr[1] == '_')) {
-                mprSprintf(nameBuf, sizeof(nameBuf), "#define ES_%s%s%s_%s", typeStr, funSep, funStr, nameStr);
+                fmt(nameBuf, sizeof(nameBuf), "#define ES_%s%s%s_%s", typeStr, funSep, funStr, nameStr);
             } else {
                 nameBuf[0] = '\0';
             }
@@ -164,10 +164,10 @@ static void defineSlotCount(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *t
             *sp = '_';
         }
     }
-    mprSprintf(name, sizeof(name), "#define ES_%s_NUM_%s_PROP", typeStr, suffix);
+    fmt(name, sizeof(name), "#define ES_%s_NUM_%s_PROP", typeStr, suffix);
     mprFprintf(file, "%-70s %d\n", name, numProp);
     if (strcmp(suffix, "INSTANCE") == 0) {
-        mprSprintf(name, sizeof(name), "#define ES_%s_NUM_INHERITED_PROP", typeStr);
+        fmt(name, sizeof(name), "#define ES_%s_NUM_INHERITED_PROP", typeStr);
         mprFprintf(file, "%-70s %d\n", name, type->numInherited);
     }
 }
@@ -188,9 +188,9 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
     EjsName         qname, lqname;
     int             slotNum, i, methodHeader, count, offset;
 
-    mprAssert(bp);
-    mprAssert(type);
-    mprAssert(ejsIsType(ejs, type));
+    assure(bp);
+    assure(type);
+    assure(ejsIsType(ejs, type));
 
     ejs = bp->ejs;
     lastClassSlot = max(firstClassSlot, lastClassSlot);
@@ -452,31 +452,15 @@ static char *mapNamespace(cchar *space)
 
 /*
     @copy   default
-  
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
-  
+
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-  
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-  
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
-  
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
+
     Local variables:
     tab-width: 4
     c-basic-offset: 4

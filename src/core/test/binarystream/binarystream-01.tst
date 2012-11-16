@@ -11,7 +11,7 @@ var ba = new ByteArray
 var s = BinaryStream(ba)
 
 s.writeInteger(4000)
-assert(ba.available == 4 || ba.available == 8)
+assert(ba.length == 4 || ba.length == 8)
 v = s.readInteger()
 assert(v == 4000)
 
@@ -27,8 +27,8 @@ assert(String.fromCharCode(bs.readByte()) == "9")
 assert(String.fromCharCode(bs.readByte()) == " ")
 
 data = new ByteArray(500)
-assert(bs.read(data, 0, data.length) == 490)
-assert((data.readString(-1)).length == 490)
+assert(bs.read(data, 0, data.size) == 490)
+assert((data.readString(-1)).size == 490)
 */
 
 

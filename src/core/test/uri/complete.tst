@@ -32,7 +32,7 @@ u = Uri({ host: "www.example.com", path: "/a/b/c", reference: "extra", query: "p
 assert(u.complete("http://ibm.com:7777/demo") == "http://www.example.com/a/b/c#extra?priority=high")
 
 //  Port completion
-assert(Uri(":4100").complete() == "http://localhost:4100")
-assert(Uri("127.0.0.1:4100").complete() == "http://127.0.0.1:4100")
-assert(Uri("https://127.0.0.1:4100").complete() == "https://127.0.0.1:4100")
+assert(Uri(":4100").complete() == "http://localhost:4100/")
+assert(Uri("127.0.0.1:4100").complete() == "http://127.0.0.1:4100/")
+assert(Uri("https://127.0.0.1:4100").complete() == "https://127.0.0.1:4100/")
 

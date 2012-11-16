@@ -273,7 +273,7 @@ module ejs.db.sqlite {
         //  MOB - why have query and sql
 
         /** @duplicate ejs.db::Database.query */
-        function query(cmd: String, tag: String = "SQL", trace: Boolean = false): Array {
+        function query(cmd: String, tag: String = "SQL", trace: Boolean~ = false): Array {
             //  TODO - need to access Database.traceAll
             let mark, size
             //  MOB - rationalize Sqlite.query with Database.query and Record.innerFind
@@ -317,7 +317,7 @@ module ejs.db.sqlite {
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 
     a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
+    by the terms of either license. Consult the LICENSE.md distributed with 
     this software for full details.
     
     This software is open source; you can redistribute it and/or modify it 

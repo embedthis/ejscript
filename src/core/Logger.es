@@ -60,13 +60,13 @@ module ejs {
          */
         static const All: Number = 9
 
-        private var _filter: Function
+        private var _filter: Function?
         private var _level: Number = 0
         private var _location
-        private var _pattern: RegExp
+        private var _pattern: RegExp?
         private var _name: String
 
-        private var _outStream: Stream
+        private var _outStream: Stream?
 
         /** 
             Logger constructor.
@@ -95,7 +95,7 @@ module ejs {
             @param level Optional integer verbosity level. Messages with a message level less than or equal to the defined
                 logger level will be emitted. Range is 0 (least verbose) to 9.
          */
-        function redirect(location, level: Number = null): Void {
+        function redirect(location, level: Number? = null): Void {
             if (location is Stream) {
                 _outStream = location
             } else {
@@ -143,10 +143,10 @@ module ejs {
             function filter(log: Logger, name: String, level: Number, kind: String, msg: String): Boolean
             @param fn The filter function must return true or false.
          */
-        function get filter(): Function
+        function get filter(): Function?
             _filter
 
-        function set filter(fn: Function): void
+        function set filter(fn: Function?): void
             _filter = fn
 
         /**
@@ -182,10 +182,10 @@ module ejs {
             Matching expression to filter log messages. The match regular expression is used to match 
             against the Logger names.
          */
-        function get match(): RegExp
+        function get match(): RegExp?
             _pattern
 
-        function set match(pattern: RegExp): void 
+        function set match(pattern: RegExp?): void 
             _pattern = pattern
 
         /** 
@@ -261,14 +261,15 @@ module ejs {
         /** 
             @hide
          */
-        function on(name, observer: Function): Void {
+        function on(name, observer: Function): Logger {
             throw "on is not supported"
+            return this
         }
 
         /** 
             @hide
          */
-        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number  {
+        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number? {
             throw "Read not supported"
             return null
         }
@@ -321,3 +322,23 @@ module ejs {
         }
     }
 }
+
+/*
+    @copy   default
+
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
+
+    Local variables:
+    tab-width: 4
+    c-basic-offset: 4
+    End:
+    vim: sw=4 ts=4 expandtab
+
+    @end
+ */

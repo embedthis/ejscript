@@ -23,7 +23,6 @@ class EjsMvc {
     private const DIR_PERMS: Number = 0775
     private const FILE_PERMS: Number = 0666
     private const RC: String = ".ejsrc"
-    private const NextMigration: String = ".ejs/nextMigration"
 
     private var appName: String
     private var buildAll: Boolean
@@ -38,6 +37,7 @@ class EjsMvc {
     private var layoutPage: String
     private var mode: String = "debug"
     private var mvc: String
+    private var nextMigration: Number = 0
     private var options: Object
     private var overwrite: Boolean = false
     private var verbose: Number = 1
@@ -88,9 +88,9 @@ class EjsMvc {
 
     private var argsTemplate = {
         options: {
-            apply: { alias: 'a' },
             database: { range: String },
             debug: {},
+            diagnose: { alias: 'd'},
             full: {},
             keep: { alias: 'k' },
             layout: { range: String },
@@ -109,7 +109,6 @@ class EjsMvc {
     function usage(): Void {
         stderr.writeLine("\nUsage: mvc [options] [commands] ...\n" +
             "  Options:\n" + 
-            "    --apply                      # Apply migrations\n" + 
             "    --database [sqlite | mysql]  # Sqlite only currently supported adapter\n" + 
             "    --full                       # Generate all directories\n" + 
             "    --keep                       # Keep intermediate source in cache\n" + 
@@ -159,7 +158,9 @@ class EjsMvc {
             }
             process()
         } catch (e) {
-            if (e is String) {
+            if (options.diagnose) {
+                error(e)
+            } else if (e is String) {
                 msg = e
                 error("mvc: Error: " + msg + "\n")
             } else {
@@ -252,9 +253,6 @@ class EjsMvc {
         default:
             throw "Unknown command: " + task
             break
-        }
-        if (options.apply) {
-            migrate()
         }
     }
 
@@ -442,7 +440,7 @@ class EjsMvc {
         }
     }
 
-    function buildView(file: Path, compile: Boolean = false): Path {
+    function buildView(file: Path, compile: Boolean = false): Path? {
         if (file.toString().startsWith(dirs.layouts + "/")) {
              //  Skip layouts
             return null
@@ -515,7 +513,7 @@ class EjsMvc {
         return intermediate
     }
 
-    function buildWebPage(file: Path, compile: Boolean = true): Path {
+    function buildWebPage(file: Path, compile: Boolean = true): Path? {
         let sansExt: Path = file.trimExt()
         file = file.joinExt(ext.ejs)
         if (file.extension != ext.ejs) {
@@ -774,7 +772,7 @@ class EjsMvc {
         }
 
         /*
-            Each database has a _EjsMigrations table which has a record for each migration applied
+            The database has a _EjsMigrations table which has a record for each migration applied
          */
         let MigrationsTable = getMigrationModel()
         let migrations = MigrationsTable.findAll()
@@ -798,6 +796,7 @@ class EjsMvc {
             targetSeq = command
             let found = false
             for each (f in files) {
+                //  MOB - copy esp code
                 let base = f.basename.toString().toLowerCase()
                 if (Path(targetSeq).basename == base) {
                     targetSeq = base.replace(/^([0-9]*)_.*es/, "$1")
@@ -834,13 +833,16 @@ class EjsMvc {
                 if (appliedMigration["version"] == seq) {
                     found = true
                     id = appliedMigration["id"]
+                    break
                 }
             }
             if (backward) {
-                found = !found
+                /* MOB - cant happen
                 if (targetSeq && targetSeq == seq) {
                     return
                 }
+                */
+                found = !found
             }
             if (!found) {
                 try { delete Migration; } catch {}
@@ -853,6 +855,7 @@ class EjsMvc {
                     new Migration().forward(db)
                 }
                 if (backward) {
+//  MOB - what if id not set
                     MigrationsTable.remove(id)
                 } else {
                     migration = new MigrationsTable
@@ -863,12 +866,15 @@ class EjsMvc {
                     return
                 }
             }
+            //  MOB - don't need to test backward
             if (!backward && targetSeq && targetSeq == seq) {
                 return
             }
         }
+        //  MOB - should this not be !onlyOne
         if (onlyOne) {
             if (backward) {
+//  MOB - what is OMIT?
                 trace("[OMIT]", "All migrations reversed")
             } else {
                 trace("[OMIT]", "All migrations applied")
@@ -899,13 +905,12 @@ class EjsMvc {
      */
     function generateApp(args: Array): Void {
         appName = args[0].toLowerCase()
-        // let f: File = new Path(appName)
-
-        //  TODO - convert all paths to use dirs.name 
-        makeDir(appName)
-
-        //  TODO - should use try/finally around all chdir
-        App.chdir(appName)
+        if (appName == '.') {
+            appName = App.dir.basename
+        } else {
+            makeDir(appName)
+            App.chdir(appName)
+        }
         if (options.full) {
             makeDir("bin")
             makeDir("doc")
@@ -1021,7 +1026,7 @@ class EjsMvc {
             eval("
                 require ejs.db.mapper
                 public dynamic class _EjsMigration implements Record {
-                    function _EjsMigration(fields: Object = null) {
+                    function _EjsMigration(fields: Object? = null) {
                         initialize(fields)
                     }
                 }
@@ -1086,7 +1091,7 @@ class EjsMvc {
         data = data.replace(/\${FORWARD}/g, forward)
         data = data.replace(/\${BACKWARD}/g, backward)
 
-        seq = (new Date()).format("%Y%m%d%H%M%S")
+        seq = (new Date()).format("%Y%m%d%H%M%S") + nextMigration++
         fileComment = comment.replace(/[    ]+/g, "_")
         path = Path("db/migrations/" + seq + "_" + fileComment).joinExt(ext.es)
         if (path.exists) {
@@ -1190,9 +1195,7 @@ class EjsMvc {
         generateScaffoldController(controller, model)
         generateScaffoldViews(controller, model)
         buildApp()
-        if (!options.apply) {
-            migrate()
-        }
+        migrate()
     }
 
     /*  
@@ -1279,7 +1282,7 @@ class EjsMvc {
             }
         }
         appName = App.dir.basename.toString().toLowerCase()
-        if (!dirs.controllers.exists) {
+        if (!config.database) {
             throw new IOError("Not an MVC application directory")
         }
         if (!dirs.cache.exists || !isDir(dirs.cache)) {
@@ -1864,7 +1867,7 @@ EjsMvc().main()
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
     a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
+    by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details.
   
     This software is open source; you can redistribute it and/or modify it

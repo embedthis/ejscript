@@ -1,6 +1,5 @@
-
 /*
- *	Exception handling in functions
+  	Exception handling in functions
  */
 
 state = 0

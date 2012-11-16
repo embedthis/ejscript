@@ -10,11 +10,11 @@ var http: Http = new Http
 http.get(HTTP + "/dynamic-big.ejs")
 
 assert(http.status == 200)
-assert(http.header("Server").contains("ejs-http/"))
+assert(http.header("Server").contains("ejs-http"))
 assert(http.header("date").contains("GMT"))
 assert(http.header("Content-Length") == null)
 assert(http.header("Keep-Alive"))
 assert(http.header("Transfer-Encoding"))
-assert(http.header("connection") == "keep-alive")
+assert(http.header("connection") == "Keep-Alive")
 assert(http.response)
 http.close()

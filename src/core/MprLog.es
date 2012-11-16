@@ -72,12 +72,13 @@ module ejs {
         }
 
         /** @hide */
-        function on(name, observer: Function): Void {
+        function on(name, observer: Function): MprLogger {
             throw "on is not supported"
+            return this
         }
 
         /** @hide */
-        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number  {
+        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number? {
             throw "Read not supported"
             return null
         }
@@ -87,7 +88,7 @@ module ejs {
             @param location Output location to send messages to.
             @param level Verbosity level for logging. 
          */
-        native function redirect(location: String, level: Number = null): Void
+        native function redirect(location: String, level: Number? = null): Void
 
         /** 
             Write messages to the MprLog stream at level 0
@@ -97,3 +98,24 @@ module ejs {
             emit(0, ...data)
     }
 }
+
+
+/*
+    @copy   default
+
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
+
+    Local variables:
+    tab-width: 4
+    c-basic-offset: 4
+    End:
+    vim: sw=4 ts=4 expandtab
+
+    @end
+ */

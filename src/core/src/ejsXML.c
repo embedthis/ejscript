@@ -30,7 +30,7 @@ static EjsXML *createXml(Ejs *ejs, EjsType *type, int size)
 }
 
 
-EjsAny *cloneXml(Ejs *ejs, EjsXML *xml, bool deep)
+PUBLIC EjsAny *cloneXml(Ejs *ejs, EjsXML *xml, bool deep)
 {
     EjsXML      *root, *elt;
     int         next;
@@ -61,7 +61,7 @@ EjsAny *cloneXml(Ejs *ejs, EjsXML *xml, bool deep)
     if (xml->elements) {
         root->elements = mprCreateList(-1, 0);
         for (next = 0; (elt = mprGetNextItem(xml->elements, &next)) != 0; ) {
-            mprAssert(ejsIsXML(ejs, elt));
+            assure(ejsIsXML(ejs, elt));
             elt = ejsClone(ejs, elt, 1);
             if (elt) {
                 elt->parent = root;
@@ -85,7 +85,7 @@ static EjsAny *castXml(Ejs *ejs, EjsXML *xml, EjsType *type)
     EjsObj      *result;
     MprBuf      *buf;
 
-    mprAssert(ejsIsXML(ejs, xml));
+    assure(ejsIsXML(ejs, xml));
 
     if (type == ESV(XMLList)) {
         return xml;
@@ -140,7 +140,7 @@ static int deleteXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname)
         /* @ and @* */
         if (xml->attributes) {
             for (next = 0; (item = mprGetNextItem(xml->attributes, &next)) != 0; ) {
-                mprAssert(qname.name->value[0] == '@');
+                assure(qname.name->value[0] == '@');
                 if (qname.name->value[1] == '*' || wcmp(item->qname.name->value, &qname.name->value[1]) == 0) {
                     mprRemoveItemAtPos(xml->attributes, next - 1);
                     item->parent = 0;
@@ -154,7 +154,7 @@ static int deleteXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname)
         /* name and * */
         if (xml->elements) {
             for (next = 0; (item = mprGetNextItem(xml->elements, &next)) != 0; ) {
-                mprAssert(item->qname.name);
+                assure(item->qname.name);
                 if (qname.name->value[0] == '*' || ejsCompareString(ejs, item->qname.name, qname.name) == 0) {
                     mprRemoveItemAtPos(xml->elements, next - 1);
                     item->parent = 0;
@@ -263,7 +263,7 @@ static EjsObj *getXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname)
 
     result = 0;
 
-    mprAssert(xml->kind < 5);
+    assure(xml->kind < 5);
     if (isdigit((uchar) qname.name->value[0]) && allDigitsForXml(qname.name)) {
         /*
             Consider xml as a list with only one entry == xml. Then return the 0'th entry
@@ -276,7 +276,7 @@ static EjsObj *getXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname)
         result = ejsCreateXMLList(ejs, xml, qname);
         if (xml->attributes) {
             for (next = 0; (item = mprGetNextItem(xml->attributes, &next)) != 0; ) {
-                mprAssert(qname.name->value[0] == '@');
+                assure(qname.name->value[0] == '@');
                 if (qname.name->value[1] == '*' || wcmp(item->qname.name->value, &qname.name->value[1]) == 0) {
                     result = ejsAppendToXML(ejs, result, item);
                 }
@@ -295,14 +295,14 @@ static EjsObj *getXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname)
                 if (item->kind == EJS_XML_LIST) {
                     list = item;
                     for (nextList = 0; (item = mprGetNextItem(list->elements, &nextList)) != 0; ) {
-                        mprAssert(item->qname.name);
+                        assure(item->qname.name);
                         if (qname.name->value[0] == '*' || ejsCompareString(ejs, item->qname.name, qname.name) == 0) {
                             result = ejsAppendToXML(ejs, result, item);
                         }
                     }
 
                 } else if (item->qname.name) {
-                    mprAssert(item->qname.name);
+                    assure(item->qname.name);
                     if (qname.name->value[0] == '*' || ejsCompareString(ejs, item->qname.name, qname.name) == 0) {
                         result = ejsAppendToXML(ejs, result, item);
                     }
@@ -342,7 +342,7 @@ static int setXmlPropertyAttributeByName(Ejs *ejs, EjsXML *xml, EjsName qname, E
     EjsXML      *elt, *attribute, *xvalue, *lastElt;
     EjsString   *sv;
     EjsName     qn;
-    MprChar     *str;
+    wchar       *str;
     int         index, last, next;
 
     /*
@@ -360,7 +360,7 @@ static int setXmlPropertyAttributeByName(Ejs *ejs, EjsXML *xml, EjsName qname, E
     } else {
         value = ejsCast(ejs, value, String);
     }
-    mprAssert(ejsIs(ejs, value, String));
+    assure(ejsIs(ejs, value, String));
 
     /*
         Find the first attribute that matches. Delete all other attributes of the same name.
@@ -369,7 +369,7 @@ static int setXmlPropertyAttributeByName(Ejs *ejs, EjsXML *xml, EjsName qname, E
     if (xml->attributes) {
         lastElt = 0;
         for (last = -1, index = -1; (elt = mprGetPrevItem(xml->attributes, &index)) != 0; ) {
-            mprAssert(qname.name->value[0] == '@');
+            assure(qname.name->value[0] == '@');
             if (wcmp(elt->qname.name->value, &qname.name->value[1]) == 0) {
                 if (last >= 0) {
                     mprRemoveItemAtPos(xml->attributes, last);
@@ -394,7 +394,7 @@ static int setXmlPropertyAttributeByName(Ejs *ejs, EjsXML *xml, EjsName qname, E
     /*
         Not found. Create a new attribute node
      */
-    mprAssert(ejsIs(ejs, value, String));
+    assure(ejsIs(ejs, value, String));
     qn.space = NULL;
     qn.name = ejsSubstring(ejs, qname.name, 1, -1);
     attribute = ejsCreateXML(ejs, EJS_XML_ATTRIBUTE, qn, xml, (EjsString*) value);
@@ -590,7 +590,7 @@ static bool deepCompare(EjsXML *lhs, EjsXML *rhs)
 }
 
 
-EjsXML *ejsGetXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName qname)
+PUBLIC EjsXML *ejsGetXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName qname)
 {
     EjsXML          *item, *result;
     int             next;
@@ -635,7 +635,7 @@ EjsXML *ejsGetXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName qname)
 static EjsObj *xmlConstructor(Ejs *ejs, EjsXML *thisObj, int argc, EjsObj **argv)
 {
     EjsObj      *arg, *vp;
-    MprChar     *str;
+    wchar       *str;
 
     //  TODO - should be also able to handle a File object
 
@@ -655,7 +655,7 @@ static EjsObj *xmlConstructor(Ejs *ejs, EjsXML *thisObj, int argc, EjsObj **argv
     }
 
     arg = argv[0];
-    mprAssert(arg);
+    assure(arg);
 
     if (!ejsIsDefined(ejs, arg)) {
         return (EjsObj*) thisObj;
@@ -694,7 +694,7 @@ static EjsObj *loadXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
     MprXml      *xp;
     cchar       *filename;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
+    assure(argc == 1 && ejsIs(ejs, argv[0], String));
 
     filename = ejsToMulti(ejs, argv[0]);
     file = mprOpenFile(filename, O_RDONLY, 0664);
@@ -820,7 +820,7 @@ static EjsObj *setLength(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 {
     int         length;
 
-    mprAssert(ejsIsXML(ejs, xml));
+    assure(ejsIsXML(ejs, xml));
 
     if (argc != 1) {
         ejsThrowArgError(ejs, "usage: obj.length = value");
@@ -861,7 +861,7 @@ static EjsObj *xml_parent(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 /*
     Set an indexed element to an XML value
  */
-EjsXML *ejsSetXMLElement(Ejs *ejs, EjsXML *xml, int index, EjsXML *node)
+PUBLIC EjsXML *ejsSetXMLElement(Ejs *ejs, EjsXML *xml, int index, EjsXML *node)
 {
     EjsXML      *old;
 
@@ -886,7 +886,7 @@ EjsXML *ejsSetXMLElement(Ejs *ejs, EjsXML *xml, int index, EjsXML *node)
 }
 
 
-EjsXML *ejsAppendToXML(Ejs *ejs, EjsXML *xml, EjsXML *node)
+PUBLIC EjsXML *ejsAppendToXML(Ejs *ejs, EjsXML *xml, EjsXML *node)
 {
     EjsXML      *elt;
     int         next;
@@ -917,7 +917,7 @@ EjsXML *ejsAppendToXML(Ejs *ejs, EjsXML *xml, EjsXML *node)
 }
 
 
-int ejsAppendAttributeToXML(Ejs *ejs, EjsXML *parent, EjsXML *node)
+PUBLIC int ejsAppendAttributeToXML(Ejs *ejs, EjsXML *parent, EjsXML *node)
 {
     if (parent->attributes == 0) {
         parent->attributes = mprCreateList(-1, 0);
@@ -929,10 +929,10 @@ int ejsAppendAttributeToXML(Ejs *ejs, EjsXML *parent, EjsXML *node)
 
 static ssize readFileData(MprXml *xp, void *data, char *buf, ssize size)
 {
-    mprAssert(xp);
-    mprAssert(data);
-    mprAssert(buf);
-    mprAssert(size > 0);
+    assure(xp);
+    assure(data);
+    assure(buf);
+    assure(size > 0);
 
     return mprReadFile((MprFile*) data, buf, size);
 }
@@ -943,9 +943,9 @@ static ssize readStringData(MprXml *xp, void *data, char *buf, ssize size)
     EjsXmlState *parser;
     ssize       len, rc;
 
-    mprAssert(xp);
-    mprAssert(buf);
-    mprAssert(size > 0);
+    assure(xp);
+    assure(buf);
+    assure(size > 0);
 
     parser = (EjsXmlState*) xp->parseArg;
 
@@ -961,7 +961,7 @@ static ssize readStringData(MprXml *xp, void *data, char *buf, ssize size)
 
 static bool allDigitsForXml(EjsString *name)
 {
-    MprChar     *cp;
+    wchar       *cp;
 
     for (cp = name->value; *cp; cp++) {
         if (!isdigit((uchar) *cp) || *cp == '.') {
@@ -974,7 +974,7 @@ static bool allDigitsForXml(EjsString *name)
 
 /*********************************** Factory **********************************/
 
-EjsXML *ejsCreateXML(Ejs *ejs, int kind, EjsName qname, EjsXML *parent, EjsString *value)
+PUBLIC EjsXML *ejsCreateXML(Ejs *ejs, int kind, EjsName qname, EjsXML *parent, EjsString *value)
 {
     EjsXML      *xml;
 
@@ -993,7 +993,7 @@ EjsXML *ejsCreateXML(Ejs *ejs, int kind, EjsName qname, EjsXML *parent, EjsStrin
 }
 
 
-EjsXML *ejsConfigureXML(Ejs *ejs, EjsXML *xml, int kind, EjsString *name, EjsXML *parent, EjsString *value)
+PUBLIC EjsXML *ejsConfigureXML(Ejs *ejs, EjsXML *xml, int kind, EjsString *name, EjsXML *parent, EjsString *value)
 {
     xml->qname.name = name;
     xml->kind = kind;
@@ -1008,7 +1008,7 @@ EjsXML *ejsConfigureXML(Ejs *ejs, EjsXML *xml, int kind, EjsString *name, EjsXML
 /*
     Support routine. Not an class method
  */
-void ejsLoadXMLString(Ejs *ejs, EjsXML *xml, EjsString *xmlString)
+PUBLIC void ejsLoadXMLString(Ejs *ejs, EjsXML *xml, EjsString *xmlString)
 {
     EjsXmlState *parser;
     MprXml      *xp;
@@ -1025,13 +1025,13 @@ void ejsLoadXMLString(Ejs *ejs, EjsXML *xml, EjsString *xmlString)
 }
 
 
-void ejsLoadXMLAsc(Ejs *ejs, EjsXML *xml, cchar *xmlString)
+PUBLIC void ejsLoadXMLAsc(Ejs *ejs, EjsXML *xml, cchar *xmlString)
 {
     ejsLoadXMLString(ejs, xml, ejsCreateStringFromAsc(ejs, xmlString));
 }
 
 
-void ejsManageXML(EjsXML *xml, int flags)
+PUBLIC void ejsManageXML(EjsXML *xml, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         mprMark(xml->parent);
@@ -1046,7 +1046,7 @@ void ejsManageXML(EjsXML *xml, int flags)
 }
 
 
-void ejsCreateXMLType(Ejs *ejs)
+PUBLIC void ejsCreateXMLType(Ejs *ejs)
 {
     EjsType     *type;
 
@@ -1069,7 +1069,7 @@ void ejsCreateXMLType(Ejs *ejs)
 }
 
 
-void ejsConfigureXMLType(Ejs *ejs)
+PUBLIC void ejsConfigureXMLType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;
@@ -1103,28 +1103,12 @@ void ejsConfigureXMLType(Ejs *ejs)
     @copy   default
 
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

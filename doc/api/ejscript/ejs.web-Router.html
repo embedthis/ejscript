@@ -170,7 +170,7 @@ route for static pages. Use of this constant will not add routes for MVC content
 <h2 class='classSection'>Router Instance Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'></td><td><a href='#Router'><b>Router</b></a>(routeSet: <a href='String.html'>String</a> = Top, options: <a href='Object.html'>Object</a> = expression)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a Router instance and initialize routes.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Router'><b>Router</b></a>(routeSet: <a href='String.html'>String</a> = Restful, options: <a href='Object.html'>Object</a> = expression)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a Router instance and initialize routes.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#add'><b>add</b></a>(template: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='ejs.web-Route.html'>Route</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add a route.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#addCatchall'><b>addCatchall</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add a catch-all route for static content.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#addDefault'><b>addDefault</b></a>(response: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add a default MVC controller/action route.</td></tr>
@@ -192,13 +192,13 @@ route for static pages. Use of this constant will not add routes for MVC content
 <h2>Method Detail</h2>
 <a name='Router'></a>
 <div class='api'>
-<div class='apiSig'>  ejs.web  Router(routeSet: <a href='String.html'>String</a> = Top, options: <a href='Object.html'>Object</a> = expression)
+<div class='apiSig'>  ejs.web  Router(routeSet: <a href='String.html'>String</a> = Restful, options: <a href='Object.html'>Object</a> = expression)
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Create a Router instance and initialize routes. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>routeSet: <a href='String.html'>String</a> </td><td>Optional name of the route set to add. Supports sets include: Router.Top and Router.Restful. The Top routes provide top level routes for pages with extensions ".ejs",  and ".es" as well as for static content (see <a href='#addHandlers'>addHandlers</a> addCatchall). The Restful routes provide  default Controller/Action routes according to a RESTful paradigm (see addRestful). The routeSet can also be set to null to add not routes. This is useful for creating a bare Router instance. Defaults  to Top. [default: Top]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Options to apply to all routes. [default: expression]</td></tr></table></dd>
+<tr class='param'><td class='param'>routeSet: <a href='String.html'>String</a> </td><td>Optional name of the route set to add. Supports sets include: Router.Top and Router.Restful. The Top routes provide top level routes for pages with extensions ".ejs",  and ".es" as well as for static content (see <a href='#addHandlers'>addHandlers</a> addCatchall). The Restful routes provide  default Controller/Action routes according to a RESTful paradigm (see addRestful). The routeSet can also be set to null to add not routes. This is useful for creating a bare Router instance. Defaults  to Top. [default: Restful]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Options to apply to all routes. [default: expression]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>workers</td><td>Boolean If true, requests should be execute in a worker thread if possible. The worker thread  will be pooled when the request completes and will be available for subsequent requests.</td></tr>
@@ -375,7 +375,7 @@ Outer routes are pre-pended if defined.</dd></dl>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Route description. This can be either string or object hash. If it is a string, it should be of the form "controller/action". If the options is an object hash, it should have properties controller and action. The controller is used as the index for the route set. The action property is the index for the route name.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>Route object.</dd></dl>
+<dd>Route object or null if the route is not found.</dd></dl>
 </div>
 </div>
 <hr />

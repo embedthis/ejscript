@@ -26,7 +26,7 @@ module ejs {
             @option memory Maximum memory to use for keys and data
             @option trace Trace I/O operations for debug
          */
-        native function LocalCache(options: Object = null)
+        native function LocalCache(options: Object? = null)
 
         /**
             Destroy the cache
@@ -40,7 +40,7 @@ module ejs {
             @param expires Date at which to expire the data. Set expires to null to cause the key to never expire.
             @return True if the key's expiry can be updated. 
          */
-        native function expire(key: String~, expires: Date): Boolean
+        native function expire(key: String~, expires: Date?): Boolean
 
         /**
             Increment a key's value by a given amount. This operation is atomic.
@@ -74,14 +74,14 @@ module ejs {
                 specified "version == true", return an object with the properties "data" for the key data and 
                 "version" for the CAS version identifier.
          */
-        native function read(key: String~, options: Object = null): String
+        native function read(key: String~, options: Object? = null): String?
 
         /**
             Remove the key and associated value from the cache
             @param key Key value to remove. If key is null, then all keys are removed.
             @return True if the key was removed.
          */
-        native function remove(key: String): Boolean
+        native function remove(key: String?): Boolean
 
         /**
             Update the cache cache resource limits. The supplied limit fields are updated.
@@ -111,37 +111,21 @@ module ejs {
             @return The number of bytes written, returns null if the write failed due to an updated version identifier for
                 the key.
          */
-        native function write(key: String~, value: String~, options: Object = null): Number
+        native function write(key: String~, value: String~, options: Object? = null): Number
     }
 }
 
 
 /*
     @copy   default
-    
+
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
-    
+
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire 
-    a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
-    this software for full details.
-    
-    This software is open source; you can redistribute it and/or modify it 
-    under the terms of the GNU General Public License as published by the 
-    Free Software Foundation; either version 2 of the License, or (at your 
-    option) any later version. See the GNU General Public License for more 
-    details at: http://www.embedthis.com/downloads/gplLicense.html
-    
-    This program is distributed WITHOUT ANY WARRANTY; without even the 
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
-    
-    This GPL license does NOT permit incorporating this software into 
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses 
-    for this software and support services are available from Embedthis 
-    Software at http://www.embedthis.com 
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

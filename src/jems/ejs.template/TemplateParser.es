@@ -69,7 +69,7 @@ module ejs.template  {
             var out: ByteArray = new ByteArray
             var dir: Path = options.dir || Path(".")
             var tid: Number
-            var layoutPage: Path
+            var layoutPage: Path?
 
             if (options.layout) {
                 layoutPage = Path(options.layout)
@@ -180,7 +180,7 @@ module ejs.template  {
                 switch (c) {
                 case '<':
                     if (script[pos] == '%' && (pos < 2 || script[pos - 2] != '\\')) {
-                        if (token.available > 0) {
+                        if (token.length > 0) {
                             pos--
                             return Token.Literal
                         }
@@ -230,7 +230,7 @@ module ejs.template  {
 
                 case '@':
                     if (script[pos] == '@' && (pos < 1 || script[pos-1] != '\\')) {
-                        if (token.available > 0) {
+                        if (token.length > 0) {
                             pos--
                             return Token.Literal
                         }
@@ -263,7 +263,7 @@ module ejs.template  {
                     break
                 }
             }
-            if (token.available == 0 && pos >= script.length) {
+            if (token.length == 0 && pos >= script.length) {
                 return Token.Eof
             }
             return tid
@@ -302,7 +302,7 @@ module ejs.template  {
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire
     a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
+    by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details.
   
     This software is open source; you can redistribute it and/or modify it

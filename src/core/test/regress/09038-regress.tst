@@ -9,5 +9,5 @@ dest = new ByteArray
 //   This -1 was failing. Omitted was working
 
 dest.copyIn(0, source, 0, -1)
-dest.writePosition += source.available
+dest.writePosition += source.length
 assert(dest == "Hello")

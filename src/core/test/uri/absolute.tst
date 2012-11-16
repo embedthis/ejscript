@@ -22,5 +22,5 @@ assert(Uri("/x/y/z").absolute(base) == "http://example.com/x/y/z")
 
 //  Must not join with a relative base
 var base = Uri("a/b/c")
-assert(Uri("/x/y/z").absolute(base) == "http://localhost/x/y/z")
+assert(Uri("/x/y/z").absolute(base) == "/x/y/z")
 

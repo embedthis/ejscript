@@ -67,7 +67,7 @@ static EjsAny *invokeNamespaceOperator(Ejs *ejs, EjsNamespace *lhs, int opCode, 
 /*
     Define a reserved namespace in a block.
  */
-EjsNamespace *ejsDefineReservedNamespace(Ejs *ejs, EjsBlock *block, EjsName *typeName, cchar *spaceName)
+PUBLIC EjsNamespace *ejsDefineReservedNamespace(Ejs *ejs, EjsBlock *block, EjsName *typeName, cchar *spaceName)
 {
     EjsNamespace    *namespace;
 
@@ -88,7 +88,7 @@ EjsNamespace *ejsDefineReservedNamespace(Ejs *ejs, EjsBlock *block, EjsName *typ
     Example:
         [debug::Shape,public] where Shape was declared as "debug class Shape"
  */
-EjsString *ejsFormatReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *spaceName)
+PUBLIC EjsString *ejsFormatReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *spaceName)
 {
     EjsString   *namespace;
 
@@ -109,7 +109,7 @@ EjsString *ejsFormatReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *sp
 /*
     Create a namespace with the given name as its definition value.
  */
-EjsNamespace *ejsCreateNamespace(Ejs *ejs, EjsString *name)
+PUBLIC EjsNamespace *ejsCreateNamespace(Ejs *ejs, EjsString *name)
 {
     EjsNamespace    *np;
 
@@ -125,11 +125,11 @@ EjsNamespace *ejsCreateNamespace(Ejs *ejs, EjsString *name)
 /*
     Create a reserved namespace. Format the package, type and space names to create a unique namespace.
  */
-EjsNamespace *ejsCreateReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *spaceName)
+PUBLIC EjsNamespace *ejsCreateReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *spaceName)
 {
     EjsString       *formattedName;
 
-    mprAssert(spaceName);
+    assure(spaceName);
 
     if (typeName) {
         formattedName = ejsFormatReservedNamespace(ejs, typeName, spaceName);
@@ -148,7 +148,7 @@ static void manageNamespace(EjsNamespace *ns, int flags)
 }
 
 
-void ejsCreateNamespaceType(Ejs *ejs)
+PUBLIC void ejsCreateNamespaceType(Ejs *ejs)
 {
     EjsType     *type;
 
@@ -159,7 +159,7 @@ void ejsCreateNamespaceType(Ejs *ejs)
 }
 
 
-void ejsConfigureNamespaceType(Ejs *ejs)
+PUBLIC void ejsConfigureNamespaceType(Ejs *ejs)
 {
     EjsType     *type;
 
@@ -172,28 +172,12 @@ void ejsConfigureNamespaceType(Ejs *ejs)
     @copy   default
 
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

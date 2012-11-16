@@ -20,10 +20,10 @@ EjsModule *ejsCreateModule(Ejs *ejs, EjsString *name, int version, EjsConstants 
 {
     EjsModule   *mp;
 
-    mprAssert(version >= 0);
+    assure(version >= 0);
 
     if ((mp = mprAllocObj(EjsModule, manageModule)) == NULL) {
-        mprAssert(mp);
+        assure(mp);
         return 0;
     }
     mp->name = name;
@@ -34,7 +34,7 @@ EjsModule *ejsCreateModule(Ejs *ejs, EjsString *name, int version, EjsConstants 
             return 0;
         }
     }
-    mprAssert(mp->checksum == 0);
+    assure(mp->checksum == 0);
     return mp;
 }
 
@@ -44,7 +44,6 @@ static void manageModule(EjsModule *mp, int flags)
     if (flags & MPR_MANAGE_MARK) {
         mprMark(mp->name);
         mprMark(mp->vname);
-        mprMark(mp->vms);
         mprMark(mp->mutex);
         mprMark(mp->constants);
         mprMark(mp->initializer);
@@ -140,36 +139,29 @@ EjsModule *ejsLookupModule(Ejs *ejs, EjsString *name, int minVersion, int maxVer
 
 int ejsAddModule(Ejs *ejs, EjsModule *mp)
 {
-    mprAssert(ejs->modules);
-    if (mp->vms == 0) {
-        mp->vms = mprCreateList(-1, 0);
-        mprAddItem(mp->vms, ejs);
-    }
+    assure(ejs->modules);
     return mprAddItem(ejs->modules, mp);
 }
 
 
 void ejsRemoveModule(Ejs *ejs, EjsModule *mp)
 {
-    mprLog(7, "Remove module: %@", mp->name); 
-    mprRemoveItem(mp->vms, ejs);
     mprRemoveItem(ejs->modules, mp);
 }
 
 
 void ejsRemoveModuleFromAll(EjsModule *mp)
 {
-    Ejs     *ejs;
-    int     next;
+    Ejs         *ejs;
+    EjsService  *sp;
+    int         next;
 
-    if (mp->vms) {
-        mprLog(7, "Remove module from all vms: %@", mp->name); 
-        for (next = 0; (ejs = mprGetNextItem(mp->vms, &next)) != 0; ) {
-            if (ejs->modules) {
-                mprRemoveItem(ejs->modules, mp);
-            }
-        }
+    sp = MPR->ejsService;
+    lock(sp);
+    for (ITERATE_ITEMS(sp->vmlist, ejs, next)) {
+        mprRemoveItem(ejs->modules, mp);
     }
+    unlock(sp);
 }
 
 
@@ -205,7 +197,7 @@ int ejsCreateConstants(Ejs *ejs, EjsModule *mp, int count, ssize size, char *poo
     char            *pp;
     int             i;
 
-    mprAssert(ejs);
+    assure(ejs);
 
     if ((constants = mprAllocObj(EjsConstants, manageConstants)) == 0) {
         return MPR_ERR_MEMORY;
@@ -219,7 +211,7 @@ int ejsCreateConstants(Ejs *ejs, EjsModule *mp, int count, ssize size, char *poo
     }
     constants->poolSize = size;
     if ((constants->pool = pool) == 0) {
-        mprAssert(count == 0);
+        assure(count == 0);
         if ((constants->pool = mprAlloc(size)) == 0) {
             unlock(mp);
             return MPR_ERR_MEMORY;
@@ -231,7 +223,7 @@ int ejsCreateConstants(Ejs *ejs, EjsModule *mp, int count, ssize size, char *poo
             unlock(mp);
             return MPR_ERR_MEMORY;
         }
-        mprAssert(pool);
+        assure(pool);
         if (pool) {
             for (pp = pool, i = 0; pp < &pool[constants->poolLength]; i++) {
                 constants->index[i] = (void*) (((pp - pool) << 1) | 0x1);
@@ -311,7 +303,7 @@ EjsString *ejsCreateStringFromConst(Ejs *ejs, EjsModule *mp, int index)
     lock(mp);
     constants = mp->constants;
     if (index < 0 || index >= constants->indexCount) {
-        mprAssert(!(index < 0 || index >= constants->indexCount));
+        assure(!(index < 0 || index >= constants->indexCount));
         unlock(mp);
         return 0;
     }
@@ -321,7 +313,7 @@ EjsString *ejsCreateStringFromConst(Ejs *ejs, EjsModule *mp, int index)
         constants->index[index] = sp = ejsInternMulti(ejs, str, slen(str));
     }
     unlock(mp);
-    mprAssert(constants->index[index]);
+    assure(constants->index[index]);
     return constants->index[index];
 }
 
@@ -347,20 +339,20 @@ EjsDebug *ejsCreateDebug(Ejs *ejs, int length)
 }
 
 
-int ejsAddDebugLine(Ejs *ejs, EjsDebug **debugp, int offset, MprChar *source)
+int ejsAddDebugLine(Ejs *ejs, EjsDebug **debugp, int offset, wchar *source)
 {
     EjsDebug    *debug;
     EjsLine     *line;
     ssize       len;
     int         numLines;
 
-    mprAssert(debugp);
+    assure(debugp);
     
     if (*debugp == 0) {
         *debugp = ejsCreateDebug(ejs, 0);
     }
     debug = *debugp;
-    mprAssert(debug->magic == EJS_DEBUG_MAGIC);
+    assure(debug->magic == EJS_DEBUG_MAGIC);
     if (debug->numLines >= debug->size) {
         debug->size += EJS_DEBUG_INCR;
         len = sizeof(EjsDebug) + (debug->size * sizeof(EjsLine));
@@ -387,7 +379,7 @@ static void manageDebug(EjsDebug *debug, int flags)
 {
     int     i;
 
-    mprAssert(debug->magic == EJS_DEBUG_MAGIC);
+    assure(debug->magic == EJS_DEBUG_MAGIC);
 
     if (flags & MPR_MANAGE_MARK) {
         for (i = 0; i < debug->numLines; i++) {
@@ -439,7 +431,7 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
     length = ejsModuleReadInt(ejs, mp);
     if (!mp->hasError) {
         if ((debug = ejsCreateDebug(ejs, length)) != 0) {
-            mprAssert(debug->numLines == length);
+            assure(debug->numLines == length);
             for (i = 0; i < debug->numLines; i++) {
                 line = &debug->lines[i];
                 line->offset = ejsModuleReadInt(ejs, mp);
@@ -502,10 +494,10 @@ EjsLine *ejsGetDebugLine(Ejs *ejs, EjsFunction *fun, uchar *pc)
 }
 
 
-int ejsGetDebugInfo(Ejs *ejs, EjsFunction *fun, uchar *pc, char **pathp, int *linep, MprChar **sourcep)
+int ejsGetDebugInfo(Ejs *ejs, EjsFunction *fun, uchar *pc, char **pathp, int *linep, wchar **sourcep)
 {
     EjsLine     *line;
-    MprChar     *str, *tok, *path, *lineno, *source;
+    wchar       *str, *tok, *path, *lineno, *source;
 
     if ((line = ejsGetDebugLine(ejs, fun, pc)) == 0) {
         return MPR_ERR_CANT_FIND;
@@ -599,7 +591,7 @@ int ejsEncodeNum(Ejs *ejs, uchar *pos, int64 number)
     uint        encoded;
     uint64      unumber;
 
-    mprAssert(pos);
+    assure(pos);
 
     start = pos;
     if (number < 0) {
@@ -617,7 +609,7 @@ int ejsEncodeNum(Ejs *ejs, uchar *pos, int64 number)
         unumber >>= 7;
     }
     *pos++ = encoded;
-    mprAssert((pos - start) < 11);
+    assure((pos - start) < 11);
     return (int) (pos - start);
 }
 
@@ -628,7 +620,7 @@ int ejsEncodeUint(Ejs *ejs, uchar *pos, uint number)
     uchar       *start;
     uint        encoded;
 
-    mprAssert(pos);
+    assure(pos);
 
     start = pos;
     encoded = (uint) (((number & 0x3F) << 1));
@@ -640,7 +632,7 @@ int ejsEncodeUint(Ejs *ejs, uchar *pos, uint number)
         number >>= 7;
     }
     *pos++ = encoded;
-    mprAssert((pos - start) < 11);
+    assure((pos - start) < 11);
     return (int) (pos - start);
 }
 #endif
@@ -653,14 +645,14 @@ int ejsEncodeInt32(Ejs *ejs, uchar *pos, int number)
 {
     int         len;
 
-    mprAssert(pos);
+    assure(pos);
     if (abs(number) > EJS_ENCODE_MAX_WORD) {
-        mprAssert("Code generation error. Word exceeds maximum");
+        assure("Code generation error. Word exceeds maximum");
         return 0;
     }
     memset(pos, 0, 4);
     len = ejsEncodeNum(ejs, pos, (int64) number);
-    mprAssert(len <= 4);
+    assure(len <= 4);
     len = 4;
     return len;
 }
@@ -679,7 +671,7 @@ int ejsEncodeDouble(Ejs *ejs, uchar *pos, double number)
 
 int ejsEncodeByteAtPos(Ejs *ejs, uchar *pos, int value)
 {
-    mprAssert(pos);
+    assure(pos);
     *pos = value;
     return 0;
 }
@@ -694,7 +686,7 @@ int ejsEncodeInt32AtPos(Ejs *ejs, uchar *pos, int value)
 
 void ejsModuleReadBlock(Ejs *ejs, EjsModule *mp, char *buf, int len)
 {
-    mprAssert(mp);
+    assure(mp);
 
     if (mprReadFile(mp->file, buf, len) != len) {
         mp->hasError = 1;
@@ -706,7 +698,7 @@ int ejsModuleReadByte(Ejs *ejs, EjsModule *mp)
 {
     int     c;
 
-    mprAssert(mp);
+    assure(mp);
 
     if ((c = mprGetFileChar(mp->file)) < 0) {
         mp->hasError = 1;
@@ -736,7 +728,7 @@ int ejsModuleReadInt32(Ejs *ejs, EjsModule *mp)
 {
     uchar   buf[4], *pp;
 
-    mprAssert(mp);
+    assure(mp);
 
     if (mprReadFile(mp->file, buf, 4) != 4) {
         mp->hasError = 1;
@@ -756,10 +748,10 @@ char *ejsModuleReadMulti(Ejs *ejs, EjsModule *mp)
     char    *buf;
     int     len;
 
-    mprAssert(mp);
+    assure(mp);
 
     len = ejsModuleReadInt(ejs, mp);
-    mprAssert(len >= 0);
+    assure(len >= 0);
     if (mp->hasError || (buf = mprAlloc(len)) == 0) {
         return NULL;
     }
@@ -774,9 +766,9 @@ char *ejsModuleReadMulti(Ejs *ejs, EjsModule *mp)
 /*
     Read a multibyte string. The length is encoded first, followed by a string of bytes.
  */
-MprChar *ejsModuleReadMultiAsWide(Ejs *ejs, EjsModule *mp)
+wchar *ejsModuleReadMultiAsWide(Ejs *ejs, EjsModule *mp)
 {
-    mprAssert(mp);
+    assure(mp);
 
     //  OPT - need direct multi to wide without the double copy
     return amtow(ejsModuleReadMulti(ejs, mp), NULL);
@@ -798,9 +790,9 @@ int64 ejsModuleReadNum(Ejs *ejs, EjsModule *mp)
     int64   t;
     int     c, sign, shift;
 
-    mprAssert(ejs);
-    mprAssert(mp);
-    mprAssert(mp->file);
+    assure(ejs);
+    assure(mp);
+    assure(mp->file);
 
     if ((c = mprGetFileChar(mp->file)) < 0) {
         mp->hasError = 1;
@@ -908,28 +900,12 @@ double ejsSwapDouble(Ejs *ejs, double a)
     @copy   default
 
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

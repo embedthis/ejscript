@@ -1,3 +1,3 @@
-if (!test.features.bld_zlib) {
+if (!test.features.bit_zlib) {
     test.skip("SKIP ejs.zlib - not configured in build")
 }

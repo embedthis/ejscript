@@ -11,7 +11,7 @@ module ejs.web {
     /**
         Request for which a controller is being constructed
      */
-    var _initRequest: Request
+    var _initRequest: Request?
 
     //  DOC - need more doc here on controllers
     /** 
@@ -40,8 +40,8 @@ module ejs.web {
          */
         private static var _allOptions: Object = {}
 
-        private var _afterCheckers: Array
-        private var _beforeCheckers: Array
+        private var _afterCheckers: Array?
+        private var _beforeCheckers: Array?
 
         /** Name of the Controller action method being run for this request */
         var actionName: String 
@@ -60,7 +60,7 @@ module ejs.web {
         var params: Object
 
         /** Reference to the current $ejs.web::Request object */
-        var request: Request
+        var request: Request?
 
         var cacheIndex: String
         var cacheOptions: Object
@@ -70,23 +70,23 @@ module ejs.web {
         /***************************************** Convenience Getters  ***************************************/
 
         /** @duplicate ejs.web::Request.absHome */
-        function get absHome(): Uri 
+        function get absHome(): Uri?
             request ? request.absHome : null
 
         /** @duplicate ejs.web::Request.home */
-        function get home(): Uri 
+        function get home(): Uri?
             request ? request.home : null
 
         /** @duplicate ejs.web::Request.pathInfo */
-        function get pathInfo(): String 
+        function get pathInfo(): String?
             request ? request.pathInfo : null
 
         /** @duplicate ejs.web::Request.session */
-        function get session(): Session 
+        function get session(): Session?
             request ? request.session : null
 
         /** @duplicate ejs.web::Request.uri */
-        function get uri(): Uri 
+        function get uri(): Uri?
             request ? request.uri : null
 
         /********************************************* Methods *******************************************/
@@ -99,12 +99,11 @@ module ejs.web {
             @param cname Controller class name. This should be the name of the Controller class without the "Controller"
                 suffix.
          */
-        static function create(request: Request, cname: String = null): Controller {
+        static function create(request: Request, cname: String? = null): Controller {
             request.params.controller = request.params.controller.toPascal()
             cname ||= (request.params.controller + "Controller")
             _initRequest = request
             if (!global[cname]) {
-print("URI " + request.uri)
                 throw "Can't locate controller: '" + cname + "'"
             }
             let c: Controller = new global[cname](request)
@@ -116,7 +115,7 @@ print("URI " + request.uri)
             Create and initialize a controller. This may be called directly or via the Controller.create factory method.
             @param req Web request object
          */
-        function Controller(req: Request = null) {
+        function Controller(req: Request? = null) {
             /*  _initRequest may be set by create() to allow subclasses to omit constructors */
             controllerName = typeOf(this).trim("Controller") //MOB || "-DefaultController-"
             request = req || _initRequest
@@ -140,7 +139,7 @@ print("URI " + request.uri)
             @option except [String|Array] Run the check function for all actions except this name.
                 This can be a string action name or an array of action names.
          */
-        function after(fn, options: Object = null): Void {
+        function after(fn, options: Object? = null): Void {
             _afterCheckers ||= []
             _afterCheckers.append([fn, options])
         }
@@ -152,7 +151,7 @@ print("URI " + request.uri)
             Fetch cached data from the cache if present.
             @return a response object
          */
-        private function fetchCachedResponse(): Object {
+        private function fetchCachedResponse(): Object? {
             cacheIndex = getCacheIndex(controllerName, actionName)
             cacheOptions = _allOptions[cacheIndex]
             if (cacheOptions) {
@@ -228,7 +227,7 @@ print("URI " + request.uri)
                 let etag = request.responseHeaders["Etag"] || cacheItem.tag
                 cacheItem.data = request.writeBuffer
                 App.cache.writeObj(cacheName, cacheItem, cacheOptions)
-                App.log.debug(5, "Cache action " + cacheName + ", " + request.writeBuffer.available + " bytes")
+                App.log.debug(5, "Cache action " + cacheName + ", " + request.writeBuffer.length + " bytes")
             }
             let data = request.writeBuffer
             request.writeBuffer = null
@@ -278,7 +277,7 @@ print("URI " + request.uri)
                 "index" is used as the action method name.
             @return A response object hash {status, headers, body} or null if writing directly using the request object.
          */
-        function app(request: Request, aname: String = null): Object {
+        function app(request: Request, aname: String? = null): Object? {
             let response, cacheIndex, cacheName
             let ns = params.namespace || "action"
 
@@ -337,7 +336,7 @@ print("URI " + request.uri)
             @option except [String|Array] Run the checker for all actions except this name
                 This can be a string action name or an array of action names.
          */
-        function before(fn, options: Object = null): Void {
+        function before(fn, options: Object? = null): Void {
             _beforeCheckers ||= []
             _beforeCheckers.append([fn, options])
         }
@@ -445,7 +444,7 @@ print("URI " + request.uri)
                 URIs for that action/controller are uniquely cached. If the request has POST data, the URI may include
                 such post data in a query format. E.g. {uri: /buy?item=scarf&quantity=1}
           */
-        static function updateCache(controller, actions: Object, data: Object, options: Object = {}): Void {
+        static function updateCache(controller, actions: Object, data: Object?, options: Object = {}): Void {
             let cname
             if (controller is String) {
                 cname = controller.trim("Controller")
@@ -557,11 +556,13 @@ print("URI " + request.uri)
             request.notify(key, msg)
 
         /** @duplicate ejs.web::Request.on */
-        function on(name, observer: Function): Void
+        function on(name, observer: Function): Controller {
             request.on(name, observer)
+            return this
+        }
 
         /** @duplicate ejs.web::Request.read */
-        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
+        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number?
             request.read(buffer, offset, count)
 
         /** 
@@ -712,7 +713,7 @@ print("URI " + request.uri)
         /* 
             Run the before/after checkers. These are typically used to handle authorization and similar tasks
          */
-        private function runCheckers(checkers: Array): Void {
+        private function runCheckers(checkers: Array?): Void {
             for each (checker in checkers) {
                 let [fn, options] = checker
                 if (options) {
@@ -731,7 +732,7 @@ print("URI " + request.uri)
             }
         }
 
-        private function viewExists(name: String): Boolean {
+        private function viewExists(name: String): Boolean? {
             let viewClass = controllerName + "_" + actionName + "View"
             if (global[viewClass]) {
                 return true
@@ -758,7 +759,7 @@ print("URI " + request.uri)
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function afterFilter(fn, options: Object = null): Void
+        function afterFilter(fn, options: Object? = null): Void
             after(fn, options)
 
         /** 
@@ -774,7 +775,7 @@ print("URI " + request.uri)
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function beforeFilter(fn, options: Object = null): Void
+        function beforeFilter(fn, options: Object? = null): Void
             before(fn, options)
 
         /**
@@ -838,7 +839,7 @@ print("URI " + request.uri)
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String
+        function makeUrl(action: String, id: String? = null, options: Object = {}, query: Object? = null): String
             link({ action, id, query })
 
         /**
@@ -886,7 +887,7 @@ print("URI " + request.uri)
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function renderView(name: String = null): Void
+        function renderView(name: String? = null): Void
             writeView(name)
 
         /**
@@ -894,7 +895,7 @@ print("URI " + request.uri)
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function reportError(status: Number, msg: String, e: Object = null): Void
+        function reportError(status: Number, msg: String, e: Object? = null): Void
             writeError(status, msg + e)
 
         /**
@@ -918,7 +919,7 @@ print("URI " + request.uri)
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function setCookie(name: String, value: String, path: String = null, domain: String = null,
+        function setCookie(name: String, value: String, path: String? = null, domain: String? = null,
                 lifetime: Number = 0, secure: Boolean = false): Void  {
             request.setCookie(name, 
                 { value: value, path: path, domain: domain, lifetime: Date().future(lifetime * 1000), secure: secure})
@@ -937,7 +938,7 @@ print("URI " + request.uri)
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire 
     a commercial license from Embedthis Software. You agree to be fully bound 
-    by the terms of either license. Consult the LICENSE.TXT distributed with 
+    by the terms of either license. Consult the LICENSE.md distributed with 
     this software for full details.
     
     This software is open source; you can redistribute it and/or modify it 

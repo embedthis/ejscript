@@ -3,6 +3,10 @@
  */
 
 Bit.load({
+    settings: {
+        ejsOneModule: true,
+    },
+
     targets: {
         libejs: {
             type: 'lib',
@@ -10,6 +14,7 @@ Bit.load({
             headers: [ '*.h' ],
             depends: [ 'libhttp', 'libsqlite3', 'libpcre' ],
         },
+
         ejs: {
             type: 'exe',
             sources: [ 'ejs.c' ],
@@ -22,10 +27,27 @@ Bit.load({
                 ",
             },
         },
+
         ejsc: {
             type: 'exe',
             sources: [ 'ejsc.c' ],
             depends: [ 'libejs' ],
         },
+
+		'ejs.mod': {
+            files: [ 'ejs.es' ],
+            path: "${LIB}/ejs.mod",
+            build: "
+                trace('Compile', 'ejs.mod')
+                run('./ejsc --out ${LIB}/ejs.mod --optimize 9 --bind --require null ejs.es')
+            ",
+            'generate-nmake': '\
+                "${BIN}\\ejsc" --out "${LIB}/ejs.mod" --optimize 9 --bind --require null "ejs.es"
+            ',
+            'generate-sh': '\
+                ${BIN}/ejsc --out ${LIB}/ejs.mod --optimize 9 --bind --require null ejs.es 
+            ',
+            depends: [ 'ejsc' ],
+		},
     },
 })

@@ -140,7 +140,7 @@ static EjsAny *invokePathOperator(Ejs *ejs, EjsPath *lhs, int opcode,  EjsPath *
         ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
-    mprAssert(0);
+    assure(0);
 }
 
 
@@ -283,7 +283,7 @@ static EjsArray *getPathComponents(Ejs *ejs, EjsPath *fp, int argc, EjsObj **arg
 }
 
 
-int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *attributes)
+PUBLIC int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *attributes)
 {
     EjsObj  *permissions;
     int     perms;
@@ -325,7 +325,7 @@ static EjsObj *copyPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     ssize       bytes;
     char        *buf;
 
-    mprAssert(argc >= 1);
+    assure(argc >= 1);
     options = (argc >= 2) ? argv[1] : 0;
 
     from = to = 0;
@@ -497,7 +497,7 @@ static EjsArray *path_files(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     EjsRegExp   *exclude, *include;
     int         flags;
 
-    mprAssert(argc == 0 || argc == 1);
+    assure(argc == 0 || argc == 1);
     options = (argc == 1) ? argv[0]: 0;
     exclude = include = 0;
     flags = 0;
@@ -592,7 +592,7 @@ static EjsArray *getPathFiles(Ejs *ejs, EjsArray *results, cchar *dir, int flags
     Get the files in a directory and subdirectories
     function files(patterns: Array|String|Path, options: Object = null): Array
  */
-EjsArray *ejsGetPathFiles(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+PUBLIC EjsArray *ejsGetPathFiles(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprFileSystem   *fs;
     EjsAny          *vp, *fill;
@@ -1248,7 +1248,7 @@ static EjsByteArray *readBytes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     char            buffer[MPR_BUFSIZE];
     int             bytes, offset, rc;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
+    assure(argc == 1 && ejsIs(ejs, argv[0], String));
     path = ejsToMulti(ejs, argv[0]);
 
     file = mprOpenFile(path, O_RDONLY | O_BINARY, 0);
@@ -1298,7 +1298,7 @@ static EjsArray *readLines(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     char        *start, *end, *cp, buffer[MPR_BUFSIZE];
     int         bytes, rc, lineno;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
+    assure(argc == 1 && ejsIs(ejs, argv[0], String));
     path = ejsToMulti(ejs, argv[0]);
 
     result = ejsCreateArray(ejs, 0);
@@ -1368,7 +1368,7 @@ static EjsString *readFileAsString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **arg
     char        buffer[MPR_BUFSIZE];
     int         bytes;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], String));
+    assure(argc == 1 && ejsIs(ejs, argv[0], String));
     path = ejsToMulti(ejs, argv[0]);
 
     file = mprOpenFile(path, O_RDONLY | O_BINARY, 0);
@@ -1464,7 +1464,7 @@ static EjsObj *renamePathFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     EjsPath     *to;
 
-    mprAssert(argc == 1 && ejsIs(ejs, argv[0], Path));
+    assure(argc == 1 && ejsIs(ejs, argv[0], Path));
     to = (EjsPath*) argv[0];
     unlink((char*) to->value);
     if (rename(fp->value, to->value) < 0) {
@@ -1687,7 +1687,7 @@ static EjsObj *writeToFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     char        *path, *data;
     int         i, bytes, length, permissions;
 
-    mprAssert(argc == 3);
+    assure(argc == 3);
 
     path = ejsToMulti(ejs, argv[0]);
     permissions = ejsGetInt(ejs, argv[1]);
@@ -1732,7 +1732,7 @@ static cchar *getPathString(Ejs *ejs, EjsObj *vp)
 
 /*********************************** Factory **********************************/
 
-EjsPath *ejsCreatePath(Ejs *ejs, EjsString *path)
+PUBLIC EjsPath *ejsCreatePath(Ejs *ejs, EjsString *path)
 {
     EjsPath     *fp;
 
@@ -1744,7 +1744,7 @@ EjsPath *ejsCreatePath(Ejs *ejs, EjsString *path)
 }
 
 
-EjsPath *ejsCreatePathFromAsc(Ejs *ejs, cchar *value)
+PUBLIC EjsPath *ejsCreatePathFromAsc(Ejs *ejs, cchar *value)
 {
     return ejsCreatePath(ejs, ejsCreateStringFromAsc(ejs, value));
 }
@@ -1759,7 +1759,7 @@ static void managePath(EjsPath *path, int flags)
 }
 
 
-void ejsCreatePathType(Ejs *ejs)
+PUBLIC void ejsCreatePathType(Ejs *ejs)
 {
     EjsType     *type;
 
@@ -1771,7 +1771,7 @@ void ejsCreatePathType(Ejs *ejs)
 }
 
 
-void ejsConfigurePathType(Ejs *ejs)
+PUBLIC void ejsConfigurePathType(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;
@@ -1843,28 +1843,12 @@ void ejsConfigurePathType(Ejs *ejs)
     @copy   default
 
     Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.TXT distributed with
-    this software for full details.
-
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
 
     Local variables:
     tab-width: 4

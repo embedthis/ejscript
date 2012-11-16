@@ -1,6 +1,5 @@
-
 /*
- *	Test throw of primitive types
+  	Test throw of primitive types
  */
 
 state = 1
