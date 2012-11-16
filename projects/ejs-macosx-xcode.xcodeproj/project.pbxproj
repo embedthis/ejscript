@@ -2731,6 +2731,7 @@ cp -r bit.es ../../${CFG_DIR}/bin/bit.es
 ../src/jems/ejs.bit/bits/embedthis.es,
 ../src/jems/ejs.bit/bits/gendoc.es,
 ../src/jems/ejs.bit/bits/os,
+../src/jems/ejs.bit/bits/os/a.tmp,
 ../src/jems/ejs.bit/bits/os/freebsd.bit,
 ../src/jems/ejs.bit/bits/os/gcc.bit,
 ../src/jems/ejs.bit/bits/os/linux.bit,
@@ -4172,7 +4173,7 @@ fi";
                 /* Common Settings */
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-                CURRENT_PROJECT_VERSION = 2.0.1;
+                CURRENT_PROJECT_VERSION = 2.1.0;
                 DYLIB_COMPATIBILITY_VERSION = "$(CURRENT_PROJECT_VERSION)";
                 DYLIB_CURRENT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -4241,7 +4242,7 @@ fi";
                 /* Common Settings */
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-                CURRENT_PROJECT_VERSION = 2.0.1;
+                CURRENT_PROJECT_VERSION = 2.1.0;
                 DYLIB_COMPATIBILITY_VERSION = "$(CURRENT_PROJECT_VERSION)";
                 DYLIB_CURRENT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
