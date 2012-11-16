@@ -197,7 +197,7 @@ PUBLIC EjsType *ejsFinalizeCoreType(Ejs *ejs, EjsName qname)
     EjsType     *type;
 
     if ((type = ejsGetTypeByName(ejs, qname)) == 0) {
-        mprError("Can't find %N type", qname);
+        mprError("Cannot find %N type", qname);
         return 0;
     }
     if (type->configured) {
@@ -216,7 +216,7 @@ PUBLIC EjsType *ejsFinalizeScriptType(Ejs *ejs, EjsName qname, int size, void *m
     EjsType     *type;
 
     if ((type = ejsGetTypeByName(ejs, qname)) == 0) {
-        mprError("Can't find %N type", qname);
+        mprError("Cannot find %N type", qname);
         return 0;
     }
     if (type->configured) {

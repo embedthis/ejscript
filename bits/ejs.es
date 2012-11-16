@@ -40,7 +40,9 @@ public function packageBinaryFiles(formats = ['tar', 'native']) {
         if (bit.platform.os == 'windows') {
             install('package/windows/LICENSE.TXT', bin, {fold: true, expand: true})
         }
-        install(['doc/licenses/*.txt'], p.product.join('LICENSE.TXT'), {
+        /* Move ejscript-license to the front */
+        let files = Path('doc/licenses').files('*.txt').reject(function(p) p.contains('ejscript-license.txt'))
+        install(['doc/licenses/ejscript-license.txt'] + files, p.product.join('LICENSE.TXT'), {
             cat: true,
             textfile: true,
             fold: true,
@@ -50,7 +52,6 @@ public function packageBinaryFiles(formats = ['tar', 'native']) {
         install('package/uninstall.sh', p.bin.join('uninstall'), {permissions: 0755, expand: true})
         install('package/linkup', p.bin, {permissions: 0755})
     }
-
     install(bit.dir.bin + '/*', p.bin, {
         include: /bit|ejs|ejsc|ejsman|ejspage|http|jem|mvc|sqlite|utest|\.dll/,
         exclude: /\.pdb|\.exp|\.lib|\.def|\.suo|\.old/,

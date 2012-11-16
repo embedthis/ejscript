@@ -58,7 +58,7 @@ static EjsAny *castString(Ejs *ejs, EjsString *sp, EjsType *type)
         return ejsCreateUri(ejs, sp);
 
     default:
-        ejsThrowTypeError(ejs, "Can't cast to required type");
+        ejsThrowTypeError(ejs, "Cannot cast to required type");
         return 0;
     }
     return 0;

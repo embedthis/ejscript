@@ -122,7 +122,7 @@ static EjsObj *cmd_kill(Ejs *ejs, EjsAny *unused, int argc, EjsObj **argv)
     HANDLE	handle;
 	handle = OpenProcess(PROCESS_TERMINATE, 0, pid);
     if (handle == 0) {
-        ejsThrowIOError(ejs, "Can't find process ID %d", pid);
+        ejsThrowIOError(ejs, "Cannot find process ID %d", pid);
         return 0;
     }
     rc = TerminateProcess(handle, signal) == 0;
@@ -133,7 +133,7 @@ static EjsObj *cmd_kill(Ejs *ejs, EjsAny *unused, int argc, EjsObj **argv)
     rc = kill(pid, signal);
 #endif
     if (rc < 0) {
-        ejsThrowIOError(ejs, "Can't kill %d with signal %d, errno %d", pid, signal, errno);
+        ejsThrowIOError(ejs, "Cannot kill %d with signal %d, errno %d", pid, signal, errno);
         return ESV(false);
     }
     return ESV(true);
@@ -402,7 +402,7 @@ static bool setCmdArgs(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     } else {
         cmd->command = ejsToMulti(ejs, cmd->command);
         if ((cmd->argc = mprMakeArgv(cmd->command, &cmd->argv, 0)) < 0 || cmd->argv == 0) {
-            ejsThrowArgError(ejs, "Can't parse command line");
+            ejsThrowArgError(ejs, "Cannot parse command line");
             return 0;
         }
     }
@@ -457,11 +457,11 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         if (rc == MPR_ERR_BAD_ARGS) {
             err = "Bad command arguments";
         } else if (rc == MPR_ERR_CANT_ACCESS) {
-            err = "Can't access command";
+            err = "Cannot access command";
         } else if (MPR_ERR_CANT_OPEN) {
-            err = "Can't open standard I/O for command";
+            err = "Cannot open standard I/O for command";
         } else if (rc == MPR_ERR_CANT_CREATE) {
-            err = "Can't create process";
+            err = "Cannot create process";
         } else {
             err = "";
         }
@@ -633,7 +633,7 @@ static EjsObj *cmd_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         execv(argVector[0], (char**) argVector);
     }
 #endif
-    ejsThrowStateError(ejs, "Can't exec %@", ejsToString(ejs, argv[0]));
+    ejsThrowStateError(ejs, "Cannot exec %@", ejsToString(ejs, argv[0]));
     return 0;
 }
 

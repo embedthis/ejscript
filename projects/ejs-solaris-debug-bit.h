@@ -76,7 +76,7 @@
     #define BIT_TITLE "Embedthis Ejscript"
 #endif
 #ifndef BIT_VERSION
-    #define BIT_VERSION "2.0.1"
+    #define BIT_VERSION "2.1.0"
 #endif
 #ifndef BIT_WARN64TO32
     #define BIT_WARN64TO32 0
@@ -96,10 +96,10 @@
     #define BIT_CFG_PREFIX "/etc/ejs"
 #endif
 #ifndef BIT_BIN_PREFIX
-    #define BIT_BIN_PREFIX "/usr/lib/ejs/2.0.1/bin"
+    #define BIT_BIN_PREFIX "/usr/lib/ejs/2.1.0/bin"
 #endif
 #ifndef BIT_INC_PREFIX
-    #define BIT_INC_PREFIX "/usr/lib/ejs/2.0.1/inc"
+    #define BIT_INC_PREFIX "/usr/lib/ejs/2.1.0/inc"
 #endif
 #ifndef BIT_LOG_PREFIX
     #define BIT_LOG_PREFIX "/var/log/ejs"
@@ -111,10 +111,10 @@
     #define BIT_SPL_PREFIX "/var/spool/ejs"
 #endif
 #ifndef BIT_SRC_PREFIX
-    #define BIT_SRC_PREFIX "/usr/src/ejs-2.0.1"
+    #define BIT_SRC_PREFIX "/usr/src/ejs-2.1.0"
 #endif
 #ifndef BIT_VER_PREFIX
-    #define BIT_VER_PREFIX "/usr/lib/ejs/2.0.1"
+    #define BIT_VER_PREFIX "/usr/lib/ejs/2.1.0"
 #endif
 #ifndef BIT_WEB_PREFIX
     #define BIT_WEB_PREFIX "/var/www/ejs-default"
@@ -153,13 +153,13 @@
     #define BIT_MAJOR_VERSION 2
 #endif
 #ifndef BIT_MINOR_VERSION
-    #define BIT_MINOR_VERSION 0
+    #define BIT_MINOR_VERSION 1
 #endif
 #ifndef BIT_PATCH_VERSION
-    #define BIT_PATCH_VERSION 1
+    #define BIT_PATCH_VERSION 0
 #endif
 #ifndef BIT_VNUM
-    #define BIT_VNUM 200000001
+    #define BIT_VNUM 200010000
 #endif
 
 /* Packs */

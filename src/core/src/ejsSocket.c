@@ -38,7 +38,7 @@ PUBLIC EjsSocket *sock_accept(Ejs *ejs, EjsSocket *listen, int argc, EjsObj **ar
     EjsSocket   *sp;
 
     if ((sock = mprAcceptSocket(listen->sock)) == 0) {
-        ejsThrowIOError(ejs, "Can't accept new socket");
+        ejsThrowIOError(ejs, "Cannot accept new socket");
         return 0;
     }
     if ((sp = ejsCreateSocket(ejs, sock, listen->async)) != 0) {
@@ -125,7 +125,7 @@ static EjsObj *sock_connect(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
         return 0;
     }
     if (mprConnectSocket(sp->sock, sp->address, sp->port, 0) < 0) {
-        ejsThrowArgError(ejs, "Can't open client socket");
+        ejsThrowArgError(ejs, "Cannot open client socket");
         return 0;
     }
     if (sp->async) {
@@ -172,7 +172,7 @@ static EjsObj *sock_listen(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
         return 0;
     }
     if (mprListenOnSocket(sp->sock, sp->address, sp->port, 0) < 0) {
-        ejsThrowArgError(ejs, "Can't open listening socket");
+        ejsThrowArgError(ejs, "Cannot open listening socket");
         return 0;
     }
     if (sp->async) {
@@ -275,7 +275,7 @@ static ssize writeSocketData(Ejs *ejs, EjsSocket *sp)
     if (ba && (count = ejsGetByteArrayAvailableData(ba)) > 0) {
         nbytes = mprWriteSocket(sp->sock, &ba->value[ba->readPosition], count);
         if (nbytes < 0) {
-            ejsThrowIOError(ejs, "Can't write to socket");
+            ejsThrowIOError(ejs, "Cannot write to socket");
             return 0;
         }
         ba->readPosition += nbytes;

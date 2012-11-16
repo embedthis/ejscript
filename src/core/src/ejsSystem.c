@@ -57,7 +57,7 @@ static EjsString *system_ipaddr(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
         }
         return ejsCreateStringFromAsc(ejs, ip ? ip : "127.0.0.1");
     } else {
-        mprLog(0, "Can't get IP address, check system hostname. Error %d.\n", rc);
+        mprLog(0, "Cannot get IP address, check system hostname. Error %d.\n", rc);
     }
 #endif
     return ESV(null);

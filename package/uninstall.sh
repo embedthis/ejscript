@@ -40,14 +40,12 @@ COMPANY="${settings.company}"
 NAME="${settings.title}"
 VERSION="${settings.version}"
 NUMBER="${settings.buildNumber}"
-OS="${platform.OS}"
+OS="${platform.os}"
 CPU="${platform.arch}"
 
 BIN_PREFIX="${prefixes.bin}"
 CFG_PREFIX="${prefixes.config}"
-INC_PREFIX="${prefixes.include}"
-LIB_PREFIX="${prefixes.lib}"
-MAN_PREFIX="${prefixes.lib}/man"
+INC_PREFIX="${prefixes.inc}"
 PRD_PREFIX="${prefixes.product}"
 SPL_PREFIX="${prefixes.spool}"
 VER_PREFIX="${prefixes.productver}"
@@ -66,7 +64,7 @@ unset CDPATH
 #
 
 yesno() {
-	if [ "$${PRODUCT}_HEADLESS" = 1 ] ; then
+	if [ "$${HEADLESS}" = 1 ] ; then
 		echo "Y"
 		return
 	fi
@@ -171,12 +169,10 @@ postClean() {
     rm -f "${VER_PREFIX}/install.conf"
 
     cleanDir "${BIN_PREFIX}"
-    cleanDir "${MAN_PREFIX}"
     cleanDir "${INC_PREFIX}"
     cleanDir "${DOC_PREFIX}"
     cleanDir "${PRD_PREFIX}"
     cleanDir "${CFG_PREFIX}"
-    cleanDir "${LIB_PREFIX}"
     cleanDir "${WEB_PREFIX}"
     cleanDir "${SPL_PREFIX}"
 

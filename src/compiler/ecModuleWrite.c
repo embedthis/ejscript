@@ -160,7 +160,7 @@ static void createGlobalProperties(EcCompiler *cp)
         slotNum = ejsLookupProperty(ejs, ejs->global, *prop);
         if (slotNum < 0) {
             cp->fatalError = 1;
-            mprError("Code generation error. Can't find global property %s.", prop->name);
+            mprError("Code generation error. Cannot find global property %s.", prop->name);
             return;
         }
         vp = ejsGetProperty(ejs, ejs->global, slotNum);

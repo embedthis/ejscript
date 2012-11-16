@@ -99,7 +99,7 @@ static EjsWorker *initWorker(Ejs *ejs, EjsWorker *worker, Ejs *baseVM, cchar *na
         worker->state = EJS_WORKER_STARTED;
         if (mprCreateEvent(wejs->dispatcher, "workerMain", 0, (MprEventProc) workerMain, self, 0) < 0) {
             mprRemoveItem(ejs->workers, worker);
-            ejsThrowStateError(ejs, "Can't create worker event");
+            ejsThrowStateError(ejs, "Cannot create worker event");
             return 0;
         }
     }
@@ -223,7 +223,7 @@ static EjsObj *startWorker(Ejs *ejs, EjsWorker *outsideWorker, int timeout)
     outsideWorker->state = EJS_WORKER_STARTED;
 
     if (mprCreateEvent(inside->dispatcher, "workerMain", 0, (MprEventProc) workerMain, insideWorker, 0) < 0) {
-        ejsThrowStateError(ejs, "Can't create worker event");
+        ejsThrowStateError(ejs, "Cannot create worker event");
         return 0;
     }
     if (timeout == 0) {
@@ -637,7 +637,7 @@ static EjsObj *workerPostMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
      */
     ejsBlockGC(ejs);
     if ((data = ejsToJSON(ejs, argv[0], NULL)) == 0) {
-        ejsThrowArgError(ejs, "Can't serialize message data");
+        ejsThrowArgError(ejs, "Cannot serialize message data");
         return 0;
     }
     if ((msg = createMessage()) == 0) {

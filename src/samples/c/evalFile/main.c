@@ -16,7 +16,7 @@ int main(int argc, char **argv)
         Load the script and evaluate
      */
     if (ejsEvalFile("test.es") < 0) {
-        fprintf(stderr, "Can't load test.es\n");
+        fprintf(stderr, "Cannot load test.es\n");
         exit(1);
     }
     return 0;

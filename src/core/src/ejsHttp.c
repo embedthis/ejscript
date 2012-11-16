@@ -639,14 +639,19 @@ static EjsObj *http_set_retries(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
 
 /*  
-    function setCredentials(username: String, password: String): Void
+    function setCredentials(username: String?, password: String?, authType: String?): Void
  */
 static EjsObj *http_setCredentials(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
+    cchar   *authType, *password, *user;
+
+    user = (argc <= 0) ? 0 : ejsToMulti(ejs, argv[0]);
+    password = (argc <= 1) ? 0 : ejsToMulti(ejs, argv[1]);
+    authType = (argc <= 2) ? 0 : ejsToMulti(ejs, argv[2]);
     if (ejsIs(ejs, argv[0], Null)) {
         httpResetCredentials(hp->conn);
     } else {
-        httpSetCredentials(hp->conn, ejsToMulti(ejs, argv[0]), ejsToMulti(ejs, argv[1]));
+        httpSetCredentials(hp->conn, user, password, authType);
     }
     return 0;
 }
@@ -665,7 +670,7 @@ static EjsObj *http_setHeader(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
     conn = hp->conn;
     if (conn->state >= HTTP_STATE_CONNECTED) {
-        ejsThrowArgError(ejs, "Can't update request headers once the request has started");
+        ejsThrowArgError(ejs, "Cannot update request headers once the request has started");
         return 0;
     }
     key = ejsToMulti(ejs, argv[0]);
@@ -959,14 +964,14 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
         mprSetSslCertFile(hp->ssl, hp->certFile);
     }
     if (httpConnect(conn, hp->method, hp->uri, hp->ssl) < 0) {
-        ejsThrowIOError(ejs, "Can't issue request for \"%s\"", hp->uri);
+        ejsThrowIOError(ejs, "Cannot issue request for \"%s\"", hp->uri);
         return 0;
     }
     if (mprGetBufLength(hp->requestContent) > 0) {
         nbytes = httpWriteBlock(conn->writeq, mprGetBufStart(hp->requestContent), mprGetBufLength(hp->requestContent),
             HTTP_BLOCK);
         if (nbytes < 0) {
-            ejsThrowIOError(ejs, "Can't write request data for \"%s\"", hp->uri);
+            ejsThrowIOError(ejs, "Cannot write request data for \"%s\"", hp->uri);
             return 0;
         } else if (nbytes > 0) {
             assure(nbytes == mprGetBufLength(hp->requestContent));
@@ -1046,7 +1051,7 @@ static ssize readHttpData(Ejs *ejs, EjsHttp *hp, ssize count)
             mprGrowBuf(buf, len - space);
         }
         if ((nbytes = httpRead(conn, mprGetBufEnd(buf), len)) < 0) {
-            ejsThrowIOError(ejs, "Can't read required data");
+            ejsThrowIOError(ejs, "Cannot read required data");
             return MPR_ERR_CANT_READ;
         }
         mprAdjustBufEnd(buf, nbytes);
@@ -1075,13 +1080,13 @@ static ssize writeHttpData(Ejs *ejs, EjsHttp *hp)
     nbytes = 0;
     if (ba && (count = ejsGetByteArrayAvailableData(ba)) > 0) {
         if (conn->tx->finalizedOutput) {
-            ejsThrowIOError(ejs, "Can't write to socket");
+            ejsThrowIOError(ejs, "Cannot write to socket");
             return 0;
         }
         //  MOB - or should this be non-blocking
         nbytes = httpWriteBlock(conn->writeq, (cchar*) &ba->value[ba->readPosition], count, HTTP_BLOCK);
         if (nbytes < 0) {
-            ejsThrowIOError(ejs, "Can't write to socket");
+            ejsThrowIOError(ejs, "Cannot write to socket");
             return 0;
         }
         ba->readPosition += nbytes;
@@ -1325,7 +1330,7 @@ static bool waitForState(EjsHttp *hp, int state, MprTicks timeout, int throw)
             }
         }
         if (hp->writeCount > 0) {
-            /* Can't auto-retry with manual writes */
+            /* Cannot auto-retry with manual writes */
             break;
         }
         if (timeout > 0) {

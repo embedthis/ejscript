@@ -56,7 +56,7 @@ static EjsVar *debuggerConstructor(Ejs *ejs, EjsDebugger *db, int argc, EjsVar *
 
     sdb = 0;
     if (debugger3_open(path, &sdb) != SQLITE_OK) {
-        ejsThrowIOError(ejs, "Can't open database %s", path);
+        ejsThrowIOError(ejs, "Cannot open database %s", path);
         return 0;
     }
     db->sdb = sdb;

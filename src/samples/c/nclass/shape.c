@@ -200,7 +200,7 @@ static int lookupProperty(Ejs *ejs, Shape *sp, EjsName *qname)
         return ES_nclass_Shape_width;
 
     } else {
-        ejsThrowReferenceError(ejs, "Can't find property %@", qname->name);
+        ejsThrowReferenceError(ejs, "Cannot find property %@", qname->name);
         return EJS_ERR;
     }
 }
@@ -267,7 +267,7 @@ static EjsObj *castVar(Ejs *ejs, Shape *sp, EjsType *type)
  */
 static int deleteProperty(Ejs *ejs, Shape *sp, const char *prop)
 {
-    ejsThrowTypeError(ejs, "Can't delete properties for this type");
+    ejsThrowTypeError(ejs, "Cannot delete properties for this type");
     return EJS_ERR;
 }
 
@@ -276,7 +276,7 @@ static int deleteProperty(Ejs *ejs, Shape *sp, const char *prop)
  */
 static int deletePropertyByName(Ejs *ejs, EjsObject *obj, EjsName *qname)
 {
-    ejsThrowTypeError(ejs, "Can't delete properties for this type");
+    ejsThrowTypeError(ejs, "Cannot delete properties for this type");
     return EJS_ERR;
 }
 
@@ -303,7 +303,7 @@ static void destroyVar(Ejs *ejs, EjsObj *obj)
 
 int defineProperty(Ejs *ejs, EjsObj *vp, int slotNum, EjsName *name, EjsType *propType, int attributes, EjsObj *value)
 {
-    ejsThrowReferenceError(ejs, "Can't define properties in this sample");
+    ejsThrowReferenceError(ejs, "Cannot define properties in this sample");
     return EJS_ERR;
 }
 
@@ -356,7 +356,7 @@ static void markVar(Ejs *ejs, EjsObj *parent, EjsObj *sp)
  */
 static EjsObj *setPropertyName(Ejs *ejs, Shape *sp, int slotNum, EjsName *name)
 {
-    ejsThrowReferenceError(ejs, "Can't define property names for this type");
+    ejsThrowReferenceError(ejs, "Cannot define property names for this type");
     return 0;
 }
 #endif
@@ -408,7 +408,7 @@ EjsType *ejsDefineShapeType(Ejs *ejs)
         instance size.
      */
     if ((type = ejsGetPropertyByName(ejs, ejs->global, N(EJS_PUBLIC_NAMESPACE, "Shape"))) == 0) {
-        mprError("Can't find class Shape");
+        mprError("Cannot find class Shape");
         return 0;
     }
     type->instanceSize = sizeof(Shape);
@@ -471,7 +471,7 @@ int configureSampleTypes(Ejs *ejs)
      */
     type = ejsGetTypeByName(ejs, N("nclass", "Shape"));
     if (type == 0) {
-        mprError("Can't find type Shape");
+        mprError("Cannot find type Shape");
         return MPR_ERR_CANT_ACCESS;
     }
 

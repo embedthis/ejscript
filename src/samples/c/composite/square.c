@@ -75,7 +75,7 @@ static int configureSampleTypes(Ejs *ejs)
      */
     type = ejsGetTypeByName(ejs, N("composite", "Square"));
     if (type == 0) {
-        mprError("Can't find type Square");
+        mprError("Cannot find type Square");
         return MPR_ERR;
     }
     /*

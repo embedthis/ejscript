@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 
     mpr = mprCreate(argc, argv, NULL);
     if (mprStart(mpr) < 0) {
-        mprError(mpr, "Can't start mpr services");
+        mprError(mpr, "Cannot start mpr services");
         return MPR_ERR;
     }
     dir = (argc == 2) ? argv[1] : ".";
@@ -52,7 +52,7 @@ static void genByteCodeHeader(Mpr *mpr, cchar *dir)
     path = mprJoinPath(mpr, dir, "ejsByteCode.h");
     file = mprOpenFile(mpr, path, O_WRONLY | O_CREAT | O_TRUNC, 0664);
     if (file == 0) {
-        mprError(mpr, "Can't open %s", path);
+        mprError(mpr, "Cannot open %s", path);
         return;
     } 
     header(file, "ejsByteCode", "Ejscript VM Byte Code");
@@ -76,7 +76,7 @@ static void genByteGotoHeader(Mpr *mpr, cchar *dir)
     path = mprJoinPath(mpr, dir, "ejsByteGoto.h");
     file = mprOpenFile(mpr, path, O_WRONLY | O_CREAT | O_TRUNC, 0664);
     if (file == 0) {
-        mprError(mpr, "Can't open %s", path);
+        mprError(mpr, "Cannot open %s", path);
         return;
     } 
     // header(file, "ejsByteGoto", "Ejscript Byte Code Jump Labels");

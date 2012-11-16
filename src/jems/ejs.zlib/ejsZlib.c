@@ -31,22 +31,22 @@ static EjsObj *zlib_compress(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         dest = sjoin(src, ".gz", NULL);
     }
     if ((in = mprOpenFile(src, O_RDONLY | O_BINARY, 0)) == 0) {
-        ejsThrowIOError(ejs, "Can't open from %s", src);
+        ejsThrowIOError(ejs, "Cannot open from %s", src);
         return 0;
     }
     if ((out = gzopen(dest, "wb")) == 0) {
-        ejsThrowIOError(ejs, "Can't open destination %s", dest);
+        ejsThrowIOError(ejs, "Cannot open destination %s", dest);
         return 0;
     }
     while (1) {
         if ((nbytes = mprReadFile(in, inbuf, sizeof(inbuf))) < 0) {
-            ejsThrowIOError(ejs, "Can't read from %s", src);
+            ejsThrowIOError(ejs, "Cannot read from %s", src);
             return 0;
         } else if (nbytes == 0) {
             break;
         }
         if (gzwrite(out, inbuf, (int) nbytes) != nbytes) {
-            ejsThrowIOError(ejs, "Can't write to %s", dest);
+            ejsThrowIOError(ejs, "Cannot write to %s", dest);
             return 0;
         }
     }
@@ -73,22 +73,22 @@ static EjsObj *zlib_uncompress(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv
         dest = sjoin(src, ".gz", NULL);
     }
     if ((in = gzopen(src, "rb")) == 0) {
-        ejsThrowIOError(ejs, "Can't open from %s", src);
+        ejsThrowIOError(ejs, "Cannot open from %s", src);
         return 0;
     }
     if ((out = mprOpenFile(dest, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0644)) == 0) {
-        ejsThrowIOError(ejs, "Can't open destination %s", dest);
+        ejsThrowIOError(ejs, "Cannot open destination %s", dest);
         return 0;
     }
     while (1) {
         if ((nbytes = gzread(in, inbuf, sizeof(inbuf))) < 0) {
-            ejsThrowIOError(ejs, "Can't read from %s", src);
+            ejsThrowIOError(ejs, "Cannot read from %s", src);
             return 0;
         } else if (nbytes == 0) {
             break;
         }
         if (mprWriteFile(out, inbuf, (int) nbytes) != nbytes) {
-            ejsThrowIOError(ejs, "Can't write to %s", dest);
+            ejsThrowIOError(ejs, "Cannot write to %s", dest);
             return 0;
         }
     }
@@ -128,7 +128,7 @@ static EjsObj *zlib_compressBytes(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
             deflate(&zs, flush);
             nbytes = ZBUFSIZE - zs.avail_out;
             if (ejsCopyToByteArray(ejs, out, -1, outbuf, nbytes) != nbytes) {
-                ejsThrowIOError(ejs, "Can't copy to byte array");
+                ejsThrowIOError(ejs, "Cannot copy to byte array");
                 deflateEnd(&zs);
                 return 0;
             }
@@ -184,7 +184,7 @@ static EjsObj *zlib_uncompressBytes(Ejs *ejs, EjsObj *unused, int argc, EjsObj *
                 nbytes = ZBUFSIZE - zs.avail_out;
             }
             if (ejsCopyToByteArray(ejs, out, -1, (char*) outbuf, nbytes) != nbytes) {
-                ejsThrowIOError(ejs, "Can't copy to byte array");
+                ejsThrowIOError(ejs, "Cannot copy to byte array");
                 inflateEnd(&zs);
                 return 0;
             }
@@ -232,7 +232,7 @@ static EjsString *zlib_compressString(Ejs *ejs, EjsObj *unused, int argc, EjsObj
             deflate(&zs, flush);
             nbytes = ZBUFSIZE - zs.avail_out;
             if (mprPutBlockToBuf(out, (char*) outbuf, nbytes) != nbytes) {
-                ejsThrowIOError(ejs, "Can't copy to output buffer");
+                ejsThrowIOError(ejs, "Cannot copy to output buffer");
                 deflateEnd(&zs);
                 return 0;
             }
@@ -289,7 +289,7 @@ static EjsString *zlib_uncompressString(Ejs *ejs, EjsObj *unused, int argc, EjsO
                 nbytes = ZBUFSIZE - zs.avail_out;
             }
             if (mprPutBlockToBuf(out, (char*) outbuf, nbytes) != nbytes) {
-                ejsThrowIOError(ejs, "Can't copy to byte array");
+                ejsThrowIOError(ejs, "Cannot copy to byte array");
                 inflateEnd(&zs);
                 return 0;
             }

@@ -1275,7 +1275,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             }
             slotNum = ejsLookupVar(ejs, vp, qname, &lookup);
             if (slotNum < 0) {
-                ejsThrowReferenceError(ejs, "Can't find function \"%@\"", qname.name);
+                ejsThrowReferenceError(ejs, "Cannot find function \"%@\"", qname.name);
             } else {
                 EjsTrait *trait = ejsGetPropertyTraits(ejs, lookup.obj, slotNum);
                 if (trait && trait->attributes & EJS_PROP_STATIC) {
@@ -1298,7 +1298,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             ejs->spreadArgs = 0;
             slotNum = ejsLookupScope(ejs, qname, &lookup);
             if (slotNum < 0) {
-                ejsThrowReferenceError(ejs, "Can't find function %@", qname.name);
+                ejsThrowReferenceError(ejs, "Cannot find function %@", qname.name);
                 BREAK;
             }
             fun = ejsGetProperty(ejs, lookup.obj, slotNum);
@@ -1372,7 +1372,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             ejs->spreadArgs = 0;
             type = ejsGetPropertyByName(ejs, ejs->global, qname);
             if (type == 0) {
-                ejsThrowReferenceError(ejs, "Can't find constructor %@", qname.name);
+                ejsThrowReferenceError(ejs, "Cannot find constructor %@", qname.name);
             } else {
                 assure(type->constructor.block.pot.isFunction);
                 callFunction(ejs, (EjsFunction*) type, THIS, argc, 0);
@@ -2182,7 +2182,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                     }
                     obj = ejsCreateObj(ejs, fun->archetype, 0);
                 } else {
-                    ejsThrowReferenceError(ejs, "Can't locate type");
+                    ejsThrowReferenceError(ejs, "Cannot locate type");
                     BREAK;
                 }
             } else {
@@ -2394,7 +2394,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             v1 = pop(ejs);
             nameVar = ejsToString(ejs, pop(ejs));
             if (nameVar == 0) {
-                ejsThrowTypeError(ejs, "Can't convert to a name");
+                ejsThrowTypeError(ejs, "Cannot convert to a name");
             } else {
                 EjsName n = { nameVar, NULL };
                 slotNum = ejsLookupProperty(ejs, v1, n);
@@ -2719,7 +2719,7 @@ EjsAny *ejsRunFunctionBySlot(Ejs *ejs, EjsAny *thisObj, int slotNum, int argc, v
         fun = ejsGetProperty(ejs, TYPE(thisObj)->prototype, slotNum);
     }
     if (fun == 0) {
-        ejsThrowReferenceError(ejs, "Can't find function at slot %d in %N", slotNum, &TYPE(thisObj)->qname);
+        ejsThrowReferenceError(ejs, "Cannot find function at slot %d in %N", slotNum, &TYPE(thisObj)->qname);
         return 0;
     }
     return ejsRunFunction(ejs, fun, thisObj, argc, argv);
@@ -2739,12 +2739,12 @@ EjsAny *ejsRunFunctionByName(Ejs *ejs, EjsAny *container, EjsName qname, EjsAny 
     }
     if (container) {
         if ((fun = ejsGetPropertyByName(ejs, container, qname)) == 0) {
-            ejsThrowReferenceError(ejs, "Can't find function %N", qname);
+            ejsThrowReferenceError(ejs, "Cannot find function %N", qname);
             return 0;
         }
     } else {
         if (ejsLookupScope(ejs, qname, &lookup) == 0) {
-            ejsThrowReferenceError(ejs, "Can't find function %N", qname);
+            ejsThrowReferenceError(ejs, "Cannot find function %N", qname);
             return 0;
         }
         fun = ejsGetProperty(ejs, lookup.obj, lookup.slotNum);
@@ -3559,7 +3559,7 @@ static EjsAny *getNthBase(Ejs *ejs, EjsAny *vp, int nthBase)
             nthBase--;
         }
         if (nthBase > 0) {
-            ejsThrowReferenceError(ejs, "Can't find correct base class");
+            ejsThrowReferenceError(ejs, "Cannot find correct base class");
             return 0;
         }
         vp = type;

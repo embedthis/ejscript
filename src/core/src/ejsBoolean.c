@@ -26,7 +26,7 @@ static EjsAny *castBooleanVar(Ejs *ejs, EjsBoolean *vp, EjsType *type)
         return ejsCreateStringFromAsc(ejs, (vp->value) ? "true" : "false");
 
     default:
-        ejsThrowTypeError(ejs, "Can't cast to this type");
+        ejsThrowTypeError(ejs, "Cannot cast to this type");
         return 0;
     }
 }

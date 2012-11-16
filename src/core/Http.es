@@ -566,8 +566,11 @@ FUTURE & KEEP
             Set the user credentials to use if the request requires authentication.
             @param username String user name to use. If null, then reset the current credentials.
             @param password Un-encrypted string password to use. Set to null to reset the current credentials.
+            @param type Authentication type. Set to basic or digest. Defaults to basic.
+                If not set, then the authentication type is determined by the response from the server and the 
+                request will be retried if it fails with an authentication error.
          */
-        native function setCredentials(username: String?, password: String?): Void
+        native function setCredentials(username: String?, password: String?, type: String = null): Void
 
         /** 
             Set a request header. Use setHeaders() to set all the headers. Use $getRequestHeaders() to retrieve and examine

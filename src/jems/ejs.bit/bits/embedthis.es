@@ -672,6 +672,60 @@ public function apiwrap(patterns) {
     }
 }
 
+public function checkInstalled() {
+    let result = []
+    for each (key in ['product', 'productver', 'bin', 'inc']) {
+        let prefix = bit.prefixes[key]
+        if (!prefix.exists) {
+            result.push(prefix)
+        }
+    }
+    return result.length > 0 ? result : null
+}
+
+public function checkUninstalled() {
+    let result = []
+    for each (prefix in bit.prefixes) {
+        if (prefix.exists) {
+            result.push(prefix)
+        }
+    }
+    return result.length > 0 ? result : null
+}
+
+public function installPackage() {
+    let s = bit.settings
+    let package
+    if (Config.OS == 'macosx') {
+        if (App.uid != 0) throw 'Must be root to install'
+        package = s.product + '-' + s.version + '-' + s.buildNumber + '-apple-macosx-x64.pkg'
+        trace('Install', package)
+        run('installer -target / -package ' + bit.dir.rel.join(package), {noshow: true})
+    } else if (Config.OS == 'windows') {
+        package = s.product + '-' + s.version + '-' + s.number + '-ms-windows-x86.exe'
+        trace('Install', package)
+        run(bit.dir.rel.join(package), {noshow: true})
+    }
+}
+
+public function uninstallPackage() {
+    if (Config.OS == 'macosx' && App.uid != 0) throw 'Must be root to install'
+    trace('Uninstall', bit.prefixes.bin.join('uninstall'))
+    run(bit.prefixes.bin.join('uninstall'), {noshow: true})
+}
+
+public function whatInstalled() {
+    for each (prefix in bit.prefixes) {
+        if (prefix.exists) {
+            trace('Exists', prefix)
+            let files = prefix.files('**')
+            if (files.length > 0) {
+                vtrace('Exists', files.join(', '))
+            }
+        }
+    }
+}
+
 /*
     @copy   default
   

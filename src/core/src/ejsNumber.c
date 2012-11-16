@@ -57,7 +57,7 @@ static EjsAny *castNumber(Ejs *ejs, EjsNumber *vp, EjsType *type)
         return vp;
             
     default:
-        ejsThrowTypeError(ejs, "Can't cast to this type");
+        ejsThrowTypeError(ejs, "Cannot cast to this type");
         return 0;
     }
 }

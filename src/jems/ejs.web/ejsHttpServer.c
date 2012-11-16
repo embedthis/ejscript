@@ -43,7 +43,7 @@ static EjsRequest *hs_accept(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **arg
     event.dispatcher = sp->endpoint->dispatcher;
     if ((conn = httpAcceptConn(sp->endpoint, &event)) == 0) {
         /* Just ignore */
-        mprError("Can't accept connection");
+        mprError("Cannot accept connection");
         return 0;
     }
     return createRequest(sp, conn);
@@ -208,7 +208,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
             This serializes all activity on one dispatcher.
          */
         if ((endpoint = httpCreateEndpoint(sp->ip, sp->port, ejs->dispatcher)) == 0) {
-            ejsThrowIOError(ejs, "Can't create Http endpoint object");
+            ejsThrowIOError(ejs, "Cannot create Http endpoint object");
             return 0;
         }
         sp->endpoint = endpoint;
@@ -259,7 +259,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         if (httpStartEndpoint(endpoint) < 0) {
             httpDestroyEndpoint(sp->endpoint);
             sp->endpoint = 0;
-            ejsThrowIOError(ejs, "Can't listen on %s", address->value);
+            ejsThrowIOError(ejs, "Cannot listen on %s", address->value);
         }
     }
     if (ejs->httpServers == 0) {
@@ -495,13 +495,13 @@ static EjsVoid *hs_passRequest(Ejs *ejs, EjsHttpServer *server, int argc, EjsAny
     conn->ejs = nejs;
 
     if ((nreq = ejsCloneRequest(nejs, req, 1)) == 0) {
-        ejsThrowStateError(ejs, "Can't clone request");
+        ejsThrowStateError(ejs, "Cannot clone request");
         return 0;
     }
     httpSetConnContext(conn, nreq);
 
     if ((nreq->server = ejsCloneHttpServer(nejs, req->server, 1)) == 0) {
-        ejsThrowStateError(ejs, "Can't clone request");
+        ejsThrowStateError(ejs, "Cannot clone request");
         return 0;
     }
     event = mprCreateEvent(conn->dispatcher, "RequestWorker", 0, receiveRequest, nreq, MPR_EVENT_DONT_QUEUE);
@@ -536,7 +536,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
             if (vs && ejsIs(ejs, vs, String)) {
                 name = vs->value;
                 if (httpLookupStage(http, name) == 0) {
-                    ejsThrowArgError(ejs, "Can't find pipeline stage name %s", name);
+                    ejsThrowArgError(ejs, "Cannot find pipeline stage name %s", name);
                     return;
                 }
                 httpAddRouteFilter(route, name, NULL, HTTP_STAGE_TX);
@@ -550,7 +550,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
             if (vs && ejsIs(ejs, vs, String)) {
                 name = vs->value;
                 if (httpLookupStage(http, name) == 0) {
-                    ejsThrowArgError(ejs, "Can't find pipeline stage name %s", name);
+                    ejsThrowArgError(ejs, "Cannot find pipeline stage name %s", name);
                     return;
                 }
                 httpAddRouteFilter(route, name, NULL, HTTP_STAGE_RX);
@@ -559,7 +559,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
     }
     if (sp->connector) {
         if ((stage = httpLookupStage(http, sp->connector)) == 0) {
-            ejsThrowArgError(ejs, "Can't find pipeline stage name %s", sp->connector);
+            ejsThrowArgError(ejs, "Cannot find pipeline stage name %s", sp->connector);
             return;
         }
         route->connector = stage;

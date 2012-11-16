@@ -76,7 +76,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
         path = sclone(file->path);
     }
     if (file == 0) {
-        mprError("Can't open %s", path);
+        mprError("Cannot open %s", path);
         return MPR_ERR_CANT_OPEN;
     }
     mprEnableFileBuffering(file, 0, 0);
@@ -105,7 +105,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
     type->constructor.block.pot.isType = 1;
 
     if (genType(bp, file, mp, type, mp->firstGlobal, mp->lastGlobal, 1) < 0) {
-        mprError("Can't generate slot file for module %@", mp->name);
+        mprError("Cannot generate slot file for module %@", mp->name);
         mprCloseFile(localFile);
         return EJS_ERR;
     }

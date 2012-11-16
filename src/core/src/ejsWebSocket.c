@@ -265,7 +265,7 @@ static EjsObj *startWebSocketRequest(Ejs *ejs, EjsWebSocket *ws)
         mprSetSslCertFile(ws->ssl, ws->certFile);
     }
     if (httpConnect(conn, "GET", ws->uri, ws->ssl) < 0) {
-        ejsThrowIOError(ejs, "Can't issue request for \"%s\"", ws->uri);
+        ejsThrowIOError(ejs, "Cannot issue request for \"%s\"", ws->uri);
         return 0;
     }
     httpEnableConnEvents(ws->conn);

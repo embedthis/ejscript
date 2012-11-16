@@ -65,13 +65,13 @@ static EjsNumber *getFileProperty(Ejs *ejs, EjsFile *fp, int slotNum)
     offset = mprSeekFile(fp->file, SEEK_CUR, 0);
     if (offset != slotNum) {
         if (mprSeekFile(fp->file, SEEK_SET, slotNum) != slotNum) {
-            ejsThrowIOError(ejs, "Can't seek to file offset");
+            ejsThrowIOError(ejs, "Cannot seek to file offset");
             return 0;
         }
     }
     c = mprPeekFileChar(fp->file);
     if (c < 0) {
-        ejsThrowIOError(ejs, "Can't read file");
+        ejsThrowIOError(ejs, "Cannot read file");
         return 0;
     }
 #endif
@@ -127,11 +127,11 @@ static int setFileProperty(Ejs *ejs, EjsFile *fp, int slotNum, EjsObj *value)
     fp->mapped[slotNum] = c;
 #else
     if (offset != slotNum && mprSeekFile(fp->file, SEEK_SET, slotNum) != slotNum) {
-        ejsThrowIOError(ejs, "Can't seek to file offset");
+        ejsThrowIOError(ejs, "Cannot seek to file offset");
         return 0;
     }
     if (mprPutFileChar(fp->file, c) < 0) {
-        ejsThrowIOError(ejs, "Can't write file");
+        ejsThrowIOError(ejs, "Cannot write file");
         return 0;
     }
 #endif
@@ -243,9 +243,9 @@ static EjsObj *closeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     if (fp->mode & EJS_FILE_OPEN && fp->mode & EJS_FILE_WRITE) {
         if (mprFlushFile(fp->file) < 0) {
             if (ejs) {
-                ejsThrowIOError(ejs, "Can't flush file data");
+                ejsThrowIOError(ejs, "Cannot flush file data");
             } else {
-                mprError("Can't flush file data");
+                mprError("Cannot flush file data");
             }
             return 0;
         }
@@ -316,7 +316,7 @@ static EjsObj *nextValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 #if !BIT_CC_MMU || 1
         if (mprSeekFile(fp->file, SEEK_CUR, 0) != ip->index) {
             if (mprSeekFile(fp->file, SEEK_SET, ip->index) != ip->index) {
-                ejsThrowIOError(ejs, "Can't seek to %d", ip->index);
+                ejsThrowIOError(ejs, "Cannot seek to %d", ip->index);
                 return 0;
             }
         }
@@ -390,7 +390,7 @@ static EjsObj *setFilePosition(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     }
     pos = ejsGetInt(ejs, argv[0]);
     if (mprSeekFile(fp->file, SEEK_SET, pos) != pos) {
-        ejsThrowIOError(ejs, "Can't seek to %Ld", pos);
+        ejsThrowIOError(ejs, "Cannot seek to %Ld", pos);
     }
     return 0;
 }
@@ -453,7 +453,7 @@ static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     }
     fp->file = mprOpenFile(fp->path, omode, perms);
     if (fp->file == 0) {
-        ejsThrowIOError(ejs, "Can't open %s", fp->path);
+        ejsThrowIOError(ejs, "Cannot open %s", fp->path);
         return 0;
     }
     if (options) {
@@ -523,7 +523,7 @@ static EjsObj *readFileBytes(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     }
     totalRead = readData(ejs, fp, result, 0, count);
     if (totalRead < 0) {
-        ejsThrowIOError(ejs, "Can't read from file: %s", fp->path);
+        ejsThrowIOError(ejs, "Cannot read from file: %s", fp->path);
         return 0;
     } else if (totalRead == 0) {
         return ESV(null);
@@ -578,7 +578,7 @@ static EjsString *readFileString(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     }
     totalRead = mprReadFile(fp->file, result->value, count);
     if (totalRead != count) {
-        ejsThrowIOError(ejs, "Can't read from file: %s", fp->path);
+        ejsThrowIOError(ejs, "Cannot read from file: %s", fp->path);
         return 0;
     }
     return ejsInternString(result);
@@ -720,7 +720,7 @@ PUBLIC EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         }
         if (mprWriteFile(fp->file, buf, len) != len) {
             mprLog(0, "Write IO error %d\n", mprGetOsError());
-            ejsThrowIOError(ejs, "Can't write to %s", fp->path);
+            ejsThrowIOError(ejs, "Cannot write to %s", fp->path);
             return 0;
         }
         written += len;

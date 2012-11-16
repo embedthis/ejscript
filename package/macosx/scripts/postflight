@@ -10,4 +10,5 @@ INS_DIR="$2"
 BIN_DIR="${prefixes.bin}"
 
 ${BIN_DIR}/linkup Install
+
 exit 0
