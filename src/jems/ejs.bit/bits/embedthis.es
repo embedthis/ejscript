@@ -696,8 +696,8 @@ public function checkUninstalled() {
 public function installPackage() {
     let s = bit.settings
     let package
-    if (App.uid != 0) throw 'Must be root to install'
     if (Config.OS == 'macosx') {
+        if (App.uid != 0) throw 'Must be root to install'
         package = s.product + '-' + s.version + '-' + s.buildNumber + '-apple-macosx-x64.pkg'
         trace('Install', package)
         run('installer -target / -package ' + bit.dir.rel.join(package), {noshow: true})
@@ -709,7 +709,7 @@ public function installPackage() {
 }
 
 public function uninstallPackage() {
-    if (App.uid != 0) throw 'Must be root to install'
+    if (Config.OS == 'macosx' && App.uid != 0) throw 'Must be root to install'
     trace('Uninstall', bit.prefixes.bin.join('uninstall'))
     run(bit.prefixes.bin.join('uninstall'), {noshow: true})
 }
