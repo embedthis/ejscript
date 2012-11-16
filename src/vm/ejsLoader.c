@@ -97,7 +97,7 @@ static int initializeModule(Ejs *ejs, EjsModule *mp)
             nativeModule = ejsLookupNativeModule(ejs, ejsToMulti(ejs, mp->name));
             if (nativeModule == NULL) {
                 if (ejs->exception == 0) {
-                    ejsThrowIOError(ejs, "Can't load or initialize the native module %@ in file \"%s\"", mp->name, mp->path);
+                    ejsThrowIOError(ejs, "Cannot load or initialize the native module %@ in file \"%s\"", mp->name, mp->path);
                 }
                 return MPR_ERR_CANT_INITIALIZE;
             }
@@ -137,13 +137,13 @@ static char *search(Ejs *ejs, cchar *filename, int minVersion, int maxVersion)
     assure(filename && *filename);
 
     if ((path = ejsSearchForModule(ejs, filename, minVersion, maxVersion)) == 0) {
-        mprLog(2, "Can't find module file \"%s\"", filename);
+        mprLog(2, "Cannot find module file \"%s\"", filename);
         if (minVersion <= 0 && maxVersion <= 0) {
-            ejsThrowReferenceError(ejs,  "Can't find module file \"%s\"", filename);
+            ejsThrowReferenceError(ejs,  "Cannot find module file \"%s\"", filename);
         } else if (minVersion == 0 && maxVersion == EJS_MAX_VERSION) {
-            ejsThrowReferenceError(ejs,  "Can't find module file \"%s\"", filename);
+            ejsThrowReferenceError(ejs,  "Cannot find module file \"%s\"", filename);
         } else {
-            ejsThrowReferenceError(ejs,  "Can't find module file \"%s\", min version %d.%d.%d, max version %d.%d.%d", 
+            ejsThrowReferenceError(ejs,  "Cannot find module file \"%s\", min version %d.%d.%d, max version %d.%d.%d", 
                 filename, 
                 EJS_MAJOR(minVersion), EJS_MINOR(minVersion), EJS_PATCH(minVersion),
                 EJS_MAJOR(maxVersion), EJS_MINOR(maxVersion), EJS_PATCH(maxVersion));
@@ -395,7 +395,7 @@ static int loadDependencySection(Ejs *ejs, EjsModule *mp)
     }
     if ((module = ejsLookupModule(ejs, name, minVersion, maxVersion)) != 0) {
         if (checksum != module->checksum) {
-            ejsThrowIOError(ejs, "Can't load module \"%@\" due to checksum mismatch.\n"
+            ejsThrowIOError(ejs, "Cannot load module \"%@\" due to checksum mismatch.\n"
                 "The program was compiled depending on a different version of module \"%@\".", mp->name, name);
             return MPR_ERR_BAD_STATE;
         }
@@ -496,13 +496,13 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
 
         type = ejsCreateType(ejs, qname, mp, baseType, NULL, slotNum, numTypeProp, numInstanceProp, 0, 0, attributes);
         if (type == 0) {
-            ejsThrowInternalError(ejs, "Can't create class %@", qname.name);
+            ejsThrowInternalError(ejs, "Cannot create class %@", qname.name);
             return MPR_ERR_BAD_STATE;
         }
 
     } else {
         if (ejsConfigureType(ejs, type, mp, baseType, numTypeProp, numInstanceProp, attributes) < 0) {
-            ejsThrowInternalError(ejs, "Can't configure class %@", qname.name);
+            ejsThrowInternalError(ejs, "Cannot configure class %@", qname.name);
             return MPR_ERR_BAD_STATE;
         }
         mp->hasNative = 1;
@@ -966,7 +966,7 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
         return MPR_ERR_CANT_ACCESS;
     }
     if ((file = mprOpenFile(path, O_RDONLY | O_BINARY, 0666)) == NULL) {
-        ejsThrowIOError(ejs, "Can't open module file %s", path);
+        ejsThrowIOError(ejs, "Cannot open module file %s", path);
         return MPR_ERR_CANT_OPEN;
     }
     mprLog(5, "Loading module %s", path);
@@ -978,7 +978,7 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
      */
     status = 0;
     if ((mprReadFile(file, &hdr, sizeof(hdr))) != sizeof(hdr)) {
-        ejsThrowIOError(ejs, "Can't read module file %s, corrupt header", path);
+        ejsThrowIOError(ejs, "Cannot read module file %s, corrupt header", path);
         status = MPR_ERR_CANT_LOAD;
 
     } else if ((int) ejsSwapInt32(ejs, hdr.magic) != EJS_MODULE_MAGIC) {
@@ -995,7 +995,7 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
         }
         if ((status = loadSections(ejs, file, path, &hdr, flags)) < 0) {
             if (ejs->exception == 0) {
-                ejsThrowReferenceError(ejs, "Can't load module file %s", path);
+                ejsThrowReferenceError(ejs, "Cannot load module file %s", path);
                 status = MPR_ERR_CANT_LOAD;
             }
         }
@@ -1031,7 +1031,7 @@ static int fixupTypes(Ejs *ejs, MprList *list)
         }
         if (type == 0) {
             if (fixup->typeName.name) {
-                ejsThrowReferenceError(ejs, "Can't fixup forward type reference for \"%@\". Fixup kind %d", 
+                ejsThrowReferenceError(ejs, "Cannot fixup forward type reference for \"%@\". Fixup kind %d", 
                     fixup->typeName.name, fixup->kind);
             }
             return MPR_ERR_CANT_LOAD;

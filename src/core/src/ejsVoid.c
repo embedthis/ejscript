@@ -32,7 +32,7 @@ static EjsAny *castVoid(Ejs *ejs, EjsVoid *vp, EjsType *type)
         return ejsCreateUriFromAsc(ejs, "undefined");
             
     default:
-        ejsThrowTypeError(ejs, "Can't cast to this type");
+        ejsThrowTypeError(ejs, "Cannot cast to this type");
         return 0;
     }
 }

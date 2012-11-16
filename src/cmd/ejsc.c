@@ -46,7 +46,7 @@ MAIN(ejscMain, int argc, char **argv, char **envp)
     mprAddStandardSignals();
 
     if (mprStart() < 0) {
-        mprError("Can't start mpr services");
+        mprError("Cannot start mpr services");
         return EJS_ERR;
     }
     err = 0;
@@ -222,7 +222,7 @@ MAIN(ejscMain, int argc, char **argv, char **envp)
         bind = 1;
     }
     if (outputFile && noout) {
-        mprPrintfError("Can't use --out and --noout\n");
+        mprPrintfError("Cannot use --out and --noout\n");
         err++;
     }
     if (argc == nextArg) {
@@ -254,7 +254,7 @@ MAIN(ejscMain, int argc, char **argv, char **envp)
             "  --strict               # Default compilation mode to strict\n"
 #if FUTURE
             "  --sign certFile        # Sign the module file (not implemented) \n"
-            "  --strip                # Strip all symbolic names (Can't import)\n"
+            "  --strip                # Strip all symbolic names (Cannot import)\n"
             "  --tabwidth             # Tab width for '^' error reporting\n"
 #endif
             "  --version              # Emit the compiler version information\n"

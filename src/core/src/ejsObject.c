@@ -241,7 +241,7 @@ static EjsObj *obj_defineProperty(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
         attributes |= EJS_TRAIT_SETTER;
     }
     if (value && (get || set)) {
-        ejsThrowArgError(ejs, "Can't provide a value and getters or setters");
+        ejsThrowArgError(ejs, "Cannot provide a value and getters or setters");
         return 0;
     }
     if (get) {
@@ -254,7 +254,7 @@ static EjsObj *obj_defineProperty(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
     }
     assure((attributes & EJS_TRAIT_MASK) == attributes);
     if (ejsDefineProperty(ejs, obj, -1, qname, type, attributes, value) < 0) {
-        ejsThrowTypeError(ejs, "Can't define property %@", qname.name);
+        ejsThrowTypeError(ejs, "Cannot define property %@", qname.name);
     }
     return 0;
 }

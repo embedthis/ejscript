@@ -469,7 +469,7 @@ PUBLIC EcNode *ecParseFile(EcCompiler *cp, char *path)
     path = mprNormalizePath(path);
     if (cp->stream == 0) {
         if (ecOpenFileStream(cp, path) < 0) {
-            parseError(cp, "Can't open %s", path);
+            parseError(cp, "Cannot open %s", path);
             return 0;
         }
         opened = 1;
@@ -2491,10 +2491,10 @@ static EcNode *parseRegularExpression(EcCompiler *cp)
     updateDebug(cp);
 
     if (id != T_REGEXP) {
-        return LEAVE(cp, parseError(cp, "Can't parse regular expression"));
+        return LEAVE(cp, parseError(cp, "Cannot parse regular expression"));
     }
     if ((vp = (EjsObj*) ejsCreateRegExp(cp->ejs, tokenString(cp))) == NULL) {
-        return LEAVE(cp, parseError(cp, "Can't compile regular expression"));
+        return LEAVE(cp, parseError(cp, "Cannot compile regular expression"));
     }
     np = createNode(cp, N_LITERAL, NULL);
     np->literal.var = vp;
@@ -6644,7 +6644,7 @@ static EcNode *parseAnnotatableDirective(EcCompiler *cp, EcNode *attributes)
             if (attributes) {
                 nextAttribute->attributes |= attributes->attributes;
                 if (attributes->qname.space && nextAttribute->qname.space) {
-                    return LEAVE(cp, parseError(cp, "Can't define multiple namespaces for directive"));
+                    return LEAVE(cp, parseError(cp, "Cannot define multiple namespaces for directive"));
                 }
                 if (attributes->qname.space) {
                     nextAttribute->qname.space = attributes->qname.space;
@@ -6801,7 +6801,7 @@ static EcNode *parseAttribute(EcCompiler *cp)
     case T_STRING:
         if (!inClass && (subId == T_PRIVATE || subId ==  T_PROTECTED)) {
             getToken(cp);
-            return LEAVE(cp, parseError(cp, "Can't use private or protected in this context"));
+            return LEAVE(cp, parseError(cp, "Cannot use private or protected in this context"));
         }
         np = parseNamespaceAttribute(cp);
         break;

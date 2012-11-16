@@ -502,7 +502,7 @@ static EjsAny *castObj(Ejs *ejs, EjsObj *obj, EjsType *type)
         if (ejsIsA(ejs, obj, type)) {
             return obj;
         }
-        ejsThrowTypeError(ejs, "Can't cast to this type");
+        ejsThrowTypeError(ejs, "Cannot cast to this type");
         return 0;
     }
 }

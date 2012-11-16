@@ -197,7 +197,7 @@ PUBLIC int ecCodeGen(EcCompiler *cp)
 
     if (cp->outputFile) {
         if (flushModule(cp->file, cp->state->code) < 0) {
-            genError(cp, 0, "Can't write to module file %s", cp->outputFile);
+            genError(cp, 0, "Cannot write to module file %s", cp->outputFile);
         }
         mprCloseFile(cp->file);
     }
@@ -935,7 +935,7 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
     
     if (!lookup->bind || lookup->slotNum < 0) {
         /*
-            Unbound or Function expression or instance variable containing a function. Can't use fast path op codes below.
+            Unbound or Function expression or instance variable containing a function. Cannot use fast path op codes below.
          */
         if (left->kind == N_QNAME && !(left->name.nameExpr || left->name.qualifierExpr)) {
             argc = genCallArgs(cp, right);
@@ -3486,7 +3486,7 @@ static MprFile *openModuleFile(EcCompiler *cp, cchar *filename)
     }
     filename = mprJoinPath(cp->outputDir, filename);
     if ((cp->file = mprOpenFile(filename,  O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664)) == 0) {
-        genError(cp, 0, "Can't create module file \"%s\"", filename);
+        genError(cp, 0, "Cannot create module file \"%s\"", filename);
         return 0;
     }
 
@@ -3495,7 +3495,7 @@ static MprFile *openModuleFile(EcCompiler *cp, cchar *filename)
      */
     state->code = allocCodeBuffer(cp);
     if (ecCreateModuleHeader(cp) < 0) {
-        genError(cp, 0, "Can't write module file header");
+        genError(cp, 0, "Cannot write module file header");
         return 0;
     }
     return cp->file;
@@ -3833,7 +3833,7 @@ static void addDebugLine(EcCompiler *cp, EcCodeGen *code, int offset, wchar *sou
 {
     assure(code->debug == 0 || code->debug->magic == EJS_DEBUG_MAGIC);
     if (ejsAddDebugLine(cp->ejs, &code->debug, offset, source) < 0) {
-        genError(cp, 0, "Can't allocate memory for debug section");
+        genError(cp, 0, "Cannot allocate memory for debug section");
         return;
     }
 }
@@ -4108,12 +4108,12 @@ static void processModule(EcCompiler *cp, EjsModule *mp)
         }
     }
     if (ecCreateModuleSection(cp) < 0) {
-        genError(cp, 0, "Can't write module sections");
+        genError(cp, 0, "Cannot write module sections");
         LEAVE(cp);
         return;
     }
     if (flushModule(mp->file, code) < 0) {
-        genError(cp, 0, "Can't write to module file %s", mp->name);
+        genError(cp, 0, "Cannot write to module file %s", mp->name);
         LEAVE(cp);
         return;
     }

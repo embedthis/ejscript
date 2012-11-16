@@ -79,7 +79,7 @@ PUBLIC EjsAny *ejsDeserialize(Ejs *ejs, EjsString *str)
     if ((obj = parseLiteral(ejs, &js)) == 0) {
         if (js.error) {
             ejsThrowSyntaxError(ejs, 
-                "Can't parse object literal. Error at position %d.\n"
+                "Cannot parse object literal. Error at position %d.\n"
                 "===========================\n"
                 "Offending text: %w\n"
                 "===========================\n"
@@ -87,7 +87,7 @@ PUBLIC EjsAny *ejsDeserialize(Ejs *ejs, EjsString *str)
                 "\n===========================\n",
                 (int) (js.error - js.data), js.error, js.data);
         } else {
-            ejsThrowSyntaxError(ejs, "Can't parse object literal. Undefined error");
+            ejsThrowSyntaxError(ejs, "Cannot parse object literal. Undefined error");
         }
         return 0;
     }
@@ -613,7 +613,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
             }
             if (sv == 0 || !ejsIs(ejs, sv, String)) {
                 if (ejs->exception) {
-                    ejsThrowTypeError(ejs, "Can't serialize property %@", qname.name);
+                    ejsThrowTypeError(ejs, "Cannot serialize property %@", qname.name);
                     SET_VISITED(obj, 0);
                     return 0;
                 }

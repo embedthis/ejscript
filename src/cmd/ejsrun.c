@@ -39,7 +39,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     mprAddStandardSignals();
 
     if (mprStart(mpr) < 0) {
-        mprError("Can't start mpr services");
+        mprError("Cannot start mpr services");
         return EJS_ERR;
     }
     err = 0;
@@ -58,7 +58,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             } else {
                 homeDir = argv[++nextArg];
                 if (chdir((char*) homeDir) < 0) {
-                    mprError("Can't change directory to %s", homeDir);
+                    mprError("Cannot change directory to %s", homeDir);
                 }
             }
 
@@ -117,7 +117,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     ecSetWarnLevel(ec, 1);
     if (ecCompile(ec, 1, (char**) &path) < 0) {
         if (flags & EC_FLAGS_THROW) {
-            ejsThrowSyntaxError(ejs, "%s", ec->errorMsg ? ec->errorMsg : "Can't parse script");
+            ejsThrowSyntaxError(ejs, "%s", ec->errorMsg ? ec->errorMsg : "Cannot parse script");
             ejsReportError(ejs, "Error in script");
         }
         err = MPR_ERR;

@@ -48,7 +48,7 @@ static EjsAny *castDate(Ejs *ejs, EjsDate *dp, EjsType *type)
         return ejsCreateStringFromAsc(ejs, mprFormatLocalTime("%a %b %d %Y %T GMT%z (%Z)", dp->value));
 
     default:
-        ejsThrowTypeError(ejs, "Can't cast to this type");
+        ejsThrowTypeError(ejs, "Cannot cast to this type");
         return 0;
     }
     return 0;
@@ -273,14 +273,14 @@ static EjsDate *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
 
         } else if (ejsIs(ejs, vp, String)) {
             if (mprParseTime(&date->value, ejsToMulti(ejs, vp), MPR_LOCAL_TIMEZONE, NULL) < 0) {
-                ejsThrowArgError(ejs, "Can't parse date string: %@", ejsToString(ejs, vp));
+                ejsThrowArgError(ejs, "Cannot parse date string: %@", ejsToString(ejs, vp));
                 return 0;
             }
         } else if (ejsIs(ejs, vp, Date)) {
             date->value = ((EjsDate*) vp)->value;
 
         } else {
-            ejsThrowArgError(ejs, "Can't construct date from this argument");
+            ejsThrowArgError(ejs, "Cannot construct date from this argument");
             return 0;
         }
 
@@ -318,7 +318,7 @@ static EjsDate *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
         }
         date->value = mprMakeTime(&tm);
         if (date->value == -1) {
-            ejsThrowArgError(ejs, "Can't construct date from this argument");
+            ejsThrowArgError(ejs, "Cannot construct date from this argument");
         } else if (args->length > 6) {
             vp = ejsGetProperty(ejs, args, 6);
             date->value += getNumber(ejs, vp);
@@ -706,7 +706,7 @@ static EjsNumber *date_parse(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
     MprTime     when;
 
     if (mprParseTime(&when, ejsToMulti(ejs, argv[0]), MPR_LOCAL_TIMEZONE, NULL) < 0) {
-        ejsThrowArgError(ejs, "Can't parse date string: %@", ejsToString(ejs, argv[0]));
+        ejsThrowArgError(ejs, "Cannot parse date string: %@", ejsToString(ejs, argv[0]));
         return 0;
     }
     return ejsCreateNumber(ejs, (MprNumber) when);
@@ -728,7 +728,7 @@ static EjsDate *date_parseDate(Ejs *ejs, EjsDate *unused, int argc, EjsObj **arg
         defaults = 0;
     }
     if (mprParseTime(&when, ejsToMulti(ejs, argv[0]), MPR_LOCAL_TIMEZONE, defaults) < 0) {
-        ejsThrowArgError(ejs, "Can't parse date string: %@", ejsToString(ejs, argv[0]));
+        ejsThrowArgError(ejs, "Cannot parse date string: %@", ejsToString(ejs, argv[0]));
         return 0;
     }
     return ejsCreateDate(ejs, when);
@@ -750,7 +750,7 @@ static EjsDate *date_parseUTCDate(Ejs *ejs, EjsDate *unused, int argc, EjsObj **
         defaults = 0;
     }
     if (mprParseTime(&when, ejsToMulti(ejs, argv[0]), MPR_UTC_TIMEZONE, defaults) < 0) {
-        ejsThrowArgError(ejs, "Can't parse date string: %@", ejsToString(ejs, argv[0]));
+        ejsThrowArgError(ejs, "Cannot parse date string: %@", ejsToString(ejs, argv[0]));
         return 0;
     }
     return ejsCreateDate(ejs, when);

@@ -64,7 +64,7 @@ unset CDPATH
 #
 
 yesno() {
-	if [ "$${PRODUCT}_HEADLESS" = 1 ] ; then
+	if [ "$${HEADLESS}" = 1 ] ; then
 		echo "Y"
 		return
 	fi

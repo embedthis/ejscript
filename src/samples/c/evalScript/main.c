@@ -21,7 +21,7 @@ MAIN(evalScript, int argc, char **argv, char **envp)
         Evaluate the command line
      */
     if (ejsEvalScript(argv[1]) < 0) {
-        fprintf(stderr, "Can't evaluate %s\n", argv[1]);
+        fprintf(stderr, "Cannot evaluate %s\n", argv[1]);
         exit(1);
     }
     return 0;

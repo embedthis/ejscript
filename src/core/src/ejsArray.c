@@ -64,7 +64,7 @@ static EjsAny *castArray(Ejs *ejs, EjsArray *vp, EjsType *type)
         return arrayToString(ejs, vp, 0, 0);
 
     default:
-        ejsThrowTypeError(ejs, "Can't cast to this type");
+        ejsThrowTypeError(ejs, "Cannot cast to this type");
         return 0;
     }
     return 0;

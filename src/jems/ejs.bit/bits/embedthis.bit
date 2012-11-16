@@ -121,19 +121,20 @@ Bit.load({
         },
 
         unit_test: {
-            /* This target is used if the product doesn't supply a 'test' target */
             type: 'test',
             action: "
-                let utest = bit.packs.utest ? bit.packs.utest.path : null
-                if (!utest) {
-                    utest = Cmd.locate('utest', [bit.dir.top.join(bit.platform.configuration, 'bin/utest'), App.exeDir])
-                }
-                if (utest) {
-                    if (bit.dir.src.join('src').exists) {
-                        run([utest, '-v', '-d', bit.settings.depth], {noio: true, dir: bit.dir.src.join('src')})
+                if (!bit.targets.test) {
+                    let utest = bit.packs.utest ? bit.packs.utest.path : null
+                    if (!utest) {
+                        utest = Cmd.locate('utest', [bit.dir.top.join(bit.platform.configuration, 'bin/utest'), App.exeDir])
                     }
-                } else {
-                    trace('Test', 'The utest program cannot be located')
+                    if (utest) {
+                        if (bit.dir.src.join('src').exists) {
+                            run([utest, '-v', '-d', bit.settings.depth], {noio: true, dir: bit.dir.src.join('src')})
+                        }
+                    } else {
+                        trace('Test', 'The utest program cannot be located')
+                    }
                 }
             ",
         }
@@ -207,23 +208,48 @@ Bit.load({
                 } else {
                     trace('Skip', 'tidy bacause ' + bit.packs.dsi.diagnostic)
                 }
-            "
+            ",
         },
 
         checkInstalled: {
             action: "
-                let present
-                for each (prefix in bit.prefixes) {
-                    if (prefix.exists) {
-                        trace('Exists', prefix)
-                        let files = prefix.files('**')
-                        if (files.length > 0) {
-                            trace('Exists', files.join(', '))
-                        }
-                        present = true
-                    }
+                let missing = checkInstalled()
+                if (missing.length > 0) {
+                    trace('Missing', missing)
+                    throw 'Missing directories: ' + missing.join(' ')
                 }
-            "
+                trace('Installed', 'Products directories are created')
+            ",
+        },
+
+        checkUninstalled: {
+            action: "
+                let existing = checkUninstalled()
+                if (existing.length > 0) {
+                    trace('Existing', existing)
+                    throw 'Existing directories: ' + existing.join(' ')
+                } else {
+                    trace('Info', 'Product is not installed')
+                }
+            ",
+        },
+
+        installPackage: {
+            action: "
+                installPackage()
+            ",
+        },
+
+        uninstallPackage: {
+            action: "
+                uninstallPackage()
+            ",
+        },
+
+        whatInstalled: {
+            action: "
+                whatInstalled()
+            ",
         },
     },
 })

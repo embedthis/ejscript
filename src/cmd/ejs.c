@@ -60,7 +60,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     mprAddStandardSignals();
 
     if (mprStart(mpr) < 0) {
-        mprError("Can't start mpr services");
+        mprError("Cannot start mpr services");
         return EJS_ERR;
     }
     err = 0;
@@ -102,7 +102,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             } else {
                 homeDir = argv[++nextArg];
                 if (chdir((char*) homeDir) < 0) {
-                    mprError("Can't change directory to %s", homeDir);
+                    mprError("Cannot change directory to %s", homeDir);
                 }
             }
 
@@ -117,7 +117,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
                     if (errno == EPERM) {
                         mprPrintfError("%s: Must be super user to use the --chroot option", mprGetAppName(mpr));
                     } else {
-                        mprPrintfError("%s: Can't change change root directory to %s, errno %d",
+                        mprPrintfError("%s: Cannot change change root directory to %s, errno %d",
                             mprGetAppName(), homeDir, errno);
                     }
                     return 4;
@@ -412,7 +412,7 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
     cp->interactive = 1;
 
     if (ecOpenConsoleStream(cp, (cmd) ? commandGets: consoleGets, cmd) < 0) {
-        mprError("Can't open input");
+        mprError("Cannot open input");
         return EJS_ERR;
     }
     tmpArgv[0] = EC_INPUT_STREAM;

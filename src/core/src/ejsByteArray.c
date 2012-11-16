@@ -55,7 +55,7 @@ static EjsAny *castByteArrayVar(Ejs *ejs, EjsByteArray *vp, EjsType *type)
         return ba_toString(ejs, vp, 0, 0);
 
     default:
-        ejsThrowTypeError(ejs, "Can't cast to this type");
+        ejsThrowTypeError(ejs, "Cannot cast to this type");
         return 0;
     }
 }

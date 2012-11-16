@@ -121,7 +121,7 @@ static EjsAny *castXml(Ejs *ejs, EjsXML *xml, EjsType *type)
         return ejsCreateStringFromAsc(ejs, (char*) buf->start);
 
     default:
-        ejsThrowTypeError(ejs, "Can't cast to this type");
+        ejsThrowTypeError(ejs, "Cannot cast to this type");
         return 0;
     }
     return 0;
@@ -699,7 +699,7 @@ static EjsObj *loadXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
     filename = ejsToMulti(ejs, argv[0]);
     file = mprOpenFile(filename, O_RDONLY, 0664);
     if (file == 0) {
-        ejsThrowIOError(ejs, "Can't open: %s", filename);
+        ejsThrowIOError(ejs, "Cannot open: %s", filename);
         return 0;
     }
     //  TODO - convert to open/close
@@ -712,7 +712,7 @@ static EjsObj *loadXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
     mprXmlSetInputStream(xp, readFileData, (void*) file);
 
     if (mprXmlParse(xp) < 0 && !ejsHasException(ejs)) {
-        ejsThrowIOError(ejs, "Can't parse XML file: %s\nDetails %s",  filename, mprXmlGetErrorMsg(xp));
+        ejsThrowIOError(ejs, "Cannot parse XML file: %s\nDetails %s",  filename, mprXmlGetErrorMsg(xp));
     }
     mprCloseFile(file);
     return 0;
@@ -743,13 +743,13 @@ static EjsObj *saveXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
     }
     file = mprOpenFile(filename,  O_CREAT | O_TRUNC | O_WRONLY | O_TEXT, 0664);
     if (file == 0) {
-        ejsThrowIOError(ejs, "Can't open: %s, %d", filename, mprGetOsError(ejs));
+        ejsThrowIOError(ejs, "Cannot open: %s, %d", filename, mprGetOsError(ejs));
         return 0;
     }
     len = mprGetBufLength(buf);
     bytes = mprWriteFile(file, buf->start, len);
     if (bytes != len) {
-        ejsThrowIOError(ejs, "Can't write to: %s", filename);
+        ejsThrowIOError(ejs, "Cannot write to: %s", filename);
         mprCloseFile(file);
         return 0;
     }
@@ -1020,7 +1020,7 @@ PUBLIC void ejsLoadXMLString(Ejs *ejs, EjsXML *xml, EjsString *xmlString)
     mprXmlSetInputStream(xp, readStringData, (void*) 0);
 
     if (mprXmlParse(xp) < 0 && !ejsHasException(ejs)) {
-        ejsThrowSyntaxError(ejs, "Can't parse XML string: %s", mprXmlGetErrorMsg(xp));
+        ejsThrowSyntaxError(ejs, "Cannot parse XML string: %s", mprXmlGetErrorMsg(xp));
     }
 }
 

@@ -156,12 +156,12 @@ static void generateImages(EjsMod *mp)
         mprMakeDir(mprGetPathDir(path), 0775, -1, -1, 1);
         file = mprOpenFile(path, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0644);
         if (file == 0) {
-            mprError("Can't create %s", path);
+            mprError("Cannot create %s", path);
             mp->errorCount++;
             return;
         }
         if (mprWriteFile(file, df->data, df->size) != df->size) {
-            mprError("Can't write to buffer");
+            mprError("Cannot write to buffer");
             mp->errorCount++;
             return;
         }
@@ -665,7 +665,7 @@ static MprFile *createFile(EjsMod *mp, char *name)
     path = mp->path = mprJoinPath(mp->docDir, name);
     file = mprOpenFile(path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (file == 0) {
-        mprError("Can't open %s", path);
+        mprError("Cannot open %s", path);
         mp->errorCount++;
         return 0;
     }
@@ -1675,7 +1675,7 @@ static wchar *mergeDuplicates(Ejs *ejs, EjsMod *mp, EjsName qname, EjsDoc *doc, 
             break;
         }
         if ((dup = getDuplicateDoc(ejs, duplicate)) == 0) {
-            mprError("Can't find @duplicate directive %s for %s", duplicate, qname.name);
+            mprError("Cannot find @duplicate directive %s for %s", duplicate, qname.name);
         } else {
             crackDoc(mp, dup, WEN(duplicate));
             mprCopyListContents(doc->params, dup->params);
@@ -1828,7 +1828,7 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
         if (match(token, "duplicate")) {
             duplicate = mtrim(line, " \t\n", MPR_TRIM_BOTH);
             if ((dup = getDuplicateDoc(ejs, duplicate)) == 0) {
-                mprError("Can't find @duplicate directive %s for %@", duplicate, qname.name);
+                mprError("Cannot find @duplicate directive %s for %@", duplicate, qname.name);
             } else {
                 crackDoc(mp, dup, WEN(duplicate));
                 mprCopyListContents(doc->params, dup->params);
@@ -2179,7 +2179,7 @@ static void out(EjsMod *mp, char *fmt, ...)
     if (mp->file == 0) {
         mp->file = mprOpenFile(mp->path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
         if (mp->file == 0) {
-            mprError("Can't open %s", mp->path);
+            mprError("Cannot open %s", mp->path);
             mp->errorCount++;
             return;
         }
@@ -2187,7 +2187,7 @@ static void out(EjsMod *mp, char *fmt, ...)
     va_start(args, fmt);
     buf = sfmtv(fmt, args);
     if (mprWriteFileString(mp->file, buf) < 0) {
-        mprError("Can't write to buffer");
+        mprError("Cannot write to buffer");
     }
 }
 

@@ -23,7 +23,7 @@ static EjsAny *castNamespace(Ejs *ejs, EjsNamespace *vp, EjsType *type)
         return vp->value;
 
     default:
-        ejsThrowTypeError(ejs, "Can't cast to this type");
+        ejsThrowTypeError(ejs, "Cannot cast to this type");
         return 0;
     }
 }

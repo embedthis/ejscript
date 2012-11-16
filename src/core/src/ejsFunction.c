@@ -47,7 +47,7 @@ static EjsAny *castFunction(Ejs *ejs, EjsFunction *vp, EjsType *type)
         return ESV(true);
             
     default:
-        ejsThrowTypeError(ejs, "Can't cast type \"%@\"", type->qname.name);
+        ejsThrowTypeError(ejs, "Cannot cast type \"%@\"", type->qname.name);
         return 0;
     }
     return 0;

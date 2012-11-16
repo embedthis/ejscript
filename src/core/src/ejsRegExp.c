@@ -32,7 +32,7 @@ static EjsAny *castRegExp(Ejs *ejs, EjsRegExp *rp, EjsType *type)
         return ejsSprintf(ejs, "/%w/%s", rp->pattern, flags);
 
     default:
-        ejsThrowTypeError(ejs, "Can't cast to this type");
+        ejsThrowTypeError(ejs, "Cannot cast to this type");
         return 0;
     }
     return 0;
@@ -61,7 +61,7 @@ static EjsRegExp *regex_Constructor(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **
         free(rp->compiled);
     }
     if ((rp->compiled = pcre_compile2(rp->pattern, rp->options, &errCode, &errMsg, &column, NULL)) == 0) {
-        ejsThrowArgError(ejs, "Can't compile regular expression '%s'. Error %s at column %d", rp->pattern, errMsg, column);
+        ejsThrowArgError(ejs, "Cannot compile regular expression '%s'. Error %s at column %d", rp->pattern, errMsg, column);
         return 0;
     }
     return rp;
@@ -220,7 +220,7 @@ PUBLIC EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
         //  TODO - UNICODE is pattern meant to be 
         rp->compiled = pcre_compile2(rp->pattern, rp->options, &errCode, &errMsg, &column, NULL);
         if (rp->compiled == NULL) {
-            ejsThrowArgError(ejs, "Can't compile regular expression '%s'. Error %s at column %d", rp->pattern, errMsg, column);
+            ejsThrowArgError(ejs, "Cannot compile regular expression '%s'. Error %s at column %d", rp->pattern, errMsg, column);
             return 0;
         }
     }

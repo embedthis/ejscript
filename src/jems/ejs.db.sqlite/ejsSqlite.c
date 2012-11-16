@@ -88,7 +88,7 @@ static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **arg
         }
         if (strstr(path, "://") == NULL) {
             if (sqlite3_open(path, &sdb) != SQLITE_OK) {
-                ejsThrowIOError(ejs, "Can't open database %s", path);
+                ejsThrowIOError(ejs, "Cannot open database %s", path);
                 return 0;
             }
             //  MOB - should be configurable somewhere
@@ -176,7 +176,7 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
                     return 0;
                 }
                 if (ejsSetProperty(ejs, (EjsObj*) result, rowNum, (EjsObj*) row) < 0) {
-                    ejsThrowIOError(ejs, "Can't update query result set");
+                    ejsThrowIOError(ejs, "Cannot update query result set");
                     return 0;
                 }
                 for (i = 0; i < ncol; i++) {
@@ -214,7 +214,7 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
                     if (ejsLookupProperty(ejs, (EjsObj*) row, qname) < 0) {
                         svalue = (EjsObj*) ejsCreateStringFromMulti(ejs, value, slen(value));
                         if (ejsSetPropertyByName(ejs, (EjsObj*) row, qname, svalue) < 0) {
-                            ejsThrowIOError(ejs, "Can't update query result set name");
+                            ejsThrowIOError(ejs, "Cannot update query result set name");
                             return 0;
                         }
                     }
@@ -410,7 +410,7 @@ static void initSqlite()
 #endif
         sqlite3_config(THREAD_STYLE);
         if (sqlite3_initialize() != SQLITE_OK) {
-            mprError("Can't initialize SQLite");
+            mprError("Cannot initialize SQLite");
             return;
         }
         sqliteInitialized = 1;
@@ -442,7 +442,7 @@ static int configureSqliteTypes(Ejs *ejs)
 #endif
     sqlite3_config(THREAD_STYLE);
     if (sqlite3_initialize() != SQLITE_OK) {
-        mprError("Can't initialize SQLite");
+        mprError("Cannot initialize SQLite");
         return MPR_ERR_CANT_INITIALIZE;
     }
 #endif

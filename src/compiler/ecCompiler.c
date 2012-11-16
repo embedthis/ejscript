@@ -165,7 +165,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
                  */
                 for (next = nextModule; (mp = mprGetNextItem(ejs->modules, &next)) != 0; ) {
                     if (mprLookupItem(cp->modules, mp) < 0 && mprAddItem(cp->modules, mp) < 0) {
-                        compileError(cp, "Can't add module %s", mp->name);
+                        compileError(cp, "Cannot add module %s", mp->name);
                     }
                 }
             }
@@ -276,7 +276,7 @@ PUBLIC int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags)
     }
     if (ecCompile(ec, 1, (char**) &path) < 0) {
         if (flags & EC_FLAGS_THROW && !ejs->exception) {
-            ejsThrowSyntaxError(ejs, "%s", ec->errorMsg ? ec->errorMsg : "Can't parse script");
+            ejsThrowSyntaxError(ejs, "%s", ec->errorMsg ? ec->errorMsg : "Cannot parse script");
         }
         mprRemoveRoot(ec);
         return EJS_ERR;
@@ -309,14 +309,14 @@ PUBLIC int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int f
     }
     //  UNICODE -- should this API be multi or unicode
     if (ecOpenMemoryStream(cp, ejsToMulti(ejs, script), script->length) < 0) {
-        mprError("Can't open memory stream");
+        mprError("Cannot open memory stream");
         mprRemoveRoot(cp);
         return EJS_ERR;
     }
     path = "__script__";
     if (ecCompile(cp, 1, (char**) &path) < 0) {
         if (flags & EC_FLAGS_THROW) {
-            ejsThrowSyntaxError(ejs, "%s", cp->errorMsg ? cp->errorMsg : "Can't parse script");
+            ejsThrowSyntaxError(ejs, "%s", cp->errorMsg ? cp->errorMsg : "Cannot parse script");
         }
         mprRemoveRoot(cp);
         return EJS_ERR;

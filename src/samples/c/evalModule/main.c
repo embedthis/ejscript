@@ -16,7 +16,7 @@ int main(int argc, char **argv)
         Load the module and evaluate
      */
     if (ejsEvalModule("test.mod") < 0) {
-        fprintf(stderr, "Can't load test.mod\n");
+        fprintf(stderr, "Cannot load test.mod\n");
         exit(1);
     }
     return 0;

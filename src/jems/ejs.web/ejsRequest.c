@@ -1177,7 +1177,7 @@ static EjsNumber *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     assure(count > 0);
     nbytes = httpRead(req->conn, (char*) &ba->value[offset], count);
     if (nbytes < 0) {
-        ejsThrowIOError(ejs, "Can't read from socket");
+        ejsThrowIOError(ejs, "Cannot read from socket");
         return 0;
     }
     if (nbytes == 0) {

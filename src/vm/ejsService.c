@@ -114,7 +114,7 @@ Ejs *ejsCreateVM(int argc, cchar **argv, int flags)
 
     if (ejs->hasError || mprHasMemError(ejs)) {
         ejsDestroyVM(ejs);
-        mprError("Can't create VM");
+        mprError("Cannot create VM");
         return 0;
     }
     mprLog(5, "ejs: create VM");
@@ -166,7 +166,7 @@ int ejsLoadModules(Ejs *ejs, cchar *search, MprList *require)
     lock(sp);
     if (loadRequiredModules(ejs, require) < 0) {
         if (ejs->exception) {
-            ejsReportError(ejs, "Can't initialize interpreter");
+            ejsReportError(ejs, "Cannot initialize interpreter");
         }
         ejsDestroyVM(ejs);
         unlock(sp);
@@ -350,7 +350,7 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
                 script = ejsCreateStringFromAsc(pool->template, pool->templateScript);
                 paused = ejsBlockGC(pool->template);
                 if (ejsLoadScriptLiteral(pool->template, script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_BIND) < 0) {
-                    mprError("Can't execute \"%@\"\n%s", script, ejsGetErrorMsg(pool->template, 1));
+                    mprError("Cannot execute \"%@\"\n%s", script, ejsGetErrorMsg(pool->template, 1));
                     unlock(pool);
                     ejsUnblockGC(pool->template, paused);
                     return 0;
@@ -361,7 +361,7 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
         unlock(pool);
 
         if ((ejs = ejsCloneVM(pool->template)) == 0) {
-            mprMemoryError("Can't alloc ejs VM");
+            mprMemoryError("Cannot alloc ejs VM");
             return 0;
         }
         if (pool->hostedHome) {
@@ -370,14 +370,14 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
         mprAddRoot(ejs);
         if (pool->startScriptPath) {
             if (ejsLoadScriptFile(ejs, pool->startScriptPath, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_BIND) < 0) {
-                mprError("Can't load \"%s\"\n%s", pool->startScriptPath, ejsGetErrorMsg(ejs, 1));
+                mprError("Cannot load \"%s\"\n%s", pool->startScriptPath, ejsGetErrorMsg(ejs, 1));
                 mprRemoveRoot(ejs);
                 return 0;
             }
         } else if (pool->startScript) {
             script = ejsCreateStringFromAsc(ejs, pool->startScript);
             if (ejsLoadScriptLiteral(ejs, script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_BIND) < 0) {
-                mprError("Can't load \"%@\"\n%s", script, ejsGetErrorMsg(ejs, 1));
+                mprError("Cannot load \"%@\"\n%s", script, ejsGetErrorMsg(ejs, 1));
                 mprRemoveRoot(ejs);
                 return 0;
             }
@@ -774,7 +774,7 @@ static int runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName)
         type = (EjsType*) ejsGetPropertyByName(ejs, ejs->global, N(EJS_PUBLIC_NAMESPACE, className));
     }
     if (type == 0 || !ejsIsType(ejs, type)) {
-        mprError("Can't find class \"%s\"", className);
+        mprError("Cannot find class \"%s\"", className);
         return EJS_ERR;
     }
     slotNum = ejsLookupProperty(ejs, type, N(EJS_PUBLIC_NAMESPACE, methodName));
@@ -1071,7 +1071,7 @@ void ejsLoadHttpService(Ejs *ejs)
     }
     ejs->http = ejs->service->http = mprGetMpr()->httpService;
     if (ejs->http == 0) {
-        mprError("Can't load Http Service");
+        mprError("Cannot load Http Service");
     }
     ejsUnlockService();
 }

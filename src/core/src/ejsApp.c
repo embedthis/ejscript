@@ -65,7 +65,7 @@ static EjsObj *app_chdir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 #endif
     if (chdir((char*) path) < 0) {
-        ejsThrowIOError(ejs, "Can't change the current directory");
+        ejsThrowIOError(ejs, "Cannot change the current directory");
     }
     return 0;
 }

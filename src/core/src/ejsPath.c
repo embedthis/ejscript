@@ -235,7 +235,7 @@ static EjsObj *path_setAttributes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv
     attributes = argv[0];
     mprGetPathInfo(fp->value, &info);
     if (!info.valid) {
-        ejsThrowIOError(ejs, "Can't access %s", fp->value);
+        ejsThrowIOError(ejs, "Cannot access %s", fp->value);
         return 0;
     }
     ejsSetPathAttributes(ejs, fp->value, attributes);
@@ -297,7 +297,7 @@ PUBLIC int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *attributes)
     getUserGroup(ejs, attributes, &uid, &gid);
     if (uid >= 0 || gid >= 0) {
         if (chown(path, uid, gid) < 0) {
-            ejsThrowStateError(ejs, "Can't change group. Error %d", mprGetError());
+            ejsThrowStateError(ejs, "Cannot change group. Error %d", mprGetError());
         }
     }
 }
@@ -305,7 +305,7 @@ PUBLIC int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *attributes)
     if ((permissions = ejsGetPropertyByName(ejs, attributes, EN("permissions"))) != 0) {
         perms = ejsGetInt(ejs, permissions);
         if (chmod(path, perms) < 0) {
-            ejsThrowIOError(ejs, "Can't change permissions. Error %d", mprGetError());
+            ejsThrowIOError(ejs, "Cannot change permissions. Error %d", mprGetError());
         }
     }
     return 0;
@@ -333,11 +333,11 @@ static EjsObj *copyPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         return 0;
     }
     if ((from = mprOpenFile(fp->value, O_RDONLY | O_BINARY, 0)) == 0) {
-        ejsThrowIOError(ejs, "Can't open %s", fp->value);
+        ejsThrowIOError(ejs, "Cannot open %s", fp->value);
         return 0;
     }
     if ((to = mprOpenFile(toPath, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, EJS_FILE_PERMS)) == 0) {
-        ejsThrowIOError(ejs, "Can't create %s, errno %d", toPath, errno);
+        ejsThrowIOError(ejs, "Cannot create %s, errno %d", toPath, errno);
         mprCloseFile(from);
         return 0;
     }
@@ -550,7 +550,7 @@ static EjsArray *getPathFiles(Ejs *ejs, EjsArray *results, cchar *dir, int flags
 
     if ((list = mprGetPathFiles(dir, flags)) == 0) {
         if (flags & FILES_NOMATCH_EXC) {
-            ejsThrowIOError(ejs, "Can't read directory");
+            ejsThrowIOError(ejs, "Cannot read directory");
         }
         return results;
     }
@@ -569,7 +569,7 @@ static EjsArray *getPathFiles(Ejs *ejs, EjsArray *results, cchar *dir, int flags
     }
     if (ejsGetLength(ejs, results) == 0) {
         if (flags & FILES_NOMATCH_EXC) {
-            ejsThrowIOError(ejs, "Can't find any matching files for directory: %s", dir);
+            ejsThrowIOError(ejs, "Cannot find any matching files for directory: %s", dir);
         }
     }
     return results;
@@ -684,7 +684,7 @@ PUBLIC EjsArray *ejsGetPathFiles(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     }
     if (ejsGetLength(ejs, result) == 0) {
         if (flags & FILES_NOMATCH_EXC) {
-            ejsThrowIOError(ejs, "Can't find any matching files for patterns: %@", ejsToString(ejs, patterns));
+            ejsThrowIOError(ejs, "Cannot find any matching files for patterns: %@", ejsToString(ejs, patterns));
         } else if (fill) {
             ejsSetProperty(ejs, result, -1, fill);
         }
@@ -794,7 +794,7 @@ static EjsArray *globPath(Ejs *ejs, EjsArray *results, cchar *path, cchar *base,
 
     if ((list = mprGetPathFiles(path, flags | MPR_PATH_RELATIVE)) == 0) {
         if (flags & FILES_NOMATCH_EXC) {
-            ejsThrowIOError(ejs, "Can't read directory");
+            ejsThrowIOError(ejs, "Cannot read directory");
             return 0;
         }
         return results;
@@ -998,7 +998,7 @@ static void getUserGroup(Ejs *ejs, EjsObj *attributes, int *uid, int *gid)
         vp = ejsToString(ejs, vp);
         //  MOB - these are thread-safe on mac, but not on all systems. use getgrnam_r
         if ((gp = getgrnam(ejsToMulti(ejs, vp))) == 0) {
-            ejsThrowArgError(ejs, "Can't find group %@", vp);
+            ejsThrowArgError(ejs, "Cannot find group %@", vp);
             return;
         }
         *gid = gp->gr_gid;
@@ -1010,7 +1010,7 @@ static void getUserGroup(Ejs *ejs, EjsObj *attributes, int *uid, int *gid)
     }
     if ((vp = ejsGetPropertyByName(ejs, attributes, EN("user"))) != 0 && ejsIsDefined(ejs, vp)) {
         if ((pp = getpwnam(ejsToMulti(ejs, vp))) == 0) {
-            ejsThrowArgError(ejs, "Can't find user %@", vp);
+            ejsThrowArgError(ejs, "Cannot find user %@", vp);
             return;
         }
         *uid = pp->pw_uid;
@@ -1048,9 +1048,9 @@ static EjsObj *makePathDir(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     if (mprGetPathInfo(fp->value, &info) < 0) {
         if ((rc = mprMakeDir(fp->value, perms, uid, gid, 1)) < 0) {
             if (rc == MPR_ERR_CANT_COMPLETE) {
-                ejsThrowStateError(ejs, "Can't set directory permissions. Error %d", mprGetError());
+                ejsThrowStateError(ejs, "Cannot set directory permissions. Error %d", mprGetError());
             } else {
-                ejsThrowStateError(ejs, "Can't make directory. Error %d", mprGetError());
+                ejsThrowStateError(ejs, "Cannot make directory. Error %d", mprGetError());
             }
             return ESV(false);
         }
@@ -1074,7 +1074,7 @@ static EjsObj *makePathLink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     target = ((EjsPath*) argv[0])->value;
     hard = (argc >= 2) ? (argv[1] == ESV(true)) : 0;
     if (mprMakeLink(fp->value, target, hard) < 0) {
-        ejsThrowIOError(ejs, "Can't make link");
+        ejsThrowIOError(ejs, "Cannot make link");
     }
     return 0;
 }
@@ -1092,7 +1092,7 @@ static EjsPath *pathTemp(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     char    *path;
 
     if ((path = mprGetTempPath(fp->value)) == NULL) {
-        ejsThrowIOError(ejs, "Can't make temp file");
+        ejsThrowIOError(ejs, "Cannot make temp file");
         return 0;
     }
     return ejsCreatePathFromAsc(ejs, path);
@@ -1208,7 +1208,7 @@ static EjsObj *setPerms(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
     perms = ejsGetInt(ejs, argv[0]);
     if (chmod(fp->value, perms) < 0) {
-        ejsThrowIOError(ejs, "Can't update permissions for %s", fp->value);
+        ejsThrowIOError(ejs, "Cannot update permissions for %s", fp->value);
     }
 #endif
     return 0;
@@ -1253,7 +1253,7 @@ static EjsByteArray *readBytes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
     file = mprOpenFile(path, O_RDONLY | O_BINARY, 0);
     if (file == 0) {
-        ejsThrowIOError(ejs, "Can't open %s", path);
+        ejsThrowIOError(ejs, "Cannot open %s", path);
         return 0;
     }
 
@@ -1309,7 +1309,7 @@ static EjsArray *readLines(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
     file = mprOpenFile(path, O_RDONLY | O_BINARY, 0);
     if (file == 0) {
-        ejsThrowIOError(ejs, "Can't open %s", path);
+        ejsThrowIOError(ejs, "Cannot open %s", path);
         return 0;
     }
 
@@ -1373,7 +1373,7 @@ static EjsString *readFileAsString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **arg
 
     file = mprOpenFile(path, O_RDONLY | O_BINARY, 0);
     if (file == 0) {
-        ejsThrowIOError(ejs, "Can't open %s", path);
+        ejsThrowIOError(ejs, "Cannot open %s", path);
         return 0;
     }
 
@@ -1591,13 +1591,13 @@ static EjsVoid *path_symlink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     unlink(fp->value);
 #if BIT_UNIX_LIKE
     if (symlink(target, fp->value) < 0) {
-        ejsThrowIOError(ejs, "Can't create symlink %s to refer to %s, error %d", fp->value, target, errno);
+        ejsThrowIOError(ejs, "Cannot create symlink %s to refer to %s, error %d", fp->value, target, errno);
         return 0;
     }
 #else
     //  MOB - does not work for directories
     if (mprCopyPath(target, fp->value, 0644) < 0) {
-        ejsThrowIOError(ejs, "Can't copy %s to %s, error %d", target, fp->value, errno);
+        ejsThrowIOError(ejs, "Cannot copy %s to %s, error %d", target, fp->value, errno);
         return 0;
     }
 #endif
@@ -1658,7 +1658,7 @@ static EjsObj *truncatePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
     size = ejsGetInt(ejs, argv[0]);
     if (mprTruncateFile(fp->value, size) < 0) {
-        ejsThrowIOError(ejs, "Can't truncate %s", fp->value);
+        ejsThrowIOError(ejs, "Cannot truncate %s", fp->value);
     }
     return 0;
 }
@@ -1699,7 +1699,7 @@ static EjsObj *writeToFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     mprDeletePath(path);
     file = mprOpenFile(path, O_CREAT | O_WRONLY | O_BINARY, permissions);
     if (file == 0) {
-        ejsThrowIOError(ejs, "Can't create %s", path);
+        ejsThrowIOError(ejs, "Cannot create %s", path);
         mprCloseFile(file);
         return 0;
     }
