@@ -639,15 +639,19 @@ static EjsObj *http_set_retries(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
 
 /*  
-    function setCredentials(username: String, password: String): Void
+    function setCredentials(username: String?, password: String?, authType: String?): Void
  */
 static EjsObj *http_setCredentials(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
+    cchar   *authType, *password, *user;
+
+    user = (argc <= 0) ? 0 : ejsToMulti(ejs, argv[0]);
+    password = (argc <= 1) ? 0 : ejsToMulti(ejs, argv[1]);
+    authType = (argc <= 2) ? 0 : ejsToMulti(ejs, argv[2]);
     if (ejsIs(ejs, argv[0], Null)) {
         httpResetCredentials(hp->conn);
     } else {
-        httpSetCredentials(hp->conn, ejsToMulti(ejs, argv[0]), ejsToMulti(ejs, argv[1]));
-        hp->conn->authType = sclone("basic");
+        httpSetCredentials(hp->conn, user, password, authType);
     }
     return 0;
 }

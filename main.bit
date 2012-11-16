@@ -108,23 +108,25 @@ Bit.load({
         testPackage: {
             type: 'test',
             action: "
-                if (bit.prefixes.bin.join('uninstall').exists) {
-                    trace('Cleanup', 'Remove prior installation')
+                if (Config.OS == 'windows' || Config.OS == 'macosx') {
+                    if (bit.prefixes.bin.join('uninstall').exists) {
+                        trace('Cleanup', 'Remove prior installation')
+                        uninstallPackage()
+                        checkUninstalled()
+                    }
+                    installPackage()
+                    if (missing = checkInstalled()) {
+                        trace('Missing', missing)
+                    }
+                    let s = bit.settings
+                    trace('Test', 'ejs -V')
+                    assert(Cmd.run([bit.prefixes.bin.join('ejs'), '-V']).trim() == s.version + '-' + s.buildNumber)
+                    trace('Test', 'bit -V')
+                    assert(Cmd.run([bit.prefixes.bin.join('bit'), '-V']).trim() == s.version + '-' + s.buildNumber)
                     uninstallPackage()
-                    checkUninstalled()
-                }
-                installPackage()
-                if (missing = checkInstalled()) {
-                    trace('Missing', missing)
-                }
-                let s = bit.settings
-                trace('Test', 'ejs -V')
-                assert(Cmd.run([bit.prefixes.bin.join('ejs'), '-V']).trim() == s.version + '-' + s.buildNumber)
-                trace('Test', 'bit -V')
-                assert(Cmd.run([bit.prefixes.bin.join('bit'), '-V']).trim() == s.version + '-' + s.buildNumber)
-                uninstallPackage()
-                if (existing = checkUninstalled()) {
-                    trace('Existing', existing)
+                    if (existing = checkUninstalled()) {
+                        trace('Existing', existing)
+                    }
                 }
             ",
         },
