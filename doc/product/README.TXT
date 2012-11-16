@@ -7,7 +7,7 @@ This document describes the installation procedure for the binary Ejscript packa
 
 You can read the documentation for the latest release online at:
 
-    http://embedthis.com/products/ejs/doc/product/index.html
+    http://embedthis.com/products/ejs/doc/index.html
 
 This software is copyrighted and distributed under license. Please read the LICENSE.md for details.
 
