@@ -108,7 +108,7 @@ Bit.load({
         testPackage: {
             type: 'test',
             action: "
-                if (Config.OS == 'windows' || Config.OS == 'macosx') {
+                if (bit.settings.depth >= 2 && (Config.OS == 'windows' || Config.OS == 'macosx')) {
                     if (bit.prefixes.bin.join('uninstall').exists) {
                         trace('Cleanup', 'Remove prior installation')
                         uninstallPackage()
