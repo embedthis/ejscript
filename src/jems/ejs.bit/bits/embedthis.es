@@ -693,25 +693,40 @@ public function checkUninstalled() {
     return result.length > 0 ? result : null
 }
 
+public function packageName(): Path {
+    let s = bit.settings
+    let p = bit.platform
+    if (Config.OS == 'macosx') {
+        name = s.product + '-' + s.version + '-' + s.buildNumber + '-' + p.dist + '-' + p.os + '-' + p.arch + '.pkg'
+    } else if (Config.OS == 'windows') {
+        name = s.product + '-' + s.version + '-' + s.buildNumber + '-' + p.dist + '-' + p.os + '-x86.exe'
+    } else {
+        return null
+    }
+    return bit.dir.rel.join(name)
+
+}
 public function installPackage() {
     let s = bit.settings
-    let package
+    let package = packageName()
     if (Config.OS == 'macosx') {
         if (App.uid != 0) throw 'Must be root to install'
-        package = s.product + '-' + s.version + '-' + s.buildNumber + '-apple-macosx-x64.pkg'
-        trace('Install', package)
-        run('installer -target / -package ' + bit.dir.rel.join(package), {noshow: true})
+        trace('Install', package.basename)
+        run('installer -target / -package ' + package, {noshow: true})
     } else if (Config.OS == 'windows') {
-        package = s.product + '-' + s.version + '-' + s.number + '-ms-windows-x86.exe'
-        trace('Install', package)
-        run(bit.dir.rel.join(package), {noshow: true})
+        trace('Install', package.basename)
+        run(package, {noshow: true})
     }
 }
 
 public function uninstallPackage() {
     if (Config.OS == 'macosx' && App.uid != 0) throw 'Must be root to install'
     trace('Uninstall', bit.prefixes.bin.join('uninstall'))
-    run(bit.prefixes.bin.join('uninstall'), {noshow: true})
+    if (Config.OS == 'macosx') {
+        run([bit.prefixes.productver.join('unins000.exe')], {noshow: true})
+    } else {
+        run([bit.prefixes.bin.join('uninstall')], {noshow: true})
+    }
 }
 
 public function whatInstalled() {

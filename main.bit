@@ -108,24 +108,32 @@ Bit.load({
         testPackage: {
             type: 'test',
             action: "
-                if (bit.settings.depth >= 2 && (Config.OS == 'windows' || Config.OS == 'macosx')) {
-                    if (bit.prefixes.bin.join('uninstall').exists) {
-                        trace('Cleanup', 'Remove prior installation')
+                let package = packageName()
+                if (!package || !package.exists || bit.settings.depth < 2) {
+                    trace('Test', 'testPackage -- SKIPPED (Runs at depth 2 on windows or macosx)')
+                } else {
+                    if (Config.OS == 'macosx' && App.uid != 0) {
+                        trace('Test', 'testPackage -- SKIPPED (Must run as root)')
+                    } else {
+                        trace('Test', 'testPackage')
+                        if (bit.prefixes.bin.join('uninstall').exists) {
+                            trace('Cleanup', 'Remove prior installation')
+                            uninstallPackage()
+                            checkUninstalled()
+                        }
+                        installPackage()
+                        if (missing = checkInstalled()) {
+                            trace('Missing', missing)
+                        }
+                        let s = bit.settings
+                        trace('Test', 'ejs -V')
+                        assert(Cmd.run([bit.prefixes.bin.join('ejs'), '-V']).trim() == s.version + '-' + s.buildNumber)
+                        trace('Test', 'bit -V')
+                        assert(Cmd.run([bit.prefixes.bin.join('bit'), '-V']).trim() == s.version + '-' + s.buildNumber)
                         uninstallPackage()
-                        checkUninstalled()
-                    }
-                    installPackage()
-                    if (missing = checkInstalled()) {
-                        trace('Missing', missing)
-                    }
-                    let s = bit.settings
-                    trace('Test', 'ejs -V')
-                    assert(Cmd.run([bit.prefixes.bin.join('ejs'), '-V']).trim() == s.version + '-' + s.buildNumber)
-                    trace('Test', 'bit -V')
-                    assert(Cmd.run([bit.prefixes.bin.join('bit'), '-V']).trim() == s.version + '-' + s.buildNumber)
-                    uninstallPackage()
-                    if (existing = checkUninstalled()) {
-                        trace('Existing', existing)
+                        if (existing = checkUninstalled()) {
+                            trace('Existing', existing)
+                        }
                     }
                 }
             ",
