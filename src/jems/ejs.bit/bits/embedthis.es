@@ -722,11 +722,13 @@ public function installPackage() {
 
 public function uninstallPackage() {
     if (Config.OS == 'macosx' && App.uid != 0) throw 'Must be root to install'
-    trace('Uninstall', bit.prefixes.bin.join('uninstall'))
     if (Config.OS == 'macosx') {
-        run([bit.prefixes.productver.join('unins000.exe')], {noshow: true})
-    } else {
+        trace('Uninstall', bit.prefixes.bin.join('uninstall'))
         run([bit.prefixes.bin.join('uninstall')], {noshow: true})
+    } else {
+        let uninstall = bit.prefixes.productver.files('unins*.exe')[0]
+        trace('Uninstall', uninstall)
+        run([uninstall, '/verysilent'], {noshow: true})
     }
 }
 
