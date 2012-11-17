@@ -585,8 +585,9 @@ function packageWindows(pkg: Path, options) {
 
     /* Wrap in a zip archive */
     let zipfile = outfile.joinExt('zip', true)
+    zipfile.remove()
     trace('Package', zipfile)
-    run([bit.packs.zip.path, '-q', zipfile, outfile])
+    run([bit.packs.zip.path, '-q', zipfile.basename, outfile.basename], {dir: bit.dir.rel})
     bit.dir.rel.join('md5-' + base).joinExt('exe.zip.txt', true).write(md5(zipfile.readString()))
     outfile.remove()
 }
@@ -680,7 +681,7 @@ public function checkInstalled() {
             result.push(prefix)
         }
     }
-    return result.length > 0 ? result : null
+    return result.length > 0 ? result.unique() : null
 }
 
 public function checkUninstalled() {
@@ -690,7 +691,7 @@ public function checkUninstalled() {
             result.push(prefix)
         }
     }
-    return result.length > 0 ? result : null
+    return result.length > 0 ? result.unique() : null
 }
 
 public function packageName(): Path {
@@ -699,7 +700,7 @@ public function packageName(): Path {
     if (Config.OS == 'macosx') {
         name = s.product + '-' + s.version + '-' + s.buildNumber + '-' + p.dist + '-' + p.os + '-' + p.arch + '.pkg'
     } else if (Config.OS == 'windows') {
-        name = s.product + '-' + s.version + '-' + s.buildNumber + '-' + p.dist + '-' + p.os + '-x86.exe'
+        name = s.product + '-' + s.version + '-' + s.buildNumber + '-' + p.dist + '-' + p.os + '-x86.exe.zip'
     } else {
         return null
     }
@@ -716,7 +717,10 @@ public function installPackage() {
 
     } else if (Config.OS == 'windows') {
         trace('Install', package.basename)
-        run([package, '/verysilent'], {noshow: true})
+        package.trimExt().remove()
+        run([bit.packs.zip.path.replace(/zip/, 'unzip'), '-q', package], {dir: bit.dir.rel})
+        run([package.trimExt(), '/verysilent'], {noshow: true})
+        package.trimExt().remove()
     }
 }
 
