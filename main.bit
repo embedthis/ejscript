@@ -117,13 +117,13 @@ Bit.load({
                     } else {
                         trace('Test', 'testPackage')
                         if (bit.prefixes.bin.join('uninstall').exists) {
-                            trace('Cleanup', 'Remove prior installation')
+                            trace('Test', 'Cleanup prior to installation')
                             uninstallPackage()
                             checkUninstalled()
                         }
                         installPackage()
                         if (missing = checkInstalled()) {
-                            trace('Missing', missing)
+                            trace('Test', 'Install is missing files: ' + missing)
                         }
                         let s = bit.settings
                         trace('Test', 'ejs -V')
@@ -132,7 +132,7 @@ Bit.load({
                         assert(Cmd.run([bit.prefixes.bin.join('bit'), '-V']).trim() == s.version + '-' + s.buildNumber)
                         uninstallPackage()
                         if (existing = checkUninstalled()) {
-                            trace('Existing', existing)
+                            trace('Test', 'Uninstall was not clean: ', existing)
                         }
                     }
                 }
