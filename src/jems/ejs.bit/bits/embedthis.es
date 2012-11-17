@@ -694,7 +694,7 @@ public function checkUninstalled() {
     return result.length > 0 ? result.unique() : null
 }
 
-public function packageName(): Path {
+public function packageName() {
     let s = bit.settings
     let p = bit.platform
     if (Config.OS == 'macosx') {
