@@ -713,9 +713,10 @@ public function installPackage() {
         if (App.uid != 0) throw 'Must be root to install'
         trace('Install', package.basename)
         run('installer -target / -package ' + package, {noshow: true})
+
     } else if (Config.OS == 'windows') {
         trace('Install', package.basename)
-        run(package, {noshow: true})
+        run([package, '/verysilent'], {noshow: true})
     }
 }
 
