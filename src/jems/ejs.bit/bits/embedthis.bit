@@ -93,6 +93,7 @@ Bit.load({
                     let s = bit.settings
                     let uri = s.farmUri || App.getenv('BUILD_UPLOAD')
                     let key = s.farmKey || App.getenv('BUILD_KEY')
+                    let branch = App.getenv('BUILD_BRANCH') || 'dev'
                     if (!key) {
                         throw 'Missing a farm authorization key'
                     }
@@ -111,7 +112,7 @@ Bit.load({
                         let http = new Http
                         trace('Upload', file.relativeTo(bit.dir.rel) + ' size ' + 
                             (file.size / 1024 / 1024).toFixed(2) + ' MB')
-                        http.upload(uri, file, {server: System.hostname, key: key})
+                        http.upload(uri, file, {branch: branch, server: System.hostname, key: key})
                         if (http.status != 200) {
                             throw 'Cant upload ' + file
                         }
