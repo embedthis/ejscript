@@ -1,7 +1,6 @@
 #!/usr/bin/env ejs
 /*
     mvc -- Ejscript web framework generator. This generates, compiles, cleans and packages Ejscript web applications. 
-    For windows, this will be invoked via mvc.cmd.
  */
 
 /*
@@ -1282,9 +1281,11 @@ class EjsMvc {
             }
         }
         appName = App.dir.basename.toString().toLowerCase()
+        /* Removed so we can compile non-mve apps
         if (!config.database) {
             throw new IOError("Not an MVC application directory")
         }
+        */
         if (!dirs.cache.exists || !isDir(dirs.cache)) {
             upgradeApp()
         }
