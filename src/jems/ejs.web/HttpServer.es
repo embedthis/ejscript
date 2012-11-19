@@ -68,6 +68,8 @@ module ejs.web {
          */
         static function initHttpServer() {
             blend(App.config, defaultConfig, {overwrite: false})
+            /* Overwrite some keys that exist in the default App.config */
+            App.config.cache.app = { enable: true, reload: true }
             let dirs = App.config.dirs
             for (let [key, value] in dirs) {
                 dirs[key] = Path(value)
@@ -239,7 +241,8 @@ server.listen("127.0.0.1:7777")
             if (hosted) {
                 let path = hostedHome
                 documents = options.documents || path
-                home = options.home || path
+                //  MOB - workaround, use path.dirname so we don't push cache in 'web' 
+                home = options.home || path.dirname
             } else {
                 documents = options.documents || "."
                 home = options.home || "."
