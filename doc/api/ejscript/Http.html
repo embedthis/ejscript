@@ -199,7 +199,7 @@ connection.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readXml'><b>readXml</b></a>(): <a href='XML.html'>XML</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the request response as an XML document.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#reset'><b>reset</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Reset the Http object to prepare for a new request.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#setCookie'><b>setCookie</b></a>(cookie: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a "Cookie" header in the request headers.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#setCredentials'><b>setCredentials</b></a>(username: <a href='String.html'>String</a>, password: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the user credentials to use if the request requires authentication.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#setCredentials'><b>setCredentials</b></a>(username: <a href='String.html'>String</a>, password: <a href='String.html'>String</a>, type: <a href='String.html'>String</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the user credentials to use if the request requires authentication.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#setHeader'><b>setHeader</b></a>(key: <a href='String.html'>String</a>, value: <a href='String.html'>String</a>, overwrite: <a href='Boolean.html'>Boolean</a> = true): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a request header.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#setHeaders'><b>setHeaders</b></a>(headers: <a href='Object.html'>Object</a>, overwrite: <a href='Boolean.html'>Boolean</a> = true): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set request headers.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#setLimits'><b>setLimits</b></a>(limits: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Update the request resource limits.</td></tr>
@@ -533,13 +533,13 @@ credentials. It will not close the connection to TCP/IP and thus Keep-Alive will
 <hr />
 <a name='setCredentials'></a>
 <div class='api'>
-<div class='apiSig'>    setCredentials(username: <a href='String.html'>String</a>, password: <a href='String.html'>String</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>    setCredentials(username: <a href='String.html'>String</a>, password: <a href='String.html'>String</a>, type: <a href='String.html'>String</a> = null): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Set the user credentials to use if the request requires authentication. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>username: <a href='String.html'>String</a> </td><td>String user name to use. If null, then reset the current credentials.</td></tr><tr class='param'><td class='param'>password: <a href='String.html'>String</a> </td><td>Un-encrypted string password to use. Set to null to reset the current credentials.</td></tr></table></dd>
+<tr class='param'><td class='param'>username: <a href='String.html'>String</a> </td><td>String user name to use. If null, then reset the current credentials.</td></tr><tr class='param'><td class='param'>password: <a href='String.html'>String</a> </td><td>Un-encrypted string password to use. Set to null to reset the current credentials.</td></tr><tr class='param'><td class='param'>type: <a href='String.html'>String</a> </td><td>Authentication type. Set to basic or digest. Defaults to basic. If not set, then the authentication type is determined by the response from the server and the  request will be retried if it fails with an authentication error. [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
