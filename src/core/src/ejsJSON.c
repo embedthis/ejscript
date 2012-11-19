@@ -239,13 +239,19 @@ Token getNextJsonToken(MprBuf *buf, wchar **token, JsonState *js)
             cp++;
 
         } else {
+            /*
+                Note: this is for keys and values
+             */
             tid = TOK_ID;
             for (start = cp; cp < end; cp++) {
                 if (*cp == '\\') {
                     continue;
                 }
-                /* Not an allowable character outside quotes */
-                if (!(isalnum((uchar) *cp) || *cp == '_' || *cp == ' ' || *cp == '-' || *cp == '+' || *cp == '.')) {
+                /* 
+                    Not an allowable character outside quotes (MOB - removed space 
+                    Should really keep state for parsing keys or values and not allow -,+,. in keys
+                 */
+                if (!(isalnum((uchar) *cp) || *cp == '_' || *cp == '-' || *cp == '+' || *cp == '.')) {
                     break;
                 }
             }

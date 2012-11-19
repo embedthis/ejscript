@@ -37,6 +37,7 @@ Bit.load({
 		'ejs.mod': {
             files: [ 'ejs.es' ],
             path: "${LIB}/ejs.mod",
+            //  Add --debug for debug symbols
             build: "
                 trace('Compile', 'ejs.mod')
                 run('./ejsc --out ${LIB}/ejs.mod --optimize 9 --bind --require null ejs.es')

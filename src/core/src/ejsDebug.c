@@ -15,7 +15,7 @@
  */
 static EjsObj *debug_breakpoint(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-#if BIT_DEBUG && DEBUG_IDE && MOB
+#if BIT_DEBUG && DEBUG_IDE
     #if BIT_WIN_LIKE && !BIT_64
         __asm { int 3 };
     #elif (MACOSX || LINUX) && (BIT_CPU_ARCH == MPR_CPU_IX86 || BIT_CPU_ARCH == MPR_CPU_IX64)

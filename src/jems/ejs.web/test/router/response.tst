@@ -29,18 +29,18 @@ let router = new Router(null)
 //  Run with inline response
 
 router.reset()
-router.add("/custom/test", { response: { status: 200, body: "hello world\n" }})
+router.add("/custom/test", { response: { status: 200, body: "{message: 'hello world'}" }})
 let response = test("/custom/test")
-assert(response == "hello world")
+assert(response.message == "hello world")
 
 
 //  Run with function response
 
 router.reset()
 router.add("/custom/test", { response: function builder(request) {
-    return { body: "Hello Cruel World\n" }
+    return { body: "{message: 'Hello Cruel World'}" }
 }})
 let response = test("/custom/test")
-assert(response == "Hello Cruel World")
+assert(response.message == "Hello Cruel World")
 
 server.close()
