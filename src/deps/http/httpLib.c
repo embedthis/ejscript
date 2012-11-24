@@ -1849,7 +1849,7 @@ static HttpConn *openConnection(HttpConn *conn, struct MprSsl *ssl)
         httpError(conn, HTTP_CODE_COMMS_ERROR, "Cannot create socket for %s", uri->uri);
         return 0;
     }
-    if ((rc = mprConnectSocket(sp, ip, port, 0)) < 0) {
+    if ((rc = mprConnectSocket(sp, ip, port, MPR_SOCKET_NODELAY)) < 0) {
         httpError(conn, HTTP_CODE_COMMS_ERROR, "Cannot open socket on %s:%d", ip, port);
         return 0;
     }
@@ -2288,30 +2288,33 @@ PUBLIC void httpConnTimeout(HttpConn *conn)
     if (conn->timeoutCallback) {
         (conn->timeoutCallback)(conn);
     }
-    if (conn->state >= HTTP_STATE_PARSED && !conn->connError) {
-        if ((conn->lastActivity + limits->inactivityTimeout) < now) {
-            httpError(conn, HTTP_CODE_REQUEST_TIMEOUT,
-                "Exceeded inactivity timeout of %Ld sec", limits->inactivityTimeout / 1000);
+    if (!conn->connError) {
+        if (conn->state < HTTP_STATE_PARSED && (conn->started + limits->requestParseTimeout) < now) {
+            httpError(conn, HTTP_CODE_REQUEST_TIMEOUT, "Exceeded parse headers timeout of %Ld sec", 
+                limits->requestParseTimeout  / 1000);
+        } else {
+            if ((conn->lastActivity + limits->inactivityTimeout) < now) {
+                httpError(conn, HTTP_CODE_REQUEST_TIMEOUT,
+                    "Exceeded inactivity timeout of %Ld sec", limits->inactivityTimeout / 1000);
 
-        } else if ((conn->started + limits->requestTimeout) < now) {
-            httpError(conn, HTTP_CODE_REQUEST_TIMEOUT, "Exceeded timeout %d sec", limits->requestTimeout / 1000);
+            } else if ((conn->started + limits->requestTimeout) < now) {
+                httpError(conn, HTTP_CODE_REQUEST_TIMEOUT, "Exceeded timeout %d sec", limits->requestTimeout / 1000);
+            }
         }
     }
-    httpDestroyConn(conn);
+    if (conn->endpoint) {
+        httpDestroyConn(conn);
+    } else {
+        httpDisconnect(conn);
+    }
 }
 
 
 static void commonPrep(HttpConn *conn)
 {
-    Http    *http;
-
-    http = conn->http;
-#if !BIT_LOCK_FIX
-    lock(http);
-#endif
-
     if (conn->timeoutEvent) {
         mprRemoveEvent(conn->timeoutEvent);
+        conn->timeoutEvent = 0;
     }
     conn->lastActivity = conn->http->now;
     conn->error = 0;
@@ -2329,9 +2332,6 @@ static void commonPrep(HttpConn *conn)
     }
     httpSetState(conn, HTTP_STATE_BEGIN);
     httpInitSchedulerQueue(conn->serviceq);
-#if !BIT_LOCK_FIX
-    unlock(http);
-#endif
 }
 
 
@@ -2387,6 +2387,7 @@ PUBLIC void httpPrepClientConn(HttpConn *conn, bool keepHeaders)
     MprHash     *headers;
 
     assure(conn);
+    conn->connError = 0;
     if (conn->keepAliveCount >= 0 && conn->sock) {
         /* Eat remaining input incase last request did not consume all data */
         httpConsumeLastRequest(conn);
@@ -2455,9 +2456,6 @@ PUBLIC void httpEvent(HttpConn *conn, MprEvent *event)
         readEvent(conn);
     }
     httpPostEvent(conn);
-#if !BIT_LOCK_FIX
-    mprYield(0);
-#endif
 }
 
 
@@ -2482,7 +2480,7 @@ static void readEvent(HttpConn *conn)
             break;
         } else if (nbytes < 0 && mprIsSocketEof(conn->sock)) {
             conn->keepAliveCount = -1;
-            if (conn->state < HTTP_STATE_PARSED) {
+            if (conn->state < HTTP_STATE_PARSED || conn->state == HTTP_STATE_COMPLETE) {
                 break;
             }
         }
@@ -2583,9 +2581,6 @@ PUBLIC void httpEnableConnEvents(HttpConn *conn)
         mprQueueEvent(conn->dispatcher, event);
 
     } else {
-#if !BIT_LOCK_FIX
-        lock(conn->http);
-#endif
         if (tx) {
             /*
                 Can be blocked with data in the iovec and none in the queue
@@ -2605,9 +2600,6 @@ PUBLIC void httpEnableConnEvents(HttpConn *conn)
             eventMask |= MPR_READABLE;
         }
         httpSetupWaitHandler(conn, eventMask);
-#if !BIT_LOCK_FIX
-        unlock(conn->http);
-#endif
     }
     if (tx && tx->handler && tx->handler->module) {
         tx->handler->module->lastActivity = conn->lastActivity;
@@ -2837,6 +2829,7 @@ PUBLIC void httpNotify(HttpConn *conn, int event, int arg)
         (conn->notifier)(conn, event, arg);
     }
 }
+
 
 /*
     Set each timeout arg to -1 to skip. Set to zero for no timeout. Otherwise set to number of msecs
@@ -3522,6 +3515,14 @@ PUBLIC bool httpValidateLimits(HttpEndpoint *endpoint, int event, HttpConn *conn
             return 0;
         }
         count = (int) PTOL(mprLookupKey(endpoint->clientLoad, conn->ip));
+        mprLog(7, "Connection count for client %s, count %d limit %d\n", conn->ip, count, limits->requestsPerClientMax);
+        if (count >= limits->requestsPerClientMax) {
+            unlock(endpoint);
+            /*  Abort connection */
+            httpError(conn, HTTP_ABORT | HTTP_CODE_SERVICE_UNAVAILABLE, 
+                "Too many concurrent requests for this client %s %d/%d", conn->ip, count, limits->requestsPerClientMax);
+            return 0;
+        }
         mprAddKey(endpoint->clientLoad, conn->ip, ITOP(count + 1));
         endpoint->clientCount = (int) mprGetHashLength(endpoint->clientLoad);
         action = "open conn";
@@ -4793,6 +4794,7 @@ PUBLIC void httpInitLimits(HttpLimits *limits, bool serverSide)
     limits->receiveFormSize = HTTP_MAX_RECEIVE_FORM;
     limits->receiveBodySize = HTTP_MAX_RECEIVE_BODY;
     limits->processMax = HTTP_MAX_REQUESTS;
+    limits->requestsPerClientMax = HTTP_MAX_REQUESTS_PER_CLIENT;
     limits->requestMax = HTTP_MAX_REQUESTS;
     limits->sessionMax = HTTP_MAX_SESSIONS;
     limits->transmissionBodySize = HTTP_MAX_TX_BODY;
@@ -4800,7 +4802,8 @@ PUBLIC void httpInitLimits(HttpLimits *limits, bool serverSide)
     limits->uriSize = MPR_MAX_URL;
 
     limits->inactivityTimeout = HTTP_INACTIVITY_TIMEOUT;
-    limits->requestTimeout = MAXINT;
+    limits->requestTimeout = HTTP_REQUEST_TIMEOUT;
+    limits->requestParseTimeout = HTTP_PARSE_TIMEOUT;
     limits->sessionTimeout = HTTP_SESSION_TIMEOUT;
 
     limits->webSocketsMax = HTTP_MAX_WSS_SOCKETS;
@@ -4926,9 +4929,8 @@ static void httpTimer(Http *http, MprEvent *event)
         limits = conn->limits;
         if (!conn->timeoutEvent) {
             abort = 0;
-            if (http->underAttack && conn->state < HTTP_STATE_PARSED && (conn->lastActivity + 3000) < http->now) {
+            if (conn->state < HTTP_STATE_PARSED && (conn->started + limits->requestParseTimeout) < http->now) {
                 abort = 1;
-                httpDisconnect(conn);
             } else if ((conn->lastActivity + limits->inactivityTimeout) < http->now || 
                     (conn->started + limits->requestTimeout) < http->now) {
                 abort = 1;
@@ -8332,16 +8334,10 @@ PUBLIC void httpRouteRequest(HttpConn *conn)
     route = 0;
 
     for (next = rewrites = 0; rewrites < HTTP_MAX_REWRITE; ) {
-#if !BIT_LOCK_FIX
-        if ((route = mprGetNextItem(conn->host->routes, &next)) == 0) {
-            break;
-        }
-#else
         if (next >= conn->host->routes->length) {
             break;
         }
         route = conn->host->routes->items[next++];
-#endif
         if (route->startSegment && strncmp(rx->pathInfo, route->startSegment, route->startSegmentLen) != 0) {
             /* Failed to match the first URI segment, skip to the next group */
             assure(next <= route->nextGroup);
@@ -16886,12 +16882,14 @@ static void incomingWebSockData(HttpQueue *q, HttpPacket *packet)
 
     if (packet->flags & HTTP_PACKET_END) {
         /* EOF packet means the socket has been abortively closed */
-        ws->closing = 1;
-        ws->frameState = WS_CLOSED;
-        ws->state = WS_STATE_CLOSED;
-        ws->closeStatus = WS_STATUS_COMMS_ERROR;
-        HTTP_NOTIFY(conn, HTTP_EVENT_APP_CLOSE, ws->closeStatus);
-        httpError(conn, HTTP_ABORT | HTTP_CODE_COMMS_ERROR, "Connection lost");
+        if (ws->state != WS_STATE_CLOSED) {
+            ws->closing = 1;
+            ws->frameState = WS_CLOSED;
+            ws->state = WS_STATE_CLOSED;
+            ws->closeStatus = WS_STATUS_COMMS_ERROR;
+            HTTP_NOTIFY(conn, HTTP_EVENT_APP_CLOSE, ws->closeStatus);
+            httpError(conn, HTTP_ABORT | HTTP_CODE_COMMS_ERROR, "Connection lost");
+        }
     }
     while ((packet = httpGetPacket(q)) != 0) {
         content = packet->content;
