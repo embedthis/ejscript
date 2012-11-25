@@ -1654,7 +1654,7 @@ public class Bit {
                     let header = bit.dir.inc.join(file.basename)
                     /* Always overwrite dynamically created targets created via makeDepends */
                     bit.targets[header] = { name: header, enable: true, path: header, type: 'header', files: [ file ],
-                        vars: {} }
+                        vars: {}, includes: target.includes }
                     target.depends ||= []
                     target.depends.push(header)
                 }
@@ -1702,13 +1702,20 @@ public class Bit {
                     /*
                         Create targets for each header (if not already present)
                      */
-                    objTarget.depends = makeDepends(objTarget)
+                    // objTarget.depends = makeDepends(objTarget)
+                    makeDepends(objTarget)
+        /* MOB UNUSED
                     for each (header in objTarget.depends) {
                         if (!bit.targets[header]) {
                             bit.targets[header] = { name: header, enable: true, path: header, 
-                                type: 'header', files: [ header ], vars: {} }
+                                type: 'header', files: [ header ], vars: {}, includes: target.includes }
+                        }
+                        let h = bit.targets[header]
+                        if (h && !h.depends) {
+                            makeDepends(h)
                         }
                     }
+         */
                 }
             }
         }
@@ -2686,8 +2693,11 @@ global.NN = item.ns
                 includes += more
             }
         }
-        let depends = [ bit.dir.inc.join('bit.h') ]
-
+        let depends = [ ]
+        let bith = bit.dir.inc.join('bit.h')
+        if (target.name != bith) {
+            depends = [ bith ]
+        }
         /*
             Resolve includes 
          */
@@ -2708,6 +2718,18 @@ global.NN = item.ns
                 depends.push(path)
             }
         }
+        target.makedep = true
+        for each (header in depends) {
+            if (!bit.targets[header]) {
+                bit.targets[header] = { name: header, enable: true, path: header, 
+                    type: 'header', files: [ header ], vars: {}, includes: target.includes }
+            }
+            let h = bit.targets[header]
+            if (h && !h.makedep) {
+                makeDepends(h)
+            }
+        }
+        target.depends = depends
         return depends
     }
 
