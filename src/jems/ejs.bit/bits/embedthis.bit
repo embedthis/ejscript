@@ -35,18 +35,18 @@ Bit.load({
                     if (name == 'macosx-x64') {
                         run(bitcmd + ' -d -q -platform ' + name + ' -without all -profile xcode -configure . -gen xcode',
                             bit.target.runopt)
-                        rmdir(bit.dir.top.join(name + '-xcode'))
                     } else if (name == 'windows-x86') {
                         run(bitcmd + ' -d -q -platform ' + name + ' -without all -profile vs -configure . -gen vs',
                             bit.target.runopt)
-                        rmdir(bit.dir.top.join(name + '-vs'))
-                    }
-                    if (name != bit.platform.name) {
-                        rm(bit.dir.top.join(name + '.bit'))
-                        rmdir(bit.dir.top.join(name + '-debug'))
                     }
                 }
                 trace('Restore', 'Restore prior configuration')
+                for each (name in ['linux-x86', 'macosx-x64', 'solaris-x86', 'windows-x86']) {
+                    rmdir(bit.dir.top.join(name + '-xcode'))
+                    rmdir(bit.dir.top.join(name + '-vs'))
+                    rmdir(bit.dir.top.join(name + '-debug'))
+                    rm(bit.dir.top.join(name + '.bit'))
+                }
                 run(bitcmd + ' -q -configure . -profile ' + bit.platform.profile, bit.target.runopt)
             ",
         },
