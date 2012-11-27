@@ -2,7 +2,7 @@
    Mail.es -- Simple mail using sendmail
  */
 
-module ejs.web {
+module ejs.mail {
     /** 
         Send mail using sendmail
         @param options Object hash with properties for: from, to, subject, date and Content-Type.

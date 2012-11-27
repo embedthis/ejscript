@@ -21,6 +21,7 @@ Bit.load({
         'src/jems/ejs.db/db.bit',
         'src/jems/ejs.db.mapper/mapper.bit',
         'src/jems/ejs.db.sqlite/sqlite.bit',
+        'src/jems/ejs.mail/mail.bit',
         'src/jems/ejs.web/web.bit',
         'src/jems/ejs.template/template.bit',
         'src/jems/ejs.zlib/zlib.bit',
