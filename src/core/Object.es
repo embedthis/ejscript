@@ -47,7 +47,7 @@ module ejs {
             @option get Getter function to return the property value
             @option namespace Property namespace qualifier
             @option set Setter function to update the property value
-            @option value Initial property value. Can't use if a get or set property is defined.
+            @option value Initial property value. Cannot use if a get or set property is defined.
             @option writable If true, the property value may be updated after the initial definition.
         */
         static native function defineProperty(obj: Object, name: String, options: Object): Void

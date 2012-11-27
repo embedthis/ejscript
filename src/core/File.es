@@ -218,6 +218,8 @@ module ejs {
             @throws IOError if the file could not be written.
          */
         native function write(...items): Number
+
+        //  MOB writeln would be useful
     }
 }
 

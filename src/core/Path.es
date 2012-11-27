@@ -740,7 +740,7 @@ module ejs {
                 }
             } 
             catch (es) {
-                throw new IOError("Can't write to file")
+                throw new IOError("Cannot write to file")
             }
             finally {
                 file.close()
