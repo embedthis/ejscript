@@ -254,6 +254,7 @@ static void manageEjs(Ejs *ejs, int flags)
         mprMark(ejs->className);
         mprMark(ejs->methodName);
         mprMark(ejs->errorMsg);
+        mprMark(ejs->hostedDocuments);
         mprMark(ejs->hostedHome);
         mprMark(ejs->exceptionArg);
         mprMark(ejs->dispatcher);
@@ -285,14 +286,17 @@ static void managePool(EjsPool *pool, int flags)
         mprMark(pool->templateScript);
         mprMark(pool->startScript);
         mprMark(pool->startScriptPath);
+        mprMark(pool->hostedDocuments);
         mprMark(pool->hostedHome);
     }
 }
 
+
 /*
     Create a pool for virtual machines
  */
-EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScript, cchar *startScriptPath, char *home)
+EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScript, cchar *startScriptPath, 
+        cchar *home, cchar *documents)
 {
     EjsPool     *pool;
 
@@ -315,6 +319,9 @@ EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScript, c
     }
     if (home) {
         pool->hostedHome = sclone(home);
+    }
+    if (documents) {
+        pool->hostedDocuments = sclone(documents);
     }
     return pool;
 }
@@ -363,6 +370,9 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
         if ((ejs = ejsCloneVM(pool->template)) == 0) {
             mprMemoryError("Cannot alloc ejs VM");
             return 0;
+        }
+        if (pool->hostedDocuments) {
+            ejs->hostedDocuments = pool->hostedDocuments;
         }
         if (pool->hostedHome) {
             ejs->hostedHome = pool->hostedHome;

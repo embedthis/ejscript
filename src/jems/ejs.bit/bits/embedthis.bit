@@ -44,8 +44,10 @@ Bit.load({
                 for each (name in ['linux-x86', 'macosx-x64', 'solaris-x86', 'windows-x86']) {
                     rmdir(bit.dir.top.join(name + '-xcode'))
                     rmdir(bit.dir.top.join(name + '-vs'))
-                    rmdir(bit.dir.top.join(name + '-debug'))
-                    rm(bit.dir.top.join(name + '.bit'))
+                    if (name != bit.platform.name) {
+                        rm(bit.dir.top.join(name + '.bit'))
+                        rmdir(bit.dir.top.join(name + '-debug'))
+                    }
                 }
                 run(bitcmd + ' -q -configure . -profile ' + bit.platform.profile, bit.target.runopt)
             ",

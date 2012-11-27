@@ -515,6 +515,7 @@ typedef struct Ejs {
     cchar               *methodName;        /**< Name of a specific method to run for a program */
     char                *errorMsg;          /**< Error message */
     cchar               **argv;             /**< Command line args (not alloced) */
+    char                *hostedDocuments;   /**< Documents directory for hosted HttpServer */
     char                *hostedHome;        /**< Home directory for hosted HttpServer */
     int                 argc;               /**< Count of command line args */
     int                 flags;              /**< Execution flags */
@@ -626,6 +627,7 @@ typedef struct EjsPool {
     char        *templateScript;            /**< Template initialization script filename */
     char        *startScript;               /**< Template initialization literal script */
     char        *startScriptPath;           /**< Template initialization script filename */
+    char        *hostedDocuments;           /**< Documents directory for hosted HttpServer */
     char        *hostedHome;                /**< Home directory for hosted HttpServer */
 } EjsPool;
 
@@ -640,10 +642,12 @@ typedef struct EjsPool {
     @param startScriptPath As an alternative to startScript, a path to a script may be provided in startScriptPath.
         If startScriptPath is specified, startScript is ignored.
     @param home Default home directory for virtual machines
+    @param documents Default documents directory for virtual machines
     @returns Allocated pool object
     @ingroup EjsPool
  */
-PUBLIC EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScript, cchar *startScriptPath, char *home);
+PUBLIC EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScript, cchar *startScriptPath, cchar *home,
+        cchar *documents);
 
 /**
     Allocate a VM from the pool

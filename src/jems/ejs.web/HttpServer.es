@@ -112,9 +112,9 @@ module ejs.web {
          */
         var documents: Path
 
-        /**
-            @hide
-         */
+        /** @hide */
+        native function get hostedDocuments(): Path
+        /** @hide */
         native function get hostedHome(): Path
 
         /** 
@@ -239,10 +239,8 @@ server.listen("127.0.0.1:7777")
                 hosted = false
             }
             if (hosted) {
-                let path = hostedHome
-                documents = options.documents || path
-                //  MOB - workaround, use path.dirname so we don't push cache in 'web' 
-                home = options.home || path.dirname
+                documents = options.documents || hostedDocuments
+                home = options.home || hostedHome
             } else {
                 documents = options.documents || "."
                 home = options.home || "."

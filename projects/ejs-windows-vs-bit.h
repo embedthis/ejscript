@@ -58,7 +58,7 @@
     #define BIT_TITLE "Embedthis Ejscript"
 #endif
 #ifndef BIT_VERSION
-    #define BIT_VERSION "2.1.0"
+    #define BIT_VERSION "2.2.0"
 #endif
 #ifndef BIT_WITHOUT_ALL
     #define BIT_WITHOUT_ALL "doxygen,dsi,man,man2html,ssl,matrixssl,openssl"
@@ -129,13 +129,13 @@
     #define BIT_MAJOR_VERSION 2
 #endif
 #ifndef BIT_MINOR_VERSION
-    #define BIT_MINOR_VERSION 1
+    #define BIT_MINOR_VERSION 2
 #endif
 #ifndef BIT_PATCH_VERSION
     #define BIT_PATCH_VERSION 0
 #endif
 #ifndef BIT_VNUM
-    #define BIT_VNUM 200010000
+    #define BIT_VNUM 200020000
 #endif
 
 /* Packs */

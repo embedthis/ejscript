@@ -50,6 +50,7 @@ all: prep \
         $(CONFIG)/bin/ejs.db.mapper.mod \
         $(CONFIG)/bin/ejs.db.sqlite.mod \
         $(CONFIG)/bin/libejs.db.sqlite.so \
+        $(CONFIG)/bin/ejs.mail.mod \
         $(CONFIG)/bin/ejs.web.mod \
         $(CONFIG)/bin/libejs.web.so \
         $(CONFIG)/bin/www \
@@ -97,6 +98,7 @@ clean:
 	rm -rf $(CONFIG)/bin/ejs.db.mapper.mod
 	rm -rf $(CONFIG)/bin/ejs.db.sqlite.mod
 	rm -rf $(CONFIG)/bin/libejs.db.sqlite.so
+	rm -rf $(CONFIG)/bin/ejs.mail.mod
 	rm -rf $(CONFIG)/bin/ejs.web.mod
 	rm -rf $(CONFIG)/bin/libejs.web.so
 	rm -rf $(CONFIG)/bin/www
@@ -896,6 +898,13 @@ $(CONFIG)/bin/libejs.db.sqlite.so:  \
         $(CONFIG)/bin/libsqlite3.so \
         $(CONFIG)/obj/ejsSqlite.o
 	$(CC) -shared -o $(CONFIG)/bin/libejs.db.sqlite.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsSqlite.o -lsqlite3 -lejs -lmpr $(LIBS) -lhttp -lpcre
+
+$(CONFIG)/bin/ejs.mail.mod:  \
+        $(CONFIG)/bin/ejsc \
+        $(CONFIG)/bin/ejs.mod
+	cd src/jems/ejs.mail >/dev/null ;\
+		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.mail.mod --debug --optimize 9 *.es ;\
+		cd - >/dev/null 
 
 $(CONFIG)/bin/ejs.web.mod:  \
         $(CONFIG)/bin/ejsc \
