@@ -546,7 +546,7 @@ ${OUTPUTS}
         let shell = '/bin/bash'
         let inputs = ''
         let outputs = ''
-        let cmd = ''
+        let cmd = 'PATH=$PATH:/usr/local/bin\n'
 
         if (!target.home.same(base)) {
             cmd += 'cd ' + target.home.relativeTo(base) + '\n'
