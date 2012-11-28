@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='ISO-8859-1' standalone='yes' ?>
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <tagfile>
   <compound kind="group">
     <name>EjsName</name>
@@ -217,8 +217,8 @@
       <type>EjsPool *</type>
       <name>ejsCreatePool</name>
       <anchorfile>group___ejs_pool.html</anchorfile>
-      <anchor>gad2b7a499e000d81f5cdbd58daf2d6317</anchor>
-      <arglist>(int poolMax, cchar *templateScript, cchar *startScript, cchar *startScriptPath, char *home)</arglist>
+      <anchor>gae91e29c7556670788cbf87013819a949</anchor>
+      <arglist>(int poolMax, cchar *templateScript, cchar *startScript, cchar *startScriptPath, cchar *home, cchar *documents)</arglist>
     </member>
     <member kind="function">
       <type>void</type>

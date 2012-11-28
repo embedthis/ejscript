@@ -190,7 +190,7 @@
 <tr class="apiDef"><td class="apiType"><a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny*</a></td><td><a href="#group___ejs_obj_1ga6fef857b0036bffaacef456cb47eff3b" class="nameRef">ejsCreateObj</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, struct EjsType *type, int numSlots)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create a variable.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_path" class="ref">EjsPath*</a></td><td><a href="#group___ejs_path_1ga89c88658e009637fe471fef151e9b599" class="nameRef">ejsCreatePath</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_string" class="ref">EjsString</a> *path)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create a Path object.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_path" class="ref">EjsPath*</a></td><td><a href="#group___ejs_path_1gacb5b025bc35d864fc937fe4ad6a24224" class="nameRef">ejsCreatePathFromAsc</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="mprBare.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *path)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create a Path object.</td></tr>
-<tr class="apiDef"><td class="apiType"><a href="#group___ejs_pool" class="ref">EjsPool*</a></td><td><a href="#group___ejs_pool_1gad2b7a499e000d81f5cdbd58daf2d6317" class="nameRef">ejsCreatePool</a>(int poolMax, <a href="mprBare.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *templateScript, <a href="mprBare.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *startScript, <a href="mprBare.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *startScriptPath, char *home)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create a pool for virutal machines.</td></tr>
+<tr class="apiDef"><td class="apiType"><a href="#group___ejs_pool" class="ref">EjsPool*</a></td><td><a href="#group___ejs_pool_1gae91e29c7556670788cbf87013819a949" class="nameRef">ejsCreatePool</a>(int poolMax, <a href="mprBare.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *templateScript, <a href="mprBare.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *startScript, <a href="mprBare.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *startScriptPath, <a href="mprBare.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *home, <a href="mprBare.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *documents)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create a pool for virutal machines.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny*</a></td><td><a href="#group___ejs_obj_1ga64d4ced5d47388dda86a6e159ec74387" class="nameRef">ejsCreatePot</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, struct EjsType *type, int size)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create an object instance of the specified type.</td></tr>
 <tr class="apiDef"><td class="apiType">void</td><td><a href="#group___ejs_pot_1gaf0c0d5d2eadfc0642471be63169c6f71" class="nameRef">ejsCreatePotHelpers</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create the Pot helpers.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_obj" class="ref">EjsObj*</a></td><td><a href="#group___ejs_type_1gae81e1e66c98088b4e2f64dc9b4429c8e" class="nameRef">ejsCreatePrototype</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_type" class="ref">EjsType</a> *type, int numProp)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Create a type prototype.</td></tr>
@@ -415,6 +415,10 @@
 </table>
 <a name="Defines"></a><h1>Defines</h1>
 <table class="apiIndex" title="Defines">
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a8c154b25b5765f5ab19a98d7b3600670" class="nameRef">_h_EJS_WEB_h</a>&nbsp;&nbsp;&nbsp;1</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>ejsWeb.h <ndash/> Header for the Ejscript Web Framework Copyright (c) All Rights Reserved.</td></tr>
 <tr class="apiDef">
 <td>#define</td><td><a href="#ejs_8h_1a7fd2ec68af927329089bd41ba24760f5" class="nameRef">BIT_NUM_TYPE</a>&nbsp;&nbsp;&nbsp;double</td>
 </tr>
@@ -766,7 +770,7 @@
 <tr class="apiDef">
 <td>#define</td><td><a href="#ejs_8h_1a0aae75c2be3c0a5c21bf1a030cdde21a" class="nameRef">EJS_SESSION</a>&nbsp;&nbsp;&nbsp;&quot;-ejs-session-&quot;</td>
 </tr>
-<tr class="apiBrief"><td>&nbsp;</td><td>ejsWeb.h &mdash; Header for the Ejscript Web Framework Copyright (c) All Rights Reserved.</td></tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Default session cookie string.</td></tr>
 <tr class="apiDef">
 <td>#define</td><td><a href="#ejs_8h_1afa9ae5ee76d32502b078ddb0432c381b" class="nameRef">EJS_SESSION_TIMER_PERIOD</a>&nbsp;&nbsp;&nbsp;(60 * 1000)</td>
 </tr>
@@ -1025,6 +1029,9 @@ Interpreter has an initialization error.
 </td>
     <tr><td class="param"><a class="ref" href="#mpr_8h_1a91ad9478d81a7aaf2593e8d9c3d06a14" external="mpr.dtags">uint</a></td><td><td>hosted</td><td>
 Interp is hosted (webserver).
+</td>
+    <tr><td class="param">char *</td><td><td>hostedDocuments</td><td>
+Documents directory for hosted HttpServer.
 </td>
     <tr><td class="param">char *</td><td><td>hostedHome</td><td>
 Home directory for hosted HttpServer.
@@ -3632,7 +3639,10 @@ Functions can be either native - meaning the implementation is via a C function,
   <div class="prototype">EjsHttp</div>
   <div class="apiDetail">
 <p>Http Class.</p>
-    <dl><dt><b>Description</b>:</dt><dd></dd></dl>
+    <dl><dt><b>Description</b>:</dt><dd><verbatim>Http objects represents a Hypertext Transfer Protocol version 1.1 client connection and are used 
+HTTP requests and capture responses. This class supports the HTTP/1.1 standard including methods for GET, POST, 
+PUT, DELETE, OPTIONS, and TRACE. It also supports Keep-Alive and SSL connections. 
+</verbatim></dd></dl>
     <dl><dt><b>API</b> Stability:</dt><dd>Evolving.</dd></dl>
     <dl><dt>See Also:</dt><dd>
     <a href="#group___ejs_http_1ga35375f154c987c2f3838c2e58a76ca3c" class="ref">ejsCreateHttp</a>, <a href="#group___ejs_http_1ga60a89e801d85e336886d45983d9f1f61" class="ref">ejsGetHttpLimits</a>, <a href="#group___ejs_path_1ga7d27ac819b3827b66dd3fee21707700b" class="ref">ejsLoadHttpService</a>, <a href="#group___ejs_http_1gaf24460df769dbdfc75e5cb162acf64c0" class="ref">ejsSetHttpLimits</a>, <a href="#group___ejs_path_1gaad418e9cce3ebf26addcddf7c6355a3a" class="ref">ejsSetupHttpTrace</a></dd></dl>
@@ -3762,7 +3772,10 @@ Count of bytes written via write().
   <div class="prototype">EjsHttpServer</div>
   <div class="apiDetail">
 <p>HttpServer Class.</p>
-    <dl><dt><b>Description</b>:</dt><dd></dd></dl>
+    <dl><dt><b>Description</b>:</dt><dd><verbatim>HttpServer objects represents a Hypertext Transfer Protocol version 1.1 client connection and are used 
+HTTP requests and capture responses. This class supports the HTTP/1.1 standard including methods for GET, POST, 
+PUT, DELETE, OPTIONS, and TRACE. It also supports Keep-Alive and SSL connections. 
+</verbatim></dd></dl>
     <dl><dt><b>API</b> Stability:</dt><dd>Prototype.</dd></dl>
     <dl><dt>See Also:</dt><dd>
     <a href="#group___ejs_http_server_1gab1aadc348f8ffa4c6ed2e90e78e681bb" class="ref">ejsCloneHttpServer</a></dd></dl>
@@ -5388,11 +5401,14 @@ Filename path.
   <div class="apiDetail">
 <p>Cached pooled of virtual machines.</p>
     <dl><dt>See Also:</dt><dd>
-    <a href="#group___ejs_pool_1gaffed175527ef9de7fbc2f75b441ea9da" class="ref">ejsAllocPoolVM</a>, <a href="#group___ejs_pool_1gad2b7a499e000d81f5cdbd58daf2d6317" class="ref">ejsCreatePool</a>, <a href="#group___ejs_pool_1ga183288605b545455090523a9756365ad" class="ref">ejsFreePoolVM</a></dd></dl>
+    <a href="#group___ejs_pool_1gaffed175527ef9de7fbc2f75b441ea9da" class="ref">ejsAllocPoolVM</a>, <a href="#group___ejs_pool_1gae91e29c7556670788cbf87013819a949" class="ref">ejsCreatePool</a>, <a href="#group___ejs_pool_1ga183288605b545455090523a9756365ad" class="ref">ejsFreePoolVM</a></dd></dl>
     <dl><dt>Fields:</dt><dd>
     <table class="parameters" title="Parameters">
     <tr><td class="param">int</td><td><td>count</td><td>
 Count of allocated VMs.
+</td>
+    <tr><td class="param">char *</td><td><td>hostedDocuments</td><td>
+Documents directory for hosted HttpServer.
 </td>
     <tr><td class="param">char *</td><td><td>hostedHome</td><td>
 Home directory for hosted HttpServer.
@@ -5443,15 +5459,15 @@ VM prune timer.
     </table></dd></dl>
     <dl><dt>Returns:</dt><dd>Returns an Ejs VM instance.</dd></dl>
     <dl><dt>See Also:</dt><dd>
-    <a href="#group___ejs_pool_1gad2b7a499e000d81f5cdbd58daf2d6317" class="ref">ejsCreatePool</a>, <a href="#group___ejs_pool_1ga183288605b545455090523a9756365ad" class="ref">ejsFreePoolVM</a></dd></dl>
+    <a href="#group___ejs_pool_1gae91e29c7556670788cbf87013819a949" class="ref">ejsCreatePool</a>, <a href="#group___ejs_pool_1ga183288605b545455090523a9756365ad" class="ref">ejsFreePoolVM</a></dd></dl>
   </div>
 </div>
-<a name="group___ejs_pool_1gad2b7a499e000d81f5cdbd58daf2d6317"></a>
+<a name="group___ejs_pool_1gae91e29c7556670788cbf87013819a949"></a>
 <div class="api">
   <div class="prototype">
     <a href="#group___ejs_pool" class="ref">EjsPool</a> *
     ejsCreatePool
-(int poolMax, <a href="mprBare.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *templateScript, <a href="mprBare.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *startScript, <a href="mprBare.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *startScriptPath, char *home)
+(int poolMax, <a href="mprBare.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *templateScript, <a href="mprBare.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *startScript, <a href="mprBare.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *startScriptPath, <a href="mprBare.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *home, <a href="mprBare.html#mpr_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *documents)
   </div>
   <div class="apiDetail">
 <p>Create a pool for virutal machines.</p>
@@ -5463,6 +5479,7 @@ VM prune timer.
     <tr><td class="param">startScript</td><td>Startup script literal. This script is executed each time the VM is allocated from the pool.</td>
     <tr><td class="param">startScriptPath</td><td>As an alternative to startScript, a path to a script may be provided in startScriptPath. If startScriptPath is specified, startScript is ignored.</td>
     <tr><td class="param">home</td><td>Default home directory for virtual machines.</td>
+    <tr><td class="param">documents</td><td>Default documents directory for virtual machines.</td>
     </table></dd></dl>
     <dl><dt>Returns:</dt><dd>Allocated pool object.</dd></dl>
     <dl><dt>See Also:</dt><dd>
@@ -5484,7 +5501,7 @@ VM prune timer.
     <tr><td class="param">ejs</td><td>Ejs reference returned from <a class="ref" href="#group___ejs_1ga98a567fe16481c6bf5368749d831ae77">ejsCreateVM</a></td>
     </table></dd></dl>
     <dl><dt>See Also:</dt><dd>
-    <a href="#group___ejs_pool_1gaffed175527ef9de7fbc2f75b441ea9da" class="ref">ejsAllocPoolVM</a>, <a href="#group___ejs_pool_1gad2b7a499e000d81f5cdbd58daf2d6317" class="ref">ejsCreatePool</a></dd></dl>
+    <a href="#group___ejs_pool_1gaffed175527ef9de7fbc2f75b441ea9da" class="ref">ejsAllocPoolVM</a>, <a href="#group___ejs_pool_1gae91e29c7556670788cbf87013819a949" class="ref">ejsCreatePool</a></dd></dl>
   </div>
 </div>
 <h1>EjsPot</h1>
@@ -5952,7 +5969,8 @@ Start of the last match.
   <div class="prototype">EjsRequest</div>
   <div class="apiDetail">
 <p>Request Class.</p>
-    <dl><dt><b>Description</b>:</dt><dd></dd></dl>
+    <dl><dt><b>Description</b>:</dt><dd><verbatim>Request objects represent a single Http request.
+</verbatim></dd></dl>
     <dl><dt><b>API</b> Stability:</dt><dd>Prototype.</dd></dl>
     <dl><dt>See Also:</dt><dd>
     <a href="#group___ejs_request_1ga1f8c776a032ffd7b147cbb0dc094c2e7" class="ref">ejsCloneRequest</a>, <a href="#group___ejs_request_1gae4d5165d879868c4cea4a78939c46cb8" class="ref">ejsCreateRequest</a></dd></dl>
@@ -6126,7 +6144,9 @@ Create a new request object associated with the given Http connection
   <div class="prototype">EjsSession</div>
   <div class="apiDetail">
 <p>Session Class.</p>
-    <dl><dt><b>Description</b>:</dt><dd></dd></dl>
+    <dl><dt><b>Description</b>:</dt><dd><verbatim>Session objects represent a shared session state object into which Http Requests and store and retrieve data
+that persists beyond a single request.
+</verbatim></dd></dl>
     <dl><dt><b>API</b> Stability:</dt><dd>Prototype.</dd></dl>
     <dl><dt>See Also:</dt><dd>
     <a href="#group___ejs_session_1gaceee664902b7431cacd92456152c3478" class="ref">ejsDestroySession</a>, <a href="#group___ejs_session_1gacfdf3f7f5fee5eea23b1152b089a3135" class="ref">ejsGetSession</a></dd></dl>
@@ -7923,7 +7943,7 @@ Worker state.
   <div class="prototype">EjsXML</div>
   <div class="apiDetail">
 <p>XML and XMLList class.</p>
-    <dl><dt><b>Description</b>:</dt><dd>The XML class and API is based on ECMA-357 &mdash; ECMAScript for XML (E4X). The XML class is a core class in the E4X specification; it provides the ability to load, parse and save XML documents.</dd></dl>
+    <dl><dt><b>Description</b>:</dt><dd>The XML class and API is based on ECMA-357 <ndash/> ECMAScript for XML (E4X). The XML class is a core class in the E4X specification; it provides the ability to load, parse and save XML documents.</dd></dl>
     <dl><dt><b>API</b> Stability:</dt><dd>Evolving.</dd></dl>
     <dl><dt>See Also:</dt><dd>
     <a href="#group___ejs_x_m_l_1ga432be67ad5f8a5b68b19b95b1346693d" class="ref">ejsAppendAttributeToXML</a>, <a href="#group___ejs_x_m_l_1ga30a98eec819837236f296ff8e9fe8560" class="ref">ejsAppendToXML</a>, <a href="#group___ejs_x_m_l_1ga0fe5fac1a54834bb2f00bcdc955c4aa2" class="ref">ejsCreateXML</a>, <a href="#group___ejs_x_m_l_1ga06ebe56f1b1705be503969940047a7c5" class="ref">ejsCreateXMLList</a>, <a href="#group___ejs_x_m_l_1ga93c3341f3b56dd28b760b3b3e88a4f2c" class="ref">ejsGetXMLDescendants</a>, <a href="#group___ejs_x_m_l_1ga6d2d73f2c1b4a483838bca1343f7ab5b" class="ref">ejsIsXML</a>, <a href="#group___ejs_x_m_l_1ga3d1eae3555c74b08fa0ea38fbaac4cea" class="ref">ejsLoadXMLAsc</a>, <a href="#group___ejs_x_m_l_1gaa12c4363491d3ec4c889db2caff2ec96" class="ref">ejsLoadXMLString</a>, <a href="#group___ejs_x_m_l_1ga585079d3c5054298dc0d6a2bc5aea973" class="ref">ejsXMLToBuf</a></dd></dl>
@@ -8511,10 +8531,10 @@ Property is an instance property.
 Name and namespace used to find the property.
 </td>
     <tr><td class="param"><a class="ref" href="#mpr_8h_1a91ad9478d81a7aaf2593e8d9c3d06a14" external="mpr.dtags">uint</a></td><td><td>nthBase</td><td>
-Property on Nth super type &mdash; count from the object.
+Property on Nth super type <ndash/> count from the object.
 </td>
     <tr><td class="param"><a class="ref" href="#mpr_8h_1a91ad9478d81a7aaf2593e8d9c3d06a14" external="mpr.dtags">uint</a></td><td><td>nthBlock</td><td>
-Property on Nth block in the scope chain &mdash; count from the end.
+Property on Nth block in the scope chain <ndash/> count from the end.
 </td>
     <tr><td class="param">EjsAny *</td><td><td>obj</td><td>
 Final object / Type containing the variable.
@@ -8608,7 +8628,7 @@ Immutable types are initialized.
 Interned Unicode string hash - shared over all interps.
 </td>
     <tr><td class="param"><a class="ref" href="#mpr_8h_1a91ad9478d81a7aaf2593e8d9c3d06a14" external="mpr.dtags">uint</a></td><td><td>logging</td><td>
-Using &mdash;log.
+Using <ndash/>log.
 </td>
     <tr><td class="param"><a class="ref" href="#struct_mpr_mutex" external="mpr.dtags">MprMutex</a> *</td><td><td>mutex</td><td>
 Multithread locking.
