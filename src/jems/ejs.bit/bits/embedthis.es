@@ -347,7 +347,7 @@ function packageInstall(pkg: Path, options) {
     for each (file in files) {
         let target = Path('/' + file.relativeTo(contents))
         if (file.isDir) {
-            target.makeDir()
+            target.makeDir(file.attributes)
         } else {
             file.copy(target)
         }
