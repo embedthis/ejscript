@@ -1058,6 +1058,10 @@ static EjsObj *makePathDir(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     } else if (!info.isDir) {
         /* Not a directory */
         return ESV(false);
+
+    } else if (attributes) {
+        /* Existing, but attributes supplied. So set the attributes */
+        ejsSetPathAttributes(ejs, fp->value, attributes);
     }
     return ESV(true);
 }
