@@ -237,7 +237,11 @@ public function installBinary() {
         createLinks()                                                                                          
         updateLatestLink()                                                                                          
     }
-    bit.dir.pkg.join('bin').removeAll()
+    if (!bit.options.keep) {
+        bit.dir.pkg.join('bin').removeAll()
+    } else {
+        trace('Keep', bit.dir.pkg.join('bin'))
+    }
     trace('Complete', bit.settings.title + ' installed')
 }
 
