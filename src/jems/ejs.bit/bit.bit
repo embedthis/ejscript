@@ -25,27 +25,6 @@ Bit.load({
             platforms: [ 'local' ],
         },
 
-/* UNUSED
-        'utest.es': {
-            path: '${BIN}/utest.es',
-            files: [ 'utest.es' ],
-            build: "
-                trace('Export', bit.target.files)
-                cp('utest.es', bit.dir.bin)
-            ",
-            'generate': "cp bit.es ${BIN}",
-            platforms: [ 'local' ],
-        },
-
-        'utest.exe': {
-            type: 'file',
-            path: '${BIN}/utest${EXE}',
-            files: [ '${BIN}/ejsrun${EXE}' ],
-            depends: ['ejsrun'],
-            platforms: [ 'local' ],
-        },
-*/
-
         bits: {
             path: '${LIB}/bits',
             files: [ 'bits/**' ],
