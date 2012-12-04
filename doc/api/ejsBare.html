@@ -484,10 +484,6 @@
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>Growth increment for tokens.</td></tr>
 <tr class="apiDef">
-<td>#define</td><td><a href="#ejs_8h_1aeb0d9f31b852a28eced7047be6c8dc84" class="nameRef">EJS_ARENA_SIZE</a>&nbsp;&nbsp;&nbsp;((1 * 1024 * 1024) - MPR_HEAP_OVERHEAD)</td>
-</tr>
-<tr class="apiBrief"><td>&nbsp;</td><td>Initial virt memory for objects.</td></tr>
-<tr class="apiDef">
 <td>#define</td><td><a href="#ejs_8h_1a5c080ddcc2de55475875384c9cc1065f" class="nameRef">EJS_BLEND_ADD</a>&nbsp;&nbsp;&nbsp;0x80</td>
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>Flag for ejsBlendObject for &quot;+&quot; property blend.</td></tr>
@@ -698,7 +694,7 @@
 <tr class="apiDef">
 <td>#define</td><td><a href="#ejs_8h_1a49971145df65c4c3e7568ec8d8d1d175" class="nameRef">EJS_MAX_COLLISIONS</a>&nbsp;&nbsp;&nbsp;4</td>
 </tr>
-<tr class="apiBrief"><td>&nbsp;</td><td>Max intern string collion chain.</td></tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Max intern string collion chain before rehash.</td></tr>
 <tr class="apiDef">
 <td>#define</td><td><a href="#ejs_8h_1a9c34bccd4c9cbf67f0cdf5c2fa4ee7ed" class="nameRef">EJS_MAX_EXCEPTIONS</a>&nbsp;&nbsp;&nbsp;8192</td>
 </tr>
@@ -708,21 +704,9 @@
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>Max number of locals.</td></tr>
 <tr class="apiDef">
-<td>#define</td><td><a href="#ejs_8h_1a5f9ffb50ca5fcfe015da5f4ab5648417" class="nameRef">EJS_MAX_OBJ_POOL</a>&nbsp;&nbsp;&nbsp;512</td>
-</tr>
-<tr class="apiBrief"><td>&nbsp;</td><td>Maximum number of objects per type to cache.</td></tr>
-<tr class="apiDef">
 <td>#define</td><td><a href="#ejs_8h_1af88a149e42518f24d026ce8b00c93691" class="nameRef">EJS_MAX_POOL</a>&nbsp;&nbsp;&nbsp;(4*1024*1024)</td>
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>Size of constant pool.</td></tr>
-<tr class="apiDef">
-<td>#define</td><td><a href="#ejs_8h_1ac349b76647b49eb260b5b02f810164a6" class="nameRef">EJS_MAX_RECURSION</a>&nbsp;&nbsp;&nbsp;10000</td>
-</tr>
-<tr class="apiBrief"><td>&nbsp;</td><td>Maximum recursion.</td></tr>
-<tr class="apiDef">
-<td>#define</td><td><a href="#ejs_8h_1a17900e05733e243cb135e8aee0285b39" class="nameRef">EJS_MAX_REGEX_MATCHES</a>&nbsp;&nbsp;&nbsp;32</td>
-</tr>
-<tr class="apiBrief"><td>&nbsp;</td><td>Maximum regular sub-expressions.</td></tr>
 <tr class="apiDef">
 <td>#define</td><td><a href="#ejs_8h_1acbcc8e0ccb373c21456ff8102dd8f2c7" class="nameRef">EJS_MAX_SQLITE_MEM</a>&nbsp;&nbsp;&nbsp;(2*1024*1024)</td>
 </tr>
@@ -731,10 +715,6 @@
 <td>#define</td><td><a href="#ejs_8h_1a9de76dda3ebc47f4caa55025cb9aed3a" class="nameRef">EJS_MAX_TRAITS</a>&nbsp;&nbsp;&nbsp;(0x7fff)</td>
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>Max number of declared properties per block.</td></tr>
-<tr class="apiDef">
-<td>#define</td><td><a href="#ejs_8h_1ab9da50b88fc6da0280701e846f4a8c47" class="nameRef">EJS_MAX_TYPE</a>&nbsp;&nbsp;&nbsp;256</td>
-</tr>
-<tr class="apiBrief"><td>&nbsp;</td><td>Maximum number of types.</td></tr>
 <tr class="apiDef">
 <td>#define</td><td><a href="#ejs_8h_1a0b196273149ab15e7f5b8f45f51396e5" class="nameRef">EJS_MIN_FRAME_SLOTS</a>&nbsp;&nbsp;&nbsp;16</td>
 </tr>
@@ -900,10 +880,6 @@
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>Type is unsing virtual slots.</td></tr>
 <tr class="apiDef">
-<td>#define</td><td><a href="#ejs_8h_1acac2a19ee3e405709136e5e0a0650b5e" class="nameRef">EJS_WORK_QUOTA</a>&nbsp;&nbsp;&nbsp;1024</td>
-</tr>
-<tr class="apiBrief"><td>&nbsp;</td><td>Allocations required before garbage colllection.</td></tr>
-<tr class="apiDef">
 <td>#define</td><td><a href="#ejs_8h_1aa50fc4411fc6e651069c645f08c1fded" class="nameRef">EJS_WORKER_BEGIN</a>&nbsp;&nbsp;&nbsp;1</td>
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>Worker state before starting.</td></tr>
@@ -924,10 +900,6 @@
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>XML node is an attribute.</td></tr>
 <tr class="apiDef">
-<td>#define</td><td><a href="#ejs_8h_1a7ac0c501aab0bcd3babb52af2a08e01d" class="nameRef">EJS_XML_BUF_MAX</a>&nbsp;&nbsp;&nbsp;(256 * 1024)</td>
-</tr>
-<tr class="apiBrief"><td>&nbsp;</td><td>Max XML document size.</td></tr>
-<tr class="apiDef">
 <td>#define</td><td><a href="#ejs_8h_1a9f3142262f5f961d0f150404cd5344c0" class="nameRef">EJS_XML_COMMENT</a>&nbsp;&nbsp;&nbsp;5</td>
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>XML node is a comment.</td></tr>
@@ -939,10 +911,6 @@
 <td>#define</td><td><a href="#ejs_8h_1a67f5fc6114514ec3f2e625fca8aeb288" class="nameRef">EJS_XML_LIST</a>&nbsp;&nbsp;&nbsp;1</td>
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>XML node is a list.</td></tr>
-<tr class="apiDef">
-<td>#define</td><td><a href="#ejs_8h_1a5eec62e38e74d0c78c0727617c887dde" class="nameRef">EJS_XML_MAX_NODE_DEPTH</a>&nbsp;&nbsp;&nbsp;64</td>
-</tr>
-<tr class="apiBrief"><td>&nbsp;</td><td>Max nesting of tags.</td></tr>
 <tr class="apiDef">
 <td>#define</td><td><a href="#ejs_8h_1ad7be5076c3dbba2a6f1509e2dc20ac14" class="nameRef">EJS_XML_PROCESSING</a>&nbsp;&nbsp;&nbsp;6</td>
 </tr>
