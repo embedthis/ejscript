@@ -8,7 +8,13 @@
 #include    "ejs.h"
 #include    "pcre.h"
 
-/***************************** Forward Declarations ***************************/
+/********************************** Defines ***********************************/
+
+#if !defined(BIT_MAX_REGEX_MATCHES)
+    #define BIT_MAX_REGEX_MATCHES 64
+#endif
+
+/********************************* Forwards ***********************************/
 
 static char *makeFlags(EjsRegExp *rp);
 static int parseFlags(EjsRegExp *rp, wchar *flags);
@@ -91,7 +97,7 @@ static EjsArray *regex_exec(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
     EjsArray    *results;
     EjsString   *match, *str;
-    int         matches[EJS_MAX_REGEX_MATCHES * 3];
+    int         matches[BIT_MAX_REGEX_MATCHES * 3];
     int         count, start, len, i, index;
 
     str = (EjsString*) argv[0];

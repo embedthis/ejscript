@@ -8,6 +8,12 @@
 
 #include    "ejs.h"
 
+/********************************** Defines ***********************************/
+
+#if !defined(BIT_XML_MAX_NODE_DEPTH)
+    #define BIT_XML_MAX_NODE_DEPTH 2048
+#endif
+
 /****************************** Forward Declarations **************************/
 
 static void indent(MprBuf *bp, int level);
@@ -31,7 +37,7 @@ MprXml *ejsCreateXmlParser(Ejs *ejs, EjsXML *xml, cchar *filename)
     EjsXmlState *parser;
     MprXml      *xp;
     
-    xp = mprXmlOpen(MPR_BUFSIZE, EJS_XML_BUF_MAX);
+    xp = mprXmlOpen(MPR_BUFSIZE, -1);
     assure(xp);
 
     /*
@@ -101,7 +107,7 @@ static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, 
         break;
 
     case MPR_XML_NEW_ELT:
-        if (parser->topOfStack > EJS_XML_MAX_NODE_DEPTH) {
+        if (parser->topOfStack > BIT_XML_MAX_NODE_DEPTH) {
             ejsThrowSyntaxError(ejs,  "XML nodes nested too deeply in %s at line %d", parser->filename, 
                 mprXmlGetLineNumber(xp));
             return MPR_ERR_BAD_SYNTAX;
