@@ -43,7 +43,7 @@ public class Bit {
     private var home: Path
     private var bareBit: Object = { platforms: [], platform: {}, dir: {}, settings: {
         required: [], optional: [],
-    }, packs: {}, targets: {}, env: {}, globals: {}, }
+    }, packs: {}, targets: {}, env: {}, globals: {}, customSettings: {}}
 
     private var bit: Object = {}
     private var gen: Object
@@ -396,10 +396,13 @@ public class Bit {
         nbit.platform.configuration = platform + '-' + '${platform.profile}'
 
         for (let [key, value] in bit.settings) {
-            if (!bit.userSettings[key]) {
+            /* Copy over non-standard settings. These include compiler sleuthing settings.  */
+            if (!bit.standardSettings[key]) {
                 nbit.settings[key] = value
             }
         }
+        blend(nbit.settings, bit.customSettings)
+
         if (envSettings) {
             blend(nbit, envSettings, {combine: true})
         }
@@ -991,7 +994,7 @@ public class Bit {
         }
         bit = blend(bit, o, {combine: true})
 
-        if (o.scripts && o.scripts.onload && !bit.quickLoad) {
+        if (o.scripts && o.scripts.onload && (!bit.quickLoad || o.scripts.mustRun)) {
             runScript(o.scripts.onload, home)
         }
     }
@@ -3047,7 +3050,7 @@ global.NN = item.ns
         expandTokens(bit)
         loadModules()
         applyProfile()
-        bit.userSettings = bit.settings.clone(true)
+        bit.standardSettings = bit.settings.clone(true)
         applyCommandLineOptions(platform)
         applyEnv()
         setPathEnvVar(bit)
