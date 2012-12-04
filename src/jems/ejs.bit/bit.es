@@ -533,13 +533,18 @@ public class Bit {
             def(f, 'BIT_PACK_' + pname.toUpper(), pack.enable ? '1' : '0')
         }
         for (let [pname, pack] in packs) {
-            if (pack.enable && pack.definitions) {
-                for each (define in pack.definitions) {
-                    if (define.match(/-D(.*)=(.*)/)) {
-                        let [key,value] = define.match(/-D(.*)=(.*)/).slice(1)
-                        def(f, key, value)
-                    } else {
-                        f.writeLine('#define ' + define.trimStart('-D'))
+            if (pack.enable) {
+                if (!generating) {
+                    def(f, 'BIT_PACK_' + pname.toUpper() + '_PATH', '"' + pack.path + '"')
+                }
+                if (pack.definitions) {
+                    for each (define in pack.definitions) {
+                        if (define.match(/-D(.*)=(.*)/)) {
+                            let [key,value] = define.match(/-D(.*)=(.*)/).slice(1)
+                            def(f, key, value)
+                        } else {
+                            f.writeLine('#define ' + define.trimStart('-D'))
+                        }
                     }
                 }
             }
