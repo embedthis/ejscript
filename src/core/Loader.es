@@ -149,7 +149,7 @@ module ejs {
                 if (dir.exists) {
                     return Path(dir).join(md5(id)).joinExt('.mod')
                 } else {
-                    App.log.error("Cannot find cache directory: \"" + dir + "\" from pwd " + App.dir)
+                    App.log.debug(5, "Skip caching, missing cache directory \"" + dir + "\" at " + App.dir)
                 }
             }
             return null
