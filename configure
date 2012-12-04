@@ -13,4 +13,4 @@ if [ "${MIN_BIT}" = "${ver}" ] ; then
     echo "Bootstrap build using \"make\" first to upgrade \"bit\"." >&2
     exit 255
 fi
-bit configure $*
+bit configure "$@"
