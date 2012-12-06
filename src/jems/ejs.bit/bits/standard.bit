@@ -49,6 +49,10 @@ Bit.load({
             type: 'configure',
         },
 
+        reconfigure: {
+            type: 'reconfigure',
+        },
+
         dump: {
             type: 'dump',
         },

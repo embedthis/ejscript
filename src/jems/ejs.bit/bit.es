@@ -87,6 +87,7 @@ public class Bit {
             pre: { },
             prefix: { range: String, separator: Array },
             profile: { range: String },
+            reconfigure: { },
             rebuild: { alias: 'r'},
             release: {},
             quiet: { alias: 'q' },
@@ -128,6 +129,7 @@ public class Bit {
             '    --pre                              # Pre-process a source file to stdout\n' +
             '    --profile [debug|release|...]      # Use the build profile\n' +
             '    --quiet                            # Quiet operation. Suppress trace \n' +
+            '    --reconfigure                      # Reconfigure with existing settings\n' +
             '    --set [feature=value]              # Enable and a feature\n' +
             '    --show                             # Show commands executed\n' +
             '    --static                           # Make static without shared libraries\n' +
@@ -177,6 +179,9 @@ public class Bit {
                 import()
                 App.exit()
             } 
+            if (options.reconfigure) {
+                reconfigure()
+            }
             if (options.configure) {
                 configure()
             }
@@ -234,6 +239,11 @@ public class Bit {
         } else if (options.configure) {
             args.rest.push('configure')
             options.configure = Path(options.configure)
+        }
+        if (args.rest.contains('reconfigure')) {
+            options.reconfigure = true
+        } else if (options.reconfigure) {
+            args.rest.push('configure')
         }
         if (args.rest.contains('generate')) {
             if (Config.OS == 'windows') {
@@ -368,6 +378,17 @@ public class Bit {
         }
     }
 
+    function reconfigure() {
+        vtrace('Load', 'Preload main.bit to determine required configuration')
+        platforms = bit.platforms = [localPlatform]
+        makeBit(localPlatform, localPlatform + '.bit')
+        if (bit.settings.configure) {
+            run(bit.settings.configure)
+        } else {
+            App.log.error('No prior configuration to use')
+        }
+    }
+
     function genStartBitFile(platform) {
         let nbit = { }
         nbit.platforms = platforms
@@ -402,6 +423,7 @@ public class Bit {
             }
         }
         blend(nbit.settings, bit.customSettings)
+        nbit.settings.configure = 'bit ' + App.args.slice(1).join(' ')
 
         if (envSettings) {
             blend(nbit, envSettings, {combine: true})

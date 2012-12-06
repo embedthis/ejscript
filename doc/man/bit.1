@@ -25,17 +25,20 @@ bit \- Build It! -- Utility to build and manage programs
 .RE
 .RS 4
 [\fI--quiet\fR]
+[\fI--reconfigure\fR]
 [\fI--set [feature=value]\fR]
 [\fI--show\fR]
 [\fI--static\fR]
 [\fI--rebuild\fR]
+.RE
+.RS 4
 [\fI--release\fR]
 [\fI--unset feature\fR]
 [\fI--version\fR]
-.RE
-.RS 4
 [\fI--verbose\fR]
 [\fI--with PACK[=PATH]\fR]
+.RE
+.RS 4
 [\fI--without PACK\fR]
 [targets|actions]
 .SH DESCRIPTION
@@ -354,6 +357,10 @@ files.
 .TP
 \fB\--quiet\fR
 Quiet operation. Suppresses output trace.
+
+.TP
+\fB\--reconfigure\fR
+Re-run configuration using the prior configuration settings.
 
 .TP
 \fB\--set key=value\fR
