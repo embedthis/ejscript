@@ -5608,8 +5608,8 @@ static void netOutgoingService(HttpQueue *q)
             freeNetPackets(q, written);
             adjustNetVec(q, written);
         }
+        LOG(1, "netConnector wrote %d, ask %d, qflags %x", (int) written, q->ioCount, q->flags);
     }
-    LOG(6, "netConnector wrote %d, qflags %x", (int) written, q->flags);
     if (q->first && q->first->flags & HTTP_PACKET_END) {
         httpFinalizeConnector(conn);
     } else {
