@@ -1939,7 +1939,7 @@ PUBLIC int httpConnect(HttpConn *conn, cchar *method, cchar *uri, struct MprSsl 
     httpSetState(conn, HTTP_STATE_CONNECTED);
     conn->authRequested = 0;
     conn->tx->method = supper(method);
-    conn->tx->parsedUri = httpCreateUri(uri, 0);
+    conn->tx->parsedUri = httpCreateUri(uri, HTTP_COMPLETE_URI_PATH);
 #if BIT_DEBUG
     conn->startMark = mprGetHiResTime();
 #endif
@@ -10480,12 +10480,14 @@ static void definePathVars(HttpRoute *route)
 static void defineHostVars(HttpRoute *route) 
 {
     assure(route);
-    mprAddKey(route->vars, "DOCUMENT_ROOT", route->dir);
+    mprAddKey(route->vars, "DOCUMENTS", route->dir);
     mprAddKey(route->vars, "ROUTE_HOME", route->home);
-    //  DEPRECATE
-    mprAddKey(route->vars, "SERVER_ROOT", route->home);
     mprAddKey(route->vars, "SERVER_NAME", route->host->name);
     mprAddKey(route->vars, "SERVER_PORT", itos(route->host->port));
+
+    //  DEPRECATE
+    mprAddKey(route->vars, "DOCUMENT_ROOT", route->dir);
+    mprAddKey(route->vars, "SERVER_ROOT", route->home);
 }
 
 
@@ -10753,7 +10755,7 @@ PUBLIC void httpDefineRouteBuiltins()
         %N - Number. Parses numbers in base 10.
         %S - String. Removes quotes.
         %T - Template String. Removes quotes and expand ${PathVars}.
-        %P - Path string. Removes quotes and expands ${PathVars}. Resolved relative to host->dir (ServerRoot).
+        %P - Path string. Removes quotes and expands ${PathVars}. Resolved relative to host->dir (Home).
         %W - Parse words into a list
         %! - Optional negate. Set value to HTTP_ROUTE_NOT present, otherwise zero.
     Values wrapped in quotes will have the outermost quotes trimmed.
@@ -12301,7 +12303,7 @@ static void processCompletion(HttpConn *conn)
     assure(tx->finalizedOutput);
     assure(tx->finalizedConnector);
 
-    mprLog(3, "Request complete, status %d, error %d, connError %d, %s%s, memsize %.2f MB",
+    LOG(3, "Request complete, status %d, error %d, connError %d, %s%s, memsize %.2f MB",
         tx->status, conn->error, conn->connError, rx->hostHeader, rx->uri, mprGetMem() / 1024 / 1024.0);
 
     httpDestroyPipeline(conn);
@@ -14424,7 +14426,13 @@ PUBLIC void httpRedirect(HttpConn *conn, int status, cchar *targetUri)
         }
         target = httpCreateUri(targetUri, 0);
         base = rx->parsedUri;
-        if (!target->port && target->scheme && !smatch(target->scheme, base->scheme)) {
+        /*
+            Support URIs without a host:  https:///path. This is used to redirect onto the same host but with a 
+            different scheme. So find a suitable local endpoint to supply the port for the scheme.
+        */
+        if (!target->port &&
+                (!target->host || smatch(base->host, target->host)) &&
+                (target->scheme && !smatch(target->scheme, base->scheme))) {
             endpoint = smatch(target->scheme, "https") ? conn->host->secureEndpoint : conn->host->defaultEndpoint;
             if (endpoint) {
                 target->port = endpoint->port;
