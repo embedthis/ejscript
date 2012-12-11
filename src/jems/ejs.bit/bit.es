@@ -127,6 +127,7 @@ public class Bit {
             '    --out path                         # Save output to a file\n' +
             '    --platform os-arch[-cpu]           # Build for specified platform\n' +
             '    --pre                              # Pre-process a source file to stdout\n' +
+            '    --prefix dir=path                  # Define installation path prefixes\n' +
             '    --profile [debug|release|...]      # Use the build profile\n' +
             '    --quiet                            # Quiet operation. Suppress trace \n' +
             '    --reconfigure                      # Reconfigure with existing settings\n' +
@@ -411,6 +412,7 @@ public class Bit {
                 top: bit.dir.top.portable,
             },
             settings: { configured: true },
+            prefixes: bit.prefixes,
             packs: bit.packs,
             env: bit.env,
         })
@@ -2551,12 +2553,6 @@ public class Bit {
                     runShell(target, item.shell, item.script)
                 } else {
                     let script = expand(item.script).expand(target.vars, {fill: ''})
-/*
-print('ITEM.NS', typeOf(item.ns))
-print('ITEM.NS', item.ns)
-dump(item)
-global.NN = item.ns
-*/
                     script = 'require ejs.unix\n' + script
                     eval(script)
                 }
@@ -3062,6 +3058,13 @@ global.NN = item.ns
                 if (path.exists) {
                     loadBitFile(path)
                 }
+            }
+        }
+        if (options.configure && options.prefix) {
+            bit.prefixes ||= {}
+            for each (p in options.prefix) {
+                let [prefix, path] = p.split('=')
+                bit.prefixes[prefix] = Path(path)
             }
         }
         for (let [key,value] in bit.ext.clone()) {

@@ -21,24 +21,25 @@ bit \- Build It! -- Utility to build and manage programs
 [\fI--out path\fR]
 [\fI--platform os-arch\fR]
 [\fI--pre sourcefile\fR]
-[\fI--profile [debug|release|...]\fR]
+[\fI--prefix dir=path\fR]
 .RE
 .RS 4
+[\fI--profile [debug|release|...]\fR]
 [\fI--quiet\fR]
 [\fI--reconfigure\fR]
 [\fI--set [feature=value]\fR]
 [\fI--show\fR]
-[\fI--static\fR]
-[\fI--rebuild\fR]
 .RE
 .RS 4
+[\fI--static\fR]
+[\fI--rebuild\fR]
 [\fI--release\fR]
 [\fI--unset feature\fR]
 [\fI--version\fR]
 [\fI--verbose\fR]
-[\fI--with PACK[=PATH]\fR]
 .RE
 .RS 4
+[\fI--with PACK[=PATH]\fR]
 [\fI--without PACK\fR]
 [targets|actions]
 .SH DESCRIPTION
@@ -340,6 +341,11 @@ Note: Products that require the building and execution of local tools MUST be ab
 .TP
 \fB\--out path\fR
 Save Bit trace output to a file instead of displaying to the console.
+
+.TP
+\fB\--prefix dir=path\fR
+Set the installation directory prefix. Various products utilize different prefixes. Typical prefixes are:
+bin, config, inc, log, product, productver, spool, src, web.
 
 .TP
 \fB\--platform os-arch\fR
