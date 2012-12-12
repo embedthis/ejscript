@@ -18,7 +18,7 @@ PUBLIC EjsBlock *ejsCloneBlock(Ejs *ejs, EjsBlock *src, bool deep)
 
     dest->nobind = src->nobind;
     dest->scope = src->scope;
-    mprInitList(&dest->namespaces, MPR_LIST_OWN);
+    mprInitList(&dest->namespaces, MPR_LIST_STABLE);
     mprCopyListContents(&dest->namespaces, &src->namespaces);
     return dest;
 }
@@ -105,7 +105,7 @@ PUBLIC EjsBlock *ejsCreateBlock(Ejs *ejs, int size)
     }
     block->pot.shortScope = 1;
     block->pot.isBlock = 1;
-    mprInitList(&block->namespaces, MPR_LIST_OWN);
+    mprInitList(&block->namespaces, MPR_LIST_STABLE);
     return block;
 }
 
