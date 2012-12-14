@@ -258,6 +258,12 @@ defaults: {
 This will use the 'TUNE=SPEED' compiler define when compiling all source files, and the 'math' library when linking
 executables (and libraries on some systems). 
 
+.SH OVERRIDING
+Bit has default command flags for the compiler, linker and other tools. These can be overridden by providing 
+environment variables containing alternate flags to use. Use CFLAGS to provide compiler flags, DFLAGS for 
+pre-processor definitions, IFLAGS for compiler include paths and LDFLAGS for linker flags. If these flags are provided
+to bit when building, they apply to that run only. If the flags are provide when configuring, they are saved in the
+generated platform build file and apply to all subsequent runs. 
 
 .SH DEBUGGING
 With Make and other build tools, it is difficult to determine why a target is or is not being built. Bit 

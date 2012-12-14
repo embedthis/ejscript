@@ -251,13 +251,19 @@ settings: {
             <pre>bit --platform windows-x64 -configure .</pre>
        <p>This will create a windows-x64.bit configuration file and a start.es that references it. The platform
        switch does not need to be restated after configuration.</p>
-        <h3>Environment Variables</h3>
-        <p>When cross-compiling, it is sometimes required to pass compiler and linker paths and flags via the
-        environment. Bit detects certain environment variables and saves their values when configuring. Subsequently
-        when building, these values are used. For example:
+
+        <h2>Environment Variables</h2>
+        <p>Bit has default command paths and command flags for the compiler, linker and other tools. These can be overridden
+        by providing environment variables containing alternate flags to use. </p>
+        <p>Use the variables AR, CC and LD to specify the path to the archiver, compiler and linker tools.
+        Use CFLAGS to provide compiler flags, DFLAGS for
+        pre-processor definitions, IFLAGS for compiler include paths and LDFLAGS for linker flags.</p>
+        <p>If these flags are
+        provided to bit when building, they apply to that run only. If the flags are provide when configuring, they are
+        saved in the generated platform build file and apply to all subsequent runs.
+        For example:
             <pre>CC=/path/to/compiler CFLAGS=-w bit configure</pre>
-        <p>The following variables are eligible: CFLAGS, DFLAGS, IFLAGS, LDFLAGS, CC and LD. Note: these are only
-        processed when configuring for cross compilation.</p>
+
         <a id="projectGeneration"></a>
         <h2>Project Generation</h2>
         <p>Bit can generate generate complete project files for building using: make, nmake, Visual Studio, Xcode or

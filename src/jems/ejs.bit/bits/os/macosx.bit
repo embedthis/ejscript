@@ -28,27 +28,30 @@ Bit.load({
             'preblend': "
                 let defaults = bit.defaults
                 let arch = bit.platform.arch
-                if (bit.settings.preprocess) {
-                    defaults.compiler.push('-E')
-                }
-                if (bit.platform.profile == 'debug') {
-                    defaults.compiler += ['-g']
-                    defaults.linker.push('-g')
-                    defaults.defines.push('-DBIT_DEBUG')
-                } else if (bit.settings.tune == 'size') {
-                    defaults.compiler += ['-Os']
-                } else {
-                    defaults.compiler += ['-O3']
-                }
                 defaults.libpaths.push(bit.dir.bin)
-                if (bit.settings.warnUnused) {
-                    defaults.compiler.push('-Wno-unused-result')
-                }
-                if (bit.settings.warn64to32) {
-                    defaults.compiler.push('-Wshorten-64-to-32')
-                }
                 if (bit.settings.hasDynLoad) {
                     defaults.libraries.push('dl')
+                }
+                if (bit.settings.preprocess) {
+                    defaults.compiler.push('-E')
+                } else {
+                    if (!defaults['override-compiler']) {
+                        if (bit.platform.profile == 'debug') {
+                            defaults.compiler += ['-g']
+                            defaults.linker.push('-g')
+                            defaults.defines.push('-DBIT_DEBUG')
+                        } else if (bit.settings.tune == 'size') {
+                            defaults.compiler += ['-Os']
+                        } else {
+                            defaults.compiler += ['-O3']
+                        }
+                        if (bit.settings.warnUnused) {
+                            defaults.compiler.push('-Wno-unused-result')
+                        }
+                        if (bit.settings.warn64to32) {
+                            defaults.compiler.push('-Wshorten-64-to-32')
+                        }
+                    }
                 }
             ",
             'prebuild': "

@@ -619,26 +619,27 @@ public class Bit {
     }
 
     let envTools = {
-        AR: '+lib',
-        CC: '+compiler',
-        LD: '+linker',
+        AR: 'lib',
+        CC: 'compiler',
+        LD: 'linker',
     }
 
     let envFlags = {
-        CFLAGS:  '+compiler',
-        DFLAGS:  '+defines',
-        IFLAGS:  '+includes',
-        LDFLAGS: '+linker',
+        CFLAGS:  'compiler',
+        DFLAGS:  'defines',
+        IFLAGS:  'includes',
+        LDFLAGS: 'linker',
     }
-
     /*
         Examine environment for flags and apply
-        NOTE: this is for cross platforms ONLY
      */
     function applyEnv() {
-        if (!bit.cross) {
-            return
-        }
+        /*
+            UNUSED - now applies to ordinary non-cross builds
+            if (false && !bit.cross) {
+                return
+            }
+         */
         envSettings = { packs: {}, defaults: {} }
         for (let [key, tool] in envTools) {
             let path = App.getenv(key)
@@ -651,9 +652,14 @@ public class Bit {
         for (let [flag, option] in envFlags) {
             let value = App.getenv(flag)
             if (value) {
+                let flag = ((options.configure) ? '+' : '') + option
                 envSettings.defaults[option] ||= []
                 envSettings.defaults[option] += value.replace(/^-I/, '').split(' ')
+                envSettings.defaults['override-' + option.trim('+')] = true
             }
+        }
+        if (!options.configure) {
+            blend(bit, envSettings, {combine: true})
         }
     }
 
@@ -3089,7 +3095,6 @@ public class Bit {
             bit.globals.LBIN = localBin = bit.dir.bin.portable
         }
     }
-
 
     function quickLoad(bitfile: Path) {
         global.bit = bit = makeBareBit()
