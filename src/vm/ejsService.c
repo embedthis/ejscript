@@ -428,7 +428,7 @@ static void poolTimer(EjsPool *pool, MprEvent *event)
         mprClearList(pool->list);
         pool->count = 0;
         mprLog(5, "ejs: Release %d VMs in inactive pool. Invoking GC.", pool->count);
-        mprRequestGC(MPR_FORCE_GC);
+        mprRequestGC(MPR_GC_FORCE);
     }
 }
 
