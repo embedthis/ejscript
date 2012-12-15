@@ -342,9 +342,9 @@ typedef void EjsAny;
     Qualified name structure
     @description All names in Ejscript consist of a property name and a name space. Namespaces provide discrete
         spaces to manage and minimize name conflicts. These names will soon be converted to unicode.
-    @stability Evolving
     @defgroup EjsName EjsName
     @see EjsName ejsMarkName
+    @stability Evolving
  */       
 typedef struct EjsName {
     struct EjsString *name;                          /**< Property name */
