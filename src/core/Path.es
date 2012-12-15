@@ -292,9 +292,9 @@ module ejs {
             @param options
             @options permissions Directory permissions to use for all created directories. Set to a numeric 
                 Posix permissions mask.
-            @options user String representing the file user for all created directories.
+            @options user String representing the file user.
                 If both user and uid are specified, user takes precedence. 
-            @options group String representing the file group for all created directories.
+            @options group String representing the file group.
                 If both group and gid are specified, group takes precedence.
             @options uid Number representing the file user id
             @options gid Number representing the file group id
@@ -740,7 +740,7 @@ module ejs {
                 }
             } 
             catch (es) {
-                throw new IOError("Can't write to file")
+                throw new IOError("Cannot write to file")
             }
             finally {
                 file.close()

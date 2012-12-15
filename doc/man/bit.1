@@ -21,20 +21,24 @@ bit \- Build It! -- Utility to build and manage programs
 [\fI--out path\fR]
 [\fI--platform os-arch\fR]
 [\fI--pre sourcefile\fR]
-[\fI--profile [debug|release|...]\fR]
+[\fI--prefix dir=path\fR]
 .RE
 .RS 4
+[\fI--profile [debug|release|...]\fR]
 [\fI--quiet\fR]
+[\fI--reconfigure\fR]
 [\fI--set [feature=value]\fR]
 [\fI--show\fR]
+.RE
+.RS 4
 [\fI--static\fR]
 [\fI--rebuild\fR]
 [\fI--release\fR]
 [\fI--unset feature\fR]
 [\fI--version\fR]
+[\fI--verbose\fR]
 .RE
 .RS 4
-[\fI--verbose\fR]
 [\fI--with PACK[=PATH]\fR]
 [\fI--without PACK\fR]
 [targets|actions]
@@ -254,6 +258,12 @@ defaults: {
 This will use the 'TUNE=SPEED' compiler define when compiling all source files, and the 'math' library when linking
 executables (and libraries on some systems). 
 
+.SH OVERRIDING
+Bit has default command flags for the compiler, linker and other tools. These can be overridden by providing 
+environment variables containing alternate flags to use. Use CFLAGS to provide compiler flags, DFLAGS for 
+pre-processor definitions, IFLAGS for compiler include paths and LDFLAGS for linker flags. If these flags are provided
+to bit when building, they apply to that run only. If the flags are provide when configuring, they are saved in the
+generated platform build file and apply to all subsequent runs. 
 
 .SH DEBUGGING
 With Make and other build tools, it is difficult to determine why a target is or is not being built. Bit 
@@ -339,6 +349,11 @@ Note: Products that require the building and execution of local tools MUST be ab
 Save Bit trace output to a file instead of displaying to the console.
 
 .TP
+\fB\--prefix dir=path\fR
+Set the installation directory prefix. Various products utilize different prefixes. Typical prefixes are:
+bin, config, inc, log, product, productver, spool, src, web.
+
+.TP
 \fB\--platform os-arch\fR
 Add a platform to build for cross-compilation. Multiple platforms can be added. You may use 'local' for the local
 platform. Options specified after the platform apply to the prior platform. For example: 
@@ -354,6 +369,10 @@ files.
 .TP
 \fB\--quiet\fR
 Quiet operation. Suppresses output trace.
+
+.TP
+\fB\--reconfigure\fR
+Re-run configuration using the prior configuration settings.
 
 .TP
 \fB\--set key=value\fR

@@ -17,7 +17,7 @@
 <table class='classHead' summary='Http'>
    <tr><td><strong>Module</strong></td><td>ejs</td></tr>
    <tr><td><strong>Definition</strong></td><td> class Http</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>Http <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.1</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Http <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.2</td></tr>
 <tr><td><strong>Stability</strong></td><td>Evolving.</td></tr>
        </td></tr>
 </table>
@@ -539,7 +539,7 @@ credentials. It will not close the connection to TCP/IP and thus Keep-Alive will
 <dl><dt>Description</dt></dd><dd>Set the user credentials to use if the request requires authentication. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>username: <a href='String.html'>String</a> </td><td>String user name to use. If null, then reset the current credentials.</td></tr><tr class='param'><td class='param'>password: <a href='String.html'>String</a> </td><td>Un-encrypted string password to use. Set to null to reset the current credentials.</td></tr><tr class='param'><td class='param'>type: <a href='String.html'>String</a> </td><td>Authentication type. Set to basic or digest. Defaults to basic. If not set, then the authentication type is determined by the response from the server and the  request will be retried if it fails with an authentication error. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>username: <a href='String.html'>String</a> </td><td>String user name to use. If null, then reset the current credentials. The password may be included in the username by appending a ":" then the password. In this case set the password parameter to null.</td></tr><tr class='param'><td class='param'>password: <a href='String.html'>String</a> </td><td>Un-encrypted string password to use. Set to null to reset the current credentials.</td></tr><tr class='param'><td class='param'>type: <a href='String.html'>String</a> </td><td>Authentication type. Set to basic or digest. Defaults to basic. If not set, then the authentication type is determined by the response from the server and the  request will be retried if it fails with an authentication error. [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

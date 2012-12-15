@@ -289,6 +289,10 @@ cd - >/dev/null
 
 "${LD}" -dll -out:${CONFIG}/bin/libejs.db.sqlite.dll -entry:_DllMainCRTStartup@12 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsSqlite.obj libsqlite3.lib libejs.lib libmpr.lib ${LIBS} libhttp.lib libpcre.lib
 
+cd src/jems/ejs.mail >/dev/null ;\
+../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.mail.mod --debug --optimize 9 *.es ;\
+cd - >/dev/null 
+
 cd src/jems/ejs.web >/dev/null ;\
 ../../../${CONFIG}/bin/ejsc --out ../../../${CONFIG}/bin/ejs.web.mod --debug --optimize 9 *.es ;\
 ../../../${CONFIG}/bin/ejsmod --cslots ../../../${CONFIG}/bin/ejs.web.mod ;\

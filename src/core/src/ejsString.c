@@ -10,6 +10,11 @@
 
 /*********************************** Locals ***********************************/
 
+//  MOB - should not be fixed
+#if !defined(BIT_MAX_REGEX_MATCHES)
+    #define BIT_MAX_REGEX_MATCHES 128
+#endif
+
 static int internHashSizes[] = {
      389, 769, 1543, 3079, 6151, 12289, 24593, 49157, 98317, 196613, 0
 };
@@ -954,7 +959,7 @@ static EjsArray *match(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     EjsRegExp   *rp;
     EjsArray    *results;
     EjsString   *match;
-    int         matches[EJS_MAX_REGEX_MATCHES * 3];
+    int         matches[BIT_MAX_REGEX_MATCHES * 3];
     int         i, count, len, resultCount;
 
     rp = (EjsRegExp*) argv[0];
@@ -1099,7 +1104,7 @@ static EjsString *removeCharsFromString(Ejs *ejs, EjsString *sp, int argc, EjsOb
 
 static EjsString *getReplacementText(Ejs *ejs, EjsFunction *fn, int count, int *matches, EjsString *sp)
 {
-    EjsAny  *result, *argv[EJS_MAX_REGEX_MATCHES * 3];
+    EjsAny  *result, *argv[BIT_MAX_REGEX_MATCHES * 3];
     int     i, offset, argc;
 
     assure(fn);
@@ -1130,7 +1135,7 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     EjsFunction *replacementFunction;
     wchar       cbuf[1];
     ssize       patternLength, index;
-    int         matches[EJS_MAX_REGEX_MATCHES * 3], enabled;
+    int         matches[BIT_MAX_REGEX_MATCHES * 3], enabled;
 
     result = 0;
     if (ejsIsFunction(ejs, argv[1])) {
@@ -1287,7 +1292,7 @@ static EjsNumber *searchString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     EjsRegExp   *rp;
     EjsString   *pattern;
     ssize       index, patternLength;
-    int         count, matches[EJS_MAX_REGEX_MATCHES * 3];
+    int         count, matches[BIT_MAX_REGEX_MATCHES * 3];
 
     if (ejsIs(ejs, argv[0], String)) {
         pattern = (EjsString*) argv[0];
@@ -1412,7 +1417,7 @@ static EjsArray *split(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     } else if (ejsIs(ejs, argv[0], RegExp)) {
         EjsRegExp   *rp;
         EjsString   *match;
-        int         matches[EJS_MAX_REGEX_MATCHES * 3], count, resultCount;
+        int         matches[BIT_MAX_REGEX_MATCHES * 3], count, resultCount;
         
         rp = (EjsRegExp*) argv[0];
         rp->endLastMatch = 0;

@@ -51,6 +51,7 @@ all: prep \
         $(CONFIG)\bin\ejs.db.mapper.mod \
         $(CONFIG)\bin\ejs.db.sqlite.mod \
         $(CONFIG)\bin\libejs.db.sqlite.dll \
+        $(CONFIG)\bin\ejs.mail.mod \
         $(CONFIG)\bin\ejs.web.mod \
         $(CONFIG)\bin\libejs.web.dll \
         $(CONFIG)\bin\www \
@@ -99,6 +100,7 @@ clean:
 	-if exist $(CONFIG)\bin\ejs.db.mapper.mod del /Q $(CONFIG)\bin\ejs.db.mapper.mod
 	-if exist $(CONFIG)\bin\ejs.db.sqlite.mod del /Q $(CONFIG)\bin\ejs.db.sqlite.mod
 	-if exist $(CONFIG)\bin\libejs.db.sqlite.dll del /Q $(CONFIG)\bin\libejs.db.sqlite.dll
+	-if exist $(CONFIG)\bin\ejs.mail.mod del /Q $(CONFIG)\bin\ejs.mail.mod
 	-if exist $(CONFIG)\bin\ejs.web.mod del /Q $(CONFIG)\bin\ejs.web.mod
 	-if exist $(CONFIG)\bin\libejs.web.dll del /Q $(CONFIG)\bin\libejs.web.dll
 	-if exist $(CONFIG)\bin\www del /Q $(CONFIG)\bin\www
@@ -897,6 +899,13 @@ $(CONFIG)\bin\libejs.db.sqlite.dll:  \
         $(CONFIG)\bin\libsqlite3.dll \
         $(CONFIG)\obj\ejsSqlite.obj
 	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.db.sqlite.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsSqlite.obj libsqlite3.lib libejs.lib libmpr.lib $(LIBS) libhttp.lib libpcre.lib
+
+$(CONFIG)\bin\ejs.mail.mod:  \
+        $(CONFIG)\bin\ejsc.exe \
+        $(CONFIG)\bin\ejs.mod
+	cd src\jems\ejs.mail
+		"..\..\..\$(CONFIG)\bin\ejsc" --out "..\..\..\$(CONFIG)\bin\ejs.mail.mod" --debug --optimize 9 *.es
+		cd ..\..\..
 
 $(CONFIG)\bin\ejs.web.mod:  \
         $(CONFIG)\bin\ejsc.exe \

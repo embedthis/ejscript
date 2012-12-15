@@ -27,59 +27,45 @@ extern "C" {
 
 #if BIT_TUNE == MPR_TUNE_SIZE || DOXYGEN
     /*
-     *  Tune for size
+        Tune for size
      */
-    #define EJS_ARENA_SIZE          ((1 * 1024 * 1024) - MPR_HEAP_OVERHEAD) /**< Initial virt memory for objects */
     #define EJS_LOTSA_PROP          256             /**< Object with lots of properties. Grow by bigger chunks */
-    #define EJS_MAX_OBJ_POOL        512             /**< Maximum number of objects per type to cache */
-    #define EJS_MAX_RECURSION       10000           /**< Maximum recursion */
-    #define EJS_MAX_REGEX_MATCHES   32              /**< Maximum regular sub-expressions */
     #define EJS_MAX_SQLITE_MEM      (2*1024*1024)   /**< Maximum buffering for Sqlite */
-    #define EJS_MAX_TYPE            256             /**< Maximum number of types */
     #define EJS_MIN_FRAME_SLOTS     16              /**< Miniumum number of slots for function frames */
     #define EJS_NUM_GLOBAL          256             /**< Number of globals slots to pre-create */
     #define EJS_ROUND_PROP          16              /**< Rounding for growing properties */
-    #define EJS_WORK_QUOTA          1024            /**< Allocations required before garbage colllection */
-    #define EJS_XML_MAX_NODE_DEPTH  64              /**< Max nesting of tags */
-
+    #if !defined(BIT_XML_MAX_NODE_DEPTH)
+        #define BIT_XML_MAX_NODE_DEPTH 64
+    #endif
 #elif BIT_TUNE == MPR_TUNE_BALANCED
     /*
         Tune balancing speed and size
      */
-    #define EJS_ARENA_SIZE          ((4 * 1024 * 1024) - MPR_HEAP_OVERHEAD)
     #define EJS_LOTSA_PROP          256
-    #define EJS_MAX_OBJ_POOL        1024
     #define EJS_MAX_SQLITE_MEM      (20*1024*1024)
-    #define EJS_MAX_RECURSION       (1000000)
-    #define EJS_MAX_REGEX_MATCHES   64
     #define EJS_MIN_FRAME_SLOTS     24
     #define EJS_NUM_GLOBAL          512
-    #define EJS_MAX_TYPE            512
     #define EJS_ROUND_PROP          24
-    #define EJS_WORK_QUOTA          2048
-    #define EJS_XML_MAX_NODE_DEPTH  256
+    #if !defined(BIT_XML_MAX_NODE_DEPTH)
+        #define BIT_XML_MAX_NODE_DEPTH 128
+    #endif
 
 #else
     /*
         Tune for speed
      */
-    #define EJS_ARENA_SIZE          ((8 * 1024 * 1024) - MPR_HEAP_OVERHEAD)
     #define EJS_NUM_GLOBAL          1024
     #define EJS_LOTSA_PROP          1024
-    #define EJS_MAX_OBJ_POOL        4096
-    #define EJS_MAX_RECURSION       (1000000)
-    #define EJS_MAX_REGEX_MATCHES   128
-    #define EJS_MAX_TYPE            1024
     #define EJS_MAX_SQLITE_MEM      (20*1024*1024)
     #define EJS_MIN_FRAME_SLOTS     32
     #define EJS_ROUND_PROP          32
-    #define EJS_WORK_QUOTA          4096
-    #define EJS_XML_MAX_NODE_DEPTH  1024
+    #if !defined(BIT_XML_MAX_NODE_DEPTH)
+        #define BIT_XML_MAX_NODE_DEPTH 256
+    #endif
 #endif
 
-#define EJS_XML_BUF_MAX             (256 * 1024)    /**< Max XML document size */
 #define EJS_HASH_MIN_PROP           8               /**< Min props to hash */
-#define EJS_MAX_COLLISIONS          4               /**< Max intern string collion chain */
+#define EJS_MAX_COLLISIONS          4               /**< Max intern string collion chain before rehash */
 #define EJS_POOL_INACTIVITY_TIMEOUT (60  * 1000)    /**< Prune inactive pooled VMs older than this */
 #define EJS_SQLITE_TIMEOUT          30000           /**< Database busy timeout */
 #define EJS_SESSION_TIMEOUT         1800
@@ -356,9 +342,9 @@ typedef void EjsAny;
     Qualified name structure
     @description All names in Ejscript consist of a property name and a name space. Namespaces provide discrete
         spaces to manage and minimize name conflicts. These names will soon be converted to unicode.
-    @stability Evolving
     @defgroup EjsName EjsName
     @see EjsName ejsMarkName
+    @stability Evolving
  */       
 typedef struct EjsName {
     struct EjsString *name;                          /**< Property name */
@@ -515,6 +501,7 @@ typedef struct Ejs {
     cchar               *methodName;        /**< Name of a specific method to run for a program */
     char                *errorMsg;          /**< Error message */
     cchar               **argv;             /**< Command line args (not alloced) */
+    char                *hostedDocuments;   /**< Documents directory for hosted HttpServer */
     char                *hostedHome;        /**< Home directory for hosted HttpServer */
     int                 argc;               /**< Count of command line args */
     int                 flags;              /**< Execution flags */
@@ -524,6 +511,7 @@ typedef struct Ejs {
     int                 serializeDepth;     /**< Serialization depth */
     int                 spreadArgs;         /**< Count of spread args */
     int                 gc;                 /**< GC required (don't make bit field) */
+    uint                abandoned: 1;       /**< Pooled VM is released awaiting GC  */
     uint                hosted: 1;          /**< Interp is hosted (webserver) */
     uint                configSet: 1;       /**< Config properties defined */
     uint                compiling: 1;       /**< Currently executing the compiler */
@@ -626,6 +614,7 @@ typedef struct EjsPool {
     char        *templateScript;            /**< Template initialization script filename */
     char        *startScript;               /**< Template initialization literal script */
     char        *startScriptPath;           /**< Template initialization script filename */
+    char        *hostedDocuments;           /**< Documents directory for hosted HttpServer */
     char        *hostedHome;                /**< Home directory for hosted HttpServer */
 } EjsPool;
 
@@ -640,10 +629,12 @@ typedef struct EjsPool {
     @param startScriptPath As an alternative to startScript, a path to a script may be provided in startScriptPath.
         If startScriptPath is specified, startScript is ignored.
     @param home Default home directory for virtual machines
+    @param documents Default documents directory for virtual machines
     @returns Allocated pool object
     @ingroup EjsPool
  */
-PUBLIC EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScript, cchar *startScriptPath, char *home);
+PUBLIC EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScript, cchar *startScriptPath, cchar *home,
+        cchar *documents);
 
 /**
     Allocate a VM from the pool
@@ -3823,7 +3814,7 @@ typedef struct EjsXmlTagState {
  */
 typedef struct EjsXmlState {
     //  MOB -- should not be fixed but should be growable
-    EjsXmlTagState  nodeStack[EJS_XML_MAX_NODE_DEPTH];      /**< nodeStack */
+    EjsXmlTagState  nodeStack[BIT_XML_MAX_NODE_DEPTH];      /**< nodeStack */
     Ejs             *ejs;                                   /**< Convenient reference to ejs */
     struct EjsType  *xmlType;                               /**< Xml type reference */
     struct EjsType  *xmlListType;                           /**< Xml list type reference */
@@ -4568,7 +4559,9 @@ typedef struct EjsService {
     EjsObj          *(*loadScriptLiteral)(Ejs *ejs, EjsString *script, cchar *cache);
     EjsObj          *(*loadScriptFile)(Ejs *ejs, cchar *path, cchar *cache);
     MprList         *vmlist;                /**< List of all VM interpreters */
+#if UNUSED
     MprList         *vmpool;                /**< Pool of unused (cached) VM interpreters */
+#endif
     MprHash         *nativeModules;         /**< Set of loaded native modules */
     Http            *http;                  /**< Http service */
     uint            dontExit: 1;            /**< Prevent App.exit() from exiting */

@@ -43,7 +43,7 @@ public class Bit {
     private var home: Path
     private var bareBit: Object = { platforms: [], platform: {}, dir: {}, settings: {
         required: [], optional: [],
-    }, packs: {}, targets: {}, env: {}, globals: {}, }
+    }, packs: {}, targets: {}, env: {}, globals: {}, customSettings: {}}
 
     private var bit: Object = {}
     private var gen: Object
@@ -87,6 +87,7 @@ public class Bit {
             pre: { },
             prefix: { range: String, separator: Array },
             profile: { range: String },
+            reconfigure: { },
             rebuild: { alias: 'r'},
             release: {},
             quiet: { alias: 'q' },
@@ -126,8 +127,10 @@ public class Bit {
             '    --out path                         # Save output to a file\n' +
             '    --platform os-arch[-cpu]           # Build for specified platform\n' +
             '    --pre                              # Pre-process a source file to stdout\n' +
+            '    --prefix dir=path                  # Define installation path prefixes\n' +
             '    --profile [debug|release|...]      # Use the build profile\n' +
             '    --quiet                            # Quiet operation. Suppress trace \n' +
+            '    --reconfigure                      # Reconfigure with existing settings\n' +
             '    --set [feature=value]              # Enable and a feature\n' +
             '    --show                             # Show commands executed\n' +
             '    --static                           # Make static without shared libraries\n' +
@@ -177,6 +180,9 @@ public class Bit {
                 import()
                 App.exit()
             } 
+            if (options.reconfigure) {
+                reconfigure()
+            }
             if (options.configure) {
                 configure()
             }
@@ -234,6 +240,11 @@ public class Bit {
         } else if (options.configure) {
             args.rest.push('configure')
             options.configure = Path(options.configure)
+        }
+        if (args.rest.contains('reconfigure')) {
+            options.reconfigure = true
+        } else if (options.reconfigure) {
+            args.rest.push('configure')
         }
         if (args.rest.contains('generate')) {
             if (Config.OS == 'windows') {
@@ -368,6 +379,17 @@ public class Bit {
         }
     }
 
+    function reconfigure() {
+        vtrace('Load', 'Preload main.bit to determine required configuration')
+        platforms = bit.platforms = [localPlatform]
+        makeBit(localPlatform, localPlatform + '.bit')
+        if (bit.settings.configure) {
+            run(bit.settings.configure)
+        } else {
+            App.log.error('No prior configuration to use')
+        }
+    }
+
     function genStartBitFile(platform) {
         let nbit = { }
         nbit.platforms = platforms
@@ -390,16 +412,21 @@ public class Bit {
                 top: bit.dir.top.portable,
             },
             settings: { configured: true },
+            prefixes: bit.prefixes,
             packs: bit.packs,
             env: bit.env,
         })
         nbit.platform.configuration = platform + '-' + '${platform.profile}'
 
         for (let [key, value] in bit.settings) {
-            if (!bit.userSettings[key]) {
+            /* Copy over non-standard settings. These include compiler sleuthing settings.  */
+            if (!bit.standardSettings[key]) {
                 nbit.settings[key] = value
             }
         }
+        blend(nbit.settings, bit.customSettings)
+        nbit.settings.configure = 'bit ' + App.args.slice(1).join(' ')
+
         if (envSettings) {
             blend(nbit, envSettings, {combine: true})
         }
@@ -530,13 +557,18 @@ public class Bit {
             def(f, 'BIT_PACK_' + pname.toUpper(), pack.enable ? '1' : '0')
         }
         for (let [pname, pack] in packs) {
-            if (pack.enable && pack.definitions) {
-                for each (define in pack.definitions) {
-                    if (define.match(/-D(.*)=(.*)/)) {
-                        let [key,value] = define.match(/-D(.*)=(.*)/).slice(1)
-                        def(f, key, value)
-                    } else {
-                        f.writeLine('#define ' + define.trimStart('-D'))
+            if (pack.enable) {
+                if (!generating) {
+                    def(f, 'BIT_PACK_' + pname.toUpper() + '_PATH', '"' + pack.path + '"')
+                }
+                if (pack.definitions) {
+                    for each (define in pack.definitions) {
+                        if (define.match(/-D(.*)=(.*)/)) {
+                            let [key,value] = define.match(/-D(.*)=(.*)/).slice(1)
+                            def(f, key, value)
+                        } else {
+                            f.writeLine('#define ' + define.trimStart('-D'))
+                        }
                     }
                 }
             }
@@ -587,26 +619,27 @@ public class Bit {
     }
 
     let envTools = {
-        AR: '+lib',
-        CC: '+compiler',
-        LD: '+linker',
+        AR: 'lib',
+        CC: 'compiler',
+        LD: 'linker',
     }
 
     let envFlags = {
-        CFLAGS:  '+compiler',
-        DFLAGS:  '+defines',
-        IFLAGS:  '+includes',
-        LDFLAGS: '+linker',
+        CFLAGS:  'compiler',
+        DFLAGS:  'defines',
+        IFLAGS:  'includes',
+        LDFLAGS: 'linker',
     }
-
     /*
         Examine environment for flags and apply
-        NOTE: this is for cross platforms ONLY
      */
     function applyEnv() {
-        if (!bit.cross) {
-            return
-        }
+        /*
+            UNUSED - now applies to ordinary non-cross builds
+            if (false && !bit.cross) {
+                return
+            }
+         */
         envSettings = { packs: {}, defaults: {} }
         for (let [key, tool] in envTools) {
             let path = App.getenv(key)
@@ -619,9 +652,14 @@ public class Bit {
         for (let [flag, option] in envFlags) {
             let value = App.getenv(flag)
             if (value) {
+                let flag = ((options.configure) ? '+' : '') + option
                 envSettings.defaults[option] ||= []
                 envSettings.defaults[option] += value.replace(/^-I/, '').split(' ')
+                envSettings.defaults['override-' + option.trim('+')] = true
             }
+        }
+        if (!options.configure) {
+            blend(bit, envSettings, {combine: true})
         }
     }
 
@@ -991,7 +1029,7 @@ public class Bit {
         }
         bit = blend(bit, o, {combine: true})
 
-        if (o.scripts && o.scripts.onload && !bit.quickLoad) {
+        if (o.scripts && o.scripts.onload && (!bit.quickLoad || o.scripts.mustRun)) {
             runScript(o.scripts.onload, home)
         }
     }
@@ -1654,7 +1692,7 @@ public class Bit {
                     let header = bit.dir.inc.join(file.basename)
                     /* Always overwrite dynamically created targets created via makeDepends */
                     bit.targets[header] = { name: header, enable: true, path: header, type: 'header', files: [ file ],
-                        vars: {} }
+                        vars: {}, includes: target.includes }
                     target.depends ||= []
                     target.depends.push(header)
                 }
@@ -1702,13 +1740,20 @@ public class Bit {
                     /*
                         Create targets for each header (if not already present)
                      */
-                    objTarget.depends = makeDepends(objTarget)
+                    // objTarget.depends = makeDepends(objTarget)
+                    makeDepends(objTarget)
+        /* MOB UNUSED
                     for each (header in objTarget.depends) {
                         if (!bit.targets[header]) {
                             bit.targets[header] = { name: header, enable: true, path: header, 
-                                type: 'header', files: [ header ], vars: {} }
+                                type: 'header', files: [ header ], vars: {}, includes: target.includes }
+                        }
+                        let h = bit.targets[header]
+                        if (h && !h.depends) {
+                            makeDepends(h)
                         }
                     }
+         */
                 }
             }
         }
@@ -2514,12 +2559,6 @@ public class Bit {
                     runShell(target, item.shell, item.script)
                 } else {
                     let script = expand(item.script).expand(target.vars, {fill: ''})
-/*
-print('ITEM.NS', typeOf(item.ns))
-print('ITEM.NS', item.ns)
-dump(item)
-global.NN = item.ns
-*/
                     script = 'require ejs.unix\n' + script
                     eval(script)
                 }
@@ -2686,8 +2725,11 @@ global.NN = item.ns
                 includes += more
             }
         }
-        let depends = [ bit.dir.inc.join('bit.h') ]
-
+        let depends = [ ]
+        let bith = bit.dir.inc.join('bit.h')
+        if (target.name != bith) {
+            depends = [ bith ]
+        }
         /*
             Resolve includes 
          */
@@ -2708,6 +2750,18 @@ global.NN = item.ns
                 depends.push(path)
             }
         }
+        target.makedep = true
+        for each (header in depends) {
+            if (!bit.targets[header]) {
+                bit.targets[header] = { name: header, enable: true, path: header, 
+                    type: 'header', files: [ header ], vars: {}, includes: target.includes }
+            }
+            let h = bit.targets[header]
+            if (h && !h.makedep) {
+                makeDepends(h)
+            }
+        }
+        target.depends = depends
         return depends
     }
 
@@ -3012,6 +3066,13 @@ global.NN = item.ns
                 }
             }
         }
+        if (options.configure && options.prefix) {
+            bit.prefixes ||= {}
+            for each (p in options.prefix) {
+                let [prefix, path] = p.split('=')
+                bit.prefixes[prefix] = Path(path)
+            }
+        }
         for (let [key,value] in bit.ext.clone()) {
             if (value) {
                 bit.ext['dot' + key] = '.' + value
@@ -3025,7 +3086,7 @@ global.NN = item.ns
         expandTokens(bit)
         loadModules()
         applyProfile()
-        bit.userSettings = bit.settings.clone(true)
+        bit.standardSettings = bit.settings.clone(true)
         applyCommandLineOptions(platform)
         applyEnv()
         setPathEnvVar(bit)
@@ -3034,7 +3095,6 @@ global.NN = item.ns
             bit.globals.LBIN = localBin = bit.dir.bin.portable
         }
     }
-
 
     function quickLoad(bitfile: Path) {
         global.bit = bit = makeBareBit()

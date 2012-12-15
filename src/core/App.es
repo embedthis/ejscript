@@ -238,7 +238,7 @@ module ejs {
                 try {
                     blend(App.config, path.readJSON(), {overwrite: overwrite})
                 } catch (e) {
-                    errorStream.write(App.exePath.basename +  " Can't parse " + path + ": " + e + "\n")
+                    errorStream.write(App.exePath.basename +  " Cannot parse " + path + ": " + e + "\n")
                 }
             }
         }

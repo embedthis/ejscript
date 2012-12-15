@@ -18,7 +18,9 @@ static void initStack(Ejs *ejs);
 static int  loadRequiredModules(Ejs *ejs, MprList *require);
 static void manageEjs(Ejs *ejs, int flags);
 static void manageEjsService(EjsService *service, int flags);
+#if UNUSED && OPT
 static void poolTimer(EjsPool *pool, MprEvent *event);
+#endif
 static int  runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName);
 static int  searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn);
 
@@ -42,7 +44,9 @@ static EjsService *createService()
     sp->nativeModules = mprCreateHash(-1, MPR_HASH_STATIC_KEYS);
     sp->mutex = mprCreateLock();
     sp->vmlist = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
+#if UNUSED
     sp->vmpool = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
+#endif
     sp->intern = ejsCreateIntern(sp);
     sp->dtoaSpin[0] = mprCreateSpinLock();
     sp->dtoaSpin[1] = mprCreateSpinLock();
@@ -58,7 +62,9 @@ static void manageEjsService(EjsService *sp, int flags)
         mprMark(sp->http);
         mprMark(sp->mutex);
         mprMark(sp->vmlist);
+#if UNUSED
         mprMark(sp->vmpool);
+#endif
         mprMark(sp->nativeModules);
         mprMark(sp->intern);
         mprMark(sp->immutable);
@@ -254,6 +260,7 @@ static void manageEjs(Ejs *ejs, int flags)
         mprMark(ejs->className);
         mprMark(ejs->methodName);
         mprMark(ejs->errorMsg);
+        mprMark(ejs->hostedDocuments);
         mprMark(ejs->hostedHome);
         mprMark(ejs->exceptionArg);
         mprMark(ejs->dispatcher);
@@ -285,14 +292,17 @@ static void managePool(EjsPool *pool, int flags)
         mprMark(pool->templateScript);
         mprMark(pool->startScript);
         mprMark(pool->startScriptPath);
+        mprMark(pool->hostedDocuments);
         mprMark(pool->hostedHome);
     }
 }
 
+
 /*
     Create a pool for virtual machines
  */
-EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScript, cchar *startScriptPath, char *home)
+EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScript, cchar *startScriptPath, 
+        cchar *home, cchar *documents)
 {
     EjsPool     *pool;
 
@@ -315,6 +325,9 @@ EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScript, c
     }
     if (home) {
         pool->hostedHome = sclone(home);
+    }
+    if (documents) {
+        pool->hostedDocuments = sclone(documents);
     }
     return pool;
 }
@@ -364,6 +377,9 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
             mprMemoryError("Cannot alloc ejs VM");
             return 0;
         }
+        if (pool->hostedDocuments) {
+            ejs->hostedDocuments = pool->hostedDocuments;
+        }
         if (pool->hostedHome) {
             ejs->hostedHome = pool->hostedHome;
         }
@@ -389,10 +405,15 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
     mprLog(5, "ejs: Alloc VM active %d, allocated %d, max %d", pool->count - mprGetListLength(pool->list), 
         pool->count, pool->max);
 
+#if UNUSED && OPT
+    /*
+        Disabled because it most of the interp is not being freed due to references from the EjsService
+     */
     if (!pool->timer && !mprGetDebugMode()) {
         pool->timer = mprCreateTimerEvent(NULL, "ejsPoolTimer", EJS_POOL_INACTIVITY_TIMEOUT, poolTimer, pool,
             MPR_EVENT_CONTINUOUS | MPR_EVENT_QUICK);
     }
+#endif
     return ejs;
 }
 
@@ -411,16 +432,26 @@ void ejsFreePoolVM(EjsPool *pool, Ejs *ejs)
 }
 
 
+#if UNUSED && OPT
 static void poolTimer(EjsPool *pool, MprEvent *event)
 {
+    Ejs     *vm;
+    int     next;
+
     if (mprGetElapsedTime(pool->lastActivity) > EJS_POOL_INACTIVITY_TIMEOUT && !mprGetDebugMode()) {
-        pool->template = 0;
+        for (ITERATE_ITEMS(pool->list, vm, next)) {
+            vm->abandoned = 1;
+        }
         mprClearList(pool->list);
         pool->count = 0;
+        pool->template = 0;
         mprLog(5, "ejs: Release %d VMs in inactive pool. Invoking GC.", pool->count);
-        mprRequestGC(MPR_FORCE_GC);
+        mprRequestGC(MPR_GC_FORCE);
+        mprRemoveEvent(event);
+        pool->timer = 0;
     }
 }
+#endif
 
 
 void ejsSetDispatcher(Ejs *ejs, MprDispatcher *dispatcher)

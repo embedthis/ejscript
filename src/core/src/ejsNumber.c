@@ -22,6 +22,7 @@
 #define DTOA_EXPONENT_FORM      0x10    /**< Result in exponent form (N.NNNNe+NN) */
 #define DTOA_FIXED_FORM         0x20    /**< Emit in fixed form (NNNN.MMMM)*/
 
+#if UNUSED
 /**
     Convert a double to ascii
     @param value Value to convert
@@ -34,6 +35,11 @@
     @param flags Format flags
  */
 extern char *mprDtoa(double value, int ndigits, int mode, int flags);
+#endif
+
+extern char *dtoa(double d, int mode, int ndigits, int* decpt, int* sign, char** rve);
+extern void freedtoa(char* ptr);
+
 /**************************** Forward Declarations ****************************/
 
 #define fixed(n) ((int64) (floor(n)))

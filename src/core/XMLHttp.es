@@ -161,7 +161,7 @@ module ejs {
          */
         function send(content: String? = null): Void {
             if (!hp.async) {
-                throw new IOError("Can't call send in sync mode")
+                throw new IOError("Cannot call send in sync mode")
             }
             if (content == null) {
                 hp.finalize()

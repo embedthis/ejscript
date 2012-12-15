@@ -41,7 +41,7 @@ static EjsObj *gc_run(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
     
     if (!ejs->state->paused) {
         deep = ((argc == 1) && ejsIs(ejs, argv[1], Boolean));
-        mprRequestGC(MPR_FORCE_GC | (deep ? MPR_COMPLETE_GC : 0));
+        mprRequestGC(MPR_GC_FORCE | (deep ? MPR_GC_COMPLETE : 0));
     }
     return 0;
 }

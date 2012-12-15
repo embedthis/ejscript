@@ -122,6 +122,7 @@ module ejs {
                 If "w" is specified and the file does not exist, it will be created. If "+" is not specified, the file
                     will be truncated when opened, unless "a" is specified to append to existing content.
                 If "c" is specified and the file exists, the open will fail.
+                Use: "wa+" to append to a file and create if it does not exist.
             @options permissions Number containing the Posix permissions number value. Note: this is a number
                 and not a string representation of an octal posix number.
             @options owner String representing the file owner (Not implemented)
@@ -218,6 +219,8 @@ module ejs {
             @throws IOError if the file could not be written.
          */
         native function write(...items): Number
+
+        //  MOB writeln would be useful
     }
 }
 

@@ -76,7 +76,7 @@
     #define BIT_TITLE "Embedthis Ejscript"
 #endif
 #ifndef BIT_VERSION
-    #define BIT_VERSION "2.1.0"
+    #define BIT_VERSION "2.2.0"
 #endif
 #ifndef BIT_WARN64TO32
     #define BIT_WARN64TO32 1
@@ -96,10 +96,10 @@
     #define BIT_CFG_PREFIX "/etc/ejs"
 #endif
 #ifndef BIT_BIN_PREFIX
-    #define BIT_BIN_PREFIX "/usr/lib/ejs/2.1.0/bin"
+    #define BIT_BIN_PREFIX "/usr/lib/ejs/2.2.0/bin"
 #endif
 #ifndef BIT_INC_PREFIX
-    #define BIT_INC_PREFIX "/usr/lib/ejs/2.1.0/inc"
+    #define BIT_INC_PREFIX "/usr/lib/ejs/2.2.0/inc"
 #endif
 #ifndef BIT_LOG_PREFIX
     #define BIT_LOG_PREFIX "/var/log/ejs"
@@ -111,10 +111,10 @@
     #define BIT_SPL_PREFIX "/var/spool/ejs"
 #endif
 #ifndef BIT_SRC_PREFIX
-    #define BIT_SRC_PREFIX "/usr/src/ejs-2.1.0"
+    #define BIT_SRC_PREFIX "/usr/src/ejs-2.2.0"
 #endif
 #ifndef BIT_VER_PREFIX
-    #define BIT_VER_PREFIX "/usr/lib/ejs/2.1.0"
+    #define BIT_VER_PREFIX "/usr/lib/ejs/2.2.0"
 #endif
 #ifndef BIT_WEB_PREFIX
     #define BIT_WEB_PREFIX "/var/www/ejs-default"
@@ -153,13 +153,13 @@
     #define BIT_MAJOR_VERSION 2
 #endif
 #ifndef BIT_MINOR_VERSION
-    #define BIT_MINOR_VERSION 1
+    #define BIT_MINOR_VERSION 2
 #endif
 #ifndef BIT_PATCH_VERSION
     #define BIT_PATCH_VERSION 0
 #endif
 #ifndef BIT_VNUM
-    #define BIT_VNUM 200010000
+    #define BIT_VNUM 200020000
 #endif
 
 /* Packs */
@@ -207,4 +207,28 @@
 #endif
 #ifndef BIT_PACK_ZLIB
     #define BIT_PACK_ZLIB 1
+#endif
+#ifndef BIT_PACK_COMPILER_PATH
+    #define BIT_PACK_COMPILER_PATH "/usr/bin/clang"
+#endif
+#ifndef BIT_PACK_LIB_PATH
+    #define BIT_PACK_LIB_PATH "/usr/bin/ar"
+#endif
+#ifndef BIT_PACK_LINK_PATH
+    #define BIT_PACK_LINK_PATH "/usr/bin/ld"
+#endif
+#ifndef BIT_PACK_PCRE_PATH
+    #define BIT_PACK_PCRE_PATH "/Users/mob/git/ejs/src/deps/pcre"
+#endif
+#ifndef BIT_PACK_PMAKER_PATH
+    #define BIT_PACK_PMAKER_PATH "/Applications/PackageMaker.app/Contents/MacOS/PackageMaker"
+#endif
+#ifndef BIT_PACK_SQLITE_PATH
+    #define BIT_PACK_SQLITE_PATH "/Users/mob/git/ejs/src/deps/sqlite"
+#endif
+#ifndef BIT_PACK_ZIP_PATH
+    #define BIT_PACK_ZIP_PATH "/usr/bin/zip"
+#endif
+#ifndef BIT_PACK_ZLIB_PATH
+    #define BIT_PACK_ZLIB_PATH "/Users/mob/git/ejs/src/deps/zlib"
 #endif

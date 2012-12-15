@@ -72,7 +72,16 @@ static EjsObj *hs_set_async(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
 }
 
 
-/*  
+/*
+    function get hostedDocuments(): Path
+ */
+static EjsPath *hs_hostedDocuments(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
+{
+    return ejsCreatePathFromAsc(ejs, ejs->hostedDocuments);
+}
+
+
+/*
     function get hostedHome(): Path
  */
 static EjsPath *hs_hostedHome(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -689,7 +698,7 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
         dir = documents->value;
     } else {
         /* Safety fall back */
-        dir = conn->host->home;
+        dir = conn->rx->route->home;
     }
     req = ejsCreateRequest(ejs, sp, conn, dir);
     httpSetConnContext(conn, req);
@@ -748,7 +757,7 @@ static void startEjsHandler(HttpQueue *q)
         sp->ip = endpoint->ip;
         sp->port = endpoint->port;
         if (!ejsIsDefined(ejs, ejsGetProperty(ejs, sp, ES_ejs_web_HttpServer_documents))) {
-            ejsSetProperty(ejs, sp, ES_ejs_web_HttpServer_documents, ejsCreateStringFromAsc(ejs, conn->host->home));
+            ejsSetProperty(ejs, sp, ES_ejs_web_HttpServer_documents, ejsCreateStringFromAsc(ejs, conn->rx->route->home));
         }
     } else if (conn->ejs) {
         ejs = conn->ejs;
@@ -920,6 +929,7 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_accept, hs_accept);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_address, hs_address);
     ejsBindAccess(ejs, prototype, ES_ejs_web_HttpServer_async, hs_async, hs_set_async);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_hostedDocuments, hs_hostedDocuments);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_hostedHome, hs_hostedHome);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_close, hs_close);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_limits, hs_limits);

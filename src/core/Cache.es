@@ -56,7 +56,7 @@ module ejs {
                 if (!global.modname::[adapterClass]) {
                     load(modname + ".mod", {reload: false})
                     if (!global.modname::[adapterClass]) {
-                        throw "Can't find cache adapter: \"" + modname + "::" + adapter + "\""
+                        throw "Cannot find cache adapter: \"" + modname + "::" + adapter + "\""
                     }
                 }
             }

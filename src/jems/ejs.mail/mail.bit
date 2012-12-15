@@ -1,0 +1,25 @@
+/*
+    mail.bit -- Bit File for ejs.mail
+ */
+
+Bit.load({
+
+    targets: {
+        'ejs.mail.mod': {
+            path: '${LIB}/ejs.mail.mod',
+            files: [ '*.es' ],
+            build: "
+                trace('Compile', 'ejs.mail.mod')
+                run('${LBIN}/ejsc --out ${LIB}/ejs.mail.mod ${settings.esflags} --optimize 9 ' + 
+                    Path('.').files('*.es').sort().join(' '))
+            ",
+            'generate-nmake': '\
+                "${BIN}\\ejsc" --out "${BIN}/ejs.mail.mod" ${settings.esflags} --optimize 9 *.es
+            ',
+            'generate-sh': '\
+                ${BIN}/ejsc --out ${BIN}/ejs.mail.mod ${settings.esflags} --optimize 9 *.es
+            ',
+            depends: [ 'ejsc', 'ejs.mod' ],
+        },
+	},
+})

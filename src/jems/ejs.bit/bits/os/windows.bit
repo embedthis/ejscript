@@ -31,7 +31,7 @@ Bit.load({
     },
 
     scripts: {
-        'onload': "
+        onload: "
             if (bit.platform.arch == 'x86' && Config.CPU == 'x64') {
                 /* 32 bit build on a 64 bit system */
                 bit.prefixes.product = 'C:/Program Files (x86)/$${settings.title}'

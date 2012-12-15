@@ -167,7 +167,7 @@ module ejs {
 
         function set level(level: Number): void {
             _level = level
-            if (_outStream is Log) {
+            if (_outStream is Logger) {
                 _outStream.level = level
             }
         }

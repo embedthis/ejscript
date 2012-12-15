@@ -149,7 +149,7 @@ module ejs {
                 if (dir.exists) {
                     return Path(dir).join(md5(id)).joinExt('.mod')
                 } else {
-                    App.log.error("Can't find cache directory: \"" + dir + "\"")
+                    App.log.debug(5, "Skip caching, missing cache directory \"" + dir + "\" at " + App.dir)
                 }
             }
             return null
@@ -181,7 +181,7 @@ module ejs {
                     }
                 }
             }
-            throw "Can't find \"" + id + "\""
+            throw "Cannot find \"" + id + "\""
         }
 
         /** 

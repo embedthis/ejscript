@@ -58,7 +58,7 @@
     #define BIT_TITLE "Embedthis Ejscript"
 #endif
 #ifndef BIT_VERSION
-    #define BIT_VERSION "2.1.0"
+    #define BIT_VERSION "2.2.0"
 #endif
 #ifndef BIT_WITHOUT_ALL
     #define BIT_WITHOUT_ALL "doxygen,dsi,man,man2html,ssl,matrixssl,openssl"
@@ -129,13 +129,13 @@
     #define BIT_MAJOR_VERSION 2
 #endif
 #ifndef BIT_MINOR_VERSION
-    #define BIT_MINOR_VERSION 1
+    #define BIT_MINOR_VERSION 2
 #endif
 #ifndef BIT_PATCH_VERSION
     #define BIT_PATCH_VERSION 0
 #endif
 #ifndef BIT_VNUM
-    #define BIT_VNUM 200010000
+    #define BIT_VNUM 200020000
 #endif
 
 /* Packs */
@@ -192,4 +192,31 @@
 #endif
 #ifndef BIT_PACK_ZLIB
     #define BIT_PACK_ZLIB 1
+#endif
+#ifndef BIT_PACK_COMPILER_PATH
+    #define BIT_PACK_COMPILER_PATH "cl.exe"
+#endif
+#ifndef BIT_PACK_LIB_PATH
+    #define BIT_PACK_LIB_PATH "lib.exe"
+#endif
+#ifndef BIT_PACK_LINK_PATH
+    #define BIT_PACK_LINK_PATH "link.exe"
+#endif
+#ifndef BIT_PACK_PCRE_PATH
+    #define BIT_PACK_PCRE_PATH "/Users/mob/git/ejs/src/deps/pcre"
+#endif
+#ifndef BIT_PACK_RC_PATH
+    #define BIT_PACK_RC_PATH "rc.exe"
+#endif
+#ifndef BIT_PACK_SQLITE_PATH
+    #define BIT_PACK_SQLITE_PATH "/Users/mob/git/ejs/src/deps/sqlite"
+#endif
+#ifndef BIT_PACK_WINSDK_PATH
+    #define BIT_PACK_WINSDK_PATH "$(SDK)"
+#endif
+#ifndef BIT_PACK_ZIP_PATH
+    #define BIT_PACK_ZIP_PATH "/usr/bin/zip"
+#endif
+#ifndef BIT_PACK_ZLIB_PATH
+    #define BIT_PACK_ZLIB_PATH "/Users/mob/git/ejs/src/deps/zlib"
 #endif
