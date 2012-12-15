@@ -208,3 +208,27 @@
 #ifndef BIT_PACK_ZLIB
     #define BIT_PACK_ZLIB 1
 #endif
+#ifndef BIT_PACK_COMPILER_PATH
+    #define BIT_PACK_COMPILER_PATH "/usr/bin/clang"
+#endif
+#ifndef BIT_PACK_LIB_PATH
+    #define BIT_PACK_LIB_PATH "/usr/bin/ar"
+#endif
+#ifndef BIT_PACK_LINK_PATH
+    #define BIT_PACK_LINK_PATH "/usr/bin/ld"
+#endif
+#ifndef BIT_PACK_PCRE_PATH
+    #define BIT_PACK_PCRE_PATH "/Users/mob/git/ejs/src/deps/pcre"
+#endif
+#ifndef BIT_PACK_PMAKER_PATH
+    #define BIT_PACK_PMAKER_PATH "/Applications/PackageMaker.app/Contents/MacOS/PackageMaker"
+#endif
+#ifndef BIT_PACK_SQLITE_PATH
+    #define BIT_PACK_SQLITE_PATH "/Users/mob/git/ejs/src/deps/sqlite"
+#endif
+#ifndef BIT_PACK_ZIP_PATH
+    #define BIT_PACK_ZIP_PATH "/usr/bin/zip"
+#endif
+#ifndef BIT_PACK_ZLIB_PATH
+    #define BIT_PACK_ZLIB_PATH "/Users/mob/git/ejs/src/deps/zlib"
+#endif

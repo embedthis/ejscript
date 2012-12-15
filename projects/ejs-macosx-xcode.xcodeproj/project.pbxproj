@@ -2776,7 +2776,6 @@ cp -r bit.es ../../${CFG_DIR}/bin/bit.es
 ../src/jems/ejs.bit/bits/embedthis.es,
 ../src/jems/ejs.bit/bits/gendoc.es,
 ../src/jems/ejs.bit/bits/os,
-../src/jems/ejs.bit/bits/os/a.tmp,
 ../src/jems/ejs.bit/bits/os/freebsd.bit,
 ../src/jems/ejs.bit/bits/os/gcc.bit,
 ../src/jems/ejs.bit/bits/os/linux.bit,
