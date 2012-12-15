@@ -511,6 +511,7 @@ typedef struct Ejs {
     int                 serializeDepth;     /**< Serialization depth */
     int                 spreadArgs;         /**< Count of spread args */
     int                 gc;                 /**< GC required (don't make bit field) */
+    uint                abandoned: 1;       /**< Pooled VM is released awaiting GC  */
     uint                hosted: 1;          /**< Interp is hosted (webserver) */
     uint                configSet: 1;       /**< Config properties defined */
     uint                compiling: 1;       /**< Currently executing the compiler */
@@ -4558,7 +4559,9 @@ typedef struct EjsService {
     EjsObj          *(*loadScriptLiteral)(Ejs *ejs, EjsString *script, cchar *cache);
     EjsObj          *(*loadScriptFile)(Ejs *ejs, cchar *path, cchar *cache);
     MprList         *vmlist;                /**< List of all VM interpreters */
+#if UNUSED
     MprList         *vmpool;                /**< Pool of unused (cached) VM interpreters */
+#endif
     MprHash         *nativeModules;         /**< Set of loaded native modules */
     Http            *http;                  /**< Http service */
     uint            dontExit: 1;            /**< Prevent App.exit() from exiting */

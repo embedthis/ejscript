@@ -187,6 +187,13 @@ static EjsObj *timer_stop(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 static void manageTimer(EjsTimer *tp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
+        /* Pooled interpreter being abandoned */
+        if (tp->ejs->abandoned) {
+            if (tp->event) {
+                mprRemoveEvent(tp->event);
+                tp->event = 0;
+            }
+        }
         mprMark(tp->ejs);
         mprMark(tp->event);
         mprMark(tp->callback);
