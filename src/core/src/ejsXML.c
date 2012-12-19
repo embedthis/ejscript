@@ -114,7 +114,7 @@ static EjsAny *castXml(Ejs *ejs, EjsXML *xml, EjsType *type)
                 }
             }
         }
-        buf = mprCreateBuf(MPR_BUFSIZE, -1);
+        buf = mprCreateBuf(BIT_MAX_BUFFER, -1);
         if (ejsXMLToBuf(ejs, buf, xml, -1) < 0) {
             return 0;
         }
@@ -735,7 +735,7 @@ static EjsObj *saveXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
     /*
         Create a buffer to hold the output. All in memory.
      */
-    buf = mprCreateBuf(MPR_BUFSIZE, -1);
+    buf = mprCreateBuf(BIT_MAX_BUFFER, -1);
     mprPutStringToBuf(buf, "<?xml version=\"1.0\"?>\n");
 
     if (ejsXMLToBuf(ejs, buf, xml, 0) < 0) {

@@ -27,7 +27,7 @@ static EjsString *system_ipaddr(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
 #if BIT_UNIX_LIKE || BIT_WIN_LIKE
     struct addrinfo *res, *reslist, hints;
     cchar           *ip;
-    char            ipaddr[MPR_MAX_STRING], service[MPR_MAX_STRING];
+    char            ipaddr[BIT_MAX_PATH], service[BIT_MAX_PATH];
     int             rc;
 
     if ((ip = mprGetIpAddr(ejs)) != 0) {

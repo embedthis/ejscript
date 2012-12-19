@@ -66,8 +66,8 @@ static EjsObj *gc_set_newQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **arg
     assure(argc == 1 && ejsIs(ejs, argv[0], Number));
     quota = ejsGetInt(ejs, argv[0]);
 
-    if (quota < MPR_NEW_QUOTA && quota != 0) {
-        ejsThrowArgError(ejs, "Bad work quota");
+    if (quota < 1024 && quota != 0) {
+        ejsThrowArgError(ejs, "Bad work quota. Must be > 1024");
         return 0;
     }
     mprGetMpr()->heap->newQuota = quota;

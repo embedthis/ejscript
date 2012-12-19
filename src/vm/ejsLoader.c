@@ -911,7 +911,7 @@ static int loadDocSection(Ejs *ejs, EjsModule *mp)
 static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
 {
     MprModule   *native;
-    char        *base, *bare, *path, *moduleName, initName[MPR_MAX_PATH], *cp;
+    char        *base, *bare, *path, *moduleName, initName[BIT_MAX_PATH], *cp;
 
     /*
         Replace ".mod" with ".so", ".dll" or ".dylib"

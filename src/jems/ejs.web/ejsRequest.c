@@ -1161,7 +1161,7 @@ static EjsNumber *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     count = (argc >= 3) ? ejsGetInt(ejs, argv[2]) : -1;
 
     ejsResetByteArray(ejs, ba);
-    if (!ejsMakeRoomInByteArray(ejs, ba, count >= 0 ? count : MPR_BUFSIZE)) {
+    if (!ejsMakeRoomInByteArray(ejs, ba, count >= 0 ? count : BIT_MAX_BUFFER)) {
         return 0;
     }
     if (offset < 0) {

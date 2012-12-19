@@ -502,7 +502,7 @@ static void generateClassList(EjsMod *mp, cchar *namespace)
     MprList     *classes;
     ClassRec    *crec;
     cchar       *className, *fmtName;
-    char        *path, script[MPR_MAX_STRING], *cp;
+    char        *path, script[BIT_MAX_PATH], *cp;
     int         next;
 
     ejs = mp->ejs;
@@ -1582,7 +1582,7 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
 
 static char *fmtAttributes(EjsAny *vp, int attributes, int klass)
 {
-    static char attributeBuf[MPR_MAX_STRING];
+    static char attributeBuf[256];
 
     attributeBuf[0] = '\0';
 
@@ -1621,7 +1621,7 @@ static char *fmtAttributes(EjsAny *vp, int attributes, int klass)
 
 static char *fmtAccessors(int attributes)
 {
-    static char attributeBuf[MPR_MAX_STRING];
+    static char attributeBuf[256];
 
     attributeBuf[0] = '\0';
 
@@ -2209,14 +2209,13 @@ static char *fmtClassUrl(Ejs *ejs, EjsName qname)
 
 static char *fmtNamespace(Ejs *ejs, EjsName qname)
 {
-    static char buf[MPR_MAX_STRING];
+    static char buf[256];
     cchar       *space;
     char        *cp;
 
     space = ejsToMulti(ejs, qname.space);
     if (space[0] == '[') {
         scopy(buf, sizeof(buf), &space[1]);
-
     } else {
         scopy(buf, sizeof(buf), space);
     }
@@ -2253,7 +2252,7 @@ static char *fmtNamespace(Ejs *ejs, EjsName qname)
 
 static char *fmtType(Ejs *ejs, EjsName qname)
 {
-    static char buf[MPR_MAX_STRING];
+    static char buf[BIT_MAX_PATH];
     char        *namespace;
 
     namespace = fmtNamespace(ejs, qname);
@@ -2279,7 +2278,7 @@ static char *fmtType(Ejs *ejs, EjsName qname)
  */
 static char *getFilename(cchar *name)
 {
-    static char buf[MPR_MAX_STRING];
+    static char buf[BIT_MAX_PATH];
     char        *cp, *sp;
 
     scopy(buf, sizeof(buf), name);
@@ -2306,7 +2305,7 @@ static char *getFilename(cchar *name)
 
 static char *fmtTypeReference(Ejs *ejs, EjsName qname)
 {
-    static char buf[MPR_MAX_STRING];
+    static char buf[BIT_MAX_PATH];
     char        *typeName;
 
     typeName = fmtType(ejs, qname);
@@ -2317,7 +2316,7 @@ static char *fmtTypeReference(Ejs *ejs, EjsName qname)
 
 static char *fmtSpace(Ejs *ejs, EjsName qname)
 {
-    static char buf[MPR_MAX_STRING];
+    static char buf[BIT_MAX_PATH];
     char        *namespace;
 
     namespace = fmtNamespace(ejs, qname);
@@ -2332,7 +2331,7 @@ static char *fmtSpace(Ejs *ejs, EjsName qname)
 
 static char *fmtDeclaration(Ejs *ejs, EjsName qname)
 {
-    static char buf[MPR_MAX_STRING];
+    static char buf[BIT_MAX_PATH];
     char        *namespace;
 
     namespace = fmtNamespace(ejs, qname);

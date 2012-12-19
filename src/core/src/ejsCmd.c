@@ -18,8 +18,8 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv);
  */
 static EjsCmd *cmd_constructor(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
-    cmd->stdoutBuf = mprCreateBuf(MPR_BUFSIZE, -1);
-    cmd->stderrBuf = mprCreateBuf(MPR_BUFSIZE, -1);
+    cmd->stdoutBuf = mprCreateBuf(BIT_MAX_BUFFER, -1);
+    cmd->stderrBuf = mprCreateBuf(BIT_MAX_BUFFER, -1);
     cmd->ejs = ejs;
     cmd->timeout = -1;
     if (argc >= 1) {
@@ -209,7 +209,7 @@ static EjsNumber *cmd_read(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     }
     count = buffer->size - buffer->writePosition;
     if (count <= 0) {
-        if (ejsGrowByteArray(ejs, buffer, MPR_BUFSIZE) < 0) {
+        if (ejsGrowByteArray(ejs, buffer, BIT_MAX_BUFFER) < 0) {
             return 0;
         }
         count = buffer->size - buffer->writePosition;
@@ -297,8 +297,8 @@ static void cmdIOCallback(MprCmd *mc, int channel, void *data)
      */
     mprResetBufIfEmpty(buf);
     space = mprGetBufSpace(buf);
-    if (space < (MPR_BUFSIZE / 4)) {
-        if (mprGrowBuf(buf, MPR_BUFSIZE) < 0) {
+    if (space < (BIT_MAX_BUFFER / 4)) {
+        if (mprGrowBuf(buf, BIT_MAX_BUFFER) < 0) {
             mprCloseCmdFd(mc, channel);
             return;
         }

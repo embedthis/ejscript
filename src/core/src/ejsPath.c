@@ -348,13 +348,13 @@ static EjsObj *copyPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     if (options) {
         ejsSetPathAttributes(ejs, toPath, options);
     }
-    if ((buf = mprAlloc(MPR_BUFSIZE)) == NULL) {
+    if ((buf = mprAlloc(BIT_MAX_BUFFER)) == NULL) {
         ejsThrowMemoryError(ejs);
         mprCloseFile(to);
         mprCloseFile(from);
         return 0;
     }
-    while ((bytes = mprReadFile(from, buf, MPR_BUFSIZE)) > 0) {
+    while ((bytes = mprReadFile(from, buf, BIT_MAX_BUFFER)) > 0) {
         if (mprWriteFile(to, buf, bytes) != bytes) {
             ejsThrowIOError(ejs, "Write error to %s", toPath);
             break;
@@ -1249,7 +1249,7 @@ static EjsByteArray *readBytes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     MprFile         *file;
     EjsByteArray    *result;
     cchar           *path;
-    char            buffer[MPR_BUFSIZE];
+    char            buffer[BIT_MAX_BUFFER];
     int             bytes, offset, rc;
 
     assure(argc == 1 && ejsIs(ejs, argv[0], String));
@@ -1273,7 +1273,7 @@ static EjsByteArray *readBytes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
     rc = 0;
     offset = 0;
-    while ((bytes = mprReadFile(file, buffer, MPR_BUFSIZE)) > 0) {
+    while ((bytes = mprReadFile(file, buffer, BIT_MAX_BUFFER)) > 0) {
         //  MOB - should use RC Value (== bytes)
         if (ejsCopyToByteArray(ejs, result, offset, buffer, bytes) < 0) {
             ejsThrowMemoryError(ejs);
@@ -1299,7 +1299,7 @@ static EjsArray *readLines(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     MprBuf      *data;
     EjsArray    *result;
     cchar       *path;
-    char        *start, *end, *cp, buffer[MPR_BUFSIZE];
+    char        *start, *end, *cp, buffer[BIT_MAX_BUFFER];
     int         bytes, rc, lineno;
 
     assure(argc == 1 && ejsIs(ejs, argv[0], String));
@@ -1329,7 +1329,7 @@ static EjsArray *readLines(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     }
 
     rc = 0;
-    while ((bytes = mprReadFile(file, buffer, MPR_BUFSIZE)) > 0) {
+    while ((bytes = mprReadFile(file, buffer, BIT_MAX_BUFFER)) > 0) {
         if (mprPutBlockToBuf(data, buffer, bytes) != bytes) {
             ejsThrowMemoryError(ejs);
             rc = -1;
@@ -1369,7 +1369,7 @@ static EjsString *readFileAsString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **arg
     MprFile     *file;
     MprBuf      *data;
     cchar       *path;
-    char        buffer[MPR_BUFSIZE];
+    char        buffer[BIT_MAX_BUFFER];
     int         bytes;
 
     assure(argc == 1 && ejsIs(ejs, argv[0], String));
@@ -1390,7 +1390,7 @@ static EjsString *readFileAsString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **arg
         mprCloseFile(file);
         return 0;
     }
-    while ((bytes = mprReadFile(file, buffer, MPR_BUFSIZE)) > 0) {
+    while ((bytes = mprReadFile(file, buffer, BIT_MAX_BUFFER)) > 0) {
         if (mprPutBlockToBuf(data, buffer, bytes) != bytes) {
             ejsThrowMemoryError(ejs);
             break;

@@ -21,107 +21,71 @@ extern "C" {
 
 /******************************* Tunable Constants ****************************/
 
-#define HEAP_OVERHEAD (MPR_ALLOC_HDR_SIZE + MPR_ALLOC_ALIGN(sizeof(MprRegion) + sizeof(MprHeap) + sizeof(MprDestructor)))
-
-// MOB - consistency of names needs work
-
-#if BIT_TUNE == MPR_TUNE_SIZE || DOXYGEN
-    /*
-        Tune for size
-     */
-    #define EJS_LOTSA_PROP          256             /**< Object with lots of properties. Grow by bigger chunks */
-    #define EJS_MAX_SQLITE_MEM      (2*1024*1024)   /**< Maximum buffering for Sqlite */
-    #define EJS_MIN_FRAME_SLOTS     16              /**< Miniumum number of slots for function frames */
-    #define EJS_NUM_GLOBAL          256             /**< Number of globals slots to pre-create */
-    #define EJS_ROUND_PROP          16              /**< Rounding for growing properties */
-    #if !defined(BIT_XML_MAX_NODE_DEPTH)
-        #define BIT_XML_MAX_NODE_DEPTH 64
-    #endif
-#elif BIT_TUNE == MPR_TUNE_BALANCED
-    /*
-        Tune balancing speed and size
-     */
-    #define EJS_LOTSA_PROP          256
-    #define EJS_MAX_SQLITE_MEM      (20*1024*1024)
-    #define EJS_MIN_FRAME_SLOTS     24
-    #define EJS_NUM_GLOBAL          512
-    #define EJS_ROUND_PROP          24
-    #if !defined(BIT_XML_MAX_NODE_DEPTH)
-        #define BIT_XML_MAX_NODE_DEPTH 128
-    #endif
-
-#else
-    /*
-        Tune for speed
-     */
-    #define EJS_NUM_GLOBAL          1024
-    #define EJS_LOTSA_PROP          1024
-    #define EJS_MAX_SQLITE_MEM      (20*1024*1024)
-    #define EJS_MIN_FRAME_SLOTS     32
-    #define EJS_ROUND_PROP          32
-    #if !defined(BIT_XML_MAX_NODE_DEPTH)
-        #define BIT_XML_MAX_NODE_DEPTH 256
-    #endif
+#ifndef BIT_XML_MAX_NODE_DEPTH
+    #define BIT_XML_MAX_NODE_DEPTH  64
 #endif
+#ifndef BIT_MAX_SQLITE_MEM
+    #define BIT_MAX_SQLITE_MEM      (2*1024*1024)   /**< Maximum buffering for Sqlite */
+#endif
+#ifndef BIT_MAX_SQLITE_DURATION
+    #define BIT_MAX_SQLITE_DURATION 30000           /**< Database busy timeout */
+#endif
+
+#ifndef BIT_MAX_EJS_STACK
+#if BIT_HAS_MMU
+    #define BIT_MAX_EJS_STACK       (1024 * 1024)   /**< Stack size on virtual memory systems */
+#else
+    #define BIT_MAX_EJS_STACK       (1024 * 32)     /**< Stack size without MMU */
+#endif
+#endif
+
+/*
+    Internal constants
+ */
+#if UNUSED
+#define HEAP_OVERHEAD (MPR_ALLOC_HDR_SIZE + MPR_ALLOC_ALIGN(sizeof(MprRegion) + sizeof(MprHeap) + sizeof(MprDestructor)))
+#endif
+
+#define EJS_LOTSA_PROP              256             /**< Object with lots of properties. Grow by bigger chunks */
+#define EJS_MIN_FRAME_SLOTS         16              /**< Miniumum number of slots for function frames */
+#define EJS_NUM_GLOBAL              256             /**< Number of globals slots to pre-create */
+#define EJS_ROUND_PROP              16              /**< Rounding for growing properties */
 
 #define EJS_HASH_MIN_PROP           8               /**< Min props to hash */
 #define EJS_MAX_COLLISIONS          4               /**< Max intern string collion chain before rehash */
 #define EJS_POOL_INACTIVITY_TIMEOUT (60  * 1000)    /**< Prune inactive pooled VMs older than this */
-#define EJS_SQLITE_TIMEOUT          30000           /**< Database busy timeout */
-#define EJS_SESSION_TIMEOUT         1800
 #define EJS_SESSION_TIMER_PERIOD    (60 * 1000)     /**< Timer checks ever minute */
 #define EJS_FILE_PERMS              0664            /**< Default file perms */
 #define EJS_DIR_PERMS               0775            /**< Default dir perms */
-
-#if BIT_HAS_MMU
-    #if BIT_TUNE == MPR_TUNE_SIZE
-        #define EJS_STACK_MAX       (1024 * 1024)   /**< Stack size on virtual memory systems */
-    #elif BIT_TUNE == MPR_TUNE_BALANCED
-        #define EJS_STACK_MAX       (1024 * 1024 * 4)
-    #else
-        #define EJS_STACK_MAX       (1024 * 1024 * 16)
-    #endif
-#else
-    /*
-        Highly recursive workloads may need to increase the stack values
-     */
-    #if BIT_TUNE == MPR_TUNE_SIZE
-        #define EJS_STACK_MAX       (1024 * 32)     /**< Stack size without MMU */
-    #elif BIT_TUNE == MPR_TUNE_BALANCED
-        #define EJS_STACK_MAX       (1024 * 64)
-    #else
-        #define EJS_STACK_MAX       (1024 * 128)
-    #endif
-#endif
 
 /*
     Sanity constants. Only for sanity checking. Set large enough to never be a
     real limit but low enough to catch some errors in development.
  */
-#define EJS_MAX_POOL            (4*1024*1024)   /**< Size of constant pool */
-#define EJS_MAX_ARGS            8192            /**< Max number of args */
-#define EJS_MAX_LOCALS          (10*1024)       /**< Max number of locals */
-#define EJS_MAX_EXCEPTIONS      8192            /**< Max number of exceptions */
-#define EJS_MAX_TRAITS          (0x7fff)        /**< Max number of declared properties per block */
+#define EJS_MAX_POOL                (4*1024*1024)   /**< Size of constant pool */
+#define EJS_MAX_ARGS                8192            /**< Max number of args */
+#define EJS_MAX_LOCALS              (10*1024)       /**< Max number of locals */
+#define EJS_MAX_EXCEPTIONS          8192            /**< Max number of exceptions */
+#define EJS_MAX_TRAITS              (0x7fff)        /**< Max number of declared properties per block */
 
 /*
     Should not need to change these
  */
-#define EJS_INC_ARGS            8               /**< Frame stack increment */
-#define EJS_MAX_BASE_CLASSES    256             /**< Max inheritance chain */
-#define EJS_DOC_HASH_SIZE       1007            /**< Hash for doc descriptions */
+#define EJS_INC_ARGS                8               /**< Frame stack increment */
+#define EJS_MAX_BASE_CLASSES        256             /**< Max inheritance chain */
+#define EJS_DOC_HASH_SIZE           1007            /**< Hash for doc descriptions */
 
 /*
     Compiler constants
  */
-#define EC_MAX_INCLUDE          32              /**< Max number of nested includes */
-#define EC_LINE_INCR            1024            /**< Growth increment for input lines */
-#define EC_TOKEN_INCR           64              /**< Growth increment for tokens */
-#define EC_MAX_LOOK_AHEAD       8
-#define EC_BUFSIZE              4096            /**< General buffer size */
-#define EC_MAX_ERRORS           25              /**< Max compilation errors before giving up */
-#define EC_CODE_BUFSIZE         4096            /**< Initial size of code gen buffer */
-#define EC_NUM_PAK_PROP         32              /**< Initial number of properties */
+#define EC_MAX_INCLUDE              32              /**< Max number of nested includes */
+#define EC_LINE_INCR                1024            /**< Growth increment for input lines */
+#define EC_TOKEN_INCR               64              /**< Growth increment for tokens */
+#define EC_MAX_LOOK_AHEAD           8
+#define EC_BUFSIZE                  4096            /**< General buffer size */
+#define EC_MAX_ERRORS               25              /**< Max compilation errors before giving up */
+#define EC_CODE_BUFSIZE             4096            /**< Initial size of code gen buffer */
+#define EC_NUM_PAK_PROP             32              /**< Initial number of properties */
 
 /********************************* Defines ************************************/
 

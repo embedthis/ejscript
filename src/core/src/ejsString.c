@@ -583,7 +583,7 @@ static EjsString *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             args = inner;
         }
     }
-    if ((result = ejsCreateBareString(ejs, MPR_BUFSIZE)) == NULL) {
+    if ((result = ejsCreateBareString(ejs, BIT_MAX_BUFFER)) == NULL) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
@@ -1152,7 +1152,7 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
         rp = (EjsRegExp*) argv[0];
 
-        result = ejsCreateBareString(ejs, MPR_BUFSIZE);
+        result = ejsCreateBareString(ejs, BIT_MAX_BUFFER);
         result->length = 0;
         startNextMatch = endLastMatch = 0;
 
@@ -1238,7 +1238,7 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         patternLength = pattern->length;
         index = indexof(sp->value, sp->length, pattern, patternLength, 1);
         if (index >= 0) {
-            if ((result = ejsCreateBareString(ejs, MPR_BUFSIZE)) == NULL) {
+            if ((result = ejsCreateBareString(ejs, BIT_MAX_BUFFER)) == NULL) {
                 return 0;
             }
             result->length = 0;
@@ -1828,7 +1828,7 @@ static EjsString *buildString(Ejs *ejs, EjsString *result, wchar *str, ssize len
 
     room = mprGetBlockSize(result) - sizeof(EjsString);
     if ((result->length + len + 1) >= room) {
-        size = max(result->length + len, MPR_BUFSIZE);
+        size = max(result->length + len, BIT_MAX_BUFFER);
         if ((newBuf = ejsCreateBareString(ejs, size)) == NULL) {
             return NULL;
         }

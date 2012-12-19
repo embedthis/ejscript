@@ -457,7 +457,7 @@ PUBLIC EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *vp, EjsObj *options)
                 //  TODO - get another solution to hold
             } else if (ejsIs(ejs, arg, Number)) {
                 i = ejsGetInt(ejs, arg);
-                if (0 <= i && i < MPR_MAX_STRING) {
+                if (0 <= i && i < BIT_MAX_BUFFER) {
                     json.indent = mprAlloc(i + 1);
                     //  TODO - get another solution to hold
                     memset(json.indent, ' ', i);

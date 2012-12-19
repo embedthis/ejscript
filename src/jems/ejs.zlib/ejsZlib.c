@@ -22,7 +22,7 @@ static EjsObj *zlib_compress(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     MprFile     *in;
     gzFile      out;
     cchar       *src, *dest;
-    uchar       inbuf[MPR_BUFSIZE];
+    uchar       inbuf[BIT_MAX_BUFFER];
     ssize       nbytes;
 
     src = ((EjsPath*) argv[0])->value;
@@ -64,7 +64,7 @@ static EjsObj *zlib_uncompress(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv
     MprFile     *out;
     gzFile      in;
     cchar       *src, *dest;
-    uchar       inbuf[MPR_BUFSIZE];
+    uchar       inbuf[BIT_MAX_BUFFER];
     ssize       nbytes;
 
     src = ((EjsPath*) argv[0])->value;

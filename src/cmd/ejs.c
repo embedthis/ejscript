@@ -509,7 +509,7 @@ static char *readline(cchar *msg)
 
 static char *readline(cchar *msg)
 {
-    char    buf[MPR_MAX_STRING];
+    char    buf[BIT_MAX_PATH];
 
     printf("%s", msg);
     fflush(stdout);
@@ -526,7 +526,7 @@ static char *readline(cchar *msg)
  */
 static int consoleGets(EcStream *stream)
 {
-    char    prompt[MPR_MAX_STRING], *line, *cp;
+    char    prompt[BIT_MAX_PATH], *line, *cp;
     int     level;
 
     if (stream->flags & EC_STREAM_EOL) {

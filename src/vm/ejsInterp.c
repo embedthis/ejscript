@@ -3295,7 +3295,7 @@ int ejsGrowStack(Ejs *ejs, int incr)
         /*
             Allocate a stack
          */
-        if (sp->top >= &sp->bottom[EJS_STACK_MAX]) {
+        if (sp->top >= &sp->bottom[BIT_MAX_EJS_STACK]) {
             return MPR_ERR_MEMORY;
         }
         size = (sizeof(EjsObj*) * incr);
@@ -3612,7 +3612,7 @@ static EjsAny *getNthBlock(Ejs *ejs, int nth)
 void ejsLog(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     args;
-    char        buf[MPR_MAX_LOG];
+    char        buf[BIT_MAX_BUFFER];
 
     va_start(args, fmt);
     fmtv(buf, sizeof(buf) - 1, fmt, args);

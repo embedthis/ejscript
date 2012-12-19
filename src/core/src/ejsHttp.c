@@ -42,8 +42,8 @@ static EjsHttp *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         hp->uri = httpUriToString(((EjsUri*) argv[0])->uri, HTTP_COMPLETE_URI);
     }
     hp->method = sclone("GET");
-    hp->requestContent = mprCreateBuf(HTTP_BUFSIZE, -1);
-    hp->responseContent = mprCreateBuf(HTTP_BUFSIZE, -1);
+    hp->requestContent = mprCreateBuf(BIT_MAX_BUFFER, -1);
+    hp->responseContent = mprCreateBuf(BIT_MAX_BUFFER, -1);
     return hp;
 }
 
@@ -1045,7 +1045,7 @@ static ssize readHttpData(Ejs *ejs, EjsHttp *hp, ssize count)
     buf = hp->responseContent;
     mprResetBufIfEmpty(buf);
     while (count < 0 || mprGetBufLength(buf) < count) {
-        len = (count < 0) ? HTTP_BUFSIZE : (count - mprGetBufLength(buf));
+        len = (count < 0) ? BIT_MAX_BUFFER : (count - mprGetBufLength(buf));
         space = mprGetBufSpace(buf);
         if (space < len) {
             mprGrowBuf(buf, len - space);

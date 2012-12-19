@@ -1,0 +1,89 @@
+/*
+    est.pak - Embedded Secure Transport package for Bit
+ */
+
+require ejs.tar
+require ejs.zlib
+
+pack('est', 'Embedded Transport Security')
+let path = bit.packs.est.path
+let deps = bit.dir.src.join('src/deps')
+let ejs = deps.join('est')
+let tgz = deps.join('est.tgz')
+let tar = deps.join('est.tar')
+
+if (path) {
+    if (path.toString().startsWith('http:')) {
+        try {
+            /*
+                Auto download EST
+             */
+            let http:Http = new Http
+            trace('Download', 'ETS from: ' + path)
+            http.get("" + path)
+            buf = new ByteArray
+            let fp = File(tgz, 'w')
+            while (http.read(buf) > 0) {
+                fp.write(buf)
+            }
+            fp.close()
+            if (http.status != 200) {
+                App.log.error("Cannot download ETS from " + path)
+                App.exit(1)
+            }
+            http.close()
+            trace('Prepare', 'ETS distribution')
+            est.removeAll()
+            est.makeDir()
+            Zlib.uncompress(tgz, tar)
+            Tar(tar, {chdir: deps}).extract()
+            let dir = deps.files('est-*').sort().reverse()[0]
+            dir.rename(est)
+            tgz.remove()
+            tar.remove()
+            trace('Done', 'ETS distribution')
+        } catch (e) {
+            trace('Prepare', 'Failed: ' + e)
+        }
+    }
+}
+
+let cfg
+if (Path('src/deps/est/est.c').exists) {
+    /*  Internal ETS distribution */
+    let dir = bit.dir.src.join('src/deps/est')
+    cfg = {
+        path: dir,
+        dir: dir,
+        includes: [ dir ],
+        libraries: [ 'est' ]
+    }
+} else {
+    /*  External est distribution */
+    if (path && !path.exists) {
+        throw 'Can\'t find ETS at ' + path
+    }
+    let search
+    if (path) {
+        search = path.files('*/bin') + path.files('*/inc')
+    } else {
+        search = [ bit.dir.packs.join('est'), '/usr/lib/est/latest/lib', '/usr/include' ]
+    }
+    let libdir = probe(Path('libest').joinExt(bit.ext.shobj), {search: search}).absolute
+    let incdir = probe('est.h', {search: search}).absolute
+    let libraries = libdir.files('libest*') + libdir.files('libmpr*') + libdir.files('libpcre*') + 
+        libdir.files('libhttp*') + libdir.files('est*' + bit.ext.shobj) + libdir.files('libsqlite3*')
+    let imports = libdir.files('est*.mod') + libraries + incdir.files('est*.h') + 
+        incdir.files('mpr.h') + incdir.files('http.h') + incdir.files('pcre.h') + incdir.files('sqlite3.h')
+    cfg = {
+        path: path,
+        dir: path,
+        includes: [ incdir ],
+        libraries: [ 'est' ],
+        libpaths: [ libdir.parent ],
+        imports: imports,
+        external: true,
+    }
+}
+Bit.load({packs: { est: cfg }})
+

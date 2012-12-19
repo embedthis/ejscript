@@ -9556,7 +9556,7 @@ static void appendDocString(EcCompiler *cp, EcNode *np, EcNode *parameter, EcNod
 {
     EjsString   *defaultValue;
     Ejs         *ejs;
-    char        arg[MPR_MAX_STRING];
+    char        arg[BIT_MAX_BUFFER];
     int         found;
     
     ejs = cp->ejs;

@@ -269,12 +269,12 @@ static EjsByteArray *ba_ByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj *
 
     assure(0 <= argc && argc <= 2);
 
-    size = (argc >= 1) ? ejsGetInt(ejs, argv[0]) : MPR_BUFSIZE;
+    size = (argc >= 1) ? ejsGetInt(ejs, argv[0]) : BIT_MAX_BUFFER;
     if (size <= 0) {
         size = 1;
     }
     resizable = (argc == 2) ? ejsGetBoolean(ejs, argv[1]): 1;
-    ap->growInc = (resizable) ? MPR_BUFSIZE : 0;
+    ap->growInc = (resizable) ? BIT_MAX_BUFFER : 0;
     ap->endian = mprGetEndian(ejs);
     ap->resizable = 1;
     if (ejsGrowByteArray(ejs, ap, size) < 0) {
@@ -1358,11 +1358,11 @@ PUBLIC EjsByteArray *ejsCreateByteArray(Ejs *ejs, ssize size)
         return 0;
     }
     if (size <= 0) {
-        size = MPR_BUFSIZE;
+        size = BIT_MAX_BUFFER;
     }
     ap->async = -1;
     ap->resizable = 1;
-    ap->growInc = MPR_BUFSIZE;
+    ap->growInc = BIT_MAX_BUFFER;
     ap->endian = mprGetEndian(ejs);
     if (ejsGrowByteArray(ejs, ap, size) < 0) {
         return 0;
