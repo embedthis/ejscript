@@ -486,7 +486,7 @@ static int doHandshake(MprSocket *sp, short cipherSuite)
 {
     MprMatrixSocket     *msp;
     ssize               rc, written, toWrite;
-    char                *obuf, buf[MPR_SSL_BUFSIZE];
+    char                *obuf, buf[BIT_MAX_BUFFER];
     int                 mode;
 
     msp = sp->sslSocket;
@@ -1177,7 +1177,7 @@ static int upgradeOss(MprSocket *sp, MprSsl *ssl, int server)
 {
     MprOpenSocket   *osp;
     MprOpenSsl      *ossl;
-    char            ebuf[MPR_MAX_STRING];
+    char            ebuf[BIT_MAX_BUFFER];
     ulong           error;
     int             rc;
 
@@ -1249,7 +1249,7 @@ static ssize readOss(MprSocket *sp, void *buf, ssize len)
     MprSsl          *ssl;
     X509_NAME       *xSubject;
     X509            *cert;
-    char            subject[260], issuer[260], peer[260], ebuf[MPR_MAX_STRING];
+    char            subject[260], issuer[260], peer[260], ebuf[BIT_MAX_BUFFER];
     ulong           serror;
     int             rc, error, retries, i;
 

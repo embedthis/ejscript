@@ -41,7 +41,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
     Ejs         *ejs;
     EjsType     *type;
     MprFile     *localFile;
-    char        *path, slotsName[MPR_MAX_FNAME], moduleName[MPR_MAX_FNAME];
+    char        *path, slotsName[BIT_MAX_FNAME], moduleName[BIT_MAX_FNAME];
     char        *cp, *sp, *dp;
 
     assure(bp);
@@ -120,7 +120,7 @@ static void defineSlot(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, 
         EjsName *name)
 {
     Ejs     *ejs;
-    char    nameBuf[MPR_MAX_STRING];
+    char    nameBuf[BIT_MAX_PATH];
     char    *funSep, *sp, *typeStr, *funStr, *nameStr;
     ejs = bp->ejs;
 
@@ -153,7 +153,7 @@ static void defineSlot(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, 
 
 static void defineSlotCount(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, char *suffix, int numProp)
 {
-    char        name[MPR_MAX_STRING], *typeStr, *sp;
+    char        name[BIT_MAX_PATH], *typeStr, *sp;
 
     typeStr = mapFullName(bp->ejs, &type->qname, 1);
     if (*typeStr == '\0') {

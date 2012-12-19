@@ -45,7 +45,7 @@ Bit.load({
         product: 'ejs',
         title: 'Embedthis Ejscript',
         company: 'Embedthis',
-        version: '2.2.0',
+        version: '2.3.0',
         buildNumber: '0',
         sync: ['http', 'mpr', 'pcre', 'sqlite', 'zlib'],
         packs: [ 'bits/packs' ],
@@ -62,7 +62,6 @@ Bit.load({
     usage: {
         assert: 'Enable program assertions (true|false)',
         static: 'Build with static linking (true|false)',
-        tune:   'Optimize (size|speed|balanced)',
     },
 
     profiles: {

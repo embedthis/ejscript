@@ -60,10 +60,8 @@ static EjsVar *debuggerConstructor(Ejs *ejs, EjsDebugger *db, int argc, EjsVar *
         return 0;
     }
     db->sdb = sdb;
-    debugger3_busy_timeout(sdb, EJS_SQLITE_TIMEOUT);
-
-    //  TODO - should be configurable somewhere
-    debugger3_soft_heap_limit(2 * 1024 * 1024);
+    debugger3_busy_timeout(sdb, BIT_MAX_SQLITE_DURATION);
+    debugger3_soft_heap_limit(BIT_MAX_SQLITE_MEM);
     return 0;
 }
 

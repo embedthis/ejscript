@@ -638,7 +638,7 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
     EjsCode     *code;
     wchar       *currentLine;
     uchar       *start;
-    char        argbuf[MPR_MAX_STRING], lineInfo[MPR_MAX_STRING], name[MPR_MAX_STRING];
+    char        argbuf[BIT_MAX_PATH], lineInfo[BIT_MAX_PATH], name[BIT_MAX_PATH];
     char        *currentFile, *src, *dest;
     int         maxOp, opcode, lineNumber, stack, codeLen, address, stackEffect, nbytes, i, lastLine;
 
@@ -941,7 +941,7 @@ static EjsString *getBlockName(EjsMod *mp, EjsObj *block, int slotNum)
 
 static char *getAttributeString(EjsMod *mp, int attributes)
 {
-    static char attributeBuf[MPR_MAX_STRING];
+    static char attributeBuf[256];
 
     attributeBuf[0] = '\0';
 

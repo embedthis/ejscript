@@ -32,7 +32,7 @@ if (bit.platform.os == 'windows') {
     let incdir = probe('openssl/ssl.h', {search: search}).absolute
     cfg = {
         dir: dir,
-        path: lib,
+        path: path,
         includes: [ incdir ],
         libraries: [ 'libeay32.lib', 'ssleay32.lib' ],
         libpaths: [ lib.parent ],
@@ -48,7 +48,7 @@ if (bit.platform.os == 'windows') {
     let incdir = probe('openssl/ssl.h', {search: search}).absolute
     cfg = {
         dir: dir,
-        path: lib,
+        path: path,
         includes: [ incdir ],
         libraries: [ 'ssl', 'crypto' ],
         libpaths: [ lib.parent ],
@@ -68,7 +68,7 @@ if (bit.platform.os == 'windows') {
     let incdir = probe('openssl/ssl.h', {search: search}).absolute
     cfg = {
         dir: dir,
-        path: lib,
+        path: path,
         includes: [ incdir ],
         libraries: [ 'ssl', 'crypto' ],
         libpaths: [ lib.parent ],

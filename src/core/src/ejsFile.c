@@ -512,7 +512,7 @@ static EjsObj *readFileBytes(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
             count = (int) info.size;
             count -= (int) mprGetFilePosition(fp->file);
         } else {
-            count = MPR_BUFSIZE;
+            count = BIT_MAX_BUFFER;
         }
         assure(count >= 0);
     }
@@ -568,7 +568,7 @@ static EjsString *readFileString(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
             count = (int) info.size;
             count -= (int) mprGetFilePosition(fp->file);
         } else {
-            count = MPR_BUFSIZE;
+            count = BIT_MAX_BUFFER;
         }
         assure(count >= 0);
     }
@@ -624,7 +624,7 @@ static EjsNumber *readFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
             count = (int) info.size;
             count -= (int) mprGetFilePosition(fp->file);
         } else {
-            count = MPR_BUFSIZE;
+            count = BIT_MAX_BUFFER;
         }
         assure(count >= 0);
     }

@@ -566,7 +566,7 @@ static void initStack(Ejs *ejs)
         This will allocate memory virtually for systems with virutal memory. Otherwise, it will just use malloc.
      */
     state = ejs->state;
-    state->stackSize = MPR_PAGE_ALIGN(EJS_STACK_MAX, mprGetPageSize(ejs));
+    state->stackSize = MPR_PAGE_ALIGN(BIT_MAX_EJS_STACK, mprGetPageSize(ejs));
     if ((state->stackBase = mprVirtAlloc(state->stackSize, MPR_MAP_READ | MPR_MAP_WRITE)) != 0) {
         state->stack = &state->stackBase[-1];
     }

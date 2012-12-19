@@ -603,12 +603,21 @@ public class Bit {
         }
         for each (field in poptions['with']) {
             let [field,value] = field.split('=')
+// print(field, value)
+            bit.packs[field] ||= {}
             if (value) {
                 bit.packs[field] = { enable: true, path: Path(value) }
             }
+// dump(field, bit.packs[field])
+            if (!bit.settings.required.contains(field) && !bit.settings.optional.contains(field)) {
+                bit.settings.optional.push(field)
+            }
         }
         for each (field in poptions['without']) {
-            if ((field == 'all' || field == 'own') && bit.settings['without-' + field]) {
+            if (bit.settings.required.contains(field)) { 
+                throw 'Required pack ' + field + ' cannot be disabled'
+            }
+            if (field == 'all' && bit.settings['without-' + field]) {
                 for each (f in bit.settings['without-' + field]) {
                     bit.packs[f] = { enable: false, diagnostic: 'configured --without ' + f }
                 }
@@ -706,8 +715,8 @@ public class Bit {
         trace('Search', 'For tools and extension packages')
         vtrace('Search', 'Packages: ' + [settings.required + settings.optional].join(' '))
         let packs = (settings.required + settings.optional).sort().unique()
-        for each (pack in settings.required + settings.optional) {
-            if (bit.packs[pack] && !bit.packs[pack].enable) {
+        for each (pack in packs) {
+            if (bit.packs[pack] && bit.packs[pack].enable == false) {
                 if (settings.required.contains(pack)) { 
                     throw 'Required pack ' + pack + ' is not enabled'
                 }
@@ -724,7 +733,8 @@ public class Bit {
             }
             if (path.exists) {
                 try {
-                    bit.packs[pack] ||= {enable: true}
+                    bit.packs[pack] ||= {}
+                    bit.packs[pack].enable ||= true
                     currentPack = pack
                     loadBitFile(path)
                 } catch (e) {
@@ -749,14 +759,14 @@ public class Bit {
                         vtrace('Found', desc + ' at ' + p.path)
                     } else if (options.show) {
                         trace('Found', desc + ' at:\n                 ' + p.path)
-                    } else {
-                        trace('Found', desc)
+                    } else if (!p.quiet) {
+                        trace('Found', desc + ': ' + p.path.basename)
                     }
                 } else {
-                    trace('Not Found', 'Optional: ' + desc)
+                    vtrace('Omitted', 'Optional: ' + desc)
                 }
             } else {
-                trace('Not Found', 'Optional: ' + pack)
+                vtrace('Omitted', 'Optional: ' + pack)
             }
         }
         castDirTypes()

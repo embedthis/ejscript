@@ -91,9 +91,8 @@ static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **arg
                 ejsThrowIOError(ejs, "Cannot open database %s", path);
                 return 0;
             }
-            //  MOB - should be configurable somewhere
-            sqlite3_soft_heap_limit(20 * 1024 * 1024);
-            sqlite3_busy_timeout(sdb, EJS_SQLITE_TIMEOUT);
+            sqlite3_soft_heap_limit(BIT_MAX_SQLITE_MEM);
+            sqlite3_busy_timeout(sdb, BIT_MAX_SQLITE_DURATION);
 
         } else {
             ejsThrowArgError(ejs, "Unknown SQLite database URI %s", path);

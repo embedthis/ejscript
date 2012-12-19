@@ -37,7 +37,7 @@ MprXml *ejsCreateXmlParser(Ejs *ejs, EjsXML *xml, cchar *filename)
     EjsXmlState *parser;
     MprXml      *xp;
     
-    xp = mprXmlOpen(MPR_BUFSIZE, -1);
+    xp = mprXmlOpen(BIT_MAX_BUFFER, -1);
     assure(xp);
 
     /*
