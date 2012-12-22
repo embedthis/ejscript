@@ -603,12 +603,11 @@ public class Bit {
         }
         for each (field in poptions['with']) {
             let [field,value] = field.split('=')
-// print(field, value)
             bit.packs[field] ||= {}
             if (value) {
                 bit.packs[field] = { enable: true, path: Path(value) }
             }
-// dump(field, bit.packs[field])
+            bit.packs[field].required = true
             if (!bit.settings.required.contains(field) && !bit.settings.optional.contains(field)) {
                 bit.settings.optional.push(field)
             }
@@ -714,7 +713,7 @@ public class Bit {
         }
         trace('Search', 'For tools and extension packages')
         vtrace('Search', 'Packages: ' + [settings.required + settings.optional].join(' '))
-        let packs = (settings.required + settings.optional).sort().unique()
+        let packs = settings.required + settings.optional
         for each (pack in packs) {
             if (bit.packs[pack] && bit.packs[pack].enable == false) {
                 if (settings.required.contains(pack)) { 
@@ -746,7 +745,7 @@ public class Bit {
                     let p = bit.packs[pack] ||= {}
                     p.enable = false
                     p.diagnostic = "" + e
-                    if (kind == 'Required' && !options['continue']) {
+                    if ((kind == 'Required' || bit.packs[pack].required) && !options['continue']) {
                         throw e
                     }
                 }
@@ -756,11 +755,9 @@ public class Bit {
                 let desc = p.description || pack
                 if (p && p.enable && p.path) {
                     if (options.verbose) {
-                        vtrace('Found', desc + ' at ' + p.path)
-                    } else if (options.show) {
                         trace('Found', desc + ' at:\n                 ' + p.path)
                     } else if (!p.quiet) {
-                        trace('Found', desc + ': ' + p.path.basename)
+                        trace('Found', desc + ': ' + p.path)
                     }
                 } else {
                     vtrace('Omitted', 'Optional: ' + desc)
@@ -1750,20 +1747,7 @@ public class Bit {
                     /*
                         Create targets for each header (if not already present)
                      */
-                    // objTarget.depends = makeDepends(objTarget)
                     makeDepends(objTarget)
-        /* MOB UNUSED
-                    for each (header in objTarget.depends) {
-                        if (!bit.targets[header]) {
-                            bit.targets[header] = { name: header, enable: true, path: header, 
-                                type: 'header', files: [ header ], vars: {}, includes: target.includes }
-                        }
-                        let h = bit.targets[header]
-                        if (h && !h.depends) {
-                            makeDepends(h)
-                        }
-                    }
-         */
                 }
             }
         }
@@ -3192,6 +3176,9 @@ public function action(command: String, options = null)
 public function trace(tag, msg)
     b.trace(tag, msg)
 
+public function strace(tag, msg)
+    b.strace(tag, msg)
+    
 public function vtrace(tag, msg)
     b.vtrace(tag, msg)
 

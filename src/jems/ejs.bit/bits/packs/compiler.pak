@@ -12,12 +12,11 @@ let settings = getDefaultSettings(platform)
 try {
     if (platform.like == 'posix') {
         path ||= (platform.os == 'macosx') ? 'clang' : 'gcc'
-        if (platform.os == Config.OS) {
+        try {
+            /* Try this, because when cross-generating we won't be able to find compiler */
             cc = probe(path, {fullpath: true})
             Bit.load({packs: { compiler: { path: cc }}})
-        } else {
-            Bit.load({packs: { compiler: { path: 'gcc' }}})
-        }
+        } catch {}
 
     } else if (platform.like == 'windows') {
         let search
@@ -106,7 +105,7 @@ try {
         Bit.load({packs: { compiler: { path: cc, name: path.basename }}})
     }
 
-    if (platform.like == 'posix' || (platform.os == 'vxworks' && Config.OS == 'linux')) {
+    if (cc && (platform.like == 'posix' || (platform.os == 'vxworks' && Config.OS == 'linux'))) {
         settings.hasDoubleBraces = compile(cc, '', '#include <stdarg.h>\nva_list d = {{0}};')
         settings.hasMtune = compile(cc, '-mtune=generic', 'int main() { return 0;}')
         settings.hasStackProtector = compile(cc, '-fno-stack-protector', 'int main() { return 0;}')
@@ -130,15 +129,9 @@ try {
                 '#include <stdio.h>\nint main() { void *ptr = 0; __sync_bool_compare_and_swap(&ptr, ptr, ptr); return 0; }')
             settings.hasUnnamedUnions = compile(cc, '', 
                 '#include <stdio.h>\nint main() { struct test { union { int x; int y; };}; return 0; }')
-/*
-            UNUSED
-            let littleEndian = compile(cc, '', 
-                '#include <stdio.h>\nint main() { int test=1; char *probe = (char*) &test; return (*probe == 1);}')
-            settings.endian = littleEndian ? 1 : 2
- */
         }
     }
-} catch {}
+} catch (e) { print("bit compiler.pak error: ", e)}
 
 Bit.load({ settings: settings })
 
@@ -157,14 +150,15 @@ function compile(cc: Path, command: String, contents: String = null): Boolean {
         command += ' -c ' + file
     }
     command = '' + cc + ' -Werror -Wall ' + command
+    strace('Compile', command)
+    strace('Program', contents)
     let cmd
     try {
         cmd = new Cmd
         cmd.env = bit.env
         cmd.start(command)
         if (cmd.status != 0) {
-            App.log.debug(3, "Test " + command)
-            App.log.debug(3, "Compiler package test compile result: " + cmd.error)
+            strace('Result', '  ' + cmd.error)
         }
     } finally {
         if (file) {
@@ -197,7 +191,7 @@ function getDefaultSettings(platform) {
             hasPam: false,
             hasStackProtector: true,
             hasSync: true,
-            hasSyncCas: true,
+            hasSyncCas: false,
             hasUnnamedUnions: true,
             warn64to32: false,
             warnUnused: true,

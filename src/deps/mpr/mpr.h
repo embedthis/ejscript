@@ -698,6 +698,13 @@ typedef int64 MprTicks;
     #endif
 #endif
 
+#if BIT_WIN_LIKE
+    #define INT64(x)    (x##i64)
+    #define UINT64(x)   (x##Ui64)
+#else
+    #define INT64(x)    (x##LL)
+    #define UINT64(x)   (x##ULL)
+#endif
 
 #ifndef MAXINT
 #if INT_MAX
@@ -746,14 +753,6 @@ typedef int64 MprTicks;
     #define PTOI(i)     ((int) i)
     #define LTOP(i)     ((void*) ((int) i))
     #define PTOL(i)     ((int64) (int) i)
-#endif
-
-#if BIT_WIN_LIKE
-    #define INT64(x)    (x##i64)
-    #define UINT64(x)   (x##Ui64)
-#else
-    #define INT64(x)    (x##LL)
-    #define UINT64(x)   (x##ULL)
 #endif
 
 #if BIT_WIN_LIKE
@@ -7892,6 +7891,8 @@ PUBLIC int mprParseSocketAddress(cchar *ipSpec, char **ip, int *port, int defaul
     @param buf Pointer to a buffer to hold the read data. 
     @param size Size of the buffer.
     @return A count of bytes actually read. Return a negative MPR error code on errors.
+    @return Return -1 for EOF and errors. On success, return the number of bytes read. Use  mprIsSocketEof to 
+        distinguision between EOF and errors.
     @ingroup MprSocket
     @stability Stable
  */
@@ -8044,11 +8045,13 @@ typedef struct MprSsl {
     char            *caPath;            /**< Certificate verification cert directory */
     char            *ciphers;           /**< Candidate ciphers to use */
     int             configured;         /**< Set if this SSL configuration has been processed */
+    //  MOB - rename config
     void            *pconfig;           /**< Extended provider SSL configuration */
     int             verifyPeer;         /**< Verify the peer verificate */
     int             verifyIssuer;       /**< Set if the certificate issuer should be also verified */
     int             verifyDepth;        /**< Set if the cert chain depth should be verified */
     int             protocols;          /**< SSL protocols */
+    MprMutex        *mutex;             /**< Multithread sync */
 } MprSsl;
 
 /*
@@ -8184,6 +8187,9 @@ PUBLIC void mprVerifySslIssuer(struct MprSsl *ssl, bool on);
  */
 PUBLIC void mprVerifySslDepth(struct MprSsl *ssl, int depth);
 
+#if BIT_PACK_EST
+    PUBLIC int mprCreateEstModule();
+#endif
 #if BIT_PACK_MATRIXSSL
     PUBLIC int mprCreateMatrixSslModule();
 #endif

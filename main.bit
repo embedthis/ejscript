@@ -6,6 +6,7 @@ Bit.load({
     blend: [
         '${BITS}/embedthis.bit',
         'src/deps/mpr/mpr.bit',
+        'src/deps/est/est.bit',
         'src/deps/pcre/pcre.bit',
         'src/deps/http/http.bit',
         'src/deps/sqlite/sqlite.bit',
@@ -47,7 +48,7 @@ Bit.load({
         company: 'Embedthis',
         version: '2.3.0',
         buildNumber: '0',
-        sync: ['http', 'mpr', 'pcre', 'sqlite', 'zlib'],
+        sync: ['est', 'http', 'mpr', 'pcre', 'sqlite', 'zlib'],
         packs: [ 'bits/packs' ],
         /* Must build locally to build tools */
         platforms: [ 'local' ],

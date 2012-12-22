@@ -11,7 +11,7 @@
 
 /************************************************************************/
 /*
-    Start of file "src/mprMem.c"
+    Start of file "src/mem.c"
  */
 /************************************************************************/
 
@@ -3341,7 +3341,7 @@ PUBLIC void mprNop(void *ptr) {
 
 /************************************************************************/
 /*
-    Start of file "src/mprAsync.c"
+    Start of file "src/async.c"
  */
 /************************************************************************/
 
@@ -3622,7 +3622,7 @@ PUBLIC void mprSetWinMsgCallback(MprMsgCallback callback)
 
 /************************************************************************/
 /*
-    Start of file "src/mprAtomic.c"
+    Start of file "src/atomic.c"
  */
 /************************************************************************/
 
@@ -3811,7 +3811,7 @@ PUBLIC void mprAtomicListInsert(void * volatile *head, volatile void **link, voi
 
 /************************************************************************/
 /*
-    Start of file "src/mprBuf.c"
+    Start of file "src/buf.c"
  */
 /************************************************************************/
 
@@ -4439,7 +4439,7 @@ PUBLIC ssize mprPutStringToWideBuf(MprBuf *bp, cchar *str)
 
 /************************************************************************/
 /*
-    Start of file "src/mprCache.c"
+    Start of file "src/cache.c"
  */
 /************************************************************************/
 
@@ -4896,7 +4896,7 @@ static void manageCacheItem(CacheItem *item, int flags)
 
 /************************************************************************/
 /*
-    Start of file "src/mprCmd.c"
+    Start of file "src/cmd.c"
  */
 /************************************************************************/
 
@@ -6576,7 +6576,7 @@ static void closeFiles(MprCmd *cmd)
 
 /************************************************************************/
 /*
-    Start of file "src/mprCond.c"
+    Start of file "src/cond.c"
  */
 /************************************************************************/
 
@@ -6896,7 +6896,7 @@ PUBLIC void mprSignalMultiCond(MprCond *cp)
 
 /************************************************************************/
 /*
-    Start of file "src/mprCrypt.c"
+    Start of file "src/crypt.c"
  */
 /************************************************************************/
 
@@ -7613,7 +7613,7 @@ static void shaPad(MprSha *sha)
 
 /************************************************************************/
 /*
-    Start of file "src/mprDisk.c"
+    Start of file "src/disk.c"
  */
 /************************************************************************/
 
@@ -8197,7 +8197,7 @@ PUBLIC MprDiskFileSystem *mprCreateDiskFileSystem(cchar *path)
 
 /************************************************************************/
 /*
-    Start of file "src/mprDispatcher.c"
+    Start of file "src/dispatcher.c"
  */
 /************************************************************************/
 
@@ -9170,7 +9170,7 @@ PUBLIC bool mprDispatcherHasEvents(MprDispatcher *dispatcher)
 
 /************************************************************************/
 /*
-    Start of file "src/mprEncode.c"
+    Start of file "src/encode.c"
  */
 /************************************************************************/
 
@@ -9436,7 +9436,7 @@ PUBLIC char *mprEscapeHtml(cchar *html)
 
 /************************************************************************/
 /*
-    Start of file "src/mprEpoll.c"
+    Start of file "src/epoll.c"
  */
 /************************************************************************/
 
@@ -9764,7 +9764,7 @@ PUBLIC void mprWakeNotifier()
 
 /************************************************************************/
 /*
-    Start of file "src/mprEvent.c"
+    Start of file "src/event.c"
  */
 /************************************************************************/
 
@@ -10120,7 +10120,7 @@ PUBLIC void mprDequeueEvent(MprEvent *event)
 
 /************************************************************************/
 /*
-    Start of file "src/mprFile.c"
+    Start of file "src/file.c"
  */
 /************************************************************************/
 
@@ -10744,7 +10744,7 @@ PUBLIC int mprGetFileFd(MprFile *file)
 
 /************************************************************************/
 /*
-    Start of file "src/mprFileSystem.c"
+    Start of file "src/fs.c"
  */
 /************************************************************************/
 
@@ -10900,7 +10900,7 @@ PUBLIC void mprSetPathNewline(cchar *path, cchar *newline)
 
 /************************************************************************/
 /*
-    Start of file "src/mprHash.c"
+    Start of file "src/hash.c"
  */
 /************************************************************************/
 
@@ -11376,7 +11376,7 @@ PUBLIC MprHash *mprCreateHashFromWords(cchar *str)
 
 /************************************************************************/
 /*
-    Start of file "src/mprJSON.c"
+    Start of file "src/jSON.c"
  */
 /************************************************************************/
 
@@ -11822,7 +11822,7 @@ PUBLIC void mprJsonParseError(MprJson *jp, cchar *fmt, ...)
 
 /************************************************************************/
 /*
-    Start of file "src/mprKqueue.c"
+    Start of file "src/kqueue.c"
  */
 /************************************************************************/
 
@@ -12154,7 +12154,7 @@ PUBLIC void mprWakeNotifier()
 
 /************************************************************************/
 /*
-    Start of file "src/mprList.c"
+    Start of file "src/list.c"
  */
 /************************************************************************/
 
@@ -13000,7 +13000,7 @@ recurse:
 
 /************************************************************************/
 /*
-    Start of file "src/mprLock.c"
+    Start of file "src/lock.c"
  */
 /************************************************************************/
 
@@ -13382,7 +13382,7 @@ PUBLIC void mprSpinUnlock(MprSpin *lock)
 
 /************************************************************************/
 /*
-    Start of file "src/mprLog.c"
+    Start of file "src/log.c"
  */
 /************************************************************************/
 
@@ -13936,7 +13936,7 @@ PUBLIC int _cmp(char *s1, char *s2)
 
 /************************************************************************/
 /*
-    Start of file "src/mprMime.c"
+    Start of file "src/mime.c"
  */
 /************************************************************************/
 
@@ -14173,7 +14173,7 @@ PUBLIC cchar *mprLookupMime(MprHash *table, cchar *ext)
 
 /************************************************************************/
 /*
-    Start of file "src/mprMixed.c"
+    Start of file "src/mixed.c"
  */
 /************************************************************************/
 
@@ -14620,7 +14620,7 @@ PUBLIC void dummyWide() {}
 
 /************************************************************************/
 /*
-    Start of file "src/mprModule.c"
+    Start of file "src/module.c"
  */
 /************************************************************************/
 
@@ -14972,7 +14972,7 @@ PUBLIC char *mprSearchForModule(cchar *filename)
 
 /************************************************************************/
 /*
-    Start of file "src/mprPath.c"
+    Start of file "src/path.c"
  */
 /************************************************************************/
 
@@ -16695,7 +16695,7 @@ PUBLIC ssize mprWritePathContents(cchar *path, cchar *buf, ssize len, int mode)
 
 /************************************************************************/
 /*
-    Start of file "src/mprPoll.c"
+    Start of file "src/poll.c"
  */
 /************************************************************************/
 
@@ -17022,7 +17022,7 @@ PUBLIC void mprWakeNotifier()
 
 /************************************************************************/
 /*
-    Start of file "src/mprPrintf.c"
+    Start of file "src/printf.c"
  */
 /************************************************************************/
 
@@ -18002,7 +18002,7 @@ PUBLIC int print(cchar *fmt, ...)
 
 /************************************************************************/
 /*
-    Start of file "src/mprRomFile.c"
+    Start of file "src/rom.c"
  */
 /************************************************************************/
 
@@ -18328,7 +18328,7 @@ PUBLIC MprRomFileSystem *mprCreateRomFileSystem(cchar *path)
 
 /************************************************************************/
 /*
-    Start of file "src/mprSelect.c"
+    Start of file "src/select.c"
  */
 /************************************************************************/
 
@@ -18666,7 +18666,7 @@ static void readPipe(MprWaitService *ws)
 
 /************************************************************************/
 /*
-    Start of file "src/mprSignal.c"
+    Start of file "src/signal.c"
  */
 /************************************************************************/
 
@@ -19050,7 +19050,7 @@ static void standardSignalHandler(void *ignored, MprSignal *sp)
 
 /************************************************************************/
 /*
-    Start of file "src/mprSocket.c"
+    Start of file "src/socket.c"
  */
 /************************************************************************/
 
@@ -20638,6 +20638,7 @@ static void manageSsl(MprSsl *ssl, int flags)
         mprMark(ssl->caFile);
         mprMark(ssl->caPath);
         mprMark(ssl->ciphers);
+        mprMark(ssl->mutex);
         mprMark(ssl->pconfig);
         mprMark(ssl->provider);
         mprMark(ssl->providerName);
@@ -20670,6 +20671,7 @@ PUBLIC MprSsl *mprCreateSsl(int server)
         ssl->verifyPeer = MPR->verifySsl;
         ssl->verifyIssuer = MPR->verifySsl;
     }
+    ssl->mutex = mprCreateLock();
     return ssl;
 }
 
@@ -20866,7 +20868,7 @@ PUBLIC void mprVerifySslDepth(MprSsl *ssl, int depth)
 
 /************************************************************************/
 /*
-    Start of file "src/mprString.c"
+    Start of file "src/string.c"
  */
 /************************************************************************/
 
@@ -21868,7 +21870,7 @@ PUBLIC char *stemplate(cchar *str, MprHash *keys)
 
 /************************************************************************/
 /*
-    Start of file "src/mprTest.c"
+    Start of file "src/test.c"
  */
 /************************************************************************/
 
@@ -22896,7 +22898,7 @@ static int setLogging(char *logSpec)
 
 /************************************************************************/
 /*
-    Start of file "src/mprThread.c"
+    Start of file "src/thread.c"
  */
 /************************************************************************/
 
@@ -23918,7 +23920,7 @@ static void changeState(MprWorker *worker, int state)
 
 /************************************************************************/
 /*
-    Start of file "src/mprTime.c"
+    Start of file "src/time.c"
  */
 /************************************************************************/
 
@@ -25699,7 +25701,7 @@ PUBLIC int gettimeofday(struct timeval *tv, struct timezone *tz)
 
 /************************************************************************/
 /*
-    Start of file "src/mprUnix.c"
+    Start of file "src/unix.c"
  */
 /************************************************************************/
 
@@ -25950,7 +25952,7 @@ PUBLIC void mprSetFilesLimit(int limit)
 
 /************************************************************************/
 /*
-    Start of file "src/mprVxworks.c"
+    Start of file "src/vxworks.c"
  */
 /************************************************************************/
 
@@ -26164,7 +26166,7 @@ double  __mpr_floating_point_resolution(double a, double b, int64 c, int64 d, ui
 
 /************************************************************************/
 /*
-    Start of file "src/mprWait.c"
+    Start of file "src/wait.c"
  */
 /************************************************************************/
 
@@ -26462,7 +26464,7 @@ PUBLIC void mprDoWaitRecall(MprWaitService *ws)
 
 /************************************************************************/
 /*
-    Start of file "src/mprWide.c"
+    Start of file "src/wide.c"
  */
 /************************************************************************/
 
@@ -27587,7 +27589,7 @@ PUBLIC char *awtom(wchar *src, ssize *len)
 
 /************************************************************************/
 /*
-    Start of file "src/mprWin.c"
+    Start of file "src/win.c"
  */
 /************************************************************************/
 
@@ -27966,7 +27968,7 @@ PUBLIC int mprWriteRegistry(cchar *key, cchar *name, cchar *value)
 
 /************************************************************************/
 /*
-    Start of file "src/mprWince.c"
+    Start of file "src/wince.c"
  */
 /************************************************************************/
 
@@ -28869,7 +28871,7 @@ PUBLIC void mprWriteToOsLog(cchar *message, int flags, int level)
 
 /************************************************************************/
 /*
-    Start of file "src/mprXml.c"
+    Start of file "src/xml.c"
  */
 /************************************************************************/
 

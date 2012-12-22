@@ -19,16 +19,16 @@
     #define BIT_DEPTH 1
 #endif
 #ifndef BIT_HAS_DOUBLE_BRACES
-    #define BIT_HAS_DOUBLE_BRACES 0
+    #define BIT_HAS_DOUBLE_BRACES 1
 #endif
 #ifndef BIT_HAS_DYN_LOAD
     #define BIT_HAS_DYN_LOAD 1
 #endif
 #ifndef BIT_HAS_LIB_EDIT
-    #define BIT_HAS_LIB_EDIT 0
+    #define BIT_HAS_LIB_EDIT 1
 #endif
 #ifndef BIT_HAS_LIB_RT
-    #define BIT_HAS_LIB_RT 1
+    #define BIT_HAS_LIB_RT 0
 #endif
 #ifndef BIT_HAS_MMU
     #define BIT_HAS_MMU 1
@@ -37,7 +37,7 @@
     #define BIT_HAS_MTUNE 1
 #endif
 #ifndef BIT_HAS_PAM
-    #define BIT_HAS_PAM 0
+    #define BIT_HAS_PAM 1
 #endif
 #ifndef BIT_HAS_STACK_PROTECTOR
     #define BIT_HAS_STACK_PROTECTOR 1
@@ -55,7 +55,7 @@
     #define BIT_MANAGER "ejsman"
 #endif
 #ifndef BIT_OPTIONAL
-    #define BIT_OPTIONAL "doxygen,dsi,man,man2html,openssl,matrixssl,pmaker,sqlite,ssl,zip"
+    #define BIT_OPTIONAL "doxygen,dsi,man,man2html,openssl,pmaker,sqlite,ssl,zip"
 #endif
 #ifndef BIT_PACKS
     #define BIT_PACKS "bits/packs"
@@ -70,25 +70,22 @@
     #define BIT_REQUIRED "compiler,lib,link,pcre,zlib"
 #endif
 #ifndef BIT_SYNC
-    #define BIT_SYNC "http,mpr,pcre,sqlite,zlib"
+    #define BIT_SYNC "est,http,mpr,pcre,sqlite,zlib"
 #endif
 #ifndef BIT_TITLE
     #define BIT_TITLE "Embedthis Ejscript"
 #endif
 #ifndef BIT_VERSION
-    #define BIT_VERSION "2.2.0"
+    #define BIT_VERSION "2.3.0"
 #endif
 #ifndef BIT_WARN64TO32
-    #define BIT_WARN64TO32 0
+    #define BIT_WARN64TO32 1
 #endif
 #ifndef BIT_WARN_UNUSED
-    #define BIT_WARN_UNUSED 1
+    #define BIT_WARN_UNUSED 0
 #endif
 #ifndef BIT_WITHOUT_ALL
     #define BIT_WITHOUT_ALL "doxygen,dsi,man,man2html,ssl,matrixssl,openssl"
-#endif
-#ifndef BIT_WITHOUT_OWN
-    #define BIT_WITHOUT_OWN "doxygen,dsi,man,man2html,matrixssl"
 #endif
 
 /* Prefixes */
@@ -96,10 +93,10 @@
     #define BIT_CFG_PREFIX "/etc/ejs"
 #endif
 #ifndef BIT_BIN_PREFIX
-    #define BIT_BIN_PREFIX "/usr/lib/ejs/2.2.0/bin"
+    #define BIT_BIN_PREFIX "/usr/lib/ejs/2.3.0/bin"
 #endif
 #ifndef BIT_INC_PREFIX
-    #define BIT_INC_PREFIX "/usr/lib/ejs/2.2.0/inc"
+    #define BIT_INC_PREFIX "/usr/lib/ejs/2.3.0/inc"
 #endif
 #ifndef BIT_LOG_PREFIX
     #define BIT_LOG_PREFIX "/var/log/ejs"
@@ -111,10 +108,10 @@
     #define BIT_SPL_PREFIX "/var/spool/ejs"
 #endif
 #ifndef BIT_SRC_PREFIX
-    #define BIT_SRC_PREFIX "/usr/src/ejs-2.2.0"
+    #define BIT_SRC_PREFIX "/usr/src/ejs-2.3.0"
 #endif
 #ifndef BIT_VER_PREFIX
-    #define BIT_VER_PREFIX "/usr/lib/ejs/2.2.0"
+    #define BIT_VER_PREFIX "/usr/lib/ejs/2.3.0"
 #endif
 #ifndef BIT_WEB_PREFIX
     #define BIT_WEB_PREFIX "/var/www/ejs-default"
@@ -153,13 +150,13 @@
     #define BIT_MAJOR_VERSION 2
 #endif
 #ifndef BIT_MINOR_VERSION
-    #define BIT_MINOR_VERSION 2
+    #define BIT_MINOR_VERSION 3
 #endif
 #ifndef BIT_PATCH_VERSION
     #define BIT_PATCH_VERSION 0
 #endif
 #ifndef BIT_VNUM
-    #define BIT_VNUM 200020000
+    #define BIT_VNUM 200030000
 #endif
 
 /* Packs */
@@ -171,6 +168,9 @@
 #endif
 #ifndef BIT_PACK_DSI
     #define BIT_PACK_DSI 0
+#endif
+#ifndef BIT_PACK_EST
+    #define BIT_PACK_EST 0
 #endif
 #ifndef BIT_PACK_LIB
     #define BIT_PACK_LIB 1
@@ -209,7 +209,7 @@
     #define BIT_PACK_ZLIB 1
 #endif
 #ifndef BIT_PACK_COMPILER_PATH
-    #define BIT_PACK_COMPILER_PATH "gcc"
+    #define BIT_PACK_COMPILER_PATH "/usr/bin/gcc"
 #endif
 #ifndef BIT_PACK_LIB_PATH
     #define BIT_PACK_LIB_PATH "/usr/bin/ar"

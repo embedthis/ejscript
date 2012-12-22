@@ -49,7 +49,7 @@ if (path) {
 }
 
 let cfg
-if (Path('src/deps/est/est.c').exists) {
+if (Path('src/deps/est/estLib.c').exists) {
     /*  Internal ETS distribution */
     let dir = bit.dir.src.join('src/deps/est')
     cfg = {

@@ -2791,6 +2791,7 @@ cp -r bit.es ../../${CFG_DIR}/bin/bit.es
 ../src/jems/ejs.bit/bits/packs/dsi.pak,
 ../src/jems/ejs.bit/bits/packs/dumpbin.pak,
 ../src/jems/ejs.bit/bits/packs/ejs.pak,
+../src/jems/ejs.bit/bits/packs/est.pak,
 ../src/jems/ejs.bit/bits/packs/http.pak,
 ../src/jems/ejs.bit/bits/packs/lib.pak,
 ../src/jems/ejs.bit/bits/packs/link.pak,
@@ -3131,6 +3132,9 @@ cp ejs-macosx-xcode-bit.h ${INC_DIR}/bit.h
 fi
 if [ ../src/deps/mpr/mpr.h -nt ${CFG_DIR}/inc/mpr.h ] ; then
 cp ../src/deps/mpr/mpr.h ${CFG_DIR}/inc/mpr.h
+fi
+if [ ../src/deps/est/est.h -nt ${CFG_DIR}/inc/est.h ] ; then
+cp ../src/deps/est/est.h ${CFG_DIR}/inc/est.h
 fi
 if [ ../src/deps/pcre/pcre.h -nt ${CFG_DIR}/inc/pcre.h ] ; then
 cp ../src/deps/pcre/pcre.h ${CFG_DIR}/inc/pcre.h
@@ -4271,7 +4275,7 @@ fi";
                 /* Common Settings */
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-                CURRENT_PROJECT_VERSION = 2.2.0;
+                CURRENT_PROJECT_VERSION = 2.3.0;
                 DYLIB_COMPATIBILITY_VERSION = "$(CURRENT_PROJECT_VERSION)";
                 DYLIB_CURRENT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -4340,7 +4344,7 @@ fi";
                 /* Common Settings */
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-                CURRENT_PROJECT_VERSION = 2.2.0;
+                CURRENT_PROJECT_VERSION = 2.3.0;
                 DYLIB_COMPATIBILITY_VERSION = "$(CURRENT_PROJECT_VERSION)";
                 DYLIB_CURRENT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;

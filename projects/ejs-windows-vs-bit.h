@@ -37,7 +37,7 @@
     #define BIT_MANAGER "ejsman"
 #endif
 #ifndef BIT_OPTIONAL
-    #define BIT_OPTIONAL "doxygen,dsi,man,man2html,openssl,matrixssl,pmaker,sqlite,ssl,zip"
+    #define BIT_OPTIONAL "doxygen,dsi,man,man2html,openssl,pmaker,sqlite,ssl,zip"
 #endif
 #ifndef BIT_PACKS
     #define BIT_PACKS "bits/packs"
@@ -52,19 +52,16 @@
     #define BIT_REQUIRED "winsdk,compiler,lib,link,dumpbin,rc,pcre,zlib"
 #endif
 #ifndef BIT_SYNC
-    #define BIT_SYNC "http,mpr,pcre,sqlite,zlib"
+    #define BIT_SYNC "est,http,mpr,pcre,sqlite,zlib"
 #endif
 #ifndef BIT_TITLE
     #define BIT_TITLE "Embedthis Ejscript"
 #endif
 #ifndef BIT_VERSION
-    #define BIT_VERSION "2.2.0"
+    #define BIT_VERSION "2.3.0"
 #endif
 #ifndef BIT_WITHOUT_ALL
     #define BIT_WITHOUT_ALL "doxygen,dsi,man,man2html,ssl,matrixssl,openssl"
-#endif
-#ifndef BIT_WITHOUT_OWN
-    #define BIT_WITHOUT_OWN "doxygen,dsi,man,man2html,matrixssl"
 #endif
 
 /* Prefixes */
@@ -129,13 +126,13 @@
     #define BIT_MAJOR_VERSION 2
 #endif
 #ifndef BIT_MINOR_VERSION
-    #define BIT_MINOR_VERSION 2
+    #define BIT_MINOR_VERSION 3
 #endif
 #ifndef BIT_PATCH_VERSION
     #define BIT_PATCH_VERSION 0
 #endif
 #ifndef BIT_VNUM
-    #define BIT_VNUM 200020000
+    #define BIT_VNUM 200030000
 #endif
 
 /* Packs */
@@ -150,6 +147,9 @@
 #endif
 #ifndef BIT_PACK_DUMPBIN
     #define BIT_PACK_DUMPBIN 0
+#endif
+#ifndef BIT_PACK_EST
+    #define BIT_PACK_EST 0
 #endif
 #ifndef BIT_PACK_LIB
     #define BIT_PACK_LIB 1
