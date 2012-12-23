@@ -18,7 +18,7 @@ public class Bit {
     private static const supportedOS = ['freebsd', 'linux', 'macosx', 'solaris', 'vxworks', 'windows']
     private static const supportedArch = ['arm', 'i64', 'mips', 'sparc', 'x64', 'x86']
     private static const minimalCflags = [ 
-        '-w', '-g', '-Wall', '-Wno-deprecated-declarations', '-Wno-unused-result', '-Wshorten-64-to-32']
+        '-w', '-g', '-Wall', '-Wno-deprecated-declarations', '-Wno-unused-result', '-Wshorten-64-to-32', '-mtune=generic']
 
     /*
         Filter for files that look like temp files and should not be installed
