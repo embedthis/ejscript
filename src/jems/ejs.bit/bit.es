@@ -1137,7 +1137,7 @@ public class Bit {
         genout.writeLine('#\n#   ' + path.basename + ' -- Build It Shell Script to build ' + bit.settings.title + '\n#\n')
         genEnv()
         genout.writeLine('ARCH="' + bit.platform.arch + '"')
-        genout.writeLine('ARCH="`uname -m | sed \'s/i.86/x86/;s/x86_64/x64/\'`"')
+        genout.writeLine('ARCH="`uname -m | sed \'s/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/\'`"')
         genout.writeLine('OS="' + bit.platform.os + '"')
         genout.writeLine('PROFILE="' + bit.platform.profile + '"')
         genout.writeLine('CONFIG="${OS}-${ARCH}-${PROFILE}' + '"')
@@ -1172,7 +1172,7 @@ public class Bit {
         genout.writeLine('#\n#   ' + path.basename + ' -- Makefile to build ' + 
             bit.settings.title + ' for ' + bit.platform.os + '\n#\n')
         genEnv()
-        genout.writeLine('ARCH     ?= $(shell uname -m | sed \'s/i.86/x86/;s/x86_64/x64/\')')
+        genout.writeLine('ARCH     ?= $(shell uname -m | sed \'s/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/\')')
         genout.writeLine('OS       ?= ' + bit.platform.os)
         genout.writeLine('CC       ?= ' + bit.packs.compiler.path)
         if (bit.packs.link) {
