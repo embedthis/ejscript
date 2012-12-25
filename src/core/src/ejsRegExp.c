@@ -218,6 +218,7 @@ PUBLIC EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
 {
     EjsRegExp   *rp;
     cchar       *errMsg;
+    char        *cp, *dp;
     wchar       *flags;
     int         column, errCode;
 
@@ -225,22 +226,29 @@ PUBLIC EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
         ejsThrowArgError(ejs, "Bad regular expression pattern. Must start with '/'");
         return 0;
     }
-    rp = ejsCreateObj(ejs, ESV(RegExp), 0);
-    if (rp != 0) {
-        /*
-            Strip off flags for passing to pcre_compile2
-         */
-        rp->pattern = sclone(&pattern->value[1]);
-        if ((flags = wrchr(rp->pattern, '/')) != 0) {
-            rp->options = parseFlags(rp, &flags[1]);
-            *flags = 0;
+    if ((rp = ejsCreateObj(ejs, ESV(RegExp), 0)) == 0) {
+        return 0;
+    }
+    /*
+        Strip off flags for passing to pcre_compile2
+     */
+    rp->pattern = sclone(&pattern->value[1]);
+    if ((flags = wrchr(rp->pattern, '/')) != 0 && flags > rp->pattern && flags[-1] != '\\')  {
+        rp->options = parseFlags(rp, &flags[1]);
+        *flags = 0;
+    }
+    for (dp = cp = rp->pattern; *cp; ) {
+        if (*cp == '\\' && cp[1] == '/') {
+            cp++;
         }
-        //  TODO - UNICODE is pattern meant to be 
-        rp->compiled = pcre_compile2(rp->pattern, rp->options, &errCode, &errMsg, &column, NULL);
-        if (rp->compiled == NULL) {
-            ejsThrowArgError(ejs, "Cannot compile regular expression '%s'. Error %s at column %d", rp->pattern, errMsg, column);
-            return 0;
-        }
+        *dp++ = *cp++;
+    }
+    *dp++ = *cp++;
+    //  TODO - UNICODE is pattern meant to be
+    rp->compiled = pcre_compile2(rp->pattern, rp->options, &errCode, &errMsg, &column, NULL);
+    if (rp->compiled == NULL) {
+        ejsThrowArgError(ejs, "Cannot compile regular expression '%s'. Error %s at column %d", rp->pattern, errMsg, column);
+        return 0;
     }
     return rp;
 }

@@ -164,7 +164,7 @@ Token getNextJsonToken(MprBuf *buf, wchar **token, JsonState *js)
 {
     wchar       *start, *cp, *end, *next;
     wchar       *src, *dest;
-    int         quote, tid, c;
+    int         quote, tid, c, isReg;
 
     if (buf) {
         mprFlushBuf(buf);
@@ -174,6 +174,7 @@ Token getNextJsonToken(MprBuf *buf, wchar **token, JsonState *js)
     cp = skipComments(cp, end);
     next = cp + 1;
     quote = -1;
+    isReg = 0;
 
     if (*cp == '\0') {
         tid = TOK_EOF;
@@ -218,6 +219,7 @@ Token getNextJsonToken(MprBuf *buf, wchar **token, JsonState *js)
 
         } else if (*cp == '/') {
             tid = TOK_ID;
+            isReg = 1;
             for (start = cp++; cp < end; cp++) {
                 if (*cp == '\\') {
                     if (cp[1] == '/') {
@@ -273,7 +275,7 @@ Token getNextJsonToken(MprBuf *buf, wchar **token, JsonState *js)
         if (buf) {
             for (dest = src = (wchar*) buf->start; src < (wchar*) buf->end; ) {
                 c = *src++;
-                if (c == '\\') {
+                if (c == '\\' && !isReg) {
                     c = *src++;
                     if (c == 'r') {
                         c = '\r';

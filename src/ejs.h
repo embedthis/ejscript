@@ -954,7 +954,7 @@ typedef struct EjsHash {
 typedef struct EjsProperties {
     EjsHash         *hash;                  /**< Hash buckets and head of link chains */
     int             size;                   /**< Current size of slots[] in elements */
-    struct EjsSlot  slots[MPR_FLEX];        /**< Vector of slots containing property references */
+    struct EjsSlot  slots[ARRAY_FLEX];      /**< Vector of slots containing property references */
 } EjsProperties;
 
 
@@ -1300,7 +1300,7 @@ typedef struct EjsString {
     struct EjsString *next;             /**< Next string in hash chain link when interning */
     struct EjsString *prev;             /**< Prev string in hash chain */
     ssize            length;            /**< Length of string */
-    wchar            value[MPR_FLEX];   /**< String value */
+    wchar            value[ARRAY_FLEX]; /**< String value */
 } EjsString;
 
 /** 
@@ -2051,7 +2051,7 @@ typedef struct EjsDebug {
     int         magic;
     ssize      size;                        /**< Size of lines[] in elements */
     int        numLines;                    /**< Number of entries in lines[] */
-    EjsLine    lines[MPR_FLEX];             /**< Debug lines */
+    EjsLine    lines[ARRAY_FLEX];           /**< Debug lines */
 } EjsDebug;
 
 /*
@@ -2078,7 +2078,7 @@ typedef struct EjsCode {
     int              debugOffset;            /**< Offset in mod file for debug info */
     int              numHandlers;            /**< Number of exception handlers */
     int              sizeHandlers;           /**< Size of handlers array */
-    uchar            byteCode[MPR_FLEX];     /**< Byte code */
+    uchar            byteCode[ARRAY_FLEX];   /**< Byte code */
 } EjsCode;
 
 /**

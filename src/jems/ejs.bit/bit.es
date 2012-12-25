@@ -482,13 +482,31 @@ public class Bit {
         f.writeLine('#endif')
     }
 
+    function writeSettings(f: TextStream, platform, prefix: String, obj) {
+        Object.sortProperties(obj)
+        f.writeLine('/* Settings */')
+        for (let [key,value] in obj) {
+            key = prefix + '_' + key.replace(/[A-Z]/g, '_$&').replace(/-/g, '_').toUpper()
+            if (value is Number) {
+                def(f, key, value)
+            } else if (value is Boolean) {
+                def(f, key, value cast Number)
+            } else if (Object.getOwnPropertyCount(value) > 0 && !(value is Array)) {
+                writeSettings(f, platform, key, value)
+            } else {
+                def(f, key, '"' + value + '"')
+            }
+        }
+    }
     function writeDefinitions(f: TextStream, platform) {
         let settings = bit.settings.clone()
         if (options.endian) {
             settings.endian = options.endian == 'little' ? 1 : 2
         }
-        Object.sortProperties(settings)
-        f.writeLine('/* Settings */')
+        writeSettings(f, platform, "BIT", settings)
+        //Object.sortProperties(settings)
+        //f.writeLine('/* Settings */')
+    /*
         for (let [key,value] in settings) {
             if (key.match(/[a-z]/)) {
                 key = 'BIT_' + key.replace(/[A-Z]/g, '_$&').replace(/-/g, '_').toUpper()
@@ -501,7 +519,7 @@ public class Bit {
                 def(f, key, '"' + value + '"')
             }
         }
-
+     */
         f.writeLine('\n/* Prefixes */')
         let base = (settings.name == 'ejs') ? bit.prefixes.productver : bit.prefixes.product
         def(f, 'BIT_CFG_PREFIX', '"' + bit.prefixes.config + '"')

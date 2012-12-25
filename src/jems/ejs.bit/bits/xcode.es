@@ -13,6 +13,7 @@ var out: Stream             //  Project output file stream
 const PREP_CODE = 
 "[ ! -x ${INC_DIR} ] && mkdir -p ${INC_DIR} ${OBJ_DIR} ${LIB_DIR} ${BIN_DIR}
 [ ! -f ${INC_DIR}/bit.h ] && cp ${settings.product}-macosx-${platform.profile}-bit.h ${INC_DIR}/bit.h
+[ ! -f ${INC_DIR}/bitos.h ] && cp src/bitos.h ${INC_DIR}/bitos.h
 if ! diff ${INC_DIR}/bit.h ${settings.product}-macosx-${platform.profile}-bit.h >/dev/null ; then
     cp ${settings.product}-macosx-${platform.profile}-bit.h ${INC_DIR}/bit.h
 fi"
