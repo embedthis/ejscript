@@ -1458,7 +1458,9 @@ public class Bit {
                         names.push(tname)
                     }
                 }
-                selectedTargets.splice(index, 1, ...names)
+                if (names.length > 0) {
+                    selectedTargets.splice(index, 1, ...names)
+                }
             }
         }
         for (let [index, name] in selectedTargets) {
@@ -1488,7 +1490,7 @@ public class Bit {
             print(bit.settings.version + '-' + bit.settings.buildNumber)
             App.exit()
         }
-        vtrace('Targets', selectedTargets)
+        vtrace('XX Targets', selectedTargets)
     }
 
     /*
