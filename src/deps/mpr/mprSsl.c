@@ -15,7 +15,7 @@
 /************************************************************************/
 
 /*
-    mprMatrixssl.c -- Support for secure sockets via MatrixSSL
+    matrixssl.c -- Support for secure sockets via MatrixSSL
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -50,14 +50,6 @@
 #include    "mpr.h"
 
 /************************************* Defines ********************************/
-
-#if UNUSED
-#define MPR_DEFAULT_SERVER_CERT_FILE    "server.crt"
-#define MPR_DEFAULT_SERVER_KEY_FILE     "server.key.pem"
-#define MPR_DEFAULT_CLIENT_CERT_FILE    "client.crt"
-#define MPR_DEFAULT_CLIENT_CERT_PATH    "certs"
-#endif
-
 /*
     Per SSL configuration structure
  */
@@ -770,7 +762,7 @@ static ssize flushMss(MprSocket *sp)
 #endif
 
 /*
-    MOB - is this per route or per connection
+    Per-route SSL configuration
  */
 typedef struct EstConfig {
     rsa_context     rsa;
@@ -788,9 +780,7 @@ typedef struct EstSocket {
     havege_state    hs;
     ssl_context     ssl;
     ssl_session     session;
-    int             introduced;
 } EstSocket;
-
 
 static MprSocketProvider *est;
 static EstConfig *defaultEstConfig;
@@ -808,28 +798,11 @@ static char *dhKey =
 
 static char *dhg = "4";
 
-#if UNUSED
-//  MOB - bit configure somehow
-//  MOB - need API
-static int ciphers[] = {
-	SSL_EDH_RSA_AES_256_SHA,
-	SSL_EDH_RSA_CAMELLIA_256_SHA,
-	SSL_EDH_RSA_DES_168_SHA,
-	SSL_RSA_AES_256_SHA,
-	SSL_RSA_CAMELLIA_256_SHA,
-	SSL_RSA_AES_128_SHA,
-	SSL_RSA_CAMELLIA_128_SHA,
-	SSL_RSA_DES_168_SHA,
-	SSL_RSA_RC4_128_SHA,
-	SSL_RSA_RC4_128_MD5,
-	0
-};
-#endif
-
 //  MOB - push into ets
 
 //MOB http://www.iana.org/assignments/tls-parameters/tls-parameters.xml
 
+#if UNUSED
 #define KEY_RSA         (0x1)
 #define KEY_DHr         (0x2)
 #define KEY_DHd         (0x4)
@@ -861,43 +834,35 @@ static int ciphers[] = {
 
 #define CMED             (INT64(0x1) << 32)
 #define CHIGH            (INT64(0x2) << 32)
+#endif
 
 typedef struct Ciphers {
-    int     iana;
+    int     code;
     char    *name;
-    int     ianna_repeat;
-    uint64  mask;
+    int     iana;
 } Ciphers;
 
-#if UNUSED
-#define SSL_RSA_RC4_128_MD5             0x4     /* TLS_RSA_WITH_RC4_128_MD5 */
-#define SSL_RSA_RC4_128_SHA             0x5     /* TLS_RSA_WITH_RC4_128_SHA */
-#define SSL_RSA_DES_168_SHA             0xA     /* TLS_RSA_WITH_3DES_EDE_CBC_SHA */
-#define SSL_EDH_RSA_DES_168_SHA         0x16    /* TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA */
-#define SSL_RSA_AES_128_SHA             0x2F    /* TLS_RSA_WITH_AES_128_CBC_SHA */
-#define SSL_RSA_AES_256_SHA             0x35    /* TLS_RSA_WITH_AES_256_CBC_SHA */
-#define SSL_EDH_RSA_AES_256_SHA         0x39    /* TLS_DHE_RSA_WITH_AES_256_CBC_SHA */
-#define SSL_RSA_CAMELLIA_128_SHA        0x41    /* TLS_RSA_WITH_CAMELLIA_128_CBC_SHA */
-#define SSL_RSA_CAMELLIA_256_SHA        0x84    /* TLS_RSA_WITH_CAMELLIA_256_CBC_SHA */
-#define SSL_EDH_RSA_CAMELLIA_256_SHA    0x88    /* TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA */
-
+#if KEEP
 Low     9, 12, 1A, 15
 MEDIUM  04 05 07 18 80 8A 96 99 9A 9B
 HIGH    0A 13 16 1B 2F 32 33 34 35 38 39 3A 3C 3D 40 41 44 45 46 67 6A 6B 6C 6D 84 87 88 89 8B 8C 8D 9C 9D 9E 9F A2 A3 A6 A7
 #endif
 
-
+/** MOB - should have a high security and a fast security list */
 static Ciphers cipherList[] = {
-{ 0x04, "TLS_RSA_WITH_RC4_128_MD5",              SSL_RSA_RC4_128_MD5,          KEY_RSA | CIPHER_AES      | MAC_MD5 | CHIGH },
-{ 0x05, "TLS_RSA_WITH_RC4_128_SHA",              SSL_RSA_RC4_128_SHA,          KEY_RSA | CIPHER_AES      | MAC_SHA | CHIGH },
-{ 0x0A, "TLS_RSA_WITH_3DES_EDE_CBC_SHA",         SSL_RSA_DES_168_SHA,          KEY_RSA | CIPHER_AES      | MAC_SHA | CHIGH },
-{ 0x16, "TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA",     SSL_EDH_RSA_DES_168_SHA,      KEY_EDH | CIPHER_AES      | MAC_SHA | CHIGH },
-{ 0x2F, "TLS_RSA_WITH_AES_128_CBC_SHA",          SSL_RSA_AES_128_SHA,          KEY_RSA | CIPHER_AES      | MAC_SHA | CHIGH },
-{ 0x35, "TLS_RSA_WITH_AES_256_CBC_SHA",          SSL_RSA_AES_256_SHA,          KEY_RSA | CIPHER_AES      | MAC_SHA | CMED },
-{ 0x39, "TLS_DHE_RSA_WITH_AES_256_CBC_SHA",      SSL_EDH_RSA_AES_256_SHA,      KEY_EDH | CIPHER_AES      | MAC_SHA | CMED },
-{ 0x41, "TLS_RSA_WITH_CAMELLIA_128_CBC_SHA",     SSL_RSA_CAMELLIA_128_SHA,     KEY_RSA | CIPHER_CAMELLIA | MAC_SHA | CHIGH },
-{ 0x88, "TLS_RSA_WITH_CAMELLIA_256_CBC_SHA",     SSL_EDH_RSA_CAMELLIA_256_SHA, KEY_EDH | CIPHER_CAMELLIA | MAC_SHA | CMED },
-{ 0x84, "TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA", SSL_RSA_CAMELLIA_256_SHA,     KEY_RSA | CIPHER_CAMELLIA | MAC_SHA | CHIGH },
+{ 0x2F, "TLS_RSA_WITH_AES_128_CBC_SHA",          TLS_RSA_WITH_AES_128_CBC_SHA           },
+{ 0x35, "TLS_RSA_WITH_AES_256_CBC_SHA",          TLS_RSA_WITH_AES_256_CBC_SHA           },
+{ 0x05, "TLS_RSA_WITH_RC4_128_SHA",              TLS_RSA_WITH_RC4_128_SHA               },      /* MED */
+{ 0x0A, "TLS_RSA_WITH_3DES_EDE_CBC_SHA",         TLS_RSA_WITH_3DES_EDE_CBC_SHA          },
+{ 0x04, "TLS_RSA_WITH_RC4_128_MD5",              TLS_RSA_WITH_RC4_128_MD5               },      /* MED */
+{ 0x39, "TLS_DHE_RSA_WITH_AES_256_CBC_SHA",      TLS_DHE_RSA_WITH_AES_256_CBC_SHA       },
+{ 0x16, "TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA",     TLS_DHE_RSA_WITH_3DES_EDE_CBC_SHA      },
+
+#if UNUSED
+{ 0x41, "TLS_RSA_WITH_CAMELLIA_128_CBC_SHA",     TLS_RSA_WITH_CAMELLIA_128_CBC_SHA      },
+{ 0x88, "TLS_RSA_WITH_CAMELLIA_256_CBC_SHA",     TLS_RSA_WITH_CAMELLIA_256_CBC_SHA      },
+{ 0x84, "TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA", TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA  },
+#endif
 { 0x00, 0, 0 },
 };
 
@@ -951,16 +916,13 @@ static void manageEstProvider(MprSocketProvider *est, int flags)
     if (flags & MPR_MANAGE_MARK) {
         mprMark(defaultEstConfig);
         mprMark(sessions);
-    } else if (flags & MPR_MANAGE_FREE) {
     }
 }
 
 
 static void manageEstConfig(EstConfig *cfg, int flags)
 {
-    if (flags & MPR_MANAGE_MARK) {
-        ;
-    } else if (flags & MPR_MANAGE_FREE) {
+    if (flags & MPR_MANAGE_FREE) {
         rsa_free(&cfg->rsa);
         x509_free(&cfg->cert);
     }
@@ -978,6 +940,7 @@ static void manageEstConfig(EstConfig *cfg, int flags)
 static void manageEstSocket(EstSocket *esp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
+        mprMark(esp->cfg);
         mprMark(esp->ciphers);
         mprMark(esp->sock);
 
@@ -1010,156 +973,36 @@ static int listenEst(MprSocket *sp, cchar *host, int port, int flags)
 }
 
 
-    //  MOB - should be modifyable and be using ssl->ciphers and parse.
-/*
-    Parse an Apache style cipher suite. For example:
-    '+' to add, '-' to remove, '!' to filter always.
-
-        ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
-        AES128-SHA:AES256-SHA:RC4-SHA:DES-CBC3-SHA:RC4-MD5
-
-        SSLCipherSuite ECDHE-RSA-AES128-SHA256:AES128-GCM-SHA256:RC4:HIGH:!MD5:!aNULL:!EDH
- */
-static int *createCiphers(cchar *cipherSpec)
+static int *createCiphers(cchar *cipherSuite)
 {
     Ciphers     *cp;
-    char        *key, *auth, *encoding, *mac, *token, *next;
-    int         *ciphers, i, cipher, add, sub, filter, mask, value, acceptable, type;
+    char        *suite, *cipher, *next;
+    int         nciphers, i, *ciphers;
 
-    key = auth = encoding = mac = 0;
-    cipher = 0;
-    mask = 0;
-    acceptable = 0;
+    nciphers = sizeof(cipherList) / sizeof(Ciphers);
+    ciphers = mprAlloc((nciphers + 1) * sizeof(int));
    
-    //  MOB - should this be a hash?
-    while ((token = stok(sclone(cipherSpec), ":", &next)) != 0) {
-        add = sub = filter = 0;
-        type = 0;
-        if (*token == '+') {
-            add = 1;
-            token++;
-        } else if (*token == '-') {
-            sub = 1;
-            token++;
-        } else if (*token == '!') {
-            filter = 1;
-            token++;
+    suite = sclone(cipherSuite);
+    i = 0;
+    while ((cipher = stok(suite, ":, \t", &next)) != 0) {
+        for (cp = cipherList; cp->name; cp++) {
+            if (scaselessmatch(cp->name, cipher)) {
+                break;
+            }
         }
-        //  MOB - do we need the k, a prefixes?
-
-        if (scaselessmatch(token, "kRSA")) {
-            value = KEY_RSA;
-        } else if (scaselessmatch(token, "kDHr")) {
-            value = KEY_DHr;
-        } else if (scaselessmatch(token, "kDHd")) {
-            value = KEY_DHd;
-        } else if (scaselessmatch(token, "kEDH")) {
-            value = KEY_EDH;
-        } else if (scaselessmatch(token, "kSRDP")) {
-            value = KEY_SDP;
-        } else if (scaselessmatch(token, "aNULL")) {
-            value = AUTH_NULL;
-        } else if (scaselessmatch(token, "aRSA")) {
-            value = AUTH_RSA;
-        } else if (scaselessmatch(token, "aDSS")) {
-            value = AUTH_DSS;
-        } else if (scaselessmatch(token, "aDH")) {
-            value = AUTH_DH;
-        } else if (scaselessmatch(token, "eNULL")) {
-            value = CIPHER_NULL;
-        } else if (scaselessmatch(token, "NULL")) {
-            value = CIPHER_NULL;
-        } else if (scaselessmatch(token, "AES")) {
-            value = CIPHER_AES;
-        } else if (scaselessmatch(token, "DES")) {
-            value = CIPHER_DES;
-        } else if (scaselessmatch(token, "3DES")) {
-            value = CIPHER_3DES;
-        } else if (scaselessmatch(token, "RC4")) {
-            value = CIPHER_RC4;
-        } else if (scaselessmatch(token, "RC2")) {
-            value = CIPHER_RC2;
-        } else if (scaselessmatch(token, "IDEA")) {
-            value = CIPHER_IDEA;
-        } else if (scaselessmatch(token, "MD5")) {
-            value = MAC_MD5;
-        } else if (scaselessmatch(token, "SHA1")) {
-            value = MAC_SHA1;
-        } else if (scaselessmatch(token, "SHA")) {
-            value = MAC_SHA;
-
-#if UNUSED
-        /* Aliases */
-        } else if (scaselessmatch(token, "SSLv2")) {
-        } else if (scaselessmatch(token, "SSLv3")) {
-        } else if (scaselessmatch(token, "TLSv1")) {
-        } else if (scaselessmatch(token, "EXP")) {
-        } else if (scaselessmatch(token, "EXPORT40")) {
-        } else if (scaselessmatch(token, "EXPORT56")) {
-#endif
-#if UNUSED
-        } else if (scaselessmatch(token, "LOW")) {
-            for (cp = cipherList, i = 0; cp->mask; cp++) {
-                if (cp->mask & LOW) {
-                    value |= cp->mask;
-                }
-            }
-#endif
-        } else if (scaselessmatch(token, "MEDIUM")) {
-            for (cp = cipherList, i = 0; cp->mask; cp++) {
-                if (cp->mask & CMED) {
-                    value |= cp->mask;
-                }
-            }
-        } else if (scaselessmatch(token, "HIGH")) {
-            for (cp = cipherList, i = 0; cp->mask; cp++) {
-                if (cp->mask & CHIGH) {
-                    value |= cp->mask;
-                }
-            }
-        } else if (scaselessmatch(token, "RSA")) {
-            //  MOB - is this right?
-            value = KEY_RSA | AUTH_RSA;
-#if UNUSED
-        } else if (scaselessmatch(token, "DH")) {
-        } else if (scaselessmatch(token, "ADH")) {
-#endif
-        } else if (scaselessmatch(token, "EDH")) {
-            value = KEY_EDH;
-        } else if (scaselessmatch(token, "DSS")) {
-            value = AUTH_DSS;
-        } else if (scaselessmatch(token, "NULL")) {
-            value = CIPHER_NULL;
+        if (cp) {
+            ciphers[i++] = cp->iana;
+            mprLog(0, "EST: Select cipher 0x%02x: %s", cp->iana, cp->name);
         } else {
-            for (cp = cipherList, i = 0; cp->mask; cp++) {
-                if (scaselessmatch(cp->name, token)) {
-                    value |= cp->mask;
-                }
-            }
+            mprError("Cannot find cipher %s", cipher);
         }
-        if (add) {
-            acceptable |= value;
-        } else if (sub) {
-            acceptable &= ~value;
-        } else if (filter) {
-            filter |= value;
-        }
+        suite = 0;
     }
-    acceptable &= ~filter;
-    if (!(acceptable & KEY_MASK)) acceptable |= KEY_MASK;
-    if (!(acceptable & AUTH_MASK)) acceptable |= AUTH_MASK;
-    if (!(acceptable & CIPHER_MASK)) acceptable |= CIPHER_MASK;
-    if (!(acceptable & MAC_MASK)) acceptable |= MAC_MASK;
-
-    ciphers = mprAlloc(sizeof(cipherList) / sizeof(Ciphers) + sizeof(int));
-    for (cp = cipherList, i = 0; cp->mask; cp++) {
-        if (cp->mask & type) break;
-        if (!(cp->mask & acceptable & KEY_MASK)) continue;
-        if (!(cp->mask & acceptable & AUTH_MASK)) continue;
-        if (!(cp->mask & acceptable & CIPHER_MASK)) continue;
-        if (!(cp->mask & acceptable & MAC_MASK)) continue;
-        ciphers[i++] = cp->iana;
-        mprLog(0, "EST: Select cipher 0x%02x: %s", cp->iana, cp->name);
+    if (i == 0) {
+        for (i = 0; i < nciphers; i++) {
+            ciphers[i] = ssl_default_ciphers[i];
+        }
+        ciphers[i] = 0;
     }
     return ciphers;
 }
@@ -1186,7 +1029,9 @@ static int upgradeEst(MprSocket *sp, MprSsl *ssl, int server)
     sp->ssl = ssl;
 
     lock(ssl);
-    if (!ssl->pconfig) {
+    if (ssl->pconfig) {
+        esp->cfg = cfg = ssl->pconfig;
+    } else {
         /*
             One time setup for the SSL configuration for this MprSsl
          */
@@ -1196,7 +1041,6 @@ static int upgradeEst(MprSocket *sp, MprSsl *ssl, int server)
             return MPR_ERR_MEMORY;
         }
         esp->cfg = ssl->pconfig = cfg;
-#if UNUSED || 1
         if (ssl->certFile) {
             //  MOB - openssl uses encrypted and/not 
             if (x509parse_crtfile(&cfg->cert, ssl->certFile) != 0) {
@@ -1212,26 +1056,6 @@ static int upgradeEst(MprSocket *sp, MprSsl *ssl, int server)
                 return MPR_ERR_CANT_READ;
             }
         }
-        //MOB
-#else
-	int ret = x509parse_crt(&cfg->cert, (uchar*) test_srv_crt, (int) strlen(test_srv_crt));
-	if (ret != 0) {
-		printf(" failed\n  !  x509parse_crt returned %d\n\n", ret);
-        return MPR_ERR_CANT_READ;
-	}
-
-	ret = x509parse_crt(&cfg->cert, (uchar*) test_ca_crt, (int) strlen(test_ca_crt));
-	if (ret != 0) {
-		printf(" failed\n  !  x509parse_crt returned %d\n\n", ret);
-        return MPR_ERR_CANT_READ;
-	}
-
-	ret = x509parse_key(&cfg->rsa, (uchar*) test_srv_key, (int) strlen(test_srv_key), NULL, 0);
-	if (ret != 0) {
-		printf(" failed\n  !  x509parse_key returned %d\n\n", ret);
-        return MPR_ERR_CANT_READ;
-	}
-#endif
         cfg->dhKey = defaultEstConfig->dhKey;
         //  MOB - see openssl for client certificate config
     }
@@ -1318,15 +1142,14 @@ static ssize readEst(MprSocket *sp, void *buf, ssize len)
     EstSocket   *esp;
     int         rc;
 
-    //  MOB - locking
-
     esp = (EstSocket*) sp->sslSocket;
     assure(esp);
     assure(esp->cfg);
 
     while (esp->ssl.state != SSL_HANDSHAKE_OVER && (rc = ssl_handshake(&esp->ssl)) != 0) {
-        if (rc != TROPICSSL_ERR_NET_TRY_AGAIN) {
-            mprLog(2, "EST: Can't handshake: %d", rc);
+        if (rc != EST_ERR_NET_TRY_AGAIN) {
+            mprLog(2, "EST: readEst: Cannot handshake: %d", rc);
+            sp->flags |= MPR_SOCKET_EOF;
             return -1;
         }
     }
@@ -1334,13 +1157,13 @@ static ssize readEst(MprSocket *sp, void *buf, ssize len)
         rc = ssl_read(&esp->ssl, buf, (int) len);
         mprLog(5, "EST: ssl_read %d", rc);
         if (rc < 0) {
-            if (rc == TROPICSSL_ERR_NET_TRY_AGAIN)  {
+            if (rc == EST_ERR_NET_TRY_AGAIN)  {
                 continue;
-            } else if (rc == TROPICSSL_ERR_SSL_PEER_CLOSE_NOTIFY) {
+            } else if (rc == EST_ERR_SSL_PEER_CLOSE_NOTIFY) {
                 mprLog(5, "EST: connection was closed gracefully\n");
                 sp->flags |= MPR_SOCKET_EOF;
                 return -1;
-            } else if (rc == TROPICSSL_ERR_NET_CONN_RESET) {
+            } else if (rc == EST_ERR_NET_CONN_RESET) {
                 mprLog(5, "EST: connection reset");
                 sp->flags |= MPR_SOCKET_EOF;
                 return -1;
@@ -1366,7 +1189,7 @@ static ssize writeEst(MprSocket *sp, cvoid *buf, ssize len)
     int         rc;
 
     esp = (EstSocket*) sp->sslSocket;
-    if (esp->introduced == 0 || len <= 0) {
+    if (len <= 0) {
         assure(0);
         return -1;
     }
@@ -1376,14 +1199,14 @@ static ssize writeEst(MprSocket *sp, cvoid *buf, ssize len)
         rc = ssl_write(&esp->ssl, (uchar*) buf, (int) len);
         mprLog(7, "EST: written %d, requested len %d", rc, len);
         if (rc <= 0) {
-            if (rc == TROPICSSL_ERR_NET_TRY_AGAIN) {                                                          
+            if (rc == EST_ERR_NET_TRY_AGAIN) {                                                          
                 continue;
             }
-            if (rc == TROPICSSL_ERR_NET_CONN_RESET) {                                                         
+            if (rc == EST_ERR_NET_CONN_RESET) {                                                         
                 printf(" failed\n  ! peer closed the connection\n\n");                                         
                 mprLog(0, "ssl_write peer closed");
                 return -1;
-            } else if (rc != TROPICSSL_ERR_NET_TRY_AGAIN) {                                                          
+            } else if (rc != EST_ERR_NET_TRY_AGAIN) {                                                          
                 mprLog(0, "ssl_write failed rc %d", rc);
                 return -1;
             }
@@ -1534,7 +1357,12 @@ static int setSession(ssl_context *ssl)
 
 static void estTrace(void *fp, int level, char *str)
 {
-    mprLog(level, "%s", str);
+    level += 3;
+    if (level <= MPR->logLevel) {
+        str = sclone(str);
+        str[slen(str) - 1] = '\0';
+        mprLog(level, "%s", str);
+    }
 }
 
 #endif /* BIT_PACK_EST */
@@ -1566,7 +1394,7 @@ static void estTrace(void *fp, int level, char *str)
 /************************************************************************/
 
 /*
-    mprOpenssl.c - Support for secure sockets via OpenSSL
+    openssl.c - Support for secure sockets via OpenSSL
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -1586,13 +1414,6 @@ static void estTrace(void *fp, int level, char *str)
 #include    <openssl/dh.h>
 
 /************************************* Defines ********************************/
-
-#if UNUSED
-#define MPR_DEFAULT_SERVER_CERT_FILE    "server.crt"
-#define MPR_DEFAULT_SERVER_KEY_FILE     "server.key.pem"
-#define MPR_DEFAULT_CLIENT_CERT_FILE    "client.crt"
-#define MPR_DEFAULT_CLIENT_CERT_PATH    "certs"
-#endif
 
 typedef struct OpenConfig {
     SSL_CTX         *context;
@@ -2482,7 +2303,7 @@ PUBLIC int mprCreateOpenSslModule() { return -1; }
 /************************************************************************/
 
 /**
-    mprSsl.c -- Initialization for libmprssl. Load the SSL provider.
+    ssl.c -- Initialization for libmprssl. Load the SSL provider.
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -2500,12 +2321,9 @@ PUBLIC int mprSslInit(void *unused, MprModule *module)
 {
     assure(module);
 
-#if BIT_PACK_EST
-    if (mprCreateEstModule() < 0) {
-        return MPR_ERR_CANT_OPEN;
-    }
-    MPR->socketService->defaultProvider = sclone("est");
-#endif
+    /*
+        Order matters. The last enabled stack becomes the default.
+     */
 #if BIT_PACK_MATRIXSSL
     if (mprCreateMatrixSslModule() < 0) {
         return MPR_ERR_CANT_OPEN;
@@ -2517,6 +2335,12 @@ PUBLIC int mprSslInit(void *unused, MprModule *module)
         return MPR_ERR_CANT_OPEN;
     }
     MPR->socketService->defaultProvider = sclone("openssl");
+#endif
+#if BIT_PACK_EST
+    if (mprCreateEstModule() < 0) {
+        return MPR_ERR_CANT_OPEN;
+    }
+    MPR->socketService->defaultProvider = sclone("est");
 #endif
     return 0;
 }

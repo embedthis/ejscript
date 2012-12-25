@@ -16,7 +16,7 @@
 /************************************************************************/
 
 /**
-    mprMem.c - Memory Allocator and Garbage Collector. 
+    mem.c - Memory Allocator and Garbage Collector. 
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -3277,7 +3277,7 @@ PUBLIC int mprGetEndian()
 
     test = 1;
     probe = (char*) &test;
-    return (*probe == 1) ? MPR_LITTLE_ENDIAN : MPR_BIG_ENDIAN;
+    return (*probe == 1) ? BIT_LITTLE_ENDIAN : BIT_BIG_ENDIAN;
 }
 
 
@@ -3346,7 +3346,7 @@ PUBLIC void mprNop(void *ptr) {
 /************************************************************************/
 
 /**
-    mprAsync.c - Wait for I/O on Windows.
+    async.c - Wait for I/O on Windows.
 
     This module provides io management for sockets on Windows like systems. 
 
@@ -3627,7 +3627,7 @@ PUBLIC void mprSetWinMsgCallback(MprMsgCallback callback)
 /************************************************************************/
 
 /**
-    mprAtomic.c - Atomic operations
+    atomic.c - Atomic operations
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -3816,7 +3816,7 @@ PUBLIC void mprAtomicListInsert(void * volatile *head, volatile void **link, voi
 /************************************************************************/
 
 /**
-    mprBuf.c - Dynamic buffer module
+    buf.c - Dynamic buffer module
 
     This module is not thread-safe for performance. Callers must do their own locking.
 
@@ -4444,7 +4444,7 @@ PUBLIC ssize mprPutStringToWideBuf(MprBuf *bp, cchar *str)
 /************************************************************************/
 
 /**
-    mprCache.c - In-process caching
+    cache.c - In-process caching
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -4901,7 +4901,7 @@ static void manageCacheItem(CacheItem *item, int flags)
 /************************************************************************/
 
 /* 
-    mprCmd.c - Run external commands
+    cmd.c - Run external commands
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -6581,7 +6581,7 @@ static void closeFiles(MprCmd *cmd)
 /************************************************************************/
 
 /**
-    mprCond.c - Thread Conditional variables
+    cond.c - Thread Conditional variables
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -6901,7 +6901,7 @@ PUBLIC void mprSignalMultiCond(MprCond *cp)
 /************************************************************************/
 
 /*
-    mprCrypt.c - Base-64 encoding and decoding and MD5 support.
+    crypt.c - Base-64 encoding and decoding and MD5 support.
 
     Algorithms by RSA. See license at the end of the file. 
     This module is not thread safe.
@@ -7618,7 +7618,7 @@ static void shaPad(MprSha *sha)
 /************************************************************************/
 
 /**
-    mprDisk.c - File services for systems with a (disk) based file system.
+    disk.c - File services for systems with a (disk) based file system.
 
     This module is not thread safe.
 
@@ -8202,7 +8202,7 @@ PUBLIC MprDiskFileSystem *mprCreateDiskFileSystem(cchar *path)
 /************************************************************************/
 
 /*
-    mprDispatcher.c - Event dispatch services
+    dispatcher.c - Event dispatch services
 
     This module is thread-safe.
 
@@ -9175,7 +9175,8 @@ PUBLIC bool mprDispatcherHasEvents(MprDispatcher *dispatcher)
 /************************************************************************/
 
 /*
-    mprEncode.c - URI encode and decode routines
+    encode.c - URI encode and decode routines
+
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
@@ -9441,7 +9442,7 @@ PUBLIC char *mprEscapeHtml(cchar *html)
 /************************************************************************/
 
 /**
-    mprEpoll.c - Wait for I/O by using epoll on unix like systems.
+    epoll.c - Wait for I/O by using epoll on unix like systems.
 
     This module augments the mprWait wait services module by providing kqueue() based waiting support.
     Also see mprAsyncSelectWait and mprSelectWait. This module is thread-safe.
@@ -9769,7 +9770,7 @@ PUBLIC void mprWakeNotifier()
 /************************************************************************/
 
 /*
-    mprEvent.c - Event and dispatch services
+    event.c - Event and dispatch services
 
     This module is thread-safe.
 
@@ -9872,9 +9873,6 @@ static void initEvent(MprDispatcher *dispatcher, MprEvent *event, cchar *name, M
     event->dispatcher = dispatcher;
     event->next = event->prev = 0;
     event->flags = flags;
-#if UNUSED
-    event->continuous = (flags & MPR_EVENT_CONTINUOUS) ? 1 : 0;
-#endif
     event->magic = MPR_EVENT_MAGIC;
 }
 
@@ -10125,7 +10123,7 @@ PUBLIC void mprDequeueEvent(MprEvent *event)
 /************************************************************************/
 
 /**
-    mprFile.c - File services.
+    file.c - File services.
 
     This modules provides a simple cross platform file I/O abstraction. It uses the MprFileSystem to provide I/O services.
     This module is not thread safe.
@@ -10749,7 +10747,7 @@ PUBLIC int mprGetFileFd(MprFile *file)
 /************************************************************************/
 
 /**
-    mprFileSystem.c - File system services.
+    fs.c - File system services.
 
     This module provides a simple cross platform file system abstraction. File systems provide a file system switch and 
     underneath a file system provider that implements actual I/O.
@@ -10905,7 +10903,7 @@ PUBLIC void mprSetPathNewline(cchar *path, cchar *newline)
 /************************************************************************/
 
 /*
-    mprHash.c - Fast hashing hash lookup module
+    hash.c - Fast hashing hash lookup module
 
     This hash hash uses a fast key lookup mechanism. Keys may be C strings or unicode strings. The hash value entries 
     are arbitrary pointers. The keys are hashed into a series of buckets which then have a chain of hash entries.
@@ -11381,7 +11379,7 @@ PUBLIC MprHash *mprCreateHashFromWords(cchar *str)
 /************************************************************************/
 
 /**
-    mprJSON.c - A JSON parser and serializer. 
+    json.c - A JSON parser and serializer. 
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -11827,7 +11825,7 @@ PUBLIC void mprJsonParseError(MprJson *jp, cchar *fmt, ...)
 /************************************************************************/
 
 /**
-    mprKevent.c - Wait for I/O by using kevent on BSD based Unix systems.
+    kevent.c - Wait for I/O by using kevent on BSD based Unix systems.
 
     This module augments the mprWait wait services module by providing kqueue() based waiting support.
     Also see mprAsyncSelectWait and mprSelectWait. This module is thread-safe.
@@ -12159,7 +12157,7 @@ PUBLIC void mprWakeNotifier()
 /************************************************************************/
 
 /**
-    mprList.c - Simple list type.
+    list.c - Simple list type.
 
     The list supports two modes of operation. Compact mode where the list is compacted after removing list items, 
     and no-compact mode where removed items are zeroed. No-compact mode implies that all valid list entries must 
@@ -13005,7 +13003,7 @@ recurse:
 /************************************************************************/
 
 /**
-    mprLock.c - Thread Locking Support
+    lock.c - Thread Locking Support
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -13387,7 +13385,7 @@ PUBLIC void mprSpinUnlock(MprSpin *lock)
 /************************************************************************/
 
 /**
-    mprLog.c - Multithreaded Portable Runtime (MPR) Logging and error reporting.
+    log.c - Multithreaded Portable Runtime (MPR) Logging and error reporting.
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -13941,7 +13939,7 @@ PUBLIC int _cmp(char *s1, char *s2)
 /************************************************************************/
 
 /* 
-    mprMime.c - Mime type handling
+    mime.c - Mime type handling
 
     Copyright (c) All Rights Reserved. See copyright notice at the bottom of the file.
  */
@@ -14178,7 +14176,7 @@ PUBLIC cchar *mprLookupMime(MprHash *table, cchar *ext)
 /************************************************************************/
 
 /**
-    mprMixed.c - Mixed mode strings. Unicode results with ascii args.
+    mixed.c - Mixed mode strings. Unicode results with ascii args.
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -14625,7 +14623,7 @@ PUBLIC void dummyWide() {}
 /************************************************************************/
 
 /**
-    mprModule.c - Dynamic module loading support.
+    module.c - Dynamic module loading support.
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -14977,7 +14975,7 @@ PUBLIC char *mprSearchForModule(cchar *filename)
 /************************************************************************/
 
 /**
-    mprPath.c - Path (filename) services.
+    path.c - Path (filename) services.
 
     This modules provides cross platform path name services.
 
@@ -16700,7 +16698,7 @@ PUBLIC ssize mprWritePathContents(cchar *path, cchar *buf, ssize len, int mode)
 /************************************************************************/
 
 /**
-    mprPoll.c - Wait for I/O by using poll on unix like systems.
+    poll.c - Wait for I/O by using poll on unix like systems.
 
     This module augments the mprWait wait services module by providing poll() based waiting support.
     Also see mprAsyncSelectWait and mprSelectWait. This module is thread-safe.
@@ -17022,12 +17020,263 @@ PUBLIC void mprWakeNotifier()
 
 /************************************************************************/
 /*
+    Start of file "src/posix.c"
+ */
+/************************************************************************/
+
+/**
+    posix.c - Posix specific adaptions
+
+    Copyright (c) All Rights Reserved. See details at the end of the file.
+ */
+
+/********************************* Includes ***********************************/
+
+
+
+#if BIT_UNIX_LIKE
+/*********************************** Code *************************************/
+
+PUBLIC int mprCreateOsService()
+{
+    umask(022);
+
+    /*
+        Cleanup the environment. IFS is often a security hole
+     */
+    putenv("IFS=\t ");
+    return 0;
+}
+
+
+PUBLIC int mprStartOsService()
+{
+    /* 
+        Open a syslog connection
+     */
+#if SOLARIS
+    openlog(mprGetAppName(), LOG_LOCAL0);
+#else
+    openlog(mprGetAppName(), 0, LOG_LOCAL0);
+#endif
+    return 0;
+}
+
+
+PUBLIC void mprStopOsService()
+{
+    closelog();
+}
+
+
+PUBLIC int mprGetRandomBytes(char *buf, ssize length, bool block)
+{
+    ssize   sofar, rc;
+    int     fd;
+
+    if ((fd = open((block) ? "/dev/random" : "/dev/urandom", O_RDONLY, 0666)) < 0) {
+        return MPR_ERR_CANT_OPEN;
+    }
+    sofar = 0;
+    do {
+        rc = read(fd, &buf[sofar], length);
+        if (rc < 0) {
+            assure(0);
+            return MPR_ERR_CANT_READ;
+        }
+        length -= rc;
+        sofar += rc;
+    } while (length > 0);
+    close(fd);
+    return 0;
+}
+
+
+#if BIT_HAS_DYN_LOAD
+PUBLIC int mprLoadNativeModule(MprModule *mp)
+{
+    MprModuleEntry  fn;
+    MprPath         info;
+    char            *at;
+    void            *handle;
+
+    assure(mp);
+
+    /*
+        Search the image incase the module has been statically linked
+     */
+#ifdef RTLD_DEFAULT
+    handle = RTLD_DEFAULT;
+#else
+#ifdef RTLD_MAIN_ONLY
+    handle = RTLD_MAIN_ONLY;
+#else
+    handle = 0;
+#endif
+#endif
+    if (!mp->entry || !dlsym(handle, mp->entry)) {
+        if ((at = mprSearchForModule(mp->path)) == 0) {
+            mprError("Cannot find module \"%s\", cwd: \"%s\", search path \"%s\"", mp->path, mprGetCurrentPath(),
+                mprGetModuleSearchPath());
+            return 0;
+        }
+        mp->path = at;
+        mprGetPathInfo(mp->path, &info);
+        mp->modified = info.mtime;
+        mprLog(2, "Loading native module %s", mprGetPathBase(mp->path));
+        if ((handle = dlopen(mp->path, RTLD_LAZY | RTLD_GLOBAL)) == 0) {
+            mprError("Cannot load module %s\nReason: \"%s\"", mp->path, dlerror());
+            return MPR_ERR_CANT_OPEN;
+        } 
+        mp->handle = handle;
+
+    } else if (mp->entry) {
+        mprLog(2, "Activating native module %s", mp->name);
+    }
+    if (mp->entry) {
+        if ((fn = (MprModuleEntry) dlsym(handle, mp->entry)) != 0) {
+            if ((fn)(mp->moduleData, mp) < 0) {
+                mprError("Initialization for module %s failed", mp->name);
+                dlclose(handle);
+                return MPR_ERR_CANT_INITIALIZE;
+            }
+        } else {
+            mprError("Cannot load module %s\nReason: can't find function \"%s\"", mp->path, mp->entry);
+            dlclose(handle);
+            return MPR_ERR_CANT_READ;
+        }
+    }
+    return 0;
+}
+
+
+PUBLIC int mprUnloadNativeModule(MprModule *mp)
+{
+    return dlclose(mp->handle);
+}
+#endif
+
+
+/*
+    This routine does not yield
+ */
+PUBLIC void mprNap(MprTicks timeout)
+{
+    MprTicks        remaining, mark;
+    struct timespec t;
+    int             rc;
+
+    assure(timeout >= 0);
+    
+    mark = mprGetTicks();
+    remaining = timeout;
+    do {
+        /* MAC OS X corrupts the timeout if using the 2nd paramater, so recalc each time */
+        t.tv_sec = ((int) (remaining / 1000));
+        t.tv_nsec = ((int) ((remaining % 1000) * 1000000));
+        rc = nanosleep(&t, NULL);
+        remaining = mprGetRemainingTicks(mark, timeout);
+    } while (rc < 0 && errno == EINTR && remaining > 0);
+}
+
+
+PUBLIC void mprSleep(MprTicks timeout)
+{
+    mprYield(MPR_YIELD_STICKY | MPR_YIELD_NO_BLOCK);
+    mprNap(timeout);
+    mprResetYield();
+}
+
+
+/*  
+    Write a message in the O/S native log (syslog in the case of linux)
+ */
+PUBLIC void mprWriteToOsLog(cchar *message, int flags, int level)
+{
+    int     sflag;
+
+    if (flags & MPR_FATAL_SRC) {
+        sflag = LOG_ERR;
+    } else if (flags & MPR_ASSURE_SRC) {
+        sflag = LOG_WARNING;
+    } else if (flags & MPR_ERROR_SRC) {
+        sflag = LOG_ERR;
+    } else {
+        sflag = LOG_WARNING;
+    }
+    syslog(sflag, "%s", message);
+}
+
+
+PUBLIC int mprInitWindow()
+{
+    return 0;
+}
+
+
+PUBLIC void mprSetFilesLimit(int limit)
+{
+    struct rlimit r;
+    int           i;
+
+    if (limit == 0 || limit == MAXINT) {
+        /*
+            We need to determine a reasonable maximum possible limit value.
+            There is no #define we can use for this, so we test to determine it empirically
+         */
+        for (limit = 0x40000000; limit > 0; limit >>= 1) {
+            r.rlim_cur = r.rlim_max = limit;
+            if (setrlimit(RLIMIT_NOFILE, &r) == 0) {
+                for (i = (limit >> 4) * 15; i > 0; i--) {
+                    r.rlim_max = r.rlim_cur = limit + i;
+                    if (setrlimit(RLIMIT_NOFILE, &r) == 0) {
+                        limit = 0;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    } else {
+        r.rlim_cur = r.rlim_max = limit;
+        if (setrlimit(RLIMIT_NOFILE, &r) < 0) {
+            mprError("Can't set file limit to %d", limit);
+        }
+    }
+    getrlimit(RLIMIT_NOFILE, &r);
+    mprLog(6, "Set files limit to soft %d, max %d", r.rlim_cur, r.rlim_max);
+}
+
+#endif /* BIT_UNIX_LIKE */
+
+/*
+    @copy   default
+
+    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
+
+    Local variables:
+    tab-width: 4
+    c-basic-offset: 4
+    End:
+    vim: sw=4 ts=4 expandtab
+
+    @end
+ */
+
+/************************************************************************/
+/*
     Start of file "src/printf.c"
  */
 /************************************************************************/
 
 /**
-    mprPrintf.c - Printf routines safe for embedded programming
+    printf.c - Printf routines safe for embedded programming
 
     This module provides safe replacements for the standard printf formatting routines. Most routines in this file 
     are not thread-safe. It is the callers responsibility to perform all thread synchronization.
@@ -18007,7 +18256,7 @@ PUBLIC int print(cchar *fmt, ...)
 /************************************************************************/
 
 /*
-    mprRomFile.c - ROM File system
+    rom.c - ROM File system
 
     ROM support for systems without disk or flash based file systems. This module provides read-only file retrieval 
     from compiled file images. Use the mprRomComp program to compile files into C code and then link them into your 
@@ -18333,7 +18582,7 @@ PUBLIC MprRomFileSystem *mprCreateRomFileSystem(cchar *path)
 /************************************************************************/
 
 /**
-    mprSelect.c - Wait for I/O by using select.
+    select.c - Wait for I/O by using select.
 
     This module provides I/O wait management for sockets on VxWorks and systems that use select(). Windows and Unix
     uses different mechanisms. See mprAsyncSelectWait and mprPollWait. This module is thread-safe.
@@ -18671,7 +18920,7 @@ static void readPipe(MprWaitService *ws)
 /************************************************************************/
 
 /**
-    mprSignal.c - Signal handling for Unix systems
+    signal.c - Signal handling for Unix systems
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -19055,11 +19304,9 @@ static void standardSignalHandler(void *ignored, MprSignal *sp)
 /************************************************************************/
 
 /**
-    mprSocket.c - Convenience class for the management of sockets
+    socket.c - Convenience class for the management of sockets
 
     This module provides a higher interface to interact with the standard sockets API. It does not perform buffering.
-
-    This module is thread-safe.
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -19297,7 +19544,7 @@ PUBLIC int mprListenOnSocket(MprSocket *sp, cchar *ip, int port, int flags)
 static int listenSocket(MprSocket *sp, cchar *ip, int port, int initialFlags)
 {
     struct sockaddr     *addr;
-    MprSocklen          addrlen;
+    Socklen             addrlen;
     cchar               *sip;
     int                 datagram, family, protocol, rc, only;
 
@@ -19466,7 +19713,7 @@ PUBLIC int mprConnectSocket(MprSocket *sp, cchar *ip, int port, int flags)
 static int connectSocket(MprSocket *sp, cchar *ip, int port, int initialFlags)
 {
     struct sockaddr     *addr;
-    MprSocklen          addrlen;
+    Socklen             addrlen;
     int                 broadcast, datagram, family, protocol, rc;
 
     mprLog(6, "openClient: %s:%d, flags %x", ip, port, initialFlags);
@@ -19677,7 +19924,7 @@ PUBLIC MprSocket *mprAcceptSocket(MprSocket *listen)
     struct sockaddr_storage     addrStorage, saddrStorage;
     struct sockaddr             *addr, *saddr;
     char                        ip[BIT_MAX_IP], acceptIp[BIT_MAX_IP];
-    MprSocklen                  addrlen, saddrlen;
+    Socklen                     addrlen, saddrlen;
     int                         fd, port, acceptPort;
 
     ss = MPR->socketService;
@@ -19777,7 +20024,7 @@ PUBLIC ssize mprReadSocket(MprSocket *sp, void *buf, ssize bufsize)
 static ssize readSocket(MprSocket *sp, void *buf, ssize bufsize)
 {
     struct sockaddr_storage server;
-    MprSocklen              len;
+    Socklen                 len;
     ssize                   bytes;
     int                     errCode;
 
@@ -19796,7 +20043,7 @@ again:
     }
     if (sp->flags & MPR_SOCKET_DATAGRAM) {
         len = sizeof(server);
-        bytes = recvfrom(sp->fd, buf, (int) bufsize, MSG_NOSIGNAL, (struct sockaddr*) &server, (MprSocklen*) &len);
+        bytes = recvfrom(sp->fd, buf, (int) bufsize, MSG_NOSIGNAL, (struct sockaddr*) &server, (Socklen*) &len);
     } else {
         bytes = recv(sp->fd, buf, (int) bufsize, MSG_NOSIGNAL);
     }
@@ -19864,7 +20111,7 @@ PUBLIC ssize mprWriteSocket(MprSocket *sp, cvoid *buf, ssize bufsize)
 static ssize writeSocket(MprSocket *sp, cvoid *buf, ssize bufsize)
 {
     struct sockaddr     *addr;
-    MprSocklen          addrlen;
+    Socklen             addrlen;
     ssize               len, written, sofar;
     int                 family, protocol, errCode;
 
@@ -20377,7 +20624,7 @@ PUBLIC int mprGetSocketInfo(cchar *ip, int port, int *family, int *protocol, str
 }
 #else
 
-PUBLIC int mprGetSocketInfo(cchar *ip, int port, int *family, int *protocol, struct sockaddr **addr, MprSocklen *addrlen)
+PUBLIC int mprGetSocketInfo(cchar *ip, int port, int *family, int *protocol, struct sockaddr **addr, Socklen *addrlen)
 {
     MprSocketService    *ss;
     struct sockaddr_in  *sa;
@@ -20656,8 +20903,7 @@ PUBLIC MprSsl *mprCreateSsl(int server)
     if ((ssl = mprAllocObj(MprSsl, manageSsl)) == 0) {
         return 0;
     }
-    ssl->ciphers = sclone(BIT_CIPHERS);
-    ssl->protocols = MPR_PROTO_TLSV1 | MPR_PROTO_TLSV11;
+    ssl->protocols = MPR_PROTO_TLSV1 | MPR_PROTO_TLSV11 | MPR_PROTO_TLSV12;
     /*
         The default for servers is not to verify client certificates.
         The default for clients is to verify unless MPR->verifySsl has been set to false
@@ -20773,6 +21019,17 @@ PUBLIC int mprUpgradeSocket(MprSocket *sp, MprSsl *ssl, int server)
 }
 
 
+PUBLIC void mprAddSslCiphers(MprSsl *ssl, cchar *ciphers)
+{
+    assure(ssl);
+    if (ssl->ciphers) {
+        ssl->ciphers = sjoin(ssl->ciphers, ":", ciphers, NULL);
+    } else {
+        ssl->ciphers = sclone(ciphers);
+    }
+}
+
+
 PUBLIC void mprSetSslCiphers(MprSsl *ssl, cchar *ciphers)
 {
     assure(ssl);
@@ -20873,7 +21130,7 @@ PUBLIC void mprVerifySslDepth(MprSsl *ssl, int depth)
 /************************************************************************/
 
 /**
-    mprString.c - String routines safe for embedded programming
+    string.c - String routines safe for embedded programming
 
     This module provides safe replacements for the standard string library. 
     Most routines in this file are not thread-safe. It is the callers responsibility to perform all thread synchronization.
@@ -21875,7 +22132,7 @@ PUBLIC char *stemplate(cchar *str, MprHash *keys)
 /************************************************************************/
 
 /*
-    mprTest.c - Embedthis Unit Test Framework
+    test.c - Embedthis Unit Test Framework
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -22903,7 +23160,7 @@ static int setLogging(char *logSpec)
 /************************************************************************/
 
 /**
-    mprThread.c - Primitive multi-threading support for Windows
+    thread.c - Primitive multi-threading support for Windows
 
     This module provides threading, mutex and condition variable APIs.
 
@@ -23756,12 +24013,6 @@ static MprWorker *createWorker(MprWorkerService *ws, ssize stackSize)
     if ((worker = mprAllocObj(MprWorker, manageWorker)) == 0) {
         return 0;
     }
-#if UNUSED
-    worker->proc = 0;
-    worker->cleanup = 0;
-    worker->data = 0;
-    worker->state = 0;
-#endif
     worker->workerService = ws;
     worker->idleCond = mprCreateCond();
 
@@ -23925,8 +24176,8 @@ static void changeState(MprWorker *worker, int state)
 /************************************************************************/
 
 /**
-    mprTime.c - Date and Time handling
- *
+    time.c - Date and Time handling
+ 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
@@ -25701,263 +25952,12 @@ PUBLIC int gettimeofday(struct timeval *tv, struct timezone *tz)
 
 /************************************************************************/
 /*
-    Start of file "src/unix.c"
- */
-/************************************************************************/
-
-/**
-    mprUnix.c - Unix specific adaptions
-
-    Copyright (c) All Rights Reserved. See details at the end of the file.
- */
-
-/********************************* Includes ***********************************/
-
-
-
-#if BIT_UNIX_LIKE
-/*********************************** Code *************************************/
-
-PUBLIC int mprCreateOsService()
-{
-    umask(022);
-
-    /*
-        Cleanup the environment. IFS is often a security hole
-     */
-    putenv("IFS=\t ");
-    return 0;
-}
-
-
-PUBLIC int mprStartOsService()
-{
-    /* 
-        Open a syslog connection
-     */
-#if SOLARIS
-    openlog(mprGetAppName(), LOG_LOCAL0);
-#else
-    openlog(mprGetAppName(), 0, LOG_LOCAL0);
-#endif
-    return 0;
-}
-
-
-PUBLIC void mprStopOsService()
-{
-    closelog();
-}
-
-
-PUBLIC int mprGetRandomBytes(char *buf, ssize length, bool block)
-{
-    ssize   sofar, rc;
-    int     fd;
-
-    if ((fd = open((block) ? "/dev/random" : "/dev/urandom", O_RDONLY, 0666)) < 0) {
-        return MPR_ERR_CANT_OPEN;
-    }
-    sofar = 0;
-    do {
-        rc = read(fd, &buf[sofar], length);
-        if (rc < 0) {
-            assure(0);
-            return MPR_ERR_CANT_READ;
-        }
-        length -= rc;
-        sofar += rc;
-    } while (length > 0);
-    close(fd);
-    return 0;
-}
-
-
-#if BIT_HAS_DYN_LOAD
-PUBLIC int mprLoadNativeModule(MprModule *mp)
-{
-    MprModuleEntry  fn;
-    MprPath         info;
-    char            *at;
-    void            *handle;
-
-    assure(mp);
-
-    /*
-        Search the image incase the module has been statically linked
-     */
-#ifdef RTLD_DEFAULT
-    handle = RTLD_DEFAULT;
-#else
-#ifdef RTLD_MAIN_ONLY
-    handle = RTLD_MAIN_ONLY;
-#else
-    handle = 0;
-#endif
-#endif
-    if (!mp->entry || !dlsym(handle, mp->entry)) {
-        if ((at = mprSearchForModule(mp->path)) == 0) {
-            mprError("Cannot find module \"%s\", cwd: \"%s\", search path \"%s\"", mp->path, mprGetCurrentPath(),
-                mprGetModuleSearchPath());
-            return 0;
-        }
-        mp->path = at;
-        mprGetPathInfo(mp->path, &info);
-        mp->modified = info.mtime;
-        mprLog(2, "Loading native module %s", mprGetPathBase(mp->path));
-        if ((handle = dlopen(mp->path, RTLD_LAZY | RTLD_GLOBAL)) == 0) {
-            mprError("Cannot load module %s\nReason: \"%s\"", mp->path, dlerror());
-            return MPR_ERR_CANT_OPEN;
-        } 
-        mp->handle = handle;
-
-    } else if (mp->entry) {
-        mprLog(2, "Activating native module %s", mp->name);
-    }
-    if (mp->entry) {
-        if ((fn = (MprModuleEntry) dlsym(handle, mp->entry)) != 0) {
-            if ((fn)(mp->moduleData, mp) < 0) {
-                mprError("Initialization for module %s failed", mp->name);
-                dlclose(handle);
-                return MPR_ERR_CANT_INITIALIZE;
-            }
-        } else {
-            mprError("Cannot load module %s\nReason: can't find function \"%s\"", mp->path, mp->entry);
-            dlclose(handle);
-            return MPR_ERR_CANT_READ;
-        }
-    }
-    return 0;
-}
-
-
-PUBLIC int mprUnloadNativeModule(MprModule *mp)
-{
-    return dlclose(mp->handle);
-}
-#endif
-
-
-/*
-    This routine does not yield
- */
-PUBLIC void mprNap(MprTicks timeout)
-{
-    MprTicks        remaining, mark;
-    struct timespec t;
-    int             rc;
-
-    assure(timeout >= 0);
-    
-    mark = mprGetTicks();
-    remaining = timeout;
-    do {
-        /* MAC OS X corrupts the timeout if using the 2nd paramater, so recalc each time */
-        t.tv_sec = ((int) (remaining / 1000));
-        t.tv_nsec = ((int) ((remaining % 1000) * 1000000));
-        rc = nanosleep(&t, NULL);
-        remaining = mprGetRemainingTicks(mark, timeout);
-    } while (rc < 0 && errno == EINTR && remaining > 0);
-}
-
-
-PUBLIC void mprSleep(MprTicks timeout)
-{
-    mprYield(MPR_YIELD_STICKY | MPR_YIELD_NO_BLOCK);
-    mprNap(timeout);
-    mprResetYield();
-}
-
-
-/*  
-    Write a message in the O/S native log (syslog in the case of linux)
- */
-PUBLIC void mprWriteToOsLog(cchar *message, int flags, int level)
-{
-    int     sflag;
-
-    if (flags & MPR_FATAL_SRC) {
-        sflag = LOG_ERR;
-    } else if (flags & MPR_ASSURE_SRC) {
-        sflag = LOG_WARNING;
-    } else if (flags & MPR_ERROR_SRC) {
-        sflag = LOG_ERR;
-    } else {
-        sflag = LOG_WARNING;
-    }
-    syslog(sflag, "%s", message);
-}
-
-
-PUBLIC int mprInitWindow()
-{
-    return 0;
-}
-
-
-PUBLIC void mprSetFilesLimit(int limit)
-{
-    struct rlimit r;
-    int           i;
-
-    if (limit == 0 || limit == MAXINT) {
-        /*
-            We need to determine a reasonable maximum possible limit value.
-            There is no #define we can use for this, so we test to determine it empirically
-         */
-        for (limit = 0x40000000; limit > 0; limit >>= 1) {
-            r.rlim_cur = r.rlim_max = limit;
-            if (setrlimit(RLIMIT_NOFILE, &r) == 0) {
-                for (i = (limit >> 4) * 15; i > 0; i--) {
-                    r.rlim_max = r.rlim_cur = limit + i;
-                    if (setrlimit(RLIMIT_NOFILE, &r) == 0) {
-                        limit = 0;
-                        break;
-                    }
-                }
-                break;
-            }
-        }
-    } else {
-        r.rlim_cur = r.rlim_max = limit;
-        if (setrlimit(RLIMIT_NOFILE, &r) < 0) {
-            mprError("Can't set file limit to %d", limit);
-        }
-    }
-    getrlimit(RLIMIT_NOFILE, &r);
-    mprLog(6, "Set files limit to soft %d, max %d", r.rlim_cur, r.rlim_max);
-}
-
-#endif /* BIT_UNIX_LIKE */
-
-/*
-    @copy   default
-
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-
-    This software is distributed under commercial and open source licenses.
-    You may use the Embedthis Open Source license or you may acquire a 
-    commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.md distributed with
-    this software for full details and other copyrights.
-
-    Local variables:
-    tab-width: 4
-    c-basic-offset: 4
-    End:
-    vim: sw=4 ts=4 expandtab
-
-    @end
- */
-
-/************************************************************************/
-/*
     Start of file "src/vxworks.c"
  */
 /************************************************************************/
 
 /**
-    mprVxworks.c - Vxworks specific adaptions
+    vxworks.c - Vxworks specific adaptions
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -26171,7 +26171,7 @@ double  __mpr_floating_point_resolution(double a, double b, int64 c, int64 d, ui
 /************************************************************************/
 
 /*
-    mprWait.c - Wait for I/O service.
+    wait.c - Wait for I/O service.
 
     This module provides wait management for sockets and other file descriptors and allows users to create wait
     handlers which will be called when I/O events are detected. Multiple backends (one at a time) are supported.
@@ -26353,9 +26353,6 @@ PUBLIC void mprQueueIOEvent(MprWaitHandler *wp)
         dispatcher = (wp->dispatcher) ? wp->dispatcher: mprGetDispatcher();
     }
     event = wp->event = mprCreateEvent(dispatcher, "IOEvent", 0, ioEvent, wp->handlerData, MPR_EVENT_DONT_QUEUE);
-#if UNUSED
-    event->fd = wp->fd;
-#endif
     event->mask = wp->presentMask;
     event->handler = wp;
     mprQueueEvent(dispatcher, event);
@@ -26469,7 +26466,7 @@ PUBLIC void mprDoWaitRecall(MprWaitService *ws)
 /************************************************************************/
 
 /**
-    mprUnicode.c - Memory Allocator and Garbage Collector. 
+    unicode.c - Unicode support
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -27594,7 +27591,7 @@ PUBLIC char *awtom(wchar *src, ssize *len)
 /************************************************************************/
 
 /**
-    mprWin.c - Windows specific adaptions. Used by BIT_WIN_LIKE and CYGWIN
+    win.c - Windows specific adaptions
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -27973,7 +27970,7 @@ PUBLIC int mprWriteRegistry(cchar *key, cchar *name, cchar *value)
 /************************************************************************/
 
 /**
-    mprWince.c - Windows CE platform specific code.
+    wince.c - Windows CE platform specific code.
 
     Copyright (c) All Rights Reserved. See copyright notice at the bottom of the file.
  */
@@ -28876,7 +28873,7 @@ PUBLIC void mprWriteToOsLog(cchar *message, int flags, int level)
 /************************************************************************/
 
 /**
-    mprXml.c - A simple SAX style XML parser
+    xml.c - A simple SAX style XML parser
 
     This is a recursive descent parser for XML text files. It is a one-pass simple parser that invokes a user 
     supplied callback for key tokens in the XML file. The user supplies a read function so that XML files can 
