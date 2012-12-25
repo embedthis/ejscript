@@ -52,12 +52,12 @@
     The default endianness can be overridden by configure --endian big|little.
  */
 #if defined(__alpha__)
-    #define BIT_CPU "ALPHA"
+    #define BIT_CPU "alpha"
     #define BIT_CPU_ARCH BIT_CPU_ALPHA
     #define CPU_ENDIAN BIT_LITTLE_ENDIAN
 
 #elif defined(__arm__)
-    #define BIT_CPU "ARM"
+    #define BIT_CPU "arm"
     #define BIT_CPU_ARCH BIT_CPU_ARM
     #define CPU_ENDIAN BIT_LITTLE_ENDIAN
 
@@ -72,22 +72,22 @@
     #define CPU_ENDIAN BIT_LITTLE_ENDIAN
 
 #elif defined(_M_IA64)
-    #define BIT_CPU "IA64"
+    #define BIT_CPU "ia64"
     #define BIT_CPU_ARCH BIT_CPU_ITANIUM
     #define CPU_ENDIAN BIT_LITTLE_ENDIAN
 
 #elif defined(__mips__)
-    #define BIT_CPU "MIPS"
+    #define BIT_CPU "mips"
     #define BIT_CPU_ARCH BIT_CPU_MIPS
     #define CPU_ENDIAN BIT_BIG_ENDIAN
 
 #elif defined(__ppc__) || defined(__powerpc__) || defined(__ppc64__) || defined(__ppc)
-    #define BIT_CPU "PPC"
+    #define BIT_CPU "ppc"
     #define BIT_CPU_ARCH BIT_CPU_PPC
     #define CPU_ENDIAN BIT_BIG_ENDIAN
 
 #elif defined(__sparc__)
-    #define BIT_CPU "SPARC"
+    #define BIT_CPU "sparc"
     #define BIT_CPU_ARCH BIT_CPU_SPARC
     #define CPU_ENDIAN BIT_BIG_ENDIAN
 

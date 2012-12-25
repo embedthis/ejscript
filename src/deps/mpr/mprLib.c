@@ -2131,6 +2131,7 @@ static void getSystemInfo()
             return;
         }
         match = 1;
+        memStats.numCpu = 0;
         for (col = 0; read(fd, &c, 1) == 1; ) {
             if (c == '\n') {
                 col = 0;
@@ -2148,7 +2149,9 @@ static void getSystemInfo()
                 }
             }
         }
-        --memStats.numCpu;
+        if (memStats.numCpu <= 0) {
+            memStats.numCpu = 1;
+        }
         close(fd);
         memStats.pageSize = sysconf(_SC_PAGESIZE);
     }
@@ -19386,6 +19389,10 @@ PUBLIC MprSocketService *mprCreateSocketService()
     mprSetDomainName(domainName);
     mprSetHostName(hostName);
     ss->secureSockets = mprCreateList(0, 0);
+    ss->hasIPv6 = socket(AF_INET6, SOCK_STREAM, 0) == 0;
+    if (!ss->hasIPv6) {
+        mprLog(2, "System has only IPv4 support");
+    }
     return ss;
 }
 
@@ -19523,9 +19530,15 @@ PUBLIC bool mprHasDualNetworkStack()
         dual = info.dwMajorVersion >= 6;
     }
 #else
-    dual = 1;
+    dual = MPR->socketService->hasIPv6;
 #endif
     return dual;
+}
+
+
+PUBLIC bool mprHasIPv6() 
+{
+    return MPR->socketService->hasIPv6;
 }
 
 
@@ -19600,12 +19613,14 @@ static int listenSocket(MprSocket *sp, cchar *ip, int port, int initialFlags)
         So we explicitly control.
      */
 #if defined(IPV6_V6ONLY)
-    if (ip == 0 || *ip == '\0') {
-        only = 0;
-        setsockopt(sp->fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*) &only, sizeof(only));
-    } else if (ipv6(ip)) {
-        only = 1;
-        setsockopt(sp->fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*) &only, sizeof(only));
+    if (MPR->socketService->hasIPv6) {
+        if (ip == 0 || *ip == '\0') {
+            only = 0;
+            setsockopt(sp->fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*) &only, sizeof(only));
+        } else if (ipv6(ip)) {
+            only = 1;
+            setsockopt(sp->fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*) &only, sizeof(only));
+        }
     }
 #endif
     if (sp->service->prebind) {
@@ -20575,7 +20590,7 @@ PUBLIC int mprGetSocketInfo(cchar *ip, int port, int *family, int *protocol, str
      */
     if (ip == 0 || ip[0] == '\0') {
         ip = 0;
-        hints.ai_flags |= AI_PASSIVE;           /* Bind to 0.0.0.0 and :: */
+        hints.ai_flags |= AI_PASSIVE;           /* Bind to 0.0.0.0 and :: if available */
     }
     v6 = ipv6(ip);
     hints.ai_socktype = SOCK_STREAM;
