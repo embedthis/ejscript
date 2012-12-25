@@ -27,7 +27,10 @@ static int parseFlags(EjsRegExp *rp, wchar *flags);
  */
 static EjsAny *castRegExp(Ejs *ejs, EjsRegExp *rp, EjsType *type)
 {
+    wchar   *pattern;
     char    *flags;
+    ssize   len;
+    int     i, j;
 
     switch (type->sid) {
     case S_Boolean:
@@ -35,7 +38,16 @@ static EjsAny *castRegExp(Ejs *ejs, EjsRegExp *rp, EjsType *type)
 
     case S_String:
         flags = makeFlags(rp);
-        return ejsSprintf(ejs, "/%w/%s", rp->pattern, flags);
+        len = wlen(rp->pattern);
+        pattern = mprAlloc((len * 2 + 1) * sizeof(wchar));
+        for (i = j = 0; i < len; i++) {
+            if (rp->pattern[i] == '/') {
+                pattern[j++] = '\\';
+            }
+            pattern[j++] = rp->pattern[i];
+        }
+        pattern[j] = 0;
+        return ejsSprintf(ejs, "/%w/%s", pattern, flags);
 
     default:
         ejsThrowTypeError(ejs, "Cannot cast to this type");
