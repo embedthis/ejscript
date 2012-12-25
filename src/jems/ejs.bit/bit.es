@@ -660,12 +660,6 @@ public class Bit {
         Examine environment for flags and apply
      */
     function applyEnv() {
-        /*
-            UNUSED - now applies to ordinary non-cross builds
-            if (false && !bit.cross) {
-                return
-            }
-         */
         envSettings = { packs: {}, defaults: {} }
         for (let [key, tool] in envTools) {
             let path = App.getenv(key)
@@ -1273,10 +1267,6 @@ public class Bit {
         genout.writeLine('\t@if not exist $(CONFIG)\\bin md $(CONFIG)\\bin')
         genout.writeLine('\t@if not exist $(CONFIG)\\inc\\bit.h ' +
             'copy projects\\' + bit.settings.product + '-$(OS)-$(PROFILE)-bit.h $(CONFIG)\\inc\\bit.h')
-/* UNUSED
-        genout.writeLine('\t@if not exist $(CONFIG)\\bin\\*.def ' +
-            'xcopy /Y /S projects\\' + bit.settings.product + '-windows\\*.def $(CONFIG)\\bin\n')
- */
         genout.writeLine('clean:')
         action('cleanTargets')
         genout.writeLine('')
@@ -2009,7 +1999,6 @@ public class Bit {
             App.log.debug(3, "Target => " + serialize(target, {pretty: true, commas: true, indent: 4, quotes: false}))
         }
         runTargetScript(target, 'prebuild')
-        //UNUSED buildSym(target)
         let transition = target.rule || 'shlib'
         let rule = bit.rules[transition]
         if (!rule) {
@@ -2650,12 +2639,7 @@ public class Bit {
         } else {
             let mapped = []
             for each (let lib:Path in libs) {
-                /* MOB UNUSED
-                if (lib.extension) {
-                    mapped.push(bit.dir.lib.relativeTo(App.dir).join(lib))
-                } else
-                */
-                    mapped.push('-l' + lib.trimExt().relative.toString().replace(/^lib/, ''))
+                mapped.push('-l' + lib.trimExt().relative.toString().replace(/^lib/, ''))
             }
             libs = mapped
         }
@@ -2731,10 +2715,12 @@ public class Bit {
     function makeDepends(target): Array {
         let includes: Array = []
         for each (path in target.files) {
-            let str = path.readString()
-            let more = str.match(/^#include.*"$/gm)
-            if (more) {
-                includes += more
+            if (path.exists) {
+                let str = path.readString()
+                let more = str.match(/^#include.*"$/gm)
+                if (more) {
+                    includes += more
+                }
             }
         }
         let depends = [ ]
@@ -2750,7 +2736,7 @@ public class Bit {
             let path
             for each (dir in target.includes) {
                 path = Path(dir).join(ifile)
-                if (path.exists && !path.isDir) {
+                if (/* UNUSED path.exists && */ !path.isDir) {
                     break
                 }
                 if (options.why) {
