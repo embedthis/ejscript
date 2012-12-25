@@ -18,7 +18,7 @@ public class Bit {
     private static const supportedOS = ['freebsd', 'linux', 'macosx', 'solaris', 'vxworks', 'windows']
     private static const supportedArch = ['arm', 'i64', 'mips', 'sparc', 'x64', 'x86']
     private static const minimalCflags = [ 
-        '-w', '-g', '-Wall', '-Wno-deprecated-declarations', '-Wno-unused-result', '-Wshorten-64-to-32']
+        '-w', '-g', '-Wall', '-Wno-deprecated-declarations', '-Wno-unused-result', '-Wshorten-64-to-32', '-mtune=generic']
 
     /*
         Filter for files that look like temp files and should not be installed
@@ -1152,7 +1152,7 @@ public class Bit {
         genout.writeLine('#\n#   ' + path.basename + ' -- Build It Shell Script to build ' + bit.settings.title + '\n#\n')
         genEnv()
         genout.writeLine('ARCH="' + bit.platform.arch + '"')
-        genout.writeLine('ARCH="`uname -m | sed \'s/i.86/x86/;s/x86_64/x64/\'`"')
+        genout.writeLine('ARCH="`uname -m | sed \'s/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/\'`"')
         genout.writeLine('OS="' + bit.platform.os + '"')
         genout.writeLine('PROFILE="' + bit.platform.profile + '"')
         genout.writeLine('CONFIG="${OS}-${ARCH}-${PROFILE}' + '"')
@@ -1187,7 +1187,7 @@ public class Bit {
         genout.writeLine('#\n#   ' + path.basename + ' -- Makefile to build ' + 
             bit.settings.title + ' for ' + bit.platform.os + '\n#\n')
         genEnv()
-        genout.writeLine('ARCH     ?= $(shell uname -m | sed \'s/i.86/x86/;s/x86_64/x64/\')')
+        genout.writeLine('ARCH     ?= $(shell uname -m | sed \'s/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/\')')
         genout.writeLine('OS       ?= ' + bit.platform.os)
         genout.writeLine('CC       ?= ' + bit.packs.compiler.path)
         if (bit.packs.link) {
