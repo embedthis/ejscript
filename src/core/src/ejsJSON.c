@@ -236,7 +236,7 @@ Token getNextJsonToken(MprBuf *buf, wchar **token, JsonState *js)
                 return TOK_ERR;
             }
             if (buf) {
-                mprPutBlockToBuf(buf, (char*) start, (cp - start));
+                mprPutBlockToBuf(buf, (char*) start, (cp - start + 1));
             }
             cp++;
 

@@ -84,7 +84,7 @@ assert(parts == "abc,def,ghi,jkl")
 
 assert(RegExp("abc", "g") == "/abc/g")
 assert(RegExp("abc", "g").toString() == "/abc/g")
-assert(RegExp("/abc/g") == "//abc/g/")
+assert(RegExp("/abc/g") == "/\\/abc\\/g/")
 
 
 //  replace

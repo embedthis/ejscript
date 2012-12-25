@@ -233,7 +233,11 @@ PUBLIC EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
         Strip off flags for passing to pcre_compile2
      */
     rp->pattern = sclone(&pattern->value[1]);
-    if ((flags = wrchr(rp->pattern, '/')) != 0 && flags > rp->pattern && flags[-1] != '\\')  {
+    if ((flags = wrchr(rp->pattern, '/')) != 0) {
+        if (flags == rp->pattern) {
+            ejsThrowArgError(ejs, "Bad regular expression pattern. Must end with '/'");
+            return 0;
+        }
         rp->options = parseFlags(rp, &flags[1]);
         *flags = 0;
     }
