@@ -155,7 +155,7 @@ public function packageComboFiles() {
         'src/deps/pcre/pcre.h'
         ], pkg.join('src/deps/ejs/ejs.h'), {
         cat: true, filter: filter,
-        header: '#include \"bit.h\"\n#include \"mpr.h\"\n#include \"http.h\"\n#include \"ejs.slots.h\"',
+        header: '#include \"bit.h\"\n#include \"bitos.h\"\n#include \"mpr.h\"\n#include \"http.h\"\n#include \"ejs.slots.h\"',
         title: bit.settings.title + ' Library Source',
     })
     install('src/deps/mpr/mpr.h', pkg.join('src/deps/ejs/mpr.h'))
