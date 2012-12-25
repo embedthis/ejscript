@@ -835,7 +835,7 @@ EjsName ejsModuleReadName(Ejs *ejs, EjsModule *mp)
 #if UNUSED && KEEP
 int ejsSwapInt16(Ejs *ejs, int word)
 {
-    if (mprGetEndian(ejs) == MPR_LITTLE_ENDIAN) {
+    if (mprGetEndian(ejs) == BIT_LITTLE_ENDIAN) {
         return word;
     }
     return ((word & 0xFF) << 8) | ((word & 0xFF00) >> 8);
@@ -845,7 +845,7 @@ int ejsSwapInt16(Ejs *ejs, int word)
 
 int ejsSwapInt32(Ejs *ejs, int word)
 {
-    if (mprGetEndian(ejs) == MPR_LITTLE_ENDIAN) {
+    if (mprGetEndian(ejs) == BIT_LITTLE_ENDIAN) {
         return word;
     }
     return ((word & 0xFF000000) >> 24) | ((word & 0xFF0000) >> 8) | ((word & 0xFF00) << 8) | ((word & 0xFF) << 24);
@@ -856,7 +856,7 @@ int64 ejsSwapInt64(Ejs *ejs, int64 a)
 {
     int64   low, high;
 
-    if (mprGetEndian(ejs) == MPR_LITTLE_ENDIAN) {
+    if (mprGetEndian(ejs) == BIT_LITTLE_ENDIAN) {
         return a;
     }
     low = a & 0xFFFFFFFF;
@@ -873,7 +873,7 @@ double ejsSwapDouble(Ejs *ejs, double a)
         double  d;
     } alias;
     
-    if (mprGetEndian(ejs) == MPR_LITTLE_ENDIAN) {
+    if (mprGetEndian(ejs) == BIT_LITTLE_ENDIAN) {
         return a;
     }
     alias.d = a;
@@ -886,7 +886,7 @@ double ejsSwapDouble(Ejs *ejs, double a)
 {
     int64   low, high;
 
-    if (mprGetEndian(ejs) == MPR_LITTLE_ENDIAN) {
+    if (mprGetEndian(ejs) == BIT_LITTLE_ENDIAN) {
         return a;
     }
     low = ((int64) a) & 0xFFFFFFFF;
