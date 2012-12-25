@@ -48,7 +48,7 @@ Bit.load({
         company: 'Embedthis',
         version: '2.3.0',
         buildNumber: '0',
-        sync: ['est', 'http', 'mpr', 'pcre', 'sqlite', 'zlib'],
+        sync: [ 'bitos', 'est', 'http', 'mpr', 'pcre', 'sqlite', 'zlib' ],
         packs: [ 'bits/packs' ],
         /* Must build locally to build tools */
         platforms: [ 'local' ],
