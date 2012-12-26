@@ -10,7 +10,7 @@ if (bit.packs.ssl && bit.packs.ssl.enable == false) {
 
 let path: Path? = bit.packs.matrixssl.path
 if (!path) {
-    if (bit.dir.packs.join('matrixssl/latest').exists) {
+    if (bit.dir.packs.join('matrixssl/latest').exists && Config.OS != 'windows') {
         path = bit.dir.packs.join('matrixssl/latest')
     } else {
         let vers = bit.dir.packs.join('matrixssl').files('matrixssl-3*').sort().reverse()

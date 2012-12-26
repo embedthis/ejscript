@@ -10,7 +10,7 @@ if (bit.packs.ssl && bit.packs.ssl.enable == false) {
 let cfg
 let path: Path? = bit.packs.openssl.path
 if (!path) {
-    if (bit.dir.packs.join('openssl/latest').exists) {
+    if (bit.dir.packs.join('openssl/latest').exists && Config.OS != 'windows') {
         path = bit.dir.packs.join('openssl/latest')
     } else {
         /*
