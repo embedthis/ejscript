@@ -106,15 +106,16 @@ module ejs.tar {
                     header.parse(data)
                     let path = header.path
                     if (files.contains(path) || files.length == 0) {
-
                         if (operation == Extract) {
                             Path(header.name).dirname.makeDir()
                             let fp = new File(header.name, 'w')
                             let len = header.size
+                            let buf = new ByteArray(32 * 1024)
                             while (len > 0) {
-                                count = len.min(data.length)
-                                bytes = archive.read(data, 0, count)
-                                fp.write(data)
+                                buf.flush()
+                                count = len.min(buf.size)
+                                bytes = archive.read(buf, 0, count)
+                                fp.write(buf)
                                 len -= count
                             }
                             fp.close()
@@ -147,6 +148,7 @@ module ejs.tar {
                             return result
                         }
                     } else {
+print("ELSE")
                         archive.position += header.size
                     }
                     let remainder = 512 - (header.size % 512)
@@ -155,6 +157,7 @@ module ejs.tar {
                     }
                 }
             } finally {
+print("FINALLY")
                 App.chdir(home)
             }
             archive.close()
