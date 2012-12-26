@@ -186,6 +186,7 @@
 
 #if EMBEDTHIS || 1
  #include    "bit.h"
+ #include    "bitos.h"
 #endif
 #ifndef BIT_FLOAT
     #define BIT_FLOAT 1
