@@ -2462,6 +2462,9 @@ public class Bit {
         g.O = bit.ext.doto
         g.SHOBJ = bit.ext.dotshobj
         g.SHLIB = bit.ext.dotshlib
+        if (bit.settings.hasMtune && bit.platform.cpu) {
+            g.MTUNE = '-mtune=' + bit.platform.cpu
+        }
     }
 
     /*
