@@ -3037,6 +3037,8 @@ public class Bit {
         bit.dir.bits = bit.dir.src.join('bits/standard.bit').exists ? 
             bit.dir.src.join('bits') : Config.Bin.join('bits').portable
         bit.dir.top = '.'
+        bit.dir.home = Path(App.getenv('HOME')).portable
+
         if (kind == 'windows') {
             bit.dir.programs = programFiles()
             bit.dir.programFiles = Path(bit.dir.programs.name.replace(' (x86)', ''))
@@ -3091,6 +3093,12 @@ public class Bit {
             loadBitFile(bit.dir.bits.join('simple.bit'))
         }
         expandTokens(bit)
+        if (!bit.dir.packs.exists) {
+            let pdir = bit.dir.home.join('packages-' + bit.platform.name)
+            if (pdir.exists) {
+                bit.dir.packs = pdir
+            }
+        }
         loadModules()
         applyProfile()
         bit.standardSettings = bit.settings.clone(true)
