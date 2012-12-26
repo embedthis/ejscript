@@ -16,8 +16,8 @@ if (!path) {
         /*
             If path not set, look in the standard packages directory: ../packages-OS-ARCH
          */
-        let vers = bit.dir.packs.join('openssl').files('openssl-*').sort().reverse()
-        path = vers[0]
+        let versions = sortVersions(bit.dir.packs.join('openssl').files('openssl-*'))
+        path = versions[0]
     }
     if (!path) {
         if (bit.platform.os == 'windows') {

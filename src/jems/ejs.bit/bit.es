@@ -3225,6 +3225,24 @@ public function whyRebuild(path, tag, msg)
 public function expand(rule)
     b.expand(rule)
 
+public function compareVersion(list, a, b) {
+    let parts_a = list[a].match(/.*(\d+)\.(\d+)\.(\d+)/)
+    let parts_b = list[b].match(/.*(\d+)\.(\d+)\.(\d+)/)
+    for (i = 1; i <= 3; i++) {
+        parts_a[i] -= 0
+        parts_b[i] -= 0
+        if (parts_a[i] < parts_b[i]) {
+            return -1
+        } else if (parts_a[i] > parts_b[i]) {
+            return 1
+        }
+    }
+    return 0
+}
+
+public function sortVersions(versions: Array)
+    versions.sort(compareVersion).reverse()
+
 /*
     @copy   default
   
