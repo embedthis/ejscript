@@ -148,7 +148,6 @@ module ejs.tar {
                             return result
                         }
                     } else {
-print("ELSE")
                         archive.position += header.size
                     }
                     let remainder = 512 - (header.size % 512)
@@ -157,7 +156,6 @@ print("ELSE")
                     }
                 }
             } finally {
-print("FINALLY")
                 App.chdir(home)
             }
             archive.close()
