@@ -726,6 +726,7 @@ public class Bit {
         trace('Search', 'For tools and extension packages')
         vtrace('Search', 'Packages: ' + [settings.required + settings.optional].join(' '))
         let packs = settings.required + settings.optional
+        let omitted = []
         for each (pack in packs) {
             if (bit.packs[pack] && bit.packs[pack].enable == false) {
                 if (settings.required.contains(pack)) { 
@@ -772,11 +773,14 @@ public class Bit {
                         trace('Found', desc + ': ' + p.path)
                     }
                 } else {
-                    trace('Omitted', 'Optional: ' + desc)
+                    omitted.push(desc)
                 }
             } else {
-                trace('Omitted', 'Optional: ' + pack)
+                omitted.push(pack)
             }
+        }
+        for each (item in omitted) {
+            trace('Omitted', 'Optional: ' + item)
         }
         castDirTypes()
     }
