@@ -10,11 +10,15 @@ if (bit.packs.ssl && bit.packs.ssl.enable == false) {
 let cfg
 let path: Path? = bit.packs.openssl.path
 if (!path) {
-    /*
-        If path not set, look in the standard packages directory: ../packages-OS-ARCH
-     */
-    let vers = bit.dir.packs.join('openssl').files('openssl-*').sort().reverse()
-    path = vers[0]
+    if (bit.dir.packs.join('openssl/latest').exists) {
+        path = bit.dir.packs.join('openssl/latest')
+    } else {
+        /*
+            If path not set, look in the standard packages directory: ../packages-OS-ARCH
+         */
+        let vers = bit.dir.packs.join('openssl').files('openssl-*').sort().reverse()
+        path = vers[0]
+    }
     if (!path) {
         if (bit.platform.os == 'windows') {
             throw 'Can\'t find openssl source distribution'

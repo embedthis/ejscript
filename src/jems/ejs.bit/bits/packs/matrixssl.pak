@@ -10,11 +10,15 @@ if (bit.packs.ssl && bit.packs.ssl.enable == false) {
 
 let path: Path? = bit.packs.matrixssl.path
 if (!path) {
-    let vers = bit.dir.packs.join('matrixssl').files('matrixssl-3*').sort().reverse()
-    if (!vers.length || vers.length == 0) {
-        throw 'Can\'t find matrixssl'
+    if (bit.dir.packs.join('matrixssl/latest').exists) {
+        path = bit.dir.packs.join('matrixssl/latest')
+    } else {
+        let vers = bit.dir.packs.join('matrixssl').files('matrixssl-3*').sort().reverse()
+        if (!vers.length || vers.length == 0) {
+            throw 'Can\'t find matrixssl'
+        }
+        path = vers[0]
     }
-    path = vers[0]
 }
 
 let cfg = {}
