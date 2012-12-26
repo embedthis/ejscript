@@ -772,10 +772,10 @@ public class Bit {
                         trace('Found', desc + ': ' + p.path)
                     }
                 } else {
-                    vtrace('Omitted', 'Optional: ' + desc)
+                    trace('Omitted', 'Optional: ' + desc)
                 }
             } else {
-                vtrace('Omitted', 'Optional: ' + pack)
+                trace('Omitted', 'Optional: ' + pack)
             }
         }
         castDirTypes()
@@ -1490,7 +1490,7 @@ public class Bit {
             print(bit.settings.version + '-' + bit.settings.buildNumber)
             App.exit()
         }
-        vtrace('XX Targets', selectedTargets)
+        vtrace('Targets', selectedTargets)
     }
 
     /*

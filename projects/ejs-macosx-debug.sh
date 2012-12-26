@@ -3,7 +3,7 @@
 #
 
 ARCH="x64"
-ARCH="`uname -m | sed 's/i.86/x86/;s/x86_64/x64/'`"
+ARCH="`uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/'`"
 OS="macosx"
 PROFILE="debug"
 CONFIG="${OS}-${ARCH}-${PROFILE}"
@@ -22,6 +22,9 @@ LIBS="-lpthread -lm -ldl"
 if ! diff ${CONFIG}/inc/bit.h projects/ejs-${OS}-${PROFILE}-bit.h >/dev/null ; then
 	cp projects/ejs-${OS}-${PROFILE}-bit.h ${CONFIG}/inc/bit.h
 fi
+
+rm -rf ${CONFIG}/inc/bitos.h
+cp -r src/bitos.h ${CONFIG}/inc/bitos.h
 
 rm -rf ${CONFIG}/inc/mpr.h
 cp -r src/deps/mpr/mpr.h ${CONFIG}/inc/mpr.h

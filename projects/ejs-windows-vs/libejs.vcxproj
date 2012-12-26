@@ -182,6 +182,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ClInclude Include="$(IncDir)\bitos.h" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ClInclude Include="$(IncDir)\ejs.h" />
   </ItemGroup>
 
@@ -214,6 +218,7 @@ copy /Y slots\ejs.db.sqlite.slots.h $(IncDir)
 copy /Y slots\ejs.slots.h $(IncDir)
 copy /Y slots\ejs.web.slots.h $(IncDir)
 copy /Y slots\ejs.zlib.slots.h $(IncDir)
+copy /Y bitos.h $(IncDir)
 copy /Y ejs.h $(IncDir)
 copy /Y ejsByteCode.h $(IncDir)
 copy /Y ejsByteCodeTable.h $(IncDir)

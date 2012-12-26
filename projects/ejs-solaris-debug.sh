@@ -3,7 +3,7 @@
 #
 
 ARCH="x86"
-ARCH="`uname -m | sed 's/i.86/x86/;s/x86_64/x64/'`"
+ARCH="`uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/'`"
 OS="solaris"
 PROFILE="debug"
 CONFIG="${OS}-${ARCH}-${PROFILE}"
@@ -23,12 +23,18 @@ if ! diff ${CONFIG}/inc/bit.h projects/ejs-${OS}-${PROFILE}-bit.h >/dev/null ; t
 	cp projects/ejs-${OS}-${PROFILE}-bit.h ${CONFIG}/inc/bit.h
 fi
 
+rm -rf ${CONFIG}/inc/bitos.h
+cp -r src/bitos.h ${CONFIG}/inc/bitos.h
+
 rm -rf ${CONFIG}/inc/mpr.h
 cp -r src/deps/mpr/mpr.h ${CONFIG}/inc/mpr.h
 
 ${CC} -c -o ${CONFIG}/obj/mprLib.o -mtune=generic -Wall -fPIC ${LDFLAGS} -Wshorten-64-to-32 ${DFLAGS} -I${CONFIG}/inc src/deps/mpr/mprLib.c
 
 ${CC} -shared -o ${CONFIG}/bin/libmpr.so ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/mprLib.o ${LIBS}
+
+rm -rf ${CONFIG}/inc/est.h
+cp -r src/deps/est/est.h ${CONFIG}/inc/est.h
 
 ${CC} -c -o ${CONFIG}/obj/mprSsl.o -mtune=generic -Wall -fPIC ${LDFLAGS} -Wshorten-64-to-32 ${DFLAGS} -I${CONFIG}/inc src/deps/mpr/mprSsl.c
 
@@ -93,20 +99,20 @@ cp -r src/slots/ejs.web.slots.h ${CONFIG}/inc/ejs.web.slots.h
 rm -rf ${CONFIG}/inc/ejs.zlib.slots.h
 cp -r src/slots/ejs.zlib.slots.h ${CONFIG}/inc/ejs.zlib.slots.h
 
-rm -rf ${CONFIG}/inc/ejs.h
-cp -r src/ejs.h ${CONFIG}/inc/ejs.h
-
 rm -rf ${CONFIG}/inc/ejsByteCode.h
 cp -r src/ejsByteCode.h ${CONFIG}/inc/ejsByteCode.h
 
 rm -rf ${CONFIG}/inc/ejsByteCodeTable.h
 cp -r src/ejsByteCodeTable.h ${CONFIG}/inc/ejsByteCodeTable.h
 
-rm -rf ${CONFIG}/inc/ejsCompiler.h
-cp -r src/ejsCompiler.h ${CONFIG}/inc/ejsCompiler.h
-
 rm -rf ${CONFIG}/inc/ejsCustomize.h
 cp -r src/ejsCustomize.h ${CONFIG}/inc/ejsCustomize.h
+
+rm -rf ${CONFIG}/inc/ejs.h
+cp -r src/ejs.h ${CONFIG}/inc/ejs.h
+
+rm -rf ${CONFIG}/inc/ejsCompiler.h
+cp -r src/ejsCompiler.h ${CONFIG}/inc/ejsCompiler.h
 
 ${CC} -c -o ${CONFIG}/obj/ecAst.o -mtune=generic -Wall -fPIC ${LDFLAGS} -Wshorten-64-to-32 ${DFLAGS} -I${CONFIG}/inc src/compiler/ecAst.c
 

@@ -70,7 +70,7 @@
     #define BIT_REQUIRED "compiler,lib,link,pcre,zlib"
 #endif
 #ifndef BIT_SYNC
-    #define BIT_SYNC "est,http,mpr,pcre,sqlite,zlib"
+    #define BIT_SYNC "bitos,est,http,mpr,pcre,sqlite,zlib"
 #endif
 #ifndef BIT_TITLE
     #define BIT_TITLE "Embedthis Ejscript"
