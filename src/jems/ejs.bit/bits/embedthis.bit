@@ -118,7 +118,7 @@ Bit.load({
                             (file.size / 1024 / 1024).toFixed(2) + ' MB')
                         http.upload(uri, file, {branch: branch, server: System.hostname, key: key})
                         if (http.status != 200) {
-                            throw 'Cant upload ' + file
+                            throw 'Cant upload ' + file + '\n' + http.response
                         }
                     }
                 }
