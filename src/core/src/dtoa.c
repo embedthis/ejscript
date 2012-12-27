@@ -196,8 +196,8 @@
 #if EMBEDTHIS || 1
 #include    "mpr.h"
     #define MULTIPLE_THREADS 1
-    extern void ejsLockDtoa(int n);
-    extern void ejsUnlockDtoa(int n);
+    PUBLIC void ejsLockDtoa(int n);
+    PUBLIC void ejsUnlockDtoa(int n);
     #if WINDOWS || WINCE
         typedef int int32_t;
         typedef unsigned int uint32_t;
