@@ -1615,7 +1615,7 @@
 		022081D70220F0E300000123 /* ejsc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsc.c; path = src/cmd/ejsc.c; sourceTree = "<group>"; };
 		022081D70220F0E30000022B /* ejsc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ejsc; sourceTree = BUILT_PRODUCTS_DIR; };
 		022081D70220F0E300000125 /* ejsmod.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsmod.c; path = src/cmd/ejsmod.c; sourceTree = "<group>"; };
-		022081D70220F0E30000022C /* ejsmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsmod.h; path = macosx-x64-xcode/inc/ejsmod.h; sourceTree = "<group>"; };
+		022081D70220F0E30000022C /* ejsmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsmod.h; path = src/cmd/ejsmod.h; sourceTree = "<group>"; };
 		022081D70220F0E300000127 /* doc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = doc.c; path = src/cmd/doc.c; sourceTree = "<group>"; };
 		022081D70220F0E300000129 /* docFiles.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = docFiles.c; path = src/cmd/docFiles.c; sourceTree = "<group>"; };
 		022081D70220F0E30000012B /* listing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = listing.c; path = src/cmd/listing.c; sourceTree = "<group>"; };

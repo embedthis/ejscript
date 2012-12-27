@@ -861,32 +861,32 @@ $(CONFIG)\bin\ejsc.exe:  \
 $(CONFIG)\obj\ejsmod.obj: \
         src\cmd\ejsmod.c \
         $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejsmod.h
+        src\cmd\ejsmod.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsmod.obj -Fd$(CONFIG)\obj\ejsmod.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\cmd src\cmd\ejsmod.c
 
 $(CONFIG)\obj\doc.obj: \
         src\cmd\doc.c \
         $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejsmod.h
+        src\cmd\ejsmod.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\doc.obj -Fd$(CONFIG)\obj\doc.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\cmd src\cmd\doc.c
 
 $(CONFIG)\obj\docFiles.obj: \
         src\cmd\docFiles.c \
         $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejsmod.h
+        src\cmd\ejsmod.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\docFiles.obj -Fd$(CONFIG)\obj\docFiles.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\cmd src\cmd\docFiles.c
 
 $(CONFIG)\obj\listing.obj: \
         src\cmd\listing.c \
         $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejsmod.h \
+        src\cmd\ejsmod.h \
         $(CONFIG)\inc\ejsByteCodeTable.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\listing.obj -Fd$(CONFIG)\obj\listing.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\cmd src\cmd\listing.c
 
 $(CONFIG)\obj\slotGen.obj: \
         src\cmd\slotGen.c \
         $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejsmod.h
+        src\cmd\ejsmod.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\slotGen.obj -Fd$(CONFIG)\obj\slotGen.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\cmd src\cmd\slotGen.c
 
 $(CONFIG)\bin\ejsmod.exe:  \

@@ -71,6 +71,7 @@ prep:
 	@if [ "$(CONFIG)" = "" ] ; then echo WARNING: CONFIG not set ; exit 255 ; fi
 	@[ ! -x $(CONFIG)/inc ] && mkdir -p $(CONFIG)/inc $(CONFIG)/obj $(CONFIG)/lib $(CONFIG)/bin ; true
 	@[ ! -f $(CONFIG)/inc/bit.h ] && cp projects/ejs-$(OS)-$(PROFILE)-bit.h $(CONFIG)/inc/bit.h ; true
+	@[ ! -f $(CONFIG)/inc/bitos.h ] && cp src/bitos.h $(CONFIG)/inc/bitos.h ; true
 	@if ! diff $(CONFIG)/inc/bit.h projects/ejs-$(OS)-$(PROFILE)-bit.h >/dev/null ; then\
 		echo cp projects/ejs-$(OS)-$(PROFILE)-bit.h $(CONFIG)/inc/bit.h  ; \
 		cp projects/ejs-$(OS)-$(PROFILE)-bit.h $(CONFIG)/inc/bit.h  ; \
@@ -861,32 +862,32 @@ $(CONFIG)/bin/ejsc:  \
 $(CONFIG)/obj/ejsmod.o: \
         src/cmd/ejsmod.c \
         $(CONFIG)/inc/bit.h \
-        $(CONFIG)/inc/ejsmod.h
+        src/cmd/ejsmod.h
 	$(CC) -c -o $(CONFIG)/obj/ejsmod.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/cmd src/cmd/ejsmod.c
 
 $(CONFIG)/obj/doc.o: \
         src/cmd/doc.c \
         $(CONFIG)/inc/bit.h \
-        $(CONFIG)/inc/ejsmod.h
+        src/cmd/ejsmod.h
 	$(CC) -c -o $(CONFIG)/obj/doc.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/cmd src/cmd/doc.c
 
 $(CONFIG)/obj/docFiles.o: \
         src/cmd/docFiles.c \
         $(CONFIG)/inc/bit.h \
-        $(CONFIG)/inc/ejsmod.h
+        src/cmd/ejsmod.h
 	$(CC) -c -o $(CONFIG)/obj/docFiles.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/cmd src/cmd/docFiles.c
 
 $(CONFIG)/obj/listing.o: \
         src/cmd/listing.c \
         $(CONFIG)/inc/bit.h \
-        $(CONFIG)/inc/ejsmod.h \
+        src/cmd/ejsmod.h \
         $(CONFIG)/inc/ejsByteCodeTable.h
 	$(CC) -c -o $(CONFIG)/obj/listing.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/cmd src/cmd/listing.c
 
 $(CONFIG)/obj/slotGen.o: \
         src/cmd/slotGen.c \
         $(CONFIG)/inc/bit.h \
-        $(CONFIG)/inc/ejsmod.h
+        src/cmd/ejsmod.h
 	$(CC) -c -o $(CONFIG)/obj/slotGen.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/cmd src/cmd/slotGen.c
 
 $(CONFIG)/bin/ejsmod:  \
