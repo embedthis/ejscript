@@ -106,11 +106,27 @@
     <ClCompile Include="..\..\src\jems\ejs.web\ejsWeb.c" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ClInclude Include="$(IncDir)\ejs.web.slots.h" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ClInclude Include="$(IncDir)\ejsWeb.h" />
+  </ItemGroup>
+
   <ItemDefinitionGroup>
   <Link>
     <AdditionalDependencies>libejs.lib;libhttp.lib;libpcre.lib;libmpr.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
+
+  <CustomBuildStep>
+    <Command>cd ..\..\src\jems\ejs.web
+copy /Y ejs.web.slots.h $(IncDir)
+copy /Y ejsWeb.h $(IncDir)
+cd ..\..\..\projects\ejs-windows-vs</Command>
+    <Outputs>$(BinDir)\libejs.web.dll</Outputs>
+  </CustomBuildStep>
   </ItemDefinitionGroup>
 
 <ItemGroup>

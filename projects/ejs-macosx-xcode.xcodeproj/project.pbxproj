@@ -3205,8 +3205,8 @@ fi
 if [ ../src/slots/ejs.slots.h -nt ${CFG_DIR}/inc/ejs.slots.h ] ; then
 cp ../src/slots/ejs.slots.h ${CFG_DIR}/inc/ejs.slots.h
 fi
-if [ ../src/slots/ejs.web.slots.h -nt ${CFG_DIR}/inc/ejs.web.slots.h ] ; then
-cp ../src/slots/ejs.web.slots.h ${CFG_DIR}/inc/ejs.web.slots.h
+if [ ../src/jems/ejs.web/ejs.web.slots.h -nt ${CFG_DIR}/inc/ejs.web.slots.h ] ; then
+cp ../src/jems/ejs.web/ejs.web.slots.h ${CFG_DIR}/inc/ejs.web.slots.h
 fi
 if [ ../src/slots/ejs.zlib.slots.h -nt ${CFG_DIR}/inc/ejs.zlib.slots.h ] ; then
 cp ../src/slots/ejs.zlib.slots.h ${CFG_DIR}/inc/ejs.zlib.slots.h
@@ -3228,6 +3228,12 @@ cp ../src/ejsCompiler.h ${CFG_DIR}/inc/ejsCompiler.h
 fi
 if [ ../src/ejsCustomize.h -nt ${CFG_DIR}/inc/ejsCustomize.h ] ; then
 cp ../src/ejsCustomize.h ${CFG_DIR}/inc/ejsCustomize.h
+fi
+if [ ../src/jems/ejs.web/ejs.web.slots.h -nt ${CFG_DIR}/inc/ejs.web.slots.h ] ; then
+cp ../src/jems/ejs.web/ejs.web.slots.h ${CFG_DIR}/inc/ejs.web.slots.h
+fi
+if [ ../src/jems/ejs.web/ejsWeb.h -nt ${CFG_DIR}/inc/ejsWeb.h ] ; then
+cp ../src/jems/ejs.web/ejsWeb.h ${CFG_DIR}/inc/ejsWeb.h
 fi";
 		};
 /* End PBXShellScriptBuildPhase section */

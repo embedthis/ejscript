@@ -99,7 +99,7 @@ rm -rf ${CONFIG}/inc/ejs.slots.h
 cp -r src/slots/ejs.slots.h ${CONFIG}/inc/ejs.slots.h
 
 rm -rf ${CONFIG}/inc/ejs.web.slots.h
-cp -r src/slots/ejs.web.slots.h ${CONFIG}/inc/ejs.web.slots.h
+cp -r src/jems/ejs.web/ejs.web.slots.h ${CONFIG}/inc/ejs.web.slots.h
 
 rm -rf ${CONFIG}/inc/ejs.zlib.slots.h
 cp -r src/slots/ejs.zlib.slots.h ${CONFIG}/inc/ejs.zlib.slots.h
@@ -306,6 +306,9 @@ cd src/jems/ejs.web >/dev/null ;\
 if ! diff ejs.web.slots.h ../../../${CONFIG}/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../../${CONFIG}/inc; fi ;\
 rm -f ejs.web.slots.h ;\
 cd - >/dev/null 
+
+rm -rf ${CONFIG}/inc/ejsWeb.h
+cp -r src/jems/ejs.web/ejsWeb.h ${CONFIG}/inc/ejsWeb.h
 
 "${CC}" -c -Fo${CONFIG}/obj/ejsHttpServer.obj -Fd${CONFIG}/obj/ejsHttpServer.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsHttpServer.c
 

@@ -366,7 +366,7 @@ $(CONFIG)\inc\ejs.slots.h:  \
 $(CONFIG)\inc\ejs.web.slots.h:  \
         $(CONFIG)\inc\bit.h
 	-if exist $(CONFIG)\inc\ejs.web.slots.h del /Q $(CONFIG)\inc\ejs.web.slots.h
-	copy /Y src\slots\ejs.web.slots.h $(CONFIG)\inc\ejs.web.slots.h
+	copy /Y src\jems\ejs.web\ejs.web.slots.h $(CONFIG)\inc\ejs.web.slots.h
 
 $(CONFIG)\inc\ejs.zlib.slots.h:  \
         $(CONFIG)\inc\bit.h
@@ -1037,6 +1037,13 @@ $(CONFIG)\bin\ejs.web.mod:  \
 	del ejs.web.slots.h
 		cd ..\..\..
 
+$(CONFIG)\inc\ejsWeb.h:  \
+        $(CONFIG)\inc\bit.h \
+        $(CONFIG)\inc\http.h \
+        $(CONFIG)\inc\ejs.web.slots.h
+	-if exist $(CONFIG)\inc\ejsWeb.h del /Q $(CONFIG)\inc\ejsWeb.h
+	copy /Y src\jems\ejs.web\ejsWeb.h $(CONFIG)\inc\ejsWeb.h
+
 $(CONFIG)\obj\ejsHttpServer.obj: \
         src\jems\ejs.web\ejsHttpServer.c \
         $(CONFIG)\inc\bit.h \
@@ -1074,6 +1081,8 @@ $(CONFIG)\obj\ejsWeb.obj: \
 $(CONFIG)\bin\libejs.web.dll:  \
         $(CONFIG)\bin\libejs.dll \
         $(CONFIG)\bin\ejs.mod \
+        $(CONFIG)\inc\ejs.web.slots.h \
+        $(CONFIG)\inc\ejsWeb.h \
         $(CONFIG)\obj\ejsHttpServer.obj \
         $(CONFIG)\obj\ejsRequest.obj \
         $(CONFIG)\obj\ejsSession.obj \
