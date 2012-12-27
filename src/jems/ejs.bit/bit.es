@@ -1169,6 +1169,7 @@ public class Bit {
             'mkdir -p ${CONFIG}/inc ${CONFIG}/obj ${CONFIG}/lib ${CONFIG}/bin\n')
         genout.writeLine('[ ! -f ${CONFIG}/inc/bit.h ] && ' + 
             'cp projects/' + bit.settings.product + '-${OS}-${PROFILE}-bit.h ${CONFIG}/inc/bit.h')
+        genout.writeLine('[ ! -f ${CONFIG}/inc/bitos.h ] && cp src/bitos.h ${CONFIG}/inc/bitos.h')
         genout.writeLine('if ! diff ${CONFIG}/inc/bit.h projects/' + bit.settings.product + 
             '-${OS}-${PROFILE}-bit.h >/dev/null ; then')
         genout.writeLine('\tcp projects/' + bit.settings.product + '-${OS}-${PROFILE}-bit.h ${CONFIG}/inc/bit.h')
@@ -1223,6 +1224,7 @@ public class Bit {
             'mkdir -p $(CONFIG)/inc $(CONFIG)/obj $(CONFIG)/lib $(CONFIG)/bin ; true')
         genout.writeLine('\t@[ ! -f $(CONFIG)/inc/bit.h ] && ' + 
             'cp projects/' + bit.settings.product + '-$(OS)-$(PROFILE)-bit.h $(CONFIG)/inc/bit.h ; true')
+        genout.writeLine('\t@[ ! -f $(CONFIG)/inc/bitos.h ] && cp src/bitos.h $(CONFIG)/inc/bitos.h ; true')
         genout.writeLine('\t@if ! diff $(CONFIG)/inc/bit.h projects/' + bit.settings.product + 
             '-$(OS)-$(PROFILE)-bit.h >/dev/null ; then\\')
         genout.writeLine('\t\techo cp projects/' + bit.settings.product + 
@@ -2745,7 +2747,10 @@ public class Bit {
             let path
             for each (dir in target.includes) {
                 path = Path(dir).join(ifile)
-                if (/* UNUSED path.exists && */ !path.isDir) {
+                //  MOB - removed path.exists for some reason.
+                //  But it needs to be here to try to find a header under src instead of *debug/inc
+                //  This was the ejsmod.h bug
+                if (path.exists && !path.isDir) {
                     break
                 }
                 if (options.why) {
