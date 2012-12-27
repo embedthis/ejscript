@@ -40,7 +40,7 @@ Bit.load({
             //  Add --debug for debug symbols
             build: "
                 trace('Compile', 'ejs.mod')
-                run('./ejsc --out ${LIB}/ejs.mod --optimize 9 --bind --require null ejs.es')
+                run('${BIN}/ejsc --out ${LIB}/ejs.mod --optimize 9 --bind --require null ejs.es')
             ",
             'generate-nmake': '\
                 "${BIN}\\ejsc" --out "${LIB}/ejs.mod" --optimize 9 --bind --require null "ejs.es"
