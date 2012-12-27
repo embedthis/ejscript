@@ -105,7 +105,10 @@ try {
         Bit.load({packs: { compiler: { path: cc, name: path.basename }}})
     }
 
-    if (cc && (platform.like == 'posix' || (platform.os == 'vxworks' && Config.OS == 'linux'))) {
+    if (bit.options.gen && Config.OS != platform.os) {
+        /* Can't sleuth when generating for a cross-platform */
+
+    } else if (cc && (platform.like == 'posix' || (platform.os == 'vxworks' && Config.OS == 'linux'))) {
         settings.hasDoubleBraces = compile(cc, '', '#include <stdarg.h>\nva_list d = {{0}};')
         settings.hasMtune = compile(cc, '-mtune=generic', 'int main() { return 0;}')
         settings.hasStackProtector = compile(cc, '-fno-stack-protector', 'int main() { return 0;}')
