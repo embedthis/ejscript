@@ -182,7 +182,7 @@ public function packageComboFiles() {
         cat: true,
         filter: filter,
         /* Include deps/zlib */
-        exclude: /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|mpr|http|pcre|\/sqlite|ejs.debugger|samples|utils/,
+        exclude: /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|mpr|http|pcre|\/est|\/sqlite|ejs.debugger|samples|utils/,
         header: '#define EJS_DEFINE_OPTABLE 1\n#include \"ejs.h\"',
         title: bit.settings.title + ' Library Source',
     })
