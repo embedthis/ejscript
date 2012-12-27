@@ -107,10 +107,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ClInclude Include="$(IncDir)\ejs.web.slots.h" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ClInclude Include="$(IncDir)\ejsWeb.h" />
   </ItemGroup>
 
@@ -122,7 +118,6 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\jems\ejs.web
-copy /Y ejs.web.slots.h $(IncDir)
 copy /Y ejsWeb.h $(IncDir)
 cd ..\..\..\projects\ejs-windows-vs</Command>
     <Outputs>$(BinDir)\libejs.web.dll</Outputs>

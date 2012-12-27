@@ -367,7 +367,7 @@ $(CONFIG)/inc/ejs.slots.h:  \
 $(CONFIG)/inc/ejs.web.slots.h:  \
         $(CONFIG)/inc/bit.h
 	rm -fr $(CONFIG)/inc/ejs.web.slots.h
-	cp -r src/jems/ejs.web/ejs.web.slots.h $(CONFIG)/inc/ejs.web.slots.h
+	cp -r src/slots/ejs.web.slots.h $(CONFIG)/inc/ejs.web.slots.h
 
 $(CONFIG)/inc/ejs.zlib.slots.h:  \
         $(CONFIG)/inc/bit.h
@@ -1081,7 +1081,6 @@ $(CONFIG)/obj/ejsWeb.o: \
 $(CONFIG)/bin/libejs.web.dylib:  \
         $(CONFIG)/bin/libejs.dylib \
         $(CONFIG)/bin/ejs.mod \
-        $(CONFIG)/inc/ejs.web.slots.h \
         $(CONFIG)/inc/ejsWeb.h \
         $(CONFIG)/obj/ejsHttpServer.o \
         $(CONFIG)/obj/ejsRequest.o \

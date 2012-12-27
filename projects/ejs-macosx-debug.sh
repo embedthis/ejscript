@@ -95,7 +95,7 @@ rm -rf ${CONFIG}/inc/ejs.slots.h
 cp -r src/slots/ejs.slots.h ${CONFIG}/inc/ejs.slots.h
 
 rm -rf ${CONFIG}/inc/ejs.web.slots.h
-cp -r src/jems/ejs.web/ejs.web.slots.h ${CONFIG}/inc/ejs.web.slots.h
+cp -r src/slots/ejs.web.slots.h ${CONFIG}/inc/ejs.web.slots.h
 
 rm -rf ${CONFIG}/inc/ejs.zlib.slots.h
 cp -r src/slots/ejs.zlib.slots.h ${CONFIG}/inc/ejs.zlib.slots.h
