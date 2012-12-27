@@ -2758,6 +2758,9 @@ public class Bit {
                 }
                 path = null
             }
+            if (!path) {
+                path = bit.dir.inc.join(ifile)
+            }
             if (path && !depends.contains(path)) {
                 depends.push(path)
             }
