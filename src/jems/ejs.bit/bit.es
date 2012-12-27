@@ -1158,7 +1158,12 @@ public class Bit {
         if (bit.packs.link) {
             genout.writeLine('LD="' + bit.packs.link.path + '"')
         }
-        genout.writeLine('CFLAGS="' + gen.compiler + '"')
+        let cflags = gen.compiler
+        for each (word in minimalCflags) {
+            cflags = cflags.replace(word, '')
+        }
+        cflags += ' -w'
+        genout.writeLine('CFLAGS="' + cflags.trim() + '"')
         genout.writeLine('DFLAGS="' + gen.defines + '"')
         genout.writeLine('IFLAGS="' + 
             repvar(bit.defaults.includes.map(function(path) '-I' + path.relative).join(' ')) + '"')
@@ -2376,6 +2381,9 @@ public class Bit {
             command = command.replace(RegExp(gen.configuration, 'g'), '$${CONFIG}')
             command = command.replace(bit.packs.compiler.path, '${CC}')
             command = command.replace(bit.packs.link.path, '${LD}')
+            for each (word in minimalCflags) {
+                command = command.replace(word, '')
+            }
         }
         if (generating == 'nmake') {
             command = command.replace('_DllMainCRTStartup@12', '$(ENTRY)')
