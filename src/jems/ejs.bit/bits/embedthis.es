@@ -656,8 +656,9 @@ public function apidoc(dox: Path, headers, title: String, tags) {
     files += ls(api.join('xml/group*')) + ls(api.join('xml/struct_*.xml'))
     let tstr = tags ? tags.map(function(i) '--tags ' + Path(i).absolute).join(' ') : ''
 
-    run(bit.packs.ejs.path + ' ' + bit.dir.bits.join('gendoc.es') + ' --bare ' + '--title \"' + bit.settings.product.toUpper() + 
-        ' - ' + title + ' Native API\" --out ' + name + 'Bare.html ' +  tstr + ' ' + files.join(' '), {dir: api})
+    run('ejs ' + bit.dir.bits.join('gendoc.es') + ' --bare ' + '--title \"' + 
+        bit.settings.product.toUpper() + ' - ' + title + ' Native API\" --out ' + name + 
+        'Bare.html ' +  tstr + ' ' + files.join(' '), {dir: api})
     if (!bit.options.keep) {
         rmdir([api.join('html'), api.join('xml')])
     }

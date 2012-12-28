@@ -1155,7 +1155,7 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         result = ejsCreateBareString(ejs, BIT_MAX_BUFFER);
         result->length = 0;
         startNextMatch = endLastMatch = 0;
-
+        int xcount = 0;
         do {
             if (startNextMatch > sp->length) {
                 break;
@@ -1211,7 +1211,8 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                             cp--;
                             if (submatch < count) {
                                 submatch *= 2;
-                                result = buildString(ejs, result, &sp->value[matches[submatch]], matches[submatch + 1] - matches[submatch]);
+                                result = buildString(ejs, result, 
+                                    &sp->value[matches[submatch]], matches[submatch + 1] - matches[submatch]);
                             }
                         } else {
                             ejsThrowArgError(ejs, "Bad replacement $ specification");
@@ -1227,6 +1228,7 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             }
             endLastMatch = matches[1];
             startNextMatch = (startNextMatch == endLastMatch) ? startNextMatch + 1 : endLastMatch;
+            xcount++;
         } while (rp->global);
 
         if (endLastMatch < sp->length) {
@@ -1822,13 +1824,14 @@ static int catString(Ejs *ejs, EjsString *dest, char *str, ssize len)
 static EjsString *buildString(Ejs *ejs, EjsString *result, wchar *str, ssize len)
 {
     EjsString   *newBuf;
-    ssize       room, size;
+    ssize       room, size, extra;
 
     assure(result);
 
     room = mprGetBlockSize(result) - sizeof(EjsString);
     if ((result->length + len + 1) >= room) {
-        size = max(result->length + len, BIT_MAX_BUFFER);
+        extra = max(result->length / 8, len);
+        size = max(result->length + extra, 512);
         if ((newBuf = ejsCreateBareString(ejs, size)) == NULL) {
             return NULL;
         }
