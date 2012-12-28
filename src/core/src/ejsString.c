@@ -1155,7 +1155,6 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         result = ejsCreateBareString(ejs, BIT_MAX_BUFFER);
         result->length = 0;
         startNextMatch = endLastMatch = 0;
-        int xcount = 0;
         do {
             if (startNextMatch > sp->length) {
                 break;
@@ -1228,7 +1227,6 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             }
             endLastMatch = matches[1];
             startNextMatch = (startNextMatch == endLastMatch) ? startNextMatch + 1 : endLastMatch;
-            xcount++;
         } while (rp->global);
 
         if (endLastMatch < sp->length) {
