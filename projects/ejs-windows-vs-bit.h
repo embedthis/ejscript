@@ -9,9 +9,6 @@
 #ifndef BIT_BUILD_NUMBER
     #define BIT_BUILD_NUMBER "0"
 #endif
-#ifndef BIT_CIPHERS
-    #define BIT_CIPHERS "HIGH:MEDIUM"
-#endif
 #ifndef BIT_COMPANY
     #define BIT_COMPANY "Embedthis"
 #endif
@@ -33,8 +30,9 @@
 #ifndef BIT_HAS_UNNAMED_UNIONS
     #define BIT_HAS_UNNAMED_UNIONS 1
 #endif
-#ifndef BIT_MANAGER
-    #define BIT_MANAGER "ejsman"
+/* Settings */
+#ifndef BIT_MPR_MANAGER
+    #define BIT_MPR_MANAGER "ejsman"
 #endif
 #ifndef BIT_OPTIONAL
     #define BIT_OPTIONAL "doxygen,dsi,man,man2html,openssl,pmaker,sqlite,ssl,zip"
@@ -50,6 +48,9 @@
 #endif
 #ifndef BIT_REQUIRED
     #define BIT_REQUIRED "winsdk,compiler,lib,link,dumpbin,rc,pcre,zlib"
+#endif
+#ifndef BIT_STATIC
+    #define BIT_STATIC 0
 #endif
 #ifndef BIT_SYNC
     #define BIT_SYNC "bitos,est,http,mpr,pcre,sqlite,zlib"

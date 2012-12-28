@@ -4576,11 +4576,6 @@ fi";
 					"BIT_DEBUG",
 					"$(inherited)"
 				);
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
-
 			};
 			name = Debug;
 		};
@@ -4589,10 +4584,6 @@ fi";
 			buildSettings = {
 				PRODUCT_NAME = libhttp;
 
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
 
 			};
 			name = Release;
@@ -4606,11 +4597,6 @@ fi";
 					"BIT_DEBUG",
 					"$(inherited)"
 				);
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
-
 			};
 			name = Debug;
 		};
@@ -4619,10 +4605,6 @@ fi";
 			buildSettings = {
 				PRODUCT_NAME = http;
 
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
 
 			};
 			name = Release;
@@ -4701,11 +4683,6 @@ fi";
 					"BIT_DEBUG",
 					"$(inherited)"
 				);
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
-
 			};
 			name = Debug;
 		};
@@ -4714,10 +4691,6 @@ fi";
 			buildSettings = {
 				PRODUCT_NAME = libejs;
 
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
 
 			};
 			name = Release;
@@ -4732,7 +4705,6 @@ fi";
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-lpam",
 					"-ledit",
 					"$(inherited)"
 				);
@@ -4746,7 +4718,6 @@ fi";
 				PRODUCT_NAME = ejs;
 
 				OTHER_LDFLAGS = (
-					"-lpam",
 					"-ledit",
 					"$(inherited)"
 				);
@@ -4763,11 +4734,6 @@ fi";
 					"BIT_DEBUG",
 					"$(inherited)"
 				);
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
-
 			};
 			name = Debug;
 		};
@@ -4776,10 +4742,6 @@ fi";
 			buildSettings = {
 				PRODUCT_NAME = ejsc;
 
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
 
 			};
 			name = Release;
@@ -4797,11 +4759,6 @@ fi";
 					"BIT_DEBUG",
 					"$(inherited)"
 				);
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
-
 			};
 			name = Debug;
 		};
@@ -4812,11 +4769,6 @@ fi";
 
 				HEADER_SEARCH_PATHS = (
 					"../src/cmd",
-					"$(inherited)"
-				);
-
-				OTHER_LDFLAGS = (
-					"-lpam",
 					"$(inherited)"
 				);
 
@@ -4832,11 +4784,6 @@ fi";
 					"BIT_DEBUG",
 					"$(inherited)"
 				);
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
-
 			};
 			name = Debug;
 		};
@@ -4845,10 +4792,6 @@ fi";
 			buildSettings = {
 				PRODUCT_NAME = ejsrun;
 
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
 
 			};
 			name = Release;
@@ -4904,9 +4847,7 @@ fi";
 					"BIT_DEBUG",
 					"$(inherited)"
 				);
-				OTHER_LDFLAGS = (
-					"-lpam",
-					);
+				OTHER_LDFLAGS = ();
 
 				MACH_O_TYPE = staticlib;
 
@@ -4918,9 +4859,7 @@ fi";
 			buildSettings = {
 				PRODUCT_NAME = bit;
 
-				OTHER_LDFLAGS = (
-					"-lpam",
-					);
+				OTHER_LDFLAGS = ();
 
 				MACH_O_TYPE = staticlib;
 
@@ -4999,11 +4938,6 @@ fi";
 					"BIT_DEBUG",
 					"$(inherited)"
 				);
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
-
 			};
 			name = Debug;
 		};
@@ -5012,10 +4946,6 @@ fi";
 			buildSettings = {
 				PRODUCT_NAME = jem;
 
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
 
 			};
 			name = Release;
@@ -5092,11 +5022,6 @@ fi";
 					"BIT_DEBUG",
 					"$(inherited)"
 				);
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
-
 			};
 			name = Debug;
 		};
@@ -5105,10 +5030,6 @@ fi";
 			buildSettings = {
 				PRODUCT_NAME = libejs.db.sqlite;
 
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
 
 			};
 			name = Release;
@@ -5168,11 +5089,6 @@ fi";
 					"BIT_DEBUG",
 					"$(inherited)"
 				);
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
-
 			};
 			name = Debug;
 		};
@@ -5183,11 +5099,6 @@ fi";
 
 				HEADER_SEARCH_PATHS = (
 					"../src/jems/ejs.web/src",
-					"$(inherited)"
-				);
-
-				OTHER_LDFLAGS = (
-					"-lpam",
 					"$(inherited)"
 				);
 
@@ -5266,11 +5177,6 @@ fi";
 					"BIT_DEBUG",
 					"$(inherited)"
 				);
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
-
 			};
 			name = Debug;
 		};
@@ -5279,10 +5185,6 @@ fi";
 			buildSettings = {
 				PRODUCT_NAME = libejs.zlib;
 
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
 
 			};
 			name = Release;
@@ -5338,11 +5240,6 @@ fi";
 					"BIT_DEBUG",
 					"$(inherited)"
 				);
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
-
 			};
 			name = Debug;
 		};
@@ -5351,10 +5248,6 @@ fi";
 			buildSettings = {
 				PRODUCT_NAME = mvc;
 
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
 
 			};
 			name = Release;
@@ -5431,11 +5324,6 @@ fi";
 					"BIT_DEBUG",
 					"$(inherited)"
 				);
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
-
 			};
 			name = Debug;
 		};
@@ -5444,10 +5332,6 @@ fi";
 			buildSettings = {
 				PRODUCT_NAME = utest;
 
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"$(inherited)"
-				);
 
 			};
 			name = Release;
