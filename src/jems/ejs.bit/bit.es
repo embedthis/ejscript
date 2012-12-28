@@ -108,40 +108,40 @@ public class Bit {
     function usage(): Void {
         print('\nUsage: bit [options] [targets|actions] ...\n' +
             '  Options:\n' + 
-            '    --benchmark                        # Measure elapsed time\n' +
-            '    --configure path-to-source         # Configure for building\n' +
-            '    --continue                         # Continue on errors\n' +
-            '    --debug                            # Same as --profile debug\n' +
-            '    --depth                            # Set utest depth\n' +
-            '    --diagnose                         # Emit diagnostic trace \n' +
-            '    --dump                             # Dump the full project bit file\n' +
-            '    --endian [big|little]              # Define the CPU endianness\n' +
-            '    --file file.bit                    # Use the specified bit file\n' +
-            '    --force                            # Override warnings\n' +
-            '    --gen [make|nmake|sh|vs|xcode]     # Generate project file\n' + 
-            '    --help                             # Print help message\n' + 
-            '    --import                           # Import standard bit configuration\n' + 
-            '    --keep                             # Keep intermediate files\n' + 
-            '    --log logSpec                      # Save errors to a log file\n' +
-            '    --nocross                          # Build natively\n' +
-            '    --out path                         # Save output to a file\n' +
-            '    --platform os-arch[-cpu]           # Build for specified platform\n' +
-            '    --pre                              # Pre-process a source file to stdout\n' +
-            '    --prefix dir=path                  # Define installation path prefixes\n' +
-            '    --profile [debug|release|...]      # Use the build profile\n' +
-            '    --quiet                            # Quiet operation. Suppress trace \n' +
-            '    --reconfigure                      # Reconfigure with existing settings\n' +
-            '    --set [feature=value]              # Enable and a feature\n' +
-            '    --show                             # Show commands executed\n' +
-            '    --static                           # Make static without shared libraries\n' +
-            '    --rebuild                          # Rebuild all specified targets\n' +
-            '    --release                          # Same as --profile release\n' +
-            '    --unicode                          # Set char size to wide (unicode)\n' +
-            '    --unset feature                    # Unset a feature\n' +
-            '    --version                          # Dispay the bit version\n' +
-            '    --verbose                          # Trace operations\n' +
-            '    --with PACK[=PATH]                 # Build with package at PATH\n' +
-            '    --without PACK                     # Build without a package\n' +
+            '    --benchmark                            # Measure elapsed time\n' +
+            '    --configure path-to-source             # Configure for building\n' +
+            '    --continue                             # Continue on errors\n' +
+            '    --debug                                # Same as --profile debug\n' +
+            '    --depth                                # Set utest depth\n' +
+            '    --diagnose                             # Emit diagnostic trace \n' +
+            '    --dump                                 # Dump the full project bit file\n' +
+            '    --endian [big|little]                  # Define the CPU endianness\n' +
+            '    --file file.bit                        # Use the specified bit file\n' +
+            '    --force                                # Override warnings\n' +
+            '    --gen [make|nmake|sh|vs|xcode]         # Generate project file\n' + 
+            '    --help                                 # Print help message\n' + 
+            '    --import                               # Import standard bit configuration\n' + 
+            '    --keep                                 # Keep intermediate files\n' + 
+            '    --log logSpec                          # Save errors to a log file\n' +
+            '    --nocross                              # Build natively\n' +
+            '    --out path                             # Save output to a file\n' +
+            '    --platform os-arch[-cpu]               # Build for specified platform\n' +
+            '    --pre                                  # Pre-process a source file to stdout\n' +
+            '    --prefix dir=path                      # Define installation path prefixes\n' +
+            '    --profile [debug|release|...]          # Use the build profile\n' +
+            '    --quiet                                # Quiet operation. Suppress trace \n' +
+            '    --reconfigure                          # Reconfigure with existing settings\n' +
+            '    --set [feature=value]                  # Enable and a feature\n' +
+            '    --show                                 # Show commands executed\n' +
+            '    --static                               # Make static without shared libraries\n' +
+            '    --rebuild                              # Rebuild all specified targets\n' +
+            '    --release                              # Same as --profile release\n' +
+            '    --unicode                              # Set char size to wide (unicode)\n' +
+            '    --unset feature                        # Unset a feature\n' +
+            '    --version                              # Dispay the bit version\n' +
+            '    --verbose                              # Trace operations\n' +
+            '    --with PACK[=PATH]                     # Build with package at PATH\n' +
+            '    --without PACK                         # Build without a package\n' +
             '')
         if (START.exists) {
             try {
@@ -159,7 +159,7 @@ public class Bit {
                 if (bit.usage) {
                     print('Feature Selection:')
                     for (let [item,msg] in bit.usage) {
-                        print('    --set %-28s # %s' % [item + '=value', msg])
+                        print('    --set %-32s # %s' % [item + '=value', msg])
                     }
                     print('')
                 }

@@ -52,11 +52,13 @@ Bit.load({
         packs: [ 'bits/packs' ],
         /* Must build locally to build tools */
         platforms: [ 'local' ],
-        manager: 'ejsman',
-        ciphers: "HIGH:MEDIUM",
         '+optional': [ 'doxygen', 'dsi', 'man', 'man2html', 'openssl', 'pmaker', 'sqlite', 'ssl', 'zip' ],
         '+required': [ 'pcre', 'zlib' ]
         'without-all': ['doxygen', 'dsi', 'man', 'man2html', 'ssl', 'matrixssl', 'openssl'],
+        static: false,
+        mpr: {
+            manager: 'ejsman',
+        },
     },
 
     usage: {
