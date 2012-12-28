@@ -44,7 +44,7 @@ module ejs.web {
             let response = innerApp.call(request, request)
             let size = (response.body is String) ? response.body.length : 0
             /*
-                Sample:  10.0.0.5 - - [16/Mar/2012:15:40:36 -0700] "GET /index.html HTTP/1.1" 200 44
+                Sample:  10.0.0.5 - - [16/Mar/2013:15:40:36 -0700] "GET /index.html HTTP/1.1" 200 44
              */
             let user = request.authUser || "-"
             let uri = request.pathInfo + (request.query ? ("?" + request.query) : "")
@@ -59,7 +59,7 @@ module ejs.web {
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

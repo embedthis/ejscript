@@ -635,7 +635,7 @@ static void generateTerms(EjsMod *mp)
         "<div class=\"terms\">\n"
         "   <p class=\"terms\">\n"
         "       <a href=\"http://embedthis.com/\">"
-        "       Embedthis Software LLC, 2003-2012. All rights reserved. "
+        "       Embedthis Software LLC, 2003-2013. All rights reserved. "
         "Embedthis is a trademark of Embedthis Software LLC.</a>\n"
         "   </p>\n"
         "</div>");
@@ -2578,7 +2578,7 @@ static MprKeyValue *createKeyPair(wchar *key, wchar *value)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 
