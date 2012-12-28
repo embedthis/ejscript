@@ -10,10 +10,12 @@ BIT(1)                           User Commands                          BIT(1)
            [<I>--file file.bit</I>] [<I>--force</I>] [<I>--gen  [make|sh|vs|xcode]</I>]  [<I>--import</I>]
            [<I>--keep</I>] [<I>--log logSpec</I>]
            [<I>--nocross</I>]  [<I>--out  path</I>]  [<I>--platform os-arch</I>] [<I>--pre sourcefile</I>]
-           [<I>--profile [debug|release|...]</I>]
-           [<I>--quiet</I>] [<I>--set [feature=value]</I>] [<I>--show</I>]  [<I>--static</I>]  [<I>--rebuild</I>]
-           [<I>--release</I>] [<I>--unset feature</I>] [<I>--version</I>]
-           [<I>--verbose</I>] [<I>--with PACK[=PATH]</I>] [<I>--without PACK</I>] [targets|actions]
+           [<I>--prefix dir=path</I>]
+           [<I>--profile [debug|release|...]</I>]  [<I>--quiet</I>]  [<I>--reconfigure</I>]  [<I>--set</I>
+           <I>[feature=value]</I>] [<I>--show</I>]
+           [<I>--static</I>]  [<I>--rebuild</I>]  [<I>--release</I>]  [<I>--unset feature</I>] [<I>--version</I>]
+           [<I>--verbose</I>]
+           [<I>--with PACK[=PATH]</I>] [<I>--without PACK</I>] [targets|actions]
 
 <B>DESCRIPTION</B>
        The <B>bit </B>command is modern replacement for the venerable make and not so
@@ -246,21 +248,31 @@ BIT(1)                           User Commands                          BIT(1)
        source  files,  and  the  'math'  library when linking executables (and
        libraries on some systems).
 
+<B>OVERRIDING</B>
+       Bit has default command flags for the compiler, linker and other tools.
+       These  can  be overridden by providing environment variables containing
+       alternate flags to use. Use CFLAGS to provide  compiler  flags,  DFLAGS
+       for  pre-processor  definitions,  IFLAGS for compiler include paths and
+       LDFLAGS for linker flags. If these  flags  are  provided  to  bit  when
+       building,  they  apply  to that run only. If the flags are provide when
+       configuring, they are saved in the generated platform  build  file  and
+       apply to all subsequent runs.
+
 <B>DEBUGGING</B>
-       With Make and other build tools, it is difficult  to  determine  why  a
+       With  Make  and  other  build tools, it is difficult to determine why a
        target is or is not being built. Bit provides a '--why' switch to diag-
-       nose problematic build sequences. This switch displays the  reason  why
+       nose  problematic  build sequences. This switch displays the reason why
        each target was or was not built.
 
-       In  a  complex  project containing many Bit files, it can be helpful to
-       see the entire bit configuration in one file. Use the  '--dump'  switch
+       In a complex project containing many Bit files, it can  be  helpful  to
+       see  the  entire bit configuration in one file. Use the '--dump' switch
        to save a copy of the entire configuration. In the dump, build defaults
-       are fully expanded to each target contains the  expanded  configuration
+       are  fully  expanded to each target contains the expanded configuration
        that will be used to build the target.
 
-       By  default, Bit builds relativley quietly and stops on the first build
-       error. To see the commands Bit is issuing, use the '--show' switch.  To
-       build  totally  quietly, use the '--quiet' switch. To continue building
+       By default, Bit builds relativley quietly and stops on the first  build
+       error.  To see the commands Bit is issuing, use the '--show' switch. To
+       build totally quietly, use the '--quiet' switch. To  continue  building
        despite build errors, use the '--continue' switch.
 
 <B>OPTIONS</B>
@@ -268,24 +280,24 @@ BIT(1)                           User Commands                          BIT(1)
               Measure the elapsed time to run bit.
 
        <B>--configure path-to-source</B>
-              Configure the project to prepare for building.  This  configures
+              Configure  the  project to prepare for building. This configures
               Bit for building the project based on the instructions specified
-              in a 'main.bit' located in the specified path source tree.  When
-              run,  bit will create a platform configuration bit file, a build
-              output directory and bit.h header. The  configuration  directory
-              is  of the form: OS-ARCH-PROFILE where OS may be freebsd, linux,
-              macosx, solaris, vxworks, windows and ARCH is  arm,  mips,  ppc,
-              x64  or  x86.  PROFILE is typically set to debug or release. For
+              in  a 'main.bit' located in the specified path source tree. When
+              run, bit will create a platform configuration bit file, a  build
+              output  directory  and bit.h header. The configuration directory
+              is of the form: OS-ARCH-PROFILE where OS may be freebsd,  linux,
+              macosx,  solaris,  vxworks,  windows and ARCH is arm, mips, ppc,
+              x64 or x86. PROFILE is typically set to debug  or  release.  For
               example: 'macosx-x86_64-debug'. The configuration bit file omits
               the PROFILE. For example: 'linux-x86.bit'.
 
               Bit will use the settings.required and settings.optional proper-
-              ties in the main.bit for a list of packages to use.   When  con-
-              figuring,  bit  will  search  for these packages and will create
+              ties  in  the main.bit for a list of packages to use.  When con-
+              figuring, bit will search for these  packages  and  will  create
               definitions in the configuration bit file for later use.
 
        <B>--continue</B>
-              Continue to build despite any build errors. Normal operation  is
+              Continue  to build despite any build errors. Normal operation is
               to stop building if any build errors are encountered.
 
        <B>--debug</B>
@@ -294,57 +306,62 @@ BIT(1)                           User Commands                          BIT(1)
        <B>--diagnose</B>
               Run bit with stack backtrace display on errors.
 
-       <B>--dump </B>Dump  the  aggregate  bit  configuration  into a single dump bit
+       <B>--dump </B>Dump the aggregate bit configuration  into  a  single  dump  bit
               file.
 
        <B>--file bitfile</B>
-              Use the  alternate  named  bit  file  instead  of  start.bit  or
+              Use  the  alternate  named  bit  file  instead  of  start.bit or
               main.bit.
 
        <B>--force</B>
               Override warnings and proceed with the operation.
 
        <B>--gen [make|nmake|sh|vs|xcode]</B>
-              Generate  project files for the current platform. This will gen-
-              erate  project  files  under  the  'projects'  directory.    The
+              Generate project files for the current platform. This will  gen-
+              erate   project  files  under  the  'projects'  directory.   The
               projects are based on the current configuration. If cross-gener-
-              ating projects, you will typically need to also use  -configure.
+              ating  projects, you will typically need to also use -configure.
 
-       <B>--keep </B>Keep  some  intermediate  build files. This is currently used by
+       <B>--keep </B>Keep some intermediate build files. This is  currently  used  by
               some documentation generation targets.
 
        <B>--log logName[:logLevel]</B>
-              Specify a file to log internal execution messages. Bit will  log
+              Specify  a file to log internal execution messages. Bit will log
               execution related trace to the log file. The log level specifies
-              the desired verbosity of output. Level 0 is  the  least  verbose
-              and  level 9 is the most. The '-v' switch is an alias for '--log
+              the  desired  verbosity  of output. Level 0 is the least verbose
+              and level 9 is the most. The '-v' switch is an alias for  '--log
               stderr:2'.
 
        <B>--nocross</B>
-              Don't cross-build, rather build  natively  for  the  development
-              system.  This is useful when configuring for a platform that can
-              build and run natively on the development system.  For  example:
-              Linux  64-bit  systems  can  run  32-bit  applications,  so 'bit
-              --nocross  --platform  linux-x86  configure'  may  be  able   to
-              directly  target  the  32-bit  platform  without cross-building.
-              Note: Products that require the building and execution of  local
+              Don't  cross-build,  rather  build  natively for the development
+              system. This is useful when configuring for a platform that  can
+              build  and  run natively on the development system. For example:
+              Linux 64-bit  systems  can  run  32-bit  applications,  so  'bit
+              --nocross   --platform  linux-x86  configure'  may  be  able  to
+              directly target  the  32-bit  platform  without  cross-building.
+              Note:  Products that require the building and execution of local
               tools MUST be able to run those tools on the development system.
 
        <B>--out path</B>
-              Save Bit trace output to a file instead  of  displaying  to  the
+              Save  Bit  trace  output  to a file instead of displaying to the
               console.
 
+       <B>--prefix dir=path</B>
+              Set the installation directory prefix. Various products  utilize
+              different prefixes. Typical prefixes are: bin, config, inc, log,
+              product, productver, spool, src, web.
+
        <B>--platform os-arch</B>
-              Add  a  platform  to build for cross-compilation. Multiple plat-
-              forms can be added. You may use 'local' for the local  platform.
-              Options  specified  after  the platform apply to the prior plat-
+              Add a platform to build for  cross-compilation.  Multiple  plat-
+              forms  can be added. You may use 'local' for the local platform.
+              Options specified after the platform apply to  the  prior  plat-
               form. For example:
 
-                  bit --platform linux-x86 --without all --platform  linux-arm
+                  bit  --platform linux-x86 --without all --platform linux-arm
               --with ejscript configure
 
        <B>--profile [debug|release|...]</B>
-              Use  the  specified  profile when building. This options is pro-
+              Use the specified profile when building. This  options  is  pro-
               vided once when configuring and the result is saved in the plat-
               form.profile property in the configuration bit file. Custom pro-
               files can be added to the main.bit or start.bit files.
@@ -352,16 +369,19 @@ BIT(1)                           User Commands                          BIT(1)
        <B>--quiet</B>
               Quiet operation. Suppresses output trace.
 
+       <B>--reconfigure</B>
+              Re-run configuration using the prior configuration settings.
+
        <B>--set key=value</B>
               Set a settings property to a given value. For example: 'bit -set
-              version=1.0'  will  update  the  settings.version property.  Use
+              version=1.0' will update  the  settings.version  property.   Use
               this when running 'bit configure' to persist your changes in the
               configuration bit file.
 
        <B>--show </B>Show the actual commands executed by bit.
 
        <B>--static</B>
-              Build  using static linking instead of shared libraries. Same as
+              Build using static linking instead of shared libraries. Same  as
               --set static=true.
 
        <B>--rebuild</B>
@@ -371,7 +391,7 @@ BIT(1)                           User Commands                          BIT(1)
               Select the release profile. Same as --profile release.
 
        <B>--unset key=value</B>
-              Clear a settings property.  Use this when running  'bit  config-
+              Clear  a  settings property.  Use this when running 'bit config-
               ure' to persist your changes in the configuration bit file.
 
        <B>--version</B>
@@ -381,9 +401,9 @@ BIT(1)                           User Commands                          BIT(1)
               Run in verbose mode with more trace about Bit activities.
 
        <B>--with PACK[=path]</B>
-              Build  with  the named pack located at the optional path. If the
-              path is ommitted, a search is performed for the pack at  default
-              locations.  Packs  must  have  a pack description file installed
+              Build with the named pack located at the optional path.  If  the
+              path  is ommitted, a search is performed for the pack at default
+              locations. Packs must have a  pack  description  file  installed
               under 'bits/packs' in the bit installation.
 
        <B>--without PACK</B>
@@ -393,7 +413,7 @@ BIT(1)                           User Commands                          BIT(1)
        Report bugs to dev@embedthis.com.
 
 <B>COPYRIGHT</B>
-       Copyright (C) 2004-2013 Embedthis Software.  Bit  and  Ejscript  are  a
+       Copyright  (C)  2004-2013  Embedthis  Software.  Bit and Ejscript are a
        trademarks of Embedthis Software.
 
 <B>SEE ALSO</B>
