@@ -34,7 +34,7 @@
         <div class="contentRight">
             <h1>Quick Nav</h1>
             <ul>
-                <li><a href="#r220">Release 2.2.0</a></li>
+                <li><a href="#r220">Release 2.2.1</a></li>
                 <li><a href="#r210">Release 2.1.0</a></li>
                 <li><a href="#r200">Release 2.0.0</a></li>
                 <li><a href="#r113">Release 1.1.4</a></li>
@@ -54,6 +54,33 @@
             <p>Please do not mine this list and create security advisories.
             Please see the <a href="http://github.com/embedthis/ejs-2/issues">Ejscript Issue Database</a> 
             for the official product issue list and for comprehensive CVE dispositions.</p>
+
+            <a id="r221"></a>
+            <h2 class="section">Changes in 2.2.1</h2>
+            <h3>Minor Features</h3>
+            <ul>
+                <li>Fixed listening on Windows 64 with IPv6 and IPv4 on a single socket.
+                    <a href="https://github.com/embedthis/ejs-2/issues/12">[issue 12].</a></li>
+                <li>Speed up Tar.extract
+                    <a href="https://github.com/embedthis/ejs-2/issues/13">[issue 13].</a></li>
+                <li>Add support for the Mocana SSL stack:
+                    <a href="https://github.com/embedthis/ejs-2/issues/17">[issue 17].</a></li>
+                <li>Add prototype support for the EST SSL stack:
+                    <a href="https://github.com/embedthis/ejs-2/issues/18">[issue 18].</a></li>
+            </ul>
+            <h3>Fixes</h3>
+            <ul>
+                <li>Fix JSON encoding and parsing of regular expressions
+                    <a href="https://github.com/embedthis/ejs-2/issues/14">[issue 14].</a></li>
+                <li>The mpr.h header has been split into a cross platform operating system layer called bitos.h.
+                    The mpr.h header includes this, so there should be no API impact.
+                    <a href="https://github.com/embedthis/ejs-2/issues/19">[issue 19].</a></li>
+                <li>Fix generated makefiles determining the system CPU architecture
+                    <a href="https://github.com/embedthis/ejs-2/issues/15">[issue 15].</a></li>
+                <li>Remove compiler switch -mtune when not required 
+                    <a href="https://github.com/embedthis/ejs-2/issues/16">[issue 16].</a></li>
+            </ul>
+
             <a id="r220"></a>
             <h2 class="section">Changes in 2.2.0</h2>
             <h3>Minor Features</h3>
@@ -62,7 +89,7 @@
                     <a href="https://github.com/embedthis/ejs-2/issues/3">[issue 3].</a></li>
                 <li>Added bit --prefix, to set installation path prefixes
                     <a href="https://github.com/embedthis/ejs-2/issues/10">[issue 10].</a></li>
-                    <li>Make bit listen to CFLAGS etc on all runs. Configure will save in platform bit file.
+                <li>Make bit listen to CFLAGS etc on all runs. Configure will save in platform bit file.
                     <a href="https://github.com/embedthis/ejs-2/issues/11">[issue 11].</a></li>
             </ul>
             <h3>Fixes</h3>
@@ -82,6 +109,8 @@
                 <li>Fix Logger.level, was asserting
                     <a href="https://github.com/embedthis/ejs-2/issues/9">[issue 9].</a></li>
             </ul>
+
+
             <a id="r210"></a>
             <h2 class="section">Changes in 2.1.0</h2>
             <h3>Minor Features</h3>
