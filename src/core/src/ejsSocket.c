@@ -111,7 +111,7 @@ static EjsObj *sock_connect(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
             address = ejsToString(ejs, address);
         }
         sp->address = ejsToMulti(ejs, address);
-        mprParseSocketAddress(sp->address, &sp->address, &sp->port, 0);
+        mprParseSocketAddress(sp->address, &sp->address, &sp->port, NULL, 0);
         if (sp->address == 0) {
             sp->address = sclone("127.0.0.1");
         }
@@ -165,7 +165,8 @@ static EjsObj *sock_listen(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
             address = ejsToString(ejs, address);
         }
         sp->address = ejsToMulti(ejs, address);
-        mprParseSocketAddress(sp->address, &sp->address, &sp->port, 80);
+        //  MOB - should listen to secure and permit https://IP:PORT
+        mprParseSocketAddress(sp->address, &sp->address, &sp->port, NULL, 80);
     }
     if (!sp->sock) {
         ejsThrowStateError(ejs, "Socket is closed");

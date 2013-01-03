@@ -64,7 +64,7 @@ PUBLIC void ejsDefineConfigProperties(Ejs *ejs)
     fmt(version, sizeof(version), "%s-%s", BIT_VERSION, BIT_BUILD_NUMBER);
     ejsDefineProperty(ejs, type, -1, N("public", "Version"), 0, att, ejsCreateStringFromAsc(ejs, version));
 
-    ejsDefineProperty(ejs, type, -1, N("public", "SSL"), 0, att, ejsCreateBoolean(ejs, BIT_PACK_SSL));
+    ejsDefineProperty(ejs, type, -1, N("public", "SSL"), 0, att, ejsCreateBoolean(ejs, BIT_SSL));
     ejsDefineProperty(ejs, type, -1, N("public", "SQLITE"), 0, att, ejsCreateBoolean(ejs, BIT_PACK_SQLITE));
 
     if (mprSamePath(mprGetAppDir(), BIT_BIN_PREFIX)) {

@@ -52,9 +52,9 @@ Bit.load({
         packs: [ 'bits/packs' ],
         /* Must build locally to build tools */
         platforms: [ 'local' ],
-        '+optional': [ 'doxygen', 'dsi', 'man', 'man2html', 'openssl', 'pmaker', 'sqlite', 'ssl', 'zip' ],
+        '+optional': [ 'doxygen', 'dsi', 'est', 'man', 'man2html', 'pmaker', 'sqlite', 'zip' ],
         '+required': [ 'pcre', 'zlib' ]
-        'without-all': ['doxygen', 'dsi', 'man', 'man2html', 'ssl', 'matrixssl', 'openssl'],
+        'without-all': ['doxygen', 'dsi', 'est', 'man', 'man2html', 'matrixssl', 'openssl'],
         static: false,
         mpr: {
             manager: 'ejsman',
@@ -146,8 +146,9 @@ Bit.load({
     },
 
     packs: {
-        matrixssl: {},
         est: {},
+        matrixssl: {},
+        openssl: {},
     },
 
 })

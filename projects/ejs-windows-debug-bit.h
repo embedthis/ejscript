@@ -5,6 +5,7 @@
     configure or define variables in your Makefile to override these default values.
  */
 
+
 /* Settings */
 #ifndef BIT_BUILD_NUMBER
     #define BIT_BUILD_NUMBER "0"
@@ -30,12 +31,11 @@
 #ifndef BIT_HAS_UNNAMED_UNIONS
     #define BIT_HAS_UNNAMED_UNIONS 1
 #endif
-/* Settings */
 #ifndef BIT_MPR_MANAGER
     #define BIT_MPR_MANAGER "ejsman"
 #endif
 #ifndef BIT_OPTIONAL
-    #define BIT_OPTIONAL "doxygen,dsi,man,man2html,openssl,pmaker,sqlite,ssl,zip"
+    #define BIT_OPTIONAL "doxygen,dsi,est,man,man2html,pmaker,sqlite,zip"
 #endif
 #ifndef BIT_PACKS
     #define BIT_PACKS "bits/packs"
@@ -62,7 +62,7 @@
     #define BIT_VERSION "2.3.0"
 #endif
 #ifndef BIT_WITHOUT_ALL
-    #define BIT_WITHOUT_ALL "doxygen,dsi,man,man2html,ssl,matrixssl,openssl"
+    #define BIT_WITHOUT_ALL "doxygen,dsi,est,man,man2html,matrixssl,openssl"
 #endif
 
 /* Prefixes */
@@ -181,9 +181,6 @@
 #endif
 #ifndef BIT_PACK_SQLITE
     #define BIT_PACK_SQLITE 1
-#endif
-#ifndef BIT_PACK_SSL
-    #define BIT_PACK_SSL 0
 #endif
 #ifndef BIT_PACK_WINSDK
     #define BIT_PACK_WINSDK 1

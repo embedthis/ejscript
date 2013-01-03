@@ -3,10 +3,10 @@
  */
 
 pack('openssl', 'OpenSSL SSL/TLS Security')
-if (bit.packs.ssl && bit.packs.ssl.enable == false) {
+
+if (!bit.ssl) {
     throw 'SSL has been disabled'
 }
-
 let cfg
 let path: Path? = bit.packs.openssl.path
 if (!path) {
@@ -82,3 +82,4 @@ if (bit.platform.os == 'windows') {
 
 let template = {packs: { openssl: cfg}}
 Bit.load(template)
+bit.settings.ssl = true

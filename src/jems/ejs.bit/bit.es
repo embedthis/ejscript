@@ -369,7 +369,7 @@ public class Bit {
             findPacks()
             genPlatformBitFile(platform)
             makeOutDirs()
-            makeBitHeader(platform)
+            genBitHeader(platform)
             importPackFiles()
             bit.cross = true
         }
@@ -420,9 +420,9 @@ public class Bit {
 
         for (let [key, value] in bit.settings) {
             /* Copy over non-standard settings. These include compiler sleuthing settings.  */
-            if (!bit.standardSettings[key]) {
+            //UNUSED if (!bit.standardSettings[key] || Object.getOwnPropertyCount(bit.settings[key])) {
                 nbit.settings[key] = value
-            }
+            // }
         }
         blend(nbit.settings, bit.customSettings)
         nbit.settings.configure = 'bit ' + App.args.slice(1).join(' ')
@@ -463,7 +463,7 @@ public class Bit {
         }
     }
 
-    function makeBitHeader(platform) {
+    function genBitHeader(platform) {
         let path = bit.dir.inc.join('bit.h')
         let f = TextStream(File(path, 'w'))
         f.writeLine('/*\n    bit.h -- Build It Configuration Header for ' + platform + '\n\n' +
@@ -484,7 +484,6 @@ public class Bit {
 
     function writeSettings(f: TextStream, platform, prefix: String, obj) {
         Object.sortProperties(obj)
-        f.writeLine('/* Settings */')
         for (let [key,value] in obj) {
             key = prefix + '_' + key.replace(/[A-Z]/g, '_$&').replace(/-/g, '_').toUpper()
             if (value is Number) {
@@ -503,8 +502,10 @@ public class Bit {
         if (options.endian) {
             settings.endian = options.endian == 'little' ? 1 : 2
         }
+        f.writeLine('\n/* Settings */')
         writeSettings(f, platform, "BIT", settings)
-        //Object.sortProperties(settings)
+
+        //UNUSED Object.sortProperties(settings)
         //f.writeLine('/* Settings */')
     /*
         for (let [key,value] in settings) {
@@ -619,6 +620,7 @@ public class Bit {
             }
             bit.settings[field] = value
         }
+        let required = []
         for each (field in poptions['with']) {
             let [field,value] = field.split('=')
             bit.packs[field] ||= {}
@@ -627,8 +629,12 @@ public class Bit {
             }
             bit.packs[field].required = true
             if (!bit.settings.required.contains(field) && !bit.settings.optional.contains(field)) {
-                bit.settings.optional.push(field)
+                required.push(field)
             }
+        }
+        if (required.length > 0) {
+            /* Insert explicit required first */
+            bit.settings.required = required + bit.settings.required
         }
         for each (field in poptions['without']) {
             if (bit.settings.required.contains(field)) { 
@@ -1174,7 +1180,7 @@ public class Bit {
             'mkdir -p ${CONFIG}/inc ${CONFIG}/obj ${CONFIG}/lib ${CONFIG}/bin\n')
         genout.writeLine('[ ! -f ${CONFIG}/inc/bit.h ] && ' + 
             'cp projects/' + bit.settings.product + '-${OS}-${PROFILE}-bit.h ${CONFIG}/inc/bit.h')
-        genout.writeLine('[ ! -f ${CONFIG}/inc/bitos.h ] && cp src/bitos.h ${CONFIG}/inc/bitos.h')
+        genout.writeLine('[ ! -f ${CONFIG}/inc/bitos.h ] && cp ${SRC}/src/bitos.h ${CONFIG}/inc/bitos.h')
         genout.writeLine('if ! diff ${CONFIG}/inc/bit.h projects/' + bit.settings.product + 
             '-${OS}-${PROFILE}-bit.h >/dev/null ; then')
         genout.writeLine('\tcp projects/' + bit.settings.product + '-${OS}-${PROFILE}-bit.h ${CONFIG}/inc/bit.h')

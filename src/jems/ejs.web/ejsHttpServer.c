@@ -200,7 +200,8 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         loc = (argc >= 1) ? argv[0] : ESV(null);
         if (loc != ESV(null)) {
             address = ejsToString(ejs, loc);
-            mprParseSocketAddress(address->value, &sp->ip, &sp->port, 0);
+            //  MOB should permit https://IP:PORT
+            mprParseSocketAddress(address->value, &sp->ip, &sp->port, NULL, 0);
         } else {
             address = 0;
         }

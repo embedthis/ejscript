@@ -2852,7 +2852,6 @@ cp -r bit.es ../../${CFG_DIR}/bin/bit.es
 ../src/jems/ejs.bit/bits/packs/ranlib.pak,
 ../src/jems/ejs.bit/bits/packs/rc.pak,
 ../src/jems/ejs.bit/bits/packs/sqlite.pak,
-../src/jems/ejs.bit/bits/packs/ssl.pak,
 ../src/jems/ejs.bit/bits/packs/strip.pak,
 ../src/jems/ejs.bit/bits/packs/tidy.pak,
 ../src/jems/ejs.bit/bits/packs/utest.pak,
@@ -3174,7 +3173,7 @@ cp utest.worker ../../../macosx-x64-xcode/bin";
 			shellScript = "PATH=$PATH:/usr/local/bin
 [ ! -x ${INC_DIR} ] && mkdir -p ${INC_DIR} ${OBJ_DIR} ${LIB_DIR} ${BIN_DIR}
 [ ! -f ${INC_DIR}/bit.h ] && cp ejs-macosx-xcode-bit.h ${INC_DIR}/bit.h
-[ ! -f ${INC_DIR}/bitos.h ] && cp src/bitos.h ${INC_DIR}/bitos.h
+[ ! -f ${INC_DIR}/bitos.h ] && cp ${SRC_DIR}/src/bitos.h ${INC_DIR}/bitos.h
 if ! diff ${INC_DIR}/bit.h ejs-macosx-xcode-bit.h >/dev/null ; then
 cp ejs-macosx-xcode-bit.h ${INC_DIR}/bit.h
 fi
