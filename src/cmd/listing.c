@@ -135,7 +135,7 @@ void emListingLoadCallback(Ejs *ejs, int kind, ...)
         break;
 
     default:
-        assure(0);
+        assert(0);
     }
     lst->kind = kind;
     mprAddItem(mp->lstRecords, lst);
@@ -195,7 +195,7 @@ static void lstClose(EjsMod *mp, MprList *modules, int firstModule)
             default:
             case EJS_SECT_START:
             case EJS_SECT_END:
-                assure(0);
+                assert(0);
                 break;
             }
         }
@@ -212,7 +212,7 @@ static int lstOpen(EjsMod *mp, char *moduleFilename, EjsModuleHdr *hdr)
 {
     char    *path, *name, *ext;
 
-    assure(mp);
+    assert(mp);
 
     name = mprGetPathBase(moduleFilename);
     if ((ext = strstr(name, EJS_MODULE_EXT)) != 0) {
@@ -277,7 +277,7 @@ static void lstEndModule(EjsMod *mp, EjsModule *module)
     ssize   size;
     int     i;
 
-    assure(mp);
+    assert(mp);
 
     mprFprintf(mp->file,
         "\n----------------------------------------------------------------------------------------------\n");
@@ -456,7 +456,7 @@ static void lstProperty(EjsMod *mp, EjsModule *module, EjsObj *block, int slotNu
         } else {
             propType = 0;
         }
-        assure(mp->currentBlock && ejsIsBlock(ejs, mp->currentBlock));
+        assert(mp->currentBlock && ejsIsBlock(ejs, mp->currentBlock));
         slotNum = ejsDefineProperty(ejs, (EjsObj*) mp->currentBlock, -1, qname, propType, attributes, 0);
     }
 }
@@ -598,7 +598,7 @@ static int decodeOperands(EjsMod *mp, EjsOptable *opt, char *argbuf, int argbufL
 
         case EBC_STRING:
             sval = getString(mp->ejs, mp);
-            assure(sval);
+            assert(sval);
             fmt(bufp, buflen,  "<%@> ", sval);
             break;
 
@@ -642,9 +642,9 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
     char        *currentFile, *src, *dest;
     int         maxOp, opcode, lineNumber, stack, codeLen, address, stackEffect, nbytes, i, lastLine;
 
-    assure(mp);
-    assure(module);
-    assure(fun);
+    assert(mp);
+    assert(module);
+    assert(fun);
 
     /*
         Store so that getNum and getString can easily read instructions
@@ -715,7 +715,7 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
         }
         if (stack < 0) {
             if (mp->warnOnError) {
-                mprPrintfError("Instruction stack is negative %d\n", stack);
+                mprEprintf("Instruction stack is negative %d\n", stack);
             }
             if (mp->exitOnError) {
                 exit(255);
@@ -736,8 +736,8 @@ static void lstVarSlot(EjsMod *mp, EjsModule *module, EjsName *qname, EjsTrait *
     Ejs         *ejs;
     EjsString   *space;
 
-    assure(slotNum >= 0);
-    assure(qname);
+    assert(slotNum >= 0);
+    assert(qname);
 
     ejs = mp->ejs;
     space = mapSpace(ejs, qname->space);
@@ -774,8 +774,8 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
     EjsName         qname;
     int             i, numInherited, count;
 
-    assure(obj);
-    assure(module);
+    assert(obj);
+    assert(module);
 
     ejs = mp->ejs;
     if (VISITED(obj)) {
@@ -816,7 +816,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
                 if (qname.name == 0) {
                     continue;
                 }
-                assure(trait);
+                assert(trait);
                 lstVarSlot(mp, module, &qname, trait, i);
             }
         }
@@ -831,7 +831,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
 
             for (i = 0; i < count; i++) {
                 trait = ejsGetPropertyTraits(ejs, obj, i);
-                assure(trait);
+                assert(trait);
                 qname = ejsGetPropertyName(ejs, obj, i);
                 lstVarSlot(mp, module, &qname, trait, i);
             }
@@ -850,7 +850,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
         count = ejsGetLength(ejs, (EjsObj*) type);
         for (i = 0; i < count; i++) {
             trait = ejsGetPropertyTraits(ejs, (EjsObj*) type, i);
-            assure(trait);
+            assert(trait);
             qname = ejsGetPropertyName(ejs, obj, i);
             lstVarSlot(mp, module, &qname, trait, i);
         }
@@ -870,7 +870,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
             count = ejsGetLength(ejs, prototype);
             for (i = 0; i < count; i++) {
                 trait = ejsGetPropertyTraits(ejs, prototype, i);
-                assure(trait);
+                assert(trait);
                 qname = ejsGetPropertyName(ejs, prototype, i);
                 if (qname.name) {
                     lstVarSlot(mp, module, &qname, trait, i);
@@ -891,7 +891,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
             count = ejsGetLength(ejs, obj);
             for (i = 0; i < count; i++) {
                 trait = ejsGetPropertyTraits(ejs, obj, i);
-                assure(trait);
+                assert(trait);
                 qname = ejsGetPropertyName(ejs, obj, i);
                 lstVarSlot(mp, module, &qname, trait, i);
             }
@@ -1049,7 +1049,7 @@ static EjsString *getString(Ejs *ejs, EjsMod *mp)
 
     number = (int) getNum(mp);
     if (number < 0) {
-        assure(number >= 0);
+        assert(number >= 0);
         return 0;
     }
     return ejsCreateStringFromConst(ejs, mp->module, number);
@@ -1076,7 +1076,7 @@ static void getGlobal(EjsMod *mp, char *buf, int buflen)
 
     switch (t & EJS_ENCODE_GLOBAL_MASK) {
     default:
-        assure(0);
+        assert(0);
         return;
 
     case EJS_ENCODE_GLOBAL_NOREF:
@@ -1101,7 +1101,7 @@ static void getGlobal(EjsMod *mp, char *buf, int buflen)
          */
         qname.name = ejsCreateStringFromConst(ejs, mp->module, t >> 2);
         if (qname.name == 0) {
-            assure(0);
+            assert(0);
             fmt(buf, buflen,  "<var: 0x%x,  missing name> ", t);
             return;
         }

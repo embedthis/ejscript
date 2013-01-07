@@ -1,0 +1,93 @@
+/*
+    mocana.pak -- Mocana NanoSSL package search
+ */
+
+pack('mocana', 'Mocana NanoSSL')
+
+if (bit.packs.ssl && bit.packs.ssl.enable === false) {
+    throw "SSL has been disabled"
+}
+let path: Path? = bit.packs.mocana.path
+if (!path) {
+    if (bit.dir.packs.join('mocana/latest').exists && Config.OS != 'windows') {
+        path = bit.dir.packs.join('mocana/latest')
+    } else {
+        let versions = sortVersions(bit.dir.packs.join('mocana').files('mocana-5*'))
+        if (!versions.length || versions.length == 0) {
+            throw 'Can\'t find Mocana NanoSSL'
+        }
+        path = versions[0]
+    }
+}
+
+let cfg = {}
+if (bit.platform.os == 'windows') {
+    let search = [path.join('autotools')]
+    let lib = probe('libmoc.dll', {fullpath: true, search: search}).absolute
+    let dir = lib.parent.parent
+    search = [path.join('src')]
+    let incdir = probe('common/moptions.h', {search: search}).absolute
+    cfg = {
+        dir: dir,
+        path: path,
+        defines: [ '-DWIN32', '-DMATRIX_USE_FILE_SYSTEM' ],
+        includes: [ incdir, incdir.parent ],
+        libraries: [ 'libmoc.lib' ],
+        libpaths: [ lib.parent ],
+        imports: [ lib, lib.replaceExt('lib') ]
+    }
+
+} else if (bit.platform.os == 'auto-macosx') {
+    let search = [path.join('autotools')]
+    let lib = probe('libmoc.dylib', {fullpath: true, search: search}).absolute
+    let dir = lib.parent
+    let search = [path.join('src')]
+    let incdir = probe('common/moptions.h', {search: search}).absolute
+    cfg = {
+        dir: dir,
+        path: path,
+        defines: [ '-D__RTOS_OSX__', '-D__ENABLE_MOCANA_SSL_SERVER__', '-D__ENABLE_ALL_DEBUGGING__', 
+            '-D__ENABLE_MOCANA_DEBUG_CONSOLE__', '-D__MOCANA_DUMP_CONSOLE_TO_STDOUT__']
+        includes: [ incdir ],
+        libraries: [ 'ssls' ],
+        libpaths: [ lib.parent ],
+        imports: [ lib ]
+    }
+
+} else if (bit.platform.os == 'macosx') {
+    let search = [path.join('bin')]
+    let lib = probe('libssls.a', {fullpath: true, search: search}).absolute
+    let dir = lib.parent
+    let search = [path.join('src')]
+    let incdir = probe('common/moptions.h', {search: search}).absolute
+    cfg = {
+        dir: dir,
+        path: path,
+        defines: [ '-D__RTOS_OSX__', '-D__ENABLE_MOCANA_SSL_SERVER__', '-D__ENABLE_ALL_DEBUGGING__', 
+            '-D__ENABLE_MOCANA_DEBUG_CONSOLE__', '-D__MOCANA_DUMP_CONSOLE_TO_STDOUT__']
+        includes: [ incdir ],
+        libraries: [ 'ssls' ],
+        libpaths: [ lib.parent ],
+        imports: [ lib ]
+    }
+
+} else {
+    let search = [path.join('autotools')]
+    let lib = probe('libmoc.so', {fullpath: true, search: search}).absolute
+    let dir = lib.parent.parent
+    search = [path.join('src')]
+    let incdir = probe('mocanaApi.h', {search: search}).absolute
+    cfg = {
+        dir: dir,
+        path: path,
+        defines: [ '-DPOSIX', '-DMATRIX_USE_FILE_SYSTEM' ],
+        includes: [ incdir, incdir.parent ],
+        libraries: [ 'mocana' ],
+        libpaths: [ lib.parent ],
+        imports: [ lib ],
+    }
+}
+
+let template = {packs: { mocana: cfg}}
+Bit.load(template)
+bit.settings.ssl = true

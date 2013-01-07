@@ -52,7 +52,7 @@ static EjsObj *iteratorConstructor(Ejs *ejs, EjsIterator *ip, int argc, EjsObj *
     }
     ip->target = argv[0];
     ip->next = (EjsFunction*) argv[1];
-    assure(ip->nativeNext == 0);
+    assert(ip->nativeNext == 0);
 
     return ip;
 }

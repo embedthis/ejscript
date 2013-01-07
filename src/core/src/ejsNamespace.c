@@ -129,7 +129,7 @@ PUBLIC EjsNamespace *ejsCreateReservedNamespace(Ejs *ejs, EjsName *typeName, Ejs
 {
     EjsString       *formattedName;
 
-    assure(spaceName);
+    assert(spaceName);
 
     if (typeName) {
         formattedName = ejsFormatReservedNamespace(ejs, typeName, spaceName);

@@ -182,12 +182,12 @@ static EjsObj *getXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname)
     for (nextItem = 0; (item = mprGetNextItem(list->elements, &nextItem)) != 0; ) {
         if (item->kind == EJS_XML_ELEMENT) {
             subList = ejsGetPropertyByName(ejs, (EjsObj*) item, qname);
-            assure(ejsIsXML(ejs, subList));
+            assert(ejsIsXML(ejs, subList));
             ejsAppendToXML(ejs, result, subList);
 
         } else {
             //  TODO - do we ever get a list in a list?
-            assure(0);
+            assert(0);
         }
     }
     return (EjsObj*) result;
@@ -288,8 +288,8 @@ static EjsObj *invokeOperator(Ejs *ejs, EjsXML *lhs, int opCode,  EjsXML *rhs)
     EjsObj      *l, *r;
     bool        boolResult;
 
-    assure(ejsIsXML(ejs, lhs));
-    assure(ejsIsXML(ejs, rhs));
+    assert(ejsIsXML(ejs, lhs));
+    assert(ejsIsXML(ejs, rhs));
 
     //  TODO - Complete
     switch (opCode) {
@@ -329,7 +329,7 @@ static int setAlphaPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname, EjsObj 
     count = ejsGetLength(ejs, (EjsObj*) list);
     if (count > 1) {
         //  TODO - why no error in spec?
-        assure(0);
+        assert(0);
         return 0;
     }
 
@@ -350,9 +350,9 @@ static int setAlphaPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname, EjsObj 
     /*
         Update the element
      */
-    assure(ejsGetLength(ejs, (EjsObj*) list) == 1);
+    assert(ejsGetLength(ejs, (EjsObj*) list) == 1);
     elt = mprGetItem(list->elements, 0);                        //  TODO OPT - GetFirstItem
-    assure(elt);
+    assert(elt);
     ejsSetPropertyByName(ejs, elt, qname, value);
     return 0;
 }
@@ -457,9 +457,9 @@ static int updateElement(Ejs *ejs, EjsXML *list, EjsXML *elt, int index, EjsObj 
     mprSetItem(list->elements, index, value);
 
     if (elt->kind == EJS_XML_ATTRIBUTE) {
-        assure(ejsIs(ejs, value, String));
+        assert(ejsIs(ejs, value, String));
         i = mprLookupItem(elt->parent->elements, elt);
-        assure(i >= 0);
+        assert(i >= 0);
         ejsSetXMLElement(ejs, elt->parent, i, elt);
         //  TODO - why do this. Doesn't above do this?
         ejsSetPropertyByName(ejs, elt->parent, elt->qname, value);
@@ -470,7 +470,7 @@ static int updateElement(Ejs *ejs, EjsXML *list, EjsXML *elt, int index, EjsObj 
         value = (EjsObj*) shallowCopy(ejs, (EjsXML*) value);
         if (elt->parent) {
             index = mprLookupItem(elt->parent->elements, elt);
-            assure(index >= 0);
+            assert(index >= 0);
             for (j = 0; j < mprGetListLength(((EjsXML*) value)->elements); j++) {
                 mprInsertItemAtPos(elt->parent->elements, index, value);
             }
@@ -479,7 +479,7 @@ static int updateElement(Ejs *ejs, EjsXML *list, EjsXML *elt, int index, EjsObj 
     } else if (ejsIsXML(ejs, value) || elt->kind != EJS_XML_ELEMENT) {
         if (elt->parent) {
             index = mprLookupItem(elt->parent->elements, elt);
-            assure(index >= 0);
+            assert(index >= 0);
             mprSetItem(elt->parent->elements, index, value);
             ((EjsXML*) value)->parent = elt->parent;
             if (ejsIs(ejs, value, String)) {
@@ -536,7 +536,7 @@ static int setXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname, EjsOb
     } else {
         elt = mprGetItem(list->elements, index);
     }
-    assure(elt);
+    assert(elt);
     updateElement(ejs, list, elt, index, value);
     return index;
 }
@@ -570,7 +570,7 @@ static EjsXML *shallowCopy(Ejs *ejs, EjsXML *xml)
     EjsXML      *root, *elt;
     int         next;
 
-    assure(xml->kind == EJS_XML_LIST);
+    assert(xml->kind == EJS_XML_LIST);
 
     if (xml == 0) {
         return 0;
@@ -581,7 +581,7 @@ static EjsXML *shallowCopy(Ejs *ejs, EjsXML *xml)
     if (xml->elements) {
         root->elements = mprCreateList(-1, 0);
         for (next = 0; (elt = mprGetNextItem(xml->elements, &next)) != 0; ) {
-            assure(ejsIsXML(ejs, elt));
+            assert(ejsIsXML(ejs, elt));
             if (elt) {
                 mprAddItem(root->elements, elt);
             }
@@ -741,7 +741,7 @@ static EjsObj *setLength(Ejs *ejs, EjsXMLList *xml, int argc, EjsObj **argv)
 {
     int         length;
 
-    assure(ejsIsXMLList(ejs, xml));
+    assert(ejsIsXMLList(ejs, xml));
 
     if (argc != 1) {
         ejsThrowArgError(ejs, "usage: obj.length = value");

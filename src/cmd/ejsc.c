@@ -222,7 +222,7 @@ MAIN(ejscMain, int argc, char **argv, char **envp)
         bind = 1;
     }
     if (outputFile && noout) {
-        mprPrintfError("Cannot use --out and --noout\n");
+        mprEprintf("Cannot use --out and --noout\n");
         err++;
     }
     if (argc == nextArg) {
@@ -237,7 +237,7 @@ MAIN(ejscMain, int argc, char **argv, char **envp)
 
             NOTE: bind is deliberately not documented and is for internal use only.
          */
-        mprPrintfError("Usage: %s [options] files...\n"
+        mprEprintf("Usage: %s [options] files...\n"
             "  Ejscript compiler options:\n"
             "  --debug                # Include symbolic debugging information in output\n"
             "  --doc                  # Include documentation strings in output\n"
@@ -361,7 +361,7 @@ static void manageApp(App *app, int flags)
 
 static void require(cchar *name) 
 {
-    assure(app->modules);
+    assert(app->modules);
     if (name && *name) {
         mprAddItem(app->modules, sclone(name));
     }

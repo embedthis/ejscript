@@ -54,7 +54,7 @@ Bit.load({
         platforms: [ 'local' ],
         '+optional': [ 'doxygen', 'dsi', 'est', 'man', 'man2html', 'pmaker', 'sqlite', 'zip' ],
         '+required': [ 'pcre', 'zlib' ]
-        'without-all': ['doxygen', 'dsi', 'est', 'man', 'man2html', 'matrixssl', 'openssl'],
+        'without-all': ['doxygen', 'dsi', 'est', 'man', 'man2html'],
         static: false,
         mpr: {
             manager: 'ejsman',

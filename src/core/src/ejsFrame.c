@@ -12,7 +12,7 @@
 
 static void manageFrame(EjsFrame *frame, int flags)
 {
-    assure(frame);
+    assert(frame);
     if (frame) {
         if (flags & MPR_MANAGE_MARK) {
             ejsManageFunction((EjsFunction*) frame, flags);
@@ -29,7 +29,7 @@ static EjsFrame *allocFrame(Ejs *ejs, int numProp)
     EjsObj      *obj;
     ssize       size;
 
-    assure(ejs);
+    assert(ejs);
 
     size = sizeof(EjsFrame) + sizeof(EjsProperties) + numProp * sizeof(EjsSlot);
     if ((obj = mprAllocBlock(size, MPR_ALLOC_MANAGER | MPR_ALLOC_ZERO)) == 0) {
@@ -121,7 +121,7 @@ PUBLIC EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int
     frame->function.resultType = fun->resultType;
     frame->function.body = fun->body;
     frame->pc = fun->body.code->byteCode;
-    assure(frame->pc);
+    assert(frame->pc);
 
     if (argc > 0) {
         frame->argc = argc;

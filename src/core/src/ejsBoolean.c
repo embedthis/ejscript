@@ -16,7 +16,7 @@
  */
 static EjsAny *castBooleanVar(Ejs *ejs, EjsBoolean *vp, EjsType *type)
 {
-    assure(ejsIs(ejs, vp, Boolean));
+    assert(ejsIs(ejs, vp, Boolean));
 
     switch (type->sid) {
     case S_Number:
@@ -206,7 +206,7 @@ static EjsAny *invokeBooleanOperator(Ejs *ejs, EjsBoolean *lhs, int opcode, EjsB
  */
 static EjsBoolean *booleanConstructor(Ejs *ejs, EjsBoolean *bp, int argc, EjsObj **argv)
 {
-    assure(argc == 0 || argc == 1);
+    assert(argc == 0 || argc == 1);
 
     if (argc >= 1) {
         /* Change the bp value */

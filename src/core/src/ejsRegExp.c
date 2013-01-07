@@ -119,7 +119,7 @@ static EjsArray *regex_exec(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
         start = rp->endLastMatch;
     }
     rp->matched = 0;
-    assure(rp->compiled);
+    assert(rp->compiled);
     count = pcre_exec(rp->compiled, NULL, str->value, (int) str->length, start, 0, matches, sizeof(matches) / sizeof(int));
     if (count < 0) {
         rp->endLastMatch = 0;
@@ -194,7 +194,7 @@ static EjsBoolean *regex_test(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
     int         count;
 
     str = (EjsString*) argv[0];
-    assure(rp->compiled);
+    assert(rp->compiled);
     count = pcre_exec(rp->compiled, NULL, str->value, (int) str->length, rp->endLastMatch, 0, 0, 0);
     if (count < 0) {
         rp->endLastMatch = 0;

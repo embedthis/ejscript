@@ -18,7 +18,7 @@ static EjsAny *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtA
     EjsAny      *argv[1];
     char        *msg;
 
-    assure(type);
+    assert(type);
     
 #if BIT_DEBUG
     /* Breakpoint opportunity */
@@ -29,7 +29,7 @@ static EjsAny *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtA
     msg = sfmtv(fmt, fmtArgs);
     argv[0] = ejsCreateStringFromAsc(ejs, msg);
     if (argv[0] == 0) {
-        assure(argv[0]);
+        assert(argv[0]);
         return 0;
     }
     if (EST(Error)->constructor.body.proc) {
@@ -72,14 +72,14 @@ void ejsClearAttention(Ejs *ejs)
     if (ejs->exception == 0 && frame && frame->attentionPc) {
         frame->pc = frame->attentionPc;
         frame->attentionPc = 0;
-        assure(frame->pc);
+        assert(frame->pc);
     }
 }
 
 
 EjsAny *ejsThrowException(Ejs *ejs, EjsAny *error)
 {
-    assure(error);
+    assert(error);
 
     ejs->exception = error;
     ejsAttention(ejs);
@@ -121,7 +121,7 @@ EjsError *ejsThrowArgError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
-    assure(fmt);
+    assert(fmt);
     va_start(fmtArgs, fmt);
     return ejsCreateException(ejs, ES_ArgError, fmt, fmtArgs);
 }
@@ -131,7 +131,7 @@ EjsError *ejsThrowArithmeticError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
-    assure(fmt);
+    assert(fmt);
     va_start(fmtArgs, fmt);
     return ejsCreateException(ejs, ES_ArithmeticError, fmt, fmtArgs);
 }
@@ -141,7 +141,7 @@ EjsError *ejsThrowAssertError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
-    assure(fmt);
+    assert(fmt);
     va_start(fmtArgs, fmt);
     return ejsCreateException(ejs, ES_AssertError, fmt, fmtArgs);
 }
@@ -151,7 +151,7 @@ EjsError *ejsThrowInstructionError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
-    assure(fmt);
+    assert(fmt);
     va_start(fmtArgs, fmt);
     return ejsCreateException(ejs, ES_InstructionError, fmt, fmtArgs);
 }
@@ -161,7 +161,7 @@ EjsError *ejsThrowError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
-    assure(fmt);
+    assert(fmt);
     va_start(fmtArgs, fmt);
     return ejsCreateException(ejs, ES_Error, fmt, fmtArgs);
 }
@@ -171,7 +171,7 @@ EjsError *ejsThrowIOError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
-    assure(fmt);
+    assert(fmt);
     va_start(fmtArgs, fmt);
     return ejsCreateException(ejs, ES_IOError, fmt, fmtArgs);
 }
@@ -181,7 +181,7 @@ EjsError *ejsThrowInternalError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
-    assure(fmt);
+    assert(fmt);
     va_start(fmtArgs, fmt);
     return ejsCreateException(ejs, ES_InternalError, fmt, fmtArgs);
 }
@@ -204,7 +204,7 @@ EjsError *ejsThrowOutOfBoundsError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
-    assure(fmt);
+    assert(fmt);
     va_start(fmtArgs, fmt);
     return ejsCreateException(ejs, ES_OutOfBoundsError, fmt, fmtArgs);
 }
@@ -214,7 +214,7 @@ EjsError *ejsThrowReferenceError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
-    assure(fmt);
+    assert(fmt);
     va_start(fmtArgs, fmt);
     return ejsCreateException(ejs, ES_ReferenceError, fmt, fmtArgs);
 }
@@ -224,7 +224,7 @@ EjsError *ejsThrowResourceError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
-    assure(fmt);
+    assert(fmt);
     va_start(fmtArgs, fmt);
     return ejsCreateException(ejs, ES_ResourceError, fmt, fmtArgs);
 }
@@ -235,7 +235,7 @@ EjsString *ejsThrowString(Ejs *ejs, cchar *fmt, ...)
     va_list     fmtArgs;
     char        *msg;
 
-    assure(fmt);
+    assert(fmt);
     va_start(fmtArgs, fmt);
     msg = sfmtv(fmt, fmtArgs);
     va_end(fmtArgs);
@@ -253,7 +253,7 @@ EjsError *ejsThrowStateError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
-    assure(fmt);
+    assert(fmt);
     va_start(fmtArgs, fmt);
     return ejsCreateException(ejs, ES_StateError, fmt, fmtArgs);
 }
@@ -263,7 +263,7 @@ EjsError *ejsThrowSyntaxError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
-    assure(fmt);
+    assert(fmt);
     va_start(fmtArgs, fmt);
     return ejsCreateException(ejs, ES_SyntaxError, fmt, fmtArgs);
 }
@@ -273,7 +273,7 @@ EjsError *ejsThrowTypeError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
-    assure(fmt);
+    assert(fmt);
     va_start(fmtArgs, fmt);
     return ejsCreateException(ejs, ES_TypeError, fmt, fmtArgs);
 }
@@ -289,7 +289,7 @@ EjsArray *ejsCaptureStack(Ejs *ejs, int uplevels)
     char            *filename;
     int             index, lineNumber;
 
-    assure(ejs);
+    assert(ejs);
 
     stack = ejsCreateArray(ejs, 0);
     index = 0;

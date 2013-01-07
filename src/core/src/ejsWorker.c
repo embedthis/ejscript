@@ -137,14 +137,14 @@ static EjsWorker *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsOb
  */
 static void addWorker(Ejs *ejs, EjsWorker *worker) 
 {
-    assure(ejs == worker->ejs);
-    assure(worker);
-    assure(worker->state == EJS_WORKER_BEGIN);
-    assure(!worker->inside);
+    assert(ejs == worker->ejs);
+    assert(worker);
+    assert(worker->state == EJS_WORKER_BEGIN);
+    assert(!worker->inside);
 
     //  OPT - locking not needed
     lock(ejs);
-    assure(ejs->workers->length < 10);
+    assert(ejs->workers->length < 10);
     mprAddItem(ejs->workers, worker);
     unlock(ejs);
 }
@@ -154,8 +154,8 @@ static void removeWorker(EjsWorker *worker)
 {
     Ejs     *ejs;
 
-    assure(!worker->inside);
-    assure(worker);
+    assert(!worker->inside);
+    assert(worker);
 
     ejs = worker->ejs;
     if (ejs) {
@@ -202,22 +202,22 @@ static EjsObj *startWorker(Ejs *ejs, EjsWorker *outsideWorker, int timeout)
     Ejs         *inside;
     EjsString   *result;
 
-    assure(ejs);
-    assure(outsideWorker);
-    assure(!outsideWorker->inside);
-    assure(outsideWorker->state == EJS_WORKER_BEGIN);
-    assure(outsideWorker->pair);
-    assure(outsideWorker->pair->ejs);
+    assert(ejs);
+    assert(outsideWorker);
+    assert(!outsideWorker->inside);
+    assert(outsideWorker->state == EJS_WORKER_BEGIN);
+    assert(outsideWorker->pair);
+    assert(outsideWorker->pair->ejs);
 
-    LOG(5, "Worker.startWorker");
+    mprTrace(5, "Worker.startWorker");
 
     if (outsideWorker->state > EJS_WORKER_BEGIN) {
         ejsThrowStateError(ejs, "Worker has already started");
         return 0;
     }
     insideWorker = outsideWorker->pair;
-    assure(insideWorker->inside);
-    assure(insideWorker->state == EJS_WORKER_BEGIN);
+    assert(insideWorker->inside);
+    assert(insideWorker->state == EJS_WORKER_BEGIN);
     inside = insideWorker->ejs;
 
     outsideWorker->state = EJS_WORKER_STARTED;
@@ -268,7 +268,7 @@ static EjsObj *workerEval(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
     int     timeout;
 
-    assure(ejsIs(ejs, argv[0], String));
+    assert(ejsIs(ejs, argv[0], String));
 
     worker->scriptLiteral = (EjsString*) argv[0];
     timeout = argc == 2 ? ejsGetInt(ejs, argv[1]): MAXINT;
@@ -344,7 +344,7 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
     MprTicks    mark;
     int         result, remaining;
 
-    LOG(5, "Worker.join: joining %d", ejs->joining);
+    mprTrace(5, "Worker.join: joining %d", ejs->joining);
     
     mark = mprGetTicks();
     remaining = timeout;
@@ -358,7 +358,7 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
             break;
         }
         mprWaitForEvent(ejs->dispatcher, remaining);
-        assure(ejs->dispatcher->magic == MPR_DISPATCHER_MAGIC);
+        assert(ejs->dispatcher->magic == MPR_DISPATCHER_MAGIC);
 
         remaining = (int) mprGetRemainingTicks(mark, timeout);
     } while (remaining > 0 && !ejs->exception);
@@ -368,7 +368,7 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
     }
     result = (ejs->joining) ? MPR_ERR_TIMEOUT: 0;
     ejs->joining = 0;
-    LOG(7, "Worker.join: result %d", result);
+    mprTrace(7, "Worker.join: result %d", result);
     return result;
 }
 
@@ -396,8 +396,8 @@ static void loadFile(EjsWorker *worker, cchar *path)
     Ejs         *ejs;
     cchar       *cp;
 
-    assure(worker->inside);
-    assure(worker->pair && worker->pair->ejs);
+    assert(worker->inside);
+    assert(worker->pair && worker->pair->ejs);
 
     ejs = worker->ejs;
     if ((cp = strrchr(path, '.')) != NULL && strcmp(cp, EJS_MODULE_EXT) != 0) {
@@ -421,7 +421,7 @@ static EjsObj *workerLoad(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
     int     timeout;
 
-    assure(argc == 0 || ejsIs(ejs, argv[0], Path));
+    assert(argc == 0 || ejsIs(ejs, argv[0], Path));
 
     worker->scriptFile = sclone(((EjsPath*) argv[0])->value);
     timeout = argc == 2 ? ejsGetInt(ejs, argv[1]): 0;
@@ -482,7 +482,7 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
         break;
             
     default:
-        assure(msg->callbackSlot == 0);
+        assert(msg->callbackSlot == 0);
         return 0;
     }
     worker->event = event;
@@ -501,7 +501,7 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     }
     if (callback == 0 || ejsIs(ejs, callback, Null)) {
         if (msg->callbackSlot == ES_Worker_onmessage) {
-            mprLog(6, "Discard message as no onmessage handler defined for worker");
+            mprTrace(6, "Discard message as no onmessage handler defined for worker");
             
         } else if (msg->callbackSlot == ES_Worker_onerror) {
             if (ejsIs(ejs, msg->message, String)) {
@@ -521,9 +521,9 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
         ejsRunFunction(ejs, callback, worker, 1, argv);
     }
     if (msg->callbackSlot == ES_Worker_onclose) {
-        assure(!worker->inside);
+        assert(!worker->inside);
         worker->state = EJS_WORKER_COMPLETE;
-        LOG(5, "Worker.doMessage: complete");
+        mprTrace(5, "Worker.doMessage: complete");
         /* Worker and insider interpreter are now eligible for garbage collection */
         removeWorker(worker);
     }
@@ -543,14 +543,14 @@ static EjsObj *workerPreeval(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **arg
     EjsWorker   *insideWorker;
     EjsString   *result;
 
-    assure(!worker->inside);
+    assert(!worker->inside);
 
     if (worker->state > EJS_WORKER_BEGIN) {
         ejsThrowStateError(ejs, "Worker has already started");
         return 0;
     }
     insideWorker = worker->pair;
-    assure(insideWorker->inside);
+    assert(insideWorker->inside);
     inside = insideWorker->ejs;
 
     (inside->service->loadScriptLiteral)(inside, (EjsString*) argv[0], NULL);
@@ -576,15 +576,15 @@ static EjsObj *workerPreload(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **arg
     EjsWorker   *insideWorker;
     EjsString   *result;
 
-    assure(argc > 0 && ejsIs(ejs, argv[0], Path));
-    assure(!worker->inside);
+    assert(argc > 0 && ejsIs(ejs, argv[0], Path));
+    assert(!worker->inside);
 
     if (worker->state > EJS_WORKER_BEGIN) {
         ejsThrowStateError(ejs, "Worker has already started");
         return 0;
     }
     insideWorker = worker->pair;
-    assure(insideWorker->inside);
+    assert(insideWorker->inside);
     inside = insideWorker->ejs;
 
     loadFile(worker->pair, ((EjsPath*) argv[0])->value);
@@ -666,10 +666,10 @@ static int workerMain(EjsWorker *insideWorker, MprEvent *event)
     MprDispatcher   *dispatcher;
     Message         *msg;
 
-    assure(insideWorker->inside);
+    assert(insideWorker->inside);
     outsideWorker = insideWorker->pair;
-    assure(!outsideWorker->inside);
-    assure(insideWorker->state == EJS_WORKER_BEGIN);
+    assert(!outsideWorker->inside);
+    assert(insideWorker->state == EJS_WORKER_BEGIN);
 
     outside = outsideWorker->ejs;
     inside = insideWorker->ejs;
@@ -730,7 +730,7 @@ static EjsObj *workerTerminate(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **a
     /*
         Switch to the inside worker if called from outside
      */
-    assure(worker->pair && worker->pair->ejs);
+    assert(worker->pair && worker->pair->ejs);
     ejs = (!worker->inside) ? worker->pair->ejs : ejs;
     ejs->exiting = 1;
     mprSignalDispatcher(ejs->dispatcher);
@@ -778,9 +778,9 @@ static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int thro
     MprDispatcher   *dispatcher;
     Message         *msg;
 
-    assure(!worker->inside);
-    assure(exception);
-    assure(ejs == worker->ejs);
+    assert(!worker->inside);
+    assert(exception);
+    assert(ejs == worker->ejs);
 
     ejsBlockGC(ejs);
     if ((msg = createMessage()) == 0) {

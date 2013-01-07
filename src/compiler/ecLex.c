@@ -538,7 +538,7 @@ PUBLIC int ecGetRegExpToken(EcCompiler *cp, wchar *prefix)
 
     stream = cp->stream;
     tp = token = cp->token;
-    assure(tp != 0);
+    assert(tp != 0);
 
     initializeToken(tp, stream);
 
@@ -607,8 +607,8 @@ PUBLIC int ecPutToken(EcCompiler *cp)
  */
 PUBLIC int ecPutSpecificToken(EcCompiler *cp, EcToken *tp)
 {
-    assure(tp);
-    assure(tp->tokenId > 0);
+    assert(tp);
+    assert(tp->tokenId > 0);
 
     tp->next = cp->putback;
     cp->putback = tp;
@@ -790,7 +790,7 @@ static int makeQuotedToken(EcCompiler *cp, EcToken *tp, int c)
         }
         addCharToToken(tp, c);
     }
-    assure(tp->text);
+    assert(tp->text);
     setTokenID(tp, T_STRING, -1, 0);
     return finalizeToken(tp);
 }
@@ -972,7 +972,7 @@ static int addFormattedStringToToken(EcToken *tp, char *fmt, ...)
 
 static int setTokenID(EcToken *tp, int tokenId, int subId, int groupMask)
 {
-    assure(tp);
+    assert(tp);
 
     tp->tokenId = tokenId;
     tp->subId = subId;
@@ -1015,14 +1015,14 @@ static void putBackChar(EcStream *stream, int c)
 {
     if (stream->buf < stream->nextChar && c) {
         stream->nextChar--;
-        assure(c == (int) *stream->nextChar);
+        assert(c == (int) *stream->nextChar);
         if (c == '\n') {
             stream->loc = stream->lastLoc;
             stream->loc.column = 0;
         } else {
             stream->loc.column--;
         }
-        assure(stream->loc.column >= 0);
+        assert(stream->loc.column >= 0);
     }
 }
 

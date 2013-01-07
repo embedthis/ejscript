@@ -23,7 +23,7 @@ static EjsBoolean *gc_enabled(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv
  */
 static EjsObj *gc_set_enabled(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    assure(argc == 1 && ejsIs(ejs, argv[0], Boolean));
+    assert(argc == 1 && ejsIs(ejs, argv[0], Boolean));
     mprGetMpr()->heap->enabled = ejsGetBoolean(ejs, argv[0]);
     return 0;
 }
@@ -37,7 +37,7 @@ static EjsObj *gc_run(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     int     deep;
 
-    assure(!ejs->state->paused);
+    assert(!ejs->state->paused);
     
     if (!ejs->state->paused) {
         deep = ((argc == 1) && ejsIs(ejs, argv[1], Boolean));
@@ -63,7 +63,7 @@ static EjsObj *gc_set_newQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **arg
 {
     int     quota;
 
-    assure(argc == 1 && ejsIs(ejs, argv[0], Number));
+    assert(argc == 1 && ejsIs(ejs, argv[0], Number));
     quota = ejsGetInt(ejs, argv[0]);
 
     if (quota < 1024 && quota != 0) {

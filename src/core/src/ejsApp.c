@@ -43,7 +43,7 @@ static EjsObj *app_chdir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     cchar   *path;
 
-    assure(argc == 1);
+    assert(argc == 1);
 
     if (ejsIs(ejs, argv[0], Path)) {
         path = ((EjsPath*) argv[0])->value;

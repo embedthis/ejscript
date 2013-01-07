@@ -19,8 +19,8 @@ EjsAny *ejsAlloc(Ejs *ejs, EjsType *type, ssize extra)
 {
     EjsObj      *vp;
 
-    assure(type);
-    assure(extra >= 0);
+    assert(type);
+    assert(extra >= 0);
 
     //  OPT could have dedicated ejsAlloc as a macro when assign is zero
     if ((vp = mprAllocBlock(type->instanceSize + extra, MPR_ALLOC_MANAGER | MPR_ALLOC_ZERO)) == NULL) {
@@ -29,7 +29,7 @@ EjsAny *ejsAlloc(Ejs *ejs, EjsType *type, ssize extra)
     //  OPT can do direct assign
     SET_TYPE(vp, type);
     ejsSetMemRef(vp);
-    assure(type->manager);
+    assert(type->manager);
     //  OPT inline here
     mprSetManager(vp, type->manager);
     return vp;
@@ -44,9 +44,9 @@ EjsAny *ejsCastType(Ejs *ejs, EjsAny *vp, EjsType *targetType)
 {
     EjsType     *type;
 
-    assure(ejs);
-    assure(vp);
-    assure(targetType);
+    assert(ejs);
+    assert(vp);
+    assert(targetType);
 
     type = TYPE(vp);
     if (type == targetType) {
@@ -73,7 +73,7 @@ EjsAny *ejsCreateObj(Ejs *ejs, EjsType *type, int numSlots)
         return 0;
     }
 #endif
-    assure(type->helpers.create);
+    assert(type->helpers.create);
     return (type->helpers.create)(ejs, type, numSlots);
 }
 
@@ -93,7 +93,7 @@ EjsAny *ejsClone(Ejs *ejs, EjsAny *src, bool deep)
         return 0;
     }
 cloneCopy++;
-    assure(TYPE(src)->helpers.clone);
+    assert(TYPE(src)->helpers.clone);
     if (VISITED(src) == 0) {
         SET_VISITED(src, 1);
         dest = (TYPE(src)->helpers.clone)(ejs, src, deep);
@@ -112,8 +112,8 @@ cloneCopy++;
  */
 int ejsDefineProperty(Ejs *ejs, EjsAny *vp, int slotNum, EjsName name, EjsType *propType, int64 attributes, EjsAny *value)
 {
-    assure(name.name);
-    assure(name.space);
+    assert(name.name);
+    assert(name.space);
 
     return (TYPE(vp)->helpers.defineProperty)(ejs, vp, slotNum, name, propType, attributes, value);
 }
@@ -127,10 +127,10 @@ int ejsDeleteProperty(Ejs *ejs, EjsAny *vp, int slotNum)
 {
     EjsType     *type;
 
-    assure(slotNum >= 0);
+    assert(slotNum >= 0);
     
     type = TYPE(vp);
-    assure(type->helpers.deleteProperty);
+    assert(type->helpers.deleteProperty);
     return (type->helpers.deleteProperty)(ejs, vp, slotNum);
 }
 
@@ -144,8 +144,8 @@ int ejsDeletePropertyByName(Ejs *ejs, EjsAny *vp, EjsName qname)
     EjsLookup   lookup;
     int         slotNum;
 
-    assure(qname.name);
-    assure(qname.space);
+    assert(qname.name);
+    assert(qname.space);
     
     if (TYPE(vp)->helpers.deletePropertyByName) {
         return (TYPE(vp)->helpers.deletePropertyByName)(ejs, vp, qname);
@@ -168,11 +168,11 @@ void *ejsGetProperty(Ejs *ejs, EjsAny *vp, int slotNum)
 {
     EjsType     *type;
 
-    assure(ejs);
-    assure(vp);
+    assert(ejs);
+    assert(vp);
 
     type = TYPE(vp);
-    assure(type->helpers.getProperty);
+    assert(type->helpers.getProperty);
     return (type->helpers.getProperty)(ejs, vp, slotNum);
 }
 
@@ -182,8 +182,8 @@ void *ejsGetPropertyByName(Ejs *ejs, EjsAny *vp, EjsName name)
     EjsType     *type;
     int         slotNum;
 
-    assure(ejs);
-    assure(vp);
+    assert(ejs);
+    assert(vp);
 
     type = TYPE(vp);
 
@@ -207,7 +207,7 @@ void *ejsGetPropertyByName(Ejs *ejs, EjsAny *vp, EjsName name)
 
 EjsTrait *ejsGetPropertyTraits(Ejs *ejs, EjsAny *vp, int slotNum)
 {
-    assure(TYPE(vp)->helpers.getPropertyTraits);
+    assert(TYPE(vp)->helpers.getPropertyTraits);
     return (TYPE(vp)->helpers.getPropertyTraits)(ejs, vp, slotNum);
 }
 
@@ -218,7 +218,7 @@ EjsTrait *ejsGetPropertyTraits(Ejs *ejs, EjsAny *vp, int slotNum)
  */
 int ejsGetLength(Ejs *ejs, EjsAny *vp)
 {
-    assure(TYPE(vp)->helpers.getPropertyCount);
+    assert(TYPE(vp)->helpers.getPropertyCount);
     return (TYPE(vp)->helpers.getPropertyCount)(ejs, vp);
 }
 
@@ -232,7 +232,7 @@ EjsName ejsGetPropertyName(Ejs *ejs, EjsAny *vp, int slotNum)
     EjsType     *type;
 
     type = TYPE(vp);
-    assure(type->helpers.getPropertyName);
+    assert(type->helpers.getPropertyName);
     return (type->helpers.getPropertyName)(ejs, vp, slotNum);
 }
 
@@ -241,7 +241,7 @@ int ejsPropertyHasTrait(Ejs *ejs, EjsAny *vp, int slotNum, int attributes)
 {
     EjsTrait    *trait;
 
-    assure((attributes & EJS_TRAIT_MASK) == attributes);
+    assert((attributes & EJS_TRAIT_MASK) == attributes);
 
     if ((trait = ejsGetPropertyTraits(ejs, vp, slotNum)) != 0) {
         return trait->attributes & attributes;
@@ -257,11 +257,11 @@ int ejsPropertyHasTrait(Ejs *ejs, EjsAny *vp, int slotNum, int attributes)
  */
 int ejsLookupProperty(Ejs *ejs, EjsAny *vp, EjsName name)
 {
-    assure(ejs);
-    assure(vp);
-    assure(name.name);
+    assert(ejs);
+    assert(vp);
+    assert(name.name);
 
-    assure(TYPE(vp)->helpers.lookupProperty);
+    assert(TYPE(vp)->helpers.lookupProperty);
     return (TYPE(vp)->helpers.lookupProperty)(ejs, vp, name);
 }
 
@@ -273,9 +273,9 @@ int ejsLookupProperty(Ejs *ejs, EjsAny *vp, EjsName name)
  */
 EjsAny *ejsInvokeOperator(Ejs *ejs, EjsAny *vp, int opCode, EjsAny *rhs)
 {
-    assure(vp);
+    assert(vp);
 
-    assure(TYPE(vp)->helpers.invokeOperator);
+    assert(TYPE(vp)->helpers.invokeOperator);
     return (TYPE(vp)->helpers.invokeOperator)(ejs, vp, opCode, rhs);
 }
 
@@ -285,9 +285,9 @@ EjsAny *ejsInvokeOperator(Ejs *ejs, EjsAny *vp, int opCode, EjsAny *rhs)
  */
 int ejsSetProperty(Ejs *ejs, EjsAny *vp, int slotNum, EjsAny *value)
 {
-    assure(vp);
+    assert(vp);
 
-    assure(TYPE(vp)->helpers.setProperty);
+    assert(TYPE(vp)->helpers.setProperty);
     return (TYPE(vp)->helpers.setProperty)(ejs, vp, slotNum, value);
 }
 
@@ -299,8 +299,8 @@ int ejsSetPropertyByName(Ejs *ejs, EjsAny *vp, EjsName qname, EjsAny *value)
 {
     int     slotNum;
 
-    assure(ejs);
-    assure(vp);
+    assert(ejs);
+    assert(vp);
 
     /*
         WARNING: Not all types implement this
@@ -338,14 +338,14 @@ int ejsSetPropertyByName(Ejs *ejs, EjsAny *vp, EjsName qname, EjsAny *value)
  */
 int ejsSetPropertyName(Ejs *ejs, EjsAny *vp, int slot, EjsName qname)
 {
-    assure(TYPE(vp)->helpers.setPropertyName);
+    assert(TYPE(vp)->helpers.setPropertyName);
     return (TYPE(vp)->helpers.setPropertyName)(ejs, vp, slot, qname);
 }
 
 
 int ejsSetPropertyTraits(Ejs *ejs, EjsAny *vp, int slot, EjsType *type, int attributes)
 {
-    assure(TYPE(vp)->helpers.setPropertyTraits);
+    assert(TYPE(vp)->helpers.setPropertyTraits);
     return (TYPE(vp)->helpers.setPropertyTraits)(ejs, vp, slot, type, attributes);
 }
 
@@ -430,7 +430,7 @@ EjsAny *ejsCreateInstance(Ejs *ejs, EjsType *type, int argc, void *argv)
 {
     EjsAny  *vp;
 
-    assure(type);
+    assert(type);
 
     vp = ejsCreateObj(ejs, type, 0);
     if (vp == 0) {
@@ -462,7 +462,7 @@ static EjsAny *castObj(Ejs *ejs, EjsObj *obj, EjsType *type)
     EjsObj          *result;
     EjsLookup       lookup;
     
-    assure(ejsIsType(ejs, type));
+    assert(ejsIsType(ejs, type));
 
     if (type->hasMeta) {
         return ejsRunFunctionByName(ejs, type, N(EJS_META_NAMESPACE, "cast"), type, 1, &obj);
@@ -616,7 +616,7 @@ EjsAny *ejsInvokeOperatorDefault(Ejs *ejs, EjsAny *lhs, int opcode, EjsAny *rhs)
         ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
-    assure(0);
+    assert(0);
 }
 
 
@@ -791,7 +791,7 @@ EjsAny *ejsParse(Ejs *ejs, wchar *str, int preferredType)
     wchar       *buf;
     int         sid;
 
-    assure(str);
+    assert(str);
 
     buf = str;
     sid = preferredType;
@@ -883,7 +883,7 @@ static MprNumber parseNumber(Ejs *ejs, wchar *str)
     char        nbuf[32], *dp;
     int         radix, c, negative;
 
-    assure(str);
+    assert(str);
 
     num = 0;
     negative = 0;
@@ -968,65 +968,65 @@ static MprNumber parseNumber(Ejs *ejs, wchar *str)
 
 MprNumber ejsGetNumber(Ejs *ejs, EjsAny *vp)
 {
-    assure(vp);
+    assert(vp);
     if (!ejsIs(ejs, vp, Number)) {
         if ((vp = ejsCast(ejs, vp, Number)) == 0) {
             return 0;
         }
     }
-    assure(ejsIs(ejs, vp, Number));
+    assert(ejsIs(ejs, vp, Number));
     return (vp) ? ((EjsNumber*) (vp))->value: 0;
 }
 
 
 bool ejsGetBoolean(Ejs *ejs, EjsAny *vp)
 {
-    assure(vp);
+    assert(vp);
     if (!ejsIs(ejs, vp, Boolean)) {
         if ((vp = ejsCast(ejs, vp, Boolean)) == 0) {
             return 0;
         }
     }
-    assure(ejsIs(ejs, vp, Boolean));
+    assert(ejsIs(ejs, vp, Boolean));
     return (vp) ? ((EjsBoolean*) (vp))->value: 0;
 }
 
 
 int ejsGetInt(Ejs *ejs, EjsAny *vp)
 {
-    assure(vp);
+    assert(vp);
     if (!ejsIs(ejs, vp, Number)) {
         if ((vp = ejsCast(ejs, vp, Number)) == 0) {
             return 0;
         }
     }
-    assure(ejsIs(ejs, vp, Number));
+    assert(ejsIs(ejs, vp, Number));
     return (vp) ? ((int) (((EjsNumber*) (vp))->value)): 0;
 }
 
 
 int64 ejsGetInt64(Ejs *ejs, EjsAny *vp)
 {
-    assure(vp);
+    assert(vp);
     if (!ejsIs(ejs, vp, Number)) {
         if ((vp = ejsCast(ejs, vp, Number)) == 0) {
             return 0;
         }
     }
-    assure(ejsIs(ejs, vp, Number));
+    assert(ejsIs(ejs, vp, Number));
     return (vp) ? ((int64) (((EjsNumber*) (vp))->value)): 0;
 }
 
 
 double ejsGetDouble(Ejs *ejs, EjsAny *vp)
 {
-    assure(vp);
+    assert(vp);
     if (!ejsIs(ejs, vp, Number)) {
         if ((vp = ejsCast(ejs, vp, Number)) == 0) {
             return 0;
         }
     }
-    assure(ejsIs(ejs, vp, Number));
+    assert(ejsIs(ejs, vp, Number));
     return (vp) ? ((double) (((EjsNumber*) (vp))->value)): 0;
 }
 

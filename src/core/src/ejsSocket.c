@@ -332,7 +332,7 @@ static void enableSocketEvents(EjsSocket *sp, int (*proc)(EjsSocket *sp, MprEven
     Ejs     *ejs;
 
     ejs = sp->ejs;
-    assure(sp->sock);
+    assert(sp->sock);
     
     if (sp->sock->handler == 0) {
         mprAddSocketHandler(sp->sock, sp->mask, ejs->dispatcher, (MprEventProc) proc, sp, 0);

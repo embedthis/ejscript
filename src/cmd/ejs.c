@@ -115,9 +115,9 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
                 homeDir = mprGetAbsPath(argv[++nextArg]);
                 if (chroot(homeDir) < 0) {
                     if (errno == EPERM) {
-                        mprPrintfError("%s: Must be super user to use the --chroot option", mprGetAppName(mpr));
+                        mprEprintf("%s: Must be super user to use the --chroot option", mprGetAppName(mpr));
                     } else {
-                        mprPrintfError("%s: Cannot change change root directory to %s, errno %d",
+                        mprEprintf("%s: Cannot change change root directory to %s, errno %d",
                             mprGetAppName(), homeDir, errno);
                     }
                     return 4;
@@ -263,7 +263,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
                 ejs script.es arg1 arg2 arg3
                 ejs --class "Customer" --method "start" --files "script1.es script2.es" main.es
          */
-        mprPrintfError("Usage: %s [options] script.es [arguments] ...\n"
+        mprEprintf("Usage: %s [options] script.es [arguments] ...\n"
             "  Ejscript shell program options:\n"
             "  --class className        # Name of class containing method to run\n"
             "  --cmd ejscriptCode       # Literal ejscript statements to execute\n"
@@ -377,7 +377,7 @@ static int interpretFiles(EcCompiler *cp, MprList *files, int argc, char **argv,
 {
     Ejs     *ejs;
 
-    assure(files);
+    assert(files);
 
     MPR_VERIFY_MEM();
     ejs = cp->ejs;
@@ -385,7 +385,7 @@ static int interpretFiles(EcCompiler *cp, MprList *files, int argc, char **argv,
         mprRawLog(0, "%s\n", cp->errorMsg);
         return EJS_ERR;
     }
-    assure(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
+    assert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
 
     if (cp->errorCount == 0) {
         if (ejsRunProgram(ejs, className, method) < 0) {
@@ -561,7 +561,7 @@ static int commandGets(EcStream *stream)
         stream->eof = 1;
         return -1;
     }
-    assure(0);
+    assert(0);
     return (int) (stream->end - stream->nextChar);
 }
 

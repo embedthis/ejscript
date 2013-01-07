@@ -257,7 +257,7 @@ static EjsDate *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
     struct tm   tm;
     int         year;
 
-    assure(argc == 1 && ejsIs(ejs, argv[0], Array));
+    assert(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = (EjsArray*) argv[0];
 
@@ -890,7 +890,7 @@ static EjsObj *date_setUTCSeconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv
  */
 static EjsNumber *date_ticks(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
 {
-    return ejsCreateNumber(ejs, mprGetHiResTime());
+    return ejsCreateNumber(ejs, mprGetHiResTicks());
 }
 
 

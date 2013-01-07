@@ -20,10 +20,10 @@ EjsModule *ejsCreateModule(Ejs *ejs, EjsString *name, int version, EjsConstants 
 {
     EjsModule   *mp;
 
-    assure(version >= 0);
+    assert(version >= 0);
 
     if ((mp = mprAllocObj(EjsModule, manageModule)) == NULL) {
-        assure(mp);
+        assert(mp);
         return 0;
     }
     mp->name = name;
@@ -34,7 +34,7 @@ EjsModule *ejsCreateModule(Ejs *ejs, EjsString *name, int version, EjsConstants 
             return 0;
         }
     }
-    assure(mp->checksum == 0);
+    assert(mp->checksum == 0);
     return mp;
 }
 
@@ -139,7 +139,7 @@ EjsModule *ejsLookupModule(Ejs *ejs, EjsString *name, int minVersion, int maxVer
 
 int ejsAddModule(Ejs *ejs, EjsModule *mp)
 {
-    assure(ejs->modules);
+    assert(ejs->modules);
     return mprAddItem(ejs->modules, mp);
 }
 
@@ -197,7 +197,7 @@ int ejsCreateConstants(Ejs *ejs, EjsModule *mp, int count, ssize size, char *poo
     char            *pp;
     int             i;
 
-    assure(ejs);
+    assert(ejs);
 
     if ((constants = mprAllocObj(EjsConstants, manageConstants)) == 0) {
         return MPR_ERR_MEMORY;
@@ -211,7 +211,7 @@ int ejsCreateConstants(Ejs *ejs, EjsModule *mp, int count, ssize size, char *poo
     }
     constants->poolSize = size;
     if ((constants->pool = pool) == 0) {
-        assure(count == 0);
+        assert(count == 0);
         if ((constants->pool = mprAlloc(size)) == 0) {
             unlock(mp);
             return MPR_ERR_MEMORY;
@@ -223,7 +223,7 @@ int ejsCreateConstants(Ejs *ejs, EjsModule *mp, int count, ssize size, char *poo
             unlock(mp);
             return MPR_ERR_MEMORY;
         }
-        assure(pool);
+        assert(pool);
         if (pool) {
             for (pp = pool, i = 0; pp < &pool[constants->poolLength]; i++) {
                 constants->index[i] = (void*) (((pp - pool) << 1) | 0x1);
@@ -303,7 +303,7 @@ EjsString *ejsCreateStringFromConst(Ejs *ejs, EjsModule *mp, int index)
     lock(mp);
     constants = mp->constants;
     if (index < 0 || index >= constants->indexCount) {
-        assure(!(index < 0 || index >= constants->indexCount));
+        assert(!(index < 0 || index >= constants->indexCount));
         unlock(mp);
         return 0;
     }
@@ -313,7 +313,7 @@ EjsString *ejsCreateStringFromConst(Ejs *ejs, EjsModule *mp, int index)
         constants->index[index] = sp = ejsInternMulti(ejs, str, slen(str));
     }
     unlock(mp);
-    assure(constants->index[index]);
+    assert(constants->index[index]);
     return constants->index[index];
 }
 
@@ -346,13 +346,13 @@ int ejsAddDebugLine(Ejs *ejs, EjsDebug **debugp, int offset, wchar *source)
     ssize       len;
     int         numLines;
 
-    assure(debugp);
+    assert(debugp);
     
     if (*debugp == 0) {
         *debugp = ejsCreateDebug(ejs, 0);
     }
     debug = *debugp;
-    assure(debug->magic == EJS_DEBUG_MAGIC);
+    assert(debug->magic == EJS_DEBUG_MAGIC);
     if (debug->numLines >= debug->size) {
         debug->size += EJS_DEBUG_INCR;
         len = sizeof(EjsDebug) + (debug->size * sizeof(EjsLine));
@@ -379,7 +379,7 @@ static void manageDebug(EjsDebug *debug, int flags)
 {
     int     i;
 
-    assure(debug->magic == EJS_DEBUG_MAGIC);
+    assert(debug->magic == EJS_DEBUG_MAGIC);
 
     if (flags & MPR_MANAGE_MARK) {
         for (i = 0; i < debug->numLines; i++) {
@@ -415,7 +415,7 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
     lock(mp);
     if (mp->file == 0) {
         if ((mp->file = mprOpenFile(mp->path, O_RDONLY | O_BINARY, 0666)) == NULL) {
-            mprLog(5, "Cannot open module file %s", mp->path);
+            mprTrace(5, "Cannot open module file %s", mp->path);
             unlock(mp);
             return NULL;
         }
@@ -431,7 +431,7 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
     length = ejsModuleReadInt(ejs, mp);
     if (!mp->hasError) {
         if ((debug = ejsCreateDebug(ejs, length)) != 0) {
-            assure(debug->numLines == length);
+            assert(debug->numLines == length);
             for (i = 0; i < debug->numLines; i++) {
                 line = &debug->lines[i];
                 line->offset = ejsModuleReadInt(ejs, mp);
@@ -591,7 +591,7 @@ int ejsEncodeNum(Ejs *ejs, uchar *pos, int64 number)
     uint        encoded;
     uint64      unumber;
 
-    assure(pos);
+    assert(pos);
 
     start = pos;
     if (number < 0) {
@@ -609,7 +609,7 @@ int ejsEncodeNum(Ejs *ejs, uchar *pos, int64 number)
         unumber >>= 7;
     }
     *pos++ = encoded;
-    assure((pos - start) < 11);
+    assert((pos - start) < 11);
     return (int) (pos - start);
 }
 
@@ -620,7 +620,7 @@ int ejsEncodeUint(Ejs *ejs, uchar *pos, uint number)
     uchar       *start;
     uint        encoded;
 
-    assure(pos);
+    assert(pos);
 
     start = pos;
     encoded = (uint) (((number & 0x3F) << 1));
@@ -632,7 +632,7 @@ int ejsEncodeUint(Ejs *ejs, uchar *pos, uint number)
         number >>= 7;
     }
     *pos++ = encoded;
-    assure((pos - start) < 11);
+    assert((pos - start) < 11);
     return (int) (pos - start);
 }
 #endif
@@ -645,14 +645,14 @@ int ejsEncodeInt32(Ejs *ejs, uchar *pos, int number)
 {
     int         len;
 
-    assure(pos);
+    assert(pos);
     if (abs(number) > EJS_ENCODE_MAX_WORD) {
-        assure("Code generation error. Word exceeds maximum");
+        assert("Code generation error. Word exceeds maximum");
         return 0;
     }
     memset(pos, 0, 4);
     len = ejsEncodeNum(ejs, pos, (int64) number);
-    assure(len <= 4);
+    assert(len <= 4);
     len = 4;
     return len;
 }
@@ -671,7 +671,7 @@ int ejsEncodeDouble(Ejs *ejs, uchar *pos, double number)
 
 int ejsEncodeByteAtPos(Ejs *ejs, uchar *pos, int value)
 {
-    assure(pos);
+    assert(pos);
     *pos = value;
     return 0;
 }
@@ -686,7 +686,7 @@ int ejsEncodeInt32AtPos(Ejs *ejs, uchar *pos, int value)
 
 void ejsModuleReadBlock(Ejs *ejs, EjsModule *mp, char *buf, int len)
 {
-    assure(mp);
+    assert(mp);
 
     if (mprReadFile(mp->file, buf, len) != len) {
         mp->hasError = 1;
@@ -698,7 +698,7 @@ int ejsModuleReadByte(Ejs *ejs, EjsModule *mp)
 {
     int     c;
 
-    assure(mp);
+    assert(mp);
 
     if ((c = mprGetFileChar(mp->file)) < 0) {
         mp->hasError = 1;
@@ -728,7 +728,7 @@ int ejsModuleReadInt32(Ejs *ejs, EjsModule *mp)
 {
     uchar   buf[4], *pp;
 
-    assure(mp);
+    assert(mp);
 
     if (mprReadFile(mp->file, buf, 4) != 4) {
         mp->hasError = 1;
@@ -748,10 +748,10 @@ char *ejsModuleReadMulti(Ejs *ejs, EjsModule *mp)
     char    *buf;
     int     len;
 
-    assure(mp);
+    assert(mp);
 
     len = ejsModuleReadInt(ejs, mp);
-    assure(len >= 0);
+    assert(len >= 0);
     if (mp->hasError || (buf = mprAlloc(len)) == 0) {
         return NULL;
     }
@@ -768,7 +768,7 @@ char *ejsModuleReadMulti(Ejs *ejs, EjsModule *mp)
  */
 wchar *ejsModuleReadMultiAsWide(Ejs *ejs, EjsModule *mp)
 {
-    assure(mp);
+    assert(mp);
 
     //  OPT - need direct multi to wide without the double copy
     return amtow(ejsModuleReadMulti(ejs, mp), NULL);
@@ -790,9 +790,9 @@ int64 ejsModuleReadNum(Ejs *ejs, EjsModule *mp)
     int64   t;
     int     c, sign, shift;
 
-    assure(ejs);
-    assure(mp);
-    assure(mp->file);
+    assert(ejs);
+    assert(mp);
+    assert(mp->file);
 
     if ((c = mprGetFileChar(mp->file)) < 0) {
         mp->hasError = 1;

@@ -140,7 +140,7 @@ static EjsAny *invokePathOperator(Ejs *ejs, EjsPath *lhs, int opcode,  EjsPath *
         ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
-    assure(0);
+    assert(0);
 }
 
 
@@ -325,7 +325,7 @@ static EjsObj *copyPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     ssize       bytes;
     char        *buf;
 
-    assure(argc >= 1);
+    assert(argc >= 1);
     options = (argc >= 2) ? argv[1] : 0;
 
     from = to = 0;
@@ -497,7 +497,7 @@ static EjsArray *path_files(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     EjsRegExp   *exclude, *include;
     int         flags;
 
-    assure(argc == 0 || argc == 1);
+    assert(argc == 0 || argc == 1);
     options = (argc == 1) ? argv[0]: 0;
     exclude = include = 0;
     flags = 0;
@@ -1252,7 +1252,7 @@ static EjsByteArray *readBytes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     char            buffer[BIT_MAX_BUFFER];
     int             bytes, offset, rc;
 
-    assure(argc == 1 && ejsIs(ejs, argv[0], String));
+    assert(argc == 1 && ejsIs(ejs, argv[0], String));
     path = ejsToMulti(ejs, argv[0]);
 
     file = mprOpenFile(path, O_RDONLY | O_BINARY, 0);
@@ -1302,7 +1302,7 @@ static EjsArray *readLines(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     char        *start, *end, *cp, buffer[BIT_MAX_BUFFER];
     int         bytes, rc, lineno;
 
-    assure(argc == 1 && ejsIs(ejs, argv[0], String));
+    assert(argc == 1 && ejsIs(ejs, argv[0], String));
     path = ejsToMulti(ejs, argv[0]);
 
     result = ejsCreateArray(ejs, 0);
@@ -1372,7 +1372,7 @@ static EjsString *readFileAsString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **arg
     char        buffer[BIT_MAX_BUFFER];
     int         bytes;
 
-    assure(argc == 1 && ejsIs(ejs, argv[0], String));
+    assert(argc == 1 && ejsIs(ejs, argv[0], String));
     path = ejsToMulti(ejs, argv[0]);
 
     file = mprOpenFile(path, O_RDONLY | O_BINARY, 0);
@@ -1468,7 +1468,7 @@ static EjsObj *renamePathFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     EjsPath     *to;
 
-    assure(argc == 1 && ejsIs(ejs, argv[0], Path));
+    assert(argc == 1 && ejsIs(ejs, argv[0], Path));
     to = (EjsPath*) argv[0];
     unlink((char*) to->value);
     if (rename(fp->value, to->value) < 0) {
@@ -1691,7 +1691,7 @@ static EjsObj *writeToFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     char        *path, *data;
     int         i, bytes, length, permissions;
 
-    assure(argc == 3);
+    assert(argc == 3);
 
     path = ejsToMulti(ejs, argv[0]);
     permissions = ejsGetInt(ejs, argv[1]);

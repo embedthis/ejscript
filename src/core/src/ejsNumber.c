@@ -145,7 +145,7 @@ static EjsAny *invokeNumberOperator(Ejs *ejs, EjsNumber *lhs, int opcode, EjsNum
 {
     EjsObj      *result;
 
-    assure(lhs);
+    assert(lhs);
     
     if (rhs == 0 || TYPE(lhs) != TYPE(rhs)) {
         if (!ejsIs(ejs, lhs, Number) || !ejsIs(ejs, rhs, Number)) {
@@ -255,7 +255,7 @@ static EjsNumber *numberConstructor(Ejs *ejs, EjsNumber *np, int argc, EjsObj **
 {
     EjsNumber   *num;
 
-    assure(argc == 0 || argc == 1);
+    assert(argc == 0 || argc == 1);
 
     if (argc == 1) {
         num = ejsToNumber(ejs, argv[0]);
@@ -572,7 +572,7 @@ static char *ntoa(double value, int ndigits, int mode, int flags)
                 mprPutStringToBuf(buf, ip);
 
             } else {
-                assure(0);
+                assert(0);
             }
         }
     }

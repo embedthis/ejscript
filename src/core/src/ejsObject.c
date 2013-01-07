@@ -40,7 +40,7 @@ static EjsAny *obj_prototype(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
     EjsPot          *prototype;
 
     if (ejs->compiling) {
-        assure(0);
+        assert(0);
         prototype = ESV(undefined);
         
     } else if (ejsIsType(ejs, obj)) {
@@ -71,7 +71,7 @@ static EjsObj *obj_set_prototype(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
     EjsFunction     *fun;
 
     if (ejs->compiling) {
-        assure(0);
+        assert(0);
         return ESV(undefined);
     }
     prototype = (EjsPot*) argv[0];
@@ -176,7 +176,7 @@ static EjsObj *obj_defineProperty(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
     EjsName         qname;
     int             attributes, slotNum;
 
-    assure(argc == 3);
+    assert(argc == 3);
 
     obj = argv[0];
     if (!ejsIsPot(ejs, obj)) {
@@ -252,7 +252,7 @@ static EjsObj *obj_defineProperty(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
             attributes |= EJS_TRAIT_READONLY;
         }
     }
-    assure((attributes & EJS_TRAIT_MASK) == attributes);
+    assert((attributes & EJS_TRAIT_MASK) == attributes);
     if (ejsDefineProperty(ejs, obj, -1, qname, type, attributes, value) < 0) {
         ejsThrowTypeError(ejs, "Cannot define property %@", qname.name);
     }
@@ -708,7 +708,7 @@ static EjsBoolean *obj_propertyIsEnumerable(Ejs *ejs, EjsObj *obj, int argc, Ejs
     EjsLookup   lookup;
     int         slotNum;
 
-    assure(argc == 1 || argc == 2);
+    assert(argc == 1 || argc == 2);
 
     qname.space = ESV(empty);
     qname.name = (EjsString*) argv[0];
@@ -826,7 +826,7 @@ PUBLIC EjsString *ejsGetTypeName(Ejs *ejs, EjsAny *obj)
  */
 static EjsString *obj_getTypeName(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
-    assure(argc >= 1);
+    assert(argc >= 1);
     return ejsGetTypeName(ejs, argv[0]);
 }
 
@@ -856,7 +856,7 @@ static EjsString *obj_getName(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsString *obj_typeOf(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
-    assure(argc >= 1);
+    assert(argc >= 1);
     return ejsGetTypeName(ejs, argv[0]);
 }
 

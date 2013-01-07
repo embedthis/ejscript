@@ -134,7 +134,7 @@ static EjsObj *zlib_compressBytes(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
             }
             out->writePosition += nbytes;
         } while (zs.avail_out == 0);
-        assure(zs.avail_in == 0);
+        assert(zs.avail_in == 0);
     } while (flush != Z_FINISH);
     deflateEnd(&zs);
     return (EjsObj*) out;
@@ -190,7 +190,7 @@ static EjsObj *zlib_uncompressBytes(Ejs *ejs, EjsObj *unused, int argc, EjsObj *
             }
             out->writePosition += nbytes;
         } while (zs.avail_out == 0);
-        assure(zs.avail_in == 0);
+        assert(zs.avail_in == 0);
     } while (rc != Z_STREAM_END);
 
     deflateEnd(&zs);
@@ -237,7 +237,7 @@ static EjsString *zlib_compressString(Ejs *ejs, EjsObj *unused, int argc, EjsObj
                 return 0;
             }
         } while (zs.avail_out == 0);
-        assure(zs.avail_in == 0);
+        assert(zs.avail_in == 0);
     } while (flush != Z_FINISH);
 
     deflateEnd(&zs);
@@ -294,7 +294,7 @@ static EjsString *zlib_uncompressString(Ejs *ejs, EjsObj *unused, int argc, EjsO
                 return 0;
             }
         } while (zs.avail_out == 0);
-        assure(zs.avail_in == 0);
+        assert(zs.avail_in == 0);
     } while (rc != Z_STREAM_END);
 
     deflateEnd(&zs);

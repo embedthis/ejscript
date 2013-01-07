@@ -176,7 +176,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
             ejsUnblockGC(ejs, paused);
         }
     }
-    assure(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
+    assert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
 
 
     /*
@@ -209,7 +209,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
         }
     }
     ejsPopBlock(ejs);
-    assure(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
+    assert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
 
     /*
         Add compiled modules to the interpreter
@@ -222,7 +222,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     if (!paused) {
         mprYield(0);
     }
-    assure(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
+    assert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
     return (cp->errorCount > 0) ? EJS_ERR: 0;
 }
 
@@ -433,7 +433,7 @@ static char *makeHighlight(EcCompiler *cp, wchar *source, int col)
         Allow for "^" to be after the last char, plus one null.
      */
     if ((dest = mprAlloc(len + 2)) == NULL) {
-        assure(dest);
+        assert(dest);
         return 0;
     }
     for (i = 0, dp = dest, sp = source; *sp; sp++, i++) {
