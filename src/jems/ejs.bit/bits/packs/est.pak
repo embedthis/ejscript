@@ -4,8 +4,10 @@
 
 pack('est', 'Embedded Transport Security')
 
-if (bit.ssl === false) {
+if (bit.packs.ssl && bit.packs.ssl.enable === false) {
+    throw "SSL has been disabled"
 }
+
 let path = bit.packs.est.path
 
 let cfg

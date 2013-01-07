@@ -4,7 +4,7 @@
 
 pack('matrixssl', 'MatrixSSL SSL/TLS Security')
 
-if (bit.ssl === false) {
+if (bit.packs.ssl && bit.packs.ssl.enable === false) {
     throw "SSL has been disabled"
 }
 

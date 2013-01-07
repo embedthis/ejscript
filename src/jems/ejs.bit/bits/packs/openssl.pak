@@ -4,8 +4,8 @@
 
 pack('openssl', 'OpenSSL SSL/TLS Security')
 
-if (!bit.ssl) {
-    throw 'SSL has been disabled'
+if (bit.packs.ssl && bit.packs.ssl.enable === false) {
+    throw "SSL has been disabled"
 }
 let cfg
 let path: Path? = bit.packs.openssl.path

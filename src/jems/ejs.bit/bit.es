@@ -594,6 +594,16 @@ public class Bit {
         }
     }
 
+    function setSetting(obj, key, value) {
+        if (key.contains('.')) {
+            let [,name,rest] = (key.match(/([^\.]*)\.(.*)/))
+            obj[name] ||= {}
+            setSetting(obj[name], rest, value)
+        } else {
+            obj[key] = value
+        }
+    }
+
     /*
         Apply command line --with/--without --enable/--disable options
      */
@@ -618,7 +628,8 @@ public class Bit {
             if (value == undefined) {
                 value = true
             }
-            bit.settings[field] = value
+            setSetting(bit.settings, field, value)
+            // bit.settings[field] = value
         }
         let required = []
         for each (field in poptions['with']) {
