@@ -95,7 +95,7 @@ module ejs.unix {
                 count++
             }
             if (count == 0 && level == 0 && options.warn) {
-                throw new ArgError('cp: Can\'t find files for "' + patterns + '" to ' + dest)
+                throw 'cp: Can\'t find files to copy "' + patterns + '" to ' + dest
             }
             return count
         }

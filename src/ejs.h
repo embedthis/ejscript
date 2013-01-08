@@ -3213,6 +3213,7 @@ typedef struct EjsHttp {
     char            *uri;                       /**< Target uri */
     char            *method;                    /**< HTTP method */
     char            *keyFile;                   /**< SSL key file */
+    char            *caFile;                    /**< SSL CA certificate file */
     char            *certFile;                  /**< SSL certificate file */
     int             closed;                     /**< Http is closed and "close" event has been issued */
     int             error;                      /**< Http errored and "error" event has been issued */

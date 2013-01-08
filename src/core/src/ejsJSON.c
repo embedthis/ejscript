@@ -589,7 +589,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
             if (!isArray) {
                 if (json->namespaces) {
                     if (qname.space != ESV(empty)) {
-                        mprPutFmtToWideBuf(json->buf, "\"%@\"::", qname.space);
+                        mprPutToBuf(json->buf, "\"%@\"::", qname.space);
                     }
                 }
                 if (quotes) {

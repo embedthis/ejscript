@@ -95,6 +95,28 @@ static EjsNumber *http_available(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 #endif
 
 
+/*
+    function get ca(): String
+ */
+static EjsString *http_ca(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    if (hp->caFile) {
+        return ejsCreateStringFromAsc(ejs, hp->caFile);
+    }
+    return ESV(null);
+}
+
+
+/*  
+    function set setCertificate(value: String): Void
+ */
+static EjsObj *http_set_ca(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    hp->caFile = ejsToMulti(ejs, argv[0]);
+    return 0;
+}
+
+
 /*  
     function close(): Void
  */
@@ -367,7 +389,6 @@ static EjsBoolean *http_isSecure(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-#if UNUSED
 /*  
     function get key(): String
  */
@@ -388,7 +409,6 @@ static EjsObj *http_set_key(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     hp->keyFile = ejsToMulti(ejs, argv[0]);
     return 0;
 }
-#endif
 
 
 /*  
@@ -840,7 +860,7 @@ static EjsObj *http_set_uri(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function get verify(): Boolean
  */
 static EjsBoolean *http_verify(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -867,6 +887,36 @@ static EjsObj *http_set_verify(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     mprVerifySslPeer(hp->ssl, verify);
     return 0;
 }
+
+
+#if UNUSED
+/*
+    function get verifyIssuer(): Boolean
+ */
+static EjsBoolean *http_verifyIssuer(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    if (!hp->ssl) {
+        hp->ssl = mprCreateSsl(0);
+    }
+    return hp->ssl->verifyIssuer ?  ESV(false) : ESV(true);
+}
+
+
+/*  
+    function set verifyIssuer(on: Boolean): Void
+ */
+static EjsObj *http_set_verifyIssuer(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    int     verifyIssuer;
+
+    verifyIssuer = (argv[0] == ESV(true));
+    if (!hp->ssl) {
+        hp->ssl = mprCreateSsl(0);
+    }
+    mprVerifySslIssuer(hp->ssl, verify);
+    return 0;
+}
+#endif
 
 
 /*  
@@ -962,6 +1012,16 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
             hp->ssl = mprCreateSsl(0);
         }
         mprSetSslCertFile(hp->ssl, hp->certFile);
+        if (!hp->keyFile) {
+            ejsThrowStateError(ejs, "Must define a Http.key to use with a certificate");
+        }
+        mprSetSslCertFile(hp->ssl, hp->keyFile);
+    }
+    if (hp->caFile) {
+        if (!hp->ssl) {
+            hp->ssl = mprCreateSsl(0);
+        }
+        mprSetSslCaFile(hp->ssl, hp->caFile);
     }
     if (httpConnect(conn, hp->method, hp->uri, hp->ssl) < 0) {
         ejsThrowIOError(ejs, "Cannot issue request for \"%s\"", hp->uri);
@@ -1196,7 +1256,7 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, cchar *prefix, EjsObj *data)
             }
             vstr = ejsToMulti(ejs, value);
             encodedValue = mprUriEncode(vstr, MPR_ENCODE_URI_COMPONENT);
-            mprPutFmtToBuf(hp->requestContent, "%s%s=%s", sep, encodedKey, encodedValue);
+            mprPutToBuf(hp->requestContent, "%s%s=%s", sep, encodedKey, encodedValue);
         }
     }
 }
@@ -1222,7 +1282,7 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
         encodedKey = mprUriEncode(key, MPR_ENCODE_URI_COMPONENT);
     }
     encodedValue = mprUriEncode(value->value, MPR_ENCODE_URI_COMPONENT);
-    mprPutFmtToBuf(hp->requestContent, "%s%s=%s", sep, encodedKey, encodedValue);
+    mprPutToBuf(hp->requestContent, "%s%s=%s", sep, encodedKey, encodedValue);
 }
 #endif
 
@@ -1493,6 +1553,7 @@ static void manageHttp(EjsHttp *http, int flags)
         mprMark(http->responseContent);
         mprMark(http->uri);
         mprMark(http->method);
+        mprMark(http->caFile);
         mprMark(http->certFile);
         mprMark(TYPE(http));
 
@@ -1521,6 +1582,9 @@ PUBLIC void ejsConfigureHttpType(Ejs *ejs)
     /* DEPRECATED */
     ejsBindMethod(ejs, prototype, ES_Http_available, http_available);
 #endif
+#if ES_Http_ca
+    ejsBindAccess(ejs, prototype, ES_Http_ca, http_ca, http_set_ca);
+#endif
     ejsBindMethod(ejs, prototype, ES_Http_close, http_close);
     ejsBindMethod(ejs, prototype, ES_Http_connect, http_connect);
     ejsBindAccess(ejs, prototype, ES_Http_certificate, http_certificate, http_set_certificate);
@@ -1538,6 +1602,9 @@ PUBLIC void ejsConfigureHttpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Http_header, http_header);
     ejsBindMethod(ejs, prototype, ES_Http_headers, http_headers);
     ejsBindMethod(ejs, prototype, ES_Http_isSecure, http_isSecure);
+#if ES_Http_key
+    ejsBindAccess(ejs, prototype, ES_Http_key, http_key, http_set_key);
+#endif
     ejsBindMethod(ejs, prototype, ES_Http_lastModified, http_lastModified);
     ejsBindMethod(ejs, prototype, ES_Http_limits, http_limits);
     ejsBindAccess(ejs, prototype, ES_Http_method, http_method, http_set_method);

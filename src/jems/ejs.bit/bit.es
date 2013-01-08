@@ -2275,7 +2275,7 @@ public class Bit {
                 } else {
                     safeRemove(target.path)
                 }
-                cp(file, target.path)
+                cp(file, target.path, {warn: true})
             }
         }
     }

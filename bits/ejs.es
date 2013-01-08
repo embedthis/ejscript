@@ -66,6 +66,7 @@ public function packageBinaryFiles(formats = ['tar', 'native']) {
     install(bit.dir.bin.join('bits'), p.bin)
     install(bit.dir.bin.join('www'), p.bin.join('www'), {exclude: /tree-images/})
     install(bit.dir.inc.join('*.h'), p.inc)
+    install(bit.dir.bin.join('http-ca.crt'), p.bin)
 
     if (bit.targets.libmprssl.enable && bit.platform.os == 'linux') {
         install(bit.dir.bin.join('*.' + bit.ext.shobj + '*'), p.bin, {strip: strip, permissions: 0755})
