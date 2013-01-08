@@ -44,7 +44,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
     char        *path, slotsName[BIT_MAX_FNAME], moduleName[BIT_MAX_FNAME];
     char        *cp, *sp, *dp;
 
-    assure(bp);
+    assert(bp);
 
     path = 0;
     localFile = 0;
@@ -188,9 +188,9 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
     EjsName         qname, lqname;
     int             slotNum, i, methodHeader, count, offset;
 
-    assure(bp);
-    assure(type);
-    assure(ejsIsType(ejs, type));
+    assert(bp);
+    assert(type);
+    assert(ejsIsType(ejs, type));
 
     ejs = bp->ejs;
     lastClassSlot = max(firstClassSlot, lastClassSlot);
@@ -453,7 +453,7 @@ static char *mapNamespace(cchar *space)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

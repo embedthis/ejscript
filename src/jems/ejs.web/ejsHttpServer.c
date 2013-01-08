@@ -114,7 +114,7 @@ static EjsObj *hs_limits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     if (sp->limits == 0) {
         sp->limits = ejsCreateEmptyPot(ejs);
         limits = (sp->endpoint) ? sp->endpoint->limits : ejs->http->serverLimits;
-        assure(limits);
+        assert(limits);
         ejsGetHttpLimits(ejs, sp->limits, limits, 1);
     }
     return sp->limits;
@@ -132,7 +132,7 @@ static EjsObj *hs_setLimits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
     if (sp->limits == 0) {
         sp->limits = ejsCreateEmptyPot(ejs);
         limits = (sp->endpoint) ? sp->endpoint->limits : ejs->http->serverLimits;
-        assure(limits);
+        assert(limits);
         ejsGetHttpLimits(ejs, sp->limits, limits, 1);
     }
     ejsBlendObject(ejs, sp->limits, argv[0], EJS_BLEND_OVERWRITE);
@@ -200,7 +200,8 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         loc = (argc >= 1) ? argv[0] : ESV(null);
         if (loc != ESV(null)) {
             address = ejsToString(ejs, loc);
-            mprParseSocketAddress(address->value, &sp->ip, &sp->port, 0);
+            //  MOB should permit https://IP:PORT
+            mprParseSocketAddress(address->value, &sp->ip, &sp->port, NULL, 0);
         } else {
             address = 0;
         }
@@ -468,7 +469,7 @@ static void receiveRequest(EjsRequest *req, MprEvent *event)
     
     conn = req->conn;
     ejs = req->ejs;
-    assure(ejs);
+    assert(ejs);
 
     onrequest = ejsGetProperty(ejs, req->server, ES_ejs_web_HttpServer_onrequest);
     if (!ejsIsFunction(ejs, onrequest)) {
@@ -533,7 +534,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
     cchar           *name;
     int             i;
 
-    assure(sp->endpoint);
+    assert(sp->endpoint);
     http = sp->endpoint->http;
     host = mprGetFirstItem(sp->endpoint->hosts);
     route = mprGetFirstItem(host->routes);
@@ -584,7 +585,7 @@ static void stateChangeNotifier(HttpConn *conn, int event, int arg)
     Ejs             *ejs;
     EjsRequest      *req;
 
-    assure(conn);
+    assert(conn);
 
     ejs = 0;
     if ((req = httpGetConnContext(conn)) != 0) {
@@ -674,7 +675,7 @@ static void setupConnTrace(HttpConn *conn)
     EjsHttpServer   *sp;
     int             i;
 
-    assure(conn->endpoint);
+    assert(conn->endpoint);
     if (conn->endpoint) {
         if ((sp = httpGetEndpointContext(conn->endpoint)) != 0) {
             for (i = 0; i < HTTP_TRACE_MAX_DIR; i++) {
@@ -764,13 +765,13 @@ static void startEjsHandler(HttpQueue *q)
     } else {
         ejs = sp->ejs;
     }
-    assure(!conn->tx->finalized);
+    assert(!conn->tx->finalized);
     if (conn->notifier == 0) {
         httpSetConnNotifier(conn, stateChangeNotifier);
-        assure(!conn->tx->finalized);
+        assert(!conn->tx->finalized);
     }
     if ((req = createRequest(sp, conn)) != 0) {
-        assure(!conn->tx->finalized);
+        assert(!conn->tx->finalized);
         ejsSendEvent(ejs, sp->emitter, "readable", req, req);
 
         /* Send EOF if form or upload and all content has been received.  */
@@ -799,7 +800,7 @@ HttpStage *ejsAddWebHandler(Http *http, MprModule *module)
 {
     HttpStage   *handler;
 
-    assure(http);
+    assert(http);
     if ((handler = http->ejsHandler) == 0) {
         if ((handler = httpCreateHandler(http, "ejsHandler", module)) == 0) {
             return 0;
@@ -958,7 +959,7 @@ void ejsConfigureHttpServerType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

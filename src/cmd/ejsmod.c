@@ -166,7 +166,7 @@ MAIN(ejsmodMain, int argc, char **argv, char **envp)
                 ejsmod --listing embedthis.mod 
                 ejsmod --out slots.h embedthis.mod 
          */
-        mprPrintfError("Usage: %s [options] modules ...\n"
+        mprEprintf("Usage: %s [options] modules ...\n"
             "  Ejscript module manager options:\n"
             "  --cslots              # Generate a C slot definitions file\n"
             "  --html dir            # Generate HTML documentation to the specified directory\n"
@@ -231,7 +231,7 @@ static void manageMod(EjsMod *mp, int flags)
 
 static void require(MprList *list, cchar *name) 
 {
-    assure(list);
+    assert(list);
 
     if (name && *name) {
         mprAddItem(list, name);
@@ -317,7 +317,7 @@ static void getDepends(Ejs *ejs, MprList *list, EjsModule *mp)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

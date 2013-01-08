@@ -26,7 +26,7 @@ static EjsNumber *getAllocatedMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj
  */
 static EjsNumber *setRedlineCallback(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    assure(argc == 1 && ejsIsFunction(ejs, argv[0]));
+    assert(argc == 1 && ejsIsFunction(ejs, argv[0]));
 
     if (!ejsIsFunction(ejs, argv[0])) {
         ejsThrowArgError(ejs, "Callaback is not a function");
@@ -57,7 +57,7 @@ static EjsObj *setMaxMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     int     maxMemory;
 
-    assure(argc == 1 && ejsIs(ejs, argv[0], Number));
+    assert(argc == 1 && ejsIs(ejs, argv[0], Number));
 
     maxMemory = ejsGetInt(ejs, argv[0]);
     mprSetMemLimits(-1, maxMemory);
@@ -84,7 +84,7 @@ static EjsObj *setRedline(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     int     redline;
 
-    assure(argc == 1 && ejsIs(ejs, argv[0], Number));
+    assert(argc == 1 && ejsIs(ejs, argv[0], Number));
 
     redline = ejsGetInt(ejs, argv[0]);
     if (redline <= 0) {
@@ -157,7 +157,7 @@ PUBLIC void ejsConfigureMemoryType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

@@ -108,40 +108,40 @@ public class Bit {
     function usage(): Void {
         print('\nUsage: bit [options] [targets|actions] ...\n' +
             '  Options:\n' + 
-            '    --benchmark                        # Measure elapsed time\n' +
-            '    --configure path-to-source         # Configure for building\n' +
-            '    --continue                         # Continue on errors\n' +
-            '    --debug                            # Same as --profile debug\n' +
-            '    --depth                            # Set utest depth\n' +
-            '    --diagnose                         # Emit diagnostic trace \n' +
-            '    --dump                             # Dump the full project bit file\n' +
-            '    --endian [big|little]              # Define the CPU endianness\n' +
-            '    --file file.bit                    # Use the specified bit file\n' +
-            '    --force                            # Override warnings\n' +
-            '    --gen [make|nmake|sh|vs|xcode]     # Generate project file\n' + 
-            '    --help                             # Print help message\n' + 
-            '    --import                           # Import standard bit configuration\n' + 
-            '    --keep                             # Keep intermediate files\n' + 
-            '    --log logSpec                      # Save errors to a log file\n' +
-            '    --nocross                          # Build natively\n' +
-            '    --out path                         # Save output to a file\n' +
-            '    --platform os-arch[-cpu]           # Build for specified platform\n' +
-            '    --pre                              # Pre-process a source file to stdout\n' +
-            '    --prefix dir=path                  # Define installation path prefixes\n' +
-            '    --profile [debug|release|...]      # Use the build profile\n' +
-            '    --quiet                            # Quiet operation. Suppress trace \n' +
-            '    --reconfigure                      # Reconfigure with existing settings\n' +
-            '    --set [feature=value]              # Enable and a feature\n' +
-            '    --show                             # Show commands executed\n' +
-            '    --static                           # Make static without shared libraries\n' +
-            '    --rebuild                          # Rebuild all specified targets\n' +
-            '    --release                          # Same as --profile release\n' +
-            '    --unicode                          # Set char size to wide (unicode)\n' +
-            '    --unset feature                    # Unset a feature\n' +
-            '    --version                          # Dispay the bit version\n' +
-            '    --verbose                          # Trace operations\n' +
-            '    --with PACK[=PATH]                 # Build with package at PATH\n' +
-            '    --without PACK                     # Build without a package\n' +
+            '    --benchmark                            # Measure elapsed time\n' +
+            '    --configure path-to-source             # Configure for building\n' +
+            '    --continue                             # Continue on errors\n' +
+            '    --debug                                # Same as --profile debug\n' +
+            '    --depth                                # Set utest depth\n' +
+            '    --diagnose                             # Emit diagnostic trace \n' +
+            '    --dump                                 # Dump the full project bit file\n' +
+            '    --endian [big|little]                  # Define the CPU endianness\n' +
+            '    --file file.bit                        # Use the specified bit file\n' +
+            '    --force                                # Override warnings\n' +
+            '    --gen [make|nmake|sh|vs|xcode]         # Generate project file\n' + 
+            '    --help                                 # Print help message\n' + 
+            '    --import                               # Import standard bit configuration\n' + 
+            '    --keep                                 # Keep intermediate files\n' + 
+            '    --log logSpec                          # Save errors to a log file\n' +
+            '    --nocross                              # Build natively\n' +
+            '    --out path                             # Save output to a file\n' +
+            '    --platform os-arch[-cpu]               # Build for specified platform\n' +
+            '    --pre                                  # Pre-process a source file to stdout\n' +
+            '    --prefix dir=path                      # Define installation path prefixes\n' +
+            '    --profile [debug|release|...]          # Use the build profile\n' +
+            '    --quiet                                # Quiet operation. Suppress trace \n' +
+            '    --reconfigure                          # Reconfigure with existing settings\n' +
+            '    --set [feature=value]                  # Enable and a feature\n' +
+            '    --show                                 # Show commands executed\n' +
+            '    --static                               # Make static without shared libraries\n' +
+            '    --rebuild                              # Rebuild all specified targets\n' +
+            '    --release                              # Same as --profile release\n' +
+            '    --unicode                              # Set char size to wide (unicode)\n' +
+            '    --unset feature                        # Unset a feature\n' +
+            '    --version                              # Dispay the bit version\n' +
+            '    --verbose                              # Trace operations\n' +
+            '    --with PACK[=PATH]                     # Build with package at PATH\n' +
+            '    --without PACK                         # Build without a package\n' +
             '')
         if (START.exists) {
             try {
@@ -159,7 +159,7 @@ public class Bit {
                 if (bit.usage) {
                     print('Feature Selection:')
                     for (let [item,msg] in bit.usage) {
-                        print('    --set %-28s # %s' % [item + '=value', msg])
+                        print('    --set %-32s # %s' % [item + '=value', msg])
                     }
                     print('')
                 }
@@ -369,7 +369,7 @@ public class Bit {
             findPacks()
             genPlatformBitFile(platform)
             makeOutDirs()
-            makeBitHeader(platform)
+            genBitHeader(platform)
             importPackFiles()
             bit.cross = true
         }
@@ -420,9 +420,9 @@ public class Bit {
 
         for (let [key, value] in bit.settings) {
             /* Copy over non-standard settings. These include compiler sleuthing settings.  */
-            if (!bit.standardSettings[key]) {
+            //UNUSED if (!bit.standardSettings[key] || Object.getOwnPropertyCount(bit.settings[key])) {
                 nbit.settings[key] = value
-            }
+            // }
         }
         blend(nbit.settings, bit.customSettings)
         nbit.settings.configure = 'bit ' + App.args.slice(1).join(' ')
@@ -463,7 +463,7 @@ public class Bit {
         }
     }
 
-    function makeBitHeader(platform) {
+    function genBitHeader(platform) {
         let path = bit.dir.inc.join('bit.h')
         let f = TextStream(File(path, 'w'))
         f.writeLine('/*\n    bit.h -- Build It Configuration Header for ' + platform + '\n\n' +
@@ -484,7 +484,6 @@ public class Bit {
 
     function writeSettings(f: TextStream, platform, prefix: String, obj) {
         Object.sortProperties(obj)
-        f.writeLine('/* Settings */')
         for (let [key,value] in obj) {
             key = prefix + '_' + key.replace(/[A-Z]/g, '_$&').replace(/-/g, '_').toUpper()
             if (value is Number) {
@@ -503,8 +502,10 @@ public class Bit {
         if (options.endian) {
             settings.endian = options.endian == 'little' ? 1 : 2
         }
+        f.writeLine('\n/* Settings */')
         writeSettings(f, platform, "BIT", settings)
-        //Object.sortProperties(settings)
+
+        //UNUSED Object.sortProperties(settings)
         //f.writeLine('/* Settings */')
     /*
         for (let [key,value] in settings) {
@@ -593,6 +594,16 @@ public class Bit {
         }
     }
 
+    function setSetting(obj, key, value) {
+        if (key.contains('.')) {
+            let [,name,rest] = (key.match(/([^\.]*)\.(.*)/))
+            obj[name] ||= {}
+            setSetting(obj[name], rest, value)
+        } else {
+            obj[key] = value
+        }
+    }
+
     /*
         Apply command line --with/--without --enable/--disable options
      */
@@ -617,8 +628,10 @@ public class Bit {
             if (value == undefined) {
                 value = true
             }
-            bit.settings[field] = value
+            setSetting(bit.settings, field, value)
+            // bit.settings[field] = value
         }
+        let required = []
         for each (field in poptions['with']) {
             let [field,value] = field.split('=')
             bit.packs[field] ||= {}
@@ -627,8 +640,12 @@ public class Bit {
             }
             bit.packs[field].required = true
             if (!bit.settings.required.contains(field) && !bit.settings.optional.contains(field)) {
-                bit.settings.optional.push(field)
+                required.push(field)
             }
+        }
+        if (required.length > 0) {
+            /* Insert explicit required first */
+            bit.settings.required = required + bit.settings.required
         }
         for each (field in poptions['without']) {
             if (bit.settings.required.contains(field)) { 
@@ -1174,7 +1191,7 @@ public class Bit {
             'mkdir -p ${CONFIG}/inc ${CONFIG}/obj ${CONFIG}/lib ${CONFIG}/bin\n')
         genout.writeLine('[ ! -f ${CONFIG}/inc/bit.h ] && ' + 
             'cp projects/' + bit.settings.product + '-${OS}-${PROFILE}-bit.h ${CONFIG}/inc/bit.h')
-        genout.writeLine('[ ! -f ${CONFIG}/inc/bitos.h ] && cp src/bitos.h ${CONFIG}/inc/bitos.h')
+        genout.writeLine('[ ! -f ${CONFIG}/inc/bitos.h ] && cp ${SRC}/src/bitos.h ${CONFIG}/inc/bitos.h')
         genout.writeLine('if ! diff ${CONFIG}/inc/bit.h projects/' + bit.settings.product + 
             '-${OS}-${PROFILE}-bit.h >/dev/null ; then')
         genout.writeLine('\tcp projects/' + bit.settings.product + '-${OS}-${PROFILE}-bit.h ${CONFIG}/inc/bit.h')
@@ -3270,8 +3287,8 @@ public function sortVersions(versions: Array)
 /*
     @copy   default
   
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2013. All Rights Reserved.
   
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire

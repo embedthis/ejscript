@@ -36,7 +36,7 @@ static void defineParam(Ejs *ejs, EjsObj *params, cchar *key, cchar *svalue)
     char        *subkey, *nextkey;
     int         slotNum;
 
-    assure(params);
+    assert(params);
 
     value = ejsCreateStringFromAsc(ejs, svalue);
 
@@ -64,7 +64,7 @@ static void defineParam(Ejs *ejs, EjsObj *params, cchar *key, cchar *svalue)
             params = vp;
             subkey = stok(NULL, ".", &nextkey);
         }
-        assure(params);
+        assert(params);
         qname = ejsName(ejs, "", subkey);
         ejsSetPropertyByName(ejs, params, qname, value);
     }
@@ -443,7 +443,7 @@ static char *makeRelativeHome(Ejs *ejs, EjsRequest *req)
     }
     rx = req->conn->rx;
     path = rx->pathInfo;
-    assure(path && *path == '/');
+    assert(path && *path == '/');
     end = &path[strlen(path)];
     if (path[1]) {
         for (levels = 1, sp = &path[1]; sp < end; sp++) {
@@ -1174,7 +1174,7 @@ static EjsNumber *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "Read count is negative");
         return 0;
     }
-    assure(count > 0);
+    assert(count > 0);
     nbytes = httpRead(req->conn, (char*) &ba->value[offset], count);
     if (nbytes < 0) {
         ejsThrowIOError(ejs, "Cannot read from socket");
@@ -1435,9 +1435,9 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
     EjsType         *type;
     HttpRx          *rx;
 
-    assure(server);
-    assure(conn);
-    assure(dir && *dir);
+    assert(server);
+    assert(conn);
+    assert(dir && *dir);
 
     type = ejsGetTypeByName(ejs, N("ejs.web", "Request"));
     if (type == NULL || (req = ejsCreateObj(ejs, type, 0)) == NULL) {
@@ -1453,7 +1453,7 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
     } else {
         req->dir = ejsCreatePathFromAsc(ejs, mprGetRelPath(dir, 0));
     }
-    assure(!VISITED(req->dir));
+    assert(!VISITED(req->dir));
     //  OPT -- why replicate these two
     req->pathInfo = ejsCreateStringFromAsc(ejs, rx->pathInfo);
     req->scriptName = ejsCreateStringFromAsc(ejs, rx->scriptName);
@@ -1571,7 +1571,7 @@ void ejsConfigureRequestType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

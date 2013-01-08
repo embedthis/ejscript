@@ -43,7 +43,7 @@ static EjsObj *app_chdir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     cchar   *path;
 
-    assure(argc == 1);
+    assert(argc == 1);
 
     if (ejsIs(ejs, argv[0], Path)) {
         path = ((EjsPath*) argv[0])->value;
@@ -338,7 +338,7 @@ PUBLIC void ejsConfigureAppType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

@@ -61,7 +61,7 @@ PUBLIC EjsAny *cloneXml(Ejs *ejs, EjsXML *xml, bool deep)
     if (xml->elements) {
         root->elements = mprCreateList(-1, 0);
         for (next = 0; (elt = mprGetNextItem(xml->elements, &next)) != 0; ) {
-            assure(ejsIsXML(ejs, elt));
+            assert(ejsIsXML(ejs, elt));
             elt = ejsClone(ejs, elt, 1);
             if (elt) {
                 elt->parent = root;
@@ -85,7 +85,7 @@ static EjsAny *castXml(Ejs *ejs, EjsXML *xml, EjsType *type)
     EjsObj      *result;
     MprBuf      *buf;
 
-    assure(ejsIsXML(ejs, xml));
+    assert(ejsIsXML(ejs, xml));
 
     if (type == ESV(XMLList)) {
         return xml;
@@ -140,7 +140,7 @@ static int deleteXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname)
         /* @ and @* */
         if (xml->attributes) {
             for (next = 0; (item = mprGetNextItem(xml->attributes, &next)) != 0; ) {
-                assure(qname.name->value[0] == '@');
+                assert(qname.name->value[0] == '@');
                 if (qname.name->value[1] == '*' || wcmp(item->qname.name->value, &qname.name->value[1]) == 0) {
                     mprRemoveItemAtPos(xml->attributes, next - 1);
                     item->parent = 0;
@@ -154,7 +154,7 @@ static int deleteXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname)
         /* name and * */
         if (xml->elements) {
             for (next = 0; (item = mprGetNextItem(xml->elements, &next)) != 0; ) {
-                assure(item->qname.name);
+                assert(item->qname.name);
                 if (qname.name->value[0] == '*' || ejsCompareString(ejs, item->qname.name, qname.name) == 0) {
                     mprRemoveItemAtPos(xml->elements, next - 1);
                     item->parent = 0;
@@ -263,7 +263,7 @@ static EjsObj *getXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname)
 
     result = 0;
 
-    assure(xml->kind < 5);
+    assert(xml->kind < 5);
     if (isdigit((uchar) qname.name->value[0]) && allDigitsForXml(qname.name)) {
         /*
             Consider xml as a list with only one entry == xml. Then return the 0'th entry
@@ -276,7 +276,7 @@ static EjsObj *getXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname)
         result = ejsCreateXMLList(ejs, xml, qname);
         if (xml->attributes) {
             for (next = 0; (item = mprGetNextItem(xml->attributes, &next)) != 0; ) {
-                assure(qname.name->value[0] == '@');
+                assert(qname.name->value[0] == '@');
                 if (qname.name->value[1] == '*' || wcmp(item->qname.name->value, &qname.name->value[1]) == 0) {
                     result = ejsAppendToXML(ejs, result, item);
                 }
@@ -295,14 +295,14 @@ static EjsObj *getXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname)
                 if (item->kind == EJS_XML_LIST) {
                     list = item;
                     for (nextList = 0; (item = mprGetNextItem(list->elements, &nextList)) != 0; ) {
-                        assure(item->qname.name);
+                        assert(item->qname.name);
                         if (qname.name->value[0] == '*' || ejsCompareString(ejs, item->qname.name, qname.name) == 0) {
                             result = ejsAppendToXML(ejs, result, item);
                         }
                     }
 
                 } else if (item->qname.name) {
-                    assure(item->qname.name);
+                    assert(item->qname.name);
                     if (qname.name->value[0] == '*' || ejsCompareString(ejs, item->qname.name, qname.name) == 0) {
                         result = ejsAppendToXML(ejs, result, item);
                     }
@@ -360,7 +360,7 @@ static int setXmlPropertyAttributeByName(Ejs *ejs, EjsXML *xml, EjsName qname, E
     } else {
         value = ejsCast(ejs, value, String);
     }
-    assure(ejsIs(ejs, value, String));
+    assert(ejsIs(ejs, value, String));
 
     /*
         Find the first attribute that matches. Delete all other attributes of the same name.
@@ -369,7 +369,7 @@ static int setXmlPropertyAttributeByName(Ejs *ejs, EjsXML *xml, EjsName qname, E
     if (xml->attributes) {
         lastElt = 0;
         for (last = -1, index = -1; (elt = mprGetPrevItem(xml->attributes, &index)) != 0; ) {
-            assure(qname.name->value[0] == '@');
+            assert(qname.name->value[0] == '@');
             if (wcmp(elt->qname.name->value, &qname.name->value[1]) == 0) {
                 if (last >= 0) {
                     mprRemoveItemAtPos(xml->attributes, last);
@@ -394,7 +394,7 @@ static int setXmlPropertyAttributeByName(Ejs *ejs, EjsXML *xml, EjsName qname, E
     /*
         Not found. Create a new attribute node
      */
-    assure(ejsIs(ejs, value, String));
+    assert(ejsIs(ejs, value, String));
     qn.space = NULL;
     qn.name = ejsSubstring(ejs, qname.name, 1, -1);
     attribute = ejsCreateXML(ejs, EJS_XML_ATTRIBUTE, qn, xml, (EjsString*) value);
@@ -456,7 +456,7 @@ static int setXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname, EjsObj *va
     last = 0;
     lastElt = 0;
 
-    mprLog(9, "XMLSet %@.%@ = \"%@\"", xml->qname.name, qname.name, ejsCast(ejs, value, String));
+    mprTrace(9, "XMLSet %@.%@ = \"%@\"", xml->qname.name, qname.name, ejsCast(ejs, value, String));
 
     if (isdigit((uchar) qname.name->value[0]) && allDigitsForXml(qname.name)) {
         ejsThrowTypeError(ejs, "Integer indicies for set are not allowed");
@@ -655,7 +655,7 @@ static EjsObj *xmlConstructor(Ejs *ejs, EjsXML *thisObj, int argc, EjsObj **argv
     }
 
     arg = argv[0];
-    assure(arg);
+    assert(arg);
 
     if (!ejsIsDefined(ejs, arg)) {
         return (EjsObj*) thisObj;
@@ -694,7 +694,7 @@ static EjsObj *loadXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
     MprXml      *xp;
     cchar       *filename;
 
-    assure(argc == 1 && ejsIs(ejs, argv[0], String));
+    assert(argc == 1 && ejsIs(ejs, argv[0], String));
 
     filename = ejsToMulti(ejs, argv[0]);
     file = mprOpenFile(filename, O_RDONLY, 0664);
@@ -820,7 +820,7 @@ static EjsObj *setLength(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 {
     int         length;
 
-    assure(ejsIsXML(ejs, xml));
+    assert(ejsIsXML(ejs, xml));
 
     if (argc != 1) {
         ejsThrowArgError(ejs, "usage: obj.length = value");
@@ -929,10 +929,10 @@ PUBLIC int ejsAppendAttributeToXML(Ejs *ejs, EjsXML *parent, EjsXML *node)
 
 static ssize readFileData(MprXml *xp, void *data, char *buf, ssize size)
 {
-    assure(xp);
-    assure(data);
-    assure(buf);
-    assure(size > 0);
+    assert(xp);
+    assert(data);
+    assert(buf);
+    assert(size > 0);
 
     return mprReadFile((MprFile*) data, buf, size);
 }
@@ -943,9 +943,9 @@ static ssize readStringData(MprXml *xp, void *data, char *buf, ssize size)
     EjsXmlState *parser;
     ssize       len, rc;
 
-    assure(xp);
-    assure(buf);
-    assure(size > 0);
+    assert(xp);
+    assert(buf);
+    assert(size > 0);
 
     parser = (EjsXmlState*) xp->parseArg;
 
@@ -1102,7 +1102,7 @@ PUBLIC void ejsConfigureXMLType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

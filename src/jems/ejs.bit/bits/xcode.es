@@ -13,7 +13,7 @@ var out: Stream             //  Project output file stream
 const PREP_CODE = 
 "[ ! -x ${INC_DIR} ] && mkdir -p ${INC_DIR} ${OBJ_DIR} ${LIB_DIR} ${BIN_DIR}
 [ ! -f ${INC_DIR}/bit.h ] && cp ${settings.product}-macosx-${platform.profile}-bit.h ${INC_DIR}/bit.h
-[ ! -f ${INC_DIR}/bitos.h ] && cp src/bitos.h ${INC_DIR}/bitos.h
+[ ! -f ${INC_DIR}/bitos.h ] && cp ${SRC_DIR}/src/bitos.h ${INC_DIR}/bitos.h
 if ! diff ${INC_DIR}/bit.h ${settings.product}-macosx-${platform.profile}-bit.h >/dev/null ; then
     cp ${settings.product}-macosx-${platform.profile}-bit.h ${INC_DIR}/bit.h
 fi"
@@ -998,8 +998,8 @@ function getmakeid(src) {
 /*
     @copy   default
   
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2013. All Rights Reserved.
   
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire

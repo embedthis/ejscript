@@ -28,7 +28,7 @@ static EjsWebSocket *wsConstructor(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj 
     EjsAny      *certificate;
     bool        verify;
 
-    assure(ejsIsPot(ejs, ws));
+    assert(ejsIsPot(ejs, ws));
 
     ejsLoadHttpService(ejs);
     ws->ejs = ejs;
@@ -292,7 +292,7 @@ static void onWebSocketEvent(EjsWebSocket *ws, int event, EjsAny *data)
     case HTTP_EVENT_READABLE:
         slot = ES_WebSocket_onmessage;
         eventName = "readable";
-        assure(data);
+        assert(data);
         ejsSetPropertyByName(ejs, eobj, EN("data"), data);
         break;
 
@@ -360,7 +360,7 @@ static void webSocketNotify(HttpConn *conn, int event, int arg)
     case HTTP_EVENT_STATE:
         if (arg == HTTP_STATE_CONTENT) {
             ws->protocol = (char*) httpGetHeader(conn, "Sec-WebSocket-Protocol");
-            mprLog(4, "Web socket protocol %s", ws->protocol);
+            mprTrace(4, "Web socket protocol %s", ws->protocol);
             onWebSocketEvent(ws, HTTP_EVENT_APP_OPEN, 0);
         }
         break;
@@ -369,12 +369,12 @@ static void webSocketNotify(HttpConn *conn, int event, int arg)
         /* Called once per packet unless packet is too large (LimitWebSocketPacket) */
         packet = httpGetPacket(conn->readq);
         content = packet->content;
-        mprLog(4, "webSocketNotify: READABLE event format %s\n", packet->type == WS_MSG_TEXT ? "text" : "binary");
+        mprTrace(4, "webSocketNotify: READABLE event format %s\n", packet->type == WS_MSG_TEXT ? "text" : "binary");
         if (packet->type == WS_MSG_TEXT) {
             data = ejsCreateStringFromBytes(ejs, mprGetBufStart(content), mprGetBufLength(content));
         } else {
             len = httpGetPacketLength(packet);
-            assure(len > 0);
+            assert(len > 0);
             if ((ba = ejsCreateByteArray(ejs, len)) == 0) {
                 return;
             }
@@ -413,11 +413,11 @@ static bool waitForHttpState(EjsWebSocket *ws, int state, MprTicks timeout, int 
     char            *url;
     int             count, redirectCount, success, rc;
 
-    assure(state >= HTTP_STATE_PARSED);
+    assert(state >= HTTP_STATE_PARSED);
 
     ejs = ws->ejs;
     conn = ws->conn;
-    assure(conn->state >= HTTP_STATE_CONNECTED);
+    assert(conn->state >= HTTP_STATE_CONNECTED);
 
     if (conn->state >= state) {
         return 1;
@@ -470,7 +470,7 @@ static bool waitForHttpState(EjsWebSocket *ws, int state, MprTicks timeout, int 
             }
         }
         if (timeout > 0) {
-            remaining = mprGetRemainingTime(mark, timeout);
+            remaining = mprGetRemainingTicks(mark, timeout);
             if (count > 0 && remaining <= 0) {
                 break;
             }
@@ -508,7 +508,7 @@ static bool waitForReadyState(EjsWebSocket *ws, int state, MprTicks timeout, int
     ejs = ws->ejs;
     conn = ws->conn;
     rx = conn->rx;
-    assure(conn->state >= HTTP_STATE_CONNECTED);
+    assert(conn->state >= HTTP_STATE_CONNECTED);
 
     if (!rx || !rx->webSocket) {
         return 0;
@@ -535,7 +535,7 @@ static bool waitForReadyState(EjsWebSocket *ws, int state, MprTicks timeout, int
             break;
         }
         mprWaitForEvent(conn->dispatcher, min(inactivityTimeout, remaining));
-        remaining = mprGetRemainingTime(mark, timeout);
+        remaining = mprGetRemainingTicks(mark, timeout);
     }
     return rx->webSocket->state >= state;
 }
@@ -594,7 +594,7 @@ PUBLIC void ejsConfigureWebSocketType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

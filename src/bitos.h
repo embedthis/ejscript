@@ -12,14 +12,7 @@
 /******************************* Default Features *****************************/
 
 #ifndef BIT_DEBUG
-    #define BIT_DEBUG 0                 /**< Enable a debug build */
-#endif
-#ifndef BIT_ASSERT
-    #if BIT_DEBUG
-        #define BIT_ASSERT 1            /**< Turn debug assure assertions on */
-    #else
-        #define BIT_ASSERT 0
-    #endif
+    #define BIT_DEBUG 0                 /**< Default to a debug build */
 #endif
 #ifndef BIT_FLOAT
     #define BIT_FLOAT 1                 /**< Build with floating point support */
@@ -581,6 +574,7 @@
 typedef int64 Offset;
 
 #if DOXYGEN
+    /** Size to hold the length of a socket address */
     typedef int Socklen;
 #elif VXWORKS
     typedef int Socklen;
@@ -1156,7 +1150,7 @@ extern "C" {
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

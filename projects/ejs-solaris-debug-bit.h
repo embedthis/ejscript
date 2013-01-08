@@ -5,12 +5,10 @@
     configure or define variables in your Makefile to override these default values.
  */
 
+
 /* Settings */
 #ifndef BIT_BUILD_NUMBER
     #define BIT_BUILD_NUMBER "0"
-#endif
-#ifndef BIT_CIPHERS
-    #define BIT_CIPHERS "HIGH:MEDIUM"
 #endif
 #ifndef BIT_COMPANY
     #define BIT_COMPANY "Embedthis"
@@ -51,11 +49,11 @@
 #ifndef BIT_HAS_UNNAMED_UNIONS
     #define BIT_HAS_UNNAMED_UNIONS 1
 #endif
-#ifndef BIT_MANAGER
-    #define BIT_MANAGER "ejsman"
+#ifndef BIT_MPR_MANAGER
+    #define BIT_MPR_MANAGER "ejsman"
 #endif
 #ifndef BIT_OPTIONAL
-    #define BIT_OPTIONAL "doxygen,dsi,man,man2html,openssl,pmaker,sqlite,ssl,zip"
+    #define BIT_OPTIONAL "doxygen,dsi,est,man,man2html,pmaker,sqlite,zip"
 #endif
 #ifndef BIT_PACKS
     #define BIT_PACKS "bits/packs"
@@ -68,6 +66,9 @@
 #endif
 #ifndef BIT_REQUIRED
     #define BIT_REQUIRED "compiler,lib,link,pcre,zlib"
+#endif
+#ifndef BIT_STATIC
+    #define BIT_STATIC 0
 #endif
 #ifndef BIT_SYNC
     #define BIT_SYNC "bitos,est,http,mpr,pcre,sqlite,zlib"
@@ -85,7 +86,7 @@
     #define BIT_WARN_UNUSED 0
 #endif
 #ifndef BIT_WITHOUT_ALL
-    #define BIT_WITHOUT_ALL "doxygen,dsi,man,man2html,ssl,matrixssl,openssl"
+    #define BIT_WITHOUT_ALL "doxygen,dsi,est,man,man2html,matrixssl,openssl"
 #endif
 
 /* Prefixes */
@@ -198,9 +199,6 @@
 #endif
 #ifndef BIT_PACK_SQLITE
     #define BIT_PACK_SQLITE 1
-#endif
-#ifndef BIT_PACK_SSL
-    #define BIT_PACK_SSL 0
 #endif
 #ifndef BIT_PACK_ZIP
     #define BIT_PACK_ZIP 1

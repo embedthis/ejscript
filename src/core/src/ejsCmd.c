@@ -189,7 +189,7 @@ static EjsNumber *cmd_read(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     EjsByteArray    *buffer;
     ssize           offset, count, nbytes;
 
-    assure(1 <= argc && argc <= 3);
+    assert(1 <= argc && argc <= 3);
 
     buffer = (EjsByteArray*) argv[0];
     offset = (argc == 2) ? ejsGetInt(ejs, argv[1]) : 0;
@@ -242,7 +242,7 @@ static EjsString *cmd_readString(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     EjsString   *result;
     ssize       nbytes, count;
     
-    assure(0 <= argc && argc <= 1);
+    assert(0 <= argc && argc <= 1);
     
     count = (argc >= 1) ? ejsGetInt(ejs, argv[0]) : -1;
     if (count < 0) {
@@ -304,7 +304,7 @@ static void cmdIOCallback(MprCmd *mc, int channel, void *data)
         }
         space = mprGetBufSpace(buf);
     }
-    assure(mc->files[channel].fd >= 0);
+    assert(mc->files[channel].fd >= 0);
     len = mprReadCmd(mc, channel, mprGetBufEnd(buf), space);
     if (len <= 0) {
         if (len == 0 || (len < 0 && !(errno == EAGAIN || errno == EWOULDBLOCK))) {
@@ -469,13 +469,13 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         return 0;
     }
     if (!(flags & MPR_CMD_DETACH)) {
-        assure(cmd->mc);
+        assert(cmd->mc);
         mprFinalizeCmd(cmd->mc);
         if (mprWaitForCmd(cmd->mc, cmd->timeout) < 0) {
             ejsThrowStateError(ejs, "Timeout %d msec waiting for command to complete: %s", cmd->timeout, cmd->argv[0]);
             return 0;
         }
-        assure(cmd->mc);
+        assert(cmd->mc);
         if (cmd->throw) {
             status = mprGetCmdExitStatus(cmd->mc);
             if (status != 0) {
@@ -578,7 +578,7 @@ static EjsNumber *cmd_write(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     ssize           len, wrote;
     int             i;
 
-    assure(argc == 1 && ejsIs(ejs, argv[0], Array));
+    assert(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     /*
         Unwrap nested arrays
@@ -699,7 +699,7 @@ PUBLIC void ejsConfigureCmdType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

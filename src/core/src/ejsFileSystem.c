@@ -48,10 +48,10 @@ static EjsFileSystem *fileSystemConstructor(Ejs *ejs, EjsFileSystem *fp, int arg
     cchar   *path;
 
 #if UNUSED
-    assure(argc == 1 && ejsIs(ejs, argv[0], String));
+    assert(argc == 1 && ejsIs(ejs, argv[0], String));
     path = ejsToMulti(ejs, argv[0]);
 #else
-    assure(argc == 1 && ejsIs(ejs, argv[0], Path));
+    assert(argc == 1 && ejsIs(ejs, argv[0], Path));
     path = ((EjsPath*) argv[0])->value;
 #endif
     fp->path = mprNormalizePath(path);
@@ -141,7 +141,7 @@ static EjsObj *setNewline(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
     cchar   *nl;
 
-    assure(ejsIs(ejs, argv[0], String));
+    assert(ejsIs(ejs, argv[0], String));
     nl = ejsToMulti(ejs, (EjsString*) argv[0]);
     mprSetPathNewline(fp->path, nl);
     return 0;
@@ -180,7 +180,7 @@ static EjsString *getSeparators(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **
  */
 static EjsObj *setSeparators(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
-    assure(argc == 1 && ejsIs(ejs, argv[0], String));
+    assert(argc == 1 && ejsIs(ejs, argv[0], String));
     mprSetPathSeparators(fp->path, ejsToMulti(ejs, argv[0]));
     return 0;
 }
@@ -252,7 +252,7 @@ PUBLIC void ejsConfigureFileSystemType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

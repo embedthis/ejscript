@@ -17,6 +17,7 @@ const XID = '{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}'
 var PREP = 'if not exist "$(ObjDir)" md "$(ObjDir)"
 if not exist "$(BinDir)" md "$(BinDir)"
 if not exist "$(IncDir)" md "$(IncDir)"
+if not exist "$(IncDir)\\bitos.h" copy "..\\..\\src\\bitos.h" "$(IncDir)\\bitos.h"
 if not exist "$(IncDir)\\bit.h" copy "..\\${settings.product}-${platform.os}-${platform.profile}-bit.h" "$(IncDir)\\bit.h"
 '
 var prepTarget
@@ -613,8 +614,8 @@ function wpath(path): Path {
 /*
     @copy   default
   
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2013. All Rights Reserved.
   
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire

@@ -107,7 +107,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     if (ejsLoadModules(ejs, searchPath, NULL) < 0) {
         return MPR_ERR_CANT_READ;
     }
-    mprLog(2, "Load script \"%s\"", path);
+    mprTrace(2, "Load script \"%s\"", path);
     flags = EC_FLAGS_BIND | EC_FLAGS_DEBUG | EC_FLAGS_NO_OUT | EC_FLAGS_THROW;
     if ((ec = ecCreateCompiler(ejs, flags)) == 0) {
         return MPR_ERR_MEMORY;
@@ -150,7 +150,7 @@ static void manageApp(App *app, int flags)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

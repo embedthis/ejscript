@@ -111,7 +111,7 @@ static EjsObj *sock_connect(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
             address = ejsToString(ejs, address);
         }
         sp->address = ejsToMulti(ejs, address);
-        mprParseSocketAddress(sp->address, &sp->address, &sp->port, 0);
+        mprParseSocketAddress(sp->address, &sp->address, &sp->port, NULL, 0);
         if (sp->address == 0) {
             sp->address = sclone("127.0.0.1");
         }
@@ -165,7 +165,8 @@ static EjsObj *sock_listen(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
             address = ejsToString(ejs, address);
         }
         sp->address = ejsToMulti(ejs, address);
-        mprParseSocketAddress(sp->address, &sp->address, &sp->port, 80);
+        //  MOB - should listen to secure and permit https://IP:PORT
+        mprParseSocketAddress(sp->address, &sp->address, &sp->port, NULL, 80);
     }
     if (!sp->sock) {
         ejsThrowStateError(ejs, "Socket is closed");
@@ -331,7 +332,7 @@ static void enableSocketEvents(EjsSocket *sp, int (*proc)(EjsSocket *sp, MprEven
     Ejs     *ejs;
 
     ejs = sp->ejs;
-    assure(sp->sock);
+    assert(sp->sock);
     
     if (sp->sock->handler == 0) {
         mprAddSocketHandler(sp->sock, sp->mask, ejs->dispatcher, (MprEventProc) proc, sp, 0);
@@ -436,7 +437,7 @@ PUBLIC void ejsConfigureSocketType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

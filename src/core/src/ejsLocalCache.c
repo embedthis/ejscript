@@ -103,7 +103,7 @@ static EjsAny *sl_expire(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv
 
     if (cache->shared) {
         cache = cache->shared;
-        assure(cache == shared);
+        assert(cache == shared);
     }
     key = argv[0];
     expires = argv[1];
@@ -136,7 +136,7 @@ static EjsAny *sl_inc(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv)
 
     if (cache->shared) {
         cache = cache->shared;
-        assure(cache == shared);
+        assert(cache == shared);
     }
     key = argv[0];
     amount = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : 1;
@@ -173,7 +173,7 @@ static EjsPot *sl_limits(Ejs *ejs, EjsLocalCache *cache, int argc, EjsObj **argv
 
     if (cache->shared) {
         cache = cache->shared;
-        assure(cache == shared);
+        assert(cache == shared);
     }
     result = ejsCreateEmptyPot(ejs);
     ejsSetPropertyByName(ejs, result, EN("keys"), 
@@ -199,7 +199,7 @@ static EjsAny *sl_read(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv)
 
     if (cache->shared) {
         cache = cache->shared;
-        assure(cache == shared);
+        assert(cache == shared);
     }
     key = argv[0];
     getVersion = 0;
@@ -248,7 +248,7 @@ static EjsBoolean *sl_remove(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **
 
     if (cache->shared) {
         cache = cache->shared;
-        assure(cache == shared);
+        assert(cache == shared);
     }
     key = argv[0];
     lock(cache);
@@ -282,7 +282,7 @@ static void setLocalLimits(Ejs *ejs, EjsLocalCache *cache, EjsPot *options)
     }
     if (cache->shared) {
         cache = cache->shared;
-        assure(cache == shared);
+        assert(cache == shared);
     }
     if ((vp = ejsGetPropertyByName(ejs, options, EN("keys"))) != 0) {
         cache->maxKeys = (ssize) ejsGetInt64(ejs, vp);
@@ -315,7 +315,7 @@ static EjsVoid *sl_setLimits(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **
 {
     if (cache->shared) {
         cache = cache->shared;
-        assure(cache == shared);
+        assert(cache == shared);
     }
     setLocalLimits(ejs, cache, argv[0]);
     return 0;
@@ -339,7 +339,7 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
 
     if (cache->shared) {
         cache = cache->shared;
-        assure(cache == shared);
+        assert(cache == shared);
     }
     checkVersion = exists = add = prepend = append = throw = 0;
     set = 1;
@@ -430,7 +430,7 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
     cache->usedMem += (len - oldLen);
 
     if (cache->timer == 0) {
-        mprLog(5, "Start LocalCache pruner with resolution %d", cache->resolution);
+        mprTrace(5, "Start LocalCache pruner with resolution %d", cache->resolution);
         /* 
             Use the MPR dispatcher incase this VM is destroyed 
          */
@@ -471,15 +471,15 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
         for (kp = 0; (kp = mprGetNextKey(cache->store, kp)) != 0; ) {
             item = (CacheItem*) kp->data;
 #if KEEP
-            mprLog(6, "LocalCache: \"%@\" lifespan %d, expires in %d secs", item->key, 
+            mprTrace(6, "LocalCache: \"%@\" lifespan %d, expires in %d secs", item->key, 
                     item->lifespan / 1000, (item->expires - when) / 1000);
 #endif
             if (item->expires && item->expires <= when) {
-                mprLog(5, "LocalCache prune expired key %s", kp->key);
+                mprTrace(5, "LocalCache prune expired key %s", kp->key);
                 removeItem(cache, item);
             }
         }
-        assure(cache->usedMem >= 0);
+        assert(cache->usedMem >= 0);
 
         /*
             If too many keys or too much memory used. Prune oldest first.
@@ -491,7 +491,7 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
                     for (kp = 0; (kp = mprGetNextKey(cache->store, kp)) != 0; ) {
                         item = (CacheItem*) kp->data;
                         if (item->expires && item->expires <= when) {
-                            mprLog(5, "LocalCache too big execess keys %Ld, mem %Ld, prune key %s", 
+                            mprTrace(5, "LocalCache too big execess keys %Ld, mem %Ld, prune key %s", 
                                     excessKeys, (cache->maxMem - cache->usedMem), kp->key);
                             removeItem(cache, item);
                             excessKeys--;
@@ -503,7 +503,7 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
                 }
             }
         }
-        assure(cache->usedMem >= 0);
+        assert(cache->usedMem >= 0);
 
         if (mprGetHashLength(cache->store) == 0) {
             mprRemoveEvent(event);
@@ -593,7 +593,7 @@ PUBLIC void ejsConfigureLocalCacheType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

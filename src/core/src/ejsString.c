@@ -34,8 +34,8 @@ static void unlinkString(EjsString *sp);
  */
 static EjsAny *castString(Ejs *ejs, EjsString *sp, EjsType *type)
 {
-    assure(sp);
-    assure(type);
+    assert(sp);
+    assert(type);
 
     switch (type->sid) {
     case S_Boolean:
@@ -174,7 +174,7 @@ static EjsAny *invokeStringOperator(Ejs *ejs, EjsString *lhs, int opcode, EjsStr
     case EJS_OP_COMPARE_EQ:
         //  OPT -- should use lhs == rhs
         if (lhs->value == rhs->value) {
-            assure(lhs == rhs);
+            assert(lhs == rhs);
             return ESV(true);
         }
         return ESV(false);
@@ -183,7 +183,7 @@ static EjsAny *invokeStringOperator(Ejs *ejs, EjsString *lhs, int opcode, EjsStr
     case EJS_OP_COMPARE_STRICTLY_NE:
         //  OPT -- should use lhs == rhs
         if (lhs->value != rhs->value) {
-            assure(lhs != rhs);
+            assert(lhs != rhs);
             return ESV(true);
         }
         return ESV(false);
@@ -251,7 +251,7 @@ static EjsAny *invokeStringOperator(Ejs *ejs, EjsString *lhs, int opcode, EjsStr
         ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
-    assure(0);
+    assert(0);
 }
 
 
@@ -285,7 +285,7 @@ static EjsString *stringConstructor(Ejs *ejs, EjsString *sp, int argc, EjsObj **
 {
     EjsArray    *args;
 
-    assure(argc == 0 || (argc == 1 && ejsIs(ejs, argv[0], Array)));
+    assert(argc == 0 || (argc == 1 && ejsIs(ejs, argv[0], Array)));
     sp->length = 0;
 
     if (argc == 1) {
@@ -307,7 +307,7 @@ static EjsNumber *caseCompare(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     int     result;
 
-    assure(argc == 1 && ejsIs(ejs, argv[0], String));
+    assert(argc == 1 && ejsIs(ejs, argv[0], String));
 
     result = wcmp(sp->value, ((EjsString*) argv[0])->value);
     return ejsCreateNumber(ejs, result);
@@ -323,7 +323,7 @@ static EjsNumber *caselessCompare(Ejs *ejs, EjsString *sp, int argc, EjsObj **ar
 {
     int     result;
 
-    assure(argc == 1 && ejsIs(ejs, argv[0], String));
+    assert(argc == 1 && ejsIs(ejs, argv[0], String));
 
     result = wcasecmp(sp->value, ((EjsString*) argv[0])->value);
     return ejsCreateNumber(ejs, result);
@@ -339,7 +339,7 @@ static EjsString *charAt(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     int     index;
 
-    assure(argc == 1 && ejsIs(ejs, argv[0], Number));
+    assert(argc == 1 && ejsIs(ejs, argv[0], Number));
     index = ejsGetInt(ejs, argv[0]);
     if (index < 0 || index >= sp->length) {
         return ESV(empty);
@@ -380,7 +380,7 @@ static EjsString *concatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     EjsString   *result, *str;
     int         i;
 
-    assure(argc == 1 && ejsIs(ejs, argv[0], Array));
+    assert(argc == 1 && ejsIs(ejs, argv[0], Array));
     args = (EjsArray*) argv[0];
 
     result = (EjsString*) ejsClone(ejs, sp, 0);
@@ -433,7 +433,7 @@ static EjsBoolean *endsWith(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     EjsString   *pattern;
     ssize       len;
 
-    assure(argc == 1 && ejsIs(ejs, argv[0], String));
+    assert(argc == 1 && ejsIs(ejs, argv[0], String));
 
     pattern = (EjsString*) argv[0];
     len = pattern->length;
@@ -569,7 +569,7 @@ static EjsString *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     ssize       i, flen, start, len, last;
     int         c, nextArg, kind;
 
-    assure(argc == 1 && ejsIs(ejs, argv[0], Array));
+    assert(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = (EjsArray*) argv[0];
 
@@ -689,7 +689,7 @@ static EjsString *fromCharCode(Ejs *ejs, EjsString *unused, int argc, EjsObj **a
     EjsObj      *vp;
     int         i;
 
-    assure(argc == 1 && ejsIs(ejs, argv[0], Array));
+    assert(argc == 1 && ejsIs(ejs, argv[0], Array));
     args = (EjsArray*) argv[0];
 
     if ((result = (EjsString*) ejsCreateBareString(ejs, argc + 1)) == NULL) {
@@ -794,8 +794,8 @@ static EjsNumber *indexOf(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     EjsString   *pattern;
     ssize       start, index, patternLength;
 
-    assure(1 <= argc && argc <= 2);
-    assure(ejsIs(ejs, argv[0], String));
+    assert(1 <= argc && argc <= 2);
+    assert(ejsIs(ejs, argv[0], String));
 
     pattern = (EjsString*) argv[0];
     patternLength = (int) pattern->length;
@@ -925,7 +925,7 @@ static EjsNumber *lastIndexOf(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     EjsString   *pattern;
     ssize       start, patternLength, index;
 
-    assure(1 <= argc && argc <= 2);
+    assert(1 <= argc && argc <= 2);
 
     pattern = (EjsString*) argv[0];
     patternLength = (int) pattern->length;
@@ -1065,7 +1065,7 @@ static EjsString *removeCharsFromString(Ejs *ejs, EjsString *sp, int argc, EjsOb
     EjsString       *result;
     ssize           start, end, i, j;
 
-    assure(1 <= argc && argc <= 2);
+    assert(1 <= argc && argc <= 2);
 
     start = ejsGetInt(ejs, argv[0]);
     end = ejsGetInt(ejs, argv[1]);
@@ -1107,7 +1107,7 @@ static EjsString *getReplacementText(Ejs *ejs, EjsFunction *fn, int count, int *
     EjsAny  *result, *argv[BIT_MAX_REGEX_MATCHES * 3];
     int     i, offset, argc;
 
-    assure(fn);
+    assert(fn);
     
     argc = 0;
     argv[argc++] = ejsCreateString(ejs, &sp->value[matches[0]], matches[1] - matches[0]);
@@ -1155,7 +1155,6 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         result = ejsCreateBareString(ejs, BIT_MAX_BUFFER);
         result->length = 0;
         startNextMatch = endLastMatch = 0;
-
         do {
             if (startNextMatch > sp->length) {
                 break;
@@ -1211,7 +1210,8 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                             cp--;
                             if (submatch < count) {
                                 submatch *= 2;
-                                result = buildString(ejs, result, &sp->value[matches[submatch]], matches[submatch + 1] - matches[submatch]);
+                                result = buildString(ejs, result, 
+                                    &sp->value[matches[submatch]], matches[submatch + 1] - matches[submatch]);
                             }
                         } else {
                             ejsThrowArgError(ejs, "Bad replacement $ specification");
@@ -1325,7 +1325,7 @@ static EjsString *sliceString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     EjsString       *result;
     ssize           start, end, step, i, j, size;
 
-    assure(1 <= argc && argc <= 3);
+    assert(1 <= argc && argc <= 3);
 
     start = ejsGetInt(ejs, argv[0]);
     if (argc >= 2) {
@@ -1388,7 +1388,7 @@ static EjsArray *split(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     wchar       *cp, *mark, *end;
     ssize      limit;
 
-    assure(1 <= argc && argc <= 2);
+    assert(1 <= argc && argc <= 2);
 
     limit = (argc == 2) ? ejsGetInt(ejs, argv[1]): MAXSSIZE;
     results = ejsCreateArray(ejs, 0);
@@ -1460,7 +1460,7 @@ static EjsBoolean *startsWith(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     EjsString   *pattern;
 
-    assure(argc == 1 && ejsIs(ejs, argv[0], String));
+    assert(argc == 1 && ejsIs(ejs, argv[0], String));
 
     pattern = (EjsString*) argv[0];
     return ejsCreateBoolean(ejs, wncmp(&sp->value[0], pattern->value, pattern->length) == 0);
@@ -1619,7 +1619,7 @@ static EjsArray *tokenize(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     wchar       *cp, *buf;
     cchar       *fmt;
 
-    assure(argc == 1 && ejsIs(ejs, argv[0], String));
+    assert(argc == 1 && ejsIs(ejs, argv[0], String));
 
     buf = sp->value;
     fmt = ejsToMulti(ejs, argv[0]);
@@ -1725,7 +1725,7 @@ static EjsString *trimString(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 {
     EjsString   *pattern;
 
-    assure(argc == 0 || (argc == 1 && ejsIs(ejs, argv[0], String)));
+    assert(argc == 0 || (argc == 1 && ejsIs(ejs, argv[0], String)));
 
     if (argc == 0) {
         return trim(ejs, sp, NULL, MPR_TRIM_START | MPR_TRIM_END);
@@ -1744,7 +1744,7 @@ static EjsString *trimStartString(Ejs *ejs, EjsString *sp, int argc,  EjsObj **a
 {
     EjsString   *pattern;
 
-    assure(argc == 0 || (argc == 1 && ejsIs(ejs, argv[0], String)));
+    assert(argc == 0 || (argc == 1 && ejsIs(ejs, argv[0], String)));
 
     if (argc == 0) {
         return trim(ejs, sp, NULL, MPR_TRIM_START);
@@ -1763,7 +1763,7 @@ static EjsString *trimEndString(Ejs *ejs, EjsString *sp, int argc,  EjsObj **arg
 {
     EjsString   *pattern;
 
-    assure(argc == 0 || (argc == 1 && ejsIs(ejs, argv[0], String)));
+    assert(argc == 0 || (argc == 1 && ejsIs(ejs, argv[0], String)));
 
     if (argc == 0) {
         return trim(ejs, sp, NULL, MPR_TRIM_END);
@@ -1786,7 +1786,7 @@ static int catString(Ejs *ejs, EjsString *dest, char *str, ssize len)
     char        *oldBuf, *buf;
     int         oldLen, newLen;
 
-    assure(dest);
+    assert(dest);
 
     castSrc = 0;
 
@@ -1822,13 +1822,14 @@ static int catString(Ejs *ejs, EjsString *dest, char *str, ssize len)
 static EjsString *buildString(Ejs *ejs, EjsString *result, wchar *str, ssize len)
 {
     EjsString   *newBuf;
-    ssize       room, size;
+    ssize       room, size, extra;
 
-    assure(result);
+    assert(result);
 
     room = mprGetBlockSize(result) - sizeof(EjsString);
     if ((result->length + len + 1) >= room) {
-        size = max(result->length + len, BIT_MAX_BUFFER);
+        extra = max(result->length / 8, len);
+        size = max(result->length + extra, 512);
         if ((newBuf = ejsCreateBareString(ejs, size)) == NULL) {
             return NULL;
         }
@@ -1853,7 +1854,7 @@ static ssize indexof(wchar *str, ssize len, EjsString *pattern, ssize patternLen
     wchar       *s1, *s2;
     ssize       i, j;
 
-    assure(dir == 1 || dir == -1);
+    assert(dir == 1 || dir == -1);
 
     if (dir > 0) {
         for (i = 0; i < len; i++) {
@@ -1953,8 +1954,8 @@ PUBLIC int ejsStartsWithAsc(Ejs *ejs, EjsString *sp, cchar *pat)
 {
     ssize   i;
 
-    assure(sp);
-    assure(pat);
+    assert(sp);
+    assert(pat);
 
     if (pat == 0 || *pat == '\0') {
         return 0;
@@ -2035,14 +2036,14 @@ PUBLIC int ejsCompareString(Ejs *ejs, EjsString *sp1, EjsString *sp2)
     } else if (*s2 == '\0' && *s1) {
         return 1;
     }
-    assure(0);
+    assert(0);
     return 0;
 }
 
 
 PUBLIC int ejsCompareSubstring(Ejs *ejs, EjsString *sp1, EjsString *sp2, ssize offset, ssize len)
 {
-    assure(0 <= len && len < MAXINT);
+    assert(0 <= len && len < MAXINT);
 
     if (offset < 0 || offset >= sp2->length) {
         return -1;
@@ -2057,7 +2058,7 @@ PUBLIC int ejsCompareWide(Ejs *ejs, EjsString *sp1, wchar *sp2, ssize len)
     wchar       *s2;
     int         rc;
 
-    assure(0 <= len && len < MAXINT);
+    assert(0 <= len && len < MAXINT);
 
     s1 = sp1->value;
     s2 = sp2;
@@ -2094,7 +2095,7 @@ PUBLIC int ejsContainsChar(Ejs *ejs, EjsString *sp, int charPat)
 {
     int     i;
 
-    assure(sp);
+    assert(sp);
 
     for (i = 0; i < sp->length; i++) {
         if (sp->value[i] == charPat) {
@@ -2113,9 +2114,9 @@ PUBLIC int ejsContainsStringAnyCase(Ejs *ejs, EjsString *sp, EjsString *pat)
 {
     int     i, j;
 
-    assure(sp);
-    assure(pat);
-    assure(pat->value);
+    assert(sp);
+    assert(pat);
+    assert(pat->value);
 
     for (i = 0; i < sp->length; i++) {
         for (j = 0; j < pat->length; j++) {
@@ -2138,8 +2139,8 @@ PUBLIC int ejsContainsAsc(Ejs *ejs, EjsString *sp, cchar *pat)
     ssize   len;
     int     i, j, k;
 
-    assure(sp);
-    assure(pat);
+    assert(sp);
+    assert(pat);
 
     if (pat == 0 || *pat == '\0') {
         return 0;
@@ -2164,9 +2165,9 @@ PUBLIC int ejsContainsString(Ejs *ejs, EjsString *sp, EjsString *pat)
 {
     int     i, j, k;
 
-    assure(sp);
-    assure(pat);
-    assure(pat->value);
+    assert(sp);
+    assert(pat);
+    assert(pat->value);
 
     if (pat == 0 || pat->value == 0) {
         return 0;
@@ -2195,7 +2196,7 @@ PUBLIC char *ejsToMulti(Ejs *ejs, EjsAny *ev)
             return MPR->emptyString;
         }
     }
-    assure(ejsIs(ejs, ev, String));
+    assert(ejsIs(ejs, ev, String));
     //  UNICODE
 #if BIT_CHAR_LEN == 1
 {
@@ -2216,7 +2217,7 @@ PUBLIC EjsString *ejsSprintf(Ejs *ejs, cchar *fmt, ...)
     va_list     ap;
     char        *result;
 
-    assure(fmt);
+    assert(fmt);
 
     va_start(ap, fmt);
     result = sfmtv(fmt, ap);
@@ -2233,9 +2234,9 @@ PUBLIC EjsString *ejsSubstring(Ejs *ejs, EjsString *src, ssize start, ssize len)
 {
     EjsString   *result;
 
-    assure(src);
-    assure(start >= 0);
-    assure((start + len) <= src->length);
+    assert(src);
+    assert(start >= 0);
+    assert((start + len) <= src->length);
 
     if (len < 0) {
         len = src->length - start;
@@ -2257,8 +2258,8 @@ PUBLIC EjsString *ejsToLower(Ejs *ejs, EjsString *sp)
     EjsString   *result;
     int         i;
 
-    assure(sp);
-    assure(sp->value);
+    assert(sp);
+    assert(sp->value);
 
     result = (EjsString*) ejsCreateBareString(ejs, sp->length);
     for (i = 0; i < sp->length; i++) {
@@ -2273,8 +2274,8 @@ PUBLIC EjsString *ejsToUpper(Ejs *ejs, EjsString *sp)
     EjsString   *result;
     int         i;
 
-    assure(sp);
-    assure(sp->value);
+    assert(sp);
+    assert(sp->value);
 
     result = (EjsString*) ejsCreateBareString(ejs, sp->length);
     for (i = 0; i < sp->length; i++) {
@@ -2292,7 +2293,7 @@ PUBLIC EjsString *ejsTrimString(Ejs *ejs, EjsString *sp, cchar *pat, int flags)
     cchar       *p;
     int         plen, trimmed;
 
-    assure(pat);
+    assert(pat);
 
     start = sp->value;
     plen = strlen(pat);
@@ -2336,7 +2337,7 @@ PUBLIC EjsString *ejsTruncateString(Ejs *ejs, EjsString *sp, ssize len)
 {
     EjsString   *result;
 
-    assure(sp);
+    assert(sp);
 
     len = min(len, sp->length);
     result = ejsCreateBareString(ejs, len);
@@ -2411,7 +2412,7 @@ PUBLIC EjsString *ejsInternWide(Ejs *ejs, wchar *value, ssize len)
     ssize       i, end;
     int         index, step;
 
-    assure(0 <= len && len < MAXINT);
+    assert(0 <= len && len < MAXINT);
 
     ip = ejs->service->intern;
     step = 0;
@@ -2464,7 +2465,7 @@ PUBLIC EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
     ssize       i, end;
     int         index, step;
 
-    assure(0 <= len && len < MAXINT);
+    assert(0 <= len && len < MAXINT);
 
     step = 0;
     ip = ejs->service->intern;
@@ -2472,7 +2473,7 @@ PUBLIC EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
     lock(ip);
     //  MOB - accesses should be debug only
     ip->accesses++;
-    assure(ip->size > 0);
+    assert(ip->size > 0);
     index = shash(value, len) % ip->size;
     if ((head = &ip->buckets[index]) != NULL) {
         for (sp = head->next; sp != head; sp = sp->next, step++) {
@@ -2532,10 +2533,10 @@ PUBLIC EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
     ssize       i, end;
     int         index;
 
-    assure(0 < len && len < MAXINT);
+    assert(0 < len && len < MAXINT);
 
     len = mtow(NULL, MAXSSIZE, value, len);
-    assure(len < MAXINT);
+    assert(len < MAXINT);
 
     /*
         Have to convert the multibyte string to unicode before comparision. Convert into an EjsString to it is ready
@@ -2598,7 +2599,7 @@ static int rebuildIntern(EjsIntern *ip)
     EjsString   *oldBuckets, *sp, *next, *head;
     int         i, newSize, oldSize;
 
-    assure(ip);
+    assert(ip);
 
     oldBuckets = ip->buckets;
     newSize = getInternHashSize(ip->size + 1);
@@ -2609,7 +2610,7 @@ static int rebuildIntern(EjsIntern *ip)
             return 0;
         }
     }
-    mprLog(6, "Grow string intern new size %d old size %d, count %d, sizeof(EjsString) %d", 
+    mprTrace(6, "Grow string intern new size %d old size %d, count %d, sizeof(EjsString) %d", 
         newSize, oldSize, ip->count, sizeof(EjsString));
 
     if ((ip->buckets = mprAllocZeroed((newSize * sizeof(EjsString)))) == NULL) {
@@ -2639,16 +2640,16 @@ static int rebuildIntern(EjsIntern *ip)
  */
 static void linkString(EjsString *head, EjsString *sp)
 {
-    assure(sp != head);
-    assure(sp->next == NULL || sp->next == sp);
-    assure(sp->prev == NULL || sp->next == sp);
+    assert(sp != head);
+    assert(sp->next == NULL || sp->next == sp);
+    assert(sp->prev == NULL || sp->next == sp);
 
     sp->next = head->next;
     sp->prev = head;
     head->next->prev = sp;
     head->next = sp;
-    assure(sp != sp->next);
-    assure(sp != sp->prev);
+    assert(sp != sp->next);
+    assert(sp != sp->prev);
 }
 
 
@@ -2695,7 +2696,7 @@ PUBLIC EjsString *ejsCreateStringFromAsc(Ejs *ejs, cchar *value)
 
 PUBLIC EjsString *ejsCreateStringFromMulti(Ejs *ejs, cchar *value, ssize len)
 {
-    assure(0 <= len && len < MAXINT);
+    assert(0 <= len && len < MAXINT);
     if (value == 0 || len < 0) {
         return ESV(empty);
     }
@@ -2705,7 +2706,7 @@ PUBLIC EjsString *ejsCreateStringFromMulti(Ejs *ejs, cchar *value, ssize len)
 
 PUBLIC EjsString *ejsCreateStringFromBytes(Ejs *ejs, cchar *value, ssize len)
 {
-    assure(0 <= len && len < MAXINT);
+    assert(0 <= len && len < MAXINT);
     return ejsInternAsc(ejs, value, len);
 }
 
@@ -2717,7 +2718,7 @@ PUBLIC EjsString *ejsCreateBareString(Ejs *ejs, ssize len)
 {
     EjsString   *sp;
     
-    assure(0 <= len && len < MAXINT);
+    assert(0 <= len && len < MAXINT);
     if ((sp = ejsAlloc(ejs, ESV(String), (len + 1) * sizeof(wchar))) != NULL) {
         sp->length = len;
         sp->value[0] = 0;
@@ -2732,7 +2733,7 @@ PUBLIC EjsString *ejsCreateNonInternedString(Ejs *ejs, wchar *value, ssize len)
 {
     EjsString   *sp;
     
-    assure(0 <= len && len < MAXINT);
+    assert(0 <= len && len < MAXINT);
     if ((sp = ejsAlloc(ejs, ESV(String), (len + 1) * sizeof(wchar))) != NULL) {
         memcpy(sp->value, value, (len + 1) * sizeof(wchar));
         sp->length = len;
@@ -2884,7 +2885,7 @@ PUBLIC void ejsConfigureStringType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

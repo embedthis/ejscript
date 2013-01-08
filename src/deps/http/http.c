@@ -23,8 +23,10 @@ typedef struct App {
     int      activeLoadThreads;  /* Still running test threads */
     char     *authType;          /* Authentication: basic|digest */
     int      benchmark;          /* Output benchmarks */
-    cchar    *cert;              /* Cert file */
+    cchar    *cabundle;          /* Certificate bundle to use when validating the server certificate */
+    cchar    *cert;              /* Certificate to identify the client */
     int      chunkSize;          /* Ask for response data to be chunked in this quanta */
+    char     *ciphers;           /* Set of acceptable ciphers to use for SSL */
     int      continueOnErrors;   /* Continue testing even if an error occurs. Default is to stop */
     int      success;            /* Total success flag */
     int      fetchCount;         /* Total count of fetches */
@@ -63,7 +65,8 @@ typedef struct App {
     int      timeout;            /* Timeout in msecs for a non-responsive server */
     int      upload;             /* Upload using multipart mime */
     char     *username;          /* User name for authentication of requests */
-    int      validate;           /* Validate server certs */
+    int      verifyPeer;         /* Validate server certs */
+    int      verifyIssuer;       /* Validate the issuer. Permits self-signed certs if false. */
     int      verbose;            /* Trace progress */
     int      workers;            /* Worker threads. >0 if multi-threaded */
     int      zeroOnErrors;       /* Exit zero status for any valid HTTP response code  */
@@ -151,7 +154,9 @@ MAIN(httpMain, int argc, char **argv, char **envp)
 static void manageApp(App *app, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
+        mprMark(app->cabundle);
         mprMark(app->cert);
+        mprMark(app->ciphers);
         mprMark(app->files);
         mprMark(app->formData);
         mprMark(app->headers);
@@ -178,6 +183,8 @@ static void initSettings()
     app->verbose = 0;
     app->continueOnErrors = 0;
     app->showHeaders = 0;
+    app->verifyIssuer = -1;
+    app->verifyPeer = 0;
     app->zeroOnErrors = 0;
 
     app->authType = sclone("basic");
@@ -202,9 +209,10 @@ static void initSettings()
 static bool parseArgs(int argc, char **argv)
 {
     char        *argp, *key, *value;
-    int         i, setWorkers, nextArg;
+    int         i, setWorkers, nextArg, ssl;
 
     setWorkers = 0;
+    ssl = 0;
 
     for (nextArg = 1; nextArg < argc; nextArg++) {
         argp = argv[nextArg];
@@ -221,12 +229,29 @@ static bool parseArgs(int argc, char **argv)
         } else if (smatch(argp, "--benchmark") || smatch(argp, "-b")) {
             app->benchmark++;
 
+        } else if (smatch(argp, "--ca")) {
+            if (nextArg >= argc) {
+                return 0;
+            } else {
+                app->cabundle = sclone(argv[++nextArg]);
+                if (!mprPathExists(app->cabundle, R_OK)) {
+                    mprError("Cannot find ca file %s", app->cabundle);
+                    return 0;
+                }
+            }
+            ssl = 1;
+
         } else if (smatch(argp, "--cert")) {
             if (nextArg >= argc) {
                 return 0;
             } else {
                 app->cert = sclone(argv[++nextArg]);
+                if (!mprPathExists(app->cert, R_OK)) {
+                    mprError("Cannot find cert file %s", app->cert);
+                    return 0;
+                }
             }
+            ssl = 1;
 
         } else if (smatch(argp, "--chunk")) {
             if (nextArg >= argc) {
@@ -239,6 +264,14 @@ static bool parseArgs(int argc, char **argv)
                     return 0;
                 }
             }
+
+        } else if (smatch(argp, "--ciphers")) {
+            if (nextArg >= argc) {
+                return 0;
+            } else {
+                app->ciphers = sclone(argv[++nextArg]);
+            }
+            ssl = 1;
 
         } else if (smatch(argp, "--continue")) {
             app->continueOnErrors++;
@@ -321,7 +354,12 @@ static bool parseArgs(int argc, char **argv)
                 return 0;
             } else {
                 app->key = sclone(argv[++nextArg]);
+                if (!mprPathExists(app->key, R_OK)) {
+                    mprError("Cannot find key file %s", app->key);
+                    return 0;
+                }
             }
+            ssl = 1;
 
         } else if (smatch(argp, "--log") || smatch(argp, "-l")) {
             if (nextArg >= argc) {
@@ -372,11 +410,13 @@ static bool parseArgs(int argc, char **argv)
             }
 
         } else if (smatch(argp, "--provider")) {
+            /* Undocumented SSL provider selection */
             if (nextArg >= argc) {
                 return 0;
             } else {
                 app->provider = sclone(argv[++nextArg]);
             }
+            ssl = 1;
 
         } else if (smatch(argp, "--put")) {
             app->method = "PUT";
@@ -399,6 +439,11 @@ static bool parseArgs(int argc, char **argv)
             } else {
                 app->retries = atoi(argv[++nextArg]);
             }
+
+        } else if (smatch(argp, "--self")) {
+            /* Undocumented. Users should just not set --verify */
+            app->verifyIssuer = 0;
+            ssl = 1;
             
         } else if (smatch(argp, "--sequence")) {
             app->sequence++;
@@ -439,16 +484,18 @@ static bool parseArgs(int argc, char **argv)
                 app->username = argv[++nextArg];
             }
 
-        } else if (smatch(argp, "--validate")) {
-            app->validate++;
+        //  DEPRECATE validate. Preserve verify.
+        } else if (smatch(argp, "--validate") || smatch(argp, "--verify")) {
+            app->verifyPeer = 1;
+            ssl = 1;
 
         } else if (smatch(argp, "--verbose") || smatch(argp, "-v")) {
             app->verbose++;
 
         } else if (smatch(argp, "--version") || smatch(argp, "-V")) {
-            mprPrintfError("%s %s\n"
-                "Copyright (C) Embedthis Software 2003-2012\n"
-                "Copyright (C) Michael O'Brien 2003-2012\n",
+            mprEprintf("%s %s\n"
+                "Copyright (C) Embedthis Software 2003-2013\n"
+                "Copyright (C) Michael O'Brien 2003-2013\n",
                BIT_TITLE, BIT_VERSION);
             exit(0);
 
@@ -503,15 +550,16 @@ static bool parseArgs(int argc, char **argv)
             app->method = "GET";
         }
     }
-#if BIT_PACK_SSL
+#if BIT_SSL
 {
     HttpUri *uri = httpCreateUri(app->target, 0);
-    if (app->validate || app->cert || app->provider || uri->secure) {
+    if (uri->secure || ssl) {
         app->ssl = mprCreateSsl(0);
         if (app->provider) {
             mprSetSslProvider(app->ssl, app->provider);
         }
         if (app->cert) {
+            //  MOB - should allow a key in the cert?
             if (!app->key) {
                 mprError("Must specify key file");
                 return 0;
@@ -519,8 +567,18 @@ static bool parseArgs(int argc, char **argv)
             mprSetSslCertFile(app->ssl, app->cert);
             mprSetSslKeyFile(app->ssl, app->key);
         }
-        mprVerifySslPeer(app->ssl, app->validate);
-        mprVerifySslIssuer(app->ssl, app->validate);
+        if (app->cabundle) {
+            //  MOB - what about caPath?
+            mprSetSslCaFile(app->ssl, app->cabundle);
+        }
+        if (app->verifyIssuer == -1) {
+            app->verifyIssuer = app->verifyPeer ? 1 : 0;
+        }
+        mprVerifySslPeer(app->ssl, app->verifyPeer);
+        mprVerifySslIssuer(app->ssl, app->verifyIssuer);
+        if (app->ciphers) {
+            mprSetSslCiphers(app->ssl, app->ciphers);
+        }
     } else {
         mprVerifySslPeer(NULL, 0);
     }
@@ -532,12 +590,14 @@ static bool parseArgs(int argc, char **argv)
 
 static void showUsage()
 {
-    mprPrintfError("usage: %s [options] [files] url\n"
+    mprEprintf("usage: %s [options] [files] url\n"
         "  Options:\n"
         "  --auth basic|digest   # Set authentication type.\n"
         "  --benchmark           # Compute benchmark results.\n"
-        "  --cert file           # Certificate CA file to validate server certs.\n"
+        "  --ca file             # Certificate bundle to use when validating the server certificate.\n"
+        "  --cert file           # Certificate to send to the server to identify the client.\n"
         "  --chunk size          # Request response data to use this chunk size.\n"
+        "  --ciphers cipher,...  # List of suitable ciphers.\n"
         "  --continue            # Continue on errors.\n"
         "  --cookie CookieString # Define a cookie header. Multiple uses okay.\n"
         "  --data bodyData       # Body data to send with PUT or POST.\n"
@@ -547,12 +607,12 @@ static void showUsage()
         "  --header 'key: value' # Add a custom request header.\n"
         "  --host hostName       # Host name or IP address for unqualified URLs.\n"
         "  --iterations count    # Number of times to fetch the URLs per thread (default 1).\n"
-        "  --keyt file           # Private key file.\n"
+        "  --key file            # Private key file.\n"
         "  --log logFile:level   # Log to the file at the verbosity level.\n"
         "  --method KIND         # HTTP request method GET|OPTIONS|POST|PUT|TRACE (default GET).\n"
         "  --nofollow            # Don't automatically follow redirects.\n"
         "  --noout               # Don't output files to stdout.\n"
-        "  --out file            # Send output to file\n"
+        "  --out file            # Send output to file.\n"
         "  --password pass       # Password for authentication.\n"
         "  --post                # Use POST method. Shortcut for --method POST.\n"
         "  --printable           # Make binary output printable.\n"
@@ -568,10 +628,10 @@ static void showUsage()
         "  --timeout secs        # Request timeout period in seconds.\n"
         "  --upload              # Use multipart mime upload.\n"
         "  --user name           # User name for authentication.\n"
-        "  --validate            # Validate server certificates when using SSL\n"
+        "  --verify              # Validate server certificates when using SSL.\n"
         "  --verbose             # Verbose operation. Trace progress.\n"
         "  --workers count       # Set maximum worker threads.\n"
-        "  --zero                # Exit with zero status for any valid HTTP response\n"
+        "  --zero                # Exit with zero status for any valid HTTP response.\n"
         , mprGetAppName());
 }
 
@@ -757,7 +817,7 @@ static int sendRequest(HttpConn *conn, cchar *method, cchar *url, MprList *files
             return MPR_ERR_CANT_WRITE;
         }
     }
-    assure(!mprGetCurrentThread()->yielded);
+    assert(!mprGetCurrentThread()->yielded);
     httpFinalizeOutput(conn);
     return 0;
 }
@@ -814,7 +874,7 @@ static int issueRequest(HttpConn *conn, cchar *url, MprList *files)
                 break;
             }
         }
-        mprLog(MPR_DEBUG, "retry %d of %d for: %s %s", count, conn->retries, app->method, url);
+        mprTrace(4, "retry %d of %d for: %s %s", count, conn->retries, app->method, url);
     }
     if (conn->error) {
         msg = (conn->errorMsg) ? conn->errorMsg : "";
@@ -841,7 +901,7 @@ static int reportResponse(HttpConn *conn, cchar *url, MprTicks elapsed)
     if (bytesRead < 0 && conn->rx) {
         bytesRead = conn->rx->bytesRead;
     }
-    mprLog(6, "Response status %d, elapsed %Ld", status, elapsed);
+    mprTrace(6, "Response status %d, elapsed %Ld", status, elapsed);
     if (conn->error) {
         app->success = 0;
     }
@@ -919,10 +979,10 @@ static int doRequest(HttpConn *conn, cchar *url, MprList *files)
     MprFile         *outFile;
     cchar           *path;
 
-    assure(url && *url);
+    assert(url && *url);
     limits = conn->limits;
 
-    mprLog(MPR_DEBUG, "fetch: %s %s", app->method, url);
+    mprTrace(4, "fetch: %s %s", app->method, url);
     mark = mprGetTicks();
 
     if (issueRequest(conn, url, files) < 0) {
@@ -1028,7 +1088,7 @@ static ssize writeBody(HttpConn *conn, MprList *files)
             }
         }
         if (files) {
-            assure(mprGetListLength(files) == 1);
+            assert(mprGetListLength(files) == 1);
             for (next = 0; (path = mprGetNextItem(files, &next)) != 0; ) {
                 if (strcmp(path, "-") == 0) {
                     file = mprAttachFileFd(0, "stdin", O_RDONLY | O_BINARY);
@@ -1052,7 +1112,7 @@ static ssize writeBody(HttpConn *conn, MprList *files)
                         }
                         bytes -= nbytes;
                         sofar += nbytes;
-                        assure(bytes >= 0);
+                        assert(bytes >= 0);
                     }
                     mprYield(0);
                 }
@@ -1281,7 +1341,7 @@ PUBLIC int _exit() {
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

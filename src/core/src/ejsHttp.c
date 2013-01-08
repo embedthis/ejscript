@@ -537,7 +537,7 @@ static EjsNumber *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         count = buffer->size - offset;
     }
     if ((count = readHttpData(ejs, hp, count)) < 0) {
-        assure(ejs->exception);
+        assert(ejs->exception);
         return 0;
     } else if (count == 0 && conn->state > HTTP_STATE_CONTENT) {
         return ESV(null);
@@ -567,7 +567,7 @@ static EjsString *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv
         return 0;
     }
     if ((count = readHttpData(ejs, hp, count)) < 0) {
-        assure(ejs->exception);
+        assert(ejs->exception);
         return 0;
     } else if (count == 0 && hp->conn->state > HTTP_STATE_CONTENT) {
         return ESV(null);
@@ -666,7 +666,7 @@ static EjsObj *http_setHeader(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     cchar       *key, *value;
     bool        overwrite;
 
-    assure(argc >= 2);
+    assert(argc >= 2);
 
     conn = hp->conn;
     if (conn->state >= HTTP_STATE_CONNECTED) {
@@ -943,7 +943,7 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
             written = ejsWriteToByteArray(ejs, data, 1, &argv[1]);
             mprPutBlockToBuf(hp->requestContent, (char*) data->value, (int) written->value);
             mprAddNullToBuf(hp->requestContent);
-            assure(written > 0);
+            assert(written > 0);
         }
     }
     if (hp->uri == 0) {
@@ -974,7 +974,7 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
             ejsThrowIOError(ejs, "Cannot write request data for \"%s\"", hp->uri);
             return 0;
         } else if (nbytes > 0) {
-            assure(nbytes == mprGetBufLength(hp->requestContent));
+            assert(nbytes == mprGetBufLength(hp->requestContent));
             mprAdjustBufStart(hp->requestContent, nbytes);
             hp->requestContentCount += nbytes;
         }
@@ -1104,7 +1104,7 @@ static void httpIOEvent(HttpConn *conn, MprEvent *event)
     EjsHttp     *hp;
     Ejs         *ejs;
 
-    assure(conn->async);
+    assert(conn->async);
 
     hp = conn->context;
     ejs = hp->ejs;
@@ -1247,13 +1247,13 @@ static bool expired(EjsHttp *hp)
     if (diff < 0) {
         if (conn->rx) {
             if (inactivity) {
-                mprLog(http, 4, "Inactive request timed out %s, exceeded inactivity timeout %d", 
+                mprTrace(4, "Inactive request timed out %s, exceeded inactivity timeout %d", 
                     conn->rx->uri, inactivityTimeout);
             } else {
-                mprLog(http, 4, "Request timed out %s, exceeded timeout %d", conn->rx->uri, requestTimeout);
+                mprTrace(4, "Request timed out %s, exceeded timeout %d", conn->rx->uri, requestTimeout);
             }
         } else {
-            mprLog(http, 4, "Idle connection timed out");
+            mprTrace(4, "Idle connection timed out");
         }
     }
 }
@@ -1566,7 +1566,7 @@ PUBLIC void ejsConfigureHttpType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

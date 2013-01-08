@@ -111,8 +111,8 @@ static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **arg
  */
 static int sqliteClose(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
 {
-    assure(ejs);
-    assure(db);
+    assert(ejs);
+    assert(db);
 
     if (db->sdb && !db->memory) {
         sqlite3_close(db->sdb);
@@ -139,8 +139,8 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
     cchar           *tail, *colName, *cmd, *value, *defaultTableName;
     int             i, ncol, rc, retries, rowNum, len;
 
-    assure(ejs);
-    assure(db);
+    assert(ejs);
+    assert(db);
 
     cmd = ejsToMulti(ejs, argv[0]);
     retries = 0;
@@ -364,13 +364,13 @@ static void leaveMutex(sqlite3_mutex *mutex)
 
 
 static int mutexIsHeld(sqlite3_mutex *mutex) { 
-    assure(0); 
+    assert(0); 
     return 0; 
 }
 
 
 static int mutexIsNotHeld(sqlite3_mutex *mutex) { 
-    assure(0); 
+    assert(0); 
     return 0; 
 }
 
@@ -462,7 +462,7 @@ PUBLIC int ejs_db_sqlite_Init(Ejs *ejs, MprModule *mp)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

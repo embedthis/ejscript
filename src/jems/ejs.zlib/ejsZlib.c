@@ -134,7 +134,7 @@ static EjsObj *zlib_compressBytes(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
             }
             out->writePosition += nbytes;
         } while (zs.avail_out == 0);
-        assure(zs.avail_in == 0);
+        assert(zs.avail_in == 0);
     } while (flush != Z_FINISH);
     deflateEnd(&zs);
     return (EjsObj*) out;
@@ -190,7 +190,7 @@ static EjsObj *zlib_uncompressBytes(Ejs *ejs, EjsObj *unused, int argc, EjsObj *
             }
             out->writePosition += nbytes;
         } while (zs.avail_out == 0);
-        assure(zs.avail_in == 0);
+        assert(zs.avail_in == 0);
     } while (rc != Z_STREAM_END);
 
     deflateEnd(&zs);
@@ -237,7 +237,7 @@ static EjsString *zlib_compressString(Ejs *ejs, EjsObj *unused, int argc, EjsObj
                 return 0;
             }
         } while (zs.avail_out == 0);
-        assure(zs.avail_in == 0);
+        assert(zs.avail_in == 0);
     } while (flush != Z_FINISH);
 
     deflateEnd(&zs);
@@ -294,7 +294,7 @@ static EjsString *zlib_uncompressString(Ejs *ejs, EjsObj *unused, int argc, EjsO
                 return 0;
             }
         } while (zs.avail_out == 0);
-        assure(zs.avail_in == 0);
+        assert(zs.avail_in == 0);
     } while (rc != Z_STREAM_END);
 
     deflateEnd(&zs);
@@ -347,7 +347,7 @@ PUBLIC int ejs_zlib_Init(Ejs *ejs, MprModule *mp)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

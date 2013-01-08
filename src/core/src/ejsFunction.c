@@ -103,9 +103,9 @@ static EjsFunction *fun_Function(Ejs *ejs, EjsFunction *fun, int argc, void *arg
     cchar           *body, *param, *script;
     int             i, count;
     
-    assure(argc > 1);
+    assert(argc > 1);
     args = (EjsArray*) argv[1];
-    assure(ejsIs(ejs, args, Array));
+    assert(ejsIs(ejs, args, Array));
 
     if (args->length <= 0) {
         ejsThrowArgError(ejs, "Missing function body");
@@ -148,9 +148,9 @@ static EjsObj *fun_applyFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **
     EjsArray    *args;
     EjsObj      *save, *result, *thisObj;
     
-    assure(argc > 1);
+    assert(argc > 1);
     args = (EjsArray*) argv[1];
-    assure(ejsIs(ejs, args, Array));
+    assert(ejsIs(ejs, args, Array));
 
     save = fun->boundThis;
     thisObj = argv[0];
@@ -170,13 +170,13 @@ static EjsObj *fun_bindFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **a
 {
     EjsAny      *thisObj;
 
-    assure(argc >= 1);
+    assert(argc >= 1);
 
     thisObj = argv[0];
     fun->boundThis = ejsIsDefined(ejs, thisObj) ? thisObj : 0;
     if (argc == 2) {
         fun->boundArgs = (EjsArray*) argv[1];
-        assure(ejsIs(ejs, fun->boundArgs, Array));
+        assert(ejsIs(ejs, fun->boundArgs, Array));
     }
     return 0;
 }
@@ -196,7 +196,7 @@ static EjsAny *fun_bound(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
  */
 static EjsObj *fun_call(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 {
-    assure(argc > 1);
+    assert(argc > 1);
     return fun_applyFunction(ejs, fun, argc, argv);
 }
 
@@ -306,11 +306,11 @@ PUBLIC EjsEx *ejsAddException(Ejs *ejs, EjsFunction *fun, uint tryStart, uint tr
     EjsCode         *code;
     int             size;
 
-    assure(fun);
+    assert(fun);
 
     /* Managed by manageCode */
     if ((exception = mprAllocZeroed(sizeof(EjsEx))) == 0) {
-        assure(0);
+        assert(0);
         return 0;
     }
     exception->flags = flags;
@@ -330,7 +330,7 @@ PUBLIC EjsEx *ejsAddException(Ejs *ejs, EjsFunction *fun, uint tryStart, uint tr
         size = code->sizeHandlers + EJS_EX_INC;
         code->handlers = mprRealloc(code->handlers, size * sizeof(EjsEx));
         if (code->handlers == 0) {
-            assure(0);
+            assert(0);
             return 0;
         }
         memset(&code->handlers[code->sizeHandlers], 0, EJS_EX_INC * sizeof(EjsEx)); 
@@ -347,7 +347,7 @@ PUBLIC void ejsOffsetExceptions(EjsFunction *fun, int offset)
     EjsEx           *ex;
     int             i;
 
-    assure(fun);
+    assert(fun);
 
     for (i = 0; i < fun->body.code->numHandlers; i++) {
         ex = fun->body.code->handlers[i];
@@ -364,9 +364,9 @@ static void manageCode(EjsCode *code, int flags)
 {
     int     i;
 
-    assure(code->magic == EJS_CODE_MAGIC);
+    assert(code->magic == EJS_CODE_MAGIC);
     if (flags & MPR_MANAGE_MARK) {
-        assure(code->debug == 0 || code->debug->magic == EJS_DEBUG_MAGIC);        
+        assert(code->debug == 0 || code->debug->magic == EJS_DEBUG_MAGIC);        
         mprMark(code->module);
         mprMark(code->debug);
         if (code->handlers) {
@@ -385,11 +385,11 @@ PUBLIC EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuc
 {
     EjsCode     *code;
 
-    assure(fun);
-    assure(module);
-    assure(byteCode);
-    assure(len >= 0);
-    assure(debug == 0 || debug->magic == EJS_DEBUG_MAGIC);
+    assert(fun);
+    assert(module);
+    assert(byteCode);
+    assert(len >= 0);
+    assert(debug == 0 || debug->magic == EJS_DEBUG_MAGIC);
 
     if ((code = mprAllocBlock(sizeof(EjsCode) + len, MPR_ALLOC_ZERO | MPR_ALLOC_MANAGER)) == 0) {
         return NULL;
@@ -409,10 +409,10 @@ PUBLIC EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuc
  */
 PUBLIC int ejsSetFunctionCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *byteCode, ssize len, EjsDebug *debug)
 {
-    assure(fun);
-    assure(byteCode);
-    assure(len >= 0);
-    assure(debug == 0 || debug->magic == EJS_DEBUG_MAGIC);
+    assert(fun);
+    assert(byteCode);
+    assert(len >= 0);
+    assert(debug == 0 || debug->magic == EJS_DEBUG_MAGIC);
 
     fun->body.code = ejsCreateCode(ejs, fun, module, byteCode, len, debug);
     return 0;
@@ -576,7 +576,7 @@ PUBLIC void ejsConfigureFunctionType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

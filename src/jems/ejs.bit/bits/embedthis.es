@@ -644,7 +644,7 @@ public function apidoc(dox: Path, headers, title: String, tags) {
     let data = api.join(name + '.dox').readString().replace(/^INPUT .*=.*$/m, 'INPUT = ' + headers)
     Path(doxtmp).write(data)
     trace('Generate', name.toPascal() + ' documentation')
-    run('doxygen ' + doxtmp, {dir: api})
+    run([bit.packs.doxygen.path, doxtmp], {dir: api})
     if (output) {
         output.remove()
     }
@@ -656,8 +656,9 @@ public function apidoc(dox: Path, headers, title: String, tags) {
     files += ls(api.join('xml/group*')) + ls(api.join('xml/struct_*.xml'))
     let tstr = tags ? tags.map(function(i) '--tags ' + Path(i).absolute).join(' ') : ''
 
-    run('ejs ' + bit.dir.bits.join('gendoc.es') + ' --bare ' + '--title \"' + bit.settings.product.toUpper() + 
-        ' - ' + title + ' Native API\" --out ' + name + 'Bare.html ' +  tstr + ' ' + files.join(' '), {dir: api})
+    run('ejs ' + bit.dir.bits.join('gendoc.es') + ' --bare ' + '--title \"' + 
+        bit.settings.product.toUpper() + ' - ' + title + ' Native API\" --out ' + name + 
+        'Bare.html ' +  tstr + ' ' + files.join(' '), {dir: api})
     if (!bit.options.keep) {
         rmdir([api.join('html'), api.join('xml')])
     }
@@ -755,8 +756,8 @@ public function whatInstalled() {
 /*
     @copy   default
   
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2013. All Rights Reserved.
   
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire

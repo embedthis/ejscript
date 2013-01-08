@@ -635,7 +635,7 @@ static void generateTerms(EjsMod *mp)
         "<div class=\"terms\">\n"
         "   <p class=\"terms\">\n"
         "       <a href=\"http://embedthis.com/\">"
-        "       Embedthis Software LLC, 2003-2012. All rights reserved. "
+        "       Embedthis Software LLC, 2003-2013. All rights reserved. "
         "Embedthis is a trademark of Embedthis Software LLC.</a>\n"
         "   </p>\n"
         "</div>");
@@ -844,7 +844,7 @@ static void generateClassPageHeader(EjsMod *mp, EjsObj *obj, EjsName qname, EjsT
 
     ejs = mp->ejs;
 
-    assure(ejsIsBlock(ejs, obj));
+    assert(ejsIsBlock(ejs, obj));
 
     if (!ejsIsType(ejs, obj)) {
         generateContentHeader(mp, "Global Functions and Variables");
@@ -1133,7 +1133,7 @@ static void buildMethodList(EjsMod *mp, MprList *methods, EjsObj *obj, EjsObj *o
     if (ejsIsType(ejs, owner) && !ejsIsPrototype(ejs, obj) && ((EjsType*) owner)->hasConstructor) {
         type = (EjsType*) owner;
         slotNum = ejsLookupProperty(ejs, ejs->global, ownerName);
-        assure(slotNum >= 0);
+        assert(slotNum >= 0);
         fp = mprAlloc(sizeof(FunRec));
         fp->fun = (EjsFunction*) type;
         fp->obj = ejs->global;
@@ -1406,7 +1406,7 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
 
     type = ejsIsType(ejs, obj) ? (EjsType*) obj : 0;
     fun = (EjsFunction*) ejsGetProperty(ejs, obj, slotNum);
-    assure(ejsIsFunction(ejs, fun));
+    assert(ejsIsFunction(ejs, fun));
 
     qname = ejsGetPropertyName(ejs, obj, slotNum);
     trait = ejsGetPropertyTraits(ejs, obj, slotNum);
@@ -1783,8 +1783,8 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
     doc->description = wjoin(doc->description, thisDescription, NULL);
     mtrim(doc->brief, " \t\r\n", MPR_TRIM_BOTH);
     mtrim(doc->description, " \t\r\n", MPR_TRIM_BOTH);
-    assure(doc->brief);
-    assure(doc->description);
+    assert(doc->brief);
+    assert(doc->description);
 
     /*
         This is what we are parsing:
@@ -2080,7 +2080,7 @@ static wchar *wikiFormat(Ejs *ejs, wchar *start)
             }
             klass = snclone(klass, len);
             sentence = (klass[wlen(klass) - 1] == '.');
-            assure(strcmp(klass, "ejs.web::Request") != 0);
+            assert(strcmp(klass, "ejs.web::Request") != 0);
 
             if (scontains(klass, "::")) {
                 space = stok(klass, "::", &klass);
@@ -2348,8 +2348,8 @@ static bool match(wchar *last, cchar *key)
 {
     int     len;
 
-    assure(last);
-    assure(key && *key);
+    assert(last);
+    assert(key && *key);
 
     len = (int) strlen(key);
     return mncmp(last, key, len) == 0;
@@ -2578,7 +2578,7 @@ static MprKeyValue *createKeyPair(wchar *key, wchar *value)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

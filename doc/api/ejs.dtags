@@ -2103,8 +2103,8 @@
       <type>uchar</type>
       <name>byteCode</name>
       <anchorfile>struct_ejs_code.html</anchorfile>
-      <anchor>ad7dae4c391c4da29cabdacb1ea44c08f</anchor>
-      <arglist>[MPR_FLEX]</arglist>
+      <anchor>a9dcb9df8dc1e6ebf79a3cdbf3f039a72</anchor>
+      <arglist>[ARRAY_FLEX]</arglist>
     </member>
     <member kind="variable">
       <type>int</type>
@@ -2230,8 +2230,8 @@
       <type>EjsLine</type>
       <name>lines</name>
       <anchorfile>struct_ejs_debug.html</anchorfile>
-      <anchor>a48dc78dbcb56939ddcfa14a5d7aaaff2</anchor>
-      <arglist>[MPR_FLEX]</arglist>
+      <anchor>a33a31ce689a2c2ad5122ca44f896a9c0</anchor>
+      <arglist>[ARRAY_FLEX]</arglist>
     </member>
     <member kind="variable">
       <type>int</type>
@@ -2532,8 +2532,8 @@
       <type>struct EjsSlot</type>
       <name>slots</name>
       <anchorfile>struct_ejs_properties.html</anchorfile>
-      <anchor>a6025750968c1c7c96c0dc168307f28de</anchor>
-      <arglist>[MPR_FLEX]</arglist>
+      <anchor>af0fbb366bc40a715856ad5659f9a8d4b</anchor>
+      <arglist>[ARRAY_FLEX]</arglist>
     </member>
   </compound>
   <compound kind="struct">
@@ -2635,13 +2635,6 @@
       <name>vmlist</name>
       <anchorfile>struct_ejs_service.html</anchorfile>
       <anchor>a93de4232025000f9709d7fdd51364349</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>MprList *</type>
-      <name>vmpool</name>
-      <anchorfile>struct_ejs_service.html</anchorfile>
-      <anchor>a007510b48b70ed1f6c2be4c8b2beabbe</anchor>
       <arglist></arglist>
     </member>
   </compound>

@@ -16,7 +16,7 @@
  */
 static EjsAny *castBooleanVar(Ejs *ejs, EjsBoolean *vp, EjsType *type)
 {
-    assure(ejsIs(ejs, vp, Boolean));
+    assert(ejsIs(ejs, vp, Boolean));
 
     switch (type->sid) {
     case S_Number:
@@ -206,7 +206,7 @@ static EjsAny *invokeBooleanOperator(Ejs *ejs, EjsBoolean *lhs, int opcode, EjsB
  */
 static EjsBoolean *booleanConstructor(Ejs *ejs, EjsBoolean *bp, int argc, EjsObj **argv)
 {
-    assure(argc == 0 || argc == 1);
+    assert(argc == 0 || argc == 1);
 
     if (argc >= 1) {
         /* Change the bp value */
@@ -255,7 +255,7 @@ PUBLIC void ejsConfigureBooleanType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

@@ -58,7 +58,7 @@ PUBLIC int ecCreateModuleSection(EcCompiler *cp)
     mp = state->currentModule;
     constants = mp->constants;
 
-    mprLog(7, "Create module section %s", mp->name);
+    mprTrace(7, "Create module section %s", mp->name);
 
     ecEncodeByte(cp, EJS_SECT_MODULE);
     ecEncodeConst(cp, mp->name);
@@ -100,7 +100,7 @@ static void createDependencySection(EcCompiler *cp)
     int         i, count, version;
 
     mp = cp->state->currentModule;
-    assure(mp);
+    assert(mp);
 
     /*
         If merging, don't need references to dependent modules as they are aggregated onto the output
@@ -133,7 +133,7 @@ static void createDependencySection(EcCompiler *cp)
                 return;
             }
             mp->checksum += sumString(module->name);
-            mprLog(7, "    dependency section for %s from module %s", module->name, mp->name);
+            mprTrace(7, "    dependency section for %s from module %s", module->name, mp->name);
         }
     }
 }
@@ -208,7 +208,7 @@ static void createGlobalType(EcCompiler *cp, EjsType *type)
         }
     }
     slotNum = ejsLookupProperty(ejs, ejs->global, type->qname);
-    assure(slotNum >= 0);
+    assert(slotNum >= 0);
 
     createSection(cp, ejs->global, slotNum);
 }
@@ -233,7 +233,7 @@ static void createSection(EcCompiler *cp, EjsPot *block, int slotNum)
     if (slotNum < 0 || trait == 0 || vp == 0 || qname.name->value[0] == '\0') {
         return;
     }
-    assure(qname.name);
+    assert(qname.name);
 
     if (ejsIsType(ejs, vp)) {
         createClassSection(cp, block, slotNum, (EjsPot*) vp);
@@ -242,7 +242,7 @@ static void createSection(EcCompiler *cp, EjsPot *block, int slotNum)
         fun = (EjsFunction*) vp;
         createFunctionSection(cp, block, slotNum, fun, 0);
         if (trait->attributes & EJS_TRAIT_SETTER) {
-            assure(fun->setter);
+            assert(fun->setter);
             createFunctionSection(cp, block, slotNum, fun->setter, 1);
         }
 
@@ -273,13 +273,13 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
 
     createDocSection(cp, "class", ejs->global, slotNum);
     qname = ejsGetPropertyName(ejs, ejs->global, slotNum);
-    assure(qname.name);
+    assert(qname.name);
 
-    mprLog(7, "    type section %@ for module %@", qname.name, mp->name);
+    mprTrace(7, "    type section %@ for module %@", qname.name, mp->name);
     
     type = ejsGetProperty(ejs, ejs->global, slotNum);
-    assure(type);
-    assure(ejsIsType(ejs, type));
+    assert(type);
+    assert(ejsIsType(ejs, type));
 
     ecEncodeByte(cp, EJS_SECT_CLASS);
     ecEncodeConst(cp, qname.name);
@@ -312,7 +312,7 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
     ecEncodeNum(cp, attributes);
     ecEncodeNum(cp, (cp->bind) ? slotNum : -1);
 
-    assure(type != type->baseType);
+    assert(type != type->baseType);
     if (type->baseType) {
         ecEncodeGlobal(cp, (EjsObj*) type->baseType, type->baseType->qname);
     } else {
@@ -321,11 +321,11 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
     ecEncodeNum(cp, ejsGetLength(ejs, (EjsObj*) type));
 
     instanceTraits = ejsGetLength(ejs, (EjsObj*) type->prototype);
-    assure(instanceTraits >= 0);
+    assert(instanceTraits >= 0);
     ecEncodeNum(cp, instanceTraits);
     
     interfaceCount = (type->implements) ? mprGetListLength(type->implements) : 00;
-    assure(interfaceCount >= 0);
+    assert(interfaceCount >= 0);
     ecEncodeNum(cp, interfaceCount);
 
     if (type->implements) {
@@ -337,8 +337,8 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
         return;
     }    
     if (type->hasConstructor) {
-        assure(type->constructor.isConstructor);
-        assure(type->constructor.block.pot.isFunction);
+        assert(type->constructor.isConstructor);
+        assert(type->constructor.block.pot.isFunction);
         createFunctionSection(cp, block, slotNum, (EjsFunction*) type, 0);
     }
     /*
@@ -385,7 +385,7 @@ static void createFunctionSection(EcCompiler *cp, EjsPot *block, int slotNum, Ej
     EjsPot          *activation;
     int             i, attributes, numProp;
 
-    assure(fun);
+    assert(fun);
 
     mp = cp->state->currentModule;
     ejs = cp->ejs;
@@ -416,7 +416,7 @@ static void createFunctionSection(EcCompiler *cp, EjsPot *block, int slotNum, Ej
         qname = N(EJS_EJS_NAMESPACE, EJS_INITIALIZER_NAME);
     }
     if (fun->isConstructor) {
-        assure(fun->block.pot.isFunction);
+        assert(fun->block.pot.isFunction);
         attributes |= EJS_FUN_CONSTRUCTOR;
     }
     if (fun->rest) {
@@ -446,7 +446,7 @@ static void createFunctionSection(EcCompiler *cp, EjsPot *block, int slotNum, Ej
     ecEncodeNum(cp, fun->numDefault);
 
     if (code) {
-        assure(code->codeLen > 0);
+        assert(code->codeLen > 0);
         ecEncodeNum(cp, code->numHandlers);
         ecEncodeNum(cp, code->codeLen);
         ecEncodeBlock(cp, code->byteCode, code->codeLen);
@@ -490,7 +490,7 @@ static void createExceptionSection(EcCompiler *cp, EjsFunction *fun)
     EjsCode     *code;
     int         i;
 
-    assure(fun);
+    assert(fun);
 
     code = fun->body.code;
     ecEncodeByte(cp, EJS_SECT_EXCEPTION);
@@ -519,7 +519,7 @@ static void createDebugSection(EcCompiler *cp, EjsFunction *fun)
     EjsLine     *line;
     int         i, patchSizeOffset, startDebug;
 
-    assure(fun);
+    assert(fun);
     debug = fun->body.code->debug;
 
     ecEncodeByte(cp, EJS_SECT_DEBUG);
@@ -574,11 +574,11 @@ static void createPropertySection(EcCompiler *cp, EjsPot *block, int slotNum, Ej
     
     createDocSection(cp, "var", block, slotNum);
 
-    assure(qname.name->value[0] != '\0');
+    assert(qname.name->value[0] != '\0');
     trait = ejsGetPropertyTraits(ejs, block, slotNum);
     attributes = trait->attributes;
 
-    mprLog(7, "    global property section %@", qname.name);
+    mprTrace(7, "    global property section %@", qname.name);
 
     if (trait->type) {
         if (trait->type == EST(Namespace) || (!ejs->initialized && trait->type->qname.name == EST(Namespace)->qname.name)){
@@ -614,7 +614,7 @@ static void createDocSection(EcCompiler *cp, cchar *tag, EjsPot *block, int slot
     char        key[32];
 
     ejs = cp->ejs;
-    assure(slotNum >= 0);
+    assert(slotNum >= 0);
     
     if (!(ejs->flags & EJS_FLAG_DOC)) {
         return;
@@ -648,7 +648,7 @@ PUBLIC int ecAddStringConstant(EcCompiler *cp, EjsString *sp)
     offset = ecAddModuleConstant(cp, cp->state->currentModule, ejsToMulti(cp->ejs, sp));
     if (offset < 0) {
         cp->fatalError = 1;
-        assure(offset > 0);
+        assert(offset > 0);
         return EJS_ERR;
     }
     return offset;
@@ -665,7 +665,7 @@ PUBLIC int ecAddCStringConstant(EcCompiler *cp, cchar *str)
     offset = ecAddModuleConstant(cp, cp->state->currentModule, str);
     if (offset < 0) {
         cp->fatalError = 1;
-        assure(offset > 0);
+        assert(offset > 0);
         return EJS_ERR;
     }
     return offset;
@@ -743,15 +743,15 @@ PUBLIC int ecAddDocConstant(EcCompiler *cp, cchar *tag, void *vp, int slotNum)
 
     ejs = cp->ejs;
 
-    assure(ejs->doc);
-    assure(vp);
-    assure(slotNum >= 0);
+    assert(ejs->doc);
+    assert(vp);
+    assert(slotNum >= 0);
 
     fmt(key, sizeof(key), "%s %Lx %d", tag, PTOL(vp), slotNum);
     doc = (EjsDoc*) mprLookupKey(ejs->doc, key);
     if (doc && doc->docString) {
         if (ecAddStringConstant(cp, doc->docString) < 0) {
-            assure(0);
+            assert(0);
             return EJS_ERR;
         }
     }
@@ -768,10 +768,10 @@ PUBLIC int ecAddModuleConstant(EcCompiler *cp, EjsModule *mp, cchar *str)
     MprKey          *kp;
     int             index;
 
-    assure(mp);
+    assert(mp);
 
     if (str == 0) {
-        assure(0);
+        assert(0);
         return 0;
     }
     constants = mp->constants;
@@ -779,7 +779,7 @@ PUBLIC int ecAddModuleConstant(EcCompiler *cp, EjsModule *mp, cchar *str)
         return PTOI(kp->data);
     }
     index = ejsAddConstant(cp->ejs, mp, str);
-    // mprLog(0, "%6d %s", index, str);
+    // mprTrace(0, "%6d %s", index, str);
     mprAddKey(constants->table, str, ITOP(index));
     return index;
 }
@@ -793,12 +793,12 @@ static void encodeTypeName(EcCompiler *cp, EjsString *name, int flags)
 {
     int        offset;
 
-    assure(name);
+    assert(name);
 
     offset = ecAddModuleConstant(cp, cp->state->currentModule, ejsToMulti(cp->ejs, name));
     if (offset < 0) {
         cp->fatalError = 1;
-        assure(offset > 0);
+        assert(offset > 0);
     } else {
         ecEncodeNum(cp, offset << 2 | flags);
     }
@@ -818,7 +818,7 @@ PUBLIC void ecEncodeGlobal(EcCompiler *cp, EjsAny *obj, EjsName qname)
     slotNum = -1;
 
     if (obj == 0) {
-        assure(0);
+        assert(0);
         ecEncodeNum(cp, EJS_ENCODE_GLOBAL_NOREF);
         return;
     }
@@ -848,12 +848,12 @@ static int reserveRoom(EcCompiler *cp, int room)
     EcCodeGen       *code;
 
     code = cp->state->code;
-    assure(code);
+    assert(code);
 
     if (mprGetBufSpace(code->buf) < room) {
         if (mprGrowBuf(code->buf, -1) < 0) {
             cp->fatalError = 1;
-            assure(0);
+            assert(0);
             return MPR_ERR_MEMORY;
         }
     }
@@ -866,8 +866,8 @@ static int reserveRoom(EcCompiler *cp, int room)
  */
 PUBLIC void ecEncodeOpcode(EcCompiler *cp, int code)
 {
-    assure(code < 240);
-    assure(cp);
+    assert(code < 240);
+    assert(cp);
 
     cp->lastOpcode = code;
     ecEncodeByte(cp, code);
@@ -879,7 +879,7 @@ PUBLIC void ecEncodeOpcode(EcCompiler *cp, int code)
  */
 PUBLIC void ecEncodeName(EcCompiler *cp, EjsName qname)
 {
-    assure(qname.name);
+    assert(qname.name);
 
     ecEncodeConst(cp, qname.name);
     ecEncodeConst(cp, qname.space);
@@ -892,7 +892,7 @@ PUBLIC void ecEncodeConst(EcCompiler *cp, EjsString *sp)
     cchar   *str;
     int     offset;
 
-    assure(cp);
+    assert(cp);
     ejs = cp->ejs;
 
     if (sp == 0) {
@@ -905,7 +905,7 @@ PUBLIC void ecEncodeConst(EcCompiler *cp, EjsString *sp)
         cp->fatalError = 1;
         return;
     }
-    assure(offset >= 0);
+    assert(offset >= 0);
     ecEncodeNum(cp, offset);
 }
 
@@ -915,7 +915,7 @@ PUBLIC void ecEncodeByte(EcCompiler *cp, int value)
     EcCodeGen   *code;
     uchar       *pc;
 
-    assure(cp);
+    assert(cp);
     code = cp->state->code;
 
     if (reserveRoom(cp, sizeof(uchar)) < 0) {
@@ -931,10 +931,10 @@ PUBLIC void ecEncodeMulti(EcCompiler *cp, cchar *str)
 {
     int    len;
 
-    assure(cp);
+    assert(cp);
 
     len = (int) strlen(str) + 1;
-    assure(len > 0);
+    assert(len > 0);
     ecEncodeNum(cp, len);
     ecEncodeBlock(cp, (uchar*) str, len);
 }
@@ -945,12 +945,12 @@ PUBLIC void ecEncodeWideAsMulti(EcCompiler *cp, wchar *str)
     char    *mstr;
     ssize   len;
 
-    assure(cp);
+    assert(cp);
 
     mstr = awtom(str, &len);
     //  UNICODE - why calculate len again?
     len = strlen(mstr) + 1;
-    assure(len > 0);
+    assert(len > 0);
     ecEncodeNum(cp, (int) len);
     ecEncodeBlock(cp, (uchar*) str, (int) len);
 }
@@ -961,7 +961,7 @@ PUBLIC void ecEncodeNum(EcCompiler *cp, int64 number)
     MprBuf      *buf;
     int         len;
 
-    assure(cp);
+    assert(cp);
     buf = cp->state->code->buf;
     if (reserveRoom(cp, sizeof(int64) + 2) < 0) {
         return;
@@ -976,7 +976,7 @@ PUBLIC void ecEncodeDouble(EcCompiler *cp, double value)
     MprBuf      *buf;
     int         len;
 
-    assure(cp);
+    assert(cp);
     buf = cp->state->code->buf;
     if (reserveRoom(cp, sizeof(double) + 4) < 0) {
         return;
@@ -994,14 +994,14 @@ PUBLIC void ecEncodeInt32(EcCompiler *cp, int number)
     MprBuf      *buf;
     int         len;
 
-    assure(cp);
+    assert(cp);
     buf = cp->state->code->buf;
 
     if (reserveRoom(cp, sizeof(int) / sizeof(char)) < 0) {
         return;
     }
     len = ejsEncodeInt32(cp->ejs, (uchar*) mprGetBufEnd(buf), number);
-    assure(len == 4);
+    assert(len == 4);
     mprAdjustBufEnd(buf, len);
 }
 
@@ -1132,8 +1132,8 @@ static int sumString(EjsString *name)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the GPL open source license described below or you may acquire

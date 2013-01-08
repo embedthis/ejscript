@@ -25,10 +25,10 @@ int ejsLookupScope(Ejs *ejs, EjsName name, EjsLookup *lookup)
     EjsBlock        *bp;
     int             slotNum;
 
-    assure(ejs);
-    assure(name.name);
-    assure(name.space);
-    assure(lookup);
+    assert(ejs);
+    assert(name.name);
+    assert(name.space);
+    assert(lookup);
 
     memset(lookup, 0, sizeof(*lookup));
 
@@ -58,10 +58,10 @@ static int lookupVarInBlock(Ejs *ejs, EjsBlock *bp, EjsName name, EjsLookup *loo
     EjsPot          *prototype;
     int             slotNum, nthBase;
 
-    assure(ejs);
-    assure(name.name);
-    assure(name.space);
-    assure(lookup);
+    assert(ejs);
+    assert(name.name);
+    assert(name.space);
+    assert(lookup);
 
     state = ejs->state;
     slotNum = -1;
@@ -133,8 +133,8 @@ int ejsLookupVar(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup)
     EjsPot      *prototype;
     int         slotNum, nthBase;
 
-    assure(obj);
-    assure(lookup);
+    assert(obj);
+    assert(lookup);
 
     memset(lookup, 0, sizeof(*lookup));
 
@@ -180,10 +180,10 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *l
     MprList         *globalSpaces;
     int             next, slotNum;
 
-    assure(obj);
-    assure(name.name);
-    assure(name.space);
-    assure(lookup);
+    assert(obj);
+    assert(name.name);
+    assert(name.space);
+    assert(lookup);
 
     b = (EjsBlock*) ejs->global;
     globalSpaces = &b->namespaces;
@@ -237,7 +237,7 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *l
                 for (next = -1; (nsp = (EjsNamespace*) mprGetPrevItem(&b->namespaces, &next)) != 0; ) {
                     qname.space = nsp->value;
                     if ((slotNum = ejsLookupProperty(ejs, obj, qname)) >= 0) {
-                        // mprLog(5, "WARNING: Object has multiple properties of the same name \"%@\"", name.name); 
+                        // mprTrace(5, "WARNING: Object has multiple properties of the same name \"%@\"", name.name); 
                         goto done;
                     }
                 }
@@ -245,7 +245,7 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *l
             for (next = -1; (nsp = mprGetPrevItem(globalSpaces, &next)) != 0; ) {
                 qname.space = nsp->value;
                 if ((slotNum = ejsLookupProperty(ejs, obj, qname)) >= 0) {
-                    // mprLog(5, "WARNING: Object has multiple properties of the same name \"%@\"", name.name); 
+                    // mprTrace(5, "WARNING: Object has multiple properties of the same name \"%@\"", name.name); 
                     goto done;
                 }
             }
@@ -276,7 +276,7 @@ EjsAny *ejsGetVarByName(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup)
     EjsObj  *result;
     int     slotNum;
 
-    assure(ejs);
+    assert(ejs);
 
     //  OPT - really nice to remove this
     //  OPT -- perhaps delegate the logic below down into a getPropertyByName?
@@ -304,13 +304,13 @@ void ejsShowBlockScope(Ejs *ejs, EjsBlock *block)
     MprList         *namespaces;
     int             nextNsp;
 
-    mprLog(6, "\n  Block scope");
+    mprTrace(6, "\n  Block scope");
     for (; block; block = block->scope) {
-        mprLog(6, "    Block \"%s\" 0x%08x", mprGetName(block), block);
+        mprTrace(6, "    Block \"%s\" 0x%08x", mprGetName(block), block);
         namespaces = &block->namespaces;
         if (namespaces) {
             for (nextNsp = 0; (nsp = (EjsNamespace*) mprGetNextItem(namespaces, &nextNsp)) != 0; ) {
-                mprLog(6, "        \"%@\"", nsp->value);
+                mprTrace(6, "        \"%@\"", nsp->value);
             }
         }
     }
@@ -326,13 +326,13 @@ void ejsShowCurrentScope(Ejs *ejs)
     EjsBlock        *block;
     int             nextNsp;
 
-    mprLog(6, "\n  Current scope");
+    mprTrace(6, "\n  Current scope");
     for (block = ejs->state->bp; block; block = block->scope) {
-        mprLog(6, "    Block \"%s\" 0x%08x", mprGetName(block), block);
+        mprTrace(6, "    Block \"%s\" 0x%08x", mprGetName(block), block);
         namespaces = &block->namespaces;
         if (namespaces) {
             for (nextNsp = 0; (nsp = (EjsNamespace*) mprGetNextItem(namespaces, &nextNsp)) != 0; ) {
-                mprLog(6, "        \"%@\"", nsp->value);
+                mprTrace(6, "        \"%@\"", nsp->value);
             }
         }
     }
@@ -343,7 +343,7 @@ void ejsShowCurrentScope(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

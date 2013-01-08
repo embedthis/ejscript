@@ -16,10 +16,10 @@
  */
 static EjsTimer *timer_constructor(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    assure(argc >= 2);
-    assure(ejsIs(ejs, argv[0], Number));
-    assure(ejsIsFunction(ejs, argv[1]));
-    assure(ejsIs(ejs, argv[2], Array));
+    assert(argc >= 2);
+    assert(ejsIs(ejs, argv[0], Number));
+    assert(ejsIsFunction(ejs, argv[1]));
+    assert(ejsIs(ejs, argv[2], Array));
 
     tp->period = ejsGetInt(ejs, argv[0]);
     tp->callback = (EjsFunction*) argv[1];
@@ -36,7 +36,7 @@ static EjsTimer *timer_constructor(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **ar
  */
 static EjsBoolean *timer_get_drift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    assure(argc == 0);
+    assert(argc == 0);
     return ejsCreateBoolean(ejs, tp->drift);
 }
 
@@ -46,7 +46,7 @@ static EjsBoolean *timer_get_drift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **ar
  */
 static EjsObj *timer_set_drift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    assure(argc == 1 && ejsIs(ejs, argv[0], Boolean));
+    assert(argc == 1 && ejsIs(ejs, argv[0], Boolean));
     tp->drift = ejsGetBoolean(ejs, argv[0]);
     return 0;
 }
@@ -57,7 +57,7 @@ static EjsObj *timer_set_drift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
  */
 static EjsFunction *timer_get_onerror(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    assure(argc == 0);
+    assert(argc == 0);
     return tp->onerror;
 }
 
@@ -77,7 +77,7 @@ static EjsObj *timer_set_onerror(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv
  */
 static EjsNumber *timer_get_period(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    assure(argc == 0);
+    assert(argc == 0);
     return ejsCreateNumber(ejs, tp->period);
 }
 
@@ -87,7 +87,7 @@ static EjsNumber *timer_get_period(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **ar
  */
 static EjsObj *timer_set_period(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    assure(argc == 1 && ejsIs(ejs, argv[0], Number));
+    assert(argc == 1 && ejsIs(ejs, argv[0], Number));
 
     tp->period = ejsGetInt(ejs, argv[0]);
     return 0;
@@ -99,7 +99,7 @@ static EjsObj *timer_set_period(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
  */
 static EjsBoolean *timer_get_repeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    assure(argc == 0);
+    assert(argc == 0);
     return ejsCreateBoolean(ejs, tp->repeat);
 }
 
@@ -109,7 +109,7 @@ static EjsBoolean *timer_get_repeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **a
  */
 static EjsObj *timer_set_repeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    assure(argc == 1 && ejsIs(ejs, argv[0], Boolean));
+    assert(argc == 1 && ejsIs(ejs, argv[0], Boolean));
 
     tp->repeat = ejsGetBoolean(ejs, argv[0]);
     if (tp->event) {
@@ -124,9 +124,9 @@ static int timerCallback(EjsTimer *tp, MprEvent *e)
     Ejs         *ejs;
     EjsObj      *thisObj, *error;
 
-    assure(tp);
-    assure(tp->args);
-    assure(tp->callback);
+    assert(tp);
+    assert(tp->args);
+    assert(tp->callback);
 
     ejs = tp->ejs;
     thisObj = (tp->callback->boundThis) ? tp->callback->boundThis : tp;
@@ -233,7 +233,7 @@ PUBLIC void ejsConfigureTimerType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

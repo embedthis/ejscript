@@ -22,7 +22,7 @@ static EjsNumber *lf_emit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     ssize           len, written;
     int             i, level, paused;
 
-    assure(argc >= 2 && ejsIs(ejs, argv[1], Array));
+    assert(argc >= 2 && ejsIs(ejs, argv[1], Array));
 
     level = ejsGetInt(ejs, argv[0]);
     args = (EjsArray*) argv[1];
@@ -32,7 +32,7 @@ static EjsNumber *lf_emit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
     for (i = 0; i < args->length; i++) {
         vp = ejsGetProperty(ejs, args, i);
-        assure(vp);
+        assert(vp);
         switch (TYPE(vp)->sid) {
         case S_ByteArray:
             ap = (EjsByteArray*) vp;
@@ -143,7 +143,7 @@ PUBLIC void ejsConfigureMprLogType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

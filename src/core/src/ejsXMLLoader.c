@@ -38,7 +38,7 @@ MprXml *ejsCreateXmlParser(Ejs *ejs, EjsXML *xml, cchar *filename)
     MprXml      *xp;
     
     xp = mprXmlOpen(BIT_MAX_BUFFER, -1);
-    assure(xp);
+    assert(xp);
 
     /*
         Create the parser stack
@@ -90,10 +90,10 @@ static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, 
     xml = tos->obj;
     value = ejsCreateStringFromAsc(ejs, str);
     
-    assure(xml);
+    assert(xml);
 
-    assure(state >= 0);
-    assure(tagName && *tagName);
+    assert(state >= 0);
+    assert(tagName && *tagName);
 
     switch (state) {
     case MPR_XML_PI:
@@ -136,7 +136,7 @@ static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, 
             //  TODO - rc
             ejsAppendToXML(ejs, parent, xml);
             parser->topOfStack--;
-            assure(parser->topOfStack >= 0);
+            assert(parser->topOfStack >= 0);
             tos = &parser->nodeStack[parser->topOfStack];
         }
         break;
@@ -163,7 +163,7 @@ static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, 
          */
         if (parser->topOfStack > 0) {
             parser->topOfStack--;
-            assure(parser->topOfStack >= 0);
+            assert(parser->topOfStack >= 0);
             tos = &parser->nodeStack[parser->topOfStack];
         }
         break;
@@ -171,7 +171,7 @@ static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, 
     default:
         ejsThrowSyntaxError(ejs, "XML error in %s at %d\nDetails %s", parser->filename, mprXmlGetLineNumber(xp), 
             mprXmlGetErrorMsg(xp));
-        assure(0);
+        assert(0);
         return MPR_ERR_BAD_SYNTAX;
     }
     return 0;
@@ -209,7 +209,7 @@ PUBLIC int ejsXMLToBuf(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
         }
         return 0;
     }
-    assure(ejsIsXML(ejs, node));
+    assert(ejsIsXML(ejs, node));
     xml = (EjsXML*) node;
     
     switch (xml->kind) {
@@ -288,7 +288,7 @@ static void indent(MprBuf *bp, int level)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

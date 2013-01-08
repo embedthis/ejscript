@@ -2,51 +2,13 @@
     est.pak - Embedded Secure Transport package for Bit
  */
 
-require ejs.tar
-require ejs.zlib
-
 pack('est', 'Embedded Transport Security')
-let path = bit.packs.est.path
-let deps = bit.dir.src.join('src/deps')
-let ejs = deps.join('est')
-let tgz = deps.join('est.tgz')
-let tar = deps.join('est.tar')
 
-if (path) {
-    if (path.toString().startsWith('http:')) {
-        try {
-            /*
-                Auto download EST
-             */
-            let http:Http = new Http
-            trace('Download', 'ETS from: ' + path)
-            http.get("" + path)
-            buf = new ByteArray
-            let fp = File(tgz, 'w')
-            while (http.read(buf) > 0) {
-                fp.write(buf)
-            }
-            fp.close()
-            if (http.status != 200) {
-                App.log.error("Cannot download ETS from " + path)
-                App.exit(1)
-            }
-            http.close()
-            trace('Prepare', 'ETS distribution')
-            est.removeAll()
-            est.makeDir()
-            Zlib.uncompress(tgz, tar)
-            Tar(tar, {chdir: deps}).extract()
-            let dir = deps.files('est-*').sort().reverse()[0]
-            dir.rename(est)
-            tgz.remove()
-            tar.remove()
-            trace('Done', 'ETS distribution')
-        } catch (e) {
-            trace('Prepare', 'Failed: ' + e)
-        }
-    }
+if (bit.packs.ssl && bit.packs.ssl.enable === false) {
+    throw "SSL has been disabled"
 }
+
+let path = bit.packs.est.path
 
 let cfg
 if (Path('src/deps/est/estLib.c').exists) {
@@ -86,4 +48,4 @@ if (Path('src/deps/est/estLib.c').exists) {
     }
 }
 Bit.load({packs: { est: cfg }})
-
+bit.settings.ssl = true

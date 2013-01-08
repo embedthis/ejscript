@@ -28,7 +28,7 @@ static EjsBoolean *g_assert(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
             b = (EjsBoolean*) argv[0];
         }
     }
-    assure(b);
+    assert(b);
 
     if (b == 0 || !b->value) {
         fp = ejs->state->fp;
@@ -81,7 +81,7 @@ static EjsObj *g_cloneBase(Ejs *ejs, EjsObj *ignored, int argc, EjsObj **argv)
 {
     EjsType     *type;
     
-    assure(argc == 1);
+    assert(argc == 1);
     
     type = (EjsType*) argv[0];
     type->baseType = ejsClone(ejs, type->baseType, 0);
@@ -116,7 +116,7 @@ static EjsObj *g_eval(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsNumber *g_hashcode(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
-    assure(argc == 1);
+    assert(argc == 1);
     return ejsCreateNumber(ejs, (MprNumber) PTOL(argv[0]));
 }
 
@@ -401,7 +401,7 @@ static EjsObj *g_printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     cchar       *data;
     int         i, count;
 
-    assure(argc == 1 && ejsIs(ejs, argv[0], Array));
+    assert(argc == 1 && ejsIs(ejs, argv[0], Array));
 
     args = argv[0];
     count = ejsGetLength(ejs, args);
@@ -468,7 +468,7 @@ PUBLIC void ejsConfigureGlobalBlock(Ejs *ejs)
     EjsBlock    *block;
 
     block = (EjsBlock*) ejs->global;
-    assure(block);
+    assert(block);
     
     ejsSetProperty(ejs, ejs->global, ES_global, ejs->global);
     ejsSetProperty(ejs, ejs->global, ES_void, ESV(Void));
@@ -501,7 +501,7 @@ PUBLIC void ejsConfigureGlobalBlock(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

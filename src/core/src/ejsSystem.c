@@ -57,7 +57,7 @@ static EjsString *system_ipaddr(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
         }
         return ejsCreateStringFromAsc(ejs, ip ? ip : "127.0.0.1");
     } else {
-        mprLog(0, "Cannot get IP address, check system hostname. Error %d.\n", rc);
+        mprError("Cannot get IP address, check system hostname. Error %d.\n", rc);
     }
 #endif
     return ESV(null);
@@ -80,7 +80,7 @@ PUBLIC void ejsConfigureSystemType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2012. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 
