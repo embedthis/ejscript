@@ -4,7 +4,7 @@
     This file is a catenation of all the source code. Amalgamating into a
     single file makes embedding simpler and the resulting application faster.
 
-    Prepared by: magnetar.local
+    Prepared by: xp-32
  */
 
 #include "est.h"
@@ -3767,7 +3767,6 @@ char xyssl_ca_crt[] =
 int snfmt(char *buf, ssize bufsize, cchar *fmt, ...)
 {
     va_list     ap;
-    char        *result;
     int         n;
 
     if (bufsize <= 0) {
@@ -9909,8 +9908,8 @@ int *ssl_create_ciphers(cchar *cipherSuite)
     char        *suite, *cipher, *next;
     int         nciphers, i, *ciphers;
 
-    if (!ciphers) {
-        return 0;
+    if (!cipherSuite) {
+        return ssl_default_ciphers;
     }
     nciphers = sizeof(cipherList) / sizeof(EstCipher);
     ciphers = malloc((nciphers + 1) * sizeof(int));
@@ -11604,7 +11603,7 @@ int ssl_default_ciphers[] = {
 /*
    Perform the SSL handshake
  */
-int ssl_handshake(ssl_context * ssl)
+PUBLIC int ssl_handshake(ssl_context * ssl)
 {
     char    cbuf[4096];
 
@@ -13012,8 +13011,10 @@ if (buflen > 0) {
     crt = crt->next;
     memset(crt, 0, sizeof(x509_cert));
 
+#if UNUSED
 //MOB
 more:
+#endif
     if (buflen > 0) {
         int rc = x509parse_crt(crt, buf, buflen);
         //  MOB - return true
