@@ -3767,7 +3767,6 @@ char xyssl_ca_crt[] =
 int snfmt(char *buf, ssize bufsize, cchar *fmt, ...)
 {
     va_list     ap;
-    char        *result;
     int         n;
 
     if (bufsize <= 0) {
@@ -11604,7 +11603,7 @@ char *ssl_get_cipher(ssl_context * ssl)
 /*
    Perform the SSL handshake
  */
-int ssl_handshake(ssl_context * ssl)
+PUBLIC int ssl_handshake(ssl_context * ssl)
 {
     char    cbuf[4096];
 
@@ -13012,8 +13011,10 @@ if (buflen > 0) {
     crt = crt->next;
     memset(crt, 0, sizeof(x509_cert));
 
+#if UNUSED
 //MOB
 more:
+#endif
     if (buflen > 0) {
         int rc = x509parse_crt(crt, buf, buflen);
         //  MOB - return true
@@ -13464,6 +13465,7 @@ char *x509parse_cert_info(char *prefix, char *buf, int bufsize, x509_cert *crt)
 
     snfmt(pbuf, sizeof(pbuf), "%sS_", prefix);
     p += x509parse_dn_gets(pbuf, p, end - p, &crt->subject);
+
     snfmt(pbuf, sizeof(pbuf), "%sI_", prefix);
     p += x509parse_dn_gets(pbuf, p, end - p, &crt->issuer);
 
@@ -13490,7 +13492,7 @@ char *x509parse_cert_info(char *prefix, char *buf, int bufsize, x509_cert *crt)
         cipher = "RSA";
         break;
     }
-    //  MOB - This is the cipher encrypting the cert. Not the real cipher
+    //  MOB - This is the cipher encrypting the cert
     p += snfmt(p, end - p, "%sCIPHER=%s, ", prefix, cipher);
     p += snfmt(p, end - p, "%sKEYSIZE=%d, ", prefix, crt->rsa.N.n * (int)sizeof(ulong) * 8);
     return buf;

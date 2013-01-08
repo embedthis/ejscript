@@ -785,9 +785,9 @@ public class Bit {
                 let desc = p.description || pack
                 if (p && p.enable && p.path) {
                     if (options.verbose) {
-                        trace('Found', desc + ' at:\n                 ' + p.path)
+                        trace('Found', desc + ' at:\n                 ' + p.path.portable)
                     } else if (!p.quiet) {
-                        trace('Found', desc + ': ' + p.path)
+                        trace('Found', desc + ': ' + p.path.portable)
                     }
                 } else {
                     omitted.push(desc)

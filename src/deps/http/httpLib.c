@@ -1823,7 +1823,7 @@ static HttpConn *openConnection(HttpConn *conn, struct MprSsl *ssl)
     Http        *http;
     HttpUri     *uri;
     MprSocket   *sp;
-    char        *ip, *peerName;
+    char        *ip;
     int         port, rc, level;
 
     assert(conn);
@@ -1869,6 +1869,7 @@ static HttpConn *openConnection(HttpConn *conn, struct MprSsl *ssl)
 #if BIT_SSL
     /* Must be done even if using keep alive for repeat SSL requests */
     if (uri->secure) {
+        char *peerName;
         if (ssl == 0) {
             ssl = mprCreateSsl(0);
         }

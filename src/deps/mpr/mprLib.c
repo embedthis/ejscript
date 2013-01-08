@@ -40,12 +40,14 @@
     #define VALLOC 0
 #endif
 
+#if BIT_MEMORY_DEBUG
 /*
     Set this address to break when this address is allocated or freed
     Only used for debug, but defined regardless so we can have constant exports.
  */
-PUBLIC MprMem *stopAlloc = 0;
-PUBLIC int stopSeqno = -1;
+static MprMem *stopAlloc = 0;
+static int stopSeqno = -1;
+#endif
 
 #define GET_MEM(ptr)                ((MprMem*) (((char*) (ptr)) - sizeof(MprMem)))
 #define GET_PTR(mp)                 ((char*) (((char*) mp) + sizeof(MprMem)))
@@ -17324,7 +17326,7 @@ PUBLIC void mprSetFilesLimit(int limit)
 #define STATE_TYPE      7               /* Data type */
 #define STATE_COUNT     8
 
-PUBLIC char stateMap[] = {
+static char stateMap[] = {
     /*     STATES:  Normal Percent Modifier Width  Dot  Prec Bits Type */
     /* CLASS           0      1       2       3     4     5    6    7  */
     /* Normal   0 */   0,     0,      0,      0,    0,    0,   0,   0,
@@ -17343,7 +17345,7 @@ PUBLIC char stateMap[] = {
   
     The Class map will map from a specifier letter to a state.
  */
-PUBLIC char classMap[] = {
+static char classMap[] = {
     /*   0  ' '    !     "     #     $     %     &     ' */
              2,    0,    0,    2,    0,    1,    0,    0,
     /*  07   (     )     *     +     ,     -     .     / */
@@ -21097,7 +21099,6 @@ PUBLIC int mprUpgradeSocket(MprSocket *sp, MprSsl *ssl, cchar *peerName)
 }
 
 
-//  MOB - is this supported in Est?
 PUBLIC void mprAddSslCiphers(MprSsl *ssl, cchar *ciphers)
 {
     assert(ssl);
@@ -23859,8 +23860,9 @@ PUBLIC void mprSetMinWorkers(int n)
     ws = MPR->workerService;
     lock(ws);
     ws->minThreads = n; 
-    mprTrace(4, "Pre-start %d workers", ws->minThreads);
-    
+    if (n > 0) {
+        mprTrace(4, "Pre-start %d workers", ws->minThreads);
+    }
     while (ws->numThreads < ws->minThreads) {
         worker = createWorker(ws, ws->stackSize);
         ws->numThreads++;

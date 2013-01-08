@@ -1057,7 +1057,9 @@ static int upgradeEst(MprSocket *sp, MprSsl *ssl, cchar *peerName)
         }
         est->cfg = ssl->config = cfg;
         if (ssl->certFile) {
-            //  MOB - openssl uses encrypted and/not 
+            //  MOB - encrypted and/not?
+            //  MOB PEM/DER?
+            //  MOB catenated with key file?
             if (x509parse_crtfile(&cfg->cert, ssl->certFile) != 0) {
                 sp->errorMsg = sfmt("Unable to parse certificate %s", ssl->certFile); 
                 unlock(ssl);
@@ -1109,7 +1111,7 @@ static int upgradeEst(MprSocket *sp, MprSsl *ssl, cchar *peerName)
 	ssl_set_session(&est->ctx, 1, 0, &est->session);
 	memset(&est->session, 0, sizeof(ssl_session));
 
-	ssl_set_ca_chain(&est->ctx, &cfg->cabundle, (char*) peerName);
+    ssl_set_ca_chain(&est->ctx, &cfg->cabundle, (char*) peerName);
 	ssl_set_own_cert(&est->ctx, &cfg->cert, &cfg->rsa);
 	ssl_set_dh_param(&est->ctx, dhKey, dhG);
 
@@ -1387,7 +1389,7 @@ static void estTrace(void *fp, int level, char *str)
 {
     level += 3;
     if (level <= MPR->logLevel) {
-        mprLog(level, "EST: %s", str);
+        mprLog(level | MPR_RAW_MSG, "EST: %s", str);
     }
 }
 
