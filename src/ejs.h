@@ -974,7 +974,7 @@ typedef struct EjsProperties {
     @defgroup EjsPot EjsPot
     @see EjsPot ejsAlloc ejsBlendObject ejsCast ejsCheckSlot ejsClone ejsCloneObject ejsClonePot ejsCoerceOperands 
         ejsCompactPot ejsCopySlots ejsCreateEmptyPot ejsCreateInstance ejsCreateObject ejsCreatePot 
-        ejsCreatePotHelpers ejsCreateSimpleObject ejsDefineProperty ejsDeleteProperty ejsDeletePropertyByName 
+        ejsCreatePotHelpers ejsDefineProperty ejsDeleteProperty ejsDeletePropertyByName 
         ejsDeserialize ejsFixTraits ejsGetHashSize ejsGetPotPropertyName ejsGetProperty ejsGrowObject ejsGrowPot 
         ejsIndexProperties ejsInsertPotProperties ejsIsPot ejsLookupPotProperty ejsLookupProperty ejsManageObject 
         ejsManagePot ejsMatchName ejsObjToJSON ejsObjToString ejsParse ejsPropertyHasTrait ejsRemovePotProperty 

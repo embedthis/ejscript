@@ -218,8 +218,8 @@ module ejs {
             Filename of the certificate bundle used to verify server certificates.
             This file contains catenated CA certificates in PEM format.
          */
-        native function get ca(): Path
-        native function set ca(bundle: Path): Void
+        native function get ca(): Path?
+        native function set ca(bundle: Path?): Void
 
         /** 
             @duplicate Stream.close 
@@ -252,9 +252,8 @@ module ejs {
             Filename of the certificate used to identify the client.
             This file contains the client certificate in PEM format.
          */
-        native function get certificate(): Path
-        native function set certificate(certFile: Path): Void
-
+        native function get certificate(): Path?
+        native function set certificate(certFile: Path?): Void
 
         /** 
             Response content body length. Set to the length of the response body in bytes or -1 if no body or not known.
@@ -408,6 +407,12 @@ FUTURE & KEEP
         native function get headers(): Object
 
         /** 
+            Connection information. This object has properties for SSL certificates and ciphers.
+            @hide
+         */
+        native function get info(): Object
+
+        /** 
             Is the connection is utilizing SSL.
             @return True if the connection is using SSL.
          */
@@ -417,8 +422,8 @@ FUTURE & KEEP
             Filename of the private key to use with the certificate for SSL communications.
             This file contains the client certificate in PEM format.
          */
-        native function get key(): Path
-        native function set key(keyFile: Path): Void
+        native function get key(): Path?
+        native function set key(keyFile: Path?): Void
 
         /** 
             When the response content was last modified. Set to the the value of the response Http Last-Modified header.
@@ -485,6 +490,12 @@ FUTURE & KEEP
             @throws IOError if the request cannot be issued to the remote server.
          */
         native function post(uri: Uri?, ...data): Void
+
+        /** 
+            SSL provider to use
+         */
+        native function get provider(): String
+        native function set provider(name: String): Void
 
         /** 
             Commence a PUT request for the current uri. See $connect() for connection details.
@@ -728,8 +739,8 @@ FUTURE & KEEP
             Verify the certificate issuer. If false, then the the certificate verification process will accept certificates
             for which the issuer cannot be verified. This permits self-signed certificates to be accepted. 
          */
-        // native function get verifyIssuer(): Boolean
-        // native function set verifyIssuer(enable: Boolean): Void
+        native function get verifyIssuer(): Boolean
+        native function set verifyIssuer(enable: Boolean): Void
 
         /** 
             Wait for a request to complete. This will call $finalize() if in sync mode and the request is not already 

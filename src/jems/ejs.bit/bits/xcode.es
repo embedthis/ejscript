@@ -548,7 +548,9 @@ ${OUTPUTS}
         let inputs = ''
         let outputs = ''
         let cmd = 'PATH=$PATH:/usr/local/bin\n'
-
+        if (bit.platform.profile == 'mine' && bit.settings.product == 'appweb') {
+            cmd += 'rm -f ${BIN_DIR}/appweb\n'
+        }
         if (!target.home.same(base)) {
             cmd += 'cd ' + target.home.relativeTo(base) + '\n'
             makeDirGlobals(target.home)

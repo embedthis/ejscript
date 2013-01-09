@@ -420,9 +420,7 @@ public class Bit {
 
         for (let [key, value] in bit.settings) {
             /* Copy over non-standard settings. These include compiler sleuthing settings.  */
-            //UNUSED if (!bit.standardSettings[key] || Object.getOwnPropertyCount(bit.settings[key])) {
-                nbit.settings[key] = value
-            // }
+            nbit.settings[key] = value
         }
         blend(nbit.settings, bit.customSettings)
         nbit.settings.configure = 'bit ' + App.args.slice(1).join(' ')
@@ -505,22 +503,6 @@ public class Bit {
         f.writeLine('\n/* Settings */')
         writeSettings(f, platform, "BIT", settings)
 
-        //UNUSED Object.sortProperties(settings)
-        //f.writeLine('/* Settings */')
-    /*
-        for (let [key,value] in settings) {
-            if (key.match(/[a-z]/)) {
-                key = 'BIT_' + key.replace(/[A-Z]/g, '_$&').replace(/-/g, '_').toUpper()
-            }
-            if (value is Number) {
-                def(f, key, value)
-            } else if (value is Boolean) {
-                def(f, key, value cast Number)
-            } else {
-                def(f, key, '"' + value + '"')
-            }
-        }
-     */
         f.writeLine('\n/* Prefixes */')
         let base = (settings.name == 'ejs') ? bit.prefixes.productver : bit.prefixes.product
         def(f, 'BIT_CFG_PREFIX', '"' + bit.prefixes.config + '"')
@@ -2556,6 +2538,9 @@ public class Bit {
             tv.DEFINES = (target.defines) ? target.defines.join(' ') : ''
             tv.INCLUDES = (target.includes) ? target.includes.map(function(p) '-I' + p.relativeTo(base)) : ''
             tv.PDB = tv.OUT.replaceExt('pdb')
+            if (bit.dir.home.join('.embedthis').exists) {
+                tv.CFLAGS += ' -DEMBEDTHIS=1'
+            }
 
         } else if (target.type == 'resource') {
             tv.OUT = target.path.relative
