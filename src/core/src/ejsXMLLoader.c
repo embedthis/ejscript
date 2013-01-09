@@ -222,10 +222,10 @@ PUBLIC int ejsXMLToBuf(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
         }
         indent(buf, indentLevel);
 
-        mprPutFmtToBuf(buf, "<%@", xml->qname.name);
+        mprPutToBuf(buf, "<%@", xml->qname.name);
         if (xml->attributes) {
             for (next = 0; (attribute = mprGetNextItem(xml->attributes, &next)) != 0; ) {
-                mprPutFmtToBuf(buf, " %@=\"%@\"",  attribute->qname.name, attribute->value);
+                mprPutToBuf(buf, " %@=\"%@\"",  attribute->qname.name, attribute->value);
             }
         }
         sawElements = 0;
@@ -245,7 +245,7 @@ PUBLIC int ejsXMLToBuf(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
                 mprPutCharToBuf(buf, '\n');
                 indent(buf, indentLevel);
             }
-            mprPutFmtToBuf(buf, "</%@>", xml->qname.name);
+            mprPutToBuf(buf, "</%@>", xml->qname.name);
             
         } else {
             /* Solo */
@@ -256,7 +256,7 @@ PUBLIC int ejsXMLToBuf(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
     case EJS_XML_COMMENT:
         mprPutCharToBuf(buf, '\n');
         indent(buf, indentLevel);
-        mprPutFmtToBuf(buf, "<!--%@ -->", xml->value);
+        mprPutToBuf(buf, "<!--%@ -->", xml->value);
         break;
         
     case EJS_XML_ATTRIBUTE:

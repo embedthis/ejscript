@@ -522,7 +522,7 @@ static char *ntoa(double value, int ndigits, int mode, int flags)
             }
             mprPutCharToBuf(buf, 'e');
             mprPutCharToBuf(buf, (period < 0) ? '-' : '+');
-            mprPutFmtToBuf(buf, "%d", (exponent < 0) ? -exponent: exponent);
+            mprPutToBuf(buf, "%d", (exponent < 0) ? -exponent: exponent);
 
         } else {
             if (mode == DTOA_N_FRACTION_DIGITS) {

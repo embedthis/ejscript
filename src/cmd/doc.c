@@ -2106,21 +2106,21 @@ static wchar *wikiFormat(Ejs *ejs, wchar *start)
                 ejs->state->bp = ejs->global;
                 if ((slotNum = ejsLookupVar(ejs, ejs->global, N(space, klass), &lookup)) < 0) {
                     if (klass) {
-                        mprPutFmtToWideBuf(buf, "%s.%s", klass, property);
+                        mprPutToBuf(buf, "%s.%s", klass, property);
                     } else {
                         mprPutStringToBuf(buf, property);
                     }
                 } else {
                     qname = lookup.name;
                     if (property) {
-                        mprPutFmtToWideBuf(buf, "<a href='%s#%s'>%s.%s</a>", getFilename(fmtType(ejs, qname)), 
+                        mprPutToBuf(buf, "<a href='%s#%s'>%s.%s</a>", getFilename(fmtType(ejs, qname)), 
                             pref, klass, property);
                     } else {
-                        mprPutFmtToWideBuf(buf, "<a href='%s'>%s</a>", getFilename(fmtType(ejs, qname)), klass);
+                        mprPutToBuf(buf, "<a href='%s'>%s</a>", getFilename(fmtType(ejs, qname)), klass);
                     }
                 }
             } else {
-                mprPutFmtToWideBuf(buf, "<a href='#%s'>%s</a>", pref, property);
+                mprPutToBuf(buf, "<a href='#%s'>%s</a>", pref, property);
             }
             if (sentence) {
                 mprPutCharToWideBuf(buf, '.');

@@ -62,7 +62,7 @@
     #define BIT_VERSION "2.3.0"
 #endif
 #ifndef BIT_WITHOUT_ALL
-    #define BIT_WITHOUT_ALL "doxygen,dsi,est,man,man2html,matrixssl,openssl"
+    #define BIT_WITHOUT_ALL "doxygen,dsi,est,man,man2html"
 #endif
 
 /* Prefixes */
@@ -166,6 +166,9 @@
 #endif
 #ifndef BIT_PACK_MATRIXSSL
     #define BIT_PACK_MATRIXSSL 0
+#endif
+#ifndef BIT_PACK_MOCANA
+    #define BIT_PACK_MOCANA 0
 #endif
 #ifndef BIT_PACK_OPENSSL
     #define BIT_PACK_OPENSSL 0

@@ -34,58 +34,61 @@ cp -r src/bitos.h ${CONFIG}/inc/bitos.h
 rm -rf ${CONFIG}/inc/mpr.h
 cp -r src/deps/mpr/mpr.h ${CONFIG}/inc/mpr.h
 
-"${CC}" -c -Fo${CONFIG}/obj/mprLib.obj -Fd${CONFIG}/obj/mprLib.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/mpr/mprLib.c
+"${CC}" -c -Fo${CONFIG}/obj/mprLib.obj -Fd${CONFIG}/obj/mprLib.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/deps/mpr/mprLib.c
 
 "${LD}" -dll -out:${CONFIG}/bin/libmpr.dll -entry:_DllMainCRTStartup@12 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/mprLib.obj ${LIBS}
 
 rm -rf ${CONFIG}/inc/est.h
 cp -r src/deps/est/est.h ${CONFIG}/inc/est.h
 
-"${CC}" -c -Fo${CONFIG}/obj/mprSsl.obj -Fd${CONFIG}/obj/mprSsl.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/mpr/mprSsl.c
+"${CC}" -c -Fo${CONFIG}/obj/mprSsl.obj -Fd${CONFIG}/obj/mprSsl.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/deps/mpr/mprSsl.c
 
 "${LD}" -dll -out:${CONFIG}/bin/libmprssl.dll -entry:_DllMainCRTStartup@12 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/mprSsl.obj libmpr.lib ${LIBS}
 
-"${CC}" -c -Fo${CONFIG}/obj/manager.obj -Fd${CONFIG}/obj/manager.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/mpr/manager.c
+"${CC}" -c -Fo${CONFIG}/obj/manager.obj -Fd${CONFIG}/obj/manager.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/deps/mpr/manager.c
 
 "${LD}" -out:${CONFIG}/bin/ejsman.exe -entry:WinMainCRTStartup -subsystem:Windows ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/manager.obj libmpr.lib ${LIBS}
 
-"${CC}" -c -Fo${CONFIG}/obj/makerom.obj -Fd${CONFIG}/obj/makerom.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/mpr/makerom.c
+"${CC}" -c -Fo${CONFIG}/obj/makerom.obj -Fd${CONFIG}/obj/makerom.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/deps/mpr/makerom.c
 
 "${LD}" -out:${CONFIG}/bin/makerom.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/makerom.obj libmpr.lib ${LIBS}
 
 rm -rf ${CONFIG}/inc/pcre.h
 cp -r src/deps/pcre/pcre.h ${CONFIG}/inc/pcre.h
 
-"${CC}" -c -Fo${CONFIG}/obj/pcre.obj -Fd${CONFIG}/obj/pcre.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/pcre/pcre.c
+"${CC}" -c -Fo${CONFIG}/obj/pcre.obj -Fd${CONFIG}/obj/pcre.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/deps/pcre/pcre.c
 
 "${LD}" -dll -out:${CONFIG}/bin/libpcre.dll -entry:_DllMainCRTStartup@12 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/pcre.obj ${LIBS}
 
 rm -rf ${CONFIG}/inc/http.h
 cp -r src/deps/http/http.h ${CONFIG}/inc/http.h
 
-"${CC}" -c -Fo${CONFIG}/obj/httpLib.obj -Fd${CONFIG}/obj/httpLib.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/http/httpLib.c
+"${CC}" -c -Fo${CONFIG}/obj/httpLib.obj -Fd${CONFIG}/obj/httpLib.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/deps/http/httpLib.c
 
 "${LD}" -dll -out:${CONFIG}/bin/libhttp.dll -entry:_DllMainCRTStartup@12 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/httpLib.obj libpcre.lib libmpr.lib ${LIBS}
 
-"${CC}" -c -Fo${CONFIG}/obj/http.obj -Fd${CONFIG}/obj/http.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/http/http.c
+"${CC}" -c -Fo${CONFIG}/obj/http.obj -Fd${CONFIG}/obj/http.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/deps/http/http.c
 
 "${LD}" -out:${CONFIG}/bin/http.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/http.obj libhttp.lib ${LIBS} libpcre.lib libmpr.lib
+
+rm -rf ${CONFIG}/bin/http-ca.crt
+cp -r src/deps/http/http-ca.crt ${CONFIG}/bin/http-ca.crt
 
 rm -rf ${CONFIG}/inc/sqlite3.h
 cp -r src/deps/sqlite/sqlite3.h ${CONFIG}/inc/sqlite3.h
 
-"${CC}" -c -Fo${CONFIG}/obj/sqlite3.obj -Fd${CONFIG}/obj/sqlite3.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/sqlite/sqlite3.c
+"${CC}" -c -Fo${CONFIG}/obj/sqlite3.obj -Fd${CONFIG}/obj/sqlite3.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/deps/sqlite/sqlite3.c
 
 "${LD}" -dll -out:${CONFIG}/bin/libsqlite3.dll -entry:_DllMainCRTStartup@12 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/sqlite3.obj ${LIBS}
 
-"${CC}" -c -Fo${CONFIG}/obj/sqlite.obj -Fd${CONFIG}/obj/sqlite.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/sqlite/sqlite.c
+"${CC}" -c -Fo${CONFIG}/obj/sqlite.obj -Fd${CONFIG}/obj/sqlite.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/deps/sqlite/sqlite.c
 
 "${LD}" -out:${CONFIG}/bin/sqlite.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/sqlite.obj libsqlite3.lib ${LIBS}
 
 rm -rf ${CONFIG}/inc/zlib.h
 cp -r src/deps/zlib/zlib.h ${CONFIG}/inc/zlib.h
 
-"${CC}" -c -Fo${CONFIG}/obj/zlib.obj -Fd${CONFIG}/obj/zlib.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/zlib/zlib.c
+"${CC}" -c -Fo${CONFIG}/obj/zlib.obj -Fd${CONFIG}/obj/zlib.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/deps/zlib/zlib.c
 
 "${LD}" -dll -out:${CONFIG}/bin/libzlib.dll -entry:_DllMainCRTStartup@12 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/zlib.obj ${LIBS}
 
@@ -119,147 +122,147 @@ cp -r src/ejs.h ${CONFIG}/inc/ejs.h
 rm -rf ${CONFIG}/inc/ejsCompiler.h
 cp -r src/ejsCompiler.h ${CONFIG}/inc/ejsCompiler.h
 
-"${CC}" -c -Fo${CONFIG}/obj/ecAst.obj -Fd${CONFIG}/obj/ecAst.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/compiler/ecAst.c
+"${CC}" -c -Fo${CONFIG}/obj/ecAst.obj -Fd${CONFIG}/obj/ecAst.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/compiler/ecAst.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ecCodeGen.obj -Fd${CONFIG}/obj/ecCodeGen.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/compiler/ecCodeGen.c
+"${CC}" -c -Fo${CONFIG}/obj/ecCodeGen.obj -Fd${CONFIG}/obj/ecCodeGen.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/compiler/ecCodeGen.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ecCompiler.obj -Fd${CONFIG}/obj/ecCompiler.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/compiler/ecCompiler.c
+"${CC}" -c -Fo${CONFIG}/obj/ecCompiler.obj -Fd${CONFIG}/obj/ecCompiler.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/compiler/ecCompiler.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ecLex.obj -Fd${CONFIG}/obj/ecLex.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/compiler/ecLex.c
+"${CC}" -c -Fo${CONFIG}/obj/ecLex.obj -Fd${CONFIG}/obj/ecLex.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/compiler/ecLex.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ecModuleWrite.obj -Fd${CONFIG}/obj/ecModuleWrite.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/compiler/ecModuleWrite.c
+"${CC}" -c -Fo${CONFIG}/obj/ecModuleWrite.obj -Fd${CONFIG}/obj/ecModuleWrite.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/compiler/ecModuleWrite.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ecParser.obj -Fd${CONFIG}/obj/ecParser.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/compiler/ecParser.c
+"${CC}" -c -Fo${CONFIG}/obj/ecParser.obj -Fd${CONFIG}/obj/ecParser.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/compiler/ecParser.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ecState.obj -Fd${CONFIG}/obj/ecState.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/compiler/ecState.c
+"${CC}" -c -Fo${CONFIG}/obj/ecState.obj -Fd${CONFIG}/obj/ecState.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/compiler/ecState.c
 
-"${CC}" -c -Fo${CONFIG}/obj/dtoa.obj -Fd${CONFIG}/obj/dtoa.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/dtoa.c
+"${CC}" -c -Fo${CONFIG}/obj/dtoa.obj -Fd${CONFIG}/obj/dtoa.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/dtoa.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsApp.obj -Fd${CONFIG}/obj/ejsApp.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsApp.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsApp.obj -Fd${CONFIG}/obj/ejsApp.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsApp.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsArray.obj -Fd${CONFIG}/obj/ejsArray.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsArray.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsArray.obj -Fd${CONFIG}/obj/ejsArray.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsArray.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsBlock.obj -Fd${CONFIG}/obj/ejsBlock.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsBlock.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsBlock.obj -Fd${CONFIG}/obj/ejsBlock.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsBlock.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsBoolean.obj -Fd${CONFIG}/obj/ejsBoolean.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsBoolean.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsBoolean.obj -Fd${CONFIG}/obj/ejsBoolean.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsBoolean.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsByteArray.obj -Fd${CONFIG}/obj/ejsByteArray.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsByteArray.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsByteArray.obj -Fd${CONFIG}/obj/ejsByteArray.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsByteArray.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsCache.obj -Fd${CONFIG}/obj/ejsCache.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsCache.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsCache.obj -Fd${CONFIG}/obj/ejsCache.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsCache.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsCmd.obj -Fd${CONFIG}/obj/ejsCmd.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsCmd.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsCmd.obj -Fd${CONFIG}/obj/ejsCmd.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsCmd.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsConfig.obj -Fd${CONFIG}/obj/ejsConfig.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsConfig.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsConfig.obj -Fd${CONFIG}/obj/ejsConfig.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsConfig.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsDate.obj -Fd${CONFIG}/obj/ejsDate.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsDate.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsDate.obj -Fd${CONFIG}/obj/ejsDate.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsDate.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsDebug.obj -Fd${CONFIG}/obj/ejsDebug.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsDebug.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsDebug.obj -Fd${CONFIG}/obj/ejsDebug.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsDebug.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsError.obj -Fd${CONFIG}/obj/ejsError.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsError.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsError.obj -Fd${CONFIG}/obj/ejsError.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsError.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsFile.obj -Fd${CONFIG}/obj/ejsFile.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsFile.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsFile.obj -Fd${CONFIG}/obj/ejsFile.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsFile.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsFileSystem.obj -Fd${CONFIG}/obj/ejsFileSystem.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsFileSystem.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsFileSystem.obj -Fd${CONFIG}/obj/ejsFileSystem.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsFileSystem.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsFrame.obj -Fd${CONFIG}/obj/ejsFrame.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsFrame.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsFrame.obj -Fd${CONFIG}/obj/ejsFrame.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsFrame.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsFunction.obj -Fd${CONFIG}/obj/ejsFunction.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsFunction.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsFunction.obj -Fd${CONFIG}/obj/ejsFunction.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsFunction.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsGC.obj -Fd${CONFIG}/obj/ejsGC.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsGC.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsGC.obj -Fd${CONFIG}/obj/ejsGC.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsGC.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsGlobal.obj -Fd${CONFIG}/obj/ejsGlobal.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsGlobal.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsGlobal.obj -Fd${CONFIG}/obj/ejsGlobal.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsGlobal.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsHttp.obj -Fd${CONFIG}/obj/ejsHttp.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsHttp.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsHttp.obj -Fd${CONFIG}/obj/ejsHttp.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsHttp.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsIterator.obj -Fd${CONFIG}/obj/ejsIterator.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsIterator.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsIterator.obj -Fd${CONFIG}/obj/ejsIterator.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsIterator.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsJSON.obj -Fd${CONFIG}/obj/ejsJSON.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsJSON.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsJSON.obj -Fd${CONFIG}/obj/ejsJSON.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsJSON.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsLocalCache.obj -Fd${CONFIG}/obj/ejsLocalCache.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsLocalCache.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsLocalCache.obj -Fd${CONFIG}/obj/ejsLocalCache.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsLocalCache.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsMath.obj -Fd${CONFIG}/obj/ejsMath.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsMath.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsMath.obj -Fd${CONFIG}/obj/ejsMath.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsMath.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsMemory.obj -Fd${CONFIG}/obj/ejsMemory.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsMemory.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsMemory.obj -Fd${CONFIG}/obj/ejsMemory.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsMemory.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsMprLog.obj -Fd${CONFIG}/obj/ejsMprLog.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsMprLog.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsMprLog.obj -Fd${CONFIG}/obj/ejsMprLog.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsMprLog.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsNamespace.obj -Fd${CONFIG}/obj/ejsNamespace.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsNamespace.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsNamespace.obj -Fd${CONFIG}/obj/ejsNamespace.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsNamespace.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsNull.obj -Fd${CONFIG}/obj/ejsNull.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsNull.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsNull.obj -Fd${CONFIG}/obj/ejsNull.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsNull.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsNumber.obj -Fd${CONFIG}/obj/ejsNumber.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsNumber.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsNumber.obj -Fd${CONFIG}/obj/ejsNumber.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsNumber.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsObject.obj -Fd${CONFIG}/obj/ejsObject.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsObject.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsObject.obj -Fd${CONFIG}/obj/ejsObject.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsObject.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsPath.obj -Fd${CONFIG}/obj/ejsPath.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsPath.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsPath.obj -Fd${CONFIG}/obj/ejsPath.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsPath.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsPot.obj -Fd${CONFIG}/obj/ejsPot.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsPot.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsPot.obj -Fd${CONFIG}/obj/ejsPot.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsPot.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsRegExp.obj -Fd${CONFIG}/obj/ejsRegExp.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsRegExp.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsRegExp.obj -Fd${CONFIG}/obj/ejsRegExp.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsRegExp.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsSocket.obj -Fd${CONFIG}/obj/ejsSocket.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsSocket.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsSocket.obj -Fd${CONFIG}/obj/ejsSocket.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsSocket.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsString.obj -Fd${CONFIG}/obj/ejsString.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsString.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsString.obj -Fd${CONFIG}/obj/ejsString.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsString.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsSystem.obj -Fd${CONFIG}/obj/ejsSystem.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsSystem.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsSystem.obj -Fd${CONFIG}/obj/ejsSystem.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsSystem.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsTimer.obj -Fd${CONFIG}/obj/ejsTimer.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsTimer.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsTimer.obj -Fd${CONFIG}/obj/ejsTimer.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsTimer.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsType.obj -Fd${CONFIG}/obj/ejsType.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsType.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsType.obj -Fd${CONFIG}/obj/ejsType.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsType.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsUri.obj -Fd${CONFIG}/obj/ejsUri.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsUri.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsUri.obj -Fd${CONFIG}/obj/ejsUri.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsUri.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsVoid.obj -Fd${CONFIG}/obj/ejsVoid.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsVoid.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsVoid.obj -Fd${CONFIG}/obj/ejsVoid.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsVoid.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsWebSocket.obj -Fd${CONFIG}/obj/ejsWebSocket.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsWebSocket.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsWebSocket.obj -Fd${CONFIG}/obj/ejsWebSocket.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsWebSocket.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsWorker.obj -Fd${CONFIG}/obj/ejsWorker.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsWorker.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsWorker.obj -Fd${CONFIG}/obj/ejsWorker.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsWorker.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsXML.obj -Fd${CONFIG}/obj/ejsXML.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsXML.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsXML.obj -Fd${CONFIG}/obj/ejsXML.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsXML.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsXMLList.obj -Fd${CONFIG}/obj/ejsXMLList.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsXMLList.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsXMLList.obj -Fd${CONFIG}/obj/ejsXMLList.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsXMLList.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsXMLLoader.obj -Fd${CONFIG}/obj/ejsXMLLoader.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsXMLLoader.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsXMLLoader.obj -Fd${CONFIG}/obj/ejsXMLLoader.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/core/src/ejsXMLLoader.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsByteCode.obj -Fd${CONFIG}/obj/ejsByteCode.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/vm/ejsByteCode.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsByteCode.obj -Fd${CONFIG}/obj/ejsByteCode.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/vm/ejsByteCode.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsException.obj -Fd${CONFIG}/obj/ejsException.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/vm/ejsException.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsException.obj -Fd${CONFIG}/obj/ejsException.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/vm/ejsException.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsHelper.obj -Fd${CONFIG}/obj/ejsHelper.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/vm/ejsHelper.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsHelper.obj -Fd${CONFIG}/obj/ejsHelper.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/vm/ejsHelper.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsInterp.obj -Fd${CONFIG}/obj/ejsInterp.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/vm/ejsInterp.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsInterp.obj -Fd${CONFIG}/obj/ejsInterp.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/vm/ejsInterp.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsLoader.obj -Fd${CONFIG}/obj/ejsLoader.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/vm/ejsLoader.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsLoader.obj -Fd${CONFIG}/obj/ejsLoader.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/vm/ejsLoader.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsModule.obj -Fd${CONFIG}/obj/ejsModule.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/vm/ejsModule.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsModule.obj -Fd${CONFIG}/obj/ejsModule.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/vm/ejsModule.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsScope.obj -Fd${CONFIG}/obj/ejsScope.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/vm/ejsScope.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsScope.obj -Fd${CONFIG}/obj/ejsScope.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/vm/ejsScope.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsService.obj -Fd${CONFIG}/obj/ejsService.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/vm/ejsService.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsService.obj -Fd${CONFIG}/obj/ejsService.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/vm/ejsService.c
 
 "${LD}" -dll -out:${CONFIG}/bin/libejs.dll -entry:_DllMainCRTStartup@12 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ecAst.obj ${CONFIG}/obj/ecCodeGen.obj ${CONFIG}/obj/ecCompiler.obj ${CONFIG}/obj/ecLex.obj ${CONFIG}/obj/ecModuleWrite.obj ${CONFIG}/obj/ecParser.obj ${CONFIG}/obj/ecState.obj ${CONFIG}/obj/dtoa.obj ${CONFIG}/obj/ejsApp.obj ${CONFIG}/obj/ejsArray.obj ${CONFIG}/obj/ejsBlock.obj ${CONFIG}/obj/ejsBoolean.obj ${CONFIG}/obj/ejsByteArray.obj ${CONFIG}/obj/ejsCache.obj ${CONFIG}/obj/ejsCmd.obj ${CONFIG}/obj/ejsConfig.obj ${CONFIG}/obj/ejsDate.obj ${CONFIG}/obj/ejsDebug.obj ${CONFIG}/obj/ejsError.obj ${CONFIG}/obj/ejsFile.obj ${CONFIG}/obj/ejsFileSystem.obj ${CONFIG}/obj/ejsFrame.obj ${CONFIG}/obj/ejsFunction.obj ${CONFIG}/obj/ejsGC.obj ${CONFIG}/obj/ejsGlobal.obj ${CONFIG}/obj/ejsHttp.obj ${CONFIG}/obj/ejsIterator.obj ${CONFIG}/obj/ejsJSON.obj ${CONFIG}/obj/ejsLocalCache.obj ${CONFIG}/obj/ejsMath.obj ${CONFIG}/obj/ejsMemory.obj ${CONFIG}/obj/ejsMprLog.obj ${CONFIG}/obj/ejsNamespace.obj ${CONFIG}/obj/ejsNull.obj ${CONFIG}/obj/ejsNumber.obj ${CONFIG}/obj/ejsObject.obj ${CONFIG}/obj/ejsPath.obj ${CONFIG}/obj/ejsPot.obj ${CONFIG}/obj/ejsRegExp.obj ${CONFIG}/obj/ejsSocket.obj ${CONFIG}/obj/ejsString.obj ${CONFIG}/obj/ejsSystem.obj ${CONFIG}/obj/ejsTimer.obj ${CONFIG}/obj/ejsType.obj ${CONFIG}/obj/ejsUri.obj ${CONFIG}/obj/ejsVoid.obj ${CONFIG}/obj/ejsWebSocket.obj ${CONFIG}/obj/ejsWorker.obj ${CONFIG}/obj/ejsXML.obj ${CONFIG}/obj/ejsXMLList.obj ${CONFIG}/obj/ejsXMLLoader.obj ${CONFIG}/obj/ejsByteCode.obj ${CONFIG}/obj/ejsException.obj ${CONFIG}/obj/ejsHelper.obj ${CONFIG}/obj/ejsInterp.obj ${CONFIG}/obj/ejsLoader.obj ${CONFIG}/obj/ejsModule.obj ${CONFIG}/obj/ejsScope.obj ${CONFIG}/obj/ejsService.obj libhttp.lib ${LIBS} libpcre.lib libmpr.lib
 
-"${CC}" -c -Fo${CONFIG}/obj/ejs.obj -Fd${CONFIG}/obj/ejs.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/cmd/ejs.c
+"${CC}" -c -Fo${CONFIG}/obj/ejs.obj -Fd${CONFIG}/obj/ejs.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/cmd/ejs.c
 
 "${LD}" -out:${CONFIG}/bin/ejs.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejs.obj libejs.lib ${LIBS} libhttp.lib libpcre.lib libmpr.lib
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsc.obj -Fd${CONFIG}/obj/ejsc.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/cmd/ejsc.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsc.obj -Fd${CONFIG}/obj/ejsc.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/cmd/ejsc.c
 
 "${LD}" -out:${CONFIG}/bin/ejsc.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsc.obj libejs.lib ${LIBS} libhttp.lib libpcre.lib libmpr.lib
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsmod.obj -Fd${CONFIG}/obj/ejsmod.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -Isrc/cmd src/cmd/ejsmod.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsmod.obj -Fd${CONFIG}/obj/ejsmod.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc -Isrc/cmd src/cmd/ejsmod.c
 
-"${CC}" -c -Fo${CONFIG}/obj/doc.obj -Fd${CONFIG}/obj/doc.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -Isrc/cmd src/cmd/doc.c
+"${CC}" -c -Fo${CONFIG}/obj/doc.obj -Fd${CONFIG}/obj/doc.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc -Isrc/cmd src/cmd/doc.c
 
-"${CC}" -c -Fo${CONFIG}/obj/docFiles.obj -Fd${CONFIG}/obj/docFiles.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -Isrc/cmd src/cmd/docFiles.c
+"${CC}" -c -Fo${CONFIG}/obj/docFiles.obj -Fd${CONFIG}/obj/docFiles.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc -Isrc/cmd src/cmd/docFiles.c
 
-"${CC}" -c -Fo${CONFIG}/obj/listing.obj -Fd${CONFIG}/obj/listing.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -Isrc/cmd src/cmd/listing.c
+"${CC}" -c -Fo${CONFIG}/obj/listing.obj -Fd${CONFIG}/obj/listing.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc -Isrc/cmd src/cmd/listing.c
 
-"${CC}" -c -Fo${CONFIG}/obj/slotGen.obj -Fd${CONFIG}/obj/slotGen.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -Isrc/cmd src/cmd/slotGen.c
+"${CC}" -c -Fo${CONFIG}/obj/slotGen.obj -Fd${CONFIG}/obj/slotGen.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc -Isrc/cmd src/cmd/slotGen.c
 
 "${LD}" -out:${CONFIG}/bin/ejsmod.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsmod.obj ${CONFIG}/obj/doc.obj ${CONFIG}/obj/docFiles.obj ${CONFIG}/obj/listing.obj ${CONFIG}/obj/slotGen.obj libejs.lib ${LIBS} libhttp.lib libpcre.lib libmpr.lib
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsrun.obj -Fd${CONFIG}/obj/ejsrun.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/cmd/ejsrun.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsrun.obj -Fd${CONFIG}/obj/ejsrun.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/cmd/ejsrun.c
 
 "${LD}" -out:${CONFIG}/bin/ejsrun.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsrun.obj libejs.lib ${LIBS} libhttp.lib libpcre.lib libmpr.lib
 
@@ -279,7 +282,7 @@ cp -r bits ../../../${CONFIG}/bin ;\
 cd - >/dev/null 
 
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.zlib.mod
-"${CC}" -c -Fo${CONFIG}/obj/ejsZlib.obj -Fd${CONFIG}/obj/ejsZlib.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/jems/ejs.zlib/ejsZlib.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsZlib.obj -Fd${CONFIG}/obj/ejsZlib.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/jems/ejs.zlib/ejsZlib.c
 
 "${LD}" -dll -out:${CONFIG}/bin/libejs.zlib.dll -entry:_DllMainCRTStartup@12 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsZlib.obj libzlib.lib libejs.lib ${LIBS} libhttp.lib libpcre.lib libmpr.lib
 
@@ -292,7 +295,7 @@ cd - >/dev/null
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.db.mod
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.db.mapper.mod
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.db.sqlite.mod
-"${CC}" -c -Fo${CONFIG}/obj/ejsSqlite.obj -Fd${CONFIG}/obj/ejsSqlite.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/jems/ejs.db.sqlite/ejsSqlite.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsSqlite.obj -Fd${CONFIG}/obj/ejsSqlite.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc src/jems/ejs.db.sqlite/ejsSqlite.c
 
 "${LD}" -dll -out:${CONFIG}/bin/libejs.db.sqlite.dll -entry:_DllMainCRTStartup@12 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsSqlite.obj libsqlite3.lib libejs.lib libmpr.lib ${LIBS} libhttp.lib libpcre.lib
 
@@ -310,13 +313,13 @@ cd - >/dev/null
 rm -rf ${CONFIG}/inc/ejsWeb.h
 cp -r src/jems/ejs.web/ejsWeb.h ${CONFIG}/inc/ejsWeb.h
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsHttpServer.obj -Fd${CONFIG}/obj/ejsHttpServer.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsHttpServer.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsHttpServer.obj -Fd${CONFIG}/obj/ejsHttpServer.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsHttpServer.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsRequest.obj -Fd${CONFIG}/obj/ejsRequest.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsRequest.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsRequest.obj -Fd${CONFIG}/obj/ejsRequest.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsRequest.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsSession.obj -Fd${CONFIG}/obj/ejsSession.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsSession.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsSession.obj -Fd${CONFIG}/obj/ejsSession.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsSession.c
 
-"${CC}" -c -Fo${CONFIG}/obj/ejsWeb.obj -Fd${CONFIG}/obj/ejsWeb.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsWeb.c
+"${CC}" -c -Fo${CONFIG}/obj/ejsWeb.obj -Fd${CONFIG}/obj/ejsWeb.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsWeb.c
 
 "${LD}" -dll -out:${CONFIG}/bin/libejs.web.dll -entry:_DllMainCRTStartup@12 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsHttpServer.obj ${CONFIG}/obj/ejsRequest.obj ${CONFIG}/obj/ejsSession.obj ${CONFIG}/obj/ejsWeb.obj libejs.lib ${LIBS} libhttp.lib libpcre.lib libmpr.lib
 
@@ -335,7 +338,7 @@ cd - >/dev/null
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/utest.worker
 "${LD}" -out:${CONFIG}/bin/utest.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsrun.obj libejs.lib ${LIBS} libhttp.lib libpcre.lib libmpr.lib
 
-"${CC}" -c -Fo${CONFIG}/obj/removeFiles.obj -Fd${CONFIG}/obj/removeFiles.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc package/windows/removeFiles.c
+"${CC}" -c -Fo${CONFIG}/obj/removeFiles.obj -Fd${CONFIG}/obj/removeFiles.pdb ${CFLAGS} -DEMBEDTHIS=1 ${DFLAGS} -I${CONFIG}/inc package/windows/removeFiles.c
 
 "${LD}" -out:${CONFIG}/bin/removeFiles.exe -entry:WinMainCRTStartup -subsystem:Windows ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/removeFiles.obj libmpr.lib ${LIBS}
 

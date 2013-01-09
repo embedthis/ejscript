@@ -1588,7 +1588,7 @@ static LRESULT msgProc(HWND hwnd, uint msg, uint wp, long lp)
  */
 static void logHandler(int flags, int level, cchar *msg)
 {
-#if FUTURE
+#if UNUSED
     if (flags & MPR_USER_MSG) {
         MessageBoxEx(NULL, msg, mprGetAppTitle(), MB_OK, 0);
     }
