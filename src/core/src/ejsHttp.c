@@ -1064,12 +1064,15 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
         }
         mprSetSslKeyFile(hp->ssl, hp->keyFile);
     }
-    if (hp->caFile) {
-        if (!hp->ssl) {
-            hp->ssl = mprCreateSsl(0);
-        }
-        mprSetSslCaFile(hp->ssl, hp->caFile);
+    if (!hp->caFile) {
+        //MOB - Some define for this.
+        hp->caFile = mprJoinPath(mprGetAppDir(), "http-ca.crt");
     }
+    if (!hp->ssl) {
+        hp->ssl = mprCreateSsl(0);
+    }
+    mprSetSslCaFile(hp->ssl, hp->caFile);
+
     if (httpConnect(conn, hp->method, hp->uri, hp->ssl) < 0) {
         ejsThrowIOError(ejs, "Cannot issue request for \"%s\"", hp->uri);
         return 0;
