@@ -44,6 +44,9 @@ static EjsHttp *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     hp->method = sclone("GET");
     hp->requestContent = mprCreateBuf(BIT_MAX_BUFFER, -1);
     hp->responseContent = mprCreateBuf(BIT_MAX_BUFFER, -1);
+#if UNUSED
+    hp->caFile = mprJoinPath(mprGetAppDir(), "http-ca.crt");
+#endif
     return hp;
 }
 
@@ -557,6 +560,32 @@ static EjsObj *http_set_provider(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
+/*
+    function get providers(): Array
+ */
+static EjsArray *http_providers(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    EjsArray    *result;
+    int         i;
+
+    result = ejsCreateArray(ejs, 0);
+    i = 0;
+#if BIT_PACK_EST
+    ejsSetProperty(ejs, result, i++, ejsCreateStringFromAsc(ejs, "est"));
+#endif
+#if BIT_PACK_OPENSSL
+    ejsSetProperty(ejs, result, i++, ejsCreateStringFromAsc(ejs, "openssl"));
+#endif
+#if BIT_PACK_MATRIXSSL
+    ejsSetProperty(ejs, result, i++, ejsCreateStringFromAsc(ejs, "matrixssl"));
+#endif
+#if BIT_PACK_MOCANA
+    ejsSetProperty(ejs, result, i++, ejsCreateStringFromAsc(ejs, "mocana"));
+#endif
+    return result;
+}
+
+
 /*  
     function put(uri: String = null, form object): Void
  */
@@ -1064,15 +1093,18 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
         }
         mprSetSslKeyFile(hp->ssl, hp->keyFile);
     }
+#if UNUSED
     if (!hp->caFile) {
         //MOB - Some define for this.
         hp->caFile = mprJoinPath(mprGetAppDir(), "http-ca.crt");
     }
-    if (!hp->ssl) {
-        hp->ssl = mprCreateSsl(0);
+#endif
+    if (hp->caFile) {
+        if (!hp->ssl) {
+            hp->ssl = mprCreateSsl(0);
+        }
+        mprSetSslCaFile(hp->ssl, hp->caFile);
     }
-    mprSetSslCaFile(hp->ssl, hp->caFile);
-
     if (httpConnect(conn, hp->method, hp->uri, hp->ssl) < 0) {
         ejsThrowIOError(ejs, "Cannot issue request for \"%s\"", hp->uri);
         return 0;
@@ -1628,6 +1660,10 @@ PUBLIC void ejsConfigureHttpType(Ejs *ejs)
     }
     prototype = type->prototype;
     ejsBindConstructor(ejs, type, httpConstructor);
+#if ES_Http_providers
+    ejsBindMethod(ejs, type, ES_Http_providers, http_providers);
+#endif
+
     ejsBindAccess(ejs, prototype, ES_Http_async, http_async, http_set_async);
 #if ES_Http_available
     /* DEPRECATED */

@@ -1212,7 +1212,8 @@
 #define ES_Http_ServiceUnavailable                                     35
 #define ES_Http_GatewayTimeout                                         36
 #define ES_Http_VersionNotSupported                                    37
-#define ES_Http_NUM_CLASS_PROP                                         38
+#define ES_Http_providers                                              38
+#define ES_Http_NUM_CLASS_PROP                                         39
 
 /*
    Prototype (instance) slots for "Http" type 
@@ -2388,6 +2389,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1499086
+#define _ES_CHECKSUM_ejs   1500077
 
 #endif

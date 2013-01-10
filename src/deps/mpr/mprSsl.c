@@ -449,11 +449,6 @@ static int verifyCert(ssl_t *ssl, psX509Cert_t *cert, int32 alert)
     }
     unlock(ss);
 
-    /*
-        MOB - cases:
-            - Not trused by CA
-            - Self-signed
-     */
     if (!sp) {
         /* Should not get here */
         assert(sp);
@@ -1047,6 +1042,7 @@ static int upgradeEst(MprSocket *sp, MprSsl *ssl, cchar *peerName)
     est->sock = sp;
     sp->sslSocket = est;
     sp->ssl = ssl;
+    verifyMode = (sp->flags & MPR_SOCKET_SERVER && !ssl->verifyPeer) ? SSL_VERIFY_NO_CHECK : SSL_VERIFY_OPTIONAL;
 
     lock(ssl);
     if (ssl->config && !ssl->changed) {
@@ -1063,10 +1059,9 @@ static int upgradeEst(MprSocket *sp, MprSsl *ssl, cchar *peerName)
         }
         est->cfg = ssl->config = cfg;
         if (ssl->certFile) {
-            //  MOB - encrypted and/not?
-            //  MOB PEM/DER?
-            //  MOB catenated with key file?
-            //  MOB - must check that a keyFile is provided
+            /*
+                Load a PEM format certificate file
+             */
             if (x509parse_crtfile(&cfg->cert, ssl->certFile) != 0) {
                 sp->errorMsg = sfmt("Unable to parse certificate %s", ssl->certFile); 
                 unlock(ssl);
@@ -1074,17 +1069,24 @@ static int upgradeEst(MprSocket *sp, MprSsl *ssl, cchar *peerName)
             }
         }
         if (ssl->keyFile) {
-            //  MOB - last arg is password
-            //  MOB - must check that a certFile is provided
+            /*
+                Load a decrypted PEM format private key
+                Last arg is password if you need to use an encrypted private key
+             */
             if (x509parse_keyfile(&cfg->rsa, ssl->keyFile, 0) != 0) {
                 sp->errorMsg = sfmt("Unable to parse key file %s", ssl->keyFile); 
                 unlock(ssl);
                 return MPR_ERR_CANT_READ;
             }
         }
-        if (ssl->caFile) {
+        if (verifyMode != SSL_VERIFY_NO_CHECK) {
+            if (!ssl->caFile) {
+                sp->errorMsg = sclone("No defined certificate authority file");
+                unlock(ssl);
+                return MPR_ERR_CANT_READ;
+            }
             if (x509parse_crtfile(&cfg->ca, ssl->caFile) != 0) {
-                sp->errorMsg = sfmt("Unable to parse certificate authority bundle %s", ssl->caFile); 
+                sp->errorMsg = sfmt("Unable to open or parse certificate authority file %s", ssl->caFile); 
                 unlock(ssl);
                 return MPR_ERR_CANT_READ;
             }
@@ -1100,17 +1102,6 @@ static int upgradeEst(MprSocket *sp, MprSsl *ssl, cchar *peerName)
     havege_init(&est->hs);
     ssl_init(&est->ctx);
 	ssl_set_endpoint(&est->ctx, sp->flags & MPR_SOCKET_SERVER ? SSL_IS_SERVER : SSL_IS_CLIENT);
-
-    /* Optional means to manually verify in estHandshake */
-    if (sp->flags & MPR_SOCKET_SERVER) {
-        verifyMode = ssl->verifyPeer ? SSL_VERIFY_OPTIONAL : SSL_VERIFY_NO_CHECK;
-    } else {
-        verifyMode = SSL_VERIFY_OPTIONAL;
-    }
-    if (verifyMode == SSL_VERIFY_OPTIONAL && !ssl->caFile) {
-        mprError("Can't verify peer certificate without a defined CA bundle");
-        verifyMode = SSL_VERIFY_NO_CHECK;
-    }
     ssl_set_authmode(&est->ctx, verifyMode);
     ssl_set_rng(&est->ctx, havege_rand, &est->hs);
 	ssl_set_dbg(&est->ctx, estTrace, NULL);
@@ -1664,6 +1655,7 @@ static OpenConfig *createOpenSslConfig(MprSocket *sp)
     OpenConfig      *cfg;
     SSL_CTX         *context;
     uchar           resume[16];
+    int             verifyMode;
 
     ssl = sp->ssl;
     assert(ssl);
@@ -1689,6 +1681,9 @@ static OpenConfig *createOpenSslConfig(MprSocket *sp)
     RAND_bytes(resume, sizeof(resume));
     SSL_CTX_set_session_id_context(context, resume, sizeof(resume));
 
+    verifyMode = (sp->flags & MPR_SOCKET_SERVER && !ssl->verifyPeer) ? SSL_VERIFY_NONE : 
+        SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT;
+
     /*
         Configure the certificates
      */
@@ -1700,10 +1695,15 @@ static OpenConfig *createOpenSslConfig(MprSocket *sp)
     }
     SSL_CTX_set_cipher_list(context, ssl->ciphers);
 
-    if (ssl->caFile || ssl->caPath) {
+    if (verifyMode != SSL_VERIFY_NONE) {
+        if (!(ssl->caFile || ssl->caPath)) {
+            sp->errorMsg = sclone("No defined certificate authority file");
+            SSL_CTX_free(context);
+            return MPR_ERR_CANT_READ;
+        }
         if ((!SSL_CTX_load_verify_locations(context, ssl->caFile, ssl->caPath)) ||
                 (!SSL_CTX_set_default_verify_paths(context))) {
-            mprError("OpenSSL: Unable to set certificate locations"); 
+            sp->errorMsg = sclone("OpenSSL: Unable to set certificate locations"); 
             SSL_CTX_free(context);
             return 0;
         }
@@ -1718,27 +1718,12 @@ static OpenConfig *createOpenSslConfig(MprSocket *sp)
                 SSL_CTX_set_client_CA_list(context, certNames);
             }
         }
-    }
-    if (sp->flags & MPR_SOCKET_SERVER) {
-        if (ssl->verifyPeer) {
-            if (!ssl->caFile == 0 && !ssl->caPath) {
-                mprError("OpenSSL: Must define CA certificates if using client verification");
-                SSL_CTX_free(context);
-                return 0;
-            }
-            SSL_CTX_set_verify(context, SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT, verifyX509Certificate);
+        if (sp->flags & MPR_SOCKET_SERVER) {
             SSL_CTX_set_verify_depth(context, ssl->verifyDepth);
-        } else {
-            /* With this, the server will not request a client certificate */
-            SSL_CTX_set_verify(context, SSL_VERIFY_NONE, verifyX509Certificate);
-        }
-    } else {
-        if (ssl->verifyPeer) {
-            SSL_CTX_set_verify(context, SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT, verifyX509Certificate);
-        } else {
-            SSL_CTX_set_verify(context, SSL_VERIFY_NONE, verifyX509Certificate);
         }
     }
+    SSL_CTX_set_verify(context, verifyMode, verifyX509Certificate);
+
     /*
         Define callbacks
      */

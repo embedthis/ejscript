@@ -2538,7 +2538,7 @@ public class Bit {
             tv.DEFINES = (target.defines) ? target.defines.join(' ') : ''
             tv.INCLUDES = (target.includes) ? target.includes.map(function(p) '-I' + p.relativeTo(base)) : ''
             tv.PDB = tv.OUT.replaceExt('pdb')
-            if (bit.dir.home.join('.embedthis').exists) {
+            if (bit.dir.home.join('.embedthis').exists && !generating) {
                 tv.CFLAGS += ' -DEMBEDTHIS=1'
             }
 
