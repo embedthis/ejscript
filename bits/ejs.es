@@ -171,19 +171,19 @@ public function packageComboFiles() {
     install(['src/deps/**.c'], pkg.join('src/deps/ejs/deps.c'), {
         cat: true,
         filter: filter,
-        exclude: /pcre|makerom|http\.c|sqlite|manager|zlib/,
+        exclude: /pcre|est|makerom|http\.c|sqlite|manager|zlib/,
         header: '#include \"ejs.h\"',
         title: bit.settings.title + ' Library Source',
     })
 
-    install(['src/deps/pcre/pcre.c', 'src/deps/pcre/pcre.h'], pkg.join('src/deps/appweb'))
+    install(['src/deps/pcre/pcre.c', 'src/deps/pcre/pcre.h'], pkg.join('src/deps/pcre'))
     install(['src/deps/sqlite/sqlite3.c', 'src/deps/sqlite/sqlite3.h'], pkg.join('src/deps/sqlite'))
 
     install(['src/**.c'], pkg.join('src/deps/ejs/ejsLib.c'), {
         cat: true,
         filter: filter,
         /* Include deps/zlib */
-        exclude: /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|mpr|http|pcre|\/sqlite|ejs.debugger|samples|utils/,
+        exclude: /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|mpr|http|est|pcre|\/sqlite|ejs.debugger|samples|utils/,
         header: '#define EJS_DEFINE_OPTABLE 1\n#include \"ejs.h\"',
         title: bit.settings.title + ' Library Source',
     })
