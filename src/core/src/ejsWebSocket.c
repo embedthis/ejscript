@@ -67,6 +67,14 @@ static EjsWebSocket *wsConstructor(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj 
         ws->ssl = mprCreateSsl(0);
         mprVerifySslIssuer(ws->ssl, verify);
         mprVerifySslPeer(ws->ssl, verify);
+#if FUTURE
+        if (!hp->caFile) {
+            //MOB - Some define for this.
+            hp->caFile = mprJoinPath(mprGetAppDir(), "http-ca.crt");
+        }
+        mprSetSslCaFile(hp->ssl, hp->caFile);
+        mprSetSslCaFile(hp->ssl, mprJoinPath(mprGetAppDir(), "http-ca.crt"));
+#endif
     }
     startWebSocketRequest(ejs, ws);
     return ws;

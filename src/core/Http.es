@@ -493,9 +493,16 @@ FUTURE & KEEP
 
         /** 
             SSL provider to use
+            @hide
          */
         native function get provider(): String
         native function set provider(name: String): Void
+
+        /**
+            SSL providers
+            @hide
+          */
+        static native function get providers(): Array
 
         /** 
             Commence a PUT request for the current uri. See $connect() for connection details.

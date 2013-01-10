@@ -99,6 +99,7 @@ module ejs {
          */
         native function off(name, observer: Function): Void
 
+        //  MOB - should not these types be WebSocket
         /** 
             @duplicate Stream.on
             All events are called with the following signature.  The "this" object will be set to the instance object
