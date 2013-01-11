@@ -761,6 +761,8 @@ public class Bit {
                         throw e
                     }
                 }
+            } else {
+                throw 'Cannot find pack description file: ' + pack + '.pak'
             }
             let p = bit.packs[pack]
             if (p) {
