@@ -30,7 +30,9 @@ if (bit.platform.os == 'windows') {
     cfg = {
         dir: dir,
         path: path,
-        defines: [ '-DWIN32', '-DMATRIX_USE_FILE_SYSTEM' ],
+        defines: [ '-D__RTOS_OSX__', '-D__ENABLE_MOCANA_SSL_SERVER__', '-D__ENABLE_ALL_DEBUGGING__', 
+            '-D__ENABLE_MOCANA_DEBUG_CONSOLE__', '-D__MOCANA_DUMP_CONSOLE_TO_STDOUT__',
+            '-D__ENABLE_MOCANA_PEM_CONVERSION__']
         includes: [ incdir, incdir.parent ],
         libraries: [ 'libmoc.lib' ],
         libpaths: [ lib.parent ],
@@ -47,7 +49,8 @@ if (bit.platform.os == 'windows') {
         dir: dir,
         path: path,
         defines: [ '-D__RTOS_OSX__', '-D__ENABLE_MOCANA_SSL_SERVER__', '-D__ENABLE_ALL_DEBUGGING__', 
-            '-D__ENABLE_MOCANA_DEBUG_CONSOLE__', '-D__MOCANA_DUMP_CONSOLE_TO_STDOUT__']
+            '-D__ENABLE_MOCANA_DEBUG_CONSOLE__', '-D__MOCANA_DUMP_CONSOLE_TO_STDOUT__',
+            '-D__ENABLE_MOCANA_PEM_CONVERSION__']
         includes: [ incdir ],
         libraries: [ 'ssls' ],
         libpaths: [ lib.parent ],
@@ -64,7 +67,8 @@ if (bit.platform.os == 'windows') {
         dir: dir,
         path: path,
         defines: [ '-D__RTOS_OSX__', '-D__ENABLE_MOCANA_SSL_SERVER__', '-D__ENABLE_ALL_DEBUGGING__', 
-            '-D__ENABLE_MOCANA_DEBUG_CONSOLE__', '-D__MOCANA_DUMP_CONSOLE_TO_STDOUT__']
+            '-D__ENABLE_MOCANA_DEBUG_CONSOLE__', '-D__MOCANA_DUMP_CONSOLE_TO_STDOUT__',
+            '-D__ENABLE_MOCANA_PEM_CONVERSION__']
         includes: [ incdir ],
         libraries: [ 'ssls' ],
         libpaths: [ lib.parent ],
@@ -80,7 +84,9 @@ if (bit.platform.os == 'windows') {
     cfg = {
         dir: dir,
         path: path,
-        defines: [ '-DPOSIX', '-DMATRIX_USE_FILE_SYSTEM' ],
+        defines: [ '-D__RTOS_OSX__', '-D__ENABLE_MOCANA_SSL_SERVER__', '-D__ENABLE_ALL_DEBUGGING__', 
+            '-D__ENABLE_MOCANA_DEBUG_CONSOLE__', '-D__MOCANA_DUMP_CONSOLE_TO_STDOUT__',
+            '-D__ENABLE_MOCANA_PEM_CONVERSION__']
         includes: [ incdir, incdir.parent ],
         libraries: [ 'mocana' ],
         libpaths: [ lib.parent ],
