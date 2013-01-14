@@ -64,6 +64,8 @@ Bit.load({
     usage: {
         assert: 'Enable program assertions (true|false)',
         static: 'Build with static linking (true|false)',
+        'mpr.logging':'Enable application logging (true|false)',
+        'mpr.tracing':'Enable debug tracing (true|false)',
     },
 
     profiles: {
