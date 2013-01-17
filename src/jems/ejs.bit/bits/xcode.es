@@ -716,7 +716,6 @@ function prepareSettings(base, o, debug: Boolean) {
     let staticTarget = o.target && o.target.static
     let flags = o.linker.filter(function(e) e != '-g') + 
         libs.map(function(lib: Path) {
-print("LIB", lib)
             if (staticTarget) {
                 // return bit.settings.static ? ('-l' + lib.trimExt().replace(/^lib/, '')) : lib
                 return ''
@@ -735,7 +734,6 @@ print("LIB", lib)
     } else if (staticTarget) {
         options.linker = '\n\t\t\t\tOTHER_LDFLAGS = ();\n'
     }
-print("OL", options.linker)
     if (o.includes.length > 0) {
         options.includes = '\n\t\t\t\tHEADER_SEARCH_PATHS = (\n' + 
             o.includes.map(function(f) '\t\t\t\t\t"' + f.relativeTo(base) + '",').join('\n') + '\n\t\t\t\t\t"$(inherited)"\n\t\t\t\t);\n'
