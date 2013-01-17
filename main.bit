@@ -58,7 +58,16 @@ Bit.load({
          */
         '+discover': [ 'doxygen', 'dsi', 'est', 'man', 'man2html', 'pmaker', 'sqlite', 'zip' ],
         '+required': [ 'pcre', 'zlib' ]
+
+        /*
+            Packs to disable when using --without all
+         */
         'without-all': ['doxygen', 'dsi', 'est', 'man', 'man2html'],
+
+        /*
+            Packs to disable when using --without default (generating packages)
+         */
+        'without-default': ['doxygen', 'dsi', 'man', 'man2html'],
 
         /*
             Set to true for a static (non-shared library) build                                            

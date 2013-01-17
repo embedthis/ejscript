@@ -8,6 +8,25 @@ if (bit.packs.ssl && bit.packs.ssl.enable === false) {
     throw "SSL has been disabled"
 }
 
+/*
+    Defer to other SSL if explicitly requested and EST not explicitly requested too
+ */
+let alternate, other
+for each (name in ['openssl', 'matrixssl', 'mocana']) {
+    if (bit.packs[name] && bit.packs[name].enable) {
+        if (bit.packs[name].explicit) {
+            alternate = true
+            other = name
+        } else {
+            bit.packs[name].enable = false
+            bit.packs[name].diagnostic = 'Defer SSL to EST, disabled'
+        }
+    }
+}
+if (alternate && !bit.packs.est.explicit) {
+    throw "Disable EST. Defer to " + other + " SSL"
+}
+
 let path = bit.packs.est.path
 
 let cfg

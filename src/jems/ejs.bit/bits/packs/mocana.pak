@@ -7,6 +7,10 @@ pack('mocana', 'Mocana NanoSSL (SSL)')
 if (bit.packs.ssl && bit.packs.ssl.enable === false) {
     throw "SSL has been disabled"
 }
+if (bit.packs.est && bit.packs.est.enable && bit.packs.est.explicit && !bit.packs.mocana.explicit) {
+    throw "Disable mocana. Defer to EST SSL"
+}
+
 let path: Path? = bit.packs.mocana.path
 if (!path) {
     if (bit.dir.packs.join('mocana/latest').exists && Config.OS != 'windows') {
@@ -93,7 +97,6 @@ if (bit.platform.os == 'windows') {
         imports: [ lib ],
     }
 }
-
 let template = {packs: { mocana: cfg}}
 Bit.load(template)
 bit.settings.ssl = true

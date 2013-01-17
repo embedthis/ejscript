@@ -7,6 +7,9 @@ pack('matrixssl', 'MatrixSSL (SSL)')
 if (bit.packs.ssl && bit.packs.ssl.enable === false) {
     throw "SSL has been disabled"
 }
+if (bit.packs.est && bit.packs.est.enable && bit.packs.est.explicit && !bit.packs.matrixssl.explicit) {
+    throw "Disable matrixssl. Defer to EST SSL"
+}
 
 let path: Path? = bit.packs.matrixssl.path
 if (!path) {

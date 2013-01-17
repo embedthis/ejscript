@@ -30,13 +30,13 @@ Bit.load({
                         formats = '-gen sh,make'
                     }
                     trace('Generate', bit.settings.product + '-' + name.replace(/-.*/, '') + ' projects')
-                    run(bitcmd + ' -d -q -platform ' + name + ' -without all -configure . ' + formats, bit.target.runopt)
+                    run(bitcmd + ' -d -q -platform ' + name + ' -without default -configure . ' + formats, bit.target.runopt)
                     /* Xcode and VS use separate profiles */
                     if (name == 'macosx-x64') {
-                        run(bitcmd + ' -d -q -platform ' + name + ' -without all -profile xcode -configure . -gen xcode',
+                        run(bitcmd + ' -d -q -platform ' + name + ' -without default -profile xcode -configure . -gen xcode',
                             bit.target.runopt)
                     } else if (name == 'windows-x86') {
-                        run(bitcmd + ' -d -q -platform ' + name + ' -without all -profile vs -configure . -gen vs',
+                        run(bitcmd + ' -d -q -platform ' + name + ' -without default -profile vs -configure . -gen vs',
                             bit.target.runopt)
                     }
                 }

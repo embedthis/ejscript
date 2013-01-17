@@ -168,10 +168,17 @@ public class Bit {
                 print('Extension Packages (--with PACK):')
                 Object.sortProperties(bit.packs)
                 for (name in bit.packs) {
-                    if (bit.packs[name].description) {
-                        if (!bit.settings.required.contains(name)) {
-                            print('    %-38s # %s'.format([name, bit.packs[name].description]))
+                    let pack = bit.packs[name]
+                    if (!pack.description) {
+                        let path = findPack(name)
+                        if (path.exists) {
+                            try {
+                                pack.description = path.readString().match(/(pack|program)\(.*, '(.*)'/m)[2]
+                            } catch (e) { print('CATCH', e)}
                         }
+                    }
+                    if (!bit.settings.required.contains(name)) {
+                        print('    %-38s # %s'.format([name, pack.description]))
                     }
                 }
             } catch (e) { print('CATCH: ' + e)}
@@ -635,9 +642,9 @@ public class Bit {
             let [field,value] = field.split('=')
             bit.packs[field] ||= {}
             if (value) {
-                bit.packs[field] = { enable: true, path: Path(value) }
+                bit.packs[field] = { enable: true, path: Path(value), explicit: true }
             }
-            bit.packs[field].required = true
+            bit.packs[field] = { required: true, explicit: true }
             if (!bit.settings.required.contains(field) && !bit.settings.discover.contains(field)) {
                 required.push(field)
             }
@@ -652,11 +659,11 @@ public class Bit {
             }
             if (field == 'all' && bit.settings['without-' + field]) {
                 for each (f in bit.settings['without-' + field]) {
-                    bit.packs[f] = { enable: false, diagnostic: 'configured --without ' + f }
+                    bit.packs[f] = { enable: false, diagnostic: 'configured --without ' + f, explicit: true }
                 }
                 continue
             }
-            bit.packs[field] = { enable: false, diagnostic: 'configured --without ' + field }
+            bit.packs[field] = { enable: false, diagnostic: 'configured --without ' + field, explicit: true }
         }
     }
 
@@ -731,6 +738,19 @@ public class Bit {
         }
     }
 
+    function findPack(pack) {
+        let path = bit.dir.bits.join('packs', pack + '.pak')
+        if (!path.exists) {
+            for each (d in bit.settings.packs) {
+                path = bit.dir.src.join(d, pack + '.pak')
+                if (path.exists) {
+                    break
+                }
+            }
+        }
+        return path
+    }
+
     /*
         Search for enabled packs in the system
      */
@@ -750,15 +770,7 @@ public class Bit {
                 }
                 continue
             }
-            let path = bit.dir.bits.join('packs', pack + '.pak')
-            if (!path.exists) {
-                for each (d in settings.packs) {
-                    path = bit.dir.src.join(d, pack + '.pak')
-                    if (path.exists) {
-                        break
-                    }
-                }
-            }
+            let path = findPack(pack)
             if (path.exists) {
                 try {
                     bit.packs[pack] ||= {}
