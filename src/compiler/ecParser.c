@@ -9361,7 +9361,7 @@ static EcNode *parseSuper(EcCompiler *cp)
  */
 PUBLIC EcNode *ecResetError(EcCompiler *cp, EcNode *np, bool eatInput)
 {
-    int     tid;
+    int     tid, count;
 
     assert(cp->error);
 
@@ -9375,7 +9375,9 @@ PUBLIC EcNode *ecResetError(EcCompiler *cp, EcNode *np, bool eatInput)
     /*
         Try to resync by eating input up to the next statement / directive
      */
-    while (!cp->interactive) {
+    //  MOB - workaround
+    count = 0;
+    while (!cp->interactive && count++ < 50) {
         tid = peekToken(cp);
         if (tid == T_SEMICOLON || tid == T_RBRACE || tid == T_RBRACKET || tid == T_RPAREN || tid == T_ERR || tid == T_EOF)  {
             break;
