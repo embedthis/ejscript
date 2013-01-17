@@ -9,6 +9,7 @@ Bit.load({
 
     targets: {
         libejs: {
+            enable: 'bit.packs.ejscript.enable',
             type: 'lib',
             sources: [ 'ejsLib.c' ],
             headers: [ '*.h' ],
@@ -16,6 +17,7 @@ Bit.load({
         },
 
         ejs: {
+            enable: 'bit.packs.ejscript.enable',
             type: 'exe',
             sources: [ 'ejs.c' ],
             depends: [ 'libejs' ],
@@ -29,12 +31,14 @@ Bit.load({
         },
 
         ejsc: {
+            enable: 'bit.packs.ejscript.enable',
             type: 'exe',
             sources: [ 'ejsc.c' ],
             depends: [ 'libejs' ],
         },
 
 		'ejs.mod': {
+            enable: 'bit.packs.ejscript.enable',
             files: [ 'ejs.es' ],
             path: "${LIB}/ejs.mod",
             //  Add --debug for debug symbols
@@ -50,5 +54,30 @@ Bit.load({
             ',
             depends: [ 'ejsc' ],
 		},
+
+        'sync-ejs': {
+            action: "
+                let deps = App.dir.parent
+                let ejs = deps.join('ejs')
+                let tgz = bit.dir.top.join('../ejs/releases/ejs-flat.tgz')
+                let tar = deps.join('ejs.tar')
+                trace('Update', 'Ejscript distribution')
+                ejs.removeAll()
+                require ejs.zlib
+                require ejs.tar
+                Zlib.uncompress(tgz, tar)
+                Tar(tar, {chdir: deps}).extract()
+                let dir = deps.files('ejs-*').sort().reverse()[0]
+                dir.rename(ejs)
+                tgz.remove()
+                tar.remove()
+                for each (n in ['Makefile', 'bit.h', 'mpr.h', 'http.h', 'deps.c', 'ejsmod.c', 'pcre.c', 'pcre.h', 
+                        'sqlite3.c', 'sqlite3.h', 'start.bit']) {
+                    ejs.join(n).remove()
+                }
+                bit.settings.ejsOneModule = true
+                //./configure --release --with php --with ejscript=http://farm.embedthis.com/software/stable/ejs-flat.tgz
+            ",
+        },
     },
 })
