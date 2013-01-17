@@ -52,18 +52,63 @@ Bit.load({
         packs: [ 'bits/packs' ],
         /* Must build locally to build tools */
         platforms: [ 'local' ],
+
+        /*
+            Optional packages to automatically configure
+         */
         '+optional': [ 'doxygen', 'dsi', 'est', 'man', 'man2html', 'pmaker', 'sqlite', 'zip' ],
         '+required': [ 'pcre', 'zlib' ]
         'without-all': ['doxygen', 'dsi', 'est', 'man', 'man2html'],
+
+        /*
+            Set to true for a static (non-shared library) build                                            
+         */
         static: false,
+
+        /*
+            EST SSL stack configuration
+         */
+        est: {
+            camellia: false,
+            padlock: false,                                                                                
+            sslClient: false,                                                                              
+            des: false,                                                                                    
+            testCerts: false,                                                                              
+            xtea: false,                                                                                   
+            romTables: false,                                                                              
+            genPrime: false,                                                                               
+        }, 
+                                                                                                           
+        http: {                                                                                            
+            /* Use PAM (Plugable Authentication Module) to store passwords */                              
+            pam: true,                                                                                     
+                                                                                                           
+            /*                                                                                             
+                Enable stealth options. Disable OPTIONS and TRACE methods. Not yet operational.            
+             */                                                                                            
+            stealth: true,                                                                                 
+        },
+
         mpr: {
+            /*
+                Enable logging via mprLog to the log file. Error messages are always enabled.
+                The default is to enable logging for both debug and release builds.
+             */
+            logging: true,
+
             manager: 'ejsman',
+
+            /*
+                Enable debug trace and asserts to the log file.
+                This is enabled by default for debug builds.
+                tracing: true,
+             */
         },
     },
 
     usage: {
-        assert: 'Enable program assertions (true|false)',
         static: 'Build with static linking (true|false)',
+        'http.pam':   'Enable Unix Pluggable Auth Module (true|false)',
         'mpr.logging':'Enable application logging (true|false)',
         'mpr.tracing':'Enable debug tracing (true|false)',
     },
