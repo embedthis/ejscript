@@ -713,26 +713,29 @@ function prepareSettings(base, o, debug: Boolean) {
         }
         o.linker.compact()
     }
-    let static = o.target && o.target.static
+    let staticTarget = o.target && o.target.static
     let flags = o.linker.filter(function(e) e != '-g') + 
         libs.map(function(lib: Path) {
-            if (lib.extension == 'a') {
-                return lib
+print("LIB", lib)
+            if (staticTarget) {
+                // return bit.settings.static ? ('-l' + lib.trimExt().replace(/^lib/, '')) : lib
+                return ''
             } else {
                 return '-l' + lib.trimExt().toString().replace(/^lib/, '')
             }
         })
     if (flags.length > 0) {
-        if (static) {
+        if (staticTarget) {
             options.linker = '\n\t\t\t\tOTHER_LDFLAGS = (\n' + 
                 flags.map(function(f) '\t\t\t\t\t"' + f + '",').join('\n') + '\n\t\t\t\t\t);\n'
         } else {
             options.linker = '\n\t\t\t\tOTHER_LDFLAGS = (\n' + 
                 flags.map(function(f) '\t\t\t\t\t"' + f + '",').join('\n') + '\n\t\t\t\t\t"$(inherited)"\n\t\t\t\t);\n'
         }
-    } else if (static) {
+    } else if (staticTarget) {
         options.linker = '\n\t\t\t\tOTHER_LDFLAGS = ();\n'
     }
+print("OL", options.linker)
     if (o.includes.length > 0) {
         options.includes = '\n\t\t\t\tHEADER_SEARCH_PATHS = (\n' + 
             o.includes.map(function(f) '\t\t\t\t\t"' + f.relativeTo(base) + '",').join('\n') + '\n\t\t\t\t\t"$(inherited)"\n\t\t\t\t);\n'
@@ -756,7 +759,7 @@ function prepareSettings(base, o, debug: Boolean) {
     if (options.defines) result += options.defines
     if (options.libpaths) result += options.libpaths
     if (options.linker) result += options.linker
-    if (static) {
+    if (staticTarget) {
         result += '\n\t\t\t\tMACH_O_TYPE = staticlib;\n'
     }
     return result.trimStart('\n')
@@ -785,7 +788,6 @@ function appendSetting(result, o, keys, option) {
     }
     return result
 }
-
 
 function projectConfigSection(base) {
     let common_settings = '
@@ -854,7 +856,6 @@ ${RELEASE_SETTINGS}
     overridable += appendSetting(overridable, defaults.compiler, 
             ['GCC_WARN_UNUSED_VARIABLE', 'GCC_WARN_UNUSED_FUNCTION', 'GCC_WARN_UNUSED_LABEL'], 'unused-result')
     overridable += appendSetting(overridable, defaults.compiler, ['GCC_WARN_INHIBIT_ALL_WARNINGS'], '-w')
-
     makeDirGlobals(base)
     output(section.expand(ids, eo).expand({
         COMMON_SETTINGS: common_settings.expand(bit, eo).expand(bit.globals, eo).expand(ids, eo).expand({
@@ -911,7 +912,9 @@ ${RELEASE_SETTINGS}
         overridable += appendSetting(overridable, ts.compiler, 
             ['GCC_WARN_UNUSED_VARIABLE', 'GCC_WARN_UNUSED_FUNCTION', 'GCC_WARN_UNUSED_LABEL'], 'unused-result')
         overridable += appendSetting(overridable, ts.compiler, ['GCC_WARN_INHIBIT_ALL_WARNINGS'], '-w')
-
+        if (target.type == 'lib' && bit.settings.static) {
+            overridable += '\t\t\t\tEXECUTABLE_EXTENSION = a;\n'
+        }
         output(section.expand({TNAME: target.name, TARGET_DEBUG: tdid, TARGET_RELEASE: trid, 
             OVERRIDABLE_SETTINGS: overridable,
             DEBUG_SETTINGS: prepareSettings(base, ts, true),

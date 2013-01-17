@@ -90,6 +90,7 @@ public class Bit {
             reconfigure: { },
             rebuild: { alias: 'r'},
             release: {},
+            rom: { },
             quiet: { alias: 'q' },
             'set': { range: String, separator: Array },
             show: { alias: 's'},
@@ -112,7 +113,7 @@ public class Bit {
             '    --configure path-to-source             # Configure for building\n' +
             '    --continue                             # Continue on errors\n' +
             '    --debug                                # Same as --profile debug\n' +
-            '    --depth                                # Set utest depth\n' +
+            '    --depth level                          # Set utest depth level\n' +
             '    --diagnose                             # Emit diagnostic trace \n' +
             '    --dump                                 # Dump the full project bit file\n' +
             '    --endian [big|little]                  # Define the CPU endianness\n' +
@@ -130,12 +131,13 @@ public class Bit {
             '    --prefix dir=path                      # Define installation path prefixes\n' +
             '    --profile [debug|release|...]          # Use the build profile\n' +
             '    --quiet                                # Quiet operation. Suppress trace \n' +
+            '    --rebuild                              # Rebuild all specified targets\n' +
             '    --reconfigure                          # Reconfigure with existing settings\n' +
+            '    --release                              # Same as --profile release\n' +
+            '    --rom                                  # Build for ROM without a file system\n' +
             '    --set [feature=value]                  # Enable and a feature\n' +
             '    --show                                 # Show commands executed\n' +
             '    --static                               # Make static without shared libraries\n' +
-            '    --rebuild                              # Rebuild all specified targets\n' +
-            '    --release                              # Same as --profile release\n' +
             '    --unicode                              # Set char size to wide (unicode)\n' +
             '    --unset feature                        # Unset a feature\n' +
             '    --version                              # Dispay the bit version\n' +
@@ -339,6 +341,10 @@ public class Bit {
         if (options.static) {
             poptions.enable ||= []
             poptions.enable.push('static=true')
+        }
+        if (options.rom) {
+            poptions.enable ||= []
+            poptions.enable.push('rom=true')
         }
         if (options.unicode) {
             poptions.enable ||= []
@@ -600,7 +606,9 @@ public class Bit {
         }
         for each (field in poptions.enable) {
             let [field,value] = field.split('=')
-            if (value == 'true') {
+            if (value === undefined) {
+                value = true
+            } else if (value == 'true') {
                 value = true
             } else if (value == 'false') {
                 value = false
@@ -2075,7 +2083,7 @@ public class Bit {
             genout.writeLine(reppath(target.path) + ': ' + repvar(getTargetDeps(target)) + '\n\t' + command + '\n')
 
         } else {
-            trace('Link', target.name)
+            trace('Archive', target.name)
             if (target.active && bit.platform.like == 'windows') {
                 let active = target.path.relative.replaceExt('old')
                 trace('Preserve', 'Active target ' + target.path.relative + ' as ' + active)
