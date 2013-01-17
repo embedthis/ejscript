@@ -6,39 +6,43 @@ bit \- Build It! -- Utility to build and manage programs
 [\fI--configure path-to-source\fR]
 [\fI--continue\fR]
 [\fI--debug\fR]
+[\fI--depth level\fR]
 [\fI--diagnose\fR]
-[\fI--dump\fR]
 .RS 4
+[\fI--dump\fR]
+[\fI--endian [big|little]\fR]
 [\fI--file file.bit\fR]
 [\fI--force\fR]
-[\fI--gen [make|sh|vs|xcode]\fR]
+[\fI--gen [make|nmake|sh|vs|xcode]\fR]
+.RE
+.RS 4
 [\fI--import\fR]
 [\fI--keep\fR]
 [\fI--log logSpec\fR]
-.RE
-.RS 4
 [\fI--nocross\fR]
 [\fI--out path\fR]
 [\fI--platform os-arch\fR]
-[\fI--pre sourcefile\fR]
-[\fI--prefix dir=path\fR]
+[\fI--pre\fR]
 .RE
 .RS 4
+[\fI--prefix dir=path\fR]
 [\fI--profile [debug|release|...]\fR]
 [\fI--quiet\fR]
+[\fI--rebuild\fR]
 [\fI--reconfigure\fR]
+.RE
+.RS 4
+[\fI--release\fR]
+[\fI--rom\fR]
 [\fI--set [feature=value]\fR]
 [\fI--show\fR]
+[\fI--static\fR]
+[\fI--unicode\fR]
+[\fI--unset feature\fR]
 .RE
 .RS 4
-[\fI--static\fR]
-[\fI--rebuild\fR]
-[\fI--release\fR]
-[\fI--unset feature\fR]
 [\fI--version\fR]
 [\fI--verbose\fR]
-.RE
-.RS 4
 [\fI--with PACK[=PATH]\fR]
 [\fI--without PACK\fR]
 [targets|actions]
@@ -306,12 +310,20 @@ Continue to build despite any build errors. Normal operation is to stop building
 Same as --profile debug
 
 .TP
+\fB\--depth level\fR
+Set the unit test depth level.
+
+.TP
 \fB\--diagnose\fR
 Run bit with stack backtrace display on errors.
 
 .TP
 \fB\--dump\fR
 Dump the aggregate bit configuration into a single dump bit file.
+
+.TP
+\fB\--endian [big|little]\fR
+Set the CPU endianness. This is normally detected by the compiler but may be overridden by this switch.
 
 .TP
 \fB\--file bitfile\fR
@@ -326,6 +338,10 @@ Override warnings and proceed with the operation.
 Generate project files for the current platform. This will generate project files under the 'projects' directory.
 The projects are based on the current configuration. If cross-generating projects, you will typically need to
 also use -configure.
+
+.TP
+\fB\--import\fR
+Import the standard ibt configuration into the local source tree.
 
 .TP
 \fB\--keep\fR
@@ -349,16 +365,20 @@ Note: Products that require the building and execution of local tools MUST be ab
 Save Bit trace output to a file instead of displaying to the console.
 
 .TP
-\fB\--prefix dir=path\fR
-Set the installation directory prefix. Various products utilize different prefixes. Typical prefixes are:
-bin, config, inc, log, product, productver, spool, src, web.
-
-.TP
 \fB\--platform os-arch\fR
 Add a platform to build for cross-compilation. Multiple platforms can be added. You may use 'local' for the local
 platform. Options specified after the platform apply to the prior platform. For example: 
 
     bit --platform linux-x86 --without all --platform linux-arm --with ejscript configure
+
+.TP
+\fB\--pre\fR
+Pre-process a source file to stdout.
+
+.TP
+\fB\--prefix dir=path\fR
+Set the installation directory prefix. Various products utilize different prefixes. Typical prefixes are:
+bin, config, inc, log, product, productver, spool, src, web.
 
 .TP
 \fB\--profile [debug|release|...]\fR
@@ -371,8 +391,21 @@ files.
 Quiet operation. Suppresses output trace.
 
 .TP
+\fB\--rebuild\fR
+Rebuild the specified targets. Can also use 'bit rebuild'.
+
+.TP
 \fB\--reconfigure\fR
 Re-run configuration using the prior configuration settings.
+
+.TP
+\fB\--release\fR
+Select the release profile. Same as --profile release.
+
+.TP
+\fB\--rom\fR
+Configure setting to build for systems without a file system. This enables the ROM file system.
+Use the makerom utility to process required files into C source code for building with the application. 
 
 .TP
 \fB\--set key=value\fR
@@ -385,15 +418,11 @@ Show the actual commands executed by bit.
 
 .TP
 \fB\--static\fR
-Build using static linking instead of shared libraries. Same as --set static=true.
+Configure to build using static linking instead of shared libraries. Same as --set static=true.
 
 .TP
-\fB\--rebuild\fR
-Rebuild the specified targets. Can also use 'bit rebuild'.
-
-.TP
-\fB\--release\fR
-Select the release profile. Same as --profile release.
+\fB\--unicode\fR
+Set the character size to wide. 
 
 .TP
 \fB\--unset key=value\fR
