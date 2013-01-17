@@ -1,8 +1,8 @@
 /*
-    est.pak - Embedded Secure Transport (SSL) package for Bit
+    est.pak - Embedded Security Transport (SSL) package for Bit
  */
 
-pack('est', 'Embedded Transport Security (SSL)')
+pack('est', 'Embedded Security Transport (SSL)')
 
 if (bit.packs.ssl && bit.packs.ssl.enable === false) {
     throw "SSL has been disabled"

@@ -2,7 +2,7 @@
     mocana.pak -- Mocana NanoSSL package search
  */
 
-pack('mocana', 'Mocana NanoSSL')
+pack('mocana', 'Mocana NanoSSL (SSL)')
 
 if (bit.packs.ssl && bit.packs.ssl.enable === false) {
     throw "SSL has been disabled"
