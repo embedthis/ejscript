@@ -3262,16 +3262,25 @@ public function expand(rule)
     b.expand(rule)
 
 public function compareVersion(list, a, b) {
-    let parts_a = list[a].match(/.*(\d+)\.(\d+)\.(\d+)/)
-    let parts_b = list[b].match(/.*(\d+)\.(\d+)\.(\d+)/)
-    for (i = 1; i <= 3; i++) {
-        parts_a[i] -= 0
-        parts_b[i] -= 0
-        if (parts_a[i] < parts_b[i]) {
+    let parts_a = list[a].match(/.*(\d+)[\-\.](\d+)[\-\.](\d+)/)
+    let parts_b = list[b].match(/.*(\d+)[\-\.](\d+)[\-\.](\d+)/)
+    try {
+        for (i = 1; i <= 3; i++) {
+            parts_a[i] -= 0
+            parts_b[i] -= 0
+            if (parts_a[i] < parts_b[i]) {
+                return -1
+            } else if (parts_a[i] > parts_b[i]) {
+                return 1
+            }
+        }
+    } catch {
+        if (parts_a == null) {
             return -1
-        } else if (parts_a[i] > parts_b[i]) {
+        } else if (parts_b == null) {
             return 1
         }
+        return 0
     }
     return 0
 }
