@@ -165,6 +165,15 @@ public class Bit {
                     }
                     print('')
                 }
+                print('Extension Packages (--with PACK):')
+                Object.sortProperties(bit.packs)
+                for (name in bit.packs) {
+                    if (bit.packs[name].description) {
+                        if (!bit.settings.required.contains(name)) {
+                            print('    %-38s # %s'.format([name, bit.packs[name].description]))
+                        }
+                    }
+                }
             } catch (e) { print('CATCH: ' + e)}
         }
         App.exit(1)
@@ -629,7 +638,7 @@ public class Bit {
                 bit.packs[field] = { enable: true, path: Path(value) }
             }
             bit.packs[field].required = true
-            if (!bit.settings.required.contains(field) && !bit.settings.optional.contains(field)) {
+            if (!bit.settings.required.contains(field) && !bit.settings.discover.contains(field)) {
                 required.push(field)
             }
         }
@@ -727,12 +736,12 @@ public class Bit {
      */
     function findPacks() {
         let settings = bit.settings
-        if (!settings.required && !settings.optional) {
+        if (!settings.required && !settings.discover) {
             return
         }
         trace('Search', 'For tools and extension packages')
-        vtrace('Search', 'Packages: ' + [settings.required + settings.optional].join(' '))
-        let packs = settings.required + settings.optional
+        vtrace('Search', 'Packages: ' + [settings.required + settings.discover].join(' '))
+        let packs = settings.required + settings.discover
         let omitted = []
         for each (pack in packs) {
             if (bit.packs[pack] && bit.packs[pack].enable == false) {

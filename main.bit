@@ -54,9 +54,9 @@ Bit.load({
         platforms: [ 'local' ],
 
         /*
-            Optional packages to automatically configure
+            Optional packs to automatically discover and configure
          */
-        '+optional': [ 'doxygen', 'dsi', 'est', 'man', 'man2html', 'pmaker', 'sqlite', 'zip' ],
+        '+discover': [ 'doxygen', 'dsi', 'est', 'man', 'man2html', 'pmaker', 'sqlite', 'zip' ],
         '+required': [ 'pcre', 'zlib' ]
         'without-all': ['doxygen', 'dsi', 'est', 'man', 'man2html'],
 
