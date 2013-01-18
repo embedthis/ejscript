@@ -6,11 +6,11 @@ Bit.load({
 
     targets: {
         'ejs.mail.mod': {
-            path: '${LIB}/ejs.mail.mod',
+            path: '${BIN}/ejs.mail.mod',
             files: [ '*.es' ],
             build: "
                 trace('Compile', 'ejs.mail.mod')
-                run('${LBIN}/ejsc --out ${LIB}/ejs.mail.mod ${settings.esflags} --optimize 9 ' + 
+                run('${LBIN}/ejsc --out ${BIN}/ejs.mail.mod ${settings.esflags} --optimize 9 ' + 
                     Path('.').files('*.es').sort().join(' '))
             ",
             'generate-nmake': '\

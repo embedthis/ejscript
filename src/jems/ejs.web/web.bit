@@ -6,13 +6,13 @@ Bit.load({
 
     targets: {
         'ejs.web.mod': {
-            path: '${LIB}/ejs.web.mod',
+            path: '${BIN}/ejs.web.mod',
             files: [ '*.es' ],
             build: "
                 trace('Compile', 'ejs.web.mod')
-                run('${LBIN}/ejsc --out ${LIB}/ejs.web.mod ${settings.esflags} --optimize 9 ' + 
+                run('${LBIN}/ejsc --out ${BIN}/ejs.web.mod ${settings.esflags} --optimize 9 ' + 
                     Path('.').files('*.es').sort().join(' '))
-                run('${LBIN}/ejsmod --cslots ${LIB}/ejs.web.mod')
+                run('${LBIN}/ejsmod --cslots ${BIN}/ejs.web.mod')
                 let header = Path('ejs.web.slots.h')
                 let dest = bit.dir.inc.join(header)
                 if (!dest.exists || header.readString() != dest.readString()) {
@@ -44,7 +44,7 @@ Bit.load({
         },
 
         www: {
-            path: '${LIB}/www',
+            path: '${BIN}/www',
             files: [ 'www' ],
             build: "
                 trace('Copy', 'ejs.web www')
@@ -53,13 +53,13 @@ Bit.load({
                 cp('www', bit.dir.lib)
             "
             'generate-nmake': '\
-                if exist "${LIB}\\www" rd /Q /S "${LIB}\\www"
-                if not exist "${LIB}\\www" md "${LIB}\\www"
-                xcopy /S /Y "www" "${LIB}\\www"
+                if exist "${BIN}\\www" rd /Q /S "${BIN}\\www"
+                if not exist "${BIN}\\www" md "${BIN}\\www"
+                xcopy /S /Y "www" "${BIN}\\www"
             ',
             'generate-sh': '\
-                rm -fr ${LIB}/www
-                cp -r www ${LIB}                                                                  
+                rm -fr ${BIN}/www
+                cp -r www ${BIN}                                                                  
             ',
             platforms: [ 'local' ],
         },

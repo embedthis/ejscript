@@ -26,7 +26,7 @@ Bit.load({
         },
 
         bits: {
-            path: '${LIB}/bits',
+            path: '${BIN}/bits',
             files: [ 'bits/**' ],
             precious: true,
             build: "
@@ -36,13 +36,13 @@ Bit.load({
                 cp('bits', bit.dir.lib)
             "
             'generate-nmake': '\
-                if exist "${LIB}\\bits" rd /Q /S "${LIB}\\bits"
-                if not exist "${LIB}\\bits" md "${LIB}\\bits"
-                xcopy /S /Y "bits" "${LIB}\\bits"
+                if exist "${BIN}\\bits" rd /Q /S "${BIN}\\bits"
+                if not exist "${BIN}\\bits" md "${BIN}\\bits"
+                xcopy /S /Y "bits" "${BIN}\\bits"
             ',
             'generate-sh': "\
-                rm -fr ${LIB}/bits
-                cp -r bits ${LIB}
+                rm -fr ${BIN}/bits
+                cp -r bits ${BIN}
             ",
             platforms: [ 'local' ],
         },

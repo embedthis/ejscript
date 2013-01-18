@@ -6,7 +6,7 @@ Bit.load({
 
     targets: {
         'ejs.db.mapper.mod': {
-            path: '${LIB}/ejs.db.mapper.mod',
+            path: '${BIN}/ejs.db.mapper.mod',
             files: [ '*.es' ],
             build: "
                 trace('Compile', 'ejs.db.mapper.mod')
