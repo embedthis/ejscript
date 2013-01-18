@@ -64,8 +64,8 @@ Bit.load({
         'cpp->o': '${packs.compiler.path} -c -o ${OUT} -arch ${CC_ARCH} ${MTUNE} ${CFLAGS} ${DEFINES} ${INCLUDES} ${PREPROCESS} ${IN}',
         'shlib':  '${packs.compiler.path} -shared -o ${OUT} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS}',
         'lib':    '${packs.lib.path} -cr ${OUT} ${IN}',
-        'exe':    '${packs.compiler.path} -o ${OUT} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS} ${LDFLAGS}',
-        'gui':    '${packs.compiler.path} -o ${OUT} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS} ${LDFLAGS}',
+        'exe':    '${packs.compiler.path} -o ${OUT} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS} ${LIBS} ${LDFLAGS}',
+        'gui':    '${packs.compiler.path} -o ${OUT} ${LDFLAGS} ${LIBPATHS} ${IN} ${LIBS} ${LIBS} ${LDFLAGS}'
         'res':    '${packs.rc.path} -o ${OUT} ${IN}',
     },
     ccArch: {
