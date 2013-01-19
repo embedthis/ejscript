@@ -1937,6 +1937,7 @@ public class Bit {
         if (target.building) {
             throw 'Possible recursive dependancy: target ' + target.name + ' is already building'
         }
+        vtrace('Consider', target.name)
         target.building = true
         target.linker ||= []
         target.libpaths ||= []

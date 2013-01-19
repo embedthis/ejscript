@@ -13,12 +13,8 @@ Bit.load({
                 run('${LBIN}/ejsc --out ${BIN}/ejs.mail.mod ${settings.esflags} --optimize 9 ' + 
                     Path('.').files('*.es').sort().join(' '))
             ",
-            'generate-nmake': '\
-                "${BIN}\\ejsc" --out "${BIN}/ejs.mail.mod" ${settings.esflags} --optimize 9 *.es
-            ',
-            'generate-sh': '\
-                ${BIN}/ejsc --out ${BIN}/ejs.mail.mod ${settings.esflags} --optimize 9 *.es
-            ',
+            'generate-nmake': '"${BIN}\\ejsc" --out "${BIN}/ejs.mail.mod" ${settings.esflags} --optimize 9 *.es',
+            'generate-sh': '${BIN}/ejsc --out ${BIN}/ejs.mail.mod ${settings.esflags} --optimize 9 *.es',
             depends: [ 'ejsc', 'ejs.mod' ],
         },
 	},
