@@ -641,10 +641,13 @@ public class Bit {
         for each (field in poptions['with']) {
             let [field,value] = field.split('=')
             bit.packs[field] ||= {}
+            let pack = bit.packs[field]
             if (value) {
-                bit.packs[field] = { enable: true, path: Path(value), explicit: true }
+                pack.enable = true
+                pack.path = Path(value)
             }
-            bit.packs[field] = { required: true, explicit: true }
+            pack.explicit = true
+            pack.required = true
             if (!bit.settings.required.contains(field) && !bit.settings.discover.contains(field)) {
                 required.push(field)
             }
@@ -657,13 +660,21 @@ public class Bit {
             if (bit.settings.required.contains(field)) { 
                 throw 'Required pack ' + field + ' cannot be disabled'
             }
+            bit.packs[field] ||= {}
+            let pack = bit.packs[field]
             if (field == 'all' && bit.settings['without-' + field]) {
                 for each (f in bit.settings['without-' + field]) {
-                    bit.packs[f] = { enable: false, diagnostic: 'configured --without ' + f, explicit: true }
+                    bit.packs[f] ||= {}
+                    let pack = bit.packs[f]
+                    pack.enable = false
+                    pack.explicit = true
+                    pack.diagnostic = 'configured --without ' + f
                 }
                 continue
             }
-            bit.packs[field] = { enable: false, diagnostic: 'configured --without ' + field, explicit: true }
+            pack.enable = false
+            pack.diagnostic = 'configured --without ' + field
+            pack.explicit = true
         }
     }
 
