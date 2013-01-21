@@ -192,6 +192,10 @@ PUBLIC int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
         ejsThrowArgError(ejs, "destination is not an object");
         return -1;
     }
+    if (!ejsIsDefined(ejs, src)) {
+        /* Allow this - blend nothing */
+        return 0;
+    }
     if (!ejsIsPot(ejs, src)) {
         ejsThrowArgError(ejs, "source is not an object");
         return -1;
