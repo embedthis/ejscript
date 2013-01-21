@@ -42,7 +42,7 @@ public class Bit {
 
     private var home: Path
     private var bareBit: Object = { platforms: [], platform: {}, dir: {}, settings: {
-        required: [], optional: [],
+        required: [], discover: [],
     }, packs: {}, targets: {}, env: {}, globals: {}, customSettings: {}}
 
     private var bit: Object = {}
@@ -772,6 +772,10 @@ public class Bit {
         }
         trace('Search', 'For tools and extension packages')
         vtrace('Search', 'Packages: ' + [settings.required + settings.discover].join(' '))
+        //  MOB Temp
+        if (settings.optional) {
+            settings.discover += settings.optional
+        }
         let packs = settings.required + settings.discover
         let omitted = []
         for each (pack in packs) {
