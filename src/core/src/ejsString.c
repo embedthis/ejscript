@@ -2142,7 +2142,7 @@ PUBLIC int ejsContainsAsc(Ejs *ejs, EjsString *sp, cchar *pat)
     assert(sp);
     assert(pat);
 
-    if (pat == 0 || *pat == '\0') {
+    if (pat == 0 || *pat == '\0' || sp == 0) {
         return 0;
     }
     len = strlen(pat);

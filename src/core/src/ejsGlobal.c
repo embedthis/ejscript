@@ -188,6 +188,14 @@ PUBLIC int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
     char        *str;
     int         i, j, count, start, deep, functions, overwrite, privateProps, trace, kind, combine, cflags;
 
+    if (!ejsIsPot(ejs, dest)) {
+        ejsThrowArgError(ejs, "destination is not an object");
+        return -1;
+    }
+    if (!ejsIsPot(ejs, src)) {
+        ejsThrowArgError(ejs, "source is not an object");
+        return -1;
+    }
     count = ejsGetLength(ejs, src);
     start = (flags & EJS_BLEND_SUBCLASSES) ? 0 : TYPE(src)->numInherited;
     deep = (flags & EJS_BLEND_DEEP) ? 1 : 0;
