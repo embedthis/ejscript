@@ -744,7 +744,7 @@ public class Bit {
         Apply the selected build profile
      */
     function applyProfile() {
-        if (options.profile && bit.profiles) {
+        if (options.profile && bit.profiles && bit.profiles[options.profile]) {
             blend(bit, bit.profiles[options.profile], {combine: true})
         }
     }
