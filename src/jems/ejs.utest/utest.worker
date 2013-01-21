@@ -71,7 +71,7 @@ Object.defineProperty(global, "assert", { writable: true, value: assert})
 
 
 public function cleanDir(path) {
-    rmdir(path, true)
+    rmdir(path)
     mkdir(path)
 }
 
