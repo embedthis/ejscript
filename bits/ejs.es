@@ -138,10 +138,9 @@ public function packageComboFiles() {
     }
     let s = bit.settings
     let src = bit.dir.pkg
+    safeRemove(bit.dir.pkg)
+    bit.dir.pkg.makeDir()
     let pkg = src.join(s.product + '-' + s.version)
-print("PKG", pkg)
-    safeRemove(pkg)
-    pkg.makeDir()
 /* UNUSED
     install('projects/ejs-' + bit.platform.os + '-debug-bit.h', pkg.join('src/deps/ejs/bit.h'))
     install('package/Makefile-flat', pkg.join('src/deps/ejs/Makefile'))
