@@ -8,13 +8,40 @@
 
 /* Settings */
 #ifndef BIT_BUILD_NUMBER
-    #define BIT_BUILD_NUMBER "0"
+    #define BIT_BUILD_NUMBER "1"
 #endif
 #ifndef BIT_COMPANY
     #define BIT_COMPANY "Embedthis"
 #endif
 #ifndef BIT_DEPTH
     #define BIT_DEPTH 1
+#endif
+#ifndef BIT_DISCOVER
+    #define BIT_DISCOVER "doxygen,dsi,est,man,man2html,pmaker,sqlite,zip"
+#endif
+#ifndef BIT_EST_CAMELLIA
+    #define BIT_EST_CAMELLIA 0
+#endif
+#ifndef BIT_EST_DES
+    #define BIT_EST_DES 0
+#endif
+#ifndef BIT_EST_GEN_PRIME
+    #define BIT_EST_GEN_PRIME 0
+#endif
+#ifndef BIT_EST_PADLOCK
+    #define BIT_EST_PADLOCK 0
+#endif
+#ifndef BIT_EST_ROM_TABLES
+    #define BIT_EST_ROM_TABLES 0
+#endif
+#ifndef BIT_EST_SSL_CLIENT
+    #define BIT_EST_SSL_CLIENT 0
+#endif
+#ifndef BIT_EST_TEST_CERTS
+    #define BIT_EST_TEST_CERTS 0
+#endif
+#ifndef BIT_EST_XTEA
+    #define BIT_EST_XTEA 0
 #endif
 #ifndef BIT_HAS_DOUBLE_BRACES
     #define BIT_HAS_DOUBLE_BRACES 0
@@ -49,11 +76,17 @@
 #ifndef BIT_HAS_UNNAMED_UNIONS
     #define BIT_HAS_UNNAMED_UNIONS 1
 #endif
+#ifndef BIT_HTTP_PAM
+    #define BIT_HTTP_PAM 1
+#endif
+#ifndef BIT_HTTP_STEALTH
+    #define BIT_HTTP_STEALTH 1
+#endif
+#ifndef BIT_MPR_LOGGING
+    #define BIT_MPR_LOGGING 1
+#endif
 #ifndef BIT_MPR_MANAGER
     #define BIT_MPR_MANAGER "ejsman"
-#endif
-#ifndef BIT_OPTIONAL
-    #define BIT_OPTIONAL "doxygen,dsi,est,man,man2html,pmaker,sqlite,zip"
 #endif
 #ifndef BIT_PACKS
     #define BIT_PACKS "bits/packs"
@@ -66,6 +99,9 @@
 #endif
 #ifndef BIT_REQUIRED
     #define BIT_REQUIRED "compiler,lib,link,pcre,zlib"
+#endif
+#ifndef BIT_SSL
+    #define BIT_SSL 1
 #endif
 #ifndef BIT_STATIC
     #define BIT_STATIC 0
@@ -87,6 +123,9 @@
 #endif
 #ifndef BIT_WITHOUT_ALL
     #define BIT_WITHOUT_ALL "doxygen,dsi,est,man,man2html"
+#endif
+#ifndef BIT_WITHOUT_DEFAULT
+    #define BIT_WITHOUT_DEFAULT "doxygen,dsi,man,man2html"
 #endif
 
 /* Prefixes */
@@ -137,7 +176,7 @@
 
 /* Profile */
 #ifndef BIT_CONFIG_CMD
-    #define BIT_CONFIG_CMD "bit -d -q -platform linux-x86 -without all -configure . -gen sh,make"
+    #define BIT_CONFIG_CMD "bit -d -q -platform linux-x86 -without default -configure . -gen sh,make"
 #endif
 #ifndef BIT_EJS_PRODUCT
     #define BIT_EJS_PRODUCT 1
@@ -164,14 +203,17 @@
 #ifndef BIT_PACK_CC
     #define BIT_PACK_CC 1
 #endif
+#ifndef BIT_PACK_DEFAULT
+    #define BIT_PACK_DEFAULT 0
+#endif
 #ifndef BIT_PACK_DOXYGEN
-    #define BIT_PACK_DOXYGEN 0
+    #define BIT_PACK_DOXYGEN 1
 #endif
 #ifndef BIT_PACK_DSI
-    #define BIT_PACK_DSI 0
+    #define BIT_PACK_DSI 1
 #endif
 #ifndef BIT_PACK_EST
-    #define BIT_PACK_EST 0
+    #define BIT_PACK_EST 1
 #endif
 #ifndef BIT_PACK_LIB
     #define BIT_PACK_LIB 1
@@ -180,10 +222,10 @@
     #define BIT_PACK_LINK 1
 #endif
 #ifndef BIT_PACK_MAN
-    #define BIT_PACK_MAN 0
+    #define BIT_PACK_MAN 1
 #endif
 #ifndef BIT_PACK_MAN2HTML
-    #define BIT_PACK_MAN2HTML 0
+    #define BIT_PACK_MAN2HTML 1
 #endif
 #ifndef BIT_PACK_MATRIXSSL
     #define BIT_PACK_MATRIXSSL 0
@@ -212,11 +254,26 @@
 #ifndef BIT_PACK_COMPILER_PATH
     #define BIT_PACK_COMPILER_PATH "/usr/bin/gcc"
 #endif
+#ifndef BIT_PACK_DOXYGEN_PATH
+    #define BIT_PACK_DOXYGEN_PATH "/usr/local/bin/doxygen"
+#endif
+#ifndef BIT_PACK_DSI_PATH
+    #define BIT_PACK_DSI_PATH "/opt/bin/dsi"
+#endif
+#ifndef BIT_PACK_EST_PATH
+    #define BIT_PACK_EST_PATH "/Users/mob/git/ejs/src/deps/est"
+#endif
 #ifndef BIT_PACK_LIB_PATH
     #define BIT_PACK_LIB_PATH "/usr/bin/ar"
 #endif
 #ifndef BIT_PACK_LINK_PATH
     #define BIT_PACK_LINK_PATH "/usr/bin/ld"
+#endif
+#ifndef BIT_PACK_MAN_PATH
+    #define BIT_PACK_MAN_PATH "/usr/bin/man"
+#endif
+#ifndef BIT_PACK_MAN2HTML_PATH
+    #define BIT_PACK_MAN2HTML_PATH "/opt/bin/man2html"
 #endif
 #ifndef BIT_PACK_PCRE_PATH
     #define BIT_PACK_PCRE_PATH "/Users/mob/git/ejs/src/deps/pcre"
