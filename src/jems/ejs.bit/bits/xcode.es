@@ -717,8 +717,11 @@ function prepareSettings(base, o, debug: Boolean) {
     let flags = o.linker.filter(function(e) e != '-g') + 
         libs.map(function(lib: Path) {
             if (staticTarget) {
-                // return bit.settings.static ? ('-l' + lib.trimExt().replace(/^lib/, '')) : lib
-                return ''
+                if (o.target && o.target.type == 'exe') {
+                    return '-l' + lib.trimExt().toString().replace(/^lib/, '')
+                } else {
+                    return ''
+                }
             } else {
                 return '-l' + lib.trimExt().toString().replace(/^lib/, '')
             }
