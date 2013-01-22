@@ -5065,7 +5065,7 @@ fi";
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"",
+					"-lpam",
 					);
 
 				MACH_O_TYPE = staticlib;
@@ -5079,7 +5079,7 @@ fi";
 				PRODUCT_NAME = bit;
 
 				OTHER_LDFLAGS = (
-					"",
+					"-lpam",
 					);
 
 				MACH_O_TYPE = staticlib;
