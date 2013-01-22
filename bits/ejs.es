@@ -137,16 +137,18 @@ public function packageComboFiles() {
         return
     }
     let s = bit.settings
-    let src = bit.dir.pkg.join('src')
+    let src = bit.dir.pkg
     let pkg = src.join(s.product + '-' + s.version)
+print("PKG", pkg)
     safeRemove(pkg)
     pkg.makeDir()
+/* UNUSED
     install('projects/ejs-' + bit.platform.os + '-debug-bit.h', pkg.join('src/deps/ejs/bit.h'))
-    install('package/ejs-flat.bit', pkg.join('src/deps/ejs/ejs.bit'))
     install('package/Makefile-flat', pkg.join('src/deps/ejs/Makefile'))
     install('package/start-flat.bit', pkg.join('src/deps/ejs/start.bit'))
+*/
+    install('package/ejs-flat.bit', pkg.join('src/deps/ejs/ejs.bit'))
     let filter = /^#inc.*ejs.*$|^#inc.*ec.*$|^#inc.*customize.*$|#include.*zlib.h.*$|#inc.*ejs.zlib.slots.h.*/mg
-
     install([
         'src/deps/zlib/zlib.h', 
         'src/ejsByteCode.h', 
@@ -160,14 +162,17 @@ public function packageComboFiles() {
         header: '#include \"bit.h\"\n#include \"bitos.h\"\n#include \"mpr.h\"\n#include \"http.h\"\n#include \"ejs.slots.h\"',
         title: bit.settings.title + ' Library Source',
     })
+/*UNUSED
     install('src/deps/mpr/mpr.h', pkg.join('src/deps/ejs/mpr.h'))
     install('src/deps/http/http.h', pkg.join('src/deps/ejs/http.h'))
+ */
     install('src/vm/ejsByteGoto.h', pkg.join('src/deps/ejs/ejsByteGoto.h'))
     install(bit.dir.inc.join('ejs*.slots.h'), pkg.join('src/deps/ejs/ejs.slots.h'), {
         cat: true, filter: filter,
         title: bit.settings.title + ' Object Slot Definitions',
     })
 
+/* UNUSED
     install(['src/deps/**.c'], pkg.join('src/deps/ejs/deps.c'), {
         cat: true,
         filter: filter,
@@ -178,7 +183,7 @@ public function packageComboFiles() {
 
     install(['src/deps/pcre/pcre.c', 'src/deps/pcre/pcre.h'], pkg.join('src/deps/pcre'))
     install(['src/deps/sqlite/sqlite3.c', 'src/deps/sqlite/sqlite3.h'], pkg.join('src/deps/sqlite'))
-
+*/
     install(['src/**.c'], pkg.join('src/deps/ejs/ejsLib.c'), {
         cat: true,
         filter: filter,
@@ -205,6 +210,7 @@ public function packageComboFiles() {
         header: '#include \"ejs.h\"',
         title: bit.settings.title + ' Compiler',
     })
+/* UNUSED
     install([
         'src/cmd/ejsmod.h', 
         'src/cmd/doc.c', 
@@ -218,7 +224,8 @@ public function packageComboFiles() {
         header: '#include \"ejs.h\"',
         title: bit.settings.title + ' Manager',
     })
-    package(pkg, ['combo', 'flat'])
+*/
+    package(bit.dir.pkg, ['combo', 'flat'])
 }
 
 
