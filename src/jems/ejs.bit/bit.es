@@ -170,7 +170,7 @@ public class Bit {
                 for (name in bit.packs) {
                     let pack = bit.packs[name]
                     if (!pack.description) {
-                        let path = findPack(name)
+                        let path = b.findPack(name)
                         if (path.exists) {
                             try {
                                 pack.description = path.readString().match(/(pack|program)\(.*, '(.*)'/m)[2]
@@ -749,7 +749,7 @@ public class Bit {
         }
     }
 
-    function findPack(pack) {
+    public function findPack(pack) {
         let path = bit.dir.bits.join('packs', pack + '.pak')
         if (!path.exists) {
             for each (d in bit.settings.packs) {
