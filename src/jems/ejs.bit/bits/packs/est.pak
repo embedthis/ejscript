@@ -30,41 +30,15 @@ if (alternate && !bit.packs.est.explicit) {
 let path = bit.packs.est.path
 
 let cfg
-if (Path('src/deps/est/estLib.c').exists) {
-    /*  Internal ETS distribution */
-    let dir = bit.dir.src.join('src/deps/est')
-    cfg = {
-        path: dir,
-        dir: dir,
-        includes: [ dir ],
-        libraries: [ 'est' ]
-    }
-} else {
-    /*  External est distribution */
-    if (path && !path.exists) {
-        throw 'Can\'t find ETS at ' + path
-    }
-    let search
-    if (path) {
-        search = path.files('*/bin') + path.files('*/inc')
-    } else {
-        search = [ bit.dir.packs.join('est'), '/usr/lib/est/latest/lib', '/usr/include' ]
-    }
-    let libdir = probe(Path('libest').joinExt(bit.ext.shobj), {search: search}).absolute
-    let incdir = probe('est.h', {search: search}).absolute
-    let libraries = libdir.files('libest*') + libdir.files('libmpr*') + libdir.files('libpcre*') + 
-        libdir.files('libhttp*') + libdir.files('est*' + bit.ext.shobj) + libdir.files('libsqlite3*')
-    let imports = libdir.files('est*.mod') + libraries + incdir.files('est*.h') + 
-        incdir.files('mpr.h') + incdir.files('http.h') + incdir.files('pcre.h') + incdir.files('sqlite3.h')
-    cfg = {
-        path: path,
-        dir: path,
-        includes: [ incdir ],
-        libraries: [ 'est' ],
-        libpaths: [ libdir.parent ],
-        imports: imports,
-        external: true,
-    }
+if (!Path('src/deps/est/estLib.c').exists) {
+    throw "Cannot find src/deps/est/estLib.c"
+}
+let dir = bit.dir.src.join('src/deps/est')
+cfg = {
+    path: dir,
+    dir: dir,
+    includes: [ dir ],
+    libraries: [ 'est' ]
 }
 Bit.load({packs: { est: cfg }})
 bit.settings.ssl = true
