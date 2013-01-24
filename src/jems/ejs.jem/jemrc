@@ -1,11 +1,6 @@
 locations: {
-    _ejs: "/usr/lib/ejs",
-    _jems: "/usr/lib/ejs/jems",
-    _modules: "/usr/lib/ejs/modules",
-    _repositories: [ "http://jems.ejscript.org" ],
-
-    ejs: "XXXXX",
-    jems: "jems",
-    modules: "modules",
-    repositories: [ "local" ],
+    ejs: "/usr/lib/ejs/latest",
+    jems: "/usr/lib/ejs/jems",
+    modules: "/usr/lib/ejs/latest/bin",
+    repositories: [ "http://jems.ejscript.org", "/usr/lib/ejs/latest/jems" ],
 }

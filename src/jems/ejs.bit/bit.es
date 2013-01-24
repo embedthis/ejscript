@@ -77,9 +77,10 @@ public class Bit {
             force: {},
             gen: { range: String, separator: Array, commas: true },
             help: { },
-            import: { alias: 'init' },
+            import: { },
             keep: { alias: 'k' },
             log: { alias: 'l', range: String },
+            overwrite: { },
             out: { range: String },
             nocross: {},
             pre: { range: String, separator: Array },
@@ -109,41 +110,42 @@ public class Bit {
     function usage(): Void {
         print('\nUsage: bit [options] [targets|actions] ...\n' +
             '  Options:\n' + 
-            '    --benchmark                            # Measure elapsed time\n' +
-            '    --configure path-to-source             # Configure for building\n' +
-            '    --continue                             # Continue on errors\n' +
-            '    --debug                                # Same as --profile debug\n' +
-            '    --depth level                          # Set utest depth level\n' +
-            '    --diagnose                             # Emit diagnostic trace \n' +
-            '    --dump                                 # Dump the full project bit file\n' +
-            '    --endian [big|little]                  # Define the CPU endianness\n' +
-            '    --file file.bit                        # Use the specified bit file\n' +
-            '    --force                                # Override warnings\n' +
-            '    --gen [make|nmake|sh|vs|xcode]         # Generate project file\n' + 
-            '    --help                                 # Print help message\n' + 
-            '    --import                               # Import standard bit configuration\n' + 
-            '    --keep                                 # Keep intermediate files\n' + 
-            '    --log logSpec                          # Save errors to a log file\n' +
-            '    --nocross                              # Build natively\n' +
-            '    --out path                             # Save output to a file\n' +
-            '    --platform os-arch[-cpu]               # Build for specified platform\n' +
-            '    --pre                                  # Pre-process a source file to stdout\n' +
-            '    --prefix dir=path                      # Define installation path prefixes\n' +
-            '    --profile [debug|release|...]          # Use the build profile\n' +
-            '    --quiet                                # Quiet operation. Suppress trace \n' +
-            '    --rebuild                              # Rebuild all specified targets\n' +
-            '    --reconfigure                          # Reconfigure with existing settings\n' +
-            '    --release                              # Same as --profile release\n' +
-            '    --rom                                  # Build for ROM without a file system\n' +
-            '    --set [feature=value]                  # Enable and a feature\n' +
-            '    --show                                 # Show commands executed\n' +
-            '    --static                               # Make static without shared libraries\n' +
-            '    --unicode                              # Set char size to wide (unicode)\n' +
-            '    --unset feature                        # Unset a feature\n' +
-            '    --version                              # Dispay the bit version\n' +
-            '    --verbose                              # Trace operations\n' +
-            '    --with PACK[=PATH]                     # Build with package at PATH\n' +
-            '    --without PACK                         # Build without a package\n' +
+            '  --benchmark                              # Measure elapsed time\n' +
+            '  --configure path-to-source               # Configure for building\n' +
+            '  --continue                               # Continue on errors\n' +
+            '  --debug                                  # Same as --profile debug\n' +
+            '  --depth level                            # Set utest depth level\n' +
+            '  --diagnose                               # Emit diagnostic trace \n' +
+            '  --dump                                   # Dump the full project bit file\n' +
+            '  --endian [big|little]                    # Define the CPU endianness\n' +
+            '  --file file.bit                          # Use the specified bit file\n' +
+            '  --force                                  # Override warnings\n' +
+            '  --gen [make|nmake|sh|vs|xcode|main|start]# Generate project file\n' + 
+            '  --help                                   # Print help message\n' + 
+            '  --import                                 # Import standard bit configuration\n' + 
+            '  --keep                                   # Keep intermediate files\n' + 
+            '  --log logSpec                            # Save errors to a log file\n' +
+            '  --nocross                                # Build natively\n' +
+            '  --overwrite                              # Overwrite existing files\n' +
+            '  --out path                               # Save output to a file\n' +
+            '  --platform os-arch[-cpu]                 # Build for specified platform\n' +
+            '  --pre                                    # Pre-process a source file to stdout\n' +
+            '  --prefix dir=path                        # Define installation path prefixes\n' +
+            '  --profile [debug|release|...]            # Use the build profile\n' +
+            '  --quiet                                  # Quiet operation. Suppress trace \n' +
+            '  --rebuild                                # Rebuild all specified targets\n' +
+            '  --reconfigure                            # Reconfigure with existing settings\n' +
+            '  --release                                # Same as --profile release\n' +
+            '  --rom                                    # Build for ROM without a file system\n' +
+            '  --set [feature=value]                    # Enable and a feature\n' +
+            '  --show                                   # Show commands executed\n' +
+            '  --static                                 # Make static without shared libraries\n' +
+            '  --unicode                                # Set char size to wide (unicode)\n' +
+            '  --unset feature                          # Unset a feature\n' +
+            '  --version                                # Dispay the bit version\n' +
+            '  --verbose                                # Trace operations\n' +
+            '  --with PACK[=PATH]                       # Build with package at PATH\n' +
+            '  --without PACK                           # Build without a package\n' +
             '')
         if (START.exists) {
             try {
@@ -165,20 +167,28 @@ public class Bit {
                     }
                     print('')
                 }
-                print('Extension Packages (--with PACK):')
-                Object.sortProperties(bit.packs)
-                for (name in bit.packs) {
-                    let pack = bit.packs[name]
-                    if (!pack.description) {
-                        let path = b.findPack(name)
-                        if (path.exists) {
-                            try {
-                                pack.description = path.readString().match(/(pack|program)\(.*, '(.*)'/m)[2]
-                            } catch (e) { print('CATCH', e)}
+                if (bit.packs) {
+                    let header
+                    Object.sortProperties(bit.packs)
+                    for (name in bit.packs) {
+                        let pack = bit.packs[name]
+                        let desc = pack.description
+                        if (!desc) {
+                            let path = b.findPack(name)
+                            if (path.exists) {
+                                let matches = path.readString().match(/(pack|program)\(.*, '(.*)'/m)
+                                if (matches) {
+                                    desc = matches[2]
+                                }
+                            }
                         }
-                    }
-                    if (!bit.settings.required.contains(name)) {
-                        print('    %-38s # %s'.format([name, pack.description]))
+                        if (!bit.settings.required.contains(name)) {
+                            if (!header) {
+                                print('Extension Packages (--with PACK):')
+                                header = true
+                            }
+                            print('    %-38s # %s'.format([name, desc]))
+                        }
                     }
                 }
             } catch (e) { print('CATCH: ' + e)}
@@ -196,6 +206,10 @@ public class Bit {
             setup(args)
             if (options.import) {
                 import()
+                App.exit()
+            } 
+            if (options.init) {
+                init()
                 App.exit()
             } 
             if (options.reconfigure) {
@@ -298,7 +312,7 @@ public class Bit {
         }
         platforms.transform(function(e) e == 'local' ? localPlatform : e).unique()
 
-        if (options.gen) {
+        if (options.gen && options.gen.toString().match(/make|nmake|sh|vs|xcode/)) {
             if (platforms.length != 1) {
                 App.log.error('Can only generate for one platform at a time')
                 usage()
@@ -1120,6 +1134,14 @@ public class Bit {
     }
 
     function generate() {
+        if (options.gen == 'start') {
+            generateStart()
+            return
+        }
+        if (options.gen == 'main') {
+            generateMain()
+            return
+        }
         platforms = bit.platforms = [localPlatform]
         makeBit(localPlatform, localPlatform + '.bit')
         bit.original = {
@@ -1137,6 +1159,31 @@ public class Bit {
         bit.platform.last = true
         prepBuild()
         generateProjects()
+    }
+
+    function generateMain() {
+        let bits = Config.Bin.join('bits')
+        let cfg = Path('configure')
+        if (cfg.exists && !options.overwrite) {
+            traceFile('Exists', 'configure')
+        } else {
+            let data = '#!/bin/bash\n#\n#   configure -- Configure for building\n#\n' +
+                'if ! type bit >/dev/null 2>&1 ; then\n' +
+                    '    echo -e "\\nInstall the \\"bit\\" tool for configuring." >&2\n' +
+                    '    echo -e "Download from: http://embedthis.com/downloads/bit/download.ejs." >&2\n' +
+                    '    echo -e "Or skip configuring and make a standard build using \\"make\\".\\n" >&2\n' +
+                    '    exit 255\n' +
+                'fi\n' + 
+                'bit configure "$@"'
+            traceFile(cfg.exists ? 'Overwrite' : 'Create', cfg)
+            cfg.write(data)
+            cfg.setAttributes({permissions: 0755})
+        }
+        copyFile(bits.join('sample-main.bit'), MAIN)
+    }
+
+    function generateStart() {
+        copyFile(Path(Config.Bin).join('bits/sample-start.bit'), 'start.bit')
     }
 
     function generateProjects() {
@@ -1162,7 +1209,6 @@ public class Bit {
         for each (item in options.gen) {
             generating = item
             let base = bit.dir.proj.join(bit.settings.product + '-' + bit.platform.os + '-' + bit.platform.profile)
-            // base.makeDir()
             let path = bit.original.dir.inc.join('bit.h')
             let hfile = bit.dir.src.join('projects', 
                     bit.settings.product + '-' + bit.platform.os + '-' + bit.platform.profile + '-bit.h')
@@ -1404,17 +1450,13 @@ public class Bit {
     }
 
     function import() {
-        if (Path('bits').exists) {
-            throw 'Current directory already contains a bits directory'
+        let bin = Path(Config.Bin)
+        for each (f in bin.files('bits/**', {relative: true})) {
+            copyFile(bin.join(f), f)
         }
-        cp(Config.Bin.join('bits'), 'bits')
-        if (!MAIN.exits) {
-            mv('bits/sample.bit', MAIN)
-        }
-        print('Initialization complete.')
-        print('Edit ' + MAIN + ' and run "bit configure" to prepare for building.')
-        print('Then run "bit" to build.')
+        generateMain()
     }
+
 
     function prepBuild() {
         vtrace('Prepare', 'For building')
@@ -2930,6 +2972,33 @@ public class Bit {
         }
     }
 
+    function makeDir(path: String): Void {
+        if (isDir(path)) {
+            return
+        }
+        trace('Create', 'Directory ' + path)
+        mkdir(path, 0755)
+    }
+
+    function copyFile(from: Path, to: Path) {
+        let p: Path = new Path(to)
+        if (to.exists && !options.overwrite) {
+            if (!from.isDir) {
+                traceFile('Exists', to)
+            }
+            return
+        }
+        if (!to.exists) {
+            traceFile('Create', to)
+        } else {
+            traceFile('Overwrite', to)
+        }
+        if (!from.isDir) {
+            mkdir(to.dirname, 0755)
+            cp(from, to)
+        }
+    }
+
     public function trace(tag: String, ...args): Void {
         if (!options.quiet) {
             let msg = args.join(" ")
@@ -2949,6 +3018,9 @@ public class Bit {
             trace(tag, msg)
         }
     }
+
+    function traceFile(msg: String, path: String): Void
+        trace(msg, '"' + path + '"')
 
     public function whyRebuild(path, tag, msg) {
         if (options.why) {

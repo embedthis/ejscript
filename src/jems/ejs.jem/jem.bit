@@ -16,16 +16,6 @@ Bit.load({
             platforms: [ 'local' ],
         },
 
-/* UNUSED
-        'jem.exe': {
-            type: 'file',
-            path: '${BIN}/jem${EXE}',
-            files: [ '${BIN}/ejsrun${EXE}' ],
-            depends: ['ejsrun'],
-            platforms: [ 'local' ],
-        },
-*/
-
         jem: {
             type: 'exe',
             path: '${BIN}/jem${EXE}',

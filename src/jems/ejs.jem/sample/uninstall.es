@@ -1,4 +1,6 @@
 /*
- *  Sample uninstall  script
+    Sample uninstall  script
  */
+
+print("UNINSTALL.ES")
 

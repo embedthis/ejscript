@@ -1,5 +1,5 @@
 /*
-    main.bit -- Sample Main Bit File
+    main.bit -- Main Bit File
  */
 
 Bit.load({

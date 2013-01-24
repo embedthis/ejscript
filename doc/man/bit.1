@@ -13,37 +13,39 @@ bit \- Build It! -- Utility to build and manage programs
 [\fI--endian [big|little]\fR]
 [\fI--file file.bit\fR]
 [\fI--force\fR]
-[\fI--gen [make|nmake|sh|vs|xcode]\fR]
 .RE
 .RS 4
+[\fI--gen [make|nmake|sh|vs|xcode|main|start]\fR]
 [\fI--import\fR]
 [\fI--keep\fR]
 [\fI--log logSpec\fR]
 [\fI--nocross\fR]
+.RE
+.RS 4
 [\fI--out path\fR]
 [\fI--platform os-arch\fR]
 [\fI--pre\fR]
-.RE
-.RS 4
 [\fI--prefix dir=path\fR]
 [\fI--profile [debug|release|...]\fR]
+.RE
+.RS 4
 [\fI--quiet\fR]
 [\fI--rebuild\fR]
 [\fI--reconfigure\fR]
-.RE
-.RS 4
 [\fI--release\fR]
 [\fI--rom\fR]
 [\fI--set [feature=value]\fR]
 [\fI--show\fR]
+.RE
+.RS 4
 [\fI--static\fR]
 [\fI--unicode\fR]
 [\fI--unset feature\fR]
-.RE
-.RS 4
 [\fI--version\fR]
 [\fI--verbose\fR]
 [\fI--with PACK[=PATH]\fR]
+.RE
+.RS 4
 [\fI--without PACK\fR]
 [targets|actions]
 .SH DESCRIPTION
@@ -334,14 +336,16 @@ Use the alternate named bit file instead of start.bit or main.bit.
 Override warnings and proceed with the operation.
 
 .TP
-\fB\--gen [make|nmake|sh|vs|xcode] \fR
-Generate project files for the current platform. This will generate project files under the 'projects' directory.
-The projects are based on the current configuration. If cross-generating projects, you will typically need to
+\fB\--gen [make|nmake|sh|vs|xcode|main|start] \fR
+Generate files. This option can be used to generate initial start.bit or main.bit files or IDE project and makefiles. 
+The --gen start, option can be used to create a stand-alone sample start.bit file. The --gen main, option
+can be used to create a sample main.bit file when starting a new product.  Project files are created under the 'projects'
+directory.  The projects are based on the current configuration. If cross-generating projects, you will typically need to
 also use -configure.
 
 .TP
 \fB\--import\fR
-Import the standard ibt configuration into the local source tree.
+Import the standard bit configuration bits directory into the local source tree.
 
 .TP
 \fB\--keep\fR
