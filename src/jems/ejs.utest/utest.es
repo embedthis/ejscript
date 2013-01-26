@@ -197,7 +197,9 @@ enumerable class Test {
         _cfg = _top.join('out')
         if (!_cfg.join('inc/bit.h').exists) {
             //  MOB - not accurate if multiple configurations exist
+print("TOP", _top)
             _cfg = _top.files(Config.OS + '-' + Config.CPU + '-*').sort()[0]
+print("_CFG", _cfg)
         }
         if (!_cfg) {
             throw 'Cannot locate configure files, run configure'
