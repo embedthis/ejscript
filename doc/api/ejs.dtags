@@ -787,6 +787,13 @@
     </member>
     <member kind="function">
       <type>EjsString *</type>
+      <name>ejsToString</name>
+      <anchorfile>group___ejs_string.html</anchorfile>
+      <anchor>gaebbc0b0666e25fddfbb39055ef427cea</anchor>
+      <arglist>(Ejs *ejs, EjsAny *obj)</arglist>
+    </member>
+    <member kind="function">
+      <type>EjsString *</type>
       <name>ejsToUpper</name>
       <anchorfile>group___ejs_string.html</anchorfile>
       <anchor>ga1554254812932883bd7c301661a4b624</anchor>
