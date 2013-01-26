@@ -235,8 +235,8 @@ PUBLIC EjsType *ejsFinalizeScriptType(Ejs *ejs, EjsName qname, int size, void *m
 }
 
 
-PUBLIC EjsType *ejsConfigureType(Ejs *ejs, EjsType *type, EjsModule *up, EjsType *baseType, int numTypeProp, int numInstanceProp, 
-    int64 attributes)
+PUBLIC EjsType *ejsConfigureType(Ejs *ejs, EjsType *type, EjsModule *up, EjsType *baseType, int numTypeProp, 
+        int numInstanceProp, int64 attributes)
 {
     type->module = up;
 

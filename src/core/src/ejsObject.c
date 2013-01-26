@@ -444,7 +444,7 @@ static EjsArray *obj_getOwnPropertyNames(Ejs *ejs, EjsObj *unused, int argc, Ejs
     obj = (EjsObj*) argv[0];
     includeBases = 0;
     excludeFunctions = 0;
-    if (argc > 0) {
+    if (argc > 1) {
         options = argv[1];
         if ((arg = ejsGetPropertyByName(ejs, options, EN("includeBases"))) != 0) {
             includeBases = (arg == ESV(true));

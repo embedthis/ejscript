@@ -196,10 +196,12 @@ PUBLIC int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
         /* Allow this - blend nothing */
         return 0;
     }
+#if FUTURE
     if (!ejsIsPot(ejs, src)) {
         ejsThrowArgError(ejs, "source is not an object");
         return -1;
     }
+#endif
     count = ejsGetLength(ejs, src);
     start = (flags & EJS_BLEND_SUBCLASSES) ? 0 : TYPE(src)->numInherited;
     deep = (flags & EJS_BLEND_DEEP) ? 1 : 0;
