@@ -97,14 +97,15 @@ static int initializeModule(Ejs *ejs, EjsModule *mp)
             nativeModule = ejsLookupNativeModule(ejs, ejsToMulti(ejs, mp->name));
             if (nativeModule == NULL) {
                 if (ejs->exception == 0) {
-                    ejsThrowIOError(ejs, "Cannot load or initialize the native module %@ in file \"%s\"", mp->name, mp->path);
+                    ejsThrowIOError(ejs, "Cannot load or initialize the native module %@ in file \"%s\"", 
+                        mp->name, mp->path);
                 }
                 return MPR_ERR_CANT_INITIALIZE;
             }
             if (!(ejs->flags & EJS_FLAG_NO_INIT)) {
                 if (nativeModule->checksum != mp->checksum) {
-                    ejsThrowIOError(ejs, "Module \"%s\" does not match native code (%d, %d)", mp->path, 
-                            nativeModule->checksum, mp->checksum);
+                    ejsThrowIOError(ejs, "Module \"%s\" XXX does not match native code (%d, %d)", mp->path, 
+                        nativeModule->checksum, mp->checksum);
                     return MPR_ERR_BAD_STATE;
                 }
             }
