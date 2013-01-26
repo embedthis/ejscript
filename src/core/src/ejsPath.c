@@ -1743,7 +1743,7 @@ PUBLIC EjsPath *ejsCreatePath(Ejs *ejs, EjsString *path)
     if ((fp = ejsCreateObj(ejs, ESV(Path), 0)) == 0) {
         return 0;
     }
-    pathConstructor(ejs, fp, 1, (EjsObj**) &path);
+    pathConstructor(ejs, fp, 1, (EjsObj**) (void*) &path);
     return fp;
 }
 

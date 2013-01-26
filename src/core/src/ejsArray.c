@@ -1658,7 +1658,7 @@ PUBLIC int ejsInsertItem(Ejs *ejs, EjsArray *ap, int index, EjsAny *item)
 
 PUBLIC EjsString *ejsJoinArray(Ejs *ejs, EjsArray *ap, EjsString *join)
 {
-    return joinArray(ejs, ap, 1, (EjsObj**) &join);
+    return joinArray(ejs, ap, 1, (EjsObj**) (void*) &join);
 }
 
 

@@ -920,7 +920,7 @@ int ejsSendEvent(Ejs *ejs, EjsObj *emitter, cchar *name, EjsAny *thisObj, EjsAny
 {
     EjsObj  **argv;
 
-    argv = (EjsObj**) &arg;
+    argv = (EjsObj**) (void*) &arg;
     return ejsSendEventv(ejs, emitter, name, thisObj, 1, argv);
 }
 

@@ -170,7 +170,7 @@ static EjsAny *invokeUriOperator(Ejs *ejs, EjsUri *lhs, int opcode,  EjsUri *rhs
         Binary operators
      */
     case EJS_OP_ADD:
-        return uri_join(ejs, lhs, 1, (EjsObj**) &rhs);
+        return uri_join(ejs, lhs, 1, (EjsObj**) (void*) &rhs);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
@@ -1129,7 +1129,7 @@ PUBLIC EjsUri *ejsCreateUri(Ejs *ejs, EjsString *path)
     if ((up = ejsCreateObj(ejs, ESV(Uri), 0)) == NULL) {
         return 0;
     }
-    uri_constructor(ejs, up, 1, (EjsObj**) &path);
+    uri_constructor(ejs, up, 1, (EjsObj**) (void*) &path);
     return up;
 }
 
