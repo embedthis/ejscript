@@ -179,8 +179,6 @@ Bit.load({
                         let s = bit.settings
                         trace('Test', 'ejs -V')
                         assert(Cmd.run([bit.prefixes.bin.join('ejs'), '-V']).trim() == s.version + '-' + s.buildNumber)
-                        trace('Test', 'bit -V')
-                        assert(Cmd.run([bit.prefixes.bin.join('bit'), '-V']).trim() == s.version + '-' + s.buildNumber)
                         uninstallPackage()
                         if (Config.OS == 'windows') App.sleep(1000)
                         if (existing = checkUninstalled()) {
