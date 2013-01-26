@@ -7,7 +7,7 @@ Version: ${settings.version}
 Release: ${settings.buildNumber}
 License: Dual GPL/commercial
 Group: Development/Other
-URL: http://ejscript.com
+URL: http://ejscript.org
 Distribution: Embedthis
 Vendor: Embedthis Software
 BuildRoot: ${dir.rpm}/BUILDROOT/${settings.product}-${settings.version}-${settings.buildNumber}.${platform.mappedCpu}

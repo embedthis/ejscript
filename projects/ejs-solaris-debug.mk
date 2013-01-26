@@ -42,9 +42,6 @@ all: prep \
         $(CONFIG)/bin/ejsmod \
         $(CONFIG)/bin/ejsrun \
         $(CONFIG)/bin/ejs.mod \
-        $(CONFIG)/bin/bit.es \
-        $(CONFIG)/bin/bit \
-        $(CONFIG)/bin/bits \
         $(CONFIG)/bin/ejs.unix.mod \
         $(CONFIG)/bin/jem.es \
         $(CONFIG)/bin/jem \
@@ -933,47 +930,6 @@ $(CONFIG)/bin/ejs.mod:  \
 	rm -f ejs.slots.h ;\
 		cd - >/dev/null 
 
-$(CONFIG)/bin/bit.es: 
-	rm -fr $(CONFIG)/bin/bit.es
-	cp -r src/jems/ejs.bit/bit.es $(CONFIG)/bin/bit.es
-
-$(CONFIG)/bin/bits: 
-	cd src/jems/ejs.bit >/dev/null ;\
-		rm -fr ../../../$(CONFIG)/bin/bits ;\
-	cp -r bits ../../../$(CONFIG)/bin ;\
-		cd - >/dev/null 
-
-$(CONFIG)/bin/ejs.zlib.mod:  \
-        $(CONFIG)/bin/ejsc \
-        $(CONFIG)/bin/ejs.mod
-	cd src/jems/ejs.zlib >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.zlib.mod --debug --optimize 9 *.es ;\
-		cd - >/dev/null 
-
-$(CONFIG)/obj/ejsZlib.o: \
-        src/jems/ejs.zlib/ejsZlib.c \
-        $(CONFIG)/inc/bit.h \
-        $(CONFIG)/inc/ejs.h \
-        $(CONFIG)/inc/zlib.h \
-        $(CONFIG)/inc/ejs.zlib.slots.h
-	$(CC) -c -o $(CONFIG)/obj/ejsZlib.o -fPIC $(LDFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/jems/ejs.zlib/ejsZlib.c
-
-$(CONFIG)/bin/libejs.zlib.so:  \
-        $(CONFIG)/bin/libejs.so \
-        $(CONFIG)/bin/ejs.mod \
-        $(CONFIG)/bin/ejs.zlib.mod \
-        $(CONFIG)/bin/libzlib.so \
-        $(CONFIG)/obj/ejsZlib.o
-	$(CC) -shared -o $(CONFIG)/bin/libejs.zlib.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsZlib.o -lzlib -lejs $(LIBS) -lhttp -lpcre -lmpr
-
-$(CONFIG)/bin/bit:  \
-        $(CONFIG)/bin/libejs.so \
-        $(CONFIG)/bin/bits \
-        $(CONFIG)/bin/bit.es \
-        $(CONFIG)/bin/libejs.zlib.so \
-        $(CONFIG)/obj/ejsrun.o
-	$(CC) -o $(CONFIG)/bin/bit $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(CONFIG)/obj/mprLib.o $(CONFIG)/obj/pcre.o $(CONFIG)/obj/httpLib.o $(CONFIG)/obj/ecAst.o $(CONFIG)/obj/ecCodeGen.o $(CONFIG)/obj/ecCompiler.o $(CONFIG)/obj/ecLex.o $(CONFIG)/obj/ecModuleWrite.o $(CONFIG)/obj/ecParser.o $(CONFIG)/obj/ecState.o $(CONFIG)/obj/dtoa.o $(CONFIG)/obj/ejsApp.o $(CONFIG)/obj/ejsArray.o $(CONFIG)/obj/ejsBlock.o $(CONFIG)/obj/ejsBoolean.o $(CONFIG)/obj/ejsByteArray.o $(CONFIG)/obj/ejsCache.o $(CONFIG)/obj/ejsCmd.o $(CONFIG)/obj/ejsConfig.o $(CONFIG)/obj/ejsDate.o $(CONFIG)/obj/ejsDebug.o $(CONFIG)/obj/ejsError.o $(CONFIG)/obj/ejsFile.o $(CONFIG)/obj/ejsFileSystem.o $(CONFIG)/obj/ejsFrame.o $(CONFIG)/obj/ejsFunction.o $(CONFIG)/obj/ejsGC.o $(CONFIG)/obj/ejsGlobal.o $(CONFIG)/obj/ejsHttp.o $(CONFIG)/obj/ejsIterator.o $(CONFIG)/obj/ejsJSON.o $(CONFIG)/obj/ejsLocalCache.o $(CONFIG)/obj/ejsMath.o $(CONFIG)/obj/ejsMemory.o $(CONFIG)/obj/ejsMprLog.o $(CONFIG)/obj/ejsNamespace.o $(CONFIG)/obj/ejsNull.o $(CONFIG)/obj/ejsNumber.o $(CONFIG)/obj/ejsObject.o $(CONFIG)/obj/ejsPath.o $(CONFIG)/obj/ejsPot.o $(CONFIG)/obj/ejsRegExp.o $(CONFIG)/obj/ejsSocket.o $(CONFIG)/obj/ejsString.o $(CONFIG)/obj/ejsSystem.o $(CONFIG)/obj/ejsTimer.o $(CONFIG)/obj/ejsType.o $(CONFIG)/obj/ejsUri.o $(CONFIG)/obj/ejsVoid.o $(CONFIG)/obj/ejsWebSocket.o $(CONFIG)/obj/ejsWorker.o $(CONFIG)/obj/ejsXML.o $(CONFIG)/obj/ejsXMLList.o $(CONFIG)/obj/ejsXMLLoader.o $(CONFIG)/obj/ejsByteCode.o $(CONFIG)/obj/ejsException.o $(CONFIG)/obj/ejsHelper.o $(CONFIG)/obj/ejsInterp.o $(CONFIG)/obj/ejsLoader.o $(CONFIG)/obj/ejsModule.o $(CONFIG)/obj/ejsScope.o $(CONFIG)/obj/ejsService.o $(CONFIG)/obj/zlib.o $(CONFIG)/obj/ejsZlib.o $(LIBS) -llxnet -lrt -lsocket -lpthread -lm -ldl $(LDFLAGS)
-
 $(CONFIG)/bin/ejs.unix.mod:  \
         $(CONFIG)/bin/ejsc \
         $(CONFIG)/bin/ejs.mod
@@ -1113,6 +1069,29 @@ $(CONFIG)/bin/ejs.template.mod:  \
 	cd src/jems/ejs.template >/dev/null ;\
 		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.template.mod --debug --optimize 9 TemplateParser.es ;\
 		cd - >/dev/null 
+
+$(CONFIG)/bin/ejs.zlib.mod:  \
+        $(CONFIG)/bin/ejsc \
+        $(CONFIG)/bin/ejs.mod
+	cd src/jems/ejs.zlib >/dev/null ;\
+		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.zlib.mod --debug --optimize 9 *.es ;\
+		cd - >/dev/null 
+
+$(CONFIG)/obj/ejsZlib.o: \
+        src/jems/ejs.zlib/ejsZlib.c \
+        $(CONFIG)/inc/bit.h \
+        $(CONFIG)/inc/ejs.h \
+        $(CONFIG)/inc/zlib.h \
+        $(CONFIG)/inc/ejs.zlib.slots.h
+	$(CC) -c -o $(CONFIG)/obj/ejsZlib.o -fPIC $(LDFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/jems/ejs.zlib/ejsZlib.c
+
+$(CONFIG)/bin/libejs.zlib.so:  \
+        $(CONFIG)/bin/libejs.so \
+        $(CONFIG)/bin/ejs.mod \
+        $(CONFIG)/bin/ejs.zlib.mod \
+        $(CONFIG)/bin/libzlib.so \
+        $(CONFIG)/obj/ejsZlib.o
+	$(CC) -shared -o $(CONFIG)/bin/libejs.zlib.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsZlib.o -lzlib -lejs $(LIBS) -lhttp -lpcre -lmpr
 
 $(CONFIG)/bin/ejs.tar.mod:  \
         $(CONFIG)/bin/ejsc \

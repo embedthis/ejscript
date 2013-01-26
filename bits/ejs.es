@@ -60,10 +60,9 @@ public function packageBinaryFiles(formats = ['tar', 'native']) {
     if (bit.platform.os != 'windows') {
         install(bit.dir.bin.join('*'), p.bin, {
             permissions: 0755, 
-            exclude: /bits|file-save|www|simple|sample/,
+            exclude: /file-save|www|simple|sample/,
         })
     }
-    install(bit.dir.bin.join('bits'), p.bin)
     install(bit.dir.bin.join('www'), p.bin.join('www'), {exclude: /tree-images/})
     install(bit.dir.inc.join('*.h'), p.inc)
     install(bit.dir.bin.join('ca.crt'), p.bin)
@@ -116,7 +115,6 @@ public function packageSourceFiles() {
     safeRemove(pkg)
     pkg.makeDir()
     install(['Makefile', 'start.bit', 'main.bit'], pkg)
-    install('bits', pkg)
     install('*.md', pkg, {fold: true, expand: true})
     install('configure', pkg, {permissions: 0755})
     install('src', pkg, {
@@ -187,7 +185,7 @@ public function packageComboFiles() {
         cat: true,
         filter: filter,
         /* Include deps/zlib */
-        exclude: /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|\/mpr|\/http|\/est|\/pcre|\/sqlite|ejs.debugger|samples|utils/,
+        exclude: /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|\/mpr|\/http|\/est|\/pcre|\/sqlite|ejs.debugger|samples|utils|ejsrun\.c/,
         header: '#define EJS_DEFINE_OPTABLE 1\n#include \"ejs.h\"',
         title: bit.settings.title + ' Library Source',
     })

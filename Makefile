@@ -1,6 +1,8 @@
 #
 #   Makefile - Makefile for Ejscript
 #
+#   This Makefile is for Unix/Linux and Cygwin. Use WinMake for windows.
+#
 #   You can use this Makefile and build via "make" with a pre-selected configuration. Alternatively,
 #	you can build using the "bit" tool for for a fully configurable build. If you wish to 
 #	cross-compile, you should use "bit".
@@ -34,6 +36,8 @@ else
 endif
     MAKE:= projects/windows.bat $(ARCH)
     EXT := nmake
+else    
+	ARCH:= $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/')
 endif
 
 all compile:

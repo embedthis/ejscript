@@ -16,7 +16,6 @@ Bit.load({
         'src/cmd/cmd.bit',
         'src/core/core.bit',
 
-        'src/jems/ejs.bit/bit.bit',
         'src/jems/ejs.unix/unix.bit',
         'src/jems/ejs.jem/jem.bit',
         'src/jems/ejs.db/db.bit',
@@ -48,6 +47,7 @@ Bit.load({
         company: 'Embedthis',
         version: '2.3.0',
         buildNumber: '1',
+        bit: '0.8.0',
         sync: [ 'bitos', 'est', 'http', 'mpr', 'pcre', 'sqlite', 'zlib' ],
         packs: [ 'bits/packs' ],
         /* Must build locally to build tools */
@@ -113,24 +113,17 @@ Bit.load({
                 tracing: true,
              */
         },
+
+        /*
+            Tailor the optimization for size|speed
+         */
+        tune: 'size',
     },
 
     usage: {
-        static: 'Build with static linking (true|false)',
         'http.pam':   'Enable Unix Pluggable Auth Module (true|false)',
         'mpr.logging':'Enable application logging (true|false)',
         'mpr.tracing':'Enable debug tracing (true|false)',
-    },
-
-    profiles: {
-        debug: { settings: { 
-            debug: true, 
-            assert: true,
-        }, },
-        release: { settings: { 
-            debug: false, 
-            assert: false,
-        } },
     },
 
     targets: {
@@ -205,6 +198,7 @@ Bit.load({
         est: {},
         matrixssl: {},
         openssl: {},
+        mocana: {},
     },
 
 })

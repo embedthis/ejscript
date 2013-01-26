@@ -276,21 +276,6 @@ if ! diff ejs.slots.h ../../${CONFIG}/inc/ejs.slots.h >/dev/null; then cp ejs.sl
 rm -f ejs.slots.h ;\
 cd - >/dev/null 
 
-rm -rf ${CONFIG}/bin/bit.es
-cp -r src/jems/ejs.bit/bit.es ${CONFIG}/bin/bit.es
-
-cd src/jems/ejs.bit >/dev/null ;\
-rm -fr ../../../${CONFIG}/bin/bits ;\
-cp -r bits ../../../${CONFIG}/bin ;\
-cd - >/dev/null 
-
-#  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.zlib.mod
-"${CC}" -c -Fo${CONFIG}/obj/ejsZlib.obj -Fd${CONFIG}/obj/ejsZlib.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/jems/ejs.zlib/ejsZlib.c
-
-"${LD}" -dll -out:${CONFIG}/bin/libejs.zlib.dll -entry:_DllMainCRTStartup@12 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsZlib.obj libzlib.lib libejs.lib ${LIBS} libhttp.lib libpcre.lib libmpr.lib
-
-"${LD}" -out:${CONFIG}/bin/bit.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsrun.obj ${CONFIG}/obj/mprLib.obj ${CONFIG}/obj/pcre.obj ${CONFIG}/obj/httpLib.obj ${CONFIG}/obj/ecAst.obj ${CONFIG}/obj/ecCodeGen.obj ${CONFIG}/obj/ecCompiler.obj ${CONFIG}/obj/ecLex.obj ${CONFIG}/obj/ecModuleWrite.obj ${CONFIG}/obj/ecParser.obj ${CONFIG}/obj/ecState.obj ${CONFIG}/obj/dtoa.obj ${CONFIG}/obj/ejsApp.obj ${CONFIG}/obj/ejsArray.obj ${CONFIG}/obj/ejsBlock.obj ${CONFIG}/obj/ejsBoolean.obj ${CONFIG}/obj/ejsByteArray.obj ${CONFIG}/obj/ejsCache.obj ${CONFIG}/obj/ejsCmd.obj ${CONFIG}/obj/ejsConfig.obj ${CONFIG}/obj/ejsDate.obj ${CONFIG}/obj/ejsDebug.obj ${CONFIG}/obj/ejsError.obj ${CONFIG}/obj/ejsFile.obj ${CONFIG}/obj/ejsFileSystem.obj ${CONFIG}/obj/ejsFrame.obj ${CONFIG}/obj/ejsFunction.obj ${CONFIG}/obj/ejsGC.obj ${CONFIG}/obj/ejsGlobal.obj ${CONFIG}/obj/ejsHttp.obj ${CONFIG}/obj/ejsIterator.obj ${CONFIG}/obj/ejsJSON.obj ${CONFIG}/obj/ejsLocalCache.obj ${CONFIG}/obj/ejsMath.obj ${CONFIG}/obj/ejsMemory.obj ${CONFIG}/obj/ejsMprLog.obj ${CONFIG}/obj/ejsNamespace.obj ${CONFIG}/obj/ejsNull.obj ${CONFIG}/obj/ejsNumber.obj ${CONFIG}/obj/ejsObject.obj ${CONFIG}/obj/ejsPath.obj ${CONFIG}/obj/ejsPot.obj ${CONFIG}/obj/ejsRegExp.obj ${CONFIG}/obj/ejsSocket.obj ${CONFIG}/obj/ejsString.obj ${CONFIG}/obj/ejsSystem.obj ${CONFIG}/obj/ejsTimer.obj ${CONFIG}/obj/ejsType.obj ${CONFIG}/obj/ejsUri.obj ${CONFIG}/obj/ejsVoid.obj ${CONFIG}/obj/ejsWebSocket.obj ${CONFIG}/obj/ejsWorker.obj ${CONFIG}/obj/ejsXML.obj ${CONFIG}/obj/ejsXMLList.obj ${CONFIG}/obj/ejsXMLLoader.obj ${CONFIG}/obj/ejsByteCode.obj ${CONFIG}/obj/ejsException.obj ${CONFIG}/obj/ejsHelper.obj ${CONFIG}/obj/ejsInterp.obj ${CONFIG}/obj/ejsLoader.obj ${CONFIG}/obj/ejsModule.obj ${CONFIG}/obj/ejsScope.obj ${CONFIG}/obj/ejsService.obj ${CONFIG}/obj/zlib.obj ${CONFIG}/obj/ejsZlib.obj ${LIBS}
-
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.unix.mod
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/jem.es
 "${LD}" -out:${CONFIG}/bin/jem.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsrun.obj libejs.lib ${LIBS} libhttp.lib libpcre.lib libmpr.lib
@@ -332,6 +317,11 @@ cp -r www ../../../${CONFIG}/bin ;\
 cd - >/dev/null 
 
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.template.mod
+#  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.zlib.mod
+"${CC}" -c -Fo${CONFIG}/obj/ejsZlib.obj -Fd${CONFIG}/obj/ejsZlib.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/jems/ejs.zlib/ejsZlib.c
+
+"${LD}" -dll -out:${CONFIG}/bin/libejs.zlib.dll -entry:_DllMainCRTStartup@12 ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsZlib.obj libzlib.lib libejs.lib ${LIBS} libhttp.lib libpcre.lib libmpr.lib
+
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/ejs.tar.mod
 #  Omit build script /Users/mob/git/ejs/windows-x86-debug/bin/mvc.es
 "${LD}" -out:${CONFIG}/bin/mvc.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/ejsrun.obj libejs.lib ${LIBS} libhttp.lib libpcre.lib libmpr.lib

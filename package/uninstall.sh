@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#	uninstall: Esjcript uninstall script
+#	uninstall: Ejscript uninstall script
 #
 #	Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
 #
