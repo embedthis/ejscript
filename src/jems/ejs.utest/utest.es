@@ -190,7 +190,7 @@ enumerable class Test {
         workerImage = new Worker
         program = Path(App.args[0]).basename
         if ((path = searchUp("configure")) == null) {
-            throw "Can't find configure"
+            throw "Cannot find configure"
         }
         _top = path.dirname.absolute
 
@@ -200,7 +200,7 @@ enumerable class Test {
             _cfg = _top.files(Config.OS + '-' + Config.CPU + '-*').sort()[0]
         }
         if (!_cfg) {
-            throw 'Can\'t locate configure files, run configure'
+            throw 'Cannot locate configure files, run configure'
         }
         parseBuildConfig(_cfg.join('inc/bit.h'))
         _bin = _lib = _cfg.join('bin')
@@ -255,7 +255,7 @@ enumerable class Test {
         }
         try {
             if (!dir.exists) {
-                error("Can't read directory: " + dir)
+                error("Cannot read directory: " + dir)
             }
             for each (file in ls(dir)) {
                 if (finish) { 
