@@ -11,6 +11,7 @@ module ejs.db.sqlite {
         @spec ejs
         @stabilitiy prototype
      */
+    # Config.SQLITE
     class Sqlite {
 
         /*
