@@ -53,7 +53,7 @@ public function packageBinaryFiles(formats = ['tar', 'native']) {
         install('package/linkup', p.bin, {permissions: 0755})
     }
     install(bit.dir.bin + '/*', p.bin, {
-        include: /bit|ejs|ejsc|ejsman|ejspage|http|jem|mvc|sqlite|utest|\.dll/,
+        include: /ejs|ejsc|ejsman|ejspage|http|jem|mvc|sqlite|utest|\.dll/,
         exclude: /\.pdb|\.exp|\.lib|\.def|\.suo|\.old/,
         permissions: 0755, 
     })
@@ -231,13 +231,6 @@ public function installBinary() {
         throw 'Must run as root. Use \"sudo bit install\"'
     }
     packageBinaryFiles(null)
-    /* Preserve bit */
-    let path = App.exePath
-    if (path.same(bit.prefixes.bin.join('bit'))) {
-        active = path.replaceExt('old')
-        active.remove()
-        path.rename(active)
-    }
     package(bit.dir.pkg.join('bin'), 'install')
     if (Config.OS != 'windows') {
         createLinks()                                                                                          
@@ -285,7 +278,7 @@ public function createLinks() {
     let log = []
     let localbin = Path('/usr/local/bin')
     if (localbin.exists) {
-        let programs = ['bit', 'ejs', 'ejsc', 'ejsmod', 'ejsman', 'http', 'jem', 'mvc', 'sqlite', 'utest' ]
+        let programs = ['ejs', 'ejsc', 'ejsmod', 'ejsman', 'http', 'jem', 'mvc', 'sqlite', 'utest' ]
         let bin = bit.prefixes.bin
         let target: Path
         for each (program in programs) {
