@@ -57,8 +57,8 @@
     #define unlink      _unlink
     #define write       _write
     extern void sleep(int secs);
-    extern int _getpid();
-    extern int _getch();
+    // extern int _getpid();
+    // extern int _getch();
 #endif
 #endif /* WINMAP_H */
 
