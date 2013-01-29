@@ -41,30 +41,38 @@ else
 endif
 
 all compile:
-	$(MAKE) -f projects/$(NAME)-$(OS)-$(PROFILE).$(EXT) $@
-	@echo ; echo 'You can now use Ejscript or use "bit" to customize and re-build Ejscript, via:'
-	@echo ; echo "   " $(OS)-*-debug/bin/bit "configure build" ; echo
-	@echo "  or for a release build:" ; echo ; echo "   " $(OS)-*-debug/bin/bit "--release configure build" ; echo
+	$(MAKE) --no-print-directory -f projects/$(NAME)-$(OS)-$(PROFILE).$(EXT) $@
+	@echo ; echo 'You can now install via "make install"'
 
-clean clobber:
-	$(MAKE) -f projects/$(NAME)-$(OS)-$(PROFILE).$(EXT) $@
-
-#
-#   Convenience targets when building with Bit
-#
-build configure generate test package:
-	@bit $@
-
-#
-#   Complete release rebuild using bit
-#
-rebuild:
-	ku rm -fr $(OS)-*-debug -fr $(OS)-*-release
-	$(MAKE) -f projects/$(NAME)-$(OS)-$(PROFILE).$(EXT)
-	$(OS)-*-debug/bin/bit --release configure build
-	rm -fr $(OS)-*-debug
-	bit install
+clean clobber install uninstall run:
+	$(MAKE) --no-print-directory -f projects/$(NAME)-$(OS)-$(PROFILE).$(EXT) $@
 
 version:
-	@bit -q version
+	@$(MAKE) --no-print-directory -f projects/$(NAME)-$(OS)-$(PROFILE).$(EXT) $@
 
+help:
+	@echo '' >&2
+	@echo 'With make, the default configuration can be modified by setting make' >&2
+	@echo 'variables. Set to 0 to disable and 1 to enable:' >&2
+	@echo '' >&2
+	@echo '      PROFILE            # Select default or static for static linking'
+	@echo '      BIT_MPR_LOGGING    # Enable application logging'
+	@echo '      BIT_MPR_TRACING    # Enable debug tracing'
+	@echo '      BIT_PACK_EST       # Enable the EST SSL stack'
+	@echo '      BIT_PACK_MOCANA    # Enable the Mocana NanoSSL stack'
+	@echo '      BIT_PACK_MATRIXSSL # Enable the MatrixSSL SSL stack'
+	@echo '      BIT_PACK_OPENSSL   # Enable the OpenSSL SSL stack'
+	@echo '      BIT_PACK_SQLITE    # Enable the SQLite database'
+	@echo ''
+	@echo 'For example, to disable logging:' >&2
+	@echo '' >&2
+	@echo '      make BIT_MPR_LOGGING=0' >&2
+	@echo '' >&2
+	@echo 'Other make variables include:' >&2
+	@echo '' >&2
+	@echo '      ARCH, CC, CFLAGS, DFLAGS, IFLAGS, LD, LDFLAGS, LIBPATHS, LIBS, OS' >&2
+	@echo '' >&2
+	@echo 'Alternatively, for faster, easier and fully configurable building, install' >&2
+	@echo 'bit from http://embedthis.com/downloads/bit/download.ejs and re-run'>&2
+	@echo 'configure and then build with bit.' >&2
+	@echo '' >&2

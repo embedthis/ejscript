@@ -2,24 +2,20 @@
 #
 #   configure -- Configure for building
 #
-MIN_BIT=0.8.0
+#   Configure will invoke bit configure to prepare for building. If bit is not installed,
+#   configuration is not required. Variables can be passed to make to modify the build.
+#
 NAME=ejs
 OS=`uname | sed 's/CYGWIN.*/windows/;s/Darwin/macosx/' | tr '[A-Z]' '[a-z]'`
 PROFILE=debug
 EXT=mk
+MIN_BIT=0.8.0
 
 if ! type bit >/dev/null 2>&1 ; then
-    echo "" >&2
-    echo "The \"bit\" tool is not installed. You can continue with a default build" >&2
-    echo "by using \"make\". The default configuration can be tailored by setting" >&2
-    echo "CFLAGS for the values in projects/${NAME}-${OS}-${PROFILE}-bit.h when running" >&2
-    echo "make. For example, to disable CGI:" >&2
-    echo "" >&2
-    echo "	CFLAGS=-DBIT_PACK_CGI=0 make" >&2
-    echo "" >&2
-    echo "Alternatively, for faster, easier building, install the \"bit\" tool from" >&2
-    echo "  http://embedthis.com/downloads/bit/download.ejs" >&2
-    echo "" >&2
+    echo '' >&2
+    echo "To configure ${NAME}, the \"bit\" tool is required. You can continue with a" >&2
+    echo 'default build by using make.' >&2
+    make help
     exit 0
 fi
 

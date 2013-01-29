@@ -1,1 +1,1 @@
-projects\windows x86 -f projects/ejs-windows-default.nmake all
+projects\windows -f projects/ejs-windows-default.nmake all
