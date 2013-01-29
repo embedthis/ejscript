@@ -24,7 +24,7 @@
 
 NAME    := ejs
 OS      := $(shell uname | sed 's/CYGWIN.*/windows/;s/Darwin/macosx/' | tr '[A-Z]' '[a-z]')
-MAKE    := $(shell if which gmake >/dev/null 2>&1; then echo gmake ; else echo make ; fi)
+MAKE    := $(shell if which gmake >/dev/null 2>&1; then echo gmake ; else echo make ; fi) --no-print-directory
 EXT     := mk
 PROFILE := debug
 
@@ -41,14 +41,14 @@ else
 endif
 
 all compile:
-	$(MAKE) --no-print-directory -f projects/$(NAME)-$(OS)-$(PROFILE).$(EXT) $@
+	$(MAKE) -f projects/$(NAME)-$(OS)-$(PROFILE).$(EXT) $@
 	@echo ; echo 'You can now install via "make install"'
 
 clean clobber install uninstall run:
-	$(MAKE) --no-print-directory -f projects/$(NAME)-$(OS)-$(PROFILE).$(EXT) $@
+	$(MAKE) -f projects/$(NAME)-$(OS)-$(PROFILE).$(EXT) $@
 
 version:
-	@$(MAKE) --no-print-directory -f projects/$(NAME)-$(OS)-$(PROFILE).$(EXT) $@
+	@$(MAKE) -f projects/$(NAME)-$(OS)-$(PROFILE).$(EXT) $@
 
 help:
 	@echo '' >&2
