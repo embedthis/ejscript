@@ -25,8 +25,9 @@
 NAME    := ejs
 OS      := $(shell uname | sed 's/CYGWIN.*/windows/;s/Darwin/macosx/' | tr '[A-Z]' '[a-z]')
 MAKE    := $(shell if which gmake >/dev/null 2>&1; then echo gmake ; else echo make ; fi) --no-print-directory
+PROFILE := default
+DEBUG	:= debug
 EXT     := mk
-PROFILE := debug
 
 ifeq ($(OS),windows)
 ifeq ($(PROCESSOR_ARCHITEW6432),AMD64)

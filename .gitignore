@@ -176,3 +176,5 @@ projects/*macosx-full.xcodeproj
 *-mine*
 TempWmic*
 projects/ipch
+/*-*-*/
+.flags

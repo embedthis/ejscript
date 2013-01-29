@@ -127,69 +127,11 @@ Bit.load({
     },
 
     targets: {
-        install: {
-            depends: ['build'],
-            action: "installBinary()",
-        },
-
-        package: {
-            enable: "'${OS}' == 'linux' || '${OS}' == 'macosx' || '${OS}' == 'windows'",
-            depends: ['packageBinary', 'packageSource', 'packageCombo'],
-        },
-
-        packageBinary: {
-            depends: ['build'],
-            action: "packageBinaryFiles()",
-        },
-
-        packageSource: {
-            depends: ['build'],
-            action: "packageSourceFiles()",
-        },
-
-        packageCombo: {
-            depends: ['build'],
-            action: "packageComboFiles()",
-        },
-
-        uninstall: {
-            action: "uninstallBinary()"
-        },
-
-        testPackage: {
-            type: 'test',
-            action: "
-                let package = packageName()
-                if (!package || !package.exists || bit.settings.depth < 2) {
-                    trace('Test', 'testPackage -- SKIPPED (Runs at depth 2 on windows or macosx)')
-                } else {
-                    if (Config.OS == 'macosx' && App.uid != 0) {
-                        trace('Test', 'testPackage -- SKIPPED (Must run as root)')
-                    } else {
-                        trace('Test', 'testPackage')
-                        if (bit.prefixes.bin.join('uninstall').exists) {
-                            trace('Test', 'Cleanup prior to installation')
-                            uninstallPackage()
-                            checkUninstalled()
-                        }
-                        installPackage()
-                        if (missing = checkInstalled()) {
-                            trace('Test', 'Install is missing files: ' + missing)
-                        }
-                        let s = bit.settings
-                        trace('Test', 'ejs -V')
-                        assert(Cmd.run([bit.prefixes.bin.join('ejs'), '-V']).trim() == s.version + '-' + s.buildNumber)
-                        uninstallPackage()
-                        if (Config.OS == 'windows') App.sleep(1000)
-                        if (existing = checkUninstalled()) {
-                            trace('Warning', 'The uninstall for testPackage was not clean: ' + existing)
-                        } else {
-                            trace('Test', 'Uninstall is clean')
-                        }
-                    }
-                }
-            ",
-        },
+        /*
+            See src/core/core.bit for building the core library
+            See src/cmd/cmd.bit for building the language commands
+            See package/package.bit for the install/package targets
+         */
     },
 
     packs: {
