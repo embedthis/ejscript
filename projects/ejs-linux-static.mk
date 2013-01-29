@@ -12,28 +12,29 @@ CC              ?= /usr/bin/gcc
 LD              ?= /usr/bin/ld
 CONFIG          ?= $(OS)-$(ARCH)-$(PROFILE)
 
-CFLAGS          += -fPIC -Os  -w
-DFLAGS          += -D_REENTRANT -DPIC$(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS)))
+CFLAGS          += -fPIC   -w
+DFLAGS          += -D_REENTRANT -DPIC $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS)))
 IFLAGS          += -I$(CONFIG)/inc
 LDFLAGS         += '-Wl,--enable-new-dtags' '-Wl,-rpath,$$ORIGIN/' '-Wl,-rpath,$$ORIGIN/../bin' '-rdynamic'
 LIBPATHS        += -L$(CONFIG)/bin
 LIBS            += -lpthread -lm -lrt -ldl
 
-DEBUG           ?= release
+DEBUG           ?= debug
 CFLAGS-debug    := -g
-CFLAGS-release  := -O2
 DFLAGS-debug    := -DBIT_DEBUG
-DFLAGS-release  := 
 LDFLAGS-debug   := -g
+DFLAGS-release  := 
+CFLAGS-release  := -O2
 LDFLAGS-release := 
-CFLAGS          += $(CFLAGS-$(PROFILE))
-DFLAGS          += $(DFLAGS-$(PROFILE))
-LDFLAGS         += $(LDFLAGS-$(PROFILE))
+CFLAGS          += $(CFLAGS-$(DEBUG))
+DFLAGS          += $(DFLAGS-$(DEBUG))
+LDFLAGS         += $(LDFLAGS-$(DEBUG))
 
 all compile: prep \
         $(CONFIG)/bin/libmpr.a \
         $(CONFIG)/bin/libmprssl.a \
         $(CONFIG)/bin/ejsman \
+        $(CONFIG)/bin/makerom \
         $(CONFIG)/bin/libest.a \
         $(CONFIG)/bin/ca.crt \
         $(CONFIG)/bin/libpcre.a \
@@ -88,6 +89,7 @@ clean:
 	rm -rf $(CONFIG)/bin/libmpr.a
 	rm -rf $(CONFIG)/bin/libmprssl.a
 	rm -rf $(CONFIG)/bin/ejsman
+	rm -rf $(CONFIG)/bin/makerom
 	rm -rf $(CONFIG)/bin/libest.a
 	rm -rf $(CONFIG)/bin/ca.crt
 	rm -rf $(CONFIG)/bin/libpcre.a
@@ -239,7 +241,7 @@ $(CONFIG)/obj/estLib.o: \
         src/deps/est/estLib.c \
         $(CONFIG)/inc/bit.h \
         $(CONFIG)/inc/est.h
-	$(CC) -c -o $(CONFIG)/obj/estLib.o -fPIC -Os $(DFLAGS) -I$(CONFIG)/inc src/deps/est/estLib.c
+	$(CC) -c -o $(CONFIG)/obj/estLib.o -fPIC $(DFLAGS) -I$(CONFIG)/inc src/deps/est/estLib.c
 
 $(CONFIG)/bin/libest.a:  \
         $(CONFIG)/inc/est.h \
@@ -270,6 +272,17 @@ $(CONFIG)/bin/ejsman:  \
         $(CONFIG)/obj/manager.o
 	$(CC) -o $(CONFIG)/bin/ejsman $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o -lmpr $(LIBS) -lmpr -lpthread -lm -lrt -ldl $(LDFLAGS)
 
+$(CONFIG)/obj/makerom.o: \
+        src/deps/mpr/makerom.c \
+        $(CONFIG)/inc/bit.h \
+        $(CONFIG)/inc/mpr.h
+	$(CC) -c -o $(CONFIG)/obj/makerom.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/mpr/makerom.c
+
+$(CONFIG)/bin/makerom:  \
+        $(CONFIG)/bin/libmpr.a \
+        $(CONFIG)/obj/makerom.o
+	$(CC) -o $(CONFIG)/bin/makerom $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o -lmpr $(LIBS) -lmpr -lpthread -lm -lrt -ldl $(LDFLAGS)
+
 $(CONFIG)/bin/ca.crt: 
 	rm -fr $(CONFIG)/bin/ca.crt
 	cp -r src/deps/est/ca.crt $(CONFIG)/bin/ca.crt
@@ -299,8 +312,7 @@ $(CONFIG)/inc/http.h:  \
 $(CONFIG)/obj/httpLib.o: \
         src/deps/http/httpLib.c \
         $(CONFIG)/inc/bit.h \
-        $(CONFIG)/inc/http.h \
-        $(CONFIG)/inc/pcre.h
+        $(CONFIG)/inc/http.h
 	$(CC) -c -o $(CONFIG)/obj/httpLib.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/http/httpLib.c
 
 $(CONFIG)/bin/libhttp.a:  \
@@ -334,7 +346,7 @@ $(CONFIG)/obj/sqlite3.o: \
         src/deps/sqlite/sqlite3.c \
         $(CONFIG)/inc/bit.h \
         $(CONFIG)/inc/sqlite3.h
-	$(CC) -c -o $(CONFIG)/obj/sqlite3.o -fPIC -Os -w $(DFLAGS) -I$(CONFIG)/inc src/deps/sqlite/sqlite3.c
+	$(CC) -c -o $(CONFIG)/obj/sqlite3.o -fPIC -w $(DFLAGS) -I$(CONFIG)/inc src/deps/sqlite/sqlite3.c
 
 $(CONFIG)/bin/libsqlite3.a:  \
         $(CONFIG)/inc/sqlite3.h \
@@ -933,9 +945,9 @@ $(CONFIG)/bin/ejs.mod:  \
         $(CONFIG)/bin/ejsmod
 	cd src/core >/dev/null ;\
 		../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.mod  --optimize 9 --bind --require null *.es  ;\
-	../../$(CONFIG)/bin/ejsmod --require null --cslots ../../$(CONFIG)/bin/ejs.mod ;\
-	if ! diff ejs.slots.h ../../$(CONFIG)/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ../../$(CONFIG)/inc; fi ;\
-	rm -f ejs.slots.h ;\
+		../../$(CONFIG)/bin/ejsmod --require null --cslots ../../$(CONFIG)/bin/ejs.mod ;\
+		if ! diff ejs.slots.h ../../$(CONFIG)/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ../../$(CONFIG)/inc; fi ;\
+		rm -f ejs.slots.h ;\
 		cd - >/dev/null 
 
 $(CONFIG)/bin/ejs.unix.mod:  \
@@ -1009,9 +1021,9 @@ $(CONFIG)/bin/ejs.web.mod:  \
         $(CONFIG)/bin/ejs.mod
 	cd src/jems/ejs.web >/dev/null ;\
 		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.web.mod  --optimize 9 *.es ;\
-	../../../$(CONFIG)/bin/ejsmod --cslots ../../../$(CONFIG)/bin/ejs.web.mod ;\
-	if ! diff ejs.web.slots.h ../../../$(CONFIG)/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../../$(CONFIG)/inc; fi ;\
-	rm -f ejs.web.slots.h ;\
+		../../../$(CONFIG)/bin/ejsmod --cslots ../../../$(CONFIG)/bin/ejs.web.mod ;\
+		if ! diff ejs.web.slots.h ../../../$(CONFIG)/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../../$(CONFIG)/inc; fi ;\
+		rm -f ejs.web.slots.h ;\
 		cd - >/dev/null 
 
 $(CONFIG)/inc/ejsWeb.h:  \
@@ -1068,7 +1080,7 @@ $(CONFIG)/bin/libejs.web.a:  \
 $(CONFIG)/bin/www: 
 	cd src/jems/ejs.web >/dev/null ;\
 		rm -fr ../../../$(CONFIG)/bin/www ;\
-	cp -r www ../../../$(CONFIG)/bin ;\
+		cp -r www ../../../$(CONFIG)/bin ;\
 		cd - >/dev/null 
 
 $(CONFIG)/bin/ejs.template.mod:  \

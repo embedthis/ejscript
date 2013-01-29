@@ -12,10 +12,10 @@ OS="linux"
 CONFIG="${OS}-${ARCH}-${PROFILE}"
 CC="/usr/bin/gcc"
 LD="/usr/bin/ld"
-CFLAGS="-fPIC -Os  -w"
-DFLAGS="-D_REENTRANT -DPIC"
+CFLAGS="-fPIC   -w"
+DFLAGS="-D_REENTRANT -DPIC -DBIT_DEBUG"
 IFLAGS="-I${CONFIG}/inc"
-LDFLAGS="-Wl,--enable-new-dtags -Wl,-rpath,\$ORIGIN/ -Wl,-rpath,\$ORIGIN/../bin -rdynamic"
+LDFLAGS="-Wl,--enable-new-dtags -Wl,-rpath,\$ORIGIN/ -Wl,-rpath,\$ORIGIN/../bin -rdynamic -g"
 LIBPATHS="-L${CONFIG}/bin"
 LIBS="-lpthread -lm -lrt -ldl"
 
@@ -40,7 +40,7 @@ ${CC} -c -o ${CONFIG}/obj/mprLib.o ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/
 rm -rf ${CONFIG}/inc/est.h
 cp -r src/deps/est/est.h ${CONFIG}/inc/est.h
 
-${CC} -c -o ${CONFIG}/obj/estLib.o -fPIC -Os ${DFLAGS} -I${CONFIG}/inc src/deps/est/estLib.c
+${CC} -c -o ${CONFIG}/obj/estLib.o -fPIC ${DFLAGS} -I${CONFIG}/inc src/deps/est/estLib.c
 
 /usr/bin/ar -cr ${CONFIG}/bin/libest.a ${CONFIG}/obj/estLib.o
 
@@ -51,6 +51,10 @@ ${CC} -c -o ${CONFIG}/obj/mprSsl.o ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/
 ${CC} -c -o ${CONFIG}/obj/manager.o ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/mpr/manager.c
 
 ${CC} -o ${CONFIG}/bin/ejsman ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/manager.o -lmpr ${LIBS} -lmpr -lpthread -lm -lrt -ldl ${LDFLAGS}
+
+${CC} -c -o ${CONFIG}/obj/makerom.o ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/mpr/makerom.c
+
+${CC} -o ${CONFIG}/bin/makerom ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/makerom.o -lmpr ${LIBS} -lmpr -lpthread -lm -lrt -ldl ${LDFLAGS}
 
 rm -rf ${CONFIG}/bin/ca.crt
 cp -r src/deps/est/ca.crt ${CONFIG}/bin/ca.crt
@@ -79,7 +83,7 @@ cp -r src/deps/http/http-ca.crt ${CONFIG}/bin/http-ca.crt
 rm -rf ${CONFIG}/inc/sqlite3.h
 cp -r src/deps/sqlite/sqlite3.h ${CONFIG}/inc/sqlite3.h
 
-${CC} -c -o ${CONFIG}/obj/sqlite3.o -fPIC -Os ${DFLAGS} -I${CONFIG}/inc src/deps/sqlite/sqlite3.c
+${CC} -c -o ${CONFIG}/obj/sqlite3.o -fPIC ${DFLAGS} -I${CONFIG}/inc src/deps/sqlite/sqlite3.c
 
 /usr/bin/ar -cr ${CONFIG}/bin/libsqlite3.a ${CONFIG}/obj/sqlite3.o
 

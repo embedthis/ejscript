@@ -16,10 +16,10 @@ OS="windows"
 CONFIG="${OS}-${ARCH}-${PROFILE}"
 CC="cl.exe"
 LD="link.exe"
-CFLAGS="-nologo -GR- -W3 -O2 -MD -w"
-DFLAGS="-D_REENTRANT -D_MT"
+CFLAGS="-nologo -GR- -W3 -Zi -Od -MDd -w"
+DFLAGS="-D_REENTRANT -D_MT -DBIT_DEBUG"
 IFLAGS="-I${CONFIG}/inc"
-LDFLAGS="-nologo -nodefaultlib -incremental:no -machine:x86"
+LDFLAGS="-nologo -nodefaultlib -incremental:no -debug -machine:x86"
 LIBPATHS="-libpath:${CONFIG}/bin"
 LIBS="ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.lib msvcrt.lib shell32.lib"
 
@@ -55,6 +55,10 @@ cp -r src/deps/est/est.h ${CONFIG}/inc/est.h
 "${CC}" -c -Fo${CONFIG}/obj/manager.obj -Fd${CONFIG}/obj/manager.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/mpr/manager.c
 
 "${LD}" -out:${CONFIG}/bin/ejsman.exe -entry:WinMainCRTStartup -subsystem:Windows ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/manager.obj libmpr.lib ${LIBS}
+
+"${CC}" -c -Fo${CONFIG}/obj/makerom.obj -Fd${CONFIG}/obj/makerom.pdb ${CFLAGS} ${DFLAGS} -I${CONFIG}/inc src/deps/mpr/makerom.c
+
+"${LD}" -out:${CONFIG}/bin/makerom.exe -entry:mainCRTStartup -subsystem:console ${LDFLAGS} ${LIBPATHS} ${CONFIG}/obj/makerom.obj libmpr.lib ${LIBS}
 
 rm -rf ${CONFIG}/bin/ca.crt
 cp -r src/deps/est/ca.crt ${CONFIG}/bin/ca.crt
