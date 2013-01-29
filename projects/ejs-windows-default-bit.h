@@ -144,6 +144,9 @@
 #ifndef BIT_UBIN_PREFIX
     #define BIT_UBIN_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/bin"
 #endif
+#ifndef BIT_MAN_PREFIX
+    #define BIT_MAN_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/man"
+#endif
 
 /* Suffixes */
 #ifndef BIT_EXE

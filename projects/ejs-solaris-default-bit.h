@@ -168,6 +168,9 @@
 #ifndef BIT_UBIN_PREFIX
     #define BIT_UBIN_PREFIX "/usr/local/bin"
 #endif
+#ifndef BIT_MAN_PREFIX
+    #define BIT_MAN_PREFIX "/usr/local/share/man/man1"
+#endif
 
 /* Suffixes */
 #ifndef BIT_EXE
@@ -188,7 +191,7 @@
 
 /* Profile */
 #ifndef BIT_CONFIG_CMD
-    #define BIT_CONFIG_CMD "bit -d -q -platform solaris-x86-default -without default -configure . -gen sh,make"
+    #define BIT_CONFIG_CMD "bit -d -q -platform solaris-x86-default -without default -configure . -gen make"
 #endif
 #ifndef BIT_EJS_PRODUCT
     #define BIT_EJS_PRODUCT 1

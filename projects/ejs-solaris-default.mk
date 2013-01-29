@@ -30,6 +30,10 @@ CFLAGS          += $(CFLAGS-$(DEBUG))
 DFLAGS          += $(DFLAGS-$(DEBUG))
 LDFLAGS         += $(LDFLAGS-$(DEBUG))
 
+ifeq ($(wildcard $(CONFIG)/inc/.prefixes*),$(CONFIG)/inc/.prefixes)
+    include $(CONFIG)/inc/.prefixes
+endif
+
 all compile: prep \
         $(CONFIG)/bin/libmpr.so \
         $(CONFIG)/bin/libmprssl.so \
@@ -283,7 +287,7 @@ $(CONFIG)/bin/makerom:  \
         $(CONFIG)/obj/makerom.o
 	$(CC) -o $(CONFIG)/bin/makerom $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o -lmpr $(LIBS) -lmpr -llxnet -lrt -lsocket -lpthread -lm -ldl $(LDFLAGS)
 
-$(CONFIG)/bin/ca.crt: 
+$(CONFIG)/bin/ca.crt: src/deps/est/ca.crt
 	rm -fr $(CONFIG)/bin/ca.crt
 	cp -r src/deps/est/ca.crt $(CONFIG)/bin/ca.crt
 
@@ -333,7 +337,7 @@ $(CONFIG)/bin/http:  \
         $(CONFIG)/obj/http.o
 	$(CC) -o $(CONFIG)/bin/http $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o -lhttp $(LIBS) -lpcre -lmpr -lhttp -llxnet -lrt -lsocket -lpthread -lm -ldl -lpcre -lmpr $(LDFLAGS)
 
-$(CONFIG)/bin/http-ca.crt: 
+$(CONFIG)/bin/http-ca.crt: src/deps/http/http-ca.crt
 	rm -fr $(CONFIG)/bin/http-ca.crt
 	cp -r src/deps/http/http-ca.crt $(CONFIG)/bin/http-ca.crt
 
@@ -346,7 +350,7 @@ $(CONFIG)/obj/sqlite3.o: \
         src/deps/sqlite/sqlite3.c \
         $(CONFIG)/inc/bit.h \
         $(CONFIG)/inc/sqlite3.h
-	$(CC) -c -o $(CONFIG)/obj/sqlite3.o -fPIC $(LDFLAGS) -w $(DFLAGS) -I$(CONFIG)/inc src/deps/sqlite/sqlite3.c
+	$(CC) -c -o $(CONFIG)/obj/sqlite3.o -fPIC $(LDFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/sqlite/sqlite3.c
 
 $(CONFIG)/bin/libsqlite3.so:  \
         $(CONFIG)/inc/sqlite3.h \
@@ -943,24 +947,18 @@ $(CONFIG)/bin/ejsrun:  \
 $(CONFIG)/bin/ejs.mod:  \
         $(CONFIG)/bin/ejsc \
         $(CONFIG)/bin/ejsmod
-	cd src/core >/dev/null ;\
-		../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.mod  --optimize 9 --bind --require null *.es  ;\
-		../../$(CONFIG)/bin/ejsmod --require null --cslots ../../$(CONFIG)/bin/ejs.mod ;\
-		if ! diff ejs.slots.h ../../$(CONFIG)/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ../../$(CONFIG)/inc; fi ;\
-		rm -f ejs.slots.h ;\
-		cd - >/dev/null 
+	cd src/core >/dev/null; ../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.mod  --optimize 9 --bind --require null *.es  ; cd - >/dev/null
+	cd src/core >/dev/null; ../../$(CONFIG)/bin/ejsmod --require null --cslots ../../$(CONFIG)/bin/ejs.mod ; cd - >/dev/null
+	cd src/core >/dev/null; if ! diff ejs.slots.h ../../$(CONFIG)/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ../../$(CONFIG)/inc; fi ; cd - >/dev/null
+	cd src/core >/dev/null; rm -f ejs.slots.h ; cd - >/dev/null
 
 $(CONFIG)/bin/ejs.unix.mod:  \
         $(CONFIG)/bin/ejsc \
         $(CONFIG)/bin/ejs.mod
-	cd src/jems/ejs.unix >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.unix.mod  --optimize 9 Unix.es ;\
-		cd - >/dev/null 
+	cd src/jems/ejs.unix >/dev/null; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.unix.mod  --optimize 9 Unix.es ; cd - >/dev/null
 
 $(CONFIG)/bin/jem.es: 
-	cd src/jems/ejs.jem >/dev/null ;\
-		cp jem.es ../../../$(CONFIG)/bin ;\
-		cd - >/dev/null 
+	cd src/jems/ejs.jem >/dev/null; cp jem.es ../../../$(CONFIG)/bin ; cd - >/dev/null
 
 $(CONFIG)/bin/jem:  \
         $(CONFIG)/bin/libejs.so \
@@ -971,25 +969,19 @@ $(CONFIG)/bin/jem:  \
 $(CONFIG)/bin/ejs.db.mod:  \
         $(CONFIG)/bin/ejsc \
         $(CONFIG)/bin/ejs.mod
-	cd src/jems/ejs.db >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.db.mod  --optimize 9 *.es ;\
-		cd - >/dev/null 
+	cd src/jems/ejs.db >/dev/null; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.db.mod  --optimize 9 *.es ; cd - >/dev/null
 
 $(CONFIG)/bin/ejs.db.mapper.mod:  \
         $(CONFIG)/bin/ejsc \
         $(CONFIG)/bin/ejs.mod \
         $(CONFIG)/bin/ejs.db.mod
-	cd src/jems/ejs.db.mapper >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.db.mapper.mod  --optimize 9 *.es ;\
-		cd - >/dev/null 
+	cd src/jems/ejs.db.mapper >/dev/null; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.db.mapper.mod  --optimize 9 *.es ; cd - >/dev/null
 
 $(CONFIG)/bin/ejs.db.sqlite.mod:  \
         $(CONFIG)/bin/ejsc \
         $(CONFIG)/bin/ejsmod \
         $(CONFIG)/bin/ejs.mod
-	cd src/jems/ejs.db.sqlite >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.db.sqlite.mod  --optimize 9 *.es ;\
-		cd - >/dev/null 
+	cd src/jems/ejs.db.sqlite >/dev/null; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.db.sqlite.mod  --optimize 9 *.es ; cd - >/dev/null
 
 $(CONFIG)/obj/ejsSqlite.o: \
         src/jems/ejs.db.sqlite/ejsSqlite.c \
@@ -1011,20 +1003,16 @@ $(CONFIG)/bin/libejs.db.sqlite.so:  \
 $(CONFIG)/bin/ejs.mail.mod:  \
         $(CONFIG)/bin/ejsc \
         $(CONFIG)/bin/ejs.mod
-	cd src/jems/ejs.mail >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.mail.mod  --optimize 9 *.es ;\
-		cd - >/dev/null 
+	cd src/jems/ejs.mail >/dev/null; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.mail.mod  --optimize 9 *.es ; cd - >/dev/null
 
 $(CONFIG)/bin/ejs.web.mod:  \
         $(CONFIG)/bin/ejsc \
         $(CONFIG)/bin/ejsmod \
         $(CONFIG)/bin/ejs.mod
-	cd src/jems/ejs.web >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.web.mod  --optimize 9 *.es ;\
-		../../../$(CONFIG)/bin/ejsmod --cslots ../../../$(CONFIG)/bin/ejs.web.mod ;\
-		if ! diff ejs.web.slots.h ../../../$(CONFIG)/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../../$(CONFIG)/inc; fi ;\
-		rm -f ejs.web.slots.h ;\
-		cd - >/dev/null 
+	cd src/jems/ejs.web >/dev/null; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.web.mod  --optimize 9 *.es ; cd - >/dev/null
+	cd src/jems/ejs.web >/dev/null; ../../../$(CONFIG)/bin/ejsmod --cslots ../../../$(CONFIG)/bin/ejs.web.mod ; cd - >/dev/null
+	cd src/jems/ejs.web >/dev/null; if ! diff ejs.web.slots.h ../../../$(CONFIG)/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../../$(CONFIG)/inc; fi ; cd - >/dev/null
+	cd src/jems/ejs.web >/dev/null; rm -f ejs.web.slots.h ; cd - >/dev/null
 
 $(CONFIG)/inc/ejsWeb.h:  \
         $(CONFIG)/inc/bit.h \
@@ -1078,24 +1066,18 @@ $(CONFIG)/bin/libejs.web.so:  \
 	$(CC) -shared -o $(CONFIG)/bin/libejs.web.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsHttpServer.o $(CONFIG)/obj/ejsRequest.o $(CONFIG)/obj/ejsSession.o $(CONFIG)/obj/ejsWeb.o -lejs $(LIBS) -lhttp -lpcre -lmpr
 
 $(CONFIG)/bin/www: 
-	cd src/jems/ejs.web >/dev/null ;\
-		rm -fr ../../../$(CONFIG)/bin/www ;\
-		cp -r www ../../../$(CONFIG)/bin ;\
-		cd - >/dev/null 
+	cd src/jems/ejs.web >/dev/null; rm -fr ../../../$(CONFIG)/bin/www ; cd - >/dev/null
+	cd src/jems/ejs.web >/dev/null; cp -r www ../../../$(CONFIG)/bin ; cd - >/dev/null
 
 $(CONFIG)/bin/ejs.template.mod:  \
         $(CONFIG)/bin/ejsc \
         $(CONFIG)/bin/ejs.mod
-	cd src/jems/ejs.template >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.template.mod  --optimize 9 TemplateParser.es ;\
-		cd - >/dev/null 
+	cd src/jems/ejs.template >/dev/null; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.template.mod  --optimize 9 TemplateParser.es ; cd - >/dev/null
 
 $(CONFIG)/bin/ejs.zlib.mod:  \
         $(CONFIG)/bin/ejsc \
         $(CONFIG)/bin/ejs.mod
-	cd src/jems/ejs.zlib >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.zlib.mod  --optimize 9 *.es ;\
-		cd - >/dev/null 
+	cd src/jems/ejs.zlib >/dev/null; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.zlib.mod  --optimize 9 *.es ; cd - >/dev/null
 
 $(CONFIG)/obj/ejsZlib.o: \
         src/jems/ejs.zlib/ejsZlib.c \
@@ -1116,14 +1098,10 @@ $(CONFIG)/bin/libejs.zlib.so:  \
 $(CONFIG)/bin/ejs.tar.mod:  \
         $(CONFIG)/bin/ejsc \
         $(CONFIG)/bin/ejs.mod
-	cd src/jems/ejs.tar >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.tar.mod  --optimize 9 *.es ;\
-		cd - >/dev/null 
+	cd src/jems/ejs.tar >/dev/null; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.tar.mod  --optimize 9 *.es ; cd - >/dev/null
 
 $(CONFIG)/bin/mvc.es: 
-	cd src/jems/ejs.mvc >/dev/null ;\
-		cp mvc.es ../../../$(CONFIG)/bin ;\
-		cd - >/dev/null 
+	cd src/jems/ejs.mvc >/dev/null; cp mvc.es ../../../$(CONFIG)/bin ; cd - >/dev/null
 
 $(CONFIG)/bin/mvc:  \
         $(CONFIG)/bin/libejs.so \
@@ -1137,19 +1115,13 @@ $(CONFIG)/bin/ejs.mvc.mod:  \
         $(CONFIG)/bin/ejs.web.mod \
         $(CONFIG)/bin/ejs.template.mod \
         $(CONFIG)/bin/ejs.unix.mod
-	cd src/jems/ejs.mvc >/dev/null ;\
-		../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.mvc.mod  --optimize 9 *.es ;\
-		cd - >/dev/null 
+	cd src/jems/ejs.mvc >/dev/null; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.mvc.mod  --optimize 9 *.es ; cd - >/dev/null
 
 $(CONFIG)/bin/utest.es: 
-	cd src/jems/ejs.utest >/dev/null ;\
-		cp utest.es ../../../$(CONFIG)/bin ;\
-		cd - >/dev/null 
+	cd src/jems/ejs.utest >/dev/null; cp utest.es ../../../$(CONFIG)/bin ; cd - >/dev/null
 
 $(CONFIG)/bin/utest.worker: 
-	cd src/jems/ejs.utest >/dev/null ;\
-		cp utest.worker ../../../$(CONFIG)/bin ;\
-		cd - >/dev/null 
+	cd src/jems/ejs.utest >/dev/null; cp utest.worker ../../../$(CONFIG)/bin ; cd - >/dev/null
 
 $(CONFIG)/bin/utest:  \
         $(CONFIG)/bin/libejs.so \
@@ -1159,5 +1131,5 @@ $(CONFIG)/bin/utest:  \
 	$(CC) -o $(CONFIG)/bin/utest $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o -lejs $(LIBS) -lhttp -lpcre -lmpr -lejs -llxnet -lrt -lsocket -lpthread -lm -ldl -lhttp -lpcre -lmpr $(LDFLAGS)
 
 version: 
-	@echo 2.3.0-1 
+	@echo 2.3.0-1
 
