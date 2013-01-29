@@ -16,17 +16,6 @@ Bit.load({
             platforms: [ 'local' ],
         },
 
-/* UNUSED
-        'mvc.exe': {
-            type: 'file',
-            path: '${BIN}/mvc${EXE}',
-            files: [ '${BIN}/ejsrun${EXE}' ],
-            depends: ['ejsrun'],
-            platforms: [ 'local' ],
-        },
-*/
-
-
         mvc: {
             type: 'exe',
             path: '${BIN}/mvc${EXE}',
