@@ -13,8 +13,6 @@ if (!Path("/bin").exists) {
         //  Windows with cygwin paths can't handle this
         assert(App.dir.same(Cmd.run("pwd").trim()))
         //  Cmd.sh
-print("DIR", App.dir)
-print("PWD", Cmd.sh("pwd"))
         assert(App.dir.same(Cmd.sh("pwd")))
     }
 
