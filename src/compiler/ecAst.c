@@ -2618,6 +2618,7 @@ static void bindVariableDefinition(EcCompiler *cp, EcNode *np)
     } else {
         block = getBlockForDefinition(cp, np, state->varBlock, np->attributes);
     }
+    modified = 0;
     if (!np->literalNamespace && resolveNamespace(cp, np, block, &modified) == 0) {
         LEAVE(cp);
         return;
