@@ -13,43 +13,23 @@ Bit.load({
             platforms: [ 'local' ],
         },
 
-		'.prefixes': {
-            home: '${TOP}',
-			action: '',
-            path: '${INC}/.prefixes',
-            files: [ '${TOP}/projects/$(PRODUCT)-$(OS)-$(PROFILE)-bit.h' ],
-            'generate-make': "
-			    ${BIN}/ejs ${TOP}/bits/getbitvals ${TOP}/projects/$(PRODUCT)-$(OS)-$(PROFILE)-bit.h PRODUCT VERSION CFG_PREFIX PRD_PREFIX WEB_PREFIX LOG_PREFIX BIN_PREFIX SPL_PREFIX UBIN_PREFIX >${INC}/.prefixes; chmod 666 ${INC}/.prefixes",
-            'generate-nmake': "
-				${BIN}/ejs ${TOP}/bits/getbitvals ${TOP}/projects/$(PRODUCT)-$(OS)-$(PROFILE)-bit.h PRODUCT VERSION CFG_PREFIX PRD_PREFIX WEB_PREFIX LOG_PREFIX BIN_PREFIX SPL_PREFIX UBIN_PREFIX >.prefixes",
-		},
-
         'root-install': {
             home: '${TOP}',
 			action: '',
-			depends: ['compile', '.prefixes'],
+			depends: ['compile'],
             'generate-make': "
-                ifeq ($(BIT_BIN_PREFIX),)
-                    sudo $(MAKE) -f projects/$(PRODUCT)-$(OS)-$(PROFILE).mk $@
-                else
-                    rm -f $(BIT_PRD_PREFIX)/latest $(BIT_UBIN_PREFIX)/bit
-                    rm -f $(BIT_PRD_PREFIX)/latest
-                    for n in ejs ejsc ejsman ejsmod jem mvc utest ; do rm -f $(BIT_UBIN_PREFIX)/$$n ; done
-                    install -d -m 755 $(BIT_BIN_PREFIX)
-                    cp -R -P ${BIN}/* $(BIT_BIN_PREFIX)
-                    ln -s $(BIT_VERSION) $(BIT_PRD_PREFIX)/latest
-                    for n in ejs ejsc ejsman ejsmod jem mvc utest ; do \\
-                        rm -f $(BIT_UBIN_PREFIX)/$$n ; \\
-                        ln -s $(BIT_BIN_PREFIX)/$$n $(BIT_UBIN_PREFIX)/$$n ; \\
-                    done
-                endif
+                rm -f $(BIT_PRD_PREFIX)/latest $(BIT_UBIN_PREFIX)/bit
+                for n in ejs ejsc ejsman ejsmod jem mvc utest ; do rm -f $(BIT_UBIN_PREFIX)/$$n ; done
+                install -d -m 755 $(BIT_BIN_PREFIX)
+                cp -R -P ${BIN}/* $(BIT_BIN_PREFIX)
+                ln -s $(VERSION) $(BIT_PRD_PREFIX)/latest
+                for n in ejs ejsc ejsman ejsmod jem mvc utest ; do \\
+                    rm -f $(BIT_UBIN_PREFIX)/$$n ; \\
+                    ln -s $(BIT_BIN_PREFIX)/$$n $(BIT_UBIN_PREFIX)/$$n ; \\
+                done
             ",
             'generate-nmake': "
-                !IF EXISTS(.prefixes)
-                    xcopy /I /S /Y /Q $(CONFIG)\\bin \"$(BIT_BIN_PREFIX)\"
-                !ELSE
-				    nmake -nologo -f ${TOP}/projects/$(PRODUCT)-$(OS)-$(PROFILE).nmake $@
-                !ENDIF
+                xcopy /I /S /Y /Q $(CONFIG)\\bin \"$(BIT_BIN_PREFIX)\"
             ",
         },
 
@@ -57,14 +37,13 @@ Bit.load({
             home: '${TOP}',
             depends: ['compile'],
             action: "installBinary()",
-            'generate-make': "sudo $(MAKE) -C ${TOP} -f projects/$(PRODUCT)-$(OS)-$(PROFILE).mk root-install",
+            'generate-make': "sudo $(MAKE) -C ${TOP} -f projects/$(PRODUCT)-$(OS)-$(PROFILE).mk $(MAKEFLAGS) root-install",
             'generate-nmake': "nmake -nologo -f ${TOP}/projects/$(PRODUCT)-$(OS)-$(PROFILE).nmake root-install",
         },
 
         'root-uninstall': {
             home: '${TOP}',
 			action: '',
-			depends: ['.prefixes'],
             'generate-make': "rm -fr $(BIT_PRD_PREFIX)",
             'generate-nmake': "del /Q \"$(BIT_PRD_PREFIX)\"",
 		},
@@ -72,7 +51,7 @@ Bit.load({
         uninstall: {
             home: '${TOP}',
             action: "uninstallBinary()"
-            'generate-make': "sudo $(MAKE) -C ${TOP} -f projects/$(PRODUCT)-$(OS)-$(PROFILE).mk root-uninstall",
+            'generate-make': "sudo $(MAKE) -C ${TOP} -f projects/$(PRODUCT)-$(OS)-$(PROFILE).mk $(MAKEFLAGS) root-uninstall",
             'generate-nmake': "nmake -nologo -f ${TOP}/projects/$(PRODUCT)-$(OS)-$(PROFILE).nmake root-uninstall",
         },
 

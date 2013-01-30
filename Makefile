@@ -43,7 +43,7 @@ endif
 
 all compile:
 	$(MAKE) -f projects/$(NAME)-$(OS)-$(PROFILE).$(EXT) $@
-	@echo ; echo 'You can now install via "make install"'
+	@echo ; echo 'You can now install via "sudo make install", then run via: "ejs"'
 
 clean clobber install uninstall run:
 	$(MAKE) -f projects/$(NAME)-$(OS)-$(PROFILE).$(EXT) $@

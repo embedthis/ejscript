@@ -12,6 +12,18 @@ CC              ?= /usr/bin/clang
 LD              ?= /usr/bin/ld
 CONFIG          ?= $(OS)-$(ARCH)-$(PROFILE)
 
+BIT_CFG_PREFIX  ?= /etc/ejs
+BIT_PRD_PREFIX  ?= /usr/lib/ejs
+BIT_VER_PREFIX  ?= $(BIT_PRD_PREFIX)/2.3.0
+BIT_BIN_PREFIX  ?= $(BIT_VER_PREFIX)/bin
+BIT_INC_PREFIX  ?= $(BIT_VER_PREFIX)/inc
+BIT_LOG_PREFIX  ?= /var/log/ejs
+BIT_SPL_PREFIX  ?= /var/spool/ejs
+BIT_SRC_PREFIX  ?= /usr/src/ejs-2.3.0
+BIT_WEB_PREFIX  ?= /var/www/ejs-default
+BIT_UBIN_PREFIX ?= /usr/local/bin
+BIT_MAN_PREFIX  ?= /usr/local/share/man/man1
+
 CFLAGS          += -w
 DFLAGS          += $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS)))
 IFLAGS          += -I$(CONFIG)/inc
@@ -29,10 +41,6 @@ LDFLAGS-release :=
 CFLAGS          += $(CFLAGS-$(DEBUG))
 DFLAGS          += $(DFLAGS-$(DEBUG))
 LDFLAGS         += $(LDFLAGS-$(DEBUG))
-
-ifeq ($(wildcard $(CONFIG)/inc/.prefixes*),$(CONFIG)/inc/.prefixes)
-    include $(CONFIG)/inc/.prefixes
-endif
 
 unexport CDPATH
 
@@ -82,6 +90,7 @@ all compile: prep \
 
 prep:
 	@if [ "$(CONFIG)" = "" ] ; then echo WARNING: CONFIG not set ; exit 255 ; fi
+	@if [ "$(BIT_PRD_PREFIX)" = "" ] ; then echo WARNING: BIT_PRD_PREFIX not set ; exit 255 ; fi
 	@[ ! -x $(CONFIG)/bin ] && mkdir -p $(CONFIG)/bin; true
 	@[ ! -x $(CONFIG)/inc ] && mkdir -p $(CONFIG)/inc; true
 	@[ ! -x $(CONFIG)/obj ] && mkdir -p $(CONFIG)/obj; true
@@ -1137,32 +1146,22 @@ $(CONFIG)/bin/utest:  \
 version: 
 	@echo 2.3.0-1
 
-$(CONFIG)/inc/.prefixes: projects/$(PRODUCT)-$(OS)-$(PROFILE)-bit.h
-	./$(CONFIG)/bin/ejs ./bits/getbitvals ./projects/$(PRODUCT)-$(OS)-$(PROFILE)-bit.h PRODUCT VERSION CFG_PREFIX PRD_PREFIX WEB_PREFIX LOG_PREFIX BIN_PREFIX SPL_PREFIX UBIN_PREFIX >./$(CONFIG)/inc/.prefixes; chmod 666 ./$(CONFIG)/inc/.prefixes
-
 root-install:  \
-        compile \
-        $(CONFIG)/inc/.prefixes
-ifeq ($(BIT_BIN_PREFIX),)
-	sudo $(MAKE) -f projects/$(PRODUCT)-$(OS)-$(PROFILE).mk $@
-else
+        compile
 	rm -f $(BIT_PRD_PREFIX)/latest $(BIT_UBIN_PREFIX)/bit
-	rm -f $(BIT_PRD_PREFIX)/latest
 	for n in ejs ejsc ejsman ejsmod jem mvc utest ; do rm -f $(BIT_UBIN_PREFIX)/$$n ; done
 	install -d -m 755 $(BIT_BIN_PREFIX)
 	cp -R -P ./$(CONFIG)/bin/* $(BIT_BIN_PREFIX)
-	ln -s $(BIT_VERSION) $(BIT_PRD_PREFIX)/latest
+	ln -s $(VERSION) $(BIT_PRD_PREFIX)/latest
 	for n in ejs ejsc ejsman ejsmod jem mvc utest ; do 	rm -f $(BIT_UBIN_PREFIX)/$$n ; 	ln -s $(BIT_BIN_PREFIX)/$$n $(BIT_UBIN_PREFIX)/$$n ; 	done
-endif
 
 install:  \
         compile
-	sudo $(MAKE) -C . -f projects/$(PRODUCT)-$(OS)-$(PROFILE).mk root-install
+	sudo $(MAKE) -C . -f projects/$(PRODUCT)-$(OS)-$(PROFILE).mk $(MAKEFLAGS) root-install
 
-root-uninstall:  \
-        $(CONFIG)/inc/.prefixes
+root-uninstall: 
 	rm -fr $(BIT_PRD_PREFIX)
 
 uninstall: 
-	sudo $(MAKE) -C . -f projects/$(PRODUCT)-$(OS)-$(PROFILE).mk root-uninstall
+	sudo $(MAKE) -C . -f projects/$(PRODUCT)-$(OS)-$(PROFILE).mk $(MAKEFLAGS) root-uninstall
 
