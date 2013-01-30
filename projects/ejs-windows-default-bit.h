@@ -115,37 +115,37 @@
 
 /* Prefixes */
 #ifndef BIT_CFG_PREFIX
-    #define BIT_CFG_PREFIX "C:/Program Files (x86)/Embedthis Ejscript"
+    #define BIT_CFG_PREFIX "C:/Program Files/Embedthis Ejscript"
 #endif
 #ifndef BIT_BIN_PREFIX
-    #define BIT_BIN_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/bin"
+    #define BIT_BIN_PREFIX "C:/Program Files/Embedthis Ejscript/bin"
 #endif
 #ifndef BIT_INC_PREFIX
-    #define BIT_INC_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/inc"
+    #define BIT_INC_PREFIX "C:/Program Files/Embedthis Ejscript/inc"
 #endif
 #ifndef BIT_LOG_PREFIX
-    #define BIT_LOG_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/logs"
+    #define BIT_LOG_PREFIX "C:/Program Files/Embedthis Ejscript/logs"
 #endif
 #ifndef BIT_PRD_PREFIX
-    #define BIT_PRD_PREFIX "C:/Program Files (x86)/Embedthis Ejscript"
+    #define BIT_PRD_PREFIX "C:/Program Files/Embedthis Ejscript"
 #endif
 #ifndef BIT_SPL_PREFIX
-    #define BIT_SPL_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/tmp"
+    #define BIT_SPL_PREFIX "C:/Program Files/Embedthis Ejscript/tmp"
 #endif
 #ifndef BIT_SRC_PREFIX
-    #define BIT_SRC_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/src"
+    #define BIT_SRC_PREFIX "C:/Program Files/Embedthis Ejscript/src"
 #endif
 #ifndef BIT_VER_PREFIX
-    #define BIT_VER_PREFIX "C:/Program Files (x86)/Embedthis Ejscript"
+    #define BIT_VER_PREFIX "C:/Program Files/Embedthis Ejscript"
 #endif
 #ifndef BIT_WEB_PREFIX
-    #define BIT_WEB_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/web"
+    #define BIT_WEB_PREFIX "C:/Program Files/Embedthis Ejscript/web"
 #endif
 #ifndef BIT_UBIN_PREFIX
-    #define BIT_UBIN_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/bin"
+    #define BIT_UBIN_PREFIX "C:/Program Files/Embedthis Ejscript/bin"
 #endif
 #ifndef BIT_MAN_PREFIX
-    #define BIT_MAN_PREFIX "C:/Program Files (x86)/Embedthis Ejscript/man"
+    #define BIT_MAN_PREFIX "C:/Program Files/Embedthis Ejscript/man"
 #endif
 
 /* Suffixes */
