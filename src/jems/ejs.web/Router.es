@@ -2,6 +2,7 @@
     Router.es - Web Request router. Route incoming client HTTP requests.
  */
 
+# Config.WEB
 module ejs.web {
 
     /** 

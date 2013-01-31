@@ -2,6 +2,7 @@
     Template.es -- Ejscript templated web content handler
  */
 
+# Config.WEB
 module ejs.web {
     /** 
         Template middleware filter. This interprets the output of an inner web app as a template page which is processed.

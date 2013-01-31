@@ -6,6 +6,7 @@ Bit.load({
 
     targets: {
         'ejs.db.mod': {
+            enable: 'bit.settings.ejs.db',
             path: '${BIN}/ejs.db.mod',
             files: [ '*.es' ],
             build: "

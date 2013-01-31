@@ -114,29 +114,14 @@ static void footer(MprFile *file)
 #endif\n\
 \n\
 /*\n\
- *  Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.\n\
- *  Copyright (c) Michael O'Brien, 1993-2013. All Rights Reserved.\n\
- *\n\
- *  This software is distributed under commercial and open source licenses.\n\
- *  You may use the GPL open source license described below or you may acquire\n\
- *  a commercial license from Embedthis Software. You agree to be fully bound\n\
- *  by the terms of either license. Consult the LICENSE.md distributed with\n\
- *  this software for full details.\n\
- *\n\
- *  This software is open source; you can redistribute it and/or modify it\n\
- *  under the terms of the GNU General Public License as published by the\n\
- *  Free Software Foundation; either version 2 of the License, or (at your\n\
- *  option) any later version. See the GNU General Public License for more\n\
- *  details at: http://embedthis.com/downloads/gplLicense.html\n\
- *\n\
- *  This program is distributed WITHOUT ANY WARRANTY; without even the\n\
- *  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\
- *\n\
- *  This GPL license does NOT permit incorporating this software into\n\
- *  proprietary programs. If you are unable to comply with the GPL, you must\n\
- *  acquire a commercial license to use this software. Commercial licenses\n\
- *  for this software and support services are available from Embedthis\n\
- *  Software at http://embedthis.com\n\
+    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.\n\
+    Copyright (c) Michael O'Brien, 1993-2013. All Rights Reserved.\n\
+  \n\
+    This software is distributed under commercial and open source licenses.\n\
+    You may use the GPL open source license described below or you may acquire\n\
+    a commercial license from Embedthis Software. You agree to be fully bound\n\
+    by the terms of either license. Consult the LICENSE.md distributed with\n\
+    this software for full details and other copyrights.\n\
  */\n");
 }
 

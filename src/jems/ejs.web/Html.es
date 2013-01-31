@@ -2,6 +2,7 @@
    Html.es -- HtmlViewConnector. This provides HTML view support.
  */
 
+# Config.WEB
 module ejs.web {
 
     /**

@@ -2,6 +2,7 @@
     Middleware.es - Wrap a web app with defined middleware
  */
 
+# Config.WEB
 module ejs.web {
 
     /** 

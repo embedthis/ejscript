@@ -3,6 +3,7 @@
     low-level properties and methods to inspect and control the request. Request objects support the CommonJS JSGI 
     protocol specification. 
  */
+# Config.WEB
 module ejs.web {
 
     /**

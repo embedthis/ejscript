@@ -6,6 +6,7 @@ Bit.load({
 
     targets: {
         'ejs.db.sqlite.mod': {
+            enable: 'bit.packs.sqlite.enable && bit.settings.ejs.db',
             path: '${BIN}/ejs.db.sqlite.mod',
             files: [ '*.es' ],
             build: "
@@ -24,6 +25,7 @@ Bit.load({
         },
 
         'libejs.db.sqlite': {
+            enable: 'bit.packs.sqlite.enable && bit.settings.ejs.db',
             type: 'lib',
             sources: [ 
                 '*.c',

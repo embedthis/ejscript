@@ -6,6 +6,7 @@ Bit.load({
 
     targets: {
         'mvc.es': {
+            enable: 'bit.settings.ejs.db',
             path: '${BIN}/mvc.es',
             files: [ 'mvc.es' ],
             build: "
@@ -17,6 +18,7 @@ Bit.load({
         },
 
         mvc: {
+            enable: 'bit.settings.ejs.db',
             type: 'exe',
             path: '${BIN}/mvc${EXE}',
             sources: [
@@ -29,6 +31,7 @@ Bit.load({
         },
 
         'ejs.mvc.mod': {
+            enable: 'bit.settings.ejs.db',
             path: '${BIN}/ejs.mvc.mod',
             files: [ '*.es' ],
             build: "

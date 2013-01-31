@@ -1,4 +1,9 @@
 if (!App.getenv("NOSERVER")) {
     Cmd.killall('ejs start.es')
 }
-httpService("start.es", {address: App.config.uris.http})
+
+if (Config.WEB) {
+    httpService("start.es", {address: App.config.uris.http})
+} else {
+    test.skip("ejs.web is not enabled")
+}

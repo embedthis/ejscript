@@ -6,6 +6,7 @@ Bit.load({
 
     targets: {
         'ejs.template.mod': {
+            enable: 'bit.settings.ejs.template',
             path: '${BIN}/ejs.template.mod',
             files: [ 'TemplateParser.es' ],
             build: "

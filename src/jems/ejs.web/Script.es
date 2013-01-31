@@ -2,6 +2,7 @@
     Script.es -- Ejscript templated web content handler
  */
 
+# Config.WEB
 module ejs.web {
 
     /**

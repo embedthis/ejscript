@@ -64,6 +64,18 @@ module ejs {
 
         /** @hide */
         native static const SQLITE: Boolean
+        /** @hide */
+        native static const DB: Boolean
+        /** @hide */
+        native static const MAPPER: Boolean
+        /** @hide */
+        native static const WEB: Boolean
+        /** @hide */
+        native static const MAIL: Boolean
+        /** @hide */
+        native static const TEMPLATE: Boolean
+        /** @hide */
+        native static const TAR: Boolean
     }
 }
 

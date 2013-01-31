@@ -485,6 +485,9 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
     /*
         See if the type has been registered in the set of immutable types. If so, can use without creating.
      */
+    if (smatch(qname.name->value, "Sqlite")) {
+        mprBreakpoint();
+    }
     type = ejsGetPropertyByName(ejs, ejs->service->immutable, qname);
     if (type == 0) {
         if (attributes & EJS_TYPE_FIXUP) {

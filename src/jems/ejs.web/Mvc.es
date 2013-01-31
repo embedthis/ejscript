@@ -2,6 +2,7 @@
     Mvc.es -- Model View Controller (MVC) web app management
  */
 
+# Config.WEB
 module ejs.web {
 
     /** 

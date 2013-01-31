@@ -2,6 +2,7 @@
     CommonLog.es -- Common Log Format logger.
  */
 
+# Config.WEB
 module ejs.web {
     /** 
         Common Log web server logging. 

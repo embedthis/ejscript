@@ -2,6 +2,7 @@
     Static.es - Static content handler
  */
 
+# Config.WEB
 module ejs.web {
 
     /** 

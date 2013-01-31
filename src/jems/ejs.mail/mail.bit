@@ -6,6 +6,7 @@ Bit.load({
 
     targets: {
         'ejs.mail.mod': {
+            enable: 'bit.settings.mail',
             path: '${BIN}/ejs.mail.mod',
             files: [ '*.es' ],
             build: "

@@ -4,22 +4,26 @@
 
 require ejs.unix
 
-let mvc = Cmd.locate("mvc").portable
+if (Config.SQLITE) {
+    let mvc = Cmd.locate("mvc").portable
+    rmdir("junk")
+    assert(!exists("junk"))
 
-rmdir("junk")
-assert(!exists("junk"))
+    //  Generate app and scaffold
+    Cmd.sh([mvc, 'generate', 'app', 'junk'])
+    Cmd.sh([mvc, 'generate', 'scaffold', 'post', 'title:string', 'body:text'], {dir: 'junk'})
+    assert(exists("junk/db/migrations") && isDir("junk/db/migrations"))
+    assert(exists("junk/controllers/Post.es"))
+    assert(exists("junk/models/Post.es"))
+    assert(exists("junk/views/Post/index.ejs"))
+    assert(exists("junk/views/Post/edit.ejs"))
 
-//  Generate app and scaffold
-Cmd.sh([mvc, 'generate', 'app', 'junk'])
-Cmd.sh([mvc, 'generate', 'scaffold', 'post', 'title:string', 'body:text'], {dir: 'junk'})
-assert(exists("junk/db/migrations") && isDir("junk/db/migrations"))
-assert(exists("junk/controllers/Post.es"))
-assert(exists("junk/models/Post.es"))
-assert(exists("junk/views/Post/index.ejs"))
-assert(exists("junk/views/Post/edit.ejs"))
+    //  Compile app
+    Cmd.sh([mvc, 'compile'], {dir: 'junk'})
+    assert(exists("junk/cache/Post.mod"))
 
-//  Compile app
-Cmd.sh([mvc, 'compile'], {dir: 'junk'})
-assert(exists("junk/cache/Post.mod"))
+    rmdir("junk")
 
-rmdir("junk")
+} else {
+    test.skip("SQLite is not enabled")
+}

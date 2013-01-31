@@ -2,6 +2,7 @@
     Dir.es - Directory content handler
  */
 
+# Config.WEB
 module ejs.web {
 
     /** 

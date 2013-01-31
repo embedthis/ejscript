@@ -2,6 +2,7 @@
    GoogleConnector.es -- View connector for the Google Visualization library
  */
 
+# Config.WEB
 module ejs.web {
 
     /**

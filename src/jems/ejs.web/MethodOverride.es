@@ -2,6 +2,7 @@
     MethodOverride.es - Override the method type based on the Method-Override header
  */
 
+# Config.WEB
 module ejs.web {
 
     /**

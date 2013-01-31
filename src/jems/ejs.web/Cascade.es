@@ -5,6 +5,7 @@
         exports.app = Cascade(app)
  */
 
+# Config.WEB
 module ejs.web {
     /** 
         Cascade middleware script for web apps.

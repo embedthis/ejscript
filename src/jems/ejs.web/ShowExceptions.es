@@ -2,6 +2,7 @@
     Show exceptions to the client 
  */
 
+# Config.WEB
 module ejs.web {
     /** 
         ShowExceptions middleware wrapper. This catches exceptions and formats the result back to the client.

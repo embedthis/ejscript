@@ -6,6 +6,7 @@ Bit.load({
 
     targets: {
         'ejs.db.mapper.mod': {
+            enable: 'bit.settings.ejs.db',
             path: '${BIN}/ejs.db.mapper.mod',
             files: [ '*.es' ],
             build: "

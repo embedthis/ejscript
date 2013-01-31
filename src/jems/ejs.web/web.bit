@@ -6,6 +6,7 @@ Bit.load({
 
     targets: {
         'ejs.web.mod': {
+            enable: 'bit.settings.ejs.web',
             path: '${BIN}/ejs.web.mod',
             files: [ '*.es' ],
             build: "
@@ -36,6 +37,7 @@ Bit.load({
         },
 
         'libejs.web': {
+            enable: 'bit.settings.ejs.web',
             type: 'lib',
             sources: [ '*.c' ],
             headers: [ 'ejsWeb.h' ],
@@ -44,6 +46,7 @@ Bit.load({
         },
 
         www: {
+            enable: 'bit.settings.ejs.web',
             path: '${BIN}/www',
             files: [ 'www' ],
             build: "

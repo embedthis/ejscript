@@ -2,6 +2,7 @@
     Session.es -- Session state management
  */
 
+# Config.WEB
 module ejs.web {
     /** 
         Session state storage class. 

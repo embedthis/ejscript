@@ -2,6 +2,7 @@
     Controller.es -- MVC Controller class.
  */
 
+# Config.WEB
 module ejs.web {
     /**
         Namespace for all action methods 

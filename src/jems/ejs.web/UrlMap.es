@@ -2,6 +2,7 @@
     UrlMap.es - Simple Url Router
  */
 
+# Config.WEB
 module ejs.web {
 
     /** 

@@ -4,6 +4,7 @@
     Copyright (c) All Rights Reserved. See details at the end of the file.
 */
 
+# Config.WEB
 module ejs.web {
 
     /**

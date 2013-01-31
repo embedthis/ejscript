@@ -3696,7 +3696,8 @@ static void createInitializer(EcCompiler *cp, EjsModule *mp)
         Note: if hasInitializer is false, we may still have some code in the buffer if --debug is used.
         We can safely just ignore this debug code.
      */
-    if (!mp->hasInitializer) {
+    if (!mp->hasInitializer || !mp->code) {
+        mp->hasInitializer = 0;
         LEAVE(cp);
         return;
     }
@@ -4076,7 +4077,7 @@ static void processModule(EcCompiler *cp, EjsModule *mp)
 
     createInitializer(cp, mp);
 
-    if (cp->noout) {
+    if (cp->noout || !mp->code) {
         return;
     }
     if (! cp->outputFile) {
@@ -4396,31 +4397,15 @@ static void badNode(EcCompiler *cp, EcNode *np)
 
 /*
     @copy   default
-  
+
     Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
-    Copyright (c) Michael O'Brien, 1993-2013. All Rights Reserved.
-  
+
     This software is distributed under commercial and open source licenses.
-    You may use the GPL open source license described below or you may acquire
-    a commercial license from Embedthis Software. You agree to be fully bound
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
     by the terms of either license. Consult the LICENSE.md distributed with
-    this software for full details.
-  
-    This software is open source; you can redistribute it and/or modify it
-    under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 2 of the License, or (at your
-    option) any later version. See the GNU General Public License for more
-    details at: http://embedthis.com/downloads/gplLicense.html
-  
-    This program is distributed WITHOUT ANY WARRANTY; without even the
-    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  
-    This GPL license does NOT permit incorporating this software into
-    proprietary programs. If you are unable to comply with the GPL, you must
-    acquire a commercial license to use this software. Commercial licenses
-    for this software and support services are available from Embedthis
-    Software at http://embedthis.com
-  
+    this software for full details and other copyrights.
+
     Local variables:
     tab-width: 4
     c-basic-offset: 4
@@ -4429,4 +4414,3 @@ static void badNode(EcCompiler *cp, EcNode *np)
 
     @end
  */
-

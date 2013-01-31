@@ -75,6 +75,21 @@ Bit.load({
         static: false,
 
         /*
+            EJS configuration
+         */
+        ejs: {
+            /*
+                Control if ejs.* is enabled or disabled
+             */
+            db: true,
+            mail: true,
+            mapper: true,
+            tar: true,
+            template: true,
+            web: true,
+        },
+
+        /*
             EST SSL stack configuration
          */
         est: {

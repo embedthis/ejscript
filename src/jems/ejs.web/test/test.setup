@@ -1,1 +1,3 @@
-// test.skip("SKIP ejs.web")
+if (!Config.WEB)
+    test.skip("ejs.web is not enabled")
+}

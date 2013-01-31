@@ -6,6 +6,7 @@
         exports.app = Head(app)
  */
 
+# Config.WEB
 module ejs.web {
     /** 
         Head wrapper middleware. Return the headers and omit the body for HTTP HEAD requests. HEAD requests should still

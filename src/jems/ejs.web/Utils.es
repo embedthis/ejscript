@@ -2,6 +2,7 @@
     Utils.es -- Utility routines for the web framework.
  */
 
+# Config.WEB
 module ejs.web {
 
     /** @hide */

@@ -2,6 +2,7 @@
     ContentType.es -- Define Content-Type headers
  */
 
+# Config.WEB
 module ejs.web {
 
     /**

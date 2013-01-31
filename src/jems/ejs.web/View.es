@@ -1,6 +1,7 @@
 /**
     View.es -- View class 
  */
+# Config.WEB
 module ejs.web {
 
     //  MOB - is this necessary?

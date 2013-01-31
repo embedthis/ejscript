@@ -64,8 +64,17 @@ PUBLIC void ejsDefineConfigProperties(Ejs *ejs)
     fmt(version, sizeof(version), "%s-%s", BIT_VERSION, BIT_BUILD_NUMBER);
     ejsDefineProperty(ejs, type, -1, N("public", "Version"), 0, att, ejsCreateStringFromAsc(ejs, version));
 
+    ejsDefineProperty(ejs, type, -1, N("public", "Legacy"), 0, att, ejsCreateBoolean(ejs, 0));
     ejsDefineProperty(ejs, type, -1, N("public", "SSL"), 0, att, ejsCreateBoolean(ejs, BIT_SSL));
     ejsDefineProperty(ejs, type, -1, N("public", "SQLITE"), 0, att, ejsCreateBoolean(ejs, BIT_PACK_SQLITE));
+#if defined(BIT_EJS_DB)
+    ejsDefineProperty(ejs, type, -1, N("public", "DB"), 0, att, ejsCreateBoolean(ejs, BIT_EJS_DB));
+    ejsDefineProperty(ejs, type, -1, N("public", "MAPPER"), 0, att, ejsCreateBoolean(ejs, BIT_EJS_MAPPER));
+    ejsDefineProperty(ejs, type, -1, N("public", "WEB"), 0, att, ejsCreateBoolean(ejs, BIT_EJS_WEB));
+    ejsDefineProperty(ejs, type, -1, N("public", "MAIL"), 0, att, ejsCreateBoolean(ejs, BIT_EJS_MAIL));
+    ejsDefineProperty(ejs, type, -1, N("public", "TEMPLATE"), 0, att, ejsCreateBoolean(ejs, BIT_EJS_TEMPLATE));
+    ejsDefineProperty(ejs, type, -1, N("public", "TAR"), 0, att, ejsCreateBoolean(ejs, BIT_EJS_TAR));
+#endif
 
     if (mprSamePath(mprGetAppDir(), BIT_BIN_PREFIX)) {
         ejsDefineProperty(ejs, type, -1, N("public", "Bin"), 0, att, ejsCreatePathFromAsc(ejs, BIT_BIN_PREFIX));
