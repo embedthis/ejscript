@@ -2,6 +2,7 @@
     Tar.es -- Tar archive management
  */
 
+# Config.TAR
 module ejs.tar {
 
     const BlockSize = 512

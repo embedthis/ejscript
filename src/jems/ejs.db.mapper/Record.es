@@ -4,7 +4,7 @@
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
-# Config.DB
+# Config.DB && Config.MAPPER
 module ejs.db.mapper {
 
     require ejs.db

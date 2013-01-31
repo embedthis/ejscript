@@ -66,7 +66,6 @@ all compile: prep \
         $(CONFIG)\bin\ejs.db.mapper.mod \
         $(CONFIG)\bin\ejs.db.sqlite.mod \
         $(CONFIG)\bin\libejs.db.sqlite.dll \
-        $(CONFIG)\bin\ejs.mail.mod \
         $(CONFIG)\bin\ejs.web.mod \
         $(CONFIG)\bin\libejs.web.dll \
         $(CONFIG)\bin\www \
@@ -124,7 +123,6 @@ clean:
 	-if exist $(CONFIG)\bin\ejs.db.mapper.mod del /Q $(CONFIG)\bin\ejs.db.mapper.mod
 	-if exist $(CONFIG)\bin\ejs.db.sqlite.mod del /Q $(CONFIG)\bin\ejs.db.sqlite.mod
 	-if exist $(CONFIG)\bin\libejs.db.sqlite.dll del /Q $(CONFIG)\bin\libejs.db.sqlite.dll
-	-if exist $(CONFIG)\bin\ejs.mail.mod del /Q $(CONFIG)\bin\ejs.mail.mod
 	-if exist $(CONFIG)\bin\ejs.web.mod del /Q $(CONFIG)\bin\ejs.web.mod
 	-if exist $(CONFIG)\bin\libejs.web.dll del /Q $(CONFIG)\bin\libejs.web.dll
 	-if exist $(CONFIG)\bin\www del /Q $(CONFIG)\bin\www
@@ -222,20 +220,19 @@ clean:
 	-if exist $(CONFIG)\obj\ejsZlib.obj del /Q $(CONFIG)\obj\ejsZlib.obj
 	-if exist $(CONFIG)\obj\removeFiles.obj del /Q $(CONFIG)\obj\removeFiles.obj
 
+$(CONFIG)\inc\mpr.h: 
+	-if exist $(CONFIG)\inc\mpr.h del /Q $(CONFIG)\inc\mpr.h
+	copy /Y src\deps\mpr\mpr.h $(CONFIG)\inc\mpr.h
+
 $(CONFIG)\inc\bitos.h: 
 	-if exist $(CONFIG)\inc\bitos.h del /Q $(CONFIG)\inc\bitos.h
 	copy /Y src\bitos.h $(CONFIG)\inc\bitos.h
 
-$(CONFIG)\inc\mpr.h:  \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\bitos.h
-	-if exist $(CONFIG)\inc\mpr.h del /Q $(CONFIG)\inc\mpr.h
-	copy /Y src\deps\mpr\mpr.h $(CONFIG)\inc\mpr.h
-
 $(CONFIG)\obj\mprLib.obj: \
         src\deps\mpr\mprLib.c \
         $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\mpr.h
+        $(CONFIG)\inc\mpr.h \
+        $(CONFIG)\inc\bitos.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\mprLib.obj -Fd$(CONFIG)\obj\mprLib.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\mpr\mprLib.c
 
 $(CONFIG)\bin\libmpr.dll:  \
@@ -243,16 +240,15 @@ $(CONFIG)\bin\libmpr.dll:  \
         $(CONFIG)\obj\mprLib.obj
 	"$(LD)" -dll -out:$(CONFIG)\bin\libmpr.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\mprLib.obj $(LIBS)
 
-$(CONFIG)\inc\est.h:  \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\bitos.h
+$(CONFIG)\inc\est.h: 
 	-if exist $(CONFIG)\inc\est.h del /Q $(CONFIG)\inc\est.h
 	copy /Y src\deps\est\est.h $(CONFIG)\inc\est.h
 
 $(CONFIG)\obj\estLib.obj: \
         src\deps\est\estLib.c \
         $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\est.h
+        $(CONFIG)\inc\est.h \
+        $(CONFIG)\inc\bitos.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\estLib.obj -Fd$(CONFIG)\obj\estLib.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\est\estLib.c
 
 $(CONFIG)\bin\libest.dll:  \
@@ -299,8 +295,7 @@ $(CONFIG)\bin\ca.crt: src/deps/est/ca.crt
 	-if exist $(CONFIG)\bin\ca.crt del /Q $(CONFIG)\bin\ca.crt
 	copy /Y src\deps\est\ca.crt $(CONFIG)\bin\ca.crt
 
-$(CONFIG)\inc\pcre.h:  \
-        $(CONFIG)\inc\bit.h
+$(CONFIG)\inc\pcre.h: 
 	-if exist $(CONFIG)\inc\pcre.h del /Q $(CONFIG)\inc\pcre.h
 	copy /Y src\deps\pcre\pcre.h $(CONFIG)\inc\pcre.h
 
@@ -315,16 +310,15 @@ $(CONFIG)\bin\libpcre.dll:  \
         $(CONFIG)\obj\pcre.obj
 	"$(LD)" -dll -out:$(CONFIG)\bin\libpcre.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\pcre.obj $(LIBS)
 
-$(CONFIG)\inc\http.h:  \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\mpr.h
+$(CONFIG)\inc\http.h: 
 	-if exist $(CONFIG)\inc\http.h del /Q $(CONFIG)\inc\http.h
 	copy /Y src\deps\http\http.h $(CONFIG)\inc\http.h
 
 $(CONFIG)\obj\httpLib.obj: \
         src\deps\http\httpLib.c \
         $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\http.h
+        $(CONFIG)\inc\http.h \
+        $(CONFIG)\inc\mpr.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\httpLib.obj -Fd$(CONFIG)\obj\httpLib.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\http\httpLib.c
 
 $(CONFIG)\bin\libhttp.dll:  \
@@ -349,8 +343,7 @@ $(CONFIG)\bin\http-ca.crt: src/deps/http/http-ca.crt
 	-if exist $(CONFIG)\bin\http-ca.crt del /Q $(CONFIG)\bin\http-ca.crt
 	copy /Y src\deps\http\http-ca.crt $(CONFIG)\bin\http-ca.crt
 
-$(CONFIG)\inc\sqlite3.h:  \
-        $(CONFIG)\inc\bit.h
+$(CONFIG)\inc\sqlite3.h: 
 	-if exist $(CONFIG)\inc\sqlite3.h del /Q $(CONFIG)\inc\sqlite3.h
 	copy /Y src\deps\sqlite\sqlite3.h $(CONFIG)\inc\sqlite3.h
 
@@ -376,8 +369,7 @@ $(CONFIG)\bin\sqlite.exe:  \
         $(CONFIG)\obj\sqlite.obj
 	"$(LD)" -out:$(CONFIG)\bin\sqlite.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite.obj libsqlite3.lib $(LIBS)
 
-$(CONFIG)\inc\zlib.h:  \
-        $(CONFIG)\inc\bit.h
+$(CONFIG)\inc\zlib.h: 
 	-if exist $(CONFIG)\inc\zlib.h del /Q $(CONFIG)\inc\zlib.h
 	copy /Y src\deps\zlib\zlib.h $(CONFIG)\inc\zlib.h
 
@@ -396,43 +388,35 @@ $(CONFIG)\inc\ejs.cache.local.slots.h:
 	-if exist $(CONFIG)\inc\ejs.cache.local.slots.h del /Q $(CONFIG)\inc\ejs.cache.local.slots.h
 	copy /Y src\slots\ejs.cache.local.slots.h $(CONFIG)\inc\ejs.cache.local.slots.h
 
-$(CONFIG)\inc\ejs.db.sqlite.slots.h:  \
-        $(CONFIG)\inc\bit.h
+$(CONFIG)\inc\ejs.db.sqlite.slots.h: 
 	-if exist $(CONFIG)\inc\ejs.db.sqlite.slots.h del /Q $(CONFIG)\inc\ejs.db.sqlite.slots.h
 	copy /Y src\slots\ejs.db.sqlite.slots.h $(CONFIG)\inc\ejs.db.sqlite.slots.h
 
-$(CONFIG)\inc\ejs.slots.h:  \
-        $(CONFIG)\inc\bit.h
+$(CONFIG)\inc\ejs.slots.h: 
 	-if exist $(CONFIG)\inc\ejs.slots.h del /Q $(CONFIG)\inc\ejs.slots.h
 	copy /Y src\slots\ejs.slots.h $(CONFIG)\inc\ejs.slots.h
 
-$(CONFIG)\inc\ejs.web.slots.h:  \
-        $(CONFIG)\inc\bit.h
+$(CONFIG)\inc\ejs.web.slots.h: 
 	-if exist $(CONFIG)\inc\ejs.web.slots.h del /Q $(CONFIG)\inc\ejs.web.slots.h
 	copy /Y src\slots\ejs.web.slots.h $(CONFIG)\inc\ejs.web.slots.h
 
-$(CONFIG)\inc\ejs.zlib.slots.h:  \
-        $(CONFIG)\inc\bit.h
+$(CONFIG)\inc\ejs.zlib.slots.h: 
 	-if exist $(CONFIG)\inc\ejs.zlib.slots.h del /Q $(CONFIG)\inc\ejs.zlib.slots.h
 	copy /Y src\slots\ejs.zlib.slots.h $(CONFIG)\inc\ejs.zlib.slots.h
 
-$(CONFIG)\inc\ejsByteCode.h:  \
-        $(CONFIG)\inc\bit.h
+$(CONFIG)\inc\ejsByteCode.h: 
 	-if exist $(CONFIG)\inc\ejsByteCode.h del /Q $(CONFIG)\inc\ejsByteCode.h
 	copy /Y src\ejsByteCode.h $(CONFIG)\inc\ejsByteCode.h
 
-$(CONFIG)\inc\ejsByteCodeTable.h:  \
-        $(CONFIG)\inc\bit.h
+$(CONFIG)\inc\ejsByteCodeTable.h: 
 	-if exist $(CONFIG)\inc\ejsByteCodeTable.h del /Q $(CONFIG)\inc\ejsByteCodeTable.h
 	copy /Y src\ejsByteCodeTable.h $(CONFIG)\inc\ejsByteCodeTable.h
 
-$(CONFIG)\inc\ejsCustomize.h:  \
-        $(CONFIG)\inc\bit.h
+$(CONFIG)\inc\ejsCustomize.h: 
 	-if exist $(CONFIG)\inc\ejsCustomize.h del /Q $(CONFIG)\inc\ejsCustomize.h
 	copy /Y src\ejsCustomize.h $(CONFIG)\inc\ejsCustomize.h
 
 $(CONFIG)\inc\ejs.h:  \
-        $(CONFIG)\inc\bit.h \
         $(CONFIG)\inc\mpr.h \
         $(CONFIG)\inc\http.h \
         $(CONFIG)\inc\ejsByteCode.h \
@@ -442,16 +426,15 @@ $(CONFIG)\inc\ejs.h:  \
 	-if exist $(CONFIG)\inc\ejs.h del /Q $(CONFIG)\inc\ejs.h
 	copy /Y src\ejs.h $(CONFIG)\inc\ejs.h
 
-$(CONFIG)\inc\ejsCompiler.h:  \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+$(CONFIG)\inc\ejsCompiler.h: 
 	-if exist $(CONFIG)\inc\ejsCompiler.h del /Q $(CONFIG)\inc\ejsCompiler.h
 	copy /Y src\ejsCompiler.h $(CONFIG)\inc\ejsCompiler.h
 
 $(CONFIG)\obj\ecAst.obj: \
         src\compiler\ecAst.c \
         $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejsCompiler.h
+        $(CONFIG)\inc\ejsCompiler.h \
+        $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ecAst.obj -Fd$(CONFIG)\obj\ecAst.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\compiler\ecAst.c
 
 $(CONFIG)\obj\ecCodeGen.obj: \
@@ -904,7 +887,8 @@ $(CONFIG)\bin\ejsc.exe:  \
 $(CONFIG)\obj\ejsmod.obj: \
         src\cmd\ejsmod.c \
         $(CONFIG)\inc\bit.h \
-        src\cmd\ejsmod.h
+        src\cmd\ejsmod.h \
+        $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsmod.obj -Fd$(CONFIG)\obj\ejsmod.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\cmd src\cmd\ejsmod.c
 
 $(CONFIG)\obj\doc.obj: \
@@ -1006,9 +990,7 @@ $(CONFIG)\bin\ejs.db.sqlite.mod:  \
 $(CONFIG)\obj\ejsSqlite.obj: \
         src\jems\ejs.db.sqlite\ejsSqlite.c \
         $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h \
-        $(CONFIG)\inc\sqlite3.h \
-        $(CONFIG)\inc\ejs.db.sqlite.slots.h
+        $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsSqlite.obj -Fd$(CONFIG)\obj\ejsSqlite.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\jems\ejs.db.sqlite\ejsSqlite.c
 
 $(CONFIG)\bin\libejs.db.sqlite.dll:  \
@@ -1019,13 +1001,6 @@ $(CONFIG)\bin\libejs.db.sqlite.dll:  \
         $(CONFIG)\bin\libsqlite3.dll \
         $(CONFIG)\obj\ejsSqlite.obj
 	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.db.sqlite.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsSqlite.obj libsqlite3.lib libejs.lib libmpr.lib $(LIBS) libhttp.lib libpcre.lib
-
-$(CONFIG)\bin\ejs.mail.mod:  \
-        $(CONFIG)\bin\ejsc.exe \
-        $(CONFIG)\bin\ejs.mod
-	cd src\jems\ejs.mail
-	"..\..\..\$(CONFIG)\bin\ejsc" --out "..\..\..\$(CONFIG)\bin\ejs.mail.mod"  --optimize 9 *.es
-	cd ..\..\..
 
 $(CONFIG)\bin\ejs.web.mod:  \
         $(CONFIG)\bin\ejsc.exe \
@@ -1038,10 +1013,7 @@ $(CONFIG)\bin\ejs.web.mod:  \
 	del ejs.web.slots.h
 	cd ..\..\..
 
-$(CONFIG)\inc\ejsWeb.h:  \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\http.h \
-        $(CONFIG)\inc\ejs.web.slots.h
+$(CONFIG)\inc\ejsWeb.h: 
 	-if exist $(CONFIG)\inc\ejsWeb.h del /Q $(CONFIG)\inc\ejsWeb.h
 	copy /Y src\jems\ejs.web\ejsWeb.h $(CONFIG)\inc\ejsWeb.h
 
@@ -1051,7 +1023,8 @@ $(CONFIG)\obj\ejsHttpServer.obj: \
         $(CONFIG)\inc\ejs.h \
         $(CONFIG)\inc\ejsCompiler.h \
         $(CONFIG)\inc\ejsWeb.h \
-        $(CONFIG)\inc\ejs.web.slots.h
+        $(CONFIG)\inc\ejs.web.slots.h \
+        $(CONFIG)\inc\http.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsHttpServer.obj -Fd$(CONFIG)\obj\ejsHttpServer.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\jems\ejs.web\src src\jems\ejs.web\ejsHttpServer.c
 
 $(CONFIG)\obj\ejsRequest.obj: \
@@ -1187,13 +1160,17 @@ version:
 root-install:  \
         compile
 	xcopy /I /S /Y /Q $(CONFIG)\bin "$(BIT_BIN_PREFIX)"
+	del /Q "$(BIT_BIN_PREFIX)\*.pdb"
+	del /Q "$(BIT_BIN_PREFIX)\*.exp"
+	del /Q "$(BIT_BIN_PREFIX)\*.lib"
 
 install:  \
         compile
 	nmake -nologo -f ./projects/$(PRODUCT)-$(OS)-$(PROFILE).nmake root-install
 
 root-uninstall: 
-	del /Q "$(BIT_PRD_PREFIX)"
+	if exist "$(BIT_CFG_PREFIX)" rd /Q /S "$(BIT_CFG_PREFIX)"
+	if exist "$(BIT_PRD_PREFIX)" rd /Q /S "$(BIT_PRD_PREFIX)"
 
 uninstall: 
 	nmake -nologo -f ./projects/$(PRODUCT)-$(OS)-$(PROFILE).nmake root-uninstall

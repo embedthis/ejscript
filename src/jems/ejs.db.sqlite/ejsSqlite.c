@@ -11,10 +11,10 @@
 
 #include    "ejs.h"
 
-#if BIT_PACK_SQLITE
+#if BIT_PACK_SQLITE && BIT_EJS_DB
 
-#include    "sqlite3.h"
-#include    "ejs.db.sqlite.slots.h"
+    #include    "sqlite3.h"
+    #include    "ejs.db.sqlite.slots.h"
 
 /*********************************** Locals ***********************************/
 /*

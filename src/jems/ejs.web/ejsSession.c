@@ -6,6 +6,9 @@
 
 /********************************** Includes **********************************/
 
+#include    "bit.h"
+
+#if BIT_EJS_WEB
 #include    "ejs.h"
 #include    "ejsWeb.h"
 
@@ -241,6 +244,7 @@ void ejsConfigureSessionType(Ejs *ejs)
     ejsBindAccess(ejs, type, ES_ejs_web_Session_destorySession, sess_destroySession, 0);
     ejsBindAccess(ejs, type, ES_ejs_web_Session_key, sess_key, 0);
 }
+#endif
 
 
 /*

@@ -5,6 +5,9 @@
  */
 /********************************** Includes **********************************/
 
+#include    "bit.h"
+
+#if BIT_EJS_WEB
 #include    "ejs.h"
 #include    "ejsCompiler.h"
 #include    "ejsWeb.h"
@@ -1566,6 +1569,7 @@ void ejsConfigureRequestType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_writeFile, req_writeFile);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_written, req_written);
 }
+#endif
 
 
 /*

@@ -71,7 +71,6 @@ all compile: prep \
         $(CONFIG)/bin/ejs.db.mapper.mod \
         $(CONFIG)/bin/ejs.db.sqlite.mod \
         $(CONFIG)/bin/libejs.db.sqlite.dylib \
-        $(CONFIG)/bin/ejs.mail.mod \
         $(CONFIG)/bin/ejs.web.mod \
         $(CONFIG)/bin/libejs.web.dylib \
         $(CONFIG)/bin/www \
@@ -127,7 +126,6 @@ clean:
 	rm -rf $(CONFIG)/bin/ejs.db.mapper.mod
 	rm -rf $(CONFIG)/bin/ejs.db.sqlite.mod
 	rm -rf $(CONFIG)/bin/libejs.db.sqlite.dylib
-	rm -rf $(CONFIG)/bin/ejs.mail.mod
 	rm -rf $(CONFIG)/bin/ejs.web.mod
 	rm -rf $(CONFIG)/bin/libejs.web.dylib
 	rm -rf $(CONFIG)/bin/www
@@ -227,20 +225,19 @@ clean:
 clobber: clean
 	rm -fr ./$(CONFIG)
 
+$(CONFIG)/inc/mpr.h: 
+	rm -fr $(CONFIG)/inc/mpr.h
+	cp -r src/deps/mpr/mpr.h $(CONFIG)/inc/mpr.h
+
 $(CONFIG)/inc/bitos.h: 
 	rm -fr $(CONFIG)/inc/bitos.h
 	cp -r src/bitos.h $(CONFIG)/inc/bitos.h
 
-$(CONFIG)/inc/mpr.h:  \
-        $(CONFIG)/inc/bit.h \
-        $(CONFIG)/inc/bitos.h
-	rm -fr $(CONFIG)/inc/mpr.h
-	cp -r src/deps/mpr/mpr.h $(CONFIG)/inc/mpr.h
-
 $(CONFIG)/obj/mprLib.o: \
         src/deps/mpr/mprLib.c \
         $(CONFIG)/inc/bit.h \
-        $(CONFIG)/inc/mpr.h
+        $(CONFIG)/inc/mpr.h \
+        $(CONFIG)/inc/bitos.h
 	$(CC) -c -o $(CONFIG)/obj/mprLib.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/mpr/mprLib.c
 
 $(CONFIG)/bin/libmpr.dylib:  \
@@ -248,16 +245,15 @@ $(CONFIG)/bin/libmpr.dylib:  \
         $(CONFIG)/obj/mprLib.o
 	$(CC) -dynamiclib -o $(CONFIG)/bin/libmpr.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.3.0 -current_version 2.3.0 $(LIBPATHS) -install_name @rpath/libmpr.dylib $(CONFIG)/obj/mprLib.o $(LIBS)
 
-$(CONFIG)/inc/est.h:  \
-        $(CONFIG)/inc/bit.h \
-        $(CONFIG)/inc/bitos.h
+$(CONFIG)/inc/est.h: 
 	rm -fr $(CONFIG)/inc/est.h
 	cp -r src/deps/est/est.h $(CONFIG)/inc/est.h
 
 $(CONFIG)/obj/estLib.o: \
         src/deps/est/estLib.c \
         $(CONFIG)/inc/bit.h \
-        $(CONFIG)/inc/est.h
+        $(CONFIG)/inc/est.h \
+        $(CONFIG)/inc/bitos.h
 	$(CC) -c -o $(CONFIG)/obj/estLib.o -arch x86_64 $(DFLAGS) -I$(CONFIG)/inc src/deps/est/estLib.c
 
 $(CONFIG)/bin/libest.dylib:  \
@@ -304,8 +300,7 @@ $(CONFIG)/bin/ca.crt: src/deps/est/ca.crt
 	rm -fr $(CONFIG)/bin/ca.crt
 	cp -r src/deps/est/ca.crt $(CONFIG)/bin/ca.crt
 
-$(CONFIG)/inc/pcre.h:  \
-        $(CONFIG)/inc/bit.h
+$(CONFIG)/inc/pcre.h: 
 	rm -fr $(CONFIG)/inc/pcre.h
 	cp -r src/deps/pcre/pcre.h $(CONFIG)/inc/pcre.h
 
@@ -320,16 +315,15 @@ $(CONFIG)/bin/libpcre.dylib:  \
         $(CONFIG)/obj/pcre.o
 	$(CC) -dynamiclib -o $(CONFIG)/bin/libpcre.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.3.0 -current_version 2.3.0 $(LIBPATHS) -install_name @rpath/libpcre.dylib $(CONFIG)/obj/pcre.o $(LIBS)
 
-$(CONFIG)/inc/http.h:  \
-        $(CONFIG)/inc/bit.h \
-        $(CONFIG)/inc/mpr.h
+$(CONFIG)/inc/http.h: 
 	rm -fr $(CONFIG)/inc/http.h
 	cp -r src/deps/http/http.h $(CONFIG)/inc/http.h
 
 $(CONFIG)/obj/httpLib.o: \
         src/deps/http/httpLib.c \
         $(CONFIG)/inc/bit.h \
-        $(CONFIG)/inc/http.h
+        $(CONFIG)/inc/http.h \
+        $(CONFIG)/inc/mpr.h
 	$(CC) -c -o $(CONFIG)/obj/httpLib.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/http/httpLib.c
 
 $(CONFIG)/bin/libhttp.dylib:  \
@@ -354,8 +348,7 @@ $(CONFIG)/bin/http-ca.crt: src/deps/http/http-ca.crt
 	rm -fr $(CONFIG)/bin/http-ca.crt
 	cp -r src/deps/http/http-ca.crt $(CONFIG)/bin/http-ca.crt
 
-$(CONFIG)/inc/sqlite3.h:  \
-        $(CONFIG)/inc/bit.h
+$(CONFIG)/inc/sqlite3.h: 
 	rm -fr $(CONFIG)/inc/sqlite3.h
 	cp -r src/deps/sqlite/sqlite3.h $(CONFIG)/inc/sqlite3.h
 
@@ -381,8 +374,7 @@ $(CONFIG)/bin/sqlite:  \
         $(CONFIG)/obj/sqlite.o
 	$(CC) -o $(CONFIG)/bin/sqlite -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o -lsqlite3 $(LIBS)
 
-$(CONFIG)/inc/zlib.h:  \
-        $(CONFIG)/inc/bit.h
+$(CONFIG)/inc/zlib.h: 
 	rm -fr $(CONFIG)/inc/zlib.h
 	cp -r src/deps/zlib/zlib.h $(CONFIG)/inc/zlib.h
 
@@ -401,43 +393,35 @@ $(CONFIG)/inc/ejs.cache.local.slots.h:
 	rm -fr $(CONFIG)/inc/ejs.cache.local.slots.h
 	cp -r src/slots/ejs.cache.local.slots.h $(CONFIG)/inc/ejs.cache.local.slots.h
 
-$(CONFIG)/inc/ejs.db.sqlite.slots.h:  \
-        $(CONFIG)/inc/bit.h
+$(CONFIG)/inc/ejs.db.sqlite.slots.h: 
 	rm -fr $(CONFIG)/inc/ejs.db.sqlite.slots.h
 	cp -r src/slots/ejs.db.sqlite.slots.h $(CONFIG)/inc/ejs.db.sqlite.slots.h
 
-$(CONFIG)/inc/ejs.slots.h:  \
-        $(CONFIG)/inc/bit.h
+$(CONFIG)/inc/ejs.slots.h: 
 	rm -fr $(CONFIG)/inc/ejs.slots.h
 	cp -r src/slots/ejs.slots.h $(CONFIG)/inc/ejs.slots.h
 
-$(CONFIG)/inc/ejs.web.slots.h:  \
-        $(CONFIG)/inc/bit.h
+$(CONFIG)/inc/ejs.web.slots.h: 
 	rm -fr $(CONFIG)/inc/ejs.web.slots.h
 	cp -r src/slots/ejs.web.slots.h $(CONFIG)/inc/ejs.web.slots.h
 
-$(CONFIG)/inc/ejs.zlib.slots.h:  \
-        $(CONFIG)/inc/bit.h
+$(CONFIG)/inc/ejs.zlib.slots.h: 
 	rm -fr $(CONFIG)/inc/ejs.zlib.slots.h
 	cp -r src/slots/ejs.zlib.slots.h $(CONFIG)/inc/ejs.zlib.slots.h
 
-$(CONFIG)/inc/ejsByteCode.h:  \
-        $(CONFIG)/inc/bit.h
+$(CONFIG)/inc/ejsByteCode.h: 
 	rm -fr $(CONFIG)/inc/ejsByteCode.h
 	cp -r src/ejsByteCode.h $(CONFIG)/inc/ejsByteCode.h
 
-$(CONFIG)/inc/ejsByteCodeTable.h:  \
-        $(CONFIG)/inc/bit.h
+$(CONFIG)/inc/ejsByteCodeTable.h: 
 	rm -fr $(CONFIG)/inc/ejsByteCodeTable.h
 	cp -r src/ejsByteCodeTable.h $(CONFIG)/inc/ejsByteCodeTable.h
 
-$(CONFIG)/inc/ejsCustomize.h:  \
-        $(CONFIG)/inc/bit.h
+$(CONFIG)/inc/ejsCustomize.h: 
 	rm -fr $(CONFIG)/inc/ejsCustomize.h
 	cp -r src/ejsCustomize.h $(CONFIG)/inc/ejsCustomize.h
 
 $(CONFIG)/inc/ejs.h:  \
-        $(CONFIG)/inc/bit.h \
         $(CONFIG)/inc/mpr.h \
         $(CONFIG)/inc/http.h \
         $(CONFIG)/inc/ejsByteCode.h \
@@ -447,16 +431,15 @@ $(CONFIG)/inc/ejs.h:  \
 	rm -fr $(CONFIG)/inc/ejs.h
 	cp -r src/ejs.h $(CONFIG)/inc/ejs.h
 
-$(CONFIG)/inc/ejsCompiler.h:  \
-        $(CONFIG)/inc/bit.h \
-        $(CONFIG)/inc/ejs.h
+$(CONFIG)/inc/ejsCompiler.h: 
 	rm -fr $(CONFIG)/inc/ejsCompiler.h
 	cp -r src/ejsCompiler.h $(CONFIG)/inc/ejsCompiler.h
 
 $(CONFIG)/obj/ecAst.o: \
         src/compiler/ecAst.c \
         $(CONFIG)/inc/bit.h \
-        $(CONFIG)/inc/ejsCompiler.h
+        $(CONFIG)/inc/ejsCompiler.h \
+        $(CONFIG)/inc/ejs.h
 	$(CC) -c -o $(CONFIG)/obj/ecAst.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/compiler/ecAst.c
 
 $(CONFIG)/obj/ecCodeGen.o: \
@@ -909,7 +892,8 @@ $(CONFIG)/bin/ejsc:  \
 $(CONFIG)/obj/ejsmod.o: \
         src/cmd/ejsmod.c \
         $(CONFIG)/inc/bit.h \
-        src/cmd/ejsmod.h
+        src/cmd/ejsmod.h \
+        $(CONFIG)/inc/ejs.h
 	$(CC) -c -o $(CONFIG)/obj/ejsmod.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/cmd src/cmd/ejsmod.c
 
 $(CONFIG)/obj/doc.o: \
@@ -999,9 +983,7 @@ $(CONFIG)/bin/ejs.db.sqlite.mod:  \
 $(CONFIG)/obj/ejsSqlite.o: \
         src/jems/ejs.db.sqlite/ejsSqlite.c \
         $(CONFIG)/inc/bit.h \
-        $(CONFIG)/inc/ejs.h \
-        $(CONFIG)/inc/sqlite3.h \
-        $(CONFIG)/inc/ejs.db.sqlite.slots.h
+        $(CONFIG)/inc/ejs.h
 	$(CC) -c -o $(CONFIG)/obj/ejsSqlite.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/jems/ejs.db.sqlite/ejsSqlite.c
 
 $(CONFIG)/bin/libejs.db.sqlite.dylib:  \
@@ -1013,11 +995,6 @@ $(CONFIG)/bin/libejs.db.sqlite.dylib:  \
         $(CONFIG)/obj/ejsSqlite.o
 	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.db.sqlite.dylib -arch x86_64 $(LDFLAGS) -compatibility_version 2.3.0 -current_version 2.3.0 $(LIBPATHS) -install_name @rpath/libejs.db.sqlite.dylib $(CONFIG)/obj/ejsSqlite.o -lsqlite3 -lejs -lmpr $(LIBS) -lhttp -lpcre -lpam
 
-$(CONFIG)/bin/ejs.mail.mod:  \
-        $(CONFIG)/bin/ejsc \
-        $(CONFIG)/bin/ejs.mod
-	cd src/jems/ejs.mail; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.mail.mod  --optimize 9 *.es ; cd ../../..
-
 $(CONFIG)/bin/ejs.web.mod:  \
         $(CONFIG)/bin/ejsc \
         $(CONFIG)/bin/ejsmod \
@@ -1027,10 +1004,7 @@ $(CONFIG)/bin/ejs.web.mod:  \
 	cd src/jems/ejs.web; if ! diff ejs.web.slots.h ../../../$(CONFIG)/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../../$(CONFIG)/inc; fi ; cd ../../..
 	cd src/jems/ejs.web; rm -f ejs.web.slots.h ; cd ../../..
 
-$(CONFIG)/inc/ejsWeb.h:  \
-        $(CONFIG)/inc/bit.h \
-        $(CONFIG)/inc/http.h \
-        $(CONFIG)/inc/ejs.web.slots.h
+$(CONFIG)/inc/ejsWeb.h: 
 	rm -fr $(CONFIG)/inc/ejsWeb.h
 	cp -r src/jems/ejs.web/ejsWeb.h $(CONFIG)/inc/ejsWeb.h
 
@@ -1040,7 +1014,8 @@ $(CONFIG)/obj/ejsHttpServer.o: \
         $(CONFIG)/inc/ejs.h \
         $(CONFIG)/inc/ejsCompiler.h \
         $(CONFIG)/inc/ejsWeb.h \
-        $(CONFIG)/inc/ejs.web.slots.h
+        $(CONFIG)/inc/ejs.web.slots.h \
+        $(CONFIG)/inc/http.h
 	$(CC) -c -o $(CONFIG)/obj/ejsHttpServer.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsHttpServer.c
 
 $(CONFIG)/obj/ejsRequest.o: \

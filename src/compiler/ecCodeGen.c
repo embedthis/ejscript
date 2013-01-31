@@ -3697,7 +3697,9 @@ static void createInitializer(EcCompiler *cp, EjsModule *mp)
         We can safely just ignore this debug code.
      */
     if (!mp->hasInitializer || !mp->code) {
+#if UNUSED
         mp->hasInitializer = 0;
+#endif
         LEAVE(cp);
         return;
     }
@@ -4097,7 +4099,6 @@ static void processModule(EcCompiler *cp, EjsModule *mp)
     }
     assert(mp->code);
     assert(mp->file);
-
     code = state->code;
 
     if (mp->hasInitializer) {
@@ -4118,14 +4119,16 @@ static void processModule(EcCompiler *cp, EjsModule *mp)
         LEAVE(cp);
         return;
     }
-    if (! cp->outputFile) {
+    if (!cp->outputFile) {
         mprCloseFile(mp->file);
-        mp->file = 0;
-        mp->code = 0;
-    } else {
-        mp->code = 0;
     }
     mp->file = 0;
+#if UNUSED
+    /*
+        Can't remove because then compileInner can't add the compiled modules to the interpreter if code is zero.
+     */
+    mp->code = 0;
+#endif
 }
 
 

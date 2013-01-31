@@ -25,6 +25,24 @@
 #ifndef BIT_DISCOVER
     #define BIT_DISCOVER "doxygen,dsi,est,man,man2html,pmaker,sqlite,zip"
 #endif
+#ifndef BIT_EJS_DB
+    #define BIT_EJS_DB 1
+#endif
+#ifndef BIT_EJS_MAIL
+    #define BIT_EJS_MAIL 1
+#endif
+#ifndef BIT_EJS_MAPPER
+    #define BIT_EJS_MAPPER 1
+#endif
+#ifndef BIT_EJS_TAR
+    #define BIT_EJS_TAR 1
+#endif
+#ifndef BIT_EJS_TEMPLATE
+    #define BIT_EJS_TEMPLATE 1
+#endif
+#ifndef BIT_EJS_WEB
+    #define BIT_EJS_WEB 1
+#endif
 #ifndef BIT_EST_CAMELLIA
     #define BIT_EST_CAMELLIA 0
 #endif

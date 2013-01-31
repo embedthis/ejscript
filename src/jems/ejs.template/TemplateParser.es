@@ -2,6 +2,7 @@
     TemplateParser.es -- Ejscript web templating parser. 
  */
 
+# Config.TEMPLATE
 module ejs.template  {
 
     /*

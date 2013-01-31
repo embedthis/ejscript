@@ -5,6 +5,9 @@
  */
 /********************************** Includes **********************************/
 
+#include    "bit.h"
+
+#if BIT_EJS_WEB
 #include    "ejs.h"
 #include    "ejsCompiler.h"
 #include    "ejsWeb.h"
@@ -49,6 +52,7 @@ int ejs_web_Init(Ejs *ejs, MprModule *mp)
 {
     return ejsAddNativeModule(ejs, "ejs.web", configureWebTypes, _ES_CHECKSUM_ejs_web, EJS_LOADER_ETERNAL);
 }
+#endif
 
 
 /*

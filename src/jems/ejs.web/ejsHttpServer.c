@@ -5,6 +5,9 @@
  */
 /********************************** Includes **********************************/
 
+#include    "bit.h"
+
+#if BIT_EJS_WEB
 #include    "ejs.h"
 #include    "ejsCompiler.h"
 #include    "ejsWeb.h"
@@ -954,6 +957,7 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     ejsLoadHttpService(ejs);
     ejsAddWebHandler(ejs->http, NULL);
 }
+#endif
 
 
 /*
