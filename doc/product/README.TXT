@@ -17,10 +17,9 @@ Table of Contents
 * System Requirements
 * Installation Package Formats
 * Development Environment Platform Support
-* Installating the Tar Self-Install Image
-* Removing Ejscript
 * Apple MAC OS X  Release Details
 * Windows Release Details
+* Removing Ejscript
 * Running Ejscript
 * Building the Source Code
 * License and Copyright Information
@@ -29,11 +28,11 @@ System Requirements
 
 Operating System Support
 
-    * Windows XP, Vista, Windows-7 (x86,x86_64)
-    * Mac OS X 10.4, 10.5 (ppc,x86,x86_64)
-    * Linux 2.4, 2.6 (x86,,x86_64,arm,ppc,sparc,xscale,mips)
+    * Windows XP, Vista, Windows-7 (x86,x64)
+    * Mac OS X 10.4, 10.5 (ppc,x86,x64)
+    * Linux 2.4, 2.6 (x86,x64,arm,ppc,sparc,xscale,mips)
     * VxWorks (x86,arm,ppc,sparc,xscale,mips)
-    * Solaris (sparc,x86,x86_64)
+    * Solaris (sparc,x86,x64)
 
 To install Ejscript, your system will need at least the following:
 
@@ -68,36 +67,9 @@ If you wish to embed Ejscript in your application or build Ejscript from source 
 
     * Linux/Unix/Solaris GNU Tools
 
-    * Windows Visual Studio (Visual Studio 2008 (Express) or the Cygwin UNIX 
-      emulation tools. See www.cygwin.com.
+    * Windows Visual Studio 2010
 
     * WindRiver Tornado Development Tools
-
-
-Installating the Tar Self-Install Image
-
-This the procedure for the self-install Tar format image:
-
-   1. Uncompress and extract the image by typing
-
-      tar xvf ejs-VERSION-BUILD-DIST-OS-ARCH.FMT.tar.gz
-
-      where FMT is "tar".
-
-   2. Invoke the installation script with administrator privilege
-
-      sudo ./install
-
-
-Removing Ejscript
-
-This is the procedure to remove Ejscript on all systems except Windows.
-
-   1. Change directory to the installation directory for Ejscript. This is usually /usr/lib/ejs.
-
-   2. Run the uninstall script in the install directory for Ejscript by typing 
-
-      sudo ./uninstall
 
 
 Apple Mac OS X Release Details
@@ -122,6 +94,17 @@ To install the Windows Installer image:
       will extract the README.TXT and setup.exe from the zip archive.
 
    3. Double click on the setup.exe image to run it.
+
+
+Removing Ejscript on MAC OS X
+
+This is the procedure to remove Ejscript on all systems except Windows.
+
+   1. Change directory to the installation directory for Ejscript. This is usually /usr/lib/ejs.
+
+   2. Run the uninstall script in the install directory for Ejscript by typing 
+
+      sudo ./uninstall
 
 
 Removing Ejscript on Windows
