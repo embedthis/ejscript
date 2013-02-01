@@ -54,7 +54,6 @@ all compile: prep \
         $(CONFIG)/bin/libpcre.dylib \
         $(CONFIG)/bin/libhttp.dylib \
         $(CONFIG)/bin/http \
-        $(CONFIG)/bin/http-ca.crt \
         $(CONFIG)/bin/libsqlite3.dylib \
         $(CONFIG)/bin/sqlite \
         $(CONFIG)/bin/libzlib.dylib \
@@ -111,7 +110,6 @@ clean:
 	rm -rf $(CONFIG)/bin/libpcre.dylib
 	rm -rf $(CONFIG)/bin/libhttp.dylib
 	rm -rf $(CONFIG)/bin/http
-	rm -rf $(CONFIG)/bin/http-ca.crt
 	rm -rf $(CONFIG)/bin/libsqlite3.dylib
 	rm -rf $(CONFIG)/bin/sqlite
 	rm -rf $(CONFIG)/bin/libzlib.dylib
@@ -343,10 +341,6 @@ $(CONFIG)/bin/http:  \
         $(CONFIG)/bin/libhttp.dylib \
         $(CONFIG)/obj/http.o
 	$(CC) -o $(CONFIG)/bin/http -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o -lhttp $(LIBS) -lpcre -lmpr -lpam
-
-$(CONFIG)/bin/http-ca.crt: src/deps/http/http-ca.crt
-	rm -fr $(CONFIG)/bin/http-ca.crt
-	cp -r src/deps/http/http-ca.crt $(CONFIG)/bin/http-ca.crt
 
 $(CONFIG)/inc/sqlite3.h: 
 	rm -fr $(CONFIG)/inc/sqlite3.h
@@ -983,7 +977,8 @@ $(CONFIG)/bin/ejs.db.sqlite.mod:  \
 $(CONFIG)/obj/ejsSqlite.o: \
         src/jems/ejs.db.sqlite/ejsSqlite.c \
         $(CONFIG)/inc/bit.h \
-        $(CONFIG)/inc/ejs.h
+        $(CONFIG)/inc/ejs.h \
+        $(CONFIG)/inc/ejs.db.sqlite.slots.h
 	$(CC) -c -o $(CONFIG)/obj/ejsSqlite.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/jems/ejs.db.sqlite/ejsSqlite.c
 
 $(CONFIG)/bin/libejs.db.sqlite.dylib:  \
@@ -1121,7 +1116,7 @@ $(CONFIG)/bin/utest:  \
 version: 
 	@echo 2.3.0-1
 
-root-install:  \
+install:  \
         compile
 	rm -f $(BIT_PRD_PREFIX)/latest $(BIT_UBIN_PREFIX)/bit
 	for n in ejs ejsc ejsman ejsmod jem mvc utest ; do rm -f $(BIT_UBIN_PREFIX)/$$n ; done
@@ -1130,13 +1125,6 @@ root-install:  \
 	ln -s $(VERSION) $(BIT_PRD_PREFIX)/latest
 	for n in ejs ejsc ejsman ejsmod jem mvc utest ; do 	rm -f $(BIT_UBIN_PREFIX)/$$n ; 	ln -s $(BIT_BIN_PREFIX)/$$n $(BIT_UBIN_PREFIX)/$$n ; 	done
 
-install:  \
-        compile
-	sudo $(MAKE) -C . -f projects/$(PRODUCT)-$(OS)-$(PROFILE).mk $(MAKEFLAGS) root-install
-
-root-uninstall: 
-	rm -fr $(BIT_PRD_PREFIX)
-
 uninstall: 
-	sudo $(MAKE) -C . -f projects/$(PRODUCT)-$(OS)-$(PROFILE).mk $(MAKEFLAGS) root-uninstall
+	rm -fr $(BIT_PRD_PREFIX)
 

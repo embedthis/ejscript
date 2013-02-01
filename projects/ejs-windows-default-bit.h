@@ -43,6 +43,9 @@
 #ifndef BIT_EJS_WEB
     #define BIT_EJS_WEB 1
 #endif
+#ifndef BIT_EJS_ZLIB
+    #define BIT_EJS_ZLIB 1
+#endif
 #ifndef BIT_EST_CAMELLIA
     #define BIT_EST_CAMELLIA 0
 #endif
