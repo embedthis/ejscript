@@ -5,39 +5,41 @@
 PRODUCT         = ejs
 VERSION         = 2.3.0
 BUILD_NUMBER    = 1
-PROFILE   = default
-PA        = $(PROCESSOR_ARCHITECTURE)
+PROFILE         = default
+PA              = $(PROCESSOR_ARCHITECTURE)
+
 !IF "$(PA)" == "AMD64"
-ARCH     = x64
-ENTRY    = _DllMainCRTStartup
+ARCH            = x64
+ENTRY           = _DllMainCRTStartup
 !ELSE
-ARCH     = x86
-ENTRY    = _DllMainCRTStartup@12
+ARCH            = x86
+ENTRY           = _DllMainCRTStartup@12
 !ENDIF
 
-OS       = windows
-CONFIG   = $(OS)-$(ARCH)-$(PROFILE)
-CC       = cl
-LD       = link
-RC       = rc
-CFLAGS   = -nologo -GR- -W3 -Zi -Od -MDd
-DFLAGS   = -D_REENTRANT -D_MT -DBIT_DEBUG
-IFLAGS   = -I$(CONFIG)\inc
-LDFLAGS  = -nologo -nodefaultlib -incremental:no -debug -machine:$(ARCH)
-LIBPATHS = -libpath:$(CONFIG)\bin
-LIBS     = ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.lib msvcrt.lib shell32.lib
+OS              = windows
+CONFIG          = $(OS)-$(ARCH)-$(PROFILE)
+CC              = cl
+LD              = link
+RC              = rc
+CFLAGS          = -nologo -GR- -W3 -Zi -Od -MDd
+DFLAGS          = -D_REENTRANT -D_MT -DBIT_DEBUG
+IFLAGS          = -I$(CONFIG)\inc
+LDFLAGS         = -nologo -nodefaultlib -incremental:no -debug -machine:$(ARCH)
+LIBPATHS        = -libpath:$(CONFIG)\bin
+LIBS            = ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.lib msvcrt.lib shell32.lib
 
-BIT_PRD_PREFIX  = C:/Program Files/Embedthis Ejscript
-BIT_VER_PREFIX  = $(BIT_PRD_PREFIX)
-BIT_CFG_PREFIX  = $(BIT_PRD_PREFIX)
-BIT_BIN_PREFIX  = $(BIT_PRD_PREFIX)/bin
-BIT_INC_PREFIX  = $(BIT_PRD_PREFIX)/inc
-BIT_LOG_PREFIX  = $(BIT_PRD_PREFIX)/logs
-BIT_SPL_PREFIX  = $(BIT_PRD_PREFIX)/tmp
-BIT_SRC_PREFIX  = $(BIT_PRD_PREFIX)/src
-BIT_WEB_PREFIX  = $(BIT_PRD_PREFIX)/web
-BIT_UBIN_PREFIX = $(BIT_PRD_PREFIX)/bin
-BIT_MAN_PREFIX  = $(BIT_PRD_PREFIX)/man
+BIT_ROOT_PREFIX = C:/
+BIT_PRD_PREFIX  = $(BIT_ROOT_PREFIX)Program Files/Embedthis Ejscript
+BIT_VER_PREFIX  = $(BIT_ROOT_PREFIX)Program Files/Embedthis Ejscript
+BIT_CFG_PREFIX  = $(BIT_VER_PREFIX)
+BIT_BIN_PREFIX  = $(BIT_VER_PREFIX)/bin
+BIT_INC_PREFIX  = $(BIT_VER_PREFIX)/inc
+BIT_LOG_PREFIX  = $(BIT_VER_PREFIX)/logs
+BIT_SPL_PREFIX  = $(BIT_VER_PREFIX)/tmp
+BIT_SRC_PREFIX  = $(BIT_VER_PREFIX)/src
+BIT_WEB_PREFIX  = $(BIT_VER_PREFIX)/web
+BIT_UBIN_PREFIX = $(BIT_VER_PREFIX)/bin
+BIT_MAN_PREFIX  = $(BIT_VER_PREFIX)/man
 
 all compile: prep \
         $(CONFIG)\bin\libmpr.dll \
@@ -94,9 +96,7 @@ prep:
 	@if not exist $(CONFIG)\bin md $(CONFIG)\bin
 	@if not exist $(CONFIG)\inc md $(CONFIG)\inc
 	@if not exist $(CONFIG)\obj md $(CONFIG)\obj
-	@if not exist $(CONFIG)\inc\bit.h copy projects\ejs-$(OS)-$(PROFILE)-bit.h $(CONFIG)\inc\bit.h
-	@echo $(DFLAGS) $(CFLAGS) >projects/.flags
-
+	@if not exist $(CONFIG)\inc\bit.h copy projects\ejs-windows-default-bit.h $(CONFIG)\inc\bit.h
 clean:
 	-if exist $(CONFIG)\bin\libmpr.dll del /Q $(CONFIG)\bin\libmpr.dll
 	-if exist $(CONFIG)\bin\libmprssl.dll del /Q $(CONFIG)\bin\libmprssl.dll
@@ -227,15 +227,15 @@ $(CONFIG)\inc\bitos.h:
 	copy /Y src\bitos.h $(CONFIG)\inc\bitos.h
 
 $(CONFIG)\obj\mprLib.obj: \
-        src\deps\mpr\mprLib.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\mpr.h \
-        $(CONFIG)\inc\bitos.h
+    src\deps\mpr\mprLib.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\mpr.h \
+    $(CONFIG)\inc\bitos.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\mprLib.obj -Fd$(CONFIG)\obj\mprLib.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\mpr\mprLib.c
 
-$(CONFIG)\bin\libmpr.dll:  \
-        $(CONFIG)\inc\mpr.h \
-        $(CONFIG)\obj\mprLib.obj
+$(CONFIG)\bin\libmpr.dll: \
+    $(CONFIG)\inc\mpr.h \
+    $(CONFIG)\obj\mprLib.obj
 	"$(LD)" -dll -out:$(CONFIG)\bin\libmpr.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\mprLib.obj $(LIBS)
 
 $(CONFIG)\inc\est.h: 
@@ -243,50 +243,50 @@ $(CONFIG)\inc\est.h:
 	copy /Y src\deps\est\est.h $(CONFIG)\inc\est.h
 
 $(CONFIG)\obj\estLib.obj: \
-        src\deps\est\estLib.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\est.h \
-        $(CONFIG)\inc\bitos.h
+    src\deps\est\estLib.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\est.h \
+    $(CONFIG)\inc\bitos.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\estLib.obj -Fd$(CONFIG)\obj\estLib.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\est\estLib.c
 
-$(CONFIG)\bin\libest.dll:  \
-        $(CONFIG)\inc\est.h \
-        $(CONFIG)\obj\estLib.obj
+$(CONFIG)\bin\libest.dll: \
+    $(CONFIG)\inc\est.h \
+    $(CONFIG)\obj\estLib.obj
 	"$(LD)" -dll -out:$(CONFIG)\bin\libest.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\estLib.obj $(LIBS)
 
 $(CONFIG)\obj\mprSsl.obj: \
-        src\deps\mpr\mprSsl.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\mpr.h \
-        $(CONFIG)\inc\est.h
+    src\deps\mpr\mprSsl.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\mpr.h \
+    $(CONFIG)\inc\est.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\mprSsl.obj -Fd$(CONFIG)\obj\mprSsl.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\mpr\mprSsl.c
 
-$(CONFIG)\bin\libmprssl.dll:  \
-        $(CONFIG)\bin\libmpr.dll \
-        $(CONFIG)\bin\libest.dll \
-        $(CONFIG)\obj\mprSsl.obj
+$(CONFIG)\bin\libmprssl.dll: \
+    $(CONFIG)\bin\libmpr.dll \
+    $(CONFIG)\bin\libest.dll \
+    $(CONFIG)\obj\mprSsl.obj
 	"$(LD)" -dll -out:$(CONFIG)\bin\libmprssl.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\mprSsl.obj libest.lib libmpr.lib $(LIBS)
 
 $(CONFIG)\obj\manager.obj: \
-        src\deps\mpr\manager.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\mpr.h
+    src\deps\mpr\manager.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\mpr.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\manager.obj -Fd$(CONFIG)\obj\manager.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\mpr\manager.c
 
-$(CONFIG)\bin\ejsman.exe:  \
-        $(CONFIG)\bin\libmpr.dll \
-        $(CONFIG)\obj\manager.obj
+$(CONFIG)\bin\ejsman.exe: \
+    $(CONFIG)\bin\libmpr.dll \
+    $(CONFIG)\obj\manager.obj
 	"$(LD)" -out:$(CONFIG)\bin\ejsman.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\manager.obj libmpr.lib $(LIBS)
 
 $(CONFIG)\obj\makerom.obj: \
-        src\deps\mpr\makerom.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\mpr.h
+    src\deps\mpr\makerom.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\mpr.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\makerom.obj -Fd$(CONFIG)\obj\makerom.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\mpr\makerom.c
 
-$(CONFIG)\bin\makerom.exe:  \
-        $(CONFIG)\bin\libmpr.dll \
-        $(CONFIG)\obj\makerom.obj
+$(CONFIG)\bin\makerom.exe: \
+    $(CONFIG)\bin\libmpr.dll \
+    $(CONFIG)\obj\makerom.obj
 	"$(LD)" -out:$(CONFIG)\bin\makerom.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\makerom.obj libmpr.lib $(LIBS)
 
 $(CONFIG)\bin\ca.crt: src/deps/est/ca.crt
@@ -298,14 +298,14 @@ $(CONFIG)\inc\pcre.h:
 	copy /Y src\deps\pcre\pcre.h $(CONFIG)\inc\pcre.h
 
 $(CONFIG)\obj\pcre.obj: \
-        src\deps\pcre\pcre.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\pcre.h
+    src\deps\pcre\pcre.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\pcre.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\pcre.obj -Fd$(CONFIG)\obj\pcre.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\pcre\pcre.c
 
-$(CONFIG)\bin\libpcre.dll:  \
-        $(CONFIG)\inc\pcre.h \
-        $(CONFIG)\obj\pcre.obj
+$(CONFIG)\bin\libpcre.dll: \
+    $(CONFIG)\inc\pcre.h \
+    $(CONFIG)\obj\pcre.obj
 	"$(LD)" -dll -out:$(CONFIG)\bin\libpcre.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\pcre.obj $(LIBS)
 
 $(CONFIG)\inc\http.h: 
@@ -313,28 +313,28 @@ $(CONFIG)\inc\http.h:
 	copy /Y src\deps\http\http.h $(CONFIG)\inc\http.h
 
 $(CONFIG)\obj\httpLib.obj: \
-        src\deps\http\httpLib.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\http.h \
-        $(CONFIG)\inc\mpr.h
+    src\deps\http\httpLib.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\http.h \
+    $(CONFIG)\inc\mpr.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\httpLib.obj -Fd$(CONFIG)\obj\httpLib.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\http\httpLib.c
 
-$(CONFIG)\bin\libhttp.dll:  \
-        $(CONFIG)\bin\libmpr.dll \
-        $(CONFIG)\bin\libpcre.dll \
-        $(CONFIG)\inc\http.h \
-        $(CONFIG)\obj\httpLib.obj
+$(CONFIG)\bin\libhttp.dll: \
+    $(CONFIG)\bin\libmpr.dll \
+    $(CONFIG)\bin\libpcre.dll \
+    $(CONFIG)\inc\http.h \
+    $(CONFIG)\obj\httpLib.obj
 	"$(LD)" -dll -out:$(CONFIG)\bin\libhttp.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\httpLib.obj libpcre.lib libmpr.lib $(LIBS)
 
 $(CONFIG)\obj\http.obj: \
-        src\deps\http\http.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\http.h
+    src\deps\http\http.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\http.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\http.obj -Fd$(CONFIG)\obj\http.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\http\http.c
 
-$(CONFIG)\bin\http.exe:  \
-        $(CONFIG)\bin\libhttp.dll \
-        $(CONFIG)\obj\http.obj
+$(CONFIG)\bin\http.exe: \
+    $(CONFIG)\bin\libhttp.dll \
+    $(CONFIG)\obj\http.obj
 	"$(LD)" -out:$(CONFIG)\bin\http.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\http.obj libhttp.lib $(LIBS) libpcre.lib libmpr.lib
 
 $(CONFIG)\inc\sqlite3.h: 
@@ -342,25 +342,25 @@ $(CONFIG)\inc\sqlite3.h:
 	copy /Y src\deps\sqlite\sqlite3.h $(CONFIG)\inc\sqlite3.h
 
 $(CONFIG)\obj\sqlite3.obj: \
-        src\deps\sqlite\sqlite3.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\sqlite3.h
+    src\deps\sqlite\sqlite3.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\sqlite3.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\sqlite3.obj -Fd$(CONFIG)\obj\sqlite3.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\sqlite\sqlite3.c
 
-$(CONFIG)\bin\libsqlite3.dll:  \
-        $(CONFIG)\inc\sqlite3.h \
-        $(CONFIG)\obj\sqlite3.obj
+$(CONFIG)\bin\libsqlite3.dll: \
+    $(CONFIG)\inc\sqlite3.h \
+    $(CONFIG)\obj\sqlite3.obj
 	"$(LD)" -dll -out:$(CONFIG)\bin\libsqlite3.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite3.obj $(LIBS)
 
 $(CONFIG)\obj\sqlite.obj: \
-        src\deps\sqlite\sqlite.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\sqlite3.h
+    src\deps\sqlite\sqlite.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\sqlite3.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\sqlite.obj -Fd$(CONFIG)\obj\sqlite.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\sqlite\sqlite.c
 
-$(CONFIG)\bin\sqlite.exe:  \
-        $(CONFIG)\bin\libsqlite3.dll \
-        $(CONFIG)\obj\sqlite.obj
+$(CONFIG)\bin\sqlite.exe: \
+    $(CONFIG)\bin\libsqlite3.dll \
+    $(CONFIG)\obj\sqlite.obj
 	"$(LD)" -out:$(CONFIG)\bin\sqlite.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite.obj libsqlite3.lib $(LIBS)
 
 $(CONFIG)\inc\zlib.h: 
@@ -368,14 +368,14 @@ $(CONFIG)\inc\zlib.h:
 	copy /Y src\deps\zlib\zlib.h $(CONFIG)\inc\zlib.h
 
 $(CONFIG)\obj\zlib.obj: \
-        src\deps\zlib\zlib.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\zlib.h
+    src\deps\zlib\zlib.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\zlib.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\zlib.obj -Fd$(CONFIG)\obj\zlib.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\deps\zlib\zlib.c
 
-$(CONFIG)\bin\libzlib.dll:  \
-        $(CONFIG)\inc\zlib.h \
-        $(CONFIG)\obj\zlib.obj
+$(CONFIG)\bin\libzlib.dll: \
+    $(CONFIG)\inc\zlib.h \
+    $(CONFIG)\obj\zlib.obj
 	"$(LD)" -dll -out:$(CONFIG)\bin\libzlib.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\zlib.obj $(LIBS)
 
 $(CONFIG)\inc\ejs.cache.local.slots.h: 
@@ -410,13 +410,13 @@ $(CONFIG)\inc\ejsCustomize.h:
 	-if exist $(CONFIG)\inc\ejsCustomize.h del /Q $(CONFIG)\inc\ejsCustomize.h
 	copy /Y src\ejsCustomize.h $(CONFIG)\inc\ejsCustomize.h
 
-$(CONFIG)\inc\ejs.h:  \
-        $(CONFIG)\inc\mpr.h \
-        $(CONFIG)\inc\http.h \
-        $(CONFIG)\inc\ejsByteCode.h \
-        $(CONFIG)\inc\ejsByteCodeTable.h \
-        $(CONFIG)\inc\ejs.slots.h \
-        $(CONFIG)\inc\ejsCustomize.h
+$(CONFIG)\inc\ejs.h: \
+    $(CONFIG)\inc\mpr.h \
+    $(CONFIG)\inc\http.h \
+    $(CONFIG)\inc\ejsByteCode.h \
+    $(CONFIG)\inc\ejsByteCodeTable.h \
+    $(CONFIG)\inc\ejs.slots.h \
+    $(CONFIG)\inc\ejsCustomize.h
 	-if exist $(CONFIG)\inc\ejs.h del /Q $(CONFIG)\inc\ejs.h
 	copy /Y src\ejs.h $(CONFIG)\inc\ejs.h
 
@@ -425,514 +425,514 @@ $(CONFIG)\inc\ejsCompiler.h:
 	copy /Y src\ejsCompiler.h $(CONFIG)\inc\ejsCompiler.h
 
 $(CONFIG)\obj\ecAst.obj: \
-        src\compiler\ecAst.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejsCompiler.h \
-        $(CONFIG)\inc\ejs.h
+    src\compiler\ecAst.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejsCompiler.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ecAst.obj -Fd$(CONFIG)\obj\ecAst.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\compiler\ecAst.c
 
 $(CONFIG)\obj\ecCodeGen.obj: \
-        src\compiler\ecCodeGen.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejsCompiler.h
+    src\compiler\ecCodeGen.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejsCompiler.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ecCodeGen.obj -Fd$(CONFIG)\obj\ecCodeGen.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\compiler\ecCodeGen.c
 
 $(CONFIG)\obj\ecCompiler.obj: \
-        src\compiler\ecCompiler.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejsCompiler.h
+    src\compiler\ecCompiler.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejsCompiler.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ecCompiler.obj -Fd$(CONFIG)\obj\ecCompiler.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\compiler\ecCompiler.c
 
 $(CONFIG)\obj\ecLex.obj: \
-        src\compiler\ecLex.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejsCompiler.h
+    src\compiler\ecLex.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejsCompiler.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ecLex.obj -Fd$(CONFIG)\obj\ecLex.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\compiler\ecLex.c
 
 $(CONFIG)\obj\ecModuleWrite.obj: \
-        src\compiler\ecModuleWrite.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejsCompiler.h
+    src\compiler\ecModuleWrite.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejsCompiler.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ecModuleWrite.obj -Fd$(CONFIG)\obj\ecModuleWrite.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\compiler\ecModuleWrite.c
 
 $(CONFIG)\obj\ecParser.obj: \
-        src\compiler\ecParser.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejsCompiler.h
+    src\compiler\ecParser.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejsCompiler.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ecParser.obj -Fd$(CONFIG)\obj\ecParser.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\compiler\ecParser.c
 
 $(CONFIG)\obj\ecState.obj: \
-        src\compiler\ecState.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejsCompiler.h
+    src\compiler\ecState.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejsCompiler.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ecState.obj -Fd$(CONFIG)\obj\ecState.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\compiler\ecState.c
 
 $(CONFIG)\obj\dtoa.obj: \
-        src\core\src\dtoa.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\mpr.h
+    src\core\src\dtoa.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\mpr.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\dtoa.obj -Fd$(CONFIG)\obj\dtoa.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\dtoa.c
 
 $(CONFIG)\obj\ejsApp.obj: \
-        src\core\src\ejsApp.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsApp.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsApp.obj -Fd$(CONFIG)\obj\ejsApp.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsApp.c
 
 $(CONFIG)\obj\ejsArray.obj: \
-        src\core\src\ejsArray.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsArray.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsArray.obj -Fd$(CONFIG)\obj\ejsArray.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsArray.c
 
 $(CONFIG)\obj\ejsBlock.obj: \
-        src\core\src\ejsBlock.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsBlock.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsBlock.obj -Fd$(CONFIG)\obj\ejsBlock.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsBlock.c
 
 $(CONFIG)\obj\ejsBoolean.obj: \
-        src\core\src\ejsBoolean.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsBoolean.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsBoolean.obj -Fd$(CONFIG)\obj\ejsBoolean.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsBoolean.c
 
 $(CONFIG)\obj\ejsByteArray.obj: \
-        src\core\src\ejsByteArray.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsByteArray.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsByteArray.obj -Fd$(CONFIG)\obj\ejsByteArray.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsByteArray.c
 
 $(CONFIG)\obj\ejsCache.obj: \
-        src\core\src\ejsCache.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsCache.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsCache.obj -Fd$(CONFIG)\obj\ejsCache.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsCache.c
 
 $(CONFIG)\obj\ejsCmd.obj: \
-        src\core\src\ejsCmd.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsCmd.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsCmd.obj -Fd$(CONFIG)\obj\ejsCmd.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsCmd.c
 
 $(CONFIG)\obj\ejsConfig.obj: \
-        src\core\src\ejsConfig.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsConfig.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsConfig.obj -Fd$(CONFIG)\obj\ejsConfig.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsConfig.c
 
 $(CONFIG)\obj\ejsDate.obj: \
-        src\core\src\ejsDate.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsDate.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsDate.obj -Fd$(CONFIG)\obj\ejsDate.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsDate.c
 
 $(CONFIG)\obj\ejsDebug.obj: \
-        src\core\src\ejsDebug.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsDebug.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsDebug.obj -Fd$(CONFIG)\obj\ejsDebug.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsDebug.c
 
 $(CONFIG)\obj\ejsError.obj: \
-        src\core\src\ejsError.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsError.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsError.obj -Fd$(CONFIG)\obj\ejsError.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsError.c
 
 $(CONFIG)\obj\ejsFile.obj: \
-        src\core\src\ejsFile.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsFile.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsFile.obj -Fd$(CONFIG)\obj\ejsFile.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsFile.c
 
 $(CONFIG)\obj\ejsFileSystem.obj: \
-        src\core\src\ejsFileSystem.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsFileSystem.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsFileSystem.obj -Fd$(CONFIG)\obj\ejsFileSystem.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsFileSystem.c
 
 $(CONFIG)\obj\ejsFrame.obj: \
-        src\core\src\ejsFrame.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsFrame.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsFrame.obj -Fd$(CONFIG)\obj\ejsFrame.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsFrame.c
 
 $(CONFIG)\obj\ejsFunction.obj: \
-        src\core\src\ejsFunction.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsFunction.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsFunction.obj -Fd$(CONFIG)\obj\ejsFunction.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsFunction.c
 
 $(CONFIG)\obj\ejsGC.obj: \
-        src\core\src\ejsGC.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsGC.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsGC.obj -Fd$(CONFIG)\obj\ejsGC.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsGC.c
 
 $(CONFIG)\obj\ejsGlobal.obj: \
-        src\core\src\ejsGlobal.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsGlobal.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsGlobal.obj -Fd$(CONFIG)\obj\ejsGlobal.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsGlobal.c
 
 $(CONFIG)\obj\ejsHttp.obj: \
-        src\core\src\ejsHttp.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsHttp.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsHttp.obj -Fd$(CONFIG)\obj\ejsHttp.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsHttp.c
 
 $(CONFIG)\obj\ejsIterator.obj: \
-        src\core\src\ejsIterator.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsIterator.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsIterator.obj -Fd$(CONFIG)\obj\ejsIterator.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsIterator.c
 
 $(CONFIG)\obj\ejsJSON.obj: \
-        src\core\src\ejsJSON.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsJSON.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsJSON.obj -Fd$(CONFIG)\obj\ejsJSON.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsJSON.c
 
 $(CONFIG)\obj\ejsLocalCache.obj: \
-        src\core\src\ejsLocalCache.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsLocalCache.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsLocalCache.obj -Fd$(CONFIG)\obj\ejsLocalCache.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsLocalCache.c
 
 $(CONFIG)\obj\ejsMath.obj: \
-        src\core\src\ejsMath.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsMath.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsMath.obj -Fd$(CONFIG)\obj\ejsMath.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsMath.c
 
 $(CONFIG)\obj\ejsMemory.obj: \
-        src\core\src\ejsMemory.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsMemory.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsMemory.obj -Fd$(CONFIG)\obj\ejsMemory.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsMemory.c
 
 $(CONFIG)\obj\ejsMprLog.obj: \
-        src\core\src\ejsMprLog.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsMprLog.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsMprLog.obj -Fd$(CONFIG)\obj\ejsMprLog.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsMprLog.c
 
 $(CONFIG)\obj\ejsNamespace.obj: \
-        src\core\src\ejsNamespace.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsNamespace.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsNamespace.obj -Fd$(CONFIG)\obj\ejsNamespace.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsNamespace.c
 
 $(CONFIG)\obj\ejsNull.obj: \
-        src\core\src\ejsNull.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsNull.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsNull.obj -Fd$(CONFIG)\obj\ejsNull.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsNull.c
 
 $(CONFIG)\obj\ejsNumber.obj: \
-        src\core\src\ejsNumber.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsNumber.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsNumber.obj -Fd$(CONFIG)\obj\ejsNumber.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsNumber.c
 
 $(CONFIG)\obj\ejsObject.obj: \
-        src\core\src\ejsObject.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsObject.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsObject.obj -Fd$(CONFIG)\obj\ejsObject.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsObject.c
 
 $(CONFIG)\obj\ejsPath.obj: \
-        src\core\src\ejsPath.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h \
-        $(CONFIG)\inc\pcre.h
+    src\core\src\ejsPath.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h \
+    $(CONFIG)\inc\pcre.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsPath.obj -Fd$(CONFIG)\obj\ejsPath.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsPath.c
 
 $(CONFIG)\obj\ejsPot.obj: \
-        src\core\src\ejsPot.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsPot.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsPot.obj -Fd$(CONFIG)\obj\ejsPot.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsPot.c
 
 $(CONFIG)\obj\ejsRegExp.obj: \
-        src\core\src\ejsRegExp.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h \
-        $(CONFIG)\inc\pcre.h
+    src\core\src\ejsRegExp.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h \
+    $(CONFIG)\inc\pcre.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsRegExp.obj -Fd$(CONFIG)\obj\ejsRegExp.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsRegExp.c
 
 $(CONFIG)\obj\ejsSocket.obj: \
-        src\core\src\ejsSocket.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsSocket.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsSocket.obj -Fd$(CONFIG)\obj\ejsSocket.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsSocket.c
 
 $(CONFIG)\obj\ejsString.obj: \
-        src\core\src\ejsString.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h \
-        $(CONFIG)\inc\pcre.h
+    src\core\src\ejsString.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h \
+    $(CONFIG)\inc\pcre.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsString.obj -Fd$(CONFIG)\obj\ejsString.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsString.c
 
 $(CONFIG)\obj\ejsSystem.obj: \
-        src\core\src\ejsSystem.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsSystem.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsSystem.obj -Fd$(CONFIG)\obj\ejsSystem.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsSystem.c
 
 $(CONFIG)\obj\ejsTimer.obj: \
-        src\core\src\ejsTimer.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsTimer.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsTimer.obj -Fd$(CONFIG)\obj\ejsTimer.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsTimer.c
 
 $(CONFIG)\obj\ejsType.obj: \
-        src\core\src\ejsType.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsType.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsType.obj -Fd$(CONFIG)\obj\ejsType.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsType.c
 
 $(CONFIG)\obj\ejsUri.obj: \
-        src\core\src\ejsUri.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsUri.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsUri.obj -Fd$(CONFIG)\obj\ejsUri.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsUri.c
 
 $(CONFIG)\obj\ejsVoid.obj: \
-        src\core\src\ejsVoid.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsVoid.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsVoid.obj -Fd$(CONFIG)\obj\ejsVoid.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsVoid.c
 
 $(CONFIG)\obj\ejsWebSocket.obj: \
-        src\core\src\ejsWebSocket.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsWebSocket.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsWebSocket.obj -Fd$(CONFIG)\obj\ejsWebSocket.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsWebSocket.c
 
 $(CONFIG)\obj\ejsWorker.obj: \
-        src\core\src\ejsWorker.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsWorker.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsWorker.obj -Fd$(CONFIG)\obj\ejsWorker.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsWorker.c
 
 $(CONFIG)\obj\ejsXML.obj: \
-        src\core\src\ejsXML.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsXML.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsXML.obj -Fd$(CONFIG)\obj\ejsXML.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsXML.c
 
 $(CONFIG)\obj\ejsXMLList.obj: \
-        src\core\src\ejsXMLList.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsXMLList.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsXMLList.obj -Fd$(CONFIG)\obj\ejsXMLList.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsXMLList.c
 
 $(CONFIG)\obj\ejsXMLLoader.obj: \
-        src\core\src\ejsXMLLoader.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\core\src\ejsXMLLoader.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsXMLLoader.obj -Fd$(CONFIG)\obj\ejsXMLLoader.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\core\src\ejsXMLLoader.c
 
 $(CONFIG)\obj\ejsByteCode.obj: \
-        src\vm\ejsByteCode.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\vm\ejsByteCode.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsByteCode.obj -Fd$(CONFIG)\obj\ejsByteCode.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\vm\ejsByteCode.c
 
 $(CONFIG)\obj\ejsException.obj: \
-        src\vm\ejsException.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\vm\ejsException.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsException.obj -Fd$(CONFIG)\obj\ejsException.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\vm\ejsException.c
 
 $(CONFIG)\obj\ejsHelper.obj: \
-        src\vm\ejsHelper.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\vm\ejsHelper.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsHelper.obj -Fd$(CONFIG)\obj\ejsHelper.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\vm\ejsHelper.c
 
 $(CONFIG)\obj\ejsInterp.obj: \
-        src\vm\ejsInterp.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\vm\ejsInterp.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsInterp.obj -Fd$(CONFIG)\obj\ejsInterp.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\vm\ejsInterp.c
 
 $(CONFIG)\obj\ejsLoader.obj: \
-        src\vm\ejsLoader.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\vm\ejsLoader.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsLoader.obj -Fd$(CONFIG)\obj\ejsLoader.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\vm\ejsLoader.c
 
 $(CONFIG)\obj\ejsModule.obj: \
-        src\vm\ejsModule.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\vm\ejsModule.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsModule.obj -Fd$(CONFIG)\obj\ejsModule.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\vm\ejsModule.c
 
 $(CONFIG)\obj\ejsScope.obj: \
-        src\vm\ejsScope.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\vm\ejsScope.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsScope.obj -Fd$(CONFIG)\obj\ejsScope.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\vm\ejsScope.c
 
 $(CONFIG)\obj\ejsService.obj: \
-        src\vm\ejsService.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h
+    src\vm\ejsService.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsService.obj -Fd$(CONFIG)\obj\ejsService.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\vm\ejsService.c
 
-$(CONFIG)\bin\libejs.dll:  \
-        $(CONFIG)\bin\libhttp.dll \
-        $(CONFIG)\inc\ejs.cache.local.slots.h \
-        $(CONFIG)\inc\ejs.db.sqlite.slots.h \
-        $(CONFIG)\inc\ejs.slots.h \
-        $(CONFIG)\inc\ejs.web.slots.h \
-        $(CONFIG)\inc\ejs.zlib.slots.h \
-        $(CONFIG)\inc\bitos.h \
-        $(CONFIG)\inc\ejs.h \
-        $(CONFIG)\inc\ejsByteCode.h \
-        $(CONFIG)\inc\ejsByteCodeTable.h \
-        $(CONFIG)\inc\ejsCompiler.h \
-        $(CONFIG)\inc\ejsCustomize.h \
-        $(CONFIG)\obj\ecAst.obj \
-        $(CONFIG)\obj\ecCodeGen.obj \
-        $(CONFIG)\obj\ecCompiler.obj \
-        $(CONFIG)\obj\ecLex.obj \
-        $(CONFIG)\obj\ecModuleWrite.obj \
-        $(CONFIG)\obj\ecParser.obj \
-        $(CONFIG)\obj\ecState.obj \
-        $(CONFIG)\obj\dtoa.obj \
-        $(CONFIG)\obj\ejsApp.obj \
-        $(CONFIG)\obj\ejsArray.obj \
-        $(CONFIG)\obj\ejsBlock.obj \
-        $(CONFIG)\obj\ejsBoolean.obj \
-        $(CONFIG)\obj\ejsByteArray.obj \
-        $(CONFIG)\obj\ejsCache.obj \
-        $(CONFIG)\obj\ejsCmd.obj \
-        $(CONFIG)\obj\ejsConfig.obj \
-        $(CONFIG)\obj\ejsDate.obj \
-        $(CONFIG)\obj\ejsDebug.obj \
-        $(CONFIG)\obj\ejsError.obj \
-        $(CONFIG)\obj\ejsFile.obj \
-        $(CONFIG)\obj\ejsFileSystem.obj \
-        $(CONFIG)\obj\ejsFrame.obj \
-        $(CONFIG)\obj\ejsFunction.obj \
-        $(CONFIG)\obj\ejsGC.obj \
-        $(CONFIG)\obj\ejsGlobal.obj \
-        $(CONFIG)\obj\ejsHttp.obj \
-        $(CONFIG)\obj\ejsIterator.obj \
-        $(CONFIG)\obj\ejsJSON.obj \
-        $(CONFIG)\obj\ejsLocalCache.obj \
-        $(CONFIG)\obj\ejsMath.obj \
-        $(CONFIG)\obj\ejsMemory.obj \
-        $(CONFIG)\obj\ejsMprLog.obj \
-        $(CONFIG)\obj\ejsNamespace.obj \
-        $(CONFIG)\obj\ejsNull.obj \
-        $(CONFIG)\obj\ejsNumber.obj \
-        $(CONFIG)\obj\ejsObject.obj \
-        $(CONFIG)\obj\ejsPath.obj \
-        $(CONFIG)\obj\ejsPot.obj \
-        $(CONFIG)\obj\ejsRegExp.obj \
-        $(CONFIG)\obj\ejsSocket.obj \
-        $(CONFIG)\obj\ejsString.obj \
-        $(CONFIG)\obj\ejsSystem.obj \
-        $(CONFIG)\obj\ejsTimer.obj \
-        $(CONFIG)\obj\ejsType.obj \
-        $(CONFIG)\obj\ejsUri.obj \
-        $(CONFIG)\obj\ejsVoid.obj \
-        $(CONFIG)\obj\ejsWebSocket.obj \
-        $(CONFIG)\obj\ejsWorker.obj \
-        $(CONFIG)\obj\ejsXML.obj \
-        $(CONFIG)\obj\ejsXMLList.obj \
-        $(CONFIG)\obj\ejsXMLLoader.obj \
-        $(CONFIG)\obj\ejsByteCode.obj \
-        $(CONFIG)\obj\ejsException.obj \
-        $(CONFIG)\obj\ejsHelper.obj \
-        $(CONFIG)\obj\ejsInterp.obj \
-        $(CONFIG)\obj\ejsLoader.obj \
-        $(CONFIG)\obj\ejsModule.obj \
-        $(CONFIG)\obj\ejsScope.obj \
-        $(CONFIG)\obj\ejsService.obj
+$(CONFIG)\bin\libejs.dll: \
+    $(CONFIG)\bin\libhttp.dll \
+    $(CONFIG)\inc\ejs.cache.local.slots.h \
+    $(CONFIG)\inc\ejs.db.sqlite.slots.h \
+    $(CONFIG)\inc\ejs.slots.h \
+    $(CONFIG)\inc\ejs.web.slots.h \
+    $(CONFIG)\inc\ejs.zlib.slots.h \
+    $(CONFIG)\inc\bitos.h \
+    $(CONFIG)\inc\ejs.h \
+    $(CONFIG)\inc\ejsByteCode.h \
+    $(CONFIG)\inc\ejsByteCodeTable.h \
+    $(CONFIG)\inc\ejsCompiler.h \
+    $(CONFIG)\inc\ejsCustomize.h \
+    $(CONFIG)\obj\ecAst.obj \
+    $(CONFIG)\obj\ecCodeGen.obj \
+    $(CONFIG)\obj\ecCompiler.obj \
+    $(CONFIG)\obj\ecLex.obj \
+    $(CONFIG)\obj\ecModuleWrite.obj \
+    $(CONFIG)\obj\ecParser.obj \
+    $(CONFIG)\obj\ecState.obj \
+    $(CONFIG)\obj\dtoa.obj \
+    $(CONFIG)\obj\ejsApp.obj \
+    $(CONFIG)\obj\ejsArray.obj \
+    $(CONFIG)\obj\ejsBlock.obj \
+    $(CONFIG)\obj\ejsBoolean.obj \
+    $(CONFIG)\obj\ejsByteArray.obj \
+    $(CONFIG)\obj\ejsCache.obj \
+    $(CONFIG)\obj\ejsCmd.obj \
+    $(CONFIG)\obj\ejsConfig.obj \
+    $(CONFIG)\obj\ejsDate.obj \
+    $(CONFIG)\obj\ejsDebug.obj \
+    $(CONFIG)\obj\ejsError.obj \
+    $(CONFIG)\obj\ejsFile.obj \
+    $(CONFIG)\obj\ejsFileSystem.obj \
+    $(CONFIG)\obj\ejsFrame.obj \
+    $(CONFIG)\obj\ejsFunction.obj \
+    $(CONFIG)\obj\ejsGC.obj \
+    $(CONFIG)\obj\ejsGlobal.obj \
+    $(CONFIG)\obj\ejsHttp.obj \
+    $(CONFIG)\obj\ejsIterator.obj \
+    $(CONFIG)\obj\ejsJSON.obj \
+    $(CONFIG)\obj\ejsLocalCache.obj \
+    $(CONFIG)\obj\ejsMath.obj \
+    $(CONFIG)\obj\ejsMemory.obj \
+    $(CONFIG)\obj\ejsMprLog.obj \
+    $(CONFIG)\obj\ejsNamespace.obj \
+    $(CONFIG)\obj\ejsNull.obj \
+    $(CONFIG)\obj\ejsNumber.obj \
+    $(CONFIG)\obj\ejsObject.obj \
+    $(CONFIG)\obj\ejsPath.obj \
+    $(CONFIG)\obj\ejsPot.obj \
+    $(CONFIG)\obj\ejsRegExp.obj \
+    $(CONFIG)\obj\ejsSocket.obj \
+    $(CONFIG)\obj\ejsString.obj \
+    $(CONFIG)\obj\ejsSystem.obj \
+    $(CONFIG)\obj\ejsTimer.obj \
+    $(CONFIG)\obj\ejsType.obj \
+    $(CONFIG)\obj\ejsUri.obj \
+    $(CONFIG)\obj\ejsVoid.obj \
+    $(CONFIG)\obj\ejsWebSocket.obj \
+    $(CONFIG)\obj\ejsWorker.obj \
+    $(CONFIG)\obj\ejsXML.obj \
+    $(CONFIG)\obj\ejsXMLList.obj \
+    $(CONFIG)\obj\ejsXMLLoader.obj \
+    $(CONFIG)\obj\ejsByteCode.obj \
+    $(CONFIG)\obj\ejsException.obj \
+    $(CONFIG)\obj\ejsHelper.obj \
+    $(CONFIG)\obj\ejsInterp.obj \
+    $(CONFIG)\obj\ejsLoader.obj \
+    $(CONFIG)\obj\ejsModule.obj \
+    $(CONFIG)\obj\ejsScope.obj \
+    $(CONFIG)\obj\ejsService.obj
 	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ecAst.obj $(CONFIG)\obj\ecCodeGen.obj $(CONFIG)\obj\ecCompiler.obj $(CONFIG)\obj\ecLex.obj $(CONFIG)\obj\ecModuleWrite.obj $(CONFIG)\obj\ecParser.obj $(CONFIG)\obj\ecState.obj $(CONFIG)\obj\dtoa.obj $(CONFIG)\obj\ejsApp.obj $(CONFIG)\obj\ejsArray.obj $(CONFIG)\obj\ejsBlock.obj $(CONFIG)\obj\ejsBoolean.obj $(CONFIG)\obj\ejsByteArray.obj $(CONFIG)\obj\ejsCache.obj $(CONFIG)\obj\ejsCmd.obj $(CONFIG)\obj\ejsConfig.obj $(CONFIG)\obj\ejsDate.obj $(CONFIG)\obj\ejsDebug.obj $(CONFIG)\obj\ejsError.obj $(CONFIG)\obj\ejsFile.obj $(CONFIG)\obj\ejsFileSystem.obj $(CONFIG)\obj\ejsFrame.obj $(CONFIG)\obj\ejsFunction.obj $(CONFIG)\obj\ejsGC.obj $(CONFIG)\obj\ejsGlobal.obj $(CONFIG)\obj\ejsHttp.obj $(CONFIG)\obj\ejsIterator.obj $(CONFIG)\obj\ejsJSON.obj $(CONFIG)\obj\ejsLocalCache.obj $(CONFIG)\obj\ejsMath.obj $(CONFIG)\obj\ejsMemory.obj $(CONFIG)\obj\ejsMprLog.obj $(CONFIG)\obj\ejsNamespace.obj $(CONFIG)\obj\ejsNull.obj $(CONFIG)\obj\ejsNumber.obj $(CONFIG)\obj\ejsObject.obj $(CONFIG)\obj\ejsPath.obj $(CONFIG)\obj\ejsPot.obj $(CONFIG)\obj\ejsRegExp.obj $(CONFIG)\obj\ejsSocket.obj $(CONFIG)\obj\ejsString.obj $(CONFIG)\obj\ejsSystem.obj $(CONFIG)\obj\ejsTimer.obj $(CONFIG)\obj\ejsType.obj $(CONFIG)\obj\ejsUri.obj $(CONFIG)\obj\ejsVoid.obj $(CONFIG)\obj\ejsWebSocket.obj $(CONFIG)\obj\ejsWorker.obj $(CONFIG)\obj\ejsXML.obj $(CONFIG)\obj\ejsXMLList.obj $(CONFIG)\obj\ejsXMLLoader.obj $(CONFIG)\obj\ejsByteCode.obj $(CONFIG)\obj\ejsException.obj $(CONFIG)\obj\ejsHelper.obj $(CONFIG)\obj\ejsInterp.obj $(CONFIG)\obj\ejsLoader.obj $(CONFIG)\obj\ejsModule.obj $(CONFIG)\obj\ejsScope.obj $(CONFIG)\obj\ejsService.obj libhttp.lib $(LIBS) libpcre.lib libmpr.lib
 
 $(CONFIG)\obj\ejs.obj: \
-        src\cmd\ejs.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejsCompiler.h
+    src\cmd\ejs.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejsCompiler.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejs.obj -Fd$(CONFIG)\obj\ejs.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\cmd\ejs.c
 
-$(CONFIG)\bin\ejs.exe:  \
-        $(CONFIG)\bin\libejs.dll \
-        $(CONFIG)\obj\ejs.obj
+$(CONFIG)\bin\ejs.exe: \
+    $(CONFIG)\bin\libejs.dll \
+    $(CONFIG)\obj\ejs.obj
 	"$(LD)" -out:$(CONFIG)\bin\ejs.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejs.obj libejs.lib $(LIBS) libhttp.lib libpcre.lib libmpr.lib
 
 $(CONFIG)\obj\ejsc.obj: \
-        src\cmd\ejsc.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejsCompiler.h
+    src\cmd\ejsc.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejsCompiler.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsc.obj -Fd$(CONFIG)\obj\ejsc.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\cmd\ejsc.c
 
-$(CONFIG)\bin\ejsc.exe:  \
-        $(CONFIG)\bin\libejs.dll \
-        $(CONFIG)\obj\ejsc.obj
+$(CONFIG)\bin\ejsc.exe: \
+    $(CONFIG)\bin\libejs.dll \
+    $(CONFIG)\obj\ejsc.obj
 	"$(LD)" -out:$(CONFIG)\bin\ejsc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsc.obj libejs.lib $(LIBS) libhttp.lib libpcre.lib libmpr.lib
 
 $(CONFIG)\obj\ejsmod.obj: \
-        src\cmd\ejsmod.c \
-        $(CONFIG)\inc\bit.h \
-        src\cmd\ejsmod.h \
-        $(CONFIG)\inc\ejs.h
+    src\cmd\ejsmod.c\
+    $(CONFIG)\inc\bit.h \
+    src\cmd\ejsmod.h \
+    $(CONFIG)\inc\ejs.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsmod.obj -Fd$(CONFIG)\obj\ejsmod.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\cmd src\cmd\ejsmod.c
 
 $(CONFIG)\obj\doc.obj: \
-        src\cmd\doc.c \
-        $(CONFIG)\inc\bit.h \
-        src\cmd\ejsmod.h
+    src\cmd\doc.c\
+    $(CONFIG)\inc\bit.h \
+    src\cmd\ejsmod.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\doc.obj -Fd$(CONFIG)\obj\doc.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\cmd src\cmd\doc.c
 
 $(CONFIG)\obj\docFiles.obj: \
-        src\cmd\docFiles.c \
-        $(CONFIG)\inc\bit.h \
-        src\cmd\ejsmod.h
+    src\cmd\docFiles.c\
+    $(CONFIG)\inc\bit.h \
+    src\cmd\ejsmod.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\docFiles.obj -Fd$(CONFIG)\obj\docFiles.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\cmd src\cmd\docFiles.c
 
 $(CONFIG)\obj\listing.obj: \
-        src\cmd\listing.c \
-        $(CONFIG)\inc\bit.h \
-        src\cmd\ejsmod.h \
-        $(CONFIG)\inc\ejsByteCodeTable.h
+    src\cmd\listing.c\
+    $(CONFIG)\inc\bit.h \
+    src\cmd\ejsmod.h \
+    $(CONFIG)\inc\ejsByteCodeTable.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\listing.obj -Fd$(CONFIG)\obj\listing.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\cmd src\cmd\listing.c
 
 $(CONFIG)\obj\slotGen.obj: \
-        src\cmd\slotGen.c \
-        $(CONFIG)\inc\bit.h \
-        src\cmd\ejsmod.h
+    src\cmd\slotGen.c\
+    $(CONFIG)\inc\bit.h \
+    src\cmd\ejsmod.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\slotGen.obj -Fd$(CONFIG)\obj\slotGen.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\cmd src\cmd\slotGen.c
 
-$(CONFIG)\bin\ejsmod.exe:  \
-        $(CONFIG)\bin\libejs.dll \
-        $(CONFIG)\obj\ejsmod.obj \
-        $(CONFIG)\obj\doc.obj \
-        $(CONFIG)\obj\docFiles.obj \
-        $(CONFIG)\obj\listing.obj \
-        $(CONFIG)\obj\slotGen.obj
+$(CONFIG)\bin\ejsmod.exe: \
+    $(CONFIG)\bin\libejs.dll \
+    $(CONFIG)\obj\ejsmod.obj \
+    $(CONFIG)\obj\doc.obj \
+    $(CONFIG)\obj\docFiles.obj \
+    $(CONFIG)\obj\listing.obj \
+    $(CONFIG)\obj\slotGen.obj
 	"$(LD)" -out:$(CONFIG)\bin\ejsmod.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsmod.obj $(CONFIG)\obj\doc.obj $(CONFIG)\obj\docFiles.obj $(CONFIG)\obj\listing.obj $(CONFIG)\obj\slotGen.obj libejs.lib $(LIBS) libhttp.lib libpcre.lib libmpr.lib
 
 $(CONFIG)\obj\ejsrun.obj: \
-        src\cmd\ejsrun.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejsCompiler.h
+    src\cmd\ejsrun.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejsCompiler.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsrun.obj -Fd$(CONFIG)\obj\ejsrun.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\cmd\ejsrun.c
 
-$(CONFIG)\bin\ejsrun.exe:  \
-        $(CONFIG)\bin\libejs.dll \
-        $(CONFIG)\obj\ejsrun.obj
+$(CONFIG)\bin\ejsrun.exe: \
+    $(CONFIG)\bin\libejs.dll \
+    $(CONFIG)\obj\ejsrun.obj
 	"$(LD)" -out:$(CONFIG)\bin\ejsrun.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj libejs.lib $(LIBS) libhttp.lib libpcre.lib libmpr.lib
 
-$(CONFIG)\bin\ejs.mod:  \
-        $(CONFIG)\bin\ejsc.exe \
-        $(CONFIG)\bin\ejsmod.exe
+$(CONFIG)\bin\ejs.mod: \
+    $(CONFIG)\bin\ejsc.exe \
+    $(CONFIG)\bin\ejsmod.exe
 	cd src\core
 	"..\..\$(CONFIG)\bin\ejsc" --out "..\..\$(CONFIG)\bin\ejs.mod"  --optimize 9 --bind --require null "*.es"
 	"..\..\$(CONFIG)\bin\ejsmod" --require null --cslots "..\..\$(CONFIG)\bin\ejs.mod"
@@ -940,9 +940,9 @@ $(CONFIG)\bin\ejs.mod:  \
 	del ejs.slots.h
 	cd ..\..
 
-$(CONFIG)\bin\ejs.unix.mod:  \
-        $(CONFIG)\bin\ejsc.exe \
-        $(CONFIG)\bin\ejs.mod
+$(CONFIG)\bin\ejs.unix.mod: \
+    $(CONFIG)\bin\ejsc.exe \
+    $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.unix
 	..\..\..\$(CONFIG)\bin\ejsc --out ..\..\..\$(CONFIG)\bin\ejs.unix.mod  --optimize 9 Unix.es
 	cd ..\..\..
@@ -952,55 +952,55 @@ $(CONFIG)\bin\jem.es:
 	copy jem.es ..\..\..\$(CONFIG)\bin
 	cd ..\..\..
 
-$(CONFIG)\bin\jem.exe:  \
-        $(CONFIG)\bin\libejs.dll \
-        $(CONFIG)\bin\jem.es \
-        $(CONFIG)\obj\ejsrun.obj
+$(CONFIG)\bin\jem.exe: \
+    $(CONFIG)\bin\libejs.dll \
+    $(CONFIG)\bin\jem.es \
+    $(CONFIG)\obj\ejsrun.obj
 	"$(LD)" -out:$(CONFIG)\bin\jem.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj libejs.lib $(LIBS) libhttp.lib libpcre.lib libmpr.lib
 
-$(CONFIG)\bin\ejs.db.mod:  \
-        $(CONFIG)\bin\ejsc.exe \
-        $(CONFIG)\bin\ejs.mod
+$(CONFIG)\bin\ejs.db.mod: \
+    $(CONFIG)\bin\ejsc.exe \
+    $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.db
 	..\..\..\$(CONFIG)\bin\ejsc --out ..\..\..\$(CONFIG)\bin\ejs.db.mod  --optimize 9 *.es
 	cd ..\..\..
 
-$(CONFIG)\bin\ejs.db.mapper.mod:  \
-        $(CONFIG)\bin\ejsc.exe \
-        $(CONFIG)\bin\ejs.mod \
-        $(CONFIG)\bin\ejs.db.mod
+$(CONFIG)\bin\ejs.db.mapper.mod: \
+    $(CONFIG)\bin\ejsc.exe \
+    $(CONFIG)\bin\ejs.mod \
+    $(CONFIG)\bin\ejs.db.mod
 	cd src\jems\ejs.db.mapper
 	..\..\..\$(CONFIG)\bin\ejsc --out ..\..\..\$(CONFIG)\bin\ejs.db.mapper.mod  --optimize 9 *.es
 	cd ..\..\..
 
-$(CONFIG)\bin\ejs.db.sqlite.mod:  \
-        $(CONFIG)\bin\ejsc.exe \
-        $(CONFIG)\bin\ejsmod.exe \
-        $(CONFIG)\bin\ejs.mod
+$(CONFIG)\bin\ejs.db.sqlite.mod: \
+    $(CONFIG)\bin\ejsc.exe \
+    $(CONFIG)\bin\ejsmod.exe \
+    $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.db.sqlite
 	..\..\..\$(CONFIG)\bin\ejsc --out ..\..\..\$(CONFIG)\bin\ejs.db.sqlite.mod  --optimize 9 *.es
 	cd ..\..\..
 
 $(CONFIG)\obj\ejsSqlite.obj: \
-        src\jems\ejs.db.sqlite\ejsSqlite.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h \
-        $(CONFIG)\inc\ejs.db.sqlite.slots.h
+    src\jems\ejs.db.sqlite\ejsSqlite.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h \
+    $(CONFIG)\inc\ejs.db.sqlite.slots.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsSqlite.obj -Fd$(CONFIG)\obj\ejsSqlite.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\jems\ejs.db.sqlite\ejsSqlite.c
 
-$(CONFIG)\bin\libejs.db.sqlite.dll:  \
-        $(CONFIG)\bin\libmpr.dll \
-        $(CONFIG)\bin\libejs.dll \
-        $(CONFIG)\bin\ejs.mod \
-        $(CONFIG)\bin\ejs.db.sqlite.mod \
-        $(CONFIG)\bin\libsqlite3.dll \
-        $(CONFIG)\obj\ejsSqlite.obj
+$(CONFIG)\bin\libejs.db.sqlite.dll: \
+    $(CONFIG)\bin\libmpr.dll \
+    $(CONFIG)\bin\libejs.dll \
+    $(CONFIG)\bin\ejs.mod \
+    $(CONFIG)\bin\ejs.db.sqlite.mod \
+    $(CONFIG)\bin\libsqlite3.dll \
+    $(CONFIG)\obj\ejsSqlite.obj
 	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.db.sqlite.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsSqlite.obj libsqlite3.lib libejs.lib libmpr.lib $(LIBS) libhttp.lib libpcre.lib
 
-$(CONFIG)\bin\ejs.web.mod:  \
-        $(CONFIG)\bin\ejsc.exe \
-        $(CONFIG)\bin\ejsmod.exe \
-        $(CONFIG)\bin\ejs.mod
+$(CONFIG)\bin\ejs.web.mod: \
+    $(CONFIG)\bin\ejsc.exe \
+    $(CONFIG)\bin\ejsmod.exe \
+    $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.web
 	"..\..\..\$(CONFIG)\bin\ejsc" --out "..\..\..\$(CONFIG)\bin\ejs.web.mod"  --optimize 9 *.es
 	"..\..\..\$(CONFIG)\bin\ejsmod" --cslots "..\..\..\$(CONFIG)\bin\ejs.web.mod"
@@ -1013,48 +1013,48 @@ $(CONFIG)\inc\ejsWeb.h:
 	copy /Y src\jems\ejs.web\ejsWeb.h $(CONFIG)\inc\ejsWeb.h
 
 $(CONFIG)\obj\ejsHttpServer.obj: \
-        src\jems\ejs.web\ejsHttpServer.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h \
-        $(CONFIG)\inc\ejsCompiler.h \
-        $(CONFIG)\inc\ejsWeb.h \
-        $(CONFIG)\inc\ejs.web.slots.h \
-        $(CONFIG)\inc\http.h
+    src\jems\ejs.web\ejsHttpServer.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h \
+    $(CONFIG)\inc\ejsCompiler.h \
+    $(CONFIG)\inc\ejsWeb.h \
+    $(CONFIG)\inc\ejs.web.slots.h \
+    $(CONFIG)\inc\http.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsHttpServer.obj -Fd$(CONFIG)\obj\ejsHttpServer.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\jems\ejs.web\src src\jems\ejs.web\ejsHttpServer.c
 
 $(CONFIG)\obj\ejsRequest.obj: \
-        src\jems\ejs.web\ejsRequest.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h \
-        $(CONFIG)\inc\ejsCompiler.h \
-        $(CONFIG)\inc\ejsWeb.h \
-        $(CONFIG)\inc\ejs.web.slots.h
+    src\jems\ejs.web\ejsRequest.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h \
+    $(CONFIG)\inc\ejsCompiler.h \
+    $(CONFIG)\inc\ejsWeb.h \
+    $(CONFIG)\inc\ejs.web.slots.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsRequest.obj -Fd$(CONFIG)\obj\ejsRequest.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\jems\ejs.web\src src\jems\ejs.web\ejsRequest.c
 
 $(CONFIG)\obj\ejsSession.obj: \
-        src\jems\ejs.web\ejsSession.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h \
-        $(CONFIG)\inc\ejsWeb.h
+    src\jems\ejs.web\ejsSession.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h \
+    $(CONFIG)\inc\ejsWeb.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsSession.obj -Fd$(CONFIG)\obj\ejsSession.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\jems\ejs.web\src src\jems\ejs.web\ejsSession.c
 
 $(CONFIG)\obj\ejsWeb.obj: \
-        src\jems\ejs.web\ejsWeb.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h \
-        $(CONFIG)\inc\ejsCompiler.h \
-        $(CONFIG)\inc\ejsWeb.h \
-        $(CONFIG)\inc\ejs.web.slots.h
+    src\jems\ejs.web\ejsWeb.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h \
+    $(CONFIG)\inc\ejsCompiler.h \
+    $(CONFIG)\inc\ejsWeb.h \
+    $(CONFIG)\inc\ejs.web.slots.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsWeb.obj -Fd$(CONFIG)\obj\ejsWeb.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc -Isrc\jems\ejs.web\src src\jems\ejs.web\ejsWeb.c
 
-$(CONFIG)\bin\libejs.web.dll:  \
-        $(CONFIG)\bin\libejs.dll \
-        $(CONFIG)\bin\ejs.mod \
-        $(CONFIG)\inc\ejsWeb.h \
-        $(CONFIG)\obj\ejsHttpServer.obj \
-        $(CONFIG)\obj\ejsRequest.obj \
-        $(CONFIG)\obj\ejsSession.obj \
-        $(CONFIG)\obj\ejsWeb.obj
+$(CONFIG)\bin\libejs.web.dll: \
+    $(CONFIG)\bin\libejs.dll \
+    $(CONFIG)\bin\ejs.mod \
+    $(CONFIG)\inc\ejsWeb.h \
+    $(CONFIG)\obj\ejsHttpServer.obj \
+    $(CONFIG)\obj\ejsRequest.obj \
+    $(CONFIG)\obj\ejsSession.obj \
+    $(CONFIG)\obj\ejsWeb.obj
 	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.web.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsHttpServer.obj $(CONFIG)\obj\ejsRequest.obj $(CONFIG)\obj\ejsSession.obj $(CONFIG)\obj\ejsWeb.obj libejs.lib $(LIBS) libhttp.lib libpcre.lib libmpr.lib
 
 $(CONFIG)\bin\www: 
@@ -1064,39 +1064,39 @@ $(CONFIG)\bin\www:
 	xcopy /S /Y "www" "..\..\..\$(CONFIG)\bin\www"
 	cd ..\..\..
 
-$(CONFIG)\bin\ejs.template.mod:  \
-        $(CONFIG)\bin\ejsc.exe \
-        $(CONFIG)\bin\ejs.mod
+$(CONFIG)\bin\ejs.template.mod: \
+    $(CONFIG)\bin\ejsc.exe \
+    $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.template
 	..\..\..\$(CONFIG)\bin\ejsc --out ..\..\..\$(CONFIG)\bin\ejs.template.mod  --optimize 9 TemplateParser.es
 	cd ..\..\..
 
-$(CONFIG)\bin\ejs.zlib.mod:  \
-        $(CONFIG)\bin\ejsc.exe \
-        $(CONFIG)\bin\ejs.mod
+$(CONFIG)\bin\ejs.zlib.mod: \
+    $(CONFIG)\bin\ejsc.exe \
+    $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.zlib
 	..\..\..\$(CONFIG)\bin\ejsc --out ..\..\..\$(CONFIG)\bin\ejs.zlib.mod  --optimize 9 *.es
 	cd ..\..\..
 
 $(CONFIG)\obj\ejsZlib.obj: \
-        src\jems\ejs.zlib\ejsZlib.c \
-        $(CONFIG)\inc\bit.h \
-        $(CONFIG)\inc\ejs.h \
-        $(CONFIG)\inc\zlib.h \
-        $(CONFIG)\inc\ejs.zlib.slots.h
+    src\jems\ejs.zlib\ejsZlib.c\
+    $(CONFIG)\inc\bit.h \
+    $(CONFIG)\inc\ejs.h \
+    $(CONFIG)\inc\zlib.h \
+    $(CONFIG)\inc\ejs.zlib.slots.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsZlib.obj -Fd$(CONFIG)\obj\ejsZlib.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc src\jems\ejs.zlib\ejsZlib.c
 
-$(CONFIG)\bin\libejs.zlib.dll:  \
-        $(CONFIG)\bin\libejs.dll \
-        $(CONFIG)\bin\ejs.mod \
-        $(CONFIG)\bin\ejs.zlib.mod \
-        $(CONFIG)\bin\libzlib.dll \
-        $(CONFIG)\obj\ejsZlib.obj
+$(CONFIG)\bin\libejs.zlib.dll: \
+    $(CONFIG)\bin\libejs.dll \
+    $(CONFIG)\bin\ejs.mod \
+    $(CONFIG)\bin\ejs.zlib.mod \
+    $(CONFIG)\bin\libzlib.dll \
+    $(CONFIG)\obj\ejsZlib.obj
 	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.zlib.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsZlib.obj libzlib.lib libejs.lib $(LIBS) libhttp.lib libpcre.lib libmpr.lib
 
-$(CONFIG)\bin\ejs.tar.mod:  \
-        $(CONFIG)\bin\ejsc.exe \
-        $(CONFIG)\bin\ejs.mod
+$(CONFIG)\bin\ejs.tar.mod: \
+    $(CONFIG)\bin\ejsc.exe \
+    $(CONFIG)\bin\ejs.mod
 	cd src\jems\ejs.tar
 	..\..\..\$(CONFIG)\bin\ejsc --out ..\..\..\$(CONFIG)\bin\ejs.tar.mod  --optimize 9 *.es
 	cd ..\..\..
@@ -1106,18 +1106,18 @@ $(CONFIG)\bin\mvc.es:
 	copy mvc.es ..\..\..\$(CONFIG)\bin
 	cd ..\..\..
 
-$(CONFIG)\bin\mvc.exe:  \
-        $(CONFIG)\bin\libejs.dll \
-        $(CONFIG)\bin\mvc.es \
-        $(CONFIG)\obj\ejsrun.obj
+$(CONFIG)\bin\mvc.exe: \
+    $(CONFIG)\bin\libejs.dll \
+    $(CONFIG)\bin\mvc.es \
+    $(CONFIG)\obj\ejsrun.obj
 	"$(LD)" -out:$(CONFIG)\bin\mvc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj libejs.lib $(LIBS) libhttp.lib libpcre.lib libmpr.lib
 
-$(CONFIG)\bin\ejs.mvc.mod:  \
-        $(CONFIG)\bin\ejsc.exe \
-        $(CONFIG)\bin\ejs.mod \
-        $(CONFIG)\bin\ejs.web.mod \
-        $(CONFIG)\bin\ejs.template.mod \
-        $(CONFIG)\bin\ejs.unix.mod
+$(CONFIG)\bin\ejs.mvc.mod: \
+    $(CONFIG)\bin\ejsc.exe \
+    $(CONFIG)\bin\ejs.mod \
+    $(CONFIG)\bin\ejs.web.mod \
+    $(CONFIG)\bin\ejs.template.mod \
+    $(CONFIG)\bin\ejs.unix.mod
 	cd src\jems\ejs.mvc
 	..\..\..\$(CONFIG)\bin\ejsc --out ..\..\..\$(CONFIG)\bin\ejs.mvc.mod  --optimize 9 *.es
 	cd ..\..\..
@@ -1132,33 +1132,34 @@ $(CONFIG)\bin\utest.worker:
 	copy utest.worker ..\..\..\$(CONFIG)\bin
 	cd ..\..\..
 
-$(CONFIG)\bin\utest.exe:  \
-        $(CONFIG)\bin\libejs.dll \
-        $(CONFIG)\bin\utest.es \
-        $(CONFIG)\bin\utest.worker \
-        $(CONFIG)\obj\ejsrun.obj
+$(CONFIG)\bin\utest.exe: \
+    $(CONFIG)\bin\libejs.dll \
+    $(CONFIG)\bin\utest.es \
+    $(CONFIG)\bin\utest.worker \
+    $(CONFIG)\obj\ejsrun.obj
 	"$(LD)" -out:$(CONFIG)\bin\utest.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj libejs.lib $(LIBS) libhttp.lib libpcre.lib libmpr.lib
 
 $(CONFIG)\obj\removeFiles.obj: \
-        package\windows\removeFiles.c \
-        $(CONFIG)\inc\bit.h
+    package\windows\removeFiles.c\
+    $(CONFIG)\inc\bit.h
 	"$(CC)" -c -Fo$(CONFIG)\obj\removeFiles.obj -Fd$(CONFIG)\obj\removeFiles.pdb $(CFLAGS) $(DFLAGS) -I$(CONFIG)\inc package\windows\removeFiles.c
 
-$(CONFIG)\bin\removeFiles.exe:  \
-        $(CONFIG)\obj\removeFiles.obj
+$(CONFIG)\bin\removeFiles.exe: \
+    $(CONFIG)\obj\removeFiles.obj
 	"$(LD)" -out:$(CONFIG)\bin\removeFiles.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\removeFiles.obj $(LIBS)
 
 version: 
 	@echo 2.3.0-1
 
-install:  \
-        compile
+deploy: compile
 	xcopy /I /S /Y /Q $(CONFIG)\bin "$(BIT_BIN_PREFIX)"
 	del /Q "$(BIT_BIN_PREFIX)\*.pdb"
 	del /Q "$(BIT_BIN_PREFIX)\*.exp"
 	del /Q "$(BIT_BIN_PREFIX)\*.lib"
 
+install: compile deploy
+
+
 uninstall: 
-	if exist "$(BIT_CFG_PREFIX)" rd /Q /S "$(BIT_CFG_PREFIX)"
 	if exist "$(BIT_PRD_PREFIX)" rd /Q /S "$(BIT_PRD_PREFIX)"
 

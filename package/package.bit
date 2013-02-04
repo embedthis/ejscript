@@ -12,20 +12,25 @@ Bit.load({
             platforms: [ 'local' ],
         },
 
-        install: {
+        deploy: {
             home: '${TOP}',
-			action: 'installBinary()',
-			depends: ['compile'],
+            action: 'packageDeploy()',
+            depends: ['compile'],
             'generate-make': "
-                rm -f $(BIT_PRD_PREFIX)/latest $(BIT_UBIN_PREFIX)/bit
                 for n in ejs ejsc ejsman ejsmod jem mvc utest ; do rm -f $(BIT_UBIN_PREFIX)/$$n ; done
-                install -d -m 755 $(BIT_BIN_PREFIX)
+                mkdir -p '$(BIT_BIN_PREFIX)' '$(BIT_INC_PREFIX)' '$(BIT_VER_PREFIX)/man/man1'
                 cp -R -P ${BIN}/* $(BIT_BIN_PREFIX)
-                ln -s $(VERSION) $(BIT_PRD_PREFIX)/latest
                 for n in ejs ejsc ejsman ejsmod jem mvc utest ; do \\
                     rm -f $(BIT_UBIN_PREFIX)/$$n ; \\
                     ln -s $(BIT_BIN_PREFIX)/$$n $(BIT_UBIN_PREFIX)/$$n ; \\
                 done
+                for n in ejs.1 ejsc.1 ejsmod.1 manager.1 mvc.1 ; do \\
+                    rm -f $(BIT_VER_PREFIX)/man/man1/$$n $(BIT_MAN_PREFIX)/$$n ; \\
+                    cp doc/man/$$n $(BIT_VER_PREFIX)/man/man1 ; \\
+                    ln -s $(BIT_VER_PREFIX)/man/man1/$$n $(BIT_MAN_PREFIX)/$$n ; \\
+                done
+                rm -f '$(BIT_PRD_PREFIX)/latest'
+                ln -s $(VERSION) $(BIT_PRD_PREFIX)/latest
             ",
             'generate-nmake': "
                 xcopy /I /S /Y /Q $(CONFIG)\\bin \"$(BIT_BIN_PREFIX)\"
@@ -35,15 +40,30 @@ Bit.load({
             ",
         },
 
-        uninstall: {
+        install: {
+            enable: "bit.platform.like == 'posix' || bit.platform.like == 'windows'",
             home: '${TOP}',
-			action: 'uninstallBinary()',
-            'generate-make': "rm -fr $(BIT_PRD_PREFIX)",
+            action: "installBinary()",
+            depends: ['compile', 'deploy'],
+            'generate': ' ',
+        },
+
+        uninstall: {
+            enable: "bit.platform.like == 'posix' || bit.platform.like == 'windows'",
+            home: '${TOP}',
+            action: 'uninstallBinary()',
+            'generate-make': "
+                for n in ejs ejsc ejsman ejsmod jem mvc utest ; do rm -f $(BIT_UBIN_PREFIX)/$$n ; done
+                for n in $(BIT_VER_PREFIX)/man/man1/*.1; do \\
+                    base=`basename $$n` ; \\
+                    rm -f $(BIT_MAN_PREFIX)/$$base ; \\
+                done
+                rm -fr $(BIT_PRD_PREFIX)
+            ",
             'generate-nmake': "
-                if exist \"$(BIT_CFG_PREFIX)\" rd /Q /S \"$(BIT_CFG_PREFIX)\"
                 if exist \"$(BIT_PRD_PREFIX)\" rd /Q /S \"$(BIT_PRD_PREFIX)\"
             ",
-		},
+        },
 
         package: {
             home: '${TOP}',

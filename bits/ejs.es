@@ -11,16 +11,13 @@ require ejs.unix
     Copy binary files to package staging area
     This is run for local and cross platforms. The last platform does the packaging
  */
-public function packageBinaryFiles(formats = ['tar', 'native']) {
+public function packageDeploy(minimal = false) {
     let settings = bit.settings
     let bin = bit.dir.pkg.join('bin')
     safeRemove(bit.dir.pkg)
     let vname = settings.product + '-' + settings.version + '-' + settings.buildNumber
     let pkg = bin.join(vname)
-    pkg.makeDir()
-
     let contents = pkg.join('contents')
-
     let prefixes = bit.prefixes;
     let p = {}
     for (prefix in bit.prefixes) {
@@ -31,6 +28,9 @@ public function packageBinaryFiles(formats = ['tar', 'native']) {
         p[prefix].makeDir()
     }
     let strip = bit.platform.profile == 'debug'
+
+    trace('Deploy', bit.settings.title)
+    pkg.makeDir()
 
     if (!bit.cross) {
         /* These three files are replicated outside the data directory */
@@ -99,11 +99,8 @@ public function packageBinaryFiles(formats = ['tar', 'native']) {
     let files = contents.files('**', {exclude: /\/$/, relative: true})
     files = files.map(function(f) Path("/" + f))
     p.productver.join('files.log').append(files.join('\n') + '\n')
-
-    if (formats && bit.platform.last) {
-        package(bit.dir.pkg.join('bin'), formats)
-    }
 }
+
 
 public function packageSourceFiles() {
     if (bit.cross) {
@@ -226,11 +223,17 @@ public function packageComboFiles() {
 }
 
 
+public function packageBinaryFiles(formats = ['tar', 'native'], minimal = false) {
+    packageDeploy(minimal)
+    if (bit.platform.last) {
+        package(bit.dir.pkg.join('bin'), formats)
+    }
+}
+
 public function installBinary() {
     if (Config.OS != 'windows' && App.uid != 0) {
         throw 'Must run as root. Use \"sudo bit install\"'
     }
-    packageBinaryFiles(null)
     package(bit.dir.pkg.join('bin'), 'install')
     if (Config.OS != 'windows') {
         createLinks()                                                                                          
@@ -243,6 +246,7 @@ public function installBinary() {
     }
     trace('Complete', bit.settings.title + ' installed')
 }
+
 
 public function uninstallBinary() {
     if (Config.OS != 'windows' && App.uid != 0) {
@@ -261,17 +265,20 @@ public function uninstallBinary() {
         file.remove()
     }
     for each (prefix in bit.prefixes) {
-        if (!prefix.name.contains(bit.settings.product)) {
-            continue
+        if (bit.platform.os == 'windows') {
+            if (!prefix.name.contains(bit.settings.title)) continue
+        } else {
+            if (!prefix.name.contains(bit.settings.product)) continue
         }
         for each (dir in prefix.files('**', {include: /\/$/}).sort().reverse()) {
             vtrace('Remove', dir)
-            dir.remove()
+            dir.removeAll()
         }
         vtrace('Remove', prefix)
-        prefix.remove()
+        prefix.removeAll()
     }
     updateLatestLink()
+    trace('Complete', bit.settings.title + ' uninstalled')                                                 
 }
 
 /*
