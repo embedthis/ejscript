@@ -2,6 +2,10 @@
 #   ejs-vxworks-default.mk -- Makefile to build Embedthis Ejscript for vxworks
 #
 
+export WIND_BASE := $(WIND_BASE)
+export WIND_HOME := $(WIND_BASE)/..
+export WIND_PLATFORM := $(WIND_PLATFORM)
+
 PRODUCT         := ejs
 VERSION         := 2.3.0
 BUILD_NUMBER    := 1
@@ -28,7 +32,7 @@ BIT_MAN_PREFIX  := $(BIT_VER_PREFIX)
 
 CFLAGS          += -fno-builtin -fno-defer-pop -fvolatile  -w
 DFLAGS          += -D_REENTRANT -DVXWORKS -DRW_MULTI_THREAD -D_GNU_TOOL  -DCPU=PENTIUM $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS)))
-IFLAGS          += -I$(CONFIG)/inc
+IFLAGS          += -I$(CONFIG)/inc -I$(WIND_BASE)/target/h -I$(WIND_BASE)/target/h/wrn/coreip
 LDFLAGS         += '-Wl,-r'
 LIBPATHS        += -L$(CONFIG)/bin -L$(CONFIG)/bin
 LIBS            += 
@@ -236,7 +240,7 @@ $(CONFIG)/obj/mprLib.o: \
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/mpr.h \
     $(CONFIG)/inc/bitos.h
-	$(CC) -c -o $(CONFIG)/obj/mprLib.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/mpr/mprLib.c
+	$(CC) -c -o $(CONFIG)/obj/mprLib.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/mpr/mprLib.c
 
 $(CONFIG)/bin/libmpr.out: \
     $(CONFIG)/inc/mpr.h \
@@ -252,7 +256,7 @@ $(CONFIG)/obj/estLib.o: \
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/est.h \
     $(CONFIG)/inc/bitos.h
-	$(CC) -c -o $(CONFIG)/obj/estLib.o -fno-builtin -fno-defer-pop -fvolatile $(DFLAGS) -I$(CONFIG)/inc src/deps/est/estLib.c
+	$(CC) -c -o $(CONFIG)/obj/estLib.o -fno-builtin -fno-defer-pop -fvolatile $(DFLAGS) $(IFLAGS) src/deps/est/estLib.c
 
 $(CONFIG)/bin/libest.out: \
     $(CONFIG)/inc/est.h \
@@ -264,7 +268,7 @@ $(CONFIG)/obj/mprSsl.o: \
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/mpr.h \
     $(CONFIG)/inc/est.h
-	$(CC) -c -o $(CONFIG)/obj/mprSsl.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/mpr/mprSsl.c
+	$(CC) -c -o $(CONFIG)/obj/mprSsl.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/mpr/mprSsl.c
 
 $(CONFIG)/bin/libmprssl.out: \
     $(CONFIG)/bin/libmpr.out \
@@ -276,7 +280,7 @@ $(CONFIG)/obj/manager.o: \
     src/deps/mpr/manager.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/mpr.h
-	$(CC) -c -o $(CONFIG)/obj/manager.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/mpr/manager.c
+	$(CC) -c -o $(CONFIG)/obj/manager.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/mpr/manager.c
 
 $(CONFIG)/bin/ejsman.out: \
     $(CONFIG)/bin/libmpr.out \
@@ -287,7 +291,7 @@ $(CONFIG)/obj/makerom.o: \
     src/deps/mpr/makerom.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/mpr.h
-	$(CC) -c -o $(CONFIG)/obj/makerom.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/mpr/makerom.c
+	$(CC) -c -o $(CONFIG)/obj/makerom.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/mpr/makerom.c
 
 $(CONFIG)/bin/makerom.out: \
     $(CONFIG)/bin/libmpr.out \
@@ -306,7 +310,7 @@ $(CONFIG)/obj/pcre.o: \
     src/deps/pcre/pcre.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/pcre.h
-	$(CC) -c -o $(CONFIG)/obj/pcre.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/pcre/pcre.c
+	$(CC) -c -o $(CONFIG)/obj/pcre.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/pcre/pcre.c
 
 $(CONFIG)/bin/libpcre.out: \
     $(CONFIG)/inc/pcre.h \
@@ -322,7 +326,7 @@ $(CONFIG)/obj/httpLib.o: \
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/http.h \
     $(CONFIG)/inc/mpr.h
-	$(CC) -c -o $(CONFIG)/obj/httpLib.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/http/httpLib.c
+	$(CC) -c -o $(CONFIG)/obj/httpLib.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/http/httpLib.c
 
 $(CONFIG)/bin/libhttp.out: \
     $(CONFIG)/bin/libmpr.out \
@@ -335,7 +339,7 @@ $(CONFIG)/obj/http.o: \
     src/deps/http/http.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/http.h
-	$(CC) -c -o $(CONFIG)/obj/http.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/http/http.c
+	$(CC) -c -o $(CONFIG)/obj/http.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/http/http.c
 
 $(CONFIG)/bin/http.out: \
     $(CONFIG)/bin/libhttp.out \
@@ -350,7 +354,7 @@ $(CONFIG)/obj/sqlite3.o: \
     src/deps/sqlite/sqlite3.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/sqlite3.h
-	$(CC) -c -o $(CONFIG)/obj/sqlite3.o -fno-builtin -fno-defer-pop -fvolatile $(DFLAGS) -I$(CONFIG)/inc src/deps/sqlite/sqlite3.c
+	$(CC) -c -o $(CONFIG)/obj/sqlite3.o -fno-builtin -fno-defer-pop -fvolatile $(DFLAGS) $(IFLAGS) src/deps/sqlite/sqlite3.c
 
 $(CONFIG)/bin/libsqlite3.out: \
     $(CONFIG)/inc/sqlite3.h \
@@ -361,7 +365,7 @@ $(CONFIG)/obj/sqlite.o: \
     src/deps/sqlite/sqlite.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/sqlite3.h
-	$(CC) -c -o $(CONFIG)/obj/sqlite.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/sqlite/sqlite.c
+	$(CC) -c -o $(CONFIG)/obj/sqlite.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/sqlite/sqlite.c
 
 $(CONFIG)/bin/sqlite.out: \
     $(CONFIG)/bin/libsqlite3.out \
@@ -376,7 +380,7 @@ $(CONFIG)/obj/zlib.o: \
     src/deps/zlib/zlib.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/zlib.h
-	$(CC) -c -o $(CONFIG)/obj/zlib.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/zlib/zlib.c
+	$(CC) -c -o $(CONFIG)/obj/zlib.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/zlib/zlib.c
 
 $(CONFIG)/bin/libzlib.out: \
     $(CONFIG)/inc/zlib.h \
@@ -434,358 +438,358 @@ $(CONFIG)/obj/ecAst.o: \
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejsCompiler.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ecAst.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/compiler/ecAst.c
+	$(CC) -c -o $(CONFIG)/obj/ecAst.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/compiler/ecAst.c
 
 $(CONFIG)/obj/ecCodeGen.o: \
     src/compiler/ecCodeGen.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejsCompiler.h
-	$(CC) -c -o $(CONFIG)/obj/ecCodeGen.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/compiler/ecCodeGen.c
+	$(CC) -c -o $(CONFIG)/obj/ecCodeGen.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/compiler/ecCodeGen.c
 
 $(CONFIG)/obj/ecCompiler.o: \
     src/compiler/ecCompiler.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejsCompiler.h
-	$(CC) -c -o $(CONFIG)/obj/ecCompiler.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/compiler/ecCompiler.c
+	$(CC) -c -o $(CONFIG)/obj/ecCompiler.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/compiler/ecCompiler.c
 
 $(CONFIG)/obj/ecLex.o: \
     src/compiler/ecLex.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejsCompiler.h
-	$(CC) -c -o $(CONFIG)/obj/ecLex.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/compiler/ecLex.c
+	$(CC) -c -o $(CONFIG)/obj/ecLex.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/compiler/ecLex.c
 
 $(CONFIG)/obj/ecModuleWrite.o: \
     src/compiler/ecModuleWrite.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejsCompiler.h
-	$(CC) -c -o $(CONFIG)/obj/ecModuleWrite.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/compiler/ecModuleWrite.c
+	$(CC) -c -o $(CONFIG)/obj/ecModuleWrite.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/compiler/ecModuleWrite.c
 
 $(CONFIG)/obj/ecParser.o: \
     src/compiler/ecParser.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejsCompiler.h
-	$(CC) -c -o $(CONFIG)/obj/ecParser.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/compiler/ecParser.c
+	$(CC) -c -o $(CONFIG)/obj/ecParser.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/compiler/ecParser.c
 
 $(CONFIG)/obj/ecState.o: \
     src/compiler/ecState.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejsCompiler.h
-	$(CC) -c -o $(CONFIG)/obj/ecState.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/compiler/ecState.c
+	$(CC) -c -o $(CONFIG)/obj/ecState.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/compiler/ecState.c
 
 $(CONFIG)/obj/dtoa.o: \
     src/core/src/dtoa.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/mpr.h
-	$(CC) -c -o $(CONFIG)/obj/dtoa.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/dtoa.c
+	$(CC) -c -o $(CONFIG)/obj/dtoa.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/dtoa.c
 
 $(CONFIG)/obj/ejsApp.o: \
     src/core/src/ejsApp.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsApp.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsApp.c
+	$(CC) -c -o $(CONFIG)/obj/ejsApp.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsApp.c
 
 $(CONFIG)/obj/ejsArray.o: \
     src/core/src/ejsArray.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsArray.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsArray.c
+	$(CC) -c -o $(CONFIG)/obj/ejsArray.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsArray.c
 
 $(CONFIG)/obj/ejsBlock.o: \
     src/core/src/ejsBlock.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsBlock.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsBlock.c
+	$(CC) -c -o $(CONFIG)/obj/ejsBlock.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsBlock.c
 
 $(CONFIG)/obj/ejsBoolean.o: \
     src/core/src/ejsBoolean.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsBoolean.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsBoolean.c
+	$(CC) -c -o $(CONFIG)/obj/ejsBoolean.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsBoolean.c
 
 $(CONFIG)/obj/ejsByteArray.o: \
     src/core/src/ejsByteArray.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsByteArray.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsByteArray.c
+	$(CC) -c -o $(CONFIG)/obj/ejsByteArray.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsByteArray.c
 
 $(CONFIG)/obj/ejsCache.o: \
     src/core/src/ejsCache.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsCache.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsCache.c
+	$(CC) -c -o $(CONFIG)/obj/ejsCache.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsCache.c
 
 $(CONFIG)/obj/ejsCmd.o: \
     src/core/src/ejsCmd.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsCmd.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsCmd.c
+	$(CC) -c -o $(CONFIG)/obj/ejsCmd.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsCmd.c
 
 $(CONFIG)/obj/ejsConfig.o: \
     src/core/src/ejsConfig.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsConfig.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsConfig.c
+	$(CC) -c -o $(CONFIG)/obj/ejsConfig.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsConfig.c
 
 $(CONFIG)/obj/ejsDate.o: \
     src/core/src/ejsDate.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsDate.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsDate.c
+	$(CC) -c -o $(CONFIG)/obj/ejsDate.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsDate.c
 
 $(CONFIG)/obj/ejsDebug.o: \
     src/core/src/ejsDebug.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsDebug.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsDebug.c
+	$(CC) -c -o $(CONFIG)/obj/ejsDebug.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsDebug.c
 
 $(CONFIG)/obj/ejsError.o: \
     src/core/src/ejsError.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsError.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsError.c
+	$(CC) -c -o $(CONFIG)/obj/ejsError.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsError.c
 
 $(CONFIG)/obj/ejsFile.o: \
     src/core/src/ejsFile.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsFile.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsFile.c
+	$(CC) -c -o $(CONFIG)/obj/ejsFile.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsFile.c
 
 $(CONFIG)/obj/ejsFileSystem.o: \
     src/core/src/ejsFileSystem.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsFileSystem.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsFileSystem.c
+	$(CC) -c -o $(CONFIG)/obj/ejsFileSystem.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsFileSystem.c
 
 $(CONFIG)/obj/ejsFrame.o: \
     src/core/src/ejsFrame.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsFrame.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsFrame.c
+	$(CC) -c -o $(CONFIG)/obj/ejsFrame.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsFrame.c
 
 $(CONFIG)/obj/ejsFunction.o: \
     src/core/src/ejsFunction.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsFunction.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsFunction.c
+	$(CC) -c -o $(CONFIG)/obj/ejsFunction.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsFunction.c
 
 $(CONFIG)/obj/ejsGC.o: \
     src/core/src/ejsGC.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsGC.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsGC.c
+	$(CC) -c -o $(CONFIG)/obj/ejsGC.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsGC.c
 
 $(CONFIG)/obj/ejsGlobal.o: \
     src/core/src/ejsGlobal.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsGlobal.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsGlobal.c
+	$(CC) -c -o $(CONFIG)/obj/ejsGlobal.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsGlobal.c
 
 $(CONFIG)/obj/ejsHttp.o: \
     src/core/src/ejsHttp.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsHttp.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsHttp.c
+	$(CC) -c -o $(CONFIG)/obj/ejsHttp.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsHttp.c
 
 $(CONFIG)/obj/ejsIterator.o: \
     src/core/src/ejsIterator.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsIterator.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsIterator.c
+	$(CC) -c -o $(CONFIG)/obj/ejsIterator.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsIterator.c
 
 $(CONFIG)/obj/ejsJSON.o: \
     src/core/src/ejsJSON.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsJSON.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsJSON.c
+	$(CC) -c -o $(CONFIG)/obj/ejsJSON.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsJSON.c
 
 $(CONFIG)/obj/ejsLocalCache.o: \
     src/core/src/ejsLocalCache.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsLocalCache.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsLocalCache.c
+	$(CC) -c -o $(CONFIG)/obj/ejsLocalCache.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsLocalCache.c
 
 $(CONFIG)/obj/ejsMath.o: \
     src/core/src/ejsMath.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsMath.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsMath.c
+	$(CC) -c -o $(CONFIG)/obj/ejsMath.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsMath.c
 
 $(CONFIG)/obj/ejsMemory.o: \
     src/core/src/ejsMemory.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsMemory.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsMemory.c
+	$(CC) -c -o $(CONFIG)/obj/ejsMemory.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsMemory.c
 
 $(CONFIG)/obj/ejsMprLog.o: \
     src/core/src/ejsMprLog.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsMprLog.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsMprLog.c
+	$(CC) -c -o $(CONFIG)/obj/ejsMprLog.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsMprLog.c
 
 $(CONFIG)/obj/ejsNamespace.o: \
     src/core/src/ejsNamespace.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsNamespace.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsNamespace.c
+	$(CC) -c -o $(CONFIG)/obj/ejsNamespace.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsNamespace.c
 
 $(CONFIG)/obj/ejsNull.o: \
     src/core/src/ejsNull.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsNull.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsNull.c
+	$(CC) -c -o $(CONFIG)/obj/ejsNull.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsNull.c
 
 $(CONFIG)/obj/ejsNumber.o: \
     src/core/src/ejsNumber.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsNumber.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsNumber.c
+	$(CC) -c -o $(CONFIG)/obj/ejsNumber.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsNumber.c
 
 $(CONFIG)/obj/ejsObject.o: \
     src/core/src/ejsObject.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsObject.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsObject.c
+	$(CC) -c -o $(CONFIG)/obj/ejsObject.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsObject.c
 
 $(CONFIG)/obj/ejsPath.o: \
     src/core/src/ejsPath.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h \
     $(CONFIG)/inc/pcre.h
-	$(CC) -c -o $(CONFIG)/obj/ejsPath.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsPath.c
+	$(CC) -c -o $(CONFIG)/obj/ejsPath.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsPath.c
 
 $(CONFIG)/obj/ejsPot.o: \
     src/core/src/ejsPot.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsPot.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsPot.c
+	$(CC) -c -o $(CONFIG)/obj/ejsPot.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsPot.c
 
 $(CONFIG)/obj/ejsRegExp.o: \
     src/core/src/ejsRegExp.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h \
     $(CONFIG)/inc/pcre.h
-	$(CC) -c -o $(CONFIG)/obj/ejsRegExp.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsRegExp.c
+	$(CC) -c -o $(CONFIG)/obj/ejsRegExp.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsRegExp.c
 
 $(CONFIG)/obj/ejsSocket.o: \
     src/core/src/ejsSocket.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsSocket.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsSocket.c
+	$(CC) -c -o $(CONFIG)/obj/ejsSocket.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsSocket.c
 
 $(CONFIG)/obj/ejsString.o: \
     src/core/src/ejsString.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h \
     $(CONFIG)/inc/pcre.h
-	$(CC) -c -o $(CONFIG)/obj/ejsString.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsString.c
+	$(CC) -c -o $(CONFIG)/obj/ejsString.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsString.c
 
 $(CONFIG)/obj/ejsSystem.o: \
     src/core/src/ejsSystem.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsSystem.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsSystem.c
+	$(CC) -c -o $(CONFIG)/obj/ejsSystem.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsSystem.c
 
 $(CONFIG)/obj/ejsTimer.o: \
     src/core/src/ejsTimer.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsTimer.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsTimer.c
+	$(CC) -c -o $(CONFIG)/obj/ejsTimer.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsTimer.c
 
 $(CONFIG)/obj/ejsType.o: \
     src/core/src/ejsType.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsType.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsType.c
+	$(CC) -c -o $(CONFIG)/obj/ejsType.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsType.c
 
 $(CONFIG)/obj/ejsUri.o: \
     src/core/src/ejsUri.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsUri.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsUri.c
+	$(CC) -c -o $(CONFIG)/obj/ejsUri.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsUri.c
 
 $(CONFIG)/obj/ejsVoid.o: \
     src/core/src/ejsVoid.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsVoid.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsVoid.c
+	$(CC) -c -o $(CONFIG)/obj/ejsVoid.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsVoid.c
 
 $(CONFIG)/obj/ejsWebSocket.o: \
     src/core/src/ejsWebSocket.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsWebSocket.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsWebSocket.c
+	$(CC) -c -o $(CONFIG)/obj/ejsWebSocket.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsWebSocket.c
 
 $(CONFIG)/obj/ejsWorker.o: \
     src/core/src/ejsWorker.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsWorker.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsWorker.c
+	$(CC) -c -o $(CONFIG)/obj/ejsWorker.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsWorker.c
 
 $(CONFIG)/obj/ejsXML.o: \
     src/core/src/ejsXML.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsXML.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsXML.c
+	$(CC) -c -o $(CONFIG)/obj/ejsXML.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsXML.c
 
 $(CONFIG)/obj/ejsXMLList.o: \
     src/core/src/ejsXMLList.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsXMLList.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsXMLList.c
+	$(CC) -c -o $(CONFIG)/obj/ejsXMLList.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsXMLList.c
 
 $(CONFIG)/obj/ejsXMLLoader.o: \
     src/core/src/ejsXMLLoader.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsXMLLoader.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/core/src/ejsXMLLoader.c
+	$(CC) -c -o $(CONFIG)/obj/ejsXMLLoader.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/core/src/ejsXMLLoader.c
 
 $(CONFIG)/obj/ejsByteCode.o: \
     src/vm/ejsByteCode.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsByteCode.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/vm/ejsByteCode.c
+	$(CC) -c -o $(CONFIG)/obj/ejsByteCode.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/vm/ejsByteCode.c
 
 $(CONFIG)/obj/ejsException.o: \
     src/vm/ejsException.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsException.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/vm/ejsException.c
+	$(CC) -c -o $(CONFIG)/obj/ejsException.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/vm/ejsException.c
 
 $(CONFIG)/obj/ejsHelper.o: \
     src/vm/ejsHelper.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsHelper.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/vm/ejsHelper.c
+	$(CC) -c -o $(CONFIG)/obj/ejsHelper.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/vm/ejsHelper.c
 
 $(CONFIG)/obj/ejsInterp.o: \
     src/vm/ejsInterp.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsInterp.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/vm/ejsInterp.c
+	$(CC) -c -o $(CONFIG)/obj/ejsInterp.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/vm/ejsInterp.c
 
 $(CONFIG)/obj/ejsLoader.o: \
     src/vm/ejsLoader.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsLoader.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/vm/ejsLoader.c
+	$(CC) -c -o $(CONFIG)/obj/ejsLoader.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/vm/ejsLoader.c
 
 $(CONFIG)/obj/ejsModule.o: \
     src/vm/ejsModule.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsModule.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/vm/ejsModule.c
+	$(CC) -c -o $(CONFIG)/obj/ejsModule.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/vm/ejsModule.c
 
 $(CONFIG)/obj/ejsScope.o: \
     src/vm/ejsScope.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsScope.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/vm/ejsScope.c
+	$(CC) -c -o $(CONFIG)/obj/ejsScope.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/vm/ejsScope.c
 
 $(CONFIG)/obj/ejsService.o: \
     src/vm/ejsService.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsService.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/vm/ejsService.c
+	$(CC) -c -o $(CONFIG)/obj/ejsService.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/vm/ejsService.c
 
 $(CONFIG)/bin/libejs.out: \
     $(CONFIG)/bin/libhttp.out \
@@ -865,7 +869,7 @@ $(CONFIG)/obj/ejs.o: \
     src/cmd/ejs.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejsCompiler.h
-	$(CC) -c -o $(CONFIG)/obj/ejs.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/cmd/ejs.c
+	$(CC) -c -o $(CONFIG)/obj/ejs.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/cmd/ejs.c
 
 $(CONFIG)/bin/ejs.out: \
     $(CONFIG)/bin/libejs.out \
@@ -876,7 +880,7 @@ $(CONFIG)/obj/ejsc.o: \
     src/cmd/ejsc.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejsCompiler.h
-	$(CC) -c -o $(CONFIG)/obj/ejsc.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/cmd/ejsc.c
+	$(CC) -c -o $(CONFIG)/obj/ejsc.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/cmd/ejsc.c
 
 $(CONFIG)/bin/ejsc.out: \
     $(CONFIG)/bin/libejs.out \
@@ -888,32 +892,32 @@ $(CONFIG)/obj/ejsmod.o: \
     $(CONFIG)/inc/bit.h \
     src/cmd/ejsmod.h \
     $(CONFIG)/inc/ejs.h
-	$(CC) -c -o $(CONFIG)/obj/ejsmod.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/cmd src/cmd/ejsmod.c
+	$(CC) -c -o $(CONFIG)/obj/ejsmod.o $(CFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/cmd src/cmd/ejsmod.c
 
 $(CONFIG)/obj/doc.o: \
     src/cmd/doc.c\
     $(CONFIG)/inc/bit.h \
     src/cmd/ejsmod.h
-	$(CC) -c -o $(CONFIG)/obj/doc.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/cmd src/cmd/doc.c
+	$(CC) -c -o $(CONFIG)/obj/doc.o $(CFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/cmd src/cmd/doc.c
 
 $(CONFIG)/obj/docFiles.o: \
     src/cmd/docFiles.c\
     $(CONFIG)/inc/bit.h \
     src/cmd/ejsmod.h
-	$(CC) -c -o $(CONFIG)/obj/docFiles.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/cmd src/cmd/docFiles.c
+	$(CC) -c -o $(CONFIG)/obj/docFiles.o $(CFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/cmd src/cmd/docFiles.c
 
 $(CONFIG)/obj/listing.o: \
     src/cmd/listing.c\
     $(CONFIG)/inc/bit.h \
     src/cmd/ejsmod.h \
     $(CONFIG)/inc/ejsByteCodeTable.h
-	$(CC) -c -o $(CONFIG)/obj/listing.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/cmd src/cmd/listing.c
+	$(CC) -c -o $(CONFIG)/obj/listing.o $(CFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/cmd src/cmd/listing.c
 
 $(CONFIG)/obj/slotGen.o: \
     src/cmd/slotGen.c\
     $(CONFIG)/inc/bit.h \
     src/cmd/ejsmod.h
-	$(CC) -c -o $(CONFIG)/obj/slotGen.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/cmd src/cmd/slotGen.c
+	$(CC) -c -o $(CONFIG)/obj/slotGen.o $(CFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/cmd src/cmd/slotGen.c
 
 $(CONFIG)/bin/ejsmod.out: \
     $(CONFIG)/bin/libejs.out \
@@ -928,7 +932,7 @@ $(CONFIG)/obj/ejsrun.o: \
     src/cmd/ejsrun.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejsCompiler.h
-	$(CC) -c -o $(CONFIG)/obj/ejsrun.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/cmd/ejsrun.c
+	$(CC) -c -o $(CONFIG)/obj/ejsrun.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/cmd/ejsrun.c
 
 $(CONFIG)/bin/ejsrun.out: \
     $(CONFIG)/bin/libejs.out \
@@ -979,7 +983,7 @@ $(CONFIG)/obj/ejsSqlite.o: \
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h \
     $(CONFIG)/inc/ejs.db.sqlite.slots.h
-	$(CC) -c -o $(CONFIG)/obj/ejsSqlite.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/jems/ejs.db.sqlite/ejsSqlite.c
+	$(CC) -c -o $(CONFIG)/obj/ejsSqlite.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/jems/ejs.db.sqlite/ejsSqlite.c
 
 $(CONFIG)/bin/libejs.db.sqlite.out: \
     $(CONFIG)/bin/libmpr.out \
@@ -1011,7 +1015,7 @@ $(CONFIG)/obj/ejsHttpServer.o: \
     $(CONFIG)/inc/ejsWeb.h \
     $(CONFIG)/inc/ejs.web.slots.h \
     $(CONFIG)/inc/http.h
-	$(CC) -c -o $(CONFIG)/obj/ejsHttpServer.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsHttpServer.c
+	$(CC) -c -o $(CONFIG)/obj/ejsHttpServer.o $(CFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsHttpServer.c
 
 $(CONFIG)/obj/ejsRequest.o: \
     src/jems/ejs.web/ejsRequest.c\
@@ -1020,14 +1024,14 @@ $(CONFIG)/obj/ejsRequest.o: \
     $(CONFIG)/inc/ejsCompiler.h \
     $(CONFIG)/inc/ejsWeb.h \
     $(CONFIG)/inc/ejs.web.slots.h
-	$(CC) -c -o $(CONFIG)/obj/ejsRequest.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsRequest.c
+	$(CC) -c -o $(CONFIG)/obj/ejsRequest.o $(CFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsRequest.c
 
 $(CONFIG)/obj/ejsSession.o: \
     src/jems/ejs.web/ejsSession.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/ejs.h \
     $(CONFIG)/inc/ejsWeb.h
-	$(CC) -c -o $(CONFIG)/obj/ejsSession.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsSession.c
+	$(CC) -c -o $(CONFIG)/obj/ejsSession.o $(CFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsSession.c
 
 $(CONFIG)/obj/ejsWeb.o: \
     src/jems/ejs.web/ejsWeb.c\
@@ -1036,7 +1040,7 @@ $(CONFIG)/obj/ejsWeb.o: \
     $(CONFIG)/inc/ejsCompiler.h \
     $(CONFIG)/inc/ejsWeb.h \
     $(CONFIG)/inc/ejs.web.slots.h
-	$(CC) -c -o $(CONFIG)/obj/ejsWeb.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsWeb.c
+	$(CC) -c -o $(CONFIG)/obj/ejsWeb.o $(CFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsWeb.c
 
 $(CONFIG)/bin/libejs.web.out: \
     $(CONFIG)/bin/libejs.out \
@@ -1068,7 +1072,7 @@ $(CONFIG)/obj/ejsZlib.o: \
     $(CONFIG)/inc/ejs.h \
     $(CONFIG)/inc/zlib.h \
     $(CONFIG)/inc/ejs.zlib.slots.h
-	$(CC) -c -o $(CONFIG)/obj/ejsZlib.o $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/jems/ejs.zlib/ejsZlib.c
+	$(CC) -c -o $(CONFIG)/obj/ejsZlib.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/jems/ejs.zlib/ejsZlib.c
 
 $(CONFIG)/bin/libejs.zlib.out: \
     $(CONFIG)/bin/libejs.out \

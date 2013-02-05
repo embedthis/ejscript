@@ -282,7 +282,7 @@
     #define BIT_PACK_SQLITE 1
 #endif
 #ifndef BIT_PACK_VXWORKS
-    #define BIT_PACK_VXWORKS 0
+    #define BIT_PACK_VXWORKS 1
 #endif
 #ifndef BIT_PACK_ZIP
     #define BIT_PACK_ZIP 1
@@ -310,6 +310,9 @@
 #endif
 #ifndef BIT_PACK_SQLITE_PATH
     #define BIT_PACK_SQLITE_PATH "/Users/mob/git/ejs/src/deps/sqlite"
+#endif
+#ifndef BIT_PACK_VXWORKS_PATH
+    #define BIT_PACK_VXWORKS_PATH "$(WIND_BASE)"
 #endif
 #ifndef BIT_PACK_ZIP_PATH
     #define BIT_PACK_ZIP_PATH "/usr/bin/zip"
