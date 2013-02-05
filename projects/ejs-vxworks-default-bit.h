@@ -212,7 +212,7 @@
 
 /* Profile */
 #ifndef BIT_CONFIG_CMD
-    #define BIT_CONFIG_CMD "bit -d -q -platform vxworks-x86-default -without default -configure . -gen make"
+    #define BIT_CONFIG_CMD "bit -d -q -platform vxworks-x86-default --without default -configure . -gen make"
 #endif
 #ifndef BIT_EJS_PRODUCT
     #define BIT_EJS_PRODUCT 1

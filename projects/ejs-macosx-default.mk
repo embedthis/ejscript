@@ -11,6 +11,7 @@ OS              := macosx
 CC              := /usr/bin/clang
 LD              := /usr/bin/ld
 CONFIG          := $(OS)-$(ARCH)-$(PROFILE)
+LBIN            := $(CONFIG)/bin
 
 BIT_ROOT_PREFIX := /
 BIT_CFG_PREFIX  := $(BIT_ROOT_PREFIX)etc/ejs
@@ -262,8 +263,7 @@ $(CONFIG)/obj/mprSsl.o: \
     src/deps/mpr/mprSsl.c\
     $(CONFIG)/inc/bit.h \
     $(CONFIG)/inc/mpr.h \
-    $(CONFIG)/inc/est.h \
-    $(CONFIG)/inc/bitos.h
+    $(CONFIG)/inc/est.h
 	$(CC) -c -o $(CONFIG)/obj/mprSsl.o -arch x86_64 $(CFLAGS) $(DFLAGS) -I$(CONFIG)/inc src/deps/mpr/mprSsl.c
 
 $(CONFIG)/bin/libmprssl.dylib: \
