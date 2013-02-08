@@ -387,6 +387,10 @@ a:hover {
 	color: #CC4477; 
 }
 
+a.logo {
+    text-decoration: none;
+}
+
 div.questions {
 	color: #31699C; 
 	text-decoration: none; 
@@ -519,7 +523,9 @@ tt, em {
     padding-bottom: 0;
     margin: 0;
     width: 60px;
-    height: 13px;
+    height: 16px;
+    vertical-align: text-bottom;
+    display: inline;
 }
 
 .nowrap {
