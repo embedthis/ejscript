@@ -30,7 +30,7 @@ module ejs.web {
      */
     function ScriptBuilder(request: Request): Object {
         if (!request.filename.exists) {
-            request.writeError(Http.NotFound, "Cannot find " + request.pathInfo) 
+            request.writeError(Http.NotFound, "Cannot find " + escapeHtml(request.pathInfo)) 
             //  MOB - should not need throw, just return
             throw true
         }

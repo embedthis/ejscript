@@ -56,7 +56,7 @@ module ejs.web {
         if (!options.literal) {
             path = request.filename
             if (path && !path.exists) {
-                request.writeError(Http.NotFound, "Cannot find " + path)
+                request.writeError(Http.NotFound, "Cannot find " + escapeHtml(request.pathInfo))
                 //  MOB - is this a generic need for a function like this?
                 return function() {}
             }
