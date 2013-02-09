@@ -46,7 +46,7 @@ server.on("readable", function (event, request: Request) {
 //  Single write by the server
 
 let http = new Http
-http.fetch("GET", HTTP + "/single", null)
+http.afetch("GET", HTTP + "/single", null)
 App.waitForEvent(http, "close", 30000)
 assert(http.status == 200)
 assert(http.response.length == written)
@@ -56,7 +56,7 @@ http.close()
 /* FUTURE
 //  Multiple writes by the server
 let http = new Http
-http.fetch("GET", HTTP + "/multiple", null)
+http.afetch("GET", HTTP + "/multiple", null)
 App.waitForEvent(http, "close", 30000)
 assert(http.status == 200)
 // print(http.response.length)

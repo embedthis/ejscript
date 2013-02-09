@@ -25,7 +25,7 @@ server.on("readable", function (event, request: Request) {
 //  Async fetch with async writing
 
 let http = new Http
-http.fetch("GET", HTTP + "/test/big", null)
+http.afetch("GET", HTTP + "/test/big", null)
 App.waitForEvent(http, "close", 30000)
 assert(http.status == 200)
 assert(http.response.length > 0)

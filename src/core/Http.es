@@ -208,7 +208,18 @@ module ejs {
          */
         native function Http(uri: Uri? = null)
 
-        static function fetch(uri: Uri, method: String = 'GET', ...data)
+        /**
+            Convenience routine to fetch a URI and return the response. 
+            This routine is a simple, one-liner to fetch a remote resource using Http.
+            This routine is deliberatly inconsistent with connect(), in that is accepts the URI to fetch as the
+            first parameter and assumes a default method of GET. 
+            @param uri New uri to use. This overrides any previously defined uri for the Http object.
+            @param method Http method. Defaults to GET.
+            @param data Data objects to send with the request. Data is written raw and is not encoded or converted. 
+                However, the routine intelligently handles arrays such that, each element of the array will be written. 
+            @throws IOError if the Uri is malformed
+         */
+        static function fetch(uri: Uri, method: String = 'GET', ...data): String
             Http().connect(method, uri, ...data).response
 
         /** 
@@ -762,8 +773,8 @@ FUTURE & KEEP
             @param data Body data to send with the request. Set to null for no data. If set to null, the request
                 will be finalized. If not set to null, $finalize() must be called after writing all data.
             @param callback Optional function to invoke on completion of the request.
+            MOB - reimplement using pure Http and not XMLHttp
           */
-        # Config.Legacy
         function afetch(method: String, uri: Uri, data: *, callback: Function? = null) {
             let xh = XMLHttp(this)
             xh.open(method, uri)

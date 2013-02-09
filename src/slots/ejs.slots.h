@@ -1279,7 +1279,8 @@
 #define ES_Http_verifyIssuer                                           51
 #define ES_Http_wait                                                   52
 #define ES_Http_write                                                  53
-#define ES_Http_NUM_INSTANCE_PROP                                      54
+#define ES_Http_afetch                                                 54
+#define ES_Http_NUM_INSTANCE_PROP                                      55
 #define ES_Http_NUM_INHERITED_PROP                                     0
 
 /*
@@ -2402,6 +2403,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1500978
+#define _ES_CHECKSUM_ejs   1504028
 
 #endif
