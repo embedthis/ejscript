@@ -193,7 +193,8 @@ module ejs {
         @param dest Destination object
         @param src Source object
         @param options Control options
-        @option combine Boolean. If true, then support key prefixes "+", "=", "-" to add, assign and subtract key values.
+        @option combine Boolean. If true, then support key prefixes "+", "=", "-", "?" to add, assign and subtract 
+            and conditionally assign key values.
             When adding string properties, values will be appended using a space separator. Extra spaces will not 
             be removed on subtraction.
             Arrays with string values may also be combined using the key prefixes. 

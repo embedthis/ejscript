@@ -2520,8 +2520,8 @@
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/deps/est
-rm -rf ../../${CFG_DIR}/bin/ca.crt
-cp -r ca.crt ../../${CFG_DIR}/bin/ca.crt
+rm -rf ../../${OUT_DIR}/bin/ca.crt
+cp -r ca.crt ../../${OUT_DIR}/bin/ca.crt
 ";
 		};
 		AF07EBABAF07FD190000000B /* ShellScript for ejs.mod */ = {
@@ -2882,59 +2882,59 @@ cp utest.worker ../../../macosx-x64-default/bin";
 if ! diff ${INC_DIR}/bit.h ejs-macosx-default-bit.h >/dev/null ; then
 cp ejs-macosx-default-bit.h ${INC_DIR}/bit.h
 fi
-if [ ../src/deps/mpr/mpr.h -nt ${CFG_DIR}/inc/mpr.h ] ; then
-cp ../src/deps/mpr/mpr.h ${CFG_DIR}/inc/mpr.h
+if [ ../src/deps/mpr/mpr.h -nt ${OUT_DIR}/inc/mpr.h ] ; then
+cp ../src/deps/mpr/mpr.h ${OUT_DIR}/inc/mpr.h
 fi
-if [ ../src/deps/est/est.h -nt ${CFG_DIR}/inc/est.h ] ; then
-cp ../src/deps/est/est.h ${CFG_DIR}/inc/est.h
+if [ ../src/deps/est/est.h -nt ${OUT_DIR}/inc/est.h ] ; then
+cp ../src/deps/est/est.h ${OUT_DIR}/inc/est.h
 fi
-if [ ../src/deps/pcre/pcre.h -nt ${CFG_DIR}/inc/pcre.h ] ; then
-cp ../src/deps/pcre/pcre.h ${CFG_DIR}/inc/pcre.h
+if [ ../src/deps/pcre/pcre.h -nt ${OUT_DIR}/inc/pcre.h ] ; then
+cp ../src/deps/pcre/pcre.h ${OUT_DIR}/inc/pcre.h
 fi
-if [ ../src/deps/http/http.h -nt ${CFG_DIR}/inc/http.h ] ; then
-cp ../src/deps/http/http.h ${CFG_DIR}/inc/http.h
+if [ ../src/deps/http/http.h -nt ${OUT_DIR}/inc/http.h ] ; then
+cp ../src/deps/http/http.h ${OUT_DIR}/inc/http.h
 fi
-if [ ../src/deps/sqlite/sqlite3.h -nt ${CFG_DIR}/inc/sqlite3.h ] ; then
-cp ../src/deps/sqlite/sqlite3.h ${CFG_DIR}/inc/sqlite3.h
+if [ ../src/deps/sqlite/sqlite3.h -nt ${OUT_DIR}/inc/sqlite3.h ] ; then
+cp ../src/deps/sqlite/sqlite3.h ${OUT_DIR}/inc/sqlite3.h
 fi
-if [ ../src/deps/zlib/zlib.h -nt ${CFG_DIR}/inc/zlib.h ] ; then
-cp ../src/deps/zlib/zlib.h ${CFG_DIR}/inc/zlib.h
+if [ ../src/deps/zlib/zlib.h -nt ${OUT_DIR}/inc/zlib.h ] ; then
+cp ../src/deps/zlib/zlib.h ${OUT_DIR}/inc/zlib.h
 fi
-if [ ../src/slots/ejs.cache.local.slots.h -nt ${CFG_DIR}/inc/ejs.cache.local.slots.h ] ; then
-cp ../src/slots/ejs.cache.local.slots.h ${CFG_DIR}/inc/ejs.cache.local.slots.h
+if [ ../src/slots/ejs.cache.local.slots.h -nt ${OUT_DIR}/inc/ejs.cache.local.slots.h ] ; then
+cp ../src/slots/ejs.cache.local.slots.h ${OUT_DIR}/inc/ejs.cache.local.slots.h
 fi
-if [ ../src/slots/ejs.db.sqlite.slots.h -nt ${CFG_DIR}/inc/ejs.db.sqlite.slots.h ] ; then
-cp ../src/slots/ejs.db.sqlite.slots.h ${CFG_DIR}/inc/ejs.db.sqlite.slots.h
+if [ ../src/slots/ejs.db.sqlite.slots.h -nt ${OUT_DIR}/inc/ejs.db.sqlite.slots.h ] ; then
+cp ../src/slots/ejs.db.sqlite.slots.h ${OUT_DIR}/inc/ejs.db.sqlite.slots.h
 fi
-if [ ../src/slots/ejs.slots.h -nt ${CFG_DIR}/inc/ejs.slots.h ] ; then
-cp ../src/slots/ejs.slots.h ${CFG_DIR}/inc/ejs.slots.h
+if [ ../src/slots/ejs.slots.h -nt ${OUT_DIR}/inc/ejs.slots.h ] ; then
+cp ../src/slots/ejs.slots.h ${OUT_DIR}/inc/ejs.slots.h
 fi
-if [ ../src/slots/ejs.web.slots.h -nt ${CFG_DIR}/inc/ejs.web.slots.h ] ; then
-cp ../src/slots/ejs.web.slots.h ${CFG_DIR}/inc/ejs.web.slots.h
+if [ ../src/slots/ejs.web.slots.h -nt ${OUT_DIR}/inc/ejs.web.slots.h ] ; then
+cp ../src/slots/ejs.web.slots.h ${OUT_DIR}/inc/ejs.web.slots.h
 fi
-if [ ../src/slots/ejs.zlib.slots.h -nt ${CFG_DIR}/inc/ejs.zlib.slots.h ] ; then
-cp ../src/slots/ejs.zlib.slots.h ${CFG_DIR}/inc/ejs.zlib.slots.h
+if [ ../src/slots/ejs.zlib.slots.h -nt ${OUT_DIR}/inc/ejs.zlib.slots.h ] ; then
+cp ../src/slots/ejs.zlib.slots.h ${OUT_DIR}/inc/ejs.zlib.slots.h
 fi
-if [ ../src/bitos.h -nt ${CFG_DIR}/inc/bitos.h ] ; then
-cp ../src/bitos.h ${CFG_DIR}/inc/bitos.h
+if [ ../src/bitos.h -nt ${OUT_DIR}/inc/bitos.h ] ; then
+cp ../src/bitos.h ${OUT_DIR}/inc/bitos.h
 fi
-if [ ../src/ejs.h -nt ${CFG_DIR}/inc/ejs.h ] ; then
-cp ../src/ejs.h ${CFG_DIR}/inc/ejs.h
+if [ ../src/ejs.h -nt ${OUT_DIR}/inc/ejs.h ] ; then
+cp ../src/ejs.h ${OUT_DIR}/inc/ejs.h
 fi
-if [ ../src/ejsByteCode.h -nt ${CFG_DIR}/inc/ejsByteCode.h ] ; then
-cp ../src/ejsByteCode.h ${CFG_DIR}/inc/ejsByteCode.h
+if [ ../src/ejsByteCode.h -nt ${OUT_DIR}/inc/ejsByteCode.h ] ; then
+cp ../src/ejsByteCode.h ${OUT_DIR}/inc/ejsByteCode.h
 fi
-if [ ../src/ejsByteCodeTable.h -nt ${CFG_DIR}/inc/ejsByteCodeTable.h ] ; then
-cp ../src/ejsByteCodeTable.h ${CFG_DIR}/inc/ejsByteCodeTable.h
+if [ ../src/ejsByteCodeTable.h -nt ${OUT_DIR}/inc/ejsByteCodeTable.h ] ; then
+cp ../src/ejsByteCodeTable.h ${OUT_DIR}/inc/ejsByteCodeTable.h
 fi
-if [ ../src/ejsCompiler.h -nt ${CFG_DIR}/inc/ejsCompiler.h ] ; then
-cp ../src/ejsCompiler.h ${CFG_DIR}/inc/ejsCompiler.h
+if [ ../src/ejsCompiler.h -nt ${OUT_DIR}/inc/ejsCompiler.h ] ; then
+cp ../src/ejsCompiler.h ${OUT_DIR}/inc/ejsCompiler.h
 fi
-if [ ../src/ejsCustomize.h -nt ${CFG_DIR}/inc/ejsCustomize.h ] ; then
-cp ../src/ejsCustomize.h ${CFG_DIR}/inc/ejsCustomize.h
+if [ ../src/ejsCustomize.h -nt ${OUT_DIR}/inc/ejsCustomize.h ] ; then
+cp ../src/ejsCustomize.h ${OUT_DIR}/inc/ejsCustomize.h
 fi
-if [ ../src/jems/ejs.web/ejsWeb.h -nt ${CFG_DIR}/inc/ejsWeb.h ] ; then
-cp ../src/jems/ejs.web/ejsWeb.h ${CFG_DIR}/inc/ejsWeb.h
+if [ ../src/jems/ejs.web/ejsWeb.h -nt ${OUT_DIR}/inc/ejsWeb.h ] ; then
+cp ../src/jems/ejs.web/ejsWeb.h ${OUT_DIR}/inc/ejsWeb.h
 fi";
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -3932,7 +3932,7 @@ fi";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
 
-                CFG_DIR = "../macosx-x64-default";
+                OUT_DIR = "../macosx-x64-default";
                 BIN_DIR = "../macosx-x64-default/bin";
                 LIB_DIR = "../macosx-x64-default/bin";
                 INC_DIR = "../macosx-x64-default/inc";
@@ -4002,7 +4002,7 @@ fi";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
 
-                CFG_DIR = "../macosx-x64-default";
+                OUT_DIR = "../macosx-x64-default";
                 BIN_DIR = "../macosx-x64-default/bin";
                 LIB_DIR = "../macosx-x64-default/bin";
                 INC_DIR = "../macosx-x64-default/inc";

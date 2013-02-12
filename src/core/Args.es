@@ -61,6 +61,7 @@ module ejs {
                 If set to 'exit', a message will be written to the console for argument parse errors and any usage
                 function will be invoked before exiting the application with a non-zero exit status.
             @option silent Don't emit any message on argument parse errors
+            @option unknown Callback to invoke for unknown arguments
             @example
 let args = Args({
     options: {
@@ -95,23 +96,29 @@ for each (file in args.rest) {
                         let [key,value] = name.split("=")
                         let item = template.options[key]
                         if (!item) {
-                            throw "Undefined option '" + key + "'"
-                        }
-                        if (!value) {
-                            if (!item.range) {
-                                value = true
+                            if (template.unknown) {
+                                i = (template.unknown)(argv, i)
+                                continue
                             } else {
-                                if (++i >= argv.length) {
-                                    throw "Missing option for " + key
-                                }
-                                value = argv[i]
+                                throw "Undefined option '" + key + "'"
                             }
-                        }
-                        if (item.separator) {
-                            item.value ||= []
-                            item.value += (item.commas && value.contains(',')) ? value.split(',') : [value]
                         } else {
-                            item.value = value
+                            if (!value) {
+                                if (!item.range) {
+                                    value = true
+                                } else {
+                                    if (++i >= argv.length) {
+                                        throw "Missing option for " + key
+                                    }
+                                    value = argv[i]
+                                }
+                            }
+                            if (item.separator) {
+                                item.value ||= []
+                                item.value += (item.commas && value.contains(',')) ? value.split(',') : [value]
+                            } else {
+                                item.value = value
+                            }
                         }
                     } else {
                         rest.append(arg)
