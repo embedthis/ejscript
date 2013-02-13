@@ -8,7 +8,7 @@
 
 /* Settings */
 #ifndef BIT_BIT
-    #define BIT_BIT "0.8.0"
+    #define BIT_BIT "0.8.1"
 #endif
 #ifndef BIT_BUILD_NUMBER
     #define BIT_BUILD_NUMBER "1"
@@ -45,6 +45,9 @@
 #endif
 #ifndef BIT_EJS_ZLIB
     #define BIT_EJS_ZLIB 1
+#endif
+#ifndef BIT_ESFLAGS
+    #define BIT_ESFLAGS ""
 #endif
 #ifndef BIT_EST_CAMELLIA
     #define BIT_EST_CAMELLIA 0
@@ -121,6 +124,9 @@
 #ifndef BIT_PLATFORMS
     #define BIT_PLATFORMS "local"
 #endif
+#ifndef BIT_PREFIXES
+    #define BIT_PREFIXES "embedthis-prefixes"
+#endif
 #ifndef BIT_PRODUCT
     #define BIT_PRODUCT "ejs"
 #endif
@@ -159,38 +165,56 @@
 #endif
 
 /* Prefixes */
-#ifndef BIT_CFG_PREFIX
-    #define BIT_CFG_PREFIX "/etc/ejs"
+#ifndef BIT_ROOT_PREFIX
+    #define BIT_ROOT_PREFIX "/"
+#endif
+#ifndef BIT_BASE_PREFIX
+    #define BIT_BASE_PREFIX "/usr/local"
+#endif
+#ifndef BIT_DATA_PREFIX
+    #define BIT_DATA_PREFIX "/"
+#endif
+#ifndef BIT_STATE_PREFIX
+    #define BIT_STATE_PREFIX "/var"
+#endif
+#ifndef BIT_APP_PREFIX
+    #define BIT_APP_PREFIX "/usr/local/lib/ejs"
+#endif
+#ifndef BIT_VAPP_PREFIX
+    #define BIT_VAPP_PREFIX "/usr/local/lib/ejs/2.3.0"
 #endif
 #ifndef BIT_BIN_PREFIX
-    #define BIT_BIN_PREFIX "/usr/lib/ejs/2.3.0/bin"
+    #define BIT_BIN_PREFIX "/usr/local/bin"
 #endif
 #ifndef BIT_INC_PREFIX
-    #define BIT_INC_PREFIX "/usr/lib/ejs/2.3.0/inc"
+    #define BIT_INC_PREFIX "/usr/local/include"
 #endif
-#ifndef BIT_LOG_PREFIX
-    #define BIT_LOG_PREFIX "/var/log/ejs"
+#ifndef BIT_LIB_PREFIX
+    #define BIT_LIB_PREFIX "/usr/local/lib"
 #endif
-#ifndef BIT_PRD_PREFIX
-    #define BIT_PRD_PREFIX "/usr/lib/ejs"
+#ifndef BIT_MAN_PREFIX
+    #define BIT_MAN_PREFIX "/usr/local/share/man"
 #endif
-#ifndef BIT_SPL_PREFIX
-    #define BIT_SPL_PREFIX "/var/spool/ejs"
+#ifndef BIT_SBIN_PREFIX
+    #define BIT_SBIN_PREFIX "/usr/local/sbin"
 #endif
-#ifndef BIT_SRC_PREFIX
-    #define BIT_SRC_PREFIX "/usr/src/ejs-2.3.0"
-#endif
-#ifndef BIT_VER_PREFIX
-    #define BIT_VER_PREFIX "/usr/lib/ejs/2.3.0"
+#ifndef BIT_ETC_PREFIX
+    #define BIT_ETC_PREFIX "/etc/ejs"
 #endif
 #ifndef BIT_WEB_PREFIX
     #define BIT_WEB_PREFIX "/var/www/ejs-default"
 #endif
-#ifndef BIT_UBIN_PREFIX
-    #define BIT_UBIN_PREFIX "/usr/local/bin"
+#ifndef BIT_LOG_PREFIX
+    #define BIT_LOG_PREFIX "/var/log/ejs"
 #endif
-#ifndef BIT_MAN_PREFIX
-    #define BIT_MAN_PREFIX "/usr/local/share/man"
+#ifndef BIT_SPOOL_PREFIX
+    #define BIT_SPOOL_PREFIX "/var/spool/ejs"
+#endif
+#ifndef BIT_CACHE_PREFIX
+    #define BIT_CACHE_PREFIX "/var/cache/ejs"
+#endif
+#ifndef BIT_SRC_PREFIX
+    #define BIT_SRC_PREFIX "/usr/local/src/ejs-2.3.0"
 #endif
 
 /* Suffixes */

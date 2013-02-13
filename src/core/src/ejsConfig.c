@@ -76,9 +76,9 @@ PUBLIC void ejsDefineConfigProperties(Ejs *ejs)
     ejsDefineProperty(ejs, type, -1, N("public", "TAR"), 0, att, ejsCreateBoolean(ejs, BIT_EJS_TAR));
 #endif
 
-    if (mprSamePath(mprGetAppDir(), BIT_BIN_PREFIX)) {
-        ejsDefineProperty(ejs, type, -1, N("public", "Bin"), 0, att, ejsCreatePathFromAsc(ejs, BIT_BIN_PREFIX));
-        ejsDefineProperty(ejs, type, -1, N("public", "Inc"), 0, att, ejsCreatePathFromAsc(ejs, BIT_INC_PREFIX));
+    if (mprSamePath(mprGetAppDir(), BIT_VAPP_PREFIX "/bin")) {
+        ejsDefineProperty(ejs, type, -1, N("public", "Bin"), 0, att, ejsCreatePathFromAsc(ejs, BIT_VAPP_PREFIX "/bin"));
+        ejsDefineProperty(ejs, type, -1, N("public", "Inc"), 0, att, ejsCreatePathFromAsc(ejs, BIT_VAPP_PREFIX "/inc"));
     } else {
         ejsDefineProperty(ejs, type, -1, N("public", "Bin"), 0, att, ejsCreatePathFromAsc(ejs, mprGetAppDir()));
         ejsDefineProperty(ejs, type, -1, N("public", "Inc"), 0, att, 

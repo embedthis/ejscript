@@ -4,12 +4,10 @@
 
 Bit.load({
 
-    defaults: {
-        scripts: {
-            '+preblend': "
-                bit.settings.esflags = (bit.platform.profile == 'debug' || bit.platform.profile == 'mine') ? '--debug' : ''
-            ",
-        }
+    scripts: {
+        preblend: "
+            bit.settings.esflags = (bit.platform.profile == 'debug' || bit.platform.profile == 'mine') ? '--debug' : ''
+        ",
     },
 
     targets: {
