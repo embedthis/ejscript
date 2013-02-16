@@ -838,6 +838,38 @@ static EjsArray *globPath(Ejs *ejs, EjsArray *results, cchar *path, cchar *base,
 }
 
 
+/**
+    function hardlink(target: Path): Void
+
+    Create the target as a link to the path.
+    This will remove any pre-existing link.
+    NOTE: this will copy the target on systems that don't support symlinks
+    NOTE: this will re-create the link if it already exists
+  */
+static EjsVoid *path_hardlink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+{
+    cchar   *target;
+
+    if ((target = ejsToMulti(ejs, argv[0])) == 0) {
+        return 0;
+    }
+    unlink(target);
+#if BIT_UNIX_LIKE
+    if (link(fp->value, target) < 0) {
+        ejsThrowIOError(ejs, "Cannot create hardlink %s to refer to %s, error %d", target, fp->value, errno);
+        return 0;
+    }
+#else
+    //  MOB - does not work for directories
+    if (mprCopyPath(fp->value, target, 0644) < 0) {
+        ejsThrowIOError(ejs, "Cannot copy %s to %s, error %d", fp->value, target, errno);
+        return 0;
+    }
+#endif
+    return 0;
+}
+
+
 /*
     Determine if the file path has a drive spec (C:) in the file name
     static function hasDrive(): Boolean
@@ -965,6 +997,38 @@ static EjsPath *joinPathExt(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 static EjsNumber *pathLength(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     return ejsCreateNumber(ejs, (MprNumber) strlen(fp->value));
+}
+
+
+/**
+    function link(target: Path): Void
+
+    Create the target as a symbolic link to refer to the path.
+    This will remove any pre-existing link.
+    NOTE: this will copy the target on systems that don't support symlinks
+    NOTE: this will re-create the link if it already exists
+  */
+static EjsVoid *path_link(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+{
+    cchar   *target;
+
+    if ((target = ejsToMulti(ejs, argv[0])) == 0) {
+        return 0;
+    }
+    unlink(target);
+#if BIT_UNIX_LIKE
+    if (symlink(fp->value, target) < 0) {
+        ejsThrowIOError(ejs, "Cannot create link %s to refer to %s, error %d", target, fp->value, errno);
+        return 0;
+    }
+#else
+    //  MOB - does not work for directories
+    if (mprCopyPath(fp->value, target, 0644) < 0) {
+        ejsThrowIOError(ejs, "Cannot copy %s to %s, error %d", fp->value, target, errno);
+        return 0;
+    }
+#endif
+    return 0;
 }
 
 
@@ -1577,6 +1641,9 @@ static EjsNumber *getPathFileSize(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv
 }
 
 
+/*  Deprected in 2.3.0 */
+
+#if DEPRECATED || 1
 /**
     function symlink(target: Path): Void
 
@@ -1607,6 +1674,7 @@ static EjsVoid *path_symlink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 #endif
     return 0;
 }
+#endif
 
 
 /*
@@ -1802,6 +1870,9 @@ PUBLIC void ejsConfigurePathType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Path_files, ejsGetPathFiles);
     ejsBindMethod(ejs, prototype, ES_Path_iterator_get, getPathIterator);
     ejsBindMethod(ejs, prototype, ES_Path_iterator_getValues, getPathValues);
+#if ES_Path_hardlink
+    ejsBindMethod(ejs, prototype, ES_Path_hardlink, path_hardlink);
+#endif
     ejsBindMethod(ejs, prototype, ES_Path_hasDrive, pathHasDrive);
     ejsBindMethod(ejs, prototype, ES_Path_isAbsolute, isPathAbsolute);
     ejsBindMethod(ejs, prototype, ES_Path_isDir, isPathDir);
@@ -1811,6 +1882,9 @@ PUBLIC void ejsConfigurePathType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Path_join, joinPath);
     ejsBindMethod(ejs, prototype, ES_Path_joinExt, joinPathExt);
     ejsBindMethod(ejs, prototype, ES_Path_length, pathLength);
+#if ES_Path_link
+    ejsBindMethod(ejs, prototype, ES_Path_link, path_link);
+#endif
     ejsBindMethod(ejs, prototype, ES_Path_linkTarget, pathLinkTarget);
     ejsBindMethod(ejs, prototype, ES_Path_makeDir, makePathDir);
     ejsBindMethod(ejs, prototype, ES_Path_makeLink, makePathLink);
@@ -1834,7 +1908,9 @@ PUBLIC void ejsConfigurePathType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Path_separator, pathSeparator);
     ejsBindMethod(ejs, prototype, ES_Path_setAttributes, path_setAttributes);
     ejsBindMethod(ejs, prototype, ES_Path_size, getPathFileSize);
+#if DEPRECATED || 1
     ejsBindMethod(ejs, prototype, ES_Path_symlink, path_symlink);
+#endif
     ejsBindMethod(ejs, prototype, ES_Path_toJSON, pathToJSON);
     ejsBindMethod(ejs, prototype, ES_Path_toString, pathToString);
     ejsBindMethod(ejs, prototype, ES_Path_trimExt, trimExt);

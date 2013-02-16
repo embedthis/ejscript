@@ -113,8 +113,8 @@ module ejs {
             name.contains(pattern)
 
         /**
-            Copy a file
-            @param target New file location
+            Copy a file to the destination
+            @param dest New file location
             @param options Object hash
             @options permissions Set to a numeric Posix permissions mask. Not implemented.
             @options user String representing the file user name
@@ -124,7 +124,7 @@ module ejs {
             @options uid Number representing the file user id
             @options gid Number representing the file group id
          */
-        native function copy(target: Object, options: Object? = null): Void
+        native function copy(destination: Object, options: Object? = null): Void
 
         /**
             When the file represented by the path was created. Set to null if the file does not exist.
@@ -224,6 +224,13 @@ module ejs {
         override iterator native function getValues(): Iterator
 
         /**
+            Create a target hard link to the path
+            This will remove any pre-existing target link and then create a hard link at the target to the path.
+            @param target Target the path will refer to.
+          */
+        native function hardlink(target: Path): Void
+
+        /**
             Does the file path have a drive spec (C:) in it's name. Only relevant on Windows like systems.
             @return True if the file path has a drive spec
          */
@@ -279,6 +286,14 @@ module ejs {
             The length of the path name in bytes. Note: this is not the file size. For that, use Path.size
          */
         native function get length(): Number 
+
+        /**
+            Create a target link to refer to the path
+            This will remove any pre-existing target link and then create a symbolic link at the target to refer to the
+            path.
+            @param target Target the path will refer to.
+          */
+        native function link(target: Path): Void
 
         /**
             The target pointed to if this path is a symbolic link. Not available on some platforms such as Windows and 
@@ -644,10 +659,13 @@ module ejs {
         function startsWith(prefix: String): Boolean
             portable.name.startsWith(Path(prefix).portable)
 
+        //  MOB - symlink is backwards
         /**
-            Create the path as a symbolic link.
-            This will remove any pre-existing path and then create a symbolic link to refer to the target.
+            Create the path as a symbolic link to refer to the target
+            This will remove any pre-existing path and then create a symbolic link at path to refer to the target.
             @param target Target the path will refer to.
+            @hide
+            @deprecate 2.3.0
           */
         native function symlink(target: Path): Void
 

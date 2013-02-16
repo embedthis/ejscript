@@ -77,8 +77,8 @@ module ejs {
             of the string.
             @param str String to match.
             @param start Optional starting index for matching.
-            @return Array of results, empty array if no matches. The first element is the entire match. Subsequent
-                elements correspond to the matching sub-expressions.
+            @return Array of results. The first element is the entire match. Subsequent
+                elements correspond to the matching sub-expressions. Returns null if not match.
             @spec ejs Adds start argument.
          */
         native function exec(str: String, start: Number = 0): Array
