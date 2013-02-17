@@ -325,6 +325,7 @@ module ejs {
             from the byte array will be copied, ie. the $data byte array will not have its readPosition adjusted. If the 
             byte array is resizable, the underlying data storage will grow to accomodate written data. If the data will not
             fit in the ByteArray, the call may return having only written a portion of the data.
+            When strings are written, they are not null terminated.
             @duplicate Stream.write
          */
         native function write(...data): Number

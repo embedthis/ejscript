@@ -294,14 +294,14 @@ rm(filename)
 //  Test links
 
 if (Config.OS != "windows" && Config.OS != "vxworks") {
-    p = Path("sym.tmp")
-    p.remove()
-    p.makeLink("file.dat")
-    assert(p.isLink)
-    assert(p.linkTarget == "file.dat")
+    let lnk = Path('sym.tmp')
+    lnk.remove()
+    Path('file.dat').link("sym.tmp")
+    assert(lnk.isLink)
+    assert(lnk.linkTarget == "file.dat")
+    lnk.remove()
+
     assert(Path("UNKNOWN").linkTarget == null)
-    assert(p.isLink)
-    p.remove()
 }
 
 

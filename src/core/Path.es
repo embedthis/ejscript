@@ -224,13 +224,6 @@ module ejs {
         override iterator native function getValues(): Iterator
 
         /**
-            Create a target hard link to the path
-            This will remove any pre-existing target link and then create a hard link at the target to the path.
-            @param target Target the path will refer to.
-          */
-        native function hardlink(target: Path): Void
-
-        /**
             Does the file path have a drive spec (C:) in it's name. Only relevant on Windows like systems.
             @return True if the file path has a drive spec
          */
@@ -291,9 +284,10 @@ module ejs {
             Create a target link to refer to the path
             This will remove any pre-existing target link and then create a symbolic link at the target to refer to the
             path.
+            @param hard Set to true to create a hard link. Otherwise the default is to create a symbolic link.
             @param target Target the path will refer to.
           */
-        native function link(target: Path): Void
+        native function link(target: Path, hard: Boolean = false): Void
 
         /**
             The target pointed to if this path is a symbolic link. Not available on some platforms such as Windows and 
@@ -322,6 +316,8 @@ module ejs {
             @param target Path to an existing file to link to.
             @param hard Set to true to create a hard link. Otherwise the default is to create a symbolic link.
             @returns this path
+            @hide
+            @deprecate 2.3.0
          */
         native function makeLink(target: Path, hard: Boolean = false): Void
 

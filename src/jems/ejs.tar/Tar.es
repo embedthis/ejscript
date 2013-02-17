@@ -6,9 +6,6 @@
 module ejs.tar {
 
     const BlockSize = 512
-    const Regular: Number = 0
-    const HardLink: Number = 1
-    const SymLink: Number = 2
 
     /*
         Operations
@@ -17,6 +14,17 @@ module ejs.tar {
     const Info: Number = 2
     const List: Number = 3
     const Read: Number = 4
+
+    /*
+        Types
+     */
+    const Regular: Number = 0
+    const HardLink: Number = 1
+    const SymLink: Number = 2
+    const CharSpecial: Number = 3
+    const BlockSpecial: Number = 4
+    const Directory: Number = 5
+    const Fifo: Number = 6
 
     class Tar {
         private var path: Path
@@ -74,18 +82,20 @@ module ejs.tar {
                     let header = new TarHeader(options)
                     header.createHeader(file)
                     header.write(archive)
-                    let fp = File(file, 'r')
-                    let data = new ByteArray
-                    while (fp.read(data)) {
-                        archive.write(data)
+                    if (header.type == Regular) {
+                        let fp = File(file, 'r')
+                        let data = new ByteArray
+                        while (fp.read(data)) {
+                            archive.write(data)
+                        }
+                        data.flush()
+                        let remainder = 512 - (file.size % 512)
+                        if (remainder < 512) {
+                            data.writePosition = remainder
+                            archive.write(data)
+                        }
+                        fp.close()
                     }
-                    data.flush()
-                    let remainder = 512 - (file.size % 512)
-                    if (remainder < 512) {
-                        data.writePosition = remainder;
-                        archive.write(data)
-                    }
-                    fp.close()
                 }
             } finally {
                 App.chdir(home)
@@ -109,17 +119,23 @@ module ejs.tar {
                     if (files.contains(path) || files.length == 0) {
                         if (operation == Extract) {
                             Path(header.name).dirname.makeDir()
-                            let fp = new File(header.name, 'w')
-                            let len = header.size
-                            let buf = new ByteArray(32 * 1024)
-                            while (len > 0) {
-                                buf.flush()
-                                count = len.min(buf.size)
-                                bytes = archive.read(buf, 0, count)
-                                fp.write(buf)
-                                len -= count
+                            if (header.type == HardLink) {
+                                Path(header.linkName).link(header.name, true)
+                            } else if (header.type == SymLink) {
+                                Path(header.linkName).link(header.name)
+                            } else {
+                                let fp = new File(header.name, 'w')
+                                let len = header.size
+                                let buf = new ByteArray(32 * 1024)
+                                while (len > 0) {
+                                    buf.flush()
+                                    count = len.min(buf.size)
+                                    bytes = archive.read(buf, 0, count)
+                                    fp.write(buf)
+                                    len -= count
+                                }
+                                fp.close()
                             }
-                            fp.close()
                             try {
                                 if (App.uid == 0) {
                                     path.setAttributes(header.attributes)
@@ -136,6 +152,7 @@ module ejs.tar {
                                 modified: header.modified,
                                 user: header.user,
                                 group: header.group,
+                                type: header.type,
                             })
                             archive.position += header.size
 
@@ -215,7 +232,16 @@ module ejs.tar {
             group = options.group || attributes.group
             size = path.size
             modified = path.modified
-            link = 0
+            link = path.isLink
+            if (link) {
+                type = SymLink
+                linkName = path.linkTarget
+                mode = path.dirname.attributes.permissions
+                modified = path.dirname.modified
+                size = 0
+            } else {
+                type = Regular
+            }
             if (options.relativeTo) {
                 path = path.relativeTo(options.relativeTo)
             }
@@ -291,7 +317,11 @@ module ejs.tar {
             ba.write('%011o ' % [size])
             ba.write('%011o ' % [modified.time / 1000])
             ba.writePosition = 156
-            ba.write('%1d' % [Regular])
+            ba.write('%1d' % [type])
+            if (linkName) {
+                ba.write(linkName) ; ba.writePosition += linkName.length
+                ba.writeByte(0)
+            }
             ba.writePosition = 257
             ba.write('ustar')
             ba.writePosition = 263

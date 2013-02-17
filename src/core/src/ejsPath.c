@@ -485,98 +485,6 @@ static EjsAny *getPathValues(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 }
 
 
-#if UNUSED
-/*
-    Get the files in a directory and subdirectories
-    function files(options: Object = null): Array
- */
-static EjsArray *path_files(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
-{
-    EjsObj      *options;
-    EjsAny      *vp;
-    EjsRegExp   *exclude, *include;
-    int         flags;
-
-    assert(argc == 0 || argc == 1);
-    options = (argc == 1) ? argv[0]: 0;
-    exclude = include = 0;
-    flags = 0;
-
-    if (options) {
-        if (ejsGetPropertyByName(ejs, options, EN("descend")) == ESV(true)) {
-            flags |= FILES_DESCEND;
-        } 
-        if (ejsGetPropertyByName(ejs, options, EN("depthFirst")) == ESV(true)) {
-            flags |= FILES_DEPTH_FIRST;
-        }
-        if (ejsGetPropertyByName(ejs, options, EN("hidden")) == ESV(true)) {
-            flags |= FILES_HIDDEN;
-        }
-        if (ejsGetPropertyByName(ejs, options, EN("files")) == ESV(true)) {
-            flags |= FILES_NODIRS;
-        }
-        exclude = ejsGetPropertyByName(ejs, options, EN("exclude"));
-        if (exclude && !ejsIs(ejs, exclude, RegExp)) {
-            ejsThrowArgError(ejs, "Exclude option must be a regular expression");
-            return 0;
-        }
-        include = ejsGetPropertyByName(ejs, options, EN("include"));
-        if (include && !ejsIs(ejs, include, RegExp)) {
-            ejsThrowArgError(ejs, "Include option must be a regular expression");
-            return 0;
-        }
-        if ((vp = ejsGetPropertyByName(ejs, options, EN("missing"))) != 0) {
-            if (vp == ESV(undefined)) {
-                flags |= FILES_NOMATCH_EXC;
-            } else {
-                ejsThrowArgError(ejs, "Invalid option value for \"missing\" property");
-                return 0;
-            }
-        }
-        if (ejsGetPropertyByName(ejs, options, EN("relative")) == ESV(true)) {
-            flags |= FILES_RELATIVE;
-        } 
-    }
-    return getPathFiles(ejs, ejsCreateArray(ejs, 0), fp->value, flags, exclude, include);
-}
-
-
-static EjsArray *getPathFiles(Ejs *ejs, EjsArray *results, cchar *dir, int flags, EjsRegExp *exclude, EjsRegExp *include)
-{
-    MprDirEntry *dp;
-    MprList     *list;
-    cchar       *path;
-    int         next, included;
-
-    if ((list = mprGetPathFiles(dir, flags)) == 0) {
-        if (flags & FILES_NOMATCH_EXC) {
-            ejsThrowIOError(ejs, "Cannot read directory");
-        }
-        return results;
-    }
-    for (next = 0; (dp = mprGetNextItem(list, &next)) != 0; ) {
-        path = dp->name;
-        included = 1;
-        if (include && pcre_exec(include->compiled, NULL, path, (int) slen(path), 0, 0, NULL, 0) < 0) {
-            included = 0;
-        }
-        if (exclude && pcre_exec(exclude->compiled, NULL, path, (int) slen(path), 0, 0, NULL, 0) >= 0) {
-            continue;
-        }
-        if (included) {
-            ejsSetProperty(ejs, results, -1, ejsCreatePathFromAsc(ejs, path));
-        }
-    }
-    if (ejsGetLength(ejs, results) == 0) {
-        if (flags & FILES_NOMATCH_EXC) {
-            ejsThrowIOError(ejs, "Cannot find any matching files for directory: %s", dir);
-        }
-    }
-    return results;
-}
-#endif
-
-
 /*
     Flags for path_files
  */
@@ -838,38 +746,6 @@ static EjsArray *globPath(Ejs *ejs, EjsArray *results, cchar *path, cchar *base,
 }
 
 
-/**
-    function hardlink(target: Path): Void
-
-    Create the target as a link to the path.
-    This will remove any pre-existing link.
-    NOTE: this will copy the target on systems that don't support symlinks
-    NOTE: this will re-create the link if it already exists
-  */
-static EjsVoid *path_hardlink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
-{
-    cchar   *target;
-
-    if ((target = ejsToMulti(ejs, argv[0])) == 0) {
-        return 0;
-    }
-    unlink(target);
-#if BIT_UNIX_LIKE
-    if (link(fp->value, target) < 0) {
-        ejsThrowIOError(ejs, "Cannot create hardlink %s to refer to %s, error %d", target, fp->value, errno);
-        return 0;
-    }
-#else
-    //  MOB - does not work for directories
-    if (mprCopyPath(fp->value, target, 0644) < 0) {
-        ejsThrowIOError(ejs, "Cannot copy %s to %s, error %d", fp->value, target, errno);
-        return 0;
-    }
-#endif
-    return 0;
-}
-
-
 /*
     Determine if the file path has a drive spec (C:) in the file name
     static function hasDrive(): Boolean
@@ -1001,25 +877,26 @@ static EjsNumber *pathLength(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
 
 /**
-    function link(target: Path): Void
+    function link(target: Path, hard: Boolean = false): Void
 
-    Create the target as a symbolic link to refer to the path.
+    Create the target as a link to refer to the path.
     This will remove any pre-existing link.
-    NOTE: this will copy the target on systems that don't support symlinks
+    NOTE: this will copy the target on systems that don't support links
     NOTE: this will re-create the link if it already exists
   */
 static EjsVoid *path_link(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     cchar   *target;
+    int     hard;
 
+    hard = (argc >= 2) ? (argv[1] == ESV(true)) : 0;
     if ((target = ejsToMulti(ejs, argv[0])) == 0) {
         return 0;
     }
     unlink(target);
 #if BIT_UNIX_LIKE
-    if (symlink(fp->value, target) < 0) {
+    if (mprMakeLink(fp->value, target, hard) < 0) {
         ejsThrowIOError(ejs, "Cannot create link %s to refer to %s, error %d", target, fp->value, errno);
-        return 0;
     }
 #else
     //  MOB - does not work for directories
@@ -1131,8 +1008,10 @@ static EjsObj *makePathDir(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 }
 
 
+#if DEPRECATE || 1
 /*
     function makeLink(target: Path, hard: Boolean = false): Void
+    Deprected in 2.3.0 
  */
 static EjsObj *makePathLink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
@@ -1146,6 +1025,7 @@ static EjsObj *makePathLink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     }
     return 0;
 }
+#endif
 
 
 /*
@@ -1864,15 +1744,9 @@ PUBLIC void ejsConfigurePathType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Path_dirname, getPathDirname);
     ejsBindMethod(ejs, prototype, ES_Path_exists, getPathExists);
     ejsBindMethod(ejs, prototype, ES_Path_extension, getPathExtension);
-#if UNUSED
-    ejsBindMethod(ejs, prototype, ES_Path_files, path_files);
-#endif
     ejsBindMethod(ejs, prototype, ES_Path_files, ejsGetPathFiles);
     ejsBindMethod(ejs, prototype, ES_Path_iterator_get, getPathIterator);
     ejsBindMethod(ejs, prototype, ES_Path_iterator_getValues, getPathValues);
-#if ES_Path_hardlink
-    ejsBindMethod(ejs, prototype, ES_Path_hardlink, path_hardlink);
-#endif
     ejsBindMethod(ejs, prototype, ES_Path_hasDrive, pathHasDrive);
     ejsBindMethod(ejs, prototype, ES_Path_isAbsolute, isPathAbsolute);
     ejsBindMethod(ejs, prototype, ES_Path_isDir, isPathDir);
@@ -1887,7 +1761,9 @@ PUBLIC void ejsConfigurePathType(Ejs *ejs)
 #endif
     ejsBindMethod(ejs, prototype, ES_Path_linkTarget, pathLinkTarget);
     ejsBindMethod(ejs, prototype, ES_Path_makeDir, makePathDir);
+#if DEPRECATED || 1
     ejsBindMethod(ejs, prototype, ES_Path_makeLink, makePathLink);
+#endif
     ejsBindMethod(ejs, prototype, ES_Path_temp, pathTemp);
     ejsBindMethod(ejs, prototype, ES_Path_map, pa_map);
     ejsBindAccess(ejs, prototype, ES_Path_mimeType, getMimeType, NULL);
