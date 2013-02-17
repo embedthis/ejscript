@@ -14,22 +14,22 @@ CONFIG          := $(OS)-$(ARCH)-$(PROFILE)
 LBIN            := $(CONFIG)/bin
 
 BIT_ROOT_PREFIX       := /
-BIT_BASE_PREFIX       := $(BIT_ROOT_PREFIX)usr/local
-BIT_DATA_PREFIX       := $(BIT_ROOT_PREFIX)
-BIT_STATE_PREFIX      := $(BIT_ROOT_PREFIX)var
+BIT_BASE_PREFIX       := $(BIT_ROOT_PREFIX)/usr/local
+BIT_DATA_PREFIX       := $(BIT_ROOT_PREFIX)/
+BIT_STATE_PREFIX      := $(BIT_ROOT_PREFIX)/var
 BIT_APP_PREFIX        := $(BIT_BASE_PREFIX)/lib/$(PRODUCT)
 BIT_VAPP_PREFIX       := $(BIT_APP_PREFIX)/$(VERSION)
-BIT_BIN_PREFIX        := $(BIT_ROOT_PREFIX)usr/local/bin
-BIT_INC_PREFIX        := $(BIT_ROOT_PREFIX)usr/local/include
-BIT_LIB_PREFIX        := $(BIT_ROOT_PREFIX)usr/local/lib
-BIT_MAN_PREFIX        := $(BIT_ROOT_PREFIX)usr/local/share/man
-BIT_SBIN_PREFIX       := $(BIT_ROOT_PREFIX)usr/local/sbin
-BIT_ETC_PREFIX        := $(BIT_ROOT_PREFIX)etc/$(PRODUCT)
-BIT_WEB_PREFIX        := $(BIT_ROOT_PREFIX)var/www/$(PRODUCT)-default
-BIT_LOG_PREFIX        := $(BIT_ROOT_PREFIX)var/log/$(PRODUCT)
-BIT_SPOOL_PREFIX      := $(BIT_ROOT_PREFIX)var/spool/$(PRODUCT)
-BIT_CACHE_PREFIX      := $(BIT_ROOT_PREFIX)var/cache/$(PRODUCT)
-BIT_SRC_PREFIX        := $(BIT_ROOT_PREFIX)usr/local/src/$(PRODUCT)-$(VERSION)
+BIT_BIN_PREFIX        := $(BIT_ROOT_PREFIX)/usr/local/bin
+BIT_INC_PREFIX        := $(BIT_ROOT_PREFIX)/usr/local/include
+BIT_LIB_PREFIX        := $(BIT_ROOT_PREFIX)/usr/local/lib
+BIT_MAN_PREFIX        := $(BIT_ROOT_PREFIX)/usr/local/share/man
+BIT_SBIN_PREFIX       := $(BIT_ROOT_PREFIX)/usr/local/sbin
+BIT_ETC_PREFIX        := $(BIT_ROOT_PREFIX)/etc/$(PRODUCT)
+BIT_WEB_PREFIX        := $(BIT_ROOT_PREFIX)/var/www/$(PRODUCT)-default
+BIT_LOG_PREFIX        := $(BIT_ROOT_PREFIX)/var/log/$(PRODUCT)
+BIT_SPOOL_PREFIX      := $(BIT_ROOT_PREFIX)/var/spool/$(PRODUCT)
+BIT_CACHE_PREFIX      := $(BIT_ROOT_PREFIX)/var/spool/$(PRODUCT)/cache
+BIT_SRC_PREFIX        := $(BIT_ROOT_PREFIX)$(PRODUCT)-$(VERSION)
 
 CFLAGS          += -fPIC  -w
 DFLAGS          += -D_REENTRANT -DPIC  $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS)))
@@ -139,6 +139,7 @@ clean:
 	rm -rf $(CONFIG)/bin/utest.es
 	rm -rf $(CONFIG)/bin/utest.worker
 	rm -rf $(CONFIG)/bin/utest
+	rm -rf $(CONFIG)/obj/removeFiles.o
 	rm -rf $(CONFIG)/obj/mprLib.o
 	rm -rf $(CONFIG)/obj/mprSsl.o
 	rm -rf $(CONFIG)/obj/manager.o
@@ -223,7 +224,6 @@ clean:
 	rm -rf $(CONFIG)/obj/ejsSession.o
 	rm -rf $(CONFIG)/obj/ejsWeb.o
 	rm -rf $(CONFIG)/obj/ejsZlib.o
-	rm -rf $(CONFIG)/obj/removeFiles.o
 
 clobber: clean
 	rm -fr ./$(CONFIG)
@@ -1121,20 +1121,7 @@ $(CONFIG)/bin/utest: \
 version: 
 	@echo 2.3.0-1
 
-deploy: compile
-	for n in ejs ejsc ejsman ejsmod jem mvc utest ; do rm -f $(BIT_BIN_PREFIX)/$$n ; done
-	mkdir -p '$(BIT_VAPP_PREFIX)/bin' '$(BIT_INC_PREFIX)' '$(BIT_VAPP_PREFIX)/man/man1'
-	cp -R -P ./$(CONFIG)/bin/* $(BIT_VAPP_PREFIX)/bin
-	for n in ejs ejsc ejsman ejsmod jem mvc utest ; do rm -f $(BIT_BIN_PREFIX)/$$n ; ln -s $(BIT_VAPP_PREFIX)/bin/$$n $(BIT_BIN_PREFIX)/$$n ; done
-	for n in ejs.1 ejsc.1 ejsmod.1 manager.1 mvc.1 ; do rm -f $(BIT_VAPP_PREFIX)/man/man1/$$n $(BIT_MAN_PREFIX)/man1/$$n ; cp doc/man/$$n $(BIT_VAPP_PREFIX)/man/man1 ; ln -s $(BIT_VAPP_PREFIX)/man/man1/$$n $(BIT_MAN_PREFIX)/man1/$$n ; done
-	rm -f '$(BIT_APP_PREFIX)/latest'
-	ln -s $(VERSION) $(BIT_APP_PREFIX)/latest
-
-install: compile deploy
+stop: 
 	
 
-uninstall: 
-	for n in ejs ejsc ejsman ejsmod jem mvc utest ; do rm -f $(BIT_BIN_PREFIX)/$$n ; done
-	for n in $(BIT_VAPP_PREFIX)/man/man1/*.1; do base=`basename $$n` ; rm -f $(BIT_MAN_PREFIX)/man1/$$base ; done
-	rm -fr $(BIT_APP_PREFIX)
-
+installBinary: stop

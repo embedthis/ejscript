@@ -28,7 +28,7 @@ Bit.load({
         'src/jems/ejs.tar/tar.bit',
         'src/jems/ejs.mvc/mvc.bit',
         'src/jems/ejs.utest/utest.bit',
-        'package/package.bit',
+        'package/manifest.bit',
         'doc/doc.bit',
     ],
 
@@ -38,10 +38,6 @@ Bit.load({
             thus override any setting. Feel free to create and customize. 
          */
         'custom.bit',
-    ],
-
-    '+modules': [
-        'bits/ejs.es',
     ],
 
     settings: {

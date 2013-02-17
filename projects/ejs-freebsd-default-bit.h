@@ -211,10 +211,10 @@
     #define BIT_SPOOL_PREFIX "/var/spool/ejs"
 #endif
 #ifndef BIT_CACHE_PREFIX
-    #define BIT_CACHE_PREFIX "/var/cache/ejs"
+    #define BIT_CACHE_PREFIX "/var/spool/ejs/cache"
 #endif
 #ifndef BIT_SRC_PREFIX
-    #define BIT_SRC_PREFIX "/usr/local/src/ejs-2.3.0"
+    #define BIT_SRC_PREFIX "ejs-2.3.0"
 #endif
 
 /* Suffixes */
