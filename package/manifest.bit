@@ -39,6 +39,7 @@ Bit.load({
         files:     [
             /* Binary Set */
             { from:        [
+                    '${BIN}/ejs${EXE}',
                     '${BIN}/ejsc${EXE}',
                     '${BIN}/ejsman${EXE}',
                     '${BIN}/ejsmod${EXE}',
