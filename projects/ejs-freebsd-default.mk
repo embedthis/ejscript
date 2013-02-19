@@ -1130,8 +1130,6 @@ stop:
 	
 
 installBinary: stop
-	mkdir -p "$(BIT_VAPP_PREFIX)/bin"
-	mkdir -p "$(BIT_VAPP_PREFIX)/bin/www"
 	mkdir -p "$(BIT_VAPP_PREFIX)/bin/www/images"
 	cp "src/jems/ejs.web/www/images/banner.jpg" "$(BIT_VAPP_PREFIX)/bin/www/images/banner.jpg"
 	cp "src/jems/ejs.web/www/images/favicon.ico" "$(BIT_VAPP_PREFIX)/bin/www/images/favicon.ico"
@@ -1160,6 +1158,7 @@ installBinary: stop
 	cp "src/jems/ejs.web/www/js/tree-images/treeview-red-line.gif" "$(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-red-line.gif"
 	cp "src/jems/ejs.web/www/js/tree-images/treeview-red.gif" "$(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-red.gif"
 	cp "src/jems/ejs.web/www/js/treeview.css" "$(BIT_VAPP_PREFIX)/bin/www/js/treeview.css"
+	mkdir -p "$(BIT_VAPP_PREFIX)/bin/www"
 	cp "src/jems/ejs.web/www/layout.css" "$(BIT_VAPP_PREFIX)/bin/www/layout.css"
 	mkdir -p "$(BIT_VAPP_PREFIX)/bin/www/themes"
 	cp "src/jems/ejs.web/www/themes/default.css" "$(BIT_VAPP_PREFIX)/bin/www/themes/default.css"
