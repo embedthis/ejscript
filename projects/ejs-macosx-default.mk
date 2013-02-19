@@ -229,14 +229,14 @@ clobber: clean
 	rm -fr ./$(CONFIG)
 
 $(CONFIG)/inc/mpr.h: 
-	mkdir -p "macosx-x64-default/inc"
-	cp "src/deps/mpr/mpr.h" "macosx-x64-default/inc/mpr.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/deps/mpr/mpr.h" "$(CONFIG)/inc/mpr.h"
 
 $(CONFIG)/inc/bit.h: 
 
 $(CONFIG)/inc/bitos.h: 
-	mkdir -p "macosx-x64-default/inc"
-	cp "src/bitos.h" "macosx-x64-default/inc/bitos.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/bitos.h" "$(CONFIG)/inc/bitos.h"
 
 $(CONFIG)/obj/mprLib.o: \
     src/deps/mpr/mprLib.c\
@@ -251,8 +251,8 @@ $(CONFIG)/bin/libmpr.dylib: \
 	$(CC) -dynamiclib -o $(CONFIG)/bin/libmpr.dylib $(LDFLAGS) -compatibility_version 2.3.0 -current_version 2.3.0 $(LIBPATHS) -install_name @rpath/libmpr.dylib $(CONFIG)/obj/mprLib.o $(LIBS)
 
 $(CONFIG)/inc/est.h: 
-	mkdir -p "macosx-x64-default/inc"
-	cp "src/deps/est/est.h" "macosx-x64-default/inc/est.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/deps/est/est.h" "$(CONFIG)/inc/est.h"
 
 $(CONFIG)/obj/estLib.o: \
     src/deps/est/estLib.c\
@@ -303,12 +303,12 @@ $(CONFIG)/bin/makerom: \
 
 $(CONFIG)/bin/ca.crt: \
     src/deps/est/ca.crt
-	mkdir -p "macosx-x64-default/bin"
-	cp "src/deps/est/ca.crt" "macosx-x64-default/bin/ca.crt"
+	mkdir -p "$(CONFIG)/bin"
+	cp "src/deps/est/ca.crt" "$(CONFIG)/bin/ca.crt"
 
 $(CONFIG)/inc/pcre.h: 
-	mkdir -p "macosx-x64-default/inc"
-	cp "src/deps/pcre/pcre.h" "macosx-x64-default/inc/pcre.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/deps/pcre/pcre.h" "$(CONFIG)/inc/pcre.h"
 
 $(CONFIG)/obj/pcre.o: \
     src/deps/pcre/pcre.c\
@@ -322,8 +322,8 @@ $(CONFIG)/bin/libpcre.dylib: \
 	$(CC) -dynamiclib -o $(CONFIG)/bin/libpcre.dylib $(LDFLAGS) -compatibility_version 2.3.0 -current_version 2.3.0 $(LIBPATHS) -install_name @rpath/libpcre.dylib $(CONFIG)/obj/pcre.o $(LIBS)
 
 $(CONFIG)/inc/http.h: 
-	mkdir -p "macosx-x64-default/inc"
-	cp "src/deps/http/http.h" "macosx-x64-default/inc/http.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/deps/http/http.h" "$(CONFIG)/inc/http.h"
 
 $(CONFIG)/obj/httpLib.o: \
     src/deps/http/httpLib.c\
@@ -351,8 +351,8 @@ $(CONFIG)/bin/http: \
 	$(CC) -o $(CONFIG)/bin/http -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o -lhttp $(LIBS) -lpcre -lmpr -lpam
 
 $(CONFIG)/inc/sqlite3.h: 
-	mkdir -p "macosx-x64-default/inc"
-	cp "src/deps/sqlite/sqlite3.h" "macosx-x64-default/inc/sqlite3.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/deps/sqlite/sqlite3.h" "$(CONFIG)/inc/sqlite3.h"
 
 $(CONFIG)/obj/sqlite3.o: \
     src/deps/sqlite/sqlite3.c\
@@ -377,8 +377,8 @@ $(CONFIG)/bin/sqlite: \
 	$(CC) -o $(CONFIG)/bin/sqlite -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o -lsqlite3 $(LIBS)
 
 $(CONFIG)/inc/zlib.h: 
-	mkdir -p "macosx-x64-default/inc"
-	cp "src/deps/zlib/zlib.h" "macosx-x64-default/inc/zlib.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/deps/zlib/zlib.h" "$(CONFIG)/inc/zlib.h"
 
 $(CONFIG)/obj/zlib.o: \
     src/deps/zlib/zlib.c\
@@ -392,36 +392,36 @@ $(CONFIG)/bin/libzlib.dylib: \
 	$(CC) -dynamiclib -o $(CONFIG)/bin/libzlib.dylib $(LDFLAGS) -compatibility_version 2.3.0 -current_version 2.3.0 $(LIBPATHS) -install_name @rpath/libzlib.dylib $(CONFIG)/obj/zlib.o $(LIBS)
 
 $(CONFIG)/inc/ejs.cache.local.slots.h: 
-	mkdir -p "macosx-x64-default/inc"
-	cp "src/slots/ejs.cache.local.slots.h" "macosx-x64-default/inc/ejs.cache.local.slots.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/slots/ejs.cache.local.slots.h" "$(CONFIG)/inc/ejs.cache.local.slots.h"
 
 $(CONFIG)/inc/ejs.db.sqlite.slots.h: 
-	mkdir -p "macosx-x64-default/inc"
-	cp "src/slots/ejs.db.sqlite.slots.h" "macosx-x64-default/inc/ejs.db.sqlite.slots.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/slots/ejs.db.sqlite.slots.h" "$(CONFIG)/inc/ejs.db.sqlite.slots.h"
 
 $(CONFIG)/inc/ejs.slots.h: 
-	mkdir -p "macosx-x64-default/inc"
-	cp "src/slots/ejs.slots.h" "macosx-x64-default/inc/ejs.slots.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/slots/ejs.slots.h" "$(CONFIG)/inc/ejs.slots.h"
 
 $(CONFIG)/inc/ejs.web.slots.h: 
-	mkdir -p "macosx-x64-default/inc"
-	cp "src/slots/ejs.web.slots.h" "macosx-x64-default/inc/ejs.web.slots.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/slots/ejs.web.slots.h" "$(CONFIG)/inc/ejs.web.slots.h"
 
 $(CONFIG)/inc/ejs.zlib.slots.h: 
-	mkdir -p "macosx-x64-default/inc"
-	cp "src/slots/ejs.zlib.slots.h" "macosx-x64-default/inc/ejs.zlib.slots.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/slots/ejs.zlib.slots.h" "$(CONFIG)/inc/ejs.zlib.slots.h"
 
 $(CONFIG)/inc/ejsByteCode.h: 
-	mkdir -p "macosx-x64-default/inc"
-	cp "src/ejsByteCode.h" "macosx-x64-default/inc/ejsByteCode.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/ejsByteCode.h" "$(CONFIG)/inc/ejsByteCode.h"
 
 $(CONFIG)/inc/ejsByteCodeTable.h: 
-	mkdir -p "macosx-x64-default/inc"
-	cp "src/ejsByteCodeTable.h" "macosx-x64-default/inc/ejsByteCodeTable.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/ejsByteCodeTable.h" "$(CONFIG)/inc/ejsByteCodeTable.h"
 
 $(CONFIG)/inc/ejsCustomize.h: 
-	mkdir -p "macosx-x64-default/inc"
-	cp "src/ejsCustomize.h" "macosx-x64-default/inc/ejsCustomize.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/ejsCustomize.h" "$(CONFIG)/inc/ejsCustomize.h"
 
 $(CONFIG)/inc/ejs.h: \
     $(CONFIG)/inc/mpr.h \
@@ -430,12 +430,12 @@ $(CONFIG)/inc/ejs.h: \
     $(CONFIG)/inc/ejsByteCodeTable.h \
     $(CONFIG)/inc/ejs.slots.h \
     $(CONFIG)/inc/ejsCustomize.h
-	mkdir -p "macosx-x64-default/inc"
-	cp "src/ejs.h" "macosx-x64-default/inc/ejs.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/ejs.h" "$(CONFIG)/inc/ejs.h"
 
 $(CONFIG)/inc/ejsCompiler.h: 
-	mkdir -p "macosx-x64-default/inc"
-	cp "src/ejsCompiler.h" "macosx-x64-default/inc/ejsCompiler.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/ejsCompiler.h" "$(CONFIG)/inc/ejsCompiler.h"
 
 $(CONFIG)/obj/ecAst.o: \
     src/compiler/ecAst.c\
@@ -1010,8 +1010,8 @@ $(CONFIG)/bin/ejs.web.mod: \
 	cd src/jems/ejs.web; rm -f ejs.web.slots.h ; cd ../../..
 
 $(CONFIG)/inc/ejsWeb.h: 
-	mkdir -p "macosx-x64-default/inc"
-	cp "src/jems/ejs.web/ejsWeb.h" "macosx-x64-default/inc/ejsWeb.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/jems/ejs.web/ejsWeb.h" "$(CONFIG)/inc/ejsWeb.h"
 
 $(CONFIG)/obj/ejsHttpServer.o: \
     src/jems/ejs.web/ejsHttpServer.c\

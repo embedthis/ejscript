@@ -229,14 +229,14 @@ clobber: clean
 	rm -fr ./$(CONFIG)
 
 $(CONFIG)/inc/mpr.h: 
-	mkdir -p "freebsd-x86-default/inc"
-	cp "src/deps/mpr/mpr.h" "freebsd-x86-default/inc/mpr.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/deps/mpr/mpr.h" "$(CONFIG)/inc/mpr.h"
 
 $(CONFIG)/inc/bit.h: 
 
 $(CONFIG)/inc/bitos.h: 
-	mkdir -p "freebsd-x86-default/inc"
-	cp "src/bitos.h" "freebsd-x86-default/inc/bitos.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/bitos.h" "$(CONFIG)/inc/bitos.h"
 
 $(CONFIG)/obj/mprLib.o: \
     src/deps/mpr/mprLib.c\
@@ -251,8 +251,8 @@ $(CONFIG)/bin/libmpr.so: \
 	$(CC) -shared -o $(CONFIG)/bin/libmpr.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/mprLib.o $(LIBS)
 
 $(CONFIG)/inc/est.h: 
-	mkdir -p "freebsd-x86-default/inc"
-	cp "src/deps/est/est.h" "freebsd-x86-default/inc/est.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/deps/est/est.h" "$(CONFIG)/inc/est.h"
 
 $(CONFIG)/obj/estLib.o: \
     src/deps/est/estLib.c\
@@ -303,12 +303,12 @@ $(CONFIG)/bin/makerom: \
 
 $(CONFIG)/bin/ca.crt: \
     src/deps/est/ca.crt
-	mkdir -p "freebsd-x86-default/bin"
-	cp "src/deps/est/ca.crt" "freebsd-x86-default/bin/ca.crt"
+	mkdir -p "$(CONFIG)/bin"
+	cp "src/deps/est/ca.crt" "$(CONFIG)/bin/ca.crt"
 
 $(CONFIG)/inc/pcre.h: 
-	mkdir -p "freebsd-x86-default/inc"
-	cp "src/deps/pcre/pcre.h" "freebsd-x86-default/inc/pcre.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/deps/pcre/pcre.h" "$(CONFIG)/inc/pcre.h"
 
 $(CONFIG)/obj/pcre.o: \
     src/deps/pcre/pcre.c\
@@ -322,8 +322,8 @@ $(CONFIG)/bin/libpcre.so: \
 	$(CC) -shared -o $(CONFIG)/bin/libpcre.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/pcre.o $(LIBS)
 
 $(CONFIG)/inc/http.h: 
-	mkdir -p "freebsd-x86-default/inc"
-	cp "src/deps/http/http.h" "freebsd-x86-default/inc/http.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/deps/http/http.h" "$(CONFIG)/inc/http.h"
 
 $(CONFIG)/obj/httpLib.o: \
     src/deps/http/httpLib.c\
@@ -351,8 +351,8 @@ $(CONFIG)/bin/http: \
 	$(CC) -o $(CONFIG)/bin/http $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o -lhttp $(LIBS) -lpcre -lmpr -lhttp -lpthread -lm -ldl -lpcre -lmpr $(LDFLAGS)
 
 $(CONFIG)/inc/sqlite3.h: 
-	mkdir -p "freebsd-x86-default/inc"
-	cp "src/deps/sqlite/sqlite3.h" "freebsd-x86-default/inc/sqlite3.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/deps/sqlite/sqlite3.h" "$(CONFIG)/inc/sqlite3.h"
 
 $(CONFIG)/obj/sqlite3.o: \
     src/deps/sqlite/sqlite3.c\
@@ -377,8 +377,8 @@ $(CONFIG)/bin/sqlite: \
 	$(CC) -o $(CONFIG)/bin/sqlite $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o -lsqlite3 $(LIBS) -lsqlite3 -lpthread -lm -ldl $(LDFLAGS)
 
 $(CONFIG)/inc/zlib.h: 
-	mkdir -p "freebsd-x86-default/inc"
-	cp "src/deps/zlib/zlib.h" "freebsd-x86-default/inc/zlib.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/deps/zlib/zlib.h" "$(CONFIG)/inc/zlib.h"
 
 $(CONFIG)/obj/zlib.o: \
     src/deps/zlib/zlib.c\
@@ -392,36 +392,36 @@ $(CONFIG)/bin/libzlib.so: \
 	$(CC) -shared -o $(CONFIG)/bin/libzlib.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/zlib.o $(LIBS)
 
 $(CONFIG)/inc/ejs.cache.local.slots.h: 
-	mkdir -p "freebsd-x86-default/inc"
-	cp "src/slots/ejs.cache.local.slots.h" "freebsd-x86-default/inc/ejs.cache.local.slots.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/slots/ejs.cache.local.slots.h" "$(CONFIG)/inc/ejs.cache.local.slots.h"
 
 $(CONFIG)/inc/ejs.db.sqlite.slots.h: 
-	mkdir -p "freebsd-x86-default/inc"
-	cp "src/slots/ejs.db.sqlite.slots.h" "freebsd-x86-default/inc/ejs.db.sqlite.slots.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/slots/ejs.db.sqlite.slots.h" "$(CONFIG)/inc/ejs.db.sqlite.slots.h"
 
 $(CONFIG)/inc/ejs.slots.h: 
-	mkdir -p "freebsd-x86-default/inc"
-	cp "src/slots/ejs.slots.h" "freebsd-x86-default/inc/ejs.slots.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/slots/ejs.slots.h" "$(CONFIG)/inc/ejs.slots.h"
 
 $(CONFIG)/inc/ejs.web.slots.h: 
-	mkdir -p "freebsd-x86-default/inc"
-	cp "src/slots/ejs.web.slots.h" "freebsd-x86-default/inc/ejs.web.slots.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/slots/ejs.web.slots.h" "$(CONFIG)/inc/ejs.web.slots.h"
 
 $(CONFIG)/inc/ejs.zlib.slots.h: 
-	mkdir -p "freebsd-x86-default/inc"
-	cp "src/slots/ejs.zlib.slots.h" "freebsd-x86-default/inc/ejs.zlib.slots.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/slots/ejs.zlib.slots.h" "$(CONFIG)/inc/ejs.zlib.slots.h"
 
 $(CONFIG)/inc/ejsByteCode.h: 
-	mkdir -p "freebsd-x86-default/inc"
-	cp "src/ejsByteCode.h" "freebsd-x86-default/inc/ejsByteCode.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/ejsByteCode.h" "$(CONFIG)/inc/ejsByteCode.h"
 
 $(CONFIG)/inc/ejsByteCodeTable.h: 
-	mkdir -p "freebsd-x86-default/inc"
-	cp "src/ejsByteCodeTable.h" "freebsd-x86-default/inc/ejsByteCodeTable.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/ejsByteCodeTable.h" "$(CONFIG)/inc/ejsByteCodeTable.h"
 
 $(CONFIG)/inc/ejsCustomize.h: 
-	mkdir -p "freebsd-x86-default/inc"
-	cp "src/ejsCustomize.h" "freebsd-x86-default/inc/ejsCustomize.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/ejsCustomize.h" "$(CONFIG)/inc/ejsCustomize.h"
 
 $(CONFIG)/inc/ejs.h: \
     $(CONFIG)/inc/mpr.h \
@@ -430,12 +430,12 @@ $(CONFIG)/inc/ejs.h: \
     $(CONFIG)/inc/ejsByteCodeTable.h \
     $(CONFIG)/inc/ejs.slots.h \
     $(CONFIG)/inc/ejsCustomize.h
-	mkdir -p "freebsd-x86-default/inc"
-	cp "src/ejs.h" "freebsd-x86-default/inc/ejs.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/ejs.h" "$(CONFIG)/inc/ejs.h"
 
 $(CONFIG)/inc/ejsCompiler.h: 
-	mkdir -p "freebsd-x86-default/inc"
-	cp "src/ejsCompiler.h" "freebsd-x86-default/inc/ejsCompiler.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/ejsCompiler.h" "$(CONFIG)/inc/ejsCompiler.h"
 
 $(CONFIG)/obj/ecAst.o: \
     src/compiler/ecAst.c\
@@ -1010,8 +1010,8 @@ $(CONFIG)/bin/ejs.web.mod: \
 	cd src/jems/ejs.web; rm -f ejs.web.slots.h ; cd ../../..
 
 $(CONFIG)/inc/ejsWeb.h: 
-	mkdir -p "freebsd-x86-default/inc"
-	cp "src/jems/ejs.web/ejsWeb.h" "freebsd-x86-default/inc/ejsWeb.h"
+	mkdir -p "$(CONFIG)/inc"
+	cp "src/jems/ejs.web/ejsWeb.h" "$(CONFIG)/inc/ejsWeb.h"
 
 $(CONFIG)/obj/ejsHttpServer.o: \
     src/jems/ejs.web/ejsHttpServer.c\
