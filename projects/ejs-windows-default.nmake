@@ -1165,7 +1165,7 @@ stop:
 
 
 installBinary: stop
-	if not exist "C:" md "C:"
+	if not exist "C:/" md "C:/"
 	if not exist "C:\Program Files\Embedthis Ejscript" md "C:\Program Files\Embedthis Ejscript"
 	if not exist "C:\Program Files\Embedthis Ejscript" md "C:\Program Files\Embedthis Ejscript"
 	if not exist "C:\Program Files\Embedthis Ejscript\bin" md "C:\Program Files\Embedthis Ejscript\bin"
