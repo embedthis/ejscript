@@ -226,17 +226,21 @@ clean:
 $(CONFIG)\inc\bit.h: 
 
 $(CONFIG)\obj\removeFiles.obj: \
-    ..\bit\macosx-x64-debug\bin\package\windows\removeFiles.c\
+    ..\bit\macosx-x64-release\bin\package\windows\removeFiles.c\
     $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\removeFiles.obj -Fd$(CONFIG)\obj\removeFiles.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) ..\bit\macosx-x64-debug\bin\package\windows\removeFiles.c
+	"$(CC)" -c -Fo$(CONFIG)\obj\removeFiles.obj -Fd$(CONFIG)\obj\removeFiles.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) ..\bit\macosx-x64-release\bin\package\windows\removeFiles.c
 
 $(CONFIG)\bin\removeFiles.exe: \
     $(CONFIG)\obj\removeFiles.obj
 	"$(LD)" -out:$(CONFIG)\bin\removeFiles.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\removeFiles.obj $(LIBS)
 
 $(CONFIG)\inc\mpr.h: 
+	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
+	copy /Y "src\deps\mpr\mpr.h" "$(CONFIG)\inc\mpr.h"
 
 $(CONFIG)\inc\bitos.h: 
+	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
+	copy /Y "src\bitos.h" "$(CONFIG)\inc\bitos.h"
 
 $(CONFIG)\obj\mprLib.obj: \
     src\deps\mpr\mprLib.c\
@@ -251,6 +255,8 @@ $(CONFIG)\bin\libmpr.dll: \
 	"$(LD)" -dll -out:$(CONFIG)\bin\libmpr.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\mprLib.obj $(LIBS)
 
 $(CONFIG)\inc\est.h: 
+	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
+	copy /Y "src\deps\est\est.h" "$(CONFIG)\inc\est.h"
 
 $(CONFIG)\obj\estLib.obj: \
     src\deps\est\estLib.c\
@@ -301,8 +307,12 @@ $(CONFIG)\bin\makerom.exe: \
 
 $(CONFIG)\bin\ca.crt: \
     src\deps\est\ca.crt
+	if not exist "$(CONFIG)\bin" md "$(CONFIG)\bin"
+	copy /Y "src\deps\est\ca.crt" "$(CONFIG)\bin\ca.crt"
 
 $(CONFIG)\inc\pcre.h: 
+	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
+	copy /Y "src\deps\pcre\pcre.h" "$(CONFIG)\inc\pcre.h"
 
 $(CONFIG)\obj\pcre.obj: \
     src\deps\pcre\pcre.c\
@@ -316,6 +326,8 @@ $(CONFIG)\bin\libpcre.dll: \
 	"$(LD)" -dll -out:$(CONFIG)\bin\libpcre.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\pcre.obj $(LIBS)
 
 $(CONFIG)\inc\http.h: 
+	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
+	copy /Y "src\deps\http\http.h" "$(CONFIG)\inc\http.h"
 
 $(CONFIG)\obj\httpLib.obj: \
     src\deps\http\httpLib.c\
@@ -343,6 +355,8 @@ $(CONFIG)\bin\http.exe: \
 	"$(LD)" -out:$(CONFIG)\bin\http.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\http.obj libhttp.lib $(LIBS) libpcre.lib libmpr.lib
 
 $(CONFIG)\inc\sqlite3.h: 
+	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
+	copy /Y "src\deps\sqlite\sqlite3.h" "$(CONFIG)\inc\sqlite3.h"
 
 $(CONFIG)\obj\sqlite3.obj: \
     src\deps\sqlite\sqlite3.c\
@@ -367,6 +381,8 @@ $(CONFIG)\bin\sqlite.exe: \
 	"$(LD)" -out:$(CONFIG)\bin\sqlite.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite.obj libsqlite3.lib $(LIBS)
 
 $(CONFIG)\inc\zlib.h: 
+	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
+	copy /Y "src\deps\zlib\zlib.h" "$(CONFIG)\inc\zlib.h"
 
 $(CONFIG)\obj\zlib.obj: \
     src\deps\zlib\zlib.c\
@@ -380,20 +396,36 @@ $(CONFIG)\bin\libzlib.dll: \
 	"$(LD)" -dll -out:$(CONFIG)\bin\libzlib.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\zlib.obj $(LIBS)
 
 $(CONFIG)\inc\ejs.cache.local.slots.h: 
+	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
+	copy /Y "src\slots\ejs.cache.local.slots.h" "$(CONFIG)\inc\ejs.cache.local.slots.h"
 
 $(CONFIG)\inc\ejs.db.sqlite.slots.h: 
+	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
+	copy /Y "src\slots\ejs.db.sqlite.slots.h" "$(CONFIG)\inc\ejs.db.sqlite.slots.h"
 
 $(CONFIG)\inc\ejs.slots.h: 
+	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
+	copy /Y "src\slots\ejs.slots.h" "$(CONFIG)\inc\ejs.slots.h"
 
 $(CONFIG)\inc\ejs.web.slots.h: 
+	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
+	copy /Y "src\slots\ejs.web.slots.h" "$(CONFIG)\inc\ejs.web.slots.h"
 
 $(CONFIG)\inc\ejs.zlib.slots.h: 
+	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
+	copy /Y "src\slots\ejs.zlib.slots.h" "$(CONFIG)\inc\ejs.zlib.slots.h"
 
 $(CONFIG)\inc\ejsByteCode.h: 
+	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
+	copy /Y "src\ejsByteCode.h" "$(CONFIG)\inc\ejsByteCode.h"
 
 $(CONFIG)\inc\ejsByteCodeTable.h: 
+	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
+	copy /Y "src\ejsByteCodeTable.h" "$(CONFIG)\inc\ejsByteCodeTable.h"
 
 $(CONFIG)\inc\ejsCustomize.h: 
+	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
+	copy /Y "src\ejsCustomize.h" "$(CONFIG)\inc\ejsCustomize.h"
 
 $(CONFIG)\inc\ejs.h: \
     $(CONFIG)\inc\mpr.h \
@@ -402,8 +434,12 @@ $(CONFIG)\inc\ejs.h: \
     $(CONFIG)\inc\ejsByteCodeTable.h \
     $(CONFIG)\inc\ejs.slots.h \
     $(CONFIG)\inc\ejsCustomize.h
+	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
+	copy /Y "src\ejs.h" "$(CONFIG)\inc\ejs.h"
 
 $(CONFIG)\inc\ejsCompiler.h: 
+	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
+	copy /Y "src\ejsCompiler.h" "$(CONFIG)\inc\ejsCompiler.h"
 
 $(CONFIG)\obj\ecAst.obj: \
     src\compiler\ecAst.c\
@@ -992,6 +1028,8 @@ $(CONFIG)\bin\ejs.web.mod: \
 	cd ..\..\..
 
 $(CONFIG)\inc\ejsWeb.h: 
+	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
+	copy /Y "src\jems\ejs.web\ejsWeb.h" "$(CONFIG)\inc\ejsWeb.h"
 
 $(CONFIG)\obj\ejsHttpServer.obj: \
     src\jems\ejs.web\ejsHttpServer.c\
@@ -1128,44 +1166,44 @@ stop:
 
 installBinary: stop
 	if not exist "C:/" md "C:/"
-	if not exist "C:\Program Files\Embedthis Ejscript" md "C:\Program Files\Embedthis Ejscript"
-	if not exist "C:\Program Files\Embedthis Ejscript" md "C:\Program Files\Embedthis Ejscript"
-	if not exist "C:\Program Files\Embedthis Ejscript\bin" md "C:\Program Files\Embedthis Ejscript\bin"
-	if not exist "C:\Program Files\Embedthis Ejscript\inc" md "C:\Program Files\Embedthis Ejscript\inc"
-	if not exist "C:\Program Files\Embedthis Ejscript\man" md "C:\Program Files\Embedthis Ejscript\man"
-	if not exist "C:\Program Files\Embedthis Ejscript\bin" md "C:\Program Files\Embedthis Ejscript\bin"
-	if not exist "C:\Program Files\Embedthis Ejscript\bin\www" md "C:\Program Files\Embedthis Ejscript\bin\www"
-	if not exist "C:\Program Files\Embedthis Ejscript\bin\www\images" md "C:\Program Files\Embedthis Ejscript\bin\www\images"
-	copy /Y "src\jems\ejs.web\www\images\banner.jpg" "C:\Program Files\Embedthis Ejscript\bin\www\images\banner.jpg"
-	copy /Y "src\jems\ejs.web\www\images\favicon.ico" "C:\Program Files\Embedthis Ejscript\bin\www\images\favicon.ico"
-	copy /Y "src\jems\ejs.web\www\images\splash.jpg" "C:\Program Files\Embedthis Ejscript\bin\www\images\splash.jpg"
-	if not exist "C:\Program Files\Embedthis Ejscript\bin\www\js" md "C:\Program Files\Embedthis Ejscript\bin\www\js"
-	copy /Y "src\jems\ejs.web\www\js\jquery.ejs.min.js" "C:\Program Files\Embedthis Ejscript\bin\www\js\jquery.ejs.min.js"
-	copy /Y "src\jems\ejs.web\www\js\jquery.min.js" "C:\Program Files\Embedthis Ejscript\bin\www\js\jquery.min.js"
-	copy /Y "src\jems\ejs.web\www\js\jquery.simplemodal.min.js" "C:\Program Files\Embedthis Ejscript\bin\www\js\jquery.simplemodal.min.js"
-	copy /Y "src\jems\ejs.web\www\js\jquery.tablesorter.js" "C:\Program Files\Embedthis Ejscript\bin\www\js\jquery.tablesorter.js"
-	copy /Y "src\jems\ejs.web\www\js\jquery.tablesorter.min.js" "C:\Program Files\Embedthis Ejscript\bin\www\js\jquery.tablesorter.min.js"
-	copy /Y "src\jems\ejs.web\www\js\jquery.treeview.min.js" "C:\Program Files\Embedthis Ejscript\bin\www\js\jquery.treeview.min.js"
-	if not exist "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images" md "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\file.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\file.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\folder-closed.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\folder-closed.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\folder.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\folder.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\minus.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\minus.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\plus.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\plus.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-black-line.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\treeview-black-line.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-black.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\treeview-black.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-default-line.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\treeview-default-line.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-default.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\treeview-default.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-famfamfam-line.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\treeview-famfamfam-line.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-famfamfam.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\treeview-famfamfam.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-gray-line.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\treeview-gray-line.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-gray.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\treeview-gray.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-red-line.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\treeview-red-line.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-red.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\treeview-red.gif"
-	copy /Y "src\jems\ejs.web\www\js\treeview.css" "C:\Program Files\Embedthis Ejscript\bin\www\js\treeview.css"
-	copy /Y "src\jems\ejs.web\www\layout.css" "C:\Program Files\Embedthis Ejscript\bin\www\layout.css"
-	if not exist "C:\Program Files\Embedthis Ejscript\bin\www\themes" md "C:\Program Files\Embedthis Ejscript\bin\www\themes"
-	copy /Y "src\jems\ejs.web\www\themes\default.css" "C:\Program Files\Embedthis Ejscript\bin\www\themes\default.css"
+	if not exist "$(BIT_VAPP_PREFIX)" md "$(BIT_VAPP_PREFIX)"
+	if not exist "$(BIT_VAPP_PREFIX)" md "$(BIT_VAPP_PREFIX)"
+	if not exist "$(BIT_VAPP_PREFIX)\bin" md "$(BIT_VAPP_PREFIX)\bin"
+	if not exist "$(BIT_VAPP_PREFIX)\inc" md "$(BIT_VAPP_PREFIX)\inc"
+	if not exist "$(BIT_VAPP_PREFIX)\man" md "$(BIT_VAPP_PREFIX)\man"
+	if not exist "$(BIT_VAPP_PREFIX)\bin" md "$(BIT_VAPP_PREFIX)\bin"
+	if not exist "$(BIT_VAPP_PREFIX)\bin\www" md "$(BIT_VAPP_PREFIX)\bin\www"
+	if not exist "$(BIT_VAPP_PREFIX)\bin\www\images" md "$(BIT_VAPP_PREFIX)\bin\www\images"
+	copy /Y "src\jems\ejs.web\www\images\banner.jpg" "$(BIT_VAPP_PREFIX)\bin\www\images\banner.jpg"
+	copy /Y "src\jems\ejs.web\www\images\favicon.ico" "$(BIT_VAPP_PREFIX)\bin\www\images\favicon.ico"
+	copy /Y "src\jems\ejs.web\www\images\splash.jpg" "$(BIT_VAPP_PREFIX)\bin\www\images\splash.jpg"
+	if not exist "$(BIT_VAPP_PREFIX)\bin\www\js" md "$(BIT_VAPP_PREFIX)\bin\www\js"
+	copy /Y "src\jems\ejs.web\www\js\jquery.ejs.min.js" "$(BIT_VAPP_PREFIX)\bin\www\js\jquery.ejs.min.js"
+	copy /Y "src\jems\ejs.web\www\js\jquery.min.js" "$(BIT_VAPP_PREFIX)\bin\www\js\jquery.min.js"
+	copy /Y "src\jems\ejs.web\www\js\jquery.simplemodal.min.js" "$(BIT_VAPP_PREFIX)\bin\www\js\jquery.simplemodal.min.js"
+	copy /Y "src\jems\ejs.web\www\js\jquery.tablesorter.js" "$(BIT_VAPP_PREFIX)\bin\www\js\jquery.tablesorter.js"
+	copy /Y "src\jems\ejs.web\www\js\jquery.tablesorter.min.js" "$(BIT_VAPP_PREFIX)\bin\www\js\jquery.tablesorter.min.js"
+	copy /Y "src\jems\ejs.web\www\js\jquery.treeview.min.js" "$(BIT_VAPP_PREFIX)\bin\www\js\jquery.treeview.min.js"
+	if not exist "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images" md "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\file.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\file.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\folder-closed.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\folder-closed.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\folder.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\folder.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\minus.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\minus.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\plus.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\plus.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-black-line.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-black-line.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-black.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-black.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-default-line.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-default-line.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-default.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-default.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-famfamfam-line.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-famfamfam-line.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-famfamfam.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-famfamfam.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-gray-line.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-gray-line.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-gray.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-gray.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-red-line.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-red-line.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-red.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-red.gif"
+	copy /Y "src\jems\ejs.web\www\js\treeview.css" "$(BIT_VAPP_PREFIX)\bin\www\js\treeview.css"
+	copy /Y "src\jems\ejs.web\www\layout.css" "$(BIT_VAPP_PREFIX)\bin\www\layout.css"
+	if not exist "$(BIT_VAPP_PREFIX)\bin\www\themes" md "$(BIT_VAPP_PREFIX)\bin\www\themes"
+	copy /Y "src\jems\ejs.web\www\themes\default.css" "$(BIT_VAPP_PREFIX)\bin\www\themes\default.css"
 
 
 start: 
@@ -1175,10 +1213,10 @@ install: stop installBinary start
 
 
 uninstall: stop
-	if exist "C:\Program Files\Embedthis Ejscript" rd /Q "C:\Program Files\Embedthis Ejscript"
-	if exist "C:\Program Files\Embedthis Ejscript" rd /Q "C:\Program Files\Embedthis Ejscript"
-	if exist "C:\Program Files\Embedthis Ejscript\bin" rd /Q "C:\Program Files\Embedthis Ejscript\bin"
-	if exist "C:\Program Files\Embedthis Ejscript\inc" rd /Q "C:\Program Files\Embedthis Ejscript\inc"
-	if exist "C:\Program Files\Embedthis Ejscript\man" rd /Q "C:\Program Files\Embedthis Ejscript\man"
+	if exist "$(BIT_VAPP_PREFIX)" rd /Q "$(BIT_VAPP_PREFIX)"
+	if exist "$(BIT_VAPP_PREFIX)" rd /Q "$(BIT_VAPP_PREFIX)"
+	if exist "$(BIT_VAPP_PREFIX)\bin" rd /Q "$(BIT_VAPP_PREFIX)\bin"
+	if exist "$(BIT_VAPP_PREFIX)\inc" rd /Q "$(BIT_VAPP_PREFIX)\inc"
+	if exist "$(BIT_VAPP_PREFIX)\man" rd /Q "$(BIT_VAPP_PREFIX)\man"
 
 
