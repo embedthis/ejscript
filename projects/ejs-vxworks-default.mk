@@ -109,6 +109,7 @@ prep:
 		echo cp projects/ejs-vxworks-default-bit.h $(CONFIG)/inc/bit.h  ; \
 		cp projects/ejs-vxworks-default-bit.h $(CONFIG)/inc/bit.h  ; \
 	fi; true
+
 clean:
 	rm -rf $(CONFIG)/bin/libmpr.out
 	rm -rf $(CONFIG)/bin/libmprssl.out
@@ -143,7 +144,6 @@ clean:
 	rm -rf $(CONFIG)/bin/utest.es
 	rm -rf $(CONFIG)/bin/utest.worker
 	rm -rf $(CONFIG)/bin/utest.out
-	rm -rf $(CONFIG)/obj/removeFiles.o
 	rm -rf $(CONFIG)/obj/mprLib.o
 	rm -rf $(CONFIG)/obj/mprSsl.o
 	rm -rf $(CONFIG)/obj/manager.o

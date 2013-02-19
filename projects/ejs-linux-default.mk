@@ -105,6 +105,7 @@ prep:
 		echo cp projects/ejs-linux-default-bit.h $(CONFIG)/inc/bit.h  ; \
 		cp projects/ejs-linux-default-bit.h $(CONFIG)/inc/bit.h  ; \
 	fi; true
+
 clean:
 	rm -rf $(CONFIG)/bin/libmpr.so
 	rm -rf $(CONFIG)/bin/libmprssl.so
@@ -139,7 +140,6 @@ clean:
 	rm -rf $(CONFIG)/bin/utest.es
 	rm -rf $(CONFIG)/bin/utest.worker
 	rm -rf $(CONFIG)/bin/utest
-	rm -rf $(CONFIG)/obj/removeFiles.o
 	rm -rf $(CONFIG)/obj/mprLib.o
 	rm -rf $(CONFIG)/obj/mprSsl.o
 	rm -rf $(CONFIG)/obj/manager.o

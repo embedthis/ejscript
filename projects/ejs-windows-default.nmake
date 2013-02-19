@@ -102,6 +102,7 @@ prep:
 	@if not exist $(CONFIG)\inc md $(CONFIG)\inc
 	@if not exist $(CONFIG)\obj md $(CONFIG)\obj
 	@if not exist $(CONFIG)\inc\bit.h copy projects\ejs-windows-default-bit.h $(CONFIG)\inc\bit.h
+
 clean:
 	-if exist $(CONFIG)\bin\removeFiles.exe del /Q $(CONFIG)\bin\removeFiles.exe
 	-if exist $(CONFIG)\bin\libmpr.dll del /Q $(CONFIG)\bin\libmpr.dll
@@ -226,9 +227,9 @@ clean:
 $(CONFIG)\inc\bit.h: 
 
 $(CONFIG)\obj\removeFiles.obj: \
-    ..\bit\macosx-x64-release\bin\package\windows\removeFiles.c\
+    package\windows\removeFiles.c\
     $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\removeFiles.obj -Fd$(CONFIG)\obj\removeFiles.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) ..\bit\macosx-x64-release\bin\package\windows\removeFiles.c
+	"$(CC)" -c -Fo$(CONFIG)\obj\removeFiles.obj -Fd$(CONFIG)\obj\removeFiles.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) package\windows\removeFiles.c
 
 $(CONFIG)\bin\removeFiles.exe: \
     $(CONFIG)\obj\removeFiles.obj
