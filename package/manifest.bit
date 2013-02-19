@@ -46,45 +46,6 @@ Bit.load({
                     '${BIN}/jem${EXE}',
                     '${BIN}/mvc${EXE}',
                     '${BIN}/utest${EXE}',
-                    '${BIN}/ca.crt',
-                ],
-                to:         '${abin}/',
-                linkin:     '${bin}',
-                set:        'core',
-
-            },{ from:        [
-                    /* Don't use wild-cards for cross-generation  */
-                    '${BIN}/libejs.db.sqlite${SHOBJ}',
-                    '${BIN}/libejs${SHOBJ}',
-                    '${BIN}/libejs.db.sqlite${SHOBJ}',
-                    '${BIN}/libejs.web${SHOBJ}',
-                    '${BIN}/libejs.zlib${SHOBJ}',
-                    '${BIN}/libest${SHOBJ}',
-                    '${BIN}/libhttp${SHOBJ}',
-                    '${BIN}/libmpr${SHOBJ}',
-                    '${BIN}/libmprSsl${SHOBJ}',
-                    '${BIN}/libpcre${SHOBJ}',
-                    '${BIN}/libsqlite3${SHOBJ}',
-                    '${BIN}/libzlib${SHOBJ}',
-                ],
-                to:         '${abin}/',
-                linkin:     '${bin}',
-                set:        'core',
-
-            },{ from:        [
-                    /* Don't use wild-cards for cross-generation  */
-                    '${BIN}/libejs.db.sqlite${SHOBJ}',
-                    '${BIN}/libejs${SHOBJ}',
-                    '${BIN}/libejs.db.sqlite${SHOBJ}',
-                    '${BIN}/libejs.web${SHOBJ}',
-                    '${BIN}/libejs.zlib${SHOBJ}',
-                    '${BIN}/libest${SHOBJ}',
-                    '${BIN}/libhttp${SHOBJ}',
-                    '${BIN}/libmpr${SHOBJ}',
-                    '${BIN}/libmprSsl${SHOBJ}',
-                    '${BIN}/libpcre${SHOBJ}',
-                    '${BIN}/libsqlite3${SHOBJ}',
-                    '${BIN}/libzlib${SHOBJ}',
                 ],
                 to:         '${abin}/',
                 linkin:     '${bin}',
@@ -117,9 +78,9 @@ Bit.load({
                     '${BIN}/jem.es',
                     '${BIN}/mvc.es',
                     '${BIN}/utest.es',
+                    '${BIN}/ca.crt',
                 ],
                 to:         '${abin}/',
-                linkin:     '${bin}',
                 set:        'core',
 
             },{
@@ -131,7 +92,7 @@ Bit.load({
                 from:       '${INC}/*.h',
                 to:         '${app}/inc/',
                 set:        'dev',
-                linkin:     '${inc}',
+                linkin:     '${inc}/ejs/',
 
             },{
                 from:       'doc/man/*.1',
@@ -144,6 +105,12 @@ Bit.load({
             /*
                 Source set
              */
+            },{
+                from:       ['src', 'doc', 'projects', 'package'],
+                to:         '${src}/',
+                exclude:    /\/old\/|\.old$|\.tmp$/,
+                set:        'source',
+
             },{
                 from:       ['Makefile', 'main.bit', 'make.bat'],
                 to:         '${src}/',
@@ -160,12 +127,6 @@ Bit.load({
                 from:       ['configure'],
                 to:         '${src}/',
                 permissions:0755,     
-                set:        'source',
-
-            },{
-                from:       ['src', 'doc', 'projects', 'package'],
-                to:         '${src}/',
-                exclude:    /\/old\/|\.old$/,
                 set:        'source',
 
             /*
@@ -219,6 +180,7 @@ Bit.load({
                 exclude:    /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|\/mpr|\/http|\/est|\/pcre|\/sqlite|ejs.debugger|samples|utils|ejsrun\.c/,                                                                         
                 header:     '#define EJS_DEFINE_OPTABLE 1\n#include \"ejs.h\"',                                        
                 title:      '${settings.title} Library Source',
+                set:        'combo',
 
             },{
                 from:       ['src/core/**.es', 'src/jems/**.es'],
@@ -226,6 +188,7 @@ Bit.load({
                 cat:        true,                                                                                         
                 exclude:    /ejs.bit|ejs.debugger|test|sample|ejspage.es|ejs.jem|ejs.mvc/,                            
                 title:      '${settings.title} Script Library',
+                set:        'combo',
 
             },{
                 from:       'src/cmd/ejs.c', 
@@ -234,6 +197,7 @@ Bit.load({
                 filter:     /^#inc.*$/mg,
                 header:     '#include \"ejs.h\"',
                 title:      '${settings.title} Shell Command',
+                set:        'combo',
 
             },{
                 from:       'src/cmd/ejsc.c', 
@@ -242,6 +206,7 @@ Bit.load({
                 filter:     /^#inc.*$/mg,
                 header:     '#include \"ejs.h\"',
                 title:      '${settings.title} Compiler',
+                set:        'combo',
             },
         ],
     },

@@ -229,12 +229,14 @@ clobber: clean
 	rm -fr ./$(CONFIG)
 
 $(CONFIG)/inc/mpr.h: 
-	rm -fr $(CONFIG)/inc/mpr.h
-	cp -r src/deps/mpr/mpr.h $(CONFIG)/inc/mpr.h
+	mkdir -p "freebsd-x86-default/inc"
+	cp "src/deps/mpr/mpr.h" "freebsd-x86-default/inc/mpr.h"
+
+$(CONFIG)/inc/bit.h: 
 
 $(CONFIG)/inc/bitos.h: 
-	rm -fr $(CONFIG)/inc/bitos.h
-	cp -r src/bitos.h $(CONFIG)/inc/bitos.h
+	mkdir -p "freebsd-x86-default/inc"
+	cp "src/bitos.h" "freebsd-x86-default/inc/bitos.h"
 
 $(CONFIG)/obj/mprLib.o: \
     src/deps/mpr/mprLib.c\
@@ -249,8 +251,8 @@ $(CONFIG)/bin/libmpr.so: \
 	$(CC) -shared -o $(CONFIG)/bin/libmpr.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/mprLib.o $(LIBS)
 
 $(CONFIG)/inc/est.h: 
-	rm -fr $(CONFIG)/inc/est.h
-	cp -r src/deps/est/est.h $(CONFIG)/inc/est.h
+	mkdir -p "freebsd-x86-default/inc"
+	cp "src/deps/est/est.h" "freebsd-x86-default/inc/est.h"
 
 $(CONFIG)/obj/estLib.o: \
     src/deps/est/estLib.c\
@@ -299,13 +301,14 @@ $(CONFIG)/bin/makerom: \
     $(CONFIG)/obj/makerom.o
 	$(CC) -o $(CONFIG)/bin/makerom $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o -lmpr $(LIBS) -lmpr -lpthread -lm -ldl $(LDFLAGS)
 
-$(CONFIG)/bin/ca.crt: src/deps/est/ca.crt
-	rm -fr $(CONFIG)/bin/ca.crt
-	cp -r src/deps/est/ca.crt $(CONFIG)/bin/ca.crt
+$(CONFIG)/bin/ca.crt: \
+    src/deps/est/ca.crt
+	mkdir -p "freebsd-x86-default/bin"
+	cp "src/deps/est/ca.crt" "freebsd-x86-default/bin/ca.crt"
 
 $(CONFIG)/inc/pcre.h: 
-	rm -fr $(CONFIG)/inc/pcre.h
-	cp -r src/deps/pcre/pcre.h $(CONFIG)/inc/pcre.h
+	mkdir -p "freebsd-x86-default/inc"
+	cp "src/deps/pcre/pcre.h" "freebsd-x86-default/inc/pcre.h"
 
 $(CONFIG)/obj/pcre.o: \
     src/deps/pcre/pcre.c\
@@ -319,8 +322,8 @@ $(CONFIG)/bin/libpcre.so: \
 	$(CC) -shared -o $(CONFIG)/bin/libpcre.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/pcre.o $(LIBS)
 
 $(CONFIG)/inc/http.h: 
-	rm -fr $(CONFIG)/inc/http.h
-	cp -r src/deps/http/http.h $(CONFIG)/inc/http.h
+	mkdir -p "freebsd-x86-default/inc"
+	cp "src/deps/http/http.h" "freebsd-x86-default/inc/http.h"
 
 $(CONFIG)/obj/httpLib.o: \
     src/deps/http/httpLib.c\
@@ -348,8 +351,8 @@ $(CONFIG)/bin/http: \
 	$(CC) -o $(CONFIG)/bin/http $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o -lhttp $(LIBS) -lpcre -lmpr -lhttp -lpthread -lm -ldl -lpcre -lmpr $(LDFLAGS)
 
 $(CONFIG)/inc/sqlite3.h: 
-	rm -fr $(CONFIG)/inc/sqlite3.h
-	cp -r src/deps/sqlite/sqlite3.h $(CONFIG)/inc/sqlite3.h
+	mkdir -p "freebsd-x86-default/inc"
+	cp "src/deps/sqlite/sqlite3.h" "freebsd-x86-default/inc/sqlite3.h"
 
 $(CONFIG)/obj/sqlite3.o: \
     src/deps/sqlite/sqlite3.c\
@@ -374,8 +377,8 @@ $(CONFIG)/bin/sqlite: \
 	$(CC) -o $(CONFIG)/bin/sqlite $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o -lsqlite3 $(LIBS) -lsqlite3 -lpthread -lm -ldl $(LDFLAGS)
 
 $(CONFIG)/inc/zlib.h: 
-	rm -fr $(CONFIG)/inc/zlib.h
-	cp -r src/deps/zlib/zlib.h $(CONFIG)/inc/zlib.h
+	mkdir -p "freebsd-x86-default/inc"
+	cp "src/deps/zlib/zlib.h" "freebsd-x86-default/inc/zlib.h"
 
 $(CONFIG)/obj/zlib.o: \
     src/deps/zlib/zlib.c\
@@ -389,36 +392,36 @@ $(CONFIG)/bin/libzlib.so: \
 	$(CC) -shared -o $(CONFIG)/bin/libzlib.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/zlib.o $(LIBS)
 
 $(CONFIG)/inc/ejs.cache.local.slots.h: 
-	rm -fr $(CONFIG)/inc/ejs.cache.local.slots.h
-	cp -r src/slots/ejs.cache.local.slots.h $(CONFIG)/inc/ejs.cache.local.slots.h
+	mkdir -p "freebsd-x86-default/inc"
+	cp "src/slots/ejs.cache.local.slots.h" "freebsd-x86-default/inc/ejs.cache.local.slots.h"
 
 $(CONFIG)/inc/ejs.db.sqlite.slots.h: 
-	rm -fr $(CONFIG)/inc/ejs.db.sqlite.slots.h
-	cp -r src/slots/ejs.db.sqlite.slots.h $(CONFIG)/inc/ejs.db.sqlite.slots.h
+	mkdir -p "freebsd-x86-default/inc"
+	cp "src/slots/ejs.db.sqlite.slots.h" "freebsd-x86-default/inc/ejs.db.sqlite.slots.h"
 
 $(CONFIG)/inc/ejs.slots.h: 
-	rm -fr $(CONFIG)/inc/ejs.slots.h
-	cp -r src/slots/ejs.slots.h $(CONFIG)/inc/ejs.slots.h
+	mkdir -p "freebsd-x86-default/inc"
+	cp "src/slots/ejs.slots.h" "freebsd-x86-default/inc/ejs.slots.h"
 
 $(CONFIG)/inc/ejs.web.slots.h: 
-	rm -fr $(CONFIG)/inc/ejs.web.slots.h
-	cp -r src/slots/ejs.web.slots.h $(CONFIG)/inc/ejs.web.slots.h
+	mkdir -p "freebsd-x86-default/inc"
+	cp "src/slots/ejs.web.slots.h" "freebsd-x86-default/inc/ejs.web.slots.h"
 
 $(CONFIG)/inc/ejs.zlib.slots.h: 
-	rm -fr $(CONFIG)/inc/ejs.zlib.slots.h
-	cp -r src/slots/ejs.zlib.slots.h $(CONFIG)/inc/ejs.zlib.slots.h
+	mkdir -p "freebsd-x86-default/inc"
+	cp "src/slots/ejs.zlib.slots.h" "freebsd-x86-default/inc/ejs.zlib.slots.h"
 
 $(CONFIG)/inc/ejsByteCode.h: 
-	rm -fr $(CONFIG)/inc/ejsByteCode.h
-	cp -r src/ejsByteCode.h $(CONFIG)/inc/ejsByteCode.h
+	mkdir -p "freebsd-x86-default/inc"
+	cp "src/ejsByteCode.h" "freebsd-x86-default/inc/ejsByteCode.h"
 
 $(CONFIG)/inc/ejsByteCodeTable.h: 
-	rm -fr $(CONFIG)/inc/ejsByteCodeTable.h
-	cp -r src/ejsByteCodeTable.h $(CONFIG)/inc/ejsByteCodeTable.h
+	mkdir -p "freebsd-x86-default/inc"
+	cp "src/ejsByteCodeTable.h" "freebsd-x86-default/inc/ejsByteCodeTable.h"
 
 $(CONFIG)/inc/ejsCustomize.h: 
-	rm -fr $(CONFIG)/inc/ejsCustomize.h
-	cp -r src/ejsCustomize.h $(CONFIG)/inc/ejsCustomize.h
+	mkdir -p "freebsd-x86-default/inc"
+	cp "src/ejsCustomize.h" "freebsd-x86-default/inc/ejsCustomize.h"
 
 $(CONFIG)/inc/ejs.h: \
     $(CONFIG)/inc/mpr.h \
@@ -427,12 +430,12 @@ $(CONFIG)/inc/ejs.h: \
     $(CONFIG)/inc/ejsByteCodeTable.h \
     $(CONFIG)/inc/ejs.slots.h \
     $(CONFIG)/inc/ejsCustomize.h
-	rm -fr $(CONFIG)/inc/ejs.h
-	cp -r src/ejs.h $(CONFIG)/inc/ejs.h
+	mkdir -p "freebsd-x86-default/inc"
+	cp "src/ejs.h" "freebsd-x86-default/inc/ejs.h"
 
 $(CONFIG)/inc/ejsCompiler.h: 
-	rm -fr $(CONFIG)/inc/ejsCompiler.h
-	cp -r src/ejsCompiler.h $(CONFIG)/inc/ejsCompiler.h
+	mkdir -p "freebsd-x86-default/inc"
+	cp "src/ejsCompiler.h" "freebsd-x86-default/inc/ejsCompiler.h"
 
 $(CONFIG)/obj/ecAst.o: \
     src/compiler/ecAst.c\
@@ -888,6 +891,8 @@ $(CONFIG)/bin/ejsc: \
     $(CONFIG)/obj/ejsc.o
 	$(CC) -o $(CONFIG)/bin/ejsc $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o -lejs $(LIBS) -lhttp -lpcre -lmpr -lejs -lpthread -lm -ldl -lhttp -lpcre -lmpr $(LDFLAGS)
 
+src/cmd/ejsmod.h: 
+
 $(CONFIG)/obj/ejsmod.o: \
     src/cmd/ejsmod.c\
     $(CONFIG)/inc/bit.h \
@@ -1005,8 +1010,8 @@ $(CONFIG)/bin/ejs.web.mod: \
 	cd src/jems/ejs.web; rm -f ejs.web.slots.h ; cd ../../..
 
 $(CONFIG)/inc/ejsWeb.h: 
-	rm -fr $(CONFIG)/inc/ejsWeb.h
-	cp -r src/jems/ejs.web/ejsWeb.h $(CONFIG)/inc/ejsWeb.h
+	mkdir -p "freebsd-x86-default/inc"
+	cp "src/jems/ejs.web/ejsWeb.h" "freebsd-x86-default/inc/ejsWeb.h"
 
 $(CONFIG)/obj/ejsHttpServer.o: \
     src/jems/ejs.web/ejsHttpServer.c\
@@ -1125,3 +1130,50 @@ stop:
 	
 
 installBinary: stop
+	mkdir -p "../../../../usr/local/lib/ejs/2.3.0/bin"
+	mkdir -p "../../../../usr/local/lib/ejs/2.3.0/bin/www"
+	mkdir -p "../../../../usr/local/lib/ejs/2.3.0/bin/www/images"
+	cp "src/jems/ejs.web/www/images/banner.jpg" "../../../../usr/local/lib/ejs/2.3.0/bin/www/images/banner.jpg"
+	cp "src/jems/ejs.web/www/images/favicon.ico" "../../../../usr/local/lib/ejs/2.3.0/bin/www/images/favicon.ico"
+	cp "src/jems/ejs.web/www/images/splash.jpg" "../../../../usr/local/lib/ejs/2.3.0/bin/www/images/splash.jpg"
+	mkdir -p "../../../../usr/local/lib/ejs/2.3.0/bin/www/js"
+	cp "src/jems/ejs.web/www/js/jquery.ejs.min.js" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/jquery.ejs.min.js"
+	cp "src/jems/ejs.web/www/js/jquery.min.js" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/jquery.min.js"
+	cp "src/jems/ejs.web/www/js/jquery.simplemodal.min.js" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/jquery.simplemodal.min.js"
+	cp "src/jems/ejs.web/www/js/jquery.tablesorter.js" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/jquery.tablesorter.js"
+	cp "src/jems/ejs.web/www/js/jquery.tablesorter.min.js" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/jquery.tablesorter.min.js"
+	cp "src/jems/ejs.web/www/js/jquery.treeview.min.js" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/jquery.treeview.min.js"
+	mkdir -p "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images"
+	cp "src/jems/ejs.web/www/js/tree-images/file.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/file.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/folder-closed.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/folder-closed.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/folder.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/folder.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/minus.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/minus.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/plus.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/plus.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/treeview-black-line.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/treeview-black-line.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/treeview-black.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/treeview-black.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/treeview-default-line.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/treeview-default-line.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/treeview-default.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/treeview-default.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/treeview-famfamfam-line.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/treeview-famfamfam.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/treeview-famfamfam.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/treeview-gray-line.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/treeview-gray-line.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/treeview-gray.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/treeview-gray.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/treeview-red-line.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/treeview-red-line.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/treeview-red.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/treeview-red.gif"
+	cp "src/jems/ejs.web/www/js/treeview.css" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/treeview.css"
+	cp "src/jems/ejs.web/www/layout.css" "../../../../usr/local/lib/ejs/2.3.0/bin/www/layout.css"
+	mkdir -p "../../../../usr/local/lib/ejs/2.3.0/bin/www/themes"
+	cp "src/jems/ejs.web/www/themes/default.css" "../../../../usr/local/lib/ejs/2.3.0/bin/www/themes/default.css"
+	rm -f "/usr/local/lib/ejs/latest"
+	mkdir -p "/usr/local/lib/ejs"
+	ln -s "2.3.0" "/usr/local/lib/ejs/latest"
+
+
+start: 
+	
+
+install: stop installBinary start
+	
+
+uninstall: stop
+
+

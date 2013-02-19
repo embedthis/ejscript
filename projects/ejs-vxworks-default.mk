@@ -33,7 +33,7 @@ BIT_SPOOL_PREFIX      := $(BIT_VAPP_PREFIX)
 BIT_CACHE_PREFIX      := $(BIT_VAPP_PREFIX)
 BIT_APP_PREFIX        := $(BIT_BASE_PREFIX)
 BIT_VAPP_PREFIX       := $(BIT_APP_PREFIX)
-BIT_SRC_PREFIX        := $(BIT_ROOT_PREFIX)usr/src/$(PRODUCT)-$(VERSION)
+BIT_SRC_PREFIX        := $(BIT_ROOT_PREFIX)/usr/src/$(PRODUCT)-$(VERSION)
 
 CFLAGS          += -fno-builtin -fno-defer-pop -fvolatile -w
 DFLAGS          += -D_REENTRANT -DVXWORKS -DRW_MULTI_THREAD -D_GNU_TOOL -DCPU=PENTIUM $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS)))
@@ -143,6 +143,7 @@ clean:
 	rm -rf $(CONFIG)/bin/utest.es
 	rm -rf $(CONFIG)/bin/utest.worker
 	rm -rf $(CONFIG)/bin/utest.out
+	rm -rf $(CONFIG)/obj/removeFiles.o
 	rm -rf $(CONFIG)/obj/mprLib.o
 	rm -rf $(CONFIG)/obj/mprSsl.o
 	rm -rf $(CONFIG)/obj/manager.o
@@ -227,18 +228,19 @@ clean:
 	rm -rf $(CONFIG)/obj/ejsSession.o
 	rm -rf $(CONFIG)/obj/ejsWeb.o
 	rm -rf $(CONFIG)/obj/ejsZlib.o
-	rm -rf $(CONFIG)/obj/removeFiles.o
 
 clobber: clean
 	rm -fr ./$(CONFIG)
 
 $(CONFIG)/inc/mpr.h: 
-	rm -fr $(CONFIG)/inc/mpr.h
-	cp -r src/deps/mpr/mpr.h $(CONFIG)/inc/mpr.h
+	mkdir -p "vxworks-x86-default/inc"
+	cp "src/deps/mpr/mpr.h" "vxworks-x86-default/inc/mpr.h"
+
+$(CONFIG)/inc/bit.h: 
 
 $(CONFIG)/inc/bitos.h: 
-	rm -fr $(CONFIG)/inc/bitos.h
-	cp -r src/bitos.h $(CONFIG)/inc/bitos.h
+	mkdir -p "vxworks-x86-default/inc"
+	cp "src/bitos.h" "vxworks-x86-default/inc/bitos.h"
 
 $(CONFIG)/obj/mprLib.o: \
     src/deps/mpr/mprLib.c\
@@ -253,8 +255,8 @@ $(CONFIG)/bin/libmpr.out: \
 	$(CC) -r -o $(CONFIG)/bin/libmpr.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/mprLib.o 
 
 $(CONFIG)/inc/est.h: 
-	rm -fr $(CONFIG)/inc/est.h
-	cp -r src/deps/est/est.h $(CONFIG)/inc/est.h
+	mkdir -p "vxworks-x86-default/inc"
+	cp "src/deps/est/est.h" "vxworks-x86-default/inc/est.h"
 
 $(CONFIG)/obj/estLib.o: \
     src/deps/est/estLib.c\
@@ -303,13 +305,14 @@ $(CONFIG)/bin/makerom.out: \
     $(CONFIG)/obj/makerom.o
 	$(CC) -o $(CONFIG)/bin/makerom.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o $(LDFLAGS)
 
-$(CONFIG)/bin/ca.crt: src/deps/est/ca.crt
-	rm -fr $(CONFIG)/bin/ca.crt
-	cp -r src/deps/est/ca.crt $(CONFIG)/bin/ca.crt
+$(CONFIG)/bin/ca.crt: \
+    src/deps/est/ca.crt
+	mkdir -p "vxworks-x86-default/bin"
+	cp "src/deps/est/ca.crt" "vxworks-x86-default/bin/ca.crt"
 
 $(CONFIG)/inc/pcre.h: 
-	rm -fr $(CONFIG)/inc/pcre.h
-	cp -r src/deps/pcre/pcre.h $(CONFIG)/inc/pcre.h
+	mkdir -p "vxworks-x86-default/inc"
+	cp "src/deps/pcre/pcre.h" "vxworks-x86-default/inc/pcre.h"
 
 $(CONFIG)/obj/pcre.o: \
     src/deps/pcre/pcre.c\
@@ -323,8 +326,8 @@ $(CONFIG)/bin/libpcre.out: \
 	$(CC) -r -o $(CONFIG)/bin/libpcre.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/pcre.o 
 
 $(CONFIG)/inc/http.h: 
-	rm -fr $(CONFIG)/inc/http.h
-	cp -r src/deps/http/http.h $(CONFIG)/inc/http.h
+	mkdir -p "vxworks-x86-default/inc"
+	cp "src/deps/http/http.h" "vxworks-x86-default/inc/http.h"
 
 $(CONFIG)/obj/httpLib.o: \
     src/deps/http/httpLib.c\
@@ -352,8 +355,8 @@ $(CONFIG)/bin/http.out: \
 	$(CC) -o $(CONFIG)/bin/http.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o $(LDFLAGS)
 
 $(CONFIG)/inc/sqlite3.h: 
-	rm -fr $(CONFIG)/inc/sqlite3.h
-	cp -r src/deps/sqlite/sqlite3.h $(CONFIG)/inc/sqlite3.h
+	mkdir -p "vxworks-x86-default/inc"
+	cp "src/deps/sqlite/sqlite3.h" "vxworks-x86-default/inc/sqlite3.h"
 
 $(CONFIG)/obj/sqlite3.o: \
     src/deps/sqlite/sqlite3.c\
@@ -378,8 +381,8 @@ $(CONFIG)/bin/sqlite.out: \
 	$(CC) -o $(CONFIG)/bin/sqlite.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LDFLAGS)
 
 $(CONFIG)/inc/zlib.h: 
-	rm -fr $(CONFIG)/inc/zlib.h
-	cp -r src/deps/zlib/zlib.h $(CONFIG)/inc/zlib.h
+	mkdir -p "vxworks-x86-default/inc"
+	cp "src/deps/zlib/zlib.h" "vxworks-x86-default/inc/zlib.h"
 
 $(CONFIG)/obj/zlib.o: \
     src/deps/zlib/zlib.c\
@@ -393,36 +396,36 @@ $(CONFIG)/bin/libzlib.out: \
 	$(CC) -r -o $(CONFIG)/bin/libzlib.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/zlib.o 
 
 $(CONFIG)/inc/ejs.cache.local.slots.h: 
-	rm -fr $(CONFIG)/inc/ejs.cache.local.slots.h
-	cp -r src/slots/ejs.cache.local.slots.h $(CONFIG)/inc/ejs.cache.local.slots.h
+	mkdir -p "vxworks-x86-default/inc"
+	cp "src/slots/ejs.cache.local.slots.h" "vxworks-x86-default/inc/ejs.cache.local.slots.h"
 
 $(CONFIG)/inc/ejs.db.sqlite.slots.h: 
-	rm -fr $(CONFIG)/inc/ejs.db.sqlite.slots.h
-	cp -r src/slots/ejs.db.sqlite.slots.h $(CONFIG)/inc/ejs.db.sqlite.slots.h
+	mkdir -p "vxworks-x86-default/inc"
+	cp "src/slots/ejs.db.sqlite.slots.h" "vxworks-x86-default/inc/ejs.db.sqlite.slots.h"
 
 $(CONFIG)/inc/ejs.slots.h: 
-	rm -fr $(CONFIG)/inc/ejs.slots.h
-	cp -r src/slots/ejs.slots.h $(CONFIG)/inc/ejs.slots.h
+	mkdir -p "vxworks-x86-default/inc"
+	cp "src/slots/ejs.slots.h" "vxworks-x86-default/inc/ejs.slots.h"
 
 $(CONFIG)/inc/ejs.web.slots.h: 
-	rm -fr $(CONFIG)/inc/ejs.web.slots.h
-	cp -r src/slots/ejs.web.slots.h $(CONFIG)/inc/ejs.web.slots.h
+	mkdir -p "vxworks-x86-default/inc"
+	cp "src/slots/ejs.web.slots.h" "vxworks-x86-default/inc/ejs.web.slots.h"
 
 $(CONFIG)/inc/ejs.zlib.slots.h: 
-	rm -fr $(CONFIG)/inc/ejs.zlib.slots.h
-	cp -r src/slots/ejs.zlib.slots.h $(CONFIG)/inc/ejs.zlib.slots.h
+	mkdir -p "vxworks-x86-default/inc"
+	cp "src/slots/ejs.zlib.slots.h" "vxworks-x86-default/inc/ejs.zlib.slots.h"
 
 $(CONFIG)/inc/ejsByteCode.h: 
-	rm -fr $(CONFIG)/inc/ejsByteCode.h
-	cp -r src/ejsByteCode.h $(CONFIG)/inc/ejsByteCode.h
+	mkdir -p "vxworks-x86-default/inc"
+	cp "src/ejsByteCode.h" "vxworks-x86-default/inc/ejsByteCode.h"
 
 $(CONFIG)/inc/ejsByteCodeTable.h: 
-	rm -fr $(CONFIG)/inc/ejsByteCodeTable.h
-	cp -r src/ejsByteCodeTable.h $(CONFIG)/inc/ejsByteCodeTable.h
+	mkdir -p "vxworks-x86-default/inc"
+	cp "src/ejsByteCodeTable.h" "vxworks-x86-default/inc/ejsByteCodeTable.h"
 
 $(CONFIG)/inc/ejsCustomize.h: 
-	rm -fr $(CONFIG)/inc/ejsCustomize.h
-	cp -r src/ejsCustomize.h $(CONFIG)/inc/ejsCustomize.h
+	mkdir -p "vxworks-x86-default/inc"
+	cp "src/ejsCustomize.h" "vxworks-x86-default/inc/ejsCustomize.h"
 
 $(CONFIG)/inc/ejs.h: \
     $(CONFIG)/inc/mpr.h \
@@ -431,12 +434,12 @@ $(CONFIG)/inc/ejs.h: \
     $(CONFIG)/inc/ejsByteCodeTable.h \
     $(CONFIG)/inc/ejs.slots.h \
     $(CONFIG)/inc/ejsCustomize.h
-	rm -fr $(CONFIG)/inc/ejs.h
-	cp -r src/ejs.h $(CONFIG)/inc/ejs.h
+	mkdir -p "vxworks-x86-default/inc"
+	cp "src/ejs.h" "vxworks-x86-default/inc/ejs.h"
 
 $(CONFIG)/inc/ejsCompiler.h: 
-	rm -fr $(CONFIG)/inc/ejsCompiler.h
-	cp -r src/ejsCompiler.h $(CONFIG)/inc/ejsCompiler.h
+	mkdir -p "vxworks-x86-default/inc"
+	cp "src/ejsCompiler.h" "vxworks-x86-default/inc/ejsCompiler.h"
 
 $(CONFIG)/obj/ecAst.o: \
     src/compiler/ecAst.c\
@@ -892,6 +895,8 @@ $(CONFIG)/bin/ejsc.out: \
     $(CONFIG)/obj/ejsc.o
 	$(CC) -o $(CONFIG)/bin/ejsc.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o $(LDFLAGS)
 
+src/cmd/ejsmod.h: 
+
 $(CONFIG)/obj/ejsmod.o: \
     src/cmd/ejsmod.c\
     $(CONFIG)/inc/bit.h \
@@ -1009,8 +1014,8 @@ $(CONFIG)/bin/ejs.web.mod: \
 	cd src/jems/ejs.web; rm -f ejs.web.slots.h ; cd ../../..
 
 $(CONFIG)/inc/ejsWeb.h: 
-	rm -fr $(CONFIG)/inc/ejsWeb.h
-	cp -r src/jems/ejs.web/ejsWeb.h $(CONFIG)/inc/ejsWeb.h
+	mkdir -p "vxworks-x86-default/inc"
+	cp "src/jems/ejs.web/ejsWeb.h" "vxworks-x86-default/inc/ejsWeb.h"
 
 $(CONFIG)/obj/ejsHttpServer.o: \
     src/jems/ejs.web/ejsHttpServer.c\
@@ -1125,12 +1130,18 @@ $(CONFIG)/bin/utest.out: \
 version: 
 	@echo 2.3.0-1
 
-deploy: compile
-	for n in ejs ejsc ejsman ejsmod jem mvc utest ; do rm -f $(BIT_BIN_PREFIX)/$$n ; done
-	mkdir -p '$(BIT_VAPP_PREFIX)/bin' '$(BIT_INC_PREFIX)' '$(BIT_VAPP_PREFIX)/man/man1'
-	cp -R -P ./$(CONFIG)/bin/* $(BIT_VAPP_PREFIX)/bin
-	for n in ejs ejsc ejsman ejsmod jem mvc utest ; do rm -f $(BIT_BIN_PREFIX)/$$n ; ln -s $(BIT_VAPP_PREFIX)/bin/$$n $(BIT_BIN_PREFIX)/$$n ; done
-	for n in ejs.1 ejsc.1 ejsmod.1 manager.1 mvc.1 ; do rm -f $(BIT_VAPP_PREFIX)/man/man1/$$n $(BIT_MAN_PREFIX)/man1/$$n ; cp doc/man/$$n $(BIT_VAPP_PREFIX)/man/man1 ; ln -s $(BIT_VAPP_PREFIX)/man/man1/$$n $(BIT_MAN_PREFIX)/man1/$$n ; done
-	rm -f '$(BIT_APP_PREFIX)/latest'
-	ln -s $(VERSION) $(BIT_APP_PREFIX)/latest
+stop: 
+	
+
+installBinary: stop
+
+
+start: 
+	
+
+install: stop installBinary start
+	
+
+uninstall: stop
+
 

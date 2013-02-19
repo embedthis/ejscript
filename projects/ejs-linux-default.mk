@@ -14,22 +14,22 @@ CONFIG          := $(OS)-$(ARCH)-$(PROFILE)
 LBIN            := $(CONFIG)/bin
 
 BIT_ROOT_PREFIX       := /
-BIT_BASE_PREFIX       := $(BIT_ROOT_PREFIX)usr/local
-BIT_DATA_PREFIX       := $(BIT_ROOT_PREFIX)
-BIT_STATE_PREFIX      := $(BIT_ROOT_PREFIX)var
+BIT_BASE_PREFIX       := $(BIT_ROOT_PREFIX)/usr/local
+BIT_DATA_PREFIX       := $(BIT_ROOT_PREFIX)/
+BIT_STATE_PREFIX      := $(BIT_ROOT_PREFIX)/var
 BIT_APP_PREFIX        := $(BIT_BASE_PREFIX)/lib/$(PRODUCT)
 BIT_VAPP_PREFIX       := $(BIT_APP_PREFIX)/$(VERSION)
-BIT_BIN_PREFIX        := $(BIT_ROOT_PREFIX)usr/local/bin
-BIT_INC_PREFIX        := $(BIT_ROOT_PREFIX)usr/local/include
-BIT_LIB_PREFIX        := $(BIT_ROOT_PREFIX)usr/local/lib
-BIT_MAN_PREFIX        := $(BIT_ROOT_PREFIX)usr/local/share/man
-BIT_SBIN_PREFIX       := $(BIT_ROOT_PREFIX)usr/local/sbin
-BIT_ETC_PREFIX        := $(BIT_ROOT_PREFIX)etc/$(PRODUCT)
-BIT_WEB_PREFIX        := $(BIT_ROOT_PREFIX)var/www/$(PRODUCT)-default
-BIT_LOG_PREFIX        := $(BIT_ROOT_PREFIX)var/log/$(PRODUCT)
-BIT_SPOOL_PREFIX      := $(BIT_ROOT_PREFIX)var/spool/$(PRODUCT)
-BIT_CACHE_PREFIX      := $(BIT_ROOT_PREFIX)var/cache/$(PRODUCT)
-BIT_SRC_PREFIX        := $(BIT_ROOT_PREFIX)usr/local/src/$(PRODUCT)-$(VERSION)
+BIT_BIN_PREFIX        := $(BIT_ROOT_PREFIX)/usr/local/bin
+BIT_INC_PREFIX        := $(BIT_ROOT_PREFIX)/usr/local/include
+BIT_LIB_PREFIX        := $(BIT_ROOT_PREFIX)/usr/local/lib
+BIT_MAN_PREFIX        := $(BIT_ROOT_PREFIX)/usr/local/share/man
+BIT_SBIN_PREFIX       := $(BIT_ROOT_PREFIX)/usr/local/sbin
+BIT_ETC_PREFIX        := $(BIT_ROOT_PREFIX)/etc/$(PRODUCT)
+BIT_WEB_PREFIX        := $(BIT_ROOT_PREFIX)/var/www/$(PRODUCT)-default
+BIT_LOG_PREFIX        := $(BIT_ROOT_PREFIX)/var/log/$(PRODUCT)
+BIT_SPOOL_PREFIX      := $(BIT_ROOT_PREFIX)/var/spool/$(PRODUCT)
+BIT_CACHE_PREFIX      := $(BIT_ROOT_PREFIX)/var/spool/$(PRODUCT)/cache
+BIT_SRC_PREFIX        := $(BIT_ROOT_PREFIX)$(PRODUCT)-$(VERSION)
 
 CFLAGS          += -fPIC   -w
 DFLAGS          += -D_REENTRANT -DPIC  $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS)))
@@ -139,6 +139,7 @@ clean:
 	rm -rf $(CONFIG)/bin/utest.es
 	rm -rf $(CONFIG)/bin/utest.worker
 	rm -rf $(CONFIG)/bin/utest
+	rm -rf $(CONFIG)/obj/removeFiles.o
 	rm -rf $(CONFIG)/obj/mprLib.o
 	rm -rf $(CONFIG)/obj/mprSsl.o
 	rm -rf $(CONFIG)/obj/manager.o
@@ -223,18 +224,19 @@ clean:
 	rm -rf $(CONFIG)/obj/ejsSession.o
 	rm -rf $(CONFIG)/obj/ejsWeb.o
 	rm -rf $(CONFIG)/obj/ejsZlib.o
-	rm -rf $(CONFIG)/obj/removeFiles.o
 
 clobber: clean
 	rm -fr ./$(CONFIG)
 
 $(CONFIG)/inc/mpr.h: 
-	rm -fr $(CONFIG)/inc/mpr.h
-	cp -r src/deps/mpr/mpr.h $(CONFIG)/inc/mpr.h
+	mkdir -p "linux-x86-default/inc"
+	cp "src/deps/mpr/mpr.h" "linux-x86-default/inc/mpr.h"
+
+$(CONFIG)/inc/bit.h: 
 
 $(CONFIG)/inc/bitos.h: 
-	rm -fr $(CONFIG)/inc/bitos.h
-	cp -r src/bitos.h $(CONFIG)/inc/bitos.h
+	mkdir -p "linux-x86-default/inc"
+	cp "src/bitos.h" "linux-x86-default/inc/bitos.h"
 
 $(CONFIG)/obj/mprLib.o: \
     src/deps/mpr/mprLib.c\
@@ -249,8 +251,8 @@ $(CONFIG)/bin/libmpr.so: \
 	$(CC) -shared -o $(CONFIG)/bin/libmpr.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/mprLib.o $(LIBS)
 
 $(CONFIG)/inc/est.h: 
-	rm -fr $(CONFIG)/inc/est.h
-	cp -r src/deps/est/est.h $(CONFIG)/inc/est.h
+	mkdir -p "linux-x86-default/inc"
+	cp "src/deps/est/est.h" "linux-x86-default/inc/est.h"
 
 $(CONFIG)/obj/estLib.o: \
     src/deps/est/estLib.c\
@@ -299,13 +301,14 @@ $(CONFIG)/bin/makerom: \
     $(CONFIG)/obj/makerom.o
 	$(CC) -o $(CONFIG)/bin/makerom $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o -lmpr $(LIBS) -lmpr -lpthread -lm -lrt -ldl $(LDFLAGS)
 
-$(CONFIG)/bin/ca.crt: src/deps/est/ca.crt
-	rm -fr $(CONFIG)/bin/ca.crt
-	cp -r src/deps/est/ca.crt $(CONFIG)/bin/ca.crt
+$(CONFIG)/bin/ca.crt: \
+    src/deps/est/ca.crt
+	mkdir -p "linux-x86-default/bin"
+	cp "src/deps/est/ca.crt" "linux-x86-default/bin/ca.crt"
 
 $(CONFIG)/inc/pcre.h: 
-	rm -fr $(CONFIG)/inc/pcre.h
-	cp -r src/deps/pcre/pcre.h $(CONFIG)/inc/pcre.h
+	mkdir -p "linux-x86-default/inc"
+	cp "src/deps/pcre/pcre.h" "linux-x86-default/inc/pcre.h"
 
 $(CONFIG)/obj/pcre.o: \
     src/deps/pcre/pcre.c\
@@ -319,8 +322,8 @@ $(CONFIG)/bin/libpcre.so: \
 	$(CC) -shared -o $(CONFIG)/bin/libpcre.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/pcre.o $(LIBS)
 
 $(CONFIG)/inc/http.h: 
-	rm -fr $(CONFIG)/inc/http.h
-	cp -r src/deps/http/http.h $(CONFIG)/inc/http.h
+	mkdir -p "linux-x86-default/inc"
+	cp "src/deps/http/http.h" "linux-x86-default/inc/http.h"
 
 $(CONFIG)/obj/httpLib.o: \
     src/deps/http/httpLib.c\
@@ -348,8 +351,8 @@ $(CONFIG)/bin/http: \
 	$(CC) -o $(CONFIG)/bin/http $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o -lhttp $(LIBS) -lpcre -lmpr -lhttp -lpthread -lm -lrt -ldl -lpcre -lmpr $(LDFLAGS)
 
 $(CONFIG)/inc/sqlite3.h: 
-	rm -fr $(CONFIG)/inc/sqlite3.h
-	cp -r src/deps/sqlite/sqlite3.h $(CONFIG)/inc/sqlite3.h
+	mkdir -p "linux-x86-default/inc"
+	cp "src/deps/sqlite/sqlite3.h" "linux-x86-default/inc/sqlite3.h"
 
 $(CONFIG)/obj/sqlite3.o: \
     src/deps/sqlite/sqlite3.c\
@@ -374,8 +377,8 @@ $(CONFIG)/bin/sqlite: \
 	$(CC) -o $(CONFIG)/bin/sqlite $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o -lsqlite3 $(LIBS) -lsqlite3 -lpthread -lm -lrt -ldl $(LDFLAGS)
 
 $(CONFIG)/inc/zlib.h: 
-	rm -fr $(CONFIG)/inc/zlib.h
-	cp -r src/deps/zlib/zlib.h $(CONFIG)/inc/zlib.h
+	mkdir -p "linux-x86-default/inc"
+	cp "src/deps/zlib/zlib.h" "linux-x86-default/inc/zlib.h"
 
 $(CONFIG)/obj/zlib.o: \
     src/deps/zlib/zlib.c\
@@ -389,36 +392,36 @@ $(CONFIG)/bin/libzlib.so: \
 	$(CC) -shared -o $(CONFIG)/bin/libzlib.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/zlib.o $(LIBS)
 
 $(CONFIG)/inc/ejs.cache.local.slots.h: 
-	rm -fr $(CONFIG)/inc/ejs.cache.local.slots.h
-	cp -r src/slots/ejs.cache.local.slots.h $(CONFIG)/inc/ejs.cache.local.slots.h
+	mkdir -p "linux-x86-default/inc"
+	cp "src/slots/ejs.cache.local.slots.h" "linux-x86-default/inc/ejs.cache.local.slots.h"
 
 $(CONFIG)/inc/ejs.db.sqlite.slots.h: 
-	rm -fr $(CONFIG)/inc/ejs.db.sqlite.slots.h
-	cp -r src/slots/ejs.db.sqlite.slots.h $(CONFIG)/inc/ejs.db.sqlite.slots.h
+	mkdir -p "linux-x86-default/inc"
+	cp "src/slots/ejs.db.sqlite.slots.h" "linux-x86-default/inc/ejs.db.sqlite.slots.h"
 
 $(CONFIG)/inc/ejs.slots.h: 
-	rm -fr $(CONFIG)/inc/ejs.slots.h
-	cp -r src/slots/ejs.slots.h $(CONFIG)/inc/ejs.slots.h
+	mkdir -p "linux-x86-default/inc"
+	cp "src/slots/ejs.slots.h" "linux-x86-default/inc/ejs.slots.h"
 
 $(CONFIG)/inc/ejs.web.slots.h: 
-	rm -fr $(CONFIG)/inc/ejs.web.slots.h
-	cp -r src/slots/ejs.web.slots.h $(CONFIG)/inc/ejs.web.slots.h
+	mkdir -p "linux-x86-default/inc"
+	cp "src/slots/ejs.web.slots.h" "linux-x86-default/inc/ejs.web.slots.h"
 
 $(CONFIG)/inc/ejs.zlib.slots.h: 
-	rm -fr $(CONFIG)/inc/ejs.zlib.slots.h
-	cp -r src/slots/ejs.zlib.slots.h $(CONFIG)/inc/ejs.zlib.slots.h
+	mkdir -p "linux-x86-default/inc"
+	cp "src/slots/ejs.zlib.slots.h" "linux-x86-default/inc/ejs.zlib.slots.h"
 
 $(CONFIG)/inc/ejsByteCode.h: 
-	rm -fr $(CONFIG)/inc/ejsByteCode.h
-	cp -r src/ejsByteCode.h $(CONFIG)/inc/ejsByteCode.h
+	mkdir -p "linux-x86-default/inc"
+	cp "src/ejsByteCode.h" "linux-x86-default/inc/ejsByteCode.h"
 
 $(CONFIG)/inc/ejsByteCodeTable.h: 
-	rm -fr $(CONFIG)/inc/ejsByteCodeTable.h
-	cp -r src/ejsByteCodeTable.h $(CONFIG)/inc/ejsByteCodeTable.h
+	mkdir -p "linux-x86-default/inc"
+	cp "src/ejsByteCodeTable.h" "linux-x86-default/inc/ejsByteCodeTable.h"
 
 $(CONFIG)/inc/ejsCustomize.h: 
-	rm -fr $(CONFIG)/inc/ejsCustomize.h
-	cp -r src/ejsCustomize.h $(CONFIG)/inc/ejsCustomize.h
+	mkdir -p "linux-x86-default/inc"
+	cp "src/ejsCustomize.h" "linux-x86-default/inc/ejsCustomize.h"
 
 $(CONFIG)/inc/ejs.h: \
     $(CONFIG)/inc/mpr.h \
@@ -427,12 +430,12 @@ $(CONFIG)/inc/ejs.h: \
     $(CONFIG)/inc/ejsByteCodeTable.h \
     $(CONFIG)/inc/ejs.slots.h \
     $(CONFIG)/inc/ejsCustomize.h
-	rm -fr $(CONFIG)/inc/ejs.h
-	cp -r src/ejs.h $(CONFIG)/inc/ejs.h
+	mkdir -p "linux-x86-default/inc"
+	cp "src/ejs.h" "linux-x86-default/inc/ejs.h"
 
 $(CONFIG)/inc/ejsCompiler.h: 
-	rm -fr $(CONFIG)/inc/ejsCompiler.h
-	cp -r src/ejsCompiler.h $(CONFIG)/inc/ejsCompiler.h
+	mkdir -p "linux-x86-default/inc"
+	cp "src/ejsCompiler.h" "linux-x86-default/inc/ejsCompiler.h"
 
 $(CONFIG)/obj/ecAst.o: \
     src/compiler/ecAst.c\
@@ -888,6 +891,8 @@ $(CONFIG)/bin/ejsc: \
     $(CONFIG)/obj/ejsc.o
 	$(CC) -o $(CONFIG)/bin/ejsc $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o -lejs $(LIBS) -lhttp -lpcre -lmpr -lejs -lpthread -lm -lrt -ldl -lhttp -lpcre -lmpr $(LDFLAGS)
 
+src/cmd/ejsmod.h: 
+
 $(CONFIG)/obj/ejsmod.o: \
     src/cmd/ejsmod.c\
     $(CONFIG)/inc/bit.h \
@@ -1005,8 +1010,8 @@ $(CONFIG)/bin/ejs.web.mod: \
 	cd src/jems/ejs.web; rm -f ejs.web.slots.h ; cd ../../..
 
 $(CONFIG)/inc/ejsWeb.h: 
-	rm -fr $(CONFIG)/inc/ejsWeb.h
-	cp -r src/jems/ejs.web/ejsWeb.h $(CONFIG)/inc/ejsWeb.h
+	mkdir -p "linux-x86-default/inc"
+	cp "src/jems/ejs.web/ejsWeb.h" "linux-x86-default/inc/ejsWeb.h"
 
 $(CONFIG)/obj/ejsHttpServer.o: \
     src/jems/ejs.web/ejsHttpServer.c\
@@ -1121,20 +1126,54 @@ $(CONFIG)/bin/utest: \
 version: 
 	@echo 2.3.0-1
 
-deploy: compile
-	for n in ejs ejsc ejsman ejsmod jem mvc utest ; do rm -f $(BIT_BIN_PREFIX)/$$n ; done
-	mkdir -p '$(BIT_VAPP_PREFIX)/bin' '$(BIT_INC_PREFIX)' '$(BIT_VAPP_PREFIX)/man/man1'
-	cp -R -P ./$(CONFIG)/bin/* $(BIT_VAPP_PREFIX)/bin
-	for n in ejs ejsc ejsman ejsmod jem mvc utest ; do rm -f $(BIT_BIN_PREFIX)/$$n ; ln -s $(BIT_VAPP_PREFIX)/bin/$$n $(BIT_BIN_PREFIX)/$$n ; done
-	for n in ejs.1 ejsc.1 ejsmod.1 manager.1 mvc.1 ; do rm -f $(BIT_VAPP_PREFIX)/man/man1/$$n $(BIT_MAN_PREFIX)/man1/$$n ; cp doc/man/$$n $(BIT_VAPP_PREFIX)/man/man1 ; ln -s $(BIT_VAPP_PREFIX)/man/man1/$$n $(BIT_MAN_PREFIX)/man1/$$n ; done
-	rm -f '$(BIT_APP_PREFIX)/latest'
-	ln -s $(VERSION) $(BIT_APP_PREFIX)/latest
-
-install: compile deploy
+stop: 
 	
 
-uninstall: 
-	for n in ejs ejsc ejsman ejsmod jem mvc utest ; do rm -f $(BIT_BIN_PREFIX)/$$n ; done
-	for n in $(BIT_VAPP_PREFIX)/man/man1/*.1; do base=`basename $$n` ; rm -f $(BIT_MAN_PREFIX)/man1/$$base ; done
-	rm -fr $(BIT_APP_PREFIX)
+installBinary: stop
+	mkdir -p "../../../../usr/local/lib/ejs/2.3.0/bin"
+	mkdir -p "../../../../usr/local/lib/ejs/2.3.0/bin/www"
+	mkdir -p "../../../../usr/local/lib/ejs/2.3.0/bin/www/images"
+	cp "src/jems/ejs.web/www/images/banner.jpg" "../../../../usr/local/lib/ejs/2.3.0/bin/www/images/banner.jpg"
+	cp "src/jems/ejs.web/www/images/favicon.ico" "../../../../usr/local/lib/ejs/2.3.0/bin/www/images/favicon.ico"
+	cp "src/jems/ejs.web/www/images/splash.jpg" "../../../../usr/local/lib/ejs/2.3.0/bin/www/images/splash.jpg"
+	mkdir -p "../../../../usr/local/lib/ejs/2.3.0/bin/www/js"
+	cp "src/jems/ejs.web/www/js/jquery.ejs.min.js" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/jquery.ejs.min.js"
+	cp "src/jems/ejs.web/www/js/jquery.min.js" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/jquery.min.js"
+	cp "src/jems/ejs.web/www/js/jquery.simplemodal.min.js" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/jquery.simplemodal.min.js"
+	cp "src/jems/ejs.web/www/js/jquery.tablesorter.js" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/jquery.tablesorter.js"
+	cp "src/jems/ejs.web/www/js/jquery.tablesorter.min.js" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/jquery.tablesorter.min.js"
+	cp "src/jems/ejs.web/www/js/jquery.treeview.min.js" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/jquery.treeview.min.js"
+	mkdir -p "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images"
+	cp "src/jems/ejs.web/www/js/tree-images/file.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/file.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/folder-closed.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/folder-closed.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/folder.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/folder.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/minus.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/minus.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/plus.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/plus.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/treeview-black-line.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/treeview-black-line.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/treeview-black.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/treeview-black.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/treeview-default-line.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/treeview-default-line.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/treeview-default.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/treeview-default.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/treeview-famfamfam-line.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/treeview-famfamfam.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/treeview-famfamfam.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/treeview-gray-line.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/treeview-gray-line.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/treeview-gray.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/treeview-gray.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/treeview-red-line.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/treeview-red-line.gif"
+	cp "src/jems/ejs.web/www/js/tree-images/treeview-red.gif" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/tree-images/treeview-red.gif"
+	cp "src/jems/ejs.web/www/js/treeview.css" "../../../../usr/local/lib/ejs/2.3.0/bin/www/js/treeview.css"
+	cp "src/jems/ejs.web/www/layout.css" "../../../../usr/local/lib/ejs/2.3.0/bin/www/layout.css"
+	mkdir -p "../../../../usr/local/lib/ejs/2.3.0/bin/www/themes"
+	cp "src/jems/ejs.web/www/themes/default.css" "../../../../usr/local/lib/ejs/2.3.0/bin/www/themes/default.css"
+	rm -f "/usr/local/lib/ejs/latest"
+	mkdir -p "/usr/local/lib/ejs"
+	ln -s "2.3.0" "/usr/local/lib/ejs/latest"
+
+
+start: 
+	
+
+install: stop installBinary start
+	
+
+uninstall: stop
+
 

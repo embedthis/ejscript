@@ -2,6 +2,11 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "prep", "ejs-windows-default\prep.vcxproj", "{C5EFD5E2-B473-4A01-8CC1-7253E3551311}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "removeFiles", "ejs-windows-default\removeFiles.vcxproj", "{CA1152DA-3B72-4321-B561-5F8EA40EDE5B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
+	EndProjectSection
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmpr", "ejs-windows-default\libmpr.vcxproj", "{145E7A7A-CF56-4257-B982-A6BE59F0738A}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
@@ -363,11 +368,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utest", "ejs-windows-defaul
 		{63B4E131-717E-4BC4-9271-2DAE72109F65} = {63B4E131-717E-4BC4-9271-2DAE72109F65}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "removeFiles", "ejs-windows-default\removeFiles.vcxproj", "{CA1152DA-3B72-4321-B561-5F8EA40EDE5B}"
-	ProjectSection(ProjectDependencies) = postProject
-		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
-	EndProjectSection
-EndProject
 
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -385,6 +385,14 @@ Global
 {C5EFD5E2-B473-4A01-8CC1-7253E3551311}.Release|Win32.Build.0 = Release|Win32
 {C5EFD5E2-B473-4A01-8CC1-7253E3551311}.Release|x64.ActiveCfg = Release|x64
 {C5EFD5E2-B473-4A01-8CC1-7253E3551311}.Release|x64.Build.0 = Release|x64
+{CA1152DA-3B72-4321-B561-5F8EA40EDE5B}.Debug|Win32.ActiveCfg = Debug|Win32
+{CA1152DA-3B72-4321-B561-5F8EA40EDE5B}.Debug|Win32.Build.0 = Debug|Win32
+{CA1152DA-3B72-4321-B561-5F8EA40EDE5B}.Debug|x64.ActiveCfg = Debug|x64
+{CA1152DA-3B72-4321-B561-5F8EA40EDE5B}.Debug|x64.Build.0 = Debug|x64
+{CA1152DA-3B72-4321-B561-5F8EA40EDE5B}.Release|Win32.ActiveCfg = Release|Win32
+{CA1152DA-3B72-4321-B561-5F8EA40EDE5B}.Release|Win32.Build.0 = Release|Win32
+{CA1152DA-3B72-4321-B561-5F8EA40EDE5B}.Release|x64.ActiveCfg = Release|x64
+{CA1152DA-3B72-4321-B561-5F8EA40EDE5B}.Release|x64.Build.0 = Release|x64
 {145E7A7A-CF56-4257-B982-A6BE59F0738A}.Debug|Win32.ActiveCfg = Debug|Win32
 {145E7A7A-CF56-4257-B982-A6BE59F0738A}.Debug|Win32.Build.0 = Debug|Win32
 {145E7A7A-CF56-4257-B982-A6BE59F0738A}.Debug|x64.ActiveCfg = Debug|x64
@@ -689,14 +697,6 @@ Global
 {E9AB3041-7551-47C6-8781-1B613898920B}.Release|Win32.Build.0 = Release|Win32
 {E9AB3041-7551-47C6-8781-1B613898920B}.Release|x64.ActiveCfg = Release|x64
 {E9AB3041-7551-47C6-8781-1B613898920B}.Release|x64.Build.0 = Release|x64
-{CA1152DA-3B72-4321-B561-5F8EA40EDE5B}.Debug|Win32.ActiveCfg = Debug|Win32
-{CA1152DA-3B72-4321-B561-5F8EA40EDE5B}.Debug|Win32.Build.0 = Debug|Win32
-{CA1152DA-3B72-4321-B561-5F8EA40EDE5B}.Debug|x64.ActiveCfg = Debug|x64
-{CA1152DA-3B72-4321-B561-5F8EA40EDE5B}.Debug|x64.Build.0 = Debug|x64
-{CA1152DA-3B72-4321-B561-5F8EA40EDE5B}.Release|Win32.ActiveCfg = Release|Win32
-{CA1152DA-3B72-4321-B561-5F8EA40EDE5B}.Release|Win32.Build.0 = Release|Win32
-{CA1152DA-3B72-4321-B561-5F8EA40EDE5B}.Release|x64.ActiveCfg = Release|x64
-{CA1152DA-3B72-4321-B561-5F8EA40EDE5B}.Release|x64.Build.0 = Release|x64
 EndGlobalSection
 
   GlobalSection(SolutionProperties) = preSolution

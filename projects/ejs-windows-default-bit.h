@@ -142,55 +142,58 @@
 
 /* Prefixes */
 #ifndef BIT_ROOT_PREFIX
-    #define BIT_ROOT_PREFIX "/"
+    #define BIT_ROOT_PREFIX "C:"
+#endif
+#ifndef BIT_PROGRAMFILES_PREFIX
+    #define BIT_PROGRAMFILES_PREFIX "C:/Program Files"
+#endif
+#ifndef BIT_PROGRAMFILES32_PREFIX
+    #define BIT_PROGRAMFILES32_PREFIX "C:/Program Files"
 #endif
 #ifndef BIT_BASE_PREFIX
-    #define BIT_BASE_PREFIX "/usr/local"
-#endif
-#ifndef BIT_DATA_PREFIX
-    #define BIT_DATA_PREFIX "/"
-#endif
-#ifndef BIT_STATE_PREFIX
-    #define BIT_STATE_PREFIX "/var"
+    #define BIT_BASE_PREFIX "C:/Program Files"
 #endif
 #ifndef BIT_APP_PREFIX
-    #define BIT_APP_PREFIX "/usr/local/lib/ejs"
+    #define BIT_APP_PREFIX "C:/Program Files/Embedthis Ejscript"
 #endif
 #ifndef BIT_VAPP_PREFIX
-    #define BIT_VAPP_PREFIX "/usr/local/lib/ejs/2.3.0"
+    #define BIT_VAPP_PREFIX "C:/Program Files/Embedthis Ejscript"
+#endif
+#ifndef BIT_DATA_PREFIX
+    #define BIT_DATA_PREFIX "C:/Program Files/Embedthis Ejscript"
+#endif
+#ifndef BIT_STATE_PREFIX
+    #define BIT_STATE_PREFIX "C:/Program Files/Embedthis Ejscript"
 #endif
 #ifndef BIT_BIN_PREFIX
-    #define BIT_BIN_PREFIX "/usr/local/bin"
+    #define BIT_BIN_PREFIX "C:/Program Files/Embedthis Ejscript/bin"
 #endif
 #ifndef BIT_INC_PREFIX
-    #define BIT_INC_PREFIX "/usr/local/include"
+    #define BIT_INC_PREFIX "C:/Program Files/Embedthis Ejscript/inc"
 #endif
 #ifndef BIT_LIB_PREFIX
-    #define BIT_LIB_PREFIX "/usr/local/lib"
+    #define BIT_LIB_PREFIX "C:/Program Files/Embedthis Ejscript/lib"
 #endif
 #ifndef BIT_MAN_PREFIX
-    #define BIT_MAN_PREFIX "/usr/local/share/man"
-#endif
-#ifndef BIT_SBIN_PREFIX
-    #define BIT_SBIN_PREFIX "/usr/local/sbin"
+    #define BIT_MAN_PREFIX "C:/Program Files/Embedthis Ejscript/man"
 #endif
 #ifndef BIT_ETC_PREFIX
-    #define BIT_ETC_PREFIX "/etc/ejs"
+    #define BIT_ETC_PREFIX "C:/Program Files/Embedthis Ejscript"
 #endif
 #ifndef BIT_WEB_PREFIX
-    #define BIT_WEB_PREFIX "/var/www/ejs-default"
+    #define BIT_WEB_PREFIX "C:/Program Files/Embedthis Ejscript/web"
 #endif
 #ifndef BIT_LOG_PREFIX
-    #define BIT_LOG_PREFIX "/var/log/ejs"
+    #define BIT_LOG_PREFIX "C:/Program Files/Embedthis Ejscript/log"
 #endif
 #ifndef BIT_SPOOL_PREFIX
-    #define BIT_SPOOL_PREFIX "/var/spool/ejs"
+    #define BIT_SPOOL_PREFIX "C:/Program Files/Embedthis Ejscript/tmp"
 #endif
 #ifndef BIT_CACHE_PREFIX
-    #define BIT_CACHE_PREFIX "/var/cache/ejs"
+    #define BIT_CACHE_PREFIX "C:/Program Files/Embedthis Ejscript/cache"
 #endif
 #ifndef BIT_SRC_PREFIX
-    #define BIT_SRC_PREFIX "/usr/local/src/ejs-2.3.0"
+    #define BIT_SRC_PREFIX "C:/Program Files/Embedthis Ejscript/src"
 #endif
 
 /* Suffixes */
@@ -295,34 +298,4 @@
 #endif
 #ifndef BIT_PACK_ZLIB
     #define BIT_PACK_ZLIB 1
-#endif
-#ifndef BIT_PACK_COMPILER_PATH
-    #define BIT_PACK_COMPILER_PATH "cl.exe"
-#endif
-#ifndef BIT_PACK_EST_PATH
-    #define BIT_PACK_EST_PATH "/Users/mob/git/ejs/src/deps/est"
-#endif
-#ifndef BIT_PACK_LIB_PATH
-    #define BIT_PACK_LIB_PATH "lib.exe"
-#endif
-#ifndef BIT_PACK_LINK_PATH
-    #define BIT_PACK_LINK_PATH "link.exe"
-#endif
-#ifndef BIT_PACK_PCRE_PATH
-    #define BIT_PACK_PCRE_PATH "/Users/mob/git/ejs/src/deps/pcre"
-#endif
-#ifndef BIT_PACK_RC_PATH
-    #define BIT_PACK_RC_PATH "rc.exe"
-#endif
-#ifndef BIT_PACK_SQLITE_PATH
-    #define BIT_PACK_SQLITE_PATH "/Users/mob/git/ejs/src/deps/sqlite"
-#endif
-#ifndef BIT_PACK_WINSDK_PATH
-    #define BIT_PACK_WINSDK_PATH "$(SDK)"
-#endif
-#ifndef BIT_PACK_ZIP_PATH
-    #define BIT_PACK_ZIP_PATH "/usr/bin/zip"
-#endif
-#ifndef BIT_PACK_ZLIB_PATH
-    #define BIT_PACK_ZLIB_PATH "/Users/mob/git/ejs/src/deps/zlib"
 #endif

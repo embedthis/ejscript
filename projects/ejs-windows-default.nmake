@@ -29,25 +29,25 @@ LDFLAGS         = -nologo -nodefaultlib -incremental:no -debug -machine:$(ARCH)
 LIBPATHS        = -libpath:$(CONFIG)\bin
 LIBS            = ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.lib msvcrt.lib shell32.lib
 
-BIT_ROOT_PREFIX       = /
-BIT_BASE_PREFIX       = $(BIT_ROOT_PREFIX)usr/local
-BIT_DATA_PREFIX       = $(BIT_ROOT_PREFIX)
-BIT_STATE_PREFIX      = $(BIT_ROOT_PREFIX)var
-BIT_APP_PREFIX        = $(BIT_BASE_PREFIX)/lib/$(PRODUCT)
-BIT_VAPP_PREFIX       = $(BIT_APP_PREFIX)/$(VERSION)
-BIT_BIN_PREFIX        = $(BIT_ROOT_PREFIX)usr/local/bin
-BIT_INC_PREFIX        = $(BIT_ROOT_PREFIX)usr/local/include
-BIT_LIB_PREFIX        = $(BIT_ROOT_PREFIX)usr/local/lib
-BIT_MAN_PREFIX        = $(BIT_ROOT_PREFIX)usr/local/share/man
-BIT_SBIN_PREFIX       = $(BIT_ROOT_PREFIX)usr/local/sbin
-BIT_ETC_PREFIX        = $(BIT_ROOT_PREFIX)etc/$(PRODUCT)
-BIT_WEB_PREFIX        = $(BIT_ROOT_PREFIX)var/www/$(PRODUCT)-default
-BIT_LOG_PREFIX        = $(BIT_ROOT_PREFIX)var/log/$(PRODUCT)
-BIT_SPOOL_PREFIX      = $(BIT_ROOT_PREFIX)var/spool/$(PRODUCT)
-BIT_CACHE_PREFIX      = $(BIT_ROOT_PREFIX)var/cache/$(PRODUCT)
-BIT_SRC_PREFIX        = $(BIT_ROOT_PREFIX)usr/local/src/$(PRODUCT)-$(VERSION)
+BIT_ROOT_PREFIX       = C:
+BIT_BASE_PREFIX       = $(BIT_ROOT_PREFIX)\Program Files
+BIT_APP_PREFIX        = $(BIT_BASE_PREFIX)\Embedthis Ejscript
+BIT_VAPP_PREFIX       = $(BIT_APP_PREFIX)
+BIT_DATA_PREFIX       = $(BIT_VAPP_PREFIX)
+BIT_STATE_PREFIX      = $(BIT_VAPP_PREFIX)
+BIT_BIN_PREFIX        = $(BIT_VAPP_PREFIX)\bin
+BIT_INC_PREFIX        = $(BIT_VAPP_PREFIX)\inc
+BIT_LIB_PREFIX        = $(BIT_VAPP_PREFIX)\lib
+BIT_MAN_PREFIX        = $(BIT_VAPP_PREFIX)\man
+BIT_ETC_PREFIX        = $(BIT_VAPP_PREFIX)
+BIT_WEB_PREFIX        = $(BIT_VAPP_PREFIX)\web
+BIT_LOG_PREFIX        = $(BIT_VAPP_PREFIX)\log
+BIT_SPOOL_PREFIX      = $(BIT_VAPP_PREFIX)\tmp
+BIT_CACHE_PREFIX      = $(BIT_VAPP_PREFIX)\cache
+BIT_SRC_PREFIX        = $(BIT_VAPP_PREFIX)\src
 
 all compile: prep \
+        $(CONFIG)\bin\removeFiles.exe \
         $(CONFIG)\bin\libmpr.dll \
         $(CONFIG)\bin\libmprssl.dll \
         $(CONFIG)\bin\ejsman.exe \
@@ -85,8 +85,7 @@ all compile: prep \
         $(CONFIG)\bin\ejs.mvc.mod \
         $(CONFIG)\bin\utest.es \
         $(CONFIG)\bin\utest.worker \
-        $(CONFIG)\bin\utest.exe \
-        $(CONFIG)\bin\removeFiles.exe
+        $(CONFIG)\bin\utest.exe
 
 .PHONY: prep
 
@@ -104,6 +103,7 @@ prep:
 	@if not exist $(CONFIG)\obj md $(CONFIG)\obj
 	@if not exist $(CONFIG)\inc\bit.h copy projects\ejs-windows-default-bit.h $(CONFIG)\inc\bit.h
 clean:
+	-if exist $(CONFIG)\bin\removeFiles.exe del /Q $(CONFIG)\bin\removeFiles.exe
 	-if exist $(CONFIG)\bin\libmpr.dll del /Q $(CONFIG)\bin\libmpr.dll
 	-if exist $(CONFIG)\bin\libmprssl.dll del /Q $(CONFIG)\bin\libmprssl.dll
 	-if exist $(CONFIG)\bin\ejsman.exe del /Q $(CONFIG)\bin\ejsman.exe
@@ -137,7 +137,7 @@ clean:
 	-if exist $(CONFIG)\bin\utest.es del /Q $(CONFIG)\bin\utest.es
 	-if exist $(CONFIG)\bin\utest.worker del /Q $(CONFIG)\bin\utest.worker
 	-if exist $(CONFIG)\bin\utest.exe del /Q $(CONFIG)\bin\utest.exe
-	-if exist $(CONFIG)\bin\removeFiles.exe del /Q $(CONFIG)\bin\removeFiles.exe
+	-if exist $(CONFIG)\obj\removeFiles.obj del /Q $(CONFIG)\obj\removeFiles.obj
 	-if exist $(CONFIG)\obj\mprLib.obj del /Q $(CONFIG)\obj\mprLib.obj
 	-if exist $(CONFIG)\obj\mprSsl.obj del /Q $(CONFIG)\obj\mprSsl.obj
 	-if exist $(CONFIG)\obj\manager.obj del /Q $(CONFIG)\obj\manager.obj
@@ -222,15 +222,25 @@ clean:
 	-if exist $(CONFIG)\obj\ejsSession.obj del /Q $(CONFIG)\obj\ejsSession.obj
 	-if exist $(CONFIG)\obj\ejsWeb.obj del /Q $(CONFIG)\obj\ejsWeb.obj
 	-if exist $(CONFIG)\obj\ejsZlib.obj del /Q $(CONFIG)\obj\ejsZlib.obj
-	-if exist $(CONFIG)\obj\removeFiles.obj del /Q $(CONFIG)\obj\removeFiles.obj
+
+$(CONFIG)\inc\bit.h: 
+
+$(CONFIG)\obj\removeFiles.obj: \
+    ..\bit\macosx-x64-debug\bin\package\windows\removeFiles.c\
+    $(CONFIG)\inc\bit.h
+	"$(CC)" -c -Fo$(CONFIG)\obj\removeFiles.obj -Fd$(CONFIG)\obj\removeFiles.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) ..\bit\macosx-x64-debug\bin\package\windows\removeFiles.c
+
+$(CONFIG)\bin\removeFiles.exe: \
+    $(CONFIG)\obj\removeFiles.obj
+	"$(LD)" -out:$(CONFIG)\bin\removeFiles.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\removeFiles.obj $(LIBS)
 
 $(CONFIG)\inc\mpr.h: 
-	-if exist $(CONFIG)\inc\mpr.h del /Q $(CONFIG)\inc\mpr.h
-	copy /Y src\deps\mpr\mpr.h $(CONFIG)\inc\mpr.h
+	if not exist "windows-x86-default\inc" md "windows-x86-default\inc"
+	copy /Y "src\deps\mpr\mpr.h" "windows-x86-default\inc\mpr.h"
 
 $(CONFIG)\inc\bitos.h: 
-	-if exist $(CONFIG)\inc\bitos.h del /Q $(CONFIG)\inc\bitos.h
-	copy /Y src\bitos.h $(CONFIG)\inc\bitos.h
+	if not exist "windows-x86-default\inc" md "windows-x86-default\inc"
+	copy /Y "src\bitos.h" "windows-x86-default\inc\bitos.h"
 
 $(CONFIG)\obj\mprLib.obj: \
     src\deps\mpr\mprLib.c\
@@ -245,8 +255,8 @@ $(CONFIG)\bin\libmpr.dll: \
 	"$(LD)" -dll -out:$(CONFIG)\bin\libmpr.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\mprLib.obj $(LIBS)
 
 $(CONFIG)\inc\est.h: 
-	-if exist $(CONFIG)\inc\est.h del /Q $(CONFIG)\inc\est.h
-	copy /Y src\deps\est\est.h $(CONFIG)\inc\est.h
+	if not exist "windows-x86-default\inc" md "windows-x86-default\inc"
+	copy /Y "src\deps\est\est.h" "windows-x86-default\inc\est.h"
 
 $(CONFIG)\obj\estLib.obj: \
     src\deps\est\estLib.c\
@@ -295,13 +305,14 @@ $(CONFIG)\bin\makerom.exe: \
     $(CONFIG)\obj\makerom.obj
 	"$(LD)" -out:$(CONFIG)\bin\makerom.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\makerom.obj libmpr.lib $(LIBS)
 
-$(CONFIG)\bin\ca.crt: src/deps/est/ca.crt
-	-if exist $(CONFIG)\bin\ca.crt del /Q $(CONFIG)\bin\ca.crt
-	copy /Y src\deps\est\ca.crt $(CONFIG)\bin\ca.crt
+$(CONFIG)\bin\ca.crt: \
+    src\deps\est\ca.crt
+	if not exist "windows-x86-default\bin" md "windows-x86-default\bin"
+	copy /Y "src\deps\est\ca.crt" "windows-x86-default\bin\ca.crt"
 
 $(CONFIG)\inc\pcre.h: 
-	-if exist $(CONFIG)\inc\pcre.h del /Q $(CONFIG)\inc\pcre.h
-	copy /Y src\deps\pcre\pcre.h $(CONFIG)\inc\pcre.h
+	if not exist "windows-x86-default\inc" md "windows-x86-default\inc"
+	copy /Y "src\deps\pcre\pcre.h" "windows-x86-default\inc\pcre.h"
 
 $(CONFIG)\obj\pcre.obj: \
     src\deps\pcre\pcre.c\
@@ -315,8 +326,8 @@ $(CONFIG)\bin\libpcre.dll: \
 	"$(LD)" -dll -out:$(CONFIG)\bin\libpcre.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\pcre.obj $(LIBS)
 
 $(CONFIG)\inc\http.h: 
-	-if exist $(CONFIG)\inc\http.h del /Q $(CONFIG)\inc\http.h
-	copy /Y src\deps\http\http.h $(CONFIG)\inc\http.h
+	if not exist "windows-x86-default\inc" md "windows-x86-default\inc"
+	copy /Y "src\deps\http\http.h" "windows-x86-default\inc\http.h"
 
 $(CONFIG)\obj\httpLib.obj: \
     src\deps\http\httpLib.c\
@@ -344,8 +355,8 @@ $(CONFIG)\bin\http.exe: \
 	"$(LD)" -out:$(CONFIG)\bin\http.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\http.obj libhttp.lib $(LIBS) libpcre.lib libmpr.lib
 
 $(CONFIG)\inc\sqlite3.h: 
-	-if exist $(CONFIG)\inc\sqlite3.h del /Q $(CONFIG)\inc\sqlite3.h
-	copy /Y src\deps\sqlite\sqlite3.h $(CONFIG)\inc\sqlite3.h
+	if not exist "windows-x86-default\inc" md "windows-x86-default\inc"
+	copy /Y "src\deps\sqlite\sqlite3.h" "windows-x86-default\inc\sqlite3.h"
 
 $(CONFIG)\obj\sqlite3.obj: \
     src\deps\sqlite\sqlite3.c\
@@ -370,8 +381,8 @@ $(CONFIG)\bin\sqlite.exe: \
 	"$(LD)" -out:$(CONFIG)\bin\sqlite.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite.obj libsqlite3.lib $(LIBS)
 
 $(CONFIG)\inc\zlib.h: 
-	-if exist $(CONFIG)\inc\zlib.h del /Q $(CONFIG)\inc\zlib.h
-	copy /Y src\deps\zlib\zlib.h $(CONFIG)\inc\zlib.h
+	if not exist "windows-x86-default\inc" md "windows-x86-default\inc"
+	copy /Y "src\deps\zlib\zlib.h" "windows-x86-default\inc\zlib.h"
 
 $(CONFIG)\obj\zlib.obj: \
     src\deps\zlib\zlib.c\
@@ -385,36 +396,36 @@ $(CONFIG)\bin\libzlib.dll: \
 	"$(LD)" -dll -out:$(CONFIG)\bin\libzlib.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\zlib.obj $(LIBS)
 
 $(CONFIG)\inc\ejs.cache.local.slots.h: 
-	-if exist $(CONFIG)\inc\ejs.cache.local.slots.h del /Q $(CONFIG)\inc\ejs.cache.local.slots.h
-	copy /Y src\slots\ejs.cache.local.slots.h $(CONFIG)\inc\ejs.cache.local.slots.h
+	if not exist "windows-x86-default\inc" md "windows-x86-default\inc"
+	copy /Y "src\slots\ejs.cache.local.slots.h" "windows-x86-default\inc\ejs.cache.local.slots.h"
 
 $(CONFIG)\inc\ejs.db.sqlite.slots.h: 
-	-if exist $(CONFIG)\inc\ejs.db.sqlite.slots.h del /Q $(CONFIG)\inc\ejs.db.sqlite.slots.h
-	copy /Y src\slots\ejs.db.sqlite.slots.h $(CONFIG)\inc\ejs.db.sqlite.slots.h
+	if not exist "windows-x86-default\inc" md "windows-x86-default\inc"
+	copy /Y "src\slots\ejs.db.sqlite.slots.h" "windows-x86-default\inc\ejs.db.sqlite.slots.h"
 
 $(CONFIG)\inc\ejs.slots.h: 
-	-if exist $(CONFIG)\inc\ejs.slots.h del /Q $(CONFIG)\inc\ejs.slots.h
-	copy /Y src\slots\ejs.slots.h $(CONFIG)\inc\ejs.slots.h
+	if not exist "windows-x86-default\inc" md "windows-x86-default\inc"
+	copy /Y "src\slots\ejs.slots.h" "windows-x86-default\inc\ejs.slots.h"
 
 $(CONFIG)\inc\ejs.web.slots.h: 
-	-if exist $(CONFIG)\inc\ejs.web.slots.h del /Q $(CONFIG)\inc\ejs.web.slots.h
-	copy /Y src\slots\ejs.web.slots.h $(CONFIG)\inc\ejs.web.slots.h
+	if not exist "windows-x86-default\inc" md "windows-x86-default\inc"
+	copy /Y "src\slots\ejs.web.slots.h" "windows-x86-default\inc\ejs.web.slots.h"
 
 $(CONFIG)\inc\ejs.zlib.slots.h: 
-	-if exist $(CONFIG)\inc\ejs.zlib.slots.h del /Q $(CONFIG)\inc\ejs.zlib.slots.h
-	copy /Y src\slots\ejs.zlib.slots.h $(CONFIG)\inc\ejs.zlib.slots.h
+	if not exist "windows-x86-default\inc" md "windows-x86-default\inc"
+	copy /Y "src\slots\ejs.zlib.slots.h" "windows-x86-default\inc\ejs.zlib.slots.h"
 
 $(CONFIG)\inc\ejsByteCode.h: 
-	-if exist $(CONFIG)\inc\ejsByteCode.h del /Q $(CONFIG)\inc\ejsByteCode.h
-	copy /Y src\ejsByteCode.h $(CONFIG)\inc\ejsByteCode.h
+	if not exist "windows-x86-default\inc" md "windows-x86-default\inc"
+	copy /Y "src\ejsByteCode.h" "windows-x86-default\inc\ejsByteCode.h"
 
 $(CONFIG)\inc\ejsByteCodeTable.h: 
-	-if exist $(CONFIG)\inc\ejsByteCodeTable.h del /Q $(CONFIG)\inc\ejsByteCodeTable.h
-	copy /Y src\ejsByteCodeTable.h $(CONFIG)\inc\ejsByteCodeTable.h
+	if not exist "windows-x86-default\inc" md "windows-x86-default\inc"
+	copy /Y "src\ejsByteCodeTable.h" "windows-x86-default\inc\ejsByteCodeTable.h"
 
 $(CONFIG)\inc\ejsCustomize.h: 
-	-if exist $(CONFIG)\inc\ejsCustomize.h del /Q $(CONFIG)\inc\ejsCustomize.h
-	copy /Y src\ejsCustomize.h $(CONFIG)\inc\ejsCustomize.h
+	if not exist "windows-x86-default\inc" md "windows-x86-default\inc"
+	copy /Y "src\ejsCustomize.h" "windows-x86-default\inc\ejsCustomize.h"
 
 $(CONFIG)\inc\ejs.h: \
     $(CONFIG)\inc\mpr.h \
@@ -423,12 +434,12 @@ $(CONFIG)\inc\ejs.h: \
     $(CONFIG)\inc\ejsByteCodeTable.h \
     $(CONFIG)\inc\ejs.slots.h \
     $(CONFIG)\inc\ejsCustomize.h
-	-if exist $(CONFIG)\inc\ejs.h del /Q $(CONFIG)\inc\ejs.h
-	copy /Y src\ejs.h $(CONFIG)\inc\ejs.h
+	if not exist "windows-x86-default\inc" md "windows-x86-default\inc"
+	copy /Y "src\ejs.h" "windows-x86-default\inc\ejs.h"
 
 $(CONFIG)\inc\ejsCompiler.h: 
-	-if exist $(CONFIG)\inc\ejsCompiler.h del /Q $(CONFIG)\inc\ejsCompiler.h
-	copy /Y src\ejsCompiler.h $(CONFIG)\inc\ejsCompiler.h
+	if not exist "windows-x86-default\inc" md "windows-x86-default\inc"
+	copy /Y "src\ejsCompiler.h" "windows-x86-default\inc\ejsCompiler.h"
 
 $(CONFIG)\obj\ecAst.obj: \
     src\compiler\ecAst.c\
@@ -884,6 +895,8 @@ $(CONFIG)\bin\ejsc.exe: \
     $(CONFIG)\obj\ejsc.obj
 	"$(LD)" -out:$(CONFIG)\bin\ejsc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsc.obj libejs.lib $(LIBS) libhttp.lib libpcre.lib libmpr.lib
 
+src\cmd\ejsmod.h: 
+
 $(CONFIG)\obj\ejsmod.obj: \
     src\cmd\ejsmod.c\
     $(CONFIG)\inc\bit.h \
@@ -1015,8 +1028,8 @@ $(CONFIG)\bin\ejs.web.mod: \
 	cd ..\..\..
 
 $(CONFIG)\inc\ejsWeb.h: 
-	-if exist $(CONFIG)\inc\ejsWeb.h del /Q $(CONFIG)\inc\ejsWeb.h
-	copy /Y src\jems\ejs.web\ejsWeb.h $(CONFIG)\inc\ejsWeb.h
+	if not exist "windows-x86-default\inc" md "windows-x86-default\inc"
+	copy /Y "src\jems\ejs.web\ejsWeb.h" "windows-x86-default\inc\ejsWeb.h"
 
 $(CONFIG)\obj\ejsHttpServer.obj: \
     src\jems\ejs.web\ejsHttpServer.c\
@@ -1145,27 +1158,65 @@ $(CONFIG)\bin\utest.exe: \
     $(CONFIG)\obj\ejsrun.obj
 	"$(LD)" -out:$(CONFIG)\bin\utest.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj libejs.lib $(LIBS) libhttp.lib libpcre.lib libmpr.lib
 
-$(CONFIG)\obj\removeFiles.obj: \
-    package\windows\removeFiles.c\
-    $(CONFIG)\inc\bit.h
-	"$(CC)" -c -Fo$(CONFIG)\obj\removeFiles.obj -Fd$(CONFIG)\obj\removeFiles.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) package\windows\removeFiles.c
-
-$(CONFIG)\bin\removeFiles.exe: \
-    $(CONFIG)\obj\removeFiles.obj
-	"$(LD)" -out:$(CONFIG)\bin\removeFiles.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\removeFiles.obj $(LIBS)
-
 version: 
 	@echo 2.3.0-1
 
-deploy: compile
-	xcopy /I /S /Y /Q $(CONFIG)\bin "$(BIT_VAPP_PREFIX)\bin"
-	del /Q "$(BIT_VAPP_PREFIX)\bin\*.pdb"
-	del /Q "$(BIT_VAPP_PREFIX)\bin\*.exp"
-	del /Q "$(BIT_VAPP_PREFIX)\bin\*.lib"
-
-install: compile deploy
+stop: 
 
 
-uninstall: 
-	if exist "$(BIT_APP_PREFIX)" rd /Q /S "$(BIT_APP_PREFIX)"
+installBinary: stop
+	if not exist "C:" md "C:"
+	if not exist "C:\Program Files\Embedthis Ejscript" md "C:\Program Files\Embedthis Ejscript"
+	if not exist "C:\Program Files\Embedthis Ejscript" md "C:\Program Files\Embedthis Ejscript"
+	if not exist "C:\Program Files\Embedthis Ejscript\bin" md "C:\Program Files\Embedthis Ejscript\bin"
+	if not exist "C:\Program Files\Embedthis Ejscript\inc" md "C:\Program Files\Embedthis Ejscript\inc"
+	if not exist "C:\Program Files\Embedthis Ejscript\man" md "C:\Program Files\Embedthis Ejscript\man"
+	if not exist "C:\Program Files\Embedthis Ejscript\bin" md "C:\Program Files\Embedthis Ejscript\bin"
+	if not exist "C:\Program Files\Embedthis Ejscript\bin\www" md "C:\Program Files\Embedthis Ejscript\bin\www"
+	if not exist "C:\Program Files\Embedthis Ejscript\bin\www\images" md "C:\Program Files\Embedthis Ejscript\bin\www\images"
+	copy /Y "src\jems\ejs.web\www\images\banner.jpg" "C:\Program Files\Embedthis Ejscript\bin\www\images\banner.jpg"
+	copy /Y "src\jems\ejs.web\www\images\favicon.ico" "C:\Program Files\Embedthis Ejscript\bin\www\images\favicon.ico"
+	copy /Y "src\jems\ejs.web\www\images\splash.jpg" "C:\Program Files\Embedthis Ejscript\bin\www\images\splash.jpg"
+	if not exist "C:\Program Files\Embedthis Ejscript\bin\www\js" md "C:\Program Files\Embedthis Ejscript\bin\www\js"
+	copy /Y "src\jems\ejs.web\www\js\jquery.ejs.min.js" "C:\Program Files\Embedthis Ejscript\bin\www\js\jquery.ejs.min.js"
+	copy /Y "src\jems\ejs.web\www\js\jquery.min.js" "C:\Program Files\Embedthis Ejscript\bin\www\js\jquery.min.js"
+	copy /Y "src\jems\ejs.web\www\js\jquery.simplemodal.min.js" "C:\Program Files\Embedthis Ejscript\bin\www\js\jquery.simplemodal.min.js"
+	copy /Y "src\jems\ejs.web\www\js\jquery.tablesorter.js" "C:\Program Files\Embedthis Ejscript\bin\www\js\jquery.tablesorter.js"
+	copy /Y "src\jems\ejs.web\www\js\jquery.tablesorter.min.js" "C:\Program Files\Embedthis Ejscript\bin\www\js\jquery.tablesorter.min.js"
+	copy /Y "src\jems\ejs.web\www\js\jquery.treeview.min.js" "C:\Program Files\Embedthis Ejscript\bin\www\js\jquery.treeview.min.js"
+	if not exist "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images" md "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\file.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\file.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\folder-closed.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\folder-closed.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\folder.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\folder.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\minus.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\minus.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\plus.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\plus.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-black-line.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\treeview-black-line.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-black.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\treeview-black.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-default-line.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\treeview-default-line.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-default.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\treeview-default.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-famfamfam-line.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\treeview-famfamfam-line.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-famfamfam.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\treeview-famfamfam.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-gray-line.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\treeview-gray-line.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-gray.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\treeview-gray.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-red-line.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\treeview-red-line.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-red.gif" "C:\Program Files\Embedthis Ejscript\bin\www\js\tree-images\treeview-red.gif"
+	copy /Y "src\jems\ejs.web\www\js\treeview.css" "C:\Program Files\Embedthis Ejscript\bin\www\js\treeview.css"
+	copy /Y "src\jems\ejs.web\www\layout.css" "C:\Program Files\Embedthis Ejscript\bin\www\layout.css"
+	if not exist "C:\Program Files\Embedthis Ejscript\bin\www\themes" md "C:\Program Files\Embedthis Ejscript\bin\www\themes"
+	copy /Y "src\jems\ejs.web\www\themes\default.css" "C:\Program Files\Embedthis Ejscript\bin\www\themes\default.css"
+
+
+start: 
+
+
+install: stop installBinary start
+
+
+uninstall: stop
+	if exist "C:\Program Files\Embedthis Ejscript" rd /Q "C:\Program Files\Embedthis Ejscript"
+	if exist "C:\Program Files\Embedthis Ejscript" rd /Q "C:\Program Files\Embedthis Ejscript"
+	if exist "C:\Program Files\Embedthis Ejscript\bin" rd /Q "C:\Program Files\Embedthis Ejscript\bin"
+	if exist "C:\Program Files\Embedthis Ejscript\inc" rd /Q "C:\Program Files\Embedthis Ejscript\inc"
+	if exist "C:\Program Files\Embedthis Ejscript\man" rd /Q "C:\Program Files\Embedthis Ejscript\man"
+
 

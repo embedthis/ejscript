@@ -211,10 +211,10 @@
     #define BIT_SPOOL_PREFIX "/var/spool/ejs"
 #endif
 #ifndef BIT_CACHE_PREFIX
-    #define BIT_CACHE_PREFIX "/var/cache/ejs"
+    #define BIT_CACHE_PREFIX "/var/spool/ejs/cache"
 #endif
 #ifndef BIT_SRC_PREFIX
-    #define BIT_SRC_PREFIX "/usr/local/src/ejs-2.3.0"
+    #define BIT_SRC_PREFIX "ejs-2.3.0"
 #endif
 
 /* Suffixes */
@@ -310,28 +310,4 @@
 #endif
 #ifndef BIT_PACK_ZLIB
     #define BIT_PACK_ZLIB 1
-#endif
-#ifndef BIT_PACK_COMPILER_PATH
-    #define BIT_PACK_COMPILER_PATH "/usr/bin/gcc"
-#endif
-#ifndef BIT_PACK_EST_PATH
-    #define BIT_PACK_EST_PATH "/Users/mob/git/ejs/src/deps/est"
-#endif
-#ifndef BIT_PACK_LIB_PATH
-    #define BIT_PACK_LIB_PATH "/usr/bin/ar"
-#endif
-#ifndef BIT_PACK_LINK_PATH
-    #define BIT_PACK_LINK_PATH "/usr/bin/ld"
-#endif
-#ifndef BIT_PACK_PCRE_PATH
-    #define BIT_PACK_PCRE_PATH "/Users/mob/git/ejs/src/deps/pcre"
-#endif
-#ifndef BIT_PACK_SQLITE_PATH
-    #define BIT_PACK_SQLITE_PATH "/Users/mob/git/ejs/src/deps/sqlite"
-#endif
-#ifndef BIT_PACK_ZIP_PATH
-    #define BIT_PACK_ZIP_PATH "/usr/bin/zip"
-#endif
-#ifndef BIT_PACK_ZLIB_PATH
-    #define BIT_PACK_ZLIB_PATH "/Users/mob/git/ejs/src/deps/zlib"
 #endif
