@@ -178,3 +178,5 @@ TempWmic*
 projects/ipch
 /*-*-*/
 .flags
+ejs.old
+package.old
