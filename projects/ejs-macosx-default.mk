@@ -1130,6 +1130,9 @@ stop:
 	
 
 installBinary: stop
+	rm -f "$(BIT_APP_PREFIX)/latest"
+	mkdir -p "$(BIT_APP_PREFIX)"
+	ln -s "2.3.0" "$(BIT_APP_PREFIX)/latest"
 	mkdir -p "$(BIT_VAPP_PREFIX)/bin/www/images"
 	cp "src/jems/ejs.web/www/images/banner.jpg" "$(BIT_VAPP_PREFIX)/bin/www/images/banner.jpg"
 	cp "src/jems/ejs.web/www/images/favicon.ico" "$(BIT_VAPP_PREFIX)/bin/www/images/favicon.ico"
@@ -1162,9 +1165,6 @@ installBinary: stop
 	cp "src/jems/ejs.web/www/layout.css" "$(BIT_VAPP_PREFIX)/bin/www/layout.css"
 	mkdir -p "$(BIT_VAPP_PREFIX)/bin/www/themes"
 	cp "src/jems/ejs.web/www/themes/default.css" "$(BIT_VAPP_PREFIX)/bin/www/themes/default.css"
-	rm -f "$(BIT_APP_PREFIX)/latest"
-	mkdir -p "$(BIT_APP_PREFIX)"
-	ln -s "2.3.0" "$(BIT_APP_PREFIX)/latest"
 
 
 start: 
@@ -1176,5 +1176,7 @@ install: stop installBinary start
 uninstall: stop
 	rmdir -p "$(BIT_APP_PREFIX)"
 	rmdir -p "$(BIT_VAPP_PREFIX)"
+	rmdir -p "$(BIT_VAPP_PREFIX)"
+	rmdir -p "$(BIT_APP_PREFIX)"
 
 
