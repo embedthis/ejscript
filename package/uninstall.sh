@@ -28,7 +28,7 @@
 #
 ################################################################################
 #
-#	NOTE: We require a saved setup file exist in ${VER_PREFIX}/install.conf
+#	NOTE: We require a saved setup file exist in ${VAPP_PREFIX}/install.conf
 #	This is created by install.
 #
 
@@ -44,12 +44,11 @@ OS="${platform.os}"
 CPU="${platform.arch}"
 
 BIN_PREFIX="${prefixes.bin}"
-CFG_PREFIX="${prefixes.config}"
 INC_PREFIX="${prefixes.inc}"
-PRD_PREFIX="${prefixes.product}"
-SPL_PREFIX="${prefixes.spool}"
-VER_PREFIX="${prefixes.productver}"
-WEB_PREFIX="${prefixes.web}"
+APP_PREFIX="${prefixes.app}"
+VAPP_PREFIX="${prefixes.vapp}"
+ABIN="${VAPP_PREFIX}/bin"
+AINC="${VAPP_PREFIX}/inc"
 
 removebin=Y
 
@@ -116,9 +115,9 @@ removeTarFiles() {
     local cdir=`pwd`
 
     pkg=$1
-    [ $pkg = bin ] && prefix="$VER_PREFIX"
+    [ $pkg = bin ] && prefix="$VAPP_PREFIX"
     if [ -f "$prefix/files.log" ] ; then
-        if [ $OS = WIN ] ; then
+        if [ $OS = windows ] ; then
             cd ${prefix%%:*}:/
         else
             cd /
@@ -133,32 +132,14 @@ preClean() {
 	local f
 	local cdir=`pwd`
 
-    cp "$BIN_PREFIX/linkup" /tmp/linkup$$
-
-	if [ $OS != WIN ] ; then
+	if [ $OS != windows ] ; then
         rm -f /var/lock/subsys/$PRODUCT /var/lock/$PRODUCT
         rm -fr /var/log/$PRODUCT
         rm -rf /var/run/$PRODUCT
     fi
-    if [ -x "$PRD_PREFIX" ] ; then
-        cd "$PRD_PREFIX"
+    if [ -x "$APP_PREFIX" ] ; then
+        cd "$APP_PREFIX"
         removeIntermediateFiles *.dylib *.dll *.exp *.lib
-    fi
-    if [ -x "$CFG_PREFIX" ] ; then
-        cd "$CFG_PREFIX"
-        removeIntermediateFiles access.log* error.log* '*.log.old' .dummy $PRODUCT.conf make.log $PRODUCT.conf.bak
-    fi
-    if [ -x "$WEB_PREFIX" ] ; then
-        cd "$WEB_PREFIX"
-        removeIntermediateFiles *.mod 
-    fi
-    if [ -x "$SPL_PREFIX" ] ; then
-        cd "$SPL_PREFIX"
-        removeIntermediateFiles *.mod *.c *.dll *.exp *.lib *.obj *.o *.dylib *.so
-    fi
-    if [ -d "$INC_PREFIX" ] ; then
-        cd "$INC_PREFIX"
-        removeIntermediateFiles '*.o' '*.lo' '*.so' '*.a' make.rules .config.h.sav make.log .changes
     fi
     cd "$cdir"
 }
@@ -166,17 +147,13 @@ preClean() {
 postClean() {
     local cdir=`pwd`
 
-    rm -f "${VER_PREFIX}/install.conf"
+    rm -f "${VAPP_PREFIX}/install.conf"
 
     cleanDir "${BIN_PREFIX}"
-    cleanDir "${INC_PREFIX}"
-    cleanDir "${DOC_PREFIX}"
-    cleanDir "${PRD_PREFIX}"
-    cleanDir "${CFG_PREFIX}"
-    cleanDir "${WEB_PREFIX}"
-    cleanDir "${SPL_PREFIX}"
+    cleanDir "${APP_PREFIX}"
+    cleanDir "${CACHE_PREFIX}"
 
-    if [ $OS != WIN ] ; then
+    if [ $OS != windows ] ; then
         if [ -x /usr/share/$PRODUCT ] ; then
             cleanDir /usr/share/$PRODUCT
         fi
@@ -184,17 +161,14 @@ postClean() {
             cleanDir /var/$PRODUCT
         fi
         rmdir /usr/share/${PRODUCT} >/dev/null 2>&1
-        for p in MAN INC DOC PRD CFG LIB WEB SPL ; do
+        for p in APP VAPP; do
             eval rmdir "\$${p}_PREFIX" >/dev/null 2>&1
         done
     fi
-    cleanDir "${VER_PREFIX}"
-    rm -f "${PRD_PREFIX}/latest"
-    cleanDir "${PRD_PREFIX}"
-    if [ -x /tmp/linkup$$ ] ; then
-        /tmp/linkup$$ Remove /
-        rm -f /tmp/linkup$$
-    fi
+    cleanDir "${VAPP_PREFIX}"
+    rm -f "${APP_PREFIX}/latest"
+    cleanDir "${APP_PREFIX}"
+    cleanDir "${INC_PREFIX}/${PRODUCT}"
 }
 
 removeFileList() {
@@ -249,7 +223,7 @@ removeIntermediateFiles() {
 
 
 setup() {
-    if [ `id -u` != "0" -a $OS != WIN ] ; then
+    if [ `id -u` != "0" -a $OS != windows ] ; then
 		echo "You must be root to remove this product."
 		exit 255
 	fi
@@ -271,11 +245,10 @@ setup() {
 	#
 	#	Get defaults from the installation configuration file
 	#
-    if [ -f ${VER_PREFIX}/install.conf ] ; then
-		.  ${VER_PREFIX}/install.conf
+    if [ -f ${VAPP_PREFIX}/install.conf ] ; then
+		.  ${VAPP_PREFIX}/install.conf
 	fi
-	
-	binDir=${binDir:-$VER_PREFIX}
+	binDir=${binDir:-$VAPP_PREFIX}
 
 	echo -e "\n$NAME ${VERSION}-${NUMBER} Removal\n"
 }

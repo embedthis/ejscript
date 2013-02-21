@@ -32,13 +32,13 @@ Embedthis Ejscript is an enhanced, embeddable implementation of JavaScript
 if [ -x /usr/bin/chcon ] ; then 
 	sestatus | grep enabled >/dev/null 2>&1
 	if [ $? = 0 ] ; then
-		for f in ${prefixes.lib}/*.so ; do
+		for f in ${prefixes.vapp}/bin/*.so ; do
 			chcon /usr/bin/chcon -t texrel_shlib_t $f
 		done
 	fi
 fi
 ${prefixes.bin}/linkup Install /
-ldconfig -n ${prefixes.lib}
+ldconfig -n ${prefixes.vapp}/bin/bin/bin/bin
 
 %preun
 rm -f ${prefixes.product}/latest

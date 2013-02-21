@@ -12,7 +12,7 @@ Bit.load({
             install: {
                 inherit:    'embedthis-manifest',
                 prefixes:   [ 'root', 'app', 'vapp', 'bin', 'inc', 'man' ],
-                sets:       [ 'core' ],
+                sets:       [ 'core', 'dev', 'doc' ],
                 platforms:  [ 'windows', 'posix' ],
             },
             binary: {
@@ -84,6 +84,15 @@ Bit.load({
                 to:         '${abin}/',
                 set:        'core',
 
+            },{ from:        [
+                    /* Don't use wild-cards for cross-generation  */
+                    '${BIN}/libejs${SHLIB}',
+                ],
+                to:         '${abin}/',
+                set:        'core',
+                enable:     "bit.platform.os == 'windows'",
+
+
             },{
                 from:       'src/jems/ejs.web/www',
                 to:         '${abin}/',
@@ -91,14 +100,13 @@ Bit.load({
 
             },{
                 from:       '${INC}/*.h',
-                to:         '${app}/inc/',
+                to:         '${vapp}/inc/',
                 set:        'dev',
                 linkin:     '${inc}/ejs/',
 
             },{
                 from:       'doc/man/*.1',
                 to:         '${adoc}/man1/',
-                compress:   true,
                 set:        'doc',
                 enable:     "bit.platform.like == 'posix'",
                 linkin:     '${man}/man1',

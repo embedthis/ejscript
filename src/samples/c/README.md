@@ -3,6 +3,8 @@ Ejscript C samples
 
 Samples:
 ---
+    function   - Simple way to define a global funcion
+
     composite  - Composite native class. This is a native class where instance state is stored as a composite
                  C structure. Offers the most optimized memory storage for classes. Ideal for if you have very large
                  numbers of object instances or types with lots of properties. See also the native sample.

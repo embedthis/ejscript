@@ -28,23 +28,24 @@ CPU="${platform.arch}"
 DIST="${platform.dist}"
 
 BIN_PREFIX="${prefixes.bin}"
-CFG_PREFIX="${prefixes.config}"
 INC_PREFIX="${prefixes.inc}"
-PRD_PREFIX="${prefixes.productver}"
-VER_PREFIX="${prefixes.productver}"
-WEB_PREFIX="${prefixes.web}"
+APP_PREFIX="${prefixes.app}"
+VAPP_PREFIX="${prefixes.vapp}"
+ABIN="${VAPP_PREFIX}/bin"
+AINC="${VAPP_PREFIX}/in"
 
 installbin=Y
 headless=${HEADLESS:-0}
 
 PATH=$PATH:/sbin:/usr/sbin
+unset CDPATH
 export CYGWIN=nodosfilewarning
 
 ###############################################################################
 
 setup() {
     umask 022
-    if [ $OS != WIN -a `id -u` != "0" ] ; then
+    if [ $OS != windows -a `id -u` != "0" ] ; then
         echo "You must be root to install this product."
         exit 255
     fi
@@ -172,14 +173,14 @@ ask() {
 saveSetup() {
     local firstChar
 
-    mkdir -p "$VER_PREFIX"
-    echo -e "FMT=$FMT\nbinDir=$VER_PREFIX\ninstallbin=$installbin\n" >"${VER_PREFIX}/install.conf"
+    mkdir -p "$VAPP_PREFIX"
+    echo -e "FMT=$FMT\nbinDir=$VAPP_PREFIX\ninstallbin=$installbin\n" >"${VAPP_PREFIX}/install.conf"
 }
 
 installFiles() {
     local dir pkg doins NAME upper target
 
-    [ "$headless" != 1 ] && echo -e "\nExtracting files ...\n"
+    [ "$headless" != 1 ] && echo -e "\nExtracting files ..."
 
     for pkg in bin ; do
         doins=`eval echo \\$install${pkg}`
@@ -198,44 +199,25 @@ installFiles() {
                 dpkg -i $HOME/$NAME >/dev/null
             elif [ "$FMT" = "tar" ] ; then
                 target=/
-                [ $OS = WIN ] && target=`cygpath ${HOMEDRIVE}/`
-                [ "$headless" != 1 ] && echo cp -rp contents/* $target
-                cp -rp contents/* $target
-
-                cd contents >/dev/null
-                find . -type f >"$VER_PREFIX/files.log"
-                cd - >/dev/null
+                [ $OS = windows ] && target=`cygpath ${HOMEDRIVE}/`
+                (cd contents ; tar cf - . | (cd $target && tar xBf -))
             fi
         fi
     done
 
     if [ -f /etc/redhat-release -a -x /usr/bin/chcon ] ; then 
         if sestatus | grep enabled >/dev/nulll ; then
-            for f in $BIN_PREFIX/*.so ; do
+            for f in $ABIN/*.so ; do
                 chcon /usr/bin/chcon -t texrel_shlib_t $f 2>&1 >/dev/null
             done
         fi
     fi
-
-    if [ "$OS" = "FREEBSD" ] ; then
-        LDCONFIG_OPT=-m
-    else
-        LDCONFIG_OPT=-n
-    fi
-    if which ldconfig >/dev/null 2>&1 ; then
-        ldconfig /usr/lib/lib${PRODUCT}.so.?.?.?
-        ldconfig $LDCONFIG_OPT /usr/lib/${PRODUCT}
-        ldconfig $LDCONFIG_OPT /usr/lib/${PRODUCT}/modules
-    fi
-    "$BIN_PREFIX/linkup" Install /
-
-    if [ $OS = WIN ] ; then
+    if [ $OS = windows ] ; then
         [ "$headless" != 1 ] && echo -e "\nSetting file permissions ..."
-        find "$PRD_PREFIX" -type d -exec chmod 755 {} \;
-        find "$PRD_PREFIX" -type f -exec chmod g+r,o+r {} \;
-        chmod 755 "$BIN_PREFIX"/*.dll "$BIN_PREFIX"/*.exe
+        find "$APP_PREFIX" -type d -exec chmod 755 {} \;
+        find "$APP_PREFIX" -type f -exec chmod g+r,o+r {} \;
+        chmod 755 "$ABIN"/*.dll "$ABIN"/*.exe
     fi
-    [ "$headless" != 1 ] && echo
 }
 
 #
@@ -256,10 +238,7 @@ legacyPrep() {
     rm -f /usr/bin/ejssql
     rm -f /usr/bin/ejsvm
     rm -f /usr/bin/ejsweb
-    rm -f /usr/lib/ejs/ejs.mod
-    rm -f /usr/lib/ejs/ejs.db.mod
-    rm -f /usr/lib/ejs/ejs.web.mod
-    rm -f /usr/lib/ejs/ejsweb.mod
+    rm -fr /usr/lib/ejs
 }
 
 removeOld() {
@@ -277,6 +256,14 @@ removeOld() {
             HEADLESS=1 /usr/lib/ejs/bin/$version/uninstall </dev/null 2>&1 >/dev/null
         fi
     fi
+    rm -f "${APP_PREFIX}/latest"
+    rm -fr "${VAPP_PREFIX}"
+    rm -fr "${INC_PREFIX}/${PRODUCT}"
+    for n in ejs ejsc ejsman ejsmod ejsrun jem mvc utest
+    do
+        rm -f "${BIN_PREFIX}/$n"
+    done
+    rm -fr "${BIN_PREFIX}/"
 }
 
 ###############################################################################
