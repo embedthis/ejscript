@@ -1251,13 +1251,11 @@ install: stop installBinary start
 
 
 uninstall: stop
-	if exist "$(BIT_VAPP_PREFIX)" rd /Q "$(BIT_VAPP_PREFIX)"
-	if exist "$(BIT_VAPP_PREFIX)" rd /Q "$(BIT_VAPP_PREFIX)"
+	if exist "$(BIT_VAPP_PREFIX)" rd /Q /S"$(BIT_VAPP_PREFIX)"
 	if exist "$(BIT_VAPP_PREFIX)\bin" rd /Q "$(BIT_VAPP_PREFIX)\bin"
 	if exist "$(BIT_VAPP_PREFIX)\inc" rd /Q "$(BIT_VAPP_PREFIX)\inc"
 	if exist "$(BIT_VAPP_PREFIX)\man" rd /Q "$(BIT_VAPP_PREFIX)\man"
+	if exist "$(BIT_VAPP_PREFIX)\latest" rd /Q "$(BIT_VAPP_PREFIX)\latest"
 	if exist "$(BIT_VAPP_PREFIX)" rd /Q "$(BIT_VAPP_PREFIX)"
-	if exist "$(BIT_VAPP_PREFIX)" rd /Q "$(BIT_VAPP_PREFIX)"
-	if exist "$(BIT_VAPP_PREFIX)\inc\ejs" rd /Q /S"$(BIT_VAPP_PREFIX)\inc\ejs"
 
 
