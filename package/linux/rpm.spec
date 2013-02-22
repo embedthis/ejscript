@@ -1,7 +1,7 @@
 #
 #	RPM spec file for ${settings.title}
 #
-Summary: ${settings.title} -- Embeddable JavaScript
+Summary: ${settings.title} -- Embeddable Javascript
 Name: ${settings.product}
 Version: ${settings.version}
 Release: ${settings.buildNumber}
@@ -10,19 +10,19 @@ Group: Development/Other
 URL: http://ejscript.org
 Distribution: Embedthis
 Vendor: Embedthis Software
-BuildRoot: ${dir.rpm}/BUILDROOT/${settings.product}-${settings.version}-${settings.buildNumber}.${platform.mappedCpu}
+BuildRoot: ${prefixes.rpm}/BUILDROOT/${settings.product}-${settings.version}-${settings.buildNumber}.${platform.mappedCpu}
 AutoReqProv: no
 
 %description
-Embedthis Ejscript is an enhanced, embeddable implementation of JavaScript
+Embedthis Ejscript is an enhanced, embeddable implementation of Javascript
 
 %prep
 
 %build
 
 %install
-    mkdir -p ${dir.rpm}/BUILDROOT/${settings.product}-${settings.version}-${settings.buildNumber}.${platform.mappedCpu}
-    cp -r ${dir.contents}/* ${dir.rpm}/BUILDROOT/${settings.product}-${settings.version}-${settings.buildNumber}.${platform.mappedCpu}
+    mkdir -p ${prefixes.rpm}/BUILDROOT/${settings.product}-${settings.version}-${settings.buildNumber}.${platform.mappedCpu}
+    cp -r ${prefixes.content}/* ${prefixes.rpm}/BUILDROOT/${settings.product}-${settings.version}-${settings.buildNumber}.${platform.mappedCpu}
 
 %clean
 
@@ -37,12 +37,10 @@ if [ -x /usr/bin/chcon ] ; then
 		done
 	fi
 fi
-${prefixes.bin}/linkup Install /
-ldconfig -n ${prefixes.vapp}/bin/bin/bin/bin
+ldconfig -n ${prefixes.vapp}/bin
 
 %preun
-rm -f ${prefixes.product}/latest
-${prefixes.bin}/linkup Remove /
+rm -f ${prefixes.app}/latest
 
 %postun
 
