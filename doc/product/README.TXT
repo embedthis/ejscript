@@ -1,7 +1,6 @@
 Embedthis Ejscript(TM)
 
-Welcome to the Embedthis Ejscript distribution. Ejscript is a powerful server-side JavaScript framework for web
-applications. It includes an enhanced implementation of the JavaScript language, supports ECMAScript Edition 3, and adds enhancments for classes, modules and an extensive system library and powerful web framework.
+Welcome to the Embedthis Ejscript distribution. Ejscript is a powerful server-side JavaScript framework for web applications. It includes an enhanced implementation of the JavaScript language, supports ECMAScript Edition 3, and adds enhancments for classes, modules and an extensive system library and powerful web framework.  
 
 This document describes the installation procedure for the binary Ejscript package. This package contains pre-built language tools including an interpreter, compiler, vm, documentation generator and assembler listing program as well as the development libraries and headers needed to embed Ejscript in an application. 
 
@@ -29,14 +28,13 @@ System Requirements
 Operating System Support
 
     * Windows XP, Vista, Windows-7 (x86,x64)
-    * Mac OS X 10.4, 10.5 (ppc,x86,x64)
+    * Mac OS X 10.6+ (x64)
     * Linux 2.4, 2.6 (x86,x64,arm,ppc,sparc,xscale,mips)
     * VxWorks (x86,arm,ppc,sparc,xscale,mips)
-    * Solaris (sparc,x86,x64)
 
 To install Ejscript, your system will need at least the following:
 
-    * 50 MB Disk
+    * 20 MB Disk
     * 1 GB RAM
 
 To deploy Ejscript in an embedded environment, you will need at least the following:
@@ -46,7 +44,7 @@ To deploy Ejscript in an embedded environment, you will need at least the follow
 
 To rebuild Ejscript from source code, you will need at least:
 
-    * 80 MB disk space
+    * 100 MB disk space
 
 
 Installation Package Formats
