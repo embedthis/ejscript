@@ -27,10 +27,6 @@
 #	from Embedthis Software at http://www.embedthis.com
 #
 ################################################################################
-#
-#	NOTE: We require a saved setup file exist in ${VAPP_PREFIX}/install.conf
-#	This is created by install.
-#
 
 HOME=`pwd`
 FMT=
@@ -147,8 +143,6 @@ preClean() {
 postClean() {
     local cdir=`pwd`
 
-    rm -f "${VAPP_PREFIX}/install.conf"
-
     cleanDir "${BIN_PREFIX}"
     cleanDir "${APP_PREFIX}"
     cleanDir "${CACHE_PREFIX}"
@@ -227,7 +221,6 @@ setup() {
 		echo "You must be root to remove this product."
 		exit 255
 	fi
-	
 	#
 	#	Headless removal. Expect an argument that supplies a config file.
 	#
@@ -241,15 +234,7 @@ setup() {
 		fi
 		exit 0
 	fi
-	
-	#
-	#	Get defaults from the installation configuration file
-	#
-    if [ -f ${VAPP_PREFIX}/install.conf ] ; then
-		.  ${VAPP_PREFIX}/install.conf
-	fi
 	binDir=${binDir:-$VAPP_PREFIX}
-
 	echo -e "\n$NAME ${VERSION}-${NUMBER} Removal\n"
 }
 
