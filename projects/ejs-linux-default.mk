@@ -1916,6 +1916,8 @@ stop: $(DEPS_144)
 DEPS_145 += stop
 
 installBinary: $(DEPS_145)
+	mkdir -p "$(BIT_APP_PREFIX)"
+	mkdir -p "$(BIT_VAPP_PREFIX)"
 	rm -f "$(BIT_APP_PREFIX)/latest"
 	mkdir -p "$(BIT_APP_PREFIX)"
 	ln -s "2.3.0" "$(BIT_APP_PREFIX)/latest"
