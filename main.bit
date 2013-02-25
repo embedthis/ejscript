@@ -28,7 +28,7 @@ Bit.load({
         'src/jems/ejs.tar/tar.bit',
         'src/jems/ejs.mvc/mvc.bit',
         'src/jems/ejs.utest/utest.bit',
-        'package/manifest.bit',
+        'package/package.bit',
         'doc/doc.bit',
     ],
 
@@ -156,6 +156,7 @@ Bit.load({
     },
 
     packs: {
+        ejscript: {enable: true},
         est: {},
         matrixssl: {},
         openssl: {},

@@ -8,6 +8,8 @@
 
 #include    "ejsmod.h"
 
+#if BIT_PACK_EJSCRIPT
+
 /****************************** Forward Declarations **************************/
 
 static void getDepends(Ejs *ejs, MprList *list, EjsModule *mp);
@@ -314,6 +316,15 @@ static void getDepends(Ejs *ejs, MprList *list, EjsModule *mp)
     }
 }
 
+#else
+
+MAIN(ejsMain, int argc, char **argv, char **envp)
+{
+    printf("Ejscript not enabled\n");
+    return 255;
+}
+
+#endif /* BIT_PACK_EJSCRIPT */
 /*
     @copy   default
 

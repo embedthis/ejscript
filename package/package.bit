@@ -159,7 +159,8 @@ Bit.load({
                 to:         '${src}/src/deps/ejs/ejs.h',
                 cat:        true, 
                 filter:     /^#inc.*ejs.*$|^#inc.*ec.*$|^#inc.*customize.*$|#include.*zlib.h.*$|#inc.*ejs.zlib.slots.h.*/mg,
-                header:     '#include \"bit.h\"\n#include \"bitos.h\"\n#include \"mpr.h\"\n#include \"http.h\"\n#include \"ejs.slots.h\"',
+                header:     '#include \"bit.h\"\n#\n#if BIT_PACK_EJSCRIPT\n\n#include \"bitos.h\"\n#include \"mpr.h\"\n#include \"http.h\"\n#include \"ejs.slots.h\"',
+                footer:     '#endif /* BIT_PACK_EJSCRIPT */',
                 title:      '${settings.title} Library Source',
                 set:        'combo',
 
@@ -187,7 +188,8 @@ Bit.load({
                 cat:        true,                                                                                         
                 filter:     /^#inc.*ejs.*$|^#inc.*ec.*$|^#inc.*customize.*$|#include.*zlib.h.*$|#inc.*ejs.zlib.slots.h.*/mg,
                 exclude:    /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|\/mpr|\/http|\/est|\/pcre|\/sqlite|ejs.debugger|samples|utils|ejsrun\.c/,                                                                         
-                header:     '#define EJS_DEFINE_OPTABLE 1\n#include \"ejs.h\"',                                        
+                header:     '#define EJS_DEFINE_OPTABLE 1\n#include \"ejs.h\"\n\n#if BIT_PACK_EJSCRIPT',
+                footer:     '#endif /* BIT_PACK_EJSCRIPT */',
                 title:      '${settings.title} Library Source',
                 set:        'combo',
 

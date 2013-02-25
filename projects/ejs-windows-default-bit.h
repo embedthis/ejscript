@@ -254,6 +254,9 @@
 #ifndef BIT_PACK_DUMPBIN
     #define BIT_PACK_DUMPBIN 0
 #endif
+#ifndef BIT_PACK_EJSCRIPT
+    #define BIT_PACK_EJSCRIPT 1
+#endif
 #ifndef BIT_PACK_EST
     #define BIT_PACK_EST 1
 #endif

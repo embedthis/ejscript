@@ -272,6 +272,9 @@
 #ifndef BIT_PACK_DSI
     #define BIT_PACK_DSI 0
 #endif
+#ifndef BIT_PACK_EJSCRIPT
+    #define BIT_PACK_EJSCRIPT 1
+#endif
 #ifndef BIT_PACK_EST
     #define BIT_PACK_EST 1
 #endif
