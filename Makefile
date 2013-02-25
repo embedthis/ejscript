@@ -61,9 +61,9 @@ help:
 	@echo '  BIT_PACK_OPENSSL   # Enable the OpenSSL SSL stack' >&2
 	@echo '  BIT_PACK_SQLITE    # Enable the SQLite database' >&2
 	@echo '' >&2
-	@echo 'For example, to disable logging:' >&2
+	@echo 'For example, to disable EST:' >&2
 	@echo '' >&2
-	@echo '  make BIT_MPR_LOGGING=0' >&2
+	@echo '  BIT_PACK_EST=0 make' >&2
 	@echo '' >&2
 	@echo 'Other make variables:' >&2
 	@echo '  ARCH               # CPU architecture (x86, x64, ppc, ...)' >&2
@@ -80,3 +80,5 @@ help:
 	@echo '  LIBS               # Add linker libraries. For example: -lpthreads' >&2
 	@echo '  PROFILE            # Build profile, used in output products directory name' >&2
 	@echo '' >&2
+	@echo '' >&2
+	@echo 'Use "SHOW=1 make" to show executed commands.' >&2
