@@ -29,6 +29,7 @@ LDFLAGS         = -nologo -nodefaultlib -incremental:no -debug -machine:$(ARCH)
 LIBPATHS        = -libpath:$(CONFIG)\bin
 LIBS            = ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.lib msvcrt.lib shell32.lib
 
+BIT_PACK_EST          = 0
 BIT_PACK_SQLITE       = 1
 
 BIT_ROOT_PREFIX       = C:
@@ -1936,7 +1937,6 @@ installBinary: $(DEPS_145)
 	copy /Y "$(CONFIG)\bin\libejs.db.sqlite.dll" "$(BIT_VAPP_PREFIX)\bin\libejs.db.sqlite.dll"
 	copy /Y "$(CONFIG)\bin\libejs.web.dll" "$(BIT_VAPP_PREFIX)\bin\libejs.web.dll"
 	copy /Y "$(CONFIG)\bin\libejs.zlib.dll" "$(BIT_VAPP_PREFIX)\bin\libejs.zlib.dll"
-	copy /Y "$(CONFIG)\bin\libest.dll" "$(BIT_VAPP_PREFIX)\bin\libest.dll"
 	copy /Y "$(CONFIG)\bin\libhttp.dll" "$(BIT_VAPP_PREFIX)\bin\libhttp.dll"
 	copy /Y "$(CONFIG)\bin\libmpr.dll" "$(BIT_VAPP_PREFIX)\bin\libmpr.dll"
 	copy /Y "$(CONFIG)\bin\libmprSsl.dll" "$(BIT_VAPP_PREFIX)\bin\libmprSsl.dll"

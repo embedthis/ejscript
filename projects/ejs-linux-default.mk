@@ -31,6 +31,7 @@ CFLAGS          += $(CFLAGS-$(DEBUG))
 DFLAGS          += $(DFLAGS-$(DEBUG))
 LDFLAGS         += $(LDFLAGS-$(DEBUG))
 
+BIT_PACK_EST          := 0
 BIT_PACK_SQLITE       := 1
 
 BIT_ROOT_PREFIX       := 
@@ -1913,7 +1914,6 @@ installBinary: $(DEPS_143)
 	cp "$(CONFIG)/bin/libejs.db.sqlite.so" "$(BIT_VAPP_PREFIX)/bin/libejs.db.sqlite.so"
 	cp "$(CONFIG)/bin/libejs.web.so" "$(BIT_VAPP_PREFIX)/bin/libejs.web.so"
 	cp "$(CONFIG)/bin/libejs.zlib.so" "$(BIT_VAPP_PREFIX)/bin/libejs.zlib.so"
-	cp "$(CONFIG)/bin/libest.so" "$(BIT_VAPP_PREFIX)/bin/libest.so"
 	cp "$(CONFIG)/bin/libhttp.so" "$(BIT_VAPP_PREFIX)/bin/libhttp.so"
 	cp "$(CONFIG)/bin/libmpr.so" "$(BIT_VAPP_PREFIX)/bin/libmpr.so"
 	cp "$(CONFIG)/bin/libmprSsl.so" "$(BIT_VAPP_PREFIX)/bin/libmprSsl.so"

@@ -35,6 +35,7 @@ CFLAGS          += $(CFLAGS-$(DEBUG))
 DFLAGS          += $(DFLAGS-$(DEBUG))
 LDFLAGS         += $(LDFLAGS-$(DEBUG))
 
+BIT_PACK_EST          := 0
 BIT_PACK_SQLITE       := 1
 
 BIT_ROOT_PREFIX       := deploy

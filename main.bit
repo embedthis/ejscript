@@ -72,7 +72,7 @@ Bit.load({
         /*
             Packs to disable when using --without default (generating packages)
          */
-        'without-default': ['doxygen', 'dsi', 'est', 'man', 'man2html'],
+        'without-default': ['doxygen', 'dsi', 'man', 'man2html'],
 
         /*
             Set to true for a static (non-shared library) build                                            
@@ -153,6 +153,12 @@ Bit.load({
             See src/cmd/cmd.bit for building the language commands
             See package/package.bit for the install/package targets
          */
+    },
+
+    scripts: { 
+        /* Want est support included, but disabled */
+        pregenheader: "bit.packs.est.enable = 0", 
+        pregen: "bit.packs.est.enable = 0",
     },
 
     packs: {

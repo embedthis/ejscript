@@ -134,7 +134,7 @@
     #define BIT_WITHOUT_ALL "doxygen,dsi,est,man,man2html"
 #endif
 #ifndef BIT_WITHOUT_DEFAULT
-    #define BIT_WITHOUT_DEFAULT "doxygen,dsi,est,man,man2html"
+    #define BIT_WITHOUT_DEFAULT "doxygen,dsi,man,man2html"
 #endif
 
 /* Prefixes */
@@ -212,7 +212,7 @@
 
 /* Profile */
 #ifndef BIT_CONFIG_CMD
-    #define BIT_CONFIG_CMD "bit -d -q -platform windows-x86-default --without default -configure . -gen vs"
+    #define BIT_CONFIG_CMD "bit -d -q -platform windows-x86-default -configure . --without default -gen vs"
 #endif
 #ifndef BIT_EJS_PRODUCT
     #define BIT_EJS_PRODUCT 1
