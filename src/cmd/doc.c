@@ -1719,6 +1719,7 @@ static void prepText(wchar *str)
             }
             if (*cp == '\0') {
                 cp--;
+                break;
             }
         } else {
             *dp++ = *cp++;
@@ -1749,7 +1750,7 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
     doc->see = mprCreateList(0, 0);
     doc->throws = mprCreateList(0, 0);
 
-    str = mprMemdup(doc->docString->value, doc->docString->length);
+    str = wclone(doc->docString->value);
     if (str == NULL) {
         return doc;
     }
