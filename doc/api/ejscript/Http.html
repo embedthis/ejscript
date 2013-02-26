@@ -176,7 +176,8 @@ for which the issuer cannot be verified. This permits self-signed certificates t
 <h2 class='classSection'>Http Class Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <p>(No own class methods defined)</p></table>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#fetch'><b>fetch</b></a>(uri: <a href='Uri.html'>Uri</a>, method: <a href='String.html'>String</a> = GET, data: <a href='Array.html'>Array</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenience routine to fetch a URI and return the response.</td></tr>
+</table>
 
 <p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
 
@@ -188,18 +189,18 @@ for which the issuer cannot be verified. This permits self-signed certificates t
    <tr class='apiDef'><td class='apiType'></td><td><a href='#Http'><b>Http</b></a>(uri: <a href='Uri.html'>Uri</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create an Http object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#close'><b>close</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.This immediately closes any open network connection and resets the http object to be ready for another 
 connection.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#connect'><b>connect</b></a>(method: <a href='String.html'>String</a>, uri: <a href='Uri.html'>Uri</a> = null, data: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a HTTP request for the current method and uri.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#connect'><b>connect</b></a>(method: <a href='String.html'>String</a>, uri: <a href='Uri.html'>Uri</a> = null, data: <a href='Array.html'>Array</a>): <a href='Http.html'>Http</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a HTTP request for the current method and uri.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#finalize'><b>finalize</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Signals the end of any write data and flushes any buffered write data to the server.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#flush'><b>flush</b></a>(dir: <a href='Number.html'>Number</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.Flush request data.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#form'><b>form</b></a>(uri: <a href='Uri.html'>Uri</a>, data: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a POST request with www-url encoded key=value data.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#get'><b>get</b></a>(uri: <a href='Uri.html'>Uri</a> = null, data: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a GET request for the current uri.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#form'><b>form</b></a>(uri: <a href='Uri.html'>Uri</a>, data: <a href='Object.html'>Object</a>): <a href='Http.html'>Http</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a POST request with www-url encoded key=value data.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#get'><b>get</b></a>(uri: <a href='Uri.html'>Uri</a> = null, data: <a href='Array.html'>Array</a>): <a href='Http.html'>Http</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a GET request for the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#getRequestHeaders'><b>getRequestHeaders</b></a>(): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the (proposed) request headers that will be sent with the request.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#head'><b>head</b></a>(uri: <a href='Uri.html'>Uri</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a HEAD request for the current uri.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#head'><b>head</b></a>(uri: <a href='Uri.html'>Uri</a> = null): <a href='Http.html'>Http</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a HEAD request for the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#header'><b>header</b></a>(key: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the value of a single response header.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#off'><b>off</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='Http.html'>Http</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.All events are called with the following signature.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#post'><b>post</b></a>(uri: <a href='Uri.html'>Uri</a>, data: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Initiate a POST request.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#put'><b>put</b></a>(uri: <a href='Uri.html'>Uri</a>, data: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a PUT request for the current uri.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#post'><b>post</b></a>(uri: <a href='Uri.html'>Uri</a>, data: <a href='Array.html'>Array</a>): <a href='Http.html'>Http</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Initiate a POST request.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#put'><b>put</b></a>(uri: <a href='Uri.html'>Uri</a>, data: <a href='Array.html'>Array</a>): <a href='Http.html'>Http</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a PUT request for the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ByteArray.html'>ByteArray</a>, offset: <a href='Number.html'>Number</a>, count: <a href='Number.html'>Number</a> = -1): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readLines'><b>readLines</b></a>(count: <a href='Number.html'>Number</a> = -1): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the request response as an array of lines.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readString'><b>readString</b></a>(count: <a href='Number.html'>Number</a> = -1): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the response as a string.</td></tr>
@@ -211,7 +212,7 @@ connection.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#setHeaders'><b>setHeaders</b></a>(headers: <a href='Object.html'>Object</a>, overwrite: <a href='Boolean.html'>Boolean</a> = true): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set request headers.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#setLimits'><b>setLimits</b></a>(limits: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Update the request resource limits.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#trace'><b>trace</b></a>(options: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Configure request tracing for the request.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#upload'><b>upload</b></a>(uri: <a href='String.html'>String</a>, files: <a href='Object.html'>Object</a>, fields: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Upload files using multipart/mime.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#upload'><b>upload</b></a>(uri: <a href='String.html'>String</a>, files: <a href='Object.html'>Object</a>, fields: <a href='Object.html'>Object</a> = null): <a href='Http.html'>Http</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Upload files using multipart/mime.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#wait'><b>wait</b></a>(timeout: <a href='Number.html'>Number</a> = -1): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Wait for a request to complete.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#write'><b>write</b></a>(data: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.Write body data to the server.</td></tr>
 </table>
@@ -254,7 +255,7 @@ on the same connection.</dd></dl>
 <hr />
 <a name='connect'></a>
 <div class='api'>
-<div class='apiSig'>    connect(method: <a href='String.html'>String</a>, uri: <a href='Uri.html'>Uri</a> = null, data: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>    connect(method: <a href='String.html'>String</a>, uri: <a href='Uri.html'>Uri</a> = null, data: <a href='Array.html'>Array</a>): <a href='Http.html'>Http</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Commence a HTTP request for the current method and uri. The HTTP method should be defined via the <a href='#method'>method</a> 
@@ -269,6 +270,23 @@ the request headers.</dd></dl>
 <tr class='param'><td class='param'>method: <a href='String.html'>String</a> </td><td>Http method. This is typically "GET" or "POST".</td></tr><tr class='param'><td class='param'>uri: <a href='Uri.html'>Uri</a> </td><td>New uri to use. This overrides any previously defined uri for the Http object. [default: null]</td></tr><tr class='param'><td class='param'>data: <a href='Array.html'>Array</a> </td><td>Data objects to send with the request. Data is written raw and is not encoded or converted.  However, the routine intelligently handles arrays such that, each element of the array will be written.</td></tr></table></dd>
 </dl><dl><dt>Throws</dt><dd>
 <a href='IOError.html'>IOError</a>: if the request cannot be issued to the remote server. Once the connection has been made,  exceptions will not be thrown and $status must be consulted for request status.
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='fetch'></a>
+<div class='api'>
+<div class='apiSig'>static     fetch(uri: <a href='Uri.html'>Uri</a>, method: <a href='String.html'>String</a> = GET, data: <a href='Array.html'>Array</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Convenience routine to fetch a URI and return the response. This routine is a simple, one-liner to fetch a remote resource using Http.
+This routine is deliberatly inconsistent with connect(), in that is accepts the URI to fetch as the
+first parameter and assumes a default method of GET.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>uri: <a href='Uri.html'>Uri</a> </td><td>New uri to use. This overrides any previously defined uri for the Http object.</td></tr><tr class='param'><td class='param'>method: <a href='String.html'>String</a> </td><td>Http method. Defaults to GET. [default: GET]</td></tr><tr class='param'><td class='param'>data: <a href='Array.html'>Array</a> </td><td>Data objects to send with the request. Data is written raw and is not encoded or converted.  However, the routine intelligently handles arrays such that, each element of the array will be written.</td></tr></table></dd>
+</dl><dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: if the Uri is malformed
 </dd>
 </dl></div>
 </div>
@@ -300,7 +318,7 @@ to write all data but will return immediately. Defaults to Stream.WRITE.Flush wi
 <hr />
 <a name='form'></a>
 <div class='api'>
-<div class='apiSig'>    form(uri: <a href='Uri.html'>Uri</a>, data: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>    form(uri: <a href='Uri.html'>Uri</a>, data: <a href='Object.html'>Object</a>): <a href='Http.html'>Http</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Commence a POST request with www-url encoded key=value data. See <a href='#connect'>connect()</a> for connection details.
@@ -317,7 +335,7 @@ After writing data, <a href='#form'>form()</a> will call <a href='#finalize'>fin
 <hr />
 <a name='get'></a>
 <div class='api'>
-<div class='apiSig'>    get(uri: <a href='Uri.html'>Uri</a> = null, data: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>    get(uri: <a href='Uri.html'>Uri</a> = null, data: <a href='Array.html'>Array</a>): <a href='Http.html'>Http</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Commence a GET request for the current uri. See <a href='#connect'>connect()</a> for connection details.
@@ -347,7 +365,7 @@ headers or header(key) to get a single response header.</dd></dl>
 <hr />
 <a name='head'></a>
 <div class='api'>
-<div class='apiSig'>    head(uri: <a href='Uri.html'>Uri</a> = null): <a href='Void.html'>Void</a>
+<div class='apiSig'>    head(uri: <a href='Uri.html'>Uri</a> = null): <a href='Http.html'>Http</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Commence a HEAD request for the current uri. See <a href='#connect'>connect()</a> for connection details.</dd></dl>
@@ -414,7 +432,7 @@ function (event: String, http: Http): Void.</dd></dl>
 <hr />
 <a name='post'></a>
 <div class='api'>
-<div class='apiSig'>    post(uri: <a href='Uri.html'>Uri</a>, data: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>    post(uri: <a href='Uri.html'>Uri</a>, data: <a href='Array.html'>Array</a>): <a href='Http.html'>Http</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Initiate a POST request. This call initiates a POST request. It does not wait for the request to complete. 
@@ -432,7 +450,7 @@ supplied may alternatively via <a href='#write'>write</a>. </dd></dl>
 <hr />
 <a name='put'></a>
 <div class='api'>
-<div class='apiSig'>    put(uri: <a href='Uri.html'>Uri</a>, data: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>    put(uri: <a href='Uri.html'>Uri</a>, data: <a href='Array.html'>Array</a>): <a href='Http.html'>Http</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Commence a PUT request for the current uri. See <a href='#connect'>connect()</a> for connection details.
@@ -620,7 +638,7 @@ the tracing for that direction and includes any of the following fields:.</dd></
 <hr />
 <a name='upload'></a>
 <div class='api'>
-<div class='apiSig'>    upload(uri: <a href='String.html'>String</a>, files: <a href='Object.html'>Object</a>, fields: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a>
+<div class='apiSig'>    upload(uri: <a href='String.html'>String</a>, files: <a href='Object.html'>Object</a>, fields: <a href='Object.html'>Object</a> = null): <a href='Http.html'>Http</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Upload files using multipart/mime. This routine initiates a POST request and sends the specified files

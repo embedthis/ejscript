@@ -43,9 +43,11 @@ in args.rest.</p>
 <a name='options'></a>
    <tr><td nowrap align='center'> </td><td>options</td><td><a href='Object.html'>Object</a></td><td>User supplied command line options. </td></tr>
 <a name='program'></a>
-   <tr><td nowrap align='center'> </td><td>program</td><td><a href='Path.html'>Path</a></td><td>Ò0. </td></tr>
+   <tr><td nowrap align='center'> </td><td>program</td><td><a href='Path.html'>Path</a></td><td>€5a
+. </td></tr>
 <a name='rest'></a>
-   <tr><td nowrap align='center'> </td><td>rest</td><td><a href='Array.html'>Array</a></td><td> Ñ0. </td></tr>
+   <tr><td nowrap align='center'> </td><td>rest</td><td><a href='Array.html'>Array</a></td><td>`5a
+. </td></tr>
 <a name='template'></a>
    <tr><td nowrap align='center'> </td><td>template</td><td><a href='Object.html'>Object</a></td><td>null </td></tr>
 </table>
@@ -91,6 +93,7 @@ Args supports command options that begin with "-" or "--" and parses option argu
 <td class='param'>usage</td><td>Function to invoke for argument parse errors.</td></tr>
 <td class='param'>onerror</td><td>If set to 'throw', an exception will be thrown for argument parse errors. The usage function will not be  called and no message will be written to the application log. If set to 'exit', a message will be written to the console for argument parse errors and any usage function will be invoked before exiting the application with a non-zero exit status.</td></tr>
 <td class='param'>silent</td><td>Don't emit any message on argument parse errors.</td></tr>
+<td class='param'>unknown</td><td>Callback to invoke for unknown arguments.</td></tr>
 </table></dd>
 </dl><dl><dt>Example</dt>
 <dd><pre>let args = Args({

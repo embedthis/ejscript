@@ -143,7 +143,7 @@ of the string.</dd></dl>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String to match.</td></tr><tr class='param'><td class='param'>start: <a href='Number.html'>Number</a> </td><td>Optional starting index for matching. [default: 0]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>Array of results, empty array if no matches. The first element is the entire match. Subsequent elements correspond to the matching sub-expressions.</dd></dl>
+<dd>Array of results. The first element is the entire match. Subsequent elements correspond to the matching sub-expressions. Returns null if not match.</dd></dl>
 <dl><dt>Specified</dt>
 <dd>ejs Adds start argument.</dd></dl>
 </div>
@@ -158,7 +158,7 @@ of the string.</dd></dl>
 If the array element is not a string, it is converted to a string before replacement.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String to match and replace.</td></tr><tr class='param'><td class='param'>replacement: <a href='Object.html'>Object</a> </td><td>Replacement text.</td></tr></table></dd>
+<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String to match and replace.</td></tr><tr class='param'><td class='param'>replacement: <a href='Object.html'>Object</a> </td><td>Replacement text. This can contain <a href='#&'>&</a> to insert the matched substring, <a href='#`'>`</a> to insert the portion preceeding that matched substring, <a href='#''>'</a> to insert the portion following the  matched substring, <a href='#n'>n</a> where n is the nth parentesized substring or $ to insert a literal <a href='#'></a> character.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A string with zero, one or more substitutions in it.</dd></dl>
 <dl><dt>Specified</dt>

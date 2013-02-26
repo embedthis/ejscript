@@ -171,7 +171,8 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#chmod'><b>chmod</b></a>(path: <a href='String.html'>String</a>, perms: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the permissions of a file or directory.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#clearInterval'><b>clearInterval</b></a>(timer: <a href='Timer.html'>Timer</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Clear and dispose of an interval timer.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#clearTimeout'><b>clearTimeout</b></a>(timer: <a href='Timer.html'>Timer</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Clear and dispose of a timeout.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#cp'><b>cp</b></a>(patterns, dest: <a href='Path.html'>Path</a>, options = expression): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Copy files.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#cp'><b>cp</b></a>(src, dest: <a href='Path.html'>Path</a>, options = expression): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Copy files
+The src argument can ba an array of Strings/Paths representing files/directories to copy.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#decodeURI'><b>decodeURI</b></a>(str: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Decode an encoded URI using www-url encoding.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#decodeURIComponent'><b>decodeURIComponent</b></a>(str: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Decode an encoded URI component.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#deserialize'><b>deserialize</b></a>(str: <a href='String.html'>String</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert a string into an object.</td></tr>
@@ -251,6 +252,7 @@ Args supports command options that begin with "-" or "--" and parses option argu
 <td class='param'>usage</td><td>Function to invoke for argument parse errors.</td></tr>
 <td class='param'>onerror</td><td>If set to 'throw', an exception will be thrown for argument parse errors. The usage function will not be  called and no message will be written to the application log. If set to 'exit', a message will be written to the console for argument parse errors and any usage function will be invoked before exiting the application with a non-zero exit status.</td></tr>
 <td class='param'>silent</td><td>Don't emit any message on argument parse errors.</td></tr>
+<td class='param'>unknown</td><td>Callback to invoke for unknown arguments.</td></tr>
 </table></dd>
 </dl><dl><dt>Example</dt>
 <dd><pre>let args = Args({
@@ -1375,7 +1377,7 @@ If the overwrite option is false, the property will only be copied if it does no
 <tr class='param'><td class='param'>dest: <a href='Object.html'>Object</a> </td><td>Destination object.</td></tr><tr class='param'><td class='param'>src: <a href='Object.html'>Object</a> </td><td>Source object.</td></tr><tr class='param'><td class='param'>options </td><td>Control options. [default: null]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
-<td class='param'>combine</td><td>Boolean. If true, then support key prefixes "+", "=", "-" to add, assign and subtract key values. When adding string properties, values will be appended using a space separator. Extra spaces will not  be removed on subtraction. Arrays with string values may also be combined using the key prefixes.</td></tr>
+<td class='param'>combine</td><td>Boolean. If true, then support key prefixes "+", "=", "-", "?" to add, assign and subtract  and conditionally assign key values. When adding string properties, values will be appended using a space separator. Extra spaces will not  be removed on subtraction. Arrays with string values may also be combined using the key prefixes.</td></tr>
 <td class='param'>overwrite</td><td>Boolean. If true, then overwrite existing properties in the destination object. Defaults to true.</td></tr>
 <td class='param'>deep</td><td>Boolean. If true, then recursively copy the properties of any objects referenced in the source object. Otherwise, the copy is only one level deep. Defaults to true.</td></tr>
 <td class='param'>functions</td><td>Boolean. If true, then copy functions. Defaults to false.</td></tr>
@@ -1450,22 +1452,22 @@ If the overwrite option is false, the property will only be copied if it does no
 <hr />
 <a name='cp'></a>
 <div class='api'>
-<div class='apiSig'>  ejs.unix  cp(patterns, dest: <a href='Path.html'>Path</a>, options = expression): <a href='Number.html'>Number</a>
+<div class='apiSig'>  ejs.unix  cp(src, dest: <a href='Path.html'>Path</a>, options = expression): <a href='Number.html'>Number</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Copy files. </dd></dl>
+<dl><dt>Description</dt></dd><dd>Copy files
+The src argument can ba an array of Strings/Paths representing files/directories to copy. The may include
+embedded wildcards. If a src element is a directory, then it all all files and subdirectories will be copied
+preserving its directory structure under dest.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>patterns </td><td>Pattern to match files to copy. This can be a String, Path or array of String/Paths.  The wildcards "*"", "***"" and "?" are the only wild card patterns supported. The "***"" pattern matches every directory. The Posix "[]" and "{a,b}" style expressions are not supported. If patterns is an existing directory, then the pattern is converted to 'dir/ *  *'' (without spaces)  and the tree option is enabled.</td></tr><tr class='param'><td class='param'>dest: <a href='Path.html'>Path</a> </td><td>Destination file or directory. If multiple files are copied, dest is assumed to be a directory and  will be created if required.</td></tr><tr class='param'><td class='param'>options </td><td>File attributes. [default: expression]</td></tr></table></dd>
+<tr class='param'><td class='param'>src </td><td>Source files/directories to copy. This can be a String, Path or array of String/Paths.  The wildcards "*"", "***"" and "?" are the only wild card patterns supported. The "***"" pattern matches every directory and file. The Posix "[]" and "{a,b}" style expressions are not supported. If src is an existing directory, then the pattern is converted to 'dir/ *  *'' (without spaces)  and the tree option is enabled.</td></tr><tr class='param'><td class='param'>dest: <a href='Path.html'>Path</a> </td><td>Destination file or directory. If multiple files are copied, dest is assumed to be a directory and  will be created if required.  If dest has a trailing "/", it is assumed to be a directory.</td></tr><tr class='param'><td class='param'>options </td><td>Processing and file attributes. [default: expression]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
-<td class='param'>expand</td><td>Set to hash of properties to use when expanding '<a href='#{token}''>{token}'</a> tokens in src or dest filenames.</td></tr>
 <td class='param'>owner</td><td>String representing the file owner.</td></tr>
 <td class='param'>group</td><td>String representing the file group.</td></tr>
 <td class='param'>permissions</td><td>Number File Posix permissions mask.</td></tr>
-<td class='param'>process</td><td>Optional callback function to process the copied file. This function must do the actual copy  and any required post-processing. Signature is function process(src: Path, dest: Path, options).</td></tr>
-<td class='param'>subtree</td><td>If copying a directory, copy the subtree below the patterns.</td></tr>
-<td class='param'>tree</td><td>If copying a directory, copy the subtree including the pattern path.</td></tr>
+<td class='param'>tree</td><td>Copy the src subtree and preserve the directory structure under the destination.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>Number of files copied.</dd></dl>

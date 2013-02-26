@@ -143,15 +143,17 @@ size determination failed.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#Path'><b>Path</b></a>(path: <a href='String.html'>String</a> = .)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new Path object and set the path's location.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#append'><b>append</b></a>(data, options = atw): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Append data to a file.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#contains'><b>contains</b></a>(pattern: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Test if the path name contains a substring.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#copy'><b>copy</b></a>(target: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Copy a file.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#copy'><b>copy</b></a>(destination: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Copy a file to the destination.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#endsWith'><b>endsWith</b></a>(suffix: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return true if the path ends with the given suffix.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#files'><b>files</b></a>(patterns: <a href='Object.html'>Object</a> = *, options: <a href='Object.html'>Object</a> = null): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Do Posix glob style file matching.</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator override </td><td><a href='#get'><b>get</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get iterate over any files contained under this path (assuming it is a directory) "for (v in files)".</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator override </td><td><a href='#getValues'><b>getValues</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get an iterator for this file to be used by "for each (v in obj)".</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#join'><b>join</b></a>(other: <a href='Array.html'>Array</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Join paths.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#joinExt'><b>joinExt</b></a>(ext: <a href='String.html'>String</a>, force: <a href='Boolean.html'>Boolean</a> = false): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Join an extension to a path.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#link'><b>link</b></a>(target: <a href='Path.html'>Path</a>, hard: <a href='Boolean.html'>Boolean</a> = false): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a target link to refer to the path
+This will remove any pre-existing target link and then create a symbolic link at the target to refer to the
+path.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#makeDir'><b>makeDir</b></a>(options: <a href='Object.html'>Object</a> = null): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Make a new directory and all required intervening directories.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#makeLink'><b>makeLink</b></a>(target: <a href='Path.html'>Path</a>, hard: <a href='Boolean.html'>Boolean</a> = false): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a link to a file.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#map'><b>map</b></a>(sep: <a href='String.html'>String</a> = separator): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a path after mapping the path directory separator.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#match'><b>match</b></a>(pattern: <a href='RegExp.html'>RegExp</a>): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Match the path to a regular expression pattern.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#open'><b>open</b></a>(options: <a href='Object.html'>Object</a> = null): <a href='File.html'>File</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Open a path and return a File object.</td></tr>
@@ -174,7 +176,6 @@ directory itself.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#same'><b>same</b></a>(other: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Compare two paths test if they represent the same file.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#setAttributes'><b>setAttributes</b></a>(attributes: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define file security permissions.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#startsWith'><b>startsWith</b></a>(prefix: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return true if the path starts with the given prefix.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#symlink'><b>symlink</b></a>(target: <a href='Path.html'>Path</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create the path as a symbolic link.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#temp'><b>temp</b></a>(): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new temporary file.</td></tr>
    <tr class='apiDef'><td class='apiType'> override </td><td><a href='#toJSON'><b>toJSON</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the path to a JSON string.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#toLowerCase'><b>toLowerCase</b></a>(): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the path to lower case.</td></tr>
@@ -232,13 +233,13 @@ NOTE: this does a case-sensitive match.</td></tr>
 <hr />
 <a name='copy'></a>
 <div class='api'>
-<div class='apiSig'>    copy(target: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a>
+<div class='apiSig'>    copy(destination: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Copy a file. </dd></dl>
+<dl><dt>Description</dt></dd><dd>Copy a file to the destination. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>target: <a href='Object.html'>Object</a> </td><td>New file location.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Object hash. [default: null]</td></tr></table></dd>
+</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Object hash. [default: null]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>permissions</td><td>Set to a numeric Posix permissions mask. Not implemented.</td></tr>
@@ -341,6 +342,20 @@ either path. If none found, the default file system path separator is used.</dd>
 </div>
 </div>
 <hr />
+<a name='link'></a>
+<div class='api'>
+<div class='apiSig'>    link(target: <a href='Path.html'>Path</a>, hard: <a href='Boolean.html'>Boolean</a> = false): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Create a target link to refer to the path
+This will remove any pre-existing target link and then create a symbolic link at the target to refer to the
+path. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>hard: <a href='Boolean.html'>Boolean</a> </td><td>Set to true to create a hard link. Otherwise the default is to create a symbolic link. [default: false]</td></tr><tr class='param'><td class='param'>target: <a href='Path.html'>Path</a> </td><td>Target the path will refer to.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
 <a name='makeDir'></a>
 <div class='api'>
 <div class='apiSig'>    makeDir(options: <a href='Object.html'>Object</a> = null): <a href='Boolean.html'>Boolean</a>
@@ -361,20 +376,6 @@ the function returns without any further action.</dd></dl>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>True if the directory can be made or already exists.</dd></dl>
-</div>
-</div>
-<hr />
-<a name='makeLink'></a>
-<div class='api'>
-<div class='apiSig'>    makeLink(target: <a href='Path.html'>Path</a>, hard: <a href='Boolean.html'>Boolean</a> = false): <a href='Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Create a link to a file. Not available on some platforms such as Windows and VxWorks.</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>target: <a href='Path.html'>Path</a> </td><td>Path to an existing file to link to.</td></tr><tr class='param'><td class='param'>hard: <a href='Boolean.html'>Boolean</a> </td><td>Set to true to create a hard link. Otherwise the default is to create a symbolic link. [default: false]</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>This path.</dd></dl>
 </div>
 </div>
 <hr />
@@ -703,18 +704,6 @@ absolute and relative path segments.</dd></dl>
 </dl><dl><dt>Returns</dt>
 <dd>True if the path does begin with the prefix.</dd></dl>
 </div>
-</div>
-<hr />
-<a name='symlink'></a>
-<div class='api'>
-<div class='apiSig'>    symlink(target: <a href='Path.html'>Path</a>): <a href='Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Create the path as a symbolic link. This will remove any pre-existing path and then create a symbolic link to refer to the target.</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>target: <a href='Path.html'>Path</a> </td><td>Target the path will refer to.</td></tr></table></dd>
-</dl></div>
 </div>
 <hr />
 <a name='temp'></a>

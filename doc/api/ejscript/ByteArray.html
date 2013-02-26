@@ -458,7 +458,8 @@ data and return immediately. Some streams will require a <a href='#flush'>flush(
 A "writable" event will be issued when the stream can again absorb more data.Data is written to the current writePosition. If the data argument is itself a ByteArray, the available data 
 from the byte array will be copied, ie. the <a href='#data'>data</a> byte array will not have its readPosition adjusted. If the 
 byte array is resizable, the underlying data storage will grow to accomodate written data. If the data will not
-fit in the ByteArray, the call may return having only written a portion of the data.</dd></dl>
+fit in the ByteArray, the call may return having only written a portion of the data.
+When strings are written, they are not null terminated.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>data: <a href='Array.html'>Array</a> </td><td>Data to write.</td></tr></table></dd>
