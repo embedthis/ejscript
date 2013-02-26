@@ -59,7 +59,6 @@ Bit.load({
                     '${BIN}/libejs.db.sqlite${SHOBJ}',
                     '${BIN}/libejs.web${SHOBJ}',
                     '${BIN}/libejs.zlib${SHOBJ}',
-                    '${BIN}/libest${SHOBJ}',
                     '${BIN}/libhttp${SHOBJ}',
                     '${BIN}/libmpr${SHOBJ}',
                     '${BIN}/libmprSsl${SHOBJ}',
@@ -85,13 +84,18 @@ Bit.load({
                 set:        'core',
 
             },{ from:        [
-                    /* Don't use wild-cards for cross-generation  */
+                    '${BIN}/libest${SHLIB}',
+                ],
+                to:         '${abin}/',
+                set:        'core',
+                require:    'est',
+
+            },{ from:        [
                     '${BIN}/libejs${SHLIB}',
                 ],
                 to:         '${abin}/',
                 set:        'core',
                 enable:     "bit.platform.os == 'windows'",
-
 
             },{
                 from:       'src/jems/ejs.web/www',

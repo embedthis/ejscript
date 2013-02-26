@@ -242,7 +242,7 @@ clobber: clean
 #   mpr.h
 #
 $(CONFIG)/inc/mpr.h: $(DEPS_1)
-	@echo '      [File] macosx-x64-default/inc/mpr.h'
+	@echo '      [File] $(CONFIG)/inc/mpr.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/deps/mpr/mpr.h" "$(CONFIG)/inc/mpr.h"
 
@@ -255,7 +255,7 @@ $(CONFIG)/inc/bit.h: $(DEPS_2)
 #   bitos.h
 #
 $(CONFIG)/inc/bitos.h: $(DEPS_3)
-	@echo '      [File] macosx-x64-default/inc/bitos.h'
+	@echo '      [File] $(CONFIG)/inc/bitos.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/bitos.h" "$(CONFIG)/inc/bitos.h"
 
@@ -362,7 +362,7 @@ $(CONFIG)/bin/makerom: $(DEPS_12)
 DEPS_13 += src/deps/est/ca.crt
 
 $(CONFIG)/bin/ca.crt: $(DEPS_13)
-	@echo '      [File] macosx-x64-default/bin/ca.crt'
+	@echo '      [File] $(CONFIG)/bin/ca.crt'
 	mkdir -p "$(CONFIG)/bin"
 	cp "src/deps/est/ca.crt" "$(CONFIG)/bin/ca.crt"
 
@@ -370,7 +370,7 @@ $(CONFIG)/bin/ca.crt: $(DEPS_13)
 #   pcre.h
 #
 $(CONFIG)/inc/pcre.h: $(DEPS_14)
-	@echo '      [File] macosx-x64-default/inc/pcre.h'
+	@echo '      [File] $(CONFIG)/inc/pcre.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/deps/pcre/pcre.h" "$(CONFIG)/inc/pcre.h"
 
@@ -399,7 +399,7 @@ $(CONFIG)/bin/libpcre.dylib: $(DEPS_16)
 #   http.h
 #
 $(CONFIG)/inc/http.h: $(DEPS_17)
-	@echo '      [File] macosx-x64-default/inc/http.h'
+	@echo '      [File] $(CONFIG)/inc/http.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/deps/http/http.h" "$(CONFIG)/inc/http.h"
 
@@ -459,7 +459,7 @@ $(CONFIG)/bin/http: $(DEPS_21)
 #   sqlite3.h
 #
 $(CONFIG)/inc/sqlite3.h: $(DEPS_22)
-	@echo '      [File] macosx-x64-default/inc/sqlite3.h'
+	@echo '      [File] $(CONFIG)/inc/sqlite3.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/deps/sqlite/sqlite3.h" "$(CONFIG)/inc/sqlite3.h"
 
@@ -519,7 +519,7 @@ endif
 #   zlib.h
 #
 $(CONFIG)/inc/zlib.h: $(DEPS_27)
-	@echo '      [File] macosx-x64-default/inc/zlib.h'
+	@echo '      [File] $(CONFIG)/inc/zlib.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/deps/zlib/zlib.h" "$(CONFIG)/inc/zlib.h"
 
@@ -548,7 +548,7 @@ $(CONFIG)/bin/libzlib.dylib: $(DEPS_29)
 #   ejs.cache.local.slots.h
 #
 $(CONFIG)/inc/ejs.cache.local.slots.h: $(DEPS_30)
-	@echo '      [File] macosx-x64-default/inc/ejs.cache.local.slots.h'
+	@echo '      [File] $(CONFIG)/inc/ejs.cache.local.slots.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/slots/ejs.cache.local.slots.h" "$(CONFIG)/inc/ejs.cache.local.slots.h"
 
@@ -556,7 +556,7 @@ $(CONFIG)/inc/ejs.cache.local.slots.h: $(DEPS_30)
 #   ejs.db.sqlite.slots.h
 #
 $(CONFIG)/inc/ejs.db.sqlite.slots.h: $(DEPS_31)
-	@echo '      [File] macosx-x64-default/inc/ejs.db.sqlite.slots.h'
+	@echo '      [File] $(CONFIG)/inc/ejs.db.sqlite.slots.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/slots/ejs.db.sqlite.slots.h" "$(CONFIG)/inc/ejs.db.sqlite.slots.h"
 
@@ -564,7 +564,7 @@ $(CONFIG)/inc/ejs.db.sqlite.slots.h: $(DEPS_31)
 #   ejs.slots.h
 #
 $(CONFIG)/inc/ejs.slots.h: $(DEPS_32)
-	@echo '      [File] macosx-x64-default/inc/ejs.slots.h'
+	@echo '      [File] $(CONFIG)/inc/ejs.slots.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/slots/ejs.slots.h" "$(CONFIG)/inc/ejs.slots.h"
 
@@ -572,7 +572,7 @@ $(CONFIG)/inc/ejs.slots.h: $(DEPS_32)
 #   ejs.web.slots.h
 #
 $(CONFIG)/inc/ejs.web.slots.h: $(DEPS_33)
-	@echo '      [File] macosx-x64-default/inc/ejs.web.slots.h'
+	@echo '      [File] $(CONFIG)/inc/ejs.web.slots.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/slots/ejs.web.slots.h" "$(CONFIG)/inc/ejs.web.slots.h"
 
@@ -580,7 +580,7 @@ $(CONFIG)/inc/ejs.web.slots.h: $(DEPS_33)
 #   ejs.zlib.slots.h
 #
 $(CONFIG)/inc/ejs.zlib.slots.h: $(DEPS_34)
-	@echo '      [File] macosx-x64-default/inc/ejs.zlib.slots.h'
+	@echo '      [File] $(CONFIG)/inc/ejs.zlib.slots.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/slots/ejs.zlib.slots.h" "$(CONFIG)/inc/ejs.zlib.slots.h"
 
@@ -588,7 +588,7 @@ $(CONFIG)/inc/ejs.zlib.slots.h: $(DEPS_34)
 #   ejsByteCode.h
 #
 $(CONFIG)/inc/ejsByteCode.h: $(DEPS_35)
-	@echo '      [File] macosx-x64-default/inc/ejsByteCode.h'
+	@echo '      [File] $(CONFIG)/inc/ejsByteCode.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/ejsByteCode.h" "$(CONFIG)/inc/ejsByteCode.h"
 
@@ -596,7 +596,7 @@ $(CONFIG)/inc/ejsByteCode.h: $(DEPS_35)
 #   ejsByteCodeTable.h
 #
 $(CONFIG)/inc/ejsByteCodeTable.h: $(DEPS_36)
-	@echo '      [File] macosx-x64-default/inc/ejsByteCodeTable.h'
+	@echo '      [File] $(CONFIG)/inc/ejsByteCodeTable.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/ejsByteCodeTable.h" "$(CONFIG)/inc/ejsByteCodeTable.h"
 
@@ -604,7 +604,7 @@ $(CONFIG)/inc/ejsByteCodeTable.h: $(DEPS_36)
 #   ejsCustomize.h
 #
 $(CONFIG)/inc/ejsCustomize.h: $(DEPS_37)
-	@echo '      [File] macosx-x64-default/inc/ejsCustomize.h'
+	@echo '      [File] $(CONFIG)/inc/ejsCustomize.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/ejsCustomize.h" "$(CONFIG)/inc/ejsCustomize.h"
 
@@ -619,7 +619,7 @@ DEPS_38 += $(CONFIG)/inc/ejs.slots.h
 DEPS_38 += $(CONFIG)/inc/ejsCustomize.h
 
 $(CONFIG)/inc/ejs.h: $(DEPS_38)
-	@echo '      [File] macosx-x64-default/inc/ejs.h'
+	@echo '      [File] $(CONFIG)/inc/ejs.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/ejs.h" "$(CONFIG)/inc/ejs.h"
 
@@ -627,7 +627,7 @@ $(CONFIG)/inc/ejs.h: $(DEPS_38)
 #   ejsCompiler.h
 #
 $(CONFIG)/inc/ejsCompiler.h: $(DEPS_39)
-	@echo '      [File] macosx-x64-default/inc/ejsCompiler.h'
+	@echo '      [File] $(CONFIG)/inc/ejsCompiler.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/ejsCompiler.h" "$(CONFIG)/inc/ejsCompiler.h"
 
@@ -1651,7 +1651,7 @@ $(CONFIG)/bin/ejs.web.mod: $(DEPS_122)
 #   ejsWeb.h
 #
 $(CONFIG)/inc/ejsWeb.h: $(DEPS_123)
-	@echo '      [File] macosx-x64-default/inc/ejsWeb.h'
+	@echo '      [File] $(CONFIG)/inc/ejsWeb.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/jems/ejs.web/ejsWeb.h" "$(CONFIG)/inc/ejsWeb.h"
 
@@ -1916,7 +1916,7 @@ installBinary: $(DEPS_143)
 	cp "$(CONFIG)/bin/libest.dylib" "$(BIT_VAPP_PREFIX)/bin/libest.dylib"
 	cp "$(CONFIG)/bin/libhttp.dylib" "$(BIT_VAPP_PREFIX)/bin/libhttp.dylib"
 	cp "$(CONFIG)/bin/libmpr.dylib" "$(BIT_VAPP_PREFIX)/bin/libmpr.dylib"
-	cp "$(CONFIG)/bin/libmprSsl.dylib" "$(BIT_VAPP_PREFIX)/bin/libmprSsl.dylib"
+	cp "$(CONFIG)/bin/libmprssl.dylib" "$(BIT_VAPP_PREFIX)/bin/libmprssl.dylib"
 	cp "$(CONFIG)/bin/libpcre.dylib" "$(BIT_VAPP_PREFIX)/bin/libpcre.dylib"
 	cp "$(CONFIG)/bin/libsqlite3.dylib" "$(BIT_VAPP_PREFIX)/bin/libsqlite3.dylib"
 	cp "$(CONFIG)/bin/libzlib.dylib" "$(BIT_VAPP_PREFIX)/bin/libzlib.dylib"
@@ -1974,9 +1974,54 @@ installBinary: $(DEPS_143)
 	cp "$(CONFIG)/inc/bitos.h" "$(BIT_VAPP_PREFIX)/inc/bitos.h"
 	rm -f "$(BIT_INC_PREFIX)/ejs/bitos.h"
 	ln -s "$(BIT_VAPP_PREFIX)/inc/bitos.h" "$(BIT_INC_PREFIX)/ejs/bitos.h"
+	cp "$(CONFIG)/inc/ejs.cache.local.slots.h" "$(BIT_VAPP_PREFIX)/inc/ejs.cache.local.slots.h"
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.cache.local.slots.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.cache.local.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.cache.local.slots.h"
+	cp "$(CONFIG)/inc/ejs.db.sqlite.slots.h" "$(BIT_VAPP_PREFIX)/inc/ejs.db.sqlite.slots.h"
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.db.sqlite.slots.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.db.sqlite.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.db.sqlite.slots.h"
+	cp "$(CONFIG)/inc/ejs.h" "$(BIT_VAPP_PREFIX)/inc/ejs.h"
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.h" "$(BIT_INC_PREFIX)/ejs/ejs.h"
+	cp "$(CONFIG)/inc/ejs.slots.h" "$(BIT_VAPP_PREFIX)/inc/ejs.slots.h"
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.slots.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.slots.h"
+	cp "$(CONFIG)/inc/ejs.web.slots.h" "$(BIT_VAPP_PREFIX)/inc/ejs.web.slots.h"
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.web.slots.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.web.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.web.slots.h"
+	cp "$(CONFIG)/inc/ejs.zlib.slots.h" "$(BIT_VAPP_PREFIX)/inc/ejs.zlib.slots.h"
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.zlib.slots.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.zlib.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.zlib.slots.h"
+	cp "$(CONFIG)/inc/ejsByteCode.h" "$(BIT_VAPP_PREFIX)/inc/ejsByteCode.h"
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejsByteCode.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejsByteCode.h" "$(BIT_INC_PREFIX)/ejs/ejsByteCode.h"
+	cp "$(CONFIG)/inc/ejsByteCodeTable.h" "$(BIT_VAPP_PREFIX)/inc/ejsByteCodeTable.h"
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejsByteCodeTable.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejsByteCodeTable.h" "$(BIT_INC_PREFIX)/ejs/ejsByteCodeTable.h"
+	cp "$(CONFIG)/inc/ejsCompiler.h" "$(BIT_VAPP_PREFIX)/inc/ejsCompiler.h"
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejsCompiler.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejsCompiler.h" "$(BIT_INC_PREFIX)/ejs/ejsCompiler.h"
+	cp "$(CONFIG)/inc/ejsCustomize.h" "$(BIT_VAPP_PREFIX)/inc/ejsCustomize.h"
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejsCustomize.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejsCustomize.h" "$(BIT_INC_PREFIX)/ejs/ejsCustomize.h"
+	cp "$(CONFIG)/inc/ejsWeb.h" "$(BIT_VAPP_PREFIX)/inc/ejsWeb.h"
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejsWeb.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejsWeb.h" "$(BIT_INC_PREFIX)/ejs/ejsWeb.h"
+	cp "$(CONFIG)/inc/http.h" "$(BIT_VAPP_PREFIX)/inc/http.h"
+	rm -f "$(BIT_INC_PREFIX)/ejs/http.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/http.h" "$(BIT_INC_PREFIX)/ejs/http.h"
 	cp "$(CONFIG)/inc/mpr.h" "$(BIT_VAPP_PREFIX)/inc/mpr.h"
 	rm -f "$(BIT_INC_PREFIX)/ejs/mpr.h"
 	ln -s "$(BIT_VAPP_PREFIX)/inc/mpr.h" "$(BIT_INC_PREFIX)/ejs/mpr.h"
+	cp "$(CONFIG)/inc/pcre.h" "$(BIT_VAPP_PREFIX)/inc/pcre.h"
+	rm -f "$(BIT_INC_PREFIX)/ejs/pcre.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/pcre.h" "$(BIT_INC_PREFIX)/ejs/pcre.h"
+	cp "$(CONFIG)/inc/sqlite3.h" "$(BIT_VAPP_PREFIX)/inc/sqlite3.h"
+	rm -f "$(BIT_INC_PREFIX)/ejs/sqlite3.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/sqlite3.h" "$(BIT_INC_PREFIX)/ejs/sqlite3.h"
+	cp "$(CONFIG)/inc/zlib.h" "$(BIT_VAPP_PREFIX)/inc/zlib.h"
+	rm -f "$(BIT_INC_PREFIX)/ejs/zlib.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/zlib.h" "$(BIT_INC_PREFIX)/ejs/zlib.h"
 	mkdir -p "$(BIT_VAPP_PREFIX)/doc/man1"
 	cp "doc/man/ejs.1" "$(BIT_VAPP_PREFIX)/doc/man1/ejs.1"
 	mkdir -p "$(BIT_MAN_PREFIX)/man1"
