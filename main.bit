@@ -61,7 +61,7 @@ Bit.load({
         /*
             Optional packs to automatically discover and configure
          */
-        '+discover': [ 'doxygen', 'dsi', 'est', 'man', 'man2html', 'pmaker', 'sqlite', 'zip' ],
+        '+discover': [ 'doxygen', 'dsi', 'man', 'man2html', 'pmaker', 'sqlite', 'zip' ],
         '+required': [ 'compiler', 'pcre', 'zlib' ]
 
         /*
@@ -72,7 +72,7 @@ Bit.load({
         /*
             Packs to disable when using --without default (generating packages)
          */
-        'without-default': ['doxygen', 'dsi', 'man', 'man2html'],
+        'without-default': ['doxygen', 'dsi', 'est', 'man', 'man2html'],
 
         /*
             Set to true for a static (non-shared library) build                                            

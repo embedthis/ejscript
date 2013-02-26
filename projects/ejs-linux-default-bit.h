@@ -23,7 +23,7 @@
     #define BIT_DEPTH 1
 #endif
 #ifndef BIT_DISCOVER
-    #define BIT_DISCOVER "doxygen,dsi,est,man,man2html,pmaker,sqlite,zip"
+    #define BIT_DISCOVER "doxygen,dsi,man,man2html,pmaker,sqlite,zip"
 #endif
 #ifndef BIT_EJS_DB
     #define BIT_EJS_DB 1
@@ -133,9 +133,6 @@
 #ifndef BIT_REQUIRED
     #define BIT_REQUIRED "compiler,lib,link,pcre,zlib"
 #endif
-#ifndef BIT_SSL
-    #define BIT_SSL 1
-#endif
 #ifndef BIT_STATIC
     #define BIT_STATIC 0
 #endif
@@ -161,7 +158,7 @@
     #define BIT_WITHOUT_ALL "doxygen,dsi,est,man,man2html"
 #endif
 #ifndef BIT_WITHOUT_DEFAULT
-    #define BIT_WITHOUT_DEFAULT "doxygen,dsi,man,man2html"
+    #define BIT_WITHOUT_DEFAULT "doxygen,dsi,est,man,man2html"
 #endif
 
 /* Prefixes */
@@ -276,7 +273,7 @@
     #define BIT_PACK_EJSCRIPT 1
 #endif
 #ifndef BIT_PACK_EST
-    #define BIT_PACK_EST 1
+    #define BIT_PACK_EST 0
 #endif
 #ifndef BIT_PACK_LIB
     #define BIT_PACK_LIB 1

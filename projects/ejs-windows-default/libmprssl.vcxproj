@@ -105,7 +105,7 @@
 
   <ItemDefinitionGroup>
   <Link>
-    <AdditionalDependencies>libest.lib;libmpr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    <AdditionalDependencies>libmpr.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
   </ItemDefinitionGroup>
@@ -113,13 +113,6 @@
 <ItemGroup>
   <ProjectReference Include="libmpr.vcxproj">
   <Project>145e7a7a-cf56-4257-b982-a6be59f0738a</Project>
-  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-  </ProjectReference>
-</ItemGroup>
-
-<ItemGroup>
-  <ProjectReference Include="libest.vcxproj">
-  <Project>84642c47-3918-41fb-8481-bf6d44dd4a33</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>
