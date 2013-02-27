@@ -61,7 +61,6 @@ Bit.load({
                     '${BIN}/libejs.zlib${SHOBJ}',
                     '${BIN}/libhttp${SHOBJ}',
                     '${BIN}/libmpr${SHOBJ}',
-                    '${BIN}/libmprssl${SHOBJ}',
                     '${BIN}/libpcre${SHOBJ}',
                     '${BIN}/libsqlite3${SHOBJ}',
                     '${BIN}/libzlib${SHOBJ}',
@@ -78,10 +77,17 @@ Bit.load({
                     '${BIN}/jem.es',
                     '${BIN}/mvc.es',
                     '${BIN}/utest.es',
+                ],
+                to:         '${abin}/',
+                set:        'core',
+
+            },{ from:        [
+                    '${BIN}/libmprssl${SHOBJ}',
                     '${BIN}/ca.crt',
                 ],
                 to:         '${abin}/',
                 set:        'core',
+                require:    'ssl',
 
             },{ from:        [
                     '${BIN}/libest${SHLIB}',
