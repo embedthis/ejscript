@@ -61,7 +61,7 @@ Bit.load({
                     '${BIN}/libejs.zlib${SHOBJ}',
                     '${BIN}/libhttp${SHOBJ}',
                     '${BIN}/libmpr${SHOBJ}',
-                    '${BIN}/libmprSsl${SHOBJ}',
+                    '${BIN}/libmprssl${SHOBJ}',
                     '${BIN}/libpcre${SHOBJ}',
                     '${BIN}/libsqlite3${SHOBJ}',
                     '${BIN}/libzlib${SHOBJ}',
