@@ -38,7 +38,7 @@ all compile:
 	$(MAKE) -f projects/$(NAME)-$(OS)-$(PROFILE).$(EXT) $@
 	@echo ; echo 'You can now install via "sudo make install", then run via: "ejs"'
 
-clean clobber deploy install uninstall run:
+clean clobber install installBinary uninstall run:
 	$(MAKE) -f projects/$(NAME)-$(OS)-$(PROFILE).$(EXT) $@
 
 version:
@@ -46,7 +46,7 @@ version:
 
 help:
 	@echo '' >&2
-	@echo 'usage: make [clean, compile, deploy, install, run, uninstall]' >&2
+	@echo 'usage: make [clean, compile, install, run, uninstall]' >&2
 	@echo '' >&2
 	@echo 'The default configuration can be modified by setting make variables' >&2
 	@echo 'Set to 0 to disable and 1 to enable:' >&2
