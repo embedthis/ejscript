@@ -2,97 +2,97 @@
 #   ejs-macosx-default.mk -- Makefile to build Embedthis Ejscript for macosx
 #
 
-PRODUCT         := ejs
-VERSION         := 2.3.0
-BUILD_NUMBER    := 1
-PROFILE         := default
-ARCH            := $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/')
-OS              := macosx
-CC              := /usr/bin/clang
-LD              := /usr/bin/ld
-CONFIG          := $(OS)-$(ARCH)-$(PROFILE)
-LBIN            := $(CONFIG)/bin
+PRODUCT           := ejs
+VERSION           := 2.3.0
+BUILD_NUMBER      := 1
+PROFILE           := default
+ARCH              := $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/')
+OS                := macosx
+CC                := /usr/bin/clang
+LD                := /usr/bin/ld
+CONFIG            := $(OS)-$(ARCH)-$(PROFILE)
+LBIN              := $(CONFIG)/bin
 
-CFLAGS          += -w
-DFLAGS          +=  $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS)))
-IFLAGS          += -I$(CONFIG)/inc
-LDFLAGS         += '-Wl,-rpath,@executable_path/' '-Wl,-rpath,@loader_path/'
-LIBPATHS        += -L$(CONFIG)/bin
-LIBS            += -lpthread -lm -ldl
+BIT_PACK_EST      := 0
+BIT_PACK_SQLITE   := 1
 
-DEBUG           := debug
-CFLAGS-debug    := -g
-DFLAGS-debug    := -DBIT_DEBUG
-LDFLAGS-debug   := -g
-DFLAGS-release  := 
-CFLAGS-release  := -O2
-LDFLAGS-release := 
-CFLAGS          += $(CFLAGS-$(DEBUG))
-DFLAGS          += $(DFLAGS-$(DEBUG))
-LDFLAGS         += $(LDFLAGS-$(DEBUG))
+CFLAGS            += -w
+DFLAGS            +=  $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS))) -DBIT_PACK_EST=$(BIT_PACK_EST) -DBIT_PACK_SQLITE=$(BIT_PACK_SQLITE) 
+IFLAGS            += -I$(CONFIG)/inc
+LDFLAGS           += '-Wl,-rpath,@executable_path/' '-Wl,-rpath,@loader_path/'
+LIBPATHS          += -L$(CONFIG)/bin
+LIBS              += -lpthread -lm -ldl
 
-BIT_PACK_EST          := 0
-BIT_PACK_SQLITE       := 1
+DEBUG             := debug
+CFLAGS-debug      := -g
+DFLAGS-debug      := -DBIT_DEBUG
+LDFLAGS-debug     := -g
+DFLAGS-release    := 
+CFLAGS-release    := -O2
+LDFLAGS-release   := 
+CFLAGS            += $(CFLAGS-$(DEBUG))
+DFLAGS            += $(DFLAGS-$(DEBUG))
+LDFLAGS           += $(LDFLAGS-$(DEBUG))
 
-BIT_ROOT_PREFIX       := 
-BIT_BASE_PREFIX       := $(BIT_ROOT_PREFIX)/usr/local
-BIT_DATA_PREFIX       := $(BIT_ROOT_PREFIX)/
-BIT_STATE_PREFIX      := $(BIT_ROOT_PREFIX)/var
-BIT_APP_PREFIX        := $(BIT_BASE_PREFIX)/lib/$(PRODUCT)
-BIT_VAPP_PREFIX       := $(BIT_APP_PREFIX)/$(VERSION)
-BIT_BIN_PREFIX        := $(BIT_ROOT_PREFIX)/usr/local/bin
-BIT_INC_PREFIX        := $(BIT_ROOT_PREFIX)/usr/local/include
-BIT_LIB_PREFIX        := $(BIT_ROOT_PREFIX)/usr/local/lib
-BIT_MAN_PREFIX        := $(BIT_ROOT_PREFIX)/usr/local/share/man
-BIT_SBIN_PREFIX       := $(BIT_ROOT_PREFIX)/usr/local/sbin
-BIT_ETC_PREFIX        := $(BIT_ROOT_PREFIX)/etc/$(PRODUCT)
-BIT_WEB_PREFIX        := $(BIT_ROOT_PREFIX)/var/www/$(PRODUCT)-default
-BIT_LOG_PREFIX        := $(BIT_ROOT_PREFIX)/var/log/$(PRODUCT)
-BIT_SPOOL_PREFIX      := $(BIT_ROOT_PREFIX)/var/spool/$(PRODUCT)
-BIT_CACHE_PREFIX      := $(BIT_ROOT_PREFIX)/var/spool/$(PRODUCT)/cache
-BIT_SRC_PREFIX        := $(BIT_ROOT_PREFIX)$(PRODUCT)-$(VERSION)
+BIT_ROOT_PREFIX   := 
+BIT_BASE_PREFIX   := $(BIT_ROOT_PREFIX)/usr/local
+BIT_DATA_PREFIX   := $(BIT_ROOT_PREFIX)/
+BIT_STATE_PREFIX  := $(BIT_ROOT_PREFIX)/var
+BIT_APP_PREFIX    := $(BIT_BASE_PREFIX)/lib/$(PRODUCT)
+BIT_VAPP_PREFIX   := $(BIT_APP_PREFIX)/$(VERSION)
+BIT_BIN_PREFIX    := $(BIT_ROOT_PREFIX)/usr/local/bin
+BIT_INC_PREFIX    := $(BIT_ROOT_PREFIX)/usr/local/include
+BIT_LIB_PREFIX    := $(BIT_ROOT_PREFIX)/usr/local/lib
+BIT_MAN_PREFIX    := $(BIT_ROOT_PREFIX)/usr/local/share/man
+BIT_SBIN_PREFIX   := $(BIT_ROOT_PREFIX)/usr/local/sbin
+BIT_ETC_PREFIX    := $(BIT_ROOT_PREFIX)/etc/$(PRODUCT)
+BIT_WEB_PREFIX    := $(BIT_ROOT_PREFIX)/var/www/$(PRODUCT)-default
+BIT_LOG_PREFIX    := $(BIT_ROOT_PREFIX)/var/log/$(PRODUCT)
+BIT_SPOOL_PREFIX  := $(BIT_ROOT_PREFIX)/var/spool/$(PRODUCT)
+BIT_CACHE_PREFIX  := $(BIT_ROOT_PREFIX)/var/spool/$(PRODUCT)/cache
+BIT_SRC_PREFIX    := $(BIT_ROOT_PREFIX)$(PRODUCT)-$(VERSION)
 
 
-TARGETS     += $(CONFIG)/bin/libmpr.dylib
-TARGETS     += $(CONFIG)/bin/ejsman
-TARGETS     += $(CONFIG)/bin/makerom
-TARGETS     += $(CONFIG)/bin/ca.crt
-TARGETS     += $(CONFIG)/bin/libpcre.dylib
-TARGETS     += $(CONFIG)/bin/libhttp.dylib
-TARGETS     += $(CONFIG)/bin/http
+TARGETS           += $(CONFIG)/bin/libmpr.dylib
+TARGETS           += $(CONFIG)/bin/ejsman
+TARGETS           += $(CONFIG)/bin/makerom
+TARGETS           += $(CONFIG)/bin/ca.crt
+TARGETS           += $(CONFIG)/bin/libpcre.dylib
+TARGETS           += $(CONFIG)/bin/libhttp.dylib
+TARGETS           += $(CONFIG)/bin/http
 ifeq ($(BIT_PACK_SQLITE),1)
-TARGETS += $(CONFIG)/bin/libsqlite3.dylib
+TARGETS           += $(CONFIG)/bin/libsqlite3.dylib
 endif
 ifeq ($(BIT_PACK_SQLITE),1)
-TARGETS += $(CONFIG)/bin/sqlite
+TARGETS           += $(CONFIG)/bin/sqlite
 endif
-TARGETS     += $(CONFIG)/bin/libzlib.dylib
-TARGETS     += $(CONFIG)/bin/libejs.dylib
-TARGETS     += $(CONFIG)/bin/ejs
-TARGETS     += $(CONFIG)/bin/ejsc
-TARGETS     += $(CONFIG)/bin/ejsmod
-TARGETS     += $(CONFIG)/bin/ejsrun
-TARGETS     += $(CONFIG)/bin/ejs.mod
-TARGETS     += $(CONFIG)/bin/ejs.unix.mod
-TARGETS     += $(CONFIG)/bin/jem.es
-TARGETS     += $(CONFIG)/bin/jem
-TARGETS     += $(CONFIG)/bin/ejs.db.mod
-TARGETS     += $(CONFIG)/bin/ejs.db.mapper.mod
-TARGETS     += $(CONFIG)/bin/ejs.db.sqlite.mod
-TARGETS     += $(CONFIG)/bin/libejs.db.sqlite.dylib
-TARGETS     += $(CONFIG)/bin/ejs.web.mod
-TARGETS     += $(CONFIG)/bin/libejs.web.dylib
-TARGETS     += $(CONFIG)/bin/www
-TARGETS     += $(CONFIG)/bin/ejs.template.mod
-TARGETS     += $(CONFIG)/bin/ejs.zlib.mod
-TARGETS     += $(CONFIG)/bin/libejs.zlib.dylib
-TARGETS     += $(CONFIG)/bin/ejs.tar.mod
-TARGETS     += $(CONFIG)/bin/mvc.es
-TARGETS     += $(CONFIG)/bin/mvc
-TARGETS     += $(CONFIG)/bin/ejs.mvc.mod
-TARGETS     += $(CONFIG)/bin/utest.es
-TARGETS     += $(CONFIG)/bin/utest.worker
-TARGETS     += $(CONFIG)/bin/utest
+TARGETS           += $(CONFIG)/bin/libzlib.dylib
+TARGETS           += $(CONFIG)/bin/libejs.dylib
+TARGETS           += $(CONFIG)/bin/ejs
+TARGETS           += $(CONFIG)/bin/ejsc
+TARGETS           += $(CONFIG)/bin/ejsmod
+TARGETS           += $(CONFIG)/bin/ejsrun
+TARGETS           += $(CONFIG)/bin/ejs.mod
+TARGETS           += $(CONFIG)/bin/ejs.unix.mod
+TARGETS           += $(CONFIG)/bin/jem.es
+TARGETS           += $(CONFIG)/bin/jem
+TARGETS           += $(CONFIG)/bin/ejs.db.mod
+TARGETS           += $(CONFIG)/bin/ejs.db.mapper.mod
+TARGETS           += $(CONFIG)/bin/ejs.db.sqlite.mod
+TARGETS           += $(CONFIG)/bin/libejs.db.sqlite.dylib
+TARGETS           += $(CONFIG)/bin/ejs.web.mod
+TARGETS           += $(CONFIG)/bin/libejs.web.dylib
+TARGETS           += $(CONFIG)/bin/www
+TARGETS           += $(CONFIG)/bin/ejs.template.mod
+TARGETS           += $(CONFIG)/bin/ejs.zlib.mod
+TARGETS           += $(CONFIG)/bin/libejs.zlib.dylib
+TARGETS           += $(CONFIG)/bin/ejs.tar.mod
+TARGETS           += $(CONFIG)/bin/mvc.es
+TARGETS           += $(CONFIG)/bin/mvc
+TARGETS           += $(CONFIG)/bin/ejs.mvc.mod
+TARGETS           += $(CONFIG)/bin/utest.es
+TARGETS           += $(CONFIG)/bin/utest.worker
+TARGETS           += $(CONFIG)/bin/utest
 
 unexport CDPATH
 
@@ -1884,7 +1884,6 @@ installBinary: $(DEPS_140)
 	cp "$(CONFIG)/bin/libejs.zlib.dylib" "$(BIT_VAPP_PREFIX)/bin/libejs.zlib.dylib"
 	cp "$(CONFIG)/bin/libhttp.dylib" "$(BIT_VAPP_PREFIX)/bin/libhttp.dylib"
 	cp "$(CONFIG)/bin/libmpr.dylib" "$(BIT_VAPP_PREFIX)/bin/libmpr.dylib"
-	cp "$(CONFIG)/bin/libmprSsl.dylib" "$(BIT_VAPP_PREFIX)/bin/libmprSsl.dylib"
 	cp "$(CONFIG)/bin/libpcre.dylib" "$(BIT_VAPP_PREFIX)/bin/libpcre.dylib"
 	cp "$(CONFIG)/bin/libsqlite3.dylib" "$(BIT_VAPP_PREFIX)/bin/libsqlite3.dylib"
 	cp "$(CONFIG)/bin/libzlib.dylib" "$(BIT_VAPP_PREFIX)/bin/libzlib.dylib"
@@ -1901,7 +1900,6 @@ installBinary: $(DEPS_140)
 	cp "$(CONFIG)/bin/jem.es" "$(BIT_VAPP_PREFIX)/bin/jem.es"
 	cp "$(CONFIG)/bin/mvc.es" "$(BIT_VAPP_PREFIX)/bin/mvc.es"
 	cp "$(CONFIG)/bin/utest.es" "$(BIT_VAPP_PREFIX)/bin/utest.es"
-	cp "$(CONFIG)/bin/ca.crt" "$(BIT_VAPP_PREFIX)/bin/ca.crt"
 	mkdir -p "$(BIT_VAPP_PREFIX)/bin/www/images"
 	cp "src/jems/ejs.web/www/images/banner.jpg" "$(BIT_VAPP_PREFIX)/bin/www/images/banner.jpg"
 	cp "src/jems/ejs.web/www/images/favicon.ico" "$(BIT_VAPP_PREFIX)/bin/www/images/favicon.ico"

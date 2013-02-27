@@ -2,95 +2,95 @@
 #   ejs-windows-default.nmake -- Makefile to build Embedthis Ejscript for windows
 #
 
-PRODUCT         = ejs
-VERSION         = 2.3.0
-BUILD_NUMBER    = 1
-PROFILE         = default
-PA              = $(PROCESSOR_ARCHITECTURE)
+PRODUCT           = ejs
+VERSION           = 2.3.0
+BUILD_NUMBER      = 1
+PROFILE           = default
+PA                = $(PROCESSOR_ARCHITECTURE)
 
 !IF "$(PA)" == "AMD64"
-ARCH            = x64
-ENTRY           = _DllMainCRTStartup
+ARCH              = x64
+ENTRY             = _DllMainCRTStartup
 !ELSE
-ARCH            = x86
-ENTRY           = _DllMainCRTStartup@12
+ARCH              = x86
+ENTRY             = _DllMainCRTStartup@12
 !ENDIF
 
-OS              = windows
-CONFIG          = $(OS)-$(ARCH)-$(PROFILE)
-LBIN            = $(CONFIG)\bin
-CC              = cl
-LD              = link
-RC              = rc
-CFLAGS          = -nologo -GR- -W3 -Zi -Od -MDd
-DFLAGS          = -D_REENTRANT -D_MT -DBIT_DEBUG -DBIT_PACK_EST=$(BIT_PACK_EST) -DBIT_PACK_SQLITE=$(BIT_PACK_SQLITE) 
-IFLAGS          = -I$(CONFIG)\inc
-LDFLAGS         = -nologo -nodefaultlib -incremental:no -debug -machine:$(ARCH)
-LIBPATHS        = -libpath:$(CONFIG)\bin
-LIBS            = ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.lib msvcrt.lib shell32.lib
+OS                = windows
+CONFIG            = $(OS)-$(ARCH)-$(PROFILE)
+LBIN              = $(CONFIG)\bin
+BIT_PACK_EST      = 0
+BIT_PACK_SQLITE   = 1
 
-BIT_PACK_EST          = 0
-BIT_PACK_SQLITE       = 1
+CC                = cl
+LD                = link
+RC                = rc
+CFLAGS            = -nologo -GR- -W3 -Zi -Od -MDd
+DFLAGS            = -D_REENTRANT -D_MT -DBIT_DEBUG -DBIT_PACK_EST=$(BIT_PACK_EST) -DBIT_PACK_SQLITE=$(BIT_PACK_SQLITE) 
+IFLAGS            = -I$(CONFIG)\inc
+LDFLAGS           = -nologo -nodefaultlib -incremental:no -debug -machine:$(ARCH)
+LIBPATHS          = -libpath:$(CONFIG)\bin
+LIBS              = ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.lib msvcrt.lib shell32.lib
 
-BIT_ROOT_PREFIX       = C:
-BIT_BASE_PREFIX       = $(BIT_ROOT_PREFIX)\Program Files
-BIT_APP_PREFIX        = $(BIT_BASE_PREFIX)\Embedthis Ejscript
-BIT_VAPP_PREFIX       = $(BIT_APP_PREFIX)
-BIT_DATA_PREFIX       = $(BIT_VAPP_PREFIX)
-BIT_STATE_PREFIX      = $(BIT_VAPP_PREFIX)
-BIT_BIN_PREFIX        = $(BIT_VAPP_PREFIX)\bin
-BIT_INC_PREFIX        = $(BIT_VAPP_PREFIX)\inc
-BIT_LIB_PREFIX        = $(BIT_VAPP_PREFIX)\lib
-BIT_MAN_PREFIX        = $(BIT_VAPP_PREFIX)\man
-BIT_ETC_PREFIX        = $(BIT_VAPP_PREFIX)
-BIT_WEB_PREFIX        = $(BIT_VAPP_PREFIX)\web
-BIT_LOG_PREFIX        = $(BIT_VAPP_PREFIX)\log
-BIT_SPOOL_PREFIX      = $(BIT_VAPP_PREFIX)\tmp
-BIT_CACHE_PREFIX      = $(BIT_VAPP_PREFIX)\cache
-BIT_SRC_PREFIX        = $(BIT_VAPP_PREFIX)\src
+BIT_ROOT_PREFIX   = C:
+BIT_BASE_PREFIX   = $(BIT_ROOT_PREFIX)\Program Files
+BIT_APP_PREFIX    = $(BIT_BASE_PREFIX)\Embedthis Ejscript
+BIT_VAPP_PREFIX   = $(BIT_APP_PREFIX)
+BIT_DATA_PREFIX   = $(BIT_VAPP_PREFIX)
+BIT_STATE_PREFIX  = $(BIT_VAPP_PREFIX)
+BIT_BIN_PREFIX    = $(BIT_VAPP_PREFIX)\bin
+BIT_INC_PREFIX    = $(BIT_VAPP_PREFIX)\inc
+BIT_LIB_PREFIX    = $(BIT_VAPP_PREFIX)\lib
+BIT_MAN_PREFIX    = $(BIT_VAPP_PREFIX)\man
+BIT_ETC_PREFIX    = $(BIT_VAPP_PREFIX)
+BIT_WEB_PREFIX    = $(BIT_VAPP_PREFIX)\web
+BIT_LOG_PREFIX    = $(BIT_VAPP_PREFIX)\log
+BIT_SPOOL_PREFIX  = $(BIT_VAPP_PREFIX)\tmp
+BIT_CACHE_PREFIX  = $(BIT_VAPP_PREFIX)\cache
+BIT_SRC_PREFIX    = $(BIT_VAPP_PREFIX)\src
 
 
-TARGETS     = $(TARGETS) $(CONFIG)\bin\removeFiles.exe
-TARGETS     = $(TARGETS) $(CONFIG)\bin\libmpr.dll
-TARGETS     = $(TARGETS) $(CONFIG)\bin\ejsman.exe
-TARGETS     = $(TARGETS) $(CONFIG)\bin\makerom.exe
-TARGETS     = $(TARGETS) $(CONFIG)\bin\ca.crt
-TARGETS     = $(TARGETS) $(CONFIG)\bin\libpcre.dll
-TARGETS     = $(TARGETS) $(CONFIG)\bin\libhttp.dll
-TARGETS     = $(TARGETS) $(CONFIG)\bin\http.exe
+TARGETS           = $(TARGETS) $(CONFIG)\bin\removeFiles.exe
+TARGETS           = $(TARGETS) $(CONFIG)\bin\libmpr.dll
+TARGETS           = $(TARGETS) $(CONFIG)\bin\ejsman.exe
+TARGETS           = $(TARGETS) $(CONFIG)\bin\makerom.exe
+TARGETS           = $(TARGETS) $(CONFIG)\bin\ca.crt
+TARGETS           = $(TARGETS) $(CONFIG)\bin\libpcre.dll
+TARGETS           = $(TARGETS) $(CONFIG)\bin\libhttp.dll
+TARGETS           = $(TARGETS) $(CONFIG)\bin\http.exe
 !IF "$(BIT_PACK_SQLITE)" == "1"
-TARGETS = $(TARGETS) $(CONFIG)\bin\libsqlite3.dll
+TARGETS           = $(TARGETS) $(CONFIG)\bin\libsqlite3.dll
 !ENDIF
 !IF "$(BIT_PACK_SQLITE)" == "1"
-TARGETS = $(TARGETS) $(CONFIG)\bin\sqlite.exe
+TARGETS           = $(TARGETS) $(CONFIG)\bin\sqlite.exe
 !ENDIF
-TARGETS     = $(TARGETS) $(CONFIG)\bin\libzlib.dll
-TARGETS     = $(TARGETS) $(CONFIG)\bin\libejs.dll
-TARGETS     = $(TARGETS) $(CONFIG)\bin\ejs.exe
-TARGETS     = $(TARGETS) $(CONFIG)\bin\ejsc.exe
-TARGETS     = $(TARGETS) $(CONFIG)\bin\ejsmod.exe
-TARGETS     = $(TARGETS) $(CONFIG)\bin\ejsrun.exe
-TARGETS     = $(TARGETS) $(CONFIG)\bin\ejs.mod
-TARGETS     = $(TARGETS) $(CONFIG)\bin\ejs.unix.mod
-TARGETS     = $(TARGETS) $(CONFIG)\bin\jem.es
-TARGETS     = $(TARGETS) $(CONFIG)\bin\jem.exe
-TARGETS     = $(TARGETS) $(CONFIG)\bin\ejs.db.mod
-TARGETS     = $(TARGETS) $(CONFIG)\bin\ejs.db.mapper.mod
-TARGETS     = $(TARGETS) $(CONFIG)\bin\ejs.db.sqlite.mod
-TARGETS     = $(TARGETS) $(CONFIG)\bin\libejs.db.sqlite.dll
-TARGETS     = $(TARGETS) $(CONFIG)\bin\ejs.web.mod
-TARGETS     = $(TARGETS) $(CONFIG)\bin\libejs.web.dll
-TARGETS     = $(TARGETS) $(CONFIG)\bin\www
-TARGETS     = $(TARGETS) $(CONFIG)\bin\ejs.template.mod
-TARGETS     = $(TARGETS) $(CONFIG)\bin\ejs.zlib.mod
-TARGETS     = $(TARGETS) $(CONFIG)\bin\libejs.zlib.dll
-TARGETS     = $(TARGETS) $(CONFIG)\bin\ejs.tar.mod
-TARGETS     = $(TARGETS) $(CONFIG)\bin\mvc.es
-TARGETS     = $(TARGETS) $(CONFIG)\bin\mvc.exe
-TARGETS     = $(TARGETS) $(CONFIG)\bin\ejs.mvc.mod
-TARGETS     = $(TARGETS) $(CONFIG)\bin\utest.es
-TARGETS     = $(TARGETS) $(CONFIG)\bin\utest.worker
-TARGETS     = $(TARGETS) $(CONFIG)\bin\utest.exe
+TARGETS           = $(TARGETS) $(CONFIG)\bin\libzlib.dll
+TARGETS           = $(TARGETS) $(CONFIG)\bin\libejs.dll
+TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.exe
+TARGETS           = $(TARGETS) $(CONFIG)\bin\ejsc.exe
+TARGETS           = $(TARGETS) $(CONFIG)\bin\ejsmod.exe
+TARGETS           = $(TARGETS) $(CONFIG)\bin\ejsrun.exe
+TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.mod
+TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.unix.mod
+TARGETS           = $(TARGETS) $(CONFIG)\bin\jem.es
+TARGETS           = $(TARGETS) $(CONFIG)\bin\jem.exe
+TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.db.mod
+TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.db.mapper.mod
+TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.db.sqlite.mod
+TARGETS           = $(TARGETS) $(CONFIG)\bin\libejs.db.sqlite.dll
+TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.web.mod
+TARGETS           = $(TARGETS) $(CONFIG)\bin\libejs.web.dll
+TARGETS           = $(TARGETS) $(CONFIG)\bin\www
+TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.template.mod
+TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.zlib.mod
+TARGETS           = $(TARGETS) $(CONFIG)\bin\libejs.zlib.dll
+TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.tar.mod
+TARGETS           = $(TARGETS) $(CONFIG)\bin\mvc.es
+TARGETS           = $(TARGETS) $(CONFIG)\bin\mvc.exe
+TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.mvc.mod
+TARGETS           = $(TARGETS) $(CONFIG)\bin\utest.es
+TARGETS           = $(TARGETS) $(CONFIG)\bin\utest.worker
+TARGETS           = $(TARGETS) $(CONFIG)\bin\utest.exe
 
 !IFNDEF SHOW
 .SILENT:
@@ -1907,7 +1907,6 @@ installBinary: $(DEPS_142)
 	copy /Y "$(CONFIG)\bin\libejs.zlib.dll" "$(BIT_VAPP_PREFIX)\bin\libejs.zlib.dll"
 	copy /Y "$(CONFIG)\bin\libhttp.dll" "$(BIT_VAPP_PREFIX)\bin\libhttp.dll"
 	copy /Y "$(CONFIG)\bin\libmpr.dll" "$(BIT_VAPP_PREFIX)\bin\libmpr.dll"
-	copy /Y "$(CONFIG)\bin\libmprSsl.dll" "$(BIT_VAPP_PREFIX)\bin\libmprSsl.dll"
 	copy /Y "$(CONFIG)\bin\libpcre.dll" "$(BIT_VAPP_PREFIX)\bin\libpcre.dll"
 	copy /Y "$(CONFIG)\bin\libsqlite3.dll" "$(BIT_VAPP_PREFIX)\bin\libsqlite3.dll"
 	copy /Y "$(CONFIG)\bin\libzlib.dll" "$(BIT_VAPP_PREFIX)\bin\libzlib.dll"
@@ -1924,7 +1923,6 @@ installBinary: $(DEPS_142)
 	copy /Y "$(CONFIG)\bin\jem.es" "$(BIT_VAPP_PREFIX)\bin\jem.es"
 	copy /Y "$(CONFIG)\bin\mvc.es" "$(BIT_VAPP_PREFIX)\bin\mvc.es"
 	copy /Y "$(CONFIG)\bin\utest.es" "$(BIT_VAPP_PREFIX)\bin\utest.es"
-	copy /Y "$(CONFIG)\bin\ca.crt" "$(BIT_VAPP_PREFIX)\bin\ca.crt"
 	copy /Y "$(CONFIG)\bin\libejs.lib" "$(BIT_VAPP_PREFIX)\bin\libejs.lib"
 	if not exist "$(BIT_VAPP_PREFIX)\bin\www\images" md "$(BIT_VAPP_PREFIX)\bin\www\images"
 	copy /Y "src\jems\ejs.web\www\images\banner.jpg" "$(BIT_VAPP_PREFIX)\bin\www\images\banner.jpg"
