@@ -80,6 +80,7 @@ TARGETS           += $(CONFIG)/bin/ejs.db.mod
 TARGETS           += $(CONFIG)/bin/ejs.db.mapper.mod
 TARGETS           += $(CONFIG)/bin/ejs.db.sqlite.mod
 TARGETS           += $(CONFIG)/bin/libejs.db.sqlite.so
+TARGETS           += $(CONFIG)/bin/ejs.mail.mod
 TARGETS           += $(CONFIG)/bin/ejs.web.mod
 TARGETS           += $(CONFIG)/bin/libejs.web.so
 TARGETS           += $(CONFIG)/bin/www
@@ -140,6 +141,7 @@ clean:
 	rm -rf $(CONFIG)/bin/ejs.db.mapper.mod
 	rm -rf $(CONFIG)/bin/ejs.db.sqlite.mod
 	rm -rf $(CONFIG)/bin/libejs.db.sqlite.so
+	rm -rf $(CONFIG)/bin/ejs.mail.mod
 	rm -rf $(CONFIG)/bin/ejs.web.mod
 	rm -rf $(CONFIG)/bin/libejs.web.so
 	rm -rf $(CONFIG)/bin/www
@@ -1604,13 +1606,22 @@ $(CONFIG)/bin/libejs.db.sqlite.so: $(DEPS_118)
 	$(CC) -shared -o $(CONFIG)/bin/libejs.db.sqlite.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsSqlite.o $(LIBS_118) $(LIBS_118) $(LIBS) -lpcre
 
 #
-#   ejs.web.mod
+#   ejs.mail.mod
 #
 DEPS_119 += $(CONFIG)/bin/ejsc
-DEPS_119 += $(CONFIG)/bin/ejsmod
 DEPS_119 += $(CONFIG)/bin/ejs.mod
 
-$(CONFIG)/bin/ejs.web.mod: $(DEPS_119)
+$(CONFIG)/bin/ejs.mail.mod: $(DEPS_119)
+	cd src/jems/ejs.mail; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.mail.mod  --optimize 9 *.es ; cd ../../..
+
+#
+#   ejs.web.mod
+#
+DEPS_120 += $(CONFIG)/bin/ejsc
+DEPS_120 += $(CONFIG)/bin/ejsmod
+DEPS_120 += $(CONFIG)/bin/ejs.mod
+
+$(CONFIG)/bin/ejs.web.mod: $(DEPS_120)
 	cd src/jems/ejs.web; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.web.mod  --optimize 9 *.es ; cd ../../..
 	cd src/jems/ejs.web; ../../../$(CONFIG)/bin/ejsmod --cslots ../../../$(CONFIG)/bin/ejs.web.mod ; cd ../../..
 	cd src/jems/ejs.web; if ! diff ejs.web.slots.h ../../../$(CONFIG)/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../../$(CONFIG)/inc; fi ; cd ../../..
@@ -1619,7 +1630,7 @@ $(CONFIG)/bin/ejs.web.mod: $(DEPS_119)
 #
 #   ejsWeb.h
 #
-$(CONFIG)/inc/ejsWeb.h: $(DEPS_120)
+$(CONFIG)/inc/ejsWeb.h: $(DEPS_121)
 	@echo '      [File] $(CONFIG)/inc/ejsWeb.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/jems/ejs.web/ejsWeb.h" "$(CONFIG)/inc/ejsWeb.h"
@@ -1627,225 +1638,225 @@ $(CONFIG)/inc/ejsWeb.h: $(DEPS_120)
 #
 #   ejsHttpServer.o
 #
-DEPS_121 += $(CONFIG)/inc/bit.h
-DEPS_121 += $(CONFIG)/inc/ejs.h
-DEPS_121 += $(CONFIG)/inc/ejsCompiler.h
-DEPS_121 += $(CONFIG)/inc/ejsWeb.h
-DEPS_121 += $(CONFIG)/inc/ejs.web.slots.h
-DEPS_121 += $(CONFIG)/inc/http.h
+DEPS_122 += $(CONFIG)/inc/bit.h
+DEPS_122 += $(CONFIG)/inc/ejs.h
+DEPS_122 += $(CONFIG)/inc/ejsCompiler.h
+DEPS_122 += $(CONFIG)/inc/ejsWeb.h
+DEPS_122 += $(CONFIG)/inc/ejs.web.slots.h
+DEPS_122 += $(CONFIG)/inc/http.h
 
 $(CONFIG)/obj/ejsHttpServer.o: \
-    src/jems/ejs.web/ejsHttpServer.c $(DEPS_121)
+    src/jems/ejs.web/ejsHttpServer.c $(DEPS_122)
 	@echo '   [Compile] src/jems/ejs.web/ejsHttpServer.c'
 	$(CC) -c -o $(CONFIG)/obj/ejsHttpServer.o -fPIC $(LDFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsHttpServer.c
 
 #
 #   ejsRequest.o
 #
-DEPS_122 += $(CONFIG)/inc/bit.h
-DEPS_122 += $(CONFIG)/inc/ejs.h
-DEPS_122 += $(CONFIG)/inc/ejsCompiler.h
-DEPS_122 += $(CONFIG)/inc/ejsWeb.h
-DEPS_122 += $(CONFIG)/inc/ejs.web.slots.h
+DEPS_123 += $(CONFIG)/inc/bit.h
+DEPS_123 += $(CONFIG)/inc/ejs.h
+DEPS_123 += $(CONFIG)/inc/ejsCompiler.h
+DEPS_123 += $(CONFIG)/inc/ejsWeb.h
+DEPS_123 += $(CONFIG)/inc/ejs.web.slots.h
 
 $(CONFIG)/obj/ejsRequest.o: \
-    src/jems/ejs.web/ejsRequest.c $(DEPS_122)
+    src/jems/ejs.web/ejsRequest.c $(DEPS_123)
 	@echo '   [Compile] src/jems/ejs.web/ejsRequest.c'
 	$(CC) -c -o $(CONFIG)/obj/ejsRequest.o -fPIC $(LDFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsRequest.c
 
 #
 #   ejsSession.o
 #
-DEPS_123 += $(CONFIG)/inc/bit.h
-DEPS_123 += $(CONFIG)/inc/ejs.h
-DEPS_123 += $(CONFIG)/inc/ejsWeb.h
+DEPS_124 += $(CONFIG)/inc/bit.h
+DEPS_124 += $(CONFIG)/inc/ejs.h
+DEPS_124 += $(CONFIG)/inc/ejsWeb.h
 
 $(CONFIG)/obj/ejsSession.o: \
-    src/jems/ejs.web/ejsSession.c $(DEPS_123)
+    src/jems/ejs.web/ejsSession.c $(DEPS_124)
 	@echo '   [Compile] src/jems/ejs.web/ejsSession.c'
 	$(CC) -c -o $(CONFIG)/obj/ejsSession.o -fPIC $(LDFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsSession.c
 
 #
 #   ejsWeb.o
 #
-DEPS_124 += $(CONFIG)/inc/bit.h
-DEPS_124 += $(CONFIG)/inc/ejs.h
-DEPS_124 += $(CONFIG)/inc/ejsCompiler.h
-DEPS_124 += $(CONFIG)/inc/ejsWeb.h
-DEPS_124 += $(CONFIG)/inc/ejs.web.slots.h
+DEPS_125 += $(CONFIG)/inc/bit.h
+DEPS_125 += $(CONFIG)/inc/ejs.h
+DEPS_125 += $(CONFIG)/inc/ejsCompiler.h
+DEPS_125 += $(CONFIG)/inc/ejsWeb.h
+DEPS_125 += $(CONFIG)/inc/ejs.web.slots.h
 
 $(CONFIG)/obj/ejsWeb.o: \
-    src/jems/ejs.web/ejsWeb.c $(DEPS_124)
+    src/jems/ejs.web/ejsWeb.c $(DEPS_125)
 	@echo '   [Compile] src/jems/ejs.web/ejsWeb.c'
 	$(CC) -c -o $(CONFIG)/obj/ejsWeb.o -fPIC $(LDFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsWeb.c
 
 #
 #   libejs.web
 #
-DEPS_125 += $(CONFIG)/bin/libejs.so
-DEPS_125 += $(CONFIG)/bin/ejs.mod
-DEPS_125 += $(CONFIG)/inc/ejsWeb.h
-DEPS_125 += $(CONFIG)/obj/ejsHttpServer.o
-DEPS_125 += $(CONFIG)/obj/ejsRequest.o
-DEPS_125 += $(CONFIG)/obj/ejsSession.o
-DEPS_125 += $(CONFIG)/obj/ejsWeb.o
+DEPS_126 += $(CONFIG)/bin/libejs.so
+DEPS_126 += $(CONFIG)/bin/ejs.mod
+DEPS_126 += $(CONFIG)/inc/ejsWeb.h
+DEPS_126 += $(CONFIG)/obj/ejsHttpServer.o
+DEPS_126 += $(CONFIG)/obj/ejsRequest.o
+DEPS_126 += $(CONFIG)/obj/ejsSession.o
+DEPS_126 += $(CONFIG)/obj/ejsWeb.o
 
-LIBS_125 += -lejs
-LIBS_125 += -lhttp
-LIBS_125 += -lpcre
-LIBS_125 += -lmpr
+LIBS_126 += -lejs
+LIBS_126 += -lhttp
+LIBS_126 += -lpcre
+LIBS_126 += -lmpr
 
-$(CONFIG)/bin/libejs.web.so: $(DEPS_125)
+$(CONFIG)/bin/libejs.web.so: $(DEPS_126)
 	@echo '      [Link] libejs.web'
-	$(CC) -shared -o $(CONFIG)/bin/libejs.web.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsHttpServer.o $(CONFIG)/obj/ejsRequest.o $(CONFIG)/obj/ejsSession.o $(CONFIG)/obj/ejsWeb.o $(LIBS_125) $(LIBS_125) $(LIBS) -lmpr
+	$(CC) -shared -o $(CONFIG)/bin/libejs.web.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsHttpServer.o $(CONFIG)/obj/ejsRequest.o $(CONFIG)/obj/ejsSession.o $(CONFIG)/obj/ejsWeb.o $(LIBS_126) $(LIBS_126) $(LIBS) -lmpr
 
 #
 #   www
 #
-$(CONFIG)/bin/www: $(DEPS_126)
+$(CONFIG)/bin/www: $(DEPS_127)
 	cd src/jems/ejs.web; rm -fr ../../../$(CONFIG)/bin/www ; cd ../../..
 	cd src/jems/ejs.web; cp -r www ../../../$(CONFIG)/bin ; cd ../../..
 
 #
 #   ejs.template.mod
 #
-DEPS_127 += $(CONFIG)/bin/ejsc
-DEPS_127 += $(CONFIG)/bin/ejs.mod
+DEPS_128 += $(CONFIG)/bin/ejsc
+DEPS_128 += $(CONFIG)/bin/ejs.mod
 
-$(CONFIG)/bin/ejs.template.mod: $(DEPS_127)
+$(CONFIG)/bin/ejs.template.mod: $(DEPS_128)
 	cd src/jems/ejs.template; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.template.mod  --optimize 9 TemplateParser.es ; cd ../../..
 
 #
 #   ejs.zlib.mod
 #
-DEPS_128 += $(CONFIG)/bin/ejsc
-DEPS_128 += $(CONFIG)/bin/ejs.mod
+DEPS_129 += $(CONFIG)/bin/ejsc
+DEPS_129 += $(CONFIG)/bin/ejs.mod
 
-$(CONFIG)/bin/ejs.zlib.mod: $(DEPS_128)
+$(CONFIG)/bin/ejs.zlib.mod: $(DEPS_129)
 	cd src/jems/ejs.zlib; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.zlib.mod  --optimize 9 *.es ; cd ../../..
 
 #
 #   ejsZlib.o
 #
-DEPS_129 += $(CONFIG)/inc/bit.h
-DEPS_129 += $(CONFIG)/inc/ejs.h
-DEPS_129 += $(CONFIG)/inc/zlib.h
-DEPS_129 += $(CONFIG)/inc/ejs.zlib.slots.h
+DEPS_130 += $(CONFIG)/inc/bit.h
+DEPS_130 += $(CONFIG)/inc/ejs.h
+DEPS_130 += $(CONFIG)/inc/zlib.h
+DEPS_130 += $(CONFIG)/inc/ejs.zlib.slots.h
 
 $(CONFIG)/obj/ejsZlib.o: \
-    src/jems/ejs.zlib/ejsZlib.c $(DEPS_129)
+    src/jems/ejs.zlib/ejsZlib.c $(DEPS_130)
 	@echo '   [Compile] src/jems/ejs.zlib/ejsZlib.c'
 	$(CC) -c -o $(CONFIG)/obj/ejsZlib.o -fPIC $(LDFLAGS) $(DFLAGS) $(IFLAGS) src/jems/ejs.zlib/ejsZlib.c
 
 #
 #   libejs.zlib
 #
-DEPS_130 += $(CONFIG)/bin/libejs.so
-DEPS_130 += $(CONFIG)/bin/ejs.mod
-DEPS_130 += $(CONFIG)/bin/ejs.zlib.mod
-DEPS_130 += $(CONFIG)/bin/libzlib.so
-DEPS_130 += $(CONFIG)/obj/ejsZlib.o
+DEPS_131 += $(CONFIG)/bin/libejs.so
+DEPS_131 += $(CONFIG)/bin/ejs.mod
+DEPS_131 += $(CONFIG)/bin/ejs.zlib.mod
+DEPS_131 += $(CONFIG)/bin/libzlib.so
+DEPS_131 += $(CONFIG)/obj/ejsZlib.o
 
-LIBS_130 += -lzlib
-LIBS_130 += -lejs
-LIBS_130 += -lhttp
-LIBS_130 += -lpcre
-LIBS_130 += -lmpr
+LIBS_131 += -lzlib
+LIBS_131 += -lejs
+LIBS_131 += -lhttp
+LIBS_131 += -lpcre
+LIBS_131 += -lmpr
 
-$(CONFIG)/bin/libejs.zlib.so: $(DEPS_130)
+$(CONFIG)/bin/libejs.zlib.so: $(DEPS_131)
 	@echo '      [Link] libejs.zlib'
-	$(CC) -shared -o $(CONFIG)/bin/libejs.zlib.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsZlib.o $(LIBS_130) $(LIBS_130) $(LIBS) -lmpr
+	$(CC) -shared -o $(CONFIG)/bin/libejs.zlib.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsZlib.o $(LIBS_131) $(LIBS_131) $(LIBS) -lmpr
 
 #
 #   ejs.tar.mod
 #
-DEPS_131 += $(CONFIG)/bin/ejsc
-DEPS_131 += $(CONFIG)/bin/ejs.mod
+DEPS_132 += $(CONFIG)/bin/ejsc
+DEPS_132 += $(CONFIG)/bin/ejs.mod
 
-$(CONFIG)/bin/ejs.tar.mod: $(DEPS_131)
+$(CONFIG)/bin/ejs.tar.mod: $(DEPS_132)
 	cd src/jems/ejs.tar; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.tar.mod  --optimize 9 *.es ; cd ../../..
 
 #
 #   mvc.es
 #
-$(CONFIG)/bin/mvc.es: $(DEPS_132)
+$(CONFIG)/bin/mvc.es: $(DEPS_133)
 	cd src/jems/ejs.mvc; cp mvc.es ../../../$(CONFIG)/bin ; cd ../../..
 
 #
 #   mvc
 #
-DEPS_133 += $(CONFIG)/bin/libejs.so
-DEPS_133 += $(CONFIG)/bin/mvc.es
-DEPS_133 += $(CONFIG)/obj/ejsrun.o
+DEPS_134 += $(CONFIG)/bin/libejs.so
+DEPS_134 += $(CONFIG)/bin/mvc.es
+DEPS_134 += $(CONFIG)/obj/ejsrun.o
 
-LIBS_133 += -lejs
-LIBS_133 += -lhttp
-LIBS_133 += -lpcre
-LIBS_133 += -lmpr
+LIBS_134 += -lejs
+LIBS_134 += -lhttp
+LIBS_134 += -lpcre
+LIBS_134 += -lmpr
 
-$(CONFIG)/bin/mvc: $(DEPS_133)
+$(CONFIG)/bin/mvc: $(DEPS_134)
 	@echo '      [Link] mvc'
-	$(CC) -o $(CONFIG)/bin/mvc $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS_133) $(LIBS_133) $(LIBS) -lmpr $(LDFLAGS)
+	$(CC) -o $(CONFIG)/bin/mvc $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS_134) $(LIBS_134) $(LIBS) -lmpr $(LDFLAGS)
 
 #
 #   ejs.mvc.mod
 #
-DEPS_134 += $(CONFIG)/bin/ejsc
-DEPS_134 += $(CONFIG)/bin/ejs.mod
-DEPS_134 += $(CONFIG)/bin/ejs.web.mod
-DEPS_134 += $(CONFIG)/bin/ejs.template.mod
-DEPS_134 += $(CONFIG)/bin/ejs.unix.mod
+DEPS_135 += $(CONFIG)/bin/ejsc
+DEPS_135 += $(CONFIG)/bin/ejs.mod
+DEPS_135 += $(CONFIG)/bin/ejs.web.mod
+DEPS_135 += $(CONFIG)/bin/ejs.template.mod
+DEPS_135 += $(CONFIG)/bin/ejs.unix.mod
 
-$(CONFIG)/bin/ejs.mvc.mod: $(DEPS_134)
+$(CONFIG)/bin/ejs.mvc.mod: $(DEPS_135)
 	cd src/jems/ejs.mvc; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.mvc.mod  --optimize 9 *.es ; cd ../../..
 
 #
 #   utest.es
 #
-$(CONFIG)/bin/utest.es: $(DEPS_135)
+$(CONFIG)/bin/utest.es: $(DEPS_136)
 	cd src/jems/ejs.utest; cp utest.es ../../../$(CONFIG)/bin ; cd ../../..
 
 #
 #   utest.worker
 #
-$(CONFIG)/bin/utest.worker: $(DEPS_136)
+$(CONFIG)/bin/utest.worker: $(DEPS_137)
 	cd src/jems/ejs.utest; cp utest.worker ../../../$(CONFIG)/bin ; cd ../../..
 
 #
 #   utest
 #
-DEPS_137 += $(CONFIG)/bin/libejs.so
-DEPS_137 += $(CONFIG)/bin/utest.es
-DEPS_137 += $(CONFIG)/bin/utest.worker
-DEPS_137 += $(CONFIG)/obj/ejsrun.o
+DEPS_138 += $(CONFIG)/bin/libejs.so
+DEPS_138 += $(CONFIG)/bin/utest.es
+DEPS_138 += $(CONFIG)/bin/utest.worker
+DEPS_138 += $(CONFIG)/obj/ejsrun.o
 
-LIBS_137 += -lejs
-LIBS_137 += -lhttp
-LIBS_137 += -lpcre
-LIBS_137 += -lmpr
+LIBS_138 += -lejs
+LIBS_138 += -lhttp
+LIBS_138 += -lpcre
+LIBS_138 += -lmpr
 
-$(CONFIG)/bin/utest: $(DEPS_137)
+$(CONFIG)/bin/utest: $(DEPS_138)
 	@echo '      [Link] utest'
-	$(CC) -o $(CONFIG)/bin/utest $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS_137) $(LIBS_137) $(LIBS) -lmpr $(LDFLAGS)
+	$(CC) -o $(CONFIG)/bin/utest $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS_138) $(LIBS_138) $(LIBS) -lmpr $(LDFLAGS)
 
 #
 #   version
 #
-version: $(DEPS_138)
+version: $(DEPS_139)
 	@echo 2.3.0-1
 
 #
 #   stop
 #
-stop: $(DEPS_139)
+stop: $(DEPS_140)
 	
 
 #
 #   installBinary
 #
-DEPS_140 += stop
+DEPS_141 += stop
 
-installBinary: $(DEPS_140)
+installBinary: $(DEPS_141)
 	mkdir -p "$(BIT_APP_PREFIX)"
 	mkdir -p "$(BIT_VAPP_PREFIX)"
 	mkdir -p "$(BIT_APP_PREFIX)"
@@ -1964,23 +1975,23 @@ installBinary: $(DEPS_140)
 #
 #   start
 #
-start: $(DEPS_141)
+start: $(DEPS_142)
 	
 
 #
 #   install
 #
-DEPS_142 += stop
-DEPS_142 += installBinary
-DEPS_142 += start
+DEPS_143 += stop
+DEPS_143 += installBinary
+DEPS_143 += start
 
-install: $(DEPS_142)
+install: $(DEPS_143)
 	
 
 #
 #   uninstall
 #
-DEPS_143 += stop
+DEPS_144 += stop
 
-uninstall: $(DEPS_143)
+uninstall: $(DEPS_144)
 
