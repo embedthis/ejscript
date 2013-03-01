@@ -895,6 +895,56 @@ static EjsArray *insertArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     function join(sep: String = undefined): String
  */
+#if OPTIMIZED || 1
+static EjsString *joinArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+{
+    EjsString       *result, *sep, *sp;
+    MprBuf          *buf;
+    ssize           len;
+    int             i, nonString;
+
+    sep = (argc == 1) ? (EjsString*) argv[0] : NULL;
+    if (sep == ESV(empty) && ap->length == 1 && ejsIs(ejs, ap->data[0], String)) {
+        /* Optimized path for joining [string]. This happens frequently with fun(...args) */
+        return (EjsString*) ap->data[0];
+    }
+    result = ESV(empty);
+    /*
+        Get an estimate of the string length
+     */
+    len = 0;
+    nonString = 0;
+    for (i = 0; i < ap->length; i++) {
+        sp = (EjsString*) ap->data[i];
+        if (!ejsIs(ejs, sp, String)) {
+            nonString = 1;
+            continue;
+        }
+        len += sp->length;
+    }
+    len += (ap->length * sep->length);
+    if (nonString) {
+        len += BIT_MAX_BUFFER;
+    }
+    buf = mprCreateBuf(len + 1, -1);
+
+    for (i = 0; i < ap->length; i++) {
+        sp = (EjsString*) ap->data[i];
+        if (!ejsIsDefined(ejs, sp)) {
+            continue;
+        }
+        if (i > 0 && sep) {
+            mprPutBlockToBuf(buf, sep->value, sep->length);
+        }
+        sp = ejsToString(ejs, sp);
+        mprPutBlockToBuf(buf, sp->value, sp->length);
+    }
+    mprAddNullToBuf(buf);
+    return ejsCreateStringFromBytes(ejs, mprGetBufStart(buf), mprGetBufLength(buf));
+}
+#else
+
+/* UNUSED */
 static EjsString *joinArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
     EjsString       *result, *sep;
@@ -919,6 +969,7 @@ static EjsString *joinArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     }
     return result;
 }
+#endif
 
 
 /*
