@@ -599,10 +599,10 @@ static EjsNumber *cmd_write(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         if (ejsIs(ejs, vp, ByteArray)) {
             bp = (EjsByteArray*) vp;
             len = bp->writePosition - bp->readPosition;
-            wrote += mprWriteCmd(cmd->mc, MPR_CMD_STDIN, (char*) &bp->value[bp->readPosition], len);
+            wrote += mprWriteCmdBlock(cmd->mc, MPR_CMD_STDIN, (char*) &bp->value[bp->readPosition], len);
         } else {
             sp = (EjsString*) ejsToString(ejs, vp);
-            wrote += mprWriteCmd(cmd->mc, MPR_CMD_STDIN, sp->value, sp->length);
+            wrote += mprWriteCmdBlock(cmd->mc, MPR_CMD_STDIN, sp->value, sp->length);
         }
     }
     return ejsCreateNumber(ejs, (MprNumber) wrote);
