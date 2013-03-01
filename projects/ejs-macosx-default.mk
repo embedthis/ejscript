@@ -4,7 +4,7 @@
 
 PRODUCT           := ejs
 VERSION           := 2.3.0
-BUILD_NUMBER      := 1
+BUILD_NUMBER      := 2
 PROFILE           := default
 ARCH              := $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/')
 OS                := macosx
@@ -1843,7 +1843,7 @@ $(CONFIG)/bin/utest: $(DEPS_138)
 #   version
 #
 version: $(DEPS_139)
-	@echo 2.3.0-1
+	@echo 2.3.0-2
 
 #
 #   stop

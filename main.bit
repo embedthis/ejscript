@@ -45,7 +45,7 @@ Bit.load({
         title: 'Embedthis Ejscript',
         company: 'Embedthis',
         version: '2.3.0',
-        buildNumber: '1',
+        buildNumber: '2',
         bit: '0.8.2',
 
         /*
@@ -157,8 +157,8 @@ Bit.load({
 
     scripts: { 
         /* Want est support included, but disabled */
-        pregenheader: "bit.packs.est.enable = 0", 
-        pregen: "bit.packs.est.enable = 0",
+        pregenheader: "if (bit.generating) bit.packs.est.enable = 0", 
+        pregen: "if (bit.generating) bit.packs.est.enable = 0",
     },
 
     packs: {

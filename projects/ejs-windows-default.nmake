@@ -4,7 +4,7 @@
 
 PRODUCT           = ejs
 VERSION           = 2.3.0
-BUILD_NUMBER      = 1
+BUILD_NUMBER      = 2
 PROFILE           = default
 PA                = $(PROCESSOR_ARCHITECTURE)
 
@@ -1890,7 +1890,7 @@ $(CONFIG)\bin\utest.exe: $(DEPS_140)
 #   version
 #
 version: $(DEPS_141)
-	@echo 2.3.0-1
+	@echo 2.3.0-2
 
 #
 #   stop
