@@ -303,6 +303,9 @@ module ejs {
     /**  @hide TODO - doc */
     function instanceOf(obj: Object, target: Object): Boolean
         obj is target
+
+    /** @hide */
+    native function base64(str: String): String
 }
 
 

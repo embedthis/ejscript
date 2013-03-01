@@ -439,6 +439,17 @@ static EjsObj *g_printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
+static EjsString *g_base64(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    EjsString   *bstring;
+    char        *str;
+
+    bstring = ejsToString(ejs, argv[0]);
+    str = ejsToMulti(ejs, bstring);
+    return ejsCreateStringFromAsc(ejs, mprEncode64Block(str, bstring->length));
+}
+
+
 PUBLIC void ejsFreezeGlobal(Ejs *ejs)
 {
     EjsTrait    *trait;
@@ -510,6 +521,7 @@ PUBLIC void ejsConfigureGlobalBlock(Ejs *ejs)
     ejsBindFunction(ejs, block, ES_parse, g_parse);
     ejsBindFunction(ejs, block, ES_parseInt, g_parseInt);
     ejsBindFunction(ejs, block, ES_print, g_printLine);
+    ejsBindFunction(ejs, block, ES_base64, g_base64);
 }
 
 
