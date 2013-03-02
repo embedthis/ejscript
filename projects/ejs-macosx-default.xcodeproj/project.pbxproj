@@ -2732,7 +2732,7 @@ cd ../src/jems/ejs.db.sqlite
 			files = (
 			);
 			inputPaths = (
-../src/jems/ejs.mail/mail.es
+../src/jems/ejs.mail/Mail.es
 			);
 			outputPaths = (
 ../macosx-x64-default/bin/ejs.mail.mod
