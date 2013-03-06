@@ -248,6 +248,7 @@ clean:
 #   bit.h
 #
 $(CONFIG)\inc\bit.h: $(DEPS_1)
+	@echo '      [Copy] $(CONFIG)/inc/bit.h'
 
 #
 #   removeFiles.obj
@@ -272,7 +273,7 @@ $(CONFIG)\bin\removeFiles.exe: $(DEPS_3)
 #   mpr.h
 #
 $(CONFIG)\inc\mpr.h: $(DEPS_4)
-	@echo '      [File] $(CONFIG)/inc/mpr.h'
+	@echo '      [Copy] $(CONFIG)/inc/mpr.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\deps\mpr\mpr.h" "$(CONFIG)\inc\mpr.h"
 
@@ -280,7 +281,7 @@ $(CONFIG)\inc\mpr.h: $(DEPS_4)
 #   bitos.h
 #
 $(CONFIG)\inc\bitos.h: $(DEPS_5)
-	@echo '      [File] $(CONFIG)/inc/bitos.h'
+	@echo '      [Copy] $(CONFIG)/inc/bitos.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\bitos.h" "$(CONFIG)\inc\bitos.h"
 
@@ -310,7 +311,7 @@ $(CONFIG)\bin\libmpr.dll: $(DEPS_7)
 #   est.h
 #
 $(CONFIG)\inc\est.h: $(DEPS_8)
-	@echo '      [File] $(CONFIG)/inc/est.h'
+	@echo '      [Copy] $(CONFIG)/inc/est.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\deps\est\est.h" "$(CONFIG)\inc\est.h"
 
@@ -422,7 +423,7 @@ $(CONFIG)\bin\makerom.exe: $(DEPS_16)
 DEPS_17 = $(DEPS_17) src\deps\est\ca.crt
 
 $(CONFIG)\bin\ca.crt: $(DEPS_17)
-	@echo '      [File] $(CONFIG)/bin/ca.crt'
+	@echo '      [Copy] $(CONFIG)/bin/ca.crt'
 	if not exist "$(CONFIG)\bin" md "$(CONFIG)\bin"
 	copy /Y "src\deps\est\ca.crt" "$(CONFIG)\bin\ca.crt"
 
@@ -430,7 +431,7 @@ $(CONFIG)\bin\ca.crt: $(DEPS_17)
 #   pcre.h
 #
 $(CONFIG)\inc\pcre.h: $(DEPS_18)
-	@echo '      [File] $(CONFIG)/inc/pcre.h'
+	@echo '      [Copy] $(CONFIG)/inc/pcre.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\deps\pcre\pcre.h" "$(CONFIG)\inc\pcre.h"
 
@@ -459,7 +460,7 @@ $(CONFIG)\bin\libpcre.dll: $(DEPS_20)
 #   http.h
 #
 $(CONFIG)\inc\http.h: $(DEPS_21)
-	@echo '      [File] $(CONFIG)/inc/http.h'
+	@echo '      [Copy] $(CONFIG)/inc/http.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\deps\http\http.h" "$(CONFIG)\inc\http.h"
 
@@ -519,7 +520,7 @@ $(CONFIG)\bin\http.exe: $(DEPS_25)
 #   sqlite3.h
 #
 $(CONFIG)\inc\sqlite3.h: $(DEPS_26)
-	@echo '      [File] $(CONFIG)/inc/sqlite3.h'
+	@echo '      [Copy] $(CONFIG)/inc/sqlite3.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\deps\sqlite\sqlite3.h" "$(CONFIG)\inc\sqlite3.h"
 
@@ -579,7 +580,7 @@ $(CONFIG)\bin\sqlite.exe: $(DEPS_30)
 #   zlib.h
 #
 $(CONFIG)\inc\zlib.h: $(DEPS_31)
-	@echo '      [File] $(CONFIG)/inc/zlib.h'
+	@echo '      [Copy] $(CONFIG)/inc/zlib.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\deps\zlib\zlib.h" "$(CONFIG)\inc\zlib.h"
 
@@ -608,7 +609,7 @@ $(CONFIG)\bin\libzlib.dll: $(DEPS_33)
 #   ejs.cache.local.slots.h
 #
 $(CONFIG)\inc\ejs.cache.local.slots.h: $(DEPS_34)
-	@echo '      [File] $(CONFIG)/inc/ejs.cache.local.slots.h'
+	@echo '      [Copy] $(CONFIG)/inc/ejs.cache.local.slots.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\slots\ejs.cache.local.slots.h" "$(CONFIG)\inc\ejs.cache.local.slots.h"
 
@@ -616,7 +617,7 @@ $(CONFIG)\inc\ejs.cache.local.slots.h: $(DEPS_34)
 #   ejs.db.sqlite.slots.h
 #
 $(CONFIG)\inc\ejs.db.sqlite.slots.h: $(DEPS_35)
-	@echo '      [File] $(CONFIG)/inc/ejs.db.sqlite.slots.h'
+	@echo '      [Copy] $(CONFIG)/inc/ejs.db.sqlite.slots.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\slots\ejs.db.sqlite.slots.h" "$(CONFIG)\inc\ejs.db.sqlite.slots.h"
 
@@ -624,7 +625,7 @@ $(CONFIG)\inc\ejs.db.sqlite.slots.h: $(DEPS_35)
 #   ejs.slots.h
 #
 $(CONFIG)\inc\ejs.slots.h: $(DEPS_36)
-	@echo '      [File] $(CONFIG)/inc/ejs.slots.h'
+	@echo '      [Copy] $(CONFIG)/inc/ejs.slots.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\slots\ejs.slots.h" "$(CONFIG)\inc\ejs.slots.h"
 
@@ -632,7 +633,7 @@ $(CONFIG)\inc\ejs.slots.h: $(DEPS_36)
 #   ejs.web.slots.h
 #
 $(CONFIG)\inc\ejs.web.slots.h: $(DEPS_37)
-	@echo '      [File] $(CONFIG)/inc/ejs.web.slots.h'
+	@echo '      [Copy] $(CONFIG)/inc/ejs.web.slots.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\slots\ejs.web.slots.h" "$(CONFIG)\inc\ejs.web.slots.h"
 
@@ -640,7 +641,7 @@ $(CONFIG)\inc\ejs.web.slots.h: $(DEPS_37)
 #   ejs.zlib.slots.h
 #
 $(CONFIG)\inc\ejs.zlib.slots.h: $(DEPS_38)
-	@echo '      [File] $(CONFIG)/inc/ejs.zlib.slots.h'
+	@echo '      [Copy] $(CONFIG)/inc/ejs.zlib.slots.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\slots\ejs.zlib.slots.h" "$(CONFIG)\inc\ejs.zlib.slots.h"
 
@@ -648,7 +649,7 @@ $(CONFIG)\inc\ejs.zlib.slots.h: $(DEPS_38)
 #   ejsByteCode.h
 #
 $(CONFIG)\inc\ejsByteCode.h: $(DEPS_39)
-	@echo '      [File] $(CONFIG)/inc/ejsByteCode.h'
+	@echo '      [Copy] $(CONFIG)/inc/ejsByteCode.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\ejsByteCode.h" "$(CONFIG)\inc\ejsByteCode.h"
 
@@ -656,7 +657,7 @@ $(CONFIG)\inc\ejsByteCode.h: $(DEPS_39)
 #   ejsByteCodeTable.h
 #
 $(CONFIG)\inc\ejsByteCodeTable.h: $(DEPS_40)
-	@echo '      [File] $(CONFIG)/inc/ejsByteCodeTable.h'
+	@echo '      [Copy] $(CONFIG)/inc/ejsByteCodeTable.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\ejsByteCodeTable.h" "$(CONFIG)\inc\ejsByteCodeTable.h"
 
@@ -664,7 +665,7 @@ $(CONFIG)\inc\ejsByteCodeTable.h: $(DEPS_40)
 #   ejsCustomize.h
 #
 $(CONFIG)\inc\ejsCustomize.h: $(DEPS_41)
-	@echo '      [File] $(CONFIG)/inc/ejsCustomize.h'
+	@echo '      [Copy] $(CONFIG)/inc/ejsCustomize.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\ejsCustomize.h" "$(CONFIG)\inc\ejsCustomize.h"
 
@@ -679,7 +680,7 @@ DEPS_42 = $(DEPS_42) $(CONFIG)\inc\ejs.slots.h
 DEPS_42 = $(DEPS_42) $(CONFIG)\inc\ejsCustomize.h
 
 $(CONFIG)\inc\ejs.h: $(DEPS_42)
-	@echo '      [File] $(CONFIG)/inc/ejs.h'
+	@echo '      [Copy] $(CONFIG)/inc/ejs.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\ejs.h" "$(CONFIG)\inc\ejs.h"
 
@@ -687,7 +688,7 @@ $(CONFIG)\inc\ejs.h: $(DEPS_42)
 #   ejsCompiler.h
 #
 $(CONFIG)\inc\ejsCompiler.h: $(DEPS_43)
-	@echo '      [File] $(CONFIG)/inc/ejsCompiler.h'
+	@echo '      [Copy] $(CONFIG)/inc/ejsCompiler.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\ejsCompiler.h" "$(CONFIG)\inc\ejsCompiler.h"
 
@@ -1483,6 +1484,7 @@ $(CONFIG)\bin\ejsc.exe: $(DEPS_107)
 #   ejsmod.h
 #
 src\cmd\ejsmod.h: $(DEPS_108)
+	@echo '      [Copy] src/cmd/ejsmod.h'
 
 #
 #   ejsmod.obj
@@ -1736,7 +1738,7 @@ $(CONFIG)\bin\ejs.web.mod: $(DEPS_127)
 #   ejsWeb.h
 #
 $(CONFIG)\inc\ejsWeb.h: $(DEPS_128)
-	@echo '      [File] $(CONFIG)/inc/ejsWeb.h'
+	@echo '      [Copy] $(CONFIG)/inc/ejsWeb.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\jems\ejs.web\ejsWeb.h" "$(CONFIG)\inc\ejsWeb.h"
 

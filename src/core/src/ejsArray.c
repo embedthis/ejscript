@@ -898,7 +898,7 @@ static EjsArray *insertArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 #if OPTIMIZED || 1
 static EjsString *joinArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
-    EjsString       *result, *sep, *sp;
+    EjsString       *sep, *sp;
     MprBuf          *buf;
     ssize           len;
     int             i, nonString;
@@ -908,7 +908,6 @@ static EjsString *joinArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         /* Optimized path for joining [string]. This happens frequently with fun(...args) */
         return (EjsString*) ap->data[0];
     }
-    result = ESV(empty);
     /*
         Get an estimate of the string length
      */
