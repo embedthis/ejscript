@@ -36,9 +36,8 @@
             <ul>
                 <li><a href="#requirements">System Requirements</a></li>
                 <li><a href="#releaseBuild">Release Build</a></li>
+                <li><a href="#issues">Known Issues</a></li>
                 <li><a href="#hints">Helpful Hints</a></li>
-                <li><a href="#limitations">Limitations and Special Notes</a></li>
-                <li><a href="#resolvedIssues">Resolved Issues</a></li>
                 <li style="list-style: none">
                     <h1>See Also</h1>
                     <ul>
@@ -97,11 +96,26 @@
             compile and build samples and source code.</p>
             <ul>
                 <li>UNIX/Linux GNU tools</li>
-                <li>Windows Visual Studio (Visual Studio 2008 and Visual Studio 2008 Express).</li>
-                <li>Windows XP with Cygwin UNIX emulation tools. See <a href=
-                "http://www.cygwin.com/">www.cygwin.com</a>.</li>
+                <li>Windows Visual Studio (Visual Studio 2010 and Visual Studio 2010 Express).</li>
                 <li>WindRiver Tornado Development Tools.</li>
-            </ul><a id="releaseBuild"></a> <a id="hints"></a>
+            </ul><a id="releaseBuild"></a> 
+            
+            <h2 class="section">Known Issues</h2>
+            <a id="issues"></a>
+            <ol><li>The Mocana NanoSSL does not support:
+                    <ul>
+                        <li>Client mode SSL</li>
+                        <li>Run-time cipher selection</li>
+                        <li>Client certificate mutual authentication</li>
+                        <li>Routing based on client certificate fields</li>
+                    </ul>
+                </li>
+                <li>The MatrixSSL does not support:
+                <ul>
+                    <li>Run-time cipher selectiion</li>
+                </ul>
+            </ol>
+            <a id="hints"></a>
             <h2 class="section">Helpful Hints</h2>
             <h3>Debug Trace and Logging</h3>
             <p>Ejscript has a debug logging and trace facility that can help when debugging configuration issues or
@@ -116,18 +130,7 @@ ejs --log logFile:logLevel
             </blockquote>
             <p>The log level can be from 0 to 9, with 9 being the most verbose level. If compiling your scripts with
             debug enabled via the --debug switch, a log level setting of 5 will trace each source statement and
-            assembly byte code to the log file.</p><a id="limitations"></a>
-            <!--
-            <h2 class="section">Limitations and Special Notes</h2>
-            <ul>
-                <li>This release snapshot is not yet fully compliant with ECMAscript 3. This will be rectified by the
-                1.0 release.</li>
-            </ul>
-            -->
-            
-            <a id="resolvedIssues"></a>
-            <h3>Resolved Issues</h3>
-            <p>See the new features and fixes in the <a href="changeLog.html">Change Log</a> document.</p>
+            assembly byte code to the log file.</p>
         </div>
     </div>
 <!-- BeginDsi "dsi/bottom.html" -->
