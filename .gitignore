@@ -180,3 +180,4 @@ projects/ipch
 .flags
 ejs.old
 package.old
+ejs.sublime-*

@@ -68,7 +68,6 @@
 
 		          <li><a href="../../../guide/ejs/users/compiler.html">Using the Compiler</a></li>
 		          <li><a href="../../../guide/ejs/users/shell.html">Command Shell</a></li>
-		          <li><a href="../../../guide/ejs/users/bit.html">Building with Bit</a></li>
 		        </ul>
 <!-- EndDsi -->
         </div>
@@ -295,7 +294,7 @@ for (initialization; conditional; increment)<br />    statement
 for (let i = 0; i &lt; 10; i++) {<br />    print("i is " + i)<br />}
 </pre>
             <p>You can put any expression or statement in the initialization or increment sections. In this example, we
-            simply define a variable <b>i</b> and initialize it to zero in the initialization section and increment it
+            simply define a variable and initialize it to zero in the initialization section and increment it
             each time after the statement body is executed. The conditional expression will evaluate to a boolean value
             which if true, allows the statement body to be executed. The increment expression is evaluated after the
             statement body is executed and before the conditional is re-tested.</p><a id="forIn"></a>
@@ -362,9 +361,9 @@ if (i &lt; j) {<br />    print("i is " + i)<br />    print("j is " + j)<br />} e
             <pre>
 i = 0<br />j = 1<br />if (i &lt; j || j != 0 || getToday() == "sunday") {<br />    // Do something<br />}
 </pre>
-            <p>Ejscript uses lazy evaluation where if the first expression (i &lt; j) is true, then the following
-            expressions will not be evaluated. In the example above, getToday() will not be called as <b>i</b> is less
-            than <b>j</b>.</p>
+            <p>Ejscript uses lazy evaluation where if the first expression "i &lt; j" is true, then the following
+            expressions will not be evaluated. In the example above, getToday() will not be called as "i" is less
+            than "j".</p>
             
             <a id="interface"></a>
             <h2 class="section">interface</h2>
@@ -398,8 +397,8 @@ module YourStuff {
 }
 </pre>
             <p>This code creates two modules and two variables both called <b>x</b>. However, it qualifies each
-            <b>x</b> with the name of the module. If your code utilizes the <b>require</b> directive, you can
-            specify which module you want to use and which variable <b>x</b> you need.</p>
+            "x" with the name of the module. If your code utilizes the <b>require</b> directive, you can
+            specify which module you want to use and which variable "x" you need.</p>
             <pre>
 <b>home&gt;</b> ejs
 require MyStuff
