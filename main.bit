@@ -44,7 +44,7 @@ Bit.load({
         product: 'ejs',
         title: 'Embedthis Ejscript',
         company: 'Embedthis',
-        version: '2.3.0',
+        version: '2.3.1',
         buildNumber: '2',
         bit: '0.8.4',
 
