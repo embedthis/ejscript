@@ -7,7 +7,7 @@ export WIND_HOME := $(WIND_BASE)/..
 export WIND_PLATFORM := $(WIND_PLATFORM)
 
 PRODUCT           := ejs
-VERSION           := 2.3.0
+VERSION           := 2.3.1
 BUILD_NUMBER      := 2
 PROFILE           := default
 ARCH              := $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/')
@@ -1924,7 +1924,7 @@ $(CONFIG)/bin/utest.out: $(DEPS_143)
 #   version
 #
 version: $(DEPS_144)
-	@echo 2.3.0-2
+	@echo 2.3.1-2
 
 #
 #   stop

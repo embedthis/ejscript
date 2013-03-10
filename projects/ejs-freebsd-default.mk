@@ -3,7 +3,7 @@
 #
 
 PRODUCT           := ejs
-VERSION           := 2.3.0
+VERSION           := 2.3.1
 BUILD_NUMBER      := 2
 PROFILE           := default
 ARCH              := $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/')
@@ -1920,7 +1920,7 @@ $(CONFIG)/bin/utest: $(DEPS_143)
 #   version
 #
 version: $(DEPS_144)
-	@echo 2.3.0-2
+	@echo 2.3.1-2
 
 #
 #   stop
@@ -1938,7 +1938,7 @@ installBinary: $(DEPS_146)
 	mkdir -p "$(BIT_VAPP_PREFIX)"
 	mkdir -p "$(BIT_APP_PREFIX)"
 	rm -f "$(BIT_APP_PREFIX)/latest"
-	ln -s "2.3.0" "$(BIT_APP_PREFIX)/latest"
+	ln -s "2.3.1" "$(BIT_APP_PREFIX)/latest"
 	mkdir -p "$(BIT_VAPP_PREFIX)/bin"
 	cp "$(CONFIG)/bin/ejs" "$(BIT_VAPP_PREFIX)/bin/ejs"
 	mkdir -p "$(BIT_BIN_PREFIX)"
