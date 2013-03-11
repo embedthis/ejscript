@@ -53,7 +53,7 @@ module ejs.db {
             if (!global.module::[adapterClass]) {
                 load(module + ".mod", {reload: false})
                 if (!global.module::[adapterClass]) {
-                    throw "Can't find database connector \"" + module + "::" + adapter + "\""
+                    throw "Cannot find database connector \"" + module + "::" + adapter + "\""
                 }
             }
             this.adapter = new global.module::[adapterClass](options)

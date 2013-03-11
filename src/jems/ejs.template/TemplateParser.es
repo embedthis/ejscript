@@ -131,7 +131,7 @@ module ejs.template  {
                             if (!layoutPage.exists) {
                                 layoutPage = Path(layouts).join(layoutPage)
                                 if (!layoutPage.exists) {
-                                    throw "Can't find layout page " + layoutPage
+                                    throw "Cannot find layout page " + layoutPage
                                 }
                             }
                         }

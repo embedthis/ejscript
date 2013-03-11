@@ -573,7 +573,7 @@ var before = Memory.resident
             if (!_db) {
                 _db = Database.defaultDatabase
                 if (!_db) {
-                    throw new Error("Can't get schema, database connection has not yet been established")
+                    throw new Error("Cannot get schema, database connection has not yet been established")
                 }
             }
             let sql: String = 'PRAGMA table_info("' + _tableName + '");'

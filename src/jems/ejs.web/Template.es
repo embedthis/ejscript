@@ -65,6 +65,7 @@ module ejs.web {
             if (!global.TemplateParser) {
                 global.load("ejs.template.mod", {reload: false})
             }
+            options.dir = path.dirname
             let data = options.literal || TemplateParser().build(path.readString(), options)
             return Loader.wrap(path, data)
         }).app

@@ -210,7 +210,7 @@ module ejs.web {
                 let path = Path(file)
                 if (!path.exists) {
                     request.status = Http.NotFound
-                    throw "Can't find required component: \"" + path + "\""
+                    throw "Cannot find required component: \"" + path + "\""
                 }
                 code += path.readString()
             }

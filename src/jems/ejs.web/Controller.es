@@ -105,7 +105,7 @@ module ejs.web {
             cname ||= (request.params.controller + "Controller")
             _initRequest = request
             if (!global[cname]) {
-                throw "Can't locate controller: '" + cname + "'"
+                throw "Cannot locate controller: '" + cname + "'"
             }
             let c: Controller = new global[cname](request)
             _initRequest = null

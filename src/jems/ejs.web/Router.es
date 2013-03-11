@@ -440,7 +440,7 @@ module ejs.web {
                     return
                 }
             }
-            throw "Can't find route \"" + name + "\" to remove"
+            throw "Cannot find route \"" + name + "\" to remove"
         }
 
         /**

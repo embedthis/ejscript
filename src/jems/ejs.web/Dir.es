@@ -28,7 +28,7 @@ module ejs.web {
             }
             return { 
                 status: Http.NotFound, 
-                body: errorBody("Not Found", "Can't locate " + escapeHtml(request.pathInfo))
+                body: errorBody("Not Found", "Cannot locate " + escapeHtml(request.pathInfo))
             }
         }
         return { 
