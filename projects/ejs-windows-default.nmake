@@ -33,22 +33,23 @@ LDFLAGS           = -nologo -nodefaultlib -incremental:no -debug -machine:$(ARCH
 LIBPATHS          = -libpath:$(CONFIG)\bin
 LIBS              = ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.lib msvcrt.lib shell32.lib
 
-BIT_ROOT_PREFIX   = C:
-BIT_BASE_PREFIX   = $(BIT_ROOT_PREFIX)\Program Files
-BIT_APP_PREFIX    = $(BIT_BASE_PREFIX)\Embedthis Ejscript
-BIT_VAPP_PREFIX   = $(BIT_APP_PREFIX)
-BIT_DATA_PREFIX   = $(BIT_VAPP_PREFIX)
-BIT_STATE_PREFIX  = $(BIT_VAPP_PREFIX)
-BIT_BIN_PREFIX    = $(BIT_VAPP_PREFIX)\bin
-BIT_INC_PREFIX    = $(BIT_VAPP_PREFIX)\inc
-BIT_LIB_PREFIX    = $(BIT_VAPP_PREFIX)\lib
-BIT_MAN_PREFIX    = $(BIT_VAPP_PREFIX)\man
-BIT_ETC_PREFIX    = $(BIT_VAPP_PREFIX)
-BIT_WEB_PREFIX    = $(BIT_VAPP_PREFIX)\web
-BIT_LOG_PREFIX    = $(BIT_VAPP_PREFIX)\log
-BIT_SPOOL_PREFIX  = $(BIT_VAPP_PREFIX)\tmp
-BIT_CACHE_PREFIX  = $(BIT_VAPP_PREFIX)\cache
-BIT_SRC_PREFIX    = $(BIT_VAPP_PREFIX)\src
+BIT_ROOT_PREFIX   = 
+BIT_BASE_PREFIX   = $(BIT_ROOT_PREFIX)\usr\local
+BIT_DATA_PREFIX   = $(BIT_ROOT_PREFIX)\
+BIT_STATE_PREFIX  = $(BIT_ROOT_PREFIX)\var
+BIT_APP_PREFIX    = \usr\local\lib\$(PRODUCT)
+BIT_VAPP_PREFIX   = \usr\local\lib\$(PRODUCT)\$(VERSION)
+BIT_BIN_PREFIX    = $(BIT_ROOT_PREFIX)\usr\local\bin
+BIT_INC_PREFIX    = $(BIT_ROOT_PREFIX)\usr\local\include
+BIT_LIB_PREFIX    = $(BIT_ROOT_PREFIX)\usr\local\lib
+BIT_MAN_PREFIX    = $(BIT_ROOT_PREFIX)\usr\local\share\man
+BIT_SBIN_PREFIX   = $(BIT_ROOT_PREFIX)\usr\local\sbin
+BIT_ETC_PREFIX    = $(BIT_ROOT_PREFIX)\etc\$(PRODUCT)
+BIT_WEB_PREFIX    = $(BIT_ROOT_PREFIX)\var\www\$(PRODUCT)-default
+BIT_LOG_PREFIX    = $(BIT_ROOT_PREFIX)\var\log\$(PRODUCT)
+BIT_SPOOL_PREFIX  = $(BIT_ROOT_PREFIX)\var\spool\$(PRODUCT)
+BIT_CACHE_PREFIX  = $(BIT_ROOT_PREFIX)\var\spool\$(PRODUCT)\cache
+BIT_SRC_PREFIX    = $(BIT_ROOT_PREFIX)$(PRODUCT)-$(VERSION)
 
 
 TARGETS           = $(TARGETS) $(CONFIG)\bin\removeFiles.exe
@@ -58,9 +59,6 @@ TARGETS           = $(TARGETS) $(CONFIG)\bin\libmprssl.dll
 !ENDIF
 TARGETS           = $(TARGETS) $(CONFIG)\bin\ejsman.exe
 TARGETS           = $(TARGETS) $(CONFIG)\bin\makerom.exe
-!IF "$(BIT_PACK_EST)" == "1"
-TARGETS           = $(TARGETS) $(CONFIG)\bin\libest.dll
-!ENDIF
 TARGETS           = $(TARGETS) $(CONFIG)\bin\ca.crt
 TARGETS           = $(TARGETS) $(CONFIG)\bin\libpcre.dll
 TARGETS           = $(TARGETS) $(CONFIG)\bin\libhttp.dll
@@ -123,156 +121,152 @@ prep:
 	@if not exist $(CONFIG)\inc\bit.h copy projects\ejs-windows-default-bit.h $(CONFIG)\inc\bit.h
 
 clean:
-	-if exist $(CONFIG)\bin\removeFiles.exe del /Q $(CONFIG)\bin\removeFiles.exe
-	-if exist $(CONFIG)\bin\libmpr.dll del /Q $(CONFIG)\bin\libmpr.dll
-	-if exist $(CONFIG)\bin\libmprssl.dll del /Q $(CONFIG)\bin\libmprssl.dll
-	-if exist $(CONFIG)\bin\ejsman.exe del /Q $(CONFIG)\bin\ejsman.exe
-	-if exist $(CONFIG)\bin\makerom.exe del /Q $(CONFIG)\bin\makerom.exe
-	-if exist $(CONFIG)\bin\libest.dll del /Q $(CONFIG)\bin\libest.dll
-	-if exist $(CONFIG)\bin\ca.crt del /Q $(CONFIG)\bin\ca.crt
-	-if exist $(CONFIG)\bin\libpcre.dll del /Q $(CONFIG)\bin\libpcre.dll
-	-if exist $(CONFIG)\bin\libhttp.dll del /Q $(CONFIG)\bin\libhttp.dll
-	-if exist $(CONFIG)\bin\http.exe del /Q $(CONFIG)\bin\http.exe
-	-if exist $(CONFIG)\bin\libsqlite3.dll del /Q $(CONFIG)\bin\libsqlite3.dll
-	-if exist $(CONFIG)\bin\sqlite.exe del /Q $(CONFIG)\bin\sqlite.exe
-	-if exist $(CONFIG)\bin\libzlib.dll del /Q $(CONFIG)\bin\libzlib.dll
-	-if exist $(CONFIG)\bin\libejs.dll del /Q $(CONFIG)\bin\libejs.dll
-	-if exist $(CONFIG)\bin\ejs.exe del /Q $(CONFIG)\bin\ejs.exe
-	-if exist $(CONFIG)\bin\ejsc.exe del /Q $(CONFIG)\bin\ejsc.exe
-	-if exist $(CONFIG)\bin\ejsmod.exe del /Q $(CONFIG)\bin\ejsmod.exe
-	-if exist $(CONFIG)\bin\ejsrun.exe del /Q $(CONFIG)\bin\ejsrun.exe
-	-if exist $(CONFIG)\bin\jem.es del /Q $(CONFIG)\bin\jem.es
-	-if exist $(CONFIG)\bin\jem.exe del /Q $(CONFIG)\bin\jem.exe
-	-if exist $(CONFIG)\bin\ejs.db.mod del /Q $(CONFIG)\bin\ejs.db.mod
-	-if exist $(CONFIG)\bin\ejs.db.mapper.mod del /Q $(CONFIG)\bin\ejs.db.mapper.mod
-	-if exist $(CONFIG)\bin\ejs.db.sqlite.mod del /Q $(CONFIG)\bin\ejs.db.sqlite.mod
-	-if exist $(CONFIG)\bin\libejs.db.sqlite.dll del /Q $(CONFIG)\bin\libejs.db.sqlite.dll
-	-if exist $(CONFIG)\bin\ejs.mail.mod del /Q $(CONFIG)\bin\ejs.mail.mod
-	-if exist $(CONFIG)\bin\ejs.web.mod del /Q $(CONFIG)\bin\ejs.web.mod
-	-if exist $(CONFIG)\bin\libejs.web.dll del /Q $(CONFIG)\bin\libejs.web.dll
-	-if exist $(CONFIG)\bin\www del /Q $(CONFIG)\bin\www
-	-if exist $(CONFIG)\bin\ejs.template.mod del /Q $(CONFIG)\bin\ejs.template.mod
-	-if exist $(CONFIG)\bin\libejs.zlib.dll del /Q $(CONFIG)\bin\libejs.zlib.dll
-	-if exist $(CONFIG)\bin\mvc.es del /Q $(CONFIG)\bin\mvc.es
-	-if exist $(CONFIG)\bin\ejs.mvc.mod del /Q $(CONFIG)\bin\ejs.mvc.mod
-	-if exist $(CONFIG)\bin\utest.es del /Q $(CONFIG)\bin\utest.es
-	-if exist $(CONFIG)\bin\utest.worker del /Q $(CONFIG)\bin\utest.worker
-	-if exist $(CONFIG)\bin\utest.exe del /Q $(CONFIG)\bin\utest.exe
-	-if exist $(CONFIG)\obj\removeFiles.obj del /Q $(CONFIG)\obj\removeFiles.obj
-	-if exist $(CONFIG)\obj\mprLib.obj del /Q $(CONFIG)\obj\mprLib.obj
-	-if exist $(CONFIG)\obj\mprSsl.obj del /Q $(CONFIG)\obj\mprSsl.obj
-	-if exist $(CONFIG)\obj\manager.obj del /Q $(CONFIG)\obj\manager.obj
-	-if exist $(CONFIG)\obj\makerom.obj del /Q $(CONFIG)\obj\makerom.obj
-	-if exist $(CONFIG)\obj\estLib.obj del /Q $(CONFIG)\obj\estLib.obj
-	-if exist $(CONFIG)\obj\pcre.obj del /Q $(CONFIG)\obj\pcre.obj
-	-if exist $(CONFIG)\obj\httpLib.obj del /Q $(CONFIG)\obj\httpLib.obj
-	-if exist $(CONFIG)\obj\http.obj del /Q $(CONFIG)\obj\http.obj
-	-if exist $(CONFIG)\obj\sqlite3.obj del /Q $(CONFIG)\obj\sqlite3.obj
-	-if exist $(CONFIG)\obj\sqlite.obj del /Q $(CONFIG)\obj\sqlite.obj
-	-if exist $(CONFIG)\obj\zlib.obj del /Q $(CONFIG)\obj\zlib.obj
-	-if exist $(CONFIG)\obj\ecAst.obj del /Q $(CONFIG)\obj\ecAst.obj
-	-if exist $(CONFIG)\obj\ecCodeGen.obj del /Q $(CONFIG)\obj\ecCodeGen.obj
-	-if exist $(CONFIG)\obj\ecCompiler.obj del /Q $(CONFIG)\obj\ecCompiler.obj
-	-if exist $(CONFIG)\obj\ecLex.obj del /Q $(CONFIG)\obj\ecLex.obj
-	-if exist $(CONFIG)\obj\ecModuleWrite.obj del /Q $(CONFIG)\obj\ecModuleWrite.obj
-	-if exist $(CONFIG)\obj\ecParser.obj del /Q $(CONFIG)\obj\ecParser.obj
-	-if exist $(CONFIG)\obj\ecState.obj del /Q $(CONFIG)\obj\ecState.obj
-	-if exist $(CONFIG)\obj\dtoa.obj del /Q $(CONFIG)\obj\dtoa.obj
-	-if exist $(CONFIG)\obj\ejsApp.obj del /Q $(CONFIG)\obj\ejsApp.obj
-	-if exist $(CONFIG)\obj\ejsArray.obj del /Q $(CONFIG)\obj\ejsArray.obj
-	-if exist $(CONFIG)\obj\ejsBlock.obj del /Q $(CONFIG)\obj\ejsBlock.obj
-	-if exist $(CONFIG)\obj\ejsBoolean.obj del /Q $(CONFIG)\obj\ejsBoolean.obj
-	-if exist $(CONFIG)\obj\ejsByteArray.obj del /Q $(CONFIG)\obj\ejsByteArray.obj
-	-if exist $(CONFIG)\obj\ejsCache.obj del /Q $(CONFIG)\obj\ejsCache.obj
-	-if exist $(CONFIG)\obj\ejsCmd.obj del /Q $(CONFIG)\obj\ejsCmd.obj
-	-if exist $(CONFIG)\obj\ejsConfig.obj del /Q $(CONFIG)\obj\ejsConfig.obj
-	-if exist $(CONFIG)\obj\ejsDate.obj del /Q $(CONFIG)\obj\ejsDate.obj
-	-if exist $(CONFIG)\obj\ejsDebug.obj del /Q $(CONFIG)\obj\ejsDebug.obj
-	-if exist $(CONFIG)\obj\ejsError.obj del /Q $(CONFIG)\obj\ejsError.obj
-	-if exist $(CONFIG)\obj\ejsFile.obj del /Q $(CONFIG)\obj\ejsFile.obj
-	-if exist $(CONFIG)\obj\ejsFileSystem.obj del /Q $(CONFIG)\obj\ejsFileSystem.obj
-	-if exist $(CONFIG)\obj\ejsFrame.obj del /Q $(CONFIG)\obj\ejsFrame.obj
-	-if exist $(CONFIG)\obj\ejsFunction.obj del /Q $(CONFIG)\obj\ejsFunction.obj
-	-if exist $(CONFIG)\obj\ejsGC.obj del /Q $(CONFIG)\obj\ejsGC.obj
-	-if exist $(CONFIG)\obj\ejsGlobal.obj del /Q $(CONFIG)\obj\ejsGlobal.obj
-	-if exist $(CONFIG)\obj\ejsHttp.obj del /Q $(CONFIG)\obj\ejsHttp.obj
-	-if exist $(CONFIG)\obj\ejsIterator.obj del /Q $(CONFIG)\obj\ejsIterator.obj
-	-if exist $(CONFIG)\obj\ejsJSON.obj del /Q $(CONFIG)\obj\ejsJSON.obj
-	-if exist $(CONFIG)\obj\ejsLocalCache.obj del /Q $(CONFIG)\obj\ejsLocalCache.obj
-	-if exist $(CONFIG)\obj\ejsMath.obj del /Q $(CONFIG)\obj\ejsMath.obj
-	-if exist $(CONFIG)\obj\ejsMemory.obj del /Q $(CONFIG)\obj\ejsMemory.obj
-	-if exist $(CONFIG)\obj\ejsMprLog.obj del /Q $(CONFIG)\obj\ejsMprLog.obj
-	-if exist $(CONFIG)\obj\ejsNamespace.obj del /Q $(CONFIG)\obj\ejsNamespace.obj
-	-if exist $(CONFIG)\obj\ejsNull.obj del /Q $(CONFIG)\obj\ejsNull.obj
-	-if exist $(CONFIG)\obj\ejsNumber.obj del /Q $(CONFIG)\obj\ejsNumber.obj
-	-if exist $(CONFIG)\obj\ejsObject.obj del /Q $(CONFIG)\obj\ejsObject.obj
-	-if exist $(CONFIG)\obj\ejsPath.obj del /Q $(CONFIG)\obj\ejsPath.obj
-	-if exist $(CONFIG)\obj\ejsPot.obj del /Q $(CONFIG)\obj\ejsPot.obj
-	-if exist $(CONFIG)\obj\ejsRegExp.obj del /Q $(CONFIG)\obj\ejsRegExp.obj
-	-if exist $(CONFIG)\obj\ejsSocket.obj del /Q $(CONFIG)\obj\ejsSocket.obj
-	-if exist $(CONFIG)\obj\ejsString.obj del /Q $(CONFIG)\obj\ejsString.obj
-	-if exist $(CONFIG)\obj\ejsSystem.obj del /Q $(CONFIG)\obj\ejsSystem.obj
-	-if exist $(CONFIG)\obj\ejsTimer.obj del /Q $(CONFIG)\obj\ejsTimer.obj
-	-if exist $(CONFIG)\obj\ejsType.obj del /Q $(CONFIG)\obj\ejsType.obj
-	-if exist $(CONFIG)\obj\ejsUri.obj del /Q $(CONFIG)\obj\ejsUri.obj
-	-if exist $(CONFIG)\obj\ejsVoid.obj del /Q $(CONFIG)\obj\ejsVoid.obj
-	-if exist $(CONFIG)\obj\ejsWebSocket.obj del /Q $(CONFIG)\obj\ejsWebSocket.obj
-	-if exist $(CONFIG)\obj\ejsWorker.obj del /Q $(CONFIG)\obj\ejsWorker.obj
-	-if exist $(CONFIG)\obj\ejsXML.obj del /Q $(CONFIG)\obj\ejsXML.obj
-	-if exist $(CONFIG)\obj\ejsXMLList.obj del /Q $(CONFIG)\obj\ejsXMLList.obj
-	-if exist $(CONFIG)\obj\ejsXMLLoader.obj del /Q $(CONFIG)\obj\ejsXMLLoader.obj
-	-if exist $(CONFIG)\obj\ejsByteCode.obj del /Q $(CONFIG)\obj\ejsByteCode.obj
-	-if exist $(CONFIG)\obj\ejsException.obj del /Q $(CONFIG)\obj\ejsException.obj
-	-if exist $(CONFIG)\obj\ejsHelper.obj del /Q $(CONFIG)\obj\ejsHelper.obj
-	-if exist $(CONFIG)\obj\ejsInterp.obj del /Q $(CONFIG)\obj\ejsInterp.obj
-	-if exist $(CONFIG)\obj\ejsLoader.obj del /Q $(CONFIG)\obj\ejsLoader.obj
-	-if exist $(CONFIG)\obj\ejsModule.obj del /Q $(CONFIG)\obj\ejsModule.obj
-	-if exist $(CONFIG)\obj\ejsScope.obj del /Q $(CONFIG)\obj\ejsScope.obj
-	-if exist $(CONFIG)\obj\ejsService.obj del /Q $(CONFIG)\obj\ejsService.obj
-	-if exist $(CONFIG)\obj\ejs.obj del /Q $(CONFIG)\obj\ejs.obj
-	-if exist $(CONFIG)\obj\ejsc.obj del /Q $(CONFIG)\obj\ejsc.obj
-	-if exist $(CONFIG)\obj\ejsmod.obj del /Q $(CONFIG)\obj\ejsmod.obj
-	-if exist $(CONFIG)\obj\doc.obj del /Q $(CONFIG)\obj\doc.obj
-	-if exist $(CONFIG)\obj\docFiles.obj del /Q $(CONFIG)\obj\docFiles.obj
-	-if exist $(CONFIG)\obj\listing.obj del /Q $(CONFIG)\obj\listing.obj
-	-if exist $(CONFIG)\obj\slotGen.obj del /Q $(CONFIG)\obj\slotGen.obj
-	-if exist $(CONFIG)\obj\ejsrun.obj del /Q $(CONFIG)\obj\ejsrun.obj
-	-if exist $(CONFIG)\obj\ejsSqlite.obj del /Q $(CONFIG)\obj\ejsSqlite.obj
-	-if exist $(CONFIG)\obj\ejsHttpServer.obj del /Q $(CONFIG)\obj\ejsHttpServer.obj
-	-if exist $(CONFIG)\obj\ejsRequest.obj del /Q $(CONFIG)\obj\ejsRequest.obj
-	-if exist $(CONFIG)\obj\ejsSession.obj del /Q $(CONFIG)\obj\ejsSession.obj
-	-if exist $(CONFIG)\obj\ejsWeb.obj del /Q $(CONFIG)\obj\ejsWeb.obj
-	-if exist $(CONFIG)\obj\ejsZlib.obj del /Q $(CONFIG)\obj\ejsZlib.obj
+	if exist "$(CONFIG)\bin\removeFiles.exe" rd /Q "$(CONFIG)\bin\removeFiles.exe"
+	if exist "$(CONFIG)\bin\libmpr.dll" rd /Q "$(CONFIG)\bin\libmpr.dll"
+	if exist "$(CONFIG)\bin\libmprssl.dll" rd /Q "$(CONFIG)\bin\libmprssl.dll"
+	if exist "$(CONFIG)\bin\ejsman.exe" rd /Q "$(CONFIG)\bin\ejsman.exe"
+	if exist "$(CONFIG)\bin\makerom.exe" rd /Q "$(CONFIG)\bin\makerom.exe"
+	if exist "$(CONFIG)\bin\libest.dll" rd /Q "$(CONFIG)\bin\libest.dll"
+	if exist "$(CONFIG)\bin\ca.crt" rd /Q "$(CONFIG)\bin\ca.crt"
+	if exist "$(CONFIG)\bin\libpcre.dll" rd /Q "$(CONFIG)\bin\libpcre.dll"
+	if exist "$(CONFIG)\bin\libhttp.dll" rd /Q "$(CONFIG)\bin\libhttp.dll"
+	if exist "$(CONFIG)\bin\http.exe" rd /Q "$(CONFIG)\bin\http.exe"
+	if exist "$(CONFIG)\bin\libsqlite3.dll" rd /Q "$(CONFIG)\bin\libsqlite3.dll"
+	if exist "$(CONFIG)\bin\sqlite.exe" rd /Q "$(CONFIG)\bin\sqlite.exe"
+	if exist "$(CONFIG)\bin\libzlib.dll" rd /Q "$(CONFIG)\bin\libzlib.dll"
+	if exist "$(CONFIG)\bin\libejs.dll" rd /Q "$(CONFIG)\bin\libejs.dll"
+	if exist "$(CONFIG)\bin\ejs.exe" rd /Q "$(CONFIG)\bin\ejs.exe"
+	if exist "$(CONFIG)\bin\ejsc.exe" rd /Q "$(CONFIG)\bin\ejsc.exe"
+	if exist "$(CONFIG)\bin\ejsmod.exe" rd /Q "$(CONFIG)\bin\ejsmod.exe"
+	if exist "$(CONFIG)\bin\ejsrun.exe" rd /Q "$(CONFIG)\bin\ejsrun.exe"
+	if exist "$(CONFIG)\bin\jem.exe" rd /Q "$(CONFIG)\bin\jem.exe"
+	if exist "$(CONFIG)\bin\libejs.db.sqlite.dll" rd /Q "$(CONFIG)\bin\libejs.db.sqlite.dll"
+	if exist "$(CONFIG)\bin\libejs.web.dll" rd /Q "$(CONFIG)\bin\libejs.web.dll"
+	if exist "$(CONFIG)\bin\libejs.zlib.dll" rd /Q "$(CONFIG)\bin\libejs.zlib.dll"
+	if exist "$(CONFIG)\bin\utest.exe" rd /Q "$(CONFIG)\bin\utest.exe"
+	if exist "$(CONFIG)\obj\removeFiles.obj" rd /Q "$(CONFIG)\obj\removeFiles.obj"
+	if exist "$(CONFIG)\obj\mprLib.obj" rd /Q "$(CONFIG)\obj\mprLib.obj"
+	if exist "$(CONFIG)\obj\mprSsl.obj" rd /Q "$(CONFIG)\obj\mprSsl.obj"
+	if exist "$(CONFIG)\obj\manager.obj" rd /Q "$(CONFIG)\obj\manager.obj"
+	if exist "$(CONFIG)\obj\makerom.obj" rd /Q "$(CONFIG)\obj\makerom.obj"
+	if exist "$(CONFIG)\obj\estLib.obj" rd /Q "$(CONFIG)\obj\estLib.obj"
+	if exist "$(CONFIG)\obj\pcre.obj" rd /Q "$(CONFIG)\obj\pcre.obj"
+	if exist "$(CONFIG)\obj\httpLib.obj" rd /Q "$(CONFIG)\obj\httpLib.obj"
+	if exist "$(CONFIG)\obj\http.obj" rd /Q "$(CONFIG)\obj\http.obj"
+	if exist "$(CONFIG)\obj\sqlite3.obj" rd /Q "$(CONFIG)\obj\sqlite3.obj"
+	if exist "$(CONFIG)\obj\sqlite.obj" rd /Q "$(CONFIG)\obj\sqlite.obj"
+	if exist "$(CONFIG)\obj\zlib.obj" rd /Q "$(CONFIG)\obj\zlib.obj"
+	if exist "$(CONFIG)\obj\ecAst.obj" rd /Q "$(CONFIG)\obj\ecAst.obj"
+	if exist "$(CONFIG)\obj\ecCodeGen.obj" rd /Q "$(CONFIG)\obj\ecCodeGen.obj"
+	if exist "$(CONFIG)\obj\ecCompiler.obj" rd /Q "$(CONFIG)\obj\ecCompiler.obj"
+	if exist "$(CONFIG)\obj\ecLex.obj" rd /Q "$(CONFIG)\obj\ecLex.obj"
+	if exist "$(CONFIG)\obj\ecModuleWrite.obj" rd /Q "$(CONFIG)\obj\ecModuleWrite.obj"
+	if exist "$(CONFIG)\obj\ecParser.obj" rd /Q "$(CONFIG)\obj\ecParser.obj"
+	if exist "$(CONFIG)\obj\ecState.obj" rd /Q "$(CONFIG)\obj\ecState.obj"
+	if exist "$(CONFIG)\obj\dtoa.obj" rd /Q "$(CONFIG)\obj\dtoa.obj"
+	if exist "$(CONFIG)\obj\ejsApp.obj" rd /Q "$(CONFIG)\obj\ejsApp.obj"
+	if exist "$(CONFIG)\obj\ejsArray.obj" rd /Q "$(CONFIG)\obj\ejsArray.obj"
+	if exist "$(CONFIG)\obj\ejsBlock.obj" rd /Q "$(CONFIG)\obj\ejsBlock.obj"
+	if exist "$(CONFIG)\obj\ejsBoolean.obj" rd /Q "$(CONFIG)\obj\ejsBoolean.obj"
+	if exist "$(CONFIG)\obj\ejsByteArray.obj" rd /Q "$(CONFIG)\obj\ejsByteArray.obj"
+	if exist "$(CONFIG)\obj\ejsCache.obj" rd /Q "$(CONFIG)\obj\ejsCache.obj"
+	if exist "$(CONFIG)\obj\ejsCmd.obj" rd /Q "$(CONFIG)\obj\ejsCmd.obj"
+	if exist "$(CONFIG)\obj\ejsConfig.obj" rd /Q "$(CONFIG)\obj\ejsConfig.obj"
+	if exist "$(CONFIG)\obj\ejsDate.obj" rd /Q "$(CONFIG)\obj\ejsDate.obj"
+	if exist "$(CONFIG)\obj\ejsDebug.obj" rd /Q "$(CONFIG)\obj\ejsDebug.obj"
+	if exist "$(CONFIG)\obj\ejsError.obj" rd /Q "$(CONFIG)\obj\ejsError.obj"
+	if exist "$(CONFIG)\obj\ejsFile.obj" rd /Q "$(CONFIG)\obj\ejsFile.obj"
+	if exist "$(CONFIG)\obj\ejsFileSystem.obj" rd /Q "$(CONFIG)\obj\ejsFileSystem.obj"
+	if exist "$(CONFIG)\obj\ejsFrame.obj" rd /Q "$(CONFIG)\obj\ejsFrame.obj"
+	if exist "$(CONFIG)\obj\ejsFunction.obj" rd /Q "$(CONFIG)\obj\ejsFunction.obj"
+	if exist "$(CONFIG)\obj\ejsGC.obj" rd /Q "$(CONFIG)\obj\ejsGC.obj"
+	if exist "$(CONFIG)\obj\ejsGlobal.obj" rd /Q "$(CONFIG)\obj\ejsGlobal.obj"
+	if exist "$(CONFIG)\obj\ejsHttp.obj" rd /Q "$(CONFIG)\obj\ejsHttp.obj"
+	if exist "$(CONFIG)\obj\ejsIterator.obj" rd /Q "$(CONFIG)\obj\ejsIterator.obj"
+	if exist "$(CONFIG)\obj\ejsJSON.obj" rd /Q "$(CONFIG)\obj\ejsJSON.obj"
+	if exist "$(CONFIG)\obj\ejsLocalCache.obj" rd /Q "$(CONFIG)\obj\ejsLocalCache.obj"
+	if exist "$(CONFIG)\obj\ejsMath.obj" rd /Q "$(CONFIG)\obj\ejsMath.obj"
+	if exist "$(CONFIG)\obj\ejsMemory.obj" rd /Q "$(CONFIG)\obj\ejsMemory.obj"
+	if exist "$(CONFIG)\obj\ejsMprLog.obj" rd /Q "$(CONFIG)\obj\ejsMprLog.obj"
+	if exist "$(CONFIG)\obj\ejsNamespace.obj" rd /Q "$(CONFIG)\obj\ejsNamespace.obj"
+	if exist "$(CONFIG)\obj\ejsNull.obj" rd /Q "$(CONFIG)\obj\ejsNull.obj"
+	if exist "$(CONFIG)\obj\ejsNumber.obj" rd /Q "$(CONFIG)\obj\ejsNumber.obj"
+	if exist "$(CONFIG)\obj\ejsObject.obj" rd /Q "$(CONFIG)\obj\ejsObject.obj"
+	if exist "$(CONFIG)\obj\ejsPath.obj" rd /Q "$(CONFIG)\obj\ejsPath.obj"
+	if exist "$(CONFIG)\obj\ejsPot.obj" rd /Q "$(CONFIG)\obj\ejsPot.obj"
+	if exist "$(CONFIG)\obj\ejsRegExp.obj" rd /Q "$(CONFIG)\obj\ejsRegExp.obj"
+	if exist "$(CONFIG)\obj\ejsSocket.obj" rd /Q "$(CONFIG)\obj\ejsSocket.obj"
+	if exist "$(CONFIG)\obj\ejsString.obj" rd /Q "$(CONFIG)\obj\ejsString.obj"
+	if exist "$(CONFIG)\obj\ejsSystem.obj" rd /Q "$(CONFIG)\obj\ejsSystem.obj"
+	if exist "$(CONFIG)\obj\ejsTimer.obj" rd /Q "$(CONFIG)\obj\ejsTimer.obj"
+	if exist "$(CONFIG)\obj\ejsType.obj" rd /Q "$(CONFIG)\obj\ejsType.obj"
+	if exist "$(CONFIG)\obj\ejsUri.obj" rd /Q "$(CONFIG)\obj\ejsUri.obj"
+	if exist "$(CONFIG)\obj\ejsVoid.obj" rd /Q "$(CONFIG)\obj\ejsVoid.obj"
+	if exist "$(CONFIG)\obj\ejsWebSocket.obj" rd /Q "$(CONFIG)\obj\ejsWebSocket.obj"
+	if exist "$(CONFIG)\obj\ejsWorker.obj" rd /Q "$(CONFIG)\obj\ejsWorker.obj"
+	if exist "$(CONFIG)\obj\ejsXML.obj" rd /Q "$(CONFIG)\obj\ejsXML.obj"
+	if exist "$(CONFIG)\obj\ejsXMLList.obj" rd /Q "$(CONFIG)\obj\ejsXMLList.obj"
+	if exist "$(CONFIG)\obj\ejsXMLLoader.obj" rd /Q "$(CONFIG)\obj\ejsXMLLoader.obj"
+	if exist "$(CONFIG)\obj\ejsByteCode.obj" rd /Q "$(CONFIG)\obj\ejsByteCode.obj"
+	if exist "$(CONFIG)\obj\ejsException.obj" rd /Q "$(CONFIG)\obj\ejsException.obj"
+	if exist "$(CONFIG)\obj\ejsHelper.obj" rd /Q "$(CONFIG)\obj\ejsHelper.obj"
+	if exist "$(CONFIG)\obj\ejsInterp.obj" rd /Q "$(CONFIG)\obj\ejsInterp.obj"
+	if exist "$(CONFIG)\obj\ejsLoader.obj" rd /Q "$(CONFIG)\obj\ejsLoader.obj"
+	if exist "$(CONFIG)\obj\ejsModule.obj" rd /Q "$(CONFIG)\obj\ejsModule.obj"
+	if exist "$(CONFIG)\obj\ejsScope.obj" rd /Q "$(CONFIG)\obj\ejsScope.obj"
+	if exist "$(CONFIG)\obj\ejsService.obj" rd /Q "$(CONFIG)\obj\ejsService.obj"
+	if exist "$(CONFIG)\obj\ejs.obj" rd /Q "$(CONFIG)\obj\ejs.obj"
+	if exist "$(CONFIG)\obj\ejsc.obj" rd /Q "$(CONFIG)\obj\ejsc.obj"
+	if exist "$(CONFIG)\obj\ejsmod.obj" rd /Q "$(CONFIG)\obj\ejsmod.obj"
+	if exist "$(CONFIG)\obj\doc.obj" rd /Q "$(CONFIG)\obj\doc.obj"
+	if exist "$(CONFIG)\obj\docFiles.obj" rd /Q "$(CONFIG)\obj\docFiles.obj"
+	if exist "$(CONFIG)\obj\listing.obj" rd /Q "$(CONFIG)\obj\listing.obj"
+	if exist "$(CONFIG)\obj\slotGen.obj" rd /Q "$(CONFIG)\obj\slotGen.obj"
+	if exist "$(CONFIG)\obj\ejsrun.obj" rd /Q "$(CONFIG)\obj\ejsrun.obj"
+	if exist "$(CONFIG)\obj\ejsSqlite.obj" rd /Q "$(CONFIG)\obj\ejsSqlite.obj"
+	if exist "$(CONFIG)\obj\ejsHttpServer.obj" rd /Q "$(CONFIG)\obj\ejsHttpServer.obj"
+	if exist "$(CONFIG)\obj\ejsRequest.obj" rd /Q "$(CONFIG)\obj\ejsRequest.obj"
+	if exist "$(CONFIG)\obj\ejsSession.obj" rd /Q "$(CONFIG)\obj\ejsSession.obj"
+	if exist "$(CONFIG)\obj\ejsWeb.obj" rd /Q "$(CONFIG)\obj\ejsWeb.obj"
+	if exist "$(CONFIG)\obj\ejsZlib.obj" rd /Q "$(CONFIG)\obj\ejsZlib.obj"
+
+
+
+#
+#   version
+#
+version: $(DEPS_1)
+	@echo NN 2.3.1-2
 
 #
 #   bit.h
 #
-$(CONFIG)\inc\bit.h: $(DEPS_1)
+$(CONFIG)\inc\bit.h: $(DEPS_2)
 	@echo '      [Copy] $(CONFIG)/inc/bit.h'
 
 #
 #   removeFiles.obj
 #
-DEPS_2 = $(DEPS_2) $(CONFIG)\inc\bit.h
+DEPS_3 = $(DEPS_3) $(CONFIG)\inc\bit.h
 
 $(CONFIG)\obj\removeFiles.obj: \
-    package\windows\removeFiles.c $(DEPS_2)
+    package\windows\removeFiles.c $(DEPS_3)
 	@echo '   [Compile] package/windows/removeFiles.c'
 	"$(CC)" -c -Fo$(CONFIG)\obj\removeFiles.obj -Fd$(CONFIG)\obj\removeFiles.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) package\windows\removeFiles.c
 
 #
 #   removeFiles
 #
-DEPS_3 = $(DEPS_3) $(CONFIG)\obj\removeFiles.obj
+DEPS_4 = $(DEPS_4) $(CONFIG)\obj\removeFiles.obj
 
-$(CONFIG)\bin\removeFiles.exe: $(DEPS_3)
+$(CONFIG)\bin\removeFiles.exe: $(DEPS_4)
 	@echo '      [Link] removeFiles'
 	"$(LD)" -out:$(CONFIG)\bin\removeFiles.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\removeFiles.obj $(LIBS)
 
 #
 #   mpr.h
 #
-$(CONFIG)\inc\mpr.h: $(DEPS_4)
+$(CONFIG)\inc\mpr.h: $(DEPS_5)
 	@echo '      [Copy] $(CONFIG)/inc/mpr.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\deps\mpr\mpr.h" "$(CONFIG)\inc\mpr.h"
@@ -280,7 +274,7 @@ $(CONFIG)\inc\mpr.h: $(DEPS_4)
 #
 #   bitos.h
 #
-$(CONFIG)\inc\bitos.h: $(DEPS_5)
+$(CONFIG)\inc\bitos.h: $(DEPS_6)
 	@echo '      [Copy] $(CONFIG)/inc/bitos.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\bitos.h" "$(CONFIG)\inc\bitos.h"
@@ -288,29 +282,29 @@ $(CONFIG)\inc\bitos.h: $(DEPS_5)
 #
 #   mprLib.obj
 #
-DEPS_6 = $(DEPS_6) $(CONFIG)\inc\bit.h
-DEPS_6 = $(DEPS_6) $(CONFIG)\inc\mpr.h
-DEPS_6 = $(DEPS_6) $(CONFIG)\inc\bitos.h
+DEPS_7 = $(DEPS_7) $(CONFIG)\inc\bit.h
+DEPS_7 = $(DEPS_7) $(CONFIG)\inc\mpr.h
+DEPS_7 = $(DEPS_7) $(CONFIG)\inc\bitos.h
 
 $(CONFIG)\obj\mprLib.obj: \
-    src\deps\mpr\mprLib.c $(DEPS_6)
+    src\deps\mpr\mprLib.c $(DEPS_7)
 	@echo '   [Compile] src/deps/mpr/mprLib.c'
 	"$(CC)" -c -Fo$(CONFIG)\obj\mprLib.obj -Fd$(CONFIG)\obj\mprLib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\mpr\mprLib.c
 
 #
 #   libmpr
 #
-DEPS_7 = $(DEPS_7) $(CONFIG)\inc\mpr.h
-DEPS_7 = $(DEPS_7) $(CONFIG)\obj\mprLib.obj
+DEPS_8 = $(DEPS_8) $(CONFIG)\inc\mpr.h
+DEPS_8 = $(DEPS_8) $(CONFIG)\obj\mprLib.obj
 
-$(CONFIG)\bin\libmpr.dll: $(DEPS_7)
+$(CONFIG)\bin\libmpr.dll: $(DEPS_8)
 	@echo '      [Link] libmpr'
 	"$(LD)" -dll -out:$(CONFIG)\bin\libmpr.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\mprLib.obj $(LIBS)
 
 #
 #   est.h
 #
-$(CONFIG)\inc\est.h: $(DEPS_8)
+$(CONFIG)\inc\est.h: $(DEPS_9)
 	@echo '      [Copy] $(CONFIG)/inc/est.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\deps\est\est.h" "$(CONFIG)\inc\est.h"
@@ -318,12 +312,12 @@ $(CONFIG)\inc\est.h: $(DEPS_8)
 #
 #   estLib.obj
 #
-DEPS_9 = $(DEPS_9) $(CONFIG)\inc\bit.h
-DEPS_9 = $(DEPS_9) $(CONFIG)\inc\est.h
-DEPS_9 = $(DEPS_9) $(CONFIG)\inc\bitos.h
+DEPS_10 = $(DEPS_10) $(CONFIG)\inc\bit.h
+DEPS_10 = $(DEPS_10) $(CONFIG)\inc\est.h
+DEPS_10 = $(DEPS_10) $(CONFIG)\inc\bitos.h
 
 $(CONFIG)\obj\estLib.obj: \
-    src\deps\est\estLib.c $(DEPS_9)
+    src\deps\est\estLib.c $(DEPS_10)
 	@echo '   [Compile] src/deps/est/estLib.c'
 	"$(CC)" -c -Fo$(CONFIG)\obj\estLib.obj -Fd$(CONFIG)\obj\estLib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\est\estLib.c
 
@@ -331,10 +325,10 @@ $(CONFIG)\obj\estLib.obj: \
 #
 #   libest
 #
-DEPS_10 = $(DEPS_10) $(CONFIG)\inc\est.h
-DEPS_10 = $(DEPS_10) $(CONFIG)\obj\estLib.obj
+DEPS_11 = $(DEPS_11) $(CONFIG)\inc\est.h
+DEPS_11 = $(DEPS_11) $(CONFIG)\obj\estLib.obj
 
-$(CONFIG)\bin\libest.dll: $(DEPS_10)
+$(CONFIG)\bin\libest.dll: $(DEPS_11)
 	@echo '      [Link] libest'
 	"$(LD)" -dll -out:$(CONFIG)\bin\libest.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\estLib.obj $(LIBS)
 !ENDIF
@@ -342,12 +336,12 @@ $(CONFIG)\bin\libest.dll: $(DEPS_10)
 #
 #   mprSsl.obj
 #
-DEPS_11 = $(DEPS_11) $(CONFIG)\inc\bit.h
-DEPS_11 = $(DEPS_11) $(CONFIG)\inc\mpr.h
-DEPS_11 = $(DEPS_11) $(CONFIG)\inc\est.h
+DEPS_12 = $(DEPS_12) $(CONFIG)\inc\bit.h
+DEPS_12 = $(DEPS_12) $(CONFIG)\inc\mpr.h
+DEPS_12 = $(DEPS_12) $(CONFIG)\inc\est.h
 
 $(CONFIG)\obj\mprSsl.obj: \
-    src\deps\mpr\mprSsl.c $(DEPS_11)
+    src\deps\mpr\mprSsl.c $(DEPS_12)
 	@echo '   [Compile] src/deps/mpr/mprSsl.c'
 	"$(CC)" -c -Fo$(CONFIG)\obj\mprSsl.obj -Fd$(CONFIG)\obj\mprSsl.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\mpr\mprSsl.c
 
@@ -355,74 +349,74 @@ $(CONFIG)\obj\mprSsl.obj: \
 #
 #   libmprssl
 #
-DEPS_12 = $(DEPS_12) $(CONFIG)\bin\libmpr.dll
+DEPS_13 = $(DEPS_13) $(CONFIG)\bin\libmpr.dll
 !IF "$(BIT_PACK_EST)" == "1"
-DEPS_12 = $(DEPS_12) $(CONFIG)\bin\libest.dll
+DEPS_13 = $(DEPS_13) $(CONFIG)\bin\libest.dll
 !ENDIF
-DEPS_12 = $(DEPS_12) $(CONFIG)\obj\mprSsl.obj
+DEPS_13 = $(DEPS_13) $(CONFIG)\obj\mprSsl.obj
 
 !IF "$(BIT_PACK_EST)" == "1"
-LIBS_12 = $(LIBS_12) libest.lib
+LIBS_13 = $(LIBS_13) libest.lib
 !ENDIF
-LIBS_12 = $(LIBS_12) libmpr.lib
+LIBS_13 = $(LIBS_13) libmpr.lib
 
-$(CONFIG)\bin\libmprssl.dll: $(DEPS_12)
+$(CONFIG)\bin\libmprssl.dll: $(DEPS_13)
 	@echo '      [Link] libmprssl'
-	"$(LD)" -dll -out:$(CONFIG)\bin\libmprssl.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\mprSsl.obj $(LIBS_12) $(LIBS_12) $(LIBS)
+	"$(LD)" -dll -out:$(CONFIG)\bin\libmprssl.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\mprSsl.obj $(LIBS_13) $(LIBS_13) $(LIBS)
 !ENDIF
 
 #
 #   manager.obj
 #
-DEPS_13 = $(DEPS_13) $(CONFIG)\inc\bit.h
-DEPS_13 = $(DEPS_13) $(CONFIG)\inc\mpr.h
+DEPS_14 = $(DEPS_14) $(CONFIG)\inc\bit.h
+DEPS_14 = $(DEPS_14) $(CONFIG)\inc\mpr.h
 
 $(CONFIG)\obj\manager.obj: \
-    src\deps\mpr\manager.c $(DEPS_13)
+    src\deps\mpr\manager.c $(DEPS_14)
 	@echo '   [Compile] src/deps/mpr/manager.c'
 	"$(CC)" -c -Fo$(CONFIG)\obj\manager.obj -Fd$(CONFIG)\obj\manager.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\mpr\manager.c
 
 #
 #   manager
 #
-DEPS_14 = $(DEPS_14) $(CONFIG)\bin\libmpr.dll
-DEPS_14 = $(DEPS_14) $(CONFIG)\obj\manager.obj
+DEPS_15 = $(DEPS_15) $(CONFIG)\bin\libmpr.dll
+DEPS_15 = $(DEPS_15) $(CONFIG)\obj\manager.obj
 
-LIBS_14 = $(LIBS_14) libmpr.lib
+LIBS_15 = $(LIBS_15) libmpr.lib
 
-$(CONFIG)\bin\ejsman.exe: $(DEPS_14)
+$(CONFIG)\bin\ejsman.exe: $(DEPS_15)
 	@echo '      [Link] manager'
-	"$(LD)" -out:$(CONFIG)\bin\ejsman.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\manager.obj $(LIBS_14) $(LIBS_14) $(LIBS)
+	"$(LD)" -out:$(CONFIG)\bin\ejsman.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\manager.obj $(LIBS_15) $(LIBS_15) $(LIBS)
 
 #
 #   makerom.obj
 #
-DEPS_15 = $(DEPS_15) $(CONFIG)\inc\bit.h
-DEPS_15 = $(DEPS_15) $(CONFIG)\inc\mpr.h
+DEPS_16 = $(DEPS_16) $(CONFIG)\inc\bit.h
+DEPS_16 = $(DEPS_16) $(CONFIG)\inc\mpr.h
 
 $(CONFIG)\obj\makerom.obj: \
-    src\deps\mpr\makerom.c $(DEPS_15)
+    src\deps\mpr\makerom.c $(DEPS_16)
 	@echo '   [Compile] src/deps/mpr/makerom.c'
 	"$(CC)" -c -Fo$(CONFIG)\obj\makerom.obj -Fd$(CONFIG)\obj\makerom.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\mpr\makerom.c
 
 #
 #   makerom
 #
-DEPS_16 = $(DEPS_16) $(CONFIG)\bin\libmpr.dll
-DEPS_16 = $(DEPS_16) $(CONFIG)\obj\makerom.obj
+DEPS_17 = $(DEPS_17) $(CONFIG)\bin\libmpr.dll
+DEPS_17 = $(DEPS_17) $(CONFIG)\obj\makerom.obj
 
-LIBS_16 = $(LIBS_16) libmpr.lib
+LIBS_17 = $(LIBS_17) libmpr.lib
 
-$(CONFIG)\bin\makerom.exe: $(DEPS_16)
+$(CONFIG)\bin\makerom.exe: $(DEPS_17)
 	@echo '      [Link] makerom'
-	"$(LD)" -out:$(CONFIG)\bin\makerom.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\makerom.obj $(LIBS_16) $(LIBS_16) $(LIBS)
+	"$(LD)" -out:$(CONFIG)\bin\makerom.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\makerom.obj $(LIBS_17) $(LIBS_17) $(LIBS)
 
 #
 #   ca-crt
 #
-DEPS_17 = $(DEPS_17) src\deps\est\ca.crt
+DEPS_18 = $(DEPS_18) src\deps\est\ca.crt
 
-$(CONFIG)\bin\ca.crt: $(DEPS_17)
+$(CONFIG)\bin\ca.crt: $(DEPS_18)
 	@echo '      [Copy] $(CONFIG)/bin/ca.crt'
 	if not exist "$(CONFIG)\bin" md "$(CONFIG)\bin"
 	copy /Y "src\deps\est\ca.crt" "$(CONFIG)\bin\ca.crt"
@@ -430,7 +424,7 @@ $(CONFIG)\bin\ca.crt: $(DEPS_17)
 #
 #   pcre.h
 #
-$(CONFIG)\inc\pcre.h: $(DEPS_18)
+$(CONFIG)\inc\pcre.h: $(DEPS_19)
 	@echo '      [Copy] $(CONFIG)/inc/pcre.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\deps\pcre\pcre.h" "$(CONFIG)\inc\pcre.h"
@@ -438,28 +432,28 @@ $(CONFIG)\inc\pcre.h: $(DEPS_18)
 #
 #   pcre.obj
 #
-DEPS_19 = $(DEPS_19) $(CONFIG)\inc\bit.h
-DEPS_19 = $(DEPS_19) $(CONFIG)\inc\pcre.h
+DEPS_20 = $(DEPS_20) $(CONFIG)\inc\bit.h
+DEPS_20 = $(DEPS_20) $(CONFIG)\inc\pcre.h
 
 $(CONFIG)\obj\pcre.obj: \
-    src\deps\pcre\pcre.c $(DEPS_19)
+    src\deps\pcre\pcre.c $(DEPS_20)
 	@echo '   [Compile] src/deps/pcre/pcre.c'
 	"$(CC)" -c -Fo$(CONFIG)\obj\pcre.obj -Fd$(CONFIG)\obj\pcre.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\pcre\pcre.c
 
 #
 #   libpcre
 #
-DEPS_20 = $(DEPS_20) $(CONFIG)\inc\pcre.h
-DEPS_20 = $(DEPS_20) $(CONFIG)\obj\pcre.obj
+DEPS_21 = $(DEPS_21) $(CONFIG)\inc\pcre.h
+DEPS_21 = $(DEPS_21) $(CONFIG)\obj\pcre.obj
 
-$(CONFIG)\bin\libpcre.dll: $(DEPS_20)
+$(CONFIG)\bin\libpcre.dll: $(DEPS_21)
 	@echo '      [Link] libpcre'
 	"$(LD)" -dll -out:$(CONFIG)\bin\libpcre.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\pcre.obj $(LIBS)
 
 #
 #   http.h
 #
-$(CONFIG)\inc\http.h: $(DEPS_21)
+$(CONFIG)\inc\http.h: $(DEPS_22)
 	@echo '      [Copy] $(CONFIG)/inc/http.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\deps\http\http.h" "$(CONFIG)\inc\http.h"
@@ -467,75 +461,68 @@ $(CONFIG)\inc\http.h: $(DEPS_21)
 #
 #   httpLib.obj
 #
-DEPS_22 = $(DEPS_22) $(CONFIG)\inc\bit.h
-DEPS_22 = $(DEPS_22) $(CONFIG)\inc\http.h
-DEPS_22 = $(DEPS_22) $(CONFIG)\inc\mpr.h
+DEPS_23 = $(DEPS_23) $(CONFIG)\inc\bit.h
+DEPS_23 = $(DEPS_23) $(CONFIG)\inc\http.h
+DEPS_23 = $(DEPS_23) $(CONFIG)\inc\mpr.h
 
 $(CONFIG)\obj\httpLib.obj: \
-    src\deps\http\httpLib.c $(DEPS_22)
+    src\deps\http\httpLib.c $(DEPS_23)
 	@echo '   [Compile] src/deps/http/httpLib.c'
 	"$(CC)" -c -Fo$(CONFIG)\obj\httpLib.obj -Fd$(CONFIG)\obj\httpLib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\http\httpLib.c
 
 #
 #   libhttp
 #
-DEPS_23 = $(DEPS_23) $(CONFIG)\bin\libmpr.dll
-DEPS_23 = $(DEPS_23) $(CONFIG)\bin\libpcre.dll
-DEPS_23 = $(DEPS_23) $(CONFIG)\inc\http.h
-DEPS_23 = $(DEPS_23) $(CONFIG)\obj\httpLib.obj
+DEPS_24 = $(DEPS_24) $(CONFIG)\bin\libmpr.dll
+DEPS_24 = $(DEPS_24) $(CONFIG)\bin\libpcre.dll
+DEPS_24 = $(DEPS_24) $(CONFIG)\inc\http.h
+DEPS_24 = $(DEPS_24) $(CONFIG)\obj\httpLib.obj
 
-LIBS_23 = $(LIBS_23) libpcre.lib
-LIBS_23 = $(LIBS_23) libmpr.lib
+LIBS_24 = $(LIBS_24) libpcre.lib
+LIBS_24 = $(LIBS_24) libmpr.lib
 
-$(CONFIG)\bin\libhttp.dll: $(DEPS_23)
+$(CONFIG)\bin\libhttp.dll: $(DEPS_24)
 	@echo '      [Link] libhttp'
-	"$(LD)" -dll -out:$(CONFIG)\bin\libhttp.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\httpLib.obj $(LIBS_23) $(LIBS_23) $(LIBS)
+	"$(LD)" -dll -out:$(CONFIG)\bin\libhttp.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\httpLib.obj $(LIBS_24) $(LIBS_24) $(LIBS)
 
 #
 #   http.obj
 #
-DEPS_24 = $(DEPS_24) $(CONFIG)\inc\bit.h
-DEPS_24 = $(DEPS_24) $(CONFIG)\inc\http.h
+DEPS_25 = $(DEPS_25) $(CONFIG)\inc\bit.h
+DEPS_25 = $(DEPS_25) $(CONFIG)\inc\http.h
 
 $(CONFIG)\obj\http.obj: \
-    src\deps\http\http.c $(DEPS_24)
+    src\deps\http\http.c $(DEPS_25)
 	@echo '   [Compile] src/deps/http/http.c'
 	"$(CC)" -c -Fo$(CONFIG)\obj\http.obj -Fd$(CONFIG)\obj\http.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\http\http.c
 
 #
 #   http
 #
-DEPS_25 = $(DEPS_25) $(CONFIG)\bin\libhttp.dll
-DEPS_25 = $(DEPS_25) $(CONFIG)\obj\http.obj
+DEPS_26 = $(DEPS_26) $(CONFIG)\bin\libhttp.dll
+DEPS_26 = $(DEPS_26) $(CONFIG)\obj\http.obj
 
-LIBS_25 = $(LIBS_25) libhttp.lib
-LIBS_25 = $(LIBS_25) libpcre.lib
-LIBS_25 = $(LIBS_25) libmpr.lib
+LIBS_26 = $(LIBS_26) libhttp.lib
+LIBS_26 = $(LIBS_26) libpcre.lib
+LIBS_26 = $(LIBS_26) libmpr.lib
 
-$(CONFIG)\bin\http.exe: $(DEPS_25)
+$(CONFIG)\bin\http.exe: $(DEPS_26)
 	@echo '      [Link] http'
-	"$(LD)" -out:$(CONFIG)\bin\http.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\http.obj $(LIBS_25) $(LIBS_25) $(LIBS) libmpr.lib
+	"$(LD)" -out:$(CONFIG)\bin\http.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\http.obj $(LIBS_26) $(LIBS_26) $(LIBS) libmpr.lib
 
 #
 #   sqlite3.h
 #
-$(CONFIG)\inc\sqlite3.h: $(DEPS_26)
+$(CONFIG)\inc\sqlite3.h: $(DEPS_27)
 	@echo '      [Copy] $(CONFIG)/inc/sqlite3.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y "src\deps\sqlite\sqlite3.h" "$(CONFIG)\inc\sqlite3.h"
-
-#
-#   config.h
-#
-$(CONFIG)\inc\config.h: $(DEPS_27)
-	@echo '      [Copy] $(CONFIG)/inc/config.h'
 
 #
 #   sqlite3.obj
 #
 DEPS_28 = $(DEPS_28) $(CONFIG)\inc\bit.h
 DEPS_28 = $(DEPS_28) $(CONFIG)\inc\sqlite3.h
-DEPS_28 = $(DEPS_28) $(CONFIG)\inc\config.h
 
 $(CONFIG)\obj\sqlite3.obj: \
     src\deps\sqlite\sqlite3.c $(DEPS_28)
@@ -1598,6 +1585,60 @@ $(CONFIG)\bin\ejsrun.exe: $(DEPS_117)
 #
 #   ejs.mod
 #
+DEPS_118 = $(DEPS_118) src\core\App.es
+DEPS_118 = $(DEPS_118) src\core\Args.es
+DEPS_118 = $(DEPS_118) src\core\Array.es
+DEPS_118 = $(DEPS_118) src\core\BinaryStream.es
+DEPS_118 = $(DEPS_118) src\core\Block.es
+DEPS_118 = $(DEPS_118) src\core\Boolean.es
+DEPS_118 = $(DEPS_118) src\core\ByteArray.es
+DEPS_118 = $(DEPS_118) src\core\Cache.es
+DEPS_118 = $(DEPS_118) src\core\Cmd.es
+DEPS_118 = $(DEPS_118) src\core\Compat.es
+DEPS_118 = $(DEPS_118) src\core\Config.es
+DEPS_118 = $(DEPS_118) src\core\Date.es
+DEPS_118 = $(DEPS_118) src\core\Debug.es
+DEPS_118 = $(DEPS_118) src\core\Emitter.es
+DEPS_118 = $(DEPS_118) src\core\Error.es
+DEPS_118 = $(DEPS_118) src\core\File.es
+DEPS_118 = $(DEPS_118) src\core\FileSystem.es
+DEPS_118 = $(DEPS_118) src\core\Frame.es
+DEPS_118 = $(DEPS_118) src\core\Function.es
+DEPS_118 = $(DEPS_118) src\core\GC.es
+DEPS_118 = $(DEPS_118) src\core\Global.es
+DEPS_118 = $(DEPS_118) src\core\Http.es
+DEPS_118 = $(DEPS_118) src\core\Inflector.es
+DEPS_118 = $(DEPS_118) src\core\Iterator.es
+DEPS_118 = $(DEPS_118) src\core\JSON.es
+DEPS_118 = $(DEPS_118) src\core\Loader.es
+DEPS_118 = $(DEPS_118) src\core\LocalCache.es
+DEPS_118 = $(DEPS_118) src\core\Locale.es
+DEPS_118 = $(DEPS_118) src\core\Logger.es
+DEPS_118 = $(DEPS_118) src\core\Math.es
+DEPS_118 = $(DEPS_118) src\core\Memory.es
+DEPS_118 = $(DEPS_118) src\core\MprLog.es
+DEPS_118 = $(DEPS_118) src\core\Name.es
+DEPS_118 = $(DEPS_118) src\core\Namespace.es
+DEPS_118 = $(DEPS_118) src\core\Null.es
+DEPS_118 = $(DEPS_118) src\core\Number.es
+DEPS_118 = $(DEPS_118) src\core\Object.es
+DEPS_118 = $(DEPS_118) src\core\Path.es
+DEPS_118 = $(DEPS_118) src\core\Promise.es
+DEPS_118 = $(DEPS_118) src\core\RegExp.es
+DEPS_118 = $(DEPS_118) src\core\Socket.es
+DEPS_118 = $(DEPS_118) src\core\Stream.es
+DEPS_118 = $(DEPS_118) src\core\String.es
+DEPS_118 = $(DEPS_118) src\core\System.es
+DEPS_118 = $(DEPS_118) src\core\TextStream.es
+DEPS_118 = $(DEPS_118) src\core\Timer.es
+DEPS_118 = $(DEPS_118) src\core\Type.es
+DEPS_118 = $(DEPS_118) src\core\Uri.es
+DEPS_118 = $(DEPS_118) src\core\Void.es
+DEPS_118 = $(DEPS_118) src\core\WebSocket.es
+DEPS_118 = $(DEPS_118) src\core\Worker.es
+DEPS_118 = $(DEPS_118) src\core\XML.es
+DEPS_118 = $(DEPS_118) src\core\XMLHttp.es
+DEPS_118 = $(DEPS_118) src\core\XMLList.es
 DEPS_118 = $(DEPS_118) $(CONFIG)\bin\ejsc.exe
 DEPS_118 = $(DEPS_118) $(CONFIG)\bin\ejsmod.exe
 
@@ -1612,6 +1653,7 @@ $(CONFIG)\bin\ejs.mod: $(DEPS_118)
 #
 #   ejs.unix.mod
 #
+DEPS_119 = $(DEPS_119) src\jems\ejs.unix\Unix.es
 DEPS_119 = $(DEPS_119) $(CONFIG)\bin\ejsc.exe
 DEPS_119 = $(DEPS_119) $(CONFIG)\bin\ejs.mod
 
@@ -1623,6 +1665,8 @@ $(CONFIG)\bin\ejs.unix.mod: $(DEPS_119)
 #
 #   jem.es
 #
+DEPS_120 = $(DEPS_120) src\jems\ejs.jem\jem.es
+
 $(CONFIG)\bin\jem.es: $(DEPS_120)
 	cd src\jems\ejs.jem
 	copy jem.es ..\..\..\$(CONFIG)\bin
@@ -1647,6 +1691,8 @@ $(CONFIG)\bin\jem.exe: $(DEPS_121)
 #
 #   ejs.db.mod
 #
+DEPS_122 = $(DEPS_122) src\jems\ejs.db\Database.es
+DEPS_122 = $(DEPS_122) src\jems\ejs.db\DatabaseConnector.es
 DEPS_122 = $(DEPS_122) $(CONFIG)\bin\ejsc.exe
 DEPS_122 = $(DEPS_122) $(CONFIG)\bin\ejs.mod
 
@@ -1658,6 +1704,7 @@ $(CONFIG)\bin\ejs.db.mod: $(DEPS_122)
 #
 #   ejs.db.mapper.mod
 #
+DEPS_123 = $(DEPS_123) src\jems\ejs.db.mapper\Record.es
 DEPS_123 = $(DEPS_123) $(CONFIG)\bin\ejsc.exe
 DEPS_123 = $(DEPS_123) $(CONFIG)\bin\ejs.mod
 DEPS_123 = $(DEPS_123) $(CONFIG)\bin\ejs.db.mod
@@ -1670,6 +1717,7 @@ $(CONFIG)\bin\ejs.db.mapper.mod: $(DEPS_123)
 #
 #   ejs.db.sqlite.mod
 #
+DEPS_124 = $(DEPS_124) src\jems\ejs.db.sqlite\Sqlite.es
 DEPS_124 = $(DEPS_124) $(CONFIG)\bin\ejsc.exe
 DEPS_124 = $(DEPS_124) $(CONFIG)\bin\ejsmod.exe
 DEPS_124 = $(DEPS_124) $(CONFIG)\bin\ejs.mod
@@ -1718,6 +1766,7 @@ $(CONFIG)\bin\libejs.db.sqlite.dll: $(DEPS_126)
 #
 #   ejs.mail.mod
 #
+DEPS_127 = $(DEPS_127) src\jems\ejs.mail\Mail.es
 DEPS_127 = $(DEPS_127) $(CONFIG)\bin\ejsc.exe
 DEPS_127 = $(DEPS_127) $(CONFIG)\bin\ejs.mod
 
@@ -1729,6 +1778,29 @@ $(CONFIG)\bin\ejs.mail.mod: $(DEPS_127)
 #
 #   ejs.web.mod
 #
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\Cascade.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\CommonLog.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\ContentType.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\Controller.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\Dir.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\Google.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\Head.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\Html.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\HttpServer.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\MethodOverride.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\Middleware.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\Mvc.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\Request.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\Router.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\Script.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\Session.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\ShowExceptions.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\Static.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\Template.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\UploadFile.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\UrlMap.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\Utils.es
+DEPS_128 = $(DEPS_128) src\jems\ejs.web\View.es
 DEPS_128 = $(DEPS_128) $(CONFIG)\bin\ejsc.exe
 DEPS_128 = $(DEPS_128) $(CONFIG)\bin\ejsmod.exe
 DEPS_128 = $(DEPS_128) $(CONFIG)\bin\ejs.mod
@@ -1827,6 +1899,8 @@ $(CONFIG)\bin\libejs.web.dll: $(DEPS_134)
 #
 #   www
 #
+DEPS_135 = $(DEPS_135) src\jems\ejs.web\www
+
 $(CONFIG)\bin\www: $(DEPS_135)
 	cd src\jems\ejs.web
 	if exist "..\..\..\$(CONFIG)\bin\www" rd /Q /S "..\..\..\$(CONFIG)\bin\www"
@@ -1837,6 +1911,7 @@ $(CONFIG)\bin\www: $(DEPS_135)
 #
 #   ejs.template.mod
 #
+DEPS_136 = $(DEPS_136) src\jems\ejs.template\TemplateParser.es
 DEPS_136 = $(DEPS_136) $(CONFIG)\bin\ejsc.exe
 DEPS_136 = $(DEPS_136) $(CONFIG)\bin\ejs.mod
 
@@ -1848,6 +1923,7 @@ $(CONFIG)\bin\ejs.template.mod: $(DEPS_136)
 #
 #   ejs.zlib.mod
 #
+DEPS_137 = $(DEPS_137) src\jems\ejs.zlib\Zlib.es
 DEPS_137 = $(DEPS_137) $(CONFIG)\bin\ejsc.exe
 DEPS_137 = $(DEPS_137) $(CONFIG)\bin\ejs.mod
 
@@ -1891,6 +1967,7 @@ $(CONFIG)\bin\libejs.zlib.dll: $(DEPS_139)
 #
 #   ejs.tar.mod
 #
+DEPS_140 = $(DEPS_140) src\jems\ejs.tar\Tar.es
 DEPS_140 = $(DEPS_140) $(CONFIG)\bin\ejsc.exe
 DEPS_140 = $(DEPS_140) $(CONFIG)\bin\ejs.mod
 
@@ -1902,6 +1979,8 @@ $(CONFIG)\bin\ejs.tar.mod: $(DEPS_140)
 #
 #   mvc.es
 #
+DEPS_141 = $(DEPS_141) src\jems\ejs.mvc\mvc.es
+
 $(CONFIG)\bin\mvc.es: $(DEPS_141)
 	cd src\jems\ejs.mvc
 	copy mvc.es ..\..\..\$(CONFIG)\bin
@@ -1926,6 +2005,7 @@ $(CONFIG)\bin\mvc.exe: $(DEPS_142)
 #
 #   ejs.mvc.mod
 #
+DEPS_143 = $(DEPS_143) src\jems\ejs.mvc\mvc.es
 DEPS_143 = $(DEPS_143) $(CONFIG)\bin\ejsc.exe
 DEPS_143 = $(DEPS_143) $(CONFIG)\bin\ejs.mod
 DEPS_143 = $(DEPS_143) $(CONFIG)\bin\ejs.web.mod
@@ -1940,6 +2020,8 @@ $(CONFIG)\bin\ejs.mvc.mod: $(DEPS_143)
 #
 #   utest.es
 #
+DEPS_144 = $(DEPS_144) src\jems\ejs.utest\utest.es
+
 $(CONFIG)\bin\utest.es: $(DEPS_144)
 	cd src\jems\ejs.utest
 	copy utest.es ..\..\..\$(CONFIG)\bin
@@ -1948,6 +2030,8 @@ $(CONFIG)\bin\utest.es: $(DEPS_144)
 #
 #   utest.worker
 #
+DEPS_145 = $(DEPS_145) src\jems\ejs.utest\utest.worker
+
 $(CONFIG)\bin\utest.worker: $(DEPS_145)
 	cd src\jems\ejs.utest
 	copy utest.worker ..\..\..\$(CONFIG)\bin
@@ -1971,121 +2055,38 @@ $(CONFIG)\bin\utest.exe: $(DEPS_146)
 	"$(LD)" -out:$(CONFIG)\bin\utest.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBS_146) $(LIBS_146) $(LIBS) libmpr.lib
 
 #
-#   version
-#
-version: $(DEPS_147)
-	@echo 2.3.1-2
-
-#
 #   stop
 #
-stop: $(DEPS_148)
-
+stop: $(DEPS_147)
 
 #
 #   installBinary
 #
-DEPS_149 = $(DEPS_149) stop
+DEPS_148 = $(DEPS_148) stop
 
-installBinary: $(DEPS_149)
-	if not exist "$(BIT_VAPP_PREFIX)\bin" md "$(BIT_VAPP_PREFIX)\bin"
-	copy /Y "$(CONFIG)\bin\ejs.exe" "$(BIT_VAPP_PREFIX)\bin\ejs.exe"
-	copy /Y "$(CONFIG)\bin\ejsc.exe" "$(BIT_VAPP_PREFIX)\bin\ejsc.exe"
-	copy /Y "$(CONFIG)\bin\ejsman.exe" "$(BIT_VAPP_PREFIX)\bin\ejsman.exe"
-	copy /Y "$(CONFIG)\bin\ejsmod.exe" "$(BIT_VAPP_PREFIX)\bin\ejsmod.exe"
-	copy /Y "$(CONFIG)\bin\ejsrun.exe" "$(BIT_VAPP_PREFIX)\bin\ejsrun.exe"
-	copy /Y "$(CONFIG)\bin\jem.exe" "$(BIT_VAPP_PREFIX)\bin\jem.exe"
-	copy /Y "$(CONFIG)\bin\mvc.exe" "$(BIT_VAPP_PREFIX)\bin\mvc.exe"
-	copy /Y "$(CONFIG)\bin\utest.exe" "$(BIT_VAPP_PREFIX)\bin\utest.exe"
-	copy /Y "$(CONFIG)\bin\libejs.db.sqlite.dll" "$(BIT_VAPP_PREFIX)\bin\libejs.db.sqlite.dll"
-	copy /Y "$(CONFIG)\bin\libejs.dll" "$(BIT_VAPP_PREFIX)\bin\libejs.dll"
-	copy /Y "$(CONFIG)\bin\libejs.db.sqlite.dll" "$(BIT_VAPP_PREFIX)\bin\libejs.db.sqlite.dll"
-	copy /Y "$(CONFIG)\bin\libejs.web.dll" "$(BIT_VAPP_PREFIX)\bin\libejs.web.dll"
-	copy /Y "$(CONFIG)\bin\libejs.zlib.dll" "$(BIT_VAPP_PREFIX)\bin\libejs.zlib.dll"
-	copy /Y "$(CONFIG)\bin\libhttp.dll" "$(BIT_VAPP_PREFIX)\bin\libhttp.dll"
-	copy /Y "$(CONFIG)\bin\libmpr.dll" "$(BIT_VAPP_PREFIX)\bin\libmpr.dll"
-	copy /Y "$(CONFIG)\bin\libpcre.dll" "$(BIT_VAPP_PREFIX)\bin\libpcre.dll"
-	copy /Y "$(CONFIG)\bin\libsqlite3.dll" "$(BIT_VAPP_PREFIX)\bin\libsqlite3.dll"
-	copy /Y "$(CONFIG)\bin\libzlib.dll" "$(BIT_VAPP_PREFIX)\bin\libzlib.dll"
-	copy /Y "$(CONFIG)\bin\ejs.db.mapper.mod" "$(BIT_VAPP_PREFIX)\bin\ejs.db.mapper.mod"
-	copy /Y "$(CONFIG)\bin\ejs.db.mod" "$(BIT_VAPP_PREFIX)\bin\ejs.db.mod"
-	copy /Y "$(CONFIG)\bin\ejs.db.sqlite.mod" "$(BIT_VAPP_PREFIX)\bin\ejs.db.sqlite.mod"
-	copy /Y "$(CONFIG)\bin\ejs.mod" "$(BIT_VAPP_PREFIX)\bin\ejs.mod"
-	copy /Y "$(CONFIG)\bin\ejs.mvc.mod" "$(BIT_VAPP_PREFIX)\bin\ejs.mvc.mod"
-	copy /Y "$(CONFIG)\bin\ejs.tar.mod" "$(BIT_VAPP_PREFIX)\bin\ejs.tar.mod"
-	copy /Y "$(CONFIG)\bin\ejs.template.mod" "$(BIT_VAPP_PREFIX)\bin\ejs.template.mod"
-	copy /Y "$(CONFIG)\bin\ejs.unix.mod" "$(BIT_VAPP_PREFIX)\bin\ejs.unix.mod"
-	copy /Y "$(CONFIG)\bin\ejs.web.mod" "$(BIT_VAPP_PREFIX)\bin\ejs.web.mod"
-	copy /Y "$(CONFIG)\bin\ejs.zlib.mod" "$(BIT_VAPP_PREFIX)\bin\ejs.zlib.mod"
-	copy /Y "$(CONFIG)\bin\jem.es" "$(BIT_VAPP_PREFIX)\bin\jem.es"
-	copy /Y "$(CONFIG)\bin\mvc.es" "$(BIT_VAPP_PREFIX)\bin\mvc.es"
-	copy /Y "$(CONFIG)\bin\utest.es" "$(BIT_VAPP_PREFIX)\bin\utest.es"
-!IF "$(BIT_PACK_SSL)" == "1"
-	copy /Y "$(CONFIG)\bin\libmprssl.dll" "$(BIT_VAPP_PREFIX)\bin\libmprssl.dll"
-	copy /Y "$(CONFIG)\bin\ca.crt" "$(BIT_VAPP_PREFIX)\bin\ca.crt"
-!ENDIF
-	copy /Y "$(CONFIG)\bin\libejs.lib" "$(BIT_VAPP_PREFIX)\bin\libejs.lib"
-	if not exist "$(BIT_VAPP_PREFIX)\bin\www\images" md "$(BIT_VAPP_PREFIX)\bin\www\images"
-	copy /Y "src\jems\ejs.web\www\images\banner.jpg" "$(BIT_VAPP_PREFIX)\bin\www\images\banner.jpg"
-	copy /Y "src\jems\ejs.web\www\images\favicon.ico" "$(BIT_VAPP_PREFIX)\bin\www\images\favicon.ico"
-	copy /Y "src\jems\ejs.web\www\images\splash.jpg" "$(BIT_VAPP_PREFIX)\bin\www\images\splash.jpg"
-	if not exist "$(BIT_VAPP_PREFIX)\bin\www\js" md "$(BIT_VAPP_PREFIX)\bin\www\js"
-	copy /Y "src\jems\ejs.web\www\js\jquery.ejs.min.js" "$(BIT_VAPP_PREFIX)\bin\www\js\jquery.ejs.min.js"
-	copy /Y "src\jems\ejs.web\www\js\jquery.min.js" "$(BIT_VAPP_PREFIX)\bin\www\js\jquery.min.js"
-	copy /Y "src\jems\ejs.web\www\js\jquery.simplemodal.min.js" "$(BIT_VAPP_PREFIX)\bin\www\js\jquery.simplemodal.min.js"
-	copy /Y "src\jems\ejs.web\www\js\jquery.tablesorter.js" "$(BIT_VAPP_PREFIX)\bin\www\js\jquery.tablesorter.js"
-	copy /Y "src\jems\ejs.web\www\js\jquery.tablesorter.min.js" "$(BIT_VAPP_PREFIX)\bin\www\js\jquery.tablesorter.min.js"
-	copy /Y "src\jems\ejs.web\www\js\jquery.treeview.min.js" "$(BIT_VAPP_PREFIX)\bin\www\js\jquery.treeview.min.js"
-	if not exist "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images" md "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\file.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\file.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\folder-closed.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\folder-closed.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\folder.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\folder.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\minus.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\minus.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\plus.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\plus.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-black-line.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-black-line.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-black.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-black.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-default-line.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-default-line.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-default.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-default.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-famfamfam-line.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-famfamfam-line.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-famfamfam.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-famfamfam.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-gray-line.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-gray-line.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-gray.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-gray.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-red-line.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-red-line.gif"
-	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-red.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-red.gif"
-	copy /Y "src\jems\ejs.web\www\js\treeview.css" "$(BIT_VAPP_PREFIX)\bin\www\js\treeview.css"
-	if not exist "$(BIT_VAPP_PREFIX)\bin\www" md "$(BIT_VAPP_PREFIX)\bin\www"
-	copy /Y "src\jems\ejs.web\www\layout.css" "$(BIT_VAPP_PREFIX)\bin\www\layout.css"
-	if not exist "$(BIT_VAPP_PREFIX)\bin\www\themes" md "$(BIT_VAPP_PREFIX)\bin\www\themes"
-	copy /Y "src\jems\ejs.web\www\themes\default.css" "$(BIT_VAPP_PREFIX)\bin\www\themes\default.css"
-	if not exist "$(BIT_VAPP_PREFIX)\inc" md "$(BIT_VAPP_PREFIX)\inc"
-	copy /Y "$(CONFIG)\inc\*.h" "$(BIT_VAPP_PREFIX)\inc\*.h"
+installBinary: $(DEPS_148)
+#  Omit build script installBinary
 
 #
 #   start
 #
-start: $(DEPS_150)
-
+start: $(DEPS_149)
 
 #
 #   install
 #
-DEPS_151 = $(DEPS_151) stop
-DEPS_151 = $(DEPS_151) installBinary
-DEPS_151 = $(DEPS_151) start
+DEPS_150 = $(DEPS_150) stop
+DEPS_150 = $(DEPS_150) installBinary
+DEPS_150 = $(DEPS_150) start
 
-install: $(DEPS_151)
+install: $(DEPS_150)
 
 
 #
 #   uninstall
 #
-DEPS_152 = $(DEPS_152) stop
+DEPS_151 = $(DEPS_151) stop
 
-uninstall: $(DEPS_152)
-	if exist "$(BIT_VAPP_PREFIX)" rd /Q /S"$(BIT_VAPP_PREFIX)"
-	if exist "$(BIT_VAPP_PREFIX)\bin" rd /Q "$(BIT_VAPP_PREFIX)\bin"
-	if exist "$(BIT_VAPP_PREFIX)\inc" rd /Q "$(BIT_VAPP_PREFIX)\inc"
-	if exist "$(BIT_VAPP_PREFIX)\man" rd /Q "$(BIT_VAPP_PREFIX)\man"
-	if exist "$(BIT_VAPP_PREFIX)\latest" rd /Q "$(BIT_VAPP_PREFIX)\latest"
-	if exist "$(BIT_VAPP_PREFIX)" rd /Q "$(BIT_VAPP_PREFIX)"
+uninstall: $(DEPS_151)
+
 

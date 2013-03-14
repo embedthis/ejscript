@@ -60,9 +60,6 @@ TARGETS           += $(CONFIG)/bin/libmprssl.dylib
 endif
 TARGETS           += $(CONFIG)/bin/ejsman
 TARGETS           += $(CONFIG)/bin/makerom
-ifeq ($(BIT_PACK_EST),1)
-TARGETS           += $(CONFIG)/bin/libest.dylib
-endif
 TARGETS           += $(CONFIG)/bin/ca.crt
 TARGETS           += $(CONFIG)/bin/libpcre.dylib
 TARGETS           += $(CONFIG)/bin/libhttp.dylib
@@ -127,132 +124,128 @@ prep:
 	fi; true
 
 clean:
-	rm -rf $(CONFIG)/bin/libmpr.dylib
-	rm -rf $(CONFIG)/bin/libmprssl.dylib
-	rm -rf $(CONFIG)/bin/ejsman
-	rm -rf $(CONFIG)/bin/makerom
-	rm -rf $(CONFIG)/bin/libest.dylib
-	rm -rf $(CONFIG)/bin/ca.crt
-	rm -rf $(CONFIG)/bin/libpcre.dylib
-	rm -rf $(CONFIG)/bin/libhttp.dylib
-	rm -rf $(CONFIG)/bin/http
-	rm -rf $(CONFIG)/bin/libsqlite3.dylib
-	rm -rf $(CONFIG)/bin/sqlite
-	rm -rf $(CONFIG)/bin/libzlib.dylib
-	rm -rf $(CONFIG)/bin/libejs.dylib
-	rm -rf $(CONFIG)/bin/ejs
-	rm -rf $(CONFIG)/bin/ejsc
-	rm -rf $(CONFIG)/bin/ejsmod
-	rm -rf $(CONFIG)/bin/ejsrun
-	rm -rf $(CONFIG)/bin/jem.es
-	rm -rf $(CONFIG)/bin/jem
-	rm -rf $(CONFIG)/bin/ejs.db.mod
-	rm -rf $(CONFIG)/bin/ejs.db.mapper.mod
-	rm -rf $(CONFIG)/bin/ejs.db.sqlite.mod
-	rm -rf $(CONFIG)/bin/libejs.db.sqlite.dylib
-	rm -rf $(CONFIG)/bin/ejs.mail.mod
-	rm -rf $(CONFIG)/bin/ejs.web.mod
-	rm -rf $(CONFIG)/bin/libejs.web.dylib
-	rm -rf $(CONFIG)/bin/www
-	rm -rf $(CONFIG)/bin/ejs.template.mod
-	rm -rf $(CONFIG)/bin/libejs.zlib.dylib
-	rm -rf $(CONFIG)/bin/mvc.es
-	rm -rf $(CONFIG)/bin/ejs.mvc.mod
-	rm -rf $(CONFIG)/bin/utest.es
-	rm -rf $(CONFIG)/bin/utest.worker
-	rm -rf $(CONFIG)/bin/utest
-	rm -rf $(CONFIG)/obj/mprLib.o
-	rm -rf $(CONFIG)/obj/mprSsl.o
-	rm -rf $(CONFIG)/obj/manager.o
-	rm -rf $(CONFIG)/obj/makerom.o
-	rm -rf $(CONFIG)/obj/estLib.o
-	rm -rf $(CONFIG)/obj/pcre.o
-	rm -rf $(CONFIG)/obj/httpLib.o
-	rm -rf $(CONFIG)/obj/http.o
-	rm -rf $(CONFIG)/obj/sqlite3.o
-	rm -rf $(CONFIG)/obj/sqlite.o
-	rm -rf $(CONFIG)/obj/zlib.o
-	rm -rf $(CONFIG)/obj/ecAst.o
-	rm -rf $(CONFIG)/obj/ecCodeGen.o
-	rm -rf $(CONFIG)/obj/ecCompiler.o
-	rm -rf $(CONFIG)/obj/ecLex.o
-	rm -rf $(CONFIG)/obj/ecModuleWrite.o
-	rm -rf $(CONFIG)/obj/ecParser.o
-	rm -rf $(CONFIG)/obj/ecState.o
-	rm -rf $(CONFIG)/obj/dtoa.o
-	rm -rf $(CONFIG)/obj/ejsApp.o
-	rm -rf $(CONFIG)/obj/ejsArray.o
-	rm -rf $(CONFIG)/obj/ejsBlock.o
-	rm -rf $(CONFIG)/obj/ejsBoolean.o
-	rm -rf $(CONFIG)/obj/ejsByteArray.o
-	rm -rf $(CONFIG)/obj/ejsCache.o
-	rm -rf $(CONFIG)/obj/ejsCmd.o
-	rm -rf $(CONFIG)/obj/ejsConfig.o
-	rm -rf $(CONFIG)/obj/ejsDate.o
-	rm -rf $(CONFIG)/obj/ejsDebug.o
-	rm -rf $(CONFIG)/obj/ejsError.o
-	rm -rf $(CONFIG)/obj/ejsFile.o
-	rm -rf $(CONFIG)/obj/ejsFileSystem.o
-	rm -rf $(CONFIG)/obj/ejsFrame.o
-	rm -rf $(CONFIG)/obj/ejsFunction.o
-	rm -rf $(CONFIG)/obj/ejsGC.o
-	rm -rf $(CONFIG)/obj/ejsGlobal.o
-	rm -rf $(CONFIG)/obj/ejsHttp.o
-	rm -rf $(CONFIG)/obj/ejsIterator.o
-	rm -rf $(CONFIG)/obj/ejsJSON.o
-	rm -rf $(CONFIG)/obj/ejsLocalCache.o
-	rm -rf $(CONFIG)/obj/ejsMath.o
-	rm -rf $(CONFIG)/obj/ejsMemory.o
-	rm -rf $(CONFIG)/obj/ejsMprLog.o
-	rm -rf $(CONFIG)/obj/ejsNamespace.o
-	rm -rf $(CONFIG)/obj/ejsNull.o
-	rm -rf $(CONFIG)/obj/ejsNumber.o
-	rm -rf $(CONFIG)/obj/ejsObject.o
-	rm -rf $(CONFIG)/obj/ejsPath.o
-	rm -rf $(CONFIG)/obj/ejsPot.o
-	rm -rf $(CONFIG)/obj/ejsRegExp.o
-	rm -rf $(CONFIG)/obj/ejsSocket.o
-	rm -rf $(CONFIG)/obj/ejsString.o
-	rm -rf $(CONFIG)/obj/ejsSystem.o
-	rm -rf $(CONFIG)/obj/ejsTimer.o
-	rm -rf $(CONFIG)/obj/ejsType.o
-	rm -rf $(CONFIG)/obj/ejsUri.o
-	rm -rf $(CONFIG)/obj/ejsVoid.o
-	rm -rf $(CONFIG)/obj/ejsWebSocket.o
-	rm -rf $(CONFIG)/obj/ejsWorker.o
-	rm -rf $(CONFIG)/obj/ejsXML.o
-	rm -rf $(CONFIG)/obj/ejsXMLList.o
-	rm -rf $(CONFIG)/obj/ejsXMLLoader.o
-	rm -rf $(CONFIG)/obj/ejsByteCode.o
-	rm -rf $(CONFIG)/obj/ejsException.o
-	rm -rf $(CONFIG)/obj/ejsHelper.o
-	rm -rf $(CONFIG)/obj/ejsInterp.o
-	rm -rf $(CONFIG)/obj/ejsLoader.o
-	rm -rf $(CONFIG)/obj/ejsModule.o
-	rm -rf $(CONFIG)/obj/ejsScope.o
-	rm -rf $(CONFIG)/obj/ejsService.o
-	rm -rf $(CONFIG)/obj/ejs.o
-	rm -rf $(CONFIG)/obj/ejsc.o
-	rm -rf $(CONFIG)/obj/ejsmod.o
-	rm -rf $(CONFIG)/obj/doc.o
-	rm -rf $(CONFIG)/obj/docFiles.o
-	rm -rf $(CONFIG)/obj/listing.o
-	rm -rf $(CONFIG)/obj/slotGen.o
-	rm -rf $(CONFIG)/obj/ejsrun.o
-	rm -rf $(CONFIG)/obj/ejsSqlite.o
-	rm -rf $(CONFIG)/obj/ejsHttpServer.o
-	rm -rf $(CONFIG)/obj/ejsRequest.o
-	rm -rf $(CONFIG)/obj/ejsSession.o
-	rm -rf $(CONFIG)/obj/ejsWeb.o
-	rm -rf $(CONFIG)/obj/ejsZlib.o
+	rm -f "$(CONFIG)/bin/libmpr.dylib"
+	rm -f "$(CONFIG)/bin/libmprssl.dylib"
+	rm -f "$(CONFIG)/bin/ejsman"
+	rm -f "$(CONFIG)/bin/makerom"
+	rm -f "$(CONFIG)/bin/libest.dylib"
+	rm -f "$(CONFIG)/bin/ca.crt"
+	rm -f "$(CONFIG)/bin/libpcre.dylib"
+	rm -f "$(CONFIG)/bin/libhttp.dylib"
+	rm -f "$(CONFIG)/bin/http"
+	rm -f "$(CONFIG)/bin/libsqlite3.dylib"
+	rm -f "$(CONFIG)/bin/sqlite"
+	rm -f "$(CONFIG)/bin/libzlib.dylib"
+	rm -f "$(CONFIG)/bin/libejs.dylib"
+	rm -f "$(CONFIG)/bin/ejs"
+	rm -f "$(CONFIG)/bin/ejsc"
+	rm -f "$(CONFIG)/bin/ejsmod"
+	rm -f "$(CONFIG)/bin/ejsrun"
+	rm -f "$(CONFIG)/bin/jem"
+	rm -f "$(CONFIG)/bin/libejs.db.sqlite.dylib"
+	rm -f "$(CONFIG)/bin/libejs.web.dylib"
+	rm -f "$(CONFIG)/bin/libejs.zlib.dylib"
+	rm -f "$(CONFIG)/bin/utest"
+	rm -f "$(CONFIG)/obj/mprLib.o"
+	rm -f "$(CONFIG)/obj/mprSsl.o"
+	rm -f "$(CONFIG)/obj/manager.o"
+	rm -f "$(CONFIG)/obj/makerom.o"
+	rm -f "$(CONFIG)/obj/estLib.o"
+	rm -f "$(CONFIG)/obj/pcre.o"
+	rm -f "$(CONFIG)/obj/httpLib.o"
+	rm -f "$(CONFIG)/obj/http.o"
+	rm -f "$(CONFIG)/obj/sqlite3.o"
+	rm -f "$(CONFIG)/obj/sqlite.o"
+	rm -f "$(CONFIG)/obj/zlib.o"
+	rm -f "$(CONFIG)/obj/ecAst.o"
+	rm -f "$(CONFIG)/obj/ecCodeGen.o"
+	rm -f "$(CONFIG)/obj/ecCompiler.o"
+	rm -f "$(CONFIG)/obj/ecLex.o"
+	rm -f "$(CONFIG)/obj/ecModuleWrite.o"
+	rm -f "$(CONFIG)/obj/ecParser.o"
+	rm -f "$(CONFIG)/obj/ecState.o"
+	rm -f "$(CONFIG)/obj/dtoa.o"
+	rm -f "$(CONFIG)/obj/ejsApp.o"
+	rm -f "$(CONFIG)/obj/ejsArray.o"
+	rm -f "$(CONFIG)/obj/ejsBlock.o"
+	rm -f "$(CONFIG)/obj/ejsBoolean.o"
+	rm -f "$(CONFIG)/obj/ejsByteArray.o"
+	rm -f "$(CONFIG)/obj/ejsCache.o"
+	rm -f "$(CONFIG)/obj/ejsCmd.o"
+	rm -f "$(CONFIG)/obj/ejsConfig.o"
+	rm -f "$(CONFIG)/obj/ejsDate.o"
+	rm -f "$(CONFIG)/obj/ejsDebug.o"
+	rm -f "$(CONFIG)/obj/ejsError.o"
+	rm -f "$(CONFIG)/obj/ejsFile.o"
+	rm -f "$(CONFIG)/obj/ejsFileSystem.o"
+	rm -f "$(CONFIG)/obj/ejsFrame.o"
+	rm -f "$(CONFIG)/obj/ejsFunction.o"
+	rm -f "$(CONFIG)/obj/ejsGC.o"
+	rm -f "$(CONFIG)/obj/ejsGlobal.o"
+	rm -f "$(CONFIG)/obj/ejsHttp.o"
+	rm -f "$(CONFIG)/obj/ejsIterator.o"
+	rm -f "$(CONFIG)/obj/ejsJSON.o"
+	rm -f "$(CONFIG)/obj/ejsLocalCache.o"
+	rm -f "$(CONFIG)/obj/ejsMath.o"
+	rm -f "$(CONFIG)/obj/ejsMemory.o"
+	rm -f "$(CONFIG)/obj/ejsMprLog.o"
+	rm -f "$(CONFIG)/obj/ejsNamespace.o"
+	rm -f "$(CONFIG)/obj/ejsNull.o"
+	rm -f "$(CONFIG)/obj/ejsNumber.o"
+	rm -f "$(CONFIG)/obj/ejsObject.o"
+	rm -f "$(CONFIG)/obj/ejsPath.o"
+	rm -f "$(CONFIG)/obj/ejsPot.o"
+	rm -f "$(CONFIG)/obj/ejsRegExp.o"
+	rm -f "$(CONFIG)/obj/ejsSocket.o"
+	rm -f "$(CONFIG)/obj/ejsString.o"
+	rm -f "$(CONFIG)/obj/ejsSystem.o"
+	rm -f "$(CONFIG)/obj/ejsTimer.o"
+	rm -f "$(CONFIG)/obj/ejsType.o"
+	rm -f "$(CONFIG)/obj/ejsUri.o"
+	rm -f "$(CONFIG)/obj/ejsVoid.o"
+	rm -f "$(CONFIG)/obj/ejsWebSocket.o"
+	rm -f "$(CONFIG)/obj/ejsWorker.o"
+	rm -f "$(CONFIG)/obj/ejsXML.o"
+	rm -f "$(CONFIG)/obj/ejsXMLList.o"
+	rm -f "$(CONFIG)/obj/ejsXMLLoader.o"
+	rm -f "$(CONFIG)/obj/ejsByteCode.o"
+	rm -f "$(CONFIG)/obj/ejsException.o"
+	rm -f "$(CONFIG)/obj/ejsHelper.o"
+	rm -f "$(CONFIG)/obj/ejsInterp.o"
+	rm -f "$(CONFIG)/obj/ejsLoader.o"
+	rm -f "$(CONFIG)/obj/ejsModule.o"
+	rm -f "$(CONFIG)/obj/ejsScope.o"
+	rm -f "$(CONFIG)/obj/ejsService.o"
+	rm -f "$(CONFIG)/obj/ejs.o"
+	rm -f "$(CONFIG)/obj/ejsc.o"
+	rm -f "$(CONFIG)/obj/ejsmod.o"
+	rm -f "$(CONFIG)/obj/doc.o"
+	rm -f "$(CONFIG)/obj/docFiles.o"
+	rm -f "$(CONFIG)/obj/listing.o"
+	rm -f "$(CONFIG)/obj/slotGen.o"
+	rm -f "$(CONFIG)/obj/ejsrun.o"
+	rm -f "$(CONFIG)/obj/ejsSqlite.o"
+	rm -f "$(CONFIG)/obj/ejsHttpServer.o"
+	rm -f "$(CONFIG)/obj/ejsRequest.o"
+	rm -f "$(CONFIG)/obj/ejsSession.o"
+	rm -f "$(CONFIG)/obj/ejsWeb.o"
+	rm -f "$(CONFIG)/obj/ejsZlib.o"
 
 clobber: clean
 	rm -fr ./$(CONFIG)
 
+
+
+#
+#   version
+#
+version: $(DEPS_1)
+	@echo NN 2.3.1-2
+
 #
 #   mpr.h
 #
-$(CONFIG)/inc/mpr.h: $(DEPS_1)
+$(CONFIG)/inc/mpr.h: $(DEPS_2)
 	@echo '      [Copy] $(CONFIG)/inc/mpr.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/deps/mpr/mpr.h" "$(CONFIG)/inc/mpr.h"
@@ -260,13 +253,13 @@ $(CONFIG)/inc/mpr.h: $(DEPS_1)
 #
 #   bit.h
 #
-$(CONFIG)/inc/bit.h: $(DEPS_2)
+$(CONFIG)/inc/bit.h: $(DEPS_3)
 	@echo '      [Copy] $(CONFIG)/inc/bit.h'
 
 #
 #   bitos.h
 #
-$(CONFIG)/inc/bitos.h: $(DEPS_3)
+$(CONFIG)/inc/bitos.h: $(DEPS_4)
 	@echo '      [Copy] $(CONFIG)/inc/bitos.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/bitos.h" "$(CONFIG)/inc/bitos.h"
@@ -274,29 +267,29 @@ $(CONFIG)/inc/bitos.h: $(DEPS_3)
 #
 #   mprLib.o
 #
-DEPS_4 += $(CONFIG)/inc/bit.h
-DEPS_4 += $(CONFIG)/inc/mpr.h
-DEPS_4 += $(CONFIG)/inc/bitos.h
+DEPS_5 += $(CONFIG)/inc/bit.h
+DEPS_5 += $(CONFIG)/inc/mpr.h
+DEPS_5 += $(CONFIG)/inc/bitos.h
 
 $(CONFIG)/obj/mprLib.o: \
-    src/deps/mpr/mprLib.c $(DEPS_4)
+    src/deps/mpr/mprLib.c $(DEPS_5)
 	@echo '   [Compile] src/deps/mpr/mprLib.c'
 	$(CC) -c -o $(CONFIG)/obj/mprLib.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/mpr/mprLib.c
 
 #
 #   libmpr
 #
-DEPS_5 += $(CONFIG)/inc/mpr.h
-DEPS_5 += $(CONFIG)/obj/mprLib.o
+DEPS_6 += $(CONFIG)/inc/mpr.h
+DEPS_6 += $(CONFIG)/obj/mprLib.o
 
-$(CONFIG)/bin/libmpr.dylib: $(DEPS_5)
+$(CONFIG)/bin/libmpr.dylib: $(DEPS_6)
 	@echo '      [Link] libmpr'
 	$(CC) -dynamiclib -o $(CONFIG)/bin/libmpr.dylib $(LDFLAGS) -compatibility_version 2.3.1 -current_version 2.3.1 $(LIBPATHS) -install_name @rpath/libmpr.dylib $(CONFIG)/obj/mprLib.o $(LIBS)
 
 #
 #   est.h
 #
-$(CONFIG)/inc/est.h: $(DEPS_6)
+$(CONFIG)/inc/est.h: $(DEPS_7)
 	@echo '      [Copy] $(CONFIG)/inc/est.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/deps/est/est.h" "$(CONFIG)/inc/est.h"
@@ -304,12 +297,12 @@ $(CONFIG)/inc/est.h: $(DEPS_6)
 #
 #   estLib.o
 #
-DEPS_7 += $(CONFIG)/inc/bit.h
-DEPS_7 += $(CONFIG)/inc/est.h
-DEPS_7 += $(CONFIG)/inc/bitos.h
+DEPS_8 += $(CONFIG)/inc/bit.h
+DEPS_8 += $(CONFIG)/inc/est.h
+DEPS_8 += $(CONFIG)/inc/bitos.h
 
 $(CONFIG)/obj/estLib.o: \
-    src/deps/est/estLib.c $(DEPS_7)
+    src/deps/est/estLib.c $(DEPS_8)
 	@echo '   [Compile] src/deps/est/estLib.c'
 	$(CC) -c -o $(CONFIG)/obj/estLib.o $(DFLAGS) $(IFLAGS) src/deps/est/estLib.c
 
@@ -317,10 +310,10 @@ ifeq ($(BIT_PACK_EST),1)
 #
 #   libest
 #
-DEPS_8 += $(CONFIG)/inc/est.h
-DEPS_8 += $(CONFIG)/obj/estLib.o
+DEPS_9 += $(CONFIG)/inc/est.h
+DEPS_9 += $(CONFIG)/obj/estLib.o
 
-$(CONFIG)/bin/libest.dylib: $(DEPS_8)
+$(CONFIG)/bin/libest.dylib: $(DEPS_9)
 	@echo '      [Link] libest'
 	$(CC) -dynamiclib -o $(CONFIG)/bin/libest.dylib $(LDFLAGS) -compatibility_version 2.3.1 -current_version 2.3.1 $(LIBPATHS) -install_name @rpath/libest.dylib $(CONFIG)/obj/estLib.o $(LIBS)
 endif
@@ -328,12 +321,12 @@ endif
 #
 #   mprSsl.o
 #
-DEPS_9 += $(CONFIG)/inc/bit.h
-DEPS_9 += $(CONFIG)/inc/mpr.h
-DEPS_9 += $(CONFIG)/inc/est.h
+DEPS_10 += $(CONFIG)/inc/bit.h
+DEPS_10 += $(CONFIG)/inc/mpr.h
+DEPS_10 += $(CONFIG)/inc/est.h
 
 $(CONFIG)/obj/mprSsl.o: \
-    src/deps/mpr/mprSsl.c $(DEPS_9)
+    src/deps/mpr/mprSsl.c $(DEPS_10)
 	@echo '   [Compile] src/deps/mpr/mprSsl.c'
 	$(CC) -c -o $(CONFIG)/obj/mprSsl.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/mpr/mprSsl.c
 
@@ -341,74 +334,74 @@ ifeq ($(BIT_PACK_SSL),1)
 #
 #   libmprssl
 #
-DEPS_10 += $(CONFIG)/bin/libmpr.dylib
+DEPS_11 += $(CONFIG)/bin/libmpr.dylib
 ifeq ($(BIT_PACK_EST),1)
-    DEPS_10 += $(CONFIG)/bin/libest.dylib
+    DEPS_11 += $(CONFIG)/bin/libest.dylib
 endif
-DEPS_10 += $(CONFIG)/obj/mprSsl.o
+DEPS_11 += $(CONFIG)/obj/mprSsl.o
 
 ifeq ($(BIT_PACK_EST),1)
-    LIBS_10 += -lest
+    LIBS_11 += -lest
 endif
-LIBS_10 += -lmpr
+LIBS_11 += -lmpr
 
-$(CONFIG)/bin/libmprssl.dylib: $(DEPS_10)
+$(CONFIG)/bin/libmprssl.dylib: $(DEPS_11)
 	@echo '      [Link] libmprssl'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libmprssl.dylib $(LDFLAGS) -compatibility_version 2.3.1 -current_version 2.3.1 $(LIBPATHS) -install_name @rpath/libmprssl.dylib $(CONFIG)/obj/mprSsl.o $(LIBS_10) $(LIBS_10) $(LIBS)
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libmprssl.dylib $(LDFLAGS) -compatibility_version 2.3.1 -current_version 2.3.1 $(LIBPATHS) -install_name @rpath/libmprssl.dylib $(CONFIG)/obj/mprSsl.o $(LIBS_11) $(LIBS_11) $(LIBS)
 endif
 
 #
 #   manager.o
 #
-DEPS_11 += $(CONFIG)/inc/bit.h
-DEPS_11 += $(CONFIG)/inc/mpr.h
+DEPS_12 += $(CONFIG)/inc/bit.h
+DEPS_12 += $(CONFIG)/inc/mpr.h
 
 $(CONFIG)/obj/manager.o: \
-    src/deps/mpr/manager.c $(DEPS_11)
+    src/deps/mpr/manager.c $(DEPS_12)
 	@echo '   [Compile] src/deps/mpr/manager.c'
 	$(CC) -c -o $(CONFIG)/obj/manager.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/mpr/manager.c
 
 #
 #   manager
 #
-DEPS_12 += $(CONFIG)/bin/libmpr.dylib
-DEPS_12 += $(CONFIG)/obj/manager.o
+DEPS_13 += $(CONFIG)/bin/libmpr.dylib
+DEPS_13 += $(CONFIG)/obj/manager.o
 
-LIBS_12 += -lmpr
+LIBS_13 += -lmpr
 
-$(CONFIG)/bin/ejsman: $(DEPS_12)
+$(CONFIG)/bin/ejsman: $(DEPS_13)
 	@echo '      [Link] manager'
-	$(CC) -o $(CONFIG)/bin/ejsman -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LIBS_12) $(LIBS_12) $(LIBS)
+	$(CC) -o $(CONFIG)/bin/ejsman -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LIBS_13) $(LIBS_13) $(LIBS)
 
 #
 #   makerom.o
 #
-DEPS_13 += $(CONFIG)/inc/bit.h
-DEPS_13 += $(CONFIG)/inc/mpr.h
+DEPS_14 += $(CONFIG)/inc/bit.h
+DEPS_14 += $(CONFIG)/inc/mpr.h
 
 $(CONFIG)/obj/makerom.o: \
-    src/deps/mpr/makerom.c $(DEPS_13)
+    src/deps/mpr/makerom.c $(DEPS_14)
 	@echo '   [Compile] src/deps/mpr/makerom.c'
 	$(CC) -c -o $(CONFIG)/obj/makerom.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/mpr/makerom.c
 
 #
 #   makerom
 #
-DEPS_14 += $(CONFIG)/bin/libmpr.dylib
-DEPS_14 += $(CONFIG)/obj/makerom.o
+DEPS_15 += $(CONFIG)/bin/libmpr.dylib
+DEPS_15 += $(CONFIG)/obj/makerom.o
 
-LIBS_14 += -lmpr
+LIBS_15 += -lmpr
 
-$(CONFIG)/bin/makerom: $(DEPS_14)
+$(CONFIG)/bin/makerom: $(DEPS_15)
 	@echo '      [Link] makerom'
-	$(CC) -o $(CONFIG)/bin/makerom -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o $(LIBS_14) $(LIBS_14) $(LIBS)
+	$(CC) -o $(CONFIG)/bin/makerom -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o $(LIBS_15) $(LIBS_15) $(LIBS)
 
 #
 #   ca-crt
 #
-DEPS_15 += src/deps/est/ca.crt
+DEPS_16 += src/deps/est/ca.crt
 
-$(CONFIG)/bin/ca.crt: $(DEPS_15)
+$(CONFIG)/bin/ca.crt: $(DEPS_16)
 	@echo '      [Copy] $(CONFIG)/bin/ca.crt'
 	mkdir -p "$(CONFIG)/bin"
 	cp "src/deps/est/ca.crt" "$(CONFIG)/bin/ca.crt"
@@ -416,7 +409,7 @@ $(CONFIG)/bin/ca.crt: $(DEPS_15)
 #
 #   pcre.h
 #
-$(CONFIG)/inc/pcre.h: $(DEPS_16)
+$(CONFIG)/inc/pcre.h: $(DEPS_17)
 	@echo '      [Copy] $(CONFIG)/inc/pcre.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/deps/pcre/pcre.h" "$(CONFIG)/inc/pcre.h"
@@ -424,28 +417,28 @@ $(CONFIG)/inc/pcre.h: $(DEPS_16)
 #
 #   pcre.o
 #
-DEPS_17 += $(CONFIG)/inc/bit.h
-DEPS_17 += $(CONFIG)/inc/pcre.h
+DEPS_18 += $(CONFIG)/inc/bit.h
+DEPS_18 += $(CONFIG)/inc/pcre.h
 
 $(CONFIG)/obj/pcre.o: \
-    src/deps/pcre/pcre.c $(DEPS_17)
+    src/deps/pcre/pcre.c $(DEPS_18)
 	@echo '   [Compile] src/deps/pcre/pcre.c'
 	$(CC) -c -o $(CONFIG)/obj/pcre.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/pcre/pcre.c
 
 #
 #   libpcre
 #
-DEPS_18 += $(CONFIG)/inc/pcre.h
-DEPS_18 += $(CONFIG)/obj/pcre.o
+DEPS_19 += $(CONFIG)/inc/pcre.h
+DEPS_19 += $(CONFIG)/obj/pcre.o
 
-$(CONFIG)/bin/libpcre.dylib: $(DEPS_18)
+$(CONFIG)/bin/libpcre.dylib: $(DEPS_19)
 	@echo '      [Link] libpcre'
 	$(CC) -dynamiclib -o $(CONFIG)/bin/libpcre.dylib $(LDFLAGS) -compatibility_version 2.3.1 -current_version 2.3.1 $(LIBPATHS) -install_name @rpath/libpcre.dylib $(CONFIG)/obj/pcre.o $(LIBS)
 
 #
 #   http.h
 #
-$(CONFIG)/inc/http.h: $(DEPS_19)
+$(CONFIG)/inc/http.h: $(DEPS_20)
 	@echo '      [Copy] $(CONFIG)/inc/http.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/deps/http/http.h" "$(CONFIG)/inc/http.h"
@@ -453,75 +446,68 @@ $(CONFIG)/inc/http.h: $(DEPS_19)
 #
 #   httpLib.o
 #
-DEPS_20 += $(CONFIG)/inc/bit.h
-DEPS_20 += $(CONFIG)/inc/http.h
-DEPS_20 += $(CONFIG)/inc/mpr.h
+DEPS_21 += $(CONFIG)/inc/bit.h
+DEPS_21 += $(CONFIG)/inc/http.h
+DEPS_21 += $(CONFIG)/inc/mpr.h
 
 $(CONFIG)/obj/httpLib.o: \
-    src/deps/http/httpLib.c $(DEPS_20)
+    src/deps/http/httpLib.c $(DEPS_21)
 	@echo '   [Compile] src/deps/http/httpLib.c'
 	$(CC) -c -o $(CONFIG)/obj/httpLib.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/http/httpLib.c
 
 #
 #   libhttp
 #
-DEPS_21 += $(CONFIG)/bin/libmpr.dylib
-DEPS_21 += $(CONFIG)/bin/libpcre.dylib
-DEPS_21 += $(CONFIG)/inc/http.h
-DEPS_21 += $(CONFIG)/obj/httpLib.o
+DEPS_22 += $(CONFIG)/bin/libmpr.dylib
+DEPS_22 += $(CONFIG)/bin/libpcre.dylib
+DEPS_22 += $(CONFIG)/inc/http.h
+DEPS_22 += $(CONFIG)/obj/httpLib.o
 
-LIBS_21 += -lpcre
-LIBS_21 += -lmpr
+LIBS_22 += -lpcre
+LIBS_22 += -lmpr
 
-$(CONFIG)/bin/libhttp.dylib: $(DEPS_21)
+$(CONFIG)/bin/libhttp.dylib: $(DEPS_22)
 	@echo '      [Link] libhttp'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libhttp.dylib $(LDFLAGS) -compatibility_version 2.3.1 -current_version 2.3.1 $(LIBPATHS) -install_name @rpath/libhttp.dylib $(CONFIG)/obj/httpLib.o $(LIBS_21) $(LIBS_21) $(LIBS) -lpam
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libhttp.dylib $(LDFLAGS) -compatibility_version 2.3.1 -current_version 2.3.1 $(LIBPATHS) -install_name @rpath/libhttp.dylib $(CONFIG)/obj/httpLib.o $(LIBS_22) $(LIBS_22) $(LIBS) -lpam
 
 #
 #   http.o
 #
-DEPS_22 += $(CONFIG)/inc/bit.h
-DEPS_22 += $(CONFIG)/inc/http.h
+DEPS_23 += $(CONFIG)/inc/bit.h
+DEPS_23 += $(CONFIG)/inc/http.h
 
 $(CONFIG)/obj/http.o: \
-    src/deps/http/http.c $(DEPS_22)
+    src/deps/http/http.c $(DEPS_23)
 	@echo '   [Compile] src/deps/http/http.c'
 	$(CC) -c -o $(CONFIG)/obj/http.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/http/http.c
 
 #
 #   http
 #
-DEPS_23 += $(CONFIG)/bin/libhttp.dylib
-DEPS_23 += $(CONFIG)/obj/http.o
+DEPS_24 += $(CONFIG)/bin/libhttp.dylib
+DEPS_24 += $(CONFIG)/obj/http.o
 
-LIBS_23 += -lhttp
-LIBS_23 += -lpcre
-LIBS_23 += -lmpr
+LIBS_24 += -lhttp
+LIBS_24 += -lpcre
+LIBS_24 += -lmpr
 
-$(CONFIG)/bin/http: $(DEPS_23)
+$(CONFIG)/bin/http: $(DEPS_24)
 	@echo '      [Link] http'
-	$(CC) -o $(CONFIG)/bin/http -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o $(LIBS_23) $(LIBS_23) $(LIBS) -lpam
+	$(CC) -o $(CONFIG)/bin/http -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o $(LIBS_24) $(LIBS_24) $(LIBS) -lpam
 
 #
 #   sqlite3.h
 #
-$(CONFIG)/inc/sqlite3.h: $(DEPS_24)
+$(CONFIG)/inc/sqlite3.h: $(DEPS_25)
 	@echo '      [Copy] $(CONFIG)/inc/sqlite3.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp "src/deps/sqlite/sqlite3.h" "$(CONFIG)/inc/sqlite3.h"
-
-#
-#   config.h
-#
-$(CONFIG)/inc/config.h: $(DEPS_25)
-	@echo '      [Copy] $(CONFIG)/inc/config.h'
 
 #
 #   sqlite3.o
 #
 DEPS_26 += $(CONFIG)/inc/bit.h
 DEPS_26 += $(CONFIG)/inc/sqlite3.h
-DEPS_26 += $(CONFIG)/inc/config.h
 
 $(CONFIG)/obj/sqlite3.o: \
     src/deps/sqlite/sqlite3.c $(DEPS_26)
@@ -1584,6 +1570,60 @@ $(CONFIG)/bin/ejsrun: $(DEPS_115)
 #
 #   ejs.mod
 #
+DEPS_116 += src/core/App.es
+DEPS_116 += src/core/Args.es
+DEPS_116 += src/core/Array.es
+DEPS_116 += src/core/BinaryStream.es
+DEPS_116 += src/core/Block.es
+DEPS_116 += src/core/Boolean.es
+DEPS_116 += src/core/ByteArray.es
+DEPS_116 += src/core/Cache.es
+DEPS_116 += src/core/Cmd.es
+DEPS_116 += src/core/Compat.es
+DEPS_116 += src/core/Config.es
+DEPS_116 += src/core/Date.es
+DEPS_116 += src/core/Debug.es
+DEPS_116 += src/core/Emitter.es
+DEPS_116 += src/core/Error.es
+DEPS_116 += src/core/File.es
+DEPS_116 += src/core/FileSystem.es
+DEPS_116 += src/core/Frame.es
+DEPS_116 += src/core/Function.es
+DEPS_116 += src/core/GC.es
+DEPS_116 += src/core/Global.es
+DEPS_116 += src/core/Http.es
+DEPS_116 += src/core/Inflector.es
+DEPS_116 += src/core/Iterator.es
+DEPS_116 += src/core/JSON.es
+DEPS_116 += src/core/Loader.es
+DEPS_116 += src/core/LocalCache.es
+DEPS_116 += src/core/Locale.es
+DEPS_116 += src/core/Logger.es
+DEPS_116 += src/core/Math.es
+DEPS_116 += src/core/Memory.es
+DEPS_116 += src/core/MprLog.es
+DEPS_116 += src/core/Name.es
+DEPS_116 += src/core/Namespace.es
+DEPS_116 += src/core/Null.es
+DEPS_116 += src/core/Number.es
+DEPS_116 += src/core/Object.es
+DEPS_116 += src/core/Path.es
+DEPS_116 += src/core/Promise.es
+DEPS_116 += src/core/RegExp.es
+DEPS_116 += src/core/Socket.es
+DEPS_116 += src/core/Stream.es
+DEPS_116 += src/core/String.es
+DEPS_116 += src/core/System.es
+DEPS_116 += src/core/TextStream.es
+DEPS_116 += src/core/Timer.es
+DEPS_116 += src/core/Type.es
+DEPS_116 += src/core/Uri.es
+DEPS_116 += src/core/Void.es
+DEPS_116 += src/core/WebSocket.es
+DEPS_116 += src/core/Worker.es
+DEPS_116 += src/core/XML.es
+DEPS_116 += src/core/XMLHttp.es
+DEPS_116 += src/core/XMLList.es
 DEPS_116 += $(CONFIG)/bin/ejsc
 DEPS_116 += $(CONFIG)/bin/ejsmod
 
@@ -1596,6 +1636,7 @@ $(CONFIG)/bin/ejs.mod: $(DEPS_116)
 #
 #   ejs.unix.mod
 #
+DEPS_117 += src/jems/ejs.unix/Unix.es
 DEPS_117 += $(CONFIG)/bin/ejsc
 DEPS_117 += $(CONFIG)/bin/ejs.mod
 
@@ -1605,6 +1646,8 @@ $(CONFIG)/bin/ejs.unix.mod: $(DEPS_117)
 #
 #   jem.es
 #
+DEPS_118 += src/jems/ejs.jem/jem.es
+
 $(CONFIG)/bin/jem.es: $(DEPS_118)
 	cd src/jems/ejs.jem; cp jem.es ../../../$(CONFIG)/bin ; cd ../../..
 
@@ -1627,6 +1670,8 @@ $(CONFIG)/bin/jem: $(DEPS_119)
 #
 #   ejs.db.mod
 #
+DEPS_120 += src/jems/ejs.db/Database.es
+DEPS_120 += src/jems/ejs.db/DatabaseConnector.es
 DEPS_120 += $(CONFIG)/bin/ejsc
 DEPS_120 += $(CONFIG)/bin/ejs.mod
 
@@ -1636,6 +1681,7 @@ $(CONFIG)/bin/ejs.db.mod: $(DEPS_120)
 #
 #   ejs.db.mapper.mod
 #
+DEPS_121 += src/jems/ejs.db.mapper/Record.es
 DEPS_121 += $(CONFIG)/bin/ejsc
 DEPS_121 += $(CONFIG)/bin/ejs.mod
 DEPS_121 += $(CONFIG)/bin/ejs.db.mod
@@ -1646,6 +1692,7 @@ $(CONFIG)/bin/ejs.db.mapper.mod: $(DEPS_121)
 #
 #   ejs.db.sqlite.mod
 #
+DEPS_122 += src/jems/ejs.db.sqlite/Sqlite.es
 DEPS_122 += $(CONFIG)/bin/ejsc
 DEPS_122 += $(CONFIG)/bin/ejsmod
 DEPS_122 += $(CONFIG)/bin/ejs.mod
@@ -1692,6 +1739,7 @@ $(CONFIG)/bin/libejs.db.sqlite.dylib: $(DEPS_124)
 #
 #   ejs.mail.mod
 #
+DEPS_125 += src/jems/ejs.mail/Mail.es
 DEPS_125 += $(CONFIG)/bin/ejsc
 DEPS_125 += $(CONFIG)/bin/ejs.mod
 
@@ -1701,6 +1749,29 @@ $(CONFIG)/bin/ejs.mail.mod: $(DEPS_125)
 #
 #   ejs.web.mod
 #
+DEPS_126 += src/jems/ejs.web/Cascade.es
+DEPS_126 += src/jems/ejs.web/CommonLog.es
+DEPS_126 += src/jems/ejs.web/ContentType.es
+DEPS_126 += src/jems/ejs.web/Controller.es
+DEPS_126 += src/jems/ejs.web/Dir.es
+DEPS_126 += src/jems/ejs.web/Google.es
+DEPS_126 += src/jems/ejs.web/Head.es
+DEPS_126 += src/jems/ejs.web/Html.es
+DEPS_126 += src/jems/ejs.web/HttpServer.es
+DEPS_126 += src/jems/ejs.web/MethodOverride.es
+DEPS_126 += src/jems/ejs.web/Middleware.es
+DEPS_126 += src/jems/ejs.web/Mvc.es
+DEPS_126 += src/jems/ejs.web/Request.es
+DEPS_126 += src/jems/ejs.web/Router.es
+DEPS_126 += src/jems/ejs.web/Script.es
+DEPS_126 += src/jems/ejs.web/Session.es
+DEPS_126 += src/jems/ejs.web/ShowExceptions.es
+DEPS_126 += src/jems/ejs.web/Static.es
+DEPS_126 += src/jems/ejs.web/Template.es
+DEPS_126 += src/jems/ejs.web/UploadFile.es
+DEPS_126 += src/jems/ejs.web/UrlMap.es
+DEPS_126 += src/jems/ejs.web/Utils.es
+DEPS_126 += src/jems/ejs.web/View.es
 DEPS_126 += $(CONFIG)/bin/ejsc
 DEPS_126 += $(CONFIG)/bin/ejsmod
 DEPS_126 += $(CONFIG)/bin/ejs.mod
@@ -1797,6 +1868,8 @@ $(CONFIG)/bin/libejs.web.dylib: $(DEPS_132)
 #
 #   www
 #
+DEPS_133 += src/jems/ejs.web/www
+
 $(CONFIG)/bin/www: $(DEPS_133)
 	cd src/jems/ejs.web; rm -fr ../../../$(CONFIG)/bin/www ; cd ../../..
 	cd src/jems/ejs.web; cp -r www ../../../$(CONFIG)/bin ; cd ../../..
@@ -1804,6 +1877,7 @@ $(CONFIG)/bin/www: $(DEPS_133)
 #
 #   ejs.template.mod
 #
+DEPS_134 += src/jems/ejs.template/TemplateParser.es
 DEPS_134 += $(CONFIG)/bin/ejsc
 DEPS_134 += $(CONFIG)/bin/ejs.mod
 
@@ -1813,6 +1887,7 @@ $(CONFIG)/bin/ejs.template.mod: $(DEPS_134)
 #
 #   ejs.zlib.mod
 #
+DEPS_135 += src/jems/ejs.zlib/Zlib.es
 DEPS_135 += $(CONFIG)/bin/ejsc
 DEPS_135 += $(CONFIG)/bin/ejs.mod
 
@@ -1854,6 +1929,7 @@ $(CONFIG)/bin/libejs.zlib.dylib: $(DEPS_137)
 #
 #   ejs.tar.mod
 #
+DEPS_138 += src/jems/ejs.tar/Tar.es
 DEPS_138 += $(CONFIG)/bin/ejsc
 DEPS_138 += $(CONFIG)/bin/ejs.mod
 
@@ -1863,6 +1939,8 @@ $(CONFIG)/bin/ejs.tar.mod: $(DEPS_138)
 #
 #   mvc.es
 #
+DEPS_139 += src/jems/ejs.mvc/mvc.es
+
 $(CONFIG)/bin/mvc.es: $(DEPS_139)
 	cd src/jems/ejs.mvc; cp mvc.es ../../../$(CONFIG)/bin ; cd ../../..
 
@@ -1885,6 +1963,7 @@ $(CONFIG)/bin/mvc: $(DEPS_140)
 #
 #   ejs.mvc.mod
 #
+DEPS_141 += src/jems/ejs.mvc/mvc.es
 DEPS_141 += $(CONFIG)/bin/ejsc
 DEPS_141 += $(CONFIG)/bin/ejs.mod
 DEPS_141 += $(CONFIG)/bin/ejs.web.mod
@@ -1897,12 +1976,16 @@ $(CONFIG)/bin/ejs.mvc.mod: $(DEPS_141)
 #
 #   utest.es
 #
+DEPS_142 += src/jems/ejs.utest/utest.es
+
 $(CONFIG)/bin/utest.es: $(DEPS_142)
 	cd src/jems/ejs.utest; cp utest.es ../../../$(CONFIG)/bin ; cd ../../..
 
 #
 #   utest.worker
 #
+DEPS_143 += src/jems/ejs.utest/utest.worker
+
 $(CONFIG)/bin/utest.worker: $(DEPS_143)
 	cd src/jems/ejs.utest; cp utest.worker ../../../$(CONFIG)/bin ; cd ../../..
 
@@ -1924,165 +2007,37 @@ $(CONFIG)/bin/utest: $(DEPS_144)
 	$(CC) -o $(CONFIG)/bin/utest -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS_144) $(LIBS_144) $(LIBS) -lpam
 
 #
-#   version
-#
-version: $(DEPS_145)
-	@echo 2.3.1-2
-
-#
 #   stop
 #
-stop: $(DEPS_146)
-	
+stop: $(DEPS_145)
 
 #
 #   installBinary
 #
-DEPS_147 += stop
+DEPS_146 += stop
 
-installBinary: $(DEPS_147)
-	mkdir -p "$(BIT_APP_PREFIX)"
-	mkdir -p "$(BIT_VAPP_PREFIX)"
-	mkdir -p "$(BIT_APP_PREFIX)"
-	rm -f "$(BIT_APP_PREFIX)/latest"
-	ln -s "2.3.1" "$(BIT_APP_PREFIX)/latest"
-	mkdir -p "$(BIT_VAPP_PREFIX)/bin"
-	cp "$(CONFIG)/bin/ejs" "$(BIT_VAPP_PREFIX)/bin/ejs"
-	mkdir -p "$(BIT_BIN_PREFIX)"
-	rm -f "$(BIT_BIN_PREFIX)/ejs"
-	ln -s "$(BIT_VAPP_PREFIX)/bin/ejs" "$(BIT_BIN_PREFIX)/ejs"
-	cp "$(CONFIG)/bin/ejsc" "$(BIT_VAPP_PREFIX)/bin/ejsc"
-	rm -f "$(BIT_BIN_PREFIX)/ejsc"
-	ln -s "$(BIT_VAPP_PREFIX)/bin/ejsc" "$(BIT_BIN_PREFIX)/ejsc"
-	cp "$(CONFIG)/bin/ejsman" "$(BIT_VAPP_PREFIX)/bin/ejsman"
-	rm -f "$(BIT_BIN_PREFIX)/ejsman"
-	ln -s "$(BIT_VAPP_PREFIX)/bin/ejsman" "$(BIT_BIN_PREFIX)/ejsman"
-	cp "$(CONFIG)/bin/ejsmod" "$(BIT_VAPP_PREFIX)/bin/ejsmod"
-	rm -f "$(BIT_BIN_PREFIX)/ejsmod"
-	ln -s "$(BIT_VAPP_PREFIX)/bin/ejsmod" "$(BIT_BIN_PREFIX)/ejsmod"
-	cp "$(CONFIG)/bin/ejsrun" "$(BIT_VAPP_PREFIX)/bin/ejsrun"
-	rm -f "$(BIT_BIN_PREFIX)/ejsrun"
-	ln -s "$(BIT_VAPP_PREFIX)/bin/ejsrun" "$(BIT_BIN_PREFIX)/ejsrun"
-	cp "$(CONFIG)/bin/jem" "$(BIT_VAPP_PREFIX)/bin/jem"
-	rm -f "$(BIT_BIN_PREFIX)/jem"
-	ln -s "$(BIT_VAPP_PREFIX)/bin/jem" "$(BIT_BIN_PREFIX)/jem"
-	cp "$(CONFIG)/bin/mvc" "$(BIT_VAPP_PREFIX)/bin/mvc"
-	rm -f "$(BIT_BIN_PREFIX)/mvc"
-	ln -s "$(BIT_VAPP_PREFIX)/bin/mvc" "$(BIT_BIN_PREFIX)/mvc"
-	cp "$(CONFIG)/bin/utest" "$(BIT_VAPP_PREFIX)/bin/utest"
-	rm -f "$(BIT_BIN_PREFIX)/utest"
-	ln -s "$(BIT_VAPP_PREFIX)/bin/utest" "$(BIT_BIN_PREFIX)/utest"
-	cp "$(CONFIG)/bin/libejs.db.sqlite.dylib" "$(BIT_VAPP_PREFIX)/bin/libejs.db.sqlite.dylib"
-	cp "$(CONFIG)/bin/libejs.dylib" "$(BIT_VAPP_PREFIX)/bin/libejs.dylib"
-	cp "$(CONFIG)/bin/libejs.db.sqlite.dylib" "$(BIT_VAPP_PREFIX)/bin/libejs.db.sqlite.dylib"
-	cp "$(CONFIG)/bin/libejs.web.dylib" "$(BIT_VAPP_PREFIX)/bin/libejs.web.dylib"
-	cp "$(CONFIG)/bin/libejs.zlib.dylib" "$(BIT_VAPP_PREFIX)/bin/libejs.zlib.dylib"
-	cp "$(CONFIG)/bin/libhttp.dylib" "$(BIT_VAPP_PREFIX)/bin/libhttp.dylib"
-	cp "$(CONFIG)/bin/libmpr.dylib" "$(BIT_VAPP_PREFIX)/bin/libmpr.dylib"
-	cp "$(CONFIG)/bin/libpcre.dylib" "$(BIT_VAPP_PREFIX)/bin/libpcre.dylib"
-	cp "$(CONFIG)/bin/libsqlite3.dylib" "$(BIT_VAPP_PREFIX)/bin/libsqlite3.dylib"
-	cp "$(CONFIG)/bin/libzlib.dylib" "$(BIT_VAPP_PREFIX)/bin/libzlib.dylib"
-	cp "$(CONFIG)/bin/ejs.db.mapper.mod" "$(BIT_VAPP_PREFIX)/bin/ejs.db.mapper.mod"
-	cp "$(CONFIG)/bin/ejs.db.mod" "$(BIT_VAPP_PREFIX)/bin/ejs.db.mod"
-	cp "$(CONFIG)/bin/ejs.db.sqlite.mod" "$(BIT_VAPP_PREFIX)/bin/ejs.db.sqlite.mod"
-	cp "$(CONFIG)/bin/ejs.mod" "$(BIT_VAPP_PREFIX)/bin/ejs.mod"
-	cp "$(CONFIG)/bin/ejs.mvc.mod" "$(BIT_VAPP_PREFIX)/bin/ejs.mvc.mod"
-	cp "$(CONFIG)/bin/ejs.tar.mod" "$(BIT_VAPP_PREFIX)/bin/ejs.tar.mod"
-	cp "$(CONFIG)/bin/ejs.template.mod" "$(BIT_VAPP_PREFIX)/bin/ejs.template.mod"
-	cp "$(CONFIG)/bin/ejs.unix.mod" "$(BIT_VAPP_PREFIX)/bin/ejs.unix.mod"
-	cp "$(CONFIG)/bin/ejs.web.mod" "$(BIT_VAPP_PREFIX)/bin/ejs.web.mod"
-	cp "$(CONFIG)/bin/ejs.zlib.mod" "$(BIT_VAPP_PREFIX)/bin/ejs.zlib.mod"
-	cp "$(CONFIG)/bin/jem.es" "$(BIT_VAPP_PREFIX)/bin/jem.es"
-	cp "$(CONFIG)/bin/mvc.es" "$(BIT_VAPP_PREFIX)/bin/mvc.es"
-	cp "$(CONFIG)/bin/utest.es" "$(BIT_VAPP_PREFIX)/bin/utest.es"
-ifeq ($(BIT_PACK_SSL),1)
-	cp "$(CONFIG)/bin/libmprssl.dylib" "$(BIT_VAPP_PREFIX)/bin/libmprssl.dylib"
-	cp "$(CONFIG)/bin/ca.crt" "$(BIT_VAPP_PREFIX)/bin/ca.crt"
-endif
-	mkdir -p "$(BIT_VAPP_PREFIX)/bin/www/images"
-	cp "src/jems/ejs.web/www/images/banner.jpg" "$(BIT_VAPP_PREFIX)/bin/www/images/banner.jpg"
-	cp "src/jems/ejs.web/www/images/favicon.ico" "$(BIT_VAPP_PREFIX)/bin/www/images/favicon.ico"
-	cp "src/jems/ejs.web/www/images/splash.jpg" "$(BIT_VAPP_PREFIX)/bin/www/images/splash.jpg"
-	mkdir -p "$(BIT_VAPP_PREFIX)/bin/www/js"
-	cp "src/jems/ejs.web/www/js/jquery.ejs.min.js" "$(BIT_VAPP_PREFIX)/bin/www/js/jquery.ejs.min.js"
-	cp "src/jems/ejs.web/www/js/jquery.min.js" "$(BIT_VAPP_PREFIX)/bin/www/js/jquery.min.js"
-	cp "src/jems/ejs.web/www/js/jquery.simplemodal.min.js" "$(BIT_VAPP_PREFIX)/bin/www/js/jquery.simplemodal.min.js"
-	cp "src/jems/ejs.web/www/js/jquery.tablesorter.js" "$(BIT_VAPP_PREFIX)/bin/www/js/jquery.tablesorter.js"
-	cp "src/jems/ejs.web/www/js/jquery.tablesorter.min.js" "$(BIT_VAPP_PREFIX)/bin/www/js/jquery.tablesorter.min.js"
-	cp "src/jems/ejs.web/www/js/jquery.treeview.min.js" "$(BIT_VAPP_PREFIX)/bin/www/js/jquery.treeview.min.js"
-	mkdir -p "$(BIT_VAPP_PREFIX)/bin/www/js/tree-images"
-	cp "src/jems/ejs.web/www/js/tree-images/file.gif" "$(BIT_VAPP_PREFIX)/bin/www/js/tree-images/file.gif"
-	cp "src/jems/ejs.web/www/js/tree-images/folder-closed.gif" "$(BIT_VAPP_PREFIX)/bin/www/js/tree-images/folder-closed.gif"
-	cp "src/jems/ejs.web/www/js/tree-images/folder.gif" "$(BIT_VAPP_PREFIX)/bin/www/js/tree-images/folder.gif"
-	cp "src/jems/ejs.web/www/js/tree-images/minus.gif" "$(BIT_VAPP_PREFIX)/bin/www/js/tree-images/minus.gif"
-	cp "src/jems/ejs.web/www/js/tree-images/plus.gif" "$(BIT_VAPP_PREFIX)/bin/www/js/tree-images/plus.gif"
-	cp "src/jems/ejs.web/www/js/tree-images/treeview-black-line.gif" "$(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-black-line.gif"
-	cp "src/jems/ejs.web/www/js/tree-images/treeview-black.gif" "$(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-black.gif"
-	cp "src/jems/ejs.web/www/js/tree-images/treeview-default-line.gif" "$(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-default-line.gif"
-	cp "src/jems/ejs.web/www/js/tree-images/treeview-default.gif" "$(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-default.gif"
-	cp "src/jems/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif" "$(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-famfamfam-line.gif"
-	cp "src/jems/ejs.web/www/js/tree-images/treeview-famfamfam.gif" "$(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-famfamfam.gif"
-	cp "src/jems/ejs.web/www/js/tree-images/treeview-gray-line.gif" "$(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-gray-line.gif"
-	cp "src/jems/ejs.web/www/js/tree-images/treeview-gray.gif" "$(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-gray.gif"
-	cp "src/jems/ejs.web/www/js/tree-images/treeview-red-line.gif" "$(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-red-line.gif"
-	cp "src/jems/ejs.web/www/js/tree-images/treeview-red.gif" "$(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-red.gif"
-	cp "src/jems/ejs.web/www/js/treeview.css" "$(BIT_VAPP_PREFIX)/bin/www/js/treeview.css"
-	mkdir -p "$(BIT_VAPP_PREFIX)/bin/www"
-	cp "src/jems/ejs.web/www/layout.css" "$(BIT_VAPP_PREFIX)/bin/www/layout.css"
-	mkdir -p "$(BIT_VAPP_PREFIX)/bin/www/themes"
-	cp "src/jems/ejs.web/www/themes/default.css" "$(BIT_VAPP_PREFIX)/bin/www/themes/default.css"
-	mkdir -p "$(BIT_VAPP_PREFIX)/inc"
-	cp "$(CONFIG)/inc/bit.h" "$(BIT_VAPP_PREFIX)/inc/bit.h"
-	mkdir -p "$(BIT_INC_PREFIX)/ejs"
-	rm -f "$(BIT_INC_PREFIX)/ejs/bit.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/bit.h" "$(BIT_INC_PREFIX)/ejs/bit.h"
-	mkdir -p "$(BIT_VAPP_PREFIX)/doc/man1"
-	cp "doc/man/ejs.1" "$(BIT_VAPP_PREFIX)/doc/man1/ejs.1"
-	mkdir -p "$(BIT_MAN_PREFIX)/man1"
-	rm -f "$(BIT_MAN_PREFIX)/man1/ejs.1"
-	ln -s "$(BIT_VAPP_PREFIX)/doc/man1/ejs.1" "$(BIT_MAN_PREFIX)/man1/ejs.1"
-	cp "doc/man/ejsc.1" "$(BIT_VAPP_PREFIX)/doc/man1/ejsc.1"
-	rm -f "$(BIT_MAN_PREFIX)/man1/ejsc.1"
-	ln -s "$(BIT_VAPP_PREFIX)/doc/man1/ejsc.1" "$(BIT_MAN_PREFIX)/man1/ejsc.1"
-	cp "doc/man/ejsmod.1" "$(BIT_VAPP_PREFIX)/doc/man1/ejsmod.1"
-	rm -f "$(BIT_MAN_PREFIX)/man1/ejsmod.1"
-	ln -s "$(BIT_VAPP_PREFIX)/doc/man1/ejsmod.1" "$(BIT_MAN_PREFIX)/man1/ejsmod.1"
-	cp "doc/man/http.1" "$(BIT_VAPP_PREFIX)/doc/man1/http.1"
-	rm -f "$(BIT_MAN_PREFIX)/man1/http.1"
-	ln -s "$(BIT_VAPP_PREFIX)/doc/man1/http.1" "$(BIT_MAN_PREFIX)/man1/http.1"
-	cp "doc/man/makerom.1" "$(BIT_VAPP_PREFIX)/doc/man1/makerom.1"
-	rm -f "$(BIT_MAN_PREFIX)/man1/makerom.1"
-	ln -s "$(BIT_VAPP_PREFIX)/doc/man1/makerom.1" "$(BIT_MAN_PREFIX)/man1/makerom.1"
-	cp "doc/man/manager.1" "$(BIT_VAPP_PREFIX)/doc/man1/manager.1"
-	rm -f "$(BIT_MAN_PREFIX)/man1/manager.1"
-	ln -s "$(BIT_VAPP_PREFIX)/doc/man1/manager.1" "$(BIT_MAN_PREFIX)/man1/manager.1"
-	cp "doc/man/mvc.1" "$(BIT_VAPP_PREFIX)/doc/man1/mvc.1"
-	rm -f "$(BIT_MAN_PREFIX)/man1/mvc.1"
-	ln -s "$(BIT_VAPP_PREFIX)/doc/man1/mvc.1" "$(BIT_MAN_PREFIX)/man1/mvc.1"
+installBinary: $(DEPS_146)
 
 #
 #   start
 #
-start: $(DEPS_148)
-	
+start: $(DEPS_147)
 
 #
 #   install
 #
-DEPS_149 += stop
-DEPS_149 += installBinary
-DEPS_149 += start
+DEPS_148 += stop
+DEPS_148 += installBinary
+DEPS_148 += start
 
-install: $(DEPS_149)
+install: $(DEPS_148)
 	
 
 #
 #   uninstall
 #
-DEPS_150 += stop
+DEPS_149 += stop
 
-uninstall: $(DEPS_150)
-	rm -fr "$(BIT_VAPP_PREFIX)"
-	rm -f "$(BIT_APP_PREFIX)/latest"
-	rmdir -p "$(BIT_APP_PREFIX)" 2>/dev/null ; true
+uninstall: $(DEPS_149)
+	
 
