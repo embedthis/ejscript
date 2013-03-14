@@ -16,6 +16,13 @@
     #include    "sqlite3.h"
 #include    "ejs.db.sqlite.slots.h"
 
+#ifndef BIT_MAX_SQLITE_MEM
+    #define BIT_MAX_SQLITE_MEM      (2*1024*1024)   /**< Maximum buffering for Sqlite */
+#endif
+#ifndef BIT_MAX_SQLITE_DURATION
+    #define BIT_MAX_SQLITE_DURATION 30000           /**< Database busy timeout */
+#endif
+
 /*********************************** Locals ***********************************/
 /*
     Map allocation and mutex routines to use ejscript version.
@@ -255,6 +262,7 @@ static void *allocBlock(int size)
 {
     void    *ptr;
 
+    //  MOB - replace with palloc
     if ((ptr = mprAlloc(size)) != 0) {
         mprHold(ptr);
     }
@@ -264,12 +272,14 @@ static void *allocBlock(int size)
 
 static void freeBlock(void *ptr)
 {
+    //  MOB - replace with pfree
     mprRelease(ptr);
 }
 
 
 static void *reallocBlock(void *ptr, int size)
 {
+    //  MOB - prealloc
     mprRelease(ptr);
     if ((ptr =  mprRealloc(ptr, size)) != 0) {
         mprHold(ptr);

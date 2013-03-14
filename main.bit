@@ -28,7 +28,6 @@ Bit.load({
         'src/jems/ejs.tar/tar.bit',
         'src/jems/ejs.mvc/mvc.bit',
         'src/jems/ejs.utest/utest.bit',
-        'package/package.bit',
         'doc/doc.bit',
     ],
 
@@ -52,6 +51,7 @@ Bit.load({
             Installation prefix set
          */
         prefixes: 'embedthis-prefixes',
+        manifest: 'package/manifest.bit',
 
         sync: [ 'bitos', 'est', 'http', 'mpr', 'pcre', 'sqlite', 'zlib' ],
         packs: [ 'bits/packs' ],

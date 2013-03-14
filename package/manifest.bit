@@ -1,5 +1,5 @@
 /*
-    manifest.bit - Install and Package File Manifest for Ejscript
+    manifest.bit - Package File Manifest for Ejscript
  */
 
 Bit.load({
