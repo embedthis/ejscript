@@ -116,7 +116,7 @@
     #define BIT_PRODUCT "ejs"
 #endif
 #ifndef BIT_REQUIRED
-    #define BIT_REQUIRED "winsdk,compiler,lib,link,dumpbin,rc,pcre,zlib"
+    #define BIT_REQUIRED "winsdk,compiler,lib,link,rc,pcre,zlib"
 #endif
 #ifndef BIT_STATIC
     #define BIT_STATIC 0
@@ -247,9 +247,6 @@
 #endif
 #ifndef BIT_PACK_DSI
     #define BIT_PACK_DSI 0
-#endif
-#ifndef BIT_PACK_DUMPBIN
-    #define BIT_PACK_DUMPBIN 0
 #endif
 #ifndef BIT_PACK_EJSCRIPT
     #define BIT_PACK_EJSCRIPT 1

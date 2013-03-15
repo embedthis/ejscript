@@ -77,6 +77,7 @@ Bit.load({
                     '${BIN}/jem.es',
                     '${BIN}/mvc.es',
                     '${BIN}/utest.es',
+                    '${BIN}/utest.worker',
                 ],
                 to:         '${abin}/',
                 set:        'core',
