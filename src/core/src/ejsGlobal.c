@@ -256,7 +256,7 @@ PUBLIC int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
                 if (cflags & EJS_BLEND_SUB) {
                     continue;
                 }
-                if (!ejsIsPot(ejs, vp)) {
+                if (!ejsIsPot(ejs, vp) || ejsIsFunction(ejs, vp)) {
                     ejsSetPropertyByName(ejs, dest, trimmedName, ejsClone(ejs, vp, 1));
                     continue;
                 }
