@@ -8,7 +8,7 @@
 
 /* Settings */
 #ifndef BIT_BIT
-    #define BIT_BIT "0.8.4"
+    #define BIT_BIT "0.8.5"
 #endif
 #ifndef BIT_BUILD_NUMBER
     #define BIT_BUILD_NUMBER "2"
@@ -308,11 +308,11 @@
 #ifndef BIT_PACK_SQLITE
     #define BIT_PACK_SQLITE 1
 #endif
-#ifndef BIT_PACK_SSL
-    #define BIT_PACK_SSL 1
-#endif
 #ifndef BIT_PACK_VXWORKS
     #define BIT_PACK_VXWORKS 1
+#endif
+#ifndef BIT_PACK_WINSDK
+    #define BIT_PACK_WINSDK 0
 #endif
 #ifndef BIT_PACK_ZIP
     #define BIT_PACK_ZIP 1

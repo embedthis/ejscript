@@ -45,7 +45,7 @@ Bit.load({
         company: 'Embedthis',
         version: '2.3.1',
         buildNumber: '2',
-        bit: '0.8.4',
+        bit: '0.8.5',
 
         /*
             Installation prefix set
@@ -155,12 +155,17 @@ Bit.load({
          */
     },
 
+    packs: {
+        ejscript: { enable: true, silent: true },
+    },
+
     scripts: { 
         /* Want est support included, but disabled */
         pregenheader: "if (bit.generating) bit.packs.est.enable = 0", 
         pregen: "if (bit.generating) bit.packs.est.enable = 0",
     },
 
+/* UNUSED
     packs: {
         ejscript: {enable: true},
         est: {},
@@ -168,5 +173,6 @@ Bit.load({
         openssl: {},
         nanossl: {},
     },
+*/
 
 })
