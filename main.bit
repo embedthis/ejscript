@@ -61,7 +61,7 @@ Bit.load({
         /*
             Optional packs to automatically discover and configure
          */
-        '+discover': [ 'doxygen', 'dsi', 'est', 'man', 'man2html', 'pmaker', 'sqlite', 'zip' ],
+        '+discover': [ 'doxygen', 'dsi', 'man', 'man2html', 'pmaker', 'sqlite', 'ssl', 'zip' ],
         '+requires': [ 'compiler', 'pcre', 'zlib' ]
 
         /*
