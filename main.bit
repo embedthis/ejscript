@@ -164,15 +164,4 @@ Bit.load({
         pregenheader: "if (bit.generating) bit.packs.est.enable = 0", 
         pregen: "if (bit.generating) bit.packs.est.enable = 0",
     },
-
-/* UNUSED
-    packs: {
-        ejscript: {enable: true},
-        est: {},
-        matrixssl: {},
-        openssl: {},
-        nanossl: {},
-    },
-*/
-
 })
