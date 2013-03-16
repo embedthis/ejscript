@@ -23,7 +23,7 @@
     #define BIT_DEPTH 1
 #endif
 #ifndef BIT_DISCOVER
-    #define BIT_DISCOVER "doxygen,dsi,est,man,man2html,pmaker,sqlite,zip"
+    #define BIT_DISCOVER "doxygen,dsi,man,man2html,pmaker,sqlite,ssl,zip"
 #endif
 #ifndef BIT_EJS_DB
     #define BIT_EJS_DB 1
@@ -289,6 +289,9 @@
 #endif
 #ifndef BIT_PACK_SQLITE
     #define BIT_PACK_SQLITE 1
+#endif
+#ifndef BIT_PACK_SSL
+    #define BIT_PACK_SSL 1
 #endif
 #ifndef BIT_PACK_VXWORKS
     #define BIT_PACK_VXWORKS 0
