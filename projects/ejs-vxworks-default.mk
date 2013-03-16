@@ -17,14 +17,12 @@ LD                := /usr/bin/ld
 CONFIG            := $(OS)-$(ARCH)-$(PROFILE)
 LBIN              := $(CONFIG)/bin
 
-BIT_PACK_EST      := 0
-BIT_PACK_SQLITE   := 1
 
-CFLAGS            += -fno-builtin -fno-defer-pop -fvolatile  -w
-DFLAGS            += -D_REENTRANT -DVXWORKS -DRW_MULTI_THREAD -D_GNU_TOOL  -DCPU=PENTIUM $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS))) -DBIT_PACK_EST=$(BIT_PACK_EST) -DBIT_PACK_SQLITE=$(BIT_PACK_SQLITE) 
+CFLAGS            += -fno-builtin -fno-defer-pop -fvolatile -w
+DFLAGS            += -D_REENTRANT -DVXWORKS -DRW_MULTI_THREAD -D_GNU_TOOL -DCPU=PENTIUM $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS))) 
 IFLAGS            += -I$(CONFIG)/inc -I$(WIND_BASE)/target/h -I$(WIND_BASE)/target/h/wrn/coreip
 LDFLAGS           += '-Wl,-r'
-LIBPATHS          += -L$(CONFIG)/bin -L$(CONFIG)/bin
+LIBPATHS          += -L$(CONFIG)/bin
 LIBS              += 
 
 DEBUG             := debug
@@ -60,19 +58,13 @@ BIT_SRC_PREFIX    := $(BIT_ROOT_PREFIX)/usr/src/$(PRODUCT)-$(VERSION)
 TARGETS           += $(CONFIG)/bin/libmpr.out
 TARGETS           += $(CONFIG)/bin/ejsman.out
 TARGETS           += $(CONFIG)/bin/makerom.out
-ifeq ($(BIT_PACK_EST),1)
 TARGETS           += $(CONFIG)/bin/libest.out
-endif
 TARGETS           += $(CONFIG)/bin/ca.crt
 TARGETS           += $(CONFIG)/bin/libpcre.out
 TARGETS           += $(CONFIG)/bin/libhttp.out
 TARGETS           += $(CONFIG)/bin/http.out
-ifeq ($(BIT_PACK_SQLITE),1)
 TARGETS           += $(CONFIG)/bin/libsqlite3.out
-endif
-ifeq ($(BIT_PACK_SQLITE),1)
 TARGETS           += $(CONFIG)/bin/sqlite.out
-endif
 TARGETS           += $(CONFIG)/bin/libzlib.out
 TARGETS           += $(CONFIG)/bin/libejs.out
 TARGETS           += $(CONFIG)/bin/ejs.out
@@ -352,7 +344,6 @@ $(CONFIG)/obj/estLib.o: \
 	@echo '   [Compile] src/deps/est/estLib.c'
 	$(CC) -c -o $(CONFIG)/obj/estLib.o -fno-builtin -fno-defer-pop -fvolatile $(DFLAGS) $(IFLAGS) src/deps/est/estLib.c
 
-ifeq ($(BIT_PACK_EST),1)
 #
 #   libest
 #
@@ -362,7 +353,6 @@ DEPS_13 += $(CONFIG)/obj/estLib.o
 $(CONFIG)/bin/libest.out: $(DEPS_13)
 	@echo '      [Link] libest'
 	$(CC) -r -o $(CONFIG)/bin/libest.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/estLib.o 
-endif
 
 #
 #   ca-crt
@@ -482,7 +472,6 @@ $(CONFIG)/obj/sqlite3.o: \
 	@echo '   [Compile] src/deps/sqlite/sqlite3.c'
 	$(CC) -c -o $(CONFIG)/obj/sqlite3.o -fno-builtin -fno-defer-pop -fvolatile $(DFLAGS) $(IFLAGS) src/deps/sqlite/sqlite3.c
 
-ifeq ($(BIT_PACK_SQLITE),1)
 #
 #   libsqlite3
 #
@@ -492,7 +481,6 @@ DEPS_25 += $(CONFIG)/obj/sqlite3.o
 $(CONFIG)/bin/libsqlite3.out: $(DEPS_25)
 	@echo '      [Link] libsqlite3'
 	$(CC) -r -o $(CONFIG)/bin/libsqlite3.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite3.o 
-endif
 
 #
 #   sqlite.o
@@ -505,23 +493,17 @@ $(CONFIG)/obj/sqlite.o: \
 	@echo '   [Compile] src/deps/sqlite/sqlite.c'
 	$(CC) -c -o $(CONFIG)/obj/sqlite.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/sqlite/sqlite.c
 
-ifeq ($(BIT_PACK_SQLITE),1)
 #
 #   sqlite
 #
-ifeq ($(BIT_PACK_SQLITE),1)
-    DEPS_27 += $(CONFIG)/bin/libsqlite3.out
-endif
+DEPS_27 += $(CONFIG)/bin/libsqlite3.out
 DEPS_27 += $(CONFIG)/obj/sqlite.o
 
-ifeq ($(BIT_PACK_SQLITE),1)
-    LIBS_27 += -lsqlite3
-endif
+LIBS_27 += -lsqlite3
 
 $(CONFIG)/bin/sqlite.out: $(DEPS_27)
 	@echo '      [Link] sqlite'
 	$(CC) -o $(CONFIG)/bin/sqlite.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LDFLAGS)
-endif
 
 #
 #   zlib.h
@@ -1687,14 +1669,10 @@ DEPS_122 += $(CONFIG)/bin/libmpr.out
 DEPS_122 += $(CONFIG)/bin/libejs.out
 DEPS_122 += $(CONFIG)/bin/ejs.mod
 DEPS_122 += $(CONFIG)/bin/ejs.db.sqlite.mod
-ifeq ($(BIT_PACK_SQLITE),1)
-    DEPS_122 += $(CONFIG)/bin/libsqlite3.out
-endif
+DEPS_122 += $(CONFIG)/bin/libsqlite3.out
 DEPS_122 += $(CONFIG)/obj/ejsSqlite.o
 
-ifeq ($(BIT_PACK_SQLITE),1)
-    LIBS_122 += -lsqlite3
-endif
+LIBS_122 += -lsqlite3
 LIBS_122 += -lejs
 LIBS_122 += -lmpr
 LIBS_122 += -lhttp

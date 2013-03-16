@@ -19,55 +19,46 @@ ENTRY             = _DllMainCRTStartup@12
 OS                = windows
 CONFIG            = $(OS)-$(ARCH)-$(PROFILE)
 LBIN              = $(CONFIG)\bin
-BIT_PACK_EST      = 0
-BIT_PACK_SQLITE   = 1
 
 CC                = cl
 LD                = link
 RC                = rc
 CFLAGS            = -nologo -GR- -W3 -Zi -Od -MDd
-DFLAGS            = -D_REENTRANT -D_MT -DBIT_DEBUG -DBIT_PACK_EST=$(BIT_PACK_EST) -DBIT_PACK_SQLITE=$(BIT_PACK_SQLITE) 
+DFLAGS            = -D_REENTRANT -D_MT -DBIT_DEBUG 
 IFLAGS            = -I$(CONFIG)\inc
 LDFLAGS           = -nologo -nodefaultlib -incremental:no -debug -machine:$(ARCH)
 LIBPATHS          = -libpath:$(CONFIG)\bin
 LIBS              = ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.lib msvcrt.lib shell32.lib
 
-BIT_ROOT_PREFIX   = 
-BIT_BASE_PREFIX   = $(BIT_ROOT_PREFIX)\usr\local
-BIT_DATA_PREFIX   = $(BIT_ROOT_PREFIX)\
-BIT_STATE_PREFIX  = $(BIT_ROOT_PREFIX)\var
-BIT_APP_PREFIX    = \usr\local\lib\$(PRODUCT)
-BIT_VAPP_PREFIX   = \usr\local\lib\$(PRODUCT)\$(VERSION)
-BIT_BIN_PREFIX    = $(BIT_ROOT_PREFIX)\usr\local\bin
-BIT_INC_PREFIX    = $(BIT_ROOT_PREFIX)\usr\local\include
-BIT_LIB_PREFIX    = $(BIT_ROOT_PREFIX)\usr\local\lib
-BIT_MAN_PREFIX    = $(BIT_ROOT_PREFIX)\usr\local\share\man
-BIT_SBIN_PREFIX   = $(BIT_ROOT_PREFIX)\usr\local\sbin
-BIT_ETC_PREFIX    = $(BIT_ROOT_PREFIX)\etc\$(PRODUCT)
-BIT_WEB_PREFIX    = $(BIT_ROOT_PREFIX)\var\www\$(PRODUCT)-default
-BIT_LOG_PREFIX    = $(BIT_ROOT_PREFIX)\var\log\$(PRODUCT)
-BIT_SPOOL_PREFIX  = $(BIT_ROOT_PREFIX)\var\spool\$(PRODUCT)
-BIT_CACHE_PREFIX  = $(BIT_ROOT_PREFIX)\var\spool\$(PRODUCT)\cache
-BIT_SRC_PREFIX    = $(BIT_ROOT_PREFIX)$(PRODUCT)-$(VERSION)
+BIT_ROOT_PREFIX   = C:
+BIT_BASE_PREFIX   = $(BIT_ROOT_PREFIX)\Program Files
+BIT_APP_PREFIX    = $(BIT_BASE_PREFIX)\Embedthis Ejscript
+BIT_VAPP_PREFIX   = $(BIT_APP_PREFIX)
+BIT_DATA_PREFIX   = $(BIT_VAPP_PREFIX)
+BIT_STATE_PREFIX  = $(BIT_VAPP_PREFIX)
+BIT_BIN_PREFIX    = $(BIT_VAPP_PREFIX)\bin
+BIT_INC_PREFIX    = $(BIT_VAPP_PREFIX)\inc
+BIT_LIB_PREFIX    = $(BIT_VAPP_PREFIX)\lib
+BIT_MAN_PREFIX    = $(BIT_VAPP_PREFIX)\man
+BIT_ETC_PREFIX    = $(BIT_VAPP_PREFIX)
+BIT_WEB_PREFIX    = $(BIT_VAPP_PREFIX)\web
+BIT_LOG_PREFIX    = $(BIT_VAPP_PREFIX)\log
+BIT_SPOOL_PREFIX  = $(BIT_VAPP_PREFIX)\tmp
+BIT_CACHE_PREFIX  = $(BIT_VAPP_PREFIX)\cache
+BIT_SRC_PREFIX    = $(BIT_VAPP_PREFIX)\src
 
 
 TARGETS           = $(TARGETS) $(CONFIG)\bin\removeFiles.exe
 TARGETS           = $(TARGETS) $(CONFIG)\bin\libmpr.dll
 TARGETS           = $(TARGETS) $(CONFIG)\bin\ejsman.exe
 TARGETS           = $(TARGETS) $(CONFIG)\bin\makerom.exe
-!IF "$(BIT_PACK_EST)" == "1"
 TARGETS           = $(TARGETS) $(CONFIG)\bin\libest.dll
-!ENDIF
 TARGETS           = $(TARGETS) $(CONFIG)\bin\ca.crt
 TARGETS           = $(TARGETS) $(CONFIG)\bin\libpcre.dll
 TARGETS           = $(TARGETS) $(CONFIG)\bin\libhttp.dll
 TARGETS           = $(TARGETS) $(CONFIG)\bin\http.exe
-!IF "$(BIT_PACK_SQLITE)" == "1"
 TARGETS           = $(TARGETS) $(CONFIG)\bin\libsqlite3.dll
-!ENDIF
-!IF "$(BIT_PACK_SQLITE)" == "1"
 TARGETS           = $(TARGETS) $(CONFIG)\bin\sqlite.exe
-!ENDIF
 TARGETS           = $(TARGETS) $(CONFIG)\bin\libzlib.dll
 TARGETS           = $(TARGETS) $(CONFIG)\bin\libejs.dll
 TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.exe
@@ -364,7 +355,6 @@ $(CONFIG)\obj\estLib.obj: \
 	@echo '   [Compile] src/deps/est/estLib.c'
 	"$(CC)" -c -Fo$(CONFIG)\obj\estLib.obj -Fd$(CONFIG)\obj\estLib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\est\estLib.c
 
-!IF "$(BIT_PACK_EST)" == "1"
 #
 #   libest
 #
@@ -374,7 +364,6 @@ DEPS_15 = $(DEPS_15) $(CONFIG)\obj\estLib.obj
 $(CONFIG)\bin\libest.dll: $(DEPS_15)
 	@echo '      [Link] libest'
 	"$(LD)" -dll -out:$(CONFIG)\bin\libest.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\estLib.obj $(LIBS)
-!ENDIF
 
 #
 #   ca-crt
@@ -494,7 +483,6 @@ $(CONFIG)\obj\sqlite3.obj: \
 	@echo '   [Compile] src/deps/sqlite/sqlite3.c'
 	"$(CC)" -c -Fo$(CONFIG)\obj\sqlite3.obj -Fd$(CONFIG)\obj\sqlite3.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\sqlite\sqlite3.c
 
-!IF "$(BIT_PACK_SQLITE)" == "1"
 #
 #   libsqlite3
 #
@@ -504,7 +492,6 @@ DEPS_27 = $(DEPS_27) $(CONFIG)\obj\sqlite3.obj
 $(CONFIG)\bin\libsqlite3.dll: $(DEPS_27)
 	@echo '      [Link] libsqlite3'
 	"$(LD)" -dll -out:$(CONFIG)\bin\libsqlite3.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite3.obj $(LIBS)
-!ENDIF
 
 #
 #   sqlite.obj
@@ -517,23 +504,17 @@ $(CONFIG)\obj\sqlite.obj: \
 	@echo '   [Compile] src/deps/sqlite/sqlite.c'
 	"$(CC)" -c -Fo$(CONFIG)\obj\sqlite.obj -Fd$(CONFIG)\obj\sqlite.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\sqlite\sqlite.c
 
-!IF "$(BIT_PACK_SQLITE)" == "1"
 #
 #   sqlite
 #
-!IF "$(BIT_PACK_SQLITE)" == "1"
 DEPS_29 = $(DEPS_29) $(CONFIG)\bin\libsqlite3.dll
-!ENDIF
 DEPS_29 = $(DEPS_29) $(CONFIG)\obj\sqlite.obj
 
-!IF "$(BIT_PACK_SQLITE)" == "1"
 LIBS_29 = $(LIBS_29) libsqlite3.lib
-!ENDIF
 
 $(CONFIG)\bin\sqlite.exe: $(DEPS_29)
 	@echo '      [Link] sqlite'
 	"$(LD)" -out:$(CONFIG)\bin\sqlite.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite.obj $(LIBS_29) $(LIBS_29) $(LIBS)
-!ENDIF
 
 #
 #   zlib.h
@@ -1711,14 +1692,10 @@ DEPS_124 = $(DEPS_124) $(CONFIG)\bin\libmpr.dll
 DEPS_124 = $(DEPS_124) $(CONFIG)\bin\libejs.dll
 DEPS_124 = $(DEPS_124) $(CONFIG)\bin\ejs.mod
 DEPS_124 = $(DEPS_124) $(CONFIG)\bin\ejs.db.sqlite.mod
-!IF "$(BIT_PACK_SQLITE)" == "1"
 DEPS_124 = $(DEPS_124) $(CONFIG)\bin\libsqlite3.dll
-!ENDIF
 DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsSqlite.obj
 
-!IF "$(BIT_PACK_SQLITE)" == "1"
 LIBS_124 = $(LIBS_124) libsqlite3.lib
-!ENDIF
 LIBS_124 = $(LIBS_124) libejs.lib
 LIBS_124 = $(LIBS_124) libmpr.lib
 LIBS_124 = $(LIBS_124) libhttp.lib

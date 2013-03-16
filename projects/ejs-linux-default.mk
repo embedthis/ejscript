@@ -13,11 +13,9 @@ LD                := /usr/bin/ld
 CONFIG            := $(OS)-$(ARCH)-$(PROFILE)
 LBIN              := $(CONFIG)/bin
 
-BIT_PACK_EST      := 0
-BIT_PACK_SQLITE   := 1
 
 CFLAGS            += -fPIC   -w
-DFLAGS            += -D_REENTRANT -DPIC  $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS))) -DBIT_PACK_EST=$(BIT_PACK_EST) -DBIT_PACK_SQLITE=$(BIT_PACK_SQLITE) 
+DFLAGS            += -D_REENTRANT -DPIC  $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS))) 
 IFLAGS            += -I$(CONFIG)/inc
 LDFLAGS           += '-Wl,--enable-new-dtags' '-Wl,-rpath,$$ORIGIN/' '-rdynamic'
 LIBPATHS          += -L$(CONFIG)/bin
@@ -56,19 +54,13 @@ BIT_SRC_PREFIX    := $(BIT_ROOT_PREFIX)$(PRODUCT)-$(VERSION)
 TARGETS           += $(CONFIG)/bin/libmpr.so
 TARGETS           += $(CONFIG)/bin/ejsman
 TARGETS           += $(CONFIG)/bin/makerom
-ifeq ($(BIT_PACK_EST),1)
 TARGETS           += $(CONFIG)/bin/libest.so
-endif
 TARGETS           += $(CONFIG)/bin/ca.crt
 TARGETS           += $(CONFIG)/bin/libpcre.so
 TARGETS           += $(CONFIG)/bin/libhttp.so
 TARGETS           += $(CONFIG)/bin/http
-ifeq ($(BIT_PACK_SQLITE),1)
 TARGETS           += $(CONFIG)/bin/libsqlite3.so
-endif
-ifeq ($(BIT_PACK_SQLITE),1)
 TARGETS           += $(CONFIG)/bin/sqlite
-endif
 TARGETS           += $(CONFIG)/bin/libzlib.so
 TARGETS           += $(CONFIG)/bin/libejs.so
 TARGETS           += $(CONFIG)/bin/ejs
@@ -348,7 +340,6 @@ $(CONFIG)/obj/estLib.o: \
 	@echo '   [Compile] src/deps/est/estLib.c'
 	$(CC) -c -o $(CONFIG)/obj/estLib.o -fPIC $(DFLAGS) $(IFLAGS) src/deps/est/estLib.c
 
-ifeq ($(BIT_PACK_EST),1)
 #
 #   libest
 #
@@ -358,7 +349,6 @@ DEPS_13 += $(CONFIG)/obj/estLib.o
 $(CONFIG)/bin/libest.so: $(DEPS_13)
 	@echo '      [Link] libest'
 	$(CC) -shared -o $(CONFIG)/bin/libest.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/estLib.o $(LIBS)
-endif
 
 #
 #   ca-crt
@@ -478,7 +468,6 @@ $(CONFIG)/obj/sqlite3.o: \
 	@echo '   [Compile] src/deps/sqlite/sqlite3.c'
 	$(CC) -c -o $(CONFIG)/obj/sqlite3.o -fPIC $(DFLAGS) $(IFLAGS) src/deps/sqlite/sqlite3.c
 
-ifeq ($(BIT_PACK_SQLITE),1)
 #
 #   libsqlite3
 #
@@ -488,7 +477,6 @@ DEPS_25 += $(CONFIG)/obj/sqlite3.o
 $(CONFIG)/bin/libsqlite3.so: $(DEPS_25)
 	@echo '      [Link] libsqlite3'
 	$(CC) -shared -o $(CONFIG)/bin/libsqlite3.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite3.o $(LIBS)
-endif
 
 #
 #   sqlite.o
@@ -501,23 +489,17 @@ $(CONFIG)/obj/sqlite.o: \
 	@echo '   [Compile] src/deps/sqlite/sqlite.c'
 	$(CC) -c -o $(CONFIG)/obj/sqlite.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/sqlite/sqlite.c
 
-ifeq ($(BIT_PACK_SQLITE),1)
 #
 #   sqlite
 #
-ifeq ($(BIT_PACK_SQLITE),1)
-    DEPS_27 += $(CONFIG)/bin/libsqlite3.so
-endif
+DEPS_27 += $(CONFIG)/bin/libsqlite3.so
 DEPS_27 += $(CONFIG)/obj/sqlite.o
 
-ifeq ($(BIT_PACK_SQLITE),1)
-    LIBS_27 += -lsqlite3
-endif
+LIBS_27 += -lsqlite3
 
 $(CONFIG)/bin/sqlite: $(DEPS_27)
 	@echo '      [Link] sqlite'
 	$(CC) -o $(CONFIG)/bin/sqlite $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LIBS_27) $(LIBS_27) $(LIBS) $(LDFLAGS)
-endif
 
 #
 #   zlib.h
@@ -1683,14 +1665,10 @@ DEPS_122 += $(CONFIG)/bin/libmpr.so
 DEPS_122 += $(CONFIG)/bin/libejs.so
 DEPS_122 += $(CONFIG)/bin/ejs.mod
 DEPS_122 += $(CONFIG)/bin/ejs.db.sqlite.mod
-ifeq ($(BIT_PACK_SQLITE),1)
-    DEPS_122 += $(CONFIG)/bin/libsqlite3.so
-endif
+DEPS_122 += $(CONFIG)/bin/libsqlite3.so
 DEPS_122 += $(CONFIG)/obj/ejsSqlite.o
 
-ifeq ($(BIT_PACK_SQLITE),1)
-    LIBS_122 += -lsqlite3
-endif
+LIBS_122 += -lsqlite3
 LIBS_122 += -lejs
 LIBS_122 += -lmpr
 LIBS_122 += -lhttp

@@ -13,11 +13,9 @@ LD                := /usr/bin/ld
 CONFIG            := $(OS)-$(ARCH)-$(PROFILE)
 LBIN              := $(CONFIG)/bin
 
-BIT_PACK_EST      := 0
-BIT_PACK_SQLITE   := 1
 
 CFLAGS            += -w
-DFLAGS            +=  $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS))) -DBIT_PACK_EST=$(BIT_PACK_EST) -DBIT_PACK_SQLITE=$(BIT_PACK_SQLITE) 
+DFLAGS            +=  $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS))) 
 IFLAGS            += -I$(CONFIG)/inc
 LDFLAGS           += '-Wl,-rpath,@executable_path/' '-Wl,-rpath,@loader_path/'
 LIBPATHS          += -L$(CONFIG)/bin
@@ -56,19 +54,13 @@ BIT_SRC_PREFIX    := $(BIT_ROOT_PREFIX)$(PRODUCT)-$(VERSION)
 TARGETS           += $(CONFIG)/bin/libmpr.dylib
 TARGETS           += $(CONFIG)/bin/ejsman
 TARGETS           += $(CONFIG)/bin/makerom
-ifeq ($(BIT_PACK_EST),1)
 TARGETS           += $(CONFIG)/bin/libest.dylib
-endif
 TARGETS           += $(CONFIG)/bin/ca.crt
 TARGETS           += $(CONFIG)/bin/libpcre.dylib
 TARGETS           += $(CONFIG)/bin/libhttp.dylib
 TARGETS           += $(CONFIG)/bin/http
-ifeq ($(BIT_PACK_SQLITE),1)
 TARGETS           += $(CONFIG)/bin/libsqlite3.dylib
-endif
-ifeq ($(BIT_PACK_SQLITE),1)
 TARGETS           += $(CONFIG)/bin/sqlite
-endif
 TARGETS           += $(CONFIG)/bin/libzlib.dylib
 TARGETS           += $(CONFIG)/bin/libejs.dylib
 TARGETS           += $(CONFIG)/bin/ejs
@@ -280,7 +272,7 @@ DEPS_6 += $(CONFIG)/obj/mprLib.o
 
 $(CONFIG)/bin/libmpr.dylib: $(DEPS_6)
 	@echo '      [Link] libmpr'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libmpr.dylib $(LDFLAGS) -compatibility_version 2.3.1 -current_version 2.3.1 $(LIBPATHS) -install_name @rpath/libmpr.dylib $(CONFIG)/obj/mprLib.o $(LIBS)
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libmpr.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libmpr.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/mprLib.o $(LIBS)
 
 #
 #   manager.o
@@ -348,7 +340,6 @@ $(CONFIG)/obj/estLib.o: \
 	@echo '   [Compile] src/deps/est/estLib.c'
 	$(CC) -c -o $(CONFIG)/obj/estLib.o $(DFLAGS) $(IFLAGS) src/deps/est/estLib.c
 
-ifeq ($(BIT_PACK_EST),1)
 #
 #   libest
 #
@@ -357,8 +348,7 @@ DEPS_13 += $(CONFIG)/obj/estLib.o
 
 $(CONFIG)/bin/libest.dylib: $(DEPS_13)
 	@echo '      [Link] libest'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libest.dylib $(LDFLAGS) -compatibility_version 2.3.1 -current_version 2.3.1 $(LIBPATHS) -install_name @rpath/libest.dylib $(CONFIG)/obj/estLib.o $(LIBS)
-endif
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libest.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libest.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/estLib.o $(LIBS)
 
 #
 #   ca-crt
@@ -397,7 +387,7 @@ DEPS_17 += $(CONFIG)/obj/pcre.o
 
 $(CONFIG)/bin/libpcre.dylib: $(DEPS_17)
 	@echo '      [Link] libpcre'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libpcre.dylib $(LDFLAGS) -compatibility_version 2.3.1 -current_version 2.3.1 $(LIBPATHS) -install_name @rpath/libpcre.dylib $(CONFIG)/obj/pcre.o $(LIBS)
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libpcre.dylib $(LDFLAGS) -compatibility_version 2.3.1 -current_version 2.3.1 $(LIBPATHS) -install_name @rpath/libpcre.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/pcre.o $(LIBS)
 
 #
 #   http.h
@@ -432,7 +422,7 @@ LIBS_20 += -lmpr
 
 $(CONFIG)/bin/libhttp.dylib: $(DEPS_20)
 	@echo '      [Link] libhttp'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libhttp.dylib $(LDFLAGS) -compatibility_version 2.3.1 -current_version 2.3.1 $(LIBPATHS) -install_name @rpath/libhttp.dylib $(CONFIG)/obj/httpLib.o $(LIBS_20) $(LIBS_20) $(LIBS) -lpam
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libhttp.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libhttp.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/httpLib.o $(LIBS_20) $(LIBS_20) $(LIBS) -lpam
 
 #
 #   http.o
@@ -478,7 +468,6 @@ $(CONFIG)/obj/sqlite3.o: \
 	@echo '   [Compile] src/deps/sqlite/sqlite3.c'
 	$(CC) -c -o $(CONFIG)/obj/sqlite3.o $(DFLAGS) $(IFLAGS) src/deps/sqlite/sqlite3.c
 
-ifeq ($(BIT_PACK_SQLITE),1)
 #
 #   libsqlite3
 #
@@ -487,8 +476,7 @@ DEPS_25 += $(CONFIG)/obj/sqlite3.o
 
 $(CONFIG)/bin/libsqlite3.dylib: $(DEPS_25)
 	@echo '      [Link] libsqlite3'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libsqlite3.dylib $(LDFLAGS) -compatibility_version 2.3.1 -current_version 2.3.1 $(LIBPATHS) -install_name @rpath/libsqlite3.dylib $(CONFIG)/obj/sqlite3.o $(LIBS)
-endif
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libsqlite3.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libsqlite3.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/sqlite3.o $(LIBS)
 
 #
 #   sqlite.o
@@ -501,23 +489,17 @@ $(CONFIG)/obj/sqlite.o: \
 	@echo '   [Compile] src/deps/sqlite/sqlite.c'
 	$(CC) -c -o $(CONFIG)/obj/sqlite.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/sqlite/sqlite.c
 
-ifeq ($(BIT_PACK_SQLITE),1)
 #
 #   sqlite
 #
-ifeq ($(BIT_PACK_SQLITE),1)
-    DEPS_27 += $(CONFIG)/bin/libsqlite3.dylib
-endif
+DEPS_27 += $(CONFIG)/bin/libsqlite3.dylib
 DEPS_27 += $(CONFIG)/obj/sqlite.o
 
-ifeq ($(BIT_PACK_SQLITE),1)
-    LIBS_27 += -lsqlite3
-endif
+LIBS_27 += -lsqlite3
 
 $(CONFIG)/bin/sqlite: $(DEPS_27)
 	@echo '      [Link] sqlite'
 	$(CC) -o $(CONFIG)/bin/sqlite -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LIBS_27) $(LIBS_27) $(LIBS)
-endif
 
 #
 #   zlib.h
@@ -546,7 +528,7 @@ DEPS_30 += $(CONFIG)/obj/zlib.o
 
 $(CONFIG)/bin/libzlib.dylib: $(DEPS_30)
 	@echo '      [Link] libzlib'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libzlib.dylib $(LDFLAGS) -compatibility_version 2.3.1 -current_version 2.3.1 $(LIBPATHS) -install_name @rpath/libzlib.dylib $(CONFIG)/obj/zlib.o $(LIBS)
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libzlib.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libzlib.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/zlib.o $(LIBS)
 
 #
 #   ejs.cache.local.slots.h
@@ -1369,7 +1351,7 @@ LIBS_100 += -lmpr
 
 $(CONFIG)/bin/libejs.dylib: $(DEPS_100)
 	@echo '      [Link] libejs'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.dylib $(LDFLAGS) -compatibility_version 2.3.1 -current_version 2.3.1 $(LIBPATHS) -install_name @rpath/libejs.dylib $(CONFIG)/obj/ecAst.o $(CONFIG)/obj/ecCodeGen.o $(CONFIG)/obj/ecCompiler.o $(CONFIG)/obj/ecLex.o $(CONFIG)/obj/ecModuleWrite.o $(CONFIG)/obj/ecParser.o $(CONFIG)/obj/ecState.o $(CONFIG)/obj/dtoa.o $(CONFIG)/obj/ejsApp.o $(CONFIG)/obj/ejsArray.o $(CONFIG)/obj/ejsBlock.o $(CONFIG)/obj/ejsBoolean.o $(CONFIG)/obj/ejsByteArray.o $(CONFIG)/obj/ejsCache.o $(CONFIG)/obj/ejsCmd.o $(CONFIG)/obj/ejsConfig.o $(CONFIG)/obj/ejsDate.o $(CONFIG)/obj/ejsDebug.o $(CONFIG)/obj/ejsError.o $(CONFIG)/obj/ejsFile.o $(CONFIG)/obj/ejsFileSystem.o $(CONFIG)/obj/ejsFrame.o $(CONFIG)/obj/ejsFunction.o $(CONFIG)/obj/ejsGC.o $(CONFIG)/obj/ejsGlobal.o $(CONFIG)/obj/ejsHttp.o $(CONFIG)/obj/ejsIterator.o $(CONFIG)/obj/ejsJSON.o $(CONFIG)/obj/ejsLocalCache.o $(CONFIG)/obj/ejsMath.o $(CONFIG)/obj/ejsMemory.o $(CONFIG)/obj/ejsMprLog.o $(CONFIG)/obj/ejsNamespace.o $(CONFIG)/obj/ejsNull.o $(CONFIG)/obj/ejsNumber.o $(CONFIG)/obj/ejsObject.o $(CONFIG)/obj/ejsPath.o $(CONFIG)/obj/ejsPot.o $(CONFIG)/obj/ejsRegExp.o $(CONFIG)/obj/ejsSocket.o $(CONFIG)/obj/ejsString.o $(CONFIG)/obj/ejsSystem.o $(CONFIG)/obj/ejsTimer.o $(CONFIG)/obj/ejsType.o $(CONFIG)/obj/ejsUri.o $(CONFIG)/obj/ejsVoid.o $(CONFIG)/obj/ejsWebSocket.o $(CONFIG)/obj/ejsWorker.o $(CONFIG)/obj/ejsXML.o $(CONFIG)/obj/ejsXMLList.o $(CONFIG)/obj/ejsXMLLoader.o $(CONFIG)/obj/ejsByteCode.o $(CONFIG)/obj/ejsException.o $(CONFIG)/obj/ejsHelper.o $(CONFIG)/obj/ejsInterp.o $(CONFIG)/obj/ejsLoader.o $(CONFIG)/obj/ejsModule.o $(CONFIG)/obj/ejsScope.o $(CONFIG)/obj/ejsService.o $(LIBS_100) $(LIBS_100) $(LIBS) -lpam
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/ecAst.o $(CONFIG)/obj/ecCodeGen.o $(CONFIG)/obj/ecCompiler.o $(CONFIG)/obj/ecLex.o $(CONFIG)/obj/ecModuleWrite.o $(CONFIG)/obj/ecParser.o $(CONFIG)/obj/ecState.o $(CONFIG)/obj/dtoa.o $(CONFIG)/obj/ejsApp.o $(CONFIG)/obj/ejsArray.o $(CONFIG)/obj/ejsBlock.o $(CONFIG)/obj/ejsBoolean.o $(CONFIG)/obj/ejsByteArray.o $(CONFIG)/obj/ejsCache.o $(CONFIG)/obj/ejsCmd.o $(CONFIG)/obj/ejsConfig.o $(CONFIG)/obj/ejsDate.o $(CONFIG)/obj/ejsDebug.o $(CONFIG)/obj/ejsError.o $(CONFIG)/obj/ejsFile.o $(CONFIG)/obj/ejsFileSystem.o $(CONFIG)/obj/ejsFrame.o $(CONFIG)/obj/ejsFunction.o $(CONFIG)/obj/ejsGC.o $(CONFIG)/obj/ejsGlobal.o $(CONFIG)/obj/ejsHttp.o $(CONFIG)/obj/ejsIterator.o $(CONFIG)/obj/ejsJSON.o $(CONFIG)/obj/ejsLocalCache.o $(CONFIG)/obj/ejsMath.o $(CONFIG)/obj/ejsMemory.o $(CONFIG)/obj/ejsMprLog.o $(CONFIG)/obj/ejsNamespace.o $(CONFIG)/obj/ejsNull.o $(CONFIG)/obj/ejsNumber.o $(CONFIG)/obj/ejsObject.o $(CONFIG)/obj/ejsPath.o $(CONFIG)/obj/ejsPot.o $(CONFIG)/obj/ejsRegExp.o $(CONFIG)/obj/ejsSocket.o $(CONFIG)/obj/ejsString.o $(CONFIG)/obj/ejsSystem.o $(CONFIG)/obj/ejsTimer.o $(CONFIG)/obj/ejsType.o $(CONFIG)/obj/ejsUri.o $(CONFIG)/obj/ejsVoid.o $(CONFIG)/obj/ejsWebSocket.o $(CONFIG)/obj/ejsWorker.o $(CONFIG)/obj/ejsXML.o $(CONFIG)/obj/ejsXMLList.o $(CONFIG)/obj/ejsXMLLoader.o $(CONFIG)/obj/ejsByteCode.o $(CONFIG)/obj/ejsException.o $(CONFIG)/obj/ejsHelper.o $(CONFIG)/obj/ejsInterp.o $(CONFIG)/obj/ejsLoader.o $(CONFIG)/obj/ejsModule.o $(CONFIG)/obj/ejsScope.o $(CONFIG)/obj/ejsService.o $(LIBS_100) $(LIBS_100) $(LIBS) -lpam
 
 #
 #   ejs.o
@@ -1683,14 +1665,10 @@ DEPS_122 += $(CONFIG)/bin/libmpr.dylib
 DEPS_122 += $(CONFIG)/bin/libejs.dylib
 DEPS_122 += $(CONFIG)/bin/ejs.mod
 DEPS_122 += $(CONFIG)/bin/ejs.db.sqlite.mod
-ifeq ($(BIT_PACK_SQLITE),1)
-    DEPS_122 += $(CONFIG)/bin/libsqlite3.dylib
-endif
+DEPS_122 += $(CONFIG)/bin/libsqlite3.dylib
 DEPS_122 += $(CONFIG)/obj/ejsSqlite.o
 
-ifeq ($(BIT_PACK_SQLITE),1)
-    LIBS_122 += -lsqlite3
-endif
+LIBS_122 += -lsqlite3
 LIBS_122 += -lejs
 LIBS_122 += -lmpr
 LIBS_122 += -lhttp
@@ -1698,7 +1676,7 @@ LIBS_122 += -lpcre
 
 $(CONFIG)/bin/libejs.db.sqlite.dylib: $(DEPS_122)
 	@echo '      [Link] libejs.db.sqlite'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.db.sqlite.dylib $(LDFLAGS) -compatibility_version 2.3.1 -current_version 2.3.1 $(LIBPATHS) -install_name @rpath/libejs.db.sqlite.dylib $(CONFIG)/obj/ejsSqlite.o $(LIBS_122) $(LIBS_122) $(LIBS) -lpam
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.db.sqlite.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.db.sqlite.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/ejsSqlite.o $(LIBS_122) $(LIBS_122) $(LIBS) -lpam
 
 #
 #   ejs.mail.mod
@@ -1827,7 +1805,7 @@ LIBS_130 += -lmpr
 
 $(CONFIG)/bin/libejs.web.dylib: $(DEPS_130)
 	@echo '      [Link] libejs.web'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.web.dylib $(LDFLAGS) -compatibility_version 2.3.1 -current_version 2.3.1 $(LIBPATHS) -install_name @rpath/libejs.web.dylib $(CONFIG)/obj/ejsHttpServer.o $(CONFIG)/obj/ejsRequest.o $(CONFIG)/obj/ejsSession.o $(CONFIG)/obj/ejsWeb.o $(LIBS_130) $(LIBS_130) $(LIBS) -lpam
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.web.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.web.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/ejsHttpServer.o $(CONFIG)/obj/ejsRequest.o $(CONFIG)/obj/ejsSession.o $(CONFIG)/obj/ejsWeb.o $(LIBS_130) $(LIBS_130) $(LIBS) -lpam
 
 #
 #   www
@@ -1888,7 +1866,7 @@ LIBS_135 += -lmpr
 
 $(CONFIG)/bin/libejs.zlib.dylib: $(DEPS_135)
 	@echo '      [Link] libejs.zlib'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.zlib.dylib $(LDFLAGS) -compatibility_version 2.3.1 -current_version 2.3.1 $(LIBPATHS) -install_name @rpath/libejs.zlib.dylib $(CONFIG)/obj/ejsZlib.o $(LIBS_135) $(LIBS_135) $(LIBS) -lpam
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.zlib.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.zlib.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/ejsZlib.o $(LIBS_135) $(LIBS_135) $(LIBS) -lpam
 
 #
 #   ejs.tar.mod

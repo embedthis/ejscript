@@ -133,8 +133,8 @@
 #ifndef BIT_PRODUCT
     #define BIT_PRODUCT "ejs"
 #endif
-#ifndef BIT_REQUIRED
-    #define BIT_REQUIRED "vxworks,compiler,lib,link,pcre,zlib"
+#ifndef BIT_REQUIRES
+    #define BIT_REQUIRES "vxworks,compiler,lib,link,pcre,zlib"
 #endif
 #ifndef BIT_STATIC
     #define BIT_STATIC 0
