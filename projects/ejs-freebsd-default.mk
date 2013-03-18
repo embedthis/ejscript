@@ -502,9 +502,11 @@ $(CONFIG)/obj/sqlite3.o: \
 DEPS_27 += $(CONFIG)/inc/sqlite3.h
 DEPS_27 += $(CONFIG)/obj/sqlite3.o
 
+LIBS_27 += -lsqlite3
+
 $(CONFIG)/bin/libsqlite3.so: $(DEPS_27)
 	@echo '      [Link] libsqlite3'
-	$(CC) -shared -o $(CONFIG)/bin/libsqlite3.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite3.o $(LIBS)
+	$(CC) -shared -o $(CONFIG)/bin/libsqlite3.so $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite3.o $(LIBS_27) $(LIBS_27) $(LIBS) -lsqlite3
 
 #
 #   sqlite.o
@@ -1684,7 +1686,7 @@ DEPS_123 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
 $(CONFIG)/obj/ejsSqlite.o: \
     src/jems/ejs.db.sqlite/ejsSqlite.c $(DEPS_123)
 	@echo '   [Compile] src/jems/ejs.db.sqlite/ejsSqlite.c'
-	$(CC) -c -o $(CONFIG)/obj/ejsSqlite.o -fPIC $(LDFLAGS) $(DFLAGS) $(IFLAGS) src/jems/ejs.db.sqlite/ejsSqlite.c
+	$(CC) -c -o $(CONFIG)/obj/ejsSqlite.o -fPIC $(LDFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/cmd src/jems/ejs.db.sqlite/ejsSqlite.c
 
 #
 #   libejs.db.sqlite
@@ -1773,7 +1775,7 @@ DEPS_128 += $(CONFIG)/inc/http.h
 $(CONFIG)/obj/ejsHttpServer.o: \
     src/jems/ejs.web/ejsHttpServer.c $(DEPS_128)
 	@echo '   [Compile] src/jems/ejs.web/ejsHttpServer.c'
-	$(CC) -c -o $(CONFIG)/obj/ejsHttpServer.o -fPIC $(LDFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsHttpServer.c
+	$(CC) -c -o $(CONFIG)/obj/ejsHttpServer.o -fPIC $(LDFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/cmd src/jems/ejs.web/ejsHttpServer.c
 
 #
 #   ejsRequest.o
@@ -1787,7 +1789,7 @@ DEPS_129 += $(CONFIG)/inc/ejs.web.slots.h
 $(CONFIG)/obj/ejsRequest.o: \
     src/jems/ejs.web/ejsRequest.c $(DEPS_129)
 	@echo '   [Compile] src/jems/ejs.web/ejsRequest.c'
-	$(CC) -c -o $(CONFIG)/obj/ejsRequest.o -fPIC $(LDFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsRequest.c
+	$(CC) -c -o $(CONFIG)/obj/ejsRequest.o -fPIC $(LDFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/cmd src/jems/ejs.web/ejsRequest.c
 
 #
 #   ejsSession.o
@@ -1799,7 +1801,7 @@ DEPS_130 += $(CONFIG)/inc/ejsWeb.h
 $(CONFIG)/obj/ejsSession.o: \
     src/jems/ejs.web/ejsSession.c $(DEPS_130)
 	@echo '   [Compile] src/jems/ejs.web/ejsSession.c'
-	$(CC) -c -o $(CONFIG)/obj/ejsSession.o -fPIC $(LDFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsSession.c
+	$(CC) -c -o $(CONFIG)/obj/ejsSession.o -fPIC $(LDFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/cmd src/jems/ejs.web/ejsSession.c
 
 #
 #   ejsWeb.o
@@ -1813,7 +1815,7 @@ DEPS_131 += $(CONFIG)/inc/ejs.web.slots.h
 $(CONFIG)/obj/ejsWeb.o: \
     src/jems/ejs.web/ejsWeb.c $(DEPS_131)
 	@echo '   [Compile] src/jems/ejs.web/ejsWeb.c'
-	$(CC) -c -o $(CONFIG)/obj/ejsWeb.o -fPIC $(LDFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/jems/ejs.web/src src/jems/ejs.web/ejsWeb.c
+	$(CC) -c -o $(CONFIG)/obj/ejsWeb.o -fPIC $(LDFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/cmd src/jems/ejs.web/ejsWeb.c
 
 #
 #   libejs.web
@@ -1875,7 +1877,7 @@ DEPS_136 += $(CONFIG)/inc/ejs.zlib.slots.h
 $(CONFIG)/obj/ejsZlib.o: \
     src/jems/ejs.zlib/ejsZlib.c $(DEPS_136)
 	@echo '   [Compile] src/jems/ejs.zlib/ejsZlib.c'
-	$(CC) -c -o $(CONFIG)/obj/ejsZlib.o -fPIC $(LDFLAGS) $(DFLAGS) $(IFLAGS) src/jems/ejs.zlib/ejsZlib.c
+	$(CC) -c -o $(CONFIG)/obj/ejsZlib.o -fPIC $(LDFLAGS) $(DFLAGS) $(IFLAGS) -Isrc/cmd src/jems/ejs.zlib/ejsZlib.c
 
 #
 #   libejs.zlib

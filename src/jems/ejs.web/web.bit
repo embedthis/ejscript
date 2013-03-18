@@ -41,7 +41,6 @@ Bit.load({
             type: 'lib',
             sources: [ '*.c' ],
             headers: [ 'ejsWeb.h' ],
-            '+includes': [ 'src' ],
             depends: [ 'libejs', 'ejs.mod' ],
         },
 
