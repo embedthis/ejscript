@@ -312,6 +312,7 @@ $(CONFIG)/bin/libest.dylib: $(DEPS_9)
 DEPS_10 += $(CONFIG)/inc/bit.h
 DEPS_10 += $(CONFIG)/inc/mpr.h
 DEPS_10 += $(CONFIG)/inc/est.h
+DEPS_10 += $(CONFIG)/inc/bitos.h
 
 $(CONFIG)/obj/mprSsl.o: \
     src/deps/mpr/mprSsl.c $(DEPS_10)
@@ -502,11 +503,9 @@ $(CONFIG)/obj/sqlite3.o: \
 DEPS_27 += $(CONFIG)/inc/sqlite3.h
 DEPS_27 += $(CONFIG)/obj/sqlite3.o
 
-LIBS_27 += -lsqlite3
-
 $(CONFIG)/bin/libsqlite3.dylib: $(DEPS_27)
 	@echo '      [Link] libsqlite3'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libsqlite3.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libsqlite3.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/sqlite3.o $(LIBS_27) $(LIBS_27) $(LIBS) -lsqlite3
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libsqlite3.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libsqlite3.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/sqlite3.o $(LIBS)
 
 #
 #   sqlite.o

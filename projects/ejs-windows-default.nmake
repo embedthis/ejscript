@@ -517,11 +517,9 @@ $(CONFIG)\obj\sqlite3.obj: \
 DEPS_29 = $(DEPS_29) $(CONFIG)\inc\sqlite3.h
 DEPS_29 = $(DEPS_29) $(CONFIG)\obj\sqlite3.obj
 
-LIBS_29 = $(LIBS_29) libsqlite3.lib
-
 $(CONFIG)\bin\libsqlite3.dll: $(DEPS_29)
 	@echo '      [Link] libsqlite3'
-	"$(LD)" -dll -out:$(CONFIG)\bin\libsqlite3.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite3.obj $(LIBS_29) $(LIBS_29) $(LIBS) libsqlite3.lib
+	"$(LD)" -dll -out:$(CONFIG)\bin\libsqlite3.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite3.obj $(LIBS)
 
 #
 #   sqlite.obj

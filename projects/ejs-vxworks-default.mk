@@ -506,8 +506,6 @@ $(CONFIG)/obj/sqlite3.o: \
 DEPS_27 += $(CONFIG)/inc/sqlite3.h
 DEPS_27 += $(CONFIG)/obj/sqlite3.o
 
-LIBS_27 += -lsqlite3
-
 $(CONFIG)/bin/libsqlite3.out: $(DEPS_27)
 	@echo '      [Link] libsqlite3'
 	$(CC) -r -o $(CONFIG)/bin/libsqlite3.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite3.o 
