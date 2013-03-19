@@ -90,7 +90,7 @@
 
   <ItemDefinitionGroup>
   <Link>
-    <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
+    <AdditionalDependencies>libejs.lib;libhttp.lib;libpcre.lib;libmpr.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
 
@@ -98,7 +98,7 @@
     <Command>cd ..\..\src\core
 "$(BinDir)\ejsc" --out "$(BinDir)/ejs.mod"  --optimize 9 --bind --require null "*.es"
 "$(BinDir)\ejsmod" --require null --cslots "$(BinDir)/ejs.mod"
-copy ejs.slots.h "$(IncDir)\ejs.slots.h"
+copy ejs.slots.h "$(IncDir);..\..\src\cmd\ejs.slots.h"
 del ejs.slots.h
 cd ..\..\projects\ejs-windows-default</Command>
     <Outputs>$(BinDir)\ejs.mod</Outputs>
