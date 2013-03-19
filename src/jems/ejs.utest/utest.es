@@ -197,6 +197,7 @@ enumerable class Test {
         _cfg = _top.join('out')
         if (!_cfg.join('inc/bit.h').exists) {
             //  MOB - not accurate if multiple configurations exist
+            //  MOB - should be aware of bit
             _cfg = _top.files(Config.OS + '-' + Config.CPU + '-*').sort()[0]
         }
         if (!_cfg) {
