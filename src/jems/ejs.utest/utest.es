@@ -27,6 +27,7 @@ enumerable class Test {
     var _cfg: Path?                         // Path to configuration outputs directory
     var _bin: Path                          // Path to bin directory
     var _depth: Number = 1                  // Test level. Higher levels mean deeper testing.
+    //  MOB - remove
     var _lib: Path                          // Path to lib directory
     var _top: Path                          // Path to top of source tree
 
@@ -193,15 +194,13 @@ enumerable class Test {
             throw "Cannot find configure"
         }
         _top = path.dirname.absolute
-
-        _cfg = _top.join('out')
-        if (!_cfg.join('inc/bit.h').exists) {
-            //  MOB - not accurate if multiple configurations exist
-            //  MOB - should be aware of bit
-            _cfg = _top.files(Config.OS + '-' + Config.CPU + '-*').sort()[0]
-        }
+        _cfg = _top.files(Config.OS + '-' + Config.CPU + '-*').sort()[0]
         if (!_cfg) {
-            throw 'Cannot locate configure files, run configure'
+            let bith = _top.files('*/inc/bit.h').sort()[0]
+            if (!bith) {
+                throw 'Cannot locate configure files, run configure'
+            }
+            _cfg = bith.trimEnd('/inc/bit.h')
         }
         parseBuildConfig(_cfg.join('inc/bit.h'))
         _bin = _lib = _cfg.join('bin')
