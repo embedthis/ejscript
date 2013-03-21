@@ -6,93 +6,104 @@ export WIND_BASE := $(WIND_BASE)
 export WIND_HOME := $(WIND_BASE)/..
 export WIND_PLATFORM := $(WIND_PLATFORM)
 
-PRODUCT           := ejs
-VERSION           := 2.3.1
-BUILD_NUMBER      := 2
-PROFILE           := default
-ARCH              := $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/')
-OS                := vxworks
-CC                := ccpentium
-LD                := /usr/bin/ld
-CONFIG            := $(OS)-$(ARCH)-$(PROFILE)
-LBIN              := $(CONFIG)/bin
+PRODUCT            := ejs
+VERSION            := 2.3.1
+BUILD_NUMBER       := 2
+PROFILE            := default
+ARCH               := $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/')
+OS                 := vxworks
+CC                 := ccpentium
+LD                 := /usr/bin/ld
+CONFIG             := $(OS)-$(ARCH)-$(PROFILE)
+LBIN               := $(CONFIG)/bin
+
+BIT_PACK_EST       := 1
+BIT_PACK_MATRIXSSL := 0
+BIT_PACK_OPENSSL   := 0
+BIT_PACK_SQLITE    := 1
+BIT_PACK_SSL       := 1
+
+CFLAGS             += -fno-builtin -fno-defer-pop -fvolatile -w
+DFLAGS             += -D_REENTRANT -DVXWORKS -DRW_MULTI_THREAD -D_GNU_TOOL -DCPU=PENTIUM $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS))) -DBIT_PACK_EST=$(BIT_PACK_EST) -DBIT_PACK_MATRIXSSL=$(BIT_PACK_MATRIXSSL) -DBIT_PACK_OPENSSL=$(BIT_PACK_OPENSSL) -DBIT_PACK_SQLITE=$(BIT_PACK_SQLITE) -DBIT_PACK_SSL=$(BIT_PACK_SSL) 
+IFLAGS             += -I$(CONFIG)/inc -I$(WIND_BASE)/target/h -I$(WIND_BASE)/target/h/wrn/coreip
+LDFLAGS            += '-Wl,-r'
+LIBPATHS           += -L$(CONFIG)/bin
+LIBS               += 
+
+DEBUG              := debug
+CFLAGS-debug       := -g
+DFLAGS-debug       := -DBIT_DEBUG
+LDFLAGS-debug      := -g
+DFLAGS-release     := 
+CFLAGS-release     := -O2
+LDFLAGS-release    := 
+CFLAGS             += $(CFLAGS-$(DEBUG))
+DFLAGS             += $(DFLAGS-$(DEBUG))
+LDFLAGS            += $(LDFLAGS-$(DEBUG))
+
+BIT_ROOT_PREFIX    := deploy
+BIT_BASE_PREFIX    := $(BIT_ROOT_PREFIX)
+BIT_DATA_PREFIX    := $(BIT_VAPP_PREFIX)
+BIT_STATE_PREFIX   := $(BIT_VAPP_PREFIX)
+BIT_BIN_PREFIX     := $(BIT_VAPP_PREFIX)
+BIT_INC_PREFIX     := $(BIT_VAPP_PREFIX)/inc
+BIT_LIB_PREFIX     := $(BIT_VAPP_PREFIX)
+BIT_MAN_PREFIX     := $(BIT_VAPP_PREFIX)
+BIT_SBIN_PREFIX    := $(BIT_VAPP_PREFIX)
+BIT_ETC_PREFIX     := $(BIT_VAPP_PREFIX)
+BIT_WEB_PREFIX     := $(BIT_VAPP_PREFIX)/web
+BIT_LOG_PREFIX     := $(BIT_VAPP_PREFIX)
+BIT_SPOOL_PREFIX   := $(BIT_VAPP_PREFIX)
+BIT_CACHE_PREFIX   := $(BIT_VAPP_PREFIX)
+BIT_APP_PREFIX     := $(BIT_BASE_PREFIX)
+BIT_VAPP_PREFIX    := $(BIT_APP_PREFIX)
+BIT_SRC_PREFIX     := $(BIT_ROOT_PREFIX)/usr/src/$(PRODUCT)-$(VERSION)
 
 
-CFLAGS            += -fno-builtin -fno-defer-pop -fvolatile -w
-DFLAGS            += -D_REENTRANT -DVXWORKS -DRW_MULTI_THREAD -D_GNU_TOOL -DCPU=PENTIUM $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS))) 
-IFLAGS            += -I$(CONFIG)/inc -I$(WIND_BASE)/target/h -I$(WIND_BASE)/target/h/wrn/coreip
-LDFLAGS           += '-Wl,-r'
-LIBPATHS          += -L$(CONFIG)/bin
-LIBS              += 
-
-DEBUG             := debug
-CFLAGS-debug      := -g
-DFLAGS-debug      := -DBIT_DEBUG
-LDFLAGS-debug     := -g
-DFLAGS-release    := 
-CFLAGS-release    := -O2
-LDFLAGS-release   := 
-CFLAGS            += $(CFLAGS-$(DEBUG))
-DFLAGS            += $(DFLAGS-$(DEBUG))
-LDFLAGS           += $(LDFLAGS-$(DEBUG))
-
-BIT_ROOT_PREFIX   := deploy
-BIT_BASE_PREFIX   := $(BIT_ROOT_PREFIX)
-BIT_DATA_PREFIX   := $(BIT_VAPP_PREFIX)
-BIT_STATE_PREFIX  := $(BIT_VAPP_PREFIX)
-BIT_BIN_PREFIX    := $(BIT_VAPP_PREFIX)
-BIT_INC_PREFIX    := $(BIT_VAPP_PREFIX)/inc
-BIT_LIB_PREFIX    := $(BIT_VAPP_PREFIX)
-BIT_MAN_PREFIX    := $(BIT_VAPP_PREFIX)
-BIT_SBIN_PREFIX   := $(BIT_VAPP_PREFIX)
-BIT_ETC_PREFIX    := $(BIT_VAPP_PREFIX)
-BIT_WEB_PREFIX    := $(BIT_VAPP_PREFIX)/web
-BIT_LOG_PREFIX    := $(BIT_VAPP_PREFIX)
-BIT_SPOOL_PREFIX  := $(BIT_VAPP_PREFIX)
-BIT_CACHE_PREFIX  := $(BIT_VAPP_PREFIX)
-BIT_APP_PREFIX    := $(BIT_BASE_PREFIX)
-BIT_VAPP_PREFIX   := $(BIT_APP_PREFIX)
-BIT_SRC_PREFIX    := $(BIT_ROOT_PREFIX)/usr/src/$(PRODUCT)-$(VERSION)
-
-
-TARGETS           += $(CONFIG)/bin/libmpr.out
-TARGETS           += $(CONFIG)/bin/libmprssl.out
-TARGETS           += $(CONFIG)/bin/ejsman.out
-TARGETS           += $(CONFIG)/bin/makerom.out
-TARGETS           += $(CONFIG)/bin/ca.crt
-TARGETS           += $(CONFIG)/bin/libpcre.out
-TARGETS           += $(CONFIG)/bin/libhttp.out
-TARGETS           += $(CONFIG)/bin/http.out
-TARGETS           += $(CONFIG)/bin/libsqlite3.out
-TARGETS           += $(CONFIG)/bin/sqlite.out
-TARGETS           += $(CONFIG)/bin/libzlib.out
-TARGETS           += $(CONFIG)/bin/libejs.out
-TARGETS           += $(CONFIG)/bin/ejs.out
-TARGETS           += $(CONFIG)/bin/ejsc.out
-TARGETS           += $(CONFIG)/bin/ejsmod.out
-TARGETS           += $(CONFIG)/bin/ejsrun.out
-TARGETS           += $(CONFIG)/bin/ejs.mod
-TARGETS           += $(CONFIG)/bin/ejs.unix.mod
-TARGETS           += $(CONFIG)/bin/jem.es
-TARGETS           += $(CONFIG)/bin/jem.out
-TARGETS           += $(CONFIG)/bin/ejs.db.mod
-TARGETS           += $(CONFIG)/bin/ejs.db.mapper.mod
-TARGETS           += $(CONFIG)/bin/ejs.db.sqlite.mod
-TARGETS           += $(CONFIG)/bin/libejs.db.sqlite.out
-TARGETS           += $(CONFIG)/bin/ejs.mail.mod
-TARGETS           += $(CONFIG)/bin/ejs.web.mod
-TARGETS           += $(CONFIG)/bin/libejs.web.out
-TARGETS           += $(CONFIG)/bin/www
-TARGETS           += $(CONFIG)/bin/ejs.template.mod
-TARGETS           += $(CONFIG)/bin/ejs.zlib.mod
-TARGETS           += $(CONFIG)/bin/libejs.zlib.out
-TARGETS           += $(CONFIG)/bin/ejs.tar.mod
-TARGETS           += $(CONFIG)/bin/mvc.es
-TARGETS           += $(CONFIG)/bin/mvc.out
-TARGETS           += $(CONFIG)/bin/ejs.mvc.mod
-TARGETS           += $(CONFIG)/bin/utest.es
-TARGETS           += $(CONFIG)/bin/utest.worker
-TARGETS           += $(CONFIG)/bin/utest.out
+TARGETS            += $(CONFIG)/bin/libmpr.out
+ifeq ($(BIT_PACK_SSL),1)
+TARGETS            += $(CONFIG)/bin/libmprssl.out
+endif
+TARGETS            += $(CONFIG)/bin/ejsman.out
+TARGETS            += $(CONFIG)/bin/makerom.out
+TARGETS            += $(CONFIG)/bin/ca.crt
+TARGETS            += $(CONFIG)/bin/libpcre.out
+TARGETS            += $(CONFIG)/bin/libhttp.out
+TARGETS            += $(CONFIG)/bin/http.out
+ifeq ($(BIT_PACK_SQLITE),1)
+TARGETS            += $(CONFIG)/bin/libsqlite3.out
+endif
+ifeq ($(BIT_PACK_SQLITE),1)
+TARGETS            += $(CONFIG)/bin/sqlite.out
+endif
+TARGETS            += $(CONFIG)/bin/libzlib.out
+TARGETS            += $(CONFIG)/bin/libejs.out
+TARGETS            += $(CONFIG)/bin/ejs.out
+TARGETS            += $(CONFIG)/bin/ejsc.out
+TARGETS            += $(CONFIG)/bin/ejsmod.out
+TARGETS            += $(CONFIG)/bin/ejsrun.out
+TARGETS            += $(CONFIG)/bin/ejs.mod
+TARGETS            += $(CONFIG)/bin/ejs.unix.mod
+TARGETS            += $(CONFIG)/bin/jem.es
+TARGETS            += $(CONFIG)/bin/jem.out
+TARGETS            += $(CONFIG)/bin/ejs.db.mod
+TARGETS            += $(CONFIG)/bin/ejs.db.mapper.mod
+TARGETS            += $(CONFIG)/bin/ejs.db.sqlite.mod
+TARGETS            += $(CONFIG)/bin/libejs.db.sqlite.out
+TARGETS            += $(CONFIG)/bin/ejs.mail.mod
+TARGETS            += $(CONFIG)/bin/ejs.web.mod
+TARGETS            += $(CONFIG)/bin/libejs.web.out
+TARGETS            += $(CONFIG)/bin/www
+TARGETS            += $(CONFIG)/bin/ejs.template.mod
+TARGETS            += $(CONFIG)/bin/ejs.zlib.mod
+TARGETS            += $(CONFIG)/bin/libejs.zlib.out
+TARGETS            += $(CONFIG)/bin/ejs.tar.mod
+TARGETS            += $(CONFIG)/bin/mvc.es
+TARGETS            += $(CONFIG)/bin/mvc.out
+TARGETS            += $(CONFIG)/bin/ejs.mvc.mod
+TARGETS            += $(CONFIG)/bin/utest.es
+TARGETS            += $(CONFIG)/bin/utest.worker
+TARGETS            += $(CONFIG)/bin/utest.out
 
 unexport CDPATH
 
@@ -278,7 +289,7 @@ DEPS_6 += $(CONFIG)/obj/mprLib.o
 
 $(CONFIG)/bin/libmpr.out: $(DEPS_6)
 	@echo '      [Link] libmpr'
-	$(CC) -r -o $(CONFIG)/bin/libmpr.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/mprLib.o 
+	$(CC) -r -o $(CONFIG)/bin/libmpr.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/mprLib.o  
 
 #
 #   est.h
@@ -300,6 +311,7 @@ $(CONFIG)/obj/estLib.o: \
 	@echo '   [Compile] src/deps/est/estLib.c'
 	$(CC) -c -o $(CONFIG)/obj/estLib.o -fno-builtin -fno-defer-pop -fvolatile $(DFLAGS) $(IFLAGS) src/deps/est/estLib.c
 
+ifeq ($(BIT_PACK_EST),1)
 #
 #   libest
 #
@@ -308,7 +320,8 @@ DEPS_9 += $(CONFIG)/obj/estLib.o
 
 $(CONFIG)/bin/libest.out: $(DEPS_9)
 	@echo '      [Link] libest'
-	$(CC) -r -o $(CONFIG)/bin/libest.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/estLib.o 
+	$(CC) -r -o $(CONFIG)/bin/libest.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/estLib.o  
+endif
 
 #
 #   mprSsl.o
@@ -322,19 +335,25 @@ $(CONFIG)/obj/mprSsl.o: \
 	@echo '   [Compile] src/deps/mpr/mprSsl.c'
 	$(CC) -c -o $(CONFIG)/obj/mprSsl.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/mpr/mprSsl.c
 
+ifeq ($(BIT_PACK_SSL),1)
 #
 #   libmprssl
 #
 DEPS_11 += $(CONFIG)/bin/libmpr.out
-DEPS_11 += $(CONFIG)/bin/libest.out
+ifeq ($(BIT_PACK_EST),1)
+    DEPS_11 += $(CONFIG)/bin/libest.out
+endif
 DEPS_11 += $(CONFIG)/obj/mprSsl.o
 
-LIBS_11 += -lest
+ifeq ($(BIT_PACK_EST),1)
+    LIBS_11 += -lest
+endif
 LIBS_11 += -lmpr
 
 $(CONFIG)/bin/libmprssl.out: $(DEPS_11)
 	@echo '      [Link] libmprssl'
-	$(CC) -r -o $(CONFIG)/bin/libmprssl.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/mprSsl.o 
+	$(CC) -r -o $(CONFIG)/bin/libmprssl.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/mprSsl.o  
+endif
 
 #
 #   manager.o
@@ -357,7 +376,7 @@ LIBS_13 += -lmpr
 
 $(CONFIG)/bin/ejsman.out: $(DEPS_13)
 	@echo '      [Link] manager'
-	$(CC) -o $(CONFIG)/bin/ejsman.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LDFLAGS)
+	$(CC) -o $(CONFIG)/bin/ejsman.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LDFLAGS) 
 
 #
 #   makerom.o
@@ -380,7 +399,7 @@ LIBS_15 += -lmpr
 
 $(CONFIG)/bin/makerom.out: $(DEPS_15)
 	@echo '      [Link] makerom'
-	$(CC) -o $(CONFIG)/bin/makerom.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o $(LDFLAGS)
+	$(CC) -o $(CONFIG)/bin/makerom.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o $(LDFLAGS) 
 
 #
 #   ca-crt
@@ -419,7 +438,7 @@ DEPS_19 += $(CONFIG)/obj/pcre.o
 
 $(CONFIG)/bin/libpcre.out: $(DEPS_19)
 	@echo '      [Link] libpcre'
-	$(CC) -r -o $(CONFIG)/bin/libpcre.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/pcre.o 
+	$(CC) -r -o $(CONFIG)/bin/libpcre.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/pcre.o  
 
 #
 #   http.h
@@ -454,7 +473,7 @@ LIBS_22 += -lmpr
 
 $(CONFIG)/bin/libhttp.out: $(DEPS_22)
 	@echo '      [Link] libhttp'
-	$(CC) -r -o $(CONFIG)/bin/libhttp.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/httpLib.o 
+	$(CC) -r -o $(CONFIG)/bin/libhttp.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/httpLib.o  
 
 #
 #   http.o
@@ -479,7 +498,7 @@ LIBS_24 += -lmpr
 
 $(CONFIG)/bin/http.out: $(DEPS_24)
 	@echo '      [Link] http'
-	$(CC) -o $(CONFIG)/bin/http.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o $(LDFLAGS)
+	$(CC) -o $(CONFIG)/bin/http.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o $(LDFLAGS) 
 
 #
 #   sqlite3.h
@@ -500,6 +519,7 @@ $(CONFIG)/obj/sqlite3.o: \
 	@echo '   [Compile] src/deps/sqlite/sqlite3.c'
 	$(CC) -c -o $(CONFIG)/obj/sqlite3.o -fno-builtin -fno-defer-pop -fvolatile $(DFLAGS) $(IFLAGS) src/deps/sqlite/sqlite3.c
 
+ifeq ($(BIT_PACK_SQLITE),1)
 #
 #   libsqlite3
 #
@@ -508,7 +528,8 @@ DEPS_27 += $(CONFIG)/obj/sqlite3.o
 
 $(CONFIG)/bin/libsqlite3.out: $(DEPS_27)
 	@echo '      [Link] libsqlite3'
-	$(CC) -r -o $(CONFIG)/bin/libsqlite3.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite3.o 
+	$(CC) -r -o $(CONFIG)/bin/libsqlite3.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite3.o  
+endif
 
 #
 #   sqlite.o
@@ -521,17 +542,23 @@ $(CONFIG)/obj/sqlite.o: \
 	@echo '   [Compile] src/deps/sqlite/sqlite.c'
 	$(CC) -c -o $(CONFIG)/obj/sqlite.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/sqlite/sqlite.c
 
+ifeq ($(BIT_PACK_SQLITE),1)
 #
 #   sqlite
 #
-DEPS_29 += $(CONFIG)/bin/libsqlite3.out
+ifeq ($(BIT_PACK_SQLITE),1)
+    DEPS_29 += $(CONFIG)/bin/libsqlite3.out
+endif
 DEPS_29 += $(CONFIG)/obj/sqlite.o
 
-LIBS_29 += -lsqlite3
+ifeq ($(BIT_PACK_SQLITE),1)
+    LIBS_29 += -lsqlite3
+endif
 
 $(CONFIG)/bin/sqlite.out: $(DEPS_29)
 	@echo '      [Link] sqlite'
-	$(CC) -o $(CONFIG)/bin/sqlite.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LDFLAGS)
+	$(CC) -o $(CONFIG)/bin/sqlite.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LDFLAGS) 
+endif
 
 #
 #   zlib.h
@@ -560,7 +587,7 @@ DEPS_32 += $(CONFIG)/obj/zlib.o
 
 $(CONFIG)/bin/libzlib.out: $(DEPS_32)
 	@echo '      [Link] libzlib'
-	$(CC) -r -o $(CONFIG)/bin/libzlib.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/zlib.o 
+	$(CC) -r -o $(CONFIG)/bin/libzlib.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/zlib.o  
 
 #
 #   ejs.cache.local.slots.h
@@ -1383,7 +1410,7 @@ LIBS_102 += -lmpr
 
 $(CONFIG)/bin/libejs.out: $(DEPS_102)
 	@echo '      [Link] libejs'
-	$(CC) -r -o $(CONFIG)/bin/libejs.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ecAst.o $(CONFIG)/obj/ecCodeGen.o $(CONFIG)/obj/ecCompiler.o $(CONFIG)/obj/ecLex.o $(CONFIG)/obj/ecModuleWrite.o $(CONFIG)/obj/ecParser.o $(CONFIG)/obj/ecState.o $(CONFIG)/obj/dtoa.o $(CONFIG)/obj/ejsApp.o $(CONFIG)/obj/ejsArray.o $(CONFIG)/obj/ejsBlock.o $(CONFIG)/obj/ejsBoolean.o $(CONFIG)/obj/ejsByteArray.o $(CONFIG)/obj/ejsCache.o $(CONFIG)/obj/ejsCmd.o $(CONFIG)/obj/ejsConfig.o $(CONFIG)/obj/ejsDate.o $(CONFIG)/obj/ejsDebug.o $(CONFIG)/obj/ejsError.o $(CONFIG)/obj/ejsFile.o $(CONFIG)/obj/ejsFileSystem.o $(CONFIG)/obj/ejsFrame.o $(CONFIG)/obj/ejsFunction.o $(CONFIG)/obj/ejsGC.o $(CONFIG)/obj/ejsGlobal.o $(CONFIG)/obj/ejsHttp.o $(CONFIG)/obj/ejsIterator.o $(CONFIG)/obj/ejsJSON.o $(CONFIG)/obj/ejsLocalCache.o $(CONFIG)/obj/ejsMath.o $(CONFIG)/obj/ejsMemory.o $(CONFIG)/obj/ejsMprLog.o $(CONFIG)/obj/ejsNamespace.o $(CONFIG)/obj/ejsNull.o $(CONFIG)/obj/ejsNumber.o $(CONFIG)/obj/ejsObject.o $(CONFIG)/obj/ejsPath.o $(CONFIG)/obj/ejsPot.o $(CONFIG)/obj/ejsRegExp.o $(CONFIG)/obj/ejsSocket.o $(CONFIG)/obj/ejsString.o $(CONFIG)/obj/ejsSystem.o $(CONFIG)/obj/ejsTimer.o $(CONFIG)/obj/ejsType.o $(CONFIG)/obj/ejsUri.o $(CONFIG)/obj/ejsVoid.o $(CONFIG)/obj/ejsWebSocket.o $(CONFIG)/obj/ejsWorker.o $(CONFIG)/obj/ejsXML.o $(CONFIG)/obj/ejsXMLList.o $(CONFIG)/obj/ejsXMLLoader.o $(CONFIG)/obj/ejsByteCode.o $(CONFIG)/obj/ejsException.o $(CONFIG)/obj/ejsHelper.o $(CONFIG)/obj/ejsInterp.o $(CONFIG)/obj/ejsLoader.o $(CONFIG)/obj/ejsModule.o $(CONFIG)/obj/ejsScope.o $(CONFIG)/obj/ejsService.o 
+	$(CC) -r -o $(CONFIG)/bin/libejs.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ecAst.o $(CONFIG)/obj/ecCodeGen.o $(CONFIG)/obj/ecCompiler.o $(CONFIG)/obj/ecLex.o $(CONFIG)/obj/ecModuleWrite.o $(CONFIG)/obj/ecParser.o $(CONFIG)/obj/ecState.o $(CONFIG)/obj/dtoa.o $(CONFIG)/obj/ejsApp.o $(CONFIG)/obj/ejsArray.o $(CONFIG)/obj/ejsBlock.o $(CONFIG)/obj/ejsBoolean.o $(CONFIG)/obj/ejsByteArray.o $(CONFIG)/obj/ejsCache.o $(CONFIG)/obj/ejsCmd.o $(CONFIG)/obj/ejsConfig.o $(CONFIG)/obj/ejsDate.o $(CONFIG)/obj/ejsDebug.o $(CONFIG)/obj/ejsError.o $(CONFIG)/obj/ejsFile.o $(CONFIG)/obj/ejsFileSystem.o $(CONFIG)/obj/ejsFrame.o $(CONFIG)/obj/ejsFunction.o $(CONFIG)/obj/ejsGC.o $(CONFIG)/obj/ejsGlobal.o $(CONFIG)/obj/ejsHttp.o $(CONFIG)/obj/ejsIterator.o $(CONFIG)/obj/ejsJSON.o $(CONFIG)/obj/ejsLocalCache.o $(CONFIG)/obj/ejsMath.o $(CONFIG)/obj/ejsMemory.o $(CONFIG)/obj/ejsMprLog.o $(CONFIG)/obj/ejsNamespace.o $(CONFIG)/obj/ejsNull.o $(CONFIG)/obj/ejsNumber.o $(CONFIG)/obj/ejsObject.o $(CONFIG)/obj/ejsPath.o $(CONFIG)/obj/ejsPot.o $(CONFIG)/obj/ejsRegExp.o $(CONFIG)/obj/ejsSocket.o $(CONFIG)/obj/ejsString.o $(CONFIG)/obj/ejsSystem.o $(CONFIG)/obj/ejsTimer.o $(CONFIG)/obj/ejsType.o $(CONFIG)/obj/ejsUri.o $(CONFIG)/obj/ejsVoid.o $(CONFIG)/obj/ejsWebSocket.o $(CONFIG)/obj/ejsWorker.o $(CONFIG)/obj/ejsXML.o $(CONFIG)/obj/ejsXMLList.o $(CONFIG)/obj/ejsXMLLoader.o $(CONFIG)/obj/ejsByteCode.o $(CONFIG)/obj/ejsException.o $(CONFIG)/obj/ejsHelper.o $(CONFIG)/obj/ejsInterp.o $(CONFIG)/obj/ejsLoader.o $(CONFIG)/obj/ejsModule.o $(CONFIG)/obj/ejsScope.o $(CONFIG)/obj/ejsService.o  
 
 #
 #   ejs.o
@@ -1409,7 +1436,7 @@ LIBS_104 += -lmpr
 
 $(CONFIG)/bin/ejs.out: $(DEPS_104)
 	@echo '      [Link] ejs'
-	$(CC) -o $(CONFIG)/bin/ejs.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LDFLAGS)
+	$(CC) -o $(CONFIG)/bin/ejs.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LDFLAGS) 
 
 #
 #   ejsc.o
@@ -1435,7 +1462,7 @@ LIBS_106 += -lmpr
 
 $(CONFIG)/bin/ejsc.out: $(DEPS_106)
 	@echo '      [Link] ejsc'
-	$(CC) -o $(CONFIG)/bin/ejsc.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o $(LDFLAGS)
+	$(CC) -o $(CONFIG)/bin/ejsc.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o $(LDFLAGS) 
 
 #
 #   ejsmod.h
@@ -1517,7 +1544,7 @@ LIBS_113 += -lmpr
 
 $(CONFIG)/bin/ejsmod.out: $(DEPS_113)
 	@echo '      [Link] ejsmod'
-	$(CC) -o $(CONFIG)/bin/ejsmod.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o $(LDFLAGS)
+	$(CC) -o $(CONFIG)/bin/ejsmod.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o $(LDFLAGS) 
 
 #
 #   ejsrun.o
@@ -1543,7 +1570,7 @@ LIBS_115 += -lmpr
 
 $(CONFIG)/bin/ejsrun.out: $(DEPS_115)
 	@echo '      [Link] ejsrun'
-	$(CC) -o $(CONFIG)/bin/ejsrun.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS)
+	$(CC) -o $(CONFIG)/bin/ejsrun.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS) 
 
 #
 #   ejs.mod
@@ -1643,7 +1670,7 @@ LIBS_119 += -lmpr
 
 $(CONFIG)/bin/jem.out: $(DEPS_119)
 	@echo '      [Link] jem'
-	$(CC) -o $(CONFIG)/bin/jem.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS)
+	$(CC) -o $(CONFIG)/bin/jem.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS) 
 
 #
 #   ejs.db.mod
@@ -1697,10 +1724,14 @@ DEPS_124 += $(CONFIG)/bin/libmpr.out
 DEPS_124 += $(CONFIG)/bin/libejs.out
 DEPS_124 += $(CONFIG)/bin/ejs.mod
 DEPS_124 += $(CONFIG)/bin/ejs.db.sqlite.mod
-DEPS_124 += $(CONFIG)/bin/libsqlite3.out
+ifeq ($(BIT_PACK_SQLITE),1)
+    DEPS_124 += $(CONFIG)/bin/libsqlite3.out
+endif
 DEPS_124 += $(CONFIG)/obj/ejsSqlite.o
 
-LIBS_124 += -lsqlite3
+ifeq ($(BIT_PACK_SQLITE),1)
+    LIBS_124 += -lsqlite3
+endif
 LIBS_124 += -lejs
 LIBS_124 += -lmpr
 LIBS_124 += -lhttp
@@ -1708,7 +1739,7 @@ LIBS_124 += -lpcre
 
 $(CONFIG)/bin/libejs.db.sqlite.out: $(DEPS_124)
 	@echo '      [Link] libejs.db.sqlite'
-	$(CC) -r -o $(CONFIG)/bin/libejs.db.sqlite.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsSqlite.o 
+	$(CC) -r -o $(CONFIG)/bin/libejs.db.sqlite.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsSqlite.o  
 
 #
 #   ejs.mail.mod
@@ -1837,7 +1868,7 @@ LIBS_132 += -lmpr
 
 $(CONFIG)/bin/libejs.web.out: $(DEPS_132)
 	@echo '      [Link] libejs.web'
-	$(CC) -r -o $(CONFIG)/bin/libejs.web.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsHttpServer.o $(CONFIG)/obj/ejsRequest.o $(CONFIG)/obj/ejsSession.o $(CONFIG)/obj/ejsWeb.o 
+	$(CC) -r -o $(CONFIG)/bin/libejs.web.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsHttpServer.o $(CONFIG)/obj/ejsRequest.o $(CONFIG)/obj/ejsSession.o $(CONFIG)/obj/ejsWeb.o  
 
 #
 #   www
@@ -1898,7 +1929,7 @@ LIBS_137 += -lmpr
 
 $(CONFIG)/bin/libejs.zlib.out: $(DEPS_137)
 	@echo '      [Link] libejs.zlib'
-	$(CC) -r -o $(CONFIG)/bin/libejs.zlib.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsZlib.o 
+	$(CC) -r -o $(CONFIG)/bin/libejs.zlib.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsZlib.o  
 
 #
 #   ejs.tar.mod
@@ -1932,7 +1963,7 @@ LIBS_140 += -lmpr
 
 $(CONFIG)/bin/mvc.out: $(DEPS_140)
 	@echo '      [Link] mvc'
-	$(CC) -o $(CONFIG)/bin/mvc.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS)
+	$(CC) -o $(CONFIG)/bin/mvc.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS) 
 
 #
 #   ejs.mvc.mod
@@ -1978,7 +2009,7 @@ LIBS_144 += -lmpr
 
 $(CONFIG)/bin/utest.out: $(DEPS_144)
 	@echo '      [Link] utest'
-	$(CC) -o $(CONFIG)/bin/utest.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS)
+	$(CC) -o $(CONFIG)/bin/utest.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS) 
 
 #
 #   stop
@@ -2013,5 +2044,4 @@ install: $(DEPS_148)
 DEPS_149 += stop
 
 uninstall: $(DEPS_149)
-	
 

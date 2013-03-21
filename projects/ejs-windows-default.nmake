@@ -19,12 +19,17 @@ ENTRY             = _DllMainCRTStartup@12
 OS                = windows
 CONFIG            = $(OS)-$(ARCH)-$(PROFILE)
 LBIN              = $(CONFIG)\bin
+BIT_PACK_EST       = 1
+BIT_PACK_MATRIXSSL = 0
+BIT_PACK_OPENSSL   = 0
+BIT_PACK_SQLITE    = 1
+BIT_PACK_SSL       = 1
 
 CC                = cl
 LD                = link
 RC                = rc
 CFLAGS            = -nologo -GR- -W3 -Zi -Od -MDd
-DFLAGS            = -D_REENTRANT -D_MT -DBIT_DEBUG 
+DFLAGS            = -D_REENTRANT -D_MT -DBIT_DEBUG -DBIT_PACK_EST=$(BIT_PACK_EST) -DBIT_PACK_MATRIXSSL=$(BIT_PACK_MATRIXSSL) -DBIT_PACK_OPENSSL=$(BIT_PACK_OPENSSL) -DBIT_PACK_SQLITE=$(BIT_PACK_SQLITE) -DBIT_PACK_SSL=$(BIT_PACK_SSL) 
 IFLAGS            = -I$(CONFIG)\inc
 LDFLAGS           = -nologo -nodefaultlib -incremental:no -debug -machine:$(ARCH)
 LIBPATHS          = -libpath:$(CONFIG)\bin
@@ -48,45 +53,51 @@ BIT_CACHE_PREFIX  = $(BIT_VAPP_PREFIX)\cache
 BIT_SRC_PREFIX    = $(BIT_VAPP_PREFIX)\src
 
 
-TARGETS           = $(TARGETS) $(CONFIG)\bin\removeFiles.exe
-TARGETS           = $(TARGETS) $(CONFIG)\bin\libmpr.dll
-TARGETS           = $(TARGETS) $(CONFIG)\bin\libmprssl.dll
-TARGETS           = $(TARGETS) $(CONFIG)\bin\ejsman.exe
-TARGETS           = $(TARGETS) $(CONFIG)\bin\makerom.exe
-TARGETS           = $(TARGETS) $(CONFIG)\bin\ca.crt
-TARGETS           = $(TARGETS) $(CONFIG)\bin\libpcre.dll
-TARGETS           = $(TARGETS) $(CONFIG)\bin\libhttp.dll
-TARGETS           = $(TARGETS) $(CONFIG)\bin\http.exe
-TARGETS           = $(TARGETS) $(CONFIG)\bin\libsqlite3.dll
-TARGETS           = $(TARGETS) $(CONFIG)\bin\sqlite.exe
-TARGETS           = $(TARGETS) $(CONFIG)\bin\libzlib.dll
-TARGETS           = $(TARGETS) $(CONFIG)\bin\libejs.dll
-TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.exe
-TARGETS           = $(TARGETS) $(CONFIG)\bin\ejsc.exe
-TARGETS           = $(TARGETS) $(CONFIG)\bin\ejsmod.exe
-TARGETS           = $(TARGETS) $(CONFIG)\bin\ejsrun.exe
-TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.mod
-TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.unix.mod
-TARGETS           = $(TARGETS) $(CONFIG)\bin\jem.es
-TARGETS           = $(TARGETS) $(CONFIG)\bin\jem.exe
-TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.db.mod
-TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.db.mapper.mod
-TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.db.sqlite.mod
-TARGETS           = $(TARGETS) $(CONFIG)\bin\libejs.db.sqlite.dll
-TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.mail.mod
-TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.web.mod
-TARGETS           = $(TARGETS) $(CONFIG)\bin\libejs.web.dll
-TARGETS           = $(TARGETS) $(CONFIG)\bin\www
-TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.template.mod
-TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.zlib.mod
-TARGETS           = $(TARGETS) $(CONFIG)\bin\libejs.zlib.dll
-TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.tar.mod
-TARGETS           = $(TARGETS) $(CONFIG)\bin\mvc.es
-TARGETS           = $(TARGETS) $(CONFIG)\bin\mvc.exe
-TARGETS           = $(TARGETS) $(CONFIG)\bin\ejs.mvc.mod
-TARGETS           = $(TARGETS) $(CONFIG)\bin\utest.es
-TARGETS           = $(TARGETS) $(CONFIG)\bin\utest.worker
-TARGETS           = $(TARGETS) $(CONFIG)\bin\utest.exe
+TARGETS            = $(TARGETS) $(CONFIG)\bin\removeFiles.exe
+TARGETS            = $(TARGETS) $(CONFIG)\bin\libmpr.dll
+!IF "$(BIT_PACK_SSL)" == "1"
+TARGETS            = $(TARGETS) $(CONFIG)\bin\libmprssl.dll
+!ENDIF
+TARGETS            = $(TARGETS) $(CONFIG)\bin\ejsman.exe
+TARGETS            = $(TARGETS) $(CONFIG)\bin\makerom.exe
+TARGETS            = $(TARGETS) $(CONFIG)\bin\ca.crt
+TARGETS            = $(TARGETS) $(CONFIG)\bin\libpcre.dll
+TARGETS            = $(TARGETS) $(CONFIG)\bin\libhttp.dll
+TARGETS            = $(TARGETS) $(CONFIG)\bin\http.exe
+!IF "$(BIT_PACK_SQLITE)" == "1"
+TARGETS            = $(TARGETS) $(CONFIG)\bin\libsqlite3.dll
+!ENDIF
+!IF "$(BIT_PACK_SQLITE)" == "1"
+TARGETS            = $(TARGETS) $(CONFIG)\bin\sqlite.exe
+!ENDIF
+TARGETS            = $(TARGETS) $(CONFIG)\bin\libzlib.dll
+TARGETS            = $(TARGETS) $(CONFIG)\bin\libejs.dll
+TARGETS            = $(TARGETS) $(CONFIG)\bin\ejs.exe
+TARGETS            = $(TARGETS) $(CONFIG)\bin\ejsc.exe
+TARGETS            = $(TARGETS) $(CONFIG)\bin\ejsmod.exe
+TARGETS            = $(TARGETS) $(CONFIG)\bin\ejsrun.exe
+TARGETS            = $(TARGETS) $(CONFIG)\bin\ejs.mod
+TARGETS            = $(TARGETS) $(CONFIG)\bin\ejs.unix.mod
+TARGETS            = $(TARGETS) $(CONFIG)\bin\jem.es
+TARGETS            = $(TARGETS) $(CONFIG)\bin\jem.exe
+TARGETS            = $(TARGETS) $(CONFIG)\bin\ejs.db.mod
+TARGETS            = $(TARGETS) $(CONFIG)\bin\ejs.db.mapper.mod
+TARGETS            = $(TARGETS) $(CONFIG)\bin\ejs.db.sqlite.mod
+TARGETS            = $(TARGETS) $(CONFIG)\bin\libejs.db.sqlite.dll
+TARGETS            = $(TARGETS) $(CONFIG)\bin\ejs.mail.mod
+TARGETS            = $(TARGETS) $(CONFIG)\bin\ejs.web.mod
+TARGETS            = $(TARGETS) $(CONFIG)\bin\libejs.web.dll
+TARGETS            = $(TARGETS) $(CONFIG)\bin\www
+TARGETS            = $(TARGETS) $(CONFIG)\bin\ejs.template.mod
+TARGETS            = $(TARGETS) $(CONFIG)\bin\ejs.zlib.mod
+TARGETS            = $(TARGETS) $(CONFIG)\bin\libejs.zlib.dll
+TARGETS            = $(TARGETS) $(CONFIG)\bin\ejs.tar.mod
+TARGETS            = $(TARGETS) $(CONFIG)\bin\mvc.es
+TARGETS            = $(TARGETS) $(CONFIG)\bin\mvc.exe
+TARGETS            = $(TARGETS) $(CONFIG)\bin\ejs.mvc.mod
+TARGETS            = $(TARGETS) $(CONFIG)\bin\utest.es
+TARGETS            = $(TARGETS) $(CONFIG)\bin\utest.worker
+TARGETS            = $(TARGETS) $(CONFIG)\bin\utest.exe
 
 !IFNDEF SHOW
 .SILENT:
@@ -251,7 +262,7 @@ DEPS_4 = $(DEPS_4) $(CONFIG)\obj\removeFiles.obj
 
 $(CONFIG)\bin\removeFiles.exe: $(DEPS_4)
 	@echo '      [Link] removeFiles'
-	"$(LD)" -out:$(CONFIG)\bin\removeFiles.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\removeFiles.obj $(LIBS)
+	"$(LD)" -out:$(CONFIG)\bin\removeFiles.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\removeFiles.obj $(LIBS) 
 
 #
 #   mpr.h
@@ -289,7 +300,7 @@ DEPS_8 = $(DEPS_8) $(CONFIG)\obj\mprLib.obj
 
 $(CONFIG)\bin\libmpr.dll: $(DEPS_8)
 	@echo '      [Link] libmpr'
-	"$(LD)" -dll -out:$(CONFIG)\bin\libmpr.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\mprLib.obj $(LIBS)
+	"$(LD)" -dll -out:$(CONFIG)\bin\libmpr.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\mprLib.obj $(LIBS) 
 
 #
 #   est.h
@@ -311,6 +322,7 @@ $(CONFIG)\obj\estLib.obj: \
 	@echo '   [Compile] src/deps/est/estLib.c'
 	"$(CC)" -c -Fo$(CONFIG)\obj\estLib.obj -Fd$(CONFIG)\obj\estLib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\est\estLib.c
 
+!IF "$(BIT_PACK_EST)" == "1"
 #
 #   libest
 #
@@ -319,7 +331,8 @@ DEPS_11 = $(DEPS_11) $(CONFIG)\obj\estLib.obj
 
 $(CONFIG)\bin\libest.dll: $(DEPS_11)
 	@echo '      [Link] libest'
-	"$(LD)" -dll -out:$(CONFIG)\bin\libest.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\estLib.obj $(LIBS)
+	"$(LD)" -dll -out:$(CONFIG)\bin\libest.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\estLib.obj $(LIBS) 
+!ENDIF
 
 #
 #   mprSsl.obj
@@ -333,19 +346,25 @@ $(CONFIG)\obj\mprSsl.obj: \
 	@echo '   [Compile] src/deps/mpr/mprSsl.c'
 	"$(CC)" -c -Fo$(CONFIG)\obj\mprSsl.obj -Fd$(CONFIG)\obj\mprSsl.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\mpr\mprSsl.c
 
+!IF "$(BIT_PACK_SSL)" == "1"
 #
 #   libmprssl
 #
 DEPS_13 = $(DEPS_13) $(CONFIG)\bin\libmpr.dll
+!IF "$(BIT_PACK_EST)" == "1"
 DEPS_13 = $(DEPS_13) $(CONFIG)\bin\libest.dll
+!ENDIF
 DEPS_13 = $(DEPS_13) $(CONFIG)\obj\mprSsl.obj
 
+!IF "$(BIT_PACK_EST)" == "1"
 LIBS_13 = $(LIBS_13) libest.lib
+!ENDIF
 LIBS_13 = $(LIBS_13) libmpr.lib
 
 $(CONFIG)\bin\libmprssl.dll: $(DEPS_13)
 	@echo '      [Link] libmprssl'
-	"$(LD)" -dll -out:$(CONFIG)\bin\libmprssl.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\mprSsl.obj $(LIBS_13) $(LIBS_13) $(LIBS)
+	"$(LD)" -dll -out:$(CONFIG)\bin\libmprssl.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\mprSsl.obj $(LIBS_13) $(LIBS_13) $(LIBS) 
+!ENDIF
 
 #
 #   manager.obj
@@ -368,7 +387,7 @@ LIBS_15 = $(LIBS_15) libmpr.lib
 
 $(CONFIG)\bin\ejsman.exe: $(DEPS_15)
 	@echo '      [Link] manager'
-	"$(LD)" -out:$(CONFIG)\bin\ejsman.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\manager.obj $(LIBS_15) $(LIBS_15) $(LIBS)
+	"$(LD)" -out:$(CONFIG)\bin\ejsman.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\manager.obj $(LIBS_15) $(LIBS_15) $(LIBS) 
 
 #
 #   makerom.obj
@@ -391,7 +410,7 @@ LIBS_17 = $(LIBS_17) libmpr.lib
 
 $(CONFIG)\bin\makerom.exe: $(DEPS_17)
 	@echo '      [Link] makerom'
-	"$(LD)" -out:$(CONFIG)\bin\makerom.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\makerom.obj $(LIBS_17) $(LIBS_17) $(LIBS)
+	"$(LD)" -out:$(CONFIG)\bin\makerom.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\makerom.obj $(LIBS_17) $(LIBS_17) $(LIBS) 
 
 #
 #   ca-crt
@@ -430,7 +449,7 @@ DEPS_21 = $(DEPS_21) $(CONFIG)\obj\pcre.obj
 
 $(CONFIG)\bin\libpcre.dll: $(DEPS_21)
 	@echo '      [Link] libpcre'
-	"$(LD)" -dll -out:$(CONFIG)\bin\libpcre.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\pcre.obj $(LIBS)
+	"$(LD)" -dll -out:$(CONFIG)\bin\libpcre.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\pcre.obj $(LIBS) 
 
 #
 #   http.h
@@ -465,7 +484,7 @@ LIBS_24 = $(LIBS_24) libmpr.lib
 
 $(CONFIG)\bin\libhttp.dll: $(DEPS_24)
 	@echo '      [Link] libhttp'
-	"$(LD)" -dll -out:$(CONFIG)\bin\libhttp.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\httpLib.obj $(LIBS_24) $(LIBS_24) $(LIBS)
+	"$(LD)" -dll -out:$(CONFIG)\bin\libhttp.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\httpLib.obj $(LIBS_24) $(LIBS_24) $(LIBS) 
 
 #
 #   http.obj
@@ -490,7 +509,7 @@ LIBS_26 = $(LIBS_26) libmpr.lib
 
 $(CONFIG)\bin\http.exe: $(DEPS_26)
 	@echo '      [Link] http'
-	"$(LD)" -out:$(CONFIG)\bin\http.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\http.obj $(LIBS_26) $(LIBS_26) $(LIBS) libmpr.lib
+	"$(LD)" -out:$(CONFIG)\bin\http.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\http.obj $(LIBS_26) $(LIBS_26) $(LIBS) 
 
 #
 #   sqlite3.h
@@ -511,6 +530,7 @@ $(CONFIG)\obj\sqlite3.obj: \
 	@echo '   [Compile] src/deps/sqlite/sqlite3.c'
 	"$(CC)" -c -Fo$(CONFIG)\obj\sqlite3.obj -Fd$(CONFIG)\obj\sqlite3.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\sqlite\sqlite3.c
 
+!IF "$(BIT_PACK_SQLITE)" == "1"
 #
 #   libsqlite3
 #
@@ -519,7 +539,8 @@ DEPS_29 = $(DEPS_29) $(CONFIG)\obj\sqlite3.obj
 
 $(CONFIG)\bin\libsqlite3.dll: $(DEPS_29)
 	@echo '      [Link] libsqlite3'
-	"$(LD)" -dll -out:$(CONFIG)\bin\libsqlite3.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite3.obj $(LIBS)
+	"$(LD)" -dll -out:$(CONFIG)\bin\libsqlite3.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite3.obj $(LIBS) 
+!ENDIF
 
 #
 #   sqlite.obj
@@ -532,17 +553,23 @@ $(CONFIG)\obj\sqlite.obj: \
 	@echo '   [Compile] src/deps/sqlite/sqlite.c'
 	"$(CC)" -c -Fo$(CONFIG)\obj\sqlite.obj -Fd$(CONFIG)\obj\sqlite.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\sqlite\sqlite.c
 
+!IF "$(BIT_PACK_SQLITE)" == "1"
 #
 #   sqlite
 #
+!IF "$(BIT_PACK_SQLITE)" == "1"
 DEPS_31 = $(DEPS_31) $(CONFIG)\bin\libsqlite3.dll
+!ENDIF
 DEPS_31 = $(DEPS_31) $(CONFIG)\obj\sqlite.obj
 
+!IF "$(BIT_PACK_SQLITE)" == "1"
 LIBS_31 = $(LIBS_31) libsqlite3.lib
+!ENDIF
 
 $(CONFIG)\bin\sqlite.exe: $(DEPS_31)
 	@echo '      [Link] sqlite'
-	"$(LD)" -out:$(CONFIG)\bin\sqlite.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite.obj $(LIBS_31) $(LIBS_31) $(LIBS)
+	"$(LD)" -out:$(CONFIG)\bin\sqlite.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite.obj $(LIBS_31) $(LIBS_31) $(LIBS) 
+!ENDIF
 
 #
 #   zlib.h
@@ -571,7 +598,7 @@ DEPS_34 = $(DEPS_34) $(CONFIG)\obj\zlib.obj
 
 $(CONFIG)\bin\libzlib.dll: $(DEPS_34)
 	@echo '      [Link] libzlib'
-	"$(LD)" -dll -out:$(CONFIG)\bin\libzlib.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\zlib.obj $(LIBS)
+	"$(LD)" -dll -out:$(CONFIG)\bin\libzlib.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\zlib.obj $(LIBS) 
 
 #
 #   ejs.cache.local.slots.h
@@ -1394,7 +1421,7 @@ LIBS_104 = $(LIBS_104) libmpr.lib
 
 $(CONFIG)\bin\libejs.dll: $(DEPS_104)
 	@echo '      [Link] libejs'
-	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ecAst.obj $(CONFIG)\obj\ecCodeGen.obj $(CONFIG)\obj\ecCompiler.obj $(CONFIG)\obj\ecLex.obj $(CONFIG)\obj\ecModuleWrite.obj $(CONFIG)\obj\ecParser.obj $(CONFIG)\obj\ecState.obj $(CONFIG)\obj\dtoa.obj $(CONFIG)\obj\ejsApp.obj $(CONFIG)\obj\ejsArray.obj $(CONFIG)\obj\ejsBlock.obj $(CONFIG)\obj\ejsBoolean.obj $(CONFIG)\obj\ejsByteArray.obj $(CONFIG)\obj\ejsCache.obj $(CONFIG)\obj\ejsCmd.obj $(CONFIG)\obj\ejsConfig.obj $(CONFIG)\obj\ejsDate.obj $(CONFIG)\obj\ejsDebug.obj $(CONFIG)\obj\ejsError.obj $(CONFIG)\obj\ejsFile.obj $(CONFIG)\obj\ejsFileSystem.obj $(CONFIG)\obj\ejsFrame.obj $(CONFIG)\obj\ejsFunction.obj $(CONFIG)\obj\ejsGC.obj $(CONFIG)\obj\ejsGlobal.obj $(CONFIG)\obj\ejsHttp.obj $(CONFIG)\obj\ejsIterator.obj $(CONFIG)\obj\ejsJSON.obj $(CONFIG)\obj\ejsLocalCache.obj $(CONFIG)\obj\ejsMath.obj $(CONFIG)\obj\ejsMemory.obj $(CONFIG)\obj\ejsMprLog.obj $(CONFIG)\obj\ejsNamespace.obj $(CONFIG)\obj\ejsNull.obj $(CONFIG)\obj\ejsNumber.obj $(CONFIG)\obj\ejsObject.obj $(CONFIG)\obj\ejsPath.obj $(CONFIG)\obj\ejsPot.obj $(CONFIG)\obj\ejsRegExp.obj $(CONFIG)\obj\ejsSocket.obj $(CONFIG)\obj\ejsString.obj $(CONFIG)\obj\ejsSystem.obj $(CONFIG)\obj\ejsTimer.obj $(CONFIG)\obj\ejsType.obj $(CONFIG)\obj\ejsUri.obj $(CONFIG)\obj\ejsVoid.obj $(CONFIG)\obj\ejsWebSocket.obj $(CONFIG)\obj\ejsWorker.obj $(CONFIG)\obj\ejsXML.obj $(CONFIG)\obj\ejsXMLList.obj $(CONFIG)\obj\ejsXMLLoader.obj $(CONFIG)\obj\ejsByteCode.obj $(CONFIG)\obj\ejsException.obj $(CONFIG)\obj\ejsHelper.obj $(CONFIG)\obj\ejsInterp.obj $(CONFIG)\obj\ejsLoader.obj $(CONFIG)\obj\ejsModule.obj $(CONFIG)\obj\ejsScope.obj $(CONFIG)\obj\ejsService.obj $(LIBS_104) $(LIBS_104) $(LIBS) libmpr.lib
+	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ecAst.obj $(CONFIG)\obj\ecCodeGen.obj $(CONFIG)\obj\ecCompiler.obj $(CONFIG)\obj\ecLex.obj $(CONFIG)\obj\ecModuleWrite.obj $(CONFIG)\obj\ecParser.obj $(CONFIG)\obj\ecState.obj $(CONFIG)\obj\dtoa.obj $(CONFIG)\obj\ejsApp.obj $(CONFIG)\obj\ejsArray.obj $(CONFIG)\obj\ejsBlock.obj $(CONFIG)\obj\ejsBoolean.obj $(CONFIG)\obj\ejsByteArray.obj $(CONFIG)\obj\ejsCache.obj $(CONFIG)\obj\ejsCmd.obj $(CONFIG)\obj\ejsConfig.obj $(CONFIG)\obj\ejsDate.obj $(CONFIG)\obj\ejsDebug.obj $(CONFIG)\obj\ejsError.obj $(CONFIG)\obj\ejsFile.obj $(CONFIG)\obj\ejsFileSystem.obj $(CONFIG)\obj\ejsFrame.obj $(CONFIG)\obj\ejsFunction.obj $(CONFIG)\obj\ejsGC.obj $(CONFIG)\obj\ejsGlobal.obj $(CONFIG)\obj\ejsHttp.obj $(CONFIG)\obj\ejsIterator.obj $(CONFIG)\obj\ejsJSON.obj $(CONFIG)\obj\ejsLocalCache.obj $(CONFIG)\obj\ejsMath.obj $(CONFIG)\obj\ejsMemory.obj $(CONFIG)\obj\ejsMprLog.obj $(CONFIG)\obj\ejsNamespace.obj $(CONFIG)\obj\ejsNull.obj $(CONFIG)\obj\ejsNumber.obj $(CONFIG)\obj\ejsObject.obj $(CONFIG)\obj\ejsPath.obj $(CONFIG)\obj\ejsPot.obj $(CONFIG)\obj\ejsRegExp.obj $(CONFIG)\obj\ejsSocket.obj $(CONFIG)\obj\ejsString.obj $(CONFIG)\obj\ejsSystem.obj $(CONFIG)\obj\ejsTimer.obj $(CONFIG)\obj\ejsType.obj $(CONFIG)\obj\ejsUri.obj $(CONFIG)\obj\ejsVoid.obj $(CONFIG)\obj\ejsWebSocket.obj $(CONFIG)\obj\ejsWorker.obj $(CONFIG)\obj\ejsXML.obj $(CONFIG)\obj\ejsXMLList.obj $(CONFIG)\obj\ejsXMLLoader.obj $(CONFIG)\obj\ejsByteCode.obj $(CONFIG)\obj\ejsException.obj $(CONFIG)\obj\ejsHelper.obj $(CONFIG)\obj\ejsInterp.obj $(CONFIG)\obj\ejsLoader.obj $(CONFIG)\obj\ejsModule.obj $(CONFIG)\obj\ejsScope.obj $(CONFIG)\obj\ejsService.obj $(LIBS_104) $(LIBS_104) $(LIBS) 
 
 #
 #   ejs.obj
@@ -1420,7 +1447,7 @@ LIBS_106 = $(LIBS_106) libmpr.lib
 
 $(CONFIG)\bin\ejs.exe: $(DEPS_106)
 	@echo '      [Link] ejs'
-	"$(LD)" -out:$(CONFIG)\bin\ejs.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejs.obj $(LIBS_106) $(LIBS_106) $(LIBS) libmpr.lib
+	"$(LD)" -out:$(CONFIG)\bin\ejs.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejs.obj $(LIBS_106) $(LIBS_106) $(LIBS) 
 
 #
 #   ejsc.obj
@@ -1446,7 +1473,7 @@ LIBS_108 = $(LIBS_108) libmpr.lib
 
 $(CONFIG)\bin\ejsc.exe: $(DEPS_108)
 	@echo '      [Link] ejsc'
-	"$(LD)" -out:$(CONFIG)\bin\ejsc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsc.obj $(LIBS_108) $(LIBS_108) $(LIBS) libmpr.lib
+	"$(LD)" -out:$(CONFIG)\bin\ejsc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsc.obj $(LIBS_108) $(LIBS_108) $(LIBS) 
 
 #
 #   ejsmod.h
@@ -1528,7 +1555,7 @@ LIBS_115 = $(LIBS_115) libmpr.lib
 
 $(CONFIG)\bin\ejsmod.exe: $(DEPS_115)
 	@echo '      [Link] ejsmod'
-	"$(LD)" -out:$(CONFIG)\bin\ejsmod.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsmod.obj $(CONFIG)\obj\doc.obj $(CONFIG)\obj\docFiles.obj $(CONFIG)\obj\listing.obj $(CONFIG)\obj\slotGen.obj $(LIBS_115) $(LIBS_115) $(LIBS) libmpr.lib
+	"$(LD)" -out:$(CONFIG)\bin\ejsmod.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsmod.obj $(CONFIG)\obj\doc.obj $(CONFIG)\obj\docFiles.obj $(CONFIG)\obj\listing.obj $(CONFIG)\obj\slotGen.obj $(LIBS_115) $(LIBS_115) $(LIBS) 
 
 #
 #   ejsrun.obj
@@ -1554,7 +1581,7 @@ LIBS_117 = $(LIBS_117) libmpr.lib
 
 $(CONFIG)\bin\ejsrun.exe: $(DEPS_117)
 	@echo '      [Link] ejsrun'
-	"$(LD)" -out:$(CONFIG)\bin\ejsrun.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBS_117) $(LIBS_117) $(LIBS) libmpr.lib
+	"$(LD)" -out:$(CONFIG)\bin\ejsrun.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBS_117) $(LIBS_117) $(LIBS) 
 
 #
 #   ejs.mod
@@ -1660,7 +1687,7 @@ LIBS_121 = $(LIBS_121) libmpr.lib
 
 $(CONFIG)\bin\jem.exe: $(DEPS_121)
 	@echo '      [Link] jem'
-	"$(LD)" -out:$(CONFIG)\bin\jem.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBS_121) $(LIBS_121) $(LIBS) libmpr.lib
+	"$(LD)" -out:$(CONFIG)\bin\jem.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBS_121) $(LIBS_121) $(LIBS) 
 
 #
 #   ejs.db.mod
@@ -1720,10 +1747,14 @@ DEPS_126 = $(DEPS_126) $(CONFIG)\bin\libmpr.dll
 DEPS_126 = $(DEPS_126) $(CONFIG)\bin\libejs.dll
 DEPS_126 = $(DEPS_126) $(CONFIG)\bin\ejs.mod
 DEPS_126 = $(DEPS_126) $(CONFIG)\bin\ejs.db.sqlite.mod
+!IF "$(BIT_PACK_SQLITE)" == "1"
 DEPS_126 = $(DEPS_126) $(CONFIG)\bin\libsqlite3.dll
+!ENDIF
 DEPS_126 = $(DEPS_126) $(CONFIG)\obj\ejsSqlite.obj
 
+!IF "$(BIT_PACK_SQLITE)" == "1"
 LIBS_126 = $(LIBS_126) libsqlite3.lib
+!ENDIF
 LIBS_126 = $(LIBS_126) libejs.lib
 LIBS_126 = $(LIBS_126) libmpr.lib
 LIBS_126 = $(LIBS_126) libhttp.lib
@@ -1731,7 +1762,7 @@ LIBS_126 = $(LIBS_126) libpcre.lib
 
 $(CONFIG)\bin\libejs.db.sqlite.dll: $(DEPS_126)
 	@echo '      [Link] libejs.db.sqlite'
-	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.db.sqlite.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsSqlite.obj $(LIBS_126) $(LIBS_126) $(LIBS) libpcre.lib
+	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.db.sqlite.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsSqlite.obj $(LIBS_126) $(LIBS_126) $(LIBS) 
 
 #
 #   ejs.mail.mod
@@ -1864,7 +1895,7 @@ LIBS_134 = $(LIBS_134) libmpr.lib
 
 $(CONFIG)\bin\libejs.web.dll: $(DEPS_134)
 	@echo '      [Link] libejs.web'
-	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.web.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsHttpServer.obj $(CONFIG)\obj\ejsRequest.obj $(CONFIG)\obj\ejsSession.obj $(CONFIG)\obj\ejsWeb.obj $(LIBS_134) $(LIBS_134) $(LIBS) libmpr.lib
+	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.web.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsHttpServer.obj $(CONFIG)\obj\ejsRequest.obj $(CONFIG)\obj\ejsSession.obj $(CONFIG)\obj\ejsWeb.obj $(LIBS_134) $(LIBS_134) $(LIBS) 
 
 #
 #   www
@@ -1932,7 +1963,7 @@ LIBS_139 = $(LIBS_139) libmpr.lib
 
 $(CONFIG)\bin\libejs.zlib.dll: $(DEPS_139)
 	@echo '      [Link] libejs.zlib'
-	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.zlib.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsZlib.obj $(LIBS_139) $(LIBS_139) $(LIBS) libmpr.lib
+	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.zlib.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsZlib.obj $(LIBS_139) $(LIBS_139) $(LIBS) 
 
 #
 #   ejs.tar.mod
@@ -1970,7 +2001,7 @@ LIBS_142 = $(LIBS_142) libmpr.lib
 
 $(CONFIG)\bin\mvc.exe: $(DEPS_142)
 	@echo '      [Link] mvc'
-	"$(LD)" -out:$(CONFIG)\bin\mvc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBS_142) $(LIBS_142) $(LIBS) libmpr.lib
+	"$(LD)" -out:$(CONFIG)\bin\mvc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBS_142) $(LIBS_142) $(LIBS) 
 
 #
 #   ejs.mvc.mod
@@ -2022,7 +2053,7 @@ LIBS_146 = $(LIBS_146) libmpr.lib
 
 $(CONFIG)\bin\utest.exe: $(DEPS_146)
 	@echo '      [Link] utest'
-	"$(LD)" -out:$(CONFIG)\bin\utest.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBS_146) $(LIBS_146) $(LIBS) libmpr.lib
+	"$(LD)" -out:$(CONFIG)\bin\utest.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBS_146) $(LIBS_146) $(LIBS) 
 
 #
 #   stop
@@ -2035,7 +2066,81 @@ stop: $(DEPS_147)
 DEPS_148 = $(DEPS_148) stop
 
 installBinary: $(DEPS_148)
-#  Omit build script installBinary
+	if not exist "$(BIT_VAPP_PREFIX)\bin" md "$(BIT_VAPP_PREFIX)\bin"
+	copy /Y "$(CONFIG)\bin\ejs.exe" "$(BIT_VAPP_PREFIX)\bin\ejs.exe"
+	copy /Y "$(CONFIG)\bin\ejsc.exe" "$(BIT_VAPP_PREFIX)\bin\ejsc.exe"
+	copy /Y "$(CONFIG)\bin\ejsman.exe" "$(BIT_VAPP_PREFIX)\bin\ejsman.exe"
+	copy /Y "$(CONFIG)\bin\ejsmod.exe" "$(BIT_VAPP_PREFIX)\bin\ejsmod.exe"
+	copy /Y "$(CONFIG)\bin\ejsrun.exe" "$(BIT_VAPP_PREFIX)\bin\ejsrun.exe"
+	copy /Y "$(CONFIG)\bin\jem.exe" "$(BIT_VAPP_PREFIX)\bin\jem.exe"
+	copy /Y "$(CONFIG)\bin\mvc.exe" "$(BIT_VAPP_PREFIX)\bin\mvc.exe"
+	copy /Y "$(CONFIG)\bin\utest.exe" "$(BIT_VAPP_PREFIX)\bin\utest.exe"
+	copy /Y "$(CONFIG)\bin\libejs.db.sqlite.dll" "$(BIT_VAPP_PREFIX)\bin\libejs.db.sqlite.dll"
+	copy /Y "$(CONFIG)\bin\libejs.dll" "$(BIT_VAPP_PREFIX)\bin\libejs.dll"
+	copy /Y "$(CONFIG)\bin\libejs.db.sqlite.dll" "$(BIT_VAPP_PREFIX)\bin\libejs.db.sqlite.dll"
+	copy /Y "$(CONFIG)\bin\libejs.web.dll" "$(BIT_VAPP_PREFIX)\bin\libejs.web.dll"
+	copy /Y "$(CONFIG)\bin\libejs.zlib.dll" "$(BIT_VAPP_PREFIX)\bin\libejs.zlib.dll"
+	copy /Y "$(CONFIG)\bin\libhttp.dll" "$(BIT_VAPP_PREFIX)\bin\libhttp.dll"
+	copy /Y "$(CONFIG)\bin\libmpr.dll" "$(BIT_VAPP_PREFIX)\bin\libmpr.dll"
+	copy /Y "$(CONFIG)\bin\libpcre.dll" "$(BIT_VAPP_PREFIX)\bin\libpcre.dll"
+	copy /Y "$(CONFIG)\bin\libsqlite3.dll" "$(BIT_VAPP_PREFIX)\bin\libsqlite3.dll"
+	copy /Y "$(CONFIG)\bin\libzlib.dll" "$(BIT_VAPP_PREFIX)\bin\libzlib.dll"
+	copy /Y "$(CONFIG)\bin\ejs.db.mapper.mod" "$(BIT_VAPP_PREFIX)\bin\ejs.db.mapper.mod"
+	copy /Y "$(CONFIG)\bin\ejs.db.mod" "$(BIT_VAPP_PREFIX)\bin\ejs.db.mod"
+	copy /Y "$(CONFIG)\bin\ejs.db.sqlite.mod" "$(BIT_VAPP_PREFIX)\bin\ejs.db.sqlite.mod"
+	copy /Y "$(CONFIG)\bin\ejs.mod" "$(BIT_VAPP_PREFIX)\bin\ejs.mod"
+	copy /Y "$(CONFIG)\bin\ejs.mvc.mod" "$(BIT_VAPP_PREFIX)\bin\ejs.mvc.mod"
+	copy /Y "$(CONFIG)\bin\ejs.tar.mod" "$(BIT_VAPP_PREFIX)\bin\ejs.tar.mod"
+	copy /Y "$(CONFIG)\bin\ejs.template.mod" "$(BIT_VAPP_PREFIX)\bin\ejs.template.mod"
+	copy /Y "$(CONFIG)\bin\ejs.unix.mod" "$(BIT_VAPP_PREFIX)\bin\ejs.unix.mod"
+	copy /Y "$(CONFIG)\bin\ejs.web.mod" "$(BIT_VAPP_PREFIX)\bin\ejs.web.mod"
+	copy /Y "$(CONFIG)\bin\ejs.zlib.mod" "$(BIT_VAPP_PREFIX)\bin\ejs.zlib.mod"
+	copy /Y "$(CONFIG)\bin\jem.es" "$(BIT_VAPP_PREFIX)\bin\jem.es"
+	copy /Y "$(CONFIG)\bin\mvc.es" "$(BIT_VAPP_PREFIX)\bin\mvc.es"
+	copy /Y "$(CONFIG)\bin\utest.es" "$(BIT_VAPP_PREFIX)\bin\utest.es"
+	copy /Y "$(CONFIG)\bin\utest.worker" "$(BIT_VAPP_PREFIX)\bin\utest.worker"
+!IF "$(BIT_PACK_SSL)" == "1"
+	copy /Y "$(CONFIG)\bin\libmprssl.dll" "$(BIT_VAPP_PREFIX)\bin\libmprssl.dll"
+	copy /Y "$(CONFIG)\bin\ca.crt" "$(BIT_VAPP_PREFIX)\bin\ca.crt"
+!ENDIF
+!IF "$(BIT_PACK_EST)" == "1"
+	copy /Y "$(CONFIG)\bin\libest.lib" "$(BIT_VAPP_PREFIX)\bin\libest.lib"
+!ENDIF
+	copy /Y "$(CONFIG)\bin\libejs.lib" "$(BIT_VAPP_PREFIX)\bin\libejs.lib"
+	if not exist "$(BIT_VAPP_PREFIX)\bin\www\images" md "$(BIT_VAPP_PREFIX)\bin\www\images"
+	copy /Y "src\jems\ejs.web\www\images\banner.jpg" "$(BIT_VAPP_PREFIX)\bin\www\images\banner.jpg"
+	copy /Y "src\jems\ejs.web\www\images\favicon.ico" "$(BIT_VAPP_PREFIX)\bin\www\images\favicon.ico"
+	copy /Y "src\jems\ejs.web\www\images\splash.jpg" "$(BIT_VAPP_PREFIX)\bin\www\images\splash.jpg"
+	if not exist "$(BIT_VAPP_PREFIX)\bin\www\js" md "$(BIT_VAPP_PREFIX)\bin\www\js"
+	copy /Y "src\jems\ejs.web\www\js\jquery.ejs.min.js" "$(BIT_VAPP_PREFIX)\bin\www\js\jquery.ejs.min.js"
+	copy /Y "src\jems\ejs.web\www\js\jquery.min.js" "$(BIT_VAPP_PREFIX)\bin\www\js\jquery.min.js"
+	copy /Y "src\jems\ejs.web\www\js\jquery.simplemodal.min.js" "$(BIT_VAPP_PREFIX)\bin\www\js\jquery.simplemodal.min.js"
+	copy /Y "src\jems\ejs.web\www\js\jquery.tablesorter.js" "$(BIT_VAPP_PREFIX)\bin\www\js\jquery.tablesorter.js"
+	copy /Y "src\jems\ejs.web\www\js\jquery.tablesorter.min.js" "$(BIT_VAPP_PREFIX)\bin\www\js\jquery.tablesorter.min.js"
+	copy /Y "src\jems\ejs.web\www\js\jquery.treeview.min.js" "$(BIT_VAPP_PREFIX)\bin\www\js\jquery.treeview.min.js"
+	if not exist "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images" md "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\file.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\file.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\folder-closed.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\folder-closed.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\folder.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\folder.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\minus.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\minus.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\plus.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\plus.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-black-line.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-black-line.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-black.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-black.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-default-line.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-default-line.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-default.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-default.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-famfamfam-line.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-famfamfam-line.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-famfamfam.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-famfamfam.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-gray-line.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-gray-line.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-gray.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-gray.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-red-line.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-red-line.gif"
+	copy /Y "src\jems\ejs.web\www\js\tree-images\treeview-red.gif" "$(BIT_VAPP_PREFIX)\bin\www\js\tree-images\treeview-red.gif"
+	copy /Y "src\jems\ejs.web\www\js\treeview.css" "$(BIT_VAPP_PREFIX)\bin\www\js\treeview.css"
+	if not exist "$(BIT_VAPP_PREFIX)\bin\www" md "$(BIT_VAPP_PREFIX)\bin\www"
+	copy /Y "src\jems\ejs.web\www\layout.css" "$(BIT_VAPP_PREFIX)\bin\www\layout.css"
+	if not exist "$(BIT_VAPP_PREFIX)\bin\www\themes" md "$(BIT_VAPP_PREFIX)\bin\www\themes"
+	copy /Y "src\jems\ejs.web\www\themes\default.css" "$(BIT_VAPP_PREFIX)\bin\www\themes\default.css"
+	if not exist "$(BIT_VAPP_PREFIX)\inc" md "$(BIT_VAPP_PREFIX)\inc"
+	copy /Y "$(CONFIG)\inc\*.h" "$(BIT_VAPP_PREFIX)\inc\*.h"
 
 #
 #   start
@@ -2058,5 +2163,10 @@ install: $(DEPS_150)
 DEPS_151 = $(DEPS_151) stop
 
 uninstall: $(DEPS_151)
-
+	if exist "$(BIT_VAPP_PREFIX)" rd /Q /S"$(BIT_VAPP_PREFIX)"
+	if exist "$(BIT_VAPP_PREFIX)\bin" rd /Q "$(BIT_VAPP_PREFIX)\bin"
+	if exist "$(BIT_VAPP_PREFIX)\inc" rd /Q "$(BIT_VAPP_PREFIX)\inc"
+	if exist "$(BIT_VAPP_PREFIX)\man" rd /Q "$(BIT_VAPP_PREFIX)\man"
+	if exist "$(BIT_VAPP_PREFIX)\latest" rd /Q "$(BIT_VAPP_PREFIX)\latest"
+	if exist "$(BIT_VAPP_PREFIX)" rd /Q "$(BIT_VAPP_PREFIX)"
 

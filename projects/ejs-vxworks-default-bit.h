@@ -133,6 +133,21 @@
 #ifndef BIT_PRODUCT
     #define BIT_PRODUCT "ejs"
 #endif
+#ifndef BIT_PROJECTS_EST
+    #define BIT_PROJECTS_EST 1
+#endif
+#ifndef BIT_PROJECTS_MATRIXSSL
+    #define BIT_PROJECTS_MATRIXSSL 0
+#endif
+#ifndef BIT_PROJECTS_OPENSSL
+    #define BIT_PROJECTS_OPENSSL 0
+#endif
+#ifndef BIT_PROJECTS_SQLITE
+    #define BIT_PROJECTS_SQLITE 1
+#endif
+#ifndef BIT_PROJECTS_SSL
+    #define BIT_PROJECTS_SSL 1
+#endif
 #ifndef BIT_REQUIRES
     #define BIT_REQUIRES "vxworks,compiler,lib,link,pcre,zlib"
 #endif
