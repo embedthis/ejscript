@@ -341,7 +341,6 @@ endif
 DEPS_10 += $(CONFIG)/inc/bit.h
 DEPS_10 += $(CONFIG)/inc/mpr.h
 DEPS_10 += $(CONFIG)/inc/est.h
-DEPS_10 += $(CONFIG)/inc/bitos.h
 
 $(CONFIG)/obj/mprSsl.o: \
     src/deps/mpr/mprSsl.c $(DEPS_10)
@@ -2134,24 +2133,6 @@ endif
 	mkdir -p "$(BIT_INC_PREFIX)/ejs"
 	rm -f "$(BIT_INC_PREFIX)/ejs/bit.h"
 	ln -s "$(BIT_VAPP_PREFIX)/inc/bit.h" "$(BIT_INC_PREFIX)/ejs/bit.h"
-	cp "$(CONFIG)/inc/bitos.h" "$(BIT_VAPP_PREFIX)/inc/bitos.h"
-	rm -f "$(BIT_INC_PREFIX)/ejs/bitos.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/bitos.h" "$(BIT_INC_PREFIX)/ejs/bitos.h"
-	cp "$(CONFIG)/inc/est.h" "$(BIT_VAPP_PREFIX)/inc/est.h"
-	rm -f "$(BIT_INC_PREFIX)/ejs/est.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/est.h" "$(BIT_INC_PREFIX)/ejs/est.h"
-	cp "$(CONFIG)/inc/http.h" "$(BIT_VAPP_PREFIX)/inc/http.h"
-	rm -f "$(BIT_INC_PREFIX)/ejs/http.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/http.h" "$(BIT_INC_PREFIX)/ejs/http.h"
-	cp "$(CONFIG)/inc/mpr.h" "$(BIT_VAPP_PREFIX)/inc/mpr.h"
-	rm -f "$(BIT_INC_PREFIX)/ejs/mpr.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/mpr.h" "$(BIT_INC_PREFIX)/ejs/mpr.h"
-	cp "$(CONFIG)/inc/pcre.h" "$(BIT_VAPP_PREFIX)/inc/pcre.h"
-	rm -f "$(BIT_INC_PREFIX)/ejs/pcre.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/pcre.h" "$(BIT_INC_PREFIX)/ejs/pcre.h"
-	cp "$(CONFIG)/inc/sqlite3.h" "$(BIT_VAPP_PREFIX)/inc/sqlite3.h"
-	rm -f "$(BIT_INC_PREFIX)/ejs/sqlite3.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/sqlite3.h" "$(BIT_INC_PREFIX)/ejs/sqlite3.h"
 	mkdir -p "$(BIT_VAPP_PREFIX)/doc/man1"
 	cp "doc/man/ejs.1" "$(BIT_VAPP_PREFIX)/doc/man1/ejs.1"
 	mkdir -p "$(BIT_MAN_PREFIX)/man1"
