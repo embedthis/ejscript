@@ -1802,6 +1802,7 @@
 				AF07EBABAF07FD1900000216 /* bit.h */,
 				AF07EBABAF07FD1900000217 /* mpr.h */,
 				AF07EBABAF07FD1900000219 /* est.h */,
+				AF07EBABAF07FD1900000218 /* bitos.h */,
 				AF07EBABAF07FD1900000094 /* mprSsl.c */,
 			);
             name = "libmprssl";
