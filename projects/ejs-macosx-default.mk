@@ -19,6 +19,22 @@ BIT_PACK_OPENSSL   := 0
 BIT_PACK_SQLITE    := 1
 BIT_PACK_SSL       := 1
 
+ifeq ($(BIT_PACK_EST),1)
+    BIT_PACK_SSL := 1
+endif
+ifeq ($(BIT_PACK_LIB),1)
+    BIT_PACK_COMPILER := 1
+endif
+ifeq ($(BIT_PACK_MATRIXSSL),1)
+    BIT_PACK_SSL := 1
+endif
+ifeq ($(BIT_PACK_NANOSSL),1)
+    BIT_PACK_SSL := 1
+endif
+ifeq ($(BIT_PACK_OPENSSL),1)
+    BIT_PACK_SSL := 1
+endif
+
 CFLAGS             += -w
 DFLAGS             +=  $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS))) -DBIT_PACK_EST=$(BIT_PACK_EST) -DBIT_PACK_MATRIXSSL=$(BIT_PACK_MATRIXSSL) -DBIT_PACK_OPENSSL=$(BIT_PACK_OPENSSL) -DBIT_PACK_SQLITE=$(BIT_PACK_SQLITE) -DBIT_PACK_SSL=$(BIT_PACK_SSL) 
 IFLAGS             += -I$(CONFIG)/inc
