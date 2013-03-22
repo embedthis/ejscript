@@ -136,11 +136,16 @@ prep:
 	@[ ! -x $(CONFIG)/obj ] && mkdir -p $(CONFIG)/obj; true
 	@[ ! -f $(CONFIG)/inc/bit.h ] && cp projects/ejs-freebsd-default-bit.h $(CONFIG)/inc/bit.h ; true
 	@[ ! -f $(CONFIG)/inc/bitos.h ] && cp src/bitos.h $(CONFIG)/inc/bitos.h ; true
+	@if ! diff $(CONFIG)/inc/bitos.h src/bitos.h >/dev/null ; then\
+		cp src/bitos.h $(CONFIG)/inc/bitos.h  ; \
+	fi; true
 	@if ! diff $(CONFIG)/inc/bit.h projects/ejs-freebsd-default-bit.h >/dev/null ; then\
 		cp projects/ejs-freebsd-default-bit.h $(CONFIG)/inc/bit.h  ; \
 	fi; true
-	@if [ -f "$(CONFIG)/.makeflags" -a "$(MAKEFLAGS)" != " `cat $(CONFIG)/.makeflags`" ] ; then \
-		echo "   [Warning] Make flags have changed since the last build: "`cat $(CONFIG)/.makeflags`"" ; \
+	@if [ -f "$(CONFIG)/.makeflags" ] ; then \
+		if [ "$(MAKEFLAGS)" != " ` cat $(CONFIG)/.makeflags`" ] ; then \
+			echo "   [Warning] Make flags have changed since the last build: "`cat $(CONFIG)/.makeflags`"" ; \
+		fi ; \
 	fi
 	@echo $(MAKEFLAGS) >$(CONFIG)/.makeflags
 clean:
@@ -2095,6 +2100,10 @@ installBinary: $(DEPS_146)
 ifeq ($(BIT_PACK_SSL),1)
 	cp "$(CONFIG)/bin/libmprssl.so" "$(BIT_VAPP_PREFIX)/bin/libmprssl.so"
 	cp "$(CONFIG)/bin/ca.crt" "$(BIT_VAPP_PREFIX)/bin/ca.crt"
+endif
+ifeq ($(BIT_PACK_OPENSSL),1)
+	cp "$(CONFIG)/bin/libssl*.so*" "$(BIT_VAPP_PREFIX)/bin/libssl*.so*"
+	cp "$(CONFIG)/bin/libcrypto*.so*" "$(BIT_VAPP_PREFIX)/bin/libcrypto*.so*"
 endif
 ifeq ($(BIT_PACK_EST),1)
 	cp "$(CONFIG)/bin/libest.so" "$(BIT_VAPP_PREFIX)/bin/libest.so"
