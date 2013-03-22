@@ -141,112 +141,112 @@ prep:
 	fi; true
 
 clean:
-	rm -f "$(CONFIG)/bin/libmpr.so"
-	rm -f "$(CONFIG)/bin/libmprssl.so"
-	rm -f "$(CONFIG)/bin/ejsman"
-	rm -f "$(CONFIG)/bin/makerom"
-	rm -f "$(CONFIG)/bin/libest.so"
-	rm -f "$(CONFIG)/bin/ca.crt"
-	rm -f "$(CONFIG)/bin/libpcre.so"
-	rm -f "$(CONFIG)/bin/libhttp.so"
-	rm -f "$(CONFIG)/bin/http"
-	rm -f "$(CONFIG)/bin/libsqlite3.so"
-	rm -f "$(CONFIG)/bin/sqlite"
-	rm -f "$(CONFIG)/bin/libzlib.so"
-	rm -f "$(CONFIG)/bin/libejs.so"
-	rm -f "$(CONFIG)/bin/ejs"
-	rm -f "$(CONFIG)/bin/ejsc"
-	rm -f "$(CONFIG)/bin/ejsmod"
-	rm -f "$(CONFIG)/bin/ejsrun"
-	rm -f "$(CONFIG)/bin/jem"
-	rm -f "$(CONFIG)/bin/libejs.db.sqlite.so"
-	rm -f "$(CONFIG)/bin/libejs.web.so"
-	rm -f "$(CONFIG)/bin/libejs.zlib.so"
-	rm -f "$(CONFIG)/bin/utest"
-	rm -f "$(CONFIG)/obj/mprLib.o"
-	rm -f "$(CONFIG)/obj/mprSsl.o"
-	rm -f "$(CONFIG)/obj/manager.o"
-	rm -f "$(CONFIG)/obj/makerom.o"
-	rm -f "$(CONFIG)/obj/estLib.o"
-	rm -f "$(CONFIG)/obj/pcre.o"
-	rm -f "$(CONFIG)/obj/httpLib.o"
-	rm -f "$(CONFIG)/obj/http.o"
-	rm -f "$(CONFIG)/obj/sqlite3.o"
-	rm -f "$(CONFIG)/obj/sqlite.o"
-	rm -f "$(CONFIG)/obj/zlib.o"
-	rm -f "$(CONFIG)/obj/ecAst.o"
-	rm -f "$(CONFIG)/obj/ecCodeGen.o"
-	rm -f "$(CONFIG)/obj/ecCompiler.o"
-	rm -f "$(CONFIG)/obj/ecLex.o"
-	rm -f "$(CONFIG)/obj/ecModuleWrite.o"
-	rm -f "$(CONFIG)/obj/ecParser.o"
-	rm -f "$(CONFIG)/obj/ecState.o"
-	rm -f "$(CONFIG)/obj/dtoa.o"
-	rm -f "$(CONFIG)/obj/ejsApp.o"
-	rm -f "$(CONFIG)/obj/ejsArray.o"
-	rm -f "$(CONFIG)/obj/ejsBlock.o"
-	rm -f "$(CONFIG)/obj/ejsBoolean.o"
-	rm -f "$(CONFIG)/obj/ejsByteArray.o"
-	rm -f "$(CONFIG)/obj/ejsCache.o"
-	rm -f "$(CONFIG)/obj/ejsCmd.o"
-	rm -f "$(CONFIG)/obj/ejsConfig.o"
-	rm -f "$(CONFIG)/obj/ejsDate.o"
-	rm -f "$(CONFIG)/obj/ejsDebug.o"
-	rm -f "$(CONFIG)/obj/ejsError.o"
-	rm -f "$(CONFIG)/obj/ejsFile.o"
-	rm -f "$(CONFIG)/obj/ejsFileSystem.o"
-	rm -f "$(CONFIG)/obj/ejsFrame.o"
-	rm -f "$(CONFIG)/obj/ejsFunction.o"
-	rm -f "$(CONFIG)/obj/ejsGC.o"
-	rm -f "$(CONFIG)/obj/ejsGlobal.o"
-	rm -f "$(CONFIG)/obj/ejsHttp.o"
-	rm -f "$(CONFIG)/obj/ejsIterator.o"
-	rm -f "$(CONFIG)/obj/ejsJSON.o"
-	rm -f "$(CONFIG)/obj/ejsLocalCache.o"
-	rm -f "$(CONFIG)/obj/ejsMath.o"
-	rm -f "$(CONFIG)/obj/ejsMemory.o"
-	rm -f "$(CONFIG)/obj/ejsMprLog.o"
-	rm -f "$(CONFIG)/obj/ejsNamespace.o"
-	rm -f "$(CONFIG)/obj/ejsNull.o"
-	rm -f "$(CONFIG)/obj/ejsNumber.o"
-	rm -f "$(CONFIG)/obj/ejsObject.o"
-	rm -f "$(CONFIG)/obj/ejsPath.o"
-	rm -f "$(CONFIG)/obj/ejsPot.o"
-	rm -f "$(CONFIG)/obj/ejsRegExp.o"
-	rm -f "$(CONFIG)/obj/ejsSocket.o"
-	rm -f "$(CONFIG)/obj/ejsString.o"
-	rm -f "$(CONFIG)/obj/ejsSystem.o"
-	rm -f "$(CONFIG)/obj/ejsTimer.o"
-	rm -f "$(CONFIG)/obj/ejsType.o"
-	rm -f "$(CONFIG)/obj/ejsUri.o"
-	rm -f "$(CONFIG)/obj/ejsVoid.o"
-	rm -f "$(CONFIG)/obj/ejsWebSocket.o"
-	rm -f "$(CONFIG)/obj/ejsWorker.o"
-	rm -f "$(CONFIG)/obj/ejsXML.o"
-	rm -f "$(CONFIG)/obj/ejsXMLList.o"
-	rm -f "$(CONFIG)/obj/ejsXMLLoader.o"
-	rm -f "$(CONFIG)/obj/ejsByteCode.o"
-	rm -f "$(CONFIG)/obj/ejsException.o"
-	rm -f "$(CONFIG)/obj/ejsHelper.o"
-	rm -f "$(CONFIG)/obj/ejsInterp.o"
-	rm -f "$(CONFIG)/obj/ejsLoader.o"
-	rm -f "$(CONFIG)/obj/ejsModule.o"
-	rm -f "$(CONFIG)/obj/ejsScope.o"
-	rm -f "$(CONFIG)/obj/ejsService.o"
-	rm -f "$(CONFIG)/obj/ejs.o"
-	rm -f "$(CONFIG)/obj/ejsc.o"
-	rm -f "$(CONFIG)/obj/ejsmod.o"
-	rm -f "$(CONFIG)/obj/doc.o"
-	rm -f "$(CONFIG)/obj/docFiles.o"
-	rm -f "$(CONFIG)/obj/listing.o"
-	rm -f "$(CONFIG)/obj/slotGen.o"
-	rm -f "$(CONFIG)/obj/ejsrun.o"
-	rm -f "$(CONFIG)/obj/ejsSqlite.o"
-	rm -f "$(CONFIG)/obj/ejsHttpServer.o"
-	rm -f "$(CONFIG)/obj/ejsRequest.o"
-	rm -f "$(CONFIG)/obj/ejsSession.o"
-	rm -f "$(CONFIG)/obj/ejsWeb.o"
-	rm -f "$(CONFIG)/obj/ejsZlib.o"
+	rm -fr "$(CONFIG)/bin/libmpr.so"
+	rm -fr "$(CONFIG)/bin/libmprssl.so"
+	rm -fr "$(CONFIG)/bin/ejsman"
+	rm -fr "$(CONFIG)/bin/makerom"
+	rm -fr "$(CONFIG)/bin/libest.so"
+	rm -fr "$(CONFIG)/bin/ca.crt"
+	rm -fr "$(CONFIG)/bin/libpcre.so"
+	rm -fr "$(CONFIG)/bin/libhttp.so"
+	rm -fr "$(CONFIG)/bin/http"
+	rm -fr "$(CONFIG)/bin/libsqlite3.so"
+	rm -fr "$(CONFIG)/bin/sqlite"
+	rm -fr "$(CONFIG)/bin/libzlib.so"
+	rm -fr "$(CONFIG)/bin/libejs.so"
+	rm -fr "$(CONFIG)/bin/ejs"
+	rm -fr "$(CONFIG)/bin/ejsc"
+	rm -fr "$(CONFIG)/bin/ejsmod"
+	rm -fr "$(CONFIG)/bin/ejsrun"
+	rm -fr "$(CONFIG)/bin/jem"
+	rm -fr "$(CONFIG)/bin/libejs.db.sqlite.so"
+	rm -fr "$(CONFIG)/bin/libejs.web.so"
+	rm -fr "$(CONFIG)/bin/libejs.zlib.so"
+	rm -fr "$(CONFIG)/bin/utest"
+	rm -fr "$(CONFIG)/obj/mprLib.o"
+	rm -fr "$(CONFIG)/obj/mprSsl.o"
+	rm -fr "$(CONFIG)/obj/manager.o"
+	rm -fr "$(CONFIG)/obj/makerom.o"
+	rm -fr "$(CONFIG)/obj/estLib.o"
+	rm -fr "$(CONFIG)/obj/pcre.o"
+	rm -fr "$(CONFIG)/obj/httpLib.o"
+	rm -fr "$(CONFIG)/obj/http.o"
+	rm -fr "$(CONFIG)/obj/sqlite3.o"
+	rm -fr "$(CONFIG)/obj/sqlite.o"
+	rm -fr "$(CONFIG)/obj/zlib.o"
+	rm -fr "$(CONFIG)/obj/ecAst.o"
+	rm -fr "$(CONFIG)/obj/ecCodeGen.o"
+	rm -fr "$(CONFIG)/obj/ecCompiler.o"
+	rm -fr "$(CONFIG)/obj/ecLex.o"
+	rm -fr "$(CONFIG)/obj/ecModuleWrite.o"
+	rm -fr "$(CONFIG)/obj/ecParser.o"
+	rm -fr "$(CONFIG)/obj/ecState.o"
+	rm -fr "$(CONFIG)/obj/dtoa.o"
+	rm -fr "$(CONFIG)/obj/ejsApp.o"
+	rm -fr "$(CONFIG)/obj/ejsArray.o"
+	rm -fr "$(CONFIG)/obj/ejsBlock.o"
+	rm -fr "$(CONFIG)/obj/ejsBoolean.o"
+	rm -fr "$(CONFIG)/obj/ejsByteArray.o"
+	rm -fr "$(CONFIG)/obj/ejsCache.o"
+	rm -fr "$(CONFIG)/obj/ejsCmd.o"
+	rm -fr "$(CONFIG)/obj/ejsConfig.o"
+	rm -fr "$(CONFIG)/obj/ejsDate.o"
+	rm -fr "$(CONFIG)/obj/ejsDebug.o"
+	rm -fr "$(CONFIG)/obj/ejsError.o"
+	rm -fr "$(CONFIG)/obj/ejsFile.o"
+	rm -fr "$(CONFIG)/obj/ejsFileSystem.o"
+	rm -fr "$(CONFIG)/obj/ejsFrame.o"
+	rm -fr "$(CONFIG)/obj/ejsFunction.o"
+	rm -fr "$(CONFIG)/obj/ejsGC.o"
+	rm -fr "$(CONFIG)/obj/ejsGlobal.o"
+	rm -fr "$(CONFIG)/obj/ejsHttp.o"
+	rm -fr "$(CONFIG)/obj/ejsIterator.o"
+	rm -fr "$(CONFIG)/obj/ejsJSON.o"
+	rm -fr "$(CONFIG)/obj/ejsLocalCache.o"
+	rm -fr "$(CONFIG)/obj/ejsMath.o"
+	rm -fr "$(CONFIG)/obj/ejsMemory.o"
+	rm -fr "$(CONFIG)/obj/ejsMprLog.o"
+	rm -fr "$(CONFIG)/obj/ejsNamespace.o"
+	rm -fr "$(CONFIG)/obj/ejsNull.o"
+	rm -fr "$(CONFIG)/obj/ejsNumber.o"
+	rm -fr "$(CONFIG)/obj/ejsObject.o"
+	rm -fr "$(CONFIG)/obj/ejsPath.o"
+	rm -fr "$(CONFIG)/obj/ejsPot.o"
+	rm -fr "$(CONFIG)/obj/ejsRegExp.o"
+	rm -fr "$(CONFIG)/obj/ejsSocket.o"
+	rm -fr "$(CONFIG)/obj/ejsString.o"
+	rm -fr "$(CONFIG)/obj/ejsSystem.o"
+	rm -fr "$(CONFIG)/obj/ejsTimer.o"
+	rm -fr "$(CONFIG)/obj/ejsType.o"
+	rm -fr "$(CONFIG)/obj/ejsUri.o"
+	rm -fr "$(CONFIG)/obj/ejsVoid.o"
+	rm -fr "$(CONFIG)/obj/ejsWebSocket.o"
+	rm -fr "$(CONFIG)/obj/ejsWorker.o"
+	rm -fr "$(CONFIG)/obj/ejsXML.o"
+	rm -fr "$(CONFIG)/obj/ejsXMLList.o"
+	rm -fr "$(CONFIG)/obj/ejsXMLLoader.o"
+	rm -fr "$(CONFIG)/obj/ejsByteCode.o"
+	rm -fr "$(CONFIG)/obj/ejsException.o"
+	rm -fr "$(CONFIG)/obj/ejsHelper.o"
+	rm -fr "$(CONFIG)/obj/ejsInterp.o"
+	rm -fr "$(CONFIG)/obj/ejsLoader.o"
+	rm -fr "$(CONFIG)/obj/ejsModule.o"
+	rm -fr "$(CONFIG)/obj/ejsScope.o"
+	rm -fr "$(CONFIG)/obj/ejsService.o"
+	rm -fr "$(CONFIG)/obj/ejs.o"
+	rm -fr "$(CONFIG)/obj/ejsc.o"
+	rm -fr "$(CONFIG)/obj/ejsmod.o"
+	rm -fr "$(CONFIG)/obj/doc.o"
+	rm -fr "$(CONFIG)/obj/docFiles.o"
+	rm -fr "$(CONFIG)/obj/listing.o"
+	rm -fr "$(CONFIG)/obj/slotGen.o"
+	rm -fr "$(CONFIG)/obj/ejsrun.o"
+	rm -fr "$(CONFIG)/obj/ejsSqlite.o"
+	rm -fr "$(CONFIG)/obj/ejsHttpServer.o"
+	rm -fr "$(CONFIG)/obj/ejsRequest.o"
+	rm -fr "$(CONFIG)/obj/ejsSession.o"
+	rm -fr "$(CONFIG)/obj/ejsWeb.o"
+	rm -fr "$(CONFIG)/obj/ejsZlib.o"
 
 clobber: clean
 	rm -fr ./$(CONFIG)
@@ -388,7 +388,7 @@ LIBS_13 += -lmpr
 
 $(CONFIG)/bin/ejsman: $(DEPS_13)
 	@echo '      [Link] manager'
-	$(CC) -o $(CONFIG)/bin/ejsman $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LIBS_13) $(LIBS_13) $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejsman $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LIBS_13) $(LIBS_13) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 
 #
 #   makerom.o
@@ -411,7 +411,7 @@ LIBS_15 += -lmpr
 
 $(CONFIG)/bin/makerom: $(DEPS_15)
 	@echo '      [Link] makerom'
-	$(CC) -o $(CONFIG)/bin/makerom $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o $(LIBS_15) $(LIBS_15) $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/makerom $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o $(LIBS_15) $(LIBS_15) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 
 #
 #   ca-crt
@@ -510,7 +510,7 @@ LIBS_24 += -lmpr
 
 $(CONFIG)/bin/http: $(DEPS_24)
 	@echo '      [Link] http'
-	$(CC) -o $(CONFIG)/bin/http $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o $(LIBS_24) $(LIBS_24) $(LIBS) -lmpr $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/http $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o $(LIBS_24) $(LIBS_24) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 
 #
 #   sqlite3.h
@@ -569,7 +569,7 @@ endif
 
 $(CONFIG)/bin/sqlite: $(DEPS_29)
 	@echo '      [Link] sqlite'
-	$(CC) -o $(CONFIG)/bin/sqlite $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LIBS_29) $(LIBS_29) $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/sqlite $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LIBS_29) $(LIBS_29) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 endif
 
 #
@@ -1448,7 +1448,7 @@ LIBS_104 += -lmpr
 
 $(CONFIG)/bin/ejs: $(DEPS_104)
 	@echo '      [Link] ejs'
-	$(CC) -o $(CONFIG)/bin/ejs $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LIBS_104) $(LIBS_104) $(LIBS) -lmpr $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejs $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LIBS_104) $(LIBS_104) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 
 #
 #   ejsc.o
@@ -1474,7 +1474,7 @@ LIBS_106 += -lmpr
 
 $(CONFIG)/bin/ejsc: $(DEPS_106)
 	@echo '      [Link] ejsc'
-	$(CC) -o $(CONFIG)/bin/ejsc $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o $(LIBS_106) $(LIBS_106) $(LIBS) -lmpr $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejsc $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o $(LIBS_106) $(LIBS_106) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 
 #
 #   ejsmod.h
@@ -1556,7 +1556,7 @@ LIBS_113 += -lmpr
 
 $(CONFIG)/bin/ejsmod: $(DEPS_113)
 	@echo '      [Link] ejsmod'
-	$(CC) -o $(CONFIG)/bin/ejsmod $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o $(LIBS_113) $(LIBS_113) $(LIBS) -lmpr $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejsmod $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o $(LIBS_113) $(LIBS_113) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 
 #
 #   ejsrun.o
@@ -1582,7 +1582,7 @@ LIBS_115 += -lmpr
 
 $(CONFIG)/bin/ejsrun: $(DEPS_115)
 	@echo '      [Link] ejsrun'
-	$(CC) -o $(CONFIG)/bin/ejsrun $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS_115) $(LIBS_115) $(LIBS) -lmpr $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejsrun $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS_115) $(LIBS_115) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 
 #
 #   ejs.mod
@@ -1682,7 +1682,7 @@ LIBS_119 += -lmpr
 
 $(CONFIG)/bin/jem: $(DEPS_119)
 	@echo '      [Link] jem'
-	$(CC) -o $(CONFIG)/bin/jem $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS_119) $(LIBS_119) $(LIBS) -lmpr $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/jem $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS_119) $(LIBS_119) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 
 #
 #   ejs.db.mod
@@ -1975,7 +1975,7 @@ LIBS_140 += -lmpr
 
 $(CONFIG)/bin/mvc: $(DEPS_140)
 	@echo '      [Link] mvc'
-	$(CC) -o $(CONFIG)/bin/mvc $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS_140) $(LIBS_140) $(LIBS) -lmpr $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/mvc $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS_140) $(LIBS_140) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 
 #
 #   ejs.mvc.mod
@@ -2021,7 +2021,7 @@ LIBS_144 += -lmpr
 
 $(CONFIG)/bin/utest: $(DEPS_144)
 	@echo '      [Link] utest'
-	$(CC) -o $(CONFIG)/bin/utest $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS_144) $(LIBS_144) $(LIBS) -lmpr $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/utest $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS_144) $(LIBS_144) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 
 #
 #   stop
