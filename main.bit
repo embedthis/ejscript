@@ -44,7 +44,7 @@ Bit.load({
         title: 'Embedthis Ejscript',
         company: 'Embedthis',
         version: '2.3.1',
-        buildNumber: '2',
+        buildNumber: '0',
         bit: '0.8.5',
 
         /*
@@ -68,11 +68,6 @@ Bit.load({
             Packs to disable when using --without all
          */
         'without-all': ['doxygen', 'dsi', 'est', 'man', 'man2html'],
-
-        /*
-            Packs to disable when using --without default (generating packages)
-         */
-        'without-default': ['doxygen', 'dsi', 'man', 'man2html'],
 
         /*
             Set to true for a static (non-shared library) build                                            

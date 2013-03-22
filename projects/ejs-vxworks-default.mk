@@ -8,7 +8,7 @@ export WIND_PLATFORM := $(WIND_PLATFORM)
 
 PRODUCT            := ejs
 VERSION            := 2.3.1
-BUILD_NUMBER       := 2
+BUILD_NUMBER       := 0
 PROFILE            := default
 ARCH               := $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/')
 OS                 := vxworks
@@ -261,7 +261,7 @@ clobber: clean
 #   version
 #
 version: $(DEPS_1)
-	@echo NN 2.3.1-2
+	@echo NN 2.3.1-0
 
 #
 #   mpr.h
