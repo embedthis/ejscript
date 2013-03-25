@@ -2493,7 +2493,7 @@ static EcNode *parseRegularExpression(EcCompiler *cp)
     if (id != T_REGEXP) {
         return LEAVE(cp, parseError(cp, "Cannot parse regular expression"));
     }
-    if ((vp = (EjsObj*) ejsCreateRegExp(cp->ejs, tokenString(cp))) == NULL) {
+    if ((vp = (EjsObj*) ejsParseRegExp(cp->ejs, tokenString(cp))) == NULL) {
         return LEAVE(cp, parseError(cp, "Cannot compile regular expression"));
     }
     np = createNode(cp, N_LITERAL, NULL);

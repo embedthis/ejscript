@@ -841,7 +841,7 @@ EjsAny *ejsParse(Ejs *ejs, wchar *str, int preferredType)
 
 #if BIT_PACK_PCRE
     case S_RegExp:
-        return ejsCreateRegExp(ejs, ejsCreateStringFromAsc(ejs, buf));
+        return ejsParseRegExp(ejs, ejsCreateStringFromAsc(ejs, buf));
 #endif
 
     case S_String:

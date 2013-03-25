@@ -51,10 +51,7 @@ static EjsAny *castString(Ejs *ejs, EjsString *sp, EjsType *type)
         return ejsCreatePath(ejs, sp);
 
     case S_RegExp:
-        if (sp && sp->value[0] == '/') {
-            return ejsCreateRegExp(ejs, sp);
-        }
-        return ejsCreateRegExp(ejs, ejsSprintf(ejs, "/%@/", sp));
+        return ejsParseRegExp(ejs, sp);
 
     case S_String:
         return sp;

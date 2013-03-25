@@ -446,7 +446,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
         CASE (EJS_OP_LOAD_REGEXP):
 #if BIT_PACK_PCRE
             str = GET_STRING();
-            v1 = (EjsObj*) ejsCreateRegExp(ejs, str);
+            v1 = (EjsObj*) ejsParseRegExp(ejs, str);
             push(v1);
 #else
             ejsThrowReferenceError(ejs, "RegularExpression support was not included in the build");

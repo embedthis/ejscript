@@ -86,6 +86,10 @@ assert(RegExp("abc", "g") == "/abc/g")
 assert(RegExp("abc", "g").toString() == "/abc/g")
 assert(RegExp("/abc/g") == "/\\/abc\\/g/")
 
+assert(RegExp("a\\bc") == "/a\\bc/")
+assert(RegExp("a\\\\bc") == "/a\\\\bc/")
+assert(RegExp("a\/bc") == "/a\\/bc/")
+
 
 //  replace
 

@@ -28,9 +28,10 @@ typedef struct Json {
     int         depth;
     int         hidden;
     int         namespaces;
+    int         regexp;             /* Emit native regular expression types */
     int         quotes;
     int         pretty;
-    int         nest;              /* Json serialize nest level */
+    int         nest;               /* Json serialize nest level */
 } Json;
 
 /***************************** Forward Declarations ***************************/
@@ -476,6 +477,9 @@ PUBLIC EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *vp, EjsObj *options)
         if ((arg = ejsGetPropertyByName(ejs, options, EN("namespaces"))) != 0) {
             json.namespaces = (arg == ESV(true));
         }
+        if ((arg = ejsGetPropertyByName(ejs, options, EN("regexp"))) != 0) {
+            json.regexp = (arg == ESV(true));
+        }
         if ((arg = ejsGetPropertyByName(ejs, options, EN("quotes"))) != 0) {
             json.quotes = (arg != ESV(false));
         }
@@ -505,6 +509,7 @@ PUBLIC EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, int flags)
     json.commas = (flags & EJS_JSON_SHOW_COMMAS) ? 1 : 0;
     json.hidden = (flags & EJS_JSON_SHOW_HIDDEN) ? 1 : 0;
     json.namespaces = (flags & EJS_JSON_SHOW_NAMESPACES) ? 1 : 0;
+    json.regexp = (flags & EJS_JSON_SHOW_REGEXP) ? 1 : 0;
     json.pretty = (flags & EJS_JSON_SHOW_PRETTY) ? 1 : 0;
     json.quotes = (flags & EJS_JSON_SHOW_NOQUOTES) ? 0 : 1;
     return serialize(ejs, vp, &json);
@@ -530,6 +535,8 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
     if (count == 0 && TYPE(vp) != ESV(Object) && TYPE(vp) != ESV(Array)) {
         //  OPT - need some flag for this test.
         if (!ejsIsDefined(ejs, vp) || ejsIs(ejs, vp, Boolean) || ejsIs(ejs, vp, Number)) {
+            return ejsToString(ejs, vp);
+        } else if (json->regexp) {
             return ejsToString(ejs, vp);
         } else {
             return ejsToLiteralString(ejs, vp);
@@ -613,7 +620,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                 }
             }
             fn = (EjsFunction*) ejsGetPropertyByName(ejs, TYPE(pp)->prototype, N(NULL, "toJSON"));
-// OPT - check that this is going directly to serialize most of the time
+            // OPT - check that this is going directly to serialize most of the time
             if (!ejsIsFunction(ejs, fn) || (fn->isNativeProc && fn->body.proc == (EjsProc) ejsObjToJSON)) {
                 sv = serialize(ejs, pp, json);
             } else {

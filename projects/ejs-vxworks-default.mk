@@ -2,18 +2,14 @@
 #   ejs-vxworks-default.mk -- Makefile to build Embedthis Ejscript for vxworks
 #
 
-export WIND_BASE := $(WIND_BASE)
-export WIND_HOME := $(WIND_BASE)/..
-export WIND_PLATFORM := $(WIND_PLATFORM)
-
 PRODUCT            := ejs
 VERSION            := 2.3.1
 BUILD_NUMBER       := 0
 PROFILE            := default
 ARCH               := $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/')
 OS                 := vxworks
-CC                 := ccpentium
-LD                 := /usr/bin/ld
+CC                 := cc$(subst x86,pentium,$(ARCH))
+LD                 := link
 CONFIG             := $(OS)-$(ARCH)-$(PROFILE)
 LBIN               := $(CONFIG)/bin
 
@@ -38,6 +34,30 @@ endif
 ifeq ($(BIT_PACK_OPENSSL),1)
     BIT_PACK_SSL := 1
 endif
+
+BIT_PACK_COMPILER_PATH := cc$(subst x86,pentium,$(ARCH))
+BIT_PACK_DOXYGEN_PATH := doxygen
+BIT_PACK_DSI_PATH  := dsi
+BIT_PACK_EJSCRIPT_PATH := ejscript
+BIT_PACK_EST_PATH  := est
+BIT_PACK_LIB_PATH  := ar
+BIT_PACK_LINK_PATH := link
+BIT_PACK_MAN_PATH  := man
+BIT_PACK_MAN2HTML_PATH := man2html
+BIT_PACK_MATRIXSSL_PATH := /usr/src/matrixssl
+BIT_PACK_NANOSSL_PATH := /usr/src/nanossl
+BIT_PACK_OPENSSL_PATH := /usr/src/openssl
+BIT_PACK_PCRE_PATH := pcre
+BIT_PACK_PMAKER_PATH := pmaker
+BIT_PACK_SQLITE_PATH := sqlite
+BIT_PACK_SSL_PATH  := ssl
+BIT_PACK_VXWORKS_PATH := $(WIND_BASE)
+BIT_PACK_ZIP_PATH  := zip
+BIT_PACK_ZLIB_PATH := zlib
+
+export WIND_BASE := $(WIND_BASE)
+export WIND_HOME := $(WIND_BASE)/..
+export WIND_PLATFORM := $(WIND_PLATFORM)
 
 CFLAGS             += -fno-builtin -fno-defer-pop -fvolatile -w
 DFLAGS             += -D_REENTRANT -DVXWORKS -DRW_MULTI_THREAD -D_GNU_TOOL -DCPU=PENTIUM $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS))) -DBIT_PACK_EST=$(BIT_PACK_EST) -DBIT_PACK_MATRIXSSL=$(BIT_PACK_MATRIXSSL) -DBIT_PACK_OPENSSL=$(BIT_PACK_OPENSSL) -DBIT_PACK_SQLITE=$(BIT_PACK_SQLITE) -DBIT_PACK_SSL=$(BIT_PACK_SSL) 
@@ -269,7 +289,7 @@ clobber: clean
 #   version
 #
 version: $(DEPS_1)
-	@echo NN 2.3.1-0
+	@echo 2.3.1-0
 
 #
 #   mpr.h
@@ -277,7 +297,7 @@ version: $(DEPS_1)
 $(CONFIG)/inc/mpr.h: $(DEPS_2)
 	@echo '      [Copy] $(CONFIG)/inc/mpr.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp "src/deps/mpr/mpr.h" "$(CONFIG)/inc/mpr.h"
+	cp src/deps/mpr/mpr.h $(CONFIG)/inc/mpr.h
 
 #
 #   bit.h
@@ -291,7 +311,7 @@ $(CONFIG)/inc/bit.h: $(DEPS_3)
 $(CONFIG)/inc/bitos.h: $(DEPS_4)
 	@echo '      [Copy] $(CONFIG)/inc/bitos.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp "src/bitos.h" "$(CONFIG)/inc/bitos.h"
+	cp src/bitos.h $(CONFIG)/inc/bitos.h
 
 #
 #   mprLib.o
@@ -321,7 +341,7 @@ $(CONFIG)/bin/libmpr.out: $(DEPS_6)
 $(CONFIG)/inc/est.h: $(DEPS_7)
 	@echo '      [Copy] $(CONFIG)/inc/est.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp "src/deps/est/est.h" "$(CONFIG)/inc/est.h"
+	cp src/deps/est/est.h $(CONFIG)/inc/est.h
 
 #
 #   estLib.o
@@ -433,7 +453,7 @@ DEPS_16 += src/deps/est/ca.crt
 $(CONFIG)/bin/ca.crt: $(DEPS_16)
 	@echo '      [Copy] $(CONFIG)/bin/ca.crt'
 	mkdir -p "$(CONFIG)/bin"
-	cp "src/deps/est/ca.crt" "$(CONFIG)/bin/ca.crt"
+	cp src/deps/est/ca.crt $(CONFIG)/bin/ca.crt
 
 #
 #   pcre.h
@@ -441,7 +461,7 @@ $(CONFIG)/bin/ca.crt: $(DEPS_16)
 $(CONFIG)/inc/pcre.h: $(DEPS_17)
 	@echo '      [Copy] $(CONFIG)/inc/pcre.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp "src/deps/pcre/pcre.h" "$(CONFIG)/inc/pcre.h"
+	cp src/deps/pcre/pcre.h $(CONFIG)/inc/pcre.h
 
 #
 #   pcre.o
@@ -470,7 +490,7 @@ $(CONFIG)/bin/libpcre.out: $(DEPS_19)
 $(CONFIG)/inc/http.h: $(DEPS_20)
 	@echo '      [Copy] $(CONFIG)/inc/http.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp "src/deps/http/http.h" "$(CONFIG)/inc/http.h"
+	cp src/deps/http/http.h $(CONFIG)/inc/http.h
 
 #
 #   httpLib.o
@@ -530,7 +550,7 @@ $(CONFIG)/bin/http.out: $(DEPS_24)
 $(CONFIG)/inc/sqlite3.h: $(DEPS_25)
 	@echo '      [Copy] $(CONFIG)/inc/sqlite3.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp "src/deps/sqlite/sqlite3.h" "$(CONFIG)/inc/sqlite3.h"
+	cp src/deps/sqlite/sqlite3.h $(CONFIG)/inc/sqlite3.h
 
 #
 #   sqlite3.o
@@ -590,7 +610,7 @@ endif
 $(CONFIG)/inc/zlib.h: $(DEPS_30)
 	@echo '      [Copy] $(CONFIG)/inc/zlib.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp "src/deps/zlib/zlib.h" "$(CONFIG)/inc/zlib.h"
+	cp src/deps/zlib/zlib.h $(CONFIG)/inc/zlib.h
 
 #
 #   zlib.o
@@ -619,7 +639,7 @@ $(CONFIG)/bin/libzlib.out: $(DEPS_32)
 $(CONFIG)/inc/ejs.cache.local.slots.h: $(DEPS_33)
 	@echo '      [Copy] $(CONFIG)/inc/ejs.cache.local.slots.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp "src/slots/ejs.cache.local.slots.h" "$(CONFIG)/inc/ejs.cache.local.slots.h"
+	cp src/slots/ejs.cache.local.slots.h $(CONFIG)/inc/ejs.cache.local.slots.h
 
 #
 #   ejs.db.sqlite.slots.h
@@ -627,7 +647,7 @@ $(CONFIG)/inc/ejs.cache.local.slots.h: $(DEPS_33)
 $(CONFIG)/inc/ejs.db.sqlite.slots.h: $(DEPS_34)
 	@echo '      [Copy] $(CONFIG)/inc/ejs.db.sqlite.slots.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp "src/slots/ejs.db.sqlite.slots.h" "$(CONFIG)/inc/ejs.db.sqlite.slots.h"
+	cp src/slots/ejs.db.sqlite.slots.h $(CONFIG)/inc/ejs.db.sqlite.slots.h
 
 #
 #   ejs.slots.h
@@ -635,7 +655,7 @@ $(CONFIG)/inc/ejs.db.sqlite.slots.h: $(DEPS_34)
 $(CONFIG)/inc/ejs.slots.h: $(DEPS_35)
 	@echo '      [Copy] $(CONFIG)/inc/ejs.slots.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp "src/slots/ejs.slots.h" "$(CONFIG)/inc/ejs.slots.h"
+	cp src/slots/ejs.slots.h $(CONFIG)/inc/ejs.slots.h
 
 #
 #   ejs.web.slots.h
@@ -643,7 +663,7 @@ $(CONFIG)/inc/ejs.slots.h: $(DEPS_35)
 $(CONFIG)/inc/ejs.web.slots.h: $(DEPS_36)
 	@echo '      [Copy] $(CONFIG)/inc/ejs.web.slots.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp "src/slots/ejs.web.slots.h" "$(CONFIG)/inc/ejs.web.slots.h"
+	cp src/slots/ejs.web.slots.h $(CONFIG)/inc/ejs.web.slots.h
 
 #
 #   ejs.zlib.slots.h
@@ -651,7 +671,7 @@ $(CONFIG)/inc/ejs.web.slots.h: $(DEPS_36)
 $(CONFIG)/inc/ejs.zlib.slots.h: $(DEPS_37)
 	@echo '      [Copy] $(CONFIG)/inc/ejs.zlib.slots.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp "src/slots/ejs.zlib.slots.h" "$(CONFIG)/inc/ejs.zlib.slots.h"
+	cp src/slots/ejs.zlib.slots.h $(CONFIG)/inc/ejs.zlib.slots.h
 
 #
 #   ejsByteCode.h
@@ -659,7 +679,7 @@ $(CONFIG)/inc/ejs.zlib.slots.h: $(DEPS_37)
 $(CONFIG)/inc/ejsByteCode.h: $(DEPS_38)
 	@echo '      [Copy] $(CONFIG)/inc/ejsByteCode.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp "src/ejsByteCode.h" "$(CONFIG)/inc/ejsByteCode.h"
+	cp src/ejsByteCode.h $(CONFIG)/inc/ejsByteCode.h
 
 #
 #   ejsByteCodeTable.h
@@ -667,7 +687,7 @@ $(CONFIG)/inc/ejsByteCode.h: $(DEPS_38)
 $(CONFIG)/inc/ejsByteCodeTable.h: $(DEPS_39)
 	@echo '      [Copy] $(CONFIG)/inc/ejsByteCodeTable.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp "src/ejsByteCodeTable.h" "$(CONFIG)/inc/ejsByteCodeTable.h"
+	cp src/ejsByteCodeTable.h $(CONFIG)/inc/ejsByteCodeTable.h
 
 #
 #   ejsCustomize.h
@@ -675,7 +695,7 @@ $(CONFIG)/inc/ejsByteCodeTable.h: $(DEPS_39)
 $(CONFIG)/inc/ejsCustomize.h: $(DEPS_40)
 	@echo '      [Copy] $(CONFIG)/inc/ejsCustomize.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp "src/ejsCustomize.h" "$(CONFIG)/inc/ejsCustomize.h"
+	cp src/ejsCustomize.h $(CONFIG)/inc/ejsCustomize.h
 
 #
 #   ejs.h
@@ -690,7 +710,7 @@ DEPS_41 += $(CONFIG)/inc/ejsCustomize.h
 $(CONFIG)/inc/ejs.h: $(DEPS_41)
 	@echo '      [Copy] $(CONFIG)/inc/ejs.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp "src/ejs.h" "$(CONFIG)/inc/ejs.h"
+	cp src/ejs.h $(CONFIG)/inc/ejs.h
 
 #
 #   ejsCompiler.h
@@ -698,7 +718,7 @@ $(CONFIG)/inc/ejs.h: $(DEPS_41)
 $(CONFIG)/inc/ejsCompiler.h: $(DEPS_42)
 	@echo '      [Copy] $(CONFIG)/inc/ejsCompiler.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp "src/ejsCompiler.h" "$(CONFIG)/inc/ejsCompiler.h"
+	cp src/ejsCompiler.h $(CONFIG)/inc/ejsCompiler.h
 
 #
 #   ecAst.o
@@ -1817,7 +1837,7 @@ $(CONFIG)/bin/ejs.web.mod: $(DEPS_126)
 $(CONFIG)/inc/ejsWeb.h: $(DEPS_127)
 	@echo '      [Copy] $(CONFIG)/inc/ejsWeb.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp "src/jems/ejs.web/ejsWeb.h" "$(CONFIG)/inc/ejsWeb.h"
+	cp src/jems/ejs.web/ejsWeb.h $(CONFIG)/inc/ejsWeb.h
 
 #
 #   ejsHttpServer.o
@@ -2043,8 +2063,6 @@ stop: $(DEPS_145)
 #
 #   installBinary
 #
-DEPS_146 += stop
-
 installBinary: $(DEPS_146)
 
 #

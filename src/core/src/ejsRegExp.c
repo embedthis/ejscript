@@ -29,8 +29,8 @@ static EjsAny *castRegExp(Ejs *ejs, EjsRegExp *rp, EjsType *type)
 {
     wchar   *pattern;
     char    *flags;
-    ssize   len;
-    int     i, j, quoted;
+    ssize   len, flen;
+    int     i, j;
 
     switch (type->sid) {
     case S_Boolean:
@@ -39,19 +39,24 @@ static EjsAny *castRegExp(Ejs *ejs, EjsRegExp *rp, EjsType *type)
     case S_String:
         flags = makeFlags(rp);
         len = wlen(rp->pattern);
-        pattern = mprAlloc((len * 2 + 1) * sizeof(wchar));
-        quoted = 0;
-        for (i = j = 0; i < len; i++) {
-            if (rp->pattern[i] == '\\') {
-                quoted = !quoted;
-            }
-            if (rp->pattern[i] == '/' && !quoted) {
+        flen = wlen(flags);
+        pattern = mprAlloc((len * 2 + flen + 1) * sizeof(wchar));
+        /*
+            Convert to a form that is a valid, parsable as regular expression literal
+         */
+        pattern[0] = '/';
+        for (i = 0, j = 1; i < len; i++) {
+            if (rp->pattern[i] == '/') {
                 pattern[j++] = '\\';
             }
             pattern[j++] = rp->pattern[i];
         }
+        pattern[j++] = '/';
+        for (i = 0; i < flen; i++) {
+            pattern[j++] = flags[i];
+        }
         pattern[j] = 0;
-        return ejsSprintf(ejs, "/%w/%s", pattern, flags);
+        return ejsCreateStringFromAsc(ejs, pattern);
 
     default:
         ejsThrowTypeError(ejs, "Cannot cast to this type");
@@ -215,10 +220,33 @@ PUBLIC EjsString *ejsRegExpToString(Ejs *ejs, EjsRegExp *rp)
 
 /*********************************** Factory **********************************/
 /*
-    Create an initialized regular expression object. The pattern should include
-    the slash delimiters. For example: /abc/ or /abc/g
+    Create an initialized regular expression object. The pattern should NOT include the slash delimiters. 
  */
-PUBLIC EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
+PUBLIC EjsRegExp *ejsCreateRegExp(Ejs *ejs, cchar *pattern, cchar *flags)
+{
+    EjsRegExp   *rp;
+    cchar       *errMsg;
+    int         column, errCode;
+
+    if ((rp = ejsCreateObj(ejs, ESV(RegExp), 0)) == 0) {
+        return 0;
+    }
+    rp->pattern = sclone(pattern);
+    rp->options = parseFlags(rp, (wchar*) flags);
+    rp->compiled = pcre_compile2(rp->pattern, rp->options, &errCode, &errMsg, &column, NULL);
+    if (rp->compiled == NULL) {
+        ejsThrowArgError(ejs, "Cannot compile regular expression '%s'. Error %s at column %d", rp->pattern, errMsg, column);
+        return 0;
+    }
+    return rp;
+}
+
+
+/*
+    Parse a regular expression string. The string should include the slash delimiters and may contain appended flags. 
+    For example: /abc/ or /abc/g
+ */
+PUBLIC EjsRegExp *ejsParseRegExp(Ejs *ejs, EjsString *pattern)
 {
     EjsRegExp   *rp;
     cchar       *errMsg;
@@ -236,23 +264,30 @@ PUBLIC EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
     /*
         Strip off flags for passing to pcre_compile2
      */
-    rp->pattern = sclone(&pattern->value[1]);
-    if ((flags = wrchr(rp->pattern, '/')) != 0) {
-        if (flags == rp->pattern) {
-            ejsThrowArgError(ejs, "Bad regular expression pattern. Must end with '/'");
-            return 0;
+    if (pattern->value[0] == '/') {
+        rp->pattern = sclone(&pattern->value[1]);
+        if ((flags = wrchr(rp->pattern, '/')) != 0) {
+            if (flags == rp->pattern) {
+                ejsThrowArgError(ejs, "Bad regular expression pattern. Must end with '/'");
+                return 0;
+            }
+            rp->options = parseFlags(rp, &flags[1]);
+            *flags = 0;
         }
-        rp->options = parseFlags(rp, &flags[1]);
-        *flags = 0;
-    }
-    for (dp = cp = rp->pattern; *cp; ) {
-        if (*cp == '\\' && cp[1] == '/') {
-            cp++;
+        /*
+            NOTE: we don't expect backquotes to be quoted. That only happens when interpreting literal js code and JSON
+         */
+        for (dp = cp = rp->pattern; *cp; ) {
+            if (*cp == '\\' && cp[1] == '/') {
+                cp++;
+            }
+            *dp++ = *cp++;
         }
-        *dp++ = *cp++;
+        *dp++ = '\0';
+
+    } else {
+        rp->pattern = sclone(&pattern->value[1]);
     }
-    *dp++ = *cp++;
-    //  TODO - UNICODE is pattern meant to be
     rp->compiled = pcre_compile2(rp->pattern, rp->options, &errCode, &errMsg, &column, NULL);
     if (rp->compiled == NULL) {
         ejsThrowArgError(ejs, "Cannot compile regular expression '%s'. Error %s at column %d", rp->pattern, errMsg, column);
