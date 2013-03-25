@@ -35,24 +35,24 @@ ifeq ($(BIT_PACK_OPENSSL),1)
     BIT_PACK_SSL := 1
 endif
 
-BIT_PACK_COMPILER_PATH := clang
-BIT_PACK_DOXYGEN_PATH := doxygen
-BIT_PACK_DSI_PATH  := dsi
-BIT_PACK_EJSCRIPT_PATH := ejscript
-BIT_PACK_EST_PATH  := est
-BIT_PACK_LIB_PATH  := ar
-BIT_PACK_LINK_PATH := link
-BIT_PACK_MAN_PATH  := man
-BIT_PACK_MAN2HTML_PATH := man2html
-BIT_PACK_MATRIXSSL_PATH := /usr/src/matrixssl
-BIT_PACK_NANOSSL_PATH := /usr/src/nanossl
-BIT_PACK_OPENSSL_PATH := /usr/src/openssl
-BIT_PACK_PCRE_PATH := pcre
-BIT_PACK_PMAKER_PATH := pmaker
-BIT_PACK_SQLITE_PATH := sqlite
-BIT_PACK_SSL_PATH  := ssl
-BIT_PACK_ZIP_PATH  := zip
-BIT_PACK_ZLIB_PATH := zlib
+BIT_PACK_COMPILER_PATH    := clang
+BIT_PACK_DOXYGEN_PATH     := doxygen
+BIT_PACK_DSI_PATH         := dsi
+BIT_PACK_EJSCRIPT_PATH    := ejscript
+BIT_PACK_EST_PATH         := est
+BIT_PACK_LIB_PATH         := ar
+BIT_PACK_LINK_PATH        := link
+BIT_PACK_MAN_PATH         := man
+BIT_PACK_MAN2HTML_PATH    := man2html
+BIT_PACK_MATRIXSSL_PATH   := /usr/src/matrixssl
+BIT_PACK_NANOSSL_PATH     := /usr/src/nanossl
+BIT_PACK_OPENSSL_PATH     := /usr/src/openssl
+BIT_PACK_PCRE_PATH        := pcre
+BIT_PACK_PMAKER_PATH      := pmaker
+BIT_PACK_SQLITE_PATH      := sqlite
+BIT_PACK_SSL_PATH         := ssl
+BIT_PACK_ZIP_PATH         := zip
+BIT_PACK_ZLIB_PATH        := zlib
 
 CFLAGS             += -w
 DFLAGS             +=  $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS))) -DBIT_PACK_EST=$(BIT_PACK_EST) -DBIT_PACK_MATRIXSSL=$(BIT_PACK_MATRIXSSL) -DBIT_PACK_OPENSSL=$(BIT_PACK_OPENSSL) -DBIT_PACK_SQLITE=$(BIT_PACK_SQLITE) -DBIT_PACK_SSL=$(BIT_PACK_SSL) 
@@ -372,7 +372,7 @@ DEPS_10 += $(CONFIG)/inc/est.h
 $(CONFIG)/obj/mprSsl.o: \
     src/deps/mpr/mprSsl.c $(DEPS_10)
 	@echo '   [Compile] src/deps/mpr/mprSsl.c'
-	$(CC) -c -o $(CONFIG)/obj/mprSsl.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/mpr/mprSsl.c
+	$(CC) -c -o $(CONFIG)/obj/mprSsl.o $(CFLAGS) $(DFLAGS) $(IFLAGS) -I$(BIT_PACK_OPENSSL_PATH)/include -I$(BIT_PACK_MATRIXSSL_PATH) -I$(BIT_PACK_MATRIXSSL_PATH)/matrixssl -I$(BIT_PACK_NANOSSL_PATH)/src src/deps/mpr/mprSsl.c
 
 ifeq ($(BIT_PACK_SSL),1)
 #
@@ -384,6 +384,26 @@ ifeq ($(BIT_PACK_EST),1)
 endif
 DEPS_11 += $(CONFIG)/obj/mprSsl.o
 
+ifeq ($(BIT_PACK_SSL),1)
+ifeq ($(BIT_PACK_NANOSSL),1)
+    LIBS_11 += -lssls
+endif
+endif
+ifeq ($(BIT_PACK_SSL),1)
+ifeq ($(BIT_PACK_MATRIXSSL),1)
+    LIBS_11 += -lmatrixssl
+endif
+endif
+ifeq ($(BIT_PACK_SSL),1)
+ifeq ($(BIT_PACK_OPENSSL),1)
+    LIBS_11 += -lcrypto
+endif
+endif
+ifeq ($(BIT_PACK_SSL),1)
+ifeq ($(BIT_PACK_OPENSSL),1)
+    LIBS_11 += -lssl
+endif
+endif
 ifeq ($(BIT_PACK_EST),1)
     LIBS_11 += -lest
 endif
@@ -391,7 +411,7 @@ LIBS_11 += -lmpr
 
 $(CONFIG)/bin/libmprssl.dylib: $(DEPS_11)
 	@echo '      [Link] libmprssl'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libmprssl.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libmprssl.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/mprSsl.o $(LIBS_11) $(LIBS_11) $(LIBS) 
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libmprssl.dylib $(LDFLAGS) $(LIBPATHS) -L$(BIT_PACK_OPENSSL_PATH) -L$(BIT_PACK_MATRIXSSL_PATH) -L$(BIT_PACK_NANOSSL_PATH)/bin -install_name @rpath/libmprssl.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/mprSsl.o $(LIBS_11) $(LIBS_11) $(LIBS) 
 endif
 
 #
@@ -531,13 +551,13 @@ $(CONFIG)/obj/http.o: \
 DEPS_24 += $(CONFIG)/bin/libhttp.dylib
 DEPS_24 += $(CONFIG)/obj/http.o
 
-LIBS_24 += -lhttp
-LIBS_24 += -lpcre
 LIBS_24 += -lmpr
+LIBS_24 += -lpcre
+LIBS_24 += -lhttp
 
 $(CONFIG)/bin/http: $(DEPS_24)
 	@echo '      [Link] http'
-	$(CC) -o $(CONFIG)/bin/http -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o $(LIBS_24) $(LIBS_24) $(LIBS) -lpam 
+	$(CC) -o $(CONFIG)/bin/http -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o -lpam $(LIBS_24) $(LIBS_24) $(LIBS) 
 
 #
 #   sqlite3.h
@@ -1443,13 +1463,13 @@ DEPS_102 += $(CONFIG)/obj/ejsModule.o
 DEPS_102 += $(CONFIG)/obj/ejsScope.o
 DEPS_102 += $(CONFIG)/obj/ejsService.o
 
-LIBS_102 += -lhttp
-LIBS_102 += -lpcre
 LIBS_102 += -lmpr
+LIBS_102 += -lpcre
+LIBS_102 += -lhttp
 
 $(CONFIG)/bin/libejs.dylib: $(DEPS_102)
 	@echo '      [Link] libejs'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/ecAst.o $(CONFIG)/obj/ecCodeGen.o $(CONFIG)/obj/ecCompiler.o $(CONFIG)/obj/ecLex.o $(CONFIG)/obj/ecModuleWrite.o $(CONFIG)/obj/ecParser.o $(CONFIG)/obj/ecState.o $(CONFIG)/obj/dtoa.o $(CONFIG)/obj/ejsApp.o $(CONFIG)/obj/ejsArray.o $(CONFIG)/obj/ejsBlock.o $(CONFIG)/obj/ejsBoolean.o $(CONFIG)/obj/ejsByteArray.o $(CONFIG)/obj/ejsCache.o $(CONFIG)/obj/ejsCmd.o $(CONFIG)/obj/ejsConfig.o $(CONFIG)/obj/ejsDate.o $(CONFIG)/obj/ejsDebug.o $(CONFIG)/obj/ejsError.o $(CONFIG)/obj/ejsFile.o $(CONFIG)/obj/ejsFileSystem.o $(CONFIG)/obj/ejsFrame.o $(CONFIG)/obj/ejsFunction.o $(CONFIG)/obj/ejsGC.o $(CONFIG)/obj/ejsGlobal.o $(CONFIG)/obj/ejsHttp.o $(CONFIG)/obj/ejsIterator.o $(CONFIG)/obj/ejsJSON.o $(CONFIG)/obj/ejsLocalCache.o $(CONFIG)/obj/ejsMath.o $(CONFIG)/obj/ejsMemory.o $(CONFIG)/obj/ejsMprLog.o $(CONFIG)/obj/ejsNamespace.o $(CONFIG)/obj/ejsNull.o $(CONFIG)/obj/ejsNumber.o $(CONFIG)/obj/ejsObject.o $(CONFIG)/obj/ejsPath.o $(CONFIG)/obj/ejsPot.o $(CONFIG)/obj/ejsRegExp.o $(CONFIG)/obj/ejsSocket.o $(CONFIG)/obj/ejsString.o $(CONFIG)/obj/ejsSystem.o $(CONFIG)/obj/ejsTimer.o $(CONFIG)/obj/ejsType.o $(CONFIG)/obj/ejsUri.o $(CONFIG)/obj/ejsVoid.o $(CONFIG)/obj/ejsWebSocket.o $(CONFIG)/obj/ejsWorker.o $(CONFIG)/obj/ejsXML.o $(CONFIG)/obj/ejsXMLList.o $(CONFIG)/obj/ejsXMLLoader.o $(CONFIG)/obj/ejsByteCode.o $(CONFIG)/obj/ejsException.o $(CONFIG)/obj/ejsHelper.o $(CONFIG)/obj/ejsInterp.o $(CONFIG)/obj/ejsLoader.o $(CONFIG)/obj/ejsModule.o $(CONFIG)/obj/ejsScope.o $(CONFIG)/obj/ejsService.o $(LIBS_102) $(LIBS_102) $(LIBS) -lpam 
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/ecAst.o $(CONFIG)/obj/ecCodeGen.o $(CONFIG)/obj/ecCompiler.o $(CONFIG)/obj/ecLex.o $(CONFIG)/obj/ecModuleWrite.o $(CONFIG)/obj/ecParser.o $(CONFIG)/obj/ecState.o $(CONFIG)/obj/dtoa.o $(CONFIG)/obj/ejsApp.o $(CONFIG)/obj/ejsArray.o $(CONFIG)/obj/ejsBlock.o $(CONFIG)/obj/ejsBoolean.o $(CONFIG)/obj/ejsByteArray.o $(CONFIG)/obj/ejsCache.o $(CONFIG)/obj/ejsCmd.o $(CONFIG)/obj/ejsConfig.o $(CONFIG)/obj/ejsDate.o $(CONFIG)/obj/ejsDebug.o $(CONFIG)/obj/ejsError.o $(CONFIG)/obj/ejsFile.o $(CONFIG)/obj/ejsFileSystem.o $(CONFIG)/obj/ejsFrame.o $(CONFIG)/obj/ejsFunction.o $(CONFIG)/obj/ejsGC.o $(CONFIG)/obj/ejsGlobal.o $(CONFIG)/obj/ejsHttp.o $(CONFIG)/obj/ejsIterator.o $(CONFIG)/obj/ejsJSON.o $(CONFIG)/obj/ejsLocalCache.o $(CONFIG)/obj/ejsMath.o $(CONFIG)/obj/ejsMemory.o $(CONFIG)/obj/ejsMprLog.o $(CONFIG)/obj/ejsNamespace.o $(CONFIG)/obj/ejsNull.o $(CONFIG)/obj/ejsNumber.o $(CONFIG)/obj/ejsObject.o $(CONFIG)/obj/ejsPath.o $(CONFIG)/obj/ejsPot.o $(CONFIG)/obj/ejsRegExp.o $(CONFIG)/obj/ejsSocket.o $(CONFIG)/obj/ejsString.o $(CONFIG)/obj/ejsSystem.o $(CONFIG)/obj/ejsTimer.o $(CONFIG)/obj/ejsType.o $(CONFIG)/obj/ejsUri.o $(CONFIG)/obj/ejsVoid.o $(CONFIG)/obj/ejsWebSocket.o $(CONFIG)/obj/ejsWorker.o $(CONFIG)/obj/ejsXML.o $(CONFIG)/obj/ejsXMLList.o $(CONFIG)/obj/ejsXMLLoader.o $(CONFIG)/obj/ejsByteCode.o $(CONFIG)/obj/ejsException.o $(CONFIG)/obj/ejsHelper.o $(CONFIG)/obj/ejsInterp.o $(CONFIG)/obj/ejsLoader.o $(CONFIG)/obj/ejsModule.o $(CONFIG)/obj/ejsScope.o $(CONFIG)/obj/ejsService.o -lpam $(LIBS_102) $(LIBS_102) $(LIBS) 
 
 #
 #   ejs.o
@@ -1468,14 +1488,14 @@ $(CONFIG)/obj/ejs.o: \
 DEPS_104 += $(CONFIG)/bin/libejs.dylib
 DEPS_104 += $(CONFIG)/obj/ejs.o
 
-LIBS_104 += -lejs
 LIBS_104 += -lhttp
 LIBS_104 += -lpcre
 LIBS_104 += -lmpr
+LIBS_104 += -lejs
 
 $(CONFIG)/bin/ejs: $(DEPS_104)
 	@echo '      [Link] ejs'
-	$(CC) -o $(CONFIG)/bin/ejs -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LIBS_104) $(LIBS_104) $(LIBS) -lpam -ledit 
+	$(CC) -o $(CONFIG)/bin/ejs -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o -lpam $(LIBS_104) $(LIBS_104) $(LIBS) -ledit 
 
 #
 #   ejsc.o
@@ -1494,14 +1514,14 @@ $(CONFIG)/obj/ejsc.o: \
 DEPS_106 += $(CONFIG)/bin/libejs.dylib
 DEPS_106 += $(CONFIG)/obj/ejsc.o
 
-LIBS_106 += -lejs
 LIBS_106 += -lhttp
 LIBS_106 += -lpcre
 LIBS_106 += -lmpr
+LIBS_106 += -lejs
 
 $(CONFIG)/bin/ejsc: $(DEPS_106)
 	@echo '      [Link] ejsc'
-	$(CC) -o $(CONFIG)/bin/ejsc -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o $(LIBS_106) $(LIBS_106) $(LIBS) -lpam 
+	$(CC) -o $(CONFIG)/bin/ejsc -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o -lpam $(LIBS_106) $(LIBS_106) $(LIBS) 
 
 #
 #   ejsmod.h
@@ -1576,14 +1596,14 @@ DEPS_113 += $(CONFIG)/obj/docFiles.o
 DEPS_113 += $(CONFIG)/obj/listing.o
 DEPS_113 += $(CONFIG)/obj/slotGen.o
 
-LIBS_113 += -lejs
 LIBS_113 += -lhttp
 LIBS_113 += -lpcre
 LIBS_113 += -lmpr
+LIBS_113 += -lejs
 
 $(CONFIG)/bin/ejsmod: $(DEPS_113)
 	@echo '      [Link] ejsmod'
-	$(CC) -o $(CONFIG)/bin/ejsmod -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o $(LIBS_113) $(LIBS_113) $(LIBS) -lpam 
+	$(CC) -o $(CONFIG)/bin/ejsmod -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o -lpam $(LIBS_113) $(LIBS_113) $(LIBS) 
 
 #
 #   ejsrun.o
@@ -1602,14 +1622,14 @@ $(CONFIG)/obj/ejsrun.o: \
 DEPS_115 += $(CONFIG)/bin/libejs.dylib
 DEPS_115 += $(CONFIG)/obj/ejsrun.o
 
-LIBS_115 += -lejs
 LIBS_115 += -lhttp
 LIBS_115 += -lpcre
 LIBS_115 += -lmpr
+LIBS_115 += -lejs
 
 $(CONFIG)/bin/ejsrun: $(DEPS_115)
 	@echo '      [Link] ejsrun'
-	$(CC) -o $(CONFIG)/bin/ejsrun -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS_115) $(LIBS_115) $(LIBS) -lpam 
+	$(CC) -o $(CONFIG)/bin/ejsrun -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o -lpam $(LIBS_115) $(LIBS_115) $(LIBS) 
 
 #
 #   ejs.mod
@@ -1702,14 +1722,14 @@ DEPS_119 += $(CONFIG)/bin/libejs.dylib
 DEPS_119 += $(CONFIG)/bin/jem.es
 DEPS_119 += $(CONFIG)/obj/ejsrun.o
 
-LIBS_119 += -lejs
 LIBS_119 += -lhttp
 LIBS_119 += -lpcre
 LIBS_119 += -lmpr
+LIBS_119 += -lejs
 
 $(CONFIG)/bin/jem: $(DEPS_119)
 	@echo '      [Link] jem'
-	$(CC) -o $(CONFIG)/bin/jem -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS_119) $(LIBS_119) $(LIBS) -lpam 
+	$(CC) -o $(CONFIG)/bin/jem -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o -lpam $(LIBS_119) $(LIBS_119) $(LIBS) 
 
 #
 #   ejs.db.mod
@@ -1771,14 +1791,14 @@ DEPS_124 += $(CONFIG)/obj/ejsSqlite.o
 ifeq ($(BIT_PACK_SQLITE),1)
     LIBS_124 += -lsqlite3
 endif
-LIBS_124 += -lejs
-LIBS_124 += -lmpr
 LIBS_124 += -lhttp
 LIBS_124 += -lpcre
+LIBS_124 += -lejs
+LIBS_124 += -lmpr
 
 $(CONFIG)/bin/libejs.db.sqlite.dylib: $(DEPS_124)
 	@echo '      [Link] libejs.db.sqlite'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.db.sqlite.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.db.sqlite.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/ejsSqlite.o $(LIBS_124) $(LIBS_124) $(LIBS) -lpam 
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.db.sqlite.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.db.sqlite.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/ejsSqlite.o -lpam $(LIBS_124) $(LIBS_124) $(LIBS) 
 
 #
 #   ejs.mail.mod
@@ -1900,14 +1920,14 @@ DEPS_132 += $(CONFIG)/obj/ejsRequest.o
 DEPS_132 += $(CONFIG)/obj/ejsSession.o
 DEPS_132 += $(CONFIG)/obj/ejsWeb.o
 
-LIBS_132 += -lejs
 LIBS_132 += -lhttp
 LIBS_132 += -lpcre
 LIBS_132 += -lmpr
+LIBS_132 += -lejs
 
 $(CONFIG)/bin/libejs.web.dylib: $(DEPS_132)
 	@echo '      [Link] libejs.web'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.web.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.web.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/ejsHttpServer.o $(CONFIG)/obj/ejsRequest.o $(CONFIG)/obj/ejsSession.o $(CONFIG)/obj/ejsWeb.o $(LIBS_132) $(LIBS_132) $(LIBS) -lpam 
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.web.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.web.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/ejsHttpServer.o $(CONFIG)/obj/ejsRequest.o $(CONFIG)/obj/ejsSession.o $(CONFIG)/obj/ejsWeb.o -lpam $(LIBS_132) $(LIBS_132) $(LIBS) 
 
 #
 #   www
@@ -1961,14 +1981,14 @@ DEPS_137 += $(CONFIG)/bin/libzlib.dylib
 DEPS_137 += $(CONFIG)/obj/ejsZlib.o
 
 LIBS_137 += -lzlib
-LIBS_137 += -lejs
 LIBS_137 += -lhttp
 LIBS_137 += -lpcre
 LIBS_137 += -lmpr
+LIBS_137 += -lejs
 
 $(CONFIG)/bin/libejs.zlib.dylib: $(DEPS_137)
 	@echo '      [Link] libejs.zlib'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.zlib.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.zlib.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/ejsZlib.o $(LIBS_137) $(LIBS_137) $(LIBS) -lpam 
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.zlib.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.zlib.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/ejsZlib.o -lpam $(LIBS_137) $(LIBS_137) $(LIBS) 
 
 #
 #   ejs.tar.mod
@@ -1995,14 +2015,14 @@ DEPS_140 += $(CONFIG)/bin/libejs.dylib
 DEPS_140 += $(CONFIG)/bin/mvc.es
 DEPS_140 += $(CONFIG)/obj/ejsrun.o
 
-LIBS_140 += -lejs
 LIBS_140 += -lhttp
 LIBS_140 += -lpcre
 LIBS_140 += -lmpr
+LIBS_140 += -lejs
 
 $(CONFIG)/bin/mvc: $(DEPS_140)
 	@echo '      [Link] mvc'
-	$(CC) -o $(CONFIG)/bin/mvc -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS_140) $(LIBS_140) $(LIBS) -lpam 
+	$(CC) -o $(CONFIG)/bin/mvc -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o -lpam $(LIBS_140) $(LIBS_140) $(LIBS) 
 
 #
 #   ejs.mvc.mod
@@ -2041,14 +2061,14 @@ DEPS_144 += $(CONFIG)/bin/utest.es
 DEPS_144 += $(CONFIG)/bin/utest.worker
 DEPS_144 += $(CONFIG)/obj/ejsrun.o
 
-LIBS_144 += -lejs
 LIBS_144 += -lhttp
 LIBS_144 += -lpcre
 LIBS_144 += -lmpr
+LIBS_144 += -lejs
 
 $(CONFIG)/bin/utest: $(DEPS_144)
 	@echo '      [Link] utest'
-	$(CC) -o $(CONFIG)/bin/utest -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS_144) $(LIBS_144) $(LIBS) -lpam 
+	$(CC) -o $(CONFIG)/bin/utest -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o -lpam $(LIBS_144) $(LIBS_144) $(LIBS) 
 
 #
 #   stop

@@ -51,26 +51,26 @@ BIT_PACK_WINSDK = 1
 !ENDIF
 
 
-BIT_PACK_COMPILER_PATH := cl
-BIT_PACK_DOXYGEN_PATH := doxygen
-BIT_PACK_DSI_PATH  := dsi
-BIT_PACK_EJSCRIPT_PATH := ejscript
-BIT_PACK_EST_PATH  := est
-BIT_PACK_LIB_PATH  := lib.exe
-BIT_PACK_LINK_PATH := link
-BIT_PACK_MAN_PATH  := man
-BIT_PACK_MAN2HTML_PATH := man2html
-BIT_PACK_MATRIXSSL_PATH := /usr/src/matrixssl
-BIT_PACK_NANOSSL_PATH := /usr/src/nanossl
-BIT_PACK_OPENSSL_PATH := /usr/src/openssl
-BIT_PACK_PCRE_PATH := pcre
-BIT_PACK_PMAKER_PATH := pmaker
-BIT_PACK_RC_PATH   := rc
-BIT_PACK_SQLITE_PATH := sqlite
-BIT_PACK_SSL_PATH  := ssl
-BIT_PACK_WINSDK_PATH := winsdk
-BIT_PACK_ZIP_PATH  := zip
-BIT_PACK_ZLIB_PATH := zlib
+BIT_PACK_COMPILER_PATH    = cl
+BIT_PACK_DOXYGEN_PATH     = doxygen
+BIT_PACK_DSI_PATH         = dsi
+BIT_PACK_EJSCRIPT_PATH    = ejscript
+BIT_PACK_EST_PATH         = est
+BIT_PACK_LIB_PATH         = lib.exe
+BIT_PACK_LINK_PATH        = link
+BIT_PACK_MAN_PATH         = man
+BIT_PACK_MAN2HTML_PATH    = man2html
+BIT_PACK_MATRIXSSL_PATH   = /usr/src/matrixssl
+BIT_PACK_NANOSSL_PATH     = /usr/src/nanossl
+BIT_PACK_OPENSSL_PATH     = /usr/src/openssl
+BIT_PACK_PCRE_PATH        = pcre
+BIT_PACK_PMAKER_PATH      = pmaker
+BIT_PACK_RC_PATH          = rc
+BIT_PACK_SQLITE_PATH      = sqlite
+BIT_PACK_SSL_PATH         = ssl
+BIT_PACK_WINSDK_PATH      = winsdk
+BIT_PACK_ZIP_PATH         = zip
+BIT_PACK_ZLIB_PATH        = zlib
 
 CC                 = cl
 LD                 = link
@@ -391,7 +391,7 @@ DEPS_12 = $(DEPS_12) $(CONFIG)\inc\est.h
 $(CONFIG)\obj\mprSsl.obj: \
     src\deps\mpr\mprSsl.c $(DEPS_12)
 	@echo '   [Compile] src/deps/mpr/mprSsl.c'
-	"$(CC)" -c -Fo$(CONFIG)\obj\mprSsl.obj -Fd$(CONFIG)\obj\mprSsl.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\mpr\mprSsl.c
+	"$(CC)" -c -Fo$(CONFIG)\obj\mprSsl.obj -Fd$(CONFIG)\obj\mprSsl.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) -I$(BIT_PACK_OPENSSL_PATH)\include -I$(BIT_PACK_MATRIXSSL_PATH) -I$(BIT_PACK_MATRIXSSL_PATH)\matrixssl -I$(BIT_PACK_NANOSSL_PATH)\src src\deps\mpr\mprSsl.c
 
 !IF "$(BIT_PACK_SSL)" == "1"
 #
@@ -403,6 +403,26 @@ DEPS_13 = $(DEPS_13) $(CONFIG)\bin\libest.dll
 !ENDIF
 DEPS_13 = $(DEPS_13) $(CONFIG)\obj\mprSsl.obj
 
+!IF "$(BIT_PACK_SSL)" == "1"
+!IF "$(BIT_PACK_NANOSSL)" == "1"
+LIBS_13 = $(LIBS_13) libssls.lib
+!ENDIF
+!ENDIF
+!IF "$(BIT_PACK_SSL)" == "1"
+!IF "$(BIT_PACK_MATRIXSSL)" == "1"
+LIBS_13 = $(LIBS_13) libmatrixssl.lib.lib
+!ENDIF
+!ENDIF
+!IF "$(BIT_PACK_SSL)" == "1"
+!IF "$(BIT_PACK_OPENSSL)" == "1"
+LIBS_13 = $(LIBS_13) libssleay32.lib.lib
+!ENDIF
+!ENDIF
+!IF "$(BIT_PACK_SSL)" == "1"
+!IF "$(BIT_PACK_OPENSSL)" == "1"
+LIBS_13 = $(LIBS_13) liblibeay32.lib.lib
+!ENDIF
+!ENDIF
 !IF "$(BIT_PACK_EST)" == "1"
 LIBS_13 = $(LIBS_13) libest.lib
 !ENDIF
@@ -410,7 +430,7 @@ LIBS_13 = $(LIBS_13) libmpr.lib
 
 $(CONFIG)\bin\libmprssl.dll: $(DEPS_13)
 	@echo '      [Link] libmprssl'
-	"$(LD)" -dll -out:$(CONFIG)\bin\libmprssl.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\mprSsl.obj $(LIBS_13) $(LIBS_13) $(LIBS) 
+	"$(LD)" -dll -out:$(CONFIG)\bin\libmprssl.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) -libpath:$(BIT_PACK_OPENSSL_PATH) -libpath:$(BIT_PACK_MATRIXSSL_PATH) -libpath:$(BIT_PACK_NANOSSL_PATH)\bin $(CONFIG)\obj\mprSsl.obj ssls matrixssl.lib ssleay32.lib libeay32.lib $(LIBS_13) $(LIBS_13) $(LIBS) 
 !ENDIF
 
 #
@@ -550,9 +570,9 @@ $(CONFIG)\obj\http.obj: \
 DEPS_26 = $(DEPS_26) $(CONFIG)\bin\libhttp.dll
 DEPS_26 = $(DEPS_26) $(CONFIG)\obj\http.obj
 
-LIBS_26 = $(LIBS_26) libhttp.lib
-LIBS_26 = $(LIBS_26) libpcre.lib
 LIBS_26 = $(LIBS_26) libmpr.lib
+LIBS_26 = $(LIBS_26) libpcre.lib
+LIBS_26 = $(LIBS_26) libhttp.lib
 
 $(CONFIG)\bin\http.exe: $(DEPS_26)
 	@echo '      [Link] http'
@@ -1462,9 +1482,9 @@ DEPS_104 = $(DEPS_104) $(CONFIG)\obj\ejsModule.obj
 DEPS_104 = $(DEPS_104) $(CONFIG)\obj\ejsScope.obj
 DEPS_104 = $(DEPS_104) $(CONFIG)\obj\ejsService.obj
 
-LIBS_104 = $(LIBS_104) libhttp.lib
-LIBS_104 = $(LIBS_104) libpcre.lib
 LIBS_104 = $(LIBS_104) libmpr.lib
+LIBS_104 = $(LIBS_104) libpcre.lib
+LIBS_104 = $(LIBS_104) libhttp.lib
 
 $(CONFIG)\bin\libejs.dll: $(DEPS_104)
 	@echo '      [Link] libejs'
@@ -1487,10 +1507,10 @@ $(CONFIG)\obj\ejs.obj: \
 DEPS_106 = $(DEPS_106) $(CONFIG)\bin\libejs.dll
 DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejs.obj
 
-LIBS_106 = $(LIBS_106) libejs.lib
 LIBS_106 = $(LIBS_106) libhttp.lib
 LIBS_106 = $(LIBS_106) libpcre.lib
 LIBS_106 = $(LIBS_106) libmpr.lib
+LIBS_106 = $(LIBS_106) libejs.lib
 
 $(CONFIG)\bin\ejs.exe: $(DEPS_106)
 	@echo '      [Link] ejs'
@@ -1513,10 +1533,10 @@ $(CONFIG)\obj\ejsc.obj: \
 DEPS_108 = $(DEPS_108) $(CONFIG)\bin\libejs.dll
 DEPS_108 = $(DEPS_108) $(CONFIG)\obj\ejsc.obj
 
-LIBS_108 = $(LIBS_108) libejs.lib
 LIBS_108 = $(LIBS_108) libhttp.lib
 LIBS_108 = $(LIBS_108) libpcre.lib
 LIBS_108 = $(LIBS_108) libmpr.lib
+LIBS_108 = $(LIBS_108) libejs.lib
 
 $(CONFIG)\bin\ejsc.exe: $(DEPS_108)
 	@echo '      [Link] ejsc'
@@ -1595,10 +1615,10 @@ DEPS_115 = $(DEPS_115) $(CONFIG)\obj\docFiles.obj
 DEPS_115 = $(DEPS_115) $(CONFIG)\obj\listing.obj
 DEPS_115 = $(DEPS_115) $(CONFIG)\obj\slotGen.obj
 
-LIBS_115 = $(LIBS_115) libejs.lib
 LIBS_115 = $(LIBS_115) libhttp.lib
 LIBS_115 = $(LIBS_115) libpcre.lib
 LIBS_115 = $(LIBS_115) libmpr.lib
+LIBS_115 = $(LIBS_115) libejs.lib
 
 $(CONFIG)\bin\ejsmod.exe: $(DEPS_115)
 	@echo '      [Link] ejsmod'
@@ -1621,10 +1641,10 @@ $(CONFIG)\obj\ejsrun.obj: \
 DEPS_117 = $(DEPS_117) $(CONFIG)\bin\libejs.dll
 DEPS_117 = $(DEPS_117) $(CONFIG)\obj\ejsrun.obj
 
-LIBS_117 = $(LIBS_117) libejs.lib
 LIBS_117 = $(LIBS_117) libhttp.lib
 LIBS_117 = $(LIBS_117) libpcre.lib
 LIBS_117 = $(LIBS_117) libmpr.lib
+LIBS_117 = $(LIBS_117) libejs.lib
 
 $(CONFIG)\bin\ejsrun.exe: $(DEPS_117)
 	@echo '      [Link] ejsrun'
@@ -1727,10 +1747,10 @@ DEPS_121 = $(DEPS_121) $(CONFIG)\bin\libejs.dll
 DEPS_121 = $(DEPS_121) $(CONFIG)\bin\jem.es
 DEPS_121 = $(DEPS_121) $(CONFIG)\obj\ejsrun.obj
 
-LIBS_121 = $(LIBS_121) libejs.lib
 LIBS_121 = $(LIBS_121) libhttp.lib
 LIBS_121 = $(LIBS_121) libpcre.lib
 LIBS_121 = $(LIBS_121) libmpr.lib
+LIBS_121 = $(LIBS_121) libejs.lib
 
 $(CONFIG)\bin\jem.exe: $(DEPS_121)
 	@echo '      [Link] jem'
@@ -1802,10 +1822,10 @@ DEPS_126 = $(DEPS_126) $(CONFIG)\obj\ejsSqlite.obj
 !IF "$(BIT_PACK_SQLITE)" == "1"
 LIBS_126 = $(LIBS_126) libsqlite3.lib
 !ENDIF
-LIBS_126 = $(LIBS_126) libejs.lib
-LIBS_126 = $(LIBS_126) libmpr.lib
 LIBS_126 = $(LIBS_126) libhttp.lib
 LIBS_126 = $(LIBS_126) libpcre.lib
+LIBS_126 = $(LIBS_126) libejs.lib
+LIBS_126 = $(LIBS_126) libmpr.lib
 
 $(CONFIG)\bin\libejs.db.sqlite.dll: $(DEPS_126)
 	@echo '      [Link] libejs.db.sqlite'
@@ -1935,10 +1955,10 @@ DEPS_134 = $(DEPS_134) $(CONFIG)\obj\ejsRequest.obj
 DEPS_134 = $(DEPS_134) $(CONFIG)\obj\ejsSession.obj
 DEPS_134 = $(DEPS_134) $(CONFIG)\obj\ejsWeb.obj
 
-LIBS_134 = $(LIBS_134) libejs.lib
 LIBS_134 = $(LIBS_134) libhttp.lib
 LIBS_134 = $(LIBS_134) libpcre.lib
 LIBS_134 = $(LIBS_134) libmpr.lib
+LIBS_134 = $(LIBS_134) libejs.lib
 
 $(CONFIG)\bin\libejs.web.dll: $(DEPS_134)
 	@echo '      [Link] libejs.web'
@@ -2003,10 +2023,10 @@ DEPS_139 = $(DEPS_139) $(CONFIG)\bin\libzlib.dll
 DEPS_139 = $(DEPS_139) $(CONFIG)\obj\ejsZlib.obj
 
 LIBS_139 = $(LIBS_139) libzlib.lib
-LIBS_139 = $(LIBS_139) libejs.lib
 LIBS_139 = $(LIBS_139) libhttp.lib
 LIBS_139 = $(LIBS_139) libpcre.lib
 LIBS_139 = $(LIBS_139) libmpr.lib
+LIBS_139 = $(LIBS_139) libejs.lib
 
 $(CONFIG)\bin\libejs.zlib.dll: $(DEPS_139)
 	@echo '      [Link] libejs.zlib'
@@ -2041,10 +2061,10 @@ DEPS_142 = $(DEPS_142) $(CONFIG)\bin\libejs.dll
 DEPS_142 = $(DEPS_142) $(CONFIG)\bin\mvc.es
 DEPS_142 = $(DEPS_142) $(CONFIG)\obj\ejsrun.obj
 
-LIBS_142 = $(LIBS_142) libejs.lib
 LIBS_142 = $(LIBS_142) libhttp.lib
 LIBS_142 = $(LIBS_142) libpcre.lib
 LIBS_142 = $(LIBS_142) libmpr.lib
+LIBS_142 = $(LIBS_142) libejs.lib
 
 $(CONFIG)\bin\mvc.exe: $(DEPS_142)
 	@echo '      [Link] mvc'
@@ -2093,10 +2113,10 @@ DEPS_146 = $(DEPS_146) $(CONFIG)\bin\utest.es
 DEPS_146 = $(DEPS_146) $(CONFIG)\bin\utest.worker
 DEPS_146 = $(DEPS_146) $(CONFIG)\obj\ejsrun.obj
 
-LIBS_146 = $(LIBS_146) libejs.lib
 LIBS_146 = $(LIBS_146) libhttp.lib
 LIBS_146 = $(LIBS_146) libpcre.lib
 LIBS_146 = $(LIBS_146) libmpr.lib
+LIBS_146 = $(LIBS_146) libejs.lib
 
 $(CONFIG)\bin\utest.exe: $(DEPS_146)
 	@echo '      [Link] utest'

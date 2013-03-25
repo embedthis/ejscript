@@ -35,25 +35,25 @@ ifeq ($(BIT_PACK_OPENSSL),1)
     BIT_PACK_SSL := 1
 endif
 
-BIT_PACK_COMPILER_PATH := cc$(subst x86,pentium,$(ARCH))
-BIT_PACK_DOXYGEN_PATH := doxygen
-BIT_PACK_DSI_PATH  := dsi
-BIT_PACK_EJSCRIPT_PATH := ejscript
-BIT_PACK_EST_PATH  := est
-BIT_PACK_LIB_PATH  := ar
-BIT_PACK_LINK_PATH := link
-BIT_PACK_MAN_PATH  := man
-BIT_PACK_MAN2HTML_PATH := man2html
-BIT_PACK_MATRIXSSL_PATH := /usr/src/matrixssl
-BIT_PACK_NANOSSL_PATH := /usr/src/nanossl
-BIT_PACK_OPENSSL_PATH := /usr/src/openssl
-BIT_PACK_PCRE_PATH := pcre
-BIT_PACK_PMAKER_PATH := pmaker
-BIT_PACK_SQLITE_PATH := sqlite
-BIT_PACK_SSL_PATH  := ssl
-BIT_PACK_VXWORKS_PATH := $(WIND_BASE)
-BIT_PACK_ZIP_PATH  := zip
-BIT_PACK_ZLIB_PATH := zlib
+BIT_PACK_COMPILER_PATH    := cc$(subst x86,pentium,$(ARCH))
+BIT_PACK_DOXYGEN_PATH     := doxygen
+BIT_PACK_DSI_PATH         := dsi
+BIT_PACK_EJSCRIPT_PATH    := ejscript
+BIT_PACK_EST_PATH         := est
+BIT_PACK_LIB_PATH         := ar
+BIT_PACK_LINK_PATH        := link
+BIT_PACK_MAN_PATH         := man
+BIT_PACK_MAN2HTML_PATH    := man2html
+BIT_PACK_MATRIXSSL_PATH   := /usr/src/matrixssl
+BIT_PACK_NANOSSL_PATH     := /usr/src/nanossl
+BIT_PACK_OPENSSL_PATH     := /usr/src/openssl
+BIT_PACK_PCRE_PATH        := pcre
+BIT_PACK_PMAKER_PATH      := pmaker
+BIT_PACK_SQLITE_PATH      := sqlite
+BIT_PACK_SSL_PATH         := ssl
+BIT_PACK_VXWORKS_PATH     := $(WIND_BASE)
+BIT_PACK_ZIP_PATH         := zip
+BIT_PACK_ZLIB_PATH        := zlib
 
 export WIND_BASE := $(WIND_BASE)
 export WIND_HOME := $(WIND_BASE)/..
@@ -377,7 +377,7 @@ DEPS_10 += $(CONFIG)/inc/est.h
 $(CONFIG)/obj/mprSsl.o: \
     src/deps/mpr/mprSsl.c $(DEPS_10)
 	@echo '   [Compile] src/deps/mpr/mprSsl.c'
-	$(CC) -c -o $(CONFIG)/obj/mprSsl.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/mpr/mprSsl.c
+	$(CC) -c -o $(CONFIG)/obj/mprSsl.o $(CFLAGS) $(DFLAGS) $(IFLAGS) -I$(BIT_PACK_OPENSSL_PATH)/include -I$(BIT_PACK_MATRIXSSL_PATH) -I$(BIT_PACK_MATRIXSSL_PATH)/matrixssl -I$(BIT_PACK_NANOSSL_PATH)/src src/deps/mpr/mprSsl.c
 
 ifeq ($(BIT_PACK_SSL),1)
 #
@@ -389,6 +389,26 @@ ifeq ($(BIT_PACK_EST),1)
 endif
 DEPS_11 += $(CONFIG)/obj/mprSsl.o
 
+ifeq ($(BIT_PACK_SSL),1)
+ifeq ($(BIT_PACK_NANOSSL),1)
+    LIBS_11 += -lssls
+endif
+endif
+ifeq ($(BIT_PACK_SSL),1)
+ifeq ($(BIT_PACK_MATRIXSSL),1)
+    LIBS_11 += -lmatrixssl
+endif
+endif
+ifeq ($(BIT_PACK_SSL),1)
+ifeq ($(BIT_PACK_OPENSSL),1)
+    LIBS_11 += -lcrypto
+endif
+endif
+ifeq ($(BIT_PACK_SSL),1)
+ifeq ($(BIT_PACK_OPENSSL),1)
+    LIBS_11 += -lssl
+endif
+endif
 ifeq ($(BIT_PACK_EST),1)
     LIBS_11 += -lest
 endif
@@ -396,7 +416,7 @@ LIBS_11 += -lmpr
 
 $(CONFIG)/bin/libmprssl.out: $(DEPS_11)
 	@echo '      [Link] libmprssl'
-	$(CC) -r -o $(CONFIG)/bin/libmprssl.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/mprSsl.o   $(LIBS_11) $(LIBS_11)
+	$(CC) -r -o $(CONFIG)/bin/libmprssl.out $(LDFLAGS) $(LIBPATHS) -L$(BIT_PACK_OPENSSL_PATH) -L$(BIT_PACK_MATRIXSSL_PATH) -L$(BIT_PACK_NANOSSL_PATH)/bin $(CONFIG)/obj/mprSsl.o   $(LIBS_11) $(LIBS_11)
 endif
 
 #
@@ -536,9 +556,9 @@ $(CONFIG)/obj/http.o: \
 DEPS_24 += $(CONFIG)/bin/libhttp.out
 DEPS_24 += $(CONFIG)/obj/http.o
 
-LIBS_24 += -lhttp
-LIBS_24 += -lpcre
 LIBS_24 += -lmpr
+LIBS_24 += -lpcre
+LIBS_24 += -lhttp
 
 $(CONFIG)/bin/http.out: $(DEPS_24)
 	@echo '      [Link] http'
@@ -1448,9 +1468,9 @@ DEPS_102 += $(CONFIG)/obj/ejsModule.o
 DEPS_102 += $(CONFIG)/obj/ejsScope.o
 DEPS_102 += $(CONFIG)/obj/ejsService.o
 
-LIBS_102 += -lhttp
-LIBS_102 += -lpcre
 LIBS_102 += -lmpr
+LIBS_102 += -lpcre
+LIBS_102 += -lhttp
 
 $(CONFIG)/bin/libejs.out: $(DEPS_102)
 	@echo '      [Link] libejs'
@@ -1473,10 +1493,10 @@ $(CONFIG)/obj/ejs.o: \
 DEPS_104 += $(CONFIG)/bin/libejs.out
 DEPS_104 += $(CONFIG)/obj/ejs.o
 
-LIBS_104 += -lejs
 LIBS_104 += -lhttp
 LIBS_104 += -lpcre
 LIBS_104 += -lmpr
+LIBS_104 += -lejs
 
 $(CONFIG)/bin/ejs.out: $(DEPS_104)
 	@echo '      [Link] ejs'
@@ -1499,10 +1519,10 @@ $(CONFIG)/obj/ejsc.o: \
 DEPS_106 += $(CONFIG)/bin/libejs.out
 DEPS_106 += $(CONFIG)/obj/ejsc.o
 
-LIBS_106 += -lejs
 LIBS_106 += -lhttp
 LIBS_106 += -lpcre
 LIBS_106 += -lmpr
+LIBS_106 += -lejs
 
 $(CONFIG)/bin/ejsc.out: $(DEPS_106)
 	@echo '      [Link] ejsc'
@@ -1581,10 +1601,10 @@ DEPS_113 += $(CONFIG)/obj/docFiles.o
 DEPS_113 += $(CONFIG)/obj/listing.o
 DEPS_113 += $(CONFIG)/obj/slotGen.o
 
-LIBS_113 += -lejs
 LIBS_113 += -lhttp
 LIBS_113 += -lpcre
 LIBS_113 += -lmpr
+LIBS_113 += -lejs
 
 $(CONFIG)/bin/ejsmod.out: $(DEPS_113)
 	@echo '      [Link] ejsmod'
@@ -1607,10 +1627,10 @@ $(CONFIG)/obj/ejsrun.o: \
 DEPS_115 += $(CONFIG)/bin/libejs.out
 DEPS_115 += $(CONFIG)/obj/ejsrun.o
 
-LIBS_115 += -lejs
 LIBS_115 += -lhttp
 LIBS_115 += -lpcre
 LIBS_115 += -lmpr
+LIBS_115 += -lejs
 
 $(CONFIG)/bin/ejsrun.out: $(DEPS_115)
 	@echo '      [Link] ejsrun'
@@ -1707,10 +1727,10 @@ DEPS_119 += $(CONFIG)/bin/libejs.out
 DEPS_119 += $(CONFIG)/bin/jem.es
 DEPS_119 += $(CONFIG)/obj/ejsrun.o
 
-LIBS_119 += -lejs
 LIBS_119 += -lhttp
 LIBS_119 += -lpcre
 LIBS_119 += -lmpr
+LIBS_119 += -lejs
 
 $(CONFIG)/bin/jem.out: $(DEPS_119)
 	@echo '      [Link] jem'
@@ -1776,10 +1796,10 @@ DEPS_124 += $(CONFIG)/obj/ejsSqlite.o
 ifeq ($(BIT_PACK_SQLITE),1)
     LIBS_124 += -lsqlite3
 endif
-LIBS_124 += -lejs
-LIBS_124 += -lmpr
 LIBS_124 += -lhttp
 LIBS_124 += -lpcre
+LIBS_124 += -lejs
+LIBS_124 += -lmpr
 
 $(CONFIG)/bin/libejs.db.sqlite.out: $(DEPS_124)
 	@echo '      [Link] libejs.db.sqlite'
@@ -1905,10 +1925,10 @@ DEPS_132 += $(CONFIG)/obj/ejsRequest.o
 DEPS_132 += $(CONFIG)/obj/ejsSession.o
 DEPS_132 += $(CONFIG)/obj/ejsWeb.o
 
-LIBS_132 += -lejs
 LIBS_132 += -lhttp
 LIBS_132 += -lpcre
 LIBS_132 += -lmpr
+LIBS_132 += -lejs
 
 $(CONFIG)/bin/libejs.web.out: $(DEPS_132)
 	@echo '      [Link] libejs.web'
@@ -1966,10 +1986,10 @@ DEPS_137 += $(CONFIG)/bin/libzlib.out
 DEPS_137 += $(CONFIG)/obj/ejsZlib.o
 
 LIBS_137 += -lzlib
-LIBS_137 += -lejs
 LIBS_137 += -lhttp
 LIBS_137 += -lpcre
 LIBS_137 += -lmpr
+LIBS_137 += -lejs
 
 $(CONFIG)/bin/libejs.zlib.out: $(DEPS_137)
 	@echo '      [Link] libejs.zlib'
@@ -2000,10 +2020,10 @@ DEPS_140 += $(CONFIG)/bin/libejs.out
 DEPS_140 += $(CONFIG)/bin/mvc.es
 DEPS_140 += $(CONFIG)/obj/ejsrun.o
 
-LIBS_140 += -lejs
 LIBS_140 += -lhttp
 LIBS_140 += -lpcre
 LIBS_140 += -lmpr
+LIBS_140 += -lejs
 
 $(CONFIG)/bin/mvc.out: $(DEPS_140)
 	@echo '      [Link] mvc'
@@ -2046,10 +2066,10 @@ DEPS_144 += $(CONFIG)/bin/utest.es
 DEPS_144 += $(CONFIG)/bin/utest.worker
 DEPS_144 += $(CONFIG)/obj/ejsrun.o
 
-LIBS_144 += -lejs
 LIBS_144 += -lhttp
 LIBS_144 += -lpcre
 LIBS_144 += -lmpr
+LIBS_144 += -lejs
 
 $(CONFIG)/bin/utest.out: $(DEPS_144)
 	@echo '      [Link] utest'
