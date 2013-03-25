@@ -30,7 +30,7 @@ static EjsAny *castRegExp(Ejs *ejs, EjsRegExp *rp, EjsType *type)
     wchar   *pattern;
     char    *flags;
     ssize   len;
-    int     i, j;
+    int     i, j, quoted;
 
     switch (type->sid) {
     case S_Boolean:
@@ -40,8 +40,12 @@ static EjsAny *castRegExp(Ejs *ejs, EjsRegExp *rp, EjsType *type)
         flags = makeFlags(rp);
         len = wlen(rp->pattern);
         pattern = mprAlloc((len * 2 + 1) * sizeof(wchar));
+        quoted = 0;
         for (i = j = 0; i < len; i++) {
-            if (rp->pattern[i] == '/') {
+            if (rp->pattern[i] == '\\') {
+                quoted = !quoted;
+            }
+            if (rp->pattern[i] == '/' && !quoted) {
                 pattern[j++] = '\\';
             }
             pattern[j++] = rp->pattern[i];
