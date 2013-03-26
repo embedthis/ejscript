@@ -13,14 +13,14 @@ Bit.load({
             install: {
                 inherit:    'embedthis-manifest',
                 prefixes:   [ 'root', 'app', 'vapp', 'bin', 'inc', 'man' ],
-                sets:       [ 'core', 'dev', 'doc' ],
+                sets:       [ 'core', 'libs', 'dev', 'doc' ],
                 platforms:  [ 'windows', 'unix' ],
             },
             binary: {
                 inherit:    'embedthis-manifest',
                 prefixes:   [ 'root', 'app', 'vapp', 'bin', 'inc', 'man' ],
                 formats:    [ 'native', 'tar' ],
-                sets:       [ 'core', 'test', 'doc', 'dev', 'package' ],
+                sets:       [ 'core', 'libs', 'test', 'doc', 'dev', 'package' ],
                 platforms:  [ 'windows', 'macosx' ]
             },
             source: {
@@ -65,6 +65,12 @@ Bit.load({
                     '${BIN}/libpcre${SHOBJ}',
                     '${BIN}/libsqlite3${SHOBJ}',
                     '${BIN}/libzlib${SHOBJ}',
+                ],
+                to:         '${abin}/',
+                set:        'core',
+                enable:     '!bit.settings.static', 
+
+            },{ from:        [
                     '${BIN}/ejs.db.mapper.mod',
                     '${BIN}/ejs.db.mod',
                     '${BIN}/ejs.db.sqlite.mod',
@@ -85,6 +91,13 @@ Bit.load({
 
             },{ from:        [
                     '${BIN}/libmprssl${SHOBJ}',
+                ],
+                to:         '${abin}/',
+                set:        'core',
+                requires:   'ssl',
+                enable:     '!bit.settings.static', 
+
+            },{ from:        [
                     '${BIN}/ca.crt',
                 ],
                 to:         '${abin}/',
@@ -115,6 +128,7 @@ Bit.load({
                 to:         '${abin}/',
                 set:        'core',
                 requires:   'est',
+                enable:     '!bit.settings.static', 
 
             },{ from:        [
                     '${BIN}/libejs${SHLIB}',
@@ -122,6 +136,7 @@ Bit.load({
                 to:         '${abin}/',
                 set:        'core',
                 enable:     "bit.platform.os == 'windows'",
+                enable:     '!bit.settings.static', 
 
             },{
                 from:       'src/jems/ejs.web/www',
