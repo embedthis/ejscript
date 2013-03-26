@@ -1643,7 +1643,14 @@
       <type>EjsRegExp *</type>
       <name>ejsCreateRegExp</name>
       <anchorfile>group___ejs_reg_exp.html</anchorfile>
-      <anchor>gac9a6378d8053367d37657d26c816fa50</anchor>
+      <anchor>gaeadd405d338274acaa25acad550d4443</anchor>
+      <arglist>(Ejs *ejs, cchar *pattern, cchar *flags)</arglist>
+    </member>
+    <member kind="function">
+      <type>EjsRegExp *</type>
+      <name>ejsParseRegExp</name>
+      <anchorfile>group___ejs_reg_exp.html</anchorfile>
+      <anchor>gaf10d72be3aa1eebdc3e0f3ed5998ff1b</anchor>
       <arglist>(Ejs *ejs, EjsString *pattern)</arglist>
     </member>
     <member kind="function">

@@ -62,7 +62,7 @@ help:
 	@echo '  BIT_MPR_LOGGING    # Enable application logging' >&2
 	@echo '  BIT_MPR_TRACING    # Enable debug tracing' >&2
 	@echo '  BIT_PACK_EST       # Enable the EST SSL stack' >&2
-	@echo '  BIT_PACK_MOCANA    # Enable the Mocana NanoSSL stack' >&2
+	@echo '  BIT_PACK_NANOSSL   # Enable the Mocana NanoSSL stack' >&2
 	@echo '  BIT_PACK_MATRIXSSL # Enable the MatrixSSL SSL stack' >&2
 	@echo '  BIT_PACK_OPENSSL   # Enable the OpenSSL SSL stack' >&2
 	@echo '  BIT_PACK_SQLITE    # Enable the SQLite database' >&2
