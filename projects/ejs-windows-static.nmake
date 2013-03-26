@@ -429,7 +429,7 @@ LIBS_15 = $(LIBS_15) libmpr.lib
 
 $(CONFIG)\bin\ejsman.exe: $(DEPS_15)
 	@echo '      [Link] manager'
-	"$(LD)" -out:$(CONFIG)\bin\ejsman.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\manager.obj $(LIBS_15) $(LIBS_15) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\ejsman.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\manager.obj $(LIBPATHS_15) $(LIBS_15) $(LIBS_15) $(LIBS) 
 
 #
 #   makerom.obj
@@ -452,7 +452,7 @@ LIBS_17 = $(LIBS_17) libmpr.lib
 
 $(CONFIG)\bin\makerom.exe: $(DEPS_17)
 	@echo '      [Link] makerom'
-	"$(LD)" -out:$(CONFIG)\bin\makerom.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\makerom.obj $(LIBS_17) $(LIBS_17) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\makerom.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\makerom.obj $(LIBPATHS_17) $(LIBS_17) $(LIBS_17) $(LIBS) 
 
 #
 #   ca-crt
@@ -548,7 +548,7 @@ LIBS_26 = $(LIBS_26) libhttp.lib
 
 $(CONFIG)\bin\http.exe: $(DEPS_26)
 	@echo '      [Link] http'
-	"$(LD)" -out:$(CONFIG)\bin\http.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\http.obj $(LIBS_26) $(LIBS_26) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\http.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\http.obj $(LIBPATHS_26) $(LIBS_26) $(LIBS_26) $(LIBS) 
 
 #
 #   sqlite3.h
@@ -607,7 +607,7 @@ LIBS_31 = $(LIBS_31) libsqlite3.lib
 
 $(CONFIG)\bin\sqlite.exe: $(DEPS_31)
 	@echo '      [Link] sqlite'
-	"$(LD)" -out:$(CONFIG)\bin\sqlite.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite.obj $(LIBS_31) $(LIBS_31) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\sqlite.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite.obj $(LIBPATHS_31) $(LIBS_31) $(LIBS_31) $(LIBS) 
 !ENDIF
 
 #
@@ -1482,7 +1482,7 @@ LIBS_106 = $(LIBS_106) libejs.lib
 
 $(CONFIG)\bin\ejs.exe: $(DEPS_106)
 	@echo '      [Link] ejs'
-	"$(LD)" -out:$(CONFIG)\bin\ejs.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejs.obj $(LIBS_106) $(LIBS_106) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\ejs.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejs.obj $(LIBPATHS_106) $(LIBS_106) $(LIBS_106) $(LIBS) 
 
 #
 #   ejsc.obj
@@ -1508,7 +1508,7 @@ LIBS_108 = $(LIBS_108) libejs.lib
 
 $(CONFIG)\bin\ejsc.exe: $(DEPS_108)
 	@echo '      [Link] ejsc'
-	"$(LD)" -out:$(CONFIG)\bin\ejsc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsc.obj $(LIBS_108) $(LIBS_108) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\ejsc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsc.obj $(LIBPATHS_108) $(LIBS_108) $(LIBS_108) $(LIBS) 
 
 #
 #   ejsmod.h
@@ -1590,7 +1590,7 @@ LIBS_115 = $(LIBS_115) libejs.lib
 
 $(CONFIG)\bin\ejsmod.exe: $(DEPS_115)
 	@echo '      [Link] ejsmod'
-	"$(LD)" -out:$(CONFIG)\bin\ejsmod.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsmod.obj $(CONFIG)\obj\doc.obj $(CONFIG)\obj\docFiles.obj $(CONFIG)\obj\listing.obj $(CONFIG)\obj\slotGen.obj $(LIBS_115) $(LIBS_115) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\ejsmod.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsmod.obj $(CONFIG)\obj\doc.obj $(CONFIG)\obj\docFiles.obj $(CONFIG)\obj\listing.obj $(CONFIG)\obj\slotGen.obj $(LIBPATHS_115) $(LIBS_115) $(LIBS_115) $(LIBS) 
 
 #
 #   ejsrun.obj
@@ -1616,7 +1616,7 @@ LIBS_117 = $(LIBS_117) libejs.lib
 
 $(CONFIG)\bin\ejsrun.exe: $(DEPS_117)
 	@echo '      [Link] ejsrun'
-	"$(LD)" -out:$(CONFIG)\bin\ejsrun.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBS_117) $(LIBS_117) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\ejsrun.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBPATHS_117) $(LIBS_117) $(LIBS_117) $(LIBS) 
 
 #
 #   ejs.mod
@@ -1722,7 +1722,7 @@ LIBS_121 = $(LIBS_121) libejs.lib
 
 $(CONFIG)\bin\jem.exe: $(DEPS_121)
 	@echo '      [Link] jem'
-	"$(LD)" -out:$(CONFIG)\bin\jem.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBS_121) $(LIBS_121) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\jem.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBPATHS_121) $(LIBS_121) $(LIBS_121) $(LIBS) 
 
 #
 #   ejs.db.mod
@@ -2017,7 +2017,7 @@ LIBS_142 = $(LIBS_142) libejs.lib
 
 $(CONFIG)\bin\mvc.exe: $(DEPS_142)
 	@echo '      [Link] mvc'
-	"$(LD)" -out:$(CONFIG)\bin\mvc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBS_142) $(LIBS_142) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\mvc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBPATHS_142) $(LIBS_142) $(LIBS_142) $(LIBS) 
 
 #
 #   ejs.mvc.mod
@@ -2069,7 +2069,7 @@ LIBS_146 = $(LIBS_146) libejs.lib
 
 $(CONFIG)\bin\utest.exe: $(DEPS_146)
 	@echo '      [Link] utest'
-	"$(LD)" -out:$(CONFIG)\bin\utest.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBS_146) $(LIBS_146) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\utest.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBPATHS_146) $(LIBS_146) $(LIBS_146) $(LIBS) 
 
 #
 #   stop

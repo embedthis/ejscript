@@ -387,21 +387,25 @@ DEPS_11 += $(CONFIG)/obj/mprSsl.o
 ifeq ($(BIT_PACK_SSL),1)
 ifeq ($(BIT_PACK_NANOSSL),1)
     LIBS_11 += -lssls
+    LIBPATHS_11 += -L$(BIT_PACK_NANOSSL_PATH)/bin
 endif
 endif
 ifeq ($(BIT_PACK_SSL),1)
 ifeq ($(BIT_PACK_MATRIXSSL),1)
     LIBS_11 += -lmatrixssl
+    LIBPATHS_11 += -L$(BIT_PACK_MATRIXSSL_PATH)
 endif
 endif
 ifeq ($(BIT_PACK_SSL),1)
 ifeq ($(BIT_PACK_OPENSSL),1)
     LIBS_11 += -lcrypto
+    LIBPATHS_11 += -L$(BIT_PACK_OPENSSL_PATH)
 endif
 endif
 ifeq ($(BIT_PACK_SSL),1)
 ifeq ($(BIT_PACK_OPENSSL),1)
     LIBS_11 += -lssl
+    LIBPATHS_11 += -L$(BIT_PACK_OPENSSL_PATH)
 endif
 endif
 ifeq ($(BIT_PACK_EST),1)
@@ -411,7 +415,7 @@ LIBS_11 += -lmpr
 
 $(CONFIG)/bin/libmprssl.dylib: $(DEPS_11)
 	@echo '      [Link] libmprssl'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libmprssl.dylib $(LDFLAGS) $(LIBPATHS) -L$(BIT_PACK_OPENSSL_PATH) -L$(BIT_PACK_MATRIXSSL_PATH) -L$(BIT_PACK_NANOSSL_PATH)/bin -install_name @rpath/libmprssl.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/mprSsl.o $(LIBS_11) $(LIBS_11) $(LIBS) 
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libmprssl.dylib $(LDFLAGS) $(LIBPATHS)    -install_name @rpath/libmprssl.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/mprSsl.o $(LIBPATHS_11) $(LIBS_11) $(LIBS_11) $(LIBS) 
 endif
 
 #
@@ -435,7 +439,7 @@ LIBS_13 += -lmpr
 
 $(CONFIG)/bin/ejsman: $(DEPS_13)
 	@echo '      [Link] manager'
-	$(CC) -o $(CONFIG)/bin/ejsman -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LIBS_13) $(LIBS_13) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/ejsman -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LIBPATHS_13) $(LIBS_13) $(LIBS_13) $(LIBS) 
 
 #
 #   makerom.o
@@ -458,7 +462,7 @@ LIBS_15 += -lmpr
 
 $(CONFIG)/bin/makerom: $(DEPS_15)
 	@echo '      [Link] makerom'
-	$(CC) -o $(CONFIG)/bin/makerom -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o $(LIBS_15) $(LIBS_15) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/makerom -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o $(LIBPATHS_15) $(LIBS_15) $(LIBS_15) $(LIBS) 
 
 #
 #   ca-crt
@@ -532,7 +536,7 @@ LIBS_22 += -lmpr
 
 $(CONFIG)/bin/libhttp.dylib: $(DEPS_22)
 	@echo '      [Link] libhttp'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libhttp.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libhttp.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/httpLib.o $(LIBS_22) $(LIBS_22) $(LIBS) -lpam 
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libhttp.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libhttp.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/httpLib.o $(LIBPATHS_22) $(LIBS_22) $(LIBS_22) $(LIBS) -lpam 
 
 #
 #   http.o
@@ -557,7 +561,7 @@ LIBS_24 += -lhttp
 
 $(CONFIG)/bin/http: $(DEPS_24)
 	@echo '      [Link] http'
-	$(CC) -o $(CONFIG)/bin/http -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o -lpam $(LIBS_24) $(LIBS_24) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/http -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o -lpam $(LIBPATHS_24) $(LIBS_24) $(LIBS_24) $(LIBS) 
 
 #
 #   sqlite3.h
@@ -616,7 +620,7 @@ endif
 
 $(CONFIG)/bin/sqlite: $(DEPS_29)
 	@echo '      [Link] sqlite'
-	$(CC) -o $(CONFIG)/bin/sqlite -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LIBS_29) $(LIBS_29) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/sqlite -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LIBPATHS_29) $(LIBS_29) $(LIBS_29) $(LIBS) 
 endif
 
 #
@@ -1469,7 +1473,7 @@ LIBS_102 += -lhttp
 
 $(CONFIG)/bin/libejs.dylib: $(DEPS_102)
 	@echo '      [Link] libejs'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/ecAst.o $(CONFIG)/obj/ecCodeGen.o $(CONFIG)/obj/ecCompiler.o $(CONFIG)/obj/ecLex.o $(CONFIG)/obj/ecModuleWrite.o $(CONFIG)/obj/ecParser.o $(CONFIG)/obj/ecState.o $(CONFIG)/obj/dtoa.o $(CONFIG)/obj/ejsApp.o $(CONFIG)/obj/ejsArray.o $(CONFIG)/obj/ejsBlock.o $(CONFIG)/obj/ejsBoolean.o $(CONFIG)/obj/ejsByteArray.o $(CONFIG)/obj/ejsCache.o $(CONFIG)/obj/ejsCmd.o $(CONFIG)/obj/ejsConfig.o $(CONFIG)/obj/ejsDate.o $(CONFIG)/obj/ejsDebug.o $(CONFIG)/obj/ejsError.o $(CONFIG)/obj/ejsFile.o $(CONFIG)/obj/ejsFileSystem.o $(CONFIG)/obj/ejsFrame.o $(CONFIG)/obj/ejsFunction.o $(CONFIG)/obj/ejsGC.o $(CONFIG)/obj/ejsGlobal.o $(CONFIG)/obj/ejsHttp.o $(CONFIG)/obj/ejsIterator.o $(CONFIG)/obj/ejsJSON.o $(CONFIG)/obj/ejsLocalCache.o $(CONFIG)/obj/ejsMath.o $(CONFIG)/obj/ejsMemory.o $(CONFIG)/obj/ejsMprLog.o $(CONFIG)/obj/ejsNamespace.o $(CONFIG)/obj/ejsNull.o $(CONFIG)/obj/ejsNumber.o $(CONFIG)/obj/ejsObject.o $(CONFIG)/obj/ejsPath.o $(CONFIG)/obj/ejsPot.o $(CONFIG)/obj/ejsRegExp.o $(CONFIG)/obj/ejsSocket.o $(CONFIG)/obj/ejsString.o $(CONFIG)/obj/ejsSystem.o $(CONFIG)/obj/ejsTimer.o $(CONFIG)/obj/ejsType.o $(CONFIG)/obj/ejsUri.o $(CONFIG)/obj/ejsVoid.o $(CONFIG)/obj/ejsWebSocket.o $(CONFIG)/obj/ejsWorker.o $(CONFIG)/obj/ejsXML.o $(CONFIG)/obj/ejsXMLList.o $(CONFIG)/obj/ejsXMLLoader.o $(CONFIG)/obj/ejsByteCode.o $(CONFIG)/obj/ejsException.o $(CONFIG)/obj/ejsHelper.o $(CONFIG)/obj/ejsInterp.o $(CONFIG)/obj/ejsLoader.o $(CONFIG)/obj/ejsModule.o $(CONFIG)/obj/ejsScope.o $(CONFIG)/obj/ejsService.o -lpam $(LIBS_102) $(LIBS_102) $(LIBS) 
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/ecAst.o $(CONFIG)/obj/ecCodeGen.o $(CONFIG)/obj/ecCompiler.o $(CONFIG)/obj/ecLex.o $(CONFIG)/obj/ecModuleWrite.o $(CONFIG)/obj/ecParser.o $(CONFIG)/obj/ecState.o $(CONFIG)/obj/dtoa.o $(CONFIG)/obj/ejsApp.o $(CONFIG)/obj/ejsArray.o $(CONFIG)/obj/ejsBlock.o $(CONFIG)/obj/ejsBoolean.o $(CONFIG)/obj/ejsByteArray.o $(CONFIG)/obj/ejsCache.o $(CONFIG)/obj/ejsCmd.o $(CONFIG)/obj/ejsConfig.o $(CONFIG)/obj/ejsDate.o $(CONFIG)/obj/ejsDebug.o $(CONFIG)/obj/ejsError.o $(CONFIG)/obj/ejsFile.o $(CONFIG)/obj/ejsFileSystem.o $(CONFIG)/obj/ejsFrame.o $(CONFIG)/obj/ejsFunction.o $(CONFIG)/obj/ejsGC.o $(CONFIG)/obj/ejsGlobal.o $(CONFIG)/obj/ejsHttp.o $(CONFIG)/obj/ejsIterator.o $(CONFIG)/obj/ejsJSON.o $(CONFIG)/obj/ejsLocalCache.o $(CONFIG)/obj/ejsMath.o $(CONFIG)/obj/ejsMemory.o $(CONFIG)/obj/ejsMprLog.o $(CONFIG)/obj/ejsNamespace.o $(CONFIG)/obj/ejsNull.o $(CONFIG)/obj/ejsNumber.o $(CONFIG)/obj/ejsObject.o $(CONFIG)/obj/ejsPath.o $(CONFIG)/obj/ejsPot.o $(CONFIG)/obj/ejsRegExp.o $(CONFIG)/obj/ejsSocket.o $(CONFIG)/obj/ejsString.o $(CONFIG)/obj/ejsSystem.o $(CONFIG)/obj/ejsTimer.o $(CONFIG)/obj/ejsType.o $(CONFIG)/obj/ejsUri.o $(CONFIG)/obj/ejsVoid.o $(CONFIG)/obj/ejsWebSocket.o $(CONFIG)/obj/ejsWorker.o $(CONFIG)/obj/ejsXML.o $(CONFIG)/obj/ejsXMLList.o $(CONFIG)/obj/ejsXMLLoader.o $(CONFIG)/obj/ejsByteCode.o $(CONFIG)/obj/ejsException.o $(CONFIG)/obj/ejsHelper.o $(CONFIG)/obj/ejsInterp.o $(CONFIG)/obj/ejsLoader.o $(CONFIG)/obj/ejsModule.o $(CONFIG)/obj/ejsScope.o $(CONFIG)/obj/ejsService.o -lpam $(LIBPATHS_102) $(LIBS_102) $(LIBS_102) $(LIBS) 
 
 #
 #   ejs.o
@@ -1495,7 +1499,7 @@ LIBS_104 += -lejs
 
 $(CONFIG)/bin/ejs: $(DEPS_104)
 	@echo '      [Link] ejs'
-	$(CC) -o $(CONFIG)/bin/ejs -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o -lpam $(LIBS_104) $(LIBS_104) $(LIBS) -ledit 
+	$(CC) -o $(CONFIG)/bin/ejs -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o -lpam $(LIBPATHS_104) $(LIBS_104) $(LIBS_104) $(LIBS) -ledit 
 
 #
 #   ejsc.o
@@ -1521,7 +1525,7 @@ LIBS_106 += -lejs
 
 $(CONFIG)/bin/ejsc: $(DEPS_106)
 	@echo '      [Link] ejsc'
-	$(CC) -o $(CONFIG)/bin/ejsc -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o -lpam $(LIBS_106) $(LIBS_106) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/ejsc -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o -lpam $(LIBPATHS_106) $(LIBS_106) $(LIBS_106) $(LIBS) 
 
 #
 #   ejsmod.h
@@ -1603,7 +1607,7 @@ LIBS_113 += -lejs
 
 $(CONFIG)/bin/ejsmod: $(DEPS_113)
 	@echo '      [Link] ejsmod'
-	$(CC) -o $(CONFIG)/bin/ejsmod -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o -lpam $(LIBS_113) $(LIBS_113) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/ejsmod -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o -lpam $(LIBPATHS_113) $(LIBS_113) $(LIBS_113) $(LIBS) 
 
 #
 #   ejsrun.o
@@ -1629,7 +1633,7 @@ LIBS_115 += -lejs
 
 $(CONFIG)/bin/ejsrun: $(DEPS_115)
 	@echo '      [Link] ejsrun'
-	$(CC) -o $(CONFIG)/bin/ejsrun -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o -lpam $(LIBS_115) $(LIBS_115) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/ejsrun -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o -lpam $(LIBPATHS_115) $(LIBS_115) $(LIBS_115) $(LIBS) 
 
 #
 #   ejs.mod
@@ -1729,7 +1733,7 @@ LIBS_119 += -lejs
 
 $(CONFIG)/bin/jem: $(DEPS_119)
 	@echo '      [Link] jem'
-	$(CC) -o $(CONFIG)/bin/jem -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o -lpam $(LIBS_119) $(LIBS_119) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/jem -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o -lpam $(LIBPATHS_119) $(LIBS_119) $(LIBS_119) $(LIBS) 
 
 #
 #   ejs.db.mod
@@ -1798,7 +1802,7 @@ LIBS_124 += -lmpr
 
 $(CONFIG)/bin/libejs.db.sqlite.dylib: $(DEPS_124)
 	@echo '      [Link] libejs.db.sqlite'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.db.sqlite.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.db.sqlite.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/ejsSqlite.o -lpam $(LIBS_124) $(LIBS_124) $(LIBS) 
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.db.sqlite.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.db.sqlite.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/ejsSqlite.o -lpam $(LIBPATHS_124) $(LIBS_124) $(LIBS_124) $(LIBS) 
 
 #
 #   ejs.mail.mod
@@ -1927,7 +1931,7 @@ LIBS_132 += -lejs
 
 $(CONFIG)/bin/libejs.web.dylib: $(DEPS_132)
 	@echo '      [Link] libejs.web'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.web.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.web.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/ejsHttpServer.o $(CONFIG)/obj/ejsRequest.o $(CONFIG)/obj/ejsSession.o $(CONFIG)/obj/ejsWeb.o -lpam $(LIBS_132) $(LIBS_132) $(LIBS) 
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.web.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.web.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/ejsHttpServer.o $(CONFIG)/obj/ejsRequest.o $(CONFIG)/obj/ejsSession.o $(CONFIG)/obj/ejsWeb.o -lpam $(LIBPATHS_132) $(LIBS_132) $(LIBS_132) $(LIBS) 
 
 #
 #   www
@@ -1988,7 +1992,7 @@ LIBS_137 += -lejs
 
 $(CONFIG)/bin/libejs.zlib.dylib: $(DEPS_137)
 	@echo '      [Link] libejs.zlib'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.zlib.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.zlib.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/ejsZlib.o -lpam $(LIBS_137) $(LIBS_137) $(LIBS) 
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libejs.zlib.dylib $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.zlib.dylib -compatibility_version 2.3.1 -current_version 2.3.1 $(CONFIG)/obj/ejsZlib.o -lpam $(LIBPATHS_137) $(LIBS_137) $(LIBS_137) $(LIBS) 
 
 #
 #   ejs.tar.mod
@@ -2022,7 +2026,7 @@ LIBS_140 += -lejs
 
 $(CONFIG)/bin/mvc: $(DEPS_140)
 	@echo '      [Link] mvc'
-	$(CC) -o $(CONFIG)/bin/mvc -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o -lpam $(LIBS_140) $(LIBS_140) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/mvc -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o -lpam $(LIBPATHS_140) $(LIBS_140) $(LIBS_140) $(LIBS) 
 
 #
 #   ejs.mvc.mod
@@ -2068,7 +2072,7 @@ LIBS_144 += -lejs
 
 $(CONFIG)/bin/utest: $(DEPS_144)
 	@echo '      [Link] utest'
-	$(CC) -o $(CONFIG)/bin/utest -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o -lpam $(LIBS_144) $(LIBS_144) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/utest -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o -lpam $(LIBPATHS_144) $(LIBS_144) $(LIBS_144) $(LIBS) 
 
 #
 #   stop

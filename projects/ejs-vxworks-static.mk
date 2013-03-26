@@ -415,7 +415,7 @@ LIBS_13 += -lmpr
 
 $(CONFIG)/bin/ejsman.out: $(DEPS_13)
 	@echo '      [Link] manager'
-	$(CC) -o $(CONFIG)/bin/ejsman.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LDFLAGS)  $(LIBS_13) $(LIBS_13)
+	$(CC) -o $(CONFIG)/bin/ejsman.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LDFLAGS)  $(LIBPATHS_13) $(LIBS_13) $(LIBS_13)
 
 #
 #   makerom.o
@@ -438,7 +438,7 @@ LIBS_15 += -lmpr
 
 $(CONFIG)/bin/makerom.out: $(DEPS_15)
 	@echo '      [Link] makerom'
-	$(CC) -o $(CONFIG)/bin/makerom.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o $(LDFLAGS)  $(LIBS_15) $(LIBS_15)
+	$(CC) -o $(CONFIG)/bin/makerom.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o $(LDFLAGS)  $(LIBPATHS_15) $(LIBS_15) $(LIBS_15)
 
 #
 #   ca-crt
@@ -534,7 +534,7 @@ LIBS_24 += -lhttp
 
 $(CONFIG)/bin/http.out: $(DEPS_24)
 	@echo '      [Link] http'
-	$(CC) -o $(CONFIG)/bin/http.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o $(LDFLAGS)  $(LIBS_24) $(LIBS_24)
+	$(CC) -o $(CONFIG)/bin/http.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o $(LDFLAGS)  $(LIBPATHS_24) $(LIBS_24) $(LIBS_24)
 
 #
 #   sqlite3.h
@@ -593,7 +593,7 @@ endif
 
 $(CONFIG)/bin/sqlite.out: $(DEPS_29)
 	@echo '      [Link] sqlite'
-	$(CC) -o $(CONFIG)/bin/sqlite.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LDFLAGS)  $(LIBS_29) $(LIBS_29)
+	$(CC) -o $(CONFIG)/bin/sqlite.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LDFLAGS)  $(LIBPATHS_29) $(LIBS_29) $(LIBS_29)
 endif
 
 #
@@ -1468,7 +1468,7 @@ LIBS_104 += -lejs
 
 $(CONFIG)/bin/ejs.out: $(DEPS_104)
 	@echo '      [Link] ejs'
-	$(CC) -o $(CONFIG)/bin/ejs.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LDFLAGS)  $(LIBS_104) $(LIBS_104)
+	$(CC) -o $(CONFIG)/bin/ejs.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LDFLAGS)  $(LIBPATHS_104) $(LIBS_104) $(LIBS_104)
 
 #
 #   ejsc.o
@@ -1494,7 +1494,7 @@ LIBS_106 += -lejs
 
 $(CONFIG)/bin/ejsc.out: $(DEPS_106)
 	@echo '      [Link] ejsc'
-	$(CC) -o $(CONFIG)/bin/ejsc.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o $(LDFLAGS)  $(LIBS_106) $(LIBS_106)
+	$(CC) -o $(CONFIG)/bin/ejsc.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o $(LDFLAGS)  $(LIBPATHS_106) $(LIBS_106) $(LIBS_106)
 
 #
 #   ejsmod.h
@@ -1576,7 +1576,7 @@ LIBS_113 += -lejs
 
 $(CONFIG)/bin/ejsmod.out: $(DEPS_113)
 	@echo '      [Link] ejsmod'
-	$(CC) -o $(CONFIG)/bin/ejsmod.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o $(LDFLAGS)  $(LIBS_113) $(LIBS_113)
+	$(CC) -o $(CONFIG)/bin/ejsmod.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o $(LDFLAGS)  $(LIBPATHS_113) $(LIBS_113) $(LIBS_113)
 
 #
 #   ejsrun.o
@@ -1602,7 +1602,7 @@ LIBS_115 += -lejs
 
 $(CONFIG)/bin/ejsrun.out: $(DEPS_115)
 	@echo '      [Link] ejsrun'
-	$(CC) -o $(CONFIG)/bin/ejsrun.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS)  $(LIBS_115) $(LIBS_115)
+	$(CC) -o $(CONFIG)/bin/ejsrun.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS)  $(LIBPATHS_115) $(LIBS_115) $(LIBS_115)
 
 #
 #   ejs.mod
@@ -1702,7 +1702,7 @@ LIBS_119 += -lejs
 
 $(CONFIG)/bin/jem.out: $(DEPS_119)
 	@echo '      [Link] jem'
-	$(CC) -o $(CONFIG)/bin/jem.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS)  $(LIBS_119) $(LIBS_119)
+	$(CC) -o $(CONFIG)/bin/jem.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS)  $(LIBPATHS_119) $(LIBS_119) $(LIBS_119)
 
 #
 #   ejs.db.mod
@@ -1976,7 +1976,7 @@ LIBS_140 += -lejs
 
 $(CONFIG)/bin/mvc.out: $(DEPS_140)
 	@echo '      [Link] mvc'
-	$(CC) -o $(CONFIG)/bin/mvc.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS)  $(LIBS_140) $(LIBS_140)
+	$(CC) -o $(CONFIG)/bin/mvc.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS)  $(LIBPATHS_140) $(LIBS_140) $(LIBS_140)
 
 #
 #   ejs.mvc.mod
@@ -2022,7 +2022,7 @@ LIBS_144 += -lejs
 
 $(CONFIG)/bin/utest.out: $(DEPS_144)
 	@echo '      [Link] utest'
-	$(CC) -o $(CONFIG)/bin/utest.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS)  $(LIBS_144) $(LIBS_144)
+	$(CC) -o $(CONFIG)/bin/utest.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS)  $(LIBPATHS_144) $(LIBS_144) $(LIBS_144)
 
 #
 #   stop

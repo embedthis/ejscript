@@ -392,21 +392,25 @@ DEPS_11 += $(CONFIG)/obj/mprSsl.o
 ifeq ($(BIT_PACK_SSL),1)
 ifeq ($(BIT_PACK_NANOSSL),1)
     LIBS_11 += -lssls
+    LIBPATHS_11 += -L$(BIT_PACK_NANOSSL_PATH)/bin
 endif
 endif
 ifeq ($(BIT_PACK_SSL),1)
 ifeq ($(BIT_PACK_MATRIXSSL),1)
     LIBS_11 += -lmatrixssl
+    LIBPATHS_11 += -L$(BIT_PACK_MATRIXSSL_PATH)
 endif
 endif
 ifeq ($(BIT_PACK_SSL),1)
 ifeq ($(BIT_PACK_OPENSSL),1)
     LIBS_11 += -lcrypto
+    LIBPATHS_11 += -L$(BIT_PACK_OPENSSL_PATH)
 endif
 endif
 ifeq ($(BIT_PACK_SSL),1)
 ifeq ($(BIT_PACK_OPENSSL),1)
     LIBS_11 += -lssl
+    LIBPATHS_11 += -L$(BIT_PACK_OPENSSL_PATH)
 endif
 endif
 ifeq ($(BIT_PACK_EST),1)
@@ -416,7 +420,7 @@ LIBS_11 += -lmpr
 
 $(CONFIG)/bin/libmprssl.out: $(DEPS_11)
 	@echo '      [Link] libmprssl'
-	$(CC) -r -o $(CONFIG)/bin/libmprssl.out $(LDFLAGS) $(LIBPATHS) -L$(BIT_PACK_OPENSSL_PATH) -L$(BIT_PACK_MATRIXSSL_PATH) -L$(BIT_PACK_NANOSSL_PATH)/bin $(CONFIG)/obj/mprSsl.o   $(LIBS_11) $(LIBS_11)
+	$(CC) -r -o $(CONFIG)/bin/libmprssl.out $(LDFLAGS) $(LIBPATHS)    $(CONFIG)/obj/mprSsl.o   $(LIBPATHS_11) $(LIBS_11) $(LIBS_11)
 endif
 
 #
@@ -440,7 +444,7 @@ LIBS_13 += -lmpr
 
 $(CONFIG)/bin/ejsman.out: $(DEPS_13)
 	@echo '      [Link] manager'
-	$(CC) -o $(CONFIG)/bin/ejsman.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LDFLAGS)  $(LIBS_13) $(LIBS_13)
+	$(CC) -o $(CONFIG)/bin/ejsman.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LDFLAGS)  $(LIBPATHS_13) $(LIBS_13) $(LIBS_13)
 
 #
 #   makerom.o
@@ -463,7 +467,7 @@ LIBS_15 += -lmpr
 
 $(CONFIG)/bin/makerom.out: $(DEPS_15)
 	@echo '      [Link] makerom'
-	$(CC) -o $(CONFIG)/bin/makerom.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o $(LDFLAGS)  $(LIBS_15) $(LIBS_15)
+	$(CC) -o $(CONFIG)/bin/makerom.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o $(LDFLAGS)  $(LIBPATHS_15) $(LIBS_15) $(LIBS_15)
 
 #
 #   ca-crt
@@ -537,7 +541,7 @@ LIBS_22 += -lmpr
 
 $(CONFIG)/bin/libhttp.out: $(DEPS_22)
 	@echo '      [Link] libhttp'
-	$(CC) -r -o $(CONFIG)/bin/libhttp.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/httpLib.o   $(LIBS_22) $(LIBS_22)
+	$(CC) -r -o $(CONFIG)/bin/libhttp.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/httpLib.o   $(LIBPATHS_22) $(LIBS_22) $(LIBS_22)
 
 #
 #   http.o
@@ -562,7 +566,7 @@ LIBS_24 += -lhttp
 
 $(CONFIG)/bin/http.out: $(DEPS_24)
 	@echo '      [Link] http'
-	$(CC) -o $(CONFIG)/bin/http.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o $(LDFLAGS)  $(LIBS_24) $(LIBS_24)
+	$(CC) -o $(CONFIG)/bin/http.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o $(LDFLAGS)  $(LIBPATHS_24) $(LIBS_24) $(LIBS_24)
 
 #
 #   sqlite3.h
@@ -621,7 +625,7 @@ endif
 
 $(CONFIG)/bin/sqlite.out: $(DEPS_29)
 	@echo '      [Link] sqlite'
-	$(CC) -o $(CONFIG)/bin/sqlite.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LDFLAGS)  $(LIBS_29) $(LIBS_29)
+	$(CC) -o $(CONFIG)/bin/sqlite.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LDFLAGS)  $(LIBPATHS_29) $(LIBS_29) $(LIBS_29)
 endif
 
 #
@@ -1474,7 +1478,7 @@ LIBS_102 += -lhttp
 
 $(CONFIG)/bin/libejs.out: $(DEPS_102)
 	@echo '      [Link] libejs'
-	$(CC) -r -o $(CONFIG)/bin/libejs.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ecAst.o $(CONFIG)/obj/ecCodeGen.o $(CONFIG)/obj/ecCompiler.o $(CONFIG)/obj/ecLex.o $(CONFIG)/obj/ecModuleWrite.o $(CONFIG)/obj/ecParser.o $(CONFIG)/obj/ecState.o $(CONFIG)/obj/dtoa.o $(CONFIG)/obj/ejsApp.o $(CONFIG)/obj/ejsArray.o $(CONFIG)/obj/ejsBlock.o $(CONFIG)/obj/ejsBoolean.o $(CONFIG)/obj/ejsByteArray.o $(CONFIG)/obj/ejsCache.o $(CONFIG)/obj/ejsCmd.o $(CONFIG)/obj/ejsConfig.o $(CONFIG)/obj/ejsDate.o $(CONFIG)/obj/ejsDebug.o $(CONFIG)/obj/ejsError.o $(CONFIG)/obj/ejsFile.o $(CONFIG)/obj/ejsFileSystem.o $(CONFIG)/obj/ejsFrame.o $(CONFIG)/obj/ejsFunction.o $(CONFIG)/obj/ejsGC.o $(CONFIG)/obj/ejsGlobal.o $(CONFIG)/obj/ejsHttp.o $(CONFIG)/obj/ejsIterator.o $(CONFIG)/obj/ejsJSON.o $(CONFIG)/obj/ejsLocalCache.o $(CONFIG)/obj/ejsMath.o $(CONFIG)/obj/ejsMemory.o $(CONFIG)/obj/ejsMprLog.o $(CONFIG)/obj/ejsNamespace.o $(CONFIG)/obj/ejsNull.o $(CONFIG)/obj/ejsNumber.o $(CONFIG)/obj/ejsObject.o $(CONFIG)/obj/ejsPath.o $(CONFIG)/obj/ejsPot.o $(CONFIG)/obj/ejsRegExp.o $(CONFIG)/obj/ejsSocket.o $(CONFIG)/obj/ejsString.o $(CONFIG)/obj/ejsSystem.o $(CONFIG)/obj/ejsTimer.o $(CONFIG)/obj/ejsType.o $(CONFIG)/obj/ejsUri.o $(CONFIG)/obj/ejsVoid.o $(CONFIG)/obj/ejsWebSocket.o $(CONFIG)/obj/ejsWorker.o $(CONFIG)/obj/ejsXML.o $(CONFIG)/obj/ejsXMLList.o $(CONFIG)/obj/ejsXMLLoader.o $(CONFIG)/obj/ejsByteCode.o $(CONFIG)/obj/ejsException.o $(CONFIG)/obj/ejsHelper.o $(CONFIG)/obj/ejsInterp.o $(CONFIG)/obj/ejsLoader.o $(CONFIG)/obj/ejsModule.o $(CONFIG)/obj/ejsScope.o $(CONFIG)/obj/ejsService.o   $(LIBS_102) $(LIBS_102)
+	$(CC) -r -o $(CONFIG)/bin/libejs.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ecAst.o $(CONFIG)/obj/ecCodeGen.o $(CONFIG)/obj/ecCompiler.o $(CONFIG)/obj/ecLex.o $(CONFIG)/obj/ecModuleWrite.o $(CONFIG)/obj/ecParser.o $(CONFIG)/obj/ecState.o $(CONFIG)/obj/dtoa.o $(CONFIG)/obj/ejsApp.o $(CONFIG)/obj/ejsArray.o $(CONFIG)/obj/ejsBlock.o $(CONFIG)/obj/ejsBoolean.o $(CONFIG)/obj/ejsByteArray.o $(CONFIG)/obj/ejsCache.o $(CONFIG)/obj/ejsCmd.o $(CONFIG)/obj/ejsConfig.o $(CONFIG)/obj/ejsDate.o $(CONFIG)/obj/ejsDebug.o $(CONFIG)/obj/ejsError.o $(CONFIG)/obj/ejsFile.o $(CONFIG)/obj/ejsFileSystem.o $(CONFIG)/obj/ejsFrame.o $(CONFIG)/obj/ejsFunction.o $(CONFIG)/obj/ejsGC.o $(CONFIG)/obj/ejsGlobal.o $(CONFIG)/obj/ejsHttp.o $(CONFIG)/obj/ejsIterator.o $(CONFIG)/obj/ejsJSON.o $(CONFIG)/obj/ejsLocalCache.o $(CONFIG)/obj/ejsMath.o $(CONFIG)/obj/ejsMemory.o $(CONFIG)/obj/ejsMprLog.o $(CONFIG)/obj/ejsNamespace.o $(CONFIG)/obj/ejsNull.o $(CONFIG)/obj/ejsNumber.o $(CONFIG)/obj/ejsObject.o $(CONFIG)/obj/ejsPath.o $(CONFIG)/obj/ejsPot.o $(CONFIG)/obj/ejsRegExp.o $(CONFIG)/obj/ejsSocket.o $(CONFIG)/obj/ejsString.o $(CONFIG)/obj/ejsSystem.o $(CONFIG)/obj/ejsTimer.o $(CONFIG)/obj/ejsType.o $(CONFIG)/obj/ejsUri.o $(CONFIG)/obj/ejsVoid.o $(CONFIG)/obj/ejsWebSocket.o $(CONFIG)/obj/ejsWorker.o $(CONFIG)/obj/ejsXML.o $(CONFIG)/obj/ejsXMLList.o $(CONFIG)/obj/ejsXMLLoader.o $(CONFIG)/obj/ejsByteCode.o $(CONFIG)/obj/ejsException.o $(CONFIG)/obj/ejsHelper.o $(CONFIG)/obj/ejsInterp.o $(CONFIG)/obj/ejsLoader.o $(CONFIG)/obj/ejsModule.o $(CONFIG)/obj/ejsScope.o $(CONFIG)/obj/ejsService.o   $(LIBPATHS_102) $(LIBS_102) $(LIBS_102)
 
 #
 #   ejs.o
@@ -1500,7 +1504,7 @@ LIBS_104 += -lejs
 
 $(CONFIG)/bin/ejs.out: $(DEPS_104)
 	@echo '      [Link] ejs'
-	$(CC) -o $(CONFIG)/bin/ejs.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LDFLAGS)  $(LIBS_104) $(LIBS_104)
+	$(CC) -o $(CONFIG)/bin/ejs.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LDFLAGS)  $(LIBPATHS_104) $(LIBS_104) $(LIBS_104)
 
 #
 #   ejsc.o
@@ -1526,7 +1530,7 @@ LIBS_106 += -lejs
 
 $(CONFIG)/bin/ejsc.out: $(DEPS_106)
 	@echo '      [Link] ejsc'
-	$(CC) -o $(CONFIG)/bin/ejsc.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o $(LDFLAGS)  $(LIBS_106) $(LIBS_106)
+	$(CC) -o $(CONFIG)/bin/ejsc.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o $(LDFLAGS)  $(LIBPATHS_106) $(LIBS_106) $(LIBS_106)
 
 #
 #   ejsmod.h
@@ -1608,7 +1612,7 @@ LIBS_113 += -lejs
 
 $(CONFIG)/bin/ejsmod.out: $(DEPS_113)
 	@echo '      [Link] ejsmod'
-	$(CC) -o $(CONFIG)/bin/ejsmod.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o $(LDFLAGS)  $(LIBS_113) $(LIBS_113)
+	$(CC) -o $(CONFIG)/bin/ejsmod.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o $(LDFLAGS)  $(LIBPATHS_113) $(LIBS_113) $(LIBS_113)
 
 #
 #   ejsrun.o
@@ -1634,7 +1638,7 @@ LIBS_115 += -lejs
 
 $(CONFIG)/bin/ejsrun.out: $(DEPS_115)
 	@echo '      [Link] ejsrun'
-	$(CC) -o $(CONFIG)/bin/ejsrun.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS)  $(LIBS_115) $(LIBS_115)
+	$(CC) -o $(CONFIG)/bin/ejsrun.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS)  $(LIBPATHS_115) $(LIBS_115) $(LIBS_115)
 
 #
 #   ejs.mod
@@ -1734,7 +1738,7 @@ LIBS_119 += -lejs
 
 $(CONFIG)/bin/jem.out: $(DEPS_119)
 	@echo '      [Link] jem'
-	$(CC) -o $(CONFIG)/bin/jem.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS)  $(LIBS_119) $(LIBS_119)
+	$(CC) -o $(CONFIG)/bin/jem.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS)  $(LIBPATHS_119) $(LIBS_119) $(LIBS_119)
 
 #
 #   ejs.db.mod
@@ -1803,7 +1807,7 @@ LIBS_124 += -lmpr
 
 $(CONFIG)/bin/libejs.db.sqlite.out: $(DEPS_124)
 	@echo '      [Link] libejs.db.sqlite'
-	$(CC) -r -o $(CONFIG)/bin/libejs.db.sqlite.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsSqlite.o   $(LIBS_124) $(LIBS_124)
+	$(CC) -r -o $(CONFIG)/bin/libejs.db.sqlite.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsSqlite.o   $(LIBPATHS_124) $(LIBS_124) $(LIBS_124)
 
 #
 #   ejs.mail.mod
@@ -1932,7 +1936,7 @@ LIBS_132 += -lejs
 
 $(CONFIG)/bin/libejs.web.out: $(DEPS_132)
 	@echo '      [Link] libejs.web'
-	$(CC) -r -o $(CONFIG)/bin/libejs.web.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsHttpServer.o $(CONFIG)/obj/ejsRequest.o $(CONFIG)/obj/ejsSession.o $(CONFIG)/obj/ejsWeb.o   $(LIBS_132) $(LIBS_132)
+	$(CC) -r -o $(CONFIG)/bin/libejs.web.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsHttpServer.o $(CONFIG)/obj/ejsRequest.o $(CONFIG)/obj/ejsSession.o $(CONFIG)/obj/ejsWeb.o   $(LIBPATHS_132) $(LIBS_132) $(LIBS_132)
 
 #
 #   www
@@ -1993,7 +1997,7 @@ LIBS_137 += -lejs
 
 $(CONFIG)/bin/libejs.zlib.out: $(DEPS_137)
 	@echo '      [Link] libejs.zlib'
-	$(CC) -r -o $(CONFIG)/bin/libejs.zlib.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsZlib.o   $(LIBS_137) $(LIBS_137)
+	$(CC) -r -o $(CONFIG)/bin/libejs.zlib.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsZlib.o   $(LIBPATHS_137) $(LIBS_137) $(LIBS_137)
 
 #
 #   ejs.tar.mod
@@ -2027,7 +2031,7 @@ LIBS_140 += -lejs
 
 $(CONFIG)/bin/mvc.out: $(DEPS_140)
 	@echo '      [Link] mvc'
-	$(CC) -o $(CONFIG)/bin/mvc.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS)  $(LIBS_140) $(LIBS_140)
+	$(CC) -o $(CONFIG)/bin/mvc.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS)  $(LIBPATHS_140) $(LIBS_140) $(LIBS_140)
 
 #
 #   ejs.mvc.mod
@@ -2073,7 +2077,7 @@ LIBS_144 += -lejs
 
 $(CONFIG)/bin/utest.out: $(DEPS_144)
 	@echo '      [Link] utest'
-	$(CC) -o $(CONFIG)/bin/utest.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS)  $(LIBS_144) $(LIBS_144)
+	$(CC) -o $(CONFIG)/bin/utest.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LDFLAGS)  $(LIBPATHS_144) $(LIBS_144) $(LIBS_144)
 
 #
 #   stop

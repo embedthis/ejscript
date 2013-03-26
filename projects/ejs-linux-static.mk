@@ -410,7 +410,7 @@ LIBS_13 += -lmpr
 
 $(CONFIG)/bin/ejsman: $(DEPS_13)
 	@echo '      [Link] manager'
-	$(CC) -o $(CONFIG)/bin/ejsman $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LIBS_13) $(LIBS_13) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejsman $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LIBPATHS_13) $(LIBS_13) $(LIBS_13) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 
 #
 #   makerom.o
@@ -433,7 +433,7 @@ LIBS_15 += -lmpr
 
 $(CONFIG)/bin/makerom: $(DEPS_15)
 	@echo '      [Link] makerom'
-	$(CC) -o $(CONFIG)/bin/makerom $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o $(LIBS_15) $(LIBS_15) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/makerom $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o $(LIBPATHS_15) $(LIBS_15) $(LIBS_15) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 
 #
 #   ca-crt
@@ -529,7 +529,7 @@ LIBS_24 += -lhttp
 
 $(CONFIG)/bin/http: $(DEPS_24)
 	@echo '      [Link] http'
-	$(CC) -o $(CONFIG)/bin/http $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o $(LIBS_24) $(LIBS_24) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/http $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o $(LIBPATHS_24) $(LIBS_24) $(LIBS_24) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 
 #
 #   sqlite3.h
@@ -588,7 +588,7 @@ endif
 
 $(CONFIG)/bin/sqlite: $(DEPS_29)
 	@echo '      [Link] sqlite'
-	$(CC) -o $(CONFIG)/bin/sqlite $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LIBS_29) $(LIBS_29) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/sqlite $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LIBPATHS_29) $(LIBS_29) $(LIBS_29) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 endif
 
 #
@@ -1463,7 +1463,7 @@ LIBS_104 += -lejs
 
 $(CONFIG)/bin/ejs: $(DEPS_104)
 	@echo '      [Link] ejs'
-	$(CC) -o $(CONFIG)/bin/ejs $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LIBS_104) $(LIBS_104) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejs $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LIBPATHS_104) $(LIBS_104) $(LIBS_104) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 
 #
 #   ejsc.o
@@ -1489,7 +1489,7 @@ LIBS_106 += -lejs
 
 $(CONFIG)/bin/ejsc: $(DEPS_106)
 	@echo '      [Link] ejsc'
-	$(CC) -o $(CONFIG)/bin/ejsc $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o $(LIBS_106) $(LIBS_106) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejsc $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o $(LIBPATHS_106) $(LIBS_106) $(LIBS_106) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 
 #
 #   ejsmod.h
@@ -1571,7 +1571,7 @@ LIBS_113 += -lejs
 
 $(CONFIG)/bin/ejsmod: $(DEPS_113)
 	@echo '      [Link] ejsmod'
-	$(CC) -o $(CONFIG)/bin/ejsmod $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o $(LIBS_113) $(LIBS_113) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejsmod $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o $(LIBPATHS_113) $(LIBS_113) $(LIBS_113) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 
 #
 #   ejsrun.o
@@ -1597,7 +1597,7 @@ LIBS_115 += -lejs
 
 $(CONFIG)/bin/ejsrun: $(DEPS_115)
 	@echo '      [Link] ejsrun'
-	$(CC) -o $(CONFIG)/bin/ejsrun $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS_115) $(LIBS_115) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejsrun $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBPATHS_115) $(LIBS_115) $(LIBS_115) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 
 #
 #   ejs.mod
@@ -1697,7 +1697,7 @@ LIBS_119 += -lejs
 
 $(CONFIG)/bin/jem: $(DEPS_119)
 	@echo '      [Link] jem'
-	$(CC) -o $(CONFIG)/bin/jem $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS_119) $(LIBS_119) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/jem $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBPATHS_119) $(LIBS_119) $(LIBS_119) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 
 #
 #   ejs.db.mod
@@ -1971,7 +1971,7 @@ LIBS_140 += -lejs
 
 $(CONFIG)/bin/mvc: $(DEPS_140)
 	@echo '      [Link] mvc'
-	$(CC) -o $(CONFIG)/bin/mvc $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS_140) $(LIBS_140) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/mvc $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBPATHS_140) $(LIBS_140) $(LIBS_140) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 
 #
 #   ejs.mvc.mod
@@ -2017,7 +2017,7 @@ LIBS_144 += -lejs
 
 $(CONFIG)/bin/utest: $(DEPS_144)
 	@echo '      [Link] utest'
-	$(CC) -o $(CONFIG)/bin/utest $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS_144) $(LIBS_144) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/utest $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBPATHS_144) $(LIBS_144) $(LIBS_144) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
 
 #
 #   stop
