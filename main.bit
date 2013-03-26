@@ -131,17 +131,6 @@ Bit.load({
         },
 
         /*
-            Pack settings for when generating projects
-         */
-        projects: {
-            est: true,
-            matrixssl: false,
-            openssl: false,
-            sqlite: true,
-            ssl: true,
-        },
-
-        /*
             Tailor the optimization for size|speed
          */
         tune: 'size',
@@ -165,9 +154,11 @@ Bit.load({
         ejscript: { enable: true, silent: true },
     },
 
-    scripts: { 
-        /* Want est support included, but disabled */
-        pregenheader: "if (bit.generating) bit.packs.est.enable = 0", 
-        pregen: "if (bit.generating) bit.packs.est.enable = 0",
+    packDefaults: {
+        est: true,
+        matrixssl: false,
+        openssl: false,
+        sqlite: true,
+        ssl: true,
     },
 })
