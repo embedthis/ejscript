@@ -92,6 +92,11 @@ nmake -f projects\ejs-windows.nmake
             projects/ejs-OS-default.mk makefile and by the projects/ejs-OS-debug-bit.h file. For example, to disable
             use of SQLite:</p>
             <pre>$ make <b>BIT_PACK_SQLITE=0</b> </pre>
+
+            <p>Extension packs are enabled by setting their corresponing BIT_PACK_NAME option to 1. Disable by setting
+            to zero. Some packs requires a path to locate libraries and headers. Use BIT_PACK_NAME_PATH to define
+            the path to the extension pack.</p>
+
             <p>To see the list of configurable options, run:</p>
             <pre>$ <b>make help</b>
 usage: make [clean, compile, install, run, uninstall]
@@ -134,17 +139,21 @@ Use "SHOW=1 make" to show executed commands.
             <pre>
 sudo make uninstall
 </pre>
-            <p>If you need to capture the build products only, you can install to a specific directory via:
-            <pre>make BIT_ROOT_PREFIX=/tmp/output installBinary</pre>
-            
-            <a name="openssl"></a>
-            <h3>Supporting OpenSSL</h3>
-            <p>If OpenSSL is required to provide SSL support, you must specify the OpenSSL libraries and path to 
-              those libraries when you invoke make. For example:</p>
-            <pre>make BIT_PACK_OPENSSL=1 \
-    LDFLAGS="-L/path/to/libs -lcrypto -lssl -Wl,-rpath,/path/to/libs" \
-    SHOW=1 make clean compile</pre>
+            <h3>Warning: Must Use Same Option</h3>
+            <p>It is essential when invoking <em>make install</em>, that you provide the same make flags and options
+                as you did when compiling. This is because the Makefile will conditionally install only the selected
+                components for those options.</p>
+            <p>For example, to build and install OpenSSL:</p>
+                <pre>$ make <b>BIT_PACK_OPENSSL=1 BIT_PACK_OPENSSL_PATH=/usr/src/openssl</b> compile
+$ sudo make <b>BIT_PACK_OPENSSL=1 BIT_PACK_OPENSSL_PATH=/usr/src/openssl</b> install</pre>
 
+
+            <a name="deploy"></a>
+            <h2>Deploying</h2>
+            <p>If you need to deploy to a different system or capture the build products, you can install to a specific
+            directory via: </p>
+            <pre>make deploy</pre>
+            <p>This will install to the <em>deploy</em> directory under the output platform directory.</p>
 
             <a id="cross"></a>
             <h2 class="section">Cross Compiling with Make</h2>
@@ -175,6 +184,12 @@ make -f projects/ejs-vxworks-default.mk ARCH=arm PROFILE=debug
 make CC=/opt/bin/ccarm.exe LD=/opt/bin/ccarm.exe ARCH=arm PROFILE=release
     -f projects/ejs-vxworks-default.mk 
 </pre>
+
+            <a name="openssl"></a>
+            <h2>Supporting OpenSSL</h2>
+            <p>If OpenSSL is required to provide SSL support, you must specify the path to the OpenSSL source
+              directory. For example:</p>
+            <pre>make BIT_PACK_OPENSSL=1 BIT_PACK_OPENSSL_PATH=/path/to/openssl compile</pre>
 
         </div>
     </div>

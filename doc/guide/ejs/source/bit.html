@@ -496,10 +496,11 @@ configure --debug --platform linux-arm-arm7
             <pre>bit package</pre>
             <p>The release packages are placed under the <em>releases</em> directory. The <em>appweb-tar.tgz</em> image is a
             simple compressed tar archive of the binary release.</p>
-           
-            <p>If you are embedding appweb into another application, you can deploy the required Appweb files to a staging
-            directory. If you need to capture the build products only, you can deploy to a specific directory via:
-            <pre>make BIT_ROOT_DIR=/tmp/output install</pre>
+              
+           <h2 class="section">Deploying</h2>
+            <p>If you are embedding Ejscript into another application or installing to a target device, you can deploy the required Ejscript files to a staging directory.</p>
+            <pre>bit --sets core deploy</pre>
+            <p>This will copy the required Ejscript files to the <em>deploy</em> directory under the platform output directory.</p>
         </div>
     </div>
 <!-- BeginDsi "dsi/bottom.html" -->
