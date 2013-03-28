@@ -145,7 +145,7 @@ sudo make uninstall
                 <pre>$ make <b>BIT_PACK_OPENSSL=1 BIT_PACK_OPENSSL_PATH=/usr/src/openssl</b> compile
 $ sudo make <b>BIT_PACK_OPENSSL=1 BIT_PACK_OPENSSL_PATH=/usr/src/openssl</b> install</pre>
             <a name="deploy"></a>
-            <h2>Deploying</h2>
+            <h3>Deploying</h3>
             <p>If you need to deploy to a different system or capture the build products, you can install to a specific
             directory via: </p>
             <pre>make deploy</pre>
@@ -183,6 +183,25 @@ make CC=/opt/bin/ccarm.exe LD=/opt/bin/ccarm.exe ARCH=arm PROFILE=release
             <p>If OpenSSL is required to provide SSL support, you must specify the path to the OpenSSL source
               directory. For example:</p>
             <pre>make BIT_PACK_OPENSSL=1 BIT_PACK_OPENSSL_PATH=/path/to/openssl compile</pre>
+
+
+            <a name="static"></a>
+            <h2>Static Building</h2>
+            <p>If you require a static build without the ability to dynamically load modules, use the <em>static</em>
+                makefile profile. For example:</p>
+                <pre>make PROFILE=static</pre>
+            <p>Note that static builds cannot dynamically load native modules and may have reduced functionality.</p>
+
+            <a name="vxworks"></a>
+            <h2>Building for VxWorks</h2>
+            <p>Before building for VxWorks, you must define the WIND_* environment variables via the 
+              <em>wrenv.sh</em> script provided with VxWorks. This defines the WIND_BASE, WIND_HOST_TYPE and 
+              other required environment variables.</p>
+              <p>The command below runs wrenv.sh and defines the WIND variables
+              in the current shell's environment.</p>
+            <pre>eval `/WindRiver/wrenv.sh -p vxworks-6.8 -o print_env -f sh`</pre>
+            <p>Once defined, you can invoke make.</p>
+            <pre>make OS=vxworks</pre>
         </div>
     </div>
 <!-- BeginDsi "dsi/bottom.html" -->

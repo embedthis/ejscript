@@ -2140,6 +2140,8 @@ installBinary: $(DEPS_146)
 	cp $(CONFIG)/bin/utest.worker $(BIT_VAPP_PREFIX)/bin/utest.worker
 ifeq ($(BIT_PACK_SSL),1)
 	cp $(CONFIG)/bin/libmprssl.so $(BIT_VAPP_PREFIX)/bin/libmprssl.so
+endif
+ifeq ($(BIT_PACK_SSL),1)
 	cp $(CONFIG)/bin/ca.crt $(BIT_VAPP_PREFIX)/bin/ca.crt
 endif
 ifeq ($(BIT_PACK_OPENSSL),1)
@@ -2149,6 +2151,7 @@ endif
 ifeq ($(BIT_PACK_EST),1)
 	cp $(CONFIG)/bin/libest.so $(BIT_VAPP_PREFIX)/bin/libest.so
 endif
+	cp $(CONFIG)/bin/libejs.so $(BIT_VAPP_PREFIX)/bin/libejs.so
 	mkdir -p "$(BIT_VAPP_PREFIX)/bin/www/images"
 	cp src/jems/ejs.web/www/images/banner.jpg $(BIT_VAPP_PREFIX)/bin/www/images/banner.jpg
 	cp src/jems/ejs.web/www/images/favicon.ico $(BIT_VAPP_PREFIX)/bin/www/images/favicon.ico

@@ -2059,16 +2059,6 @@ installBinary: $(DEPS_146)
 	cp $(CONFIG)/bin/utest $(BIT_VAPP_PREFIX)/bin/utest
 	rm -f "$(BIT_BIN_PREFIX)/utest"
 	ln -s "$(BIT_VAPP_PREFIX)/bin/utest" "$(BIT_BIN_PREFIX)/utest"
-	cp $(CONFIG)/bin/libejs.db.sqlite.dylib $(BIT_VAPP_PREFIX)/bin/libejs.db.sqlite.dylib
-	cp $(CONFIG)/bin/libejs.dylib $(BIT_VAPP_PREFIX)/bin/libejs.dylib
-	cp $(CONFIG)/bin/libejs.db.sqlite.dylib $(BIT_VAPP_PREFIX)/bin/libejs.db.sqlite.dylib
-	cp $(CONFIG)/bin/libejs.web.dylib $(BIT_VAPP_PREFIX)/bin/libejs.web.dylib
-	cp $(CONFIG)/bin/libejs.zlib.dylib $(BIT_VAPP_PREFIX)/bin/libejs.zlib.dylib
-	cp $(CONFIG)/bin/libhttp.dylib $(BIT_VAPP_PREFIX)/bin/libhttp.dylib
-	cp $(CONFIG)/bin/libmpr.dylib $(BIT_VAPP_PREFIX)/bin/libmpr.dylib
-	cp $(CONFIG)/bin/libpcre.dylib $(BIT_VAPP_PREFIX)/bin/libpcre.dylib
-	cp $(CONFIG)/bin/libsqlite3.dylib $(BIT_VAPP_PREFIX)/bin/libsqlite3.dylib
-	cp $(CONFIG)/bin/libzlib.dylib $(BIT_VAPP_PREFIX)/bin/libzlib.dylib
 	cp $(CONFIG)/bin/ejs.db.mapper.mod $(BIT_VAPP_PREFIX)/bin/ejs.db.mapper.mod
 	cp $(CONFIG)/bin/ejs.db.mod $(BIT_VAPP_PREFIX)/bin/ejs.db.mod
 	cp $(CONFIG)/bin/ejs.db.sqlite.mod $(BIT_VAPP_PREFIX)/bin/ejs.db.sqlite.mod
@@ -2084,15 +2074,11 @@ installBinary: $(DEPS_146)
 	cp $(CONFIG)/bin/utest.es $(BIT_VAPP_PREFIX)/bin/utest.es
 	cp $(CONFIG)/bin/utest.worker $(BIT_VAPP_PREFIX)/bin/utest.worker
 ifeq ($(BIT_PACK_SSL),1)
-	cp $(CONFIG)/bin/libmprssl.dylib $(BIT_VAPP_PREFIX)/bin/libmprssl.dylib
 	cp $(CONFIG)/bin/ca.crt $(BIT_VAPP_PREFIX)/bin/ca.crt
 endif
 ifeq ($(BIT_PACK_OPENSSL),1)
 	cp $(CONFIG)/bin/libssl*.dylib* $(BIT_VAPP_PREFIX)/bin/libssl*.dylib*
 	cp $(CONFIG)/bin/libcrypto*.dylib* $(BIT_VAPP_PREFIX)/bin/libcrypto*.dylib*
-endif
-ifeq ($(BIT_PACK_EST),1)
-	cp $(CONFIG)/bin/libest.dylib $(BIT_VAPP_PREFIX)/bin/libest.dylib
 endif
 	mkdir -p "$(BIT_VAPP_PREFIX)/bin/www/images"
 	cp src/jems/ejs.web/www/images/banner.jpg $(BIT_VAPP_PREFIX)/bin/www/images/banner.jpg
