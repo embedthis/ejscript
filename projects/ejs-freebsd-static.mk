@@ -105,7 +105,7 @@ ifeq ($(BIT_PACK_SQLITE),1)
 TARGETS            += $(CONFIG)/bin/libsqlite3.a
 endif
 ifeq ($(BIT_PACK_SQLITE),1)
-TARGETS            += $(CONFIG)/bin/sqlite
+TARGETS            += $(CONFIG)/bin/sqliteshell
 endif
 TARGETS            += $(CONFIG)/bin/libzlib.a
 TARGETS            += $(CONFIG)/bin/libejs.a
@@ -178,7 +178,7 @@ clean:
 	rm -fr "$(CONFIG)/bin/libhttp.a"
 	rm -fr "$(CONFIG)/bin/http"
 	rm -fr "$(CONFIG)/bin/libsqlite3.a"
-	rm -fr "$(CONFIG)/bin/sqlite"
+	rm -fr "$(CONFIG)/bin/sqliteshell"
 	rm -fr "$(CONFIG)/bin/libzlib.a"
 	rm -fr "$(CONFIG)/bin/libejs.a"
 	rm -fr "$(CONFIG)/bin/ejs"
@@ -575,7 +575,7 @@ $(CONFIG)/obj/sqlite.o: \
 
 ifeq ($(BIT_PACK_SQLITE),1)
 #
-#   sqlite
+#   sqliteshell
 #
 ifeq ($(BIT_PACK_SQLITE),1)
     DEPS_29 += $(CONFIG)/bin/libsqlite3.a
@@ -586,9 +586,9 @@ ifeq ($(BIT_PACK_SQLITE),1)
     LIBS_29 += -lsqlite3
 endif
 
-$(CONFIG)/bin/sqlite: $(DEPS_29)
-	@echo '      [Link] sqlite'
-	$(CC) -o $(CONFIG)/bin/sqlite $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LIBPATHS_29) $(LIBS_29) $(LIBS_29) $(LIBS) -lpthread -lm -ldl $(LDFLAGS) 
+$(CONFIG)/bin/sqliteshell: $(DEPS_29)
+	@echo '      [Link] sqliteshell'
+	$(CC) -o $(CONFIG)/bin/sqliteshell $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LIBPATHS_29) $(LIBS_29) $(LIBS_29) $(LIBS) -lpthread -lm -ldl $(LDFLAGS) 
 endif
 
 #

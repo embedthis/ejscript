@@ -256,7 +256,7 @@
 				AF07EBABAF07FD190000006E /* PBXTargetDependency libhttp */,
 				AF07EBABAF07FD190000006F /* PBXTargetDependency http */,
 				AF07EBABAF07FD1900000070 /* PBXTargetDependency libsqlite3 */,
-				AF07EBABAF07FD1900000071 /* PBXTargetDependency sqlite */,
+				AF07EBABAF07FD1900000071 /* PBXTargetDependency sqliteshell */,
 				AF07EBABAF07FD1900000072 /* PBXTargetDependency libzlib */,
 				AF07EBABAF07FD1900000073 /* PBXTargetDependency libejs */,
 				AF07EBABAF07FD1900000074 /* PBXTargetDependency ejs */,
@@ -399,7 +399,7 @@
 		AF07EBABAF07FD1900000142 /* libmpr.dylib for http */ = {isa = PBXBuildFile; fileRef = AF07EBABAF07FD190000013C; };
 		AF07EBABAF07FD1900000143 /* libpcre.dylib for http */ = {isa = PBXBuildFile; fileRef = AF07EBABAF07FD1900000140; };
 		AF07EBABAF07FD1900000144 /* libhttp.dylib for http */ = {isa = PBXBuildFile; fileRef = AF07EBABAF07FD1900000145; };
-		AF07EBABAF07FD1900000146 /* libsqlite3.dylib for sqlite */ = {isa = PBXBuildFile; fileRef = AF07EBABAF07FD1900000147; };
+		AF07EBABAF07FD1900000146 /* libsqlite3.dylib for sqliteshell */ = {isa = PBXBuildFile; fileRef = AF07EBABAF07FD1900000147; };
 		AF07EBABAF07FD1900000148 /* libmpr.dylib for libejs */ = {isa = PBXBuildFile; fileRef = AF07EBABAF07FD190000013C; };
 		AF07EBABAF07FD1900000149 /* libpcre.dylib for libejs */ = {isa = PBXBuildFile; fileRef = AF07EBABAF07FD1900000140; };
 		AF07EBABAF07FD190000014A /* libhttp.dylib for libejs */ = {isa = PBXBuildFile; fileRef = AF07EBABAF07FD1900000145; };
@@ -567,14 +567,14 @@
 			remoteGlobalIDString = AF07EBABAF07FD190000008F;
 			remoteInfo = Prep;
 		};
-		AF07EBABAF07FD190000018C /* PBXContainerItemProxy libsqlite3 from sqlite */ = {
+		AF07EBABAF07FD190000018C /* PBXContainerItemProxy libsqlite3 from sqliteshell */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = AF07EBABAF07FD1900000001 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = AF07EBABAF07FD190000018D;
 			remoteInfo = libsqlite3;
 		};
-		AF07EBABAF07FD190000018E /* PBXContainerItemProxy Prep from sqlite */ = {
+		AF07EBABAF07FD190000018E /* PBXContainerItemProxy Prep from sqliteshell */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = AF07EBABAF07FD1900000001 /* Project object */;
 			proxyType = 1;
@@ -1204,12 +1204,12 @@
 			remoteGlobalIDString = AF07EBABAF07FD190000018D;
 			remoteInfo = libsqlite3;
 		};
-		AF07EBABAF07FD19000001F0 /* PBXContainerItemProxy sqlite from All */ = {
+		AF07EBABAF07FD19000001F0 /* PBXContainerItemProxy sqliteshell from All */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = AF07EBABAF07FD1900000001 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = AF07EBABAF07FD19000001F1;
-			remoteInfo = sqlite;
+			remoteInfo = sqliteshell;
 		};
 		AF07EBABAF07FD19000001F2 /* PBXContainerItemProxy libzlib from All */ = {
 			isa = PBXContainerItemProxy;
@@ -1436,7 +1436,7 @@
 		AF07EBABAF07FD1900000220 /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = macosx-x64-default/inc/sqlite3.h; sourceTree = "<group>"; };
 		AF07EBABAF07FD1900000147 /* libsqlite3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libsqlite3.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF07EBABAF07FD19000000A4 /* sqlite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sqlite.c; path = src/deps/sqlite/sqlite.c; sourceTree = "<group>"; };
-		AF07EBABAF07FD1900000221 /* sqlite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sqlite; sourceTree = BUILT_PRODUCTS_DIR; };
+		AF07EBABAF07FD1900000221 /* sqliteshell */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sqliteshell; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF07EBABAF07FD19000000A6 /* zlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = zlib.c; path = src/deps/zlib/zlib.c; sourceTree = "<group>"; };
 		AF07EBABAF07FD1900000222 /* zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zlib.h; path = macosx-x64-default/inc/zlib.h; sourceTree = "<group>"; };
 		AF07EBABAF07FD190000016A /* libzlib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libzlib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1614,7 +1614,7 @@
             );
             runOnlyForDeploymentPostprocessing = 0;
         };
-		AF07EBABAF07FD190000023E /* Frameworks and Libraries for sqlite */ = {
+		AF07EBABAF07FD190000023E /* Frameworks and Libraries for sqliteshell */ = {
             isa = PBXFrameworksBuildPhase;
             buildActionMask = 2147483647;
             files = (
@@ -1778,7 +1778,7 @@
 				AF07EBABAF07FD190000025D /* makerom */,
 				AF07EBABAF07FD190000025E /* manager */,
 				AF07EBABAF07FD190000025F /* mvc */,
-				AF07EBABAF07FD1900000260 /* sqlite */,
+				AF07EBABAF07FD1900000260 /* sqliteshell */,
 				AF07EBABAF07FD1900000261 /* utest */,
 				AF07EBABAF07FD1900000262 /* Products */,
 			);
@@ -1887,14 +1887,14 @@
             path = ..;
             sourceTree = SOURCE_ROOT;
         };
-		AF07EBABAF07FD1900000260 /* sqlite */ = {
+		AF07EBABAF07FD1900000260 /* sqliteshell */ = {
             isa = PBXGroup;
             children = (
 				AF07EBABAF07FD1900000216 /* bit.h */,
 				AF07EBABAF07FD1900000220 /* sqlite3.h */,
 				AF07EBABAF07FD19000000A4 /* sqlite.c */,
 			);
-            name = "sqlite";
+            name = "sqliteshell";
             path = ..;
             sourceTree = SOURCE_ROOT;
         };
@@ -2119,7 +2119,7 @@
 				AF07EBABAF07FD1900000145 /* libhttp */,
 				AF07EBABAF07FD190000021F /* http */,
 				AF07EBABAF07FD1900000147 /* libsqlite3 */,
-				AF07EBABAF07FD1900000221 /* sqlite */,
+				AF07EBABAF07FD1900000221 /* sqliteshell */,
 				AF07EBABAF07FD190000016A /* libzlib */,
 				AF07EBABAF07FD190000014F /* libejs */,
 				AF07EBABAF07FD1900000225 /* ejs */,
@@ -2300,9 +2300,9 @@
 			productReference = AF07EBABAF07FD1900000147 /* libsqlite3 */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		AF07EBABAF07FD19000001F1 /* sqlite */ = {
+		AF07EBABAF07FD19000001F1 /* sqliteshell */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AF07EBABAF07FD1900000286 /* Build configuration list for PBXNativeTarget "sqlite" */;
+			buildConfigurationList = AF07EBABAF07FD1900000286 /* Build configuration list for PBXNativeTarget "sqliteshell" */;
 			buildPhases = (
 				AF07EBABAF07FD1900000285 /* Sources */,
 				AF07EBABAF07FD190000023E /* Frameworks */,
@@ -2313,9 +2313,9 @@
 				AF07EBABAF07FD1900000287 /* libsqlite3 */,
 				AF07EBABAF07FD1900000288 /* Prep */,				
 			);
-			name = sqlite;
+			name = sqliteshell;
 			productName = ejs;
-			productReference = AF07EBABAF07FD1900000221 /* sqlite */;
+			productReference = AF07EBABAF07FD1900000221 /* sqliteshell */;
 			productType = "com.apple.product-type.tool";
 		};
 		AF07EBABAF07FD19000001CD /* libzlib */ = {
@@ -3040,7 +3040,7 @@ fi";
 				AF07EBABAF07FD19000001E8 /* makerom */,
 				AF07EBABAF07FD19000001E6 /* manager */,
 				AF07EBABAF07FD1900000210 /* mvc */,
-				AF07EBABAF07FD19000001F1 /* sqlite */,
+				AF07EBABAF07FD19000001F1 /* sqliteshell */,
 				AF07EBABAF07FD1900000215 /* utest */,
 				AF07EBABAF07FD1900000006 /* ca-crt */,
 				AF07EBABAF07FD1900000020 /* ejs.db.mapper.mod */,
@@ -3136,7 +3136,7 @@ fi";
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		AF07EBABAF07FD1900000285 /* sqlite Sources */ = {
+		AF07EBABAF07FD1900000285 /* sqliteshell Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3393,12 +3393,12 @@ fi";
 			target = AF07EBABAF07FD190000008F /* Prep */;
 			targetProxy = AF07EBABAF07FD190000018B /* PBXContainerItemProxy */;
 		};
-		AF07EBABAF07FD1900000287 /* PBXTargetDependency sqlite depends on libsqlite3 */ = {
+		AF07EBABAF07FD1900000287 /* PBXTargetDependency sqliteshell depends on libsqlite3 */ = {
 			isa = PBXTargetDependency;
 			target = AF07EBABAF07FD190000018D /* libsqlite3 */;
 			targetProxy = AF07EBABAF07FD190000018C /* PBXContainerItemProxy */;
 		};
-		AF07EBABAF07FD1900000288 /* PBXTargetDependency sqlite depends on Prep */ = {
+		AF07EBABAF07FD1900000288 /* PBXTargetDependency sqliteshell depends on Prep */ = {
 			isa = PBXTargetDependency;
 			target = AF07EBABAF07FD190000008F /* Prep */;
 			targetProxy = AF07EBABAF07FD190000018E /* PBXContainerItemProxy */;
@@ -3848,9 +3848,9 @@ fi";
 			target = AF07EBABAF07FD190000018D /* libsqlite3 */;
 			targetProxy = AF07EBABAF07FD19000001EF /* PBXContainerItemProxy */;
 		};
-		AF07EBABAF07FD1900000071 /* PBXTargetDependency All depends on sqlite */ = {
+		AF07EBABAF07FD1900000071 /* PBXTargetDependency All depends on sqliteshell */ = {
 			isa = PBXTargetDependency;
-			target = AF07EBABAF07FD19000001F1 /* sqlite */;
+			target = AF07EBABAF07FD19000001F1 /* sqliteshell */;
 			targetProxy = AF07EBABAF07FD19000001F0 /* PBXContainerItemProxy */;
 		};
 		AF07EBABAF07FD1900000072 /* PBXTargetDependency All depends on libzlib */ = {
@@ -4373,7 +4373,7 @@ fi";
 		AF07EBABAF07FD19000002D8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = sqlite;
+				PRODUCT_NAME = sqliteshell;
 
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"BIT_DEBUG",
@@ -4385,7 +4385,7 @@ fi";
 		AF07EBABAF07FD19000002D9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = sqlite;
+				PRODUCT_NAME = sqliteshell;
 
 
 			};
@@ -5458,7 +5458,7 @@ fi";
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AF07EBABAF07FD1900000286 /* Build configuration list for PBXNativeTarget "sqlite" */ = {
+		AF07EBABAF07FD1900000286 /* Build configuration list for PBXNativeTarget "sqliteshell" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AF07EBABAF07FD19000002D8 /* Debug */,

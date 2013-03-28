@@ -110,7 +110,7 @@ ifeq ($(BIT_PACK_SQLITE),1)
 TARGETS            += $(CONFIG)/bin/libsqlite3.a
 endif
 ifeq ($(BIT_PACK_SQLITE),1)
-TARGETS            += $(CONFIG)/bin/sqlite.out
+TARGETS            += $(CONFIG)/bin/sqliteshell.out
 endif
 TARGETS            += $(CONFIG)/bin/libzlib.a
 TARGETS            += $(CONFIG)/bin/libejs.a
@@ -186,7 +186,7 @@ clean:
 	rm -fr "$(CONFIG)/bin/libhttp.a"
 	rm -fr "$(CONFIG)/bin/http.out"
 	rm -fr "$(CONFIG)/bin/libsqlite3.a"
-	rm -fr "$(CONFIG)/bin/sqlite.out"
+	rm -fr "$(CONFIG)/bin/sqliteshell.out"
 	rm -fr "$(CONFIG)/bin/libzlib.a"
 	rm -fr "$(CONFIG)/bin/libejs.a"
 	rm -fr "$(CONFIG)/bin/ejs.out"
@@ -414,9 +414,11 @@ $(CONFIG)/obj/manager.o: \
 DEPS_13 += $(CONFIG)/bin/libmpr.a
 DEPS_13 += $(CONFIG)/obj/manager.o
 
+LIBS_13 += -lmpr
+
 $(CONFIG)/bin/ejsman.out: $(DEPS_13)
 	@echo '      [Link] manager'
-	$(CC) -o $(CONFIG)/bin/ejsman.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o -lmpr $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejsman.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LIBPATHS_13) $(LIBS_13) $(LIBS_13) $(LIBS) $(LDFLAGS) 
 
 #
 #   makerom.o
@@ -435,9 +437,11 @@ $(CONFIG)/obj/makerom.o: \
 DEPS_15 += $(CONFIG)/bin/libmpr.a
 DEPS_15 += $(CONFIG)/obj/makerom.o
 
+LIBS_15 += -lmpr
+
 $(CONFIG)/bin/makerom.out: $(DEPS_15)
 	@echo '      [Link] makerom'
-	$(CC) -o $(CONFIG)/bin/makerom.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o -lmpr $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/makerom.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o $(LIBPATHS_15) $(LIBS_15) $(LIBS_15) $(LIBS) $(LDFLAGS) 
 
 #
 #   ca-crt
@@ -527,9 +531,13 @@ $(CONFIG)/obj/http.o: \
 DEPS_24 += $(CONFIG)/bin/libhttp.a
 DEPS_24 += $(CONFIG)/obj/http.o
 
+LIBS_24 += -lmpr
+LIBS_24 += -lpcre
+LIBS_24 += -lhttp
+
 $(CONFIG)/bin/http.out: $(DEPS_24)
 	@echo '      [Link] http'
-	$(CC) -o $(CONFIG)/bin/http.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o -lmpr -lpcre -lhttp $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/http.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o $(LIBPATHS_24) $(LIBS_24) $(LIBS_24) $(LIBS) $(LDFLAGS) 
 
 #
 #   sqlite3.h
@@ -575,16 +583,20 @@ $(CONFIG)/obj/sqlite.o: \
 
 ifeq ($(BIT_PACK_SQLITE),1)
 #
-#   sqlite
+#   sqliteshell
 #
 ifeq ($(BIT_PACK_SQLITE),1)
     DEPS_29 += $(CONFIG)/bin/libsqlite3.a
 endif
 DEPS_29 += $(CONFIG)/obj/sqlite.o
 
-$(CONFIG)/bin/sqlite.out: $(DEPS_29)
-	@echo '      [Link] sqlite'
-	$(CC) -o $(CONFIG)/bin/sqlite.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o -lsqlite3 $(LIBS) $(LDFLAGS) 
+ifeq ($(BIT_PACK_SQLITE),1)
+    LIBS_29 += -lsqlite3
+endif
+
+$(CONFIG)/bin/sqliteshell.out: $(DEPS_29)
+	@echo '      [Link] sqliteshell'
+	$(CC) -o $(CONFIG)/bin/sqliteshell.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LIBPATHS_29) $(LIBS_29) $(LIBS_29) $(LIBS) $(LDFLAGS) 
 endif
 
 #
@@ -1452,9 +1464,14 @@ $(CONFIG)/obj/ejs.o: \
 DEPS_104 += $(CONFIG)/bin/libejs.a
 DEPS_104 += $(CONFIG)/obj/ejs.o
 
+LIBS_104 += -lhttp
+LIBS_104 += -lpcre
+LIBS_104 += -lmpr
+LIBS_104 += -lejs
+
 $(CONFIG)/bin/ejs.out: $(DEPS_104)
 	@echo '      [Link] ejs'
-	$(CC) -o $(CONFIG)/bin/ejs.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o -lhttp -lpcre -lmpr -lejs $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejs.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LIBPATHS_104) $(LIBS_104) $(LIBS_104) $(LIBS) $(LDFLAGS) 
 
 #
 #   ejsc.o
@@ -1473,9 +1490,14 @@ $(CONFIG)/obj/ejsc.o: \
 DEPS_106 += $(CONFIG)/bin/libejs.a
 DEPS_106 += $(CONFIG)/obj/ejsc.o
 
+LIBS_106 += -lhttp
+LIBS_106 += -lpcre
+LIBS_106 += -lmpr
+LIBS_106 += -lejs
+
 $(CONFIG)/bin/ejsc.out: $(DEPS_106)
 	@echo '      [Link] ejsc'
-	$(CC) -o $(CONFIG)/bin/ejsc.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o -lhttp -lpcre -lmpr -lejs $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejsc.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o $(LIBPATHS_106) $(LIBS_106) $(LIBS_106) $(LIBS) $(LDFLAGS) 
 
 #
 #   ejsmod.h
@@ -1550,9 +1572,14 @@ DEPS_113 += $(CONFIG)/obj/docFiles.o
 DEPS_113 += $(CONFIG)/obj/listing.o
 DEPS_113 += $(CONFIG)/obj/slotGen.o
 
+LIBS_113 += -lhttp
+LIBS_113 += -lpcre
+LIBS_113 += -lmpr
+LIBS_113 += -lejs
+
 $(CONFIG)/bin/ejsmod.out: $(DEPS_113)
 	@echo '      [Link] ejsmod'
-	$(CC) -o $(CONFIG)/bin/ejsmod.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o -lhttp -lpcre -lmpr -lejs $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejsmod.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o $(LIBPATHS_113) $(LIBS_113) $(LIBS_113) $(LIBS) $(LDFLAGS) 
 
 #
 #   ejsrun.o
@@ -1571,9 +1598,14 @@ $(CONFIG)/obj/ejsrun.o: \
 DEPS_115 += $(CONFIG)/bin/libejs.a
 DEPS_115 += $(CONFIG)/obj/ejsrun.o
 
+LIBS_115 += -lhttp
+LIBS_115 += -lpcre
+LIBS_115 += -lmpr
+LIBS_115 += -lejs
+
 $(CONFIG)/bin/ejsrun.out: $(DEPS_115)
 	@echo '      [Link] ejsrun'
-	$(CC) -o $(CONFIG)/bin/ejsrun.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o -lhttp -lpcre -lmpr -lejs $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejsrun.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBPATHS_115) $(LIBS_115) $(LIBS_115) $(LIBS) $(LDFLAGS) 
 
 #
 #   ejs.mod
@@ -1666,9 +1698,14 @@ DEPS_119 += $(CONFIG)/bin/libejs.a
 DEPS_119 += $(CONFIG)/bin/jem.es
 DEPS_119 += $(CONFIG)/obj/ejsrun.o
 
+LIBS_119 += -lhttp
+LIBS_119 += -lpcre
+LIBS_119 += -lmpr
+LIBS_119 += -lejs
+
 $(CONFIG)/bin/jem.out: $(DEPS_119)
 	@echo '      [Link] jem'
-	$(CC) -o $(CONFIG)/bin/jem.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o -lhttp -lpcre -lmpr -lejs $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/jem.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBPATHS_119) $(LIBS_119) $(LIBS_119) $(LIBS) $(LDFLAGS) 
 
 #
 #   ejs.db.mod
@@ -1935,9 +1972,14 @@ DEPS_140 += $(CONFIG)/bin/libejs.a
 DEPS_140 += $(CONFIG)/bin/mvc.es
 DEPS_140 += $(CONFIG)/obj/ejsrun.o
 
+LIBS_140 += -lhttp
+LIBS_140 += -lpcre
+LIBS_140 += -lmpr
+LIBS_140 += -lejs
+
 $(CONFIG)/bin/mvc.out: $(DEPS_140)
 	@echo '      [Link] mvc'
-	$(CC) -o $(CONFIG)/bin/mvc.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o -lhttp -lpcre -lmpr -lejs $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/mvc.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBPATHS_140) $(LIBS_140) $(LIBS_140) $(LIBS) $(LDFLAGS) 
 
 #
 #   ejs.mvc.mod
@@ -1976,9 +2018,14 @@ DEPS_144 += $(CONFIG)/bin/utest.es
 DEPS_144 += $(CONFIG)/bin/utest.worker
 DEPS_144 += $(CONFIG)/obj/ejsrun.o
 
+LIBS_144 += -lhttp
+LIBS_144 += -lpcre
+LIBS_144 += -lmpr
+LIBS_144 += -lejs
+
 $(CONFIG)/bin/utest.out: $(DEPS_144)
 	@echo '      [Link] utest'
-	$(CC) -o $(CONFIG)/bin/utest.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o -lhttp -lpcre -lmpr -lejs $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/utest.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBPATHS_144) $(LIBS_144) $(LIBS_144) $(LIBS) $(LDFLAGS) 
 
 #
 #   stop
