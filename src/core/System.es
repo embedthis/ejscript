@@ -34,6 +34,9 @@ module ejs {
             @hide
          */
         native static function get ipaddr(): String
+
+        /** @hide */
+        native static function get tmpdir(): String
     }
 }
 
