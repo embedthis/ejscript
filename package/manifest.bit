@@ -94,7 +94,7 @@ Bit.load({
                 ],
                 to:         '${abin}/',
                 set:        'core',
-                requires:   'ssl',
+                packs:      'ssl',
                 enable:     '!bit.settings.static', 
 
             },{ from:        [
@@ -102,7 +102,7 @@ Bit.load({
                 ],
                 to:         '${abin}/',
                 set:        'core',
-                requires:   'ssl',
+                packs:      'ssl',
 
             },{ from:        [
                     '${BIN}/libssl*${SHOBJ}*',
@@ -111,7 +111,7 @@ Bit.load({
                 to:         '${abin}/',
                 set:        'core',
                 enable:     "bit.platform.os != 'windows'",
-                requires:   'openssl',
+                packs:      'openssl',
 
             },{ from:        [
                     '${BIN}/libeay32${SHOBJ}',
@@ -120,14 +120,14 @@ Bit.load({
                 to:         '${abin}/',
                 set:        'core',
                 enable:     "bit.platform.os == 'windows'",
-                requires:   'openssl',
+                packs:      'openssl',
 
             },{ from:        [
                     '${BIN}/libest${SHLIB}',
                 ],
                 to:         '${abin}/',
                 set:        'core',
-                requires:   'est',
+                packs:      'est',
                 enable:     '!bit.settings.static', 
 
             },{ from:        [
