@@ -144,7 +144,7 @@ Bit.load({
                 set:        'core',
 
             },{
-                from:       '${INC}/*.h',
+                from:       [ 'src/*.h', 'src/vm/*.h', 'src/slots/*.h', 'src/deps/**.h', 'src/jems/**.h' ],
                 to:         '${vapp}/inc/',
                 set:        'dev',
                 linkin:     '${inc}/ejs/',

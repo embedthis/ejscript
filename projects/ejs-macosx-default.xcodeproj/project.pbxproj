@@ -2080,7 +2080,7 @@
 		AF07EBABAF07FD190000027C /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = macosx-x64-default/inc/sqlite3.h; sourceTree = "<group>"; };
 		AF07EBABAF07FD1900000147 /* libsqlite3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libsqlite3.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF07EBABAF07FD19000000A4 /* sqlite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sqlite.c; path = src/deps/sqlite/sqlite.c; sourceTree = "<group>"; };
-		AF07EBABAF07FD190000027D /* sqliteshell */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sqliteshell; sourceTree = BUILT_PRODUCTS_DIR; };
+		AF07EBABAF07FD190000027D /* sqliteshell */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sqlite; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF07EBABAF07FD19000000A6 /* zlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = zlib.c; path = src/deps/zlib/zlib.c; sourceTree = "<group>"; };
 		AF07EBABAF07FD190000027E /* zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zlib.h; path = macosx-x64-default/inc/zlib.h; sourceTree = "<group>"; };
 		AF07EBABAF07FD190000016A /* libzlib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libzlib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2446,6 +2446,7 @@
 				AF07EBABAF07FD1900000272 /* bit.h */,
 				AF07EBABAF07FD1900000273 /* mpr.h */,
 				AF07EBABAF07FD1900000275 /* est.h */,
+				AF07EBABAF07FD1900000274 /* bitos.h */,
 				AF07EBABAF07FD1900000094 /* mprSsl.c */,
 			);
             name = "libmprssl";
