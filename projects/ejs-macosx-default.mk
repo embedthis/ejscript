@@ -392,7 +392,6 @@ ssl: $(DEPS_11)
 DEPS_12 += $(CONFIG)/inc/bit.h
 DEPS_12 += $(CONFIG)/inc/mpr.h
 DEPS_12 += $(CONFIG)/inc/est.h
-DEPS_12 += $(CONFIG)/inc/bitos.h
 
 $(CONFIG)/obj/mprSsl.o: \
     src/deps/mpr/mprSsl.c $(DEPS_12)
