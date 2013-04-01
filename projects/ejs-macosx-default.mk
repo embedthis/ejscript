@@ -392,7 +392,6 @@ ssl: $(DEPS_11)
 DEPS_12 += $(CONFIG)/inc/bit.h
 DEPS_12 += $(CONFIG)/inc/mpr.h
 DEPS_12 += $(CONFIG)/inc/est.h
-DEPS_12 += $(CONFIG)/inc/bitos.h
 
 $(CONFIG)/obj/mprSsl.o: \
     src/deps/mpr/mprSsl.c $(DEPS_12)
@@ -2234,60 +2233,6 @@ endif
 	mkdir -p "$(BIT_INC_PREFIX)/ejs"
 	rm -f "$(BIT_INC_PREFIX)/ejs/bit.h"
 	ln -s "$(BIT_VAPP_PREFIX)/inc/bit.h" "$(BIT_INC_PREFIX)/ejs/bit.h"
-	cp $(CONFIG)/inc/bitos.h $(BIT_VAPP_PREFIX)/inc/bitos.h
-	rm -f "$(BIT_INC_PREFIX)/ejs/bitos.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/bitos.h" "$(BIT_INC_PREFIX)/ejs/bitos.h"
-	cp $(CONFIG)/inc/ejs.cache.local.slots.h $(BIT_VAPP_PREFIX)/inc/ejs.cache.local.slots.h
-	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.cache.local.slots.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.cache.local.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.cache.local.slots.h"
-	cp $(CONFIG)/inc/ejs.db.sqlite.slots.h $(BIT_VAPP_PREFIX)/inc/ejs.db.sqlite.slots.h
-	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.db.sqlite.slots.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.db.sqlite.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.db.sqlite.slots.h"
-	cp $(CONFIG)/inc/ejs.h $(BIT_VAPP_PREFIX)/inc/ejs.h
-	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.h" "$(BIT_INC_PREFIX)/ejs/ejs.h"
-	cp $(CONFIG)/inc/ejs.slots.h $(BIT_VAPP_PREFIX)/inc/ejs.slots.h
-	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.slots.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.slots.h"
-	cp $(CONFIG)/inc/ejs.web.slots.h $(BIT_VAPP_PREFIX)/inc/ejs.web.slots.h
-	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.web.slots.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.web.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.web.slots.h"
-	cp $(CONFIG)/inc/ejs.zlib.slots.h $(BIT_VAPP_PREFIX)/inc/ejs.zlib.slots.h
-	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.zlib.slots.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.zlib.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.zlib.slots.h"
-	cp $(CONFIG)/inc/ejsByteCode.h $(BIT_VAPP_PREFIX)/inc/ejsByteCode.h
-	rm -f "$(BIT_INC_PREFIX)/ejs/ejsByteCode.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/ejsByteCode.h" "$(BIT_INC_PREFIX)/ejs/ejsByteCode.h"
-	cp $(CONFIG)/inc/ejsByteCodeTable.h $(BIT_VAPP_PREFIX)/inc/ejsByteCodeTable.h
-	rm -f "$(BIT_INC_PREFIX)/ejs/ejsByteCodeTable.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/ejsByteCodeTable.h" "$(BIT_INC_PREFIX)/ejs/ejsByteCodeTable.h"
-	cp $(CONFIG)/inc/ejsCompiler.h $(BIT_VAPP_PREFIX)/inc/ejsCompiler.h
-	rm -f "$(BIT_INC_PREFIX)/ejs/ejsCompiler.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/ejsCompiler.h" "$(BIT_INC_PREFIX)/ejs/ejsCompiler.h"
-	cp $(CONFIG)/inc/ejsCustomize.h $(BIT_VAPP_PREFIX)/inc/ejsCustomize.h
-	rm -f "$(BIT_INC_PREFIX)/ejs/ejsCustomize.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/ejsCustomize.h" "$(BIT_INC_PREFIX)/ejs/ejsCustomize.h"
-	cp $(CONFIG)/inc/ejsWeb.h $(BIT_VAPP_PREFIX)/inc/ejsWeb.h
-	rm -f "$(BIT_INC_PREFIX)/ejs/ejsWeb.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/ejsWeb.h" "$(BIT_INC_PREFIX)/ejs/ejsWeb.h"
-	cp $(CONFIG)/inc/est.h $(BIT_VAPP_PREFIX)/inc/est.h
-	rm -f "$(BIT_INC_PREFIX)/ejs/est.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/est.h" "$(BIT_INC_PREFIX)/ejs/est.h"
-	cp $(CONFIG)/inc/http.h $(BIT_VAPP_PREFIX)/inc/http.h
-	rm -f "$(BIT_INC_PREFIX)/ejs/http.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/http.h" "$(BIT_INC_PREFIX)/ejs/http.h"
-	cp $(CONFIG)/inc/mpr.h $(BIT_VAPP_PREFIX)/inc/mpr.h
-	rm -f "$(BIT_INC_PREFIX)/ejs/mpr.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/mpr.h" "$(BIT_INC_PREFIX)/ejs/mpr.h"
-	cp $(CONFIG)/inc/pcre.h $(BIT_VAPP_PREFIX)/inc/pcre.h
-	rm -f "$(BIT_INC_PREFIX)/ejs/pcre.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/pcre.h" "$(BIT_INC_PREFIX)/ejs/pcre.h"
-	cp $(CONFIG)/inc/sqlite3.h $(BIT_VAPP_PREFIX)/inc/sqlite3.h
-	rm -f "$(BIT_INC_PREFIX)/ejs/sqlite3.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/sqlite3.h" "$(BIT_INC_PREFIX)/ejs/sqlite3.h"
-	cp $(CONFIG)/inc/zlib.h $(BIT_VAPP_PREFIX)/inc/zlib.h
-	rm -f "$(BIT_INC_PREFIX)/ejs/zlib.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/zlib.h" "$(BIT_INC_PREFIX)/ejs/zlib.h"
 	mkdir -p "$(BIT_VAPP_PREFIX)/doc/man1"
 	cp doc/man/ejs.1 $(BIT_VAPP_PREFIX)/doc/man1/ejs.1
 	mkdir -p "$(BIT_MAN_PREFIX)/man1"
