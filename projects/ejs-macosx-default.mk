@@ -171,6 +171,7 @@ prep:
 		fi ; \
 	fi
 	@echo $(MAKEFLAGS) >$(CONFIG)/.makeflags
+
 clean:
 	rm -f "$(CONFIG)/bin/libmpr.dylib"
 	rm -f "$(CONFIG)/bin/libmprssl.dylib"
@@ -376,6 +377,7 @@ endif
 DEPS_10 += $(CONFIG)/inc/bit.h
 DEPS_10 += $(CONFIG)/inc/mpr.h
 DEPS_10 += $(CONFIG)/inc/est.h
+DEPS_10 += $(CONFIG)/inc/bitos.h
 
 $(CONFIG)/obj/mprSsl.o: \
     src/deps/mpr/mprSsl.c $(DEPS_10)
