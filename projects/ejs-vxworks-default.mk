@@ -406,9 +406,6 @@ ifeq ($(BIT_PACK_EST),1)
 endif
 DEPS_11 += $(CONFIG)/obj/mprSsl.o
 
-ifeq ($(BIT_PACK_EST),1)
-    LIBS_11 += -lest
-endif
 ifeq ($(BIT_PACK_MATRIXSSL),1)
     LIBS_11 += -lmatrixssl
     LIBPATHS_11 += -L$(BIT_PACK_MATRIXSSL_PATH)
