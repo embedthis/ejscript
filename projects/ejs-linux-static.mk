@@ -56,7 +56,7 @@ BIT_PACK_SSL_PATH         := ssl
 BIT_PACK_ZIP_PATH         := zip
 BIT_PACK_ZLIB_PATH        := zlib
 
-CFLAGS             += -fPIC  -w
+CFLAGS             += -fPIC -w
 DFLAGS             += -D_REENTRANT -DPIC $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS))) -DBIT_PACK_EST=$(BIT_PACK_EST) -DBIT_PACK_MATRIXSSL=$(BIT_PACK_MATRIXSSL) -DBIT_PACK_OPENSSL=$(BIT_PACK_OPENSSL) -DBIT_PACK_PCRE=$(BIT_PACK_PCRE) -DBIT_PACK_SQLITE=$(BIT_PACK_SQLITE) -DBIT_PACK_SSL=$(BIT_PACK_SSL) -DBIT_PACK_ZLIB=$(BIT_PACK_ZLIB) 
 IFLAGS             += -I$(CONFIG)/inc
 LDFLAGS            += '-rdynamic' '-Wl,--enable-new-dtags' '-Wl,-rpath,$$ORIGIN/'
@@ -4449,6 +4449,9 @@ endif
 	cp src/jems/ejs.db.sqlite/ejs.db.sqlite.slots.h $(BIT_VAPP_PREFIX)/inc/ejs.db.sqlite.slots.h
 	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.db.sqlite.slots.h"
 	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.db.sqlite.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.db.sqlite.slots.h"
+	cp src/jems/ejs.web/ejs.web.slots.h $(BIT_VAPP_PREFIX)/inc/ejs.web.slots.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.web.slots.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.web.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.web.slots.h"
 	cp src/jems/ejs.web/ejsWeb.h $(BIT_VAPP_PREFIX)/inc/ejsWeb.h
 	rm -f "$(BIT_INC_PREFIX)/ejs/ejsWeb.h"
 	ln -s "$(BIT_VAPP_PREFIX)/inc/ejsWeb.h" "$(BIT_INC_PREFIX)/ejs/ejsWeb.h"

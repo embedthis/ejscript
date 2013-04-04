@@ -82,7 +82,7 @@ DFLAGS             = -DBIT_DEBUG -D_REENTRANT -D_MT -DBIT_PACK_EST=$(BIT_PACK_ES
 IFLAGS             = -I$(CONFIG)\inc
 LDFLAGS            = -nologo -nodefaultlib -incremental:no -debug -machine:$(ARCH)
 LIBPATHS           = -libpath:$(CONFIG)\bin
-LIBS               = dl ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.lib msvcrt.lib shell32.lib
+LIBS               = ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.lib msvcrt.lib shell32.lib
 
 BIT_ROOT_PREFIX    = C:
 BIT_BASE_PREFIX    = $(BIT_ROOT_PREFIX)\Program Files
@@ -347,7 +347,7 @@ DEPS_4 = $(DEPS_4) $(CONFIG)\obj\removeFiles.obj
 
 $(CONFIG)\bin\removeFiles.exe: $(DEPS_4)
 	@echo '      [Link] $(CONFIG)/bin/removeFiles.exe'
-	"$(LD)" -out:$(CONFIG)\bin\removeFiles.exe -entry: -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\removeFiles.obj $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\removeFiles.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\removeFiles.obj $(LIBS) 
 
 #
 #   mpr.h
@@ -479,7 +479,7 @@ LIBS_15 = $(LIBS_15) libmpr.lib
 
 $(CONFIG)\bin\ejsman.exe: $(DEPS_15)
 	@echo '      [Link] $(CONFIG)/bin/ejsman.exe'
-	"$(LD)" -out:$(CONFIG)\bin\ejsman.exe -entry: -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\manager.obj $(LIBPATHS_15) $(LIBS_15) $(LIBS_15) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\ejsman.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\manager.obj $(LIBPATHS_15) $(LIBS_15) $(LIBS_15) $(LIBS) 
 
 #
 #   makerom.obj
@@ -506,7 +506,7 @@ LIBS_17 = $(LIBS_17) libmpr.lib
 
 $(CONFIG)\bin\makerom.exe: $(DEPS_17)
 	@echo '      [Link] $(CONFIG)/bin/makerom.exe'
-	"$(LD)" -out:$(CONFIG)\bin\makerom.exe -entry: -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\makerom.obj $(LIBPATHS_17) $(LIBS_17) $(LIBS_17) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\makerom.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\makerom.obj $(LIBPATHS_17) $(LIBS_17) $(LIBS_17) $(LIBS) 
 
 #
 #   ca-crt
@@ -627,7 +627,7 @@ LIBS_26 = $(LIBS_26) libpcre.lib
 
 $(CONFIG)\bin\http.exe: $(DEPS_26)
 	@echo '      [Link] $(CONFIG)/bin/http.exe'
-	"$(LD)" -out:$(CONFIG)\bin\http.exe -entry: -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\http.obj $(LIBPATHS_26) $(LIBS_26) $(LIBS_26) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\http.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\http.obj $(LIBPATHS_26) $(LIBS_26) $(LIBS_26) $(LIBS) 
 
 #
 #   sqlite3.h
@@ -686,7 +686,7 @@ LIBS_31 = $(LIBS_31) libsqlite3.lib
 
 $(CONFIG)\bin\sqlite.exe: $(DEPS_31)
 	@echo '      [Link] $(CONFIG)/bin/sqlite.exe'
-	"$(LD)" -out:$(CONFIG)\bin\sqlite.exe -entry: -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite.obj $(LIBPATHS_31) $(LIBS_31) $(LIBS_31) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\sqlite.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite.obj $(LIBPATHS_31) $(LIBS_31) $(LIBS_31) $(LIBS) 
 !ENDIF
 
 #
@@ -1971,7 +1971,7 @@ LIBS_106 = $(LIBS_106) libpcre.lib
 
 $(CONFIG)\bin\ejs.exe: $(DEPS_106)
 	@echo '      [Link] $(CONFIG)/bin/ejs.exe'
-	"$(LD)" -out:$(CONFIG)\bin\ejs.exe -entry: -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejs.obj $(LIBPATHS_106) $(LIBS_106) $(LIBS_106) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\ejs.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejs.obj $(LIBPATHS_106) $(LIBS_106) $(LIBS_106) $(LIBS) 
 
 #
 #   ejsc.obj
@@ -2081,7 +2081,7 @@ LIBS_108 = $(LIBS_108) libpcre.lib
 
 $(CONFIG)\bin\ejsc.exe: $(DEPS_108)
 	@echo '      [Link] $(CONFIG)/bin/ejsc.exe'
-	"$(LD)" -out:$(CONFIG)\bin\ejsc.exe -entry: -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsc.obj $(LIBPATHS_108) $(LIBS_108) $(LIBS_108) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\ejsc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsc.obj $(LIBPATHS_108) $(LIBS_108) $(LIBS_108) $(LIBS) 
 
 #
 #   ejsmod.h
@@ -2254,7 +2254,7 @@ LIBS_115 = $(LIBS_115) libpcre.lib
 
 $(CONFIG)\bin\ejsmod.exe: $(DEPS_115)
 	@echo '      [Link] $(CONFIG)/bin/ejsmod.exe'
-	"$(LD)" -out:$(CONFIG)\bin\ejsmod.exe -entry: -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsmod.obj $(CONFIG)\obj\doc.obj $(CONFIG)\obj\docFiles.obj $(CONFIG)\obj\listing.obj $(CONFIG)\obj\slotGen.obj $(LIBPATHS_115) $(LIBS_115) $(LIBS_115) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\ejsmod.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsmod.obj $(CONFIG)\obj\doc.obj $(CONFIG)\obj\docFiles.obj $(CONFIG)\obj\listing.obj $(CONFIG)\obj\slotGen.obj $(LIBPATHS_115) $(LIBS_115) $(LIBS_115) $(LIBS) 
 
 #
 #   ejsrun.obj
@@ -2364,7 +2364,7 @@ LIBS_117 = $(LIBS_117) libpcre.lib
 
 $(CONFIG)\bin\ejsrun.exe: $(DEPS_117)
 	@echo '      [Link] $(CONFIG)/bin/ejsrun.exe'
-	"$(LD)" -out:$(CONFIG)\bin\ejsrun.exe -entry: -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBPATHS_117) $(LIBS_117) $(LIBS_117) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\ejsrun.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBPATHS_117) $(LIBS_117) $(LIBS_117) $(LIBS) 
 
 #
 #   ejs.mod
@@ -2735,7 +2735,7 @@ LIBS_121 = $(LIBS_121) libpcre.lib
 
 $(CONFIG)\bin\jem.exe: $(DEPS_121)
 	@echo '      [Link] $(CONFIG)/bin/jem.exe'
-	"$(LD)" -out:$(CONFIG)\bin\jem.exe -entry: -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBPATHS_121) $(LIBS_121) $(LIBS_121) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\jem.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBPATHS_121) $(LIBS_121) $(LIBS_121) $(LIBS) 
 
 #
 #   ejs.db.mod
@@ -4153,7 +4153,7 @@ LIBS_142 = $(LIBS_142) libpcre.lib
 
 $(CONFIG)\bin\mvc.exe: $(DEPS_142)
 	@echo '      [Link] $(CONFIG)/bin/mvc.exe'
-	"$(LD)" -out:$(CONFIG)\bin\mvc.exe -entry: -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBPATHS_142) $(LIBS_142) $(LIBS_142) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\mvc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBPATHS_142) $(LIBS_142) $(LIBS_142) $(LIBS) 
 
 #
 #   ejs.mvc.mod
@@ -4380,7 +4380,7 @@ LIBS_146 = $(LIBS_146) libpcre.lib
 
 $(CONFIG)\bin\utest.exe: $(DEPS_146)
 	@echo '      [Link] $(CONFIG)/bin/utest.exe'
-	"$(LD)" -out:$(CONFIG)\bin\utest.exe -entry: -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBPATHS_146) $(LIBS_146) $(LIBS_146) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\utest.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBPATHS_146) $(LIBS_146) $(LIBS_146) $(LIBS) 
 
 #
 #   stop
@@ -4474,6 +4474,7 @@ installBinary: $(DEPS_148)
 	copy /Y src\deps\sqlite\sqlite3.h "$(BIT_VAPP_PREFIX)\inc\sqlite3.h"
 	copy /Y src\deps\zlib\zlib.h "$(BIT_VAPP_PREFIX)\inc\zlib.h"
 	copy /Y src\jems\ejs.db.sqlite\ejs.db.sqlite.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.db.sqlite.slots.h"
+	copy /Y src\jems\ejs.web\ejs.web.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.web.slots.h"
 	copy /Y src\jems\ejs.web\ejsWeb.h "$(BIT_VAPP_PREFIX)\inc\ejsWeb.h"
 
 #
