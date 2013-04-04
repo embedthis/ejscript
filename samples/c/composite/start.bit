@@ -1,0 +1,27 @@
+/*
+    local.bit - Bit file for the composite sample
+ */
+
+Bit.load({
+    targets: {
+        'composite' : {
+            depends: ['composite-lib', 'composite.mod'],
+        },
+
+        'composite.mod' : {
+            files: ['square.es'],
+            path: 'composite.mod',
+            build: "
+                run('ejsc square.es')
+                run('ejsmod --cslots composite.mod')
+            ",
+        },
+
+        'composite-lib': {
+            type: 'lib',
+            path: 'composite${SHOBJ}',
+            sources: ['*.c'],
+            '+libraries': [ 'ejs', 'mpr', 'mprssl' ],
+        },
+    },
+})
