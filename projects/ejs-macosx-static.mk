@@ -3,7 +3,7 @@
 #
 
 PRODUCT            := ejs
-VERSION            := 2.3.1
+VERSION            := 2.3.2
 BUILD_NUMBER       := 0
 PROFILE            := static
 ARCH               := $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/')
@@ -59,9 +59,9 @@ BIT_PACK_ZLIB_PATH        := zlib
 CFLAGS             += -w
 DFLAGS             +=  $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS))) -DBIT_PACK_EST=$(BIT_PACK_EST) -DBIT_PACK_MATRIXSSL=$(BIT_PACK_MATRIXSSL) -DBIT_PACK_OPENSSL=$(BIT_PACK_OPENSSL) -DBIT_PACK_PCRE=$(BIT_PACK_PCRE) -DBIT_PACK_SQLITE=$(BIT_PACK_SQLITE) -DBIT_PACK_SSL=$(BIT_PACK_SSL) -DBIT_PACK_ZLIB=$(BIT_PACK_ZLIB) 
 IFLAGS             += -I$(CONFIG)/inc
-LDFLAGS            += '-Wl,-rpath,@executable_path/' '-Wl,-rpath,@loader_path/'
+LDFLAGS            += '-Wl,-rpath,@executable_path/' '-Wl,-rpath,@loader_path/' 
 LIBPATHS           += -L$(CONFIG)/bin
-LIBS               += -lpthread -lm -ldl
+LIBS               += -ldl -lpthread -lm
 
 DEBUG              := debug
 CFLAGS-debug       := -g
@@ -289,7 +289,7 @@ clobber: clean
 #   version
 #
 version: $(DEPS_1)
-	@echo 2.3.1-0
+	@echo 2.3.2-0
 
 #
 #   mpr.h
@@ -567,15 +567,15 @@ DEPS_24 += $(CONFIG)/obj/httpLib.o
 DEPS_24 += $(CONFIG)/bin/libhttp.a
 DEPS_24 += $(CONFIG)/obj/http.o
 
+LIBS_24 += -lhttp
 LIBS_24 += -lmpr
 ifeq ($(BIT_PACK_PCRE),1)
     LIBS_24 += -lpcre
 endif
-LIBS_24 += -lhttp
 
 $(CONFIG)/bin/http: $(DEPS_24)
 	@echo '      [Link] $(CONFIG)/bin/http'
-	$(CC) -o $(CONFIG)/bin/http -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o -lpam $(LIBPATHS_24) $(LIBS_24) $(LIBS_24) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/http -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o $(LIBPATHS_24) $(LIBS_24) $(LIBS_24) $(LIBS) -lpam 
 
 #
 #   sqlite3.h
@@ -1910,16 +1910,16 @@ DEPS_104 += $(CONFIG)/obj/ejsService.o
 DEPS_104 += $(CONFIG)/bin/libejs.a
 DEPS_104 += $(CONFIG)/obj/ejs.o
 
+LIBS_104 += -lejs
 LIBS_104 += -lhttp
+LIBS_104 += -lmpr
 ifeq ($(BIT_PACK_PCRE),1)
     LIBS_104 += -lpcre
 endif
-LIBS_104 += -lmpr
-LIBS_104 += -lejs
 
 $(CONFIG)/bin/ejs: $(DEPS_104)
 	@echo '      [Link] $(CONFIG)/bin/ejs'
-	$(CC) -o $(CONFIG)/bin/ejs -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o -lpam $(LIBPATHS_104) $(LIBS_104) $(LIBS_104) $(LIBS) -ledit 
+	$(CC) -o $(CONFIG)/bin/ejs -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LIBPATHS_104) $(LIBS_104) $(LIBS_104) $(LIBS) -lpam -ledit 
 
 #
 #   ejsc.o
@@ -2020,16 +2020,16 @@ DEPS_106 += $(CONFIG)/obj/ejsService.o
 DEPS_106 += $(CONFIG)/bin/libejs.a
 DEPS_106 += $(CONFIG)/obj/ejsc.o
 
+LIBS_106 += -lejs
 LIBS_106 += -lhttp
+LIBS_106 += -lmpr
 ifeq ($(BIT_PACK_PCRE),1)
     LIBS_106 += -lpcre
 endif
-LIBS_106 += -lmpr
-LIBS_106 += -lejs
 
 $(CONFIG)/bin/ejsc: $(DEPS_106)
 	@echo '      [Link] $(CONFIG)/bin/ejsc'
-	$(CC) -o $(CONFIG)/bin/ejsc -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o -lpam $(LIBPATHS_106) $(LIBS_106) $(LIBS_106) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/ejsc -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o $(LIBPATHS_106) $(LIBS_106) $(LIBS_106) $(LIBS) -lpam 
 
 #
 #   ejsmod.h
@@ -2193,16 +2193,16 @@ DEPS_113 += $(CONFIG)/obj/docFiles.o
 DEPS_113 += $(CONFIG)/obj/listing.o
 DEPS_113 += $(CONFIG)/obj/slotGen.o
 
+LIBS_113 += -lejs
 LIBS_113 += -lhttp
+LIBS_113 += -lmpr
 ifeq ($(BIT_PACK_PCRE),1)
     LIBS_113 += -lpcre
 endif
-LIBS_113 += -lmpr
-LIBS_113 += -lejs
 
 $(CONFIG)/bin/ejsmod: $(DEPS_113)
 	@echo '      [Link] $(CONFIG)/bin/ejsmod'
-	$(CC) -o $(CONFIG)/bin/ejsmod -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o -lpam $(LIBPATHS_113) $(LIBS_113) $(LIBS_113) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/ejsmod -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o $(LIBPATHS_113) $(LIBS_113) $(LIBS_113) $(LIBS) -lpam 
 
 #
 #   ejsrun.o
@@ -2303,16 +2303,16 @@ DEPS_115 += $(CONFIG)/obj/ejsService.o
 DEPS_115 += $(CONFIG)/bin/libejs.a
 DEPS_115 += $(CONFIG)/obj/ejsrun.o
 
+LIBS_115 += -lejs
 LIBS_115 += -lhttp
+LIBS_115 += -lmpr
 ifeq ($(BIT_PACK_PCRE),1)
     LIBS_115 += -lpcre
 endif
-LIBS_115 += -lmpr
-LIBS_115 += -lejs
 
 $(CONFIG)/bin/ejsrun: $(DEPS_115)
 	@echo '      [Link] $(CONFIG)/bin/ejsrun'
-	$(CC) -o $(CONFIG)/bin/ejsrun -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o -lpam $(LIBPATHS_115) $(LIBS_115) $(LIBS_115) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/ejsrun -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBPATHS_115) $(LIBS_115) $(LIBS_115) $(LIBS) -lpam 
 
 #
 #   ejs.mod
@@ -2668,16 +2668,16 @@ DEPS_119 += $(CONFIG)/bin/libejs.a
 DEPS_119 += $(CONFIG)/bin/jem.es
 DEPS_119 += $(CONFIG)/obj/ejsrun.o
 
+LIBS_119 += -lejs
 LIBS_119 += -lhttp
+LIBS_119 += -lmpr
 ifeq ($(BIT_PACK_PCRE),1)
     LIBS_119 += -lpcre
 endif
-LIBS_119 += -lmpr
-LIBS_119 += -lejs
 
 $(CONFIG)/bin/jem: $(DEPS_119)
 	@echo '      [Link] $(CONFIG)/bin/jem'
-	$(CC) -o $(CONFIG)/bin/jem -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o -lpam $(LIBPATHS_119) $(LIBS_119) $(LIBS_119) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/jem -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBPATHS_119) $(LIBS_119) $(LIBS_119) $(LIBS) -lpam 
 
 #
 #   ejs.db.mod
@@ -4065,16 +4065,16 @@ DEPS_140 += $(CONFIG)/bin/libejs.a
 DEPS_140 += $(CONFIG)/bin/mvc.es
 DEPS_140 += $(CONFIG)/obj/ejsrun.o
 
+LIBS_140 += -lejs
 LIBS_140 += -lhttp
+LIBS_140 += -lmpr
 ifeq ($(BIT_PACK_PCRE),1)
     LIBS_140 += -lpcre
 endif
-LIBS_140 += -lmpr
-LIBS_140 += -lejs
 
 $(CONFIG)/bin/mvc: $(DEPS_140)
 	@echo '      [Link] $(CONFIG)/bin/mvc'
-	$(CC) -o $(CONFIG)/bin/mvc -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o -lpam $(LIBPATHS_140) $(LIBS_140) $(LIBS_140) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/mvc -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBPATHS_140) $(LIBS_140) $(LIBS_140) $(LIBS) -lpam 
 
 #
 #   ejs.mvc.mod
@@ -4286,16 +4286,16 @@ DEPS_144 += $(CONFIG)/bin/utest.es
 DEPS_144 += $(CONFIG)/bin/utest.worker
 DEPS_144 += $(CONFIG)/obj/ejsrun.o
 
+LIBS_144 += -lejs
 LIBS_144 += -lhttp
+LIBS_144 += -lmpr
 ifeq ($(BIT_PACK_PCRE),1)
     LIBS_144 += -lpcre
 endif
-LIBS_144 += -lmpr
-LIBS_144 += -lejs
 
 $(CONFIG)/bin/utest: $(DEPS_144)
 	@echo '      [Link] $(CONFIG)/bin/utest'
-	$(CC) -o $(CONFIG)/bin/utest -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o -lpam $(LIBPATHS_144) $(LIBS_144) $(LIBS_144) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/utest -arch x86_64 $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBPATHS_144) $(LIBS_144) $(LIBS_144) $(LIBS) -lpam 
 
 #
 #   stop
@@ -4310,7 +4310,7 @@ installBinary: $(DEPS_146)
 	mkdir -p "$(BIT_VAPP_PREFIX)"
 	mkdir -p "$(BIT_APP_PREFIX)"
 	rm -f "$(BIT_APP_PREFIX)/latest"
-	ln -s "2.3.1" "$(BIT_APP_PREFIX)/latest"
+	ln -s "2.3.2" "$(BIT_APP_PREFIX)/latest"
 	mkdir -p "$(BIT_VAPP_PREFIX)/bin"
 	cp $(CONFIG)/bin/ejs $(BIT_VAPP_PREFIX)/bin/ejs
 	mkdir -p "$(BIT_BIN_PREFIX)"

@@ -149,7 +149,7 @@
     #define BIT_TUNE "size"
 #endif
 #ifndef BIT_VERSION
-    #define BIT_VERSION "2.3.1"
+    #define BIT_VERSION "2.3.2"
 #endif
 #ifndef BIT_WARN64TO32
     #define BIT_WARN64TO32 1
@@ -178,7 +178,7 @@
     #define BIT_APP_PREFIX "/usr/local/lib/ejs"
 #endif
 #ifndef BIT_VAPP_PREFIX
-    #define BIT_VAPP_PREFIX "/usr/local/lib/ejs/2.3.1"
+    #define BIT_VAPP_PREFIX "/usr/local/lib/ejs/2.3.2"
 #endif
 #ifndef BIT_BIN_PREFIX
     #define BIT_BIN_PREFIX "/usr/local/bin"
@@ -211,7 +211,7 @@
     #define BIT_CACHE_PREFIX "/var/spool/ejs/cache"
 #endif
 #ifndef BIT_SRC_PREFIX
-    #define BIT_SRC_PREFIX "ejs-2.3.1"
+    #define BIT_SRC_PREFIX "ejs-2.3.2"
 #endif
 
 /* Suffixes */
@@ -250,10 +250,10 @@
     #define BIT_MINOR_VERSION 3
 #endif
 #ifndef BIT_PATCH_VERSION
-    #define BIT_PATCH_VERSION 1
+    #define BIT_PATCH_VERSION 2
 #endif
 #ifndef BIT_VNUM
-    #define BIT_VNUM 200030001
+    #define BIT_VNUM 200030002
 #endif
 
 /* Packs */

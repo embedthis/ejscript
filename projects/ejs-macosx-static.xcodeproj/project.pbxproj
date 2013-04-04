@@ -390,61 +390,61 @@
 		019452480194663400000137 /* ejsZlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 019452480194663400000138 /* ejsZlib.c */; };
 		01945248019466340000012B /* ejsrun.c in Sources */ = {isa = PBXBuildFile; fileRef = 01945248019466340000012C /* ejsrun.c */; };
 		01945248019466340000012B /* ejsrun.c in Sources */ = {isa = PBXBuildFile; fileRef = 01945248019466340000012C /* ejsrun.c */; };
-		019452480194663400000139 /* libest.a for libmprssl */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013A; };
-		01945248019466340000013B /* libmpr.a for libmprssl */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013C; };
-		01945248019466340000013D /* libmpr.a for manager */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013C; };
-		01945248019466340000013E /* libmpr.a for makerom */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013C; };
-		01945248019466340000013F /* libpcre.a for libhttp */ = {isa = PBXBuildFile; fileRef = 019452480194663400000140; };
-		019452480194663400000141 /* libmpr.a for libhttp */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013C; };
-		019452480194663400000142 /* libmpr.a for http */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013C; };
-		019452480194663400000143 /* libpcre.a for http */ = {isa = PBXBuildFile; fileRef = 019452480194663400000140; };
-		019452480194663400000144 /* libhttp.a for http */ = {isa = PBXBuildFile; fileRef = 019452480194663400000145; };
+		019452480194663400000139 /* libmpr.a for libmprssl */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013A; };
+		01945248019466340000013B /* libest.a for libmprssl */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013C; };
+		01945248019466340000013D /* libmpr.a for manager */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013A; };
+		01945248019466340000013E /* libmpr.a for makerom */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013A; };
+		01945248019466340000013F /* libmpr.a for libhttp */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013A; };
+		019452480194663400000140 /* libpcre.a for libhttp */ = {isa = PBXBuildFile; fileRef = 019452480194663400000141; };
+		019452480194663400000142 /* libhttp.a for http */ = {isa = PBXBuildFile; fileRef = 019452480194663400000143; };
+		019452480194663400000144 /* libmpr.a for http */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013A; };
+		019452480194663400000145 /* libpcre.a for http */ = {isa = PBXBuildFile; fileRef = 019452480194663400000141; };
 		019452480194663400000146 /* libsqlite3.a for sqliteshell */ = {isa = PBXBuildFile; fileRef = 019452480194663400000147; };
-		019452480194663400000148 /* libmpr.a for libejs */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013C; };
-		019452480194663400000149 /* libpcre.a for libejs */ = {isa = PBXBuildFile; fileRef = 019452480194663400000140; };
-		01945248019466340000014A /* libhttp.a for libejs */ = {isa = PBXBuildFile; fileRef = 019452480194663400000145; };
-		01945248019466340000014B /* libhttp.a for ejs */ = {isa = PBXBuildFile; fileRef = 019452480194663400000145; };
-		01945248019466340000014C /* libpcre.a for ejs */ = {isa = PBXBuildFile; fileRef = 019452480194663400000140; };
-		01945248019466340000014D /* libmpr.a for ejs */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013C; };
-		01945248019466340000014E /* libejs.a for ejs */ = {isa = PBXBuildFile; fileRef = 01945248019466340000014F; };
-		019452480194663400000150 /* libhttp.a for ejsc */ = {isa = PBXBuildFile; fileRef = 019452480194663400000145; };
-		019452480194663400000151 /* libpcre.a for ejsc */ = {isa = PBXBuildFile; fileRef = 019452480194663400000140; };
-		019452480194663400000152 /* libmpr.a for ejsc */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013C; };
-		019452480194663400000153 /* libejs.a for ejsc */ = {isa = PBXBuildFile; fileRef = 01945248019466340000014F; };
-		019452480194663400000154 /* libhttp.a for ejsmod */ = {isa = PBXBuildFile; fileRef = 019452480194663400000145; };
-		019452480194663400000155 /* libpcre.a for ejsmod */ = {isa = PBXBuildFile; fileRef = 019452480194663400000140; };
-		019452480194663400000156 /* libmpr.a for ejsmod */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013C; };
-		019452480194663400000157 /* libejs.a for ejsmod */ = {isa = PBXBuildFile; fileRef = 01945248019466340000014F; };
-		019452480194663400000158 /* libhttp.a for ejsrun */ = {isa = PBXBuildFile; fileRef = 019452480194663400000145; };
-		019452480194663400000159 /* libpcre.a for ejsrun */ = {isa = PBXBuildFile; fileRef = 019452480194663400000140; };
-		01945248019466340000015A /* libmpr.a for ejsrun */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013C; };
-		01945248019466340000015B /* libejs.a for ejsrun */ = {isa = PBXBuildFile; fileRef = 01945248019466340000014F; };
-		01945248019466340000015C /* libhttp.a for jem */ = {isa = PBXBuildFile; fileRef = 019452480194663400000145; };
-		01945248019466340000015D /* libpcre.a for jem */ = {isa = PBXBuildFile; fileRef = 019452480194663400000140; };
-		01945248019466340000015E /* libmpr.a for jem */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013C; };
-		01945248019466340000015F /* libejs.a for jem */ = {isa = PBXBuildFile; fileRef = 01945248019466340000014F; };
-		019452480194663400000160 /* libsqlite3.a for libejs.db.sqlite */ = {isa = PBXBuildFile; fileRef = 019452480194663400000147; };
-		019452480194663400000161 /* libhttp.a for libejs.db.sqlite */ = {isa = PBXBuildFile; fileRef = 019452480194663400000145; };
-		019452480194663400000162 /* libpcre.a for libejs.db.sqlite */ = {isa = PBXBuildFile; fileRef = 019452480194663400000140; };
-		019452480194663400000163 /* libejs.a for libejs.db.sqlite */ = {isa = PBXBuildFile; fileRef = 01945248019466340000014F; };
-		019452480194663400000164 /* libmpr.a for libejs.db.sqlite */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013C; };
-		019452480194663400000165 /* libhttp.a for libejs.web */ = {isa = PBXBuildFile; fileRef = 019452480194663400000145; };
-		019452480194663400000166 /* libpcre.a for libejs.web */ = {isa = PBXBuildFile; fileRef = 019452480194663400000140; };
-		019452480194663400000167 /* libmpr.a for libejs.web */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013C; };
-		019452480194663400000168 /* libejs.a for libejs.web */ = {isa = PBXBuildFile; fileRef = 01945248019466340000014F; };
-		019452480194663400000169 /* libzlib.a for libejs.zlib */ = {isa = PBXBuildFile; fileRef = 01945248019466340000016A; };
-		01945248019466340000016B /* libhttp.a for libejs.zlib */ = {isa = PBXBuildFile; fileRef = 019452480194663400000145; };
-		01945248019466340000016C /* libpcre.a for libejs.zlib */ = {isa = PBXBuildFile; fileRef = 019452480194663400000140; };
-		01945248019466340000016D /* libmpr.a for libejs.zlib */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013C; };
-		01945248019466340000016E /* libejs.a for libejs.zlib */ = {isa = PBXBuildFile; fileRef = 01945248019466340000014F; };
-		01945248019466340000016F /* libhttp.a for mvc */ = {isa = PBXBuildFile; fileRef = 019452480194663400000145; };
-		019452480194663400000170 /* libpcre.a for mvc */ = {isa = PBXBuildFile; fileRef = 019452480194663400000140; };
-		019452480194663400000171 /* libmpr.a for mvc */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013C; };
-		019452480194663400000172 /* libejs.a for mvc */ = {isa = PBXBuildFile; fileRef = 01945248019466340000014F; };
-		019452480194663400000173 /* libhttp.a for utest */ = {isa = PBXBuildFile; fileRef = 019452480194663400000145; };
-		019452480194663400000174 /* libpcre.a for utest */ = {isa = PBXBuildFile; fileRef = 019452480194663400000140; };
-		019452480194663400000175 /* libmpr.a for utest */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013C; };
-		019452480194663400000176 /* libejs.a for utest */ = {isa = PBXBuildFile; fileRef = 01945248019466340000014F; };
+		019452480194663400000148 /* libhttp.a for libejs */ = {isa = PBXBuildFile; fileRef = 019452480194663400000143; };
+		019452480194663400000149 /* libmpr.a for libejs */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013A; };
+		01945248019466340000014A /* libpcre.a for libejs */ = {isa = PBXBuildFile; fileRef = 019452480194663400000141; };
+		01945248019466340000014B /* libejs.a for ejs */ = {isa = PBXBuildFile; fileRef = 01945248019466340000014C; };
+		01945248019466340000014D /* libhttp.a for ejs */ = {isa = PBXBuildFile; fileRef = 019452480194663400000143; };
+		01945248019466340000014E /* libmpr.a for ejs */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013A; };
+		01945248019466340000014F /* libpcre.a for ejs */ = {isa = PBXBuildFile; fileRef = 019452480194663400000141; };
+		019452480194663400000150 /* libejs.a for ejsc */ = {isa = PBXBuildFile; fileRef = 01945248019466340000014C; };
+		019452480194663400000151 /* libhttp.a for ejsc */ = {isa = PBXBuildFile; fileRef = 019452480194663400000143; };
+		019452480194663400000152 /* libmpr.a for ejsc */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013A; };
+		019452480194663400000153 /* libpcre.a for ejsc */ = {isa = PBXBuildFile; fileRef = 019452480194663400000141; };
+		019452480194663400000154 /* libejs.a for ejsmod */ = {isa = PBXBuildFile; fileRef = 01945248019466340000014C; };
+		019452480194663400000155 /* libhttp.a for ejsmod */ = {isa = PBXBuildFile; fileRef = 019452480194663400000143; };
+		019452480194663400000156 /* libmpr.a for ejsmod */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013A; };
+		019452480194663400000157 /* libpcre.a for ejsmod */ = {isa = PBXBuildFile; fileRef = 019452480194663400000141; };
+		019452480194663400000158 /* libejs.a for ejsrun */ = {isa = PBXBuildFile; fileRef = 01945248019466340000014C; };
+		019452480194663400000159 /* libhttp.a for ejsrun */ = {isa = PBXBuildFile; fileRef = 019452480194663400000143; };
+		01945248019466340000015A /* libmpr.a for ejsrun */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013A; };
+		01945248019466340000015B /* libpcre.a for ejsrun */ = {isa = PBXBuildFile; fileRef = 019452480194663400000141; };
+		01945248019466340000015C /* libejs.a for jem */ = {isa = PBXBuildFile; fileRef = 01945248019466340000014C; };
+		01945248019466340000015D /* libhttp.a for jem */ = {isa = PBXBuildFile; fileRef = 019452480194663400000143; };
+		01945248019466340000015E /* libmpr.a for jem */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013A; };
+		01945248019466340000015F /* libpcre.a for jem */ = {isa = PBXBuildFile; fileRef = 019452480194663400000141; };
+		019452480194663400000160 /* libmpr.a for libejs.db.sqlite */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013A; };
+		019452480194663400000161 /* libejs.a for libejs.db.sqlite */ = {isa = PBXBuildFile; fileRef = 01945248019466340000014C; };
+		019452480194663400000162 /* libhttp.a for libejs.db.sqlite */ = {isa = PBXBuildFile; fileRef = 019452480194663400000143; };
+		019452480194663400000163 /* libpcre.a for libejs.db.sqlite */ = {isa = PBXBuildFile; fileRef = 019452480194663400000141; };
+		019452480194663400000164 /* libsqlite3.a for libejs.db.sqlite */ = {isa = PBXBuildFile; fileRef = 019452480194663400000147; };
+		019452480194663400000165 /* libejs.a for libejs.web */ = {isa = PBXBuildFile; fileRef = 01945248019466340000014C; };
+		019452480194663400000166 /* libhttp.a for libejs.web */ = {isa = PBXBuildFile; fileRef = 019452480194663400000143; };
+		019452480194663400000167 /* libmpr.a for libejs.web */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013A; };
+		019452480194663400000168 /* libpcre.a for libejs.web */ = {isa = PBXBuildFile; fileRef = 019452480194663400000141; };
+		019452480194663400000169 /* libejs.a for libejs.zlib */ = {isa = PBXBuildFile; fileRef = 01945248019466340000014C; };
+		01945248019466340000016A /* libhttp.a for libejs.zlib */ = {isa = PBXBuildFile; fileRef = 019452480194663400000143; };
+		01945248019466340000016B /* libmpr.a for libejs.zlib */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013A; };
+		01945248019466340000016C /* libpcre.a for libejs.zlib */ = {isa = PBXBuildFile; fileRef = 019452480194663400000141; };
+		01945248019466340000016D /* libzlib.a for libejs.zlib */ = {isa = PBXBuildFile; fileRef = 01945248019466340000016E; };
+		01945248019466340000016F /* libejs.a for mvc */ = {isa = PBXBuildFile; fileRef = 01945248019466340000014C; };
+		019452480194663400000170 /* libhttp.a for mvc */ = {isa = PBXBuildFile; fileRef = 019452480194663400000143; };
+		019452480194663400000171 /* libmpr.a for mvc */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013A; };
+		019452480194663400000172 /* libpcre.a for mvc */ = {isa = PBXBuildFile; fileRef = 019452480194663400000141; };
+		019452480194663400000173 /* libejs.a for utest */ = {isa = PBXBuildFile; fileRef = 01945248019466340000014C; };
+		019452480194663400000174 /* libhttp.a for utest */ = {isa = PBXBuildFile; fileRef = 019452480194663400000143; };
+		019452480194663400000175 /* libmpr.a for utest */ = {isa = PBXBuildFile; fileRef = 01945248019466340000013A; };
+		019452480194663400000176 /* libpcre.a for utest */ = {isa = PBXBuildFile; fileRef = 019452480194663400000141; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2058,7 +2058,7 @@
 		019452480194663400000272 /* bit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bit.h; path = macosx-x64-static/inc/bit.h; sourceTree = "<group>"; };
 		019452480194663400000273 /* mpr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpr.h; path = macosx-x64-static/inc/mpr.h; sourceTree = "<group>"; };
 		019452480194663400000274 /* bitos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bitos.h; path = macosx-x64-static/inc/bitos.h; sourceTree = "<group>"; };
-		01945248019466340000013C /* libmpr */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmpr.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		01945248019466340000013A /* libmpr */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmpr.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		019452480194663400000094 /* mprSsl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mprSsl.c; path = src/deps/mpr/mprSsl.c; sourceTree = "<group>"; };
 		019452480194663400000275 /* est.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = est.h; path = macosx-x64-static/inc/est.h; sourceTree = "<group>"; };
 		019452480194663400000276 /* libmprssl */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmprssl.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2067,13 +2067,13 @@
 		019452480194663400000098 /* makerom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = makerom.c; path = src/deps/mpr/makerom.c; sourceTree = "<group>"; };
 		019452480194663400000278 /* makerom */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = makerom; sourceTree = BUILT_PRODUCTS_DIR; };
 		01945248019466340000009A /* estLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = estLib.c; path = src/deps/est/estLib.c; sourceTree = "<group>"; };
-		01945248019466340000013A /* libest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libest.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		01945248019466340000013C /* libest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libest.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		01945248019466340000009C /* pcre.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pcre.c; path = src/deps/pcre/pcre.c; sourceTree = "<group>"; };
 		019452480194663400000279 /* pcre.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pcre.h; path = macosx-x64-static/inc/pcre.h; sourceTree = "<group>"; };
-		019452480194663400000140 /* libpcre */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libpcre.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		019452480194663400000141 /* libpcre */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libpcre.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		01945248019466340000009E /* httpLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = httpLib.c; path = src/deps/http/httpLib.c; sourceTree = "<group>"; };
 		01945248019466340000027A /* http.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = http.h; path = macosx-x64-static/inc/http.h; sourceTree = "<group>"; };
-		019452480194663400000145 /* libhttp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libhttp.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		019452480194663400000143 /* libhttp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libhttp.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		0194524801946634000000A0 /* http.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = http.c; path = src/deps/http/http.c; sourceTree = "<group>"; };
 		01945248019466340000027B /* http */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = http; sourceTree = BUILT_PRODUCTS_DIR; };
 		0194524801946634000000A2 /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sqlite3.c; path = src/deps/sqlite/sqlite3.c; sourceTree = "<group>"; };
@@ -2083,7 +2083,7 @@
 		01945248019466340000027D /* sqliteshell */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sqlite; sourceTree = BUILT_PRODUCTS_DIR; };
 		0194524801946634000000A6 /* zlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = zlib.c; path = src/deps/zlib/zlib.c; sourceTree = "<group>"; };
 		01945248019466340000027E /* zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zlib.h; path = macosx-x64-static/inc/zlib.h; sourceTree = "<group>"; };
-		01945248019466340000016A /* libzlib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libzlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		01945248019466340000016E /* libzlib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libzlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		0194524801946634000000A8 /* ecAst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ecAst.c; path = src/compiler/ecAst.c; sourceTree = "<group>"; };
 		01945248019466340000027F /* ejsCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsCompiler.h; path = macosx-x64-static/inc/ejsCompiler.h; sourceTree = "<group>"; };
 		019452480194663400000280 /* ejs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.h; path = macosx-x64-static/inc/ejs.h; sourceTree = "<group>"; };
@@ -2145,7 +2145,7 @@
 		019452480194663400000118 /* ejsModule.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsModule.c; path = src/vm/ejsModule.c; sourceTree = "<group>"; };
 		01945248019466340000011A /* ejsScope.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsScope.c; path = src/vm/ejsScope.c; sourceTree = "<group>"; };
 		01945248019466340000011C /* ejsService.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsService.c; path = src/vm/ejsService.c; sourceTree = "<group>"; };
-		01945248019466340000014F /* libejs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		01945248019466340000014C /* libejs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		01945248019466340000011E /* ejs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejs.c; path = src/cmd/ejs.c; sourceTree = "<group>"; };
 		019452480194663400000281 /* ejs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ejs; sourceTree = BUILT_PRODUCTS_DIR; };
 		019452480194663400000120 /* ejsc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsc.c; path = src/cmd/ejsc.c; sourceTree = "<group>"; };
@@ -2194,8 +2194,8 @@
             isa = PBXFrameworksBuildPhase;
             buildActionMask = 2147483647;
             files = (
-				019452480194663400000139 /* libest */,
-				01945248019466340000013B /* libmpr */,				
+				019452480194663400000139 /* libmpr */,
+				01945248019466340000013B /* libest */,				
             );
             runOnlyForDeploymentPostprocessing = 0;
         };
@@ -2235,8 +2235,8 @@
             isa = PBXFrameworksBuildPhase;
             buildActionMask = 2147483647;
             files = (
-				01945248019466340000013F /* libpcre */,
-				019452480194663400000141 /* libmpr */,				
+				01945248019466340000013F /* libmpr */,
+				019452480194663400000140 /* libpcre */,				
             );
             runOnlyForDeploymentPostprocessing = 0;
         };
@@ -2244,9 +2244,9 @@
             isa = PBXFrameworksBuildPhase;
             buildActionMask = 2147483647;
             files = (
-				019452480194663400000142 /* libmpr */,
-				019452480194663400000143 /* libpcre */,
-				019452480194663400000144 /* libhttp */,				
+				019452480194663400000142 /* libhttp */,
+				019452480194663400000144 /* libmpr */,
+				019452480194663400000145 /* libpcre */,				
             );
             runOnlyForDeploymentPostprocessing = 0;
         };
@@ -2278,9 +2278,9 @@
             isa = PBXFrameworksBuildPhase;
             buildActionMask = 2147483647;
             files = (
-				019452480194663400000148 /* libmpr */,
-				019452480194663400000149 /* libpcre */,
-				01945248019466340000014A /* libhttp */,				
+				019452480194663400000148 /* libhttp */,
+				019452480194663400000149 /* libmpr */,
+				01945248019466340000014A /* libpcre */,				
             );
             runOnlyForDeploymentPostprocessing = 0;
         };
@@ -2288,10 +2288,10 @@
             isa = PBXFrameworksBuildPhase;
             buildActionMask = 2147483647;
             files = (
-				01945248019466340000014B /* libhttp */,
-				01945248019466340000014C /* libpcre */,
-				01945248019466340000014D /* libmpr */,
-				01945248019466340000014E /* libejs */,				
+				01945248019466340000014B /* libejs */,
+				01945248019466340000014D /* libhttp */,
+				01945248019466340000014E /* libmpr */,
+				01945248019466340000014F /* libpcre */,				
             );
             runOnlyForDeploymentPostprocessing = 0;
         };
@@ -2299,10 +2299,10 @@
             isa = PBXFrameworksBuildPhase;
             buildActionMask = 2147483647;
             files = (
-				019452480194663400000150 /* libhttp */,
-				019452480194663400000151 /* libpcre */,
+				019452480194663400000150 /* libejs */,
+				019452480194663400000151 /* libhttp */,
 				019452480194663400000152 /* libmpr */,
-				019452480194663400000153 /* libejs */,				
+				019452480194663400000153 /* libpcre */,				
             );
             runOnlyForDeploymentPostprocessing = 0;
         };
@@ -2310,10 +2310,10 @@
             isa = PBXFrameworksBuildPhase;
             buildActionMask = 2147483647;
             files = (
-				019452480194663400000154 /* libhttp */,
-				019452480194663400000155 /* libpcre */,
+				019452480194663400000154 /* libejs */,
+				019452480194663400000155 /* libhttp */,
 				019452480194663400000156 /* libmpr */,
-				019452480194663400000157 /* libejs */,				
+				019452480194663400000157 /* libpcre */,				
             );
             runOnlyForDeploymentPostprocessing = 0;
         };
@@ -2321,10 +2321,10 @@
             isa = PBXFrameworksBuildPhase;
             buildActionMask = 2147483647;
             files = (
-				019452480194663400000158 /* libhttp */,
-				019452480194663400000159 /* libpcre */,
+				019452480194663400000158 /* libejs */,
+				019452480194663400000159 /* libhttp */,
 				01945248019466340000015A /* libmpr */,
-				01945248019466340000015B /* libejs */,				
+				01945248019466340000015B /* libpcre */,				
             );
             runOnlyForDeploymentPostprocessing = 0;
         };
@@ -2332,10 +2332,10 @@
             isa = PBXFrameworksBuildPhase;
             buildActionMask = 2147483647;
             files = (
-				01945248019466340000015C /* libhttp */,
-				01945248019466340000015D /* libpcre */,
+				01945248019466340000015C /* libejs */,
+				01945248019466340000015D /* libhttp */,
 				01945248019466340000015E /* libmpr */,
-				01945248019466340000015F /* libejs */,				
+				01945248019466340000015F /* libpcre */,				
             );
             runOnlyForDeploymentPostprocessing = 0;
         };
@@ -2343,11 +2343,11 @@
             isa = PBXFrameworksBuildPhase;
             buildActionMask = 2147483647;
             files = (
-				019452480194663400000160 /* libsqlite3 */,
-				019452480194663400000161 /* libhttp */,
-				019452480194663400000162 /* libpcre */,
-				019452480194663400000163 /* libejs */,
-				019452480194663400000164 /* libmpr */,				
+				019452480194663400000160 /* libmpr */,
+				019452480194663400000161 /* libejs */,
+				019452480194663400000162 /* libhttp */,
+				019452480194663400000163 /* libpcre */,
+				019452480194663400000164 /* libsqlite3 */,				
             );
             runOnlyForDeploymentPostprocessing = 0;
         };
@@ -2355,10 +2355,10 @@
             isa = PBXFrameworksBuildPhase;
             buildActionMask = 2147483647;
             files = (
-				019452480194663400000165 /* libhttp */,
-				019452480194663400000166 /* libpcre */,
+				019452480194663400000165 /* libejs */,
+				019452480194663400000166 /* libhttp */,
 				019452480194663400000167 /* libmpr */,
-				019452480194663400000168 /* libejs */,				
+				019452480194663400000168 /* libpcre */,				
             );
             runOnlyForDeploymentPostprocessing = 0;
         };
@@ -2366,11 +2366,11 @@
             isa = PBXFrameworksBuildPhase;
             buildActionMask = 2147483647;
             files = (
-				019452480194663400000169 /* libzlib */,
-				01945248019466340000016B /* libhttp */,
+				019452480194663400000169 /* libejs */,
+				01945248019466340000016A /* libhttp */,
+				01945248019466340000016B /* libmpr */,
 				01945248019466340000016C /* libpcre */,
-				01945248019466340000016D /* libmpr */,
-				01945248019466340000016E /* libejs */,				
+				01945248019466340000016D /* libzlib */,				
             );
             runOnlyForDeploymentPostprocessing = 0;
         };
@@ -2378,10 +2378,10 @@
             isa = PBXFrameworksBuildPhase;
             buildActionMask = 2147483647;
             files = (
-				01945248019466340000016F /* libhttp */,
-				019452480194663400000170 /* libpcre */,
+				01945248019466340000016F /* libejs */,
+				019452480194663400000170 /* libhttp */,
 				019452480194663400000171 /* libmpr */,
-				019452480194663400000172 /* libejs */,				
+				019452480194663400000172 /* libpcre */,				
             );
             runOnlyForDeploymentPostprocessing = 0;
         };
@@ -2389,10 +2389,10 @@
             isa = PBXFrameworksBuildPhase;
             buildActionMask = 2147483647;
             files = (
-				019452480194663400000173 /* libhttp */,
-				019452480194663400000174 /* libpcre */,
+				019452480194663400000173 /* libejs */,
+				019452480194663400000174 /* libhttp */,
 				019452480194663400000175 /* libmpr */,
-				019452480194663400000176 /* libejs */,				
+				019452480194663400000176 /* libpcre */,				
             );
             runOnlyForDeploymentPostprocessing = 0;
         };
@@ -2754,18 +2754,18 @@
 		0194524801946634000002BE /* Products */ = {
             isa = PBXGroup;
             children = (
-				01945248019466340000013C /* libmpr */,
+				01945248019466340000013A /* libmpr */,
 				019452480194663400000276 /* libmprssl */,
 				019452480194663400000277 /* manager */,
 				019452480194663400000278 /* makerom */,
-				01945248019466340000013A /* libest */,
-				019452480194663400000140 /* libpcre */,
-				019452480194663400000145 /* libhttp */,
+				01945248019466340000013C /* libest */,
+				019452480194663400000141 /* libpcre */,
+				019452480194663400000143 /* libhttp */,
 				01945248019466340000027B /* http */,
 				019452480194663400000147 /* libsqlite3 */,
 				01945248019466340000027D /* sqliteshell */,
-				01945248019466340000016A /* libzlib */,
-				01945248019466340000014F /* libejs */,
+				01945248019466340000016E /* libzlib */,
+				01945248019466340000014C /* libejs */,
 				019452480194663400000281 /* ejs */,
 				019452480194663400000282 /* ejsc */,
 				019452480194663400000285 /* ejsmod */,
@@ -2798,7 +2798,7 @@
 			);
 			name = libmpr;
 			productName = ejs;
-			productReference = 01945248019466340000013C /* libmpr */;
+			productReference = 01945248019466340000013A /* libmpr */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		019452480194663400000241 /* libmprssl */ = {
@@ -2870,7 +2870,7 @@
 			);
 			name = libest;
 			productName = ejs;
-			productReference = 01945248019466340000013A /* libest */;
+			productReference = 01945248019466340000013C /* libest */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		019452480194663400000187 /* libpcre */ = {
@@ -2887,7 +2887,7 @@
 			);
 			name = libpcre;
 			productName = ejs;
-			productReference = 019452480194663400000140 /* libpcre */;
+			productReference = 019452480194663400000141 /* libpcre */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		01945248019466340000018C /* libhttp */ = {
@@ -2906,7 +2906,7 @@
 			);
 			name = libhttp;
 			productName = ejs;
-			productReference = 019452480194663400000145 /* libhttp */;
+			productReference = 019452480194663400000143 /* libhttp */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		01945248019466340000024A /* http */ = {
@@ -2978,7 +2978,7 @@
 			);
 			name = libzlib;
 			productName = ejs;
-			productReference = 01945248019466340000016A /* libzlib */;
+			productReference = 01945248019466340000016E /* libzlib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		01945248019466340000019B /* libejs */ = {
@@ -2998,7 +2998,7 @@
 			);
 			name = libejs;
 			productName = ejs;
-			productReference = 01945248019466340000014F /* libejs */;
+			productReference = 01945248019466340000014C /* libejs */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		019452480194663400000251 /* ejs */ = {
@@ -5146,7 +5146,7 @@ fi";
                 /* Common Settings */
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-                CURRENT_PROJECT_VERSION = 2.3.1;
+                CURRENT_PROJECT_VERSION = 2.3.2;
                 DYLIB_COMPATIBILITY_VERSION = "$(CURRENT_PROJECT_VERSION)";
                 DYLIB_CURRENT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -5200,9 +5200,9 @@ fi";
 				OTHER_LDFLAGS = (
 					"-Wl,-rpath,@executable_path/",
 					"-Wl,-rpath,@loader_path/",
+					"-ldl",
 					"-lpthread",
 					"-lm",
-					"-ldl",
 					"$(inherited)"
 				);
 
@@ -5216,7 +5216,7 @@ fi";
                 /* Common Settings */
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-                CURRENT_PROJECT_VERSION = 2.3.1;
+                CURRENT_PROJECT_VERSION = 2.3.2;
                 DYLIB_COMPATIBILITY_VERSION = "$(CURRENT_PROJECT_VERSION)";
                 DYLIB_CURRENT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -5270,9 +5270,9 @@ fi";
 				OTHER_LDFLAGS = (
 					"-Wl,-rpath,@executable_path/",
 					"-Wl,-rpath,@loader_path/",
+					"-ldl",
 					"-lpthread",
 					"-lm",
-					"-ldl",
 					"$(inherited)"
 				);
 

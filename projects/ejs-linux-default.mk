@@ -3,7 +3,7 @@
 #
 
 PRODUCT            := ejs
-VERSION            := 2.3.1
+VERSION            := 2.3.2
 BUILD_NUMBER       := 0
 PROFILE            := default
 ARCH               := $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/')
@@ -56,12 +56,12 @@ BIT_PACK_SSL_PATH         := ssl
 BIT_PACK_ZIP_PATH         := zip
 BIT_PACK_ZLIB_PATH        := zlib
 
-CFLAGS             += -fPIC   -w
-DFLAGS             += -D_REENTRANT -DPIC  $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS))) -DBIT_PACK_EST=$(BIT_PACK_EST) -DBIT_PACK_MATRIXSSL=$(BIT_PACK_MATRIXSSL) -DBIT_PACK_OPENSSL=$(BIT_PACK_OPENSSL) -DBIT_PACK_PCRE=$(BIT_PACK_PCRE) -DBIT_PACK_SQLITE=$(BIT_PACK_SQLITE) -DBIT_PACK_SSL=$(BIT_PACK_SSL) -DBIT_PACK_ZLIB=$(BIT_PACK_ZLIB) 
+CFLAGS             += -fPIC  -w
+DFLAGS             += -D_REENTRANT -DPIC $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS))) -DBIT_PACK_EST=$(BIT_PACK_EST) -DBIT_PACK_MATRIXSSL=$(BIT_PACK_MATRIXSSL) -DBIT_PACK_OPENSSL=$(BIT_PACK_OPENSSL) -DBIT_PACK_PCRE=$(BIT_PACK_PCRE) -DBIT_PACK_SQLITE=$(BIT_PACK_SQLITE) -DBIT_PACK_SSL=$(BIT_PACK_SSL) -DBIT_PACK_ZLIB=$(BIT_PACK_ZLIB) 
 IFLAGS             += -I$(CONFIG)/inc
-LDFLAGS            += '-Wl,--enable-new-dtags' '-Wl,-rpath,$$ORIGIN/' '-rdynamic'
+LDFLAGS            += '-rdynamic' '-Wl,--enable-new-dtags' '-Wl,-rpath,$$ORIGIN/'
 LIBPATHS           += -L$(CONFIG)/bin
-LIBS               += -lpthread -lm -lrt -ldl
+LIBS               += -lrt -ldl -lpthread -lm
 
 DEBUG              := debug
 CFLAGS-debug       := -g
@@ -289,7 +289,7 @@ clobber: clean
 #   version
 #
 version: $(DEPS_1)
-	@echo 2.3.1-0
+	@echo 2.3.2-0
 
 #
 #   mpr.h
@@ -398,6 +398,7 @@ ifeq ($(BIT_PACK_EST),1)
 endif
 DEPS_11 += $(CONFIG)/obj/mprSsl.o
 
+LIBS_11 += -lmpr
 ifeq ($(BIT_PACK_EST),1)
     LIBS_11 += -lest
 endif
@@ -417,7 +418,6 @@ ifeq ($(BIT_PACK_OPENSSL),1)
     LIBS_11 += -lcrypto
     LIBPATHS_11 += -L$(BIT_PACK_OPENSSL_PATH)
 endif
-LIBS_11 += -lmpr
 
 $(CONFIG)/bin/libmprssl.so: $(DEPS_11)
 	@echo '      [Link] $(CONFIG)/bin/libmprssl.so'
@@ -448,7 +448,7 @@ LIBS_13 += -lmpr
 
 $(CONFIG)/bin/ejsman: $(DEPS_13)
 	@echo '      [Link] $(CONFIG)/bin/ejsman'
-	$(CC) -o $(CONFIG)/bin/ejsman $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LIBPATHS_13) $(LIBS_13) $(LIBS_13) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejsman $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LIBPATHS_13) $(LIBS_13) $(LIBS_13) $(LIBS) $(LIBS) 
 
 #
 #   makerom.o
@@ -475,7 +475,7 @@ LIBS_15 += -lmpr
 
 $(CONFIG)/bin/makerom: $(DEPS_15)
 	@echo '      [Link] $(CONFIG)/bin/makerom'
-	$(CC) -o $(CONFIG)/bin/makerom $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o $(LIBPATHS_15) $(LIBS_15) $(LIBS_15) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/makerom $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o $(LIBPATHS_15) $(LIBS_15) $(LIBS_15) $(LIBS) $(LIBS) 
 
 #
 #   ca-crt
@@ -555,10 +555,10 @@ endif
 DEPS_22 += $(CONFIG)/inc/http.h
 DEPS_22 += $(CONFIG)/obj/httpLib.o
 
+LIBS_22 += -lmpr
 ifeq ($(BIT_PACK_PCRE),1)
     LIBS_22 += -lpcre
 endif
-LIBS_22 += -lmpr
 
 $(CONFIG)/bin/libhttp.so: $(DEPS_22)
 	@echo '      [Link] $(CONFIG)/bin/libhttp.so'
@@ -593,15 +593,15 @@ DEPS_24 += $(CONFIG)/obj/httpLib.o
 DEPS_24 += $(CONFIG)/bin/libhttp.so
 DEPS_24 += $(CONFIG)/obj/http.o
 
+LIBS_24 += -lhttp
 LIBS_24 += -lmpr
 ifeq ($(BIT_PACK_PCRE),1)
     LIBS_24 += -lpcre
 endif
-LIBS_24 += -lhttp
 
 $(CONFIG)/bin/http: $(DEPS_24)
 	@echo '      [Link] $(CONFIG)/bin/http'
-	$(CC) -o $(CONFIG)/bin/http $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o $(LIBPATHS_24) $(LIBS_24) $(LIBS_24) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/http $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o $(LIBPATHS_24) $(LIBS_24) $(LIBS_24) $(LIBS) $(LIBS) 
 
 #
 #   sqlite3.h
@@ -660,7 +660,7 @@ LIBS_29 += -lsqlite3
 
 $(CONFIG)/bin/sqlite: $(DEPS_29)
 	@echo '      [Link] $(CONFIG)/bin/sqlite'
-	$(CC) -o $(CONFIG)/bin/sqlite $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LIBPATHS_29) $(LIBS_29) $(LIBS_29) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/sqlite $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LIBPATHS_29) $(LIBS_29) $(LIBS_29) $(LIBS) $(LIBS) 
 endif
 
 #
@@ -1833,11 +1833,11 @@ DEPS_102 += $(CONFIG)/obj/ejsModule.o
 DEPS_102 += $(CONFIG)/obj/ejsScope.o
 DEPS_102 += $(CONFIG)/obj/ejsService.o
 
+LIBS_102 += -lhttp
 LIBS_102 += -lmpr
 ifeq ($(BIT_PACK_PCRE),1)
     LIBS_102 += -lpcre
 endif
-LIBS_102 += -lhttp
 
 $(CONFIG)/bin/libejs.so: $(DEPS_102)
 	@echo '      [Link] $(CONFIG)/bin/libejs.so'
@@ -1942,16 +1942,16 @@ DEPS_104 += $(CONFIG)/obj/ejsService.o
 DEPS_104 += $(CONFIG)/bin/libejs.so
 DEPS_104 += $(CONFIG)/obj/ejs.o
 
+LIBS_104 += -lejs
 LIBS_104 += -lhttp
+LIBS_104 += -lmpr
 ifeq ($(BIT_PACK_PCRE),1)
     LIBS_104 += -lpcre
 endif
-LIBS_104 += -lmpr
-LIBS_104 += -lejs
 
 $(CONFIG)/bin/ejs: $(DEPS_104)
 	@echo '      [Link] $(CONFIG)/bin/ejs'
-	$(CC) -o $(CONFIG)/bin/ejs $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LIBPATHS_104) $(LIBS_104) $(LIBS_104) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejs $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LIBPATHS_104) $(LIBS_104) $(LIBS_104) $(LIBS) $(LIBS) 
 
 #
 #   ejsc.o
@@ -2052,16 +2052,16 @@ DEPS_106 += $(CONFIG)/obj/ejsService.o
 DEPS_106 += $(CONFIG)/bin/libejs.so
 DEPS_106 += $(CONFIG)/obj/ejsc.o
 
+LIBS_106 += -lejs
 LIBS_106 += -lhttp
+LIBS_106 += -lmpr
 ifeq ($(BIT_PACK_PCRE),1)
     LIBS_106 += -lpcre
 endif
-LIBS_106 += -lmpr
-LIBS_106 += -lejs
 
 $(CONFIG)/bin/ejsc: $(DEPS_106)
 	@echo '      [Link] $(CONFIG)/bin/ejsc'
-	$(CC) -o $(CONFIG)/bin/ejsc $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o $(LIBPATHS_106) $(LIBS_106) $(LIBS_106) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejsc $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o $(LIBPATHS_106) $(LIBS_106) $(LIBS_106) $(LIBS) $(LIBS) 
 
 #
 #   ejsmod.h
@@ -2225,16 +2225,16 @@ DEPS_113 += $(CONFIG)/obj/docFiles.o
 DEPS_113 += $(CONFIG)/obj/listing.o
 DEPS_113 += $(CONFIG)/obj/slotGen.o
 
+LIBS_113 += -lejs
 LIBS_113 += -lhttp
+LIBS_113 += -lmpr
 ifeq ($(BIT_PACK_PCRE),1)
     LIBS_113 += -lpcre
 endif
-LIBS_113 += -lmpr
-LIBS_113 += -lejs
 
 $(CONFIG)/bin/ejsmod: $(DEPS_113)
 	@echo '      [Link] $(CONFIG)/bin/ejsmod'
-	$(CC) -o $(CONFIG)/bin/ejsmod $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o $(LIBPATHS_113) $(LIBS_113) $(LIBS_113) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejsmod $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o $(LIBPATHS_113) $(LIBS_113) $(LIBS_113) $(LIBS) $(LIBS) 
 
 #
 #   ejsrun.o
@@ -2335,16 +2335,16 @@ DEPS_115 += $(CONFIG)/obj/ejsService.o
 DEPS_115 += $(CONFIG)/bin/libejs.so
 DEPS_115 += $(CONFIG)/obj/ejsrun.o
 
+LIBS_115 += -lejs
 LIBS_115 += -lhttp
+LIBS_115 += -lmpr
 ifeq ($(BIT_PACK_PCRE),1)
     LIBS_115 += -lpcre
 endif
-LIBS_115 += -lmpr
-LIBS_115 += -lejs
 
 $(CONFIG)/bin/ejsrun: $(DEPS_115)
 	@echo '      [Link] $(CONFIG)/bin/ejsrun'
-	$(CC) -o $(CONFIG)/bin/ejsrun $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBPATHS_115) $(LIBS_115) $(LIBS_115) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejsrun $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBPATHS_115) $(LIBS_115) $(LIBS_115) $(LIBS) $(LIBS) 
 
 #
 #   ejs.mod
@@ -2700,16 +2700,16 @@ DEPS_119 += $(CONFIG)/bin/libejs.so
 DEPS_119 += $(CONFIG)/bin/jem.es
 DEPS_119 += $(CONFIG)/obj/ejsrun.o
 
+LIBS_119 += -lejs
 LIBS_119 += -lhttp
+LIBS_119 += -lmpr
 ifeq ($(BIT_PACK_PCRE),1)
     LIBS_119 += -lpcre
 endif
-LIBS_119 += -lmpr
-LIBS_119 += -lejs
 
 $(CONFIG)/bin/jem: $(DEPS_119)
 	@echo '      [Link] $(CONFIG)/bin/jem'
-	$(CC) -o $(CONFIG)/bin/jem $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBPATHS_119) $(LIBS_119) $(LIBS_119) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/jem $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBPATHS_119) $(LIBS_119) $(LIBS_119) $(LIBS) $(LIBS) 
 
 #
 #   ejs.db.mod
@@ -3138,15 +3138,15 @@ ifeq ($(BIT_PACK_SQLITE),1)
 endif
 DEPS_124 += $(CONFIG)/obj/ejsSqlite.o
 
-ifeq ($(BIT_PACK_SQLITE),1)
-    LIBS_124 += -lsqlite3
-endif
+LIBS_124 += -lmpr
+LIBS_124 += -lejs
 LIBS_124 += -lhttp
 ifeq ($(BIT_PACK_PCRE),1)
     LIBS_124 += -lpcre
 endif
-LIBS_124 += -lejs
-LIBS_124 += -lmpr
+ifeq ($(BIT_PACK_SQLITE),1)
+    LIBS_124 += -lsqlite3
+endif
 
 $(CONFIG)/bin/libejs.db.sqlite.so: $(DEPS_124)
 	@echo '      [Link] $(CONFIG)/bin/libejs.db.sqlite.so'
@@ -3567,12 +3567,12 @@ DEPS_132 += $(CONFIG)/obj/ejsRequest.o
 DEPS_132 += $(CONFIG)/obj/ejsSession.o
 DEPS_132 += $(CONFIG)/obj/ejsWeb.o
 
+LIBS_132 += -lejs
 LIBS_132 += -lhttp
+LIBS_132 += -lmpr
 ifeq ($(BIT_PACK_PCRE),1)
     LIBS_132 += -lpcre
 endif
-LIBS_132 += -lmpr
-LIBS_132 += -lejs
 
 $(CONFIG)/bin/libejs.web.so: $(DEPS_132)
 	@echo '      [Link] $(CONFIG)/bin/libejs.web.so'
@@ -3912,15 +3912,15 @@ ifeq ($(BIT_PACK_ZLIB),1)
 endif
 DEPS_137 += $(CONFIG)/obj/ejsZlib.o
 
-ifeq ($(BIT_PACK_ZLIB),1)
-    LIBS_137 += -lzlib
-endif
+LIBS_137 += -lejs
 LIBS_137 += -lhttp
+LIBS_137 += -lmpr
 ifeq ($(BIT_PACK_PCRE),1)
     LIBS_137 += -lpcre
 endif
-LIBS_137 += -lmpr
-LIBS_137 += -lejs
+ifeq ($(BIT_PACK_ZLIB),1)
+    LIBS_137 += -lzlib
+endif
 
 $(CONFIG)/bin/libejs.zlib.so: $(DEPS_137)
 	@echo '      [Link] $(CONFIG)/bin/libejs.zlib.so'
@@ -4124,16 +4124,16 @@ DEPS_140 += $(CONFIG)/bin/libejs.so
 DEPS_140 += $(CONFIG)/bin/mvc.es
 DEPS_140 += $(CONFIG)/obj/ejsrun.o
 
+LIBS_140 += -lejs
 LIBS_140 += -lhttp
+LIBS_140 += -lmpr
 ifeq ($(BIT_PACK_PCRE),1)
     LIBS_140 += -lpcre
 endif
-LIBS_140 += -lmpr
-LIBS_140 += -lejs
 
 $(CONFIG)/bin/mvc: $(DEPS_140)
 	@echo '      [Link] $(CONFIG)/bin/mvc'
-	$(CC) -o $(CONFIG)/bin/mvc $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBPATHS_140) $(LIBS_140) $(LIBS_140) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/mvc $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBPATHS_140) $(LIBS_140) $(LIBS_140) $(LIBS) $(LIBS) 
 
 #
 #   ejs.mvc.mod
@@ -4345,16 +4345,16 @@ DEPS_144 += $(CONFIG)/bin/utest.es
 DEPS_144 += $(CONFIG)/bin/utest.worker
 DEPS_144 += $(CONFIG)/obj/ejsrun.o
 
+LIBS_144 += -lejs
 LIBS_144 += -lhttp
+LIBS_144 += -lmpr
 ifeq ($(BIT_PACK_PCRE),1)
     LIBS_144 += -lpcre
 endif
-LIBS_144 += -lmpr
-LIBS_144 += -lejs
 
 $(CONFIG)/bin/utest: $(DEPS_144)
 	@echo '      [Link] $(CONFIG)/bin/utest'
-	$(CC) -o $(CONFIG)/bin/utest $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBPATHS_144) $(LIBS_144) $(LIBS_144) $(LIBS) -lpthread -lm -lrt -ldl $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/utest $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBPATHS_144) $(LIBS_144) $(LIBS_144) $(LIBS) $(LIBS) 
 
 #
 #   stop
@@ -4369,7 +4369,7 @@ installBinary: $(DEPS_146)
 	mkdir -p "$(BIT_VAPP_PREFIX)"
 	mkdir -p "$(BIT_APP_PREFIX)"
 	rm -f "$(BIT_APP_PREFIX)/latest"
-	ln -s "2.3.1" "$(BIT_APP_PREFIX)/latest"
+	ln -s "2.3.2" "$(BIT_APP_PREFIX)/latest"
 	mkdir -p "$(BIT_VAPP_PREFIX)/bin"
 	cp $(CONFIG)/bin/ejs $(BIT_VAPP_PREFIX)/bin/ejs
 	mkdir -p "$(BIT_BIN_PREFIX)"

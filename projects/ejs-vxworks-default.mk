@@ -3,7 +3,7 @@
 #
 
 PRODUCT            := ejs
-VERSION            := 2.3.1
+VERSION            := 2.3.2
 BUILD_NUMBER       := 0
 PROFILE            := default
 ARCH               := $(shell echo $(WIND_HOST_TYPE) | sed 's/-.*//')
@@ -62,7 +62,7 @@ export WIND_HOME          := $(WIND_BASE)/..
 export PATH               := $(WIND_GNU_PATH)/$(WIND_HOST_TYPE)/bin:$(PATH)
 
 CFLAGS             += -fno-builtin -fno-defer-pop -fvolatile -w
-DFLAGS             += -D_REENTRANT -DVXWORKS -DRW_MULTI_THREAD -D_GNU_TOOL -DCPU=$(CPU) $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS))) -DBIT_PACK_EST=$(BIT_PACK_EST) -DBIT_PACK_MATRIXSSL=$(BIT_PACK_MATRIXSSL) -DBIT_PACK_OPENSSL=$(BIT_PACK_OPENSSL) -DBIT_PACK_PCRE=$(BIT_PACK_PCRE) -DBIT_PACK_SQLITE=$(BIT_PACK_SQLITE) -DBIT_PACK_SSL=$(BIT_PACK_SSL) -DBIT_PACK_ZLIB=$(BIT_PACK_ZLIB) 
+DFLAGS             += -DVXWORKS -DRW_MULTI_THREAD -D_GNU_TOOL -DCPU=PENTIUM $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS))) -DBIT_PACK_EST=$(BIT_PACK_EST) -DBIT_PACK_MATRIXSSL=$(BIT_PACK_MATRIXSSL) -DBIT_PACK_OPENSSL=$(BIT_PACK_OPENSSL) -DBIT_PACK_PCRE=$(BIT_PACK_PCRE) -DBIT_PACK_SQLITE=$(BIT_PACK_SQLITE) -DBIT_PACK_SSL=$(BIT_PACK_SSL) -DBIT_PACK_ZLIB=$(BIT_PACK_ZLIB) 
 IFLAGS             += -I$(CONFIG)/inc -I$(WIND_BASE)/target/h -I$(WIND_BASE)/target/h/wrn/coreip
 LDFLAGS            += '-Wl,-r'
 LIBPATHS           += -L$(CONFIG)/bin
@@ -297,7 +297,7 @@ clobber: clean
 #   version
 #
 version: $(DEPS_1)
-	@echo 2.3.1-0
+	@echo 2.3.2-0
 
 #
 #   mpr.h
@@ -363,7 +363,7 @@ DEPS_8 += $(CONFIG)/inc/bitos.h
 $(CONFIG)/obj/estLib.o: \
     src/deps/est/estLib.c $(DEPS_8)
 	@echo '   [Compile] $(CONFIG)/obj/estLib.o'
-	$(CC) -c -o $(CONFIG)/obj/estLib.o -fno-builtin -fno-defer-pop -fvolatile $(DFLAGS) $(IFLAGS) src/deps/est/estLib.c
+	$(CC) -c -o $(CONFIG)/obj/estLib.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/est/estLib.c
 
 ifeq ($(BIT_PACK_EST),1)
 #
@@ -450,7 +450,7 @@ DEPS_13 += $(CONFIG)/obj/manager.o
 
 $(CONFIG)/bin/ejsman.out: $(DEPS_13)
 	@echo '      [Link] $(CONFIG)/bin/ejsman.out'
-	$(CC) -o $(CONFIG)/bin/ejsman.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejsman.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/manager.o $(LIBS) -Wl,-r 
 
 #
 #   makerom.o
@@ -475,7 +475,7 @@ DEPS_15 += $(CONFIG)/obj/makerom.o
 
 $(CONFIG)/bin/makerom.out: $(DEPS_15)
 	@echo '      [Link] $(CONFIG)/bin/makerom.out'
-	$(CC) -o $(CONFIG)/bin/makerom.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/makerom.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/makerom.o $(LIBS) -Wl,-r 
 
 #
 #   ca-crt
@@ -590,7 +590,7 @@ DEPS_24 += $(CONFIG)/obj/http.o
 
 $(CONFIG)/bin/http.out: $(DEPS_24)
 	@echo '      [Link] $(CONFIG)/bin/http.out'
-	$(CC) -o $(CONFIG)/bin/http.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/http.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/http.o $(LIBS) -Wl,-r 
 
 #
 #   sqlite3.h
@@ -609,7 +609,7 @@ DEPS_26 += $(CONFIG)/inc/sqlite3.h
 $(CONFIG)/obj/sqlite3.o: \
     src/deps/sqlite/sqlite3.c $(DEPS_26)
 	@echo '   [Compile] $(CONFIG)/obj/sqlite3.o'
-	$(CC) -c -o $(CONFIG)/obj/sqlite3.o -fno-builtin -fno-defer-pop -fvolatile $(DFLAGS) $(IFLAGS) src/deps/sqlite/sqlite3.c
+	$(CC) -c -o $(CONFIG)/obj/sqlite3.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/deps/sqlite/sqlite3.c
 
 ifeq ($(BIT_PACK_SQLITE),1)
 #
@@ -647,7 +647,7 @@ DEPS_29 += $(CONFIG)/obj/sqlite.o
 
 $(CONFIG)/bin/sqlite.out: $(DEPS_29)
 	@echo '      [Link] $(CONFIG)/bin/sqlite.out'
-	$(CC) -o $(CONFIG)/bin/sqlite.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/sqlite.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/sqlite.o $(LIBS) -Wl,-r 
 endif
 
 #
@@ -1925,7 +1925,7 @@ DEPS_104 += $(CONFIG)/obj/ejs.o
 
 $(CONFIG)/bin/ejs.out: $(DEPS_104)
 	@echo '      [Link] $(CONFIG)/bin/ejs.out'
-	$(CC) -o $(CONFIG)/bin/ejs.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejs.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejs.o $(LIBS) -Wl,-r 
 
 #
 #   ejsc.o
@@ -2028,7 +2028,7 @@ DEPS_106 += $(CONFIG)/obj/ejsc.o
 
 $(CONFIG)/bin/ejsc.out: $(DEPS_106)
 	@echo '      [Link] $(CONFIG)/bin/ejsc.out'
-	$(CC) -o $(CONFIG)/bin/ejsc.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejsc.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsc.o $(LIBS) -Wl,-r 
 
 #
 #   ejsmod.h
@@ -2194,7 +2194,7 @@ DEPS_113 += $(CONFIG)/obj/slotGen.o
 
 $(CONFIG)/bin/ejsmod.out: $(DEPS_113)
 	@echo '      [Link] $(CONFIG)/bin/ejsmod.out'
-	$(CC) -o $(CONFIG)/bin/ejsmod.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejsmod.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsmod.o $(CONFIG)/obj/doc.o $(CONFIG)/obj/docFiles.o $(CONFIG)/obj/listing.o $(CONFIG)/obj/slotGen.o $(LIBS) -Wl,-r 
 
 #
 #   ejsrun.o
@@ -2297,7 +2297,7 @@ DEPS_115 += $(CONFIG)/obj/ejsrun.o
 
 $(CONFIG)/bin/ejsrun.out: $(DEPS_115)
 	@echo '      [Link] $(CONFIG)/bin/ejsrun.out'
-	$(CC) -o $(CONFIG)/bin/ejsrun.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/ejsrun.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS) -Wl,-r 
 
 #
 #   ejs.mod
@@ -2655,7 +2655,7 @@ DEPS_119 += $(CONFIG)/obj/ejsrun.o
 
 $(CONFIG)/bin/jem.out: $(DEPS_119)
 	@echo '      [Link] $(CONFIG)/bin/jem.out'
-	$(CC) -o $(CONFIG)/bin/jem.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/jem.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS) -Wl,-r 
 
 #
 #   ejs.db.mod
@@ -4045,7 +4045,7 @@ DEPS_140 += $(CONFIG)/obj/ejsrun.o
 
 $(CONFIG)/bin/mvc.out: $(DEPS_140)
 	@echo '      [Link] $(CONFIG)/bin/mvc.out'
-	$(CC) -o $(CONFIG)/bin/mvc.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/mvc.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS) -Wl,-r 
 
 #
 #   ejs.mvc.mod
@@ -4259,7 +4259,7 @@ DEPS_144 += $(CONFIG)/obj/ejsrun.o
 
 $(CONFIG)/bin/utest.out: $(DEPS_144)
 	@echo '      [Link] $(CONFIG)/bin/utest.out'
-	$(CC) -o $(CONFIG)/bin/utest.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS) $(LDFLAGS) 
+	$(CC) -o $(CONFIG)/bin/utest.out $(LDFLAGS) $(LIBPATHS) $(CONFIG)/obj/ejsrun.o $(LIBS) -Wl,-r 
 
 #
 #   stop

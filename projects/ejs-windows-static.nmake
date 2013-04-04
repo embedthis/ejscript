@@ -3,7 +3,7 @@
 #
 
 PRODUCT            = ejs
-VERSION            = 2.3.1
+VERSION            = 2.3.2
 BUILD_NUMBER       = 0
 PROFILE            = static
 PA                 = $(PROCESSOR_ARCHITECTURE)
@@ -78,11 +78,11 @@ CC                 = cl
 LD                 = link
 RC                 = rc
 CFLAGS             = -nologo -GR- -W3 -Zi -Od -MDd
-DFLAGS             = -D_REENTRANT -D_MT -DBIT_DEBUG -DBIT_PACK_EST=$(BIT_PACK_EST) -DBIT_PACK_MATRIXSSL=$(BIT_PACK_MATRIXSSL) -DBIT_PACK_OPENSSL=$(BIT_PACK_OPENSSL) -DBIT_PACK_PCRE=$(BIT_PACK_PCRE) -DBIT_PACK_SQLITE=$(BIT_PACK_SQLITE) -DBIT_PACK_SSL=$(BIT_PACK_SSL) -DBIT_PACK_ZLIB=$(BIT_PACK_ZLIB) 
+DFLAGS             = -DBIT_DEBUG -D_REENTRANT -D_MT -DBIT_PACK_EST=$(BIT_PACK_EST) -DBIT_PACK_MATRIXSSL=$(BIT_PACK_MATRIXSSL) -DBIT_PACK_OPENSSL=$(BIT_PACK_OPENSSL) -DBIT_PACK_PCRE=$(BIT_PACK_PCRE) -DBIT_PACK_SQLITE=$(BIT_PACK_SQLITE) -DBIT_PACK_SSL=$(BIT_PACK_SSL) -DBIT_PACK_ZLIB=$(BIT_PACK_ZLIB) 
 IFLAGS             = -I$(CONFIG)\inc
 LDFLAGS            = -nologo -nodefaultlib -incremental:no -debug -machine:$(ARCH)
 LIBPATHS           = -libpath:$(CONFIG)\bin
-LIBS               = ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.lib msvcrt.lib shell32.lib
+LIBS               = dl ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.lib msvcrt.lib shell32.lib
 
 BIT_ROOT_PREFIX    = C:
 BIT_BASE_PREFIX    = $(BIT_ROOT_PREFIX)\Program Files
@@ -321,7 +321,7 @@ clean:
 #   version
 #
 version: $(DEPS_1)
-	@echo 2.3.1-0
+	@echo 2.3.2-0
 
 #
 #   bit.h
@@ -347,7 +347,7 @@ DEPS_4 = $(DEPS_4) $(CONFIG)\obj\removeFiles.obj
 
 $(CONFIG)\bin\removeFiles.exe: $(DEPS_4)
 	@echo '      [Link] $(CONFIG)/bin/removeFiles.exe'
-	"$(LD)" -out:$(CONFIG)\bin\removeFiles.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\removeFiles.obj $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\removeFiles.exe -entry: -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\removeFiles.obj $(LIBS) 
 
 #
 #   mpr.h
@@ -479,7 +479,7 @@ LIBS_15 = $(LIBS_15) libmpr.lib
 
 $(CONFIG)\bin\ejsman.exe: $(DEPS_15)
 	@echo '      [Link] $(CONFIG)/bin/ejsman.exe'
-	"$(LD)" -out:$(CONFIG)\bin\ejsman.exe -entry:WinMainCRTStartup -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\manager.obj $(LIBPATHS_15) $(LIBS_15) $(LIBS_15) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\ejsman.exe -entry: -subsystem:Windows $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\manager.obj $(LIBPATHS_15) $(LIBS_15) $(LIBS_15) $(LIBS) 
 
 #
 #   makerom.obj
@@ -506,7 +506,7 @@ LIBS_17 = $(LIBS_17) libmpr.lib
 
 $(CONFIG)\bin\makerom.exe: $(DEPS_17)
 	@echo '      [Link] $(CONFIG)/bin/makerom.exe'
-	"$(LD)" -out:$(CONFIG)\bin\makerom.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\makerom.obj $(LIBPATHS_17) $(LIBS_17) $(LIBS_17) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\makerom.exe -entry: -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\makerom.obj $(LIBPATHS_17) $(LIBS_17) $(LIBS_17) $(LIBS) 
 
 #
 #   ca-crt
@@ -619,15 +619,15 @@ DEPS_26 = $(DEPS_26) $(CONFIG)\obj\httpLib.obj
 DEPS_26 = $(DEPS_26) $(CONFIG)\bin\libhttp.lib
 DEPS_26 = $(DEPS_26) $(CONFIG)\obj\http.obj
 
+LIBS_26 = $(LIBS_26) libhttp.lib
 LIBS_26 = $(LIBS_26) libmpr.lib
 !IF "$(BIT_PACK_PCRE)" == "1"
 LIBS_26 = $(LIBS_26) libpcre.lib
 !ENDIF
-LIBS_26 = $(LIBS_26) libhttp.lib
 
 $(CONFIG)\bin\http.exe: $(DEPS_26)
 	@echo '      [Link] $(CONFIG)/bin/http.exe'
-	"$(LD)" -out:$(CONFIG)\bin\http.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\http.obj $(LIBPATHS_26) $(LIBS_26) $(LIBS_26) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\http.exe -entry: -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\http.obj $(LIBPATHS_26) $(LIBS_26) $(LIBS_26) $(LIBS) 
 
 #
 #   sqlite3.h
@@ -686,7 +686,7 @@ LIBS_31 = $(LIBS_31) libsqlite3.lib
 
 $(CONFIG)\bin\sqlite.exe: $(DEPS_31)
 	@echo '      [Link] $(CONFIG)/bin/sqlite.exe'
-	"$(LD)" -out:$(CONFIG)\bin\sqlite.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite.obj $(LIBPATHS_31) $(LIBS_31) $(LIBS_31) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\sqlite.exe -entry: -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\sqlite.obj $(LIBPATHS_31) $(LIBS_31) $(LIBS_31) $(LIBS) 
 !ENDIF
 
 #
@@ -1962,16 +1962,16 @@ DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsService.obj
 DEPS_106 = $(DEPS_106) $(CONFIG)\bin\libejs.lib
 DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejs.obj
 
+LIBS_106 = $(LIBS_106) libejs.lib
 LIBS_106 = $(LIBS_106) libhttp.lib
+LIBS_106 = $(LIBS_106) libmpr.lib
 !IF "$(BIT_PACK_PCRE)" == "1"
 LIBS_106 = $(LIBS_106) libpcre.lib
 !ENDIF
-LIBS_106 = $(LIBS_106) libmpr.lib
-LIBS_106 = $(LIBS_106) libejs.lib
 
 $(CONFIG)\bin\ejs.exe: $(DEPS_106)
 	@echo '      [Link] $(CONFIG)/bin/ejs.exe'
-	"$(LD)" -out:$(CONFIG)\bin\ejs.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejs.obj $(LIBPATHS_106) $(LIBS_106) $(LIBS_106) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\ejs.exe -entry: -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejs.obj $(LIBPATHS_106) $(LIBS_106) $(LIBS_106) $(LIBS) 
 
 #
 #   ejsc.obj
@@ -2072,16 +2072,16 @@ DEPS_108 = $(DEPS_108) $(CONFIG)\obj\ejsService.obj
 DEPS_108 = $(DEPS_108) $(CONFIG)\bin\libejs.lib
 DEPS_108 = $(DEPS_108) $(CONFIG)\obj\ejsc.obj
 
+LIBS_108 = $(LIBS_108) libejs.lib
 LIBS_108 = $(LIBS_108) libhttp.lib
+LIBS_108 = $(LIBS_108) libmpr.lib
 !IF "$(BIT_PACK_PCRE)" == "1"
 LIBS_108 = $(LIBS_108) libpcre.lib
 !ENDIF
-LIBS_108 = $(LIBS_108) libmpr.lib
-LIBS_108 = $(LIBS_108) libejs.lib
 
 $(CONFIG)\bin\ejsc.exe: $(DEPS_108)
 	@echo '      [Link] $(CONFIG)/bin/ejsc.exe'
-	"$(LD)" -out:$(CONFIG)\bin\ejsc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsc.obj $(LIBPATHS_108) $(LIBS_108) $(LIBS_108) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\ejsc.exe -entry: -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsc.obj $(LIBPATHS_108) $(LIBS_108) $(LIBS_108) $(LIBS) 
 
 #
 #   ejsmod.h
@@ -2245,16 +2245,16 @@ DEPS_115 = $(DEPS_115) $(CONFIG)\obj\docFiles.obj
 DEPS_115 = $(DEPS_115) $(CONFIG)\obj\listing.obj
 DEPS_115 = $(DEPS_115) $(CONFIG)\obj\slotGen.obj
 
+LIBS_115 = $(LIBS_115) libejs.lib
 LIBS_115 = $(LIBS_115) libhttp.lib
+LIBS_115 = $(LIBS_115) libmpr.lib
 !IF "$(BIT_PACK_PCRE)" == "1"
 LIBS_115 = $(LIBS_115) libpcre.lib
 !ENDIF
-LIBS_115 = $(LIBS_115) libmpr.lib
-LIBS_115 = $(LIBS_115) libejs.lib
 
 $(CONFIG)\bin\ejsmod.exe: $(DEPS_115)
 	@echo '      [Link] $(CONFIG)/bin/ejsmod.exe'
-	"$(LD)" -out:$(CONFIG)\bin\ejsmod.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsmod.obj $(CONFIG)\obj\doc.obj $(CONFIG)\obj\docFiles.obj $(CONFIG)\obj\listing.obj $(CONFIG)\obj\slotGen.obj $(LIBPATHS_115) $(LIBS_115) $(LIBS_115) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\ejsmod.exe -entry: -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsmod.obj $(CONFIG)\obj\doc.obj $(CONFIG)\obj\docFiles.obj $(CONFIG)\obj\listing.obj $(CONFIG)\obj\slotGen.obj $(LIBPATHS_115) $(LIBS_115) $(LIBS_115) $(LIBS) 
 
 #
 #   ejsrun.obj
@@ -2355,16 +2355,16 @@ DEPS_117 = $(DEPS_117) $(CONFIG)\obj\ejsService.obj
 DEPS_117 = $(DEPS_117) $(CONFIG)\bin\libejs.lib
 DEPS_117 = $(DEPS_117) $(CONFIG)\obj\ejsrun.obj
 
+LIBS_117 = $(LIBS_117) libejs.lib
 LIBS_117 = $(LIBS_117) libhttp.lib
+LIBS_117 = $(LIBS_117) libmpr.lib
 !IF "$(BIT_PACK_PCRE)" == "1"
 LIBS_117 = $(LIBS_117) libpcre.lib
 !ENDIF
-LIBS_117 = $(LIBS_117) libmpr.lib
-LIBS_117 = $(LIBS_117) libejs.lib
 
 $(CONFIG)\bin\ejsrun.exe: $(DEPS_117)
 	@echo '      [Link] $(CONFIG)/bin/ejsrun.exe'
-	"$(LD)" -out:$(CONFIG)\bin\ejsrun.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBPATHS_117) $(LIBS_117) $(LIBS_117) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\ejsrun.exe -entry: -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBPATHS_117) $(LIBS_117) $(LIBS_117) $(LIBS) 
 
 #
 #   ejs.mod
@@ -2726,16 +2726,16 @@ DEPS_121 = $(DEPS_121) $(CONFIG)\bin\libejs.lib
 DEPS_121 = $(DEPS_121) $(CONFIG)\bin\jem.es
 DEPS_121 = $(DEPS_121) $(CONFIG)\obj\ejsrun.obj
 
+LIBS_121 = $(LIBS_121) libejs.lib
 LIBS_121 = $(LIBS_121) libhttp.lib
+LIBS_121 = $(LIBS_121) libmpr.lib
 !IF "$(BIT_PACK_PCRE)" == "1"
 LIBS_121 = $(LIBS_121) libpcre.lib
 !ENDIF
-LIBS_121 = $(LIBS_121) libmpr.lib
-LIBS_121 = $(LIBS_121) libejs.lib
 
 $(CONFIG)\bin\jem.exe: $(DEPS_121)
 	@echo '      [Link] $(CONFIG)/bin/jem.exe'
-	"$(LD)" -out:$(CONFIG)\bin\jem.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBPATHS_121) $(LIBS_121) $(LIBS_121) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\jem.exe -entry: -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBPATHS_121) $(LIBS_121) $(LIBS_121) $(LIBS) 
 
 #
 #   ejs.db.mod
@@ -4144,16 +4144,16 @@ DEPS_142 = $(DEPS_142) $(CONFIG)\bin\libejs.lib
 DEPS_142 = $(DEPS_142) $(CONFIG)\bin\mvc.es
 DEPS_142 = $(DEPS_142) $(CONFIG)\obj\ejsrun.obj
 
+LIBS_142 = $(LIBS_142) libejs.lib
 LIBS_142 = $(LIBS_142) libhttp.lib
+LIBS_142 = $(LIBS_142) libmpr.lib
 !IF "$(BIT_PACK_PCRE)" == "1"
 LIBS_142 = $(LIBS_142) libpcre.lib
 !ENDIF
-LIBS_142 = $(LIBS_142) libmpr.lib
-LIBS_142 = $(LIBS_142) libejs.lib
 
 $(CONFIG)\bin\mvc.exe: $(DEPS_142)
 	@echo '      [Link] $(CONFIG)/bin/mvc.exe'
-	"$(LD)" -out:$(CONFIG)\bin\mvc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBPATHS_142) $(LIBS_142) $(LIBS_142) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\mvc.exe -entry: -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBPATHS_142) $(LIBS_142) $(LIBS_142) $(LIBS) 
 
 #
 #   ejs.mvc.mod
@@ -4371,16 +4371,16 @@ DEPS_146 = $(DEPS_146) $(CONFIG)\bin\utest.es
 DEPS_146 = $(DEPS_146) $(CONFIG)\bin\utest.worker
 DEPS_146 = $(DEPS_146) $(CONFIG)\obj\ejsrun.obj
 
+LIBS_146 = $(LIBS_146) libejs.lib
 LIBS_146 = $(LIBS_146) libhttp.lib
+LIBS_146 = $(LIBS_146) libmpr.lib
 !IF "$(BIT_PACK_PCRE)" == "1"
 LIBS_146 = $(LIBS_146) libpcre.lib
 !ENDIF
-LIBS_146 = $(LIBS_146) libmpr.lib
-LIBS_146 = $(LIBS_146) libejs.lib
 
 $(CONFIG)\bin\utest.exe: $(DEPS_146)
 	@echo '      [Link] $(CONFIG)/bin/utest.exe'
-	"$(LD)" -out:$(CONFIG)\bin\utest.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBPATHS_146) $(LIBS_146) $(LIBS_146) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\utest.exe -entry: -subsystem:console $(LDFLAGS) $(LIBPATHS) $(CONFIG)\obj\ejsrun.obj $(LIBPATHS_146) $(LIBS_146) $(LIBS_146) $(LIBS) 
 
 #
 #   stop
