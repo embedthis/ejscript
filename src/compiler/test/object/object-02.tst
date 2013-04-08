@@ -6,6 +6,7 @@ o = { }
 assert(o != null)
 assert(o == '[object Object]')
 
+
 //  Literal with simple elements
 
 o = { one: 1, two: 2, three: 3, four: "Four" }
@@ -13,6 +14,7 @@ assert(o.one == 1)
 assert(o.two == 2)
 assert(o.three == 3)
 assert(o.four == "Four")
+
 
 //  Using getter/setter functions
 
@@ -25,6 +27,17 @@ o = {
 assert(o.fun == 7)
 o.fun = 23
 assert(o.fun == 23)
+
+
+//  Literal functions (no "function" required)
+var x = 0
+o = {
+    fun() { x = 42 },
+}
+assert(x == 0)
+o.fun()
+assert(x == 42)
+
 
 //  Nested literals
 
@@ -95,3 +108,5 @@ user = {
 s = serialize(user)
 o = deserialize(s)
 assert(o.name == "O'Brien")
+
+
