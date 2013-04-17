@@ -330,7 +330,7 @@ module ejs.db.mapper {
             Process a sql result and add properties for each field in the row
          */
         private static function createRecord(data: Object, options: Object = {}) {
-var before = Memory.resident
+// var before = Memory.resident
             let rec: Record = new global[_className]
             rec.initialize(data)
             rec._keyValue = data[_keyName]

@@ -66,8 +66,7 @@ module ejs.db.sqlite {
         }
 
         /*
-            Map Ejscript native types back to SQL types
-            INCOMPLETE and INCORRECT
+            Map Ejscript native types back to SQL types. INCOMPLETE.
          
         static var EjsToDataType: Object = {
             "string":       "varchar",
