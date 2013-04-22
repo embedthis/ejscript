@@ -13,7 +13,7 @@ server.on("readable", function (event, request: Request) {
 
     //  Request headers
     count = Object.getOwnPropertyCount(headers)
-    assert(count == 5)
+    assert(count == 6)
     assert(headers && 
         header("Host") && header("Date") && header("Connection") && header("User-Agent") && header("Accept-Ranges"))
     headers["Additional-Header"] = 1234
