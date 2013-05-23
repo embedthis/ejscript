@@ -7,6 +7,7 @@ VERSION            := 2.3.2
 BUILD_NUMBER       := 0
 PROFILE            := default
 ARCH               := $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/')
+CC_ARCH            := $(shell echo $(ARCH) | sed 's/x86/i686/;s/x64/x86_64/')
 OS                 := linux
 CC                 := gcc
 LD                 := link
@@ -4525,9 +4526,6 @@ endif
 	cp src/jems/ejs.db.sqlite/ejs.db.sqlite.slots.h $(BIT_VAPP_PREFIX)/inc/ejs.db.sqlite.slots.h
 	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.db.sqlite.slots.h"
 	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.db.sqlite.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.db.sqlite.slots.h"
-	cp src/jems/ejs.web/ejs.web.slots.h $(BIT_VAPP_PREFIX)/inc/ejs.web.slots.h
-	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.web.slots.h"
-	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.web.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.web.slots.h"
 	cp src/jems/ejs.web/ejsWeb.h $(BIT_VAPP_PREFIX)/inc/ejsWeb.h
 	rm -f "$(BIT_INC_PREFIX)/ejs/ejsWeb.h"
 	ln -s "$(BIT_VAPP_PREFIX)/inc/ejsWeb.h" "$(BIT_INC_PREFIX)/ejs/ejsWeb.h"
