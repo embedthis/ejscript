@@ -4474,6 +4474,7 @@ installBinary: $(DEPS_148)
 	copy /Y src\deps\sqlite\sqlite3.h "$(BIT_VAPP_PREFIX)\inc\sqlite3.h"
 	copy /Y src\deps\zlib\zlib.h "$(BIT_VAPP_PREFIX)\inc\zlib.h"
 	copy /Y src\jems\ejs.db.sqlite\ejs.db.sqlite.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.db.sqlite.slots.h"
+	copy /Y src\jems\ejs.web\ejs.web.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.web.slots.h"
 	copy /Y src\jems\ejs.web\ejsWeb.h "$(BIT_VAPP_PREFIX)\inc\ejsWeb.h"
 
 #

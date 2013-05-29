@@ -327,7 +327,6 @@ PUBLIC int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
             } else {
                 /* Assign */
                 ejsSetPropertyByName(ejs, dest, trimmedName, vp);
-                
             }
 
         } else {
