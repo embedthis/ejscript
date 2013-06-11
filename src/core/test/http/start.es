@@ -12,6 +12,7 @@ const HTTPS = App.config.uris.ssl
 let server: HttpServer = new HttpServer({documents: "web"})
 let router: Router = new Router(Router.Top)
 
+router.show()
 server.on("readable", function (event, request) {
     App.log.info(request.method, request.uri, request.scheme)
     server.serve(request, router)

@@ -10,5 +10,5 @@ assert(http.header("Allow") == "OPTIONS,GET,HEAD,POST,PUT,DELETE")
 http.close()
 
 http.connect("TRACE", HTTP + "/index.html")
-assert(http.status == 406)
+assert(http.status == 405)
 http.close()

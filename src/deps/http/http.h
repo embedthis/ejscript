@@ -39,6 +39,10 @@ struct HttpWebSocket;
 /********************************** Tunables **********************************/
 
 //  TODO - do all these need to have MAX some are just sizes and not maximums
+
+#ifndef BIT_DEFAULT_METHODS
+    #define BIT_DEFAULT_METHODS     "GET,POST"          /**< Default methods for routes */
+#endif
 #ifndef BIT_HTTP_PORT
     #define BIT_HTTP_PORT           80
 #endif
@@ -134,7 +138,13 @@ struct HttpWebSocket;
     #define BIT_MAX_SESSION_DURATION (3600 * 1000)      /**< Default session timeout (one hour) */
 #endif
 #ifndef BIT_MAX_PING_DURATION
-    #define BIT_MAX_PING_DURATION (30 * 1000)           /**< WSS ping defeat Keep-Alive timeouts (30 sec) */
+    #define BIT_MAX_PING_DURATION   (30 * 1000)         /**< WSS ping defeat Keep-Alive timeouts (30 sec) */
+#endif
+#ifndef BIT_XSRF_COOKIE
+    #define BIT_XSRF_COOKIE        "XSRF-TOKEN"         /**< CSRF token cookie name */
+#endif
+#ifndef BIT_XSRF_HEADER
+    #define BIT_XSRF_HEADER        "X-XSRF-TOKEN"       /**< CSRF token name in Http headers */
 #endif
 
 #ifndef BIT_HTTP_LOG
@@ -1778,7 +1788,14 @@ PUBLIC HttpStage *httpCreateStage(Http *http, cchar *name, int flags, MprModule 
 */
 PUBLIC struct HttpStage *httpLookupStage(Http *http, cchar *name);
 
-//  MOB DOC
+/** 
+    Default incoming put callback. 
+    @description Adds packet to the service queue
+    @param q Current queue
+    @param packet Packet containg data
+    @ingroup HttpStage
+    @stability Prototype
+*/
 PUBLIC void httpDefaultIncoming(HttpQueue *q, HttpPacket *packet);
 
 /** 
@@ -1803,16 +1820,25 @@ PUBLIC void httpDefaultOutgoingServiceStage(HttpQueue *q);
  */
 PUBLIC cvoid *httpGetStageData(struct HttpConn *conn, cchar *key);
 
+#if DEPRECATED || 1
 /**
     Handle a Http Trace or Options method request
     @description Convenience routine to respond to an OPTIONS or TRACE request. 
     @param conn HttpConn object created via #httpCreateConn
-    @param methods Comma separated list of supported methods excluding OPTIONS and TRACE which are automatically
-        added if the route supports these methods.
     @ingroup HttpStage
-    @stability Evolving
+    @stability Deprecated
  */
-PUBLIC void httpHandleOptionsTrace(struct HttpConn *conn, cchar *methods);
+PUBLIC void httpHandleOptionsTrace(struct HttpConn *conn);
+#endif
+
+/**
+    Handle a Http Options method request
+    @description Convenience routine to respond to an OPTIONS request. 
+    @param conn HttpConn object created via #httpCreateConn
+    @ingroup HttpStage
+    @stability Prototype
+ */
+PUBLIC void httpHandleOptions(struct HttpConn *conn);
 
 /** 
     Lookup stage data
@@ -2593,7 +2619,13 @@ PUBLIC int httpShouldTrace(HttpConn *conn, int dir, int item, cchar *ext);
  */
 PUBLIC void httpStartPipeline(HttpConn *conn);
 
-//  MOB DOC
+/**
+    Create the pipeline.
+    @description Create the processing pipeline.
+    @param conn HttpConn object created via #httpCreateConn
+    @ingroup HttpConn
+    @stability Internal
+ */
 PUBLIC void httpCreatePipeline(HttpConn *conn);
 
 /**
@@ -2866,21 +2898,6 @@ PUBLIC HttpAuth *httpCreateAuth();
  */
 PUBLIC HttpRole *httpCreateRole(HttpAuth *auth, cchar *name, cchar *abilities);
 
-#if UNUSED
-/**
-    Create a new user
-    @description The user is not added to the authentication database
-    @param auth Auth object allocated by #httpCreateAuth.
-    @param name User name 
-    @param password User password. The password should not be encrypted. The backend will encrypt as required.
-    @param abilities Space separated list of abilities.
-    @return Zero if successful, otherwise a negative MPR error code
-    @ingroup HttpAuth
-    @stability Evolving
- */
-PUBLIC HttpUser *httpCreateUser(HttpAuth *auth, cchar *name, cchar *password, cchar *abilities);
-#endif
-
 /**
     Test if the user is authenticated
     @param conn HttpConn connection object 
@@ -2906,12 +2923,34 @@ PUBLIC bool httpIsAuthenticated(HttpConn *conn);
 PUBLIC bool httpLogin(HttpConn *conn, cchar *username, cchar *password);
 
 /**
+    Test if the client for the current request is logged in
+    @description This tests if there is a login session for the client
+    @param conn HttpConn connection object 
+    @return True if the user is authenticated and logged in
+    @stability Prototype
+    @ingroup HttpAuth
+    @stability Prototype
+  */
+PUBLIC bool httpLoggedIn(HttpConn *conn);
+
+/**
     Logout the user.
     @param conn HttpConn connection object 
     @ingroup HttpAuth
     @stability Prototype
  */
 PUBLIC void httpLogout(HttpConn *conn);
+
+/**
+    Lookup a user by username
+    @param auth HttpAuth object. Stored in HttpConn.rx.route.auth
+    @param name Username
+    @return User object
+    @stability Prototype
+    @ingroup HttpAuth
+    @stability Prototype
+  */
+PUBLIC HttpUser *httpLookupUser(HttpAuth *auth, cchar *name);
 
 /**
     Remove a role
@@ -3073,11 +3112,7 @@ PUBLIC void httpInitAuth(Http *http);
 PUBLIC HttpAuth *httpCreateInheritedAuth(HttpAuth *parent);
 PUBLIC HttpAuthType *httpLookupAuthType(cchar *type);
 PUBLIC bool httpGetCredentials(HttpConn *conn, cchar **username, cchar **password);
-
-//  MOB DOC
-PUBLIC bool httpLoggedIn(HttpConn *conn);
 PUBLIC void httpComputeUserAbilities(HttpAuth *auth, HttpUser *user);
-PUBLIC HttpUser *httpLookupUser(HttpAuth *auth, cchar *name);
 
 /********************************** HttpLang  ********************************/
 
@@ -3245,8 +3280,6 @@ typedef void (*HttpAction)(HttpConn *conn);
 PUBLIC void httpDefineAction(cchar *uri, HttpAction fun);
 
 /********************************** HttpStream  ********************************/
-
-//  MOB DOC
 /**
     Determine if input body content should be streamed or buffered for requests with content of a given mime type 
     @param host Host to modify
@@ -3258,7 +3291,6 @@ PUBLIC void httpDefineAction(cchar *uri, HttpAction fun);
  */
 PUBLIC bool httpGetStreaming(struct HttpHost *host, cchar *mime, cchar *uri);
 
-//  MOB DOC
 /**
     Control if input body content should be streamed or buffered for requests with content of a given mime type 
     @param host Host to modify
@@ -3279,15 +3311,13 @@ PUBLIC void httpSetStreaming(struct HttpHost *host, cchar *mime, cchar *uri, boo
 #define HTTP_ROUTE_FREE                 0x2         /**< Free Route.mdata back to malloc when route is freed */
 #define HTTP_ROUTE_FREE_PATTERN         0x4         /**< Free Route.patternCompiled back to malloc when route is freed */
 #define HTTP_ROUTE_RAW                  0x8         /**< Don't html encode the write data */
-#define HTTP_ROUTE_GZIP                 0x1000      /**< Support gzipped content on this route */
-#define HTTP_ROUTE_STARTED              0x2000      /**< Route initialized */
-#define HTTP_ROUTE_PUT_DELETE_METHODS   0x4000      /**< Support PUT|DELETE on this route */
-#define HTTP_ROUTE_TRACE_METHOD         0x8000      /**< Enable the trace method for handlers supporting it */
-#define HTTP_ROUTE_JSON                 0x10000     /**< Route expects params in JSON body */
-#define HTTP_ROUTE_JSON_RESOURCES       0x20000     /**< Create resource routes to use JSON params */
-
+#define HTTP_ROUTE_STARTED              0x10        /**< Route initialized */
+#define HTTP_ROUTE_JSON                 0x20        /**< Route expects params in JSON body */
+#define HTTP_ROUTE_XSRF                 0x80        /**< Generate XSRF tokens */
+#define HTTP_ROUTE_CORS                 0x100       /**< Cross-Origin resource sharing */
 #if (DEPRECATED || 1) && !DOXYGEN
-#define HTTP_ROUTE_LEGACY_MVC           0x40000     /**< Legacy MVC app. Using "static" instead of "client". Deprecated in 4.4 */
+#define HTTP_ROUTE_GZIP                 0x200       /**< Support gzipped content on this route */
+#define HTTP_ROUTE_LEGACY_MVC           0x400       /**< Legacy MVC app. Using "static" instead of "client". Deprecated in 4.4 */
 #endif
 
 /**
@@ -3298,7 +3328,7 @@ PUBLIC void httpSetStreaming(struct HttpHost *host, cchar *mime, cchar *uri, boo
         httpAddRouteLoad httpAddRouteQuery httpAddRouteUpdate httpClearRouteStages httpCreateAliasRoute 
         httpCreateDefaultRoute httpCreateInheritedRoute httpCreateRoute httpDefineRoute
         httpDefineRouteCondition httpDefineRouteTarget httpDefineRouteUpdate httpFinalizeRoute httpGetRouteData 
-        httpGetRouteDir httpLink httpLookupRouteErrorDocument httpMakePath httpMatchRoute httpResetRoutePipeline 
+        httpGetRouteDir httpLink httpLookupRouteErrorDocument httpMakePath httpResetRoutePipeline 
         httpSetRouteAuth httpSetRouteAutoDelete httpSetRouteCompression httpSetRouteConnector httpSetRouteData 
         httpSetRouteDefaultLanguage httpSetRouteDir httpSetRouteFlags httpSetRouteHandler httpSetRouteHost 
         httpSetRouteIndex httpSetRouteMethods httpSetRouteName httpSetRouteVar httpSetRoutePattern 
@@ -3323,7 +3353,6 @@ typedef struct HttpRoute {
     char            *dir;                   /**< Documents directory */
     char            *home;                  /**< Home directory for configuration files */
     MprList         *indicies;              /**< Directory index documents */
-    char            *methodSpec;            /**< Supported HTTP methods */
     HttpStage       *handler;               /**< Fixed handler */
 
     int             nextGroup;              /**< Next route with a different startWith */
@@ -3367,6 +3396,12 @@ typedef struct HttpRoute {
 
     HttpTrace       trace[2];               /**< Default route request tracing */
     int             traceMask;              /**< Request/response trace mask */
+
+    cchar           *corsOrigin;            /**< CORS permissible client origins */
+    cchar           *corsHeaders;           /**< Headers to add for Access-Control-Expose-Headers */
+    cchar           *corsMethods;           /**< Methods to add for Access-Control-Allow-Methods */
+    bool            corsCredentials;        /**< Whether to emit an Access-Control-Allow-Credentials */
+    int             corsAge;                /**< Age in seconds of the pre-flight authorization */
 
     /*
         Used by Ejscript
@@ -3783,13 +3818,12 @@ PUBLIC HttpRoute *httpCreateRoute(struct HttpHost *host);
     @param target Route target string expression. This is used by handlers to determine the physical or virtual resource
         to serve.
     @param source Source file pattern containing the resource to activate or serve. 
-    @param flags Route flags.
     @return Created route.
     @ingroup HttpRoute
     @stability Evolving
  */
 PUBLIC HttpRoute *httpDefineRoute(HttpRoute *parent, cchar *name, cchar *methods, cchar *pattern, 
-    cchar *target, cchar *source, int flags);
+    cchar *target, cchar *source);
 
 /**
     Define a route condition rule
@@ -3820,24 +3854,6 @@ PUBLIC void httpDefineRouteTarget(cchar *name, HttpRouteProc *proc);
     @stability Evolving
  */
 PUBLIC void httpDefineRouteUpdate(cchar *name, HttpRouteProc *proc);
-
-/**
-    Enable use of the TRACE Http method
-    @param route Route to modify
-    @param on Set to true to enable the trace method
-    @ingroup HttpLimits
-    @stability Evolving
- */
-PUBLIC void httpEnableTraceMethod(HttpRoute *route, bool on);
-
-/**
-    Enable use of the DELETE and PUT methods
-    @param route Route to modify
-    @param on Set to true to enable the DELETE and PUT Http methods
-    @ingroup HttpLimits
-    @stability Evolving
- */
-PUBLIC void httpEnablePutMethod(HttpRoute *route, bool on);
 
 /**
     Expand route variables in a string
@@ -4023,19 +4039,6 @@ PUBLIC char *httpMakePath(HttpRoute *route, cchar *dir, cchar *path);
 PUBLIC void httpMapFile(HttpConn *conn, HttpRoute *route);
 
 /**
-    Match a route against the current request 
-    @description This tests if a route matches the current request on a connection. This call is automatically called
-        by #httpRouteRequest for incoming requests to a server.
-    @param conn HttpConn connection object 
-    @param route Route to modify
-    @return HTTP_ROUTE_OK if the request matches. Return HTTP_ROUTE_REMATCH if the request has been modified and
-        route matching must be restarted.
-    @ingroup HttpRoute
-    @stability Evolving
- */
-PUBLIC int httpMatchRoute(HttpConn *conn, HttpRoute *route);
-
-/**
     Reset the route pipeline
     @description This completely resets the pipeline and discards inherited pipeline configuration. This resets the
         error documents, expiry cache values, extensions, handlers, input and output stage configuration.
@@ -4171,11 +4174,32 @@ PUBLIC void httpSetRouteHost(HttpRoute *route, struct HttpHost *host);
     @description This defines the set of valid HTTP methods for requests to match this route
     @param route Route to modify
     @param methods Set to a comma or space separated list of methods. Can also set to "All" or "*" for all possible 
-        methods.  Standard methods include: "DELETE, GET, OPTIONS, POST, PUT, TRACE".
+        methods.  Typical methods include: "DELETE, GET, OPTIONS, POST, PUT, TRACE".
     @ingroup HttpRoute
     @stability Evolving
  */
 PUBLIC void httpSetRouteMethods(HttpRoute *route, cchar *methods);
+
+/**
+    Add HTTP methods for the route
+    @description This defines additional HTTP methods for requests to match this route
+    @param route Route to modify
+    @param methods Set to a comma or space separated list of methods. Can also set to "All" or "*" for all possible 
+        methods.  Typical methods include: "DELETE, GET, OPTIONS, POST, PUT, TRACE".
+    @ingroup HttpRoute
+    @stability Prototype
+ */
+PUBLIC void httpAddRouteMethods(HttpRoute *route, cchar *methods);
+
+/**
+    Remove HTTP methods for the route
+    @description This removes supported HTTP methods from this route
+    @param route Route to modify
+    @param methods Set to a comma or space separated list of methods.
+    @ingroup HttpRoute
+    @stability Prototype
+ */
+PUBLIC void httpRemoveRouteMethods(HttpRoute *route, cchar *methods);
 
 /**
     Set the route name
@@ -4416,6 +4440,15 @@ PUBLIC bool httpTokenize(HttpRoute *route, cchar *str, cchar *fmt, ...);
 PUBLIC bool httpTokenizev(HttpRoute *route, cchar *str, cchar *fmt, va_list args);
 
 /**
+    Parse a boolean token
+    @param tok Token to parse
+    @return True if tok is set to "yes", "on", "true" or "1"
+    @ingroup HttpRoute
+    @stability Prototype
+ */
+PUBLIC bool httpGetBoolToken(cchar *tok);
+
+/**
     Configure the route access log
     @param route Route to modify
     @param path Path for route access log file.
@@ -4586,6 +4619,46 @@ PUBLIC int httpSetSessionObj(HttpConn *conn, cchar *key, MprHash *value);
  */
 PUBLIC int httpWriteSession(HttpConn *conn);
 
+/**
+    Check a security token.
+    @description Check the request security token against the security token defined in the session state.
+    @param conn Http connection object
+    @return True if the security token matches the session held token.
+    @ingroup HttpSession
+    @stability Prototype
+ */
+PUBLIC bool httpCheckSecurityToken(HttpConn *conn);
+
+/**
+    Create a new security token.
+    @description This will create a new security token and store it in the session state for validation by subsequent requests.
+    @param conn HttpConn connection object
+    @return The security token string
+    @ingroup HttpSession
+    @stability Prototype
+*/
+PUBLIC cchar *httpCreateSecurityToken(HttpConn *conn);
+
+/**
+    Get a unique security token.
+    @description This will get an existing security token or create a new token if none exist for the current request.
+        The security token will be stored in the session state for validation by subsequent requests.
+    @param conn HttpConn connection object
+    @return The security token string
+    @ingroup HttpSession
+    @stability Prototype
+*/
+PUBLIC cchar *httpGetSecurityToken(HttpConn *conn);
+
+/**
+    Render a security token.
+    @description This call will render a security token in the response as a cookie to be stored in the client. 
+    Client Javascript must then send this token as a request header in subsquent POST requests.
+    @param conn Http connection object
+    @ingroup HttpSession
+    @stability Prototype
+*/
+PUBLIC int httpRenderSecurityToken(HttpConn *conn);
 
 /********************************** HttpUploadFile *********************************/
 /**
@@ -4639,7 +4712,7 @@ PUBLIC void httpRemoveUploadFile(HttpConn *conn, cchar *id);
 /********************************** HttpRx *********************************/
 /* 
     Rx flags
-    TODO - inconsistent with HTTP_TX_
+    TODO - inconsistent with HTTP_TX_. Should these have HTTP_RX prefix
  */
 #define HTTP_DELETE             0x1         /**< DELETE method  */
 #define HTTP_GET                0x2         /**< GET method  */
@@ -4655,9 +4728,6 @@ PUBLIC void httpRemoveUploadFile(HttpConn *conn, cchar *id);
 #define HTTP_ADDED_BODY_PARAMS  0x800       /**< Body data added to params */
 #define HTTP_LIMITS_OPENED      0x1000      /**< Request limits opened */
 #define HTTP_EXPECT_CONTINUE    0x2000      /**< Client expects an HTTP 100 Continue response */
-#if UNUSED
-#define HTTP_AUTH_CHECKED       0x4000      /**< User authentication has been checked */
-#endif
 
 /*  
     Incoming chunk encoding states
@@ -4773,8 +4843,24 @@ typedef struct HttpRx {
     int             matchCount;
 } HttpRx;
 
-//  MOB
+/**
+    Add parameters from the request query string.
+    @description This adds query data to the request params
+    @param conn HttpConn connection object
+    @ingroup HttpRx
+    @stability Internal
+    @internal
+ */
 PUBLIC void httpAddQueryParams(HttpConn *conn);
+
+/**
+    Add parameters from the request body content.
+    @description This adds query data to the request params
+    @param conn HttpConn connection object
+    @ingroup HttpRx
+    @stability Internal
+    @internal
+ */
 PUBLIC void httpAddBodyParams(HttpConn *conn);
 
 /**
@@ -4870,7 +4956,7 @@ PUBLIC char *httpGetParamsString(HttpConn *conn);
 
 /** 
     Get an rx http header.
-    @description Get a http response header for a given header key.
+    @description Get a http request header value for a given header key.
     @param conn HttpConn connection object created via #httpCreateConn
     @param key Name of the header to retrieve. This should be a lower case header name. For example: "Connection"
     @return Value associated with the header key or null if the key did not exist in the response.
@@ -5979,6 +6065,15 @@ PUBLIC void httpLogRoutes(HttpHost *host, bool full);
     @stability Stable
  */
 PUBLIC HttpRoute *httpLookupRoute(HttpHost *host, cchar *name);
+
+/**
+    Lookup a route by pattern
+    @param host HttpHost object owning the route table
+    @param pattern Route pattern to find. If null or empty, look for "/"
+    @ingroup HttpRoute
+    @stability Stable
+  */
+PUBLIC HttpRoute *httpLookupRouteByPattern(HttpHost *host, cchar *pattern);
 
 /**
     Reset the list of routes for the host
