@@ -212,7 +212,7 @@
 
 /* Profile */
 #ifndef BIT_CONFIG_CMD
-    #define BIT_CONFIG_CMD "bit -d -q -platform windows-x86-default -configure . -gen nmake"
+    #define BIT_CONFIG_CMD "bit -d -q -platform windows-x86-default -configure . -gen vs"
 #endif
 #ifndef BIT_EJS_PRODUCT
     #define BIT_EJS_PRODUCT 1
