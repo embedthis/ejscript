@@ -12,17 +12,17 @@ enumerable public class Test {
     public var lib: Path
     public var env: Object
     public var features: Object
-    public var cross: Boolean
+    public var cross: Boolean           //  TODO - not set
     public var depth: Number
     public var dir: Path
-    public var multithread: Boolean
-    public var phase: String?
+    public var multithread: Boolean     //  TODO - not set
+    public var phase: String?           //  TODO - not set
     public var session: Object
     public var threads: Number
     public var top: Path
-    public var os: String
-    public var hostOs: String
-    public var hostSystem: String
+    public var os: String               //  TODO - not set
+    public var hostOs: String           //  TODO - not set
+    public var hostSystem: String       //  TODO - not set
     public var verbosity: Number = false
 
     var log = App.log
