@@ -325,19 +325,6 @@ typedef struct HttpCounter {
     int64       limit;                          /**< Counter limit */
 } HttpCounter;
 
-/*
-    Per-IP address structure.
-    Note: this does not need GC marking
- */
-typedef struct HttpAddress {
-    MprTicks    updated;                        /**< When the address counters were last updated */
-    MprTicks    banUntil;                       /**< Ban IP address until this time */
-    MprTicks    delayUntil;                     /**< Delay (go-slow) servicing requests until this time  */
-    int         delay;                          /**< Delay per request */
-    int         ncounters;                      /**< Number of counters in ncounters */
-    HttpCounter counters[1];
-} HttpAddress;
-
 typedef struct HttpMonitor {
     int         counterIndex;                   /**< Counter item index to monitor */
     int         expr;                           /**< Expression. Set to '<' or '>' */
@@ -347,6 +334,21 @@ typedef struct HttpMonitor {
     MprList     *defenses;                      /**< List of defensive measures */
     struct Http *http;
 } HttpMonitor;
+
+/*
+    Per-IP address structure.
+    Note: this does not need GC marking
+ */
+typedef struct HttpAddress {
+    MprTicks    updated;                        /**< When the address counters were last updated */
+    MprTicks    banUntil;                       /**< Ban IP address until this time */
+    MprTicks    delayUntil;                     /**< Delay (go-slow) servicing requests until this time  */
+    cchar       *banMsg;                        /**< Ban response message */
+    int         banStatus;                      /**< Ban response status */
+    int         delay;                          /**< Delay per request */
+    int         ncounters;                      /**< Number of counters in ncounters */
+    HttpCounter counters[1];
+} HttpAddress;
 
 typedef void (*HttpRemedyProc)(MprHash *args);
 
@@ -415,6 +417,9 @@ PUBLIC int httpAddCounter(cchar *name);
     @stability Prototype
  */
 PUBLIC int httpAddRemedy(cchar *name, HttpRemedyProc remedy);
+
+//  MOB
+PUBLIC int httpBanClient(cchar *ip, MprTicks period, int status, cchar *msg);
 
 /*
     Internal
@@ -2179,6 +2184,7 @@ typedef struct HttpConn {
     MprTicks        lastActivity;           /**< Last activity on the connection */
     MprEvent        *timeoutEvent;          /**< Connection or request timeout event */
     MprEvent        *workerEvent;           /**< Event for running connection via a worker thread */
+    
     void            *context;               /**< Embedding context (EjsRequest) */
     void            *ejs;                   /**< Embedding VM */
     void            *pool;                  /**< Pool of VMs */
