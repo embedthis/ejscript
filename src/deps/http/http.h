@@ -307,13 +307,13 @@ PUBLIC void httpSetForkCallback(struct Http *http, MprForkCallback proc, void *a
 #define HTTP_COUNTER_ACTIVE_REQUESTS    2       /**< Active requests per client */
 #define HTTP_COUNTER_ACTIVE_PROCESSES   3       /**< Total processes for server */
 #define HTTP_COUNTER_BAD_REQUEST_ERRORS 4       /**< Bad request format errors */
-#define HTTP_COUNTER_LIMIT_ERRORS       5       /**< Limit violation errors */
-#define HTTP_COUNTER_MEMORY             6       /**< Total application memory for server */
-#define HTTP_COUNTER_NOT_FOUND_ERRORS   7       /**< URI not found errors */
+#define HTTP_COUNTER_ERRORS             5       /**< All errors */
+#define HTTP_COUNTER_LIMIT_ERRORS       6       /**< Limit violation errors */
+#define HTTP_COUNTER_MEMORY             7       /**< Total application memory for server */
 #define HTTP_COUNTER_NETWORK_IO         8       /**< Network I/O */
-#define HTTP_COUNTER_REQUESTS           9       /**< Request count */
-#define HTTP_COUNTER_SSL_ERRORS         10      /**< SSL upgrade errors */
-#define HTTP_COUNTER_TOTAL_ERRORS       11      /**< All errors */
+#define HTTP_COUNTER_NOT_FOUND_ERRORS   9       /**< URI not found errors */
+#define HTTP_COUNTER_REQUESTS           10      /**< Request count */
+#define HTTP_COUNTER_SSL_ERRORS         11      /**< SSL upgrade errors */
     
 /*
     Per-counter monitoring structure
@@ -322,7 +322,6 @@ PUBLIC void httpSetForkCallback(struct Http *http, MprForkCallback proc, void *a
 typedef struct HttpCounter {
     cchar       *name;                          /**< Counter name (static reference) */
     int64       value;                          /**< Current counter value */
-    int64       limit;                          /**< Counter limit */
 } HttpCounter;
 
 typedef struct HttpMonitor {
@@ -337,7 +336,6 @@ typedef struct HttpMonitor {
 
 /*
     Per-IP address structure.
-    Note: this does not need GC marking
  */
 typedef struct HttpAddress {
     MprTicks    updated;                        /**< When the address counters were last updated */
