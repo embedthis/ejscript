@@ -142,9 +142,10 @@ module ejs {
                 notify()
             })
             hp.on("readable", function (event, ...args) {
-                let count = hp.read(responseBuf, -1)
-                state = Receiving
-                notify()
+                while (hp.read(responseBuf, -1) > 0) {
+                    state = Receiving
+                    notify()
+                }
             })
             hp.connect(method, uri)
             state = Open
