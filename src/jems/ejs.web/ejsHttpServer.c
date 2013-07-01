@@ -39,11 +39,17 @@ static EjsString *hs_address(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **arg
  */
 static EjsRequest *hs_accept(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
+    MprSocket   *sock;
     HttpConn    *conn;
     MprEvent    event;
 
+    if ((sock = mprAcceptSocket(sp->endpoint->sock)) == 0) {
+        /* Just ignore */
+        return 0;
+    }
     memset(&event, 0, sizeof(MprEvent));
     event.dispatcher = sp->endpoint->dispatcher;
+    event.sock = sock;
     if ((conn = httpAcceptConn(sp->endpoint, &event)) == 0) {
         /* Just ignore */
         mprError("Cannot accept connection");
@@ -235,7 +241,6 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         httpSetRouteTarget(route, "run", 0);
         httpFinalizeRoute(route);
         httpSetHostDefaultRoute(host, route);
-
         httpAddHostToEndpoint(endpoint, host);
 
         if (sp->limits) {
@@ -260,7 +265,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
          */
         documents = ejsGetProperty(ejs, sp, ES_ejs_web_HttpServer_documents);
         if (ejsIs(ejs, documents, Path)) {
-            httpSetRouteDir(route, documents->value);
+            httpSetRouteDocuments(route, documents->value);
         }
 #if KEEP
         //  MOB -- what to do with home?
