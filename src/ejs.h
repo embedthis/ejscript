@@ -3298,6 +3298,7 @@ typedef struct EjsWebSocket {
     char            *protocol;                  /**< Protocol selected by the server */
     int             closed;                     /**< Http is closed and "close" event has been issued */
     int             error;                      /**< Http errored and "error" event has been issued */
+    int             frames;                     /**< Preserve frames */
 } EjsWebSocket;
 
 /** 

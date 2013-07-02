@@ -46,6 +46,7 @@ module ejs {
             @options verify Boolean Set to true to verify the server certificate. 
                 The certificate is verified and the issuer chain is verified. Defaults to true.
                 Set to false to accept a self-signed certificate.
+            @options frames Preserve individual message frames to onmessage.
          */
         native function WebSocket(uri: Uri, protocols = null, options = null)
 
@@ -99,13 +100,14 @@ module ejs {
          */
         native function off(name, observer: Function): Void
 
-        //  MOB - should not these types be WebSocket
         /** 
             @duplicate Stream.on
             All events are called with the following signature.  The "this" object will be set to the instance object
             if the callback is a method. Otherwise, "this" will be set to the Http instance. If Function.bind may also
             be used to define the "this" object and to inject additional callback arguments. 
                 function (event: String, http: Http): Void
+            The event has properties: "data" containing the message, "last" set to true if this is the last portion of data for
+                a logical message, and "type" set to the WebSockets message type.
             @event headers Issued when the response headers have been fully received.
             @event readable Issued when some body content is available.
             @event writable Issued when the connection is writable to accept body data (PUT, POST).
@@ -136,6 +138,13 @@ module ejs {
                If multiple arguments are provided, each is sent as a separate message. 
          */
         native function send(...content): Void
+
+        /*
+            @param options
+            @options more Set to false for the last frame in a message. If omitted, assumed to be true.
+            @options type Message type. Masked to the valid WebSockets message types.
+         */
+        native function sendBlock(content, options): Void
 
         /**
             The URI provided to the constructor

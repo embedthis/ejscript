@@ -8,7 +8,7 @@
 
 /*********************************** Forwards *********************************/
 
-static void onWebSocketEvent(EjsWebSocket *ws, int event, EjsAny *data);
+static void onWebSocketEvent(EjsWebSocket *ws, int event, EjsAny *data, HttpPacket *packet);
 static EjsObj *startWebSocketRequest(Ejs *ejs, EjsWebSocket *ws);
 static bool waitForHttpState(EjsWebSocket *ws, int state, MprTicks timeout, int throw);
 static bool waitForReadyState(EjsWebSocket *ws, int state, MprTicks timeout, int throw);
@@ -40,6 +40,8 @@ static EjsWebSocket *wsConstructor(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj 
             ws->protocols = sclone((ejsToString(ejs, argv[1]))->value);
         } else if (ejsIs(ejs, argv[1], String)) {
             ws->protocols = sclone(((EjsString*) argv[1])->value);
+        } else {
+            ws->protocols = sclone("chat");
         }
     } else {
         ws->protocols = sclone("chat");
@@ -49,6 +51,7 @@ static EjsWebSocket *wsConstructor(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj 
         return 0;
     }
     if (argc >= 3) {
+        ws->frames = ejsGetPropertyByName(ejs, argv[2], EN("frames")) == ESV(true);
         verify = ejsGetPropertyByName(ejs, argv[2], EN("verify")) == ESV(true);
         if ((certificate = ejsGetPropertyByName(ejs, argv[2], EN("certificate"))) != 0) {
             ws->certFile = ejsToMulti(ejs, argv[0]);
@@ -164,13 +167,14 @@ static EjsWebSocket *ws_on(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 
     conn = ws->conn;
     if (conn->readq && conn->readq->count > 0) {
-        onWebSocketEvent(ws, HTTP_EVENT_READABLE, 0);
+        //  MOB - can't have NULL as data
+        onWebSocketEvent(ws, HTTP_EVENT_READABLE, 0, 0);
     }
     //  MOB - don't need to test finalizedConnector
     if (!conn->tx->finalizedConnector && 
             !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_FINALIZED &&
             conn->writeq->ioCount == 0) {
-        onWebSocketEvent(ws, HTTP_EVENT_WRITABLE, 0);
+        onWebSocketEvent(ws, HTTP_EVENT_WRITABLE, 0, 0);
     }
     return ws;
 }
@@ -281,7 +285,7 @@ static EjsObj *startWebSocketRequest(Ejs *ejs, EjsWebSocket *ws)
 }
 
 
-static void onWebSocketEvent(EjsWebSocket *ws, int event, EjsAny *data)
+static void onWebSocketEvent(EjsWebSocket *ws, int event, EjsAny *data, HttpPacket *packet)
 {
     Ejs             *ejs;
     EjsAny          *eobj;
@@ -302,6 +306,8 @@ static void onWebSocketEvent(EjsWebSocket *ws, int event, EjsAny *data)
         eventName = "readable";
         assert(data);
         ejsSetPropertyByName(ejs, eobj, EN("data"), data);
+        ejsSetPropertyByName(ejs, eobj, EN("last"), ejsCreateBoolean(ejs, packet->last));
+        ejsSetPropertyByName(ejs, eobj, EN("type"), ejsCreateNumber(ejs, packet->type));
         break;
 
     case HTTP_EVENT_ERROR:
@@ -312,6 +318,9 @@ static void onWebSocketEvent(EjsWebSocket *ws, int event, EjsAny *data)
     case HTTP_EVENT_APP_OPEN:
         slot = ES_WebSocket_onopen;
         eventName = "headers";
+        if (rx->webSocket) {
+            httpSetWebSocketPreserveFrames(ws->conn, ws->frames);
+        }
         break;
 
     case HTTP_EVENT_DESTROY:
@@ -368,16 +377,14 @@ static void webSocketNotify(HttpConn *conn, int event, int arg)
     case HTTP_EVENT_STATE:
         if (arg == HTTP_STATE_CONTENT) {
             ws->protocol = (char*) httpGetHeader(conn, "Sec-WebSocket-Protocol");
-            mprTrace(4, "Web socket protocol %s", ws->protocol);
-            onWebSocketEvent(ws, HTTP_EVENT_APP_OPEN, 0);
+            mprTrace(3, "Web socket protocol %s", ws->protocol);
+            onWebSocketEvent(ws, HTTP_EVENT_APP_OPEN, 0, 0);
         }
         break;
     
     case HTTP_EVENT_READABLE:
-        /* Called once per packet unless packet is too large (LimitWebSocketPacket) */
         packet = httpGetPacket(conn->readq);
         content = packet->content;
-        mprTrace(4, "webSocketNotify: READABLE event format %s\n", packet->type == WS_MSG_TEXT ? "text" : "binary");
         if (packet->type == WS_MSG_TEXT) {
             data = ejsCreateStringFromBytes(ejs, mprGetBufStart(content), mprGetBufLength(content));
         } else {
@@ -390,22 +397,22 @@ static void webSocketNotify(HttpConn *conn, int event, int arg)
             ejsSetByteArrayPositions(ejs, ba, -1, len);
             data = ba;
         }
-        onWebSocketEvent(ws, event, data);
+        onWebSocketEvent(ws, event, data, packet);
         break;
 
     case HTTP_EVENT_ERROR:
         if (!ws->error && !ws->closed) {
             ws->error = 1;
-            onWebSocketEvent(ws, event, 0);
+            onWebSocketEvent(ws, event, 0, 0);
             ws->closed = 1;
-            onWebSocketEvent(ws, HTTP_EVENT_APP_CLOSE, 0);
+            onWebSocketEvent(ws, HTTP_EVENT_APP_CLOSE, 0, 0);
         }
         break;
 
     case HTTP_EVENT_APP_CLOSE:
         if (!ws->closed) {
             ws->closed = 1;
-            onWebSocketEvent(ws, event, 0);
+            onWebSocketEvent(ws, event, 0, 0);
         }
         break;
     }
