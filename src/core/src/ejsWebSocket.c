@@ -232,6 +232,52 @@ static EjsString *ws_send(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 }
 
 
+/*  
+    function sendBlock(content, options): Void
+ */
+static EjsString *ws_sendBlock(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
+{
+    EjsByteArray    *ba;
+    EjsAny          *content, *vp;
+    ssize           nbytes;
+    cchar           *str;
+    int             more, type, flags;
+
+    assert(argc == 2);
+
+    if (ws->conn->state < HTTP_STATE_PARSED && !waitForHttpState(ws, HTTP_STATE_PARSED, -1, 1)) {
+        return 0;
+    }
+    content = argv[0];
+    more = ejsGetPropertyByName(ejs, argv[1], EN("more")) == ESV(true);
+    if ((vp = ejsGetPropertyByName(ejs, argv[1], EN("type"))) != 0) {
+        type = ejsGetNumber(ejs, vp);
+        if (type != WS_MSG_CONT && type != WS_MSG_TEXT && type != WS_MSG_BINARY) {
+            ejsThrowArgError(ejs, "Bad message type");
+            return 0;
+        }
+    } else {
+        type = WS_MSG_TEXT;
+    }
+    flags = HTTP_BLOCK;
+    if (more) {
+        flags |= HTTP_MORE;
+    }
+    if (ejsIs(ejs, content, ByteArray)) {
+        ba = (EjsByteArray*) content;
+        nbytes = ejsGetByteArrayAvailableData(ba);
+        nbytes = httpSendBlock(ws->conn, type, (cchar*) &ba->value[ba->readPosition], nbytes, flags);
+    } else {
+        str = ejsToMulti(ejs, content);
+        nbytes = httpSendBlock(ws->conn, type, str, slen(str), flags);
+    }
+    if (nbytes < 0) {
+        return 0;
+    }
+    return 0;
+}
+
+
 /*
     function get url(): Uri
  */
@@ -602,6 +648,7 @@ PUBLIC void ejsConfigureWebSocketType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_WebSocket_protocol, ws_protocol);
     ejsBindMethod(ejs, prototype, ES_WebSocket_readyState, ws_readyState);
     ejsBindMethod(ejs, prototype, ES_WebSocket_send, ws_send);
+    ejsBindMethod(ejs, prototype, ES_WebSocket_sendBlock, ws_sendBlock);
     ejsBindMethod(ejs, prototype, ES_WebSocket_url, ws_url);
     ejsBindMethod(ejs, prototype, ES_WebSocket_wait, ws_wait);
 }
