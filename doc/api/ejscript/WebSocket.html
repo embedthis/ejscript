@@ -94,6 +94,7 @@ creating the <a href='#WebSocket'>WebSocket</a>. </td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#WebSocket'><b>WebSocket</b></a>(uri: <a href='Uri.html'>Uri</a>, protocols = null, options = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new WebSocket and connect to the server using the supplied URI.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#close'><b>close</b></a>(code: <a href='Number.html'>Number</a> = 1000, reason: <a href='String.html'>String</a> = ): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a close message and close the web socket connection.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#send'><b>send</b></a>(content: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send data with the request.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#sendBlock'><b>sendBlock</b></a>(content, options): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>null</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#wait'><b>wait</b></a>(state: <a href='Number.html'>Number</a>, timeout: <a href='Number.html'>Number</a> = -1): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Wait for the WebSocket to achieve a desired state.</td></tr>
 </table>
 
@@ -114,6 +115,7 @@ creating the <a href='#WebSocket'>WebSocket</a>. </td></tr>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>certificate</td><td>Path|String Optional path to file containing certificates to validate the  server certificate.</td></tr>
 <td class='param'>verify</td><td>Boolean Set to true to verify the server certificate.  The certificate is verified and the issuer chain is verified. Defaults to true. Set to false to accept a self-signed certificate.</td></tr>
+<td class='param'>frames</td><td>Preserve individual message frames to onmessage.</td></tr>
 </table></dd>
 </dl></div>
 </div>
