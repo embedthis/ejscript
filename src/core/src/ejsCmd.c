@@ -652,6 +652,7 @@ static void manageEjsCmd(EjsCmd *cmd, int flags)
         mprMark(cmd->options);
         mprMark(cmd->error);
         mprMark(cmd->argv);
+        mprMark(cmd->ejs);
 
     } else {
         if (cmd->mc) {

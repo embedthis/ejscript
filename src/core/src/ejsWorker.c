@@ -75,7 +75,9 @@ static EjsWorker *initWorker(Ejs *ejs, EjsWorker *worker, Ejs *baseVM, cchar *na
     self->inside = 1;
     self->pair = worker;
     self->name = sjoin("inside-", worker->name, NULL);
+#if MOB
     mprEnableDispatcher(wejs->dispatcher);
+#endif
     if (search) {
         ejsSetSearchPath(ejs, (EjsArray*) search);
     }
@@ -358,8 +360,6 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
             break;
         }
         mprWaitForEvent(ejs->dispatcher, remaining);
-        assert(ejs->dispatcher->magic == MPR_DISPATCHER_MAGIC);
-
         remaining = (int) mprGetRemainingTicks(mark, timeout);
     } while (remaining > 0 && !ejs->exception);
 
@@ -466,6 +466,8 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     worker = msg->worker;
     worker->gotMessage = 1;
     ejs = worker->ejs;
+    assert(!ejs->exception);
+
     event = 0;
     ejsBlockGC(ejs);
 
@@ -499,6 +501,8 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
             ejsSetProperty(ejs, event, ES_ErrorEvent_lineno, ejsGetPropertyByName(ejs, frame, EN("lineno")));
         }
     }
+    assert(!ejs->exception);
+
     if (callback == 0 || ejsIs(ejs, callback, Null)) {
         if (msg->callbackSlot == ES_Worker_onmessage) {
             mprTrace(6, "Discard message as no onmessage handler defined for worker");
@@ -517,6 +521,7 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
         ejsThrowTypeError(ejs, "Worker callback %s is not a function", msg->callback);
 
     } else {
+        assert(!ejs->exception);
         argv[0] = event;
         ejsRunFunction(ejs, callback, worker, 1, argv);
     }

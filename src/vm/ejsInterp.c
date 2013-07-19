@@ -2663,6 +2663,9 @@ EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, vo
     assert(ejs);
     assert(fun);
     assert(ejsIsFunction(ejs, fun));
+    if (ejs->exception) {
+        mprTrace(0, "STOP");
+    }
     assert(ejs->exception == 0);
     MPR_VERIFY_MEM();
 
@@ -2821,6 +2824,7 @@ static int validateArgs(Ejs *ejs, EjsFunction *fun, int argc, void *args)
         }
         argc = argc - numRest + 1;
         pushOutside(ejs, rest);
+        assert((void*) rest == argv[argc-1]);
     }
 
     /*
@@ -3756,7 +3760,7 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
 
     fp = state->fp;
     opcount[opcode]++;
-    assert(ejs->exception || (state->stack >= fp->stackReturn));
+    // assert(ejs->exception || (state->stack >= fp->stackReturn));
 
     if (1 || (ejs->initialized && doDebug)) {
         offset = (int) (fp->pc - fp->function.body.code->byteCode) - 1;
@@ -3770,7 +3774,7 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
             ejsShowOpFrequency(ejs);
         }
 #endif
-        assert(ejs->exception || (state->stack >= fp->stackReturn));
+        // assert(ejs->exception || (state->stack >= fp->stackReturn));
     }
     ejsOpCount++;
     return opcode;
