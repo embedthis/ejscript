@@ -2314,6 +2314,10 @@ PUBLIC void httpDestroyConn(HttpConn *conn)
             conn->rx = 0;
         }
         httpCloseConn(conn);
+        if (conn->endpoint) {
+            mprDestroyDispatcher(conn->dispatcher);
+            conn->dispatcher = 0;
+        }
         conn->http = 0;
     }
 }
@@ -5356,7 +5360,7 @@ static void updateCurrentDate(Http *http)
 PUBLIC void httpGetStats(HttpStats *sp)
 {
     Http                *http;
-    HttpCounter         *counters;
+    HttpAddress         *address;
     MprKey              *kp;
     MprMemStats         *ap;
     MprWorkerStats      wstats;
@@ -5388,12 +5392,12 @@ PUBLIC void httpGetStats(HttpStats *sp)
     sp->activeProcesses = http->activeProcesses;
     sp->activeSessions = http->activeSessions;
 
-    lock(http);
-    for (ITERATE_KEY_DATA(http->addresses, kp, counters)) {
-        sp->activeRequests += (int) counters[HTTP_COUNTER_ACTIVE_REQUESTS].value;
-        sp->activeClients += (int) counters[HTTP_COUNTER_ACTIVE_CLIENTS].value;
+    lock(http->addresses);
+    for (ITERATE_KEY_DATA(http->addresses, kp, address)) {
+        sp->activeRequests += (int) address->counters[HTTP_COUNTER_ACTIVE_REQUESTS].value;
+        sp->activeClients += (int) address->counters[HTTP_COUNTER_ACTIVE_CLIENTS].value;
     }
-    unlock(http);
+    unlock(http->addresses);
     sp->totalRequests = http->totalRequests;
     sp->totalConnections = http->totalConnections;
     sp->totalSweeps = MPR->heap->iteration;
@@ -12612,14 +12616,10 @@ static bool parseIncoming(HttpConn *conn, HttpPacket *packet)
         return 0;
     }
     start = mprGetBufStart(packet->content);
-
-#if FUTURE
     while (*start == '\r' || *start == '\n') {
         mprGetCharFromBuf(packet->content);
         start = mprGetBufStart(packet->content);
     }
-#endif
-
     /*
         Don't start processing until all the headers have been received (delimited by two blank lines)
      */
