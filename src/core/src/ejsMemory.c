@@ -60,7 +60,7 @@ static EjsObj *setMaxMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
     assert(argc == 1 && ejsIs(ejs, argv[0], Number));
 
     maxMemory = ejsGetInt(ejs, argv[0]);
-    mprSetMemLimits(-1, maxMemory);
+    mprSetMemLimits(-1, maxMemory, -1);
     return 0;
 }
 
@@ -91,7 +91,7 @@ static EjsObj *setRedline(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
         //  TODO - 64 bit
         redline = MAXINT;
     }
-    mprSetMemLimits(redline, -1);
+    mprSetMemLimits(redline, -1, -1);
     return 0;
 }
 

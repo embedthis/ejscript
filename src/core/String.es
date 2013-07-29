@@ -327,6 +327,7 @@ module ejs {
          */
         native function substring(startIndex: Number, end: Number = -1): String
 
+        //  TODO - Ecma6 - calls this repeat()
         /**
             Replication. Replicate the string N times.
             @param times The number of times to copy the string

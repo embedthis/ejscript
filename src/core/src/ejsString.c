@@ -2374,13 +2374,14 @@ PUBLIC EjsString *ejsInternString(EjsString *str)
     step = 0;
 
     lock(ip);
-    //  MOB - accesses should be debug only
     ip->accesses++;
     index = whash(str->value, str->length) % ip->size;
     if ((head = &ip->buckets[index]) != NULL) {
         for (sp = head->next; sp != head; sp = sp->next, step++) {
             if (str == sp) {
+#if UNUSED
                 mprRevive(sp);
+#endif
                 unlock(ip);
                 return sp;
             }
@@ -2393,10 +2394,11 @@ PUBLIC EjsString *ejsInternString(EjsString *str)
                     }
                 }
                 if (i == sp->length && i == str->length) {
-                    //  MOB - reuse should be debug only
                     ip->reuse++;
+#if UNUSED
                     /* Revive incase almost stale or dead */
                     mprRevive(sp);
+#endif
                     unlock(ip);
                     return sp;
                 }
@@ -2444,10 +2446,11 @@ PUBLIC EjsString *ejsInternWide(Ejs *ejs, wchar *value, ssize len)
                     }
                 }
                 if (i == sp->length) {
-                    //  MOB - reuse should be debug only
                     ip->reuse++;
+#if UNUSED
                     /* Revive incase almost stale or dead */
                     mprRevive(sp);
+#endif
                     unlock(ip);
                     return sp;
                 }
@@ -2484,7 +2487,6 @@ PUBLIC EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
     ip = ejs->service->intern;
 
     lock(ip);
-    //  MOB - accesses should be debug only
     ip->accesses++;
     assert(ip->size > 0);
     index = shash(value, len) % ip->size;
@@ -2498,10 +2500,11 @@ PUBLIC EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
                     }
                 }
                 if (i == sp->length) {
-                    //  MOB - reuse should be debug only
                     ip->reuse++;
+#if UNUSED
                     /* Revive incase almost stale or dead */
                     mprRevive(sp);
+#endif
                     unlock(ip);
                     return sp;
                 }
@@ -2560,7 +2563,6 @@ PUBLIC EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
         value = src->value;
     }
     lock(ip);
-    //  MOB - accesses should be debug only
     ip->accesses++;
     index = whash(value, len) % ip->size;
     if ((head = &ip->buckets[index]) != NULL) {
@@ -2572,10 +2574,11 @@ PUBLIC EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
                 }
             }
             if (i == sp->length && value[i] == 0) {
-                //  MOB - reuse should be debug only
                 ip->reuse++;
+#if UNUSED
                 /* Revive incase almost stale or dead */
                 mprRevive(sp);
+#endif
                 unlock(ip);
                 return sp;
             }

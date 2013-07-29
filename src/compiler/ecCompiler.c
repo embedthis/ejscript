@@ -176,9 +176,6 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
             ejsUnblockGC(ejs, paused);
         }
     }
-    assert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
-
-
     /*
         Allocate the eval frame stack. This is used for property lookups. We have one dummy block at the top always.
      */
@@ -209,7 +206,6 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
         }
     }
     ejsPopBlock(ejs);
-    assert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
 
     /*
         Add compiled modules to the interpreter
@@ -224,7 +220,6 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     if (!paused) {
         mprYield(0);
     }
-    assert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap->dead));
     return (cp->errorCount > 0) ? EJS_ERR: 0;
 }
 
