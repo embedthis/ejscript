@@ -1,0 +1,24 @@
+         Traditional Loop    14.16 (10,000,000)
+              For in loop     7.06 (20,000,000)
+           Function calls    12.96 ( 4,000,000)
+                  If/else    10.12 ( 3,000,000)
+              New Objects    13.42 ( 6,000,000)
+       Dynamic Properties     1.04 (   200,000)
+          Property Access     2.26 (   800,000)
+        Instance creation    14.03 ( 6,000,000)
+    Class property access    14.25 ( 5,000,000)
+                    Total    74.17 (         0)
+
+Test Complete -- waiting for 10 secs
+
+ForLoop, ForIn, Function, If, NewObject, NewProperty, GetProperty, NewClass, ClassAccess, Total
+   14.16,     7.06,    12.96,    10.12,    13.42,     1.04,     2.26,    14.03,    14.25,    74.17, 
+
+Memory Report Memory Report
+-------------
+  Total memory                5252 K
+  Current heap                3968 K
+  Free heap memory            2107 K
+  Memory limit                2047 MB (0 %)
+  Memory redline              2027 MB (0 %)
+  Allocation errors              0
