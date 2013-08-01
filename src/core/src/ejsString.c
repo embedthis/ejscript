@@ -2360,6 +2360,16 @@ PUBLIC EjsString *ejsTruncateString(Ejs *ejs, EjsString *sp, ssize len)
 
 
 /*********************************** Interning *********************************/
+
+ void revive(cvoid *sp)
+{
+    MprMem  *mp;
+
+    mp = (MprMem*) MPR_GET_MEM(sp);
+    mp->mark = MPR->heap->mark;
+}
+
+
 /*
     Intern a unicode string. Lookup a string and return an interned string (this may be an existing interned string)
  */
@@ -2379,9 +2389,7 @@ PUBLIC EjsString *ejsInternString(EjsString *str)
     if ((head = &ip->buckets[index]) != NULL) {
         for (sp = head->next; sp != head; sp = sp->next, step++) {
             if (str == sp) {
-#if UNUSED
-                mprRevive(sp);
-#endif
+                revive(sp);
                 unlock(ip);
                 return sp;
             }
@@ -2395,10 +2403,8 @@ PUBLIC EjsString *ejsInternString(EjsString *str)
                 }
                 if (i == sp->length && i == str->length) {
                     ip->reuse++;
-#if UNUSED
                     /* Revive incase almost stale or dead */
-                    mprRevive(sp);
-#endif
+                    revive(sp);
                     unlock(ip);
                     return sp;
                 }
@@ -2447,10 +2453,8 @@ PUBLIC EjsString *ejsInternWide(Ejs *ejs, wchar *value, ssize len)
                 }
                 if (i == sp->length) {
                     ip->reuse++;
-#if UNUSED
                     /* Revive incase almost stale or dead */
-                    mprRevive(sp);
-#endif
+                    revive(sp);
                     unlock(ip);
                     return sp;
                 }
@@ -2501,10 +2505,8 @@ PUBLIC EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
                 }
                 if (i == sp->length) {
                     ip->reuse++;
-#if UNUSED
                     /* Revive incase almost stale or dead */
-                    mprRevive(sp);
-#endif
+                    revive(sp);
                     unlock(ip);
                     return sp;
                 }
@@ -2575,10 +2577,8 @@ PUBLIC EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
             }
             if (i == sp->length && value[i] == 0) {
                 ip->reuse++;
-#if UNUSED
                 /* Revive incase almost stale or dead */
-                mprRevive(sp);
-#endif
+                revive(sp);
                 unlock(ip);
                 return sp;
             }
