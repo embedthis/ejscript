@@ -52,7 +52,7 @@ static EjsObj *gc_run(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
  */
 static EjsNumber *gc_newQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    return ejsCreateNumber(ejs, mprGetMpr()->heap->newQuota);
+    return ejsCreateNumber(ejs, mprGetMpr()->heap->workQuota);
 }
 
 
@@ -70,7 +70,7 @@ static EjsObj *gc_set_newQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **arg
         ejsThrowArgError(ejs, "Bad work quota. Must be > 1024");
         return 0;
     }
-    mprGetMpr()->heap->newQuota = quota;
+    mprGetMpr()->heap->workQuota = quota;
     return 0;
 }
 
