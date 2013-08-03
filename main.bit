@@ -128,6 +128,10 @@ Bit.load({
                 This is enabled by default for debug builds.
                 tracing: true,
              */
+
+            alloc: {
+                parallel: false
+            },
         },
 
         /*
