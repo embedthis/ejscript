@@ -520,7 +520,7 @@ PUBLIC EjsArray *ejsGetPathFiles(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
     if (argc == 0) {
         patterns = ejsCreateArray(ejs, 0);
-        ejsAddItem(ejs, patterns, ejsCreateString(ejs, "**", -1));
+        ejsAddItem(ejs, patterns, ejsCreateString(ejs, "*", -1));
     } else if (!ejsIs(ejs, argv[0], Array)) {
         patterns = ejsCreateArray(ejs, 0);
         ejsAddItem(ejs, patterns, ejsToString(ejs, argv[0]));
