@@ -240,7 +240,9 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
     }
     if (rc != SQLITE_OK) {
         if (rc == sqlite3_errcode(sdb)) {
-            ejsThrowIOError(ejs, "SQL error: %s", sqlite3_errmsg(sdb));
+            return sqliteSql(ejs, db,  argc, argv);
+
+            // ejsThrowIOError(ejs, "SQL error: %s", sqlite3_errmsg(sdb));
         } else {
             ejsThrowIOError(ejs, "Unspecified SQL error");
         }
@@ -308,8 +310,6 @@ struct sqlite3_mem_methods mem = {
     Map mutexes to use MPR
  */
 
-int mutc = 0;
-
 static int initMutex(void) { 
     return 0; 
 }
@@ -326,7 +326,6 @@ static sqlite3_mutex *allocMutex(int kind)
 
     if ((lock = mprCreateLock()) != 0) {
         mprHold(lock);
-        mutc++;
     }
     return (sqlite3_mutex*) lock;
 }
@@ -334,7 +333,6 @@ static sqlite3_mutex *allocMutex(int kind)
 
 static void freeMutex(sqlite3_mutex *mutex)
 {
-    mutc--;
     mprRelease((MprMutex*) mutex);
 }
 

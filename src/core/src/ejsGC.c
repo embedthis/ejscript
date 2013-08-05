@@ -80,7 +80,7 @@ static EjsObj *gc_set_newQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **arg
  */
 static EjsObj *gc_verify(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    mprVerifyMem();
+    //  UNUSED - not supported
     return 0;
 }
 

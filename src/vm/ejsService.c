@@ -97,7 +97,7 @@ Ejs *ejsCreateVM(int argc, cchar **argv, int flags)
     ejs->argc = argc;
     ejs->argv = argv;
     ejs->name = sfmt("ejs-%d", sp->seqno++);
-    ejs->dispatcher = mprCreateDispatcher(ejs->name);
+    ejs->dispatcher = mprCreateDispatcher(ejs->name, 0);
     ejs->mutex = mprCreateLock(ejs);
     ejs->dontExit = sp->dontExit;
     ejs->flags |= (flags & (EJS_FLAG_NO_INIT | EJS_FLAG_DOC | EJS_FLAG_HOSTED));
