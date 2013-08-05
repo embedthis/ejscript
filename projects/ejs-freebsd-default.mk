@@ -57,7 +57,7 @@ BIT_PACK_SSL_PATH         := ssl
 BIT_PACK_ZIP_PATH         := zip
 BIT_PACK_ZLIB_PATH        := zlib
 
-CFLAGS             += -fPIC -w
+CFLAGS             += -O2 -fPIC -w
 DFLAGS             += -D_REENTRANT -DPIC $(patsubst %,-D%,$(filter BIT_%,$(MAKEFLAGS))) -DBIT_PACK_EST=$(BIT_PACK_EST) -DBIT_PACK_MATRIXSSL=$(BIT_PACK_MATRIXSSL) -DBIT_PACK_OPENSSL=$(BIT_PACK_OPENSSL) -DBIT_PACK_PCRE=$(BIT_PACK_PCRE) -DBIT_PACK_SQLITE=$(BIT_PACK_SQLITE) -DBIT_PACK_SSL=$(BIT_PACK_SSL) -DBIT_PACK_ZLIB=$(BIT_PACK_ZLIB) 
 IFLAGS             += -I$(CONFIG)/inc
 LDFLAGS            += 
@@ -336,7 +336,7 @@ DEPS_6 += $(CONFIG)/obj/mprLib.o
 
 $(CONFIG)/bin/libmpr.so: $(DEPS_6)
 	@echo '      [Link] $(CONFIG)/bin/libmpr.so'
-	$(CC) -shared -o $(CONFIG)/bin/libmpr.so $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/mprLib.o" $(LIBS) 
+	$(CC) -shared -o $(CONFIG)/bin/libmpr.so $(LIBPATHS) "$(CONFIG)/obj/mprLib.o" $(LIBS) 
 
 #
 #   est.h
@@ -356,7 +356,7 @@ DEPS_8 += $(CONFIG)/inc/bitos.h
 $(CONFIG)/obj/estLib.o: \
     src/deps/est/estLib.c $(DEPS_8)
 	@echo '   [Compile] $(CONFIG)/obj/estLib.o'
-	$(CC) -c -o $(CONFIG)/obj/estLib.o $(LDFLAGS) -fPIC $(DFLAGS) "$(IFLAGS)" src/deps/est/estLib.c
+	$(CC) -c -o $(CONFIG)/obj/estLib.o -O2 -fPIC $(DFLAGS) "$(IFLAGS)" src/deps/est/estLib.c
 
 ifeq ($(BIT_PACK_EST),1)
 #
@@ -369,7 +369,7 @@ DEPS_9 += $(CONFIG)/obj/estLib.o
 
 $(CONFIG)/bin/libest.so: $(DEPS_9)
 	@echo '      [Link] $(CONFIG)/bin/libest.so'
-	$(CC) -shared -o $(CONFIG)/bin/libest.so $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/estLib.o" $(LIBS) 
+	$(CC) -shared -o $(CONFIG)/bin/libest.so $(LIBPATHS) "$(CONFIG)/obj/estLib.o" $(LIBS) 
 endif
 
 #
@@ -422,7 +422,7 @@ endif
 
 $(CONFIG)/bin/libmprssl.so: $(DEPS_11)
 	@echo '      [Link] $(CONFIG)/bin/libmprssl.so'
-	$(CC) -shared -o $(CONFIG)/bin/libmprssl.so $(LDFLAGS) $(LIBPATHS)    "$(CONFIG)/obj/mprSsl.o" $(LIBPATHS_11) $(LIBS_11) $(LIBS_11) $(LIBS) 
+	$(CC) -shared -o $(CONFIG)/bin/libmprssl.so $(LIBPATHS)    "$(CONFIG)/obj/mprSsl.o" $(LIBPATHS_11) $(LIBS_11) $(LIBS_11) $(LIBS) 
 
 #
 #   manager.o
@@ -449,7 +449,7 @@ LIBS_13 += -lmpr
 
 $(CONFIG)/bin/ejsman: $(DEPS_13)
 	@echo '      [Link] $(CONFIG)/bin/ejsman'
-	$(CC) -o $(CONFIG)/bin/ejsman $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/manager.o" $(LIBPATHS_13) $(LIBS_13) $(LIBS_13) $(LIBS) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/ejsman $(LIBPATHS) "$(CONFIG)/obj/manager.o" $(LIBPATHS_13) $(LIBS_13) $(LIBS_13) $(LIBS) $(LIBS) 
 
 #
 #   makerom.o
@@ -476,7 +476,7 @@ LIBS_15 += -lmpr
 
 $(CONFIG)/bin/makerom: $(DEPS_15)
 	@echo '      [Link] $(CONFIG)/bin/makerom'
-	$(CC) -o $(CONFIG)/bin/makerom $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/makerom.o" $(LIBPATHS_15) $(LIBS_15) $(LIBS_15) $(LIBS) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/makerom $(LIBPATHS) "$(CONFIG)/obj/makerom.o" $(LIBPATHS_15) $(LIBS_15) $(LIBS_15) $(LIBS) $(LIBS) 
 
 #
 #   ca-crt
@@ -517,7 +517,7 @@ DEPS_19 += $(CONFIG)/obj/pcre.o
 
 $(CONFIG)/bin/libpcre.so: $(DEPS_19)
 	@echo '      [Link] $(CONFIG)/bin/libpcre.so'
-	$(CC) -shared -o $(CONFIG)/bin/libpcre.so $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/pcre.o" $(LIBS) 
+	$(CC) -shared -o $(CONFIG)/bin/libpcre.so $(LIBPATHS) "$(CONFIG)/obj/pcre.o" $(LIBS) 
 endif
 
 #
@@ -563,7 +563,7 @@ endif
 
 $(CONFIG)/bin/libhttp.so: $(DEPS_22)
 	@echo '      [Link] $(CONFIG)/bin/libhttp.so'
-	$(CC) -shared -o $(CONFIG)/bin/libhttp.so $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/httpLib.o" $(LIBPATHS_22) $(LIBS_22) $(LIBS_22) $(LIBS) 
+	$(CC) -shared -o $(CONFIG)/bin/libhttp.so $(LIBPATHS) "$(CONFIG)/obj/httpLib.o" $(LIBPATHS_22) $(LIBS_22) $(LIBS_22) $(LIBS) 
 
 #
 #   http.o
@@ -602,7 +602,7 @@ endif
 
 $(CONFIG)/bin/http: $(DEPS_24)
 	@echo '      [Link] $(CONFIG)/bin/http'
-	$(CC) -o $(CONFIG)/bin/http $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/http.o" $(LIBPATHS_24) $(LIBS_24) $(LIBS_24) $(LIBS) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/http $(LIBPATHS) "$(CONFIG)/obj/http.o" $(LIBPATHS_24) $(LIBS_24) $(LIBS_24) $(LIBS) $(LIBS) 
 
 #
 #   sqlite3.h
@@ -621,7 +621,7 @@ DEPS_26 += $(CONFIG)/inc/sqlite3.h
 $(CONFIG)/obj/sqlite3.o: \
     src/deps/sqlite/sqlite3.c $(DEPS_26)
 	@echo '   [Compile] $(CONFIG)/obj/sqlite3.o'
-	$(CC) -c -o $(CONFIG)/obj/sqlite3.o $(LDFLAGS) -fPIC $(DFLAGS) "$(IFLAGS)" src/deps/sqlite/sqlite3.c
+	$(CC) -c -o $(CONFIG)/obj/sqlite3.o -O2 -fPIC $(DFLAGS) "$(IFLAGS)" src/deps/sqlite/sqlite3.c
 
 ifeq ($(BIT_PACK_SQLITE),1)
 #
@@ -633,7 +633,7 @@ DEPS_27 += $(CONFIG)/obj/sqlite3.o
 
 $(CONFIG)/bin/libsqlite3.so: $(DEPS_27)
 	@echo '      [Link] $(CONFIG)/bin/libsqlite3.so'
-	$(CC) -shared -o $(CONFIG)/bin/libsqlite3.so $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/sqlite3.o" $(LIBS) 
+	$(CC) -shared -o $(CONFIG)/bin/libsqlite3.so $(LIBPATHS) "$(CONFIG)/obj/sqlite3.o" $(LIBS) 
 endif
 
 #
@@ -661,7 +661,7 @@ LIBS_29 += -lsqlite3
 
 $(CONFIG)/bin/sqlite: $(DEPS_29)
 	@echo '      [Link] $(CONFIG)/bin/sqlite'
-	$(CC) -o $(CONFIG)/bin/sqlite $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/sqlite.o" $(LIBPATHS_29) $(LIBS_29) $(LIBS_29) $(LIBS) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/sqlite $(LIBPATHS) "$(CONFIG)/obj/sqlite.o" $(LIBPATHS_29) $(LIBS_29) $(LIBS_29) $(LIBS) $(LIBS) 
 endif
 
 #
@@ -693,7 +693,7 @@ DEPS_32 += $(CONFIG)/obj/zlib.o
 
 $(CONFIG)/bin/libzlib.so: $(DEPS_32)
 	@echo '      [Link] $(CONFIG)/bin/libzlib.so'
-	$(CC) -shared -o $(CONFIG)/bin/libzlib.so $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/zlib.o" $(LIBS) 
+	$(CC) -shared -o $(CONFIG)/bin/libzlib.so $(LIBPATHS) "$(CONFIG)/obj/zlib.o" $(LIBS) 
 endif
 
 #
@@ -1842,7 +1842,7 @@ endif
 
 $(CONFIG)/bin/libejs.so: $(DEPS_102)
 	@echo '      [Link] $(CONFIG)/bin/libejs.so'
-	$(CC) -shared -o $(CONFIG)/bin/libejs.so $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/ecAst.o" "$(CONFIG)/obj/ecCodeGen.o" "$(CONFIG)/obj/ecCompiler.o" "$(CONFIG)/obj/ecLex.o" "$(CONFIG)/obj/ecModuleWrite.o" "$(CONFIG)/obj/ecParser.o" "$(CONFIG)/obj/ecState.o" "$(CONFIG)/obj/dtoa.o" "$(CONFIG)/obj/ejsApp.o" "$(CONFIG)/obj/ejsArray.o" "$(CONFIG)/obj/ejsBlock.o" "$(CONFIG)/obj/ejsBoolean.o" "$(CONFIG)/obj/ejsByteArray.o" "$(CONFIG)/obj/ejsCache.o" "$(CONFIG)/obj/ejsCmd.o" "$(CONFIG)/obj/ejsConfig.o" "$(CONFIG)/obj/ejsDate.o" "$(CONFIG)/obj/ejsDebug.o" "$(CONFIG)/obj/ejsError.o" "$(CONFIG)/obj/ejsFile.o" "$(CONFIG)/obj/ejsFileSystem.o" "$(CONFIG)/obj/ejsFrame.o" "$(CONFIG)/obj/ejsFunction.o" "$(CONFIG)/obj/ejsGC.o" "$(CONFIG)/obj/ejsGlobal.o" "$(CONFIG)/obj/ejsHttp.o" "$(CONFIG)/obj/ejsIterator.o" "$(CONFIG)/obj/ejsJSON.o" "$(CONFIG)/obj/ejsLocalCache.o" "$(CONFIG)/obj/ejsMath.o" "$(CONFIG)/obj/ejsMemory.o" "$(CONFIG)/obj/ejsMprLog.o" "$(CONFIG)/obj/ejsNamespace.o" "$(CONFIG)/obj/ejsNull.o" "$(CONFIG)/obj/ejsNumber.o" "$(CONFIG)/obj/ejsObject.o" "$(CONFIG)/obj/ejsPath.o" "$(CONFIG)/obj/ejsPot.o" "$(CONFIG)/obj/ejsRegExp.o" "$(CONFIG)/obj/ejsSocket.o" "$(CONFIG)/obj/ejsString.o" "$(CONFIG)/obj/ejsSystem.o" "$(CONFIG)/obj/ejsTimer.o" "$(CONFIG)/obj/ejsType.o" "$(CONFIG)/obj/ejsUri.o" "$(CONFIG)/obj/ejsVoid.o" "$(CONFIG)/obj/ejsWebSocket.o" "$(CONFIG)/obj/ejsWorker.o" "$(CONFIG)/obj/ejsXML.o" "$(CONFIG)/obj/ejsXMLList.o" "$(CONFIG)/obj/ejsXMLLoader.o" "$(CONFIG)/obj/ejsByteCode.o" "$(CONFIG)/obj/ejsException.o" "$(CONFIG)/obj/ejsHelper.o" "$(CONFIG)/obj/ejsInterp.o" "$(CONFIG)/obj/ejsLoader.o" "$(CONFIG)/obj/ejsModule.o" "$(CONFIG)/obj/ejsScope.o" "$(CONFIG)/obj/ejsService.o" $(LIBPATHS_102) $(LIBS_102) $(LIBS_102) $(LIBS) 
+	$(CC) -shared -o $(CONFIG)/bin/libejs.so $(LIBPATHS) "$(CONFIG)/obj/ecAst.o" "$(CONFIG)/obj/ecCodeGen.o" "$(CONFIG)/obj/ecCompiler.o" "$(CONFIG)/obj/ecLex.o" "$(CONFIG)/obj/ecModuleWrite.o" "$(CONFIG)/obj/ecParser.o" "$(CONFIG)/obj/ecState.o" "$(CONFIG)/obj/dtoa.o" "$(CONFIG)/obj/ejsApp.o" "$(CONFIG)/obj/ejsArray.o" "$(CONFIG)/obj/ejsBlock.o" "$(CONFIG)/obj/ejsBoolean.o" "$(CONFIG)/obj/ejsByteArray.o" "$(CONFIG)/obj/ejsCache.o" "$(CONFIG)/obj/ejsCmd.o" "$(CONFIG)/obj/ejsConfig.o" "$(CONFIG)/obj/ejsDate.o" "$(CONFIG)/obj/ejsDebug.o" "$(CONFIG)/obj/ejsError.o" "$(CONFIG)/obj/ejsFile.o" "$(CONFIG)/obj/ejsFileSystem.o" "$(CONFIG)/obj/ejsFrame.o" "$(CONFIG)/obj/ejsFunction.o" "$(CONFIG)/obj/ejsGC.o" "$(CONFIG)/obj/ejsGlobal.o" "$(CONFIG)/obj/ejsHttp.o" "$(CONFIG)/obj/ejsIterator.o" "$(CONFIG)/obj/ejsJSON.o" "$(CONFIG)/obj/ejsLocalCache.o" "$(CONFIG)/obj/ejsMath.o" "$(CONFIG)/obj/ejsMemory.o" "$(CONFIG)/obj/ejsMprLog.o" "$(CONFIG)/obj/ejsNamespace.o" "$(CONFIG)/obj/ejsNull.o" "$(CONFIG)/obj/ejsNumber.o" "$(CONFIG)/obj/ejsObject.o" "$(CONFIG)/obj/ejsPath.o" "$(CONFIG)/obj/ejsPot.o" "$(CONFIG)/obj/ejsRegExp.o" "$(CONFIG)/obj/ejsSocket.o" "$(CONFIG)/obj/ejsString.o" "$(CONFIG)/obj/ejsSystem.o" "$(CONFIG)/obj/ejsTimer.o" "$(CONFIG)/obj/ejsType.o" "$(CONFIG)/obj/ejsUri.o" "$(CONFIG)/obj/ejsVoid.o" "$(CONFIG)/obj/ejsWebSocket.o" "$(CONFIG)/obj/ejsWorker.o" "$(CONFIG)/obj/ejsXML.o" "$(CONFIG)/obj/ejsXMLList.o" "$(CONFIG)/obj/ejsXMLLoader.o" "$(CONFIG)/obj/ejsByteCode.o" "$(CONFIG)/obj/ejsException.o" "$(CONFIG)/obj/ejsHelper.o" "$(CONFIG)/obj/ejsInterp.o" "$(CONFIG)/obj/ejsLoader.o" "$(CONFIG)/obj/ejsModule.o" "$(CONFIG)/obj/ejsScope.o" "$(CONFIG)/obj/ejsService.o" $(LIBPATHS_102) $(LIBS_102) $(LIBS_102) $(LIBS) 
 
 #
 #   ejs.o
@@ -1952,7 +1952,7 @@ endif
 
 $(CONFIG)/bin/ejs: $(DEPS_104)
 	@echo '      [Link] $(CONFIG)/bin/ejs'
-	$(CC) -o $(CONFIG)/bin/ejs $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/ejs.o" $(LIBPATHS_104) $(LIBS_104) $(LIBS_104) $(LIBS) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/ejs $(LIBPATHS) "$(CONFIG)/obj/ejs.o" $(LIBPATHS_104) $(LIBS_104) $(LIBS_104) $(LIBS) $(LIBS) 
 
 #
 #   ejsc.o
@@ -2062,7 +2062,7 @@ endif
 
 $(CONFIG)/bin/ejsc: $(DEPS_106)
 	@echo '      [Link] $(CONFIG)/bin/ejsc'
-	$(CC) -o $(CONFIG)/bin/ejsc $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/ejsc.o" $(LIBPATHS_106) $(LIBS_106) $(LIBS_106) $(LIBS) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/ejsc $(LIBPATHS) "$(CONFIG)/obj/ejsc.o" $(LIBPATHS_106) $(LIBS_106) $(LIBS_106) $(LIBS) $(LIBS) 
 
 #
 #   ejsmod.h
@@ -2235,7 +2235,7 @@ endif
 
 $(CONFIG)/bin/ejsmod: $(DEPS_113)
 	@echo '      [Link] $(CONFIG)/bin/ejsmod'
-	$(CC) -o $(CONFIG)/bin/ejsmod $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/ejsmod.o" "$(CONFIG)/obj/doc.o" "$(CONFIG)/obj/docFiles.o" "$(CONFIG)/obj/listing.o" "$(CONFIG)/obj/slotGen.o" $(LIBPATHS_113) $(LIBS_113) $(LIBS_113) $(LIBS) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/ejsmod $(LIBPATHS) "$(CONFIG)/obj/ejsmod.o" "$(CONFIG)/obj/doc.o" "$(CONFIG)/obj/docFiles.o" "$(CONFIG)/obj/listing.o" "$(CONFIG)/obj/slotGen.o" $(LIBPATHS_113) $(LIBS_113) $(LIBS_113) $(LIBS) $(LIBS) 
 
 #
 #   ejsrun.o
@@ -2345,7 +2345,7 @@ endif
 
 $(CONFIG)/bin/ejsrun: $(DEPS_115)
 	@echo '      [Link] $(CONFIG)/bin/ejsrun'
-	$(CC) -o $(CONFIG)/bin/ejsrun $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_115) $(LIBS_115) $(LIBS_115) $(LIBS) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/ejsrun $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_115) $(LIBS_115) $(LIBS_115) $(LIBS) $(LIBS) 
 
 #
 #   ejs.mod
@@ -2710,7 +2710,7 @@ endif
 
 $(CONFIG)/bin/jem: $(DEPS_119)
 	@echo '      [Link] $(CONFIG)/bin/jem'
-	$(CC) -o $(CONFIG)/bin/jem $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_119) $(LIBS_119) $(LIBS_119) $(LIBS) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/jem $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_119) $(LIBS_119) $(LIBS_119) $(LIBS) $(LIBS) 
 
 #
 #   ejs.db.mod
@@ -3151,7 +3151,7 @@ endif
 
 $(CONFIG)/bin/libejs.db.sqlite.so: $(DEPS_124)
 	@echo '      [Link] $(CONFIG)/bin/libejs.db.sqlite.so'
-	$(CC) -shared -o $(CONFIG)/bin/libejs.db.sqlite.so $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/ejsSqlite.o" $(LIBPATHS_124) $(LIBS_124) $(LIBS_124) $(LIBS) 
+	$(CC) -shared -o $(CONFIG)/bin/libejs.db.sqlite.so $(LIBPATHS) "$(CONFIG)/obj/ejsSqlite.o" $(LIBPATHS_124) $(LIBS_124) $(LIBS_124) $(LIBS) 
 
 #
 #   ejs.mail.mod
@@ -3577,7 +3577,7 @@ endif
 
 $(CONFIG)/bin/libejs.web.so: $(DEPS_132)
 	@echo '      [Link] $(CONFIG)/bin/libejs.web.so'
-	$(CC) -shared -o $(CONFIG)/bin/libejs.web.so $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/ejsHttpServer.o" "$(CONFIG)/obj/ejsRequest.o" "$(CONFIG)/obj/ejsSession.o" "$(CONFIG)/obj/ejsWeb.o" $(LIBPATHS_132) $(LIBS_132) $(LIBS_132) $(LIBS) 
+	$(CC) -shared -o $(CONFIG)/bin/libejs.web.so $(LIBPATHS) "$(CONFIG)/obj/ejsHttpServer.o" "$(CONFIG)/obj/ejsRequest.o" "$(CONFIG)/obj/ejsSession.o" "$(CONFIG)/obj/ejsWeb.o" $(LIBPATHS_132) $(LIBS_132) $(LIBS_132) $(LIBS) 
 
 #
 #   www
@@ -3925,7 +3925,7 @@ endif
 
 $(CONFIG)/bin/libejs.zlib.so: $(DEPS_137)
 	@echo '      [Link] $(CONFIG)/bin/libejs.zlib.so'
-	$(CC) -shared -o $(CONFIG)/bin/libejs.zlib.so $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/ejsZlib.o" $(LIBPATHS_137) $(LIBS_137) $(LIBS_137) $(LIBS) 
+	$(CC) -shared -o $(CONFIG)/bin/libejs.zlib.so $(LIBPATHS) "$(CONFIG)/obj/ejsZlib.o" $(LIBPATHS_137) $(LIBS_137) $(LIBS_137) $(LIBS) 
 
 #
 #   ejs.tar.mod
@@ -4134,7 +4134,7 @@ endif
 
 $(CONFIG)/bin/mvc: $(DEPS_140)
 	@echo '      [Link] $(CONFIG)/bin/mvc'
-	$(CC) -o $(CONFIG)/bin/mvc $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_140) $(LIBS_140) $(LIBS_140) $(LIBS) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/mvc $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_140) $(LIBS_140) $(LIBS_140) $(LIBS) $(LIBS) 
 
 #
 #   ejs.mvc.mod
@@ -4355,7 +4355,7 @@ endif
 
 $(CONFIG)/bin/utest: $(DEPS_144)
 	@echo '      [Link] $(CONFIG)/bin/utest'
-	$(CC) -o $(CONFIG)/bin/utest $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_144) $(LIBS_144) $(LIBS_144) $(LIBS) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/utest $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_144) $(LIBS_144) $(LIBS_144) $(LIBS) $(LIBS) 
 
 #
 #   stop

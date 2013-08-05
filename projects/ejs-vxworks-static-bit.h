@@ -115,6 +115,9 @@
 #ifndef BIT_MANIFEST
     #define BIT_MANIFEST "package/manifest.bit"
 #endif
+#ifndef BIT_MPR_ALLOC_PARALLEL
+    #define BIT_MPR_ALLOC_PARALLEL 0
+#endif
 #ifndef BIT_MPR_LOGGING
     #define BIT_MPR_LOGGING 1
 #endif
@@ -240,6 +243,9 @@
 #endif
 #ifndef BIT_PROFILE
     #define BIT_PROFILE "static"
+#endif
+#ifndef BIT_TUNE_SIZE
+    #define BIT_TUNE_SIZE 1
 #endif
 
 /* Miscellaneous */
