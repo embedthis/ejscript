@@ -2622,7 +2622,7 @@ static int rebuildIntern(EjsIntern *ip)
     oldSize = 0;
     if (oldBuckets) {
         oldSize = ip->size;
-        if (oldSize > newSize) {
+        if (oldSize >= newSize) {
             return 0;
         }
     }
