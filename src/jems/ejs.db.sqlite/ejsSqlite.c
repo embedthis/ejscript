@@ -271,7 +271,7 @@ static void freeBlock(void *ptr)
 
 static void *reallocBlock(void *ptr, int size)
 {
-    return prealloc(ptr, size );
+    return prealloc(ptr, size);
 }
 
 
