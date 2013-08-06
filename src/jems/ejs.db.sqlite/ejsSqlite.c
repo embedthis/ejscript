@@ -255,7 +255,7 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
 /*********************************** Alloc ********************************/
 #if MAP_ALLOC
 /*
-    Map memory allocations to use MPR
+    Map memory allocations to use MPR permanent allocations
  */
 static void *allocBlock(int size)
 {
@@ -271,13 +271,13 @@ static void freeBlock(void *ptr)
 
 static void *reallocBlock(void *ptr, int size)
 {
-    return prealloc(ptr, size);
+    return prealloc(ptr, size );
 }
 
 
 static int blockSize(void *ptr)
 {
-    return (int) mprGetBlockSize(ptr);
+    return (int) psize(ptr);
 }
 
 
@@ -423,20 +423,6 @@ static int configureSqliteTypes(Ejs *ejs)
     ejsBindConstructor(ejs, type, sqliteConstructor);
     ejsBindMethod(ejs, prototype, ES_ejs_db_sqlite_Sqlite_close, sqliteClose);
     ejsBindMethod(ejs, prototype, ES_ejs_db_sqlite_Sqlite_sql, sqliteSql);
-
-#if UNUSED
-#if MAP_ALLOC
-    sqlite3_config(SQLITE_CONFIG_MALLOC, &mem);
-#endif
-#if MAP_MUTEXES
-    sqlite3_config(SQLITE_CONFIG_MUTEX, &mut);
-#endif
-    sqlite3_config(THREAD_STYLE);
-    if (sqlite3_initialize() != SQLITE_OK) {
-        mprError("Cannot initialize SQLite");
-        return MPR_ERR_CANT_INITIALIZE;
-    }
-#endif
     return 0;
 }
 

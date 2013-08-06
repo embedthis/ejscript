@@ -211,8 +211,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     assert(!ejs->exception);
     assert(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);
 
-    MPR_VERIFY_MEM();
-
     vp = 0;
     slotNum = -1;
     global = ejs->global;
@@ -1398,9 +1396,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 AddNamespaceRef
          */
         CASE (EJS_OP_ADD_NAMESPACE_REF):
-            MPR_VERIFY_MEM();
             ejsAddNamespaceToBlock(ejs, state->bp, (EjsNamespace*) pop(ejs));
-            MPR_VERIFY_MEM();
             BREAK;
 
         /*
@@ -1450,7 +1446,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 DefineClass <type>
          */
         CASE (EJS_OP_DEFINE_CLASS):
-            MPR_VERIFY_MEM();
             type = GET_TYPE();
             if (type == 0 || !ejsIsType(ejs, type)) {
                 ejsThrowReferenceError(ejs, "Reference is not a class");
@@ -1458,14 +1453,11 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 type->constructor.block.scope = state->bp;
                 if (type && type->hasInitializer) {
                     fun = ejsGetProperty(ejs, type, 0);
-                    MPR_VERIFY_MEM();
                     callFunction(ejs, fun, type, 0, 0);
-                    MPR_VERIFY_MEM();
                     if (type->implements && !ejs->exception) {
                         callInterfaceInitializers(ejs, type);
                     }
                     state->bp = &FRAME->function.block;
-                    MPR_VERIFY_MEM();
                 }
             }
             ejs->result = type;
@@ -2245,7 +2237,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                     ejsDefineProperty(ejs, vp, -1, qname, NULL, attributes, v1);
                 }
             } 
-            MPR_VERIFY_MEM();
             state->stack -= (argc * 3);
             push(vp);
             state->t1 = 0;
@@ -2667,7 +2658,6 @@ EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, vo
         mprTrace(0, "STOP");
     }
     assert(ejs->exception == 0);
-    MPR_VERIFY_MEM();
 
     if (ejs->exception) {
         return 0;
@@ -3755,9 +3745,7 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
     static int      showFrequency = 1;
 #endif
 
-    MPR_VERIFY_MEM();
     state = ejs->state;
-
     fp = state->fp;
     opcount[opcode]++;
     // assert(ejs->exception || (state->stack >= fp->stackReturn));

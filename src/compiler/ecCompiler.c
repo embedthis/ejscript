@@ -237,7 +237,6 @@ PUBLIC int ejsInitCompiler(EjsService *service)
  */
 static EjsObj *loadScriptFile(Ejs *ejs, cchar *path, cchar *cache)
 {
-    MPR_VERIFY_MEM();
     if (ejsLoadScriptFile(ejs, path, cache, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG | EC_FLAGS_THROW) < 0) {
         return 0;
     }
@@ -320,8 +319,6 @@ PUBLIC int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int f
     }
     ecCloseStream(cp);
     mprRemoveRoot(cp);
-    MPR_VERIFY_MEM();
-    
     if (ejsRun(ejs) < 0) {
         return EJS_ERR;
     }
