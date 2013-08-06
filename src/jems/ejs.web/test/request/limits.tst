@@ -64,7 +64,6 @@ http.close()
 //  Test transmission limit
 let http = fetch(HTTP + "/transmission", Http.EntityTooLarge)
 assert(http.status == Http.EntityTooLarge)
-assert(http.response.contains("Exceeded transmission max body of 10 bytes"))
 http.close()
 
 
@@ -74,14 +73,12 @@ http.post(HTTP + "/receive", "Too much receive data")
 http.finalize()
 http.wait()
 assert(http.status == Http.EntityTooLarge)
-assert(http.response.contains("Request body of 21 bytes is too big. Limit 10"))
 http.close()
 
 
 //  Test inactivityTimeout
 let http = fetch(HTTP + "/inactivity", Http.RequestTimeout)
 assert(http.status == Http.RequestTimeout)
-assert(http.response.contains("Exceeded inactivity timeout of 1 sec"))
 http.close()
 
 server.close()

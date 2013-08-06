@@ -194,6 +194,7 @@ enumerable class Test {
             throw "Cannot find configure"
         }
         _top = path.dirname.absolute
+        //  MOB - this is not reliable. If multiple platforms, it may pick the wrong one.
         _cfg = _top.files(Config.OS + '-' + Config.CPU + '-*').sort()[0]
         if (!_cfg) {
             let bith = _top.files('*/inc/bit.h').sort()[0]
