@@ -130,7 +130,7 @@ Bit.load({
              */
 
             alloc: {
-                parallel: false
+                parallel: true
             },
         },
 

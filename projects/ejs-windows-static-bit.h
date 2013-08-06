@@ -98,7 +98,7 @@
     #define BIT_MANIFEST "package/manifest.bit"
 #endif
 #ifndef BIT_MPR_ALLOC_PARALLEL
-    #define BIT_MPR_ALLOC_PARALLEL 0
+    #define BIT_MPR_ALLOC_PARALLEL 1
 #endif
 #ifndef BIT_MPR_LOGGING
     #define BIT_MPR_LOGGING 1
@@ -215,7 +215,7 @@
 
 /* Profile */
 #ifndef BIT_CONFIG_CMD
-    #define BIT_CONFIG_CMD "bit -d -q -platform windows-x86-static -static -configure . -gen vs"
+    #define BIT_CONFIG_CMD "bit -d -q -platform windows-x86-static -static -configure . -gen nmake"
 #endif
 #ifndef BIT_EJS_PRODUCT
     #define BIT_EJS_PRODUCT 1
