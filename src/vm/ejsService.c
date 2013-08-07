@@ -617,7 +617,9 @@ static int configureEjs(Ejs *ejs)
         ejsConfigureWorkerType(ejs);
         ejsConfigureXMLType(ejs);
         ejsConfigureXMLListType(ejs);
+#if BIT_HTTP_WEB_SOCKETS
         ejsConfigureWebSocketType(ejs);
+#endif
         ejs->service->immutableInitialized = 1;
     }
     /*

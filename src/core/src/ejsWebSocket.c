@@ -1,11 +1,13 @@
 /**
     ejsWebSocket.c - WebSocket class
+
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 /********************************** Includes **********************************/
 
 #include    "ejs.h"
 
+#if BIT_HTTP_WEB_SOCKETS
 /*********************************** Forwards *********************************/
 
 static void onWebSocketEvent(EjsWebSocket *ws, int event, EjsAny *data, HttpPacket *packet);
@@ -652,6 +654,7 @@ PUBLIC void ejsConfigureWebSocketType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_WebSocket_url, ws_url);
     ejsBindMethod(ejs, prototype, ES_WebSocket_wait, ws_wait);
 }
+#endif /* BIT_HTTP_WEB_SOCKETS */
 
 /*
     @copy   default
