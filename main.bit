@@ -106,12 +106,8 @@ Bit.load({
                                                                                                            
         http: {                                                                                            
             /* Use PAM (Plugable Authentication Module) to store passwords */                              
-            pam: true,                                                                                     
-                                                                                                           
-            /*                                                                                             
-                Enable stealth options. Disable OPTIONS and TRACE methods. Not yet operational.            
-             */                                                                                            
-            stealth: true,                                                                                 
+            pam: true,
+            webSockets: true,
         },
 
         mpr: {
@@ -141,9 +137,10 @@ Bit.load({
     },
 
     usage: {
-        'http.pam':   'Enable Unix Pluggable Auth Module (true|false)',
-        'mpr.logging':'Enable application logging (true|false)',
-        'mpr.tracing':'Enable debug tracing (true|false)',
+        'http.pam':         'Enable Unix Pluggable Auth Module (true|false)',
+        'http.webSockets':  'Enable WebSockets (true|false)',                
+        'mpr.logging':      'Enable application logging (true|false)',
+        'mpr.tracing':      'Enable debug tracing (true|false)',
     },
 
     targets: {
