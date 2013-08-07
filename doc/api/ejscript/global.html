@@ -144,7 +144,8 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#ScriptBuilder'><b>ScriptBuilder</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Script builder to create a function to serve a script request (*..es).</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Session'><b>Session</b></a>(key, options: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new session state object.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#ShowExceptions'><b>ShowExceptions</b></a>(app: <a href='Function.html'>Function</a>): <a href='Function.html'>Function</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>ShowExceptions middleware wrapper.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#Socket'><b>Socket</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a socket object.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#Socket'><b>Socket</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a socket object
+(.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.db.sqlite </td><td><a href='#Sqlite'><b>Sqlite</b></a>(options: <a href='Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Initialize a database connection using the supplied database connection string.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#StateError'><b>StateError</b></a>(message: <a href='String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>StateError constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#StaticApp'><b>StaticApp</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Static content handler.</td></tr>
@@ -166,7 +167,8 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#assert'><b>assert</b></a>(condition: <a href='Boolean.html'>Boolean</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Assert a condition is true.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#basename'><b>basename</b></a>(path: <a href='String.html'>String</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the base name of a file.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#blend'><b>blend</b></a>(dest: <a href='Object.html'>Object</a>, src: <a href='Object.html'>Object</a>, options = null): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Blend the contents of one object into another.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#breakpoint'><b>breakpoint</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenient way to trap to the debugger.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#breakpoint'><b>breakpoint</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenient way to trap to the debugger
+0.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#chdir'><b>chdir</b></a>(dir: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Change the current working directory.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.unix </td><td><a href='#chmod'><b>chmod</b></a>(path: <a href='String.html'>String</a>, perms: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the permissions of a file or directory.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#clearInterval'><b>clearInterval</b></a>(timer: <a href='Timer.html'>Timer</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Clear and dispose of an interval timer.</td></tr>
@@ -230,7 +232,7 @@ This function is prototype and may be renamed in a future release.</td></tr>
 <dl><dt>Description</dt></dd><dd>ArgError constructor. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property.X [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -251,7 +253,7 @@ Args supports command options that begin with "-" or "--" and parses option argu
 <td class='param'>options</td><td>This is an object with properties for each command line option. The value of each property is an object with properties: 'alias', 'range', 'value' and 'separator'. The 'alias' property defines a String alias for the option. This is typically used to define a single character alias for the full command line option name. The 'range' property defines what permissible values an option parameter may take. It may be set to either an Ejscript type, a Regular Expression or it may be set to an array of values.  The 'value' property may define a default value for the option if it is not defined. This is the value that args.options[OPTION] will be set to when the command line option is absent.  If an option without an argument is specified by the user, its value in options[NAME] will be set to true.    If the 'separator' property is defined, multiple command line options of this name are permitted. If 'separator' is set to a string, then the multiple command line option values are catenated using the 'separator'. If set to array, the option values are stored in an array.</td></tr>
 <td class='param'>usage</td><td>Function to invoke for argument parse errors.</td></tr>
 <td class='param'>onerror</td><td>If set to 'throw', an exception will be thrown for argument parse errors. The usage function will not be  called and no message will be written to the application log. If set to 'exit', a message will be written to the console for argument parse errors and any usage function will be invoked before exiting the application with a non-zero exit status.</td></tr>
-<td class='param'>silent</td><td>Don't emit any message on argument parse errors.</td></tr>
+<td class='param'>silent</td><td>Don't emit any message on argument parse errors.X</td></tr>
 <td class='param'>unknown</td><td>Callback to invoke for unknown arguments.</td></tr>
 </table></dd>
 </dl><dl><dt>Example</dt>
@@ -284,7 +286,7 @@ for each (file in args.rest) {
 <dl><dt>Description</dt></dd><dd>ArithmeticError constructor. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property.X [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -308,7 +310,7 @@ for each (file in args.rest) {
 <dl><dt>Description</dt></dd><dd>AssertError constructor. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property.X [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -362,10 +364,10 @@ immutable, this constructor will return a reference to either the "true" or "fal
 <dd><table class='parameters' summary ='options'>
 <td class='param'>lifespan</td><td>Default lifespan for key values in seconds.</td></tr>
 <td class='param'>resolution</td><td>Time in milliseconds to check for expired expired keys.</td></tr>
-<td class='param'>timeout</td><td>Timeout on cache I/O operations.</td></tr>
+<td class='param'>timeout</td><td>Timeout on cache I/O operations.X</td></tr>
 <td class='param'>trace</td><td>Trace I/O operations for debug.</td></tr>
 <td class='param'>module</td><td>Module name containing the cache connector class. This is a bare module name without ".mod" or any leading path. If module is not present, a module name is derrived using "ejs.cache" + adapter.</td></tr>
-<td class='param'>class</td><td>Class name containing the cache backend. If the class property is not present, the  class is derived from the adapter name with "Cache" appended. The first letter of the adapter is converted to uppercase. For example, if the adapter was "mem", the class would be inferred to be "MemCache".</td></tr>
+<td class='param'>class</td><td>Class name containing the cache backend. If the class property is not present, the  class is derived from the adapter name with "Cache" appended. The first letter of the adapter is converted to uppercase. For example, if the adapter was "mem", the class would be inferred to be "MemCache". H.</td></tr>
 </table></dd>
 </dl></div>
 </div>
@@ -457,7 +459,8 @@ mime type from the Request.pathInfo extension.</dd></dl>
 </dl><dl><dt>Returns</dt>
 <dd>A web application function that services a web request and when invoked with the request object will  yield a response object.</dd></dl>
 <dl><dt>Example</dt>
-<dd><pre>export.app = ContentType(app, { mimeTypes: { "md": "text/x-markdown" }})</pre></dd></dl>
+<dd><pre>export.app = ContentType(app, { mimeTypes: { "md": "text/x-markdown" }})
+0</pre></dd></dl>
 </div>
 </div>
 <hr />
@@ -469,7 +472,7 @@ mime type from the Request.pathInfo extension.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Create and initialize a controller. This may be called directly or via the Controller.create factory method.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>req: <a href='ejs.web-Request.html'>Request</a> </td><td>Web request object. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>req: <a href='ejs.web-Request.html'>Request</a> </td><td>Web request object 8. [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -550,7 +553,7 @@ the client is redirected to a URL equal to the pathInfo with a "/" appended.</dd
 <dl><dt>Description</dt></dd><dd>Construct a new Error object. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property. Typically a string but can be an object of any type. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property. Typically a string but can be an object of any type. 8.X [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -675,7 +678,7 @@ server.listen("127.0.0.1:7777")</pre></dd></dl>
 <dl><dt>Description</dt></dd><dd>IOError constructor. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property.X [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -687,7 +690,7 @@ server.listen("127.0.0.1:7777")</pre></dd></dl>
 <dl><dt>Description</dt></dd><dd>InstructionError constructor. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property.X [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -707,7 +710,7 @@ can use the local cache to reliably share information.</dd></dl>
 <td class='param'>shared</td><td>Create or connect to a single, shared cache. If multiple interpreters in a single process create shared LocalCache instances they will be able to share key/value data.</td></tr>
 <td class='param'>lifespan</td><td>Default lifespan for key values in seconds. Set to zero for a default unlimited timeout.</td></tr>
 <td class='param'>resolution</td><td>Time in milliseconds to check for expired expired keys.</td></tr>
-<td class='param'>memory</td><td>Maximum memory to use for keys and data.</td></tr>
+<td class='param'>memory</td><td>Maximum memory to use for keys and data.X</td></tr>
 <td class='param'>trace</td><td>Trace I/O operations for debug.</td></tr>
 </table></dd>
 </dl></div>
@@ -737,7 +740,7 @@ log.debug(2, "message")</pre></dd></dl>
 <dl><dt>Description</dt></dd><dd>MemoryError constructor. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property.X [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -784,7 +787,7 @@ a X-HTTP-METHOD-OVERRIDE Http header.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Load an MVC application and the optional application specific ejsrc file. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>home: <a href='Path.html'>Path</a> </td><td>Base directory for the MVC app.</td></tr><tr class='param'><td class='param'>config </td><td>Configuration object. [default: expression]</td></tr></table></dd>
+<tr class='param'><td class='param'>home: <a href='Path.html'>Path</a> </td><td>Base directory for the MVC app.</td></tr><tr class='param'><td class='param'>config </td><td>Configuration object 8. [default: expression]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -832,7 +835,7 @@ a X-HTTP-METHOD-OVERRIDE Http header.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Number constructor. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>value: <a href='Object.html'>Object</a> </td><td>Value to use in creating the Number object. If the value cannot be converted to a number,  the value will ba NaN (or 0 if using integer numerics). [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>value: <a href='Object.html'>Object</a> </td><td>Value to use in creating the Number object. If the value cannot be converted to a number,  the value will ba NaN (or 0 if using integer numerics). 8. [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -869,7 +872,7 @@ class and will provdie their own constructor which calls initialize().</dd></dl>
 <dl><dt>Description</dt></dd><dd>ReferenceError constructor. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property.X [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -906,7 +909,7 @@ manually.</dd></dl>
 <dl><dt>Description</dt></dd><dd>ResourceError constructor. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property.X [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -919,7 +922,7 @@ manually.</dd></dl>
 create and install routes into the Router.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>template: <a href='Object.html'>Object</a> </td><td>String or Regular Expression defining the form of a matching URI (Request.pathInfo).</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Route options representing the URI and options to use when servicing the request. If it is a string, it may begin with an " @" and be of the form " @[controller/]action". In this case, if there is a "/" delimiter, the first portion is a controller and the second is the controller action to invoke. The controller or action may be absent. For example: " @Controller/", " @action", " @controller/action". If the string does not begin with an " @", it is interpreted as a literal URI.  For example: "/web/index.html". If the options is an object hash, it may contain the options below:.</td></tr><tr class='param'><td class='param'>router: <a href='ejs.web-Router.html'>Router</a> </td><td>Owning router object.</td></tr></table></dd>
+<tr class='param'><td class='param'>template: <a href='Object.html'>Object</a> </td><td>String or Regular Expression defining the form of a matching URI (Request.pathInfo).</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Route options representing the URI and options to use when servicing the request. If it is a string, it may begin with an " @" and be of the form " @[controller/]action". In this case, if there is a "/" delimiter, the first portion is a controller and the second is the controller action to invoke. The controller or action may be absent. For example: " @Controller/", " @action", " @controller/action". If the string does not begin with an " @", it is interpreted as a literal URI.  For example: "/web/index.html". If the options is an object hash, it may contain the options below:.X</td></tr><tr class='param'><td class='param'>router: <a href='ejs.web-Router.html'>Router</a> </td><td>Owning router object.</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>action</td><td>Action method to service the request. This may be of the form "action", "controller/action" or  "controller/".  If the action portion omitted, the default action (index) will be used.</td></tr>
@@ -1028,7 +1031,8 @@ Route("/User/login", {name: "login" })</pre></dd></dl>
 <div class='apiSig'>    Socket()
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Create a socket object. </dd></dl>
+<dl><dt>Description</dt></dd><dd>Create a socket object
+(. </dd></dl>
 </div>
 </div>
 <hr />
@@ -1056,7 +1060,7 @@ Route("/User/login", {name: "login" })</pre></dd></dl>
 <dl><dt>Description</dt></dd><dd>StateError constructor. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property.X [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -1070,7 +1074,7 @@ and will use X-SendFile for efficient transmission of static content. The If-Mat
 If-Modified-Since and If-Unmodified-Since headers are supported.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request objects.</td></tr></table></dd>
+<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request objects.X</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A response hash object.</dd></dl>
 <dl><dt>Specified</dt>
@@ -1125,7 +1129,7 @@ If-Modified-Since and If-Unmodified-Since headers are supported.</dd></dl>
 <dl><dt>Description</dt></dd><dd>SyntaxError constructor. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property.X [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -1137,7 +1141,7 @@ If-Modified-Since and If-Unmodified-Since headers are supported.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Template web page handler. The template web page at request.filename will be processed and run.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request objects.</td></tr></table></dd>
+<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request objects.X</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A response hash object.</dd></dl>
 <dl><dt>Specified</dt>
@@ -1213,7 +1217,7 @@ The template path can be supplied via the request.filename or a literal template
 <dl><dt>Description</dt></dd><dd>Constructor for Timer. The timer is will not be called until <a href='#start'>start</a> is called.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>period: <a href='Number.html'>Number</a> </td><td>Delay in milliseconds before the timer will run.</td></tr><tr class='param'><td class='param'>callback: <a href='Function.html'>Function</a> </td><td>Function to invoke when the timer is due. The callback is invoked with the following signature: function callback(error: Error): Void.</td></tr><tr class='param'><td class='param'>args: <a href='Array.html'>Array</a> </td><td>Callback arguments.</td></tr></table></dd>
+<tr class='param'><td class='param'>period: <a href='Number.html'>Number</a> </td><td>Delay in milliseconds before the timer will run.X</td></tr><tr class='param'><td class='param'>callback: <a href='Function.html'>Function</a> </td><td>Function to invoke when the timer is due. The callback is invoked with the following signature: function callback(error: Error): Void.</td></tr><tr class='param'><td class='param'>args: <a href='Array.html'>Array</a> </td><td>Callback arguments.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -1225,7 +1229,7 @@ The template path can be supplied via the request.filename or a literal template
 <dl><dt>Description</dt></dd><dd>TypeError constructor. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>message: <a href='String.html'>String</a> </td><td>Message to use when defining the Error.message property.X [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -1243,9 +1247,9 @@ The template path can be supplied via the request.filename or a literal template
 <td class='param'>scheme</td><td>String URI protocol scheme (http or https).</td></tr>
 <td class='param'>host</td><td>String URI host name or IP address.</td></tr>
 <td class='param'>port</td><td>Number TCP/IP port number for communications.</td></tr>
-<td class='param'>path</td><td>String URI path.</td></tr>
+<td class='param'>path</td><td>String URI path.X</td></tr>
 <td class='param'>query</td><td>String URI query parameters. Does not include "?".</td></tr>
-<td class='param'>reference</td><td>String URI path reference. Does not include "#".</td></tr>
+<td class='param'>reference</td><td>String URI path reference. Does not include "#".X</td></tr>
 </table></dd>
 </dl></div>
 </div>
@@ -1296,7 +1300,7 @@ the client is redirected to a URL equal to the pathInfo with a "/" appended.</dd
 <dd><table class='parameters' summary ='options'>
 <td class='param'>certificate</td><td>Path|String Optional path to file containing certificates to validate the  server certificate.</td></tr>
 <td class='param'>verify</td><td>Boolean Set to true to verify the server certificate.  The certificate is verified and the issuer chain is verified. Defaults to true. Set to false to accept a self-signed certificate.</td></tr>
-<td class='param'>frames</td><td>Preserve individual message frames to onmessage.</td></tr>
+<td class='param'>frames</td><td>Preserve individual message frames to onmessage. P.</td></tr>
 </table></dd>
 </dl></div>
 </div>
@@ -1375,7 +1379,7 @@ Otherwise the object reference is copied.
 If the overwrite option is false, the property will only be copied if it does not already exist in the destination.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>dest: <a href='Object.html'>Object</a> </td><td>Destination object.</td></tr><tr class='param'><td class='param'>src: <a href='Object.html'>Object</a> </td><td>Source object.</td></tr><tr class='param'><td class='param'>options </td><td>Control options. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>dest: <a href='Object.html'>Object</a> </td><td>Destination object.</td></tr><tr class='param'><td class='param'>src: <a href='Object.html'>Object</a> </td><td>Source object.</td></tr><tr class='param'><td class='param'>options </td><td>Control options.X [default: null]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>combine</td><td>Boolean. If true, then support key prefixes "+", "=", "-", "?" to add, assign and subtract  and conditionally assign key values. When adding string properties, values will be appended using a space separator. Extra spaces will not  be removed on subtraction. Arrays with string values may also be combined using the key prefixes.</td></tr>
@@ -1399,7 +1403,8 @@ If the overwrite option is false, the property will only be copied if it does no
 <div class='apiSig'>    breakpoint(): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Convenient way to trap to the debugger. </dd></dl>
+<dl><dt>Description</dt></dd><dd>Convenient way to trap to the debugger
+0. </dd></dl>
 </div>
 </div>
 <hr />
@@ -1447,7 +1452,7 @@ If the overwrite option is false, the property will only be copied if it does no
 <dl><dt>Description</dt></dd><dd>Clear and dispose of a timeout. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>timer: <a href='Timer.html'>Timer</a> </td><td>Timeout timer returned from <a href='#setTimeout'>setTimeout</a>. </td></tr></table></dd>
+<tr class='param'><td class='param'>timer: <a href='Timer.html'>Timer</a> </td><td>Timeout timer returned from <a href='setTimeout.html#X'>setTimeout.X</a> </td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -1641,7 +1646,7 @@ The encode call replaces all characters except: alphabetic, decimal digits, "-",
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>path: <a href='String.html'>String</a> </td><td>Filename path to examine.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>True if the file can be accessed.</dd></dl>
+<dd>True if the file can be accessed 0.</dd></dl>
 </div>
 </div>
 <hr />
@@ -1733,7 +1738,8 @@ in the path.</dd></dl>
 <dl><dt>Specified</dt>
 <dd>ejscript-2.3</dd></dl>
 <dl><dt>Stability</dt>
-<dd>Prototype.</dd></dl>
+<dd>Prototype
+0.</dd></dl>
 </div>
 </div>
 <hr />
@@ -1761,7 +1767,7 @@ in the path.</dd></dl>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>arg: <a href='Number.html'>Number</a> </td><td>To evaluate.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>True if the argument is a finite number.</dd></dl>
+<dd>True if the argument is a finite number.X</dd></dl>
 </div>
 </div>
 <hr />
@@ -1831,9 +1837,10 @@ This function is prototype and may be renamed in a future release. </dd></dl>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String on which to compute a checksum.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>An MD5 checksum.</dd></dl>
+<dd>An MD5 checksum.X</dd></dl>
 <dl><dt>Specified</dt>
-<dd>ejscript-2.3</dd></dl>
+<dd>ejs
+8</dd></dl>
 </div>
 </div>
 <hr />
@@ -1848,7 +1855,7 @@ already exists, the function returns without throwing an exception.</dd></dl>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>path: <a href='String.html'>String</a> </td><td>Filename path to use.</td></tr><tr class='param'><td class='param'>permissions: <a href='Number.html'>Number</a> </td><td>Optional posix permissions mask number. e.g. 0664. [default: 493]</td></tr></table></dd>
 </dl><dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: if the directory cannot be created.
+<a href='IOError.html'>IOError</a>: if the directory cannot be created. H
 </dd>
 </dl></div>
 </div>
@@ -1876,7 +1883,7 @@ already exists, the function returns without throwing an exception.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Parse a string and convert to a primitive type. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String to parse.</td></tr><tr class='param'><td class='param'>preferredType: <a href='Type.html'>Type</a> </td><td>Preferred type to use if the input can be parsed multiple ways. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String to parse.X</td></tr><tr class='param'><td class='param'>preferredType: <a href='Type.html'>Type</a> </td><td>Preferred type to use if the input can be parsed multiple ways. [default: null]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>Parsed object.</dd></dl>
 </div>
@@ -1904,9 +1911,9 @@ a session cookie will be sent to and from the browser with each request.</dd></d
 <dl><dt>Description</dt></dd><dd>Parse a string as a floating point number. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String to parse.</td></tr></table></dd>
+<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String to parse.X</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A parsed number.</dd></dl>
+<dd>A parsed number.X</dd></dl>
 </div>
 </div>
 <hr />
@@ -1918,9 +1925,9 @@ a session cookie will be sent to and from the browser with each request.</dd></d
 <dl><dt>Description</dt></dd><dd>Parse a string and convert to an integral number using the specified radix. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String to parse.</td></tr><tr class='param'><td class='param'>radix: <a href='Number.html'>Number</a> </td><td>Base radix to use when parsing the number. [default: 10]</td></tr></table></dd>
+<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String to parse.X</td></tr><tr class='param'><td class='param'>radix: <a href='Number.html'>Number</a> </td><td>Base radix to use when parsing the number. [default: 10]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A parsed number.</dd></dl>
+<dd>A parsed number P.</dd></dl>
 </div>
 </div>
 <hr />
@@ -1932,7 +1939,7 @@ a session cookie will be sent to and from the browser with each request.</dd></d
 <dl><dt>Description</dt></dd><dd>Post a message to the Worker's parent. This is only valid inside Worker scripts.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>data: <a href='Object.html'>Object</a> </td><td>Data to pass to the worker's onmessage callback.</td></tr><tr class='param'><td class='param'>ports: <a href='Array.html'>Array</a> </td><td>Not implemented.</td></tr></table></dd>
+<tr class='param'><td class='param'>data: <a href='Object.html'>Object</a> </td><td>Data to pass to the worker's onmessage callback.</td></tr><tr class='param'><td class='param'>ports: <a href='Array.html'>Array</a> </td><td>Not implemented.X</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -1975,7 +1982,7 @@ standard output. Arguments are converted to strings by calling their toString me
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Get the current working directory. </dd></dl>
 <dl><dt>Returns</dt>
-<dd>A Path containing the current working directory.</dd></dl>
+<dd>A Path containing the current working directory.X</dd></dl>
 </div>
 </div>
 <hr />
@@ -2061,7 +2068,7 @@ until all properties are rendered.  NOTE: the maxDepth, all and base properties 
 <dl><dt>Description</dt></dd><dd>Create an interval timer. This will invoke the callback every <a href='#delay'>delay</a> milliseconds.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>callback: <a href='Function.html'>Function</a> </td><td>Function to invoke when the timer is due.</td></tr><tr class='param'><td class='param'>delay: <a href='Number.html'>Number</a> </td><td>Time period in milliseconds between invocations of the callback.</td></tr><tr class='param'><td class='param'>args: <a href='Array.html'>Array</a> </td><td>Function arguments to provide to the callback.</td></tr></table></dd>
+<tr class='param'><td class='param'>callback: <a href='Function.html'>Function</a> </td><td>Function to invoke when the timer is due.</td></tr><tr class='param'><td class='param'>delay: <a href='Number.html'>Number</a> </td><td>Time period in milliseconds between invocations of the callback.X</td></tr><tr class='param'><td class='param'>args: <a href='Array.html'>Array</a> </td><td>Function arguments to provide to the callback.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>Timer ID that can be used with <a href='#clearInterval'>clearInterval</a>. </dd></dl>
 </div>
@@ -2181,7 +2188,8 @@ Ejscript underlying type name. This call is an alias for Object.getTypeName(o).<
 <dl><dt>Specified</dt>
 <dd>ejscript-2.3</dd></dl>
 <dl><dt>Stability</dt>
-<dd>Prototype.</dd></dl>
+<dd>Prototype
+8.</dd></dl>
 </div>
 </div>
 <hr />

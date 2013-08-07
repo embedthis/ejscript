@@ -49,7 +49,6 @@ trigger the GC to run. This roughly corresponds to the number of allocated objec
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#run'><b>run</b></a>(deep: <a href='Boolean.html'>Boolean</a> = false): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run the garbage collector and reclaim memory allocated to objects and properties that are no longer reachable.</td></tr>
-   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#verify'><b>verify</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Verify memory.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
@@ -78,16 +77,6 @@ automatically run the garbage collector as required.</dd></dl>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>deep: <a href='Boolean.html'>Boolean</a> </td><td>If set to true, will collect from all generations. The default is to collect only the youngest geneartion of objects. [default: false]</td></tr></table></dd>
 </dl></div>
-</div>
-<hr />
-<a name='verify'></a>
-<div class='api'>
-<div class='apiSig'>static     verify(): <a href='Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Verify memory. In debug builds, this call verifies all memory blocks by checking a per-block signature.
-This is very slow, so call sparingly. In release builds, this call does nothing.</dd></dl>
-</div>
 </div>
 <hr />
 <div class="terms">

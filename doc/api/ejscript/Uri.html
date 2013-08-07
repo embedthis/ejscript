@@ -49,9 +49,11 @@ elements of the URI path excluding the base name. Set to null if the Uri has no 
 Set to null if no extension. If this is modified, the path property will be updated accordingly.</td></tr>
 <a name='filename'></a>
    <tr><td nowrap align='center'> get </td><td>filename</td><td><a href='Path.html'>Path</a></td><td>Set to a Path type corresponding to the Uri path property. The Path is relative to the current directory.
-i.e. this removes the leading "/" from the path property.</td></tr>
+i.e. this removes the leading "/" from the path property.
+(.</td></tr>
 <a name='hasExtension'></a>
-   <tr><td nowrap align='center'> get </td><td>hasExtension</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI has an explicit extension. </td></tr>
+   <tr><td nowrap align='center'> get </td><td>hasExtension</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI has an explicit extension
+8. </td></tr>
 <a name='hasHost'></a>
    <tr><td nowrap align='center'> get </td><td>hasHost</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI have an explicit host component. For example: "www.example.com".</td></tr>
 <a name='hasPort'></a>
@@ -68,7 +70,8 @@ i.e. this removes the leading "/" from the path property.</td></tr>
    <tr><td nowrap align='center'> get </td><td>isAbsolute</td><td><a href='Boolean.html'>Boolean</a></td><td>Is the URI is an absolute path. Set to true if the URI path component beginning with a "/".</td></tr>
 <a name='isDir'></a>
    <tr><td nowrap align='center'> get </td><td>isDir</td><td><a href='Boolean.html'>Boolean</a></td><td>Is the URI is a directory URI. Set to true if the URI ends with "/". NOTE: this only tests the URI and 
-not any physical resource associated with the URI.</td></tr>
+not any physical resource associated with the URI.
+0.</td></tr>
 <a name='isRegular'></a>
    <tr><td nowrap align='center'> get </td><td>isRegular</td><td><a href='Boolean.html'>Boolean</a></td><td>Is the URI is a regular resource and not a directory. Set to true if the URI does not end with "/". 
 NOTE: this only tests the URI and not any physical resource associated with the URI.</td></tr>
@@ -90,7 +93,8 @@ Set to null if there is no path. </td></tr>
    <tr><td nowrap align='center'> get set </td><td>port</td><td><a href='Number.html'>Number</a></td><td>The port number of the URI. Set to null if the URI does not have an explicit port.</td></tr>
 <a name='query'></a>
    <tr><td nowrap align='center'> get set </td><td>query</td><td><a href='String.html'>String</a></td><td>The URI query string. The query string is the fragment after a "?" character in the URI.
-Set to null if there is no query.</td></tr>
+Set to null if there is no query.
+0.</td></tr>
 <a name='reference'></a>
    <tr><td nowrap align='center'> get set </td><td>reference</td><td><a href='String.html'>String</a></td><td>The URI reference portion. The reference portion is sometimes called the "anchor" and is the the fragment 
 after a "#" character in the URI.  Set to null if there is no reference.</td></tr>
@@ -161,9 +165,9 @@ NOTE: this does a case-sensitive match.</td></tr>
 <td class='param'>scheme</td><td>String URI protocol scheme (http or https).</td></tr>
 <td class='param'>host</td><td>String URI host name or IP address.</td></tr>
 <td class='param'>port</td><td>Number TCP/IP port number for communications.</td></tr>
-<td class='param'>path</td><td>String URI path.</td></tr>
+<td class='param'>path</td><td>String URI path.X</td></tr>
 <td class='param'>query</td><td>String URI query parameters. Does not include "?".</td></tr>
-<td class='param'>reference</td><td>String URI path reference. Does not include "#".</td></tr>
+<td class='param'>reference</td><td>String URI path reference. Does not include "#".X</td></tr>
 </table></dd>
 </dl></div>
 </div>
@@ -331,7 +335,7 @@ is regarded as POST data and not integral to the base URI.</dd></dl>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Replace the extension and return a new URI. </dd></dl>
 <dl><dt>Returns</dt>
-<dd>A path with extension.</dd></dl>
+<dd>A path with extension. 8.</dd></dl>
 </div>
 </div>
 <hr />
@@ -365,7 +369,7 @@ is regarded as POST data and not integral to the base URI.</dd></dl>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>other: <a href='Object.html'>Object</a> </td><td>Other URI to compare with.</td></tr><tr class='param'><td class='param'>exact: <a href='Boolean.html'>Boolean</a> </td><td>If exact is true, then the query and reference portions must match. [default: false]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>True if the URIs represent the same underlying resource.</dd></dl>
+<dd>True if the URIs represent the same underlying resource.X</dd></dl>
 </div>
 </div>
 <hr />
@@ -453,7 +457,7 @@ NOTE: this does a case-sensitive match. MOB - is this right?.</dd></dl>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Trim the extension portion off the URI path. </dd></dl>
 <dl><dt>Returns</dt>
-<dd>A URI with no extension.</dd></dl>
+<dd>A URI with no extension.X</dd></dl>
 </div>
 </div>
 <hr />

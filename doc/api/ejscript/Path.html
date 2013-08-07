@@ -70,7 +70,8 @@ See also <a href='#parent'>parent</a> which will determine the parent directory 
 <a name='hasDrive'></a>
    <tr><td nowrap align='center'> get </td><td>hasDrive</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the file path have a drive spec (C:) in it's name. Only relevant on Windows like systems.</td></tr>
 <a name='isAbsolute'></a>
-   <tr><td nowrap align='center'> get </td><td>isAbsolute</td><td><a href='Boolean.html'>Boolean</a></td><td>Is the path absolute, i.e. Beginning at the file system's root.</td></tr>
+   <tr><td nowrap align='center'> get </td><td>isAbsolute</td><td><a href='Boolean.html'>Boolean</a></td><td>Is the path absolute, i.e. Beginning at the file system's root.
+8.</td></tr>
 <a name='isDir'></a>
    <tr><td nowrap align='center'> get </td><td>isDir</td><td><a href='Boolean.html'>Boolean</a></td><td>Is the path a directory. If the path is a symbolic link, the target of the link is tested.</td></tr>
 <a name='isLink'></a>
@@ -83,7 +84,8 @@ See also <a href='#parent'>parent</a> which will determine the parent directory 
    <tr><td nowrap align='center'> get </td><td>length</td><td><a href='Number.html'>Number</a></td><td>The length of the path name in bytes. Note: this is not the file size. For that, use Path.size.</td></tr>
 <a name='linkTarget'></a>
    <tr><td nowrap align='center'> get </td><td>linkTarget</td><td><a href='Path.html'>Path</a></td><td>The target pointed to if this path is a symbolic link. Not available on some platforms such as Windows and 
-VxWorks. If the path is not a symbolic link, it is set to null.</td></tr>
+VxWorks. If the path is not a symbolic link, it is set to null.
+0.</td></tr>
 <a name='mimeType'></a>
    <tr><td nowrap align='center'> get </td><td>mimeType</td><td><a href='String.html'>String</a></td><td>Get the mime type for a path or extension string. The path's extension is used to lookup the corresponding
 mime type.</td></tr>
@@ -297,7 +299,8 @@ NOTE: this does a case-sensitive match.</td></tr>
 <dl><dt>Returns</dt>
 <dd>An iterator object.</dd></dl>
 <dl><dt>Example</dt>
-<dd><pre>for (f in Path("."))</pre></dd></dl>
+<dd><pre>for (f in Path("."))
+@</pre></dd></dl>
 </div>
 </div>
 <hr />
@@ -324,7 +327,7 @@ This operates the same as <a href='#get'>get</a> on a Path object.</dd></dl>
 add a separator, and continue joining. The separator is chosen to match the first separator found in 
 either path. If none found, the default file system path separator is used.</dd></dl>
 <dl><dt>Returns</dt>
-<dd>A new joined, normalized Path object.</dd></dl>
+<dd>A new joined, normalized Path object. 0.X</dd></dl>
 </div>
 </div>
 <hr />
@@ -338,7 +341,7 @@ either path. If none found, the default file system path separator is used.</dd>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>ext: <a href='String.html'>String</a> </td><td>Extension to add. The extension may or may not contain a leading period. Best practice is to  not have leading periods on extensions.</td></tr><tr class='param'><td class='param'>force: <a href='Boolean.html'>Boolean</a> </td><td>Set to true to always add the extension. [default: false]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A new Path object with the given extension if the path did not already have one.</dd></dl>
+<dd>A new Path object with the given extension if the path did not already have one. P.</dd></dl>
 </div>
 </div>
 <hr />
@@ -439,7 +442,7 @@ the function returns without any further action.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Open a file and return a BinaryStream object. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional options object. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional options object.X [default: null]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>mode</td><td>Optional file access mode with values ored from: Read, Write, Append, Create, Open, Truncate.  Defaults to Read.</td></tr>
@@ -463,7 +466,7 @@ the function returns without any further action.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Open a file and return a TextStream object. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional options object. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional options object.X [default: null]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>mode</td><td>Optional file access mode string. Use "r" for read, "w" for write, "a" for append to existing content, "+" never truncate.</td></tr>
@@ -475,7 +478,7 @@ the function returns without any further action.</dd></dl>
 </dl><dl><dt>Returns</dt>
 <dd>A TextStream object which implements the Stream interface.</dd></dl>
 <dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: if the path or file cannot be opened or created.
+<a href='IOError.html'>IOError</a>: if the path or file cannot be opened or created. H
 </dd>
 </dl></div>
 </div>
@@ -621,7 +624,7 @@ directory itself. If the directory does not exist, this call does not error and 
 and replace it with the replace text. If the pattern is a string, only the first occurrence is replaced.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>pattern </td><td>The regular expression or string pattern to search for.</td></tr><tr class='param'><td class='param'>replacement </td><td>The string to replace the match with or a function to generate the replacement text. The replacement string can contain special replacement patterns: "$" inserts a "$", "$&" inserts the matched substring, "$`" inserts the portion that preceeds the matched substring, "$'" inserts the portion that follows the matched substring, and "$N" inserts the Nth parenthesized substring. The replacement parameter can also be a function which will be invoked and the function return value  will be used as the resplacement text. The function will be invoked multiple times for each match to be  replaced if the regular expression is global. The function will be invoked with the signature:  function (matched, submatch_1, submatch_2, ..., matched_offset, original_string).</td></tr></table></dd>
+<tr class='param'><td class='param'>pattern </td><td>The regular expression or string pattern to search for.</td></tr><tr class='param'><td class='param'>replacement </td><td>The string to replace the match with or a function to generate the replacement text. The replacement string can contain special replacement patterns: "$" inserts a "$", "$&" inserts the matched substring, "$`" inserts the portion that preceeds the matched substring, "$'" inserts the portion that follows the matched substring, and "$N" inserts the Nth parenthesized substring. The replacement parameter can also be a function which will be invoked and the function return value  will be used as the resplacement text. The function will be invoked multiple times for each match to be  replaced if the regular expression is global. The function will be invoked with the signature:  function (matched, submatch_1, submatch_2, ..., matched_offset, original_string).X</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>Returns a new string.</dd></dl>
 <dl><dt>Specified</dt>
@@ -671,7 +674,7 @@ absolute and relative path segments.</dd></dl>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>other: <a href='Object.html'>Object</a> </td><td>Other path to compare with.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>True if the paths represent the same underlying filename.</dd></dl>
+<dd>True if the paths represent the same underlying filename 8.</dd></dl>
 </div>
 </div>
 <hr />
@@ -737,7 +740,7 @@ system location for temp files. This is typically /tmp or /temp.</dd></dl>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Convert the path to lower case. </dd></dl>
 <dl><dt>Returns</dt>
-<dd>A new Path mapped to lower case.</dd></dl>
+<dd>A new Path mapped to lower case.X</dd></dl>
 </div>
 </div>
 <hr />
@@ -760,7 +763,7 @@ system location for temp files. This is typically /tmp or /temp.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Trim a pattern from the end of the path
 NOTE: this does a case-sensitive match. </dd></dl>
 <dl><dt>Returns</dt>
-<dd>A Path containing the trimmed path name.</dd></dl>
+<dd>A Path containing the trimmed path name.X</dd></dl>
 </div>
 </div>
 <hr />
@@ -783,7 +786,7 @@ NOTE: this does a case-sensitive match. </dd></dl>
 <dl><dt>Description</dt></dd><dd>Trim a pattern from the start of the path
 NOTE: this does a case-sensitive match. </dd></dl>
 <dl><dt>Returns</dt>
-<dd>A Path containing the trimmed path name.</dd></dl>
+<dd>A Path containing the trimmed path name.X</dd></dl>
 </div>
 </div>
 <hr />

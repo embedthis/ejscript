@@ -66,7 +66,8 @@ is not bound.</td></tr>
 <h2 class='classSection'>Socket Instance Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'></td><td><a href='#Socket'><b>Socket</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a socket object.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Socket'><b>Socket</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a socket object
+(.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#accept'><b>accept</b></a>(): <a href='Socket.html'>Socket</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Receive a client socket.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#close'><b>close</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#connect'><b>connect</b></a>(address: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Establish a connection to a client from this socket to the supplied address.</td></tr>
@@ -87,7 +88,8 @@ is not bound.</td></tr>
 <div class='apiSig'>    Socket()
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Create a socket object. </dd></dl>
+<dl><dt>Description</dt></dd><dd>Create a socket object
+(. </dd></dl>
 </div>
 </div>
 <hr />
@@ -98,7 +100,7 @@ is not bound.</td></tr>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Receive a client socket. Accept must be called after invoking <a href='#listen'>listen</a>. </dd></dl>
 <dl><dt>Returns</dt>
-<dd>A socket connected to the client endpoint.</dd></dl>
+<dd>A socket connected to the client endpoint. 0.</dd></dl>
 </div>
 </div>
 <hr />
@@ -199,7 +201,7 @@ client connections will be notified via "accept" events.</dd></dl>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>readable</td><td>Issued when the stream becomes readable.</td></tr>
 <td class='param'>writable</td><td>Issued when the stream becomes writable.</td></tr>
-<td class='param'>close</td><td>Issued when stream is being closed.</td></tr>
+<td class='param'>close</td><td>Issued when stream is being closed. 8.</td></tr>
 <td class='param'>writable</td><td>Issued when the connection is writable to accept body data (PUT, POST).</td></tr>
 </table></dd>
 </dl></div>
@@ -220,7 +222,7 @@ In this case a "readable" event will be issued when data is available for readin
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>readable</td><td>Issued when there is new read data available.</td></tr>
-<td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes empty. `.X.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A count of the bytes actually read. Returns null on EOF or errors.</dd></dl>

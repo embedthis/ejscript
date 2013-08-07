@@ -84,10 +84,10 @@ This will read the data for a key and then deserialize.</td></tr>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>lifespan</td><td>Default lifespan for key values in seconds.</td></tr>
 <td class='param'>resolution</td><td>Time in milliseconds to check for expired expired keys.</td></tr>
-<td class='param'>timeout</td><td>Timeout on cache I/O operations.</td></tr>
+<td class='param'>timeout</td><td>Timeout on cache I/O operations.X</td></tr>
 <td class='param'>trace</td><td>Trace I/O operations for debug.</td></tr>
 <td class='param'>module</td><td>Module name containing the cache connector class. This is a bare module name without ".mod" or any leading path. If module is not present, a module name is derrived using "ejs.cache" + adapter.</td></tr>
-<td class='param'>class</td><td>Class name containing the cache backend. If the class property is not present, the  class is derived from the adapter name with "Cache" appended. The first letter of the adapter is converted to uppercase. For example, if the adapter was "mem", the class would be inferred to be "MemCache".</td></tr>
+<td class='param'>class</td><td>Class name containing the cache backend. If the class property is not present, the  class is derived from the adapter name with "Cache" appended. The first letter of the adapter is converted to uppercase. For example, if the adapter was "mem", the class would be inferred to be "MemCache". H.</td></tr>
 </table></dd>
 </dl></div>
 </div>
@@ -163,7 +163,7 @@ key value.</dd></dl>
 <td class='param'>version</td><td>If set to true, the read will return an object hash containing the data and a unique version  identifier for the last update to this key. This version identifier can be specified to write to peform an atomic CAS (check and swap) operation.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>Null if the key is not present. Otherwise return key data as an object.</dd></dl>
+<dd>Null if the key is not present. Otherwise return key data as an object. P.</dd></dl>
 </div>
 </div>
 <hr />
@@ -239,7 +239,7 @@ written according to the optional mode option.</dd></dl>
 <td class='param'>throw</td><td>Throw an exception rather than returning null if the version id has been updated for the key.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>The number of bytes written, returns null if the write failed due to an updated version identifier for the key.</dd></dl>
+<dd>The number of bytes written, returns null if the write failed due to an updated version identifier for the key. X.</dd></dl>
 </div>
 </div>
 <hr />

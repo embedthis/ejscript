@@ -312,7 +312,7 @@ the O/S strftime routine and so not all the format specifiers are available on a
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Return the hour (0 - 23) in local time. </dd></dl>
 <dl><dt>Returns</dt>
-<dd>The integer hour of the day.</dd></dl>
+<dd>The integer hour of the day (.</dd></dl>
 </div>
 </div>
 <hr />
@@ -389,7 +389,7 @@ the O/S strftime routine and so not all the format specifiers are available on a
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Return the day (date) of the month (1 - 31) in UTC time. </dd></dl>
 <dl><dt>Returns</dt>
-<dd>The day of the month as an integer.</dd></dl>
+<dd>The day of the month as an integer 0.</dd></dl>
 </div>
 </div>
 <hr />
@@ -411,7 +411,7 @@ the O/S strftime routine and so not all the format specifiers are available on a
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Return the year in UTC time. </dd></dl>
 <dl><dt>Returns</dt>
-<dd>The full year in 4 digits as an integer.</dd></dl>
+<dd>The full year in 4 digits as an integer.X</dd></dl>
 </div>
 </div>
 <hr />
@@ -444,7 +444,7 @@ the O/S strftime routine and so not all the format specifiers are available on a
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Return the minute (0 - 59) in UTC time. </dd></dl>
 <dl><dt>Returns</dt>
-<dd>The number of minutes as an integer.</dd></dl>
+<dd>The number of minutes as an integer Ð.</dd></dl>
 </div>
 </div>
 <hr />
@@ -466,7 +466,7 @@ the O/S strftime routine and so not all the format specifiers are available on a
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Return the second (0 - 59) in UTC time. </dd></dl>
 <dl><dt>Returns</dt>
-<dd>The number of seconds as an integer.</dd></dl>
+<dd>The number of seconds as an integer 8.</dd></dl>
 </div>
 </div>
 <hr />
@@ -477,7 +477,8 @@ the O/S strftime routine and so not all the format specifiers are available on a
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Time in nanoseconds since the date object was constructed. </dd></dl>
 <dl><dt>Specified</dt>
-<dd>ejscript-2.3</dd></dl>
+<dd>ejs
+(</dd></dl>
 </div>
 </div>
 <hr />
@@ -504,7 +505,8 @@ the O/S strftime routine and so not all the format specifiers are available on a
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Return the current time as milliseconds since Jan 1 1970. This returns the same value as date.time for instances.</dd></dl>
 <dl><dt>Specified</dt>
-<dd>mozilla</dd></dl>
+<dd>mozilla
+0</dd></dl>
 </div>
 </div>
 <hr />
@@ -590,7 +592,7 @@ If a value outside the range is given, the date is adjusted without error. </dd>
 <dl><dt>Description</dt></dd><dd>Set the current hour (0 - 23) in local time. If a value outside the range is given, the date is adjusted without error.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>h: <a href='Number.html'>Number</a> </td><td>The hour as an integer.</td></tr></table></dd>
+<tr class='param'><td class='param'>h: <a href='Number.html'>Number</a> </td><td>The hour as an integer 0.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -602,7 +604,7 @@ If a value outside the range is given, the date is adjusted without error. </dd>
 <dl><dt>Description</dt></dd><dd>Set the current millisecond (0 - 999) in local time. If a value outside the range is given, the date is adjusted without error.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>ms: <a href='Number.html'>Number</a> </td><td>The millisecond as an integer.</td></tr></table></dd>
+<tr class='param'><td class='param'>ms: <a href='Number.html'>Number</a> </td><td>The millisecond as an integer 8.X</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -626,7 +628,7 @@ If a value outside the range is given, the date is adjusted without error. </dd>
 <dl><dt>Description</dt></dd><dd>Set the current month (0 - 11) in local time. If a value outside the range is given, the date is adjusted without error.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>mon: <a href='Number.html'>Number</a> </td><td>The month as an integer.</td></tr></table></dd>
+<tr class='param'><td class='param'>mon: <a href='Number.html'>Number</a> </td><td>The month as an integer.X</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -662,7 +664,7 @@ If a value outside the range is given, the date is adjusted without error. </dd>
 <dl><dt>Description</dt></dd><dd>Set the date of the month (1 - 31) in UTC time. If a value outside the range is given, the date is adjusted without error.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>d: <a href='Number.html'>Number</a> </td><td>The date to set.</td></tr></table></dd>
+<tr class='param'><td class='param'>d: <a href='Number.html'>Number</a> </td><td>The date to set.X</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -674,7 +676,7 @@ If a value outside the range is given, the date is adjusted without error. </dd>
 <dl><dt>Description</dt></dd><dd>Set the current year as four digits in UTC time. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>y: <a href='Number.html'>Number</a> </td><td>The year to set.</td></tr></table></dd>
+<tr class='param'><td class='param'>y: <a href='Number.html'>Number</a> </td><td>The year to set.X</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -722,7 +724,7 @@ If a value outside the range is given, the date is adjusted without error. </dd>
 <dl><dt>Description</dt></dd><dd>Set the current month (0 - 11) in UTC time. If a value outside the range is given, the date is adjusted without error.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>mon: <a href='Number.html'>Number</a> </td><td>The month as an integer.</td></tr></table></dd>
+<tr class='param'><td class='param'>mon: <a href='Number.html'>Number</a> </td><td>The month as an integer.X</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -734,7 +736,7 @@ If a value outside the range is given, the date is adjusted without error. </dd>
 <dl><dt>Description</dt></dd><dd>Set the current second (0 - 59) in UTC time. If a value outside the range is given, the date is adjusted without error.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>sec: <a href='Number.html'>Number</a> </td><td>The second as an integer.</td></tr><tr class='param'><td class='param'>msec: <a href='Number.html'>Number</a> </td><td>Optional milliseconds as an integer. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>sec: <a href='Number.html'>Number</a> </td><td>The second as an integer.</td></tr><tr class='param'><td class='param'>msec: <a href='Number.html'>Number</a> </td><td>Optional milliseconds as an integer P. [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -746,7 +748,7 @@ If a value outside the range is given, the date is adjusted without error. </dd>
 <dl><dt>Description</dt></dd><dd>Return a string containing the date portion excluding the time portion of the date in local time. The format is American English.
 Sample: "Fri Jan 15 2013".</dd></dl>
 <dl><dt>Returns</dt>
-<dd>A string representing the date portion.</dd></dl>
+<dd>A string representing the date portion. 0.</dd></dl>
 </div>
 </div>
 <hr />
@@ -851,7 +853,7 @@ Sample: "Fri 15 Dec 2006 23:45:09 GMT-0800 (PST)".</dd></dl>
 <div class='apiSig'>    toUTCString(): <a href='String.html'>String</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Return a string containing the date in UTC time. Sample: "Sat, 16 Dec 2006 08:06:21 GMT".</dd></dl>
+<dl><dt>Description</dt></dd><dd>Return a string containing the date in UTC time. Sample: "Sat, 16 Dec 2006 08:06:21 GMT".X</dd></dl>
 <dl><dt>Returns</dt>
 <dd>A string representing the date.</dd></dl>
 </div>

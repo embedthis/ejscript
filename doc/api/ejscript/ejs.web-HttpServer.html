@@ -36,7 +36,7 @@ including methods for GET, POST, PUT, DELETE, OPTIONS, and TRACE. It also suppor
 <table class='itemTable' summary='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
 <a name='PrunePeriod'></a>
-   <tr><td nowrap align='center'> static </td><td>PrunePeriod</td><td>&nbsp;</td><td>Frequency to check and release excess worker threads. </td></tr>
+   <tr><td nowrap align='center'> static </td><td>PrunePeriod</td><td>&nbsp;</td><td>Frequency to check and release excess worker threads 0. </td></tr>
 <a name='address'></a>
    <tr><td nowrap align='center'> get </td><td>address</td><td><a href='String.html'>String</a></td><td>Get the local IP address bound to this socket. </td></tr>
 <a name='async'></a>
@@ -283,7 +283,7 @@ server.listen("80")</pre></dd></dl>
 Request and HttpServer objects into the worker VM.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr><tr class='param'><td class='param'>worker: <a href='Worker.html'>Worker</a> </td><td>Worker to handle the request.</td></tr></table></dd>
+<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr><tr class='param'><td class='param'>worker: <a href='Worker.html'>Worker</a> </td><td>Worker to handle the request H.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -306,7 +306,8 @@ Request and HttpServer objects into the worker VM.</dd></dl>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Prune idle worker threads. This will release cached worker interpreters and reduce memory footprint. 
 After calling, the next request will be a little slower as it will need to recreate a worker interpreter.
-This is normally run every PrunePeriod. It may be also be called manually at any time.</dd></dl>
+This is normally run every PrunePeriod. It may be also be called manually at any time.
+(.</dd></dl>
 </div>
 </div>
 <hr />
@@ -328,7 +329,7 @@ will return immediately.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Define the Secure Sockets Layer (SSL) protocol credentials. This must be done before calling <a href='#listen'>listen</a>. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>keyFile: <a href='Path.html'>Path</a> </td><td>Path of the file containing the server's private key. This file contains the PEM encoded private key file for the server. Set to null if the private key is combined with  the certificate file. If the private key is encrypted, you will be prompted at the console to enter the  pass-phrase to decript the private key on system reboot. There is a delima here. If you use a crypted  private key, the server will pause until you enter the pass-phrase which makes headless operation impossible.  If you do not encrypt the private key, your private key is more vulnerable should the server be compromised.  Which option you choose depends on whether headless operation is essential or not.</td></tr><tr class='param'><td class='param'>certFile: <a href='Path.html'>Path</a> </td><td>Path of the file containing the SSL certificate The certificate file contains the PEM encoded X.509 certificate for the server. The file may also contain  the private key in which case you should set the key parameter to null. The path may be an absolute path or it may be relative to the ServerRoot.</td></tr><tr class='param'><td class='param'>protocols: <a href='Array.html'>Array</a> </td><td>Optional arary of SSL protocols to support. Select from: SSLv2, SSLv3, TLSv1, ALL.  Each protocol can be prefixed by "+" or "-" to add or subtract from the prior set. For example: ["ALL", "-SSLv2"], or ["SSLv3", "TLSv1"] or "[ALL]". [default: null]</td></tr><tr class='param'><td class='param'>ciphers: <a href='Array.html'>Array</a> </td><td>Optional array of ciphers to use when negotiating the SSL connection. Not yet supported. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>keyFile: <a href='Path.html'>Path</a> </td><td>Path of the file containing the server's private key. This file contains the PEM encoded private key file for the server. Set to null if the private key is combined with  the certificate file. If the private key is encrypted, you will be prompted at the console to enter the  pass-phrase to decript the private key on system reboot. There is a delima here. If you use a crypted  private key, the server will pause until you enter the pass-phrase which makes headless operation impossible.  If you do not encrypt the private key, your private key is more vulnerable should the server be compromised.  Which option you choose depends on whether headless operation is essential or not.</td></tr><tr class='param'><td class='param'>certFile: <a href='Path.html'>Path</a> </td><td>Path of the file containing the SSL certificate The certificate file contains the PEM encoded X.509 certificate for the server. The file may also contain  the private key in which case you should set the key parameter to null. The path may be an absolute path or it may be relative to the ServerRoot.</td></tr><tr class='param'><td class='param'>protocols: <a href='Array.html'>Array</a> </td><td>Optional arary of SSL protocols to support. Select from: SSLv2, SSLv3, TLSv1, ALL.  Each protocol can be prefixed by "+" or "-" to add or subtract from the prior set. For example: ["ALL", "-SSLv2"], or ["SSLv3", "TLSv1"] or "[ALL]".X [default: null]</td></tr><tr class='param'><td class='param'>ciphers: <a href='Array.html'>Array</a> </td><td>Optional array of ciphers to use when negotiating the SSL connection. Not yet supported. [default: null]</td></tr></table></dd>
 </dl><dl><dt>Throws</dt><dd>
 <a href='ArgError.html'>ArgError</a>: for invalid arguments
 </dd>
@@ -375,7 +376,7 @@ filtered or transmuted by filter stages. A communications connector is responsib
 the network.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>incoming: <a href='Array.html'>Array</a> </td><td>Array of stages for the incoming pipeline: default: ["chunk", "range", "upload"].</td></tr><tr class='param'><td class='param'>outgoing: <a href='Array.html'>Array</a> </td><td>Array of stages for the outgoing pipeline: default: ["auth", "range", "chunk"].</td></tr><tr class='param'><td class='param'>connector: <a href='String.html'>String</a> </td><td>Network connector to use for I/O. Defaults to the network connector "net". Other values: "send". The "net" connector transparently upgrades to the "send" connector if transmitting static data and  not using SSL, ranged or chunked transfers.</td></tr></table></dd>
+<tr class='param'><td class='param'>incoming: <a href='Array.html'>Array</a> </td><td>Array of stages for the incoming pipeline: default: ["chunk", "range", "upload"].</td></tr><tr class='param'><td class='param'>outgoing: <a href='Array.html'>Array</a> </td><td>Array of stages for the outgoing pipeline: default: ["auth", "range", "chunk"].</td></tr><tr class='param'><td class='param'>connector: <a href='String.html'>String</a> </td><td>Network connector to use for I/O. Defaults to the network connector "net". Other values: "send". The "net" connector transparently upgrades to the "send" connector if transmitting static data and  not using SSL, ranged or chunked transfers. `.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

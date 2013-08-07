@@ -46,7 +46,7 @@ infrastructure including firewalls and proxies.</p>
 <a name='CLOSED'></a>
    <tr><td nowrap align='center'> static const </td><td>CLOSED</td><td>&nbsp;</td><td>The <a href='#readyState'>readyState</a> value when the WebSockets connection is closed. </td></tr>
 <a name='CLOSING'></a>
-   <tr><td nowrap align='center'> static const </td><td>CLOSING</td><td>&nbsp;</td><td>The <a href='#readyState'>readyState</a> value when a closing handshake has commenced. </td></tr>
+   <tr><td nowrap align='center'> static const </td><td>CLOSING</td><td>&nbsp;</td><td>The <a href='#readyState'>readyState</a> value when a closing handshake has commenced (. </td></tr>
 <a name='CONNECTING'></a>
    <tr><td nowrap align='center'> static const </td><td>CONNECTING</td><td>&nbsp;</td><td>The <a href='#readyState'>readyState</a> value while waiting for the WebSockets open handshake to complete with the peer. </td></tr>
 <a name='OPEN'></a>
@@ -70,7 +70,7 @@ infrastructure including firewalls and proxies.</p>
 creating the <a href='#WebSocket'>WebSocket</a>. </td></tr>
 <a name='readyState'></a>
    <tr><td nowrap align='center'> get </td><td>readyState</td><td><a href='Number.html'>Number</a></td><td>The readystate value. This value can be compared with the WebSocket constants: 
-<a href='#CONNECTING'>CONNECTING</a> = 0, <a href='#OPEN'>OPEN</a> = 1, <a href='#CLOSING'>CLOSING</a> = 2, <a href='#CLOSED'>CLOSED</a> = 3.</td></tr>
+<a href='#CONNECTING'>CONNECTING</a> = 0, <a href='#OPEN'>OPEN</a> = 1, <a href='#CLOSING'>CLOSING</a> = 2, <a href='#CLOSED'>CLOSED</a> = 3.X</td></tr>
 <a name='url'></a>
    <tr><td nowrap align='center'> get </td><td>url</td><td><a href='Uri.html'>Uri</a></td><td>The URI provided to the constructor. </td></tr>
 </table>
@@ -94,7 +94,7 @@ creating the <a href='#WebSocket'>WebSocket</a>. </td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#WebSocket'><b>WebSocket</b></a>(uri: <a href='Uri.html'>Uri</a>, protocols = null, options = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new WebSocket and connect to the server using the supplied URI.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#close'><b>close</b></a>(code: <a href='Number.html'>Number</a> = 1000, reason: <a href='String.html'>String</a> = ): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a close message and close the web socket connection.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#send'><b>send</b></a>(content: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send data with the request.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#sendBlock'><b>sendBlock</b></a>(content, options): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>null</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#sendBlock'><b>sendBlock</b></a>(content, options): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a block of data with options to control message framing.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#wait'><b>wait</b></a>(state: <a href='Number.html'>Number</a>, timeout: <a href='Number.html'>Number</a> = -1): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Wait for the WebSocket to achieve a desired state.</td></tr>
 </table>
 
@@ -115,7 +115,7 @@ creating the <a href='#WebSocket'>WebSocket</a>. </td></tr>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>certificate</td><td>Path|String Optional path to file containing certificates to validate the  server certificate.</td></tr>
 <td class='param'>verify</td><td>Boolean Set to true to verify the server certificate.  The certificate is verified and the issuer chain is verified. Defaults to true. Set to false to accept a self-signed certificate.</td></tr>
-<td class='param'>frames</td><td>Preserve individual message frames to onmessage.</td></tr>
+<td class='param'>frames</td><td>Preserve individual message frames to onmessage. P.</td></tr>
 </table></dd>
 </dl></div>
 </div>
@@ -141,6 +141,23 @@ creating the <a href='#WebSocket'>WebSocket</a>. </td></tr>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>content: <a href='Array.html'>Array</a> </td><td>Data to send with the request. If the content is a ByteArray, the message will be sent as a WebSocket Binary message. Otherwise, the message is converted to a String and sent as a WebSockets UTF-8 Text message. If multiple arguments are provided, each is sent as a separate message.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='sendBlock'></a>
+<div class='api'>
+<div class='apiSig'>    sendBlock(content, options): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Send a block of data with options to control message framing. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>options </td><td>null</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>more</td><td>Set to false for the last frame in a message. If omitted, assumed to be true.</td></tr>
+<td class='param'>type</td><td>Message type. Masked to the valid WebSockets message types.</td></tr>
+</table></dd>
 </dl></div>
 </div>
 <hr />

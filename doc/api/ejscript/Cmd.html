@@ -43,7 +43,8 @@ and buffered.</td></tr>
 started or the command has called <a href='#close'>close</a> the call with throw an exception.</td></tr>
 <a name='response'></a>
    <tr><td nowrap align='center'> get </td><td>response</td><td><a href='String.html'>String</a></td><td>Command output data as a string. This is an alias for <a href='#readString'>readString()</a> but it will cache the 
-output data and may be called multiple times. This reads from the command's standard output.</td></tr>
+output data and may be called multiple times. This reads from the command's standard output.
+0.</td></tr>
 <a name='status'></a>
    <tr><td nowrap align='center'> get </td><td>status</td><td><a href='Number.html'>Number</a></td><td>Get the command exit status. This command will block until the command has completed. Use wait(0) to 
 test if the command has completed.</td></tr>
@@ -190,7 +191,7 @@ signify the end of write data.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Locate a program using the application PATH. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>program: <a href='Path.html'>Path</a> </td><td>Program to find.</td></tr><tr class='param'><td class='param'>search </td><td>Optional additional search paths to use before using PATH. [default: expression]</td></tr></table></dd>
+<tr class='param'><td class='param'>program: <a href='Path.html'>Path</a> </td><td>Program to find.X</td></tr><tr class='param'><td class='param'>search </td><td>Optional additional search paths to use before using PATH. [default: expression]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>Located path or null.</dd></dl>
 </div>
@@ -209,7 +210,7 @@ signify the end of write data.</dd></dl>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>readable</td><td>Issued when the stream becomes readable.</td></tr>
 <td class='param'>writable</td><td>Issued when the stream becomes writable.</td></tr>
-<td class='param'>close</td><td>Issued when stream is being closed.</td></tr>
+<td class='param'>close</td><td>Issued when stream is being closed. 8.</td></tr>
 <td class='param'>writable</td><td>Issued when the command can accept more write data.</td></tr>
 <td class='param'>complete</td><td>Issued when the command completes.</td></tr>
 <td class='param'>error</td><td>Issued if the <a href='#error'>error</a> stream is readable.  All events are called with the signature: function (event: String, cmd: Cmd): Void.</td></tr>
@@ -232,7 +233,7 @@ In this case a "readable" event will be issued when data is available for readin
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>readable</td><td>Issued when there is new read data available.</td></tr>
-<td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes empty. `.X.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A count of the bytes actually read. Returns null on EOF or errors.</dd></dl>

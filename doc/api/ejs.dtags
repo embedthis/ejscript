@@ -2683,13 +2683,6 @@
       <anchor>a7e4e8ff559929be043392447d0596b2a</anchor>
       <arglist></arglist>
     </member>
-    <member kind="variable">
-      <type>MprNumber *</type>
-      <name>value</name>
-      <anchorfile>struct_ejs_slot.html</anchorfile>
-      <anchor>a3fc55ddafbcfa9434c8ad9f053905961</anchor>
-      <arglist></arglist>
-    </member>
   </compound>
   <compound kind="struct">
     <name>EjsState</name>

@@ -184,7 +184,7 @@ MOB - review?. </dd></dl>
 the input form will be submitted.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name: <a href='String.html'>String</a> </td><td>Name for the input button. This defines the HTML element name and provides the source of the initial value to display.</td></tr><tr class='param'><td class='param'>label: <a href='String.html'>String</a> </td><td>Text label to display in the button and value to send when the form is submitted.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional extra options. See <a href='#View'>View</a> for a list of the standard options. Examples: button("commit", "OK") button("commit", "Cancel"). [default: expression]</td></tr></table></dd>
+<tr class='param'><td class='param'>name: <a href='String.html'>String</a> </td><td>Name for the input button. This defines the HTML element name and provides the source of the initial value to display.</td></tr><tr class='param'><td class='param'>label: <a href='String.html'>String</a> </td><td>Text label to display in the button and value to send when the form is submitted.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional extra options. See <a href='#View'>View</a> for a list of the standard options. Examples: button("commit", "OK") button("commit", "Cancel") X. [default: expression]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -300,7 +300,7 @@ a dynamically refreshing division.</dd></dl>
 <tr class='param'><td class='param'>kinds: <a href='Object.html'>Object</a> </td><td>Kinds of flash messages to display. May be a single string  ("error", "inform", "message", "warning"), an array of strings or null. If set to null (or omitted),  then all flash messages will be displayed. [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional extra options. See <a href='#View'>View</a> for a list of the standard options. [default: expression]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
-<td class='param'>retain</td><td>Number. Number of seconds to retain the message. If <= 0, the message is retained until another message is displayed. Default is 0. MOB - this default implies it is displayed for zero seconds.</td></tr>
+<td class='param'>retain</td><td>Number. Number of seconds to retain the message. If <= 0, the message is retained until another message is displayed. Default is 0. MOB - this default implies it is displayed for zero seconds.X</td></tr>
 </table></dd>
 </dl><dl><dt>Example</dt>
 <dd><pre>&lt;% flash("status") %&gt;
@@ -319,10 +319,10 @@ This token will automatically be included when the form is submitted and will be
 receiving Controller. To disable this functionality, set options.nosecurity to true. This security token
 will be generated once for the view and the same token will be used by all forms on the view page. To use
 security tokens outside a form, you need to manually call <a href='#securityToken'>securityToken</a> in the &lt;head> section of the page.<br/><br/>MOB -- much more doc here
-- Talk about controllers updating the record.</dd></dl>
+- Talk about controllers updating the record.X</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>record: <a href='Object.html'>Object</a> </td><td>Record to display and optionally update.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional extra options. See <a href='#View'>View</a> for a list of the standard options. [default: expression]</td></tr></table></dd>
+<tr class='param'><td class='param'>record: <a href='Object.html'>Object</a> </td><td>Record to display and optionally update.X</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional extra options. See <a href='#View'>View</a> for a list of the standard options. [default: expression]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>hideErrors</td><td>Don't display model errors. Models retain error diagnostics from a failed write. Setting this option will prevent their display.</td></tr>
@@ -341,7 +341,7 @@ security tokens outside a form, you need to manually call <a href='#securityToke
 <dl><dt>Description</dt></dd><dd>Get the data value for presentation. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>value: <a href='Object.html'>Object</a> </td><td>Data to present.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Formatting options.</td></tr></table></dd>
+<tr class='param'><td class='param'>value: <a href='Object.html'>Object</a> </td><td>Data to present.X</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Formatting options.</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>formatter</td><td>Optional data formatter. If undefined, defaults to a basic formatter based on the value's data type.</td></tr>
@@ -428,10 +428,10 @@ port components.</dd></dl>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>scheme</td><td>String URI scheme portion.</td></tr>
-<td class='param'>host</td><td>String URI host portion.</td></tr>
+<td class='param'>host</td><td>String URI host portion.X.</td></tr>
 <td class='param'>port</td><td>Number URI port number.</td></tr>
-<td class='param'>path</td><td>String URI path portion.</td></tr>
-<td class='param'>reference</td><td>String URI path reference. Does not include "#".</td></tr>
+<td class='param'>path</td><td>String URI path portion.X.</td></tr>
+<td class='param'>reference</td><td>String URI path reference. Does not include "#".X.</td></tr>
 <td class='param'>query</td><td>String URI query parameters. Does not include "?".</td></tr>
 <td class='param'>controller</td><td>String Controller name if using a Controller-based route. This can also be specified via the action option.</td></tr>
 <td class='param'>action</td><td>String Action to invoke. This can be a URI string or a Controller action of the form.</td></tr>
@@ -765,7 +765,8 @@ a dynamically refreshing division.</dd></dl>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>viewPath </td><td>(String|Object) If a string, it is a view template name or the name of an action. If an object, it should have properties: controller and action. Action can be the name of a view template.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional extra options. See <a href='#View'>View</a> for a list of the standard options. [default: expression]</td></tr></table></dd>
 </dl><dl><dt>Example</dt>
-<dd><pre>&lt;% view(viewName) %&gt;</pre></dd></dl>
+<dd><pre>&lt;% view(viewName) %&gt;
+@</pre></dd></dl>
 </div>
 </div>
 <hr />
@@ -778,7 +779,8 @@ a dynamically refreshing division.</dd></dl>
 If writing more data than the stream can absorb in sync mode, the call will block until the data is written.
 If writing more data than the stream can absorb in async mode, the call will not block and will buffer the
 data and return immediately. Some streams will require a <a href='#flush'>flush()</a> call to actually send the data.
-A "writable" event will be issued when the stream can again absorb more data.This will buffer the written data until either flush() or finalize() is called.</dd></dl>
+A "writable" event will be issued when the stream can again absorb more data.This will buffer the written data until either flush() or finalize() is called. 
+0</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>data: <a href='Array.html'>Array</a> </td><td>Data to write.</td></tr></table></dd>
@@ -803,7 +805,7 @@ A "writable" event will be issued when the stream can again absorb more data.Thi
 <dl><dt>Description</dt></dd><dd>Write safely. Write HTML escaped data back to the client.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>data: <a href='Array.html'>Array</a> </td><td>Objects to HTML encode and write back to the client.</td></tr></table></dd>
+<tr class='param'><td class='param'>data: <a href='Array.html'>Array</a> </td><td>Objects to HTML encode and write back to the client. 0.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

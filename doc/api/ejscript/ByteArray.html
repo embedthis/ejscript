@@ -51,16 +51,18 @@ function callback(event: String, ba: ByteArray): Void.</p>
 <a name='BigEndian'></a>
    <tr><td nowrap align='center'> static const </td><td>BigEndian</td><td><a href='Number.html'>Number</a></td><td>Big endian byte order used for the <a href='#endian'>endian</a> property. </td></tr>
 <a name='LittleEndian'></a>
-   <tr><td nowrap align='center'> static const </td><td>LittleEndian</td><td><a href='Number.html'>Number</a></td><td>Little endian byte order used for the <a href='#endian'>endian</a> property. </td></tr>
+   <tr><td nowrap align='center'> static const </td><td>LittleEndian</td><td><a href='Number.html'>Number</a></td><td>Little endian byte order used for the <a href='#endian'>endian</a> property
+0. </td></tr>
 <a name='MD5'></a>
-   <tr><td nowrap align='center'> get </td><td>MD5</td><td><a href='String.html'>String</a></td><td>An MD5 checksum for the buffer contents. </td></tr>
+   <tr><td nowrap align='center'> get </td><td>MD5</td><td><a href='String.html'>String</a></td><td>An MD5 checksum for the buffer contents
+(. </td></tr>
 <a name='async'></a>
    <tr><td nowrap align='center'> get set </td><td>async</td><td><a href='Boolean.html'>Boolean</a></td><td>The current async mode. Set to true if the stream is in async mode.</td></tr>
 <a name='encoding'></a>
    <tr><td nowrap align='center'> get set </td><td>encoding</td><td><a href='String.html'>String</a></td><td>Current encoding scheme for serializing strings. The default encoding is "utf-8". Set to "" for no encoding.
 If no encoding, string character points are stored as a pairs of two byte in little-endian format.</td></tr>
 <a name='endian'></a>
-   <tr><td nowrap align='center'> get set </td><td>endian</td><td><a href='Number.html'>Number</a></td><td>Current byte ordering for storing and retrieving numbers. Set to either LittleEndian or BigEndian.</td></tr>
+   <tr><td nowrap align='center'> get set </td><td>endian</td><td><a href='Number.html'>Number</a></td><td>Current byte ordering for storing and retrieving numbers. Set to either LittleEndian or BigEndian.X</td></tr>
 <a name='length'></a>
    <tr><td nowrap align='center'> get </td><td>length</td><td><a href='Number.html'>Number</a></td><td>Number of bytes that are currently available for reading. This consists of the bytes available
 from the current <a href='#readPosition'>readPosition</a> up to the current writePosition. To get the total size of the ByteArray
@@ -75,7 +77,7 @@ use <a href='#size'>size</a>. </td></tr>
    <tr><td nowrap align='center'> get </td><td>size</td><td><a href='Number.html'>Number</a></td><td>Size of the byte array. This is not the amount of read or write data, but is the size of the total 
 array storage. Use <a href='#length'>length</a> to get the amount of data between the read and write positions.</td></tr>
 <a name='writePosition'></a>
-   <tr><td nowrap align='center'> get set </td><td>writePosition</td><td><a href='Number.html'>Number</a></td><td>Current <a href='#writePosition'>writePosition</a> offset. </td></tr>
+   <tr><td nowrap align='center'> get set </td><td>writePosition</td><td><a href='Number.html'>Number</a></td><td>Current <a href='#writePosition'>writePosition</a> offset. 8.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
@@ -103,7 +105,7 @@ array storage. Use <a href='#length'>length</a> to get the amount of data betwee
    <tr class='apiDef'><td class='apiType'>iterator override </td><td><a href='#get'><b>get</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Iterator for this array to be used by "for (v in array)".</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator override </td><td><a href='#getValues'><b>getValues</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Iterator for this array to be used by "for each (v in array)".</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#off'><b>off</b></a>(name: <a href='Object.html'>Object</a>, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#on'><b>on</b></a>(name: <a href='Object.html'>Object</a>, observer: <a href='Function.html'>Function</a>): <a href='ByteArray.html'>ByteArray</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#on'><b>on</b></a>(name: <a href='Object.html'>Object</a>, observer: <a href='Function.html'>Function</a>): <a href='ByteArray.html'>ByteArray</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.H.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ByteArray.html'>ByteArray</a>, offset: <a href='Number.html'>Number</a> = 0, count: <a href='Number.html'>Number</a> = -1): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.Data is read from the current read <a href='#position'>position</a> pointer toward the current <a href='#writePosition'>writePosition</a>. </td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readBoolean'><b>readBoolean</b></a>(): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a boolean from the array.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readByte'><b>readByte</b></a>(): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a byte from the array.</td></tr>
@@ -173,7 +175,7 @@ Data is written at the destOffset index. This call does not issue events unless 
 for the incoming data ("readable" event).</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>destOffset: <a href='Number.html'>Number</a> </td><td>Index in the destination byte array to copy the data to.</td></tr><tr class='param'><td class='param'>src: <a href='ByteArray.html'>ByteArray</a> </td><td>Source byte array containing the data elements to copy.</td></tr><tr class='param'><td class='param'>srcOffset: <a href='Number.html'>Number</a> </td><td>Location in the source buffer from which to copy the data. Defaults to the start. [default: 0]</td></tr><tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>Number of bytes to copy. Set to -1 to read all the src buffer. [default: -1]</td></tr></table></dd>
+<tr class='param'><td class='param'>destOffset: <a href='Number.html'>Number</a> </td><td>Index in the destination byte array to copy the data to.X</td></tr><tr class='param'><td class='param'>src: <a href='ByteArray.html'>ByteArray</a> </td><td>Source byte array containing the data elements to copy.</td></tr><tr class='param'><td class='param'>srcOffset: <a href='Number.html'>Number</a> </td><td>Location in the source buffer from which to copy the data. Defaults to the start. [default: 0]</td></tr><tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>Number of bytes to copy. Set to -1 to read all the src buffer. [default: -1]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>The number of bytes written into the array. If the array is not resizable and there is insufficient room, this may be less than the requested amount.</dd></dl>
 </div>
@@ -241,7 +243,7 @@ read and write positions. This call does not issue events.</dd></dl>
 <div class='apiSig'>    on(name: <a href='Object.html'>Object</a>, observer: <a href='Function.html'>Function</a>): <a href='ByteArray.html'>ByteArray</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Add an observer to the stream for the named events. </dd></dl>
+<dl><dt>Description</dt></dd><dd>Add an observer to the stream for the named events.H. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>name: <a href='Object.html'>Object</a> </td><td>Name of the event to listen for. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='Function.html'>Function</a> </td><td>Callback observer function. The function is called with the following signature: function observer(event: String, ...args): Void.</td></tr></table></dd>
@@ -249,7 +251,7 @@ read and write positions. This call does not issue events.</dd></dl>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>readable</td><td>Issued when the stream becomes readable.</td></tr>
 <td class='param'>writable</td><td>Issued when the stream becomes writable.</td></tr>
-<td class='param'>close</td><td>Issued when stream is being closed.</td></tr>
+<td class='param'>close</td><td>Issued when stream is being closed. 8.</td></tr>
 </table></dd>
 </dl></div>
 </div>
@@ -272,7 +274,7 @@ one past the last byte read.</dd></dl>
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>readable</td><td>Issued when there is new read data available.</td></tr>
-<td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes empty. `.X.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A count of the bytes actually read. Returns null on EOF or errors.</dd></dl>
@@ -369,7 +371,7 @@ If insufficient data, a "write" event will be issued indicating that the byte ar
 writable.  This enables observers to write data into the byte array.  If there is no data available, the call 
 will return return null indicating EOF.</dd></dl>
 <dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature EOF.
+<a href='IOError.html'>IOError</a>: if an I/O error occurs or premature EOF. 0
 </dd>
 </dl></div>
 </div>
@@ -419,7 +421,7 @@ available, the call will return return null indicating EOF. If there is insuffic
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Read an XML document from the array. Data is read from the current read <a href='#position'>position</a> pointer.</dd></dl>
 <dl><dt>Returns</dt>
-<dd>An XML document.</dd></dl>
+<dd>An XML document.X</dd></dl>
 <dl><dt>Throws</dt><dd>
 <a href='IOError.html'>IOError</a>: if an I/O error occurs or a premature end of file.
 </dd>
@@ -459,7 +461,8 @@ A "writable" event will be issued when the stream can again absorb more data.Dat
 from the byte array will be copied, ie. the <a href='#data'>data</a> byte array will not have its readPosition adjusted. If the 
 byte array is resizable, the underlying data storage will grow to accomodate written data. If the data will not
 fit in the ByteArray, the call may return having only written a portion of the data.
-When strings are written, they are not null terminated.</dd></dl>
+When strings are written, they are not null terminated.
+0</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>data: <a href='Array.html'>Array</a> </td><td>Data to write.</td></tr></table></dd>

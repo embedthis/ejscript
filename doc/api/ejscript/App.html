@@ -65,10 +65,12 @@ Set the standard error stream. Changing the error stream will close and reopen s
 <a name='log'></a>
    <tr><td nowrap align='center'> static </td><td>log</td><td><a href='Logger.html'>Logger</a></td><td>Application logger. This singleton object respresents the Application default logger.
 If the ejsrc startup configuration file defines a log.location field, the log logger will send messages to
-the defined location. Otherwise, messages will be sent to the MprLog stream.</td></tr>
+the defined location. Otherwise, messages will be sent to the MprLog stream. 
+(.</td></tr>
 <a name='mprLog'></a>
    <tr><td nowrap align='center'> static </td><td>mprLog</td><td><a href='MprLog.html'>MprLog</a></td><td>Application MPR log object. This singleton object represents the Application log file specified via the
---log command line switch.</td></tr>
+--log command line switch.
+0.</td></tr>
 <a name='name'></a>
    <tr><td nowrap align='center'> static </td><td>name</td><td><a href='String.html'>String</a></td><td>Application name. Single word, lower-case name for the application. This is initialized to the name of
 the script or "ejs" if running interactively.</td></tr>

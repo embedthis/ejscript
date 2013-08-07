@@ -36,7 +36,8 @@ provider such as ByteArray, File, Http or Socket. The underlying stream must be 
 <table class='itemTable' summary='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
 <a name='BigEndian'></a>
-   <tr><td nowrap align='center'> static const </td><td>BigEndian</td><td><a href='Number.html'>Number</a></td><td>Big endian byte order. </td></tr>
+   <tr><td nowrap align='center'> static const </td><td>BigEndian</td><td><a href='Number.html'>Number</a></td><td>Big endian byte order 
+0. </td></tr>
 <a name='LittleEndian'></a>
    <tr><td nowrap align='center'> static const </td><td>LittleEndian</td><td><a href='Number.html'>Number</a></td><td>Little endian byte order. </td></tr>
 <a name='async'></a>
@@ -68,10 +69,10 @@ in the binary stream and does not include any data buffered downstream.</td></tr
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#BinaryStream'><b>BinaryStream</b></a>(stream: <a href='Stream.html'>Stream</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new BinaryStream.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#close'><b>close</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#flush'><b>flush</b></a>(dir: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#off'><b>off</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#flush'><b>flush</b></a>(dir: <a href='Number.html'>Number</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#off'><b>off</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.8.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='BinaryStream.html'>BinaryStream</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ByteArray.html'>ByteArray</a>, offset: <a href='Number.html'>Number</a>, count: <a href='Number.html'>Number</a> = -1): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ByteArray.html'>ByteArray</a>, offset: <a href='Number.html'>Number</a> = 0, count: <a href='Number.html'>Number</a> = -1): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.`.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readBoolean'><b>readBoolean</b></a>(): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a boolean from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readByte'><b>readByte</b></a>(): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a byte from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readDate'><b>readDate</b></a>(): <a href='Date.html'>Date</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a date from the stream.</td></tr>
@@ -120,7 +121,7 @@ in the binary stream and does not include any data buffered downstream.</td></tr
 <hr />
 <a name='flush'></a>
 <div class='api'>
-<div class='apiSig'>    flush(dir: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>    flush(dir: <a href='Number.html'>Number</a> = expression): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Flush the stream and underlying streams. A supplied flush <a href='#direction'>direction</a> argument modifies the effect of this call.
@@ -130,7 +131,7 @@ sync mode, this call will block until all data is written. If the stream is in a
 to write all data but will return immediately. Defaults to Stream.WRITE.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>dir: <a href='Number.html'>Number</a> </td><td>Direction to flush. Set to <a href='#READ'>READ</a> <a href='#WRITE'>WRITE</a> or <a href='#BOTH'>BOTH</a>.</td></tr></table></dd>
+<tr class='param'><td class='param'>dir: <a href='Number.html'>Number</a> </td><td>Direction to flush. Set to <a href='#READ'>READ</a> <a href='#WRITE'>WRITE</a> or <a href='#BOTH'>BOTH</a>. [default: expression]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -139,7 +140,7 @@ to write all data but will return immediately. Defaults to Stream.WRITE.</dd></d
 <div class='apiSig'>    off(name, observer: <a href='Function.html'>Function</a>): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Remove an observer from the stream. </dd></dl>
+<dl><dt>Description</dt></dd><dd>Remove an observer from the stream.8. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>name </td><td>Event name previously used with observe. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='Function.html'>Function</a> </td><td>Observer function previously used with observe.</td></tr></table></dd>
@@ -159,27 +160,27 @@ to write all data but will return immediately. Defaults to Stream.WRITE.</dd></d
 <dd><table class='parameters' summary ='events'>
 <td class='param'>readable</td><td>Issued when the stream becomes readable.</td></tr>
 <td class='param'>writable</td><td>Issued when the stream becomes writable.</td></tr>
-<td class='param'>close</td><td>Issued when stream is being closed.</td></tr>
+<td class='param'>close</td><td>Issued when stream is being closed. 8.</td></tr>
 </table></dd>
 </dl></div>
 </div>
 <hr />
 <a name='read'></a>
 <div class='api'>
-<div class='apiSig'>    read(buffer: <a href='ByteArray.html'>ByteArray</a>, offset: <a href='Number.html'>Number</a>, count: <a href='Number.html'>Number</a> = -1): <a href='Number.html'>Number</a>
+<div class='apiSig'>    read(buffer: <a href='ByteArray.html'>ByteArray</a>, offset: <a href='Number.html'>Number</a> = 0, count: <a href='Number.html'>Number</a> = -1): <a href='Number.html'>Number</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Read a data from the stream. If data is available, the call will return immediately. 
+<dl><dt>Description</dt></dd><dd>Read a data from the stream.`. If data is available, the call will return immediately. 
 If no data is available and the stream is in sync mode, the call will block until data is available.
 If no data is available and the stream is in async mode, the call will not block and will return immediately.
 In this case a "readable" event will be issued when data is available for reading.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>buffer: <a href='ByteArray.html'>ByteArray</a> </td><td>Destination byte array for read data.</td></tr><tr class='param'><td class='param'>offset: <a href='Number.html'>Number</a> </td><td>Offset in the byte array to place the data. If the offset is -1, then data is appended to the buffer write <a href='#position'>position</a> which is then updated. If offset is >= 0, the data is read  to the offset and the read pointer is set to the offset and the write pointer to one past the end of  the data just read.</td></tr><tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>Read up to this number of bytes. If -1, read as much as the buffer will hold up. If the  stream is of fixed and known length (such as a file) and the buffer is of sufficient size or is growable,  read the entire stream. If the buffer is of a fixed size, ready only what will fit into the buffer. [default: -1]</td></tr></table></dd>
+<tr class='param'><td class='param'>buffer: <a href='ByteArray.html'>ByteArray</a> </td><td>Destination byte array for read data.</td></tr><tr class='param'><td class='param'>offset: <a href='Number.html'>Number</a> </td><td>Offset in the byte array to place the data. If the offset is -1, then data is appended to the buffer write <a href='#position'>position</a> which is then updated. If offset is >= 0, the data is read  to the offset and the read pointer is set to the offset and the write pointer to one past the end of  the data just read. [default: 0]</td></tr><tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>Read up to this number of bytes. If -1, read as much as the buffer will hold up. If the  stream is of fixed and known length (such as a file) and the buffer is of sufficient size or is growable,  read the entire stream. If the buffer is of a fixed size, ready only what will fit into the buffer. [default: -1]</td></tr></table></dd>
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>readable</td><td>Issued when there is new read data available.</td></tr>
-<td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes empty. `.X.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A count of the bytes actually read. Returns null on EOF or errors.</dd></dl>
@@ -294,7 +295,7 @@ In this case a "readable" event will be issued when data is available for readin
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Read an XML document from the stream. This assumes the XML document will be the only data until EOF.</dd></dl>
 <dl><dt>Returns</dt>
-<dd>An XML document.</dd></dl>
+<dd>An XML document.X</dd></dl>
 <dl><dt>Throws</dt><dd>
 <a href='IOError.html'>IOError</a>: if an I/O error occurs or premature EOF
 </dd>
@@ -324,6 +325,10 @@ array, each element of the array will be written.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>items: <a href='Array.html'>Array</a> </td><td>Data items to write. The ByteStream class intelligently encodes various data types according  to the current setting of the <a href='#endian'>endian</a> property.</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>0</td><td>Ytes that were written.             @throws IOError if there is an I/O error.             @event           0.</td></tr>
+</table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>The total number of bytes that were written.</dd></dl>
 <dl><dt>Throws</dt><dd>

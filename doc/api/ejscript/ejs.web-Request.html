@@ -18,7 +18,8 @@
    <tr><td><strong>Module</strong></td><td>ejs.web</td></tr>
    <tr><td><strong>Definition</strong></td><td>dynamic  class Request</td></tr>
    <tr><td><strong>Inheritance</strong></td><td>Request <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.3</td></tr>
-<tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
+<tr><td><strong>Stability</strong></td><td>Prototype
+8.</td></tr>
        </td></tr>
 </table>
 
@@ -51,7 +52,8 @@ See <a href='#home'>home</a> to get a relative Uri.</td></tr>
 This field is read-only.</td></tr>
 <a name='authType'></a>
    <tr><td nowrap align='center'> </td><td>authType</td><td><a href='String.html'>String</a></td><td>Authentication method if authorization is being used (basic or digest). Set to null if not using authentication. 
-This field is read-only.</td></tr>
+This field is read-only.
+0.</td></tr>
 <a name='authUser'></a>
    <tr><td nowrap align='center'> </td><td>authUser</td><td><a href='String.html'>String</a></td><td>Authentication user name. This property is set to the value of the authentication user header. Set to null if
 not yet defined.
@@ -73,7 +75,8 @@ Body data is readable by using <a href='#read'>read()</a> or by using the reques
    <tr><td nowrap align='center'> </td><td>contentType</td><td><a href='String.html'>String</a></td><td>The request content type as specified by the "Content-Type" Http request header. This is set to null 
 if not defined. This is the content type of the request body content sent with the request.</td></tr>
 <a name='controller'></a>
-   <tr><td nowrap align='center'> </td><td>controller</td><td><a href='ejs.web-Controller.html'>Controller</a></td><td>Associated Controller object. Set to null if no associated controller.</td></tr>
+   <tr><td nowrap align='center'> </td><td>controller</td><td><a href='ejs.web-Controller.html'>Controller</a></td><td>Associated Controller object. Set to null if no associated controller.
+8.</td></tr>
 <a name='cookies'></a>
    <tr><td nowrap align='center'> </td><td>cookies</td><td><a href='Object.html'>Object</a></td><td>Cookie headers. Cookies are sent by the client browser via the Set-Cookie Http header. They are typically 
 used used to specify the session state. If sessions are being used, an Ejscript session cookie will be 
@@ -86,7 +89,8 @@ it is set to the document root directory specified when the HttpServer was insta
    <tr><td nowrap align='center'> </td><td>env</td><td><a href='Object.html'>Object</a></td><td>Storage for middleware specific state. Added for JSGI compliance.</td></tr>
 <a name='errorMessage'></a>
    <tr><td nowrap align='center'> </td><td>errorMessage</td><td><a href='String.html'>String</a></td><td>Descriptive error message for the request. This message is defined internally by the Request if a request
-times out or has a communications error.</td></tr>
+times out or has a communications error.
+8.</td></tr>
 <a name='extension'></a>
    <tr><td nowrap align='center'> get </td><td>extension</td><td><a href='String.html'>String</a></td><td>The request pathInfo file extension. </td></tr>
 <a name='filename'></a>
@@ -133,7 +137,7 @@ protocol scheme.</td></tr>
 <a name='log'></a>
    <tr><td nowrap align='center'> </td><td>log</td><td><a href='Logger.html'>Logger</a></td><td>Logger object. Set to App.log. This is configured from the "log" section of the "ejsrc" config file.</td></tr>
 <a name='method'></a>
-   <tr><td nowrap align='center'> </td><td>method</td><td><a href='String.html'>String</a></td><td>Request HTTP method. String containing the Http method (DELETE | GET | POST | PUT | OPTIONS | TRACE).</td></tr>
+   <tr><td nowrap align='center'> </td><td>method</td><td><a href='String.html'>String</a></td><td>Request HTTP method. String containing the Http method (DELETE | GET | POST | PUT | OPTIONS | TRACE).X</td></tr>
 <a name='originalMethod'></a>
    <tr><td nowrap align='center'> </td><td>originalMethod</td><td><a href='String.html'>String</a></td><td>Original HTTP request method used by the client. If the method is overridden by including a "-ejs-method-" 
 parameter in a POST request or by defining an X-HTTP-METHOD-OVERRIDE Http header, the original method used by
@@ -143,7 +147,8 @@ not overridden, originalMethod will be null.</td></tr>
    <tr><td nowrap align='center'> </td><td>originalUri</td><td><a href='Uri.html'>Uri</a></td><td>The original request URI supplied by the client. This is the Uri path supplied by the client on the first
 line of the Http request. It is combined with the HttpServer scheme, host and port components to yield a 
 fully qualified URI. The "uri" property has fields for: scheme, host, port, path, query and reference.
-The "uri" property is read-only.</td></tr>
+The "uri" property is read-only.
+0.</td></tr>
 <a name='params'></a>
    <tr><td nowrap align='center'> </td><td>params</td><td><a href='Object.html'>Object</a></td><td>The request form parameters plus other routing parameters. The form parameters are www-url decoded from the POST request body data. See also <a href='#form'>form</a>. </td></tr>
 <a name='pathInfo'></a>
@@ -162,9 +167,10 @@ scriptName properties will not affect the pathInfo property.</td></tr>
    <tr><td nowrap align='center'> </td><td>reference</td><td><a href='String.html'>String</a></td><td>Request reference string. This is the portion of the Uri after the "#". Set to null if there is no reference.</td></tr>
 <a name='referrer'></a>
    <tr><td nowrap align='center'> </td><td>referrer</td><td><a href='String.html'>String</a></td><td>Name of the referring URL. This comes from the request "Referrer" Http header. Set to null if there is
-no defined referrer. Note: the HTTP header is misspelt as "referer".</td></tr>
+no defined referrer. Note: the HTTP header is misspelt as "referer"
+0.</td></tr>
 <a name='remoteAddress'></a>
-   <tr><td nowrap align='center'> </td><td>remoteAddress</td><td><a href='String.html'>String</a></td><td>IP address of the client issuing the request. </td></tr>
+   <tr><td nowrap align='center'> </td><td>remoteAddress</td><td><a href='String.html'>String</a></td><td>IP address of the client issuing the request. 8.</td></tr>
 <a name='responded'></a>
    <tr><td nowrap align='center'> </td><td>responded</td><td><a href='Boolean.html'>Boolean</a></td><td>The application has responded in some way. The application has commenced a response by doing some 
 output or setting status.</td></tr>
@@ -344,7 +350,8 @@ accessing the session property.  Objects are stored in the session state using J
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Destroy a session. This call destroys the session state store that is being used for the current client. 
 If no session exists, this call has no effect. Sessions are created by reading or writing to the <a href='#session'>session</a> 
-property.</dd></dl>
+property.
+0.</dd></dl>
 </div>
 </div>
 <hr />
@@ -389,7 +396,7 @@ automatically.</dd></dl>
 <div class='apiSig'>    finalizeFlash()
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Save flash messages for the next request and delete old flash messages. </dd></dl>
+<dl><dt>Description</dt></dd><dd>Save flash messages for the next request and delete old flash messages. (.</dd></dl>
 </div>
 </div>
 <hr />
@@ -455,10 +462,10 @@ port components.</dd></dl>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>scheme</td><td>String URI scheme portion.</td></tr>
-<td class='param'>host</td><td>String URI host portion.</td></tr>
+<td class='param'>host</td><td>String URI host portion.X.</td></tr>
 <td class='param'>port</td><td>Number URI port number.</td></tr>
-<td class='param'>path</td><td>String URI path portion.</td></tr>
-<td class='param'>reference</td><td>String URI path reference. Does not include "#".</td></tr>
+<td class='param'>path</td><td>String URI path portion.X.</td></tr>
+<td class='param'>reference</td><td>String URI path reference. Does not include "#".X.</td></tr>
 <td class='param'>query</td><td>String URI query parameters. Does not include "?".</td></tr>
 <td class='param'>controller</td><td>String Controller name if using a Controller-based route. This can also be specified via the action option.</td></tr>
 <td class='param'>action</td><td>String Action to invoke. This can be a URI string or a Controller action of the form.</td></tr>
@@ -543,7 +550,7 @@ will call setupFlash and finalizeFlash automatically.</dd></dl>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>readable</td><td>Issued when the stream becomes readable.</td></tr>
 <td class='param'>writable</td><td>Issued when the stream becomes writable.</td></tr>
-<td class='param'>close</td><td>Issued when stream is being closed.</td></tr>
+<td class='param'>close</td><td>Issued when stream is being closed. 8.</td></tr>
 <td class='param'>writable</td><td>Issued when the connection is writable to accept body data (PUT, POST).</td></tr>
 <td class='param'>close</td><td>Issued when the request completes.</td></tr>
 <td class='param'>error</td><td>Issued if the request does not complete or the connection disconnects. An error event is not  caused by non-200 status codes, these are regarded as valid return results. Rather, an error event will be issued when the request cannot return a complete, valid Http response to the client. All events are called with the signature: function (event: String, http: Http): Void.</td></tr>
@@ -572,7 +579,7 @@ connection becomes "readable".</dd></dl>
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>readable</td><td>Issued when there is new read data available.</td></tr>
-<td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes empty. `.X.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A count of the bytes actually read. Returns null on EOF or errors.</dd></dl>
@@ -752,7 +759,8 @@ automatically.</dd></dl>
 If writing more data than the stream can absorb in sync mode, the call will block until the data is written.
 If writing more data than the stream can absorb in async mode, the call will not block and will buffer the
 data and return immediately. Some streams will require a <a href='#flush'>flush()</a> call to actually send the data.
-A "writable" event will be issued when the stream can again absorb more data.This will buffer the written data until either flush() or finalize() is called.</dd></dl>
+A "writable" event will be issued when the stream can again absorb more data.This will buffer the written data until either flush() or finalize() is called. 
+0</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>data: <a href='Array.html'>Array</a> </td><td>Data to write.</td></tr></table></dd>
@@ -793,7 +801,7 @@ headers to the client, otherwise it will be ignored and the slower "netConnector
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>file: <a href='Path.html'>Path</a> </td><td>Path to the file to send back to the client.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>True if the Send connector can successfully be used.</dd></dl>
+<dd>True if the Send connector can successfully be used.  8.X</dd></dl>
 </div>
 </div>
 <hr />
@@ -822,7 +830,7 @@ body properties. The respond method replaces previously defined status and heade
 <dl><dt>Description</dt></dd><dd>Write safely. Write HTML escaped data back to the client.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>data: <a href='Array.html'>Array</a> </td><td>Objects to HTML encode and write back to the client.</td></tr></table></dd>
+<tr class='param'><td class='param'>data: <a href='Array.html'>Array</a> </td><td>Objects to HTML encode and write back to the client. 0.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

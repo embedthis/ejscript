@@ -60,7 +60,7 @@ setting autoFinalizing to false or by calling dontAutoFinalize(). This property 
 <a name='cacheOptions'></a>
    <tr><td nowrap align='center'></td><td>cacheOptions</td><td><a href='Object.html'>Object</a></td><td>null </td></tr>
 <a name='config'></a>
-   <tr><td nowrap align='center'></td><td>config</td><td><a href='Object.html'>Object</a></td><td>Configuration settings. This is a reference to <a href='ejs.web-Request.html#config.'>Request.config</a>. </td></tr>
+   <tr><td nowrap align='center'></td><td>config</td><td><a href='Object.html'>Object</a></td><td>Configuration settings. This is a reference to <a href='ejs.web-Request.html#config.X'>Request.config.X</a> </td></tr>
 <a name='controllerName'></a>
    <tr><td nowrap align='center'></td><td>controllerName</td><td><a href='String.html'>String</a></td><td>Pascal case controller name. </td></tr>
 <a name='finalized'></a>
@@ -77,7 +77,7 @@ the top-most directory level of the application.</td></tr>
 <a name='params'></a>
    <tr><td nowrap align='center'></td><td>params</td><td><a href='Object.html'>Object</a></td><td>Form and query parameters. This is a reference to the <a href='ejs.web-Request.html#params'>Request.params</a> object.</td></tr>
 <a name='pathInfo'></a>
-   <tr><td nowrap align='center'>get </td><td>pathInfo</td><td><a href='String.html'>String</a></td><td>Location of the request within the application. This is the portion of the request URL after the scriptName. 
+   <tr><td nowrap align='center'>get </td><td>pathInfo</td><td><a href='String.html'>String</a></td><td>Location of the request within the application.0. This is the portion of the request URL after the scriptName. 
 The pathInfo is originally derrived from uri.path after splitting off the scriptName. Changes to the uri or 
 scriptName properties will not affect the pathInfo property.</td></tr>
 <a name='request'></a>
@@ -120,9 +120,9 @@ The "uri" property has fields for: scheme, host, port, path, query and reference
    <tr class='apiDef'><td class='apiType'></td><td><a href='#autoFinalize'><b>autoFinalize</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Finalize the request if <a href='#autoFinalizing'>autoFinalizing</a> is true.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#before'><b>before</b></a>(fn, options: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run an action checker before running the action.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#clearFlash'><b>clearFlash</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Clear previous flags messages.</td></tr>
-   <tr class='apiDef'><td class='apiType'></td><td><a href='#dontAutoFinalize'><b>dontAutoFinalize</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Stop auto-finalizing the request.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#dontAutoFinalize'><b>dontAutoFinalize</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Stop auto-finalizing the request.0.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#error'><b>error</b></a>(msg: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set an error flash notification message.</td></tr>
-   <tr class='apiDef'><td class='apiType'></td><td><a href='#finalize'><b>finalize</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Signals the end of any and all response data and flushes any buffered write data to the client.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#finalize'><b>finalize</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Signals the end of any and all response data and flushes any buffered write data to the client.(.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#flush'><b>flush</b></a>(dir: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.Flush request data.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#header'><b>header</b></a>(key: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a request header by keyword.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#inform'><b>inform</b></a>(msg: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set an informational flash notification message.</td></tr>
@@ -161,7 +161,7 @@ Write content based on the requested accept mime type.</td></tr>
 <dl><dt>Description</dt></dd><dd>Create and initialize a controller. This may be called directly or via the Controller.create factory method.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>req: <a href='ejs.web-Request.html'>Request</a> </td><td>Web request object. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>req: <a href='ejs.web-Request.html'>Request</a> </td><td>Web request object 8. [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -275,7 +275,7 @@ params["controller"] which should be set to the controller name without the "Con
 This call expects the controller class to be loaded. Called by Mvc.load().</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Web request object.</td></tr><tr class='param'><td class='param'>cname: <a href='String.html'>String</a> </td><td>Controller class name. This should be the name of the Controller class without the "Controller" suffix. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Web request object.</td></tr><tr class='param'><td class='param'>cname: <a href='String.html'>String</a> </td><td>Controller class name. This should be the name of the Controller class without the "Controller" suffix. X. [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -284,7 +284,7 @@ This call expects the controller class to be loaded. Called by Mvc.load().</dd><
 <div class='apiSig'>  ejs.web  dontAutoFinalize(): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Stop auto-finalizing the request. This will set <a href='#autoFinalizing'>autoFinalizing</a> to false. Some web frameworks will 
+<dl><dt>Description</dt></dd><dd>Stop auto-finalizing the request.0. This will set <a href='#autoFinalizing'>autoFinalizing</a> to false. Some web frameworks will 
 "auto-finalize" requests by calling finalize() automatically at the conclusion of the request. 
 Applications that wish to keep the connection open to the client can defeat this auto-finalization by 
 calling dontAutoFinalize().</dd></dl>
@@ -311,7 +311,7 @@ automatically.</dd></dl>
 <div class='apiSig'>  ejs.web  finalize(): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Signals the end of any and all response data and flushes any buffered write data to the client. If the request has already been finalized, this call has no additional effect.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Signals the end of any and all response data and flushes any buffered write data to the client.(. If the request has already been finalized, this call has no additional effect.</dd></dl>
 </div>
 </div>
 <hr />
@@ -377,10 +377,10 @@ port components.</dd></dl>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>scheme</td><td>String URI scheme portion.</td></tr>
-<td class='param'>host</td><td>String URI host portion.</td></tr>
+<td class='param'>host</td><td>String URI host portion.X.</td></tr>
 <td class='param'>port</td><td>Number URI port number.</td></tr>
-<td class='param'>path</td><td>String URI path portion.</td></tr>
-<td class='param'>reference</td><td>String URI path reference. Does not include "#".</td></tr>
+<td class='param'>path</td><td>String URI path portion.X.</td></tr>
+<td class='param'>reference</td><td>String URI path reference. Does not include "#".X.</td></tr>
 <td class='param'>query</td><td>String URI query parameters. Does not include "?".</td></tr>
 <td class='param'>controller</td><td>String Controller name if using a Controller-based route. This can also be specified via the action option.</td></tr>
 <td class='param'>action</td><td>String Action to invoke. This can be a URI string or a Controller action of the form.</td></tr>
@@ -449,7 +449,7 @@ will call setupFlash and finalizeFlash automatically.</dd></dl>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>readable</td><td>Issued when the stream becomes readable.</td></tr>
 <td class='param'>writable</td><td>Issued when the stream becomes writable.</td></tr>
-<td class='param'>close</td><td>Issued when stream is being closed.</td></tr>
+<td class='param'>close</td><td>Issued when stream is being closed. 8.</td></tr>
 <td class='param'>writable</td><td>Issued when the connection is writable to accept body data (PUT, POST).</td></tr>
 <td class='param'>close</td><td>Issued when the request completes.</td></tr>
 <td class='param'>error</td><td>Issued if the request does not complete or the connection disconnects. An error event is not  caused by non-200 status codes, these are regarded as valid return results. Rather, an error event will be issued when the request cannot return a complete, valid Http response to the client. All events are called with the signature: function (event: String, http: Http): Void.</td></tr>
@@ -478,7 +478,7 @@ connection becomes "readable".</dd></dl>
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>readable</td><td>Issued when there is new read data available.</td></tr>
-<td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes empty. `.X.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A count of the bytes actually read. Returns null on EOF or errors.</dd></dl>
@@ -512,7 +512,7 @@ connection becomes "readable".</dd></dl>
 <div class='apiSig'>  ejs.web  removeCheckers(): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Remove all defined checkers on the Controller. </dd></dl>
+<dl><dt>Description</dt></dd><dd>Remove all defined checkers on the Controller. 0.</dd></dl>
 </div>
 </div>
 <hr />

@@ -46,7 +46,7 @@ by the "--log" command line switch and otherwise defaults to send messages to th
 <a name='Config'></a>
    <tr><td nowrap align='center'> static const </td><td>Config</td><td><a href='Number.html'>Number</a></td><td>Logging level for configuration output. </td></tr>
 <a name='Error'></a>
-   <tr><td nowrap align='center'> static const </td><td>Error</td><td><a href='Number.html'>Number</a></td><td>Logging level for most serious errors. </td></tr>
+   <tr><td nowrap align='center'> static const </td><td>Error</td><td><a href='Number.html'>Number</a></td><td>Logging level for most serious errors. (.</td></tr>
 <a name='Info'></a>
    <tr><td nowrap align='center'> static const </td><td>Info</td><td><a href='Number.html'>Number</a></td><td>Logging level for informational messages. </td></tr>
 <a name='Off'></a>
@@ -60,7 +60,8 @@ message.
 function filter(log: Logger, name: String, level: Number, kind: String, msg: String): Boolean.</td></tr>
 <a name='level'></a>
    <tr><td nowrap align='center'> get set </td><td>level</td><td><a href='Number.html'>Number</a></td><td>The numeric verbosity setting (0-9) of this logger. Zero is least verbose, nine is the most verbose.
-Messages with a lower (or equal) verbosity level than the logger's level are emitted.</td></tr>
+Messages with a lower (or equal) verbosity level than the logger's level are emitted.
+(.</td></tr>
 <a name='location'></a>
    <tr><td nowrap align='center'> get </td><td>location</td><td>&nbsp;</td><td>The logging location parameter specified when constructing or redirecting the logger. </td></tr>
 <a name='match'></a>

@@ -51,7 +51,7 @@
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#Sqlite'><b>Sqlite</b></a>(options: <a href='Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Initialize a database connection using the supplied database connection string.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#addColumn'><b>addColumn</b></a>(table: <a href='String.html'>String</a>, column: <a href='String.html'>String</a>, datatype: <a href='String.html'>String</a>, options): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add a column to a table.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#addIndex'><b>addIndex</b></a>(table: <a href='String.html'>String</a>, column: <a href='String.html'>String</a>, index: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an index on a column.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#addIndex'><b>addIndex</b></a>(table: <a href='String.html'>String</a>, column: <a href='String.html'>String</a>, index: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an index on a column.P.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#close'><b>close</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the database connection.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#createDatabase'><b>createDatabase</b></a>(name: <a href='String.html'>String</a>, options): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new database.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#createTable'><b>createTable</b></a>(table: <a href='String.html'>String</a>, columns: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new table.</td></tr>
@@ -107,7 +107,7 @@
 <div class='apiSig'>    addIndex(table: <a href='String.html'>String</a>, column: <a href='String.html'>String</a>, index: <a href='String.html'>String</a>): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Add an index on a column. </dd></dl>
+<dl><dt>Description</dt></dd><dd>Add an index on a column.P. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>table: <a href='String.html'>String</a> </td><td>Name of the table.</td></tr><tr class='param'><td class='param'>column: <a href='String.html'>String</a> </td><td>Name of the column to add.</td></tr><tr class='param'><td class='param'>index: <a href='String.html'>String</a> </td><td>Name of the index.</td></tr></table></dd>
@@ -162,7 +162,7 @@ for the garbage collector to automatically close the connection when disposing t
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>dataType: <a href='String.html'>String</a> </td><td>Data type to map.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A string containing the name of the the corresponding SQL database type.</dd></dl>
+<dd>A string containing the name of the the corresponding SQL database type.X.</dd></dl>
 </div>
 </div>
 <hr />
@@ -236,7 +236,7 @@ for the garbage collector to automatically close the connection when disposing t
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>cmd: <a href='String.html'>String</a> </td><td>SQL command string.</td></tr><tr class='param'><td class='param'>tag: <a href='String.html'>String</a> </td><td>Debug tag to use when logging the command.</td></tr><tr class='param'><td class='param'>trace: <a href='Boolean.html'>Boolean</a> </td><td>Set to true to eanble logging this command. [default: false]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>An array of row results where each row is represented by an Object hash containing the  column names and values.</dd></dl>
+<dd>An array of row results where each row is represented by an Object hash containing the  column names and values.X.</dd></dl>
 </div>
 </div>
 <hr />
@@ -248,7 +248,7 @@ for the garbage collector to automatically close the connection when disposing t
 <dl><dt>Description</dt></dd><dd>Remove columns from a table. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>table: <a href='String.html'>String</a> </td><td>Name of the table to modify.</td></tr><tr class='param'><td class='param'>columns: <a href='Array.html'>Array</a> </td><td>Array of column names to remove.</td></tr></table></dd>
+<tr class='param'><td class='param'>table: <a href='String.html'>String</a> </td><td>Name of the table to modify.</td></tr><tr class='param'><td class='param'>columns: <a href='Array.html'>Array</a> </td><td>Array of column names to remove.X.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -287,7 +287,7 @@ Use.</dd></dl>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>cmd: <a href='String.html'>String</a> </td><td>SQL command to issue. Note: "SELECT" is automatically prepended and ";" is appended for you.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>An array of row results where each row is represented by an Object hash containing the column  names and values.</dd></dl>
+<dd>An array of row results where each row is represented by an Object hash containing the column  names and values.X.</dd></dl>
 </div>
 </div>
 <hr />
