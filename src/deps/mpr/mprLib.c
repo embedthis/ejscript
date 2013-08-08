@@ -1016,8 +1016,6 @@ static void invokeDestructors()
                     /* Retest incase the manager routine revied the object */
                     if (mp->mark != heap->mark) {
                         mp->hasManager = 0;
-                    } else {
-                        mprNop(0);
                     }
                 }
             }
@@ -8829,7 +8827,6 @@ PUBLIC int mprServiceEvents(MprTicks timeout, int flags)
 
             } else if (mprStartWorker((MprWorkerProc) dispatchEventsWorker, dp) < 0) {
                 queueDispatcher(es->pendingQ, dp);
-                es->pendingCount++;
                 continue;
             }
             if (justOne) {
@@ -9147,8 +9144,6 @@ static MprDispatcher *getNextReadyDispatcher(MprEventService *es)
     lock(es);
     if (pendingQ->next != pendingQ && mprAvailableWorkers() > 0) {
         dispatcher = pendingQ->next;
-        dispatcher->service->pendingCount--;
-        assert(dispatcher->service->pendingCount >= 0);
 
     } else if (readyQ->next == readyQ) {
         /*
@@ -19628,7 +19623,7 @@ PUBLIC MprSocketService *mprCreateSocketService()
         ss->hasIPv6 = 1;
         closesocket(fd);
     } else {
-        mprLog(2, "System has only IPv4 support");
+        mprLog(1, "This system does not have IPv6 support");
     }
     return ss;
 }
