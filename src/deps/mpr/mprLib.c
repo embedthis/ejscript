@@ -1013,7 +1013,12 @@ static void invokeDestructors()
                 mgr = GET_MANAGER(mp);
                 if (mgr) {
                     (mgr)(GET_PTR(mp), MPR_MANAGE_FREE);
-                    mp->hasManager = 0;
+                    /* Retest incase the manager routine revied the object */
+                    if (mp->mark != heap->mark) {
+                        mp->hasManager = 0;
+                    } else {
+                        mprNop(0);
+                    }
                 }
             }
         }
