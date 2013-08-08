@@ -991,9 +991,9 @@ static void markAndSweep()
     heap->sweeping = 0;
 
 #if BIT_MPR_ALLOC_PARALLEL
-    resumeThreads(YIELDED_THREADS | WAITING_THREADS);
-#else
     resumeThreads(WAITING_THREADS);
+#else
+    resumeThreads(YIELDED_THREADS | WAITING_THREADS);
 #endif
 }
 
