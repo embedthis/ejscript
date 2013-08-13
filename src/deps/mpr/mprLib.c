@@ -2452,8 +2452,8 @@ PUBLIC Mpr *mprCreate(int argc, char **argv, int flags)
         if (!(flags & MPR_NO_WINDOW)) {
             mprInitWindow();
         }
-        mprRunDispatcher(mpr->dispatcher);
     } else {
+        mprRunDispatcher(mpr->dispatcher);
         mprStartEventsThread();
     }
     mprStartGCService();

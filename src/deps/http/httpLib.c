@@ -2191,6 +2191,58 @@ PUBLIC ssize httpWriteUploadData(HttpConn *conn, MprList *fileData, MprList *for
     return rc;
 }
 
+/*  
+    Issue a http request.
+    Assumes the Mpr and Http services are created and initialized.
+ */
+PUBLIC int httpRequest(cchar *method, cchar *uri, cchar *data, char **response, char **err)
+{
+    Http        *http;
+    HttpConn    *conn;
+    ssize       len;
+    char        *dummy;
+
+    http = MPR->httpService;
+
+    dummy = "";
+    if (response) {
+        *response = "";
+    } else {
+        response = &dummy;
+    }
+    if (err) {
+        *err = "";
+    } else {
+        err = &dummy;
+    }
+    conn = httpCreateConn(http, NULL, NULL);
+    mprAddRoot(conn);
+
+    /* 
+       Open a connection to issue the GET. Then finalize the request output - this forces the request out.
+     */
+    if (httpConnect(conn, method, uri, NULL) < 0) {
+        *err = sfmt("Cannot connect to %s", uri);
+        mprRemoveRoot(conn);
+        return MPR_ERR_CANT_CONNECT;
+    }
+    if (data) {
+        len = slen(data);
+        if (httpWriteBlock(conn->writeq, data, len, HTTP_BLOCK) != len) {
+            *err = sclone("Cannot write request body data");
+        }
+    }
+    httpFinalizeOutput(conn);
+    if (httpWait(conn, HTTP_STATE_PARSED, 10000) < 0) {
+        *err = sclone("No response");
+        mprRemoveRoot(conn);
+        return MPR_ERR_BAD_STATE;
+    }
+    *response = httpReadString(conn);
+    mprRemoveRoot(conn);
+    return httpGetStatus(conn);
+}
+
 
 /*
     @copy   default
