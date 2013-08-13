@@ -1,6 +1,5 @@
-
 /*
- *  Test the Memory class
+    Test the Memory class
  */
 
 if (Config.OS == "macosx" || Config.OS == "linux") {
