@@ -72,6 +72,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "http", "ejs-windows-static\
 	ProjectSection(ProjectDependencies) = postProject
 		{236A87B9-87D7-430D-B73F-D139F8471900} = {236A87B9-87D7-430D-B73F-D139F8471900}
 	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{0DD11A58-06E5-45D8-8838-94CC6276F785} = {0DD11A58-06E5-45D8-8838-94CC6276F785}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsqlite3", "ejs-windows-static\libsqlite3.vcxproj", "{C27BD2E2-1711-4653-9443-2CC380D7A3EF}"
 	ProjectSection(ProjectDependencies) = postProject

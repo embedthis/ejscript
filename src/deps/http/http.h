@@ -2280,6 +2280,7 @@ typedef struct HttpConn {
     int             delay;                  /**< Delay servicing request due to defense strategy */
     int             followRedirects;        /**< Follow redirects for client requests */
     int             keepAliveCount;         /**< Count of remaining Keep-Alive requests for this connection */
+    int             mustClose;              /**< Peer explicitly requested the connection be closed via "Connection: close" */
     int             http10;                 /**< Using legacy HTTP/1.0 */
     int             ownDispatcher;          /**< Own the dispatcher and should destroy when closing connection */
     int             port;                   /**< Remote port */
@@ -5090,7 +5091,8 @@ typedef struct HttpRx {
     char            *scriptName;            /**< ScriptName portion of the uri (Decoded). May be empty or start with "/" */
     char            *extraPath;             /**< Extra path information (CGI|PHP) */
     int             eof;                    /**< All read data has been received (eof) */
-    MprOff          bytesRead;              /**< Length of content read by user */
+    MprOff          bytesUploaded;          /**< Length of uploaded content by user */
+    MprOff          bytesRead;              /**< Length of content read by user (includes bytesUloaded) */
     MprOff          length;                 /**< Content length header value (ENV: CONTENT_LENGTH) */
     MprOff          remainingContent;       /**< Remaining content data to read (in next chunk if chunked) */
 
