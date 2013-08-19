@@ -18,7 +18,7 @@
    <tr><td><strong>Module</strong></td><td>ejs</td></tr>
    <tr><td><strong>Definition</strong></td><td> class WebSocket</td></tr>
    <tr><td><strong>Inheritance</strong></td><td>WebSocket <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.3</td></tr>
-<tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
+<tr><td><strong>Stability</strong></td><td>Evolving.</td></tr>
        </td></tr>
 </table>
 
@@ -32,8 +32,8 @@ and is then upgraded without impacting the original connection. This means it wi
 infrastructure including firewalls and proxies.</p>
 
 <h3>See Also</h3><p class='detail'>
-<a href='Http.html'>Http</a>, 
-<a href='ByteArray.html'>ByteArray</a>
+<a href='ByteArray.html'>ByteArray</a>, 
+<a href='Http.html'>Http</a>
 </p>
 </div>
 
@@ -43,12 +43,30 @@ infrastructure including firewalls and proxies.</p>
 <h2 class='classSection'>Properties</h2>
 <table class='itemTable' summary='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='BLOCK'></a>
+   <tr><td nowrap align='center'> static const </td><td>BLOCK</td><td>&nbsp;</td><td><< sendBlock mode to block waiting for the content to be sent. </td></tr>
+<a name='BUFFER'></a>
+   <tr><td nowrap align='center'> static const </td><td>BUFFER</td><td>&nbsp;</td><td><< sendBlock mode to buffer the content. </td></tr>
 <a name='CLOSED'></a>
    <tr><td nowrap align='center'> static const </td><td>CLOSED</td><td>&nbsp;</td><td>The <a href='#readyState'>readyState</a> value when the WebSockets connection is closed. </td></tr>
 <a name='CLOSING'></a>
    <tr><td nowrap align='center'> static const </td><td>CLOSING</td><td>&nbsp;</td><td>The <a href='#readyState'>readyState</a> value when a closing handshake has commenced (. </td></tr>
 <a name='CONNECTING'></a>
    <tr><td nowrap align='center'> static const </td><td>CONNECTING</td><td>&nbsp;</td><td>The <a href='#readyState'>readyState</a> value while waiting for the WebSockets open handshake to complete with the peer. </td></tr>
+<a name='MSG_BINARY'></a>
+   <tr><td nowrap align='center'> static const </td><td>MSG_BINARY</td><td>&nbsp;</td><td><< WebSocket binary message. </td></tr>
+<a name='MSG_CLOSE'></a>
+   <tr><td nowrap align='center'> static const </td><td>MSG_CLOSE</td><td>&nbsp;</td><td><< WebSocket close message. </td></tr>
+<a name='MSG_CONT'></a>
+   <tr><td nowrap align='center'> static const </td><td>MSG_CONT</td><td>&nbsp;</td><td><< Continuation of WebSocket message. </td></tr>
+<a name='MSG_PING'></a>
+   <tr><td nowrap align='center'> static const </td><td>MSG_PING</td><td>&nbsp;</td><td><< WebSocket ping message. </td></tr>
+<a name='MSG_PONG'></a>
+   <tr><td nowrap align='center'> static const </td><td>MSG_PONG</td><td>&nbsp;</td><td><< WebSocket pong message. </td></tr>
+<a name='MSG_TEXT'></a>
+   <tr><td nowrap align='center'> static const </td><td>MSG_TEXT</td><td>&nbsp;</td><td><< WebSocket text message. </td></tr>
+<a name='NON_BLOCK'></a>
+   <tr><td nowrap align='center'> static const </td><td>NON_BLOCK</td><td>&nbsp;</td><td><< sendBlock mode to not block and absorb only what can fit into the queue. </td></tr>
 <a name='OPEN'></a>
    <tr><td nowrap align='center'> static const </td><td>OPEN</td><td>&nbsp;</td><td>The <a href='#readyState'>readyState</a> value once the WebSockets open handshake is complete and ready for communications. </td></tr>
 <a name='binaryType'></a>
@@ -70,7 +88,7 @@ infrastructure including firewalls and proxies.</p>
 creating the <a href='#WebSocket'>WebSocket</a>. </td></tr>
 <a name='readyState'></a>
    <tr><td nowrap align='center'> get </td><td>readyState</td><td><a href='Number.html'>Number</a></td><td>The readystate value. This value can be compared with the WebSocket constants: 
-<a href='#CONNECTING'>CONNECTING</a> = 0, <a href='#OPEN'>OPEN</a> = 1, <a href='#CLOSING'>CLOSING</a> = 2, <a href='#CLOSED'>CLOSED</a> = 3.X</td></tr>
+<a href='#CONNECTING'>CONNECTING</a> = 0, <a href='#OPEN'>OPEN</a> = 1, <a href='#CLOSING'>CLOSING</a> = 2, <a href='#CLOSED'>CLOSED</a> = 3.</td></tr>
 <a name='url'></a>
    <tr><td nowrap align='center'> get </td><td>url</td><td><a href='Uri.html'>Uri</a></td><td>The URI provided to the constructor. </td></tr>
 </table>
@@ -152,10 +170,10 @@ creating the <a href='#WebSocket'>WebSocket</a>. </td></tr>
 <dl><dt>Description</dt></dd><dd>Send a block of data with options to control message framing. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>options </td><td>null</td></tr></table></dd>
+<tr class='param'><td class='param'>content </td><td>The content may be a ByteArray or any other type which is then converted to a string.</td></tr><tr class='param'><td class='param'>options </td><td>null</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
-<td class='param'>more</td><td>Set to false for the last frame in a message. If omitted, assumed to be true.</td></tr>
+<td class='param'>last</td><td>Set to true for the last frame in a message. If omitted, assumed to be true.</td></tr>
 <td class='param'>type</td><td>Message type. Masked to the valid WebSockets message types.</td></tr>
 </table></dd>
 </dl></div>

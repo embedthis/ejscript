@@ -62,7 +62,7 @@ function callback(event: String, ba: ByteArray): Void.</p>
    <tr><td nowrap align='center'> get set </td><td>encoding</td><td><a href='String.html'>String</a></td><td>Current encoding scheme for serializing strings. The default encoding is "utf-8". Set to "" for no encoding.
 If no encoding, string character points are stored as a pairs of two byte in little-endian format.</td></tr>
 <a name='endian'></a>
-   <tr><td nowrap align='center'> get set </td><td>endian</td><td><a href='Number.html'>Number</a></td><td>Current byte ordering for storing and retrieving numbers. Set to either LittleEndian or BigEndian.X</td></tr>
+   <tr><td nowrap align='center'> get set </td><td>endian</td><td><a href='Number.html'>Number</a></td><td>Current byte ordering for storing and retrieving numbers. Set to either LittleEndian or BigEndian.</td></tr>
 <a name='length'></a>
    <tr><td nowrap align='center'> get </td><td>length</td><td><a href='Number.html'>Number</a></td><td>Number of bytes that are currently available for reading. This consists of the bytes available
 from the current <a href='#readPosition'>readPosition</a> up to the current writePosition. To get the total size of the ByteArray
@@ -175,7 +175,7 @@ Data is written at the destOffset index. This call does not issue events unless 
 for the incoming data ("readable" event).</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>destOffset: <a href='Number.html'>Number</a> </td><td>Index in the destination byte array to copy the data to.X</td></tr><tr class='param'><td class='param'>src: <a href='ByteArray.html'>ByteArray</a> </td><td>Source byte array containing the data elements to copy.</td></tr><tr class='param'><td class='param'>srcOffset: <a href='Number.html'>Number</a> </td><td>Location in the source buffer from which to copy the data. Defaults to the start. [default: 0]</td></tr><tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>Number of bytes to copy. Set to -1 to read all the src buffer. [default: -1]</td></tr></table></dd>
+<tr class='param'><td class='param'>destOffset: <a href='Number.html'>Number</a> </td><td>Index in the destination byte array to copy the data to.</td></tr><tr class='param'><td class='param'>src: <a href='ByteArray.html'>ByteArray</a> </td><td>Source byte array containing the data elements to copy.</td></tr><tr class='param'><td class='param'>srcOffset: <a href='Number.html'>Number</a> </td><td>Location in the source buffer from which to copy the data. Defaults to the start. [default: 0]</td></tr><tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>Number of bytes to copy. Set to -1 to read all the src buffer. [default: -1]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>The number of bytes written into the array. If the array is not resizable and there is insufficient room, this may be less than the requested amount.</dd></dl>
 </div>
@@ -274,7 +274,7 @@ one past the last byte read.</dd></dl>
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>readable</td><td>Issued when there is new read data available.</td></tr>
-<td class='param'>writable</td><td>Issued when the stream becomes empty. `.X.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes empty. `.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A count of the bytes actually read. Returns null on EOF or errors.</dd></dl>
@@ -421,7 +421,7 @@ available, the call will return return null indicating EOF. If there is insuffic
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Read an XML document from the array. Data is read from the current read <a href='#position'>position</a> pointer.</dd></dl>
 <dl><dt>Returns</dt>
-<dd>An XML document.X</dd></dl>
+<dd>An XML document.</dd></dl>
 <dl><dt>Throws</dt><dd>
 <a href='IOError.html'>IOError</a>: if an I/O error occurs or a premature end of file.
 </dd>

@@ -89,7 +89,7 @@ restart it.</td></tr>
 <dl><dt>Description</dt></dd><dd>Constructor for Timer. The timer is will not be called until <a href='#start'>start</a> is called.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>period: <a href='Number.html'>Number</a> </td><td>Delay in milliseconds before the timer will run.X</td></tr><tr class='param'><td class='param'>callback: <a href='Function.html'>Function</a> </td><td>Function to invoke when the timer is due. The callback is invoked with the following signature: function callback(error: Error): Void.</td></tr><tr class='param'><td class='param'>args: <a href='Array.html'>Array</a> </td><td>Callback arguments.</td></tr></table></dd>
+<tr class='param'><td class='param'>period: <a href='Number.html'>Number</a> </td><td>Delay in milliseconds before the timer will run.</td></tr><tr class='param'><td class='param'>callback: <a href='Function.html'>Function</a> </td><td>Function to invoke when the timer is due. The callback is invoked with the following signature: function callback(error: Error): Void.</td></tr><tr class='param'><td class='param'>args: <a href='Array.html'>Array</a> </td><td>Callback arguments.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -116,7 +116,7 @@ will be invoked once.
 When the timer callback is invoked, it will be invoked with the value of "this" set to the timer unless the
 function has bound a "this" value via Function.bind.</dd></dl>
 <dl><dt>Returns</dt>
-<dd>The timer instance. This helps chaining. For example: var timer = Timer(1000, sayHello).start().X</dd></dl>
+<dd>The timer instance. This helps chaining. For example: var timer = Timer(1000, sayHello).start().</dd></dl>
 </div>
 </div>
 <hr />

@@ -327,7 +327,7 @@ This operates the same as <a href='#get'>get</a> on a Path object.</dd></dl>
 add a separator, and continue joining. The separator is chosen to match the first separator found in 
 either path. If none found, the default file system path separator is used.</dd></dl>
 <dl><dt>Returns</dt>
-<dd>A new joined, normalized Path object. 0.X</dd></dl>
+<dd>A new joined, normalized Path object. 0.</dd></dl>
 </div>
 </div>
 <hr />
@@ -442,7 +442,7 @@ the function returns without any further action.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Open a file and return a BinaryStream object. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional options object.X [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional options object. [default: null]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>mode</td><td>Optional file access mode with values ored from: Read, Write, Append, Create, Open, Truncate.  Defaults to Read.</td></tr>
@@ -466,7 +466,7 @@ the function returns without any further action.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Open a file and return a TextStream object. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional options object.X [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional options object. [default: null]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>mode</td><td>Optional file access mode string. Use "r" for read, "w" for write, "a" for append to existing content, "+" never truncate.</td></tr>
@@ -624,7 +624,7 @@ directory itself. If the directory does not exist, this call does not error and 
 and replace it with the replace text. If the pattern is a string, only the first occurrence is replaced.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>pattern </td><td>The regular expression or string pattern to search for.</td></tr><tr class='param'><td class='param'>replacement </td><td>The string to replace the match with or a function to generate the replacement text. The replacement string can contain special replacement patterns: "$" inserts a "$", "$&" inserts the matched substring, "$`" inserts the portion that preceeds the matched substring, "$'" inserts the portion that follows the matched substring, and "$N" inserts the Nth parenthesized substring. The replacement parameter can also be a function which will be invoked and the function return value  will be used as the resplacement text. The function will be invoked multiple times for each match to be  replaced if the regular expression is global. The function will be invoked with the signature:  function (matched, submatch_1, submatch_2, ..., matched_offset, original_string).X</td></tr></table></dd>
+<tr class='param'><td class='param'>pattern </td><td>The regular expression or string pattern to search for.</td></tr><tr class='param'><td class='param'>replacement </td><td>The string to replace the match with or a function to generate the replacement text. The replacement string can contain special replacement patterns: "$" inserts a "$", "$&" inserts the matched substring, "$`" inserts the portion that preceeds the matched substring, "$'" inserts the portion that follows the matched substring, and "$N" inserts the Nth parenthesized substring. The replacement parameter can also be a function which will be invoked and the function return value  will be used as the resplacement text. The function will be invoked multiple times for each match to be  replaced if the regular expression is global. The function will be invoked with the signature:  function (matched, submatch_1, submatch_2, ..., matched_offset, original_string).</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>Returns a new string.</dd></dl>
 <dl><dt>Specified</dt>
@@ -740,7 +740,7 @@ system location for temp files. This is typically /tmp or /temp.</dd></dl>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Convert the path to lower case. </dd></dl>
 <dl><dt>Returns</dt>
-<dd>A new Path mapped to lower case.X</dd></dl>
+<dd>A new Path mapped to lower case.</dd></dl>
 </div>
 </div>
 <hr />
@@ -763,7 +763,7 @@ system location for temp files. This is typically /tmp or /temp.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Trim a pattern from the end of the path
 NOTE: this does a case-sensitive match. </dd></dl>
 <dl><dt>Returns</dt>
-<dd>A Path containing the trimmed path name.X</dd></dl>
+<dd>A Path containing the trimmed path name.</dd></dl>
 </div>
 </div>
 <hr />
@@ -786,7 +786,7 @@ NOTE: this does a case-sensitive match. </dd></dl>
 <dl><dt>Description</dt></dd><dd>Trim a pattern from the start of the path
 NOTE: this does a case-sensitive match. </dd></dl>
 <dl><dt>Returns</dt>
-<dd>A Path containing the trimmed path name.X</dd></dl>
+<dd>A Path containing the trimmed path name.</dd></dl>
 </div>
 </div>
 <hr />
