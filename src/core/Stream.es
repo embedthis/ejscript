@@ -97,6 +97,7 @@ module ejs {
          */
         function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number? 
 
+        //  TODO - should this throw or return status code?
         /** 
             Write data to the stream.
             If the stream can accept all the write data, the call returns immediately with the number of bytes written. 
