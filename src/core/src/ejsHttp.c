@@ -1125,7 +1125,7 @@ static void httpEventChange(HttpConn *conn, int event, int arg)
     Ejs         *ejs;
     EjsHttp     *hp;
     HttpTx      *tx;
-    ssize       lastWritten;
+    MprOff      lastWritten;
 
     hp = httpGetConnContext(conn);
     ejs = hp->ejs;

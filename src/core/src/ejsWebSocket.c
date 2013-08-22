@@ -216,6 +216,7 @@ static EjsNumber *ws_send(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
     if (ws->conn->state < HTTP_STATE_PARSED && !waitForHttpState(ws, HTTP_STATE_PARSED, -1, 1)) {
         return ESV(null);
     }
+    nbytes = 0;
     for (i = 0; i < args->length; i++) {
         if ((arg = ejsGetProperty(ejs, args, i)) != 0) {
             if (ejsIs(ejs, arg, ByteArray)) {
