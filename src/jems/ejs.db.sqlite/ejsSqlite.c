@@ -240,9 +240,7 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
     }
     if (rc != SQLITE_OK) {
         if (rc == sqlite3_errcode(sdb)) {
-            return sqliteSql(ejs, db,  argc, argv);
-
-            // ejsThrowIOError(ejs, "SQL error: %s", sqlite3_errmsg(sdb));
+            ejsThrowIOError(ejs, "SQL error: %s", sqlite3_errmsg(sdb));
         } else {
             ejsThrowIOError(ejs, "Unspecified SQL error");
         }
