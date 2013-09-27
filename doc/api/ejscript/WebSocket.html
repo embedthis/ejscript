@@ -111,8 +111,8 @@ creating the <a href='#WebSocket'>WebSocket</a>. </td></tr>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#WebSocket'><b>WebSocket</b></a>(uri: <a href='Uri.html'>Uri</a>, protocols = null, options = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new WebSocket and connect to the server using the supplied URI.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#close'><b>close</b></a>(code: <a href='Number.html'>Number</a> = 1000, reason: <a href='String.html'>String</a> = ): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a close message and close the web socket connection.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#send'><b>send</b></a>(content: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send data with the request.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#sendBlock'><b>sendBlock</b></a>(content, options): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a block of data with options to control message framing.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#send'><b>send</b></a>(content: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send data with the request.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#sendBlock'><b>sendBlock</b></a>(content, options): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a block of data with options to control message framing and buffering.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#wait'><b>wait</b></a>(state: <a href='Number.html'>Number</a>, timeout: <a href='Number.html'>Number</a> = -1): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Wait for the WebSocket to achieve a desired state.</td></tr>
 </table>
 
@@ -152,30 +152,41 @@ creating the <a href='#WebSocket'>WebSocket</a>. </td></tr>
 <hr />
 <a name='send'></a>
 <div class='api'>
-<div class='apiSig'>    send(content: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>    send(content: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Send data with the request. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>content: <a href='Array.html'>Array</a> </td><td>Data to send with the request. If the content is a ByteArray, the message will be sent as a WebSocket Binary message. Otherwise, the message is converted to a String and sent as a WebSockets UTF-8 Text message. If multiple arguments are provided, each is sent as a separate message.</td></tr></table></dd>
+<tr class='param'><td class='param'>content: <a href='Array.html'>Array</a> </td><td>Data to send with the request. If the content is a ByteArray, the message will be sent as a WebSocket Binary message. Otherwise, the message is converted to a String and sent as a WebSockets UTF-8 Text message. If multiple arguments are provided, each is sent as a separate message.  The message is buffered and so this call will never fail. Sending very large messages can consume a lot of memory. Use <a href='#sendBlock'>sendBlock</a> to efficiently send large messages.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Count of bytes written. Returns null if the WebSocket is closed.</dd></dl>
+<dl><dt>Throws</dt><dd>
+</dd>
 </dl></div>
 </div>
 <hr />
 <a name='sendBlock'></a>
 <div class='api'>
-<div class='apiSig'>    sendBlock(content, options): <a href='Void.html'>Void</a>
+<div class='apiSig'>    sendBlock(content, options): <a href='Number.html'>Number</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Send a block of data with options to control message framing. </dd></dl>
+<dl><dt>Description</dt></dd><dd>Send a block of data with options to control message framing and buffering. This API is useful for sending multipart or large messages, or wherever you need to control the framing of 
+WebSockets messages.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>content </td><td>The content may be a ByteArray or any other type which is then converted to a string.</td></tr><tr class='param'><td class='param'>options </td><td>null</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
-<td class='param'>last</td><td>Set to true for the last frame in a message. If omitted, assumed to be true.</td></tr>
-<td class='param'>type</td><td>Message type. Masked to the valid WebSockets message types.</td></tr>
+<td class='param'>last</td><td>Set to false to indicate there is more data to complete this message. Set to true for the last portion of the message. Defaults to true if unspecified.</td></tr>
+<td class='param'>type</td><td>Message type. Masked to the valid WebSockets message types. Defaults to Text.</td></tr>
+<td class='param'>mode</td><td>API transmission mode. Set to BUFFER to buffer the entire contents before transmitting. Set to BLOCK to have the API wait until all the content is accepted. Set to NON_BLOCK for the API to accept whatever data can fit into the HTTP pipeline and return without waiting. In this mode, the call may return having written less than the  requested amount of data. It is the callers responsibility to handle this occurrence.</td></tr>
 </table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Count of bytes written. Returns null if the WebSocket is closed.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='ArgError.html'>ArgError</a>: for bad options
+</dd>
 </dl></div>
 </div>
 <hr />
