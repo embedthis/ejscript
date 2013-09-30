@@ -1972,8 +1972,7 @@ static wchar *fixSentence(wchar *str)
         str = mtrim(str, " \t\r\n.", MPR_TRIM_BOTH);
         len = wlen(str);
         if (str[len - 1] != '.') {
-            str[len] = '.';
-            str[len + 1] = '\0';
+            str = sjoin(str, ".", NULL);
         }
     } else {
         str = mtrim(str, " \t\r\n", MPR_TRIM_BOTH);

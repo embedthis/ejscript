@@ -202,9 +202,9 @@ static EjsNumber *ws_readyState(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **a
 
 
 /*  
-    function send(...content): Void
+    function send(...content): Number
  */
-static EjsString *ws_send(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
+static EjsNumber *ws_send(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 {
     EjsArray        *args;
     EjsByteArray    *ba;
@@ -214,8 +214,9 @@ static EjsString *ws_send(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 
     args = (EjsArray*) argv[0];
     if (ws->conn->state < HTTP_STATE_PARSED && !waitForHttpState(ws, HTTP_STATE_PARSED, -1, 1)) {
-        return 0;
+        return ESV(null);
     }
+    nbytes = 0;
     for (i = 0; i < args->length; i++) {
         if ((arg = ejsGetProperty(ejs, args, i)) != 0) {
             if (ejsIs(ejs, arg, ByteArray)) {
@@ -226,32 +227,41 @@ static EjsString *ws_send(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
                 nbytes = httpSend(ws->conn, ejsToMulti(ejs, arg));
             }
             if (nbytes < 0) {
-                return 0;
+                return ESV(null);
             }
         }
     }
-    return 0;
+    return ejsCreateNumber(ejs, (MprNumber) nbytes);
 }
 
 
 /*  
-    function sendBlock(content, options): Void
+    function sendBlock(content, options): Number
  */
-static EjsString *ws_sendBlock(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
+static EjsNumber *ws_sendBlock(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 {
     EjsByteArray    *ba;
     EjsAny          *content, *vp;
     ssize           nbytes;
     cchar           *str;
-    int             more, type, flags;
+    int             last, mode, type, flags;
 
     assert(argc == 2);
 
     if (ws->conn->state < HTTP_STATE_PARSED && !waitForHttpState(ws, HTTP_STATE_PARSED, -1, 1)) {
-        return 0;
+        return ESV(null);
     }
     content = argv[0];
-    more = ejsGetPropertyByName(ejs, argv[1], EN("more")) == ESV(true);
+    last = ejsGetPropertyByName(ejs, argv[1], EN("last")) != ESV(false);
+    if ((vp = ejsGetPropertyByName(ejs, argv[1], EN("mode"))) != 0) {
+        mode = (int) ejsGetNumber(ejs, vp);
+        if (mode != HTTP_BUFFER && mode != HTTP_BLOCK && mode != HTTP_NON_BLOCK) {
+            ejsThrowArgError(ejs, "Bad message mode");
+            return 0;
+        }
+    } else {
+        mode = HTTP_BUFFER;
+    }
     if ((vp = ejsGetPropertyByName(ejs, argv[1], EN("type"))) != 0) {
         type = (int) ejsGetNumber(ejs, vp);
         if (type != WS_MSG_CONT && type != WS_MSG_TEXT && type != WS_MSG_BINARY) {
@@ -261,8 +271,8 @@ static EjsString *ws_sendBlock(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **ar
     } else {
         type = WS_MSG_TEXT;
     }
-    flags = HTTP_BLOCK;
-    if (more) {
+    flags = mode;
+    if (!last) {
         flags |= HTTP_MORE;
     }
     if (ejsIs(ejs, content, ByteArray)) {
@@ -274,9 +284,10 @@ static EjsString *ws_sendBlock(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **ar
         nbytes = httpSendBlock(ws->conn, type, str, slen(str), flags);
     }
     if (nbytes < 0) {
+        ejsThrowIOError(ejs, "Cannot send block");
         return 0;
     }
-    return 0;
+    return ejsCreateNumber(ejs, (MprNumber) nbytes);
 }
 
 

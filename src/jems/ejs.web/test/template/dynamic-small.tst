@@ -9,7 +9,6 @@ var http: Http = new Http
 //  Test a basic get first
 http.get(HTTP + "/dynamic-small.ejs")
 assert(http.status == 200)
-assert(http.header("Server").contains("ejs-http"))
 assert(http.header("Date").contains("GMT"))
 assert(http.header("Content-Length") == 1976)
 assert(http.header("Keep-Alive"))

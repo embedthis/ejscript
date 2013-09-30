@@ -300,7 +300,7 @@ a dynamically refreshing division.</dd></dl>
 <tr class='param'><td class='param'>kinds: <a href='Object.html'>Object</a> </td><td>Kinds of flash messages to display. May be a single string  ("error", "inform", "message", "warning"), an array of strings or null. If set to null (or omitted),  then all flash messages will be displayed. [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional extra options. See <a href='#View'>View</a> for a list of the standard options. [default: expression]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
-<td class='param'>retain</td><td>Number. Number of seconds to retain the message. If <= 0, the message is retained until another message is displayed. Default is 0. MOB - this default implies it is displayed for zero seconds.X</td></tr>
+<td class='param'>retain</td><td>Number. Number of seconds to retain the message. If <= 0, the message is retained until another message is displayed. Default is 0. MOB - this default implies it is displayed for zero seconds.</td></tr>
 </table></dd>
 </dl><dl><dt>Example</dt>
 <dd><pre>&lt;% flash("status") %&gt;
@@ -319,10 +319,10 @@ This token will automatically be included when the form is submitted and will be
 receiving Controller. To disable this functionality, set options.nosecurity to true. This security token
 will be generated once for the view and the same token will be used by all forms on the view page. To use
 security tokens outside a form, you need to manually call <a href='#securityToken'>securityToken</a> in the &lt;head> section of the page.<br/><br/>MOB -- much more doc here
-- Talk about controllers updating the record.X</dd></dl>
+- Talk about controllers updating the record.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>record: <a href='Object.html'>Object</a> </td><td>Record to display and optionally update.X</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional extra options. See <a href='#View'>View</a> for a list of the standard options. [default: expression]</td></tr></table></dd>
+<tr class='param'><td class='param'>record: <a href='Object.html'>Object</a> </td><td>Record to display and optionally update.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional extra options. See <a href='#View'>View</a> for a list of the standard options. [default: expression]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>hideErrors</td><td>Don't display model errors. Models retain error diagnostics from a failed write. Setting this option will prevent their display.</td></tr>
@@ -341,7 +341,7 @@ security tokens outside a form, you need to manually call <a href='#securityToke
 <dl><dt>Description</dt></dd><dd>Get the data value for presentation. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>value: <a href='Object.html'>Object</a> </td><td>Data to present.X</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Formatting options.</td></tr></table></dd>
+<tr class='param'><td class='param'>value: <a href='Object.html'>Object</a> </td><td>Data to present.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Formatting options.</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>formatter</td><td>Optional data formatter. If undefined, defaults to a basic formatter based on the value's data type.</td></tr>
@@ -428,10 +428,10 @@ port components.</dd></dl>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>scheme</td><td>String URI scheme portion.</td></tr>
-<td class='param'>host</td><td>String URI host portion.X.</td></tr>
+<td class='param'>host</td><td>String URI host portion.</td></tr>
 <td class='param'>port</td><td>Number URI port number.</td></tr>
-<td class='param'>path</td><td>String URI path portion.X.</td></tr>
-<td class='param'>reference</td><td>String URI path reference. Does not include "#".X.</td></tr>
+<td class='param'>path</td><td>String URI path portion.</td></tr>
+<td class='param'>reference</td><td>String URI path reference. Does not include "#".</td></tr>
 <td class='param'>query</td><td>String URI query parameters. Does not include "?".</td></tr>
 <td class='param'>controller</td><td>String Controller name if using a Controller-based route. This can also be specified via the action option.</td></tr>
 <td class='param'>action</td><td>String Action to invoke. This can be a URI string or a Controller action of the form.</td></tr>

@@ -60,7 +60,7 @@ setting autoFinalizing to false or by calling dontAutoFinalize(). This property 
 <a name='cacheOptions'></a>
    <tr><td nowrap align='center'></td><td>cacheOptions</td><td><a href='Object.html'>Object</a></td><td>null </td></tr>
 <a name='config'></a>
-   <tr><td nowrap align='center'></td><td>config</td><td><a href='Object.html'>Object</a></td><td>Configuration settings. This is a reference to <a href='ejs.web-Request.html#config.X'>Request.config.X</a> </td></tr>
+   <tr><td nowrap align='center'></td><td>config</td><td><a href='Object.html'>Object</a></td><td>Configuration settings. This is a reference to <a href='ejs.web-Request.html#config.'>Request.config</a>. </td></tr>
 <a name='controllerName'></a>
    <tr><td nowrap align='center'></td><td>controllerName</td><td><a href='String.html'>String</a></td><td>Pascal case controller name. </td></tr>
 <a name='finalized'></a>
@@ -377,10 +377,10 @@ port components.</dd></dl>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>scheme</td><td>String URI scheme portion.</td></tr>
-<td class='param'>host</td><td>String URI host portion.X.</td></tr>
+<td class='param'>host</td><td>String URI host portion.</td></tr>
 <td class='param'>port</td><td>Number URI port number.</td></tr>
-<td class='param'>path</td><td>String URI path portion.X.</td></tr>
-<td class='param'>reference</td><td>String URI path reference. Does not include "#".X.</td></tr>
+<td class='param'>path</td><td>String URI path portion.</td></tr>
+<td class='param'>reference</td><td>String URI path reference. Does not include "#".</td></tr>
 <td class='param'>query</td><td>String URI query parameters. Does not include "?".</td></tr>
 <td class='param'>controller</td><td>String Controller name if using a Controller-based route. This can also be specified via the action option.</td></tr>
 <td class='param'>action</td><td>String Action to invoke. This can be a URI string or a Controller action of the form.</td></tr>
@@ -478,7 +478,7 @@ connection becomes "readable".</dd></dl>
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>readable</td><td>Issued when there is new read data available.</td></tr>
-<td class='param'>writable</td><td>Issued when the stream becomes empty. `.X.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes empty. `.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A count of the bytes actually read. Returns null on EOF or errors.</dd></dl>

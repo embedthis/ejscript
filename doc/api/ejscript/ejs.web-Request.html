@@ -137,7 +137,7 @@ protocol scheme.</td></tr>
 <a name='log'></a>
    <tr><td nowrap align='center'> </td><td>log</td><td><a href='Logger.html'>Logger</a></td><td>Logger object. Set to App.log. This is configured from the "log" section of the "ejsrc" config file.</td></tr>
 <a name='method'></a>
-   <tr><td nowrap align='center'> </td><td>method</td><td><a href='String.html'>String</a></td><td>Request HTTP method. String containing the Http method (DELETE | GET | POST | PUT | OPTIONS | TRACE).X</td></tr>
+   <tr><td nowrap align='center'> </td><td>method</td><td><a href='String.html'>String</a></td><td>Request HTTP method. String containing the Http method (DELETE | GET | POST | PUT | OPTIONS | TRACE).</td></tr>
 <a name='originalMethod'></a>
    <tr><td nowrap align='center'> </td><td>originalMethod</td><td><a href='String.html'>String</a></td><td>Original HTTP request method used by the client. If the method is overridden by including a "-ejs-method-" 
 parameter in a POST request or by defining an X-HTTP-METHOD-OVERRIDE Http header, the original method used by
@@ -462,10 +462,10 @@ port components.</dd></dl>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>scheme</td><td>String URI scheme portion.</td></tr>
-<td class='param'>host</td><td>String URI host portion.X.</td></tr>
+<td class='param'>host</td><td>String URI host portion.</td></tr>
 <td class='param'>port</td><td>Number URI port number.</td></tr>
-<td class='param'>path</td><td>String URI path portion.X.</td></tr>
-<td class='param'>reference</td><td>String URI path reference. Does not include "#".X.</td></tr>
+<td class='param'>path</td><td>String URI path portion.</td></tr>
+<td class='param'>reference</td><td>String URI path reference. Does not include "#".</td></tr>
 <td class='param'>query</td><td>String URI query parameters. Does not include "?".</td></tr>
 <td class='param'>controller</td><td>String Controller name if using a Controller-based route. This can also be specified via the action option.</td></tr>
 <td class='param'>action</td><td>String Action to invoke. This can be a URI string or a Controller action of the form.</td></tr>
@@ -579,7 +579,7 @@ connection becomes "readable".</dd></dl>
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>readable</td><td>Issued when there is new read data available.</td></tr>
-<td class='param'>writable</td><td>Issued when the stream becomes empty. `.X.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes empty. `.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A count of the bytes actually read. Returns null on EOF or errors.</dd></dl>
@@ -801,7 +801,7 @@ headers to the client, otherwise it will be ignored and the slower "netConnector
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>file: <a href='Path.html'>Path</a> </td><td>Path to the file to send back to the client.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>True if the Send connector can successfully be used.  8.X</dd></dl>
+<dd>True if the Send connector can successfully be used.  8.</dd></dl>
 </div>
 </div>
 <hr />
