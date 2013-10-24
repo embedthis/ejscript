@@ -105,7 +105,7 @@
 
   <ItemDefinitionGroup>
   <Link>
-    <AdditionalDependencies>libmpr.lib;libejs.lib;libhttp.lib;libpcre.lib;libsqlite3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    <AdditionalDependencies>libmpr.lib;libejs.lib;libhttp.lib;libpcre.lib;libsql.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
   </ItemDefinitionGroup>
@@ -125,8 +125,8 @@
 </ItemGroup>
 
 <ItemGroup>
-  <ProjectReference Include="libsqlite3.vcxproj">
-  <Project>c27bd2e2-1711-4653-9443-2cc380d7a3ef</Project>
+  <ProjectReference Include="libsql.vcxproj">
+  <Project>93bac9c9-eafa-408e-a993-c569b4fc4e88</Project>
   <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
   </ProjectReference>
 </ItemGroup>

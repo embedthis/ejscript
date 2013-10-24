@@ -105,7 +105,7 @@ endif
 TARGETS            += $(CONFIG)/bin/libhttp.so
 TARGETS            += $(CONFIG)/bin/http
 ifeq ($(BIT_PACK_SQLITE),1)
-TARGETS            += $(CONFIG)/bin/libsqlite3.so
+TARGETS            += $(CONFIG)/bin/libsql.so
 endif
 ifeq ($(BIT_PACK_SQLITE),1)
 TARGETS            += $(CONFIG)/bin/sqlite
@@ -183,7 +183,7 @@ clean:
 	rm -f "$(CONFIG)/bin/libpcre.so"
 	rm -f "$(CONFIG)/bin/libhttp.so"
 	rm -f "$(CONFIG)/bin/http"
-	rm -f "$(CONFIG)/bin/libsqlite3.so"
+	rm -f "$(CONFIG)/bin/libsql.so"
 	rm -f "$(CONFIG)/bin/sqlite"
 	rm -f "$(CONFIG)/bin/libzlib.so"
 	rm -f "$(CONFIG)/bin/libejs.so"
@@ -625,15 +625,15 @@ $(CONFIG)/obj/sqlite3.o: \
 
 ifeq ($(BIT_PACK_SQLITE),1)
 #
-#   libsqlite3
+#   libsql
 #
 DEPS_27 += $(CONFIG)/inc/sqlite3.h
 DEPS_27 += $(CONFIG)/inc/bit.h
 DEPS_27 += $(CONFIG)/obj/sqlite3.o
 
-$(CONFIG)/bin/libsqlite3.so: $(DEPS_27)
-	@echo '      [Link] $(CONFIG)/bin/libsqlite3.so'
-	$(CC) -shared -o $(CONFIG)/bin/libsqlite3.so $(LIBPATHS) "$(CONFIG)/obj/sqlite3.o" $(LIBS) 
+$(CONFIG)/bin/libsql.so: $(DEPS_27)
+	@echo '      [Link] $(CONFIG)/bin/libsql.so'
+	$(CC) -shared -o $(CONFIG)/bin/libsql.so $(LIBPATHS) "$(CONFIG)/obj/sqlite3.o" $(LIBS) 
 endif
 
 #
@@ -654,10 +654,10 @@ ifeq ($(BIT_PACK_SQLITE),1)
 DEPS_29 += $(CONFIG)/inc/sqlite3.h
 DEPS_29 += $(CONFIG)/inc/bit.h
 DEPS_29 += $(CONFIG)/obj/sqlite3.o
-DEPS_29 += $(CONFIG)/bin/libsqlite3.so
+DEPS_29 += $(CONFIG)/bin/libsql.so
 DEPS_29 += $(CONFIG)/obj/sqlite.o
 
-LIBS_29 += -lsqlite3
+LIBS_29 += -lsql
 
 $(CONFIG)/bin/sqlite: $(DEPS_29)
 	@echo '      [Link] $(CONFIG)/bin/sqlite'
@@ -3135,7 +3135,7 @@ DEPS_124 += $(CONFIG)/bin/ejs.db.sqlite.mod
 DEPS_124 += $(CONFIG)/inc/sqlite3.h
 DEPS_124 += $(CONFIG)/obj/sqlite3.o
 ifeq ($(BIT_PACK_SQLITE),1)
-    DEPS_124 += $(CONFIG)/bin/libsqlite3.so
+    DEPS_124 += $(CONFIG)/bin/libsql.so
 endif
 DEPS_124 += $(CONFIG)/obj/ejsSqlite.o
 
@@ -3146,7 +3146,7 @@ ifeq ($(BIT_PACK_PCRE),1)
     LIBS_124 += -lpcre
 endif
 ifeq ($(BIT_PACK_SQLITE),1)
-    LIBS_124 += -lsqlite3
+    LIBS_124 += -lsql
 endif
 
 $(CONFIG)/bin/libejs.db.sqlite.so: $(DEPS_124)
@@ -4405,7 +4405,7 @@ installBinary: $(DEPS_146)
 	cp $(CONFIG)/bin/libhttp.so $(BIT_VAPP_PREFIX)/bin/libhttp.so
 	cp $(CONFIG)/bin/libmpr.so $(BIT_VAPP_PREFIX)/bin/libmpr.so
 	cp $(CONFIG)/bin/libpcre.so $(BIT_VAPP_PREFIX)/bin/libpcre.so
-	cp $(CONFIG)/bin/libsqlite3.so $(BIT_VAPP_PREFIX)/bin/libsqlite3.so
+	cp $(CONFIG)/bin/libsql.so $(BIT_VAPP_PREFIX)/bin/libsql.so
 	cp $(CONFIG)/bin/libzlib.so $(BIT_VAPP_PREFIX)/bin/libzlib.so
 	cp $(CONFIG)/bin/ejs.db.mapper.mod $(BIT_VAPP_PREFIX)/bin/ejs.db.mapper.mod
 	cp $(CONFIG)/bin/ejs.db.mod $(BIT_VAPP_PREFIX)/bin/ejs.db.mod

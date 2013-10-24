@@ -105,7 +105,7 @@ endif
 TARGETS            += $(CONFIG)/bin/libhttp.dylib
 TARGETS            += $(CONFIG)/bin/http
 ifeq ($(BIT_PACK_SQLITE),1)
-TARGETS            += $(CONFIG)/bin/libsqlite3.dylib
+TARGETS            += $(CONFIG)/bin/libsql.dylib
 endif
 ifeq ($(BIT_PACK_SQLITE),1)
 TARGETS            += $(CONFIG)/bin/sqlite
@@ -183,7 +183,7 @@ clean:
 	rm -f "$(CONFIG)/bin/libpcre.dylib"
 	rm -f "$(CONFIG)/bin/libhttp.dylib"
 	rm -f "$(CONFIG)/bin/http"
-	rm -f "$(CONFIG)/bin/libsqlite3.dylib"
+	rm -f "$(CONFIG)/bin/libsql.dylib"
 	rm -f "$(CONFIG)/bin/sqlite"
 	rm -f "$(CONFIG)/bin/libzlib.dylib"
 	rm -f "$(CONFIG)/bin/libejs.dylib"
@@ -625,15 +625,15 @@ $(CONFIG)/obj/sqlite3.o: \
 
 ifeq ($(BIT_PACK_SQLITE),1)
 #
-#   libsqlite3
+#   libsql
 #
 DEPS_27 += $(CONFIG)/inc/sqlite3.h
 DEPS_27 += $(CONFIG)/inc/bit.h
 DEPS_27 += $(CONFIG)/obj/sqlite3.o
 
-$(CONFIG)/bin/libsqlite3.dylib: $(DEPS_27)
-	@echo '      [Link] $(CONFIG)/bin/libsqlite3.dylib'
-	$(CC) -dynamiclib -o $(CONFIG)/bin/libsqlite3.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libsqlite3.dylib -compatibility_version 2.3.3 -current_version 2.3.3 "$(CONFIG)/obj/sqlite3.o" $(LIBS) 
+$(CONFIG)/bin/libsql.dylib: $(DEPS_27)
+	@echo '      [Link] $(CONFIG)/bin/libsql.dylib'
+	$(CC) -dynamiclib -o $(CONFIG)/bin/libsql.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libsql.dylib -compatibility_version 2.3.3 -current_version 2.3.3 "$(CONFIG)/obj/sqlite3.o" $(LIBS) 
 endif
 
 #
@@ -654,10 +654,10 @@ ifeq ($(BIT_PACK_SQLITE),1)
 DEPS_29 += $(CONFIG)/inc/sqlite3.h
 DEPS_29 += $(CONFIG)/inc/bit.h
 DEPS_29 += $(CONFIG)/obj/sqlite3.o
-DEPS_29 += $(CONFIG)/bin/libsqlite3.dylib
+DEPS_29 += $(CONFIG)/bin/libsql.dylib
 DEPS_29 += $(CONFIG)/obj/sqlite.o
 
-LIBS_29 += -lsqlite3
+LIBS_29 += -lsql
 
 $(CONFIG)/bin/sqlite: $(DEPS_29)
 	@echo '      [Link] $(CONFIG)/bin/sqlite'
@@ -3135,7 +3135,7 @@ DEPS_124 += $(CONFIG)/bin/ejs.db.sqlite.mod
 DEPS_124 += $(CONFIG)/inc/sqlite3.h
 DEPS_124 += $(CONFIG)/obj/sqlite3.o
 ifeq ($(BIT_PACK_SQLITE),1)
-    DEPS_124 += $(CONFIG)/bin/libsqlite3.dylib
+    DEPS_124 += $(CONFIG)/bin/libsql.dylib
 endif
 DEPS_124 += $(CONFIG)/obj/ejsSqlite.o
 
@@ -3146,7 +3146,7 @@ ifeq ($(BIT_PACK_PCRE),1)
     LIBS_124 += -lpcre
 endif
 ifeq ($(BIT_PACK_SQLITE),1)
-    LIBS_124 += -lsqlite3
+    LIBS_124 += -lsql
 endif
 
 $(CONFIG)/bin/libejs.db.sqlite.dylib: $(DEPS_124)
@@ -4405,7 +4405,7 @@ installBinary: $(DEPS_146)
 	cp $(CONFIG)/bin/libhttp.dylib $(BIT_VAPP_PREFIX)/bin/libhttp.dylib
 	cp $(CONFIG)/bin/libmpr.dylib $(BIT_VAPP_PREFIX)/bin/libmpr.dylib
 	cp $(CONFIG)/bin/libpcre.dylib $(BIT_VAPP_PREFIX)/bin/libpcre.dylib
-	cp $(CONFIG)/bin/libsqlite3.dylib $(BIT_VAPP_PREFIX)/bin/libsqlite3.dylib
+	cp $(CONFIG)/bin/libsql.dylib $(BIT_VAPP_PREFIX)/bin/libsql.dylib
 	cp $(CONFIG)/bin/libzlib.dylib $(BIT_VAPP_PREFIX)/bin/libzlib.dylib
 	cp $(CONFIG)/bin/ejs.db.mapper.mod $(BIT_VAPP_PREFIX)/bin/ejs.db.mapper.mod
 	cp $(CONFIG)/bin/ejs.db.mod $(BIT_VAPP_PREFIX)/bin/ejs.db.mod

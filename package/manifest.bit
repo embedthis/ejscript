@@ -63,7 +63,7 @@ Bit.load({
                     '${BIN}/libhttp${SHOBJ}',
                     '${BIN}/libmpr${SHOBJ}',
                     '${BIN}/libpcre${SHOBJ}',
-                    '${BIN}/libsqlite3${SHOBJ}',
+                    '${BIN}/libsql${SHOBJ}',
                     '${BIN}/libzlib${SHOBJ}',
                 ],
                 to:         '${abin}/',

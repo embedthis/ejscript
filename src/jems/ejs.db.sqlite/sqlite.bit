@@ -30,7 +30,7 @@ Bit.load({
             sources: [ 
                 '*.c',
             ],
-            depends: [ 'libmpr', 'libejs', 'ejs.mod', 'ejs.db.sqlite.mod', 'libsqlite3' ],
+            depends: [ 'libmpr', 'libejs', 'ejs.mod', 'ejs.db.sqlite.mod', 'libsql' ],
         },
 	},
 })

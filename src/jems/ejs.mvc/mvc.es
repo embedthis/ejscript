@@ -630,7 +630,7 @@ class EjsMvc {
             //  TODO - other modules
             modFiles = [ "ejs.mod", "ejs.db.mod", "ejs.db.sqlite.mod", "ejs.web.mod" ]
             modLibFiles = [ "ejs.db.sqlite", "ejs.web" ]
-            libFiles = [ "libpcre", "libec", "libmpr", "libsqlite3", "libejs" ]
+            libFiles = [ "libpcre", "libec", "libmpr", "libsql", "libejs" ]
         } else {
             //  Static
             modFiles = [ "ejs.mod", "ejsweb.mod" ]

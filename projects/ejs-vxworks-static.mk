@@ -109,7 +109,7 @@ endif
 TARGETS            += $(CONFIG)/bin/libhttp.a
 TARGETS            += $(CONFIG)/bin/http.out
 ifeq ($(BIT_PACK_SQLITE),1)
-TARGETS            += $(CONFIG)/bin/libsqlite3.a
+TARGETS            += $(CONFIG)/bin/libsql.a
 endif
 ifeq ($(BIT_PACK_SQLITE),1)
 TARGETS            += $(CONFIG)/bin/sqlite.out
@@ -190,7 +190,7 @@ clean:
 	rm -f "$(CONFIG)/bin/libpcre.a"
 	rm -f "$(CONFIG)/bin/libhttp.a"
 	rm -f "$(CONFIG)/bin/http.out"
-	rm -f "$(CONFIG)/bin/libsqlite3.a"
+	rm -f "$(CONFIG)/bin/libsql.a"
 	rm -f "$(CONFIG)/bin/sqlite.out"
 	rm -f "$(CONFIG)/bin/libzlib.a"
 	rm -f "$(CONFIG)/bin/libejs.a"
@@ -633,15 +633,15 @@ $(CONFIG)/obj/sqlite3.o: \
 
 ifeq ($(BIT_PACK_SQLITE),1)
 #
-#   libsqlite3
+#   libsql
 #
 DEPS_27 += $(CONFIG)/inc/sqlite3.h
 DEPS_27 += $(CONFIG)/inc/bit.h
 DEPS_27 += $(CONFIG)/obj/sqlite3.o
 
-$(CONFIG)/bin/libsqlite3.a: $(DEPS_27)
-	@echo '      [Link] $(CONFIG)/bin/libsqlite3.a'
-	ar -cr $(CONFIG)/bin/libsqlite3.a "$(CONFIG)/obj/sqlite3.o"
+$(CONFIG)/bin/libsql.a: $(DEPS_27)
+	@echo '      [Link] $(CONFIG)/bin/libsql.a'
+	ar -cr $(CONFIG)/bin/libsql.a "$(CONFIG)/obj/sqlite3.o"
 endif
 
 #
@@ -662,10 +662,10 @@ ifeq ($(BIT_PACK_SQLITE),1)
 DEPS_29 += $(CONFIG)/inc/sqlite3.h
 DEPS_29 += $(CONFIG)/inc/bit.h
 DEPS_29 += $(CONFIG)/obj/sqlite3.o
-DEPS_29 += $(CONFIG)/bin/libsqlite3.a
+DEPS_29 += $(CONFIG)/bin/libsql.a
 DEPS_29 += $(CONFIG)/obj/sqlite.o
 
-LIBS_29 += -lsqlite3
+LIBS_29 += -lsql
 
 $(CONFIG)/bin/sqlite.out: $(DEPS_29)
 	@echo '      [Link] $(CONFIG)/bin/sqlite.out'
@@ -3137,7 +3137,7 @@ DEPS_124 += $(CONFIG)/bin/ejs.db.sqlite.mod
 DEPS_124 += $(CONFIG)/inc/sqlite3.h
 DEPS_124 += $(CONFIG)/obj/sqlite3.o
 ifeq ($(BIT_PACK_SQLITE),1)
-    DEPS_124 += $(CONFIG)/bin/libsqlite3.a
+    DEPS_124 += $(CONFIG)/bin/libsql.a
 endif
 DEPS_124 += $(CONFIG)/obj/ejsSqlite.o
 
