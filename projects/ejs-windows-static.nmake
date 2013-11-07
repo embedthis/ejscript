@@ -4481,28 +4481,28 @@ installBinary: $(DEPS_148)
 	copy /Y src\jems\ejs.web\www\layout.css "$(BIT_VAPP_PREFIX)\bin\www\layout.css"
 	if not exist "$(BIT_VAPP_PREFIX)\bin\www\themes" md "$(BIT_VAPP_PREFIX)\bin\www\themes"
 	copy /Y src\jems\ejs.web\www\themes\default.css "$(BIT_VAPP_PREFIX)\bin\www\themes\default.css"
-	if not exist "${vapp}\inc" md "${vapp}\inc"
-	copy /Y src\bitos.h ${vapp}\inc\bitos.h
-	copy /Y src\ejs.h ${vapp}\inc\ejs.h
-	copy /Y src\ejsByteCode.h ${vapp}\inc\ejsByteCode.h
-	copy /Y src\ejsByteCodeTable.h ${vapp}\inc\ejsByteCodeTable.h
-	copy /Y src\ejsCompiler.h ${vapp}\inc\ejsCompiler.h
-	copy /Y src\ejsCustomize.h ${vapp}\inc\ejsCustomize.h
-	copy /Y src\vm\ejsByteGoto.h ${vapp}\inc\ejsByteGoto.h
-	copy /Y src\slots\ejs.cache.local.slots.h ${vapp}\inc\ejs.cache.local.slots.h
-	copy /Y src\slots\ejs.db.sqlite.slots.h ${vapp}\inc\ejs.db.sqlite.slots.h
-	copy /Y src\slots\ejs.slots.h ${vapp}\inc\ejs.slots.h
-	copy /Y src\slots\ejs.web.slots.h ${vapp}\inc\ejs.web.slots.h
-	copy /Y src\slots\ejs.zlib.slots.h ${vapp}\inc\ejs.zlib.slots.h
-	copy /Y src\deps\est\est.h ${vapp}\inc\est.h
-	copy /Y src\deps\http\http.h ${vapp}\inc\http.h
-	copy /Y src\deps\mpr\mpr.h ${vapp}\inc\mpr.h
-	copy /Y src\deps\pcre\pcre.h ${vapp}\inc\pcre.h
-	copy /Y src\deps\sqlite\sqlite3.h ${vapp}\inc\sqlite3.h
-	copy /Y src\deps\zlib\zlib.h ${vapp}\inc\zlib.h
-	copy /Y src\jems\ejs.db.sqlite\ejs.db.sqlite.slots.h ${vapp}\inc\ejs.db.sqlite.slots.h
-	copy /Y src\jems\ejs.web\ejs.web.slots.h ${vapp}\inc\ejs.web.slots.h
-	copy /Y src\jems\ejs.web\ejsWeb.h ${vapp}\inc\ejsWeb.h
+	if not exist "$(BIT_VAPP_PREFIX)\inc" md "$(BIT_VAPP_PREFIX)\inc"
+	copy /Y src\bitos.h "$(BIT_VAPP_PREFIX)\inc\bitos.h"
+	copy /Y src\ejs.h "$(BIT_VAPP_PREFIX)\inc\ejs.h"
+	copy /Y src\ejsByteCode.h "$(BIT_VAPP_PREFIX)\inc\ejsByteCode.h"
+	copy /Y src\ejsByteCodeTable.h "$(BIT_VAPP_PREFIX)\inc\ejsByteCodeTable.h"
+	copy /Y src\ejsCompiler.h "$(BIT_VAPP_PREFIX)\inc\ejsCompiler.h"
+	copy /Y src\ejsCustomize.h "$(BIT_VAPP_PREFIX)\inc\ejsCustomize.h"
+	copy /Y src\vm\ejsByteGoto.h "$(BIT_VAPP_PREFIX)\inc\ejsByteGoto.h"
+	copy /Y src\slots\ejs.cache.local.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.cache.local.slots.h"
+	copy /Y src\slots\ejs.db.sqlite.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.db.sqlite.slots.h"
+	copy /Y src\slots\ejs.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.slots.h"
+	copy /Y src\slots\ejs.web.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.web.slots.h"
+	copy /Y src\slots\ejs.zlib.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.zlib.slots.h"
+	copy /Y src\deps\est\est.h "$(BIT_VAPP_PREFIX)\inc\est.h"
+	copy /Y src\deps\http\http.h "$(BIT_VAPP_PREFIX)\inc\http.h"
+	copy /Y src\deps\mpr\mpr.h "$(BIT_VAPP_PREFIX)\inc\mpr.h"
+	copy /Y src\deps\pcre\pcre.h "$(BIT_VAPP_PREFIX)\inc\pcre.h"
+	copy /Y src\deps\sqlite\sqlite3.h "$(BIT_VAPP_PREFIX)\inc\sqlite3.h"
+	copy /Y src\deps\zlib\zlib.h "$(BIT_VAPP_PREFIX)\inc\zlib.h"
+	copy /Y src\jems\ejs.db.sqlite\ejs.db.sqlite.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.db.sqlite.slots.h"
+	copy /Y src\jems\ejs.web\ejs.web.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.web.slots.h"
+	copy /Y src\jems\ejs.web\ejsWeb.h "$(BIT_VAPP_PREFIX)\inc\ejsWeb.h"
 
 #
 #   start

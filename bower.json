@@ -1,0 +1,26 @@
+{
+  "name": "ejscript",
+  "version": "2.3.3",
+  "homepage": "https://github.com/embedthis/ejs-2",
+  "authors": [
+    "Embedthis Software <dev@embedthis.com>"
+  ],
+  "description": "Embedthis Ejscript Javascript Language",
+  "main": "main.bit",
+  "keywords": [
+    "ejscript",
+    "javascript",
+    "ecmascript"
+  ],
+  "license": "GPL",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "*-debug",
+    "*-release",
+    "releases"
+  ]
+}
