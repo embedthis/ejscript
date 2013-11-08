@@ -600,8 +600,8 @@ static void generateHtmlHeader(EjsMod *mp, cchar *script, cchar *fmt, ... )
     /*
         Header + Style sheet
      */
-    out(mp, "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n");
-    out(mp, "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n");
+    out(mp, "<!DOCTYPE html>\n");
+    out(mp, "<html>\n");
     out(mp, "<head>\n   <title>%s</title>\n\n", title);
 
     out(mp, "   <link rel=\"stylesheet\" type=\"text/css\" href=\"doc.css\" />\n");
