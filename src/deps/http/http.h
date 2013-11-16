@@ -155,11 +155,17 @@ struct HttpWebSocket;
 #ifndef BIT_MAX_PING_DURATION
     #define BIT_MAX_PING_DURATION   (30 * 1000)         /**< WSS ping defeat Keep-Alive timeouts (30 sec) */
 #endif
+#ifndef BIT_SERVER_PREFIX_CHAR
+    #define BIT_SERVER_PREFIX_CHAR '|'                  /**< URI prefix character for server prefix */
+#endif
 #ifndef BIT_XSRF_COOKIE
     #define BIT_XSRF_COOKIE        "XSRF-TOKEN"         /**< CSRF token cookie name */
 #endif
 #ifndef BIT_XSRF_HEADER
     #define BIT_XSRF_HEADER        "X-XSRF-TOKEN"       /**< CSRF token name in Http headers */
+#endif
+#ifndef BIT_XSRF_PARAM
+    #define BIT_XSRF_PARAM         "-xsrf-"             /**< CSRF parameter in form fields */
 #endif
 
 #ifndef BIT_HTTP_LOG
@@ -3202,6 +3208,17 @@ PUBLIC int httpAddRole(HttpAuth *auth, cchar *role, cchar *abilities);
     @stability Evolving
  */
 PUBLIC HttpUser *httpAddUser(HttpAuth *auth, cchar *user, cchar *password, cchar *abilities);
+
+/**
+    Authenticate a user
+    This routine authenticates a user by testing the user supplied session cookie against the server session store.
+    The result is saved in HttpRx.authenticated and supplied as a return result. Thereafter, #httpIsLoggedIn may be called
+    to test HttpRx.authenticated.
+    The httpAuthenticate call is not automatically performed by the request pipeline. Web Frameworks should call this if required.
+    @param conn HttpConn connection object created via #httpCreateConn object.
+    @return True if the user is authenticated. 
+ */
+PUBLIC bool httpAuthenticate(HttpConn *conn);
 
 /**
     Test if a user has the required abilities

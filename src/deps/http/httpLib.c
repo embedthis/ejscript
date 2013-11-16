@@ -147,7 +147,7 @@ PUBLIC void httpInitAuth(Http *http)
     httpAddAuthStore("internal", fileVerifyUser);
 #if DEPRECATE || 1
     /*
-        Deprecated in 4.4
+        Deprecated in 4.4. Use "internal"
      */
     httpAddAuthStore("file", fileVerifyUser);
 #if BIT_HAS_PAM && BIT_HTTP_PAM
@@ -157,7 +157,7 @@ PUBLIC void httpInitAuth(Http *http)
 }
 
 
-PUBLIC bool httpLoggedIn(HttpConn *conn)
+PUBLIC bool httpAuthenticate(HttpConn *conn)
 {
     HttpRx      *rx;
     HttpAuth    *auth;
@@ -180,7 +180,16 @@ PUBLIC bool httpLoggedIn(HttpConn *conn)
         conn->username = username;
         rx->authenticated = 1;
     }
-    return 1;
+    return rx->authenticated;
+}
+
+
+PUBLIC bool httpLoggedIn(HttpConn *conn)
+{
+    if (!conn->rx->authenticated) {
+        httpAuthenticate(conn);
+    }
+    return conn->rx->authenticated;
 }
 
 
@@ -2411,10 +2420,8 @@ static void manageConn(HttpConn *conn, int flags)
         mprMark(conn->pool);
         mprMark(conn->mark);
         mprMark(conn->data);
-#if (DEPRECATE || 1) && !DOXYGEN
         mprMark(conn->grid);
         mprMark(conn->record);
-#endif
         mprMark(conn->boundary);
         mprMark(conn->errorMsg);
         mprMark(conn->ip);
@@ -9806,7 +9813,9 @@ PUBLIC void httpMapRequest(HttpConn *conn)
         }
     }
 #if DEPRECATE || 1
-    /* Deprecated in 4.4 */
+    /* 
+        Deprecated in 4.4 
+     */
     if (!info->valid && !route->map && (route->flags & HTTP_ROUTE_GZIP) && scontains(rx->acceptEncoding, "gzip")) {
         path = sjoin(tx->filename, ".gz", NULL);
         if (mprGetPathInfo(path, info) == 0) {
@@ -10380,7 +10389,6 @@ PUBLIC void httpSetRouteDocuments(HttpRoute *route, cchar *path)
     route->documents = httpMakePath(route, route->home, path);
     httpSetRouteVar(route, "DOCUMENTS", route->documents);
 #if DEPRECATE || 1
-    //  DEPRECATE
     httpSetRouteVar(route, "DOCUMENTS_DIR", route->documents);
     httpSetRouteVar(route, "DOCUMENT_ROOT", route->documents);
 #endif
@@ -11044,7 +11052,7 @@ PUBLIC char *httpTemplate(HttpConn *conn, cchar *template, MprHash *options)
         if (cp == template && *cp == '~') {
             mprPutStringToBuf(buf, route->prefix ? route->prefix : "/");
 
-        } else if (cp == template && *cp == '^') {
+        } else if (cp == template && *cp == BIT_SERVER_PREFIX_CHAR) {
             mprPutStringToBuf(buf, route->prefix ? route->prefix : "/");
             mprPutStringToBuf(buf, route->serverPrefix ? route->serverPrefix : "/");
 
@@ -15005,13 +15013,7 @@ PUBLIC MprHash *httpGetSessionObj(HttpConn *conn, cchar *key)
 
     if ((sp = httpGetSession(conn, 0)) != 0) {
         if ((kp = mprLookupKeyEntry(sp->data, key)) != 0) {
-#if UNUSED
-            if (kp->type == MPR_JSON_OBJ) {
-                return (MprHash*) kp->data;
-            }
-#else
             return mprDeserialize(kp->data);
-#endif
         }
     }
     return 0;
@@ -15056,13 +15058,7 @@ PUBLIC int httpSetSessionObj(HttpConn *conn, cchar *key, MprHash *obj)
     if (obj == 0) {
         httpRemoveSessionVar(conn, key);
     } else {
-#if UNUSED
-        if ((kp = mprAddKey(sp->data, key, obj)) != 0) {
-            kp->type = MPR_JSON_OBJ;
-        }
-#else
         mprAddKey(sp->data, key, mprSerialize(obj, 0));
-#endif
     }
     return 0;
 }
@@ -15207,7 +15203,7 @@ PUBLIC bool httpCheckSecurityToken(HttpConn *conn)
             Deprecated in 4.4
         */
         if (!requestToken) {
-            requestToken = httpGetParam(conn, "__esp_security_token__", 0);
+            requestToken = httpGetParam(conn, BIT_XSRF_PARAM, 0);
         }
 #endif
         if (!smatch(sessionToken, requestToken)) {
@@ -17981,14 +17977,6 @@ PUBLIC char *httpUri(HttpConn *conn, cchar *target, MprHash *options)
             target = "/";
         }
     }
-#if UNUSED
-    {
-        MprKey *kp;
-        for (ITERATE_KEYS(options, kp)) {
-            print("KEY %s = %s", kp->key, kp->data);
-        }
-    }
-#endif 
     //  OPT
     target = httpTemplate(conn, tplate, options);
     uri = httpCreateUri(target, 0);
@@ -18072,7 +18060,7 @@ static void trimPathToDirname(HttpUri *uri)
 
 
 /*
-    Limited expansion of route names. Support ~/ and ${app} at the start of the route name
+    Limited expansion of route names. Support ~/, |/ and ${app} at the start of the route name
  */
 static cchar *expandRouteName(HttpConn *conn, cchar *routeName)
 {
@@ -18085,7 +18073,7 @@ static cchar *expandRouteName(HttpConn *conn, cchar *routeName)
     if (sstarts(routeName, "${app}")) {
         return sjoin(route->prefix, &routeName[6], NULL);
     }
-    if (routeName[0] == '!') {
+    if (routeName[0] == BIT_SERVER_PREFIX_CHAR) {
         if (route->serverPrefix) {
             return sjoin(route->prefix, "/", route->serverPrefix, &routeName[1], NULL);
         }
@@ -18193,9 +18181,9 @@ PUBLIC void httpCreateCGIParams(HttpConn *conn)
     mprAddKey(svars, "REMOTE_ADDR", conn->ip);
     mprAddKeyFmt(svars, "REMOTE_PORT", "%d", conn->port);
 
-    //  DEPRECATE
+    //  DEPRECATE - use DOCUMENTS
     mprAddKey(svars, "DOCUMENT_ROOT", rx->route->documents);
-    //  DEPRECATE
+    //  DEPRECATE - use ROUTE_HOME
     mprAddKey(svars, "SERVER_ROOT", rx->route->home);
 
     /* Set to the same as AUTH_USER */
@@ -18374,14 +18362,6 @@ PUBLIC int httpGetIntParam(HttpConn *conn, cchar *var, int defaultValue)
 }
 
 
-#if UNUSED
-static int sortParam(MprKey **h1, MprKey **h2)
-{
-    return scmp((*h1)->key, (*h2)->key);
-}
-#endif
-
-
 /*
     Return the request parameters as a string. 
     This will return the exact same string regardless of the order of form parameters.
@@ -18390,45 +18370,11 @@ PUBLIC char *httpGetParamsString(HttpConn *conn)
 {
     HttpRx      *rx;
 
-#if UNUSED
-    MprList     *list;
-    int         next;
-    MprKey      *kp;
-    MprJson     *params;
-    char        *buf, *cp;
-    ssize       len;
-#endif
-
     assert(conn);
-
     rx = conn->rx;
 
     if (rx->paramString == 0) {
-#if UNUSED
-        if ((params = conn->rx->params) != 0) {
-            if ((list = mprCreateList(mprGetHashLength(params), MPR_LIST_STABLE)) != 0) {
-                len = 0;
-                for (kp = 0; (kp = mprGetNextKey(params, kp)) != NULL; ) {
-                    mprAddItem(list, kp);
-                    len += slen(kp->key) + slen(kp->data) + 2;
-                }
-                if ((buf = mprAlloc(len + 1)) != 0) {
-                    mprSortList(list, (MprSortProc) sortParam, 0);
-                    cp = buf;
-                    for (next = 0; (kp = mprGetNextItem(list, &next)) != 0; ) {
-                        strcpy(cp, kp->key); cp += slen(kp->key);
-                        *cp++ = '=';
-                        strcpy(cp, kp->data); cp += slen(kp->data);
-                        *cp++ = '&';
-                    }
-                    cp[-1] = '\0';
-                    rx->paramString = buf;
-                }
-            }
-        }
-#else
         rx->paramString = mprJsonToString(rx->params, 0);
-#endif
     }
     return rx->paramString;
 }
@@ -18994,7 +18940,7 @@ static void incomingWebSockData(HttpQueue *q, HttpPacket *packet)
                 packet = ws->currentFrame;
                 content = packet->content;
             }
-#if UNUSED
+#if KEEP
             if (packet->type == WS_MSG_TEXT) {
                 /*
                     Validate the frame for fast-fail, provided the last frame does not have a partial codepoint.
