@@ -2180,6 +2180,16 @@ PUBLIC char *stemplate(cchar *str, struct MprHash *tokens);
 PUBLIC char *stemplateJson(cchar *str, struct MprJson *tokens);
 
 /**
+    Convert a string to a double.
+    @description This call converts the supplied string to a double.
+    @param str Pointer to the string to parse.
+    @return Returns the double equivalent value of the string. 
+    @ingroup MprString
+    @stability Prototype
+ */
+PUBLIC double stof(cchar *str);
+
+/**
     Convert a string to an integer.
     @description This call converts the supplied string to an integer using base 10.
     @param str Pointer to the string to parse.

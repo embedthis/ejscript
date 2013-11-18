@@ -1046,7 +1046,6 @@ PUBLIC HttpUri *httpMakeUriLocal(HttpUri *uri);
   */
 PUBLIC HttpUri *httpResolveUri(HttpUri *base, int argc, HttpUri **others, bool local);
 
-
 /** 
     Create a URI. 
     @description Create a URI link based on a given target an expanding embedded tokens based on the current request and 
@@ -1096,25 +1095,37 @@ PUBLIC HttpUri *httpResolveUri(HttpUri *base, int argc, HttpUri **others, bool l
     @ingroup HttpUri
     @stability Evolving
     @remarks Examples:<pre>
-    httpUri(conn, "http://example.com/index.html", 0);
-    httpUri(conn, "/path/to/index.html", 0);
-    httpUri(conn, "../images/splash.png", 0);
-    httpUri(conn, "~/static/images/splash.png", 0);
-    httpUri(conn, "${app}/static/images/splash.png", 0);
-    httpUri(conn, "@service/checkout", 0);
+    httpUri(conn, "http://example.com/index.html");
+    httpUri(conn, "/path/to/index.html");
+    httpUri(conn, "../images/splash.png");
+    httpUri(conn, "~/static/images/splash.png");
+    httpUri(conn, "${app}/static/images/splash.png");
+    httpUri(conn, "@service/checkout");
     httpUri(conn, "@service/")               //  Service = Service, action = index
     httpUri(conn, "@init")                   //  Current service, action = init
     httpUri(conn, "@")                       //  Current service, action = index
-    httpUri(conn, "{ action: '@post/create' }", 0);
-    httpUri(conn, "{ action: 'checkout' }", 0);
-    httpUri(conn, "{ action: 'logout', service: 'admin' }", 0);
-    httpUri(conn, "{ action: 'admin/logout'", 0);
-    httpUri(conn, "{ product: 'candy', quantity: '10', template: '/cart/${product}/${quantity}' }", 0);
-    httpUri(conn, "{ route: '~/STAR/edit', action: 'checkout', id: '99' }", 0);
-    httpUri(conn, "{ template: '~/static/images/${theme}/background.jpg', theme: 'blue' }", 0);
+    httpUri(conn, "{ action: '@post/create' }");
+    httpUri(conn, "{ action: 'checkout' }");
+    httpUri(conn, "{ action: 'logout', service: 'admin' }");
+    httpUri(conn, "{ action: 'admin/logout'");
+    httpUri(conn, "{ product: 'candy', quantity: '10', template: '/cart/${product}/${quantity}' }");
+    httpUri(conn, "{ route: '~/STAR/edit', action: 'checkout', id: '99' }");
+    httpUri(conn, "{ template: '~/static/images/${theme}/background.jpg', theme: 'blue' }");
 </pre>
  */
-PUBLIC char *httpUri(struct HttpConn *conn, cchar *target, MprHash *options);
+PUBLIC char *httpUri(struct HttpConn *conn, cchar *target);
+
+/** 
+    Create a URI. 
+    @description Extended httpUri with custom options
+    @param [in] conn HttpConn connection object 
+    @param target The URI target. See #httpUri for details.
+    @param options Hash of option values for embedded tokens. This hash is blended with the route variables.
+    @return A normalized, server-local Uri string.
+    @ingroup HttpUri
+    @stability Prototype
+ */
+PUBLIC char *httpUriEx(struct HttpConn *conn, cchar *target, MprHash *options);
 
 #if DEPRECATE || 1
 PUBLIC char *httpLink(struct HttpConn *conn, cchar *target, MprHash *options);
@@ -5112,14 +5123,20 @@ PUBLIC cchar *httpCreateSecurityToken(HttpConn *conn);
 PUBLIC cchar *httpGetSecurityToken(HttpConn *conn);
 
 /**
-    Render a security token.
-    @description This call will render a security token in the response as a cookie to be stored in the client. 
-    Client Javascript must then send this token as a request header in subsquent POST requests.
+    Set the security token in the response.
+    @description To minimize form replay attacks, a security token may be required for POST requests on a route.
+    This call will set a security token in the response as a response header and as a response cookie.  
+    Client-side Javascript must then send this token as a request header in subsquent POST requests.
+    To configure a route to require security tokens, call #httpSetRouteXsrf.
     @param conn Http connection object
     @ingroup HttpSession
     @stability Prototype
 */
-PUBLIC int httpRenderSecurityToken(HttpConn *conn);
+PUBLIC int httpSetSecurityToken(HttpConn *conn);
+
+#if DEPRECATED || 1
+#define httpRenderSecurityToken httpSetSecurityToken
+#endif
 
 /********************************** HttpUploadFile *********************************/
 /**

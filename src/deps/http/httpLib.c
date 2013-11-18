@@ -263,7 +263,7 @@ PUBLIC bool httpLogin(HttpConn *conn, cchar *username, cchar *password)
         if ((httpCreateSecurityToken(conn)) == 0) {
             return 0;
         }
-        httpRenderSecurityToken(conn);
+        httpSetSecurityToken(conn);
     }
     httpSetSessionVar(conn, HTTP_SESSION_USERNAME, username);
     rx->authenticated = 1;
@@ -15175,9 +15175,9 @@ PUBLIC cchar *httpGetSecurityToken(HttpConn *conn)
 
 
 /*
-    Render a security token cookie.
+    Set the security token cookie and header
  */
-PUBLIC int httpRenderSecurityToken(HttpConn *conn) 
+PUBLIC int httpSetSecurityToken(HttpConn *conn) 
 {
     cchar   *securityToken;
 
@@ -16090,7 +16090,7 @@ PUBLIC void httpRedirect(HttpConn *conn, int status, cchar *targetUri)
     }
     tx->status = status;
 
-    targetUri = httpUri(conn, targetUri, 0);
+    targetUri = httpUri(conn, targetUri);
     if (schr(targetUri, '$')) {
         targetUri = httpExpandUri(conn, targetUri);
     }
@@ -17884,7 +17884,7 @@ PUBLIC HttpUri *httpResolveUri(HttpUri *base, int argc, HttpUri **others, bool l
 }
 
 
-PUBLIC char *httpUri(HttpConn *conn, cchar *target, MprHash *options)
+PUBLIC char *httpUriEx(HttpConn *conn, cchar *target, MprHash *options)
 {
     HttpRoute       *route, *lroute;
     HttpRx          *rx;
@@ -17986,10 +17986,16 @@ PUBLIC char *httpUri(HttpConn *conn, cchar *target, MprHash *options)
 }
 
 
+PUBLIC char *httpUri(HttpConn *conn, cchar *target)
+{
+    return httpUriEx(conn, target, 0);
+}
+
+
 #if DEPRECATE || 1
 PUBLIC char *httpLink(HttpConn *conn, cchar *target, MprHash *options)
 {
-    return httpUri(conn, target, options);
+    return httpUriEx(conn, target, options);
 }
 #endif
 
