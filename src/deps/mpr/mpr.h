@@ -541,6 +541,7 @@ typedef struct MprSpin {
         MprMutex                cs;
     #elif BIT_WIN_LIKE
         CRITICAL_SECTION        cs;            /**< Internal mutex critical section */
+        bool                    freed;
     #elif VXWORKS
         #if KEEP && SPIN_LOCK_TASK_INIT
             spinlockTask_t      cs;
