@@ -684,6 +684,14 @@ module ejs {
          */
         native override function toString(): String
 
+        /**
+            Trim the requested number of directory components from the start of the path
+            @param count Number of directory components to remove
+            @return Trimmed path
+         */
+        function trimDirs(count: Number): Path
+            components.slice(count).join(separator)
+
         //  TODO - should support reg expressions
         /**
             Trim a pattern from the end of the path
