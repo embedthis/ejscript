@@ -706,10 +706,9 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
 
     /*
         Create a default search path
-        "." : APP_EXE_DIR/../lib : /usr/lib/ejs/1.0.0/lib
+        . : APP_EXE_DIR : /usr/local/lib/ejs/VERSION/bin
      */
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, "."));
-    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAppDir()));
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAppDir()));
 #if !VXWORKS
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, BIT_VAPP_PREFIX "/bin"));
