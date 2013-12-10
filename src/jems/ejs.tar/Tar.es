@@ -123,6 +123,12 @@ module ejs.tar {
                                 Path(header.linkName).link(header.name, true)
                             } else if (header.type == SymLink) {
                                 Path(header.linkName).link(header.name)
+                            } else if (header.type == Directory) {
+                                Path(header.name).makeDir()
+                                archive.position += header.size
+                            } else if (isNaN(header.type)) {
+                                /* Skip Pax global header */
+                                archive.position += header.size
                             } else {
                                 let fp = new File(header.name, 'w')
                                 let len = header.size
