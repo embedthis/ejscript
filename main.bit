@@ -17,7 +17,6 @@ Bit.load({
         'src/core/core.bit',
 
         'src/jems/ejs.unix/unix.bit',
-        'src/jems/ejs.jem/jem.bit',
         'src/jems/ejs.db/db.bit',
         'src/jems/ejs.db.mapper/mapper.bit',
         'src/jems/ejs.db.sqlite/sqlite.bit',
