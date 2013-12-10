@@ -1561,7 +1561,9 @@ static EcNode *parseLiteralField(EcCompiler *cp)
             return LEAVE(cp, 0);
         }
         cp->state->currentFunctionNode = fp;
-        fp = parseFunctionSignature(cp, fp);
+        if ((fp = parseFunctionSignature(cp, fp)) == 0) {
+            return LEAVE(cp, 0);
+        }
         fp->function.body = linkNode(fp, parseFunctionBody(cp, fp));
         if (fp->function.body == 0) {
             return LEAVE(cp, 0);
