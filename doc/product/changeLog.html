@@ -21,7 +21,7 @@
         <div class="topRight">
             <div class="search">
                 <div id="cse-search-form">Loading</div>
-                <div class='version'>Embedthis Ejscript 2.3.3</div>
+                <div class='version'>Embedthis Ejscript 2.0.1</div>
             </div>
         </div>
         <div class="crumbs">
@@ -55,15 +55,32 @@
             <p>Please do not mine this list and create security advisories.
             Please see the <a href="http://github.com/embedthis/ejs-2/issues">Ejscript Issue Database</a> 
             for the official product issue list and for comprehensive CVE dispositions.</p>
-
             <a id="r233"></a>
             <h2 class="section">Changes in 2.3.3</h2>
             <h3>Minor Features</h3>
             <ul>
                 <li>Add support for multi-line strings using back-tick. E.g. `string`
-                    <a href="https://github.com/embedthis/ejs-2/issues/39">[issue 41].</a></li>
+                    <a href="https://github.com/embedthis/ejs-2/issues/41">[issue 41].</a></li>
             </ul>
-
+            <h3>Fixes</h3>
+            <ul>
+                <li>ejs.unix cp() command. Was incorrectly handling destination paths when options.tree == true.
+                    <a href="https://github.com/embedthis/ejs-2/issues/42">[issue 42].</a></li>
+                <li>Added Add Path.trimDirs to trim directory components.
+                    <a href="https://github.com/embedthis/ejs-2/issues/43">[issue 43].</a></li>
+                <li>Parse bad literal causes compiler crash.
+                    <a href="https://github.com/embedthis/ejs-2/issues/44">[issue 44].</a></li>
+                <li>Fix Http and WebSocket retries to different hosts. Was setting Host header incorrectl
+                    <a href="https://github.com/embedthis/ejs-2/issues/45">[issue 45].</a></li>
+                <li>Fix RegExp.exec with bad start argument.
+                    <a href="https://github.com/embedthis/ejs-2/issues/46">[issue 46].</a></li>
+                <li>ejs.tar for handling directories and hidden headers.
+                    <a href="https://github.com/embedthis/ejs-2/issues/47">[issue 47].</a></li>
+                <li>Fix name of Zlib uncompress destination filename.
+                    <a href="https://github.com/embedthis/ejs-2/issues/48">[issue 48].</a></li>
+                <li>GC when loading modules fails to retain module file.
+                    <a href="https://github.com/embedthis/ejs-2/issues/49">[issue 49].</a></li>
+            </ul>
             <a id="r232"></a>
             <h2 class="section">Changes in 2.3.2</h2>
             <h3>Minor Features</h3>
@@ -72,7 +89,6 @@
                     E.g. o = { fun() { print("Hello"); }}
                     <a href="https://github.com/embedthis/ejs-2/issues/40">[issue 40].</a></li>
             </ul>
-
             <a id="r231"></a>
             <h2 class="section">Changes in 2.3.1</h2>
             <h3>Minor Features</h3>
