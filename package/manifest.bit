@@ -156,6 +156,14 @@ Bit.load({
                 enable:     "bit.platform.like == 'unix'",
                 linkin:     '${man}/man1',
 
+           }, {
+                from:       [ 'package/uninstall.sh' ],
+                to:         '${abin}/uninstall',
+                expand:     true,
+                permissions: 0755,
+                set:        'core',
+                enable:     "!bit.generating",
+
             /*
                 Source set
              */
