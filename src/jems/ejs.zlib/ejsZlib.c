@@ -71,7 +71,7 @@ static EjsObj *zlib_uncompress(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv
     src = ((EjsPath*) argv[0])->value;
     dest = (argc >= 2) ? ejsToMulti(ejs, argv[1]) : 0;
     if (!dest) {
-        dest = sjoin(src, ".gz", NULL);
+        dest = strim(src, ".gz", MPR_TRIM_END);
     }
     if ((in = gzopen(src, "rb")) == 0) {
         ejsThrowIOError(ejs, "Cannot open from %s", src);
