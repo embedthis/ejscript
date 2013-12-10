@@ -207,7 +207,7 @@ module ejs {
         /**
             Match a pattern using a regular expression
             @param pattern The regular expression pattern to search for
-            @return Returns an array of matching substrings.
+            @return If matches found, returns an array of matching substrings. Otherwise returns null.
          */
         native function match(pattern: RegExp): Array
 
