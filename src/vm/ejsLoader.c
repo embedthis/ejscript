@@ -970,6 +970,7 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
         ejsThrowIOError(ejs, "Cannot open module file %s", path);
         return MPR_ERR_CANT_OPEN;
     }
+    mprHold(file);
     mprTrace(5, "Loading module %s", path);
     mprEnableFileBuffering(file, 0, 0);
     firstModule = mprGetListLength(ejs->modules);
@@ -994,6 +995,9 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
         if (ejs->loaderCallback) {
             (ejs->loaderCallback)(ejs, EJS_SECT_START, path, &hdr);
         }
+        /*
+            WARNING: this may block and GC may run
+         */
         if ((status = loadSections(ejs, file, path, &hdr, flags)) < 0) {
             if (ejs->exception == 0) {
                 ejsThrowReferenceError(ejs, "Cannot load module file %s", path);
@@ -1007,6 +1011,7 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
         }
     }
     mprCloseFile(file);
+    mprRelease(file);
     return status;
 }
 
