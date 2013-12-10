@@ -1408,7 +1408,7 @@ static bool waitForState(EjsHttp *hp, int state, MprTicks timeout, int throw)
     Ejs             *ejs;
     MprTicks        mark, remaining;
     HttpConn        *conn;
-    HttpUri         *uri;
+    HttpUri         *location, *uri;
     HttpRx          *rx;
     char            *url;
     int             count, redirectCount, success, rc;
@@ -1436,8 +1436,8 @@ static bool waitForState(EjsHttp *hp, int state, MprTicks timeout, int throw)
         if ((rc = httpWait(conn, HTTP_STATE_PARSED, remaining)) == 0) {
             if (httpNeedRetry(conn, &url)) {
                 if (url) {
-                    uri = httpCreateUri(url, 0);
-                    httpCompleteUri(uri, httpCreateUri(hp->uri, 0));
+                    location = httpCreateUri(url, 0);
+                    uri = httpJoinUri(conn->tx->parsedUri, 1, &location);
                     hp->uri = httpUriToString(uri, HTTP_COMPLETE_URI);
                 }
                 count--; 
