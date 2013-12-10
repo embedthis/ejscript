@@ -127,6 +127,10 @@ static EjsArray *regex_exec(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
     } else {
         start = rp->endLastMatch;
     }
+    if (start < 0 || start >= str->length) {
+        rp->endLastMatch = 0;
+        return ESV(null);
+    }
     rp->matched = 0;
     assert(rp->compiled);
     count = pcre_exec(rp->compiled, NULL, str->value, (int) str->length, start, 0, matches, sizeof(matches) / sizeof(int));
