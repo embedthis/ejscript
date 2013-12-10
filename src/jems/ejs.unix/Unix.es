@@ -42,7 +42,7 @@ module ejs.unix {
             The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches
             every directory and file. The Posix "[]" and "{a,b}" style expressions are not supported.
             If src is an existing directory, then the pattern is converted to 'dir/ * *' (without spaces) 
-            and the tree option is enabled.
+            and the tree option is enabled. This will copy the directories contents and not the directory itself.
         @param dest Destination file or directory. If multiple files are copied, dest is assumed to be a directory and 
             will be created if required.  If dest has a trailing "/", it is assumed to be a directory.
         @param options Processing and file attributes
@@ -72,7 +72,7 @@ module ejs.unix {
             for each (let file: Path in list) {
                 let to, from = base.join(file)
                 if (options.tree) {
-                    to = dest.join(base, file).normalize
+                    to = dest.join(file).normalize
                 } else if (destIsDir) {
                     to = dest.join(file.basename)
                 } else {
@@ -89,7 +89,6 @@ module ejs.unix {
         }
         return count
     }
-
     /**
         Get the directory name portion of a file. The dirname name portion is the leading portion including all 
         directory elements and excluding the base name. On some systems, it will include a drive specifier.
