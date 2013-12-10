@@ -483,7 +483,7 @@ static bool waitForHttpState(EjsWebSocket *ws, int state, MprTicks timeout, int 
     Ejs             *ejs;
     MprTicks        mark, remaining;
     HttpConn        *conn;
-    HttpUri         *uri;
+    HttpUri         *location, *uri;
     char            *url;
     int             count, redirectCount, success, rc;
 
@@ -515,8 +515,8 @@ static bool waitForHttpState(EjsWebSocket *ws, int state, MprTicks timeout, int 
         if ((rc = httpWait(conn, HTTP_STATE_PARSED, remaining)) == 0) {
             if (httpNeedRetry(conn, &url)) {
                 if (url) {
-                    uri = httpCreateUri(url, 0);
-                    httpCompleteUri(uri, httpCreateUri(ws->uri, 0));
+                    location = httpCreateUri(url, 0);
+                    uri = httpJoinUri(conn->tx->parsedUri, 1, &location);
                     ws->uri = httpUriToString(uri, HTTP_COMPLETE_URI);
                 }
                 count--; 
