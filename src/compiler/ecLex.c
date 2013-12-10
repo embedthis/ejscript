@@ -238,6 +238,7 @@ PUBLIC int ecGetToken(EcCompiler *cp)
 
         case '"':
         case '\'':
+        case '`':
             return makeQuotedToken(cp, tp, c);
 
         case '#':
@@ -753,7 +754,6 @@ static int makeQuotedToken(EcCompiler *cp, EcToken *tp, int c)
         if (c == '\\') {
             c = getNextChar(stream);
             switch (c) {
-            //  TBD -- others
             case '\\':
                 break;
             case '\'':
