@@ -81,7 +81,6 @@ Bit.load({
                     '${BIN}/ejs.unix.mod',
                     '${BIN}/ejs.web.mod',
                     '${BIN}/ejs.zlib.mod',
-                    '${BIN}/jem.es',
                     '${BIN}/mvc.es',
                     '${BIN}/utest.es',
                     '${BIN}/utest.worker',
