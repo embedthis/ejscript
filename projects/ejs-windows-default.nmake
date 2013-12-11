@@ -2579,9 +2579,9 @@ DEPS_118 = $(DEPS_118) $(CONFIG)\bin\ejsmod.exe
 
 $(CONFIG)\bin\ejs.mod: $(DEPS_118)
 	cd src\core
-	"..\..\$(CONFIG)\bin\ejsc" --out "..\..\$(CONFIG)\bin\ejs.mod"  --optimize 9 --bind --require null "*.es" ; \
-	"..\..\$(CONFIG)\bin\ejsmod" --require null --cslots "..\..\$(CONFIG)\bin\ejs.mod" ; \
-	copy ejs.slots.h "..\..\$(CONFIG)\inc\ejs.slots.h" ; \
+	"..\..\$(CONFIG)\bin\ejsc" --out "..\..\$(CONFIG)\bin\ejs.mod"  --optimize 9 --bind --require null "*.es"
+	"..\..\$(CONFIG)\bin\ejsmod" --require null --cslots "..\..\$(CONFIG)\bin\ejs.mod"
+	copy ejs.slots.h "..\..\$(CONFIG)\inc\ejs.slots.h"
 	del ejs.slots.h
 	cd ..\..
 
@@ -3360,9 +3360,9 @@ DEPS_126 = $(DEPS_126) $(CONFIG)\bin\ejs.mod
 
 $(CONFIG)\bin\ejs.web.mod: $(DEPS_126)
 	cd src\ejs.web
-	"..\..\$(CONFIG)\bin\ejsc" --out "..\..\$(CONFIG)\bin\ejs.web.mod"  --optimize 9 *.es ; \
-	"..\..\$(CONFIG)\bin\ejsmod" --cslots "..\..\$(CONFIG)\bin\ejs.web.mod" ; \
-	copy ejs.web.slots.h ..\..\$(CONFIG)\inc\ejs.web.slots.h ; \
+	"..\..\$(CONFIG)\bin\ejsc" --out "..\..\$(CONFIG)\bin\ejs.web.mod"  --optimize 9 *.es
+	"..\..\$(CONFIG)\bin\ejsmod" --cslots "..\..\$(CONFIG)\bin\ejs.web.mod"
+	copy ejs.web.slots.h ..\..\$(CONFIG)\inc\ejs.web.slots.h
 	del ejs.web.slots.h
 	cd ..\..
 
@@ -3572,8 +3572,8 @@ DEPS_133 = $(DEPS_133) src\ejs.web\www
 
 $(CONFIG)\bin\www: $(DEPS_133)
 	cd src\ejs.web
-	if exist "..\..\$(CONFIG)\bin\www" rd /Q /S "..\..\$(CONFIG)\bin\www" ; \
-	if not exist "..\..\$(CONFIG)\bin\www" md "..\..\$(CONFIG)\bin\www" ; \
+	if exist "..\..\$(CONFIG)\bin\www" rd /Q /S "..\..\$(CONFIG)\bin\www"
+	if not exist "..\..\$(CONFIG)\bin\www" md "..\..\$(CONFIG)\bin\www"
 	xcopy /S /Y "www" "..\..\$(CONFIG)\bin\www"
 	cd ..\..
 
@@ -4516,7 +4516,7 @@ DEPS_149 = $(DEPS_149) installBinary
 DEPS_149 = $(DEPS_149) start
 
 install: $(DEPS_149)
-#  Omit build script install
+
 
 #
 #   uninstall
