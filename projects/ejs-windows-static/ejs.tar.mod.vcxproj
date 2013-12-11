@@ -95,9 +95,9 @@
   </Link>
 
   <CustomBuildStep>
-    <Command>cd ..\..\src\jems\ejs.tar
+    <Command>cd ..\..\src\ejs.tar
 $(BinDir)/ejsc --out $(BinDir)/ejs.tar.mod  --optimize 9 *.es
-cd ..\..\..\projects\ejs-windows-static</Command>
+cd ..\..\projects\ejs-windows-static</Command>
     <Outputs>$(BinDir)\ejs.tar.mod</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>

@@ -2447,15 +2447,11 @@ DEPS_116 += $(CONFIG)/obj/slotGen.o
 DEPS_116 += $(CONFIG)/bin/ejsmod.out
 
 $(CONFIG)/bin/ejs.mod: $(DEPS_116)
-	cd src/core; ../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.mod  --optimize 9 --bind --require null *.es  ; cd ../..
-	cd src/core; ../../$(CONFIG)/bin/ejsmod --require null --cslots ../../$(CONFIG)/bin/ejs.mod ; cd ../..
-	cd src/core; if ! diff ejs.slots.h ../../$(CONFIG)/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ../../$(CONFIG)/inc; fi ; cd ../..
-	cd src/core; rm -f ejs.slots.h ; cd ../..
 
 #
 #   ejs.unix.mod
 #
-DEPS_117 += src/jems/ejs.unix/Unix.es
+DEPS_117 += src/ejs.unix/Unix.es
 DEPS_117 += $(CONFIG)/inc/mpr.h
 DEPS_117 += $(CONFIG)/inc/bit.h
 DEPS_117 += $(CONFIG)/inc/bitos.h
@@ -2551,13 +2547,16 @@ DEPS_117 += $(CONFIG)/bin/ejsmod.out
 DEPS_117 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.unix.mod: $(DEPS_117)
-	cd src/jems/ejs.unix; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.unix.mod  --optimize 9 Unix.es ; cd ../../..
+	( \
+	cd src/ejs.unix; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.unix.mod  --optimize 9 Unix.es ; \
+	)
 
 #
 #   ejs.db.mod
 #
-DEPS_118 += src/jems/ejs.db/Database.es
-DEPS_118 += src/jems/ejs.db/DatabaseConnector.es
+DEPS_118 += src/ejs.db/Database.es
+DEPS_118 += src/ejs.db/DatabaseConnector.es
 DEPS_118 += $(CONFIG)/inc/mpr.h
 DEPS_118 += $(CONFIG)/inc/bit.h
 DEPS_118 += $(CONFIG)/inc/bitos.h
@@ -2653,12 +2652,15 @@ DEPS_118 += $(CONFIG)/bin/ejsmod.out
 DEPS_118 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.db.mod: $(DEPS_118)
-	cd src/jems/ejs.db; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.db.mod  --optimize 9 *.es ; cd ../../..
+	( \
+	cd src/ejs.db; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.db.mod  --optimize 9 *.es ; \
+	)
 
 #
 #   ejs.db.mapper.mod
 #
-DEPS_119 += src/jems/ejs.db.mapper/Record.es
+DEPS_119 += src/ejs.db.mapper/Record.es
 DEPS_119 += $(CONFIG)/inc/mpr.h
 DEPS_119 += $(CONFIG)/inc/bit.h
 DEPS_119 += $(CONFIG)/inc/bitos.h
@@ -2755,12 +2757,15 @@ DEPS_119 += $(CONFIG)/bin/ejs.mod
 DEPS_119 += $(CONFIG)/bin/ejs.db.mod
 
 $(CONFIG)/bin/ejs.db.mapper.mod: $(DEPS_119)
-	cd src/jems/ejs.db.mapper; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.db.mapper.mod  --optimize 9 *.es ; cd ../../..
+	( \
+	cd src/ejs.db.mapper; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.db.mapper.mod  --optimize 9 *.es ; \
+	)
 
 #
 #   ejs.db.sqlite.mod
 #
-DEPS_120 += src/jems/ejs.db.sqlite/Sqlite.es
+DEPS_120 += src/ejs.db.sqlite/Sqlite.es
 DEPS_120 += $(CONFIG)/inc/mpr.h
 DEPS_120 += $(CONFIG)/inc/bit.h
 DEPS_120 += $(CONFIG)/inc/bitos.h
@@ -2856,7 +2861,10 @@ DEPS_120 += $(CONFIG)/bin/ejsmod.out
 DEPS_120 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.db.sqlite.mod: $(DEPS_120)
-	cd src/jems/ejs.db.sqlite; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.db.sqlite.mod  --optimize 9 *.es ; cd ../../..
+	( \
+	cd src/ejs.db.sqlite; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.db.sqlite.mod  --optimize 9 *.es ; \
+	)
 
 #
 #   ejsSqlite.o
@@ -2872,9 +2880,9 @@ DEPS_121 += $(CONFIG)/inc/ejs.h
 DEPS_121 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
 
 $(CONFIG)/obj/ejsSqlite.o: \
-    src/jems/ejs.db.sqlite/ejsSqlite.c $(DEPS_121)
+    src/ejs.db.sqlite/ejsSqlite.c $(DEPS_121)
 	@echo '   [Compile] $(CONFIG)/obj/ejsSqlite.o'
-	$(CC) -c -o $(CONFIG)/obj/ejsSqlite.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" "-Isrc/cmd" src/jems/ejs.db.sqlite/ejsSqlite.c
+	$(CC) -c -o $(CONFIG)/obj/ejsSqlite.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" "-Isrc/cmd" src/ejs.db.sqlite/ejsSqlite.c
 
 #
 #   libejs.db.sqlite
@@ -2987,7 +2995,7 @@ $(CONFIG)/bin/libejs.db.sqlite.out: $(DEPS_122)
 #
 #   ejs.mail.mod
 #
-DEPS_123 += src/jems/ejs.mail/Mail.es
+DEPS_123 += src/ejs.mail/Mail.es
 DEPS_123 += $(CONFIG)/inc/mpr.h
 DEPS_123 += $(CONFIG)/inc/bit.h
 DEPS_123 += $(CONFIG)/inc/bitos.h
@@ -3083,34 +3091,33 @@ DEPS_123 += $(CONFIG)/bin/ejsmod.out
 DEPS_123 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.mail.mod: $(DEPS_123)
-	cd src/jems/ejs.mail; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.mail.mod  --optimize 9 *.es ; cd ../../..
 
 #
 #   ejs.web.mod
 #
-DEPS_124 += src/jems/ejs.web/Cascade.es
-DEPS_124 += src/jems/ejs.web/CommonLog.es
-DEPS_124 += src/jems/ejs.web/ContentType.es
-DEPS_124 += src/jems/ejs.web/Controller.es
-DEPS_124 += src/jems/ejs.web/Dir.es
-DEPS_124 += src/jems/ejs.web/Google.es
-DEPS_124 += src/jems/ejs.web/Head.es
-DEPS_124 += src/jems/ejs.web/Html.es
-DEPS_124 += src/jems/ejs.web/HttpServer.es
-DEPS_124 += src/jems/ejs.web/MethodOverride.es
-DEPS_124 += src/jems/ejs.web/Middleware.es
-DEPS_124 += src/jems/ejs.web/Mvc.es
-DEPS_124 += src/jems/ejs.web/Request.es
-DEPS_124 += src/jems/ejs.web/Router.es
-DEPS_124 += src/jems/ejs.web/Script.es
-DEPS_124 += src/jems/ejs.web/Session.es
-DEPS_124 += src/jems/ejs.web/ShowExceptions.es
-DEPS_124 += src/jems/ejs.web/Static.es
-DEPS_124 += src/jems/ejs.web/Template.es
-DEPS_124 += src/jems/ejs.web/UploadFile.es
-DEPS_124 += src/jems/ejs.web/UrlMap.es
-DEPS_124 += src/jems/ejs.web/Utils.es
-DEPS_124 += src/jems/ejs.web/View.es
+DEPS_124 += src/ejs.web/Cascade.es
+DEPS_124 += src/ejs.web/CommonLog.es
+DEPS_124 += src/ejs.web/ContentType.es
+DEPS_124 += src/ejs.web/Controller.es
+DEPS_124 += src/ejs.web/Dir.es
+DEPS_124 += src/ejs.web/Google.es
+DEPS_124 += src/ejs.web/Head.es
+DEPS_124 += src/ejs.web/Html.es
+DEPS_124 += src/ejs.web/HttpServer.es
+DEPS_124 += src/ejs.web/MethodOverride.es
+DEPS_124 += src/ejs.web/Middleware.es
+DEPS_124 += src/ejs.web/Mvc.es
+DEPS_124 += src/ejs.web/Request.es
+DEPS_124 += src/ejs.web/Router.es
+DEPS_124 += src/ejs.web/Script.es
+DEPS_124 += src/ejs.web/Session.es
+DEPS_124 += src/ejs.web/ShowExceptions.es
+DEPS_124 += src/ejs.web/Static.es
+DEPS_124 += src/ejs.web/Template.es
+DEPS_124 += src/ejs.web/UploadFile.es
+DEPS_124 += src/ejs.web/UrlMap.es
+DEPS_124 += src/ejs.web/Utils.es
+DEPS_124 += src/ejs.web/View.es
 DEPS_124 += $(CONFIG)/inc/mpr.h
 DEPS_124 += $(CONFIG)/inc/bit.h
 DEPS_124 += $(CONFIG)/inc/bitos.h
@@ -3206,10 +3213,6 @@ DEPS_124 += $(CONFIG)/bin/ejsmod.out
 DEPS_124 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.web.mod: $(DEPS_124)
-	cd src/jems/ejs.web; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.web.mod  --optimize 9 *.es ; cd ../../..
-	cd src/jems/ejs.web; ../../../$(CONFIG)/bin/ejsmod --cslots ../../../$(CONFIG)/bin/ejs.web.mod ; cd ../../..
-	cd src/jems/ejs.web; if ! diff ejs.web.slots.h ../../../$(CONFIG)/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../../$(CONFIG)/inc; fi ; cd ../../..
-	cd src/jems/ejs.web; rm -f ejs.web.slots.h ; cd ../../..
 
 #
 #   ejsWeb.h
@@ -3217,7 +3220,7 @@ $(CONFIG)/bin/ejs.web.mod: $(DEPS_124)
 $(CONFIG)/inc/ejsWeb.h: $(DEPS_125)
 	@echo '      [Copy] $(CONFIG)/inc/ejsWeb.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp src/jems/ejs.web/ejsWeb.h $(CONFIG)/inc/ejsWeb.h
+	cp src/ejs.web/ejsWeb.h $(CONFIG)/inc/ejsWeb.h
 
 #
 #   ejsHttpServer.o
@@ -3235,9 +3238,9 @@ DEPS_126 += $(CONFIG)/inc/ejsWeb.h
 DEPS_126 += $(CONFIG)/inc/ejs.web.slots.h
 
 $(CONFIG)/obj/ejsHttpServer.o: \
-    src/jems/ejs.web/ejsHttpServer.c $(DEPS_126)
+    src/ejs.web/ejsHttpServer.c $(DEPS_126)
 	@echo '   [Compile] $(CONFIG)/obj/ejsHttpServer.o'
-	$(CC) -c -o $(CONFIG)/obj/ejsHttpServer.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" "-Isrc/cmd" src/jems/ejs.web/ejsHttpServer.c
+	$(CC) -c -o $(CONFIG)/obj/ejsHttpServer.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" "-Isrc/cmd" src/ejs.web/ejsHttpServer.c
 
 #
 #   ejsRequest.o
@@ -3255,9 +3258,9 @@ DEPS_127 += $(CONFIG)/inc/ejsWeb.h
 DEPS_127 += $(CONFIG)/inc/ejs.web.slots.h
 
 $(CONFIG)/obj/ejsRequest.o: \
-    src/jems/ejs.web/ejsRequest.c $(DEPS_127)
+    src/ejs.web/ejsRequest.c $(DEPS_127)
 	@echo '   [Compile] $(CONFIG)/obj/ejsRequest.o'
-	$(CC) -c -o $(CONFIG)/obj/ejsRequest.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" "-Isrc/cmd" src/jems/ejs.web/ejsRequest.c
+	$(CC) -c -o $(CONFIG)/obj/ejsRequest.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" "-Isrc/cmd" src/ejs.web/ejsRequest.c
 
 #
 #   ejsSession.o
@@ -3273,9 +3276,9 @@ DEPS_128 += $(CONFIG)/inc/ejs.h
 DEPS_128 += $(CONFIG)/inc/ejsWeb.h
 
 $(CONFIG)/obj/ejsSession.o: \
-    src/jems/ejs.web/ejsSession.c $(DEPS_128)
+    src/ejs.web/ejsSession.c $(DEPS_128)
 	@echo '   [Compile] $(CONFIG)/obj/ejsSession.o'
-	$(CC) -c -o $(CONFIG)/obj/ejsSession.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" "-Isrc/cmd" src/jems/ejs.web/ejsSession.c
+	$(CC) -c -o $(CONFIG)/obj/ejsSession.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" "-Isrc/cmd" src/ejs.web/ejsSession.c
 
 #
 #   ejsWeb.o
@@ -3293,9 +3296,9 @@ DEPS_129 += $(CONFIG)/inc/ejsWeb.h
 DEPS_129 += $(CONFIG)/inc/ejs.web.slots.h
 
 $(CONFIG)/obj/ejsWeb.o: \
-    src/jems/ejs.web/ejsWeb.c $(DEPS_129)
+    src/ejs.web/ejsWeb.c $(DEPS_129)
 	@echo '   [Compile] $(CONFIG)/obj/ejsWeb.o'
-	$(CC) -c -o $(CONFIG)/obj/ejsWeb.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" "-Isrc/cmd" src/jems/ejs.web/ejsWeb.c
+	$(CC) -c -o $(CONFIG)/obj/ejsWeb.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" "-Isrc/cmd" src/ejs.web/ejsWeb.c
 
 #
 #   libejs.web
@@ -3406,16 +3409,14 @@ $(CONFIG)/bin/libejs.web.out: $(DEPS_130)
 #
 #   www
 #
-DEPS_131 += src/jems/ejs.web/www
+DEPS_131 += src/ejs.web/www
 
 $(CONFIG)/bin/www: $(DEPS_131)
-	cd src/jems/ejs.web; rm -fr ../../../$(CONFIG)/bin/www ; cd ../../..
-	cd src/jems/ejs.web; cp -r www ../../../$(CONFIG)/bin ; cd ../../..
 
 #
 #   ejs.template.mod
 #
-DEPS_132 += src/jems/ejs.template/TemplateParser.es
+DEPS_132 += src/ejs.template/TemplateParser.es
 DEPS_132 += $(CONFIG)/inc/mpr.h
 DEPS_132 += $(CONFIG)/inc/bit.h
 DEPS_132 += $(CONFIG)/inc/bitos.h
@@ -3511,12 +3512,15 @@ DEPS_132 += $(CONFIG)/bin/ejsmod.out
 DEPS_132 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.template.mod: $(DEPS_132)
-	cd src/jems/ejs.template; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.template.mod  --optimize 9 TemplateParser.es ; cd ../../..
+	( \
+	cd src/ejs.template; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.template.mod  --optimize 9 TemplateParser.es ; \
+	)
 
 #
 #   ejs.zlib.mod
 #
-DEPS_133 += src/jems/ejs.zlib/Zlib.es
+DEPS_133 += src/ejs.zlib/Zlib.es
 DEPS_133 += $(CONFIG)/inc/mpr.h
 DEPS_133 += $(CONFIG)/inc/bit.h
 DEPS_133 += $(CONFIG)/inc/bitos.h
@@ -3612,7 +3616,10 @@ DEPS_133 += $(CONFIG)/bin/ejsmod.out
 DEPS_133 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.zlib.mod: $(DEPS_133)
-	cd src/jems/ejs.zlib; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.zlib.mod  --optimize 9 *.es ; cd ../../..
+	( \
+	cd src/ejs.zlib; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.zlib.mod  --optimize 9 *.es ; \
+	)
 
 #
 #   ejsZlib.o
@@ -3629,9 +3636,9 @@ DEPS_134 += $(CONFIG)/inc/zlib.h
 DEPS_134 += $(CONFIG)/inc/ejs.zlib.slots.h
 
 $(CONFIG)/obj/ejsZlib.o: \
-    src/jems/ejs.zlib/ejsZlib.c $(DEPS_134)
+    src/ejs.zlib/ejsZlib.c $(DEPS_134)
 	@echo '   [Compile] $(CONFIG)/obj/ejsZlib.o'
-	$(CC) -c -o $(CONFIG)/obj/ejsZlib.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" "-Isrc/cmd" src/jems/ejs.zlib/ejsZlib.c
+	$(CC) -c -o $(CONFIG)/obj/ejsZlib.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" "-Isrc/cmd" src/ejs.zlib/ejsZlib.c
 
 #
 #   libejs.zlib
@@ -3744,7 +3751,7 @@ $(CONFIG)/bin/libejs.zlib.out: $(DEPS_135)
 #
 #   ejs.tar.mod
 #
-DEPS_136 += src/jems/ejs.tar/Tar.es
+DEPS_136 += src/ejs.tar/Tar.es
 DEPS_136 += $(CONFIG)/inc/mpr.h
 DEPS_136 += $(CONFIG)/inc/bit.h
 DEPS_136 += $(CONFIG)/inc/bitos.h
@@ -3840,15 +3847,21 @@ DEPS_136 += $(CONFIG)/bin/ejsmod.out
 DEPS_136 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.tar.mod: $(DEPS_136)
-	cd src/jems/ejs.tar; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.tar.mod  --optimize 9 *.es ; cd ../../..
+	( \
+	cd src/ejs.tar; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.tar.mod  --optimize 9 *.es ; \
+	)
 
 #
 #   mvc.es
 #
-DEPS_137 += src/jems/ejs.mvc/mvc.es
+DEPS_137 += src/ejs.mvc/mvc.es
 
 $(CONFIG)/bin/mvc.es: $(DEPS_137)
-	cd src/jems/ejs.mvc; cp mvc.es ../../../$(CONFIG)/bin ; cd ../../..
+	( \
+	cd src/ejs.mvc; \
+	cp mvc.es ../../$(CONFIG)/bin ; \
+	)
 
 #
 #   mvc
@@ -3946,7 +3959,7 @@ $(CONFIG)/bin/mvc.out: $(DEPS_138)
 #
 #   ejs.mvc.mod
 #
-DEPS_139 += src/jems/ejs.mvc/mvc.es
+DEPS_139 += src/ejs.mvc/mvc.es
 DEPS_139 += $(CONFIG)/inc/mpr.h
 DEPS_139 += $(CONFIG)/inc/bit.h
 DEPS_139 += $(CONFIG)/inc/bitos.h
@@ -4045,23 +4058,32 @@ DEPS_139 += $(CONFIG)/bin/ejs.template.mod
 DEPS_139 += $(CONFIG)/bin/ejs.unix.mod
 
 $(CONFIG)/bin/ejs.mvc.mod: $(DEPS_139)
-	cd src/jems/ejs.mvc; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.mvc.mod  --optimize 9 *.es ; cd ../../..
+	( \
+	cd src/ejs.mvc; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.mvc.mod  --optimize 9 *.es ; \
+	)
 
 #
 #   utest.es
 #
-DEPS_140 += src/jems/ejs.utest/utest.es
+DEPS_140 += src/ejs.utest/utest.es
 
 $(CONFIG)/bin/utest.es: $(DEPS_140)
-	cd src/jems/ejs.utest; cp utest.es ../../../$(CONFIG)/bin ; cd ../../..
+	( \
+	cd src/ejs.utest; \
+	cp utest.es ../../$(CONFIG)/bin ; \
+	)
 
 #
 #   utest.worker
 #
-DEPS_141 += src/jems/ejs.utest/utest.worker
+DEPS_141 += src/ejs.utest/utest.worker
 
 $(CONFIG)/bin/utest.worker: $(DEPS_141)
-	cd src/jems/ejs.utest; cp utest.worker ../../../$(CONFIG)/bin ; cd ../../..
+	( \
+	cd src/ejs.utest; \
+	cp utest.worker ../../$(CONFIG)/bin ; \
+	)
 
 #
 #   utest

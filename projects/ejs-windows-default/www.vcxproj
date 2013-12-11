@@ -95,11 +95,11 @@
   </Link>
 
   <CustomBuildStep>
-    <Command>cd ..\..\src\jems\ejs.web
+    <Command>cd ..\..\src\ejs.web
 if exist "$(BinDir)\www" rd /Q /S "$(BinDir)\www"
 if not exist "$(BinDir)\www" md "$(BinDir)\www"
 xcopy /S /Y "www" "$(BinDir)\www"
-cd ..\..\..\projects\ejs-windows-default</Command>
+cd ..\..\projects\ejs-windows-default</Command>
     <Outputs>$(BinDir)\www</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>

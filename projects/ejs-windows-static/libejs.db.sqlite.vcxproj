@@ -100,7 +100,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <ClCompile Include="..\..\src\jems\ejs.db.sqlite\ejsSqlite.c" />
+    <ClCompile Include="..\..\src\ejs.db.sqlite\ejsSqlite.c" />
   </ItemGroup>
 
   <ItemDefinitionGroup>

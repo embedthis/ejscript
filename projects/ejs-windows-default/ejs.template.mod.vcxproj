@@ -95,9 +95,9 @@
   </Link>
 
   <CustomBuildStep>
-    <Command>cd ..\..\src\jems\ejs.template
+    <Command>cd ..\..\src\ejs.template
 $(BinDir)/ejsc --out $(BinDir)/ejs.template.mod  --optimize 9 TemplateParser.es
-cd ..\..\..\projects\ejs-windows-default</Command>
+cd ..\..\projects\ejs-windows-default</Command>
     <Outputs>$(BinDir)\ejs.template.mod</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>

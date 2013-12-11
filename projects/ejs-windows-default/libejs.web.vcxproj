@@ -100,10 +100,10 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <ClCompile Include="..\..\src\jems\ejs.web\ejsHttpServer.c" />
-    <ClCompile Include="..\..\src\jems\ejs.web\ejsRequest.c" />
-    <ClCompile Include="..\..\src\jems\ejs.web\ejsSession.c" />
-    <ClCompile Include="..\..\src\jems\ejs.web\ejsWeb.c" />
+    <ClCompile Include="..\..\src\ejs.web\ejsHttpServer.c" />
+    <ClCompile Include="..\..\src\ejs.web\ejsRequest.c" />
+    <ClCompile Include="..\..\src\ejs.web\ejsSession.c" />
+    <ClCompile Include="..\..\src\ejs.web\ejsWeb.c" />
   </ItemGroup>
 
   <ItemGroup>
@@ -117,9 +117,9 @@
   </Link>
 
   <CustomBuildStep>
-    <Command>cd ..\..\src\jems\ejs.web
+    <Command>cd ..\..\src\ejs.web
 copy /Y ejsWeb.h $(IncDir)
-cd ..\..\..\projects\ejs-windows-default</Command>
+cd ..\..\projects\ejs-windows-default</Command>
     <Outputs>$(BinDir)\libejs.web.dll</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>

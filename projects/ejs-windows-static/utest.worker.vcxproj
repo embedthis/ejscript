@@ -95,9 +95,9 @@
   </Link>
 
   <CustomBuildStep>
-    <Command>cd ..\..\src\jems\ejs.utest
+    <Command>cd ..\..\src\ejs.utest
 copy utest.worker $(BinDir)
-cd ..\..\..\projects\ejs-windows-static</Command>
+cd ..\..\projects\ejs-windows-static</Command>
     <Outputs>$(BinDir)\utest.worker</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>

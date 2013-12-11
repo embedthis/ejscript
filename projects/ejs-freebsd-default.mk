@@ -2495,15 +2495,11 @@ DEPS_116 += $(CONFIG)/obj/slotGen.o
 DEPS_116 += $(CONFIG)/bin/ejsmod
 
 $(CONFIG)/bin/ejs.mod: $(DEPS_116)
-	cd src/core; ../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.mod  --optimize 9 --bind --require null *.es  ; cd ../..
-	cd src/core; ../../$(CONFIG)/bin/ejsmod --require null --cslots ../../$(CONFIG)/bin/ejs.mod ; cd ../..
-	cd src/core; if ! diff ejs.slots.h ../../$(CONFIG)/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ../../$(CONFIG)/inc; fi ; cd ../..
-	cd src/core; rm -f ejs.slots.h ; cd ../..
 
 #
 #   ejs.unix.mod
 #
-DEPS_117 += src/jems/ejs.unix/Unix.es
+DEPS_117 += src/ejs.unix/Unix.es
 DEPS_117 += $(CONFIG)/inc/mpr.h
 DEPS_117 += $(CONFIG)/inc/bit.h
 DEPS_117 += $(CONFIG)/inc/bitos.h
@@ -2599,13 +2595,16 @@ DEPS_117 += $(CONFIG)/bin/ejsmod
 DEPS_117 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.unix.mod: $(DEPS_117)
-	cd src/jems/ejs.unix; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.unix.mod  --optimize 9 Unix.es ; cd ../../..
+	( \
+	cd src/ejs.unix; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.unix.mod  --optimize 9 Unix.es ; \
+	)
 
 #
 #   ejs.db.mod
 #
-DEPS_118 += src/jems/ejs.db/Database.es
-DEPS_118 += src/jems/ejs.db/DatabaseConnector.es
+DEPS_118 += src/ejs.db/Database.es
+DEPS_118 += src/ejs.db/DatabaseConnector.es
 DEPS_118 += $(CONFIG)/inc/mpr.h
 DEPS_118 += $(CONFIG)/inc/bit.h
 DEPS_118 += $(CONFIG)/inc/bitos.h
@@ -2701,12 +2700,15 @@ DEPS_118 += $(CONFIG)/bin/ejsmod
 DEPS_118 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.db.mod: $(DEPS_118)
-	cd src/jems/ejs.db; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.db.mod  --optimize 9 *.es ; cd ../../..
+	( \
+	cd src/ejs.db; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.db.mod  --optimize 9 *.es ; \
+	)
 
 #
 #   ejs.db.mapper.mod
 #
-DEPS_119 += src/jems/ejs.db.mapper/Record.es
+DEPS_119 += src/ejs.db.mapper/Record.es
 DEPS_119 += $(CONFIG)/inc/mpr.h
 DEPS_119 += $(CONFIG)/inc/bit.h
 DEPS_119 += $(CONFIG)/inc/bitos.h
@@ -2803,12 +2805,15 @@ DEPS_119 += $(CONFIG)/bin/ejs.mod
 DEPS_119 += $(CONFIG)/bin/ejs.db.mod
 
 $(CONFIG)/bin/ejs.db.mapper.mod: $(DEPS_119)
-	cd src/jems/ejs.db.mapper; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.db.mapper.mod  --optimize 9 *.es ; cd ../../..
+	( \
+	cd src/ejs.db.mapper; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.db.mapper.mod  --optimize 9 *.es ; \
+	)
 
 #
 #   ejs.db.sqlite.mod
 #
-DEPS_120 += src/jems/ejs.db.sqlite/Sqlite.es
+DEPS_120 += src/ejs.db.sqlite/Sqlite.es
 DEPS_120 += $(CONFIG)/inc/mpr.h
 DEPS_120 += $(CONFIG)/inc/bit.h
 DEPS_120 += $(CONFIG)/inc/bitos.h
@@ -2904,7 +2909,10 @@ DEPS_120 += $(CONFIG)/bin/ejsmod
 DEPS_120 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.db.sqlite.mod: $(DEPS_120)
-	cd src/jems/ejs.db.sqlite; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.db.sqlite.mod  --optimize 9 *.es ; cd ../../..
+	( \
+	cd src/ejs.db.sqlite; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.db.sqlite.mod  --optimize 9 *.es ; \
+	)
 
 #
 #   ejsSqlite.o
@@ -2920,9 +2928,9 @@ DEPS_121 += $(CONFIG)/inc/ejs.h
 DEPS_121 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
 
 $(CONFIG)/obj/ejsSqlite.o: \
-    src/jems/ejs.db.sqlite/ejsSqlite.c $(DEPS_121)
+    src/ejs.db.sqlite/ejsSqlite.c $(DEPS_121)
 	@echo '   [Compile] $(CONFIG)/obj/ejsSqlite.o'
-	$(CC) -c -o $(CONFIG)/obj/ejsSqlite.o $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc/cmd" src/jems/ejs.db.sqlite/ejsSqlite.c
+	$(CC) -c -o $(CONFIG)/obj/ejsSqlite.o $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc/cmd" src/ejs.db.sqlite/ejsSqlite.c
 
 #
 #   libejs.db.sqlite
@@ -3045,7 +3053,7 @@ $(CONFIG)/bin/libejs.db.sqlite.so: $(DEPS_122)
 #
 #   ejs.mail.mod
 #
-DEPS_123 += src/jems/ejs.mail/Mail.es
+DEPS_123 += src/ejs.mail/Mail.es
 DEPS_123 += $(CONFIG)/inc/mpr.h
 DEPS_123 += $(CONFIG)/inc/bit.h
 DEPS_123 += $(CONFIG)/inc/bitos.h
@@ -3141,34 +3149,33 @@ DEPS_123 += $(CONFIG)/bin/ejsmod
 DEPS_123 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.mail.mod: $(DEPS_123)
-	cd src/jems/ejs.mail; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.mail.mod  --optimize 9 *.es ; cd ../../..
 
 #
 #   ejs.web.mod
 #
-DEPS_124 += src/jems/ejs.web/Cascade.es
-DEPS_124 += src/jems/ejs.web/CommonLog.es
-DEPS_124 += src/jems/ejs.web/ContentType.es
-DEPS_124 += src/jems/ejs.web/Controller.es
-DEPS_124 += src/jems/ejs.web/Dir.es
-DEPS_124 += src/jems/ejs.web/Google.es
-DEPS_124 += src/jems/ejs.web/Head.es
-DEPS_124 += src/jems/ejs.web/Html.es
-DEPS_124 += src/jems/ejs.web/HttpServer.es
-DEPS_124 += src/jems/ejs.web/MethodOverride.es
-DEPS_124 += src/jems/ejs.web/Middleware.es
-DEPS_124 += src/jems/ejs.web/Mvc.es
-DEPS_124 += src/jems/ejs.web/Request.es
-DEPS_124 += src/jems/ejs.web/Router.es
-DEPS_124 += src/jems/ejs.web/Script.es
-DEPS_124 += src/jems/ejs.web/Session.es
-DEPS_124 += src/jems/ejs.web/ShowExceptions.es
-DEPS_124 += src/jems/ejs.web/Static.es
-DEPS_124 += src/jems/ejs.web/Template.es
-DEPS_124 += src/jems/ejs.web/UploadFile.es
-DEPS_124 += src/jems/ejs.web/UrlMap.es
-DEPS_124 += src/jems/ejs.web/Utils.es
-DEPS_124 += src/jems/ejs.web/View.es
+DEPS_124 += src/ejs.web/Cascade.es
+DEPS_124 += src/ejs.web/CommonLog.es
+DEPS_124 += src/ejs.web/ContentType.es
+DEPS_124 += src/ejs.web/Controller.es
+DEPS_124 += src/ejs.web/Dir.es
+DEPS_124 += src/ejs.web/Google.es
+DEPS_124 += src/ejs.web/Head.es
+DEPS_124 += src/ejs.web/Html.es
+DEPS_124 += src/ejs.web/HttpServer.es
+DEPS_124 += src/ejs.web/MethodOverride.es
+DEPS_124 += src/ejs.web/Middleware.es
+DEPS_124 += src/ejs.web/Mvc.es
+DEPS_124 += src/ejs.web/Request.es
+DEPS_124 += src/ejs.web/Router.es
+DEPS_124 += src/ejs.web/Script.es
+DEPS_124 += src/ejs.web/Session.es
+DEPS_124 += src/ejs.web/ShowExceptions.es
+DEPS_124 += src/ejs.web/Static.es
+DEPS_124 += src/ejs.web/Template.es
+DEPS_124 += src/ejs.web/UploadFile.es
+DEPS_124 += src/ejs.web/UrlMap.es
+DEPS_124 += src/ejs.web/Utils.es
+DEPS_124 += src/ejs.web/View.es
 DEPS_124 += $(CONFIG)/inc/mpr.h
 DEPS_124 += $(CONFIG)/inc/bit.h
 DEPS_124 += $(CONFIG)/inc/bitos.h
@@ -3264,10 +3271,6 @@ DEPS_124 += $(CONFIG)/bin/ejsmod
 DEPS_124 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.web.mod: $(DEPS_124)
-	cd src/jems/ejs.web; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.web.mod  --optimize 9 *.es ; cd ../../..
-	cd src/jems/ejs.web; ../../../$(CONFIG)/bin/ejsmod --cslots ../../../$(CONFIG)/bin/ejs.web.mod ; cd ../../..
-	cd src/jems/ejs.web; if ! diff ejs.web.slots.h ../../../$(CONFIG)/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../../$(CONFIG)/inc; fi ; cd ../../..
-	cd src/jems/ejs.web; rm -f ejs.web.slots.h ; cd ../../..
 
 #
 #   ejsWeb.h
@@ -3275,7 +3278,7 @@ $(CONFIG)/bin/ejs.web.mod: $(DEPS_124)
 $(CONFIG)/inc/ejsWeb.h: $(DEPS_125)
 	@echo '      [Copy] $(CONFIG)/inc/ejsWeb.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp src/jems/ejs.web/ejsWeb.h $(CONFIG)/inc/ejsWeb.h
+	cp src/ejs.web/ejsWeb.h $(CONFIG)/inc/ejsWeb.h
 
 #
 #   ejsHttpServer.o
@@ -3293,9 +3296,9 @@ DEPS_126 += $(CONFIG)/inc/ejsWeb.h
 DEPS_126 += $(CONFIG)/inc/ejs.web.slots.h
 
 $(CONFIG)/obj/ejsHttpServer.o: \
-    src/jems/ejs.web/ejsHttpServer.c $(DEPS_126)
+    src/ejs.web/ejsHttpServer.c $(DEPS_126)
 	@echo '   [Compile] $(CONFIG)/obj/ejsHttpServer.o'
-	$(CC) -c -o $(CONFIG)/obj/ejsHttpServer.o $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc/cmd" src/jems/ejs.web/ejsHttpServer.c
+	$(CC) -c -o $(CONFIG)/obj/ejsHttpServer.o $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc/cmd" src/ejs.web/ejsHttpServer.c
 
 #
 #   ejsRequest.o
@@ -3313,9 +3316,9 @@ DEPS_127 += $(CONFIG)/inc/ejsWeb.h
 DEPS_127 += $(CONFIG)/inc/ejs.web.slots.h
 
 $(CONFIG)/obj/ejsRequest.o: \
-    src/jems/ejs.web/ejsRequest.c $(DEPS_127)
+    src/ejs.web/ejsRequest.c $(DEPS_127)
 	@echo '   [Compile] $(CONFIG)/obj/ejsRequest.o'
-	$(CC) -c -o $(CONFIG)/obj/ejsRequest.o $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc/cmd" src/jems/ejs.web/ejsRequest.c
+	$(CC) -c -o $(CONFIG)/obj/ejsRequest.o $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc/cmd" src/ejs.web/ejsRequest.c
 
 #
 #   ejsSession.o
@@ -3331,9 +3334,9 @@ DEPS_128 += $(CONFIG)/inc/ejs.h
 DEPS_128 += $(CONFIG)/inc/ejsWeb.h
 
 $(CONFIG)/obj/ejsSession.o: \
-    src/jems/ejs.web/ejsSession.c $(DEPS_128)
+    src/ejs.web/ejsSession.c $(DEPS_128)
 	@echo '   [Compile] $(CONFIG)/obj/ejsSession.o'
-	$(CC) -c -o $(CONFIG)/obj/ejsSession.o $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc/cmd" src/jems/ejs.web/ejsSession.c
+	$(CC) -c -o $(CONFIG)/obj/ejsSession.o $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc/cmd" src/ejs.web/ejsSession.c
 
 #
 #   ejsWeb.o
@@ -3351,9 +3354,9 @@ DEPS_129 += $(CONFIG)/inc/ejsWeb.h
 DEPS_129 += $(CONFIG)/inc/ejs.web.slots.h
 
 $(CONFIG)/obj/ejsWeb.o: \
-    src/jems/ejs.web/ejsWeb.c $(DEPS_129)
+    src/ejs.web/ejsWeb.c $(DEPS_129)
 	@echo '   [Compile] $(CONFIG)/obj/ejsWeb.o'
-	$(CC) -c -o $(CONFIG)/obj/ejsWeb.o $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc/cmd" src/jems/ejs.web/ejsWeb.c
+	$(CC) -c -o $(CONFIG)/obj/ejsWeb.o $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc/cmd" src/ejs.web/ejsWeb.c
 
 #
 #   libejs.web
@@ -3471,16 +3474,14 @@ $(CONFIG)/bin/libejs.web.so: $(DEPS_130)
 #
 #   www
 #
-DEPS_131 += src/jems/ejs.web/www
+DEPS_131 += src/ejs.web/www
 
 $(CONFIG)/bin/www: $(DEPS_131)
-	cd src/jems/ejs.web; rm -fr ../../../$(CONFIG)/bin/www ; cd ../../..
-	cd src/jems/ejs.web; cp -r www ../../../$(CONFIG)/bin ; cd ../../..
 
 #
 #   ejs.template.mod
 #
-DEPS_132 += src/jems/ejs.template/TemplateParser.es
+DEPS_132 += src/ejs.template/TemplateParser.es
 DEPS_132 += $(CONFIG)/inc/mpr.h
 DEPS_132 += $(CONFIG)/inc/bit.h
 DEPS_132 += $(CONFIG)/inc/bitos.h
@@ -3576,12 +3577,15 @@ DEPS_132 += $(CONFIG)/bin/ejsmod
 DEPS_132 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.template.mod: $(DEPS_132)
-	cd src/jems/ejs.template; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.template.mod  --optimize 9 TemplateParser.es ; cd ../../..
+	( \
+	cd src/ejs.template; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.template.mod  --optimize 9 TemplateParser.es ; \
+	)
 
 #
 #   ejs.zlib.mod
 #
-DEPS_133 += src/jems/ejs.zlib/Zlib.es
+DEPS_133 += src/ejs.zlib/Zlib.es
 DEPS_133 += $(CONFIG)/inc/mpr.h
 DEPS_133 += $(CONFIG)/inc/bit.h
 DEPS_133 += $(CONFIG)/inc/bitos.h
@@ -3677,7 +3681,10 @@ DEPS_133 += $(CONFIG)/bin/ejsmod
 DEPS_133 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.zlib.mod: $(DEPS_133)
-	cd src/jems/ejs.zlib; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.zlib.mod  --optimize 9 *.es ; cd ../../..
+	( \
+	cd src/ejs.zlib; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.zlib.mod  --optimize 9 *.es ; \
+	)
 
 #
 #   ejsZlib.o
@@ -3694,9 +3701,9 @@ DEPS_134 += $(CONFIG)/inc/zlib.h
 DEPS_134 += $(CONFIG)/inc/ejs.zlib.slots.h
 
 $(CONFIG)/obj/ejsZlib.o: \
-    src/jems/ejs.zlib/ejsZlib.c $(DEPS_134)
+    src/ejs.zlib/ejsZlib.c $(DEPS_134)
 	@echo '   [Compile] $(CONFIG)/obj/ejsZlib.o'
-	$(CC) -c -o $(CONFIG)/obj/ejsZlib.o $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc/cmd" src/jems/ejs.zlib/ejsZlib.c
+	$(CC) -c -o $(CONFIG)/obj/ejsZlib.o $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc/cmd" src/ejs.zlib/ejsZlib.c
 
 #
 #   libejs.zlib
@@ -3819,7 +3826,7 @@ $(CONFIG)/bin/libejs.zlib.so: $(DEPS_135)
 #
 #   ejs.tar.mod
 #
-DEPS_136 += src/jems/ejs.tar/Tar.es
+DEPS_136 += src/ejs.tar/Tar.es
 DEPS_136 += $(CONFIG)/inc/mpr.h
 DEPS_136 += $(CONFIG)/inc/bit.h
 DEPS_136 += $(CONFIG)/inc/bitos.h
@@ -3915,15 +3922,21 @@ DEPS_136 += $(CONFIG)/bin/ejsmod
 DEPS_136 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.tar.mod: $(DEPS_136)
-	cd src/jems/ejs.tar; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.tar.mod  --optimize 9 *.es ; cd ../../..
+	( \
+	cd src/ejs.tar; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.tar.mod  --optimize 9 *.es ; \
+	)
 
 #
 #   mvc.es
 #
-DEPS_137 += src/jems/ejs.mvc/mvc.es
+DEPS_137 += src/ejs.mvc/mvc.es
 
 $(CONFIG)/bin/mvc.es: $(DEPS_137)
-	cd src/jems/ejs.mvc; cp mvc.es ../../../$(CONFIG)/bin ; cd ../../..
+	( \
+	cd src/ejs.mvc; \
+	cp mvc.es ../../$(CONFIG)/bin ; \
+	)
 
 #
 #   mvc
@@ -4028,7 +4041,7 @@ $(CONFIG)/bin/mvc: $(DEPS_138)
 #
 #   ejs.mvc.mod
 #
-DEPS_139 += src/jems/ejs.mvc/mvc.es
+DEPS_139 += src/ejs.mvc/mvc.es
 DEPS_139 += $(CONFIG)/inc/mpr.h
 DEPS_139 += $(CONFIG)/inc/bit.h
 DEPS_139 += $(CONFIG)/inc/bitos.h
@@ -4127,23 +4140,32 @@ DEPS_139 += $(CONFIG)/bin/ejs.template.mod
 DEPS_139 += $(CONFIG)/bin/ejs.unix.mod
 
 $(CONFIG)/bin/ejs.mvc.mod: $(DEPS_139)
-	cd src/jems/ejs.mvc; ../../../$(CONFIG)/bin/ejsc --out ../../../$(CONFIG)/bin/ejs.mvc.mod  --optimize 9 *.es ; cd ../../..
+	( \
+	cd src/ejs.mvc; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.mvc.mod  --optimize 9 *.es ; \
+	)
 
 #
 #   utest.es
 #
-DEPS_140 += src/jems/ejs.utest/utest.es
+DEPS_140 += src/ejs.utest/utest.es
 
 $(CONFIG)/bin/utest.es: $(DEPS_140)
-	cd src/jems/ejs.utest; cp utest.es ../../../$(CONFIG)/bin ; cd ../../..
+	( \
+	cd src/ejs.utest; \
+	cp utest.es ../../$(CONFIG)/bin ; \
+	)
 
 #
 #   utest.worker
 #
-DEPS_141 += src/jems/ejs.utest/utest.worker
+DEPS_141 += src/ejs.utest/utest.worker
 
 $(CONFIG)/bin/utest.worker: $(DEPS_141)
-	cd src/jems/ejs.utest; cp utest.worker ../../../$(CONFIG)/bin ; cd ../../..
+	( \
+	cd src/ejs.utest; \
+	cp utest.worker ../../$(CONFIG)/bin ; \
+	)
 
 #
 #   utest
@@ -4308,52 +4330,52 @@ installBinary: $(DEPS_144)
 	cp $(CONFIG)/bin/mvc.es $(BIT_VAPP_PREFIX)/bin/mvc.es
 	cp $(CONFIG)/bin/utest.es $(BIT_VAPP_PREFIX)/bin/utest.es
 	cp $(CONFIG)/bin/utest.worker $(BIT_VAPP_PREFIX)/bin/utest.worker
-ifeq ($(BIT_PACK_SSL),1)
+	if [ "$(BIT_PACK_SSL)" = 1 ]; then 
 	cp $(CONFIG)/bin/libmprssl.so $(BIT_VAPP_PREFIX)/bin/libmprssl.so
-endif
-ifeq ($(BIT_PACK_SSL),1)
+	fi
+	if [ "$(BIT_PACK_SSL)" = 1 ]; then 
 	cp $(CONFIG)/bin/ca.crt $(BIT_VAPP_PREFIX)/bin/ca.crt
-endif
-ifeq ($(BIT_PACK_OPENSSL),1)
+	fi
+	if [ "$(BIT_PACK_OPENSSL)" = 1 ]; then 
 	cp $(CONFIG)/bin/libssl*.so* $(BIT_VAPP_PREFIX)/bin/libssl*.so*
 	cp $(CONFIG)/bin/libcrypto*.so* $(BIT_VAPP_PREFIX)/bin/libcrypto*.so*
-endif
-ifeq ($(BIT_PACK_EST),1)
+	fi
+	if [ "$(BIT_PACK_EST)" = 1 ]; then 
 	cp $(CONFIG)/bin/libest.so $(BIT_VAPP_PREFIX)/bin/libest.so
-endif
+	fi
 	cp $(CONFIG)/bin/libejs.so $(BIT_VAPP_PREFIX)/bin/libejs.so
 	mkdir -p "$(BIT_VAPP_PREFIX)/bin/www/images"
-	cp src/jems/ejs.web/www/images/banner.jpg $(BIT_VAPP_PREFIX)/bin/www/images/banner.jpg
-	cp src/jems/ejs.web/www/images/favicon.ico $(BIT_VAPP_PREFIX)/bin/www/images/favicon.ico
-	cp src/jems/ejs.web/www/images/splash.jpg $(BIT_VAPP_PREFIX)/bin/www/images/splash.jpg
+	cp src/ejs.web/www/images/banner.jpg $(BIT_VAPP_PREFIX)/bin/www/images/banner.jpg
+	cp src/ejs.web/www/images/favicon.ico $(BIT_VAPP_PREFIX)/bin/www/images/favicon.ico
+	cp src/ejs.web/www/images/splash.jpg $(BIT_VAPP_PREFIX)/bin/www/images/splash.jpg
 	mkdir -p "$(BIT_VAPP_PREFIX)/bin/www/js"
-	cp src/jems/ejs.web/www/js/jquery.ejs.min.js $(BIT_VAPP_PREFIX)/bin/www/js/jquery.ejs.min.js
-	cp src/jems/ejs.web/www/js/jquery.min.js $(BIT_VAPP_PREFIX)/bin/www/js/jquery.min.js
-	cp src/jems/ejs.web/www/js/jquery.simplemodal.min.js $(BIT_VAPP_PREFIX)/bin/www/js/jquery.simplemodal.min.js
-	cp src/jems/ejs.web/www/js/jquery.tablesorter.js $(BIT_VAPP_PREFIX)/bin/www/js/jquery.tablesorter.js
-	cp src/jems/ejs.web/www/js/jquery.tablesorter.min.js $(BIT_VAPP_PREFIX)/bin/www/js/jquery.tablesorter.min.js
-	cp src/jems/ejs.web/www/js/jquery.treeview.min.js $(BIT_VAPP_PREFIX)/bin/www/js/jquery.treeview.min.js
+	cp src/ejs.web/www/js/jquery.ejs.min.js $(BIT_VAPP_PREFIX)/bin/www/js/jquery.ejs.min.js
+	cp src/ejs.web/www/js/jquery.min.js $(BIT_VAPP_PREFIX)/bin/www/js/jquery.min.js
+	cp src/ejs.web/www/js/jquery.simplemodal.min.js $(BIT_VAPP_PREFIX)/bin/www/js/jquery.simplemodal.min.js
+	cp src/ejs.web/www/js/jquery.tablesorter.js $(BIT_VAPP_PREFIX)/bin/www/js/jquery.tablesorter.js
+	cp src/ejs.web/www/js/jquery.tablesorter.min.js $(BIT_VAPP_PREFIX)/bin/www/js/jquery.tablesorter.min.js
+	cp src/ejs.web/www/js/jquery.treeview.min.js $(BIT_VAPP_PREFIX)/bin/www/js/jquery.treeview.min.js
 	mkdir -p "$(BIT_VAPP_PREFIX)/bin/www/js/tree-images"
-	cp src/jems/ejs.web/www/js/tree-images/file.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/file.gif
-	cp src/jems/ejs.web/www/js/tree-images/folder-closed.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/folder-closed.gif
-	cp src/jems/ejs.web/www/js/tree-images/folder.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/folder.gif
-	cp src/jems/ejs.web/www/js/tree-images/minus.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/minus.gif
-	cp src/jems/ejs.web/www/js/tree-images/plus.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/plus.gif
-	cp src/jems/ejs.web/www/js/tree-images/treeview-black-line.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-black-line.gif
-	cp src/jems/ejs.web/www/js/tree-images/treeview-black.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-black.gif
-	cp src/jems/ejs.web/www/js/tree-images/treeview-default-line.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-default-line.gif
-	cp src/jems/ejs.web/www/js/tree-images/treeview-default.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-default.gif
-	cp src/jems/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-famfamfam-line.gif
-	cp src/jems/ejs.web/www/js/tree-images/treeview-famfamfam.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-famfamfam.gif
-	cp src/jems/ejs.web/www/js/tree-images/treeview-gray-line.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-gray-line.gif
-	cp src/jems/ejs.web/www/js/tree-images/treeview-gray.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-gray.gif
-	cp src/jems/ejs.web/www/js/tree-images/treeview-red-line.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-red-line.gif
-	cp src/jems/ejs.web/www/js/tree-images/treeview-red.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-red.gif
-	cp src/jems/ejs.web/www/js/treeview.css $(BIT_VAPP_PREFIX)/bin/www/js/treeview.css
+	cp src/ejs.web/www/js/tree-images/file.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/file.gif
+	cp src/ejs.web/www/js/tree-images/folder-closed.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/folder-closed.gif
+	cp src/ejs.web/www/js/tree-images/folder.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/folder.gif
+	cp src/ejs.web/www/js/tree-images/minus.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/minus.gif
+	cp src/ejs.web/www/js/tree-images/plus.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/plus.gif
+	cp src/ejs.web/www/js/tree-images/treeview-black-line.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-black-line.gif
+	cp src/ejs.web/www/js/tree-images/treeview-black.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-black.gif
+	cp src/ejs.web/www/js/tree-images/treeview-default-line.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-default-line.gif
+	cp src/ejs.web/www/js/tree-images/treeview-default.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-default.gif
+	cp src/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-famfamfam-line.gif
+	cp src/ejs.web/www/js/tree-images/treeview-famfamfam.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-famfamfam.gif
+	cp src/ejs.web/www/js/tree-images/treeview-gray-line.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-gray-line.gif
+	cp src/ejs.web/www/js/tree-images/treeview-gray.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-gray.gif
+	cp src/ejs.web/www/js/tree-images/treeview-red-line.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-red-line.gif
+	cp src/ejs.web/www/js/tree-images/treeview-red.gif $(BIT_VAPP_PREFIX)/bin/www/js/tree-images/treeview-red.gif
+	cp src/ejs.web/www/js/treeview.css $(BIT_VAPP_PREFIX)/bin/www/js/treeview.css
 	mkdir -p "$(BIT_VAPP_PREFIX)/bin/www"
-	cp src/jems/ejs.web/www/layout.css $(BIT_VAPP_PREFIX)/bin/www/layout.css
+	cp src/ejs.web/www/layout.css $(BIT_VAPP_PREFIX)/bin/www/layout.css
 	mkdir -p "$(BIT_VAPP_PREFIX)/bin/www/themes"
-	cp src/jems/ejs.web/www/themes/default.css $(BIT_VAPP_PREFIX)/bin/www/themes/default.css
+	cp src/ejs.web/www/themes/default.css $(BIT_VAPP_PREFIX)/bin/www/themes/default.css
 	mkdir -p "$(BIT_VAPP_PREFIX)/inc"
 	cp src/bitos.h $(BIT_VAPP_PREFIX)/inc/bitos.h
 	mkdir -p "$(BIT_INC_PREFIX)/ejs"
@@ -4410,15 +4432,78 @@ endif
 	cp src/deps/zlib/zlib.h $(BIT_VAPP_PREFIX)/inc/zlib.h
 	rm -f "$(BIT_INC_PREFIX)/ejs/zlib.h"
 	ln -s "$(BIT_VAPP_PREFIX)/inc/zlib.h" "$(BIT_INC_PREFIX)/ejs/zlib.h"
-	cp src/jems/ejs.db.sqlite/ejs.db.sqlite.slots.h $(BIT_VAPP_PREFIX)/inc/ejs.db.sqlite.slots.h
+	cp src/bitos.h $(BIT_VAPP_PREFIX)/inc/bitos.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/bitos.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/bitos.h" "$(BIT_INC_PREFIX)/ejs/bitos.h"
+	cp src/cmd/ejsmod.h $(BIT_VAPP_PREFIX)/inc/ejsmod.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejsmod.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejsmod.h" "$(BIT_INC_PREFIX)/ejs/ejsmod.h"
+	cp src/core/default.slots.h $(BIT_VAPP_PREFIX)/inc/default.slots.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/default.slots.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/default.slots.h" "$(BIT_INC_PREFIX)/ejs/default.slots.h"
+	cp src/core/ejs.slots.h $(BIT_VAPP_PREFIX)/inc/ejs.slots.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.slots.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.slots.h"
+	cp src/deps/est/est.h $(BIT_VAPP_PREFIX)/inc/est.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/est.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/est.h" "$(BIT_INC_PREFIX)/ejs/est.h"
+	cp src/deps/http/http.h $(BIT_VAPP_PREFIX)/inc/http.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/http.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/http.h" "$(BIT_INC_PREFIX)/ejs/http.h"
+	cp src/deps/mpr/mpr.h $(BIT_VAPP_PREFIX)/inc/mpr.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/mpr.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/mpr.h" "$(BIT_INC_PREFIX)/ejs/mpr.h"
+	cp src/deps/pcre/pcre.h $(BIT_VAPP_PREFIX)/inc/pcre.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/pcre.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/pcre.h" "$(BIT_INC_PREFIX)/ejs/pcre.h"
+	cp src/deps/sqlite/sqlite3.h $(BIT_VAPP_PREFIX)/inc/sqlite3.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/sqlite3.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/sqlite3.h" "$(BIT_INC_PREFIX)/ejs/sqlite3.h"
+	cp src/deps/zlib/zlib.h $(BIT_VAPP_PREFIX)/inc/zlib.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/zlib.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/zlib.h" "$(BIT_INC_PREFIX)/ejs/zlib.h"
+	cp src/ejs.db.sqlite/ejs.db.sqlite.slots.h $(BIT_VAPP_PREFIX)/inc/ejs.db.sqlite.slots.h
 	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.db.sqlite.slots.h"
 	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.db.sqlite.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.db.sqlite.slots.h"
-	cp src/jems/ejs.web/ejs.web.slots.h $(BIT_VAPP_PREFIX)/inc/ejs.web.slots.h
+	cp src/ejs.h $(BIT_VAPP_PREFIX)/inc/ejs.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.h" "$(BIT_INC_PREFIX)/ejs/ejs.h"
+	cp src/ejs.web/ejs.web.slots.h $(BIT_VAPP_PREFIX)/inc/ejs.web.slots.h
 	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.web.slots.h"
 	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.web.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.web.slots.h"
-	cp src/jems/ejs.web/ejsWeb.h $(BIT_VAPP_PREFIX)/inc/ejsWeb.h
+	cp src/ejs.web/ejsWeb.h $(BIT_VAPP_PREFIX)/inc/ejsWeb.h
 	rm -f "$(BIT_INC_PREFIX)/ejs/ejsWeb.h"
 	ln -s "$(BIT_VAPP_PREFIX)/inc/ejsWeb.h" "$(BIT_INC_PREFIX)/ejs/ejsWeb.h"
+	cp src/ejsByteCode.h $(BIT_VAPP_PREFIX)/inc/ejsByteCode.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejsByteCode.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejsByteCode.h" "$(BIT_INC_PREFIX)/ejs/ejsByteCode.h"
+	cp src/ejsByteCodeTable.h $(BIT_VAPP_PREFIX)/inc/ejsByteCodeTable.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejsByteCodeTable.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejsByteCodeTable.h" "$(BIT_INC_PREFIX)/ejs/ejsByteCodeTable.h"
+	cp src/ejsCompiler.h $(BIT_VAPP_PREFIX)/inc/ejsCompiler.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejsCompiler.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejsCompiler.h" "$(BIT_INC_PREFIX)/ejs/ejsCompiler.h"
+	cp src/ejsCustomize.h $(BIT_VAPP_PREFIX)/inc/ejsCustomize.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejsCustomize.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejsCustomize.h" "$(BIT_INC_PREFIX)/ejs/ejsCustomize.h"
+	cp src/slots/ejs.cache.local.slots.h $(BIT_VAPP_PREFIX)/inc/ejs.cache.local.slots.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.cache.local.slots.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.cache.local.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.cache.local.slots.h"
+	cp src/slots/ejs.db.sqlite.slots.h $(BIT_VAPP_PREFIX)/inc/ejs.db.sqlite.slots.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.db.sqlite.slots.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.db.sqlite.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.db.sqlite.slots.h"
+	cp src/slots/ejs.slots.h $(BIT_VAPP_PREFIX)/inc/ejs.slots.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.slots.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.slots.h"
+	cp src/slots/ejs.web.slots.h $(BIT_VAPP_PREFIX)/inc/ejs.web.slots.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.web.slots.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.web.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.web.slots.h"
+	cp src/slots/ejs.zlib.slots.h $(BIT_VAPP_PREFIX)/inc/ejs.zlib.slots.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejs.zlib.slots.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejs.zlib.slots.h" "$(BIT_INC_PREFIX)/ejs/ejs.zlib.slots.h"
+	cp src/vm/ejsByteGoto.h $(BIT_VAPP_PREFIX)/inc/ejsByteGoto.h
+	rm -f "$(BIT_INC_PREFIX)/ejs/ejsByteGoto.h"
+	ln -s "$(BIT_VAPP_PREFIX)/inc/ejsByteGoto.h" "$(BIT_INC_PREFIX)/ejs/ejsByteGoto.h"
 	mkdir -p "$(BIT_VAPP_PREFIX)/doc/man1"
 	cp doc/man/ejs.1 $(BIT_VAPP_PREFIX)/doc/man1/ejs.1
 	mkdir -p "$(BIT_MAN_PREFIX)/man1"
