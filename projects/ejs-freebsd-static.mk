@@ -2494,9 +2494,9 @@ DEPS_116 += $(CONFIG)/bin/ejsmod
 $(CONFIG)/bin/ejs.mod: $(DEPS_116)
 	( \
 	cd src/core; \
-	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.mod  --optimize 9 --bind --require null *.es 
-	../../$(CONFIG)/bin/ejsmod --require null --cslots ../../$(CONFIG)/bin/ejs.mod
-	if ! diff ejs.slots.h ../../$(CONFIG)/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ../../$(CONFIG)/inc; fi
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.mod  --optimize 9 --bind --require null *.es  ; \
+	../../$(CONFIG)/bin/ejsmod --require null --cslots ../../$(CONFIG)/bin/ejs.mod ; \
+	if ! diff ejs.slots.h ../../$(CONFIG)/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ../../$(CONFIG)/inc; fi ; \
 	rm -f ejs.slots.h ; \
 	)
 
@@ -3271,9 +3271,9 @@ DEPS_124 += $(CONFIG)/bin/ejs.mod
 $(CONFIG)/bin/ejs.web.mod: $(DEPS_124)
 	( \
 	cd src/ejs.web; \
-	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.web.mod  --optimize 9 *.es
-	../../$(CONFIG)/bin/ejsmod --cslots ../../$(CONFIG)/bin/ejs.web.mod
-	if ! diff ejs.web.slots.h ../../$(CONFIG)/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../$(CONFIG)/inc; fi
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.web.mod  --optimize 9 *.es ; \
+	../../$(CONFIG)/bin/ejsmod --cslots ../../$(CONFIG)/bin/ejs.web.mod ; \
+	if ! diff ejs.web.slots.h ../../$(CONFIG)/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../$(CONFIG)/inc; fi ; \
 	rm -f ejs.web.slots.h ; \
 	)
 
@@ -3477,7 +3477,7 @@ DEPS_131 += src/ejs.web/www
 $(CONFIG)/bin/www: $(DEPS_131)
 	( \
 	cd src/ejs.web; \
-	rm -fr ../../$(CONFIG)/bin/www
+	rm -fr ../../$(CONFIG)/bin/www ; \
 	cp -r www ../../$(CONFIG)/bin ; \
 	)
 
@@ -4526,7 +4526,6 @@ DEPS_147 += installBinary
 DEPS_147 += start
 
 install: $(DEPS_147)
-	
 
 #
 #   uninstall
