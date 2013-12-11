@@ -1,4 +1,4 @@
-LICENSE.md - Embedthis Ejscript Licenses
+Embedthis Ejscript Licenses
 ===
 
 This file documents the Embedthis Software Licenses. It includes the Embedthis Ejscript Open Source License and licenses for third-party components within Ejscript.
