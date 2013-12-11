@@ -1,5 +1,5 @@
 #
-#   ejs-vxworks-default.mk -- Makefile to build Embedthis Ejscript for vxworks
+#   ejs-vxworks-default.mk -- Makefile to build Embedthis Ejscript Javascript Language for vxworks
 #
 
 PRODUCT            := ejs
@@ -142,6 +142,7 @@ TARGETS            += $(CONFIG)/bin/ejs.mvc.mod
 TARGETS            += $(CONFIG)/bin/utest.es
 TARGETS            += $(CONFIG)/bin/utest.worker
 TARGETS            += $(CONFIG)/bin/utest.out
+TARGETS            += bower.json
 
 unexport CDPATH
 
@@ -200,6 +201,7 @@ clean:
 	rm -f "$(CONFIG)/bin/libejs.web.out"
 	rm -f "$(CONFIG)/bin/libejs.zlib.out"
 	rm -f "$(CONFIG)/bin/utest.out"
+	rm -f "bower.json"
 	rm -f "$(CONFIG)/obj/mprLib.o"
 	rm -f "$(CONFIG)/obj/mprSsl.o"
 	rm -f "$(CONFIG)/obj/manager.o"
@@ -294,7 +296,7 @@ clobber: clean
 #   version
 #
 version: $(DEPS_1)
-	@echo 2.3.3-0
+	echo 2.3.3-0
 
 #
 #   mpr.h
@@ -4180,34 +4182,44 @@ $(CONFIG)/bin/utest.out: $(DEPS_142)
 	$(CC) -o $(CONFIG)/bin/utest.out $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBS) -Wl,-r 
 
 #
+#   bower.json
+#
+DEPS_143 += package.json
+
+bower.json: $(DEPS_143)
+	@echo '      [Copy] bower.json'
+	mkdir -p "."
+	cp package.json bower.json
+
+#
 #   stop
 #
-stop: $(DEPS_143)
+stop: $(DEPS_144)
 
 #
 #   installBinary
 #
-installBinary: $(DEPS_144)
+installBinary: $(DEPS_145)
 
 #
 #   start
 #
-start: $(DEPS_145)
+start: $(DEPS_146)
 
 #
 #   install
 #
-DEPS_146 += stop
-DEPS_146 += installBinary
-DEPS_146 += start
+DEPS_147 += stop
+DEPS_147 += installBinary
+DEPS_147 += start
 
-install: $(DEPS_146)
+install: $(DEPS_147)
 	
 
 #
 #   uninstall
 #
-DEPS_147 += stop
+DEPS_148 += stop
 
-uninstall: $(DEPS_147)
+uninstall: $(DEPS_148)
 

@@ -1,5 +1,5 @@
 #
-#   ejs-macosx-static.mk -- Makefile to build Embedthis Ejscript for macosx
+#   ejs-macosx-static.mk -- Makefile to build Embedthis Ejscript Javascript Language for macosx
 #
 
 PRODUCT            := ejs
@@ -138,6 +138,7 @@ TARGETS            += $(CONFIG)/bin/ejs.mvc.mod
 TARGETS            += $(CONFIG)/bin/utest.es
 TARGETS            += $(CONFIG)/bin/utest.worker
 TARGETS            += $(CONFIG)/bin/utest
+TARGETS            += bower.json
 
 unexport CDPATH
 
@@ -193,6 +194,7 @@ clean:
 	rm -f "$(CONFIG)/bin/libejs.web.a"
 	rm -f "$(CONFIG)/bin/libejs.zlib.a"
 	rm -f "$(CONFIG)/bin/utest"
+	rm -f "bower.json"
 	rm -f "$(CONFIG)/obj/mprLib.o"
 	rm -f "$(CONFIG)/obj/mprSsl.o"
 	rm -f "$(CONFIG)/obj/manager.o"
@@ -287,7 +289,7 @@ clobber: clean
 #   version
 #
 version: $(DEPS_1)
-	@echo 2.3.3-0
+	echo 2.3.3-0
 
 #
 #   mpr.h
@@ -4237,14 +4239,24 @@ $(CONFIG)/bin/utest: $(DEPS_142)
 	$(CC) -o $(CONFIG)/bin/utest -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_142) $(LIBS_142) $(LIBS_142) $(LIBS) -lpam 
 
 #
+#   bower.json
+#
+DEPS_143 += package.json
+
+bower.json: $(DEPS_143)
+	@echo '      [Copy] bower.json'
+	mkdir -p "."
+	cp package.json bower.json
+
+#
 #   stop
 #
-stop: $(DEPS_143)
+stop: $(DEPS_144)
 
 #
 #   installBinary
 #
-installBinary: $(DEPS_144)
+installBinary: $(DEPS_145)
 	mkdir -p "$(BIT_APP_PREFIX)"
 	rm -f "$(BIT_APP_PREFIX)/latest"
 	ln -s "2.3.3" "$(BIT_APP_PREFIX)/latest"
@@ -4482,24 +4494,24 @@ installBinary: $(DEPS_144)
 #
 #   start
 #
-start: $(DEPS_145)
+start: $(DEPS_146)
 
 #
 #   install
 #
-DEPS_146 += stop
-DEPS_146 += installBinary
-DEPS_146 += start
+DEPS_147 += stop
+DEPS_147 += installBinary
+DEPS_147 += start
 
-install: $(DEPS_146)
+install: $(DEPS_147)
 	
 
 #
 #   uninstall
 #
-DEPS_147 += stop
+DEPS_148 += stop
 
-uninstall: $(DEPS_147)
+uninstall: $(DEPS_148)
 	rm -fr "$(BIT_VAPP_PREFIX)"
 	rm -f "$(BIT_APP_PREFIX)/latest"
 	rmdir -p "$(BIT_APP_PREFIX)" 2>/dev/null ; true
