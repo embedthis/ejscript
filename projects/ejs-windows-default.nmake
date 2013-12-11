@@ -1,5 +1,5 @@
 #
-#   ejs-windows-default.nmake -- Makefile to build Embedthis Ejscript Javascript Language for windows
+#   ejs-windows-default.nmake -- Makefile to build Embethis Ejscript for windows
 #
 
 PRODUCT            = ejs
@@ -86,7 +86,7 @@ LIBS               = ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.li
 
 BIT_ROOT_PREFIX    = C:
 BIT_BASE_PREFIX    = $(BIT_ROOT_PREFIX)\Program Files
-BIT_APP_PREFIX     = $(BIT_BASE_PREFIX)\Embedthis Ejscript Javascript Language
+BIT_APP_PREFIX     = $(BIT_BASE_PREFIX)\Embethis Ejscript
 BIT_VAPP_PREFIX    = $(BIT_APP_PREFIX)
 BIT_DATA_PREFIX    = $(BIT_VAPP_PREFIX)
 BIT_STATE_PREFIX   = $(BIT_VAPP_PREFIX)
@@ -4409,7 +4409,6 @@ installBinary: $(DEPS_147)
 	copy /Y $(CONFIG)\bin\ejs.unix.mod "$(BIT_VAPP_PREFIX)\bin\ejs.unix.mod"
 	copy /Y $(CONFIG)\bin\ejs.web.mod "$(BIT_VAPP_PREFIX)\bin\ejs.web.mod"
 	copy /Y $(CONFIG)\bin\ejs.zlib.mod "$(BIT_VAPP_PREFIX)\bin\ejs.zlib.mod"
-	copy /Y $(CONFIG)\bin\jem.es "$(BIT_VAPP_PREFIX)\bin\jem.es"
 	copy /Y $(CONFIG)\bin\mvc.es "$(BIT_VAPP_PREFIX)\bin\mvc.es"
 	copy /Y $(CONFIG)\bin\utest.es "$(BIT_VAPP_PREFIX)\bin\utest.es"
 	copy /Y $(CONFIG)\bin\utest.worker "$(BIT_VAPP_PREFIX)\bin\utest.worker"

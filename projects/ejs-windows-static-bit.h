@@ -146,7 +146,7 @@
     #define BIT_SYNC "bitos,est,http,mpr,pcre,sqlite,zlib"
 #endif
 #ifndef BIT_TITLE
-    #define BIT_TITLE "Embedthis Ejscript Javascript Language"
+    #define BIT_TITLE "Embethis Ejscript"
 #endif
 #ifndef BIT_TUNE
     #define BIT_TUNE "size"
@@ -172,46 +172,46 @@
     #define BIT_BASE_PREFIX "C:/Program Files"
 #endif
 #ifndef BIT_APP_PREFIX
-    #define BIT_APP_PREFIX "C:/Program Files/Embedthis Ejscript Javascript Language"
+    #define BIT_APP_PREFIX "C:/Program Files/Embethis Ejscript"
 #endif
 #ifndef BIT_VAPP_PREFIX
-    #define BIT_VAPP_PREFIX "C:/Program Files/Embedthis Ejscript Javascript Language"
+    #define BIT_VAPP_PREFIX "C:/Program Files/Embethis Ejscript"
 #endif
 #ifndef BIT_DATA_PREFIX
-    #define BIT_DATA_PREFIX "C:/Program Files/Embedthis Ejscript Javascript Language"
+    #define BIT_DATA_PREFIX "C:/Program Files/Embethis Ejscript"
 #endif
 #ifndef BIT_STATE_PREFIX
-    #define BIT_STATE_PREFIX "C:/Program Files/Embedthis Ejscript Javascript Language"
+    #define BIT_STATE_PREFIX "C:/Program Files/Embethis Ejscript"
 #endif
 #ifndef BIT_BIN_PREFIX
-    #define BIT_BIN_PREFIX "C:/Program Files/Embedthis Ejscript Javascript Language/bin"
+    #define BIT_BIN_PREFIX "C:/Program Files/Embethis Ejscript/bin"
 #endif
 #ifndef BIT_INC_PREFIX
-    #define BIT_INC_PREFIX "C:/Program Files/Embedthis Ejscript Javascript Language/inc"
+    #define BIT_INC_PREFIX "C:/Program Files/Embethis Ejscript/inc"
 #endif
 #ifndef BIT_LIB_PREFIX
-    #define BIT_LIB_PREFIX "C:/Program Files/Embedthis Ejscript Javascript Language/lib"
+    #define BIT_LIB_PREFIX "C:/Program Files/Embethis Ejscript/lib"
 #endif
 #ifndef BIT_MAN_PREFIX
-    #define BIT_MAN_PREFIX "C:/Program Files/Embedthis Ejscript Javascript Language/man"
+    #define BIT_MAN_PREFIX "C:/Program Files/Embethis Ejscript/man"
 #endif
 #ifndef BIT_ETC_PREFIX
-    #define BIT_ETC_PREFIX "C:/Program Files/Embedthis Ejscript Javascript Language"
+    #define BIT_ETC_PREFIX "C:/Program Files/Embethis Ejscript"
 #endif
 #ifndef BIT_WEB_PREFIX
-    #define BIT_WEB_PREFIX "C:/Program Files/Embedthis Ejscript Javascript Language/web"
+    #define BIT_WEB_PREFIX "C:/Program Files/Embethis Ejscript/web"
 #endif
 #ifndef BIT_LOG_PREFIX
-    #define BIT_LOG_PREFIX "C:/Program Files/Embedthis Ejscript Javascript Language/log"
+    #define BIT_LOG_PREFIX "C:/Program Files/Embethis Ejscript/log"
 #endif
 #ifndef BIT_SPOOL_PREFIX
-    #define BIT_SPOOL_PREFIX "C:/Program Files/Embedthis Ejscript Javascript Language/tmp"
+    #define BIT_SPOOL_PREFIX "C:/Program Files/Embethis Ejscript/tmp"
 #endif
 #ifndef BIT_CACHE_PREFIX
-    #define BIT_CACHE_PREFIX "C:/Program Files/Embedthis Ejscript Javascript Language/cache"
+    #define BIT_CACHE_PREFIX "C:/Program Files/Embethis Ejscript/cache"
 #endif
 #ifndef BIT_SRC_PREFIX
-    #define BIT_SRC_PREFIX "C:/Program Files/Embedthis Ejscript Javascript Language/src"
+    #define BIT_SRC_PREFIX "C:/Program Files/Embethis Ejscript/src"
 #endif
 
 /* Suffixes */

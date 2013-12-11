@@ -1,5 +1,5 @@
 #
-#   ejs-vxworks-default.mk -- Makefile to build Embedthis Ejscript Javascript Language for vxworks
+#   ejs-vxworks-default.mk -- Makefile to build Embethis Ejscript for vxworks
 #
 
 PRODUCT            := ejs
@@ -2449,6 +2449,13 @@ DEPS_116 += $(CONFIG)/obj/slotGen.o
 DEPS_116 += $(CONFIG)/bin/ejsmod.out
 
 $(CONFIG)/bin/ejs.mod: $(DEPS_116)
+	( \
+	cd src/core; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.mod  --optimize 9 --bind --require null *.es 
+	../../$(CONFIG)/bin/ejsmod --require null --cslots ../../$(CONFIG)/bin/ejs.mod
+	if ! diff ejs.slots.h ../../$(CONFIG)/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ../../$(CONFIG)/inc; fi
+	rm -f ejs.slots.h ; \
+	)
 
 #
 #   ejs.unix.mod
@@ -3093,6 +3100,10 @@ DEPS_123 += $(CONFIG)/bin/ejsmod.out
 DEPS_123 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.mail.mod: $(DEPS_123)
+	( \
+	cd src/ejs.mail; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.mail.mod  --optimize 9 *.es ; \
+	)
 
 #
 #   ejs.web.mod
@@ -3215,6 +3226,13 @@ DEPS_124 += $(CONFIG)/bin/ejsmod.out
 DEPS_124 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.web.mod: $(DEPS_124)
+	( \
+	cd src/ejs.web; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.web.mod  --optimize 9 *.es
+	../../$(CONFIG)/bin/ejsmod --cslots ../../$(CONFIG)/bin/ejs.web.mod
+	if ! diff ejs.web.slots.h ../../$(CONFIG)/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../$(CONFIG)/inc; fi
+	rm -f ejs.web.slots.h ; \
+	)
 
 #
 #   ejsWeb.h
@@ -3414,6 +3432,11 @@ $(CONFIG)/bin/libejs.web.out: $(DEPS_130)
 DEPS_131 += src/ejs.web/www
 
 $(CONFIG)/bin/www: $(DEPS_131)
+	( \
+	cd src/ejs.web; \
+	rm -fr ../../$(CONFIG)/bin/www
+	cp -r www ../../$(CONFIG)/bin ; \
+	)
 
 #
 #   ejs.template.mod
