@@ -173,7 +173,7 @@ Bit.load({
                 set:        'source',
 
             },{
-                from:       ['Makefile', 'main.bit', 'make.bat'],
+                from:       ['Makefile', 'main.bit', 'make.bat', 'package.json', 'bower.json'],
                 to:         '${src}/',
                 set:        'source',
 
