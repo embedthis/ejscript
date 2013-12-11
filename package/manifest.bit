@@ -139,12 +139,12 @@ Bit.load({
                 enable:     '!bit.settings.static', 
 
             },{
-                from:       'src/jems/ejs.web/www',
+                from:       'src/ejs.web/www',
                 to:         '${abin}/',
                 set:        'core',
 
             },{
-                from:       [ 'src/*.h', 'src/vm/*.h', 'src/slots/*.h', 'src/deps/**.h', 'src/jems/**.h' ],
+                from:       [ 'src/*.h', 'src/vm/*.h', 'src/slots/*.h', 'src/deps/**.h', 'src/**.h' ],
                 to:         '${vapp}/inc/',
                 set:        'dev',
                 linkin:     '${inc}/ejs/',
@@ -205,7 +205,7 @@ Bit.load({
                     'src/ejsByteCode.h',
                     'src/ejsByteCodeTable.h',
                     'src/ejs.h',
-                    'src/jems/ejs.web/ejsWeb.h',
+                    'src/ejs.web/ejsWeb.h',
                     'src/ejsCompiler.h',
                     'src/deps/pcre/pcre.h'
                 ],
@@ -247,7 +247,7 @@ Bit.load({
                 set:        'combo',
 
             },{
-                from:       ['src/core/**.es', 'src/jems/**.es'],
+                from:       ['src/core/**.es', 'src/**.es'],
                 to:         '${src}/src/deps/ejs/ejs.es',
                 cat:        true,                                                                                         
                 exclude:    /ejs.bit|ejs.debugger|test|sample|ejspage.es|ejs.jem|ejs.mvc/,                            
