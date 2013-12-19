@@ -45,7 +45,7 @@ public static var RestfulRoutes = [
   /* Rewrite the "old.html" URL to "new.html" */
   { name: "rewrite", type: "",                      match: "/web/old.html", 
                                                     rewrite: function (request) { request.pathInfo = "/web/new.html" }},
-//  MOB -- what about the blog app?
+//  TODO -- what about the blog app?
 
   /* MVC restful routes */
   { name: "new",     type: "mvc", method: "GET",    match: "/:controller/new",       params: { action: "new" } },
@@ -77,7 +77,7 @@ App.run()
 /*
     Other kinds of routes are shown below:
 
-MOB -- these need to be tested
+TODO -- these need to be tested
 
 var MoreRoutes = [
     {   

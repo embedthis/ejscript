@@ -3894,7 +3894,7 @@ static EcNode *parseLetExpression(EcCompiler *cp)
     if (getToken(cp) != T_RPAREN) {
         return LEAVE(cp, expected(cp, ")"));
     }
-    //  MOB - was return 0
+    //  TODO - was return 0
     return np;
 }
 
@@ -8785,7 +8785,7 @@ static EcNode *parsePragmas(EcCompiler *cp, EcNode *np)
     }
     return LEAVE(cp, np);
 #else
-    //  MOB - does this allow multiple pragmas?
+    //  TODO - does this allow multiple pragmas?
     return LEAVE(cp, parsePragma(cp, np));
 #endif
 }
@@ -9413,7 +9413,7 @@ PUBLIC EcNode *ecResetError(EcCompiler *cp, EcNode *np, bool eatInput)
     /*
         Try to resync by eating input up to the next statement / directive
      */
-    //  MOB - workaround
+    //  TODO - workaround
     count = 0;
     while (!cp->interactive && count++ < 50) {
         tid = peekToken(cp);

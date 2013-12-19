@@ -485,7 +485,7 @@ static char *makeRelativeHome(Ejs *ejs, EjsRequest *req)
         }
         *cp = '\0';
     } else {
-        //  MOB - was "./" -- if this is reverted, change mprAlloc to be +2 
+        //  TODO - was "./" -- if this is reverted, change mprAlloc to be +2 
         *home = '\0';
     }
     return home;
@@ -1071,7 +1071,7 @@ static EjsObj *req_finalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
     if (req->conn) {
         if (!req->writeBuffer || req->writeBuffer == ESV(null)) {
-            //  MOB - should separate these 
+            //  TODO - should separate these 
             // httpFinalize(req->conn);
             httpFinalize(req->conn);
         } else {
@@ -1159,7 +1159,7 @@ static EjsRequest *req_on(Ejs *ejs, EjsRequest *req, int argc, EjsAny **argv)
     if (conn->readq->count > 0) {
         ejsSendEvent(ejs, req->emitter, "readable", NULL, req);
     }
-    //  MOB - should not ned to test finalizedConnector
+    //  TODO - should not ned to test finalizedConnector
     if (!conn->tx->finalizedConnector && 
             !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_FINALIZED &&
             conn->writeq->ioCount == 0) {
@@ -1287,13 +1287,13 @@ static ssize writeResponseData(Ejs *ejs, EjsRequest *req, cchar *buf, ssize len)
     
     if (req->writeBuffer && req->writeBuffer != ESV(null)) {
         if ((written = ejsCopyToByteArray(ejs, req->writeBuffer, -1, buf, len)) > 0) {
-            //  MOB - need API to do combined write to ByteArray and inc writePosition
+            //  TODO - need API to do combined write to ByteArray and inc writePosition
             req->writeBuffer->writePosition += written;
         }
         httpSetResponded(req->conn);
         return written;
     } else {
-        //  MOB - or should this be non-blocking
+        //  TODO - or should this be non-blocking
         return httpWriteBlock(req->conn->writeq, buf, len, HTTP_BLOCK);
     }
 }
@@ -1358,7 +1358,7 @@ static EjsNumber *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         req->written += written;
         total += written;
     }
-    //  MOB should not need to test finalizedConnector
+    //  TODO should not need to test finalizedConnector
     if (!conn->tx->finalizedConnector && 
             !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_FINALIZED &&
             conn->writeq->ioCount == 0) {

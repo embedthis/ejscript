@@ -827,7 +827,7 @@ PUBLIC void ecEncodeGlobal(EcCompiler *cp, EjsAny *obj, EjsName qname)
      */
     slotNum = ejsLookupProperty(ejs, ejs->global, qname);
 
-    //  MOB - don't bind for Appweb all-in-one. ejs.web can load at different places 
+    //  TODO - don't bind for Appweb all-in-one. ejs.web can load at different places 
     if (slotNum < ES_global_NUM_CLASS_PROP /* || cp->bind */) {
         if (slotNum >= 0) {
             ecEncodeNum(cp, (slotNum << 2) | EJS_ENCODE_GLOBAL_SLOT);

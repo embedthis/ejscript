@@ -181,7 +181,7 @@ module ejs.web {
          */
         public function addHandlers(): Void {
             let staticPattern = "\/" + (App.config.dirs.static.basename || "static") + "\/.*"
-            //  MOB - why test here?
+            //  TODO - why test here?
             if (staticPattern) {
                 add(staticPattern, {name: "default", response: StaticApp})
             }
@@ -531,7 +531,7 @@ module ejs.web {
             let log = request.log
             log.debug(5, "Routing " + request.pathInfo)
 
-            //  MOB - this is now done by http for "-http-method" and X-HTTP-METHOD-OVERRIDE
+            //  TODO - this is now done by http for "-http-method" and X-HTTP-METHOD-OVERRIDE
             if (request.method == "POST") {
                 let method = request.params["-ejs-method-"] || request.header("X-HTTP-METHOD-OVERRIDE")
                 if (method && method.toUpperCase() != request.method) {
@@ -563,7 +563,7 @@ module ejs.web {
         public function setDefaultApp(app: Function): Void
             defaultApp = app
 
-        //  MOB - rethink the "full" arg
+        //  TODO - rethink the "full" arg
         /**
             Show the route table
             @param extra Set to "full" to display extra route information
@@ -841,7 +841,7 @@ module ejs.web {
             this.originalTemplate = template
         }
 
-        //  MOB - see ESP. It does this a better way
+        //  TODO - see ESP. It does this a better way
 
         private function compileTemplate(options: Object): Void {
             if (template is String) {
@@ -867,7 +867,7 @@ module ejs.web {
                         t = t.replace("{" + token + "}", "([^/]*)")
                     }
                 } 
-                //  MOB - is this required?
+                //  TODO - is this required?
                 t = t.replace(/\//g, "\\/")
                 pattern = RegExp("^" + t + "$")
                 /*  Splitter ends up looking like "$1:$2:$3:$4" */

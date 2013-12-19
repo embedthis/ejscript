@@ -22,12 +22,12 @@ enumerable class Test {
 
     /*
         Parsed args
-        MOB - don't need to store separate to options.
+        TODO - don't need to store separate to options.
      */
     var _cfg: Path?                         // Path to configuration outputs directory
     var _bin: Path                          // Path to bin directory
     var _depth: Number = 1                  // Test level. Higher levels mean deeper testing.
-    //  MOB - remove
+    //  TODO - remove
     var _lib: Path                          // Path to lib directory
     var _top: Path                          // Path to top of source tree
 
@@ -194,7 +194,7 @@ enumerable class Test {
             throw "Cannot find configure"
         }
         _top = path.dirname.absolute
-        //  MOB - this is not reliable. If multiple platforms, it may pick the wrong one.
+        //  TODO - this is not reliable. If multiple platforms, it may pick the wrong one.
         _cfg = _top.files(Config.OS + '-' + Config.CPU + '-*').sort()[0]
         if (!_cfg) {
             let bith = _top.files('*/inc/bit.h').sort()[0]
@@ -547,7 +547,7 @@ enumerable class Test {
         App.exit(1)
     }
 
-//  MOB - rename tor trace
+//  TODO - rename tor trace
     function activity(tag: String, ...args): Void {
         let msg = args.join(" ")
         let msg = "%12s %s" % (["[" + tag + "]"] + [msg]) + "\n"

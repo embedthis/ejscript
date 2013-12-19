@@ -59,7 +59,7 @@ module ejs.db {
             this.adapter = new global.module::[adapterClass](options)
         }
 
-        //  MOB - inconsistent naming. Add column,index vs create table
+        //  TODO - inconsistent naming. Add column,index vs create table
         /**
             Add a column to a table.
             @param table Name of the table
@@ -128,7 +128,7 @@ module ejs.db {
         function createDatabase(name: String, options: Object? = null): Void
             adapter.createDatabase(name, options)
 
-        //  MOB - should be addTable for consistency
+        //  TODO - should be addTable for consistency
         /**
             Create a new table
             @param table Name of the table
@@ -165,7 +165,7 @@ module ejs.db {
         function destroyDatabase(name: String): Void
             adapter.destroyDatabase(name)
 
-        //  MOB - should be removeTable for consistency
+        //  TODO - should be removeTable for consistency
         /**
             Destroy a table
             @param table Name of the table to destroy
@@ -307,7 +307,7 @@ module ejs.db {
         function startTransaction(): Void
             adapter.startTransaction()
 
-//  MOB -- should be setter/getter
+//  TODO -- should be setter/getter
         /**
             Trace all SQL statements on this database. Control whether trace is enabled for all SQL statements 
             issued against the database.

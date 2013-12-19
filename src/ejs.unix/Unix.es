@@ -218,8 +218,8 @@ module ejs.unix {
     function mkdir(path: String, permissions: Number = 0755): void
         Path(path).makeDir({permissions: permissions})
     
-    //  MOB - should allow toFile to be a directory
-    //  MOB - both args should be Paths
+    //  TODO - should allow toFile to be a directory
+    //  TODO - both args should be Paths
     /**
         Rename a file. If the new file name exists it is removed before the rename.
         @param fromFile Original file name.
@@ -292,6 +292,7 @@ module ejs.unix {
         return success
     }
 
+    //  TODO - need option to only remove empty directories
     /**
         Removes a directory and contents
         @param patterns Pattern to match files to delete. This can be a String, Path or array of String/Paths. 
@@ -310,7 +311,7 @@ module ejs.unix {
             patterns = [patterns]
         }
         for each (let pat:Path in patterns) {
-            for each (let path: Path in Path('.').files(pat)) {
+            for each (let path: Path in Path('.').files(pat, options)) {
                 if (path.isDir) {
                     rmdir(path.join('*'), options)
                 }

@@ -4,7 +4,7 @@
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
-//  MOB - enabled while boostraping
+//  TODO - enabled while boostraping
 # Config.ZLIB || 1
 module ejs.zlib {
 

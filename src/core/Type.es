@@ -7,7 +7,7 @@
 module ejs {
 
     /*
-        MOB - REVISE
+        TODO - REVISE
         The Type class is unlike other class definitions. Rather than provide definitions that are accessed via
         the base-class and prototype chain, these properties are cloned directly into all types.
      */

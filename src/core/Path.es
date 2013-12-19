@@ -234,7 +234,7 @@ module ejs {
          */
         native function get isAbsolute(): Boolean
 
-        //  MOB - need isExecutable
+        //  TODO - need isExecutable
         /**
             Is the path a directory. If the path is a symbolic link, the target of the link is tested.
             @return true if the file is a directory
@@ -423,9 +423,9 @@ module ejs {
          */
         native function get parent(): Path
 
-        /*  MOB -- different to File.permissions. Should have something that returns an object with full path/file
+        /*  TODO -- different to File.permissions. Should have something that returns an object with full path/file
             attributes including group/user. The perms should be broken down into world:group:user */
-        //  MOB - should not use a setter should be functions
+        //  TODO - should not use a setter should be functions
         /**
             The file permissions of a path. This number contains the Posix style permissions value or null if the file 
             does not exist. NOTE: this is not a string representation of an octal posix mask. 
@@ -532,7 +532,7 @@ module ejs {
          */
         native function remove(): Boolean 
 
-        //  MOB - consider remove({contents: true})
+        //  TODO - consider remove({contents: true})
         /**
             Removes a directory and its contents
             If the path is a directory, this call will remove all subdirectories and their contents and finally the
@@ -568,9 +568,9 @@ module ejs {
         /**
             Rename a file. If the new path exists it is removed before the rename.
             @param target New name of the path
-            @return True if the file is renamed.
+            @throws IOError if the rename fails.
          */
-        native function rename(target: Path): Boolean
+        native function rename(target: Path): Void
         
         /**
             Replace the path extension and return a new path.
@@ -655,7 +655,7 @@ module ejs {
         function startsWith(prefix: String): Boolean
             portable.name.startsWith(Path(prefix).portable)
 
-        //  MOB - symlink is backwards
+        //  TODO - symlink is backwards
         /**
             Create the path as a symbolic link to refer to the target
             This will remove any pre-existing path and then create a symbolic link at path to refer to the target.
@@ -741,9 +741,9 @@ module ejs {
          */
         native function get windows(): Path
 
-        //  MOB rename? - bit confusing "write". This really does a "save"
-        //  MOB - rename to writecContents or save
-        //  MOB - last arg should be permissions?
+        //  TODO rename? - bit confusing "write". This really does a "save"
+        //  TODO - rename to writecContents or save
+        //  TODO - last arg should be permissions?
         /**
             Write the file contents. This method opens the file, writes the contents and closes the file.
             @param args The data to write to the file. Data is serialized in before writing. Note that numbers will not 

@@ -22,7 +22,7 @@ server.on("readable", function (event, request) {
     // request.sendResponse({ status: 200, headers: {"Content-Length": 11}, body: "Some Data\r\n"})
 
     //  TODO - should these be setters?
-    //  MOB - try without a content length. Chunking should still work
+    //  TODO - try without a content length. Chunking should still work
     request.status = 200
     request.setHeaders({
         // "Content-Length", 11,

@@ -152,7 +152,7 @@ module ejs {
          */
         native function formatUTC(layout: String): String 
 
-//  MOB -- rethink name
+//  TODO -- rethink name
         /**
             Calculate a time that is $msec in the future
             @param msec Period into the future in milliseconds. Can be negative for the past.
@@ -635,7 +635,7 @@ module ejs {
             @param The operand date
             @return Return a new Date.
          */
-//  MOB -- reconsider
+//  TODO -- reconsider
         # TODO
         native function -(date: Date): Date
     }

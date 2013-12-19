@@ -20,7 +20,7 @@
  */
 #define top                     (*state->stack)
 
-//  MOB - ejs arg not used
+//  TODO - ejs arg not used
 #define pop(ejs)                (*state->stack--)
 
 #define push(value)             (*(++(state->stack))) = ((EjsObj*) (value))
@@ -2718,7 +2718,7 @@ EjsAny *ejsRunFunctionBySlot(Ejs *ejs, EjsAny *thisObj, int slotNum, int argc, v
 }
 
 
-//  MOB - this is inconsistent with ejsRunBySlot. This has a separate container and thisObj, whereas RunBySlot
+//  TODO - this is inconsistent with ejsRunBySlot. This has a separate container and thisObj, whereas RunBySlot
 //  has only one arg
 
 EjsAny *ejsRunFunctionByName(Ejs *ejs, EjsAny *container, EjsName qname, EjsAny *thisObj, int argc, void *argv)

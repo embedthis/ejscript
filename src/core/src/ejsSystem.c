@@ -23,7 +23,7 @@ static EjsString *system_hostname(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
  */
 static EjsString *system_ipaddr(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    //  MOB - move this into MPR and call mprSetIpAddr
+    //  TODO - move this into MPR and call mprSetIpAddr
 #if BIT_UNIX_LIKE || BIT_WIN_LIKE
     struct addrinfo *res, *reslist, hints;
     cchar           *ip;

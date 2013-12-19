@@ -32,7 +32,7 @@ module ejs.web {
          */ 
         native enumerable var absHome: Uri
 
-        //  MOB - update
+        //  TODO - update
         /** 
             Authentication group. This property is set to the value of the authentication group header. 
             This field is read-only.
@@ -123,7 +123,7 @@ module ejs.web {
          */
         native enumerable var filename: Path
 
-//  MOB -- why public here
+//  TODO -- why public here
         /** 
             Notification "flash" messages to pass to the next request (only). By convention, the following keys are used.
             error: Negative errors (Warnings and errors), inform: Informational / postitive feedback (note),
@@ -398,7 +398,7 @@ module ejs.web {
          */
         function createSession(timeout: Number = -1): Session {
             if (timeout >= 0) {
-// - MOB - does this change the timeout for just this session or for all?
+// - TODO - does this change the timeout for just this session or for all?
                 setLimits({ sessionTimeout: timeout })
             }
             return session
@@ -494,7 +494,7 @@ module ejs.web {
         function inform(msg: String): Void
             notify("inform", msg)
 
-        // MOB - OPT make native
+        // TODO - OPT make native
         /** 
             Create a URI link. The target parameter may contain partial or complete URI information. The missing parts 
             are supplied using the current request and route tables. The resulting URI is a normalized, server-local 
@@ -555,7 +555,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}
          */
         function link(target: Object): Uri {
             /*
-                MOB - refactor:
+                TODO - refactor:
                 Don't update target as the object hash. Don't use target.uri as the intermediate form. 
                 Don't support outside use of target.uri to tunnel a URI
              */
@@ -564,7 +564,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}
             }
             if (target is String) {
                 if (target[0] == '@') {
-                    //  MOB - what about a possible controller in the target?
+                    //  TODO - what about a possible controller in the target?
                     target = {action: target}
                 } else {
                     if (target[0] == '~') {
@@ -579,11 +579,11 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}
                     target = {uri: target}
                 }
             }
-            //  MOB - remove target.uri tunneling except internally in this routine
+            //  TODO - remove target.uri tunneling except internally in this routine
             if (!target.uri) {
                 target = target.clone()
                 if (target.action) {
-                    //  MOB - this should be genericized and take request.params to get a default action / controller
+                    //  TODO - this should be genericized and take request.params to get a default action / controller
                     //  and all other params
                     if (target.action[0] == '@') {
                         target.action = target.action.slice(1)
@@ -688,7 +688,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}
          */
         native function on(name, observer: Function): Request
 
-//  MOB - should there be a blocking read option?
+//  TODO - should there be a blocking read option?
         /** 
             @duplicate Stream.read
             If the request is posting a form, i.e. the Http ContentType header is set to 
@@ -912,7 +912,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}
          */
         native function write(...data): Number
 
-//  MOB - add this to ByteArray, Http, Socket (not to Stream)
+//  TODO - add this to ByteArray, Http, Socket (not to Stream)
         /** 
             Write a block of data to the client. This will buffer the written data which will be flushed when either 
             close(), flush() or finalize() is called or the underlying pipeline is full. 
@@ -928,7 +928,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}
         native function writeBlock(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number?
 
         /**
-MOB - DEBUG
+TODO - DEBUG
             Write content based on the requested accept mime type
             @param data Data to send to the client
             @hide
@@ -1025,7 +1025,7 @@ MOB - DEBUG
         native function get written(): Number
 
         /********************************************** JSGI  ********************************************************/
-        //   MOB - Deprecate
+        //   TODO - Deprecate
         /** 
             JSGI specification configuration object.
             @spec jsgi-0.3
@@ -1070,7 +1070,7 @@ MOB - DEBUG
 
         /*************************************** Deprecated ***************************************/
 
-//  MOB - remove all this legacy stuff
+//  TODO - remove all this legacy stuff
         /** 
             @hide
             @deprecated 2.0.0

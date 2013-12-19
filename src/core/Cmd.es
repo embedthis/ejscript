@@ -46,7 +46,7 @@ module ejs {
          */
         native function close(): Void 
 
-        //  MOB - should be a function. Need flags MPR_CMD_EXACT_ENV support.
+        //  TODO - should be a function. Need flags MPR_CMD_EXACT_ENV support.
         /**
             Hash of environment strings to pass to the command.
          */

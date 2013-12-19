@@ -14,7 +14,7 @@ while (http.read(buf) > 0) {
 assert(http.status == 200)
 http.close()
 
-/*  MOB - a bit slow
+/*  TODO - a bit slow
     http.get(BIG)
     ts = new TextStream(http)
     lines = ts.readLines()

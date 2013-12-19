@@ -797,7 +797,7 @@ PUBLIC struct EjsTrait *ejsGetPropertyTraits(Ejs *ejs, EjsAny *obj, int slotNum)
  */
 PUBLIC EjsAny *ejsInvokeOperator(Ejs *ejs, EjsAny *obj, int opCode, EjsAny *rhs);
 
-//  MOB rename
+//  TODO rename
 /** 
     Default implementation for operator invoke
     @description Invoke an Ejscript byte code operator on the specified variable given the expression right hand side.
@@ -1339,7 +1339,7 @@ PUBLIC struct EjsString *ejsObjToJSON(Ejs *ejs, EjsObj *obj, int argc, EjsObj **
 #define EJS_BLEND_ASSIGN        0x200       /**< Flag for ejsBlendObject for "=" property blend */
 #define EJS_BLEND_COND_ASSIGN   0x400       /**< Flag for ejsBlendObject for "?" property blend */
 
-//  MOB - rename ejsBlend
+//  TODO - rename ejsBlend
 /**
     Blend objects
     @description Merge one object into another. This is useful for inheriting and optionally overwriting option 
@@ -1677,7 +1677,7 @@ PUBLIC int ejsStartsWithAsc(Ejs *ejs, EjsString *sp, cchar *pat);
  */
 PUBLIC char *ejsToMulti(Ejs *ejs, void *obj);
 
-//  MOB - rename ejsFormat
+//  TODO - rename ejsFormat
 /** 
     Format arguments
     @param ejs Ejs reference returned from #ejsCreateVM
@@ -1990,7 +1990,7 @@ typedef struct EjsBlock {
     struct EjsBlock *scope;                         /**< Lexical scope chain for this block */
     struct EjsBlock *prev;                          /**< Previous block in activation chain */
 
-    //  MOB -- OPT and compress / eliminate some of these fields. Every function has these.
+    //  TODO -- OPT and compress / eliminate some of these fields. Every function has these.
     EjsObj          *prevException;                 /**< Previous exception if nested exceptions */
     EjsObj          **stackBase;                    /**< Start of stack in this block */
     uchar           *restartAddress;                /**< Restart instruction address */
@@ -2322,7 +2322,7 @@ PUBLIC int ejsBindFunction(Ejs *ejs, EjsAny *obj, int slotNum, void *fun);
  */
 PUBLIC EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *fun, int deep);
 
-//  MOB - refactor into several functions
+//  TODO - refactor into several functions
 /** 
     Create a function object
     @description This creates a function object and optionally associates byte code with the function.
@@ -2796,7 +2796,7 @@ PUBLIC EjsAny *ejsCacheReadObj(Ejs *ejs, EjsObj *cache, struct EjsString *key, E
  */
 PUBLIC EjsBoolean *ejsCacheRemove(Ejs *ejs, EjsObj *cache, struct EjsString *key);
 
-//  MOB - rename ejsSetCacheLimits
+//  TODO - rename ejsSetCacheLimits
 /** 
     Set the cache limits
     @param ejs Interpreter instance returned from #ejsCreateVM
@@ -2921,7 +2921,7 @@ PUBLIC EjsDate *ejsCreateDate(Ejs *ejs, MprTime value);
 #endif
 
 /******************************************** Error ***********************************************/
-//  MOB - missing SecurityException PermissionsException
+//  TODO - missing SecurityException PermissionsException
 /** 
     Error classes
     @description Base class for error exception objects. Exception objects are created by programs and by the system 
@@ -3900,7 +3900,7 @@ typedef struct EjsXmlTagState {
     @stability Internal
  */
 typedef struct EjsXmlState {
-    //  MOB -- should not be fixed but should be growable
+    //  TODO -- should not be fixed but should be growable
     EjsXmlTagState  nodeStack[BIT_XML_MAX_NODE_DEPTH];      /**< nodeStack */
     Ejs             *ejs;                                   /**< Convenient reference to ejs */
     struct EjsType  *xmlType;                               /**< Xml type reference */
@@ -4753,7 +4753,7 @@ PUBLIC int ejsEvalFile(cchar *path);
  */
 PUBLIC int ejsLoadScriptFile(Ejs *ejs, cchar *script, cchar *cache, int flags);
 
-//  MOB - rename ejsLoadScriptString
+//  TODO - rename ejsLoadScriptString
 /** 
     Load a script from a string
     @description This will compile the script string and then run it. If the cache path argument is provided, 
@@ -4813,7 +4813,7 @@ PUBLIC void ejsExit(Ejs *ejs, int status);
  */
 PUBLIC void *ejsGetHandle(Ejs *ejs);
 
-//  MOB - variable is the wrong name. ejsGetPropByName?
+//  TODO - variable is the wrong name. ejsGetPropByName?
 /** 
     Get a variable by name
     @description This looks for a property name in an object, its prototype or base classes.
@@ -5175,7 +5175,7 @@ typedef struct EjsModuleHdr {
  */
 typedef struct EjsModule {
     EjsString       *name;                  /**< Name of this module - basename of the filename without .mod extension */
-    //  MOB - document the version format
+    //  TODO - document the version format
     EjsString       *vname;                 /**< Versioned name - name with optional version suffix */
     MprMutex        *mutex;                 /**< Multithread locking */
     int             version;                /**< Made with EJS_MAKE_VERSION */
@@ -5186,7 +5186,7 @@ typedef struct EjsModule {
     EjsConstants    *constants;             /**< Constant pool */
     EjsFunction     *initializer;           /**< Initializer method */
 
-    //  MOB - should have isDefault bit
+    //  TODO - should have isDefault bit
     uint            compiling       : 1;    /**< Module currently being compiled from source */
     uint            configured      : 1;    /**< Module types have been configured with native code */
     uint            loaded          : 1;    /**< Module has been loaded from an external file */

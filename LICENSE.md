@@ -189,7 +189,7 @@ SQLite is used by the Ejscript web framework. It may included in the ejs binary 
 
 The author or authors of this code dedicate any and all copyright interest in this code to the public domain. We make this dedication for the benefit of the public at large and to the detriment of our heirs and successors. We intend this dedication to be an overt act of relinquishment in perpetuity of all present and future rights to this code under copyright law.
 
-TropicSSL License
+EST License
 ---
 
 It may included in the ejs binary at the user's choice and discretion if the user selects the EST SSL stack.

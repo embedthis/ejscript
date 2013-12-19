@@ -206,7 +206,7 @@ module ejs {
         function set outStream(stream: Stream): void
             _outStream = stream
 
-        //  MOB - rename from debug as useful for any level zero output
+        //  TODO - rename from debug as useful for any level zero output
         /** 
             Emit a debug message. The message level will be compared to the logger setting to determine 
             whether it will be output to the devices or not. Also, if the logger has a filter function set that 

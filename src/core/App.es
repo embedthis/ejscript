@@ -279,7 +279,7 @@ module ejs {
          */
         native static function putenv(name: String, value: String): Void
 
-        //  MOB - should this be renamed App.pump()
+        //  TODO - should this be renamed App.pump()
         /** 
             Run the application event loop. 
             A script may call run() to service events. Calling run() will cause the ejs shell to wait and service 
@@ -298,7 +298,7 @@ module ejs {
         native static function get search(): Array
         native static function set search(paths: Array): Void
 
-        //  MOB - sleep should not throw
+        //  TODO - sleep should not throw
         /** 
             Sleep the application for the given number of milliseconds. Events will be serviced while asleep.
             An alternative to sleep is $App.run which can be configured to sleep and return early if an event is received.
@@ -442,7 +442,7 @@ module ejs {
             }
         }
         if (config.cache) {
-            //  MOB - should there be a config.cache.enable instead
+            //  TODO - should there be a config.cache.enable instead
             App.cache = new Cache(null, blend({shared: true}, config.cache))
         }
     }

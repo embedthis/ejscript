@@ -56,7 +56,7 @@
             }
         }
         elt.trigger('http:before');
-        // MOB changeUrl(url);
+        // TODO changeUrl(url);
         $.ajax({
             url: url,
             data: data,
@@ -102,7 +102,7 @@
         var result = {};
         $.each(elt[0].attributes, function(index, att) {
             if (att.name.indexOf("data-") == 0) {
-                //  MOB -- why bother removing data-
+                //  TODO -- why bother removing data-
                 result[att.name.substring(5)] = att.value;
             }
         });
@@ -127,8 +127,8 @@
     function request() {
         var el          = $(this);
 
-        //  MOB - when is data-click-method used and when data-method
-        //  MOB -- really should pair these. If method uses data-click-method, then params must be data-click-params
+        //  TODO - when is data-click-method used and when data-method
+        //  TODO -- really should pair these. If method uses data-click-method, then params must be data-click-params
         var method      = el.attr('data-click-method') || el.attr('data-method') || 'GET';
         var url         = el.attr('data-click') || el.attr('action') || el.attr('href');
         var params      = el.attr('data-click-params') || el.attr('data-params');
@@ -205,7 +205,7 @@
                 e.fadeTo(0, 1);
                 e.fadeTo(1000, 0);
             } else if (effects == "bold") {
-                /* MOB Broken */
+                /* TODO Broken */
                 e.css("font-weight", 100);
                 // e.animate({"opacity": 0.1, "font-weight": 900}, 1000);
                 e.animate({"font-weight": 900}, 1000);
@@ -255,7 +255,7 @@
                             e.removeAttr("checked")
                         }
                     } else if (d.type == "radio") {
-                        //  MOB BROKEN
+                        //  TODO BROKEN
                         if (data == e.val()) {
                             e.attr("checked", "yes")
                         } else {
@@ -280,13 +280,13 @@
         function update(options) {
             var elt = $(this);
             var id = elt.attr("id");
-            //  MOB - what about defaults?
+            //  TODO - what about defaults?
             var o = $.extend({}, options, elt.data("ejs-options") || {}, getDataAttributes(elt));
             elt.data("ejs-options", o);
             if (o.updating) {
                 var method = o["refresh-method"] || "GET";
 
-                //  MOB - consider firing events - elt.trigger('http:complete', http);
+                //  TODO - consider firing events - elt.trigger('http:complete', http);
                 $.ajax({
                     url: o.refresh,
                     type: method,
@@ -372,7 +372,7 @@
         $(this).attr("checked", true);
     });
 
-//  MOB -- is this used? or is data-click always present?
+//  TODO -- is this used? or is data-click always present?
     /* Click on link foreground with data-method */
     $('a[data-method]:not([data-remote])').live('click', function (e) {
         request.apply(this)
@@ -478,8 +478,8 @@
     });
 
 /////////////////////////////////////////
-/*  MOB -- TODO - fix location 
-    //  MOB -- rename change Address
+/*  TODO -- TODO - fix location 
+    //  TODO -- rename change Address
     function changeUrl(i) {
         console.log("CHANGE " + i);
         $.address.title(i);

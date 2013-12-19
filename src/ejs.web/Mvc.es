@@ -28,7 +28,7 @@ module ejs.web {
                 views: Path("views"),
             },
             mvc: {
-                //  MOB - should be moved to files
+                //  TODO - should be moved to files
                 appmod: "App.mod",
                 view: {
                     connectors: { },
@@ -105,7 +105,7 @@ module ejs.web {
             let dirs = config.dirs
             let appmod = dirs.cache.join(config.mvc.appmod)
             if (config.web.flat) {
-                //  MOB - implement flat
+                //  TODO - implement flat
                 if (!global.BaseController) {
                     global.load(appmod)
                 }
@@ -220,7 +220,7 @@ module ejs.web {
 
     }
 
-    //  MOB - who uses this?
+    //  TODO - who uses this?
     /**
         MVC request handler.  
         @param request Request object
@@ -233,7 +233,7 @@ module ejs.web {
         return app(request)
     }
 
-//  MOB -- update doc. Rename from builder?
+//  TODO -- update doc. Rename from builder?
     /** 
         MVC builder for use in routing tables. The MVC builder function can be included directly in Route table entries.
         @param request Request object. 

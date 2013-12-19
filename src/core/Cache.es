@@ -69,7 +69,7 @@ module ejs {
         function destroy(): Void
             adapter.destroy()
 
-        //  MOB - bit inconsistent that expires takes only a date and not a lifespan too
+        //  TODO - bit inconsistent that expires takes only a date and not a lifespan too
         /**
             Set a new expire date for a key
             @param key Key to modify

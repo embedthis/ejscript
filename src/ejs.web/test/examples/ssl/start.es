@@ -7,7 +7,7 @@ let address = ":" + (App.config.test.ssl_port || "6743")
 let server: HttpServer = new HttpServer({documents: "web"})
 
 /* OK
-//  MOB -- test protocols and ciphers
+//  TODO -- test protocols and ciphers
     server.secure("ssl/server.key.pem", "ssl/server.crt")
     print("IS SECURE " + server.isSecure)
     // server.verifyClients("ssl/ca", "ssl/ca/file.certs")

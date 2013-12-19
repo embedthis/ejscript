@@ -64,14 +64,14 @@ module ejs.web {
             "width":                "width",
         }
 
-        //  MOB -- need to be able to control treeview or not
+        //  TODO -- need to be able to control treeview or not
         private static const defaultStylesheets = [
             "/layout.css", 
             "/themes/default.css", 
             "/js/treeview.css", 
         ]
 
-        //  MOB -- Should offer all-in-one script
+        //  TODO -- Should offer all-in-one script
         private static const defaultScripts = [
             "/js/jquery", 
             "/js/jquery.tablesorter",
@@ -151,7 +151,7 @@ module ejs.web {
         }
 
         function icon(uri: String, options: Object): Void {
-            //  MOB - what other places should support use request.link
+            //  TODO - what other places should support use request.link
             uri = request.link(uri)
             write('    <link href="' + uri + '" rel="shortcut icon" />\r\n')
         }
@@ -276,7 +276,7 @@ module ejs.web {
                     write('    <script src="' + uri + '" type="text/javascript"></script>\r\n')
                 }
             } else {
-                //MOB uri = request.link(uri)
+                //TODO uri = request.link(uri)
                 write('    <script src="' + uri + '" type="text/javascript"></script>\r\n')
             }
         }
@@ -366,7 +366,7 @@ module ejs.web {
                 if (options.styleRows && options.styleRows[row]) {
                     styleRow = ' class="' + options.styleRows[row] + '"'
                 }
-                //  MOB - why not set these above when defining rowOptions
+                //  TODO - why not set these above when defining rowOptions
                 rowOptions.record = r
                 rowOptions.field = null
                 rowOptions.values = values
@@ -399,7 +399,7 @@ module ejs.web {
                     } else if (value is Number) {
                         attr = append(attr, ' align="right"')
                     }
-                    if (column.click || column.edit /* MOB options.cell */) {
+                    if (column.click || column.edit /* TODO options.cell */) {
                         /* really cell options */
                         rowOptions.record = r
                         rowOptions.row = row
@@ -563,7 +563,7 @@ module ejs.web {
                 setLinkOptions(options.click, options, "data-click")
 
             } else if (options.remote) {
-                //  MOB cleanup - data-remote only ever allow a boolean value.
+                //  TODO cleanup - data-remote only ever allow a boolean value.
                 if (options.remote == true && options.action) {
                     options.remote = options.action
                 }
@@ -646,7 +646,7 @@ module ejs.web {
             return (result == "") ? result : (" " + result.trimEnd())
         }
 
-//  MOB
+//  TODO
         /*
             Set option fields for a target URI:
                 options[prefix] == uri
@@ -675,7 +675,7 @@ module ejs.web {
             }
             target.uri ||= request.link(target)
             if (target.params) {
-//  MOB - should be a utility routine
+//  TODO - should be a utility routine
                 /* Process params and convert to an encoded query string */
                 let list = []
                 for (let [k,v] in target.params) {

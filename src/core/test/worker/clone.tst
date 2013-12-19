@@ -13,7 +13,7 @@ Worker.join(w)
 
 /*
     //  Clone new worker. Preload a module into the first worker, clone to the second and should already be loaded
-    //  MOB - should not use ejs.web here - creates a forward dependency
+    //  TODO - should not use ejs.web here - creates a forward dependency
     w = new Worker
     w.preload("ejs.web.mod")
     w.preeval('assert("ejs.web"::Request != null)')

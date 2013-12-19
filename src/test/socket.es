@@ -146,7 +146,7 @@ http.on("readable", function (event, http) {
 
 http.on("complete", function (event, http) {
     print("Complete event")
-    //  MOB -- should close - close the connection?
+    //  TODO -- should close - close the connection?
     // http.close()
 })
 

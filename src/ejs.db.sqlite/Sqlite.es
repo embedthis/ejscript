@@ -270,13 +270,13 @@ module ejs.db.sqlite {
          */
         function rollback(): Void {}
 
-        //  MOB - why have query and sql
+        //  TODO - why have query and sql
 
         /** @duplicate ejs.db::Database.query */
         function query(cmd: String, tag: String = "SQL", trace: Boolean~ = false): Array {
             //  TODO - need to access Database.traceAll
             let mark, size
-            //  MOB - rationalize Sqlite.query with Database.query and Record.innerFind
+            //  TODO - rationalize Sqlite.query with Database.query and Record.innerFind
             if (trace) {
                 App.log.debug(0, tag + ": " + cmd)
                 mark = new Date

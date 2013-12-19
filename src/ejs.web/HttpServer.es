@@ -274,7 +274,7 @@ server.listen("127.0.0.1:7777")
             if (web.session) {
                 openSession()
             }
-            //  MOB - BUG. Need this.fun to bind the function
+            //  TODO - BUG. Need this.fun to bind the function
             setInterval(this.pruneWorkers, PrunePeriod, this)
         }
 
@@ -335,7 +335,7 @@ server.listen("127.0.0.1:7777")
             return w
         }
 
-        //  MOB - should take an array of endpoints (like GoAhead) and allow https:///
+        //  TODO - should take an array of endpoints (like GoAhead) and allow https:///
 
         /** 
             Listen for client connections. This creates a HTTP server listening on a single socket endpoint. It can
@@ -456,7 +456,7 @@ server.listen("127.0.0.1:7777")
             }
             if (body is Array) {
                 for each (let item in body) {
-//  MOB -- what about async? what if can't accept all the data?
+//  TODO -- what about async? what if can't accept all the data?
                     request.write(item)
                 }
                 request.autoFinalize()
@@ -465,24 +465,24 @@ server.listen("127.0.0.1:7777")
                 if (body.async) {
                     request.async = true
                     //  Should we wait on request being writable or on the body stream being readable?
-//  MOB Must detect EOF and do a finalize()
+//  TODO Must detect EOF and do a finalize()
                     request.on("readable", function(event, request) {
                         let data = new ByteArray
                         if (request.read(data)) {
-//  MOB -- what about async? what if can't accept all the data?
+//  TODO -- what about async? what if can't accept all the data?
                             request.write(body)
                         } else {
                             request.autoFinalize()
                         }
                     })
-                    //  MOB -- or this? but what about error events
+                    //  TODO -- or this? but what about error events
                     request.on("complete", function(event, body) {
                         request.autoFinalize()
                     })
                 } else {
                     ba = new ByteArray
                     while (body.read(ba)) {
-//  MOB -- exceptions on all these writes should be caught --- normal situation for client to disappear
+//  TODO -- exceptions on all these writes should be caught --- normal situation for client to disappear
                         request.write(ba)
                     }
                     request.autoFinalize()
@@ -584,7 +584,7 @@ server.listen("127.0.0.1:7777")
                     passRequest(request, w)
                     /* Must not touch request from here on - the worker owns it now */
                 } else {
-                    //  MOB - rename response => responder
+                    //  TODO - rename response => responder
                     let mark = new Date
                     process(route.response, request)
                     App.log.debug(3, "Elapsed " + mark.elapsed + " msec for " + request.uri)

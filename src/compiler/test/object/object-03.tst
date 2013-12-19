@@ -48,9 +48,9 @@ assert(hash != 0)
 
 s = serialize(peter, { pretty: true })
 assert(s == '{
-  "name": "Peter",
-  "age": 27,
-  "color": "blue"
+    "name": "Peter",
+    "age": 27,
+    "color": "blue"
 }')
 
 

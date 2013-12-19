@@ -795,7 +795,7 @@ class EjsMvc {
             targetSeq = command
             let found = false
             for each (f in files) {
-                //  MOB - copy esp code
+                //  TODO - copy esp code
                 let base = f.basename.toString().toLowerCase()
                 if (Path(targetSeq).basename == base) {
                     targetSeq = base.replace(/^([0-9]*)_.*es/, "$1")
@@ -836,7 +836,7 @@ class EjsMvc {
                 }
             }
             if (backward) {
-                /* MOB - cant happen
+                /* TODO - cant happen
                 if (targetSeq && targetSeq == seq) {
                     return
                 }
@@ -854,7 +854,7 @@ class EjsMvc {
                     new Migration().forward(db)
                 }
                 if (backward) {
-//  MOB - what if id not set
+//  TODO - what if id not set
                     MigrationsTable.remove(id)
                 } else {
                     migration = new MigrationsTable
@@ -865,15 +865,15 @@ class EjsMvc {
                     return
                 }
             }
-            //  MOB - don't need to test backward
+            //  TODO - don't need to test backward
             if (!backward && targetSeq && targetSeq == seq) {
                 return
             }
         }
-        //  MOB - should this not be !onlyOne
+        //  TODO - should this not be !onlyOne
         if (onlyOne) {
             if (backward) {
-//  MOB - what is OMIT?
+//  TODO - what is OMIT?
                 trace("[OMIT]", "All migrations reversed")
             } else {
                 trace("[OMIT]", "All migrations applied")

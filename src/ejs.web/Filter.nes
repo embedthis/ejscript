@@ -3,7 +3,7 @@
 let address = App.args[1] || App.config.test.http_port || ":6700"
 let server: HttpServer = new HttpServer(".")
 
-//  MOB -- or Request.setPipeline
+//  TODO -- or Request.setPipeline
 
 //  Pass in type or function factory
 server.setPipeline(function(request) {
@@ -37,5 +37,5 @@ class LowerCase extends Filter {
     }
 }
 
-//  MOB -- must run before creating pipeline!!!
+//  TODO -- must run before creating pipeline!!!
 

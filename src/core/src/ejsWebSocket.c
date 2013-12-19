@@ -74,7 +74,7 @@ static EjsWebSocket *wsConstructor(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj 
         mprVerifySslPeer(ws->ssl, verify);
 #if FUTURE
         if (!hp->caFile) {
-            //MOB - Some define for this.
+            //TODO - Some define for this.
             hp->caFile = mprJoinPath(mprGetAppDir(), "http-ca.crt");
         }
         mprSetSslCaFile(hp->ssl, hp->caFile);
@@ -169,10 +169,10 @@ static EjsWebSocket *ws_on(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 
     conn = ws->conn;
     if (conn->readq && conn->readq->count > 0) {
-        //  MOB - can't have NULL as data
+        //  TODO - can't have NULL as data
         onWebSocketEvent(ws, HTTP_EVENT_READABLE, 0, 0);
     }
-    //  MOB - don't need to test finalizedConnector
+    //  TODO - don't need to test finalizedConnector
     if (!conn->tx->finalizedConnector && 
             !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_FINALIZED &&
             conn->writeq->ioCount == 0) {
@@ -196,7 +196,7 @@ static EjsString *ws_protocol(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **arg
  */
 static EjsNumber *ws_readyState(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 {
-    //  MOB - should have API for this
+    //  TODO - should have API for this
     return ejsCreateNumber(ejs, (MprNumber) ws->conn->rx->webSocket->state);
 }
 

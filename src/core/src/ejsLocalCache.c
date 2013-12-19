@@ -10,7 +10,7 @@
 
 /************************************ Locals **********************************/
 
-//  MOB - should this be refactored to use MprCache?
+//  TODO - should this be refactored to use MprCache?
 
 #define CACHE_TIMER_PERIOD  (60 * MPR_TICKS_PER_SEC)
 #define CACHE_HASH_SIZE     257
@@ -219,7 +219,7 @@ static EjsAny *sl_read(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv)
         return ESV(null);
     }
 #if UNUSED && FUTURE
-    //  MOB - should reading refresh cache
+    //  TODO - should reading refresh cache
     //  Perhaps option "read-refresh"
     if (item->lifespan) {
         item->expires = mprGetTime() + item->lifespan;

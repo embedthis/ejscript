@@ -209,7 +209,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         loc = (argc >= 1) ? argv[0] : ESV(null);
         if (loc != ESV(null)) {
             address = ejsToString(ejs, loc);
-            //  MOB should permit https://IP:PORT
+            //  TODO should permit https://IP:PORT
             mprParseSocketAddress(address->value, &sp->ip, &sp->port, NULL, 0);
         } else {
             address = 0;
@@ -268,8 +268,8 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
             httpSetRouteDocuments(route, documents->value);
         }
 #if KEEP
-        //  MOB -- what to do with home?
-        //  MOB - if removed, then the "home" property should be removed?
+        //  TODO -- what to do with home?
+        //  TODO - if removed, then the "home" property should be removed?
         home = ejsGetProperty(ejs, sp, ES_ejs_web_HttpServer_home);
         if (ejsIs(ejs, home, Path)) {
             httpSetRoutDir(host, home->value);

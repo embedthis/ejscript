@@ -15,7 +15,7 @@ module ejs {
 
         use default namespace public
 
-        //  MOB - getter
+        //  TODO - getter
         /**
             Get a list of file system drives
             @return An array of drives. Returns an empty list on systems without drive specifiers in filenames.

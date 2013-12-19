@@ -3771,7 +3771,7 @@ static EjsNamespace *lookupNamespace(Ejs *ejs, EjsString *nspace)
 }
 
 
-//  MOB - common this with the slow-path version in the VM
+//  TODO - common this with the slow-path version in the VM
 
 /*
     Look for a variable by name in the scope chain and return the location in "cp->lookup" and a positive slot 

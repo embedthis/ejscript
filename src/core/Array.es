@@ -489,7 +489,7 @@ module ejs {
         # DOC_ONLY
         native function << (elements: Array): Array
 
-        //  MOB - need a function equivalent for this
+        //  TODO - need a function equivalent for this
         /**
             Array subtraction. Remove any items that appear in the supplied array.
             @param arr The array to remove.

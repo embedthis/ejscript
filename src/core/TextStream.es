@@ -66,7 +66,7 @@ module ejs {
             @duplicate Stream.close
          */
         function close(): Void {
-            inbuf.flush(2 /* MOB Stream.WRITE */)
+            inbuf.flush(2 /* TODO Stream.WRITE */)
             nextStream.close()
         }
 
@@ -148,7 +148,7 @@ module ejs {
             if (offset < 0) {
                 buffer.reset()
             } else {
-                buffer.flush(1 /* MOB Stream.READ */)
+                buffer.flush(1 /* TODO Stream.READ */)
             }
             let where = buffer.writePosition
             while (count > 0) {
@@ -183,13 +183,13 @@ module ejs {
                 return null
             }
             //  All systems strip both \n and \r\n to normalize text lines
-            //  MOB -- this should be a configurable option on a TextStream
+            //  TODO -- this should be a configurable option on a TextStream
             let nl = "\r\n"
             let nlchar = nl.charCodeAt(nl.length - 1)
             let nlchar0 = nl.charCodeAt(0)
             while (true) {
                 for (let i = inbuf.readPosition; i < inbuf.writePosition; i++) {
-                    //  MOB OPT. If ByteArray had indexOf(nl), then this could be MUCH faster
+                    //  TODO OPT. If ByteArray had indexOf(nl), then this could be MUCH faster
                     if (inbuf[i] == nlchar) {
                         if (nl.length == 2 && i > inbuf.readPosition && nlchar0 == inbuf[i-1]) {
                             result = inbuf.readString(i - inbuf.readPosition - 1)

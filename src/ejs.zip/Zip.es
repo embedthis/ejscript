@@ -5,7 +5,7 @@
 
 module ejs.tar {
 
-    //  MOB -- need some ability to trace commands  (tar tvf)
+    //  TODO -- need some ability to trace commands  (tar tvf)
 
     /** @hide */
     class Zip {
@@ -34,7 +34,7 @@ module ejs.tar {
             Cmd.sh(cmd)
         }
 
-        //  MOB -- incomplete
+        //  TODO -- incomplete
         function cat(...files): String {
             let cmd = "tar xOzf " + path + " " + files.join(" ")
             cmd = cmd.replace(/\\/g, "\\\\")

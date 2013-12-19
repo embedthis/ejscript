@@ -20,7 +20,7 @@ module ejs.web {
     }
 
 
-    //  MOB -- make all builder functions lower case: scriptBuilder -- or inline above
+    //  TODO -- make all builder functions lower case: scriptBuilder -- or inline above
     /** 
         Script builder to create a function to serve a script request (*.es).  
         @param request Request object. 
@@ -31,7 +31,7 @@ module ejs.web {
     function ScriptBuilder(request: Request): Object {
         if (!request.filename.exists) {
             request.writeError(Http.NotFound, "Cannot find " + escapeHtml(request.pathInfo)) 
-            //  MOB - should not need throw, just return
+            //  TODO - should not need throw, just return
             throw true
         }
         try {

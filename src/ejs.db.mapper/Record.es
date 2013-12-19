@@ -225,7 +225,7 @@ module ejs.db.mapper {
         }
 
         private static function checkNumber(thisObj: Record, field: String, value, options): Void {
-            //  MOB - what about decimal, +-
+            //  TODO - what about decimal, +-
             if (! RegExp(/^[0-9]+$/).test(value)) {
                 thisObj._errors[field] = (options && options.message) ? options.message : ErrorMessages.notNumber
             }
@@ -403,7 +403,7 @@ module ejs.db.mapper {
             return null
         }
 
-        //  MOB - should not throw when a record is not found. 
+        //  TODO - should not throw when a record is not found. 
         /**
             Find a record. Find and return a record identified by its primary key if supplied or by the specified options. 
             If more than one record matches, return the first matching record.

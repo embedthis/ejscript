@@ -60,14 +60,14 @@ check(d.format('%e'), " 7")
 //  %F    is equivalent to ``%Y-%m-%d''.
 check(d.format('%F'), "2005-06-07")
 
-//  MOB -- hide this (week based year) - Not supported on Windows or VxWorks
+//  TODO -- hide this (week based year) - Not supported on Windows or VxWorks
 //  %G    a year as a decimal number with century. This year is the one that contains the greater part of
 //                      the week (Monday as the first day of the week).
-//  MOB/WIN check(d.format('%G'), "2005")
+//  TODO/WIN check(d.format('%G'), "2005")
 
-//  MOB -- hide this (week based year) - Not supported on Windows or VxWorks
+//  TODO -- hide this (week based year) - Not supported on Windows or VxWorks
 //  %g    the same year as in ``%G'', but as a decimal number without century (00-99).
-//  MOB/WIN check(d.format('%g'), "05")
+//  TODO/WIN check(d.format('%g'), "05")
 
 //  %H    the hour (24-hour clock) as a decimal number (00-23).
 check(d.format('%H'), 10)
@@ -110,15 +110,15 @@ check(d.format('%OS'), "00")
 check(d.format('%Ou'), "2")
 check(d.format('%OU'), "23")
 
-//  MOB -- remove V
-//  MOB/WIN check(d.format('%OV'), "23")
+//  TODO -- remove V
+//  TODO/WIN check(d.format('%OV'), "23")
 
 check(d.format('%Ow'), "2")
 check(d.format('%OW'), "23")
 check(d.format('%Oy'), "05")
 
 //  %P    Lower case national representation of either "ante meridiem" or "post meridiem" as appropriate.
-//  MOB - BUG on MAC - not present
+//  TODO - BUG on MAC - not present
 if (Config.OS != "macosx") {
     check(d.format('%P'), "am")
 }
@@ -151,11 +151,11 @@ check(d.format('%U'), "23")
 //  %u    the weekday (Monday as the first day of the week) as a decimal number (1-7).
 check(d.format('%u'), "2")
 
-//  MOB -- hide
+//  TODO -- hide
 //  %V    the week number of the year (Monday as the first day of the week) as a decimal
 //        number (01-53).  If the week containing January 1 has four or more days in the new year, then it
 //        is week 1; otherwise it is the last week of the previous year, and the next week is week 1.
-//  MOB/WIN check(d.format('%V'), "23")
+//  TODO/WIN check(d.format('%V'), "23")
 
 //  %v    is equivalent to ``%e-%b-%Y''.
 check(d.format('%v'), " 7-Jun-2005")

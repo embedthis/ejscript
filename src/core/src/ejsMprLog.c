@@ -42,13 +42,13 @@ static EjsNumber *lf_emit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
             break;
 
         case S_String:
-            //  MOB - use NULL instead of &len
+            //  TODO - use NULL instead of &len
             arg = awtom(((EjsString*) vp)->value, &len);
             break;
 
         default:
             str = ejsToString(ejs, vp);
-            //  MOB - use NULL instead of &len
+            //  TODO - use NULL instead of &len
             arg = awtom(((EjsString*) str)->value, &len);
             break;
         }

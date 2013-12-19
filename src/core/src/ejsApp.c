@@ -93,7 +93,7 @@ static EjsPath *app_exePath(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 /*  
     Exit the application
     static function exit(status: Number, how: String = "default"): void
-    MOB - status is not implemented
+    TODO - status is not implemented
  */
 static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
@@ -264,7 +264,7 @@ static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 /*  
     Pause the application. This services events while asleep.
     static function sleep(delay: Number = -1): void
-    MOB - sleep currently throws if an exception is generated in an event callback (worker).
+    TODO - sleep currently throws if an exception is generated in an event callback (worker).
     It should not.
  */
 static EjsObj *app_sleep(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)

@@ -6,7 +6,7 @@
 
 module ejs {
 
-    //  MOB - need a simple way to construct a timer and start in one step
+    //  TODO - need a simple way to construct a timer and start in one step
     /**
         Timers manage the execution of functions at some point in the future. Timers may run once, or they can be 
         scheduled to run repeatedly, until stopped by calling the $stop() method. Timers are scheduled with a granularity 

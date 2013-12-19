@@ -10,7 +10,7 @@
 
 /*********************************** Locals ***********************************/
 
-//  MOB - should not be fixed
+//  TODO - should not be fixed
 #if !defined(BIT_MAX_REGEX_MATCHES)
     #define BIT_MAX_REGEX_MATCHES 128
 #endif
@@ -1738,13 +1738,11 @@ static EjsString *trimString(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 {
     EjsString   *pattern;
 
-    assert(argc == 0 || (argc == 1 && ejsIs(ejs, argv[0], String)));
-
     if (argc == 0) {
         return trim(ejs, sp, NULL, MPR_TRIM_START | MPR_TRIM_END);
 
     } else {
-        pattern = (EjsString*) argv[0];
+        pattern = (EjsString*) ejsToString(ejs, argv[0]);
         return trim(ejs, sp, pattern, MPR_TRIM_START | MPR_TRIM_END);
     }
 }
@@ -2153,7 +2151,6 @@ PUBLIC int ejsContainsAsc(Ejs *ejs, EjsString *sp, cchar *pat)
     int     i, j, k;
 
     assert(sp);
-    assert(pat);
 
     if (pat == 0 || *pat == '\0' || sp == 0) {
         return 0;
@@ -2439,7 +2436,7 @@ PUBLIC EjsString *ejsInternWide(Ejs *ejs, wchar *value, ssize len)
     step = 0;
 
     lock(ip);
-    //  MOB - accesses should be debug only
+    //  TODO - accesses should be debug only
     ip->accesses++;
     index = whash(value, len) % ip->size;
     if ((head = &ip->buckets[index]) != NULL) {

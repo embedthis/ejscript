@@ -75,7 +75,7 @@ static EjsWorker *initWorker(Ejs *ejs, EjsWorker *worker, Ejs *baseVM, cchar *na
     self->inside = 1;
     self->pair = worker;
     self->name = sjoin("inside-", worker->name, NULL);
-#if MOB
+#if TODO
     mprEnableDispatcher(wejs->dispatcher);
 #endif
     if (search) {

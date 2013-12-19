@@ -91,7 +91,7 @@ module ejs.web {
             request ? request.uri : null
 
         /********************************************* Methods *******************************************/
-//  MOB - better name
+//  TODO - better name
         /** 
             Static factory method to create and initialize a controller. The controller class is specified by 
             params["controller"] which should be set to the controller name without the "Controller" suffix. 
@@ -118,7 +118,7 @@ module ejs.web {
          */
         function Controller(req: Request? = null) {
             /*  _initRequest may be set by create() to allow subclasses to omit constructors */
-            controllerName = typeOf(this).trim("Controller") //MOB || "-DefaultController-"
+            controllerName = typeOf(this).trim("Controller") //TODO || "-DefaultController-"
             request = req || _initRequest
             if (request) {
                 request.controller = this
@@ -192,7 +192,7 @@ module ejs.web {
                             setHeader("Last-Modified", Date(item.modified).toUTCString())
                             if (status == Http.Ok) {
                                 setHeader("Etag", cacheTag(cacheName))
-                                //  MOB - change this trace to just use "actionName"
+                                //  TODO - change this trace to just use "actionName"
                                 App.log.debug(5, "Use cached: " + cacheName)
                                 write(item.data)
                             } else {
@@ -268,7 +268,7 @@ module ejs.web {
             return false
         }
 
-        //  MOB - rename
+        //  TODO - rename
         /** 
             Controller web application. This function will run a controller action method and return a response object. 
             The action method may be specified by the $aname parameter or it may be supplied via 
@@ -384,7 +384,7 @@ module ejs.web {
                 "no-store" response may not be stored in a cache.
                 "must-revalidate" forces clients to revalidate the request with the server.
                 "proxy-revalidate" similar to must-revalidate except only for proxy caches>
-//  MOB - unclear, clarify
+//  TODO - unclear, clarify
             @option uri URI and parameter to further differentiate cached content. If supplied, different cache data
                 can be stored for each URI that applies to the given controller/action. If the URI is set to "*" all 
                 URIs for that action/controller are uniquely cached. If the request has POST data, the URI may include
@@ -466,7 +466,7 @@ module ejs.web {
                 let cacheName = cacheIndex
                 if (options.uri) {
                     cacheName += "::" + options.uri
-                    //  MOB - this is not clearing cache data with queries
+                    //  TODO - this is not clearing cache data with queries
                 }
                 if (data == null) {
                     App.log.debug(6, "Expire " + cacheName)

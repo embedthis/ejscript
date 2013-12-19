@@ -109,7 +109,7 @@ module ejs {
             encode preserves:           ! * ' ( ) # ; , / ? : @ 
 
             NOTE: encodeComponent is encoding [] which is hard for IPv6
-            MOB:
+            TODO:
                 Don't encode [] for IPv6
                 Encode ! ' ( ) *
          */
@@ -379,7 +379,7 @@ module ejs {
 
         /** 
             Trim a pattern from the end of the URI path
-            NOTE: this does a case-sensitive match. MOB - is this right?
+            NOTE: this does a case-sensitive match. TODO - is this right?
             @return a new URI containing the trimmed URI
             TODO - should support reg expressions
          */
@@ -397,7 +397,7 @@ module ejs {
 
         /** 
             Trim a pattern from the start of the path
-            NOTE: this does a case-sensitive match. MOB - is this right?
+            NOTE: this does a case-sensitive match. TODO - is this right?
             @return a URI containing the trimmed path name
             TODO - should support reg expressions
          */

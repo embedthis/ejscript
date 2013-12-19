@@ -33,7 +33,7 @@ s2 = new Shape
 assert(s2.origin == 1)
 
 /*
-    MOB - if statics not visible to instances 
+    TODO - if statics not visible to instances 
 assert(s2.getName == undefined)
 */
 assert(s2.getName() == "Shape")

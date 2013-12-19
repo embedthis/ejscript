@@ -100,10 +100,10 @@ module ejs {
 
                 } else {
                     /* Missing or out of date cache mod file */
-                    //  MOB - can we eliminate preloaded and just use reload?
+                    //  TODO - can we eliminate preloaded and just use reload?
                     if (initializers[path] && config.app.preloaded) {
                         //  Everything compiled flat - everything in App.mod
-                        //  MOB -- warning. This prevents reload working. Should rebuild all and reload.
+                        //  TODO -- warning. This prevents reload working. Should rebuild all and reload.
                         initializer = initializers[path]
                         signatures[path] = exports = {}
                         App.log.debug(4, "Use preloaded \"" + path + "\"")

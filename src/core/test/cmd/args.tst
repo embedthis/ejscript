@@ -4,7 +4,7 @@
 
 let ejs = Cmd.locate('ejs')
 
-//  MOB -- should run on windows too!
+//  TODO -- should run on windows too!
 if (!Path("/bin").exists) {
     test.skip("Only run on unix systems")
 } else {

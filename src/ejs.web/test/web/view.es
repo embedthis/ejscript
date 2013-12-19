@@ -1,14 +1,14 @@
 require ejs.web
 
 
-//  MOB -- this not being used?
+//  TODO -- this not being used?
 class MyView extends View {
 
-    //  MOB -- is this required
+    //  TODO -- is this required
     function MyView(request) {
         super(request)
     }
-    //  MOB -- what to do here
+    //  TODO -- what to do here
 }
 
 exports.app = function(request: Request) {

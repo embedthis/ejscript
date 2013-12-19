@@ -5,7 +5,7 @@
 /*
 var a = 1
 
-//  MOB - this use case is no longer supported. "a" binds inside always
+//  TODO - this use case is no longer supported. "a" binds inside always
 function fun(a = a)
 {
 	assert(a == 1)

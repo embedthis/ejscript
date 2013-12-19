@@ -1221,7 +1221,7 @@ static ssize writeHttpData(Ejs *ejs, EjsHttp *hp)
             ejsThrowIOError(ejs, "Cannot write to socket");
             return 0;
         }
-        //  MOB - or should this be non-blocking
+        //  TODO - or should this be non-blocking
         nbytes = httpWriteBlock(conn->writeq, (cchar*) &ba->value[ba->readPosition], count, HTTP_BLOCK);
         if (nbytes < 0) {
             ejsThrowIOError(ejs, "Cannot write to socket");

@@ -4,10 +4,10 @@
 # Config.WEB
 module ejs.web {
 
-    //  MOB - is this necessary?
+    //  TODO - is this necessary?
     require ejs.web
 
-    //  MOB - what does option click Boolean mean below??
+    //  TODO - what does option click Boolean mean below??
     /*
         data-remote should only take true. Then data-click=URI data-remote=true. Otherwise can define both click and remote.
      */
@@ -138,7 +138,7 @@ module ejs.web {
                 if (helper.contains("::")) {
                     [mod, klass] = helper.split("::")
                     global.load(mod + ".mod")
-                    //  MOB -- should use blend(this, global.[mod]::[klass])
+                    //  TODO -- should use blend(this, global.[mod]::[klass])
                     blend(this, global[klass])
                 } else {
                     blend(this, global[helper])
@@ -160,7 +160,7 @@ module ejs.web {
 
         /** 
             Emit a status alert area
-MOB - review?
+TODO - review?
             @param text Initial message text to display. Status messages may be updated by calling the 
                 $Controller.status function.
             @param options Optional extra options. See $View for a list of the standard options.
@@ -176,7 +176,7 @@ MOB - review?
             getConnector("alert", options).alert(text, options)
         }
 
-        //  MOB - should have a URI argument (ESP)
+        //  TODO - should have a URI argument (ESP)
         /**
             Emit an anchor. This is a label inside an anchor reference. 
             @param text Link text to display
@@ -184,7 +184,7 @@ MOB - review?
          */
         function anchor(text: String, options: Object = {}): Void {
             options = getOptions(options)
-            //  MOB - should got to anchor
+            //  TODO - should got to anchor
             getConnector("label", options).label(text, options)
         }
 
@@ -204,7 +204,7 @@ MOB - review?
             getConnector("button", options).button(name, label, options)
         }
 
-        //  MOB - this really should have a URI parameter instead of relying on options conversion via options.click 
+        //  TODO - this really should have a URI parameter instead of relying on options conversion via options.click 
         /**
             Render a link button. This creates a button suitable for use outside an input form. When the button 
             is clicked, the associated URI will be invoked.
@@ -215,7 +215,7 @@ MOB - review?
          */
         function buttonLink(text: String, options: Object = {}): Void {
             options = getOptions(options)
-            //  MOB - why is this here - inconsistent
+            //  TODO - why is this here - inconsistent
             if (currentRecord) {
                 options.id ||= currentRecord.id
             }
@@ -225,7 +225,7 @@ MOB - review?
         /**
             Render a chart. The chart control can display static or dynamic tabular data. The client chart control manages
                 sorting by column, dynamic data refreshes, pagination and clicking on rows.
-    MOB -- update
+    TODO -- update
             @param data Optional initial data for the control. The data option may be used with the refresh option to 
                 dynamically refresh the data.
             @param options Object Optional extra options. See also $View for a list of the standard options.
@@ -289,7 +289,7 @@ MOB - review?
             @param options Optional extra options. See $View for a list of the standard options.
             @option retain Number. Number of seconds to retain the message. If <= 0, the message is retained until another
                 message is displayed. Default is 0.
-                MOB - this default implies it is displayed for zero seconds
+                TODO - this default implies it is displayed for zero seconds
             @example
                 <% flash("status") %>
                 <% flash() %>
@@ -330,7 +330,7 @@ MOB - review?
             will be generated once for the view and the same token will be used by all forms on the view page. To use
             security tokens outside a form, you need to manually call $securityToken in the &lt;head> section of the page.
 
-MOB -- much more doc here
+TODO -- much more doc here
     - Talk about controllers updating the record
             @param record Record to display and optionally update
             @param options Optional extra options. See $View for a list of the standard options.
@@ -351,7 +351,7 @@ MOB -- much more doc here
             connector.form(record, options)
         }
 
-        //  MOB - is this required if we have image()
+        //  TODO - is this required if we have image()
         /** 
             Emit an icon link.
             @param src Source name for the icon.
@@ -399,7 +399,7 @@ MOB -- much more doc here
                     let value = getValue(currentRecord, name, options)
                     datatype = Object.getTypeName(value).toLowerCase()
                 }
-                //  MOB TODO - needs fleshing out for each type
+                //  TODO TODO - needs fleshing out for each type
                 switch (datatype) {
                 case "binary":
                 case "date":
@@ -484,7 +484,7 @@ MOB -- much more doc here
             getConnector("mail", options).mail(name, address, options)
         }
 
-//  MOB -- redo progress using a commet style
+//  TODO -- redo progress using a commet style
         /** 
             Emit a progress bar.
             @param percent Progress percentage (0-100) 
@@ -624,7 +624,7 @@ MOB -- much more doc here
             <ul>
                 <li>align - Will right-align numbers by default</li>
                 <li>click - URI to invoke if the cell is clicked</li>
-                <li>edit - MOB </li>
+                <li>edit - TODO </li>
                 <li>formatter - Function to invoke to format the value to display</li>
                 <li>header - Header text for the column</li>
                 <li>style - Cell styles</li>
@@ -646,7 +646,7 @@ MOB -- much more doc here
          */
         function table(data, options: Object = {}): Void {
             options = getOptions(options)
-            //  MOB - move to client side (data-pivot). No good here as it can't be refreshed!
+            //  TODO - move to client side (data-pivot). No good here as it can't be refreshed!
             if (options.pivot) {
                 data = pivot(data)
             }
@@ -714,7 +714,7 @@ MOB -- much more doc here
             getConnector("tree", options).tree(data, options)
         }
 
-//MOB -- review and rethink this
+//TODO -- review and rethink this
         /**
             Render a partial view. This creates an HTML element with the required options. It is useful to generate
                 a dynamically refreshing division.
@@ -742,8 +742,8 @@ MOB -- much more doc here
             controller.writeTemplate(request.dir.join(config.dirs.views.basename, cname, action).joinExt(ext))
         }
 
-        // MOB TODO - need a rich text editor. Wiki style.  wiki()
-        // MOB TODO - need markdown style output?
+        // TODO TODO - need a rich text editor. Wiki style.  wiki()
+        // TODO TODO - need markdown style output?
 
         /***************************************** Wrapped Request Functions **********************************************/
         /**
@@ -830,7 +830,7 @@ MOB -- much more doc here
                 return connectors[name]
             }
             try {
-                //  MOB - what is this doing?
+                //  TODO - what is this doing?
                 return connectors[name] = new global[name](this)
             } catch (e: Error) {
                 throw new Error("Undefined view connector: " + name)
@@ -865,7 +865,7 @@ MOB -- much more doc here
             return options
         }
 
-//  MOB -- refactor - poor API
+//  TODO -- refactor - poor API
         /**
             @param record Optional record holding the data to display
             @param data String field name in record or object hash {field: field}. If record is not defined, "data" is
@@ -930,7 +930,7 @@ MOB -- much more doc here
             String: plainFormatter,
             Number: plainFormatter,
             Boolean: plainFormatter,
-            //  MOB -- put all standard types here -- faster
+            //  TODO -- put all standard types here -- faster
         }
 
         private static function dateFormatter(view: View, value: Object, options: Object): String
@@ -941,7 +941,7 @@ MOB -- much more doc here
        
         /************************************************ View Helpers ****************************************************/
         /**
-            Temporary helper function to format the date. MOB - should move to helpers somewhere
+            Temporary helper function to format the date. TODO - should move to helpers somewhere
             @param fmt Format string
             @returns a formatted string
          */
@@ -952,7 +952,7 @@ MOB -- much more doc here
         }
 
         /**
-            Temporary helper function to format a number as currency. MOB
+            Temporary helper function to format a number as currency. TODO
             @param fmt Format string
             @returns a formatted string
          */
@@ -963,7 +963,7 @@ MOB -- much more doc here
         }
 
         /**
-            Temporary helper function to format a number. MOB
+            Temporary helper function to format a number. TODO
             @param fmt Format string
             @returns a formatted string
          */

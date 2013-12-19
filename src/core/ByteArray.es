@@ -6,7 +6,7 @@
 module ejs {
 
     // use strict
-    //  MOB - add indexOf(byteValue)
+    //  TODO - add indexOf(byteValue)
 
     /** 
         ByteArrays provide a resizable, integer indexed, in-memory store for bytes. ByteArrays can be used as a simple 
@@ -330,8 +330,8 @@ module ejs {
          */
         native function write(...data): Number
 
-//  MOB -- should these routines return the number of bytes written?
-//  MOB -- function write(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
+//  TODO -- should these routines return the number of bytes written?
+//  TODO -- function write(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
 
         /** 
             Write a byte to the array. Data is written to the current write $position pointer which is then incremented.

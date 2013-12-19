@@ -183,7 +183,7 @@ module ejs.web {
         }
     }
 
-    //  MOB -- rename to scriptBuilder
+    //  TODO -- rename to scriptBuilder
     /** 
         Static builder for use in routing tables to serve static file content.
         @param request Request object. 
@@ -192,7 +192,7 @@ module ejs.web {
         @stability prototype
      */
     function StaticBuilder(request: Request): Function {
-        //  MOB - should not need "ejs.web"
+        //  TODO - should not need "ejs.web"
         return "ejs.web"::StaticApp
     }
 }

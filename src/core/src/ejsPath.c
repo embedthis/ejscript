@@ -623,7 +623,7 @@ PUBLIC EjsArray *ejsGetPathFiles(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 static int globMatch(Ejs *ejs, cchar *s, cchar *pat, int isDir, int flags, cchar *seps, int count, cchar **nextPartPattern)
 {
     int     match;
-//  MOB - need recursion limits
+//  TODO - need recursion limits
     *nextPartPattern = 0;
 
     while (*s && *pat && *pat != seps[0] && *pat != seps[1]) {
@@ -720,7 +720,7 @@ static EjsArray *globPath(Ejs *ejs, EjsArray *results, cchar *path, cchar *base,
             continue;
         }
         add = 1;
-        //  MOB - OPT
+        //  TODO - OPT
         if (nextPartPattern && strcmp(nextPartPattern, "**") != 0 && strcmp(nextPartPattern, "**/") != 0
                    && strcmp(nextPartPattern, "**/*") != 0) {
             /* Double star matches zero or more */
@@ -793,7 +793,7 @@ static EjsBoolean *isPathLink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
 
-    //  MOB -work around. GetPathInfo will return err if the target of the symlink does not exist.
+    //  TODO -work around. GetPathInfo will return err if the target of the symlink does not exist.
     info.isLink = 0;
     mprGetPathInfo(fp->value, &info);
     return ejsCreateBoolean(ejs, info.isLink);
@@ -866,7 +866,7 @@ static EjsPath *joinPathExt(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     if (ext && *ext) {
         return ejsCreatePathFromAsc(ejs, sjoin(fp->value, ".", ext, NULL));
     }
-    //  MOB - should this clone?
+    //  TODO - should this clone?
     return fp;
 }
 
@@ -905,7 +905,7 @@ static EjsVoid *path_link(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Cannot create link %s to refer to %s, error %d", target, fp->value, errno);
     }
 #else
-    //  MOB - does not work for directories
+    //  TODO - does not work for directories
     if (mprCopyPath(fp->value, target, 0644) < 0) {
         ejsThrowIOError(ejs, "Cannot copy %s to %s, error %d", fp->value, target, errno);
         return 0;
@@ -943,7 +943,7 @@ static void getUserGroup(Ejs *ejs, EjsObj *attributes, int *uid, int *gid)
     *uid = *gid = -1;
     if ((vp = ejsGetPropertyByName(ejs, attributes, EN("group"))) != 0 && ejsIsDefined(ejs, vp)) {
         vp = ejsToString(ejs, vp);
-        //  MOB - these are thread-safe on mac, but not on all systems. use getgrnam_r
+        //  TODO - these are thread-safe on mac, but not on all systems. use getgrnam_r
         if ((gp = getgrnam(ejsToMulti(ejs, vp))) == 0) {
             ejsThrowArgError(ejs, "Cannot find group %@", vp);
             return;
@@ -1224,7 +1224,7 @@ static EjsByteArray *readBytes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     rc = 0;
     offset = 0;
     while ((bytes = mprReadFile(file, buffer, BIT_MAX_BUFFER)) > 0) {
-        //  MOB - should use RC Value (== bytes)
+        //  TODO - should use RC Value (== bytes)
         if (ejsCopyToByteArray(ejs, result, offset, buffer, bytes) < 0) {
             ejsThrowMemoryError(ejs);
             rc = -1;
@@ -1398,7 +1398,7 @@ static EjsObj *removePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprPath     info;
 
-    //  MOB - workaround for isLink
+    //  TODO - workaround for isLink
     info.isLink = 0;
     if (mprGetPathInfo(fp->value, &info) == 0 || info.isLink == 1) {
         if (mprDeletePath(fp->value) < 0) {
@@ -1412,7 +1412,7 @@ static EjsObj *removePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 /*
     Rename the file
   
-    function rename(to: Path): Boolean
+    function rename(to: Path): Void
  */
 static EjsObj *renamePathFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
@@ -1422,7 +1422,8 @@ static EjsObj *renamePathFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     to = (EjsPath*) argv[0];
     unlink((char*) to->value);
     if (rename(fp->value, to->value) < 0) {
-        return ESV(false);
+        ejsThrowIOError(ejs, "Cannot rename %s to %s, error %d", fp->value, to->value, errno);
+        return 0;
     }
     return ESV(true);
 }
@@ -1552,7 +1553,7 @@ static EjsVoid *path_symlink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         return 0;
     }
 #else
-    //  MOB - does not work for directories
+    //  TODO - does not work for directories
     if (mprCopyPath(target, fp->value, 0644) < 0) {
         ejsThrowIOError(ejs, "Cannot copy %s to %s, error %d", target, fp->value, errno);
         return 0;
