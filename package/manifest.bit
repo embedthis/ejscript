@@ -29,11 +29,11 @@ Bit.load({
                 formats:    [ 'tar' ],
                 sets:       [ 'source' ],
             },
-            combo: {
+            pak: {
                 inherit:    'embedthis-manifest',
                 prefixes:   [ 'src'],
                 formats:    [ 'tar' ],
-                sets:       [ 'combo' ],
+                sets:       [ 'pak' ],
             },
         },
 
@@ -143,7 +143,7 @@ Bit.load({
                 set:        'core',
 
             },{
-                from:       [ 'src/*.h', 'src/vm/*.h', 'src/slots/*.h', 'src/deps/**.h', 'src/**.h' ],
+                from:       [ 'src/*.h', 'src/vm/*.h', 'src/slots/*.h', 'src/paks/**.h', 'src/**.h' ],
                 to:         '${vapp}/inc/',
                 set:        'dev',
                 linkin:     '${inc}/ejs/',
@@ -191,35 +191,35 @@ Bit.load({
                 set:        'source',
 
             /*
-                Combo set
+                Pak set
              */
             },{
                 from:       'package/ejs-flat.bit',
-                to:         '${src}/src/deps/ejs/ejs.bit',
-                set:        'combo',
+                to:         '${src}/ejs.bit',
+                set:        'pak',
 
             },{
                 from:       [
-                    'src/deps/zlib/zlib.h',
+                    'src/paks/zlib/zlib.h',
                     'src/ejsByteCode.h',
                     'src/ejsByteCodeTable.h',
                     'src/ejs.h',
                     'src/ejs.web/ejsWeb.h',
                     'src/ejsCompiler.h',
-                    'src/deps/pcre/pcre.h'
+                    'src/paks/pcre/pcre.h'
                 ],
-                to:         '${src}/src/deps/ejs/ejs.h',
+                to:         '${src}/ejs.h',
                 cat:        true, 
                 filter:     /^#inc.*ejs.*$|^#inc.*ec.*$|^#inc.*customize.*$|#include.*zlib.h.*$|#inc.*ejs.zlib.slots.h.*/mg,
                 header:     '#include \"bit.h\"\n#\n#if BIT_PACK_EJSCRIPT\n\n#include \"bitos.h\"\n#include \"mpr.h\"\n#include \"http.h\"\n#include \"ejs.slots.h\"',
                 footer:     '#endif /* BIT_PACK_EJSCRIPT */',
                 title:      '${settings.title} Library Source',
-                set:        'combo',
+                set:        'pak',
 
             },{
                 from:       'src/vm/ejsByteGoto.h',
-                to:         '${src}/src/deps/ejs/ejsByteGoto.h',
-                set:        'combo',
+                to:         '${src}/ejsByteGoto.h',
+                set:        'pak',
 
             },{
                 from:       [
@@ -229,47 +229,47 @@ Bit.load({
                             '${INC}/ejs.web.slots.h',
                             '${INC}/ejs.zlib.slots.h',
                 ],
-                to:         '${src}/src/deps/ejs/ejs.slots.h',
+                to:         '${src}/ejs.slots.h',
                 cat:        true, 
                 title:      '${settings.title} Object Slot Definitions',
-                set:        'combo',
+                set:        'pak',
 
             },{
                 from:       ['src/**.c'], 
-                to:         '${src}/src/deps/ejs/ejsLib.c',
+                to:         '${src}/ejsLib.c',
                 cat:        true,                                                                                         
                 filter:     /^#inc.*ejs.*$|^#inc.*ec.*$|^#inc.*customize.*$|#include.*zlib.h.*$|#inc.*ejs.zlib.slots.h.*/mg,
                 exclude:    /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|\/mpr|\/http|\/est|\/pcre|\/sqlite|ejs.debugger|samples|utils|ejsrun\.c/,                                                                         
                 header:     '#define EJS_DEFINE_OPTABLE 1\n#include \"ejs.h\"\n\n#if BIT_PACK_EJSCRIPT',
                 footer:     '#endif /* BIT_PACK_EJSCRIPT */',
                 title:      '${settings.title} Library Source',
-                set:        'combo',
+                set:        'pak',
 
             },{
                 from:       ['src/core/**.es', 'src/**.es'],
-                to:         '${src}/src/deps/ejs/ejs.es',
+                to:         '${src}/ejs.es',
                 cat:        true,                                                                                         
                 exclude:    /ejs.bit|ejs.debugger|test|sample|ejspage.es|ejs.jem|ejs.mvc/,                            
                 title:      '${settings.title} Script Library',
-                set:        'combo',
+                set:        'pak',
 
             },{
                 from:       'src/cmd/ejs.c', 
-                to:         '${src}/src/deps/ejs/ejs.c',
+                to:         '${src}/ejs.c',
                 cat:        true,
                 filter:     /^#inc.*$/mg,
                 header:     '#include \"ejs.h\"',
                 title:      '${settings.title} Shell Command',
-                set:        'combo',
+                set:        'pak',
 
             },{
                 from:       'src/cmd/ejsc.c', 
-                to:         '${src}/src/deps/ejs/ejsc.c',
+                to:         '${src}/ejsc.c',
                 cat:        true,
                 filter:     /^#inc.*$/mg,
                 header:     '#include \"ejs.h\"',
                 title:      '${settings.title} Compiler',
-                set:        'combo',
+                set:        'pak',
             },
         ],
     },

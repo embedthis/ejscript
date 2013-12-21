@@ -147,7 +147,6 @@ TARGETS            = $(TARGETS) $(CONFIG)\bin\ejs.mvc.mod
 TARGETS            = $(TARGETS) $(CONFIG)\bin\utest.es
 TARGETS            = $(TARGETS) $(CONFIG)\bin\utest.worker
 TARGETS            = $(TARGETS) $(CONFIG)\bin\utest.exe
-TARGETS            = $(TARGETS) bower.json
 
 !IFNDEF SHOW
 .SILENT:
@@ -224,7 +223,6 @@ clean:
 	if exist "$(CONFIG)\bin\utest.lib" del /Q "$(CONFIG)\bin\utest.lib"
 	if exist "$(CONFIG)\bin\utest.pdb" del /Q "$(CONFIG)\bin\utest.pdb"
 	if exist "$(CONFIG)\bin\utest.exp" del /Q "$(CONFIG)\bin\utest.exp"
-	if exist "bower.json" del /Q "bower.json"
 	if exist "$(CONFIG)\obj\removeFiles.obj" del /Q "$(CONFIG)\obj\removeFiles.obj"
 	if exist "$(CONFIG)\obj\mprLib.obj" del /Q "$(CONFIG)\obj\mprLib.obj"
 	if exist "$(CONFIG)\obj\mprSsl.obj" del /Q "$(CONFIG)\obj\mprSsl.obj"
@@ -351,7 +349,7 @@ $(CONFIG)\bin\removeFiles.exe: $(DEPS_4)
 $(CONFIG)\inc\mpr.h: $(DEPS_5)
 	@echo '      [Copy] $(CONFIG)/inc/mpr.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
-	copy /Y src\deps\mpr\mpr.h $(CONFIG)\inc\mpr.h
+	copy /Y src\paks\mpr\mpr.h $(CONFIG)\inc\mpr.h
 
 #
 #   bitos.h
@@ -369,9 +367,9 @@ DEPS_7 = $(DEPS_7) $(CONFIG)\inc\mpr.h
 DEPS_7 = $(DEPS_7) $(CONFIG)\inc\bitos.h
 
 $(CONFIG)\obj\mprLib.obj: \
-    src\deps\mpr\mprLib.c $(DEPS_7)
+    src\paks\mpr\mprLib.c $(DEPS_7)
 	@echo '   [Compile] $(CONFIG)/obj/mprLib.obj'
-	"$(CC)" -c -Fo$(CONFIG)\obj\mprLib.obj -Fd$(CONFIG)\obj\mprLib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\mpr\mprLib.c
+	"$(CC)" -c -Fo$(CONFIG)\obj\mprLib.obj -Fd$(CONFIG)\obj\mprLib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\mpr\mprLib.c
 
 #
 #   libmpr
@@ -391,7 +389,7 @@ $(CONFIG)\bin\libmpr.lib: $(DEPS_8)
 $(CONFIG)\inc\est.h: $(DEPS_9)
 	@echo '      [Copy] $(CONFIG)/inc/est.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
-	copy /Y src\deps\est\est.h $(CONFIG)\inc\est.h
+	copy /Y src\paks\est\est.h $(CONFIG)\inc\est.h
 
 #
 #   estLib.obj
@@ -401,9 +399,9 @@ DEPS_10 = $(DEPS_10) $(CONFIG)\inc\est.h
 DEPS_10 = $(DEPS_10) $(CONFIG)\inc\bitos.h
 
 $(CONFIG)\obj\estLib.obj: \
-    src\deps\est\estLib.c $(DEPS_10)
+    src\paks\est\estLib.c $(DEPS_10)
 	@echo '   [Compile] $(CONFIG)/obj/estLib.obj'
-	"$(CC)" -c -Fo$(CONFIG)\obj\estLib.obj -Fd$(CONFIG)\obj\estLib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\est\estLib.c
+	"$(CC)" -c -Fo$(CONFIG)\obj\estLib.obj -Fd$(CONFIG)\obj\estLib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\est\estLib.c
 
 !IF "$(BIT_PACK_EST)" == "1"
 #
@@ -427,9 +425,9 @@ DEPS_12 = $(DEPS_12) $(CONFIG)\inc\mpr.h
 DEPS_12 = $(DEPS_12) $(CONFIG)\inc\est.h
 
 $(CONFIG)\obj\mprSsl.obj: \
-    src\deps\mpr\mprSsl.c $(DEPS_12)
+    src\paks\mpr\mprSsl.c $(DEPS_12)
 	@echo '   [Compile] $(CONFIG)/obj/mprSsl.obj'
-	"$(CC)" -c -Fo$(CONFIG)\obj\mprSsl.obj -Fd$(CONFIG)\obj\mprSsl.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) "-I$(BIT_PACK_MATRIXSSL_PATH)" "-I$(BIT_PACK_MATRIXSSL_PATH)\matrixssl" "-I$(BIT_PACK_NANOSSL_PATH)\src" "-I$(BIT_PACK_OPENSSL_PATH)\include" src\deps\mpr\mprSsl.c
+	"$(CC)" -c -Fo$(CONFIG)\obj\mprSsl.obj -Fd$(CONFIG)\obj\mprSsl.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) "-I$(BIT_PACK_MATRIXSSL_PATH)" "-I$(BIT_PACK_MATRIXSSL_PATH)\matrixssl" "-I$(BIT_PACK_NANOSSL_PATH)\src" "-I$(BIT_PACK_OPENSSL_PATH)\include" src\paks\mpr\mprSsl.c
 
 #
 #   libmprssl
@@ -457,9 +455,9 @@ DEPS_14 = $(DEPS_14) $(CONFIG)\inc\bit.h
 DEPS_14 = $(DEPS_14) $(CONFIG)\inc\mpr.h
 
 $(CONFIG)\obj\manager.obj: \
-    src\deps\mpr\manager.c $(DEPS_14)
+    src\paks\mpr\manager.c $(DEPS_14)
 	@echo '   [Compile] $(CONFIG)/obj/manager.obj'
-	"$(CC)" -c -Fo$(CONFIG)\obj\manager.obj -Fd$(CONFIG)\obj\manager.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\mpr\manager.c
+	"$(CC)" -c -Fo$(CONFIG)\obj\manager.obj -Fd$(CONFIG)\obj\manager.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\mpr\manager.c
 
 #
 #   manager
@@ -484,9 +482,9 @@ DEPS_16 = $(DEPS_16) $(CONFIG)\inc\bit.h
 DEPS_16 = $(DEPS_16) $(CONFIG)\inc\mpr.h
 
 $(CONFIG)\obj\makerom.obj: \
-    src\deps\mpr\makerom.c $(DEPS_16)
+    src\paks\mpr\makerom.c $(DEPS_16)
 	@echo '   [Compile] $(CONFIG)/obj/makerom.obj'
-	"$(CC)" -c -Fo$(CONFIG)\obj\makerom.obj -Fd$(CONFIG)\obj\makerom.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\mpr\makerom.c
+	"$(CC)" -c -Fo$(CONFIG)\obj\makerom.obj -Fd$(CONFIG)\obj\makerom.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\mpr\makerom.c
 
 #
 #   makerom
@@ -507,12 +505,12 @@ $(CONFIG)\bin\makerom.exe: $(DEPS_17)
 #
 #   ca-crt
 #
-DEPS_18 = $(DEPS_18) src\deps\est\ca.crt
+DEPS_18 = $(DEPS_18) src\paks\est\ca.crt
 
 $(CONFIG)\bin\ca.crt: $(DEPS_18)
 	@echo '      [Copy] $(CONFIG)/bin/ca.crt'
 	if not exist "$(CONFIG)\bin" md "$(CONFIG)\bin"
-	copy /Y src\deps\est\ca.crt $(CONFIG)\bin\ca.crt
+	copy /Y src\paks\est\ca.crt $(CONFIG)\bin\ca.crt
 
 #
 #   pcre.h
@@ -520,7 +518,7 @@ $(CONFIG)\bin\ca.crt: $(DEPS_18)
 $(CONFIG)\inc\pcre.h: $(DEPS_19)
 	@echo '      [Copy] $(CONFIG)/inc/pcre.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
-	copy /Y src\deps\pcre\pcre.h $(CONFIG)\inc\pcre.h
+	copy /Y src\paks\pcre\pcre.h $(CONFIG)\inc\pcre.h
 
 #
 #   pcre.obj
@@ -529,9 +527,9 @@ DEPS_20 = $(DEPS_20) $(CONFIG)\inc\bit.h
 DEPS_20 = $(DEPS_20) $(CONFIG)\inc\pcre.h
 
 $(CONFIG)\obj\pcre.obj: \
-    src\deps\pcre\pcre.c $(DEPS_20)
+    src\paks\pcre\pcre.c $(DEPS_20)
 	@echo '   [Compile] $(CONFIG)/obj/pcre.obj'
-	"$(CC)" -c -Fo$(CONFIG)\obj\pcre.obj -Fd$(CONFIG)\obj\pcre.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\pcre\pcre.c
+	"$(CC)" -c -Fo$(CONFIG)\obj\pcre.obj -Fd$(CONFIG)\obj\pcre.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\pcre\pcre.c
 
 !IF "$(BIT_PACK_PCRE)" == "1"
 #
@@ -552,7 +550,7 @@ $(CONFIG)\bin\libpcre.lib: $(DEPS_21)
 $(CONFIG)\inc\http.h: $(DEPS_22)
 	@echo '      [Copy] $(CONFIG)/inc/http.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
-	copy /Y src\deps\http\http.h $(CONFIG)\inc\http.h
+	copy /Y src\paks\http\http.h $(CONFIG)\inc\http.h
 
 #
 #   httpLib.obj
@@ -562,9 +560,9 @@ DEPS_23 = $(DEPS_23) $(CONFIG)\inc\http.h
 DEPS_23 = $(DEPS_23) $(CONFIG)\inc\mpr.h
 
 $(CONFIG)\obj\httpLib.obj: \
-    src\deps\http\httpLib.c $(DEPS_23)
+    src\paks\http\httpLib.c $(DEPS_23)
 	@echo '   [Compile] $(CONFIG)/obj/httpLib.obj'
-	"$(CC)" -c -Fo$(CONFIG)\obj\httpLib.obj -Fd$(CONFIG)\obj\httpLib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\http\httpLib.c
+	"$(CC)" -c -Fo$(CONFIG)\obj\httpLib.obj -Fd$(CONFIG)\obj\httpLib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\http\httpLib.c
 
 #
 #   libhttp
@@ -593,9 +591,9 @@ DEPS_25 = $(DEPS_25) $(CONFIG)\inc\bit.h
 DEPS_25 = $(DEPS_25) $(CONFIG)\inc\http.h
 
 $(CONFIG)\obj\http.obj: \
-    src\deps\http\http.c $(DEPS_25)
+    src\paks\http\http.c $(DEPS_25)
 	@echo '   [Compile] $(CONFIG)/obj/http.obj'
-	"$(CC)" -c -Fo$(CONFIG)\obj\http.obj -Fd$(CONFIG)\obj\http.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) "-I$(BIT_PACK_MATRIXSSL_PATH)" "-I$(BIT_PACK_MATRIXSSL_PATH)\matrixssl" "-I$(BIT_PACK_NANOSSL_PATH)\src" "-I$(BIT_PACK_OPENSSL_PATH)\include" src\deps\http\http.c
+	"$(CC)" -c -Fo$(CONFIG)\obj\http.obj -Fd$(CONFIG)\obj\http.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) "-I$(BIT_PACK_MATRIXSSL_PATH)" "-I$(BIT_PACK_MATRIXSSL_PATH)\matrixssl" "-I$(BIT_PACK_NANOSSL_PATH)\src" "-I$(BIT_PACK_OPENSSL_PATH)\include" src\paks\http\http.c
 
 #
 #   http
@@ -658,7 +656,7 @@ $(CONFIG)\bin\http.exe: $(DEPS_26)
 $(CONFIG)\inc\sqlite3.h: $(DEPS_27)
 	@echo '      [Copy] $(CONFIG)/inc/sqlite3.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
-	copy /Y src\deps\sqlite\sqlite3.h $(CONFIG)\inc\sqlite3.h
+	copy /Y src\paks\sqlite\sqlite3.h $(CONFIG)\inc\sqlite3.h
 
 #
 #   sqlite3.obj
@@ -667,9 +665,9 @@ DEPS_28 = $(DEPS_28) $(CONFIG)\inc\bit.h
 DEPS_28 = $(DEPS_28) $(CONFIG)\inc\sqlite3.h
 
 $(CONFIG)\obj\sqlite3.obj: \
-    src\deps\sqlite\sqlite3.c $(DEPS_28)
+    src\paks\sqlite\sqlite3.c $(DEPS_28)
 	@echo '   [Compile] $(CONFIG)/obj/sqlite3.obj'
-	"$(CC)" -c -Fo$(CONFIG)\obj\sqlite3.obj -Fd$(CONFIG)\obj\sqlite3.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\sqlite\sqlite3.c
+	"$(CC)" -c -Fo$(CONFIG)\obj\sqlite3.obj -Fd$(CONFIG)\obj\sqlite3.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\sqlite\sqlite3.c
 
 !IF "$(BIT_PACK_SQLITE)" == "1"
 #
@@ -691,9 +689,9 @@ DEPS_30 = $(DEPS_30) $(CONFIG)\inc\bit.h
 DEPS_30 = $(DEPS_30) $(CONFIG)\inc\sqlite3.h
 
 $(CONFIG)\obj\sqlite.obj: \
-    src\deps\sqlite\sqlite.c $(DEPS_30)
+    src\paks\sqlite\sqlite.c $(DEPS_30)
 	@echo '   [Compile] $(CONFIG)/obj/sqlite.obj'
-	"$(CC)" -c -Fo$(CONFIG)\obj\sqlite.obj -Fd$(CONFIG)\obj\sqlite.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\sqlite\sqlite.c
+	"$(CC)" -c -Fo$(CONFIG)\obj\sqlite.obj -Fd$(CONFIG)\obj\sqlite.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\sqlite\sqlite.c
 
 !IF "$(BIT_PACK_SQLITE)" == "1"
 #
@@ -718,7 +716,7 @@ $(CONFIG)\bin\sqlite.exe: $(DEPS_31)
 $(CONFIG)\inc\zlib.h: $(DEPS_32)
 	@echo '      [Copy] $(CONFIG)/inc/zlib.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
-	copy /Y src\deps\zlib\zlib.h $(CONFIG)\inc\zlib.h
+	copy /Y src\paks\zlib\zlib.h $(CONFIG)\inc\zlib.h
 
 #
 #   zlib.obj
@@ -727,9 +725,9 @@ DEPS_33 = $(DEPS_33) $(CONFIG)\inc\bit.h
 DEPS_33 = $(DEPS_33) $(CONFIG)\inc\zlib.h
 
 $(CONFIG)\obj\zlib.obj: \
-    src\deps\zlib\zlib.c $(DEPS_33)
+    src\paks\zlib\zlib.c $(DEPS_33)
 	@echo '   [Compile] $(CONFIG)/obj/zlib.obj'
-	"$(CC)" -c -Fo$(CONFIG)\obj\zlib.obj -Fd$(CONFIG)\obj\zlib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\deps\zlib\zlib.c
+	"$(CC)" -c -Fo$(CONFIG)\obj\zlib.obj -Fd$(CONFIG)\obj\zlib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\zlib\zlib.c
 
 !IF "$(BIT_PACK_ZLIB)" == "1"
 #
@@ -4296,25 +4294,15 @@ $(CONFIG)\bin\utest.exe: $(DEPS_144)
 	"$(LD)" -out:$(CONFIG)\bin\utest.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) "$(CONFIG)\obj\ejsrun.obj" $(LIBPATHS_144) $(LIBS_144) $(LIBS_144) $(LIBS) 
 
 #
-#   bower.json
-#
-DEPS_145 = $(DEPS_145) package.json
-
-bower.json: $(DEPS_145)
-	@echo '      [Copy] bower.json'
-	if not exist "." md "."
-	copy /Y package.json bower.json
-
-#
 #   stop
 #
-stop: $(DEPS_146)
+stop: $(DEPS_145)
 #  Omit build script stop
 
 #
 #   installBinary
 #
-installBinary: $(DEPS_147)
+installBinary: $(DEPS_146)
 	if not exist "$(BIT_VAPP_PREFIX)\bin" md "$(BIT_VAPP_PREFIX)\bin"
 	copy /Y $(CONFIG)\bin\ejs.exe "$(BIT_VAPP_PREFIX)\bin\ejs.exe"
 	copy /Y $(CONFIG)\bin\ejsc.exe "$(BIT_VAPP_PREFIX)\bin\ejsc.exe"
@@ -4389,22 +4377,16 @@ installBinary: $(DEPS_147)
 	copy /Y src\slots\ejs.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.slots.h"
 	copy /Y src\slots\ejs.web.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.web.slots.h"
 	copy /Y src\slots\ejs.zlib.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.zlib.slots.h"
-	copy /Y src\deps\est\est.h "$(BIT_VAPP_PREFIX)\inc\est.h"
-	copy /Y src\deps\http\http.h "$(BIT_VAPP_PREFIX)\inc\http.h"
-	copy /Y src\deps\mpr\mpr.h "$(BIT_VAPP_PREFIX)\inc\mpr.h"
-	copy /Y src\deps\pcre\pcre.h "$(BIT_VAPP_PREFIX)\inc\pcre.h"
-	copy /Y src\deps\sqlite\sqlite3.h "$(BIT_VAPP_PREFIX)\inc\sqlite3.h"
-	copy /Y src\deps\zlib\zlib.h "$(BIT_VAPP_PREFIX)\inc\zlib.h"
+	copy /Y src\paks\est\est.h "$(BIT_VAPP_PREFIX)\inc\est.h"
+	copy /Y src\paks\http\http.h "$(BIT_VAPP_PREFIX)\inc\http.h"
+	copy /Y src\paks\mpr\mpr.h "$(BIT_VAPP_PREFIX)\inc\mpr.h"
+	copy /Y src\paks\pcre\pcre.h "$(BIT_VAPP_PREFIX)\inc\pcre.h"
+	copy /Y src\paks\sqlite\sqlite3.h "$(BIT_VAPP_PREFIX)\inc\sqlite3.h"
+	copy /Y src\paks\zlib\zlib.h "$(BIT_VAPP_PREFIX)\inc\zlib.h"
 	copy /Y src\bitos.h "$(BIT_VAPP_PREFIX)\inc\bitos.h"
 	copy /Y src\cmd\ejsmod.h "$(BIT_VAPP_PREFIX)\inc\ejsmod.h"
 	copy /Y src\core\default.slots.h "$(BIT_VAPP_PREFIX)\inc\default.slots.h"
 	copy /Y src\core\ejs.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.slots.h"
-	copy /Y src\deps\est\est.h "$(BIT_VAPP_PREFIX)\inc\est.h"
-	copy /Y src\deps\http\http.h "$(BIT_VAPP_PREFIX)\inc\http.h"
-	copy /Y src\deps\mpr\mpr.h "$(BIT_VAPP_PREFIX)\inc\mpr.h"
-	copy /Y src\deps\pcre\pcre.h "$(BIT_VAPP_PREFIX)\inc\pcre.h"
-	copy /Y src\deps\sqlite\sqlite3.h "$(BIT_VAPP_PREFIX)\inc\sqlite3.h"
-	copy /Y src\deps\zlib\zlib.h "$(BIT_VAPP_PREFIX)\inc\zlib.h"
 	copy /Y src\ejs.db.sqlite\ejs.db.sqlite.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.db.sqlite.slots.h"
 	copy /Y src\ejs.h "$(BIT_VAPP_PREFIX)\inc\ejs.h"
 	copy /Y src\ejs.web\ejs.web.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.web.slots.h"
@@ -4413,6 +4395,12 @@ installBinary: $(DEPS_147)
 	copy /Y src\ejsByteCodeTable.h "$(BIT_VAPP_PREFIX)\inc\ejsByteCodeTable.h"
 	copy /Y src\ejsCompiler.h "$(BIT_VAPP_PREFIX)\inc\ejsCompiler.h"
 	copy /Y src\ejsCustomize.h "$(BIT_VAPP_PREFIX)\inc\ejsCustomize.h"
+	copy /Y src\paks\est\est.h "$(BIT_VAPP_PREFIX)\inc\est.h"
+	copy /Y src\paks\http\http.h "$(BIT_VAPP_PREFIX)\inc\http.h"
+	copy /Y src\paks\mpr\mpr.h "$(BIT_VAPP_PREFIX)\inc\mpr.h"
+	copy /Y src\paks\pcre\pcre.h "$(BIT_VAPP_PREFIX)\inc\pcre.h"
+	copy /Y src\paks\sqlite\sqlite3.h "$(BIT_VAPP_PREFIX)\inc\sqlite3.h"
+	copy /Y src\paks\zlib\zlib.h "$(BIT_VAPP_PREFIX)\inc\zlib.h"
 	copy /Y src\slots\ejs.cache.local.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.cache.local.slots.h"
 	copy /Y src\slots\ejs.db.sqlite.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.db.sqlite.slots.h"
 	copy /Y src\slots\ejs.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.slots.h"
@@ -4423,25 +4411,25 @@ installBinary: $(DEPS_147)
 #
 #   start
 #
-start: $(DEPS_148)
+start: $(DEPS_147)
 #  Omit build script start
 
 #
 #   install
 #
-DEPS_149 = $(DEPS_149) stop
-DEPS_149 = $(DEPS_149) installBinary
-DEPS_149 = $(DEPS_149) start
+DEPS_148 = $(DEPS_148) stop
+DEPS_148 = $(DEPS_148) installBinary
+DEPS_148 = $(DEPS_148) start
 
-install: $(DEPS_149)
+install: $(DEPS_148)
 
 
 #
 #   uninstall
 #
-DEPS_150 = $(DEPS_150) stop
+DEPS_149 = $(DEPS_149) stop
 
-uninstall: $(DEPS_150)
+uninstall: $(DEPS_149)
 	if exist "$(BIT_VAPP_PREFIX)" rd /Q /S "$(BIT_VAPP_PREFIX)"
 	if exist "$(BIT_VAPP_PREFIX)\bin" rd /Q "$(BIT_VAPP_PREFIX)\bin"
 	if exist "$(BIT_VAPP_PREFIX)\inc" rd /Q "$(BIT_VAPP_PREFIX)\inc"

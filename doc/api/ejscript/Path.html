@@ -171,7 +171,7 @@ path.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#removeAll'><b>removeAll</b></a>(): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Removes a directory and its contents
 If the path is a directory, this call will remove all subdirectories and their contents and finally the
 directory itself.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#rename'><b>rename</b></a>(target: <a href='Path.html'>Path</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Rename a file.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#rename'><b>rename</b></a>(target: <a href='Path.html'>Path</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Rename a file.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#replace'><b>replace</b></a>(pattern, replacement): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Search and replace.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#replaceExt'><b>replaceExt</b></a>(ext: <a href='String.html'>String</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Replace the path extension and return a new path.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#resolve'><b>resolve</b></a>(otherPaths: <a href='Array.html'>Array</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Resolve paths in the neighborhood of this path.</td></tr>
@@ -604,16 +604,17 @@ directory itself. If the directory does not exist, this call does not error and 
 <hr />
 <a name='rename'></a>
 <div class='api'>
-<div class='apiSig'>    rename(target: <a href='Path.html'>Path</a>): <a href='Boolean.html'>Boolean</a>
+<div class='apiSig'>    rename(target: <a href='Path.html'>Path</a>): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Rename a file. If the new path exists it is removed before the rename.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>target: <a href='Path.html'>Path</a> </td><td>New name of the path.</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>True if the file is renamed.</dd></dl>
-</div>
+</dl><dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: if the rename fails.
+</dd>
+</dl></div>
 </div>
 <hr />
 <a name='replace'></a>

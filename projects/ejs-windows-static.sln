@@ -366,11 +366,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utest", "ejs-windows-static
 		{63B4E131-717E-4BC4-9271-2DAE72109F65} = {63B4E131-717E-4BC4-9271-2DAE72109F65}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bower.json", "ejs-windows-static\bower.json.vcxproj", "{8574A93A-291A-44DE-AD2A-42BBB341A4AD}"
-	ProjectSection(ProjectDependencies) = postProject
-		{C5EFD5E2-B473-4A01-8CC1-7253E3551311} = {C5EFD5E2-B473-4A01-8CC1-7253E3551311}
-	EndProjectSection
-EndProject
 
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -692,14 +687,6 @@ Global
 {E9AB3041-7551-47C6-8781-1B613898920B}.Release|Win32.Build.0 = Release|Win32
 {E9AB3041-7551-47C6-8781-1B613898920B}.Release|x64.ActiveCfg = Release|x64
 {E9AB3041-7551-47C6-8781-1B613898920B}.Release|x64.Build.0 = Release|x64
-{8574A93A-291A-44DE-AD2A-42BBB341A4AD}.Debug|Win32.ActiveCfg = Debug|Win32
-{8574A93A-291A-44DE-AD2A-42BBB341A4AD}.Debug|Win32.Build.0 = Debug|Win32
-{8574A93A-291A-44DE-AD2A-42BBB341A4AD}.Debug|x64.ActiveCfg = Debug|x64
-{8574A93A-291A-44DE-AD2A-42BBB341A4AD}.Debug|x64.Build.0 = Debug|x64
-{8574A93A-291A-44DE-AD2A-42BBB341A4AD}.Release|Win32.ActiveCfg = Release|Win32
-{8574A93A-291A-44DE-AD2A-42BBB341A4AD}.Release|Win32.Build.0 = Release|Win32
-{8574A93A-291A-44DE-AD2A-42BBB341A4AD}.Release|x64.ActiveCfg = Release|x64
-{8574A93A-291A-44DE-AD2A-42BBB341A4AD}.Release|x64.Build.0 = Release|x64
 EndGlobalSection
 
   GlobalSection(SolutionProperties) = preSolution

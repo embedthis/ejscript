@@ -142,7 +142,6 @@ TARGETS            += $(CONFIG)/bin/ejs.mvc.mod
 TARGETS            += $(CONFIG)/bin/utest.es
 TARGETS            += $(CONFIG)/bin/utest.worker
 TARGETS            += $(CONFIG)/bin/utest.out
-TARGETS            += bower.json
 
 unexport CDPATH
 
@@ -201,7 +200,6 @@ clean:
 	rm -f "$(CONFIG)/bin/libejs.web.a"
 	rm -f "$(CONFIG)/bin/libejs.zlib.a"
 	rm -f "$(CONFIG)/bin/utest.out"
-	rm -f "bower.json"
 	rm -f "$(CONFIG)/obj/mprLib.o"
 	rm -f "$(CONFIG)/obj/mprSsl.o"
 	rm -f "$(CONFIG)/obj/manager.o"
@@ -304,7 +302,7 @@ version: $(DEPS_1)
 $(CONFIG)/inc/mpr.h: $(DEPS_2)
 	@echo '      [Copy] $(CONFIG)/inc/mpr.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp src/deps/mpr/mpr.h $(CONFIG)/inc/mpr.h
+	cp src/paks/mpr/mpr.h $(CONFIG)/inc/mpr.h
 
 #
 #   bit.h
@@ -328,9 +326,9 @@ DEPS_5 += $(CONFIG)/inc/mpr.h
 DEPS_5 += $(CONFIG)/inc/bitos.h
 
 $(CONFIG)/obj/mprLib.o: \
-    src/deps/mpr/mprLib.c $(DEPS_5)
+    src/paks/mpr/mprLib.c $(DEPS_5)
 	@echo '   [Compile] $(CONFIG)/obj/mprLib.o'
-	$(CC) -c -o $(CONFIG)/obj/mprLib.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" src/deps/mpr/mprLib.c
+	$(CC) -c -o $(CONFIG)/obj/mprLib.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" src/paks/mpr/mprLib.c
 
 #
 #   libmpr
@@ -350,7 +348,7 @@ $(CONFIG)/bin/libmpr.a: $(DEPS_6)
 $(CONFIG)/inc/est.h: $(DEPS_7)
 	@echo '      [Copy] $(CONFIG)/inc/est.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp src/deps/est/est.h $(CONFIG)/inc/est.h
+	cp src/paks/est/est.h $(CONFIG)/inc/est.h
 
 #
 #   estLib.o
@@ -360,9 +358,9 @@ DEPS_8 += $(CONFIG)/inc/est.h
 DEPS_8 += $(CONFIG)/inc/bitos.h
 
 $(CONFIG)/obj/estLib.o: \
-    src/deps/est/estLib.c $(DEPS_8)
+    src/paks/est/estLib.c $(DEPS_8)
 	@echo '   [Compile] $(CONFIG)/obj/estLib.o'
-	$(CC) -c -o $(CONFIG)/obj/estLib.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" src/deps/est/estLib.c
+	$(CC) -c -o $(CONFIG)/obj/estLib.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" src/paks/est/estLib.c
 
 ifeq ($(BIT_PACK_EST),1)
 #
@@ -386,9 +384,9 @@ DEPS_10 += $(CONFIG)/inc/mpr.h
 DEPS_10 += $(CONFIG)/inc/est.h
 
 $(CONFIG)/obj/mprSsl.o: \
-    src/deps/mpr/mprSsl.c $(DEPS_10)
+    src/paks/mpr/mprSsl.c $(DEPS_10)
 	@echo '   [Compile] $(CONFIG)/obj/mprSsl.o'
-	$(CC) -c -o $(CONFIG)/obj/mprSsl.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" "-I$(BIT_PACK_MATRIXSSL_PATH)" "-I$(BIT_PACK_MATRIXSSL_PATH)/matrixssl" "-I$(BIT_PACK_NANOSSL_PATH)/src" "-I$(BIT_PACK_OPENSSL_PATH)/include" src/deps/mpr/mprSsl.c
+	$(CC) -c -o $(CONFIG)/obj/mprSsl.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" "-I$(BIT_PACK_MATRIXSSL_PATH)" "-I$(BIT_PACK_MATRIXSSL_PATH)/matrixssl" "-I$(BIT_PACK_NANOSSL_PATH)/src" "-I$(BIT_PACK_OPENSSL_PATH)/include" src/paks/mpr/mprSsl.c
 
 #
 #   libmprssl
@@ -416,9 +414,9 @@ DEPS_12 += $(CONFIG)/inc/bit.h
 DEPS_12 += $(CONFIG)/inc/mpr.h
 
 $(CONFIG)/obj/manager.o: \
-    src/deps/mpr/manager.c $(DEPS_12)
+    src/paks/mpr/manager.c $(DEPS_12)
 	@echo '   [Compile] $(CONFIG)/obj/manager.o'
-	$(CC) -c -o $(CONFIG)/obj/manager.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" src/deps/mpr/manager.c
+	$(CC) -c -o $(CONFIG)/obj/manager.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" src/paks/mpr/manager.c
 
 #
 #   manager
@@ -443,9 +441,9 @@ DEPS_14 += $(CONFIG)/inc/bit.h
 DEPS_14 += $(CONFIG)/inc/mpr.h
 
 $(CONFIG)/obj/makerom.o: \
-    src/deps/mpr/makerom.c $(DEPS_14)
+    src/paks/mpr/makerom.c $(DEPS_14)
 	@echo '   [Compile] $(CONFIG)/obj/makerom.o'
-	$(CC) -c -o $(CONFIG)/obj/makerom.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" src/deps/mpr/makerom.c
+	$(CC) -c -o $(CONFIG)/obj/makerom.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" src/paks/mpr/makerom.c
 
 #
 #   makerom
@@ -466,12 +464,12 @@ $(CONFIG)/bin/makerom.out: $(DEPS_15)
 #
 #   ca-crt
 #
-DEPS_16 += src/deps/est/ca.crt
+DEPS_16 += src/paks/est/ca.crt
 
 $(CONFIG)/bin/ca.crt: $(DEPS_16)
 	@echo '      [Copy] $(CONFIG)/bin/ca.crt'
 	mkdir -p "$(CONFIG)/bin"
-	cp src/deps/est/ca.crt $(CONFIG)/bin/ca.crt
+	cp src/paks/est/ca.crt $(CONFIG)/bin/ca.crt
 
 #
 #   pcre.h
@@ -479,7 +477,7 @@ $(CONFIG)/bin/ca.crt: $(DEPS_16)
 $(CONFIG)/inc/pcre.h: $(DEPS_17)
 	@echo '      [Copy] $(CONFIG)/inc/pcre.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp src/deps/pcre/pcre.h $(CONFIG)/inc/pcre.h
+	cp src/paks/pcre/pcre.h $(CONFIG)/inc/pcre.h
 
 #
 #   pcre.o
@@ -488,9 +486,9 @@ DEPS_18 += $(CONFIG)/inc/bit.h
 DEPS_18 += $(CONFIG)/inc/pcre.h
 
 $(CONFIG)/obj/pcre.o: \
-    src/deps/pcre/pcre.c $(DEPS_18)
+    src/paks/pcre/pcre.c $(DEPS_18)
 	@echo '   [Compile] $(CONFIG)/obj/pcre.o'
-	$(CC) -c -o $(CONFIG)/obj/pcre.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" src/deps/pcre/pcre.c
+	$(CC) -c -o $(CONFIG)/obj/pcre.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" src/paks/pcre/pcre.c
 
 ifeq ($(BIT_PACK_PCRE),1)
 #
@@ -511,7 +509,7 @@ endif
 $(CONFIG)/inc/http.h: $(DEPS_20)
 	@echo '      [Copy] $(CONFIG)/inc/http.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp src/deps/http/http.h $(CONFIG)/inc/http.h
+	cp src/paks/http/http.h $(CONFIG)/inc/http.h
 
 #
 #   httpLib.o
@@ -521,9 +519,9 @@ DEPS_21 += $(CONFIG)/inc/http.h
 DEPS_21 += $(CONFIG)/inc/mpr.h
 
 $(CONFIG)/obj/httpLib.o: \
-    src/deps/http/httpLib.c $(DEPS_21)
+    src/paks/http/httpLib.c $(DEPS_21)
 	@echo '   [Compile] $(CONFIG)/obj/httpLib.o'
-	$(CC) -c -o $(CONFIG)/obj/httpLib.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" src/deps/http/httpLib.c
+	$(CC) -c -o $(CONFIG)/obj/httpLib.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" src/paks/http/httpLib.c
 
 #
 #   libhttp
@@ -552,9 +550,9 @@ DEPS_23 += $(CONFIG)/inc/bit.h
 DEPS_23 += $(CONFIG)/inc/http.h
 
 $(CONFIG)/obj/http.o: \
-    src/deps/http/http.c $(DEPS_23)
+    src/paks/http/http.c $(DEPS_23)
 	@echo '   [Compile] $(CONFIG)/obj/http.o'
-	$(CC) -c -o $(CONFIG)/obj/http.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" "-I$(BIT_PACK_MATRIXSSL_PATH)" "-I$(BIT_PACK_MATRIXSSL_PATH)/matrixssl" "-I$(BIT_PACK_NANOSSL_PATH)/src" "-I$(BIT_PACK_OPENSSL_PATH)/include" src/deps/http/http.c
+	$(CC) -c -o $(CONFIG)/obj/http.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" "-I$(BIT_PACK_MATRIXSSL_PATH)" "-I$(BIT_PACK_MATRIXSSL_PATH)/matrixssl" "-I$(BIT_PACK_NANOSSL_PATH)/src" "-I$(BIT_PACK_OPENSSL_PATH)/include" src/paks/http/http.c
 
 #
 #   http
@@ -617,7 +615,7 @@ $(CONFIG)/bin/http.out: $(DEPS_24)
 $(CONFIG)/inc/sqlite3.h: $(DEPS_25)
 	@echo '      [Copy] $(CONFIG)/inc/sqlite3.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp src/deps/sqlite/sqlite3.h $(CONFIG)/inc/sqlite3.h
+	cp src/paks/sqlite/sqlite3.h $(CONFIG)/inc/sqlite3.h
 
 #
 #   sqlite3.o
@@ -626,9 +624,9 @@ DEPS_26 += $(CONFIG)/inc/bit.h
 DEPS_26 += $(CONFIG)/inc/sqlite3.h
 
 $(CONFIG)/obj/sqlite3.o: \
-    src/deps/sqlite/sqlite3.c $(DEPS_26)
+    src/paks/sqlite/sqlite3.c $(DEPS_26)
 	@echo '   [Compile] $(CONFIG)/obj/sqlite3.o'
-	$(CC) -c -o $(CONFIG)/obj/sqlite3.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" src/deps/sqlite/sqlite3.c
+	$(CC) -c -o $(CONFIG)/obj/sqlite3.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" src/paks/sqlite/sqlite3.c
 
 ifeq ($(BIT_PACK_SQLITE),1)
 #
@@ -650,9 +648,9 @@ DEPS_28 += $(CONFIG)/inc/bit.h
 DEPS_28 += $(CONFIG)/inc/sqlite3.h
 
 $(CONFIG)/obj/sqlite.o: \
-    src/deps/sqlite/sqlite.c $(DEPS_28)
+    src/paks/sqlite/sqlite.c $(DEPS_28)
 	@echo '   [Compile] $(CONFIG)/obj/sqlite.o'
-	$(CC) -c -o $(CONFIG)/obj/sqlite.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" src/deps/sqlite/sqlite.c
+	$(CC) -c -o $(CONFIG)/obj/sqlite.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" src/paks/sqlite/sqlite.c
 
 ifeq ($(BIT_PACK_SQLITE),1)
 #
@@ -677,7 +675,7 @@ endif
 $(CONFIG)/inc/zlib.h: $(DEPS_30)
 	@echo '      [Copy] $(CONFIG)/inc/zlib.h'
 	mkdir -p "$(CONFIG)/inc"
-	cp src/deps/zlib/zlib.h $(CONFIG)/inc/zlib.h
+	cp src/paks/zlib/zlib.h $(CONFIG)/inc/zlib.h
 
 #
 #   zlib.o
@@ -686,9 +684,9 @@ DEPS_31 += $(CONFIG)/inc/bit.h
 DEPS_31 += $(CONFIG)/inc/zlib.h
 
 $(CONFIG)/obj/zlib.o: \
-    src/deps/zlib/zlib.c $(DEPS_31)
+    src/paks/zlib/zlib.c $(DEPS_31)
 	@echo '   [Compile] $(CONFIG)/obj/zlib.o'
-	$(CC) -c -o $(CONFIG)/obj/zlib.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" src/deps/zlib/zlib.c
+	$(CC) -c -o $(CONFIG)/obj/zlib.o $(CFLAGS) $(DFLAGS) "-I$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" src/paks/zlib/zlib.c
 
 ifeq ($(BIT_PACK_ZLIB),1)
 #
@@ -4269,43 +4267,33 @@ $(CONFIG)/bin/utest.out: $(DEPS_142)
 	$(CC) -o $(CONFIG)/bin/utest.out $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_142) $(LIBS_142) $(LIBS_142) $(LIBS) -Wl,-r 
 
 #
-#   bower.json
-#
-DEPS_143 += package.json
-
-bower.json: $(DEPS_143)
-	@echo '      [Copy] bower.json'
-	mkdir -p "."
-	cp package.json bower.json
-
-#
 #   stop
 #
-stop: $(DEPS_144)
+stop: $(DEPS_143)
 
 #
 #   installBinary
 #
-installBinary: $(DEPS_145)
+installBinary: $(DEPS_144)
 
 #
 #   start
 #
-start: $(DEPS_146)
+start: $(DEPS_145)
 
 #
 #   install
 #
-DEPS_147 += stop
-DEPS_147 += installBinary
-DEPS_147 += start
+DEPS_146 += stop
+DEPS_146 += installBinary
+DEPS_146 += start
 
-install: $(DEPS_147)
+install: $(DEPS_146)
 
 #
 #   uninstall
 #
-DEPS_148 += stop
+DEPS_147 += stop
 
-uninstall: $(DEPS_148)
+uninstall: $(DEPS_147)
 
