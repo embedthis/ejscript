@@ -105,6 +105,7 @@ Initialized to the ejs version.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#createSearch'><b>createSearch</b></a>(searchPath: <a href='String.html'>String</a> = null): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a search path array for locating ejs modules.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#exit'><b>exit</b></a>(status: <a href='Number.html'>Number</a> = 0, how: <a href='String.html'>String</a> = normal): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Stop the program and exit.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#getenv'><b>getenv</b></a>(name: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get an environment variable.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#getpass'><b>getpass</b></a>(prompt: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a password from the user's /dev/tty.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#loadrc'><b>loadrc</b></a>(path: <a href='Path.html'>Path</a>, overwrite: <a href='Boolean.html'>Boolean</a> = true)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Load an "ejsrc" configuration file
 This loads an Ejscript configuration file and blends the contents with App.config.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#putenv'><b>putenv</b></a>(name: <a href='String.html'>String</a>, value: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Update an environment variable.</td></tr>
@@ -177,6 +178,17 @@ paths suitable for use by the <a href='#search'>search</a> property. NOTE: this 
 <tr class='param'><td class='param'>name: <a href='String.html'>String</a> </td><td>The name of the environment variable to retrieve.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>The value of the environment variable or null if not found.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='getpass'></a>
+<div class='api'>
+<div class='apiSig'>static     getpass(prompt: <a href='String.html'>String</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Get a password from the user's /dev/tty. </dd></dl>
+<dl><dt>Returns</dt>
+<dd>A clear-text password string.</dd></dl>
 </div>
 </div>
 <hr />
