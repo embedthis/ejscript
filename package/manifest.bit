@@ -194,7 +194,7 @@ Bit.load({
                 Pak set
              */
             },{
-                from:       'package/ejs-flat.bit',
+                from:       'package/ejs.bit',
                 to:         '${src}/ejs.bit',
                 set:        'pak',
 
