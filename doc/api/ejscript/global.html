@@ -1476,3 +1476,729 @@ preserving its directory structure under dest.</dd></dl>
 <td class='param'>tree</td><td>Copy the src subtree and preserve the directory structure under the destination.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
+<dd>Number of files copied.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='decodeURI'></a>
+<div class='api'>
+<div class='apiSig'>    decodeURI(str: <a href='String.html'>String</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Decode an encoded URI using www-url encoding. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>Encoded string.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A decoded string.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='decodeURIComponent'></a>
+<div class='api'>
+<div class='apiSig'>    decodeURIComponent(str: <a href='String.html'>String</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Decode an encoded URI component. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>Encoded string.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A decoded string.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='deserialize'></a>
+<div class='api'>
+<div class='apiSig'>    deserialize(str: <a href='String.html'>String</a>): <a href='Object.html'>Object</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Convert a string into an object. This will parse a string that has been encoded via serialize. It may contain
+nested objects and arrays. This is a static method.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>The string containing the object encoding.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The fully constructed object or undefined if it could not be reconstructed.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: If the object could not be reconstructed from the string.
+</dd>
+</dl><dl><dt>Specified</dt>
+<dd>ejscript-2.3</dd></dl>
+</div>
+</div>
+<hr />
+<a name='dirname'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.unix  dirname(path: <a href='String.html'>String</a>): <a href='Path.html'>Path</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Get the directory name portion of a file. The dirname name portion is the leading portion including all 
+directory elements and excluding the base name. On some systems, it will include a drive specifier.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>A string containing the directory name portion of the file name.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='encodeObjects'></a>
+<div class='api'>
+<div class='apiSig'>    encodeObjects(items: <a href='Array.html'>Array</a>)
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Encode objects using using www-url encoding. Each object is encoded as a "key=value" pair. Each pair is separated
+by a "&" character.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>items: <a href='Array.html'>Array</a> </td><td>Strings to encode.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>An encoded string.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='encodeURI'></a>
+<div class='api'>
+<div class='apiSig'>    encodeURI(str: <a href='String.html'>String</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Encode a URI using www-url encoding. This replaces special characters with encoded alternative sequence.
+The encode call replaces all characters except: alphabetic, decimal digits, "-", "_", ".", "!", "~", "*"", 
+"'", "(", ")", "#",";", ",", "/", "?", ":", ".</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String to encode.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>An encoded string.</dd></dl>
+<dl><dt>See Also</dt>
+<dd>
+<a href='Uri.encode.html'>Uri.encode</a>, 
+<a href='for.html'>for</a>, 
+<a href='RFC3986.html'>RFC3986</a>, 
+<a href='compliant.html'>compliant</a>, 
+<a href='encoding..html'>encoding.</a>
+</dd></dl>
+</div>
+</div>
+<hr />
+<a name='encodeURIComponent'></a>
+<div class='api'>
+<div class='apiSig'>    encodeURIComponent(str: <a href='String.html'>String</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Encode a URI component using www-url encoding. This replaces special characters with encoded alternative sequence.
+The encode call replaces all characters except: alphabetic, decimal digits, "-", "_", ".", "!", "~", "*"", 
+"'", "(", ")". Note that this call encodes "=" and "&" which are often used in URL query name/key pairs.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String to encode.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>An encoded string.</dd></dl>
+<dl><dt>See Also</dt>
+<dd>
+<a href='Uri.encodeComponent.html'>Uri.encodeComponent</a>, 
+<a href='for.html'>for</a>, 
+<a href='RFC3986.html'>RFC3986</a>, 
+<a href='compliant.html'>compliant</a>, 
+<a href='encoding..html'>encoding.</a>
+</dd></dl>
+</div>
+</div>
+<hr />
+<a name='escapeHtml'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.web  escapeHtml(str: <a href='String.html'>String</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Transform a string to be safe for output into an HTML web page. It does this by changing the
+& > < " ' characters into their ampersand HTML equivalents. This is equivalent to:<br/><br/>str.replace(/&/g,'&amp;').replace(/\>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>Input string.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>An new escaped HTML string.</dd></dl>
+<dl><dt>Specified</dt>
+<dd>ejscript-2.3</dd></dl>
+<dl><dt>Stability</dt>
+<dd>Prototype.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='eval'></a>
+<div class='api'>
+<div class='apiSig'>    eval(script: <a href='String.html'>String</a>, cache: <a href='String.html'>String</a> = null): <a href='Object.html'>Object</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Evaluate a script. Not present in ejsvm.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>script: <a href='String.html'>String</a> </td><td>Script string to evaluate.</td></tr><tr class='param'><td class='param'>cache: <a href='String.html'>String</a> </td><td>null [default: null]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The the script expression value.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='exists'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.unix  exists(path: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Does a file exist. Return true if the specified file exists and can be accessed.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>path: <a href='String.html'>String</a> </td><td>Filename path to examine.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the file can be accessed 0.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='exit'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.worker  exit(): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Exit the worker. This is only valid inside Worker scripts.</dd></dl>
+<dl><dt>Specified</dt>
+<dd>ejscript-2.3</dd></dl>
+</div>
+</div>
+<hr />
+<a name='extension'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.unix  extension(path: <a href='String.html'>String</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Get the file extension portion of the file name. The file extension is the portion after the last "."
+in the path.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>path: <a href='String.html'>String</a> </td><td>Filename path to examine.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>String containing the file extension. It excludes "." as the first character.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='find'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.unix  find(path: <a href='Object.html'>Object</a>, patterns: <a href='Object.html'>Object</a> = *, options = expression): <a href='Array.html'>Array</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Find files under a directory. This uses Path.files to implement the functionality.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>path: <a href='Object.html'>Object</a> </td><td>Path or array of paths from which to search.</td></tr><tr class='param'><td class='param'>patterns: <a href='Object.html'>Object</a> </td><td>Pattern to match files. This can be a String, Path or array of String/Paths.  The wildcard '?' matches any single character, '*'' matches zero or more characters in a filename or  directory, '***  /' matches zero or more files or directories and matches recursively in a directory tree.  If a pattern terminates with "/" it will only match directories.  The pattern '***'' is equivalent to '***  / *'' (ignore spaces).  The Posix "[]" and "{a,b}" style expressions are not supported. [default: *]</td></tr><tr class='param'><td class='param'>options </td><td>Optional properties to control the matching. [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>depthFirst</td><td>Do a depth first traversal. If "dirs" is specified, the directories will be shown after the files in the directory. Otherwise, directories will be listed first.</td></tr>
+<td class='param'>exclude</td><td>Regular expression pattern of files to exclude from the results. Matches the entire path. Only for the purpose of this match, directories will have "/" appended. To exclude directories in the results, use {exclude: /\//}. The trailing "/" will not be returned in the results.</td></tr>
+<td class='param'>hidden</td><td>Include hidden files starting with ".".</td></tr>
+<td class='param'>include</td><td>Regular expression pattern of files to include in the results. Matches the entire returned path. Only for the purpose of this match, directories will have "/" appended. To include only directories in the results, use {include: /\/<a href='#/}'>/}</a>. </td></tr>
+<td class='param'>missing</td><td>Set to undefined to report patterns that don't resolve into any files or directories  by throwing an exception. Set to any non-null value to be used in the results when there are no matching files or directories. Set to the empty string to use the patterns in the results and set to null to do nothing.</td></tr>
+<td class='param'>relative</td><td>Return paths relative to the Path, otherwise result entries include the Path. Defaults to false.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>An Array of Path objects for each file in the directory.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='freeSpace'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.unix  freeSpace(path: <a href='String.html'>String</a> = null): <a href='Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Return the free space in the file system. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>path: <a href='String.html'>String</a> </td><td>null [default: null]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The number of 1M blocks (1024 *  1024 bytes) of free space in the file system.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='hashcode'></a>
+<div class='api'>
+<div class='apiSig'>    hashcode(o: <a href='Object.html'>Object</a>): <a href='Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Get the object's Unique hash id. All objects have a unique object hash.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>This property accessor returns a long containing the object's unique hash identifier.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='html'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.web  html(args: <a href='Array.html'>Array</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>HTML encode the arguments. This escapes HTML directives to be safe for inclusion in a web page.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>args: <a href='Array.html'>Array</a> </td><td>Variable arguments that will be converted to safe html.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A string containing the encoded arguments catenated together.</dd></dl>
+<dl><dt>Specified</dt>
+<dd>ejscript-2.3</dd></dl>
+<dl><dt>Stability</dt>
+<dd>Prototype
+0.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='isDir'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.unix  isDir(path: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Is a file a directory. Return true if the specified path exists and is a directory.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>path: <a href='String.html'>String</a> </td><td>Directory path to examine.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the file can be accessed.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='isFinite'></a>
+<div class='api'>
+<div class='apiSig'>    isFinite(arg: <a href='Number.html'>Number</a>): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Evaluate an argument to determine if it is a finite number. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>arg: <a href='Number.html'>Number</a> </td><td>To evaluate.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the argument is a finite number.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='isNaN'></a>
+<div class='api'>
+<div class='apiSig'>    isNaN(arg: <a href='Number.html'>Number</a>): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Evaluate an argument to determine if it is a number. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>arg: <a href='Number.html'>Number</a> </td><td>To evaluate.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the argument is a number.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='load'></a>
+<div class='api'>
+<div class='apiSig'>    load(file: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = null): <a href='Object.html'>Object</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Load a script or module. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>file: <a href='String.html'>String</a> </td><td>Path name to load. File will be interpreted relative to EJSPATH if it is not found as an absolute or relative file name.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Option parameters. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>cache</td><td>String or Path name to save the compiled script as.</td></tr>
+<td class='param'>reload</td><td>Boolean If true, reload the module if already loaded. Defaults to true.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The value of the last expression in the loaded module.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='ls'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.unix  ls(patterns = *, options: <a href='Object.html'>Object</a> = null): <a href='Array.html'>Array</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Get a list of files in a directory. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>patterns </td><td>Pattern to match files. This can be a String, Path or array of String/Paths.  The wildcards "*"", "***"" and "?" are the only wild card patterns supported. The "***"" pattern matches every directory. The Posix "[]" and "{a,b}" style expressions are not supported. [default: *]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>If set to true, then files will include sub-directories in the returned list of files. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>dirs</td><td>Include directories in the file list.</td></tr>
+<td class='param'>depthFirst</td><td>Do a depth first traversal. If "dirs" is specified, the directories will be shown after the files in the directory. Otherwise, directories will be listed first.</td></tr>
+<td class='param'>exclude</td><td>Regular expression pattern of files to exclude from the results. Matches the entire path.</td></tr>
+<td class='param'>hidden</td><td>Show hidden files starting with ".".</td></tr>
+<td class='param'>include</td><td>Regular expression pattern of files to include in the results. Matches the entire returned path.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>An Array of Path objects for each matching file.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='md5'></a>
+<div class='api'>
+<div class='apiSig'>    md5(str: <a href='String.html'>String</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Computed an MD5 sum of a string
+This function is prototype and may be renamed in a future release. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String on which to compute a checksum.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>An MD5 checksum.</dd></dl>
+<dl><dt>Specified</dt>
+<dd>ejs
+8</dd></dl>
+</div>
+</div>
+<hr />
+<a name='mkdir'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.unix  mkdir(path: <a href='String.html'>String</a>, permissions: <a href='Number.html'>Number</a> = 493): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Make a new directory. Makes a new directory and all required intervening directories. If the directory 
+already exists, the function returns without throwing an exception.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>path: <a href='String.html'>String</a> </td><td>Filename path to use.</td></tr><tr class='param'><td class='param'>permissions: <a href='Number.html'>Number</a> </td><td>Optional posix permissions mask number. e.g. 0664. [default: 493]</td></tr></table></dd>
+</dl><dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: if the directory cannot be created. H
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='mv'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.unix  mv(fromFile: <a href='String.html'>String</a>, toFile: <a href='String.html'>String</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Rename a file. If the new file name exists it is removed before the rename.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>fromFile: <a href='String.html'>String</a> </td><td>Original file name.</td></tr><tr class='param'><td class='param'>toFile: <a href='String.html'>String</a> </td><td>New file name.</td></tr></table></dd>
+</dl><dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: if the original file does not exist or cannot be renamed.
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='parse'></a>
+<div class='api'>
+<div class='apiSig'>    parse(str: <a href='String.html'>String</a>, preferredType: <a href='Type.html'>Type</a> = null): <a href='Object.html'>Object</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Parse a string and convert to a primitive type. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String to parse.</td></tr><tr class='param'><td class='param'>preferredType: <a href='Type.html'>Type</a> </td><td>Preferred type to use if the input can be parsed multiple ways. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Parsed object.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='parseCookies'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.web  parseCookies(cookieHeader: <a href='String.html'>String</a>): <a href='Object.html'>Object</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Return the parsed cookie headers. Cookies are used to specify the session state. If sessions are being used, 
+a session cookie will be sent to and from the browser with each request.</dd></dl>
+<dl><dt>Specified</dt>
+<dd>ejscript-2.3</dd></dl>
+<dl><dt>Stability</dt>
+<dd>Prototype.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='parseFloat'></a>
+<div class='api'>
+<div class='apiSig'>    parseFloat(str: <a href='String.html'>String</a>): <a href='Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Parse a string as a floating point number. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String to parse.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A parsed number.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='parseInt'></a>
+<div class='api'>
+<div class='apiSig'>    parseInt(str: <a href='String.html'>String</a>, radix: <a href='Number.html'>Number</a> = 10): <a href='Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Parse a string and convert to an integral number using the specified radix. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String to parse.</td></tr><tr class='param'><td class='param'>radix: <a href='Number.html'>Number</a> </td><td>Base radix to use when parsing the number. [default: 10]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A parsed number P.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='postMessage'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.worker  postMessage(data: <a href='Object.html'>Object</a>, ports: <a href='Array.html'>Array</a> = null): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Post a message to the Worker's parent. This is only valid inside Worker scripts.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>data: <a href='Object.html'>Object</a> </td><td>Data to pass to the worker's onmessage callback.</td></tr><tr class='param'><td class='param'>ports: <a href='Array.html'>Array</a> </td><td>Not implemented.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='print'></a>
+<div class='api'>
+<div class='apiSig'>    print(args: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Print the arguments to the standard output with a new line appended. This call evaluates the arguments, 
+converts the result to strings and prints the result to the standard output. Arguments are converted to 
+strings by calling their toString method.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>args: <a href='Array.html'>Array</a> </td><td>Variables to print.</td></tr></table></dd>
+</dl><dl><dt>Specified</dt>
+<dd>ejscript-2.3</dd></dl>
+</div>
+</div>
+<hr />
+<a name='printf'></a>
+<div class='api'>
+<div class='apiSig'>    printf(fmt: <a href='String.html'>String</a>, args: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Print the arguments to the standard output using the supplied format template. This call evaluates the arguments, 
+converts the result to strings and invokes String.format to format the args. The result is then printed to the
+standard output. Arguments are converted to strings by calling their toString method.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>fmt: <a href='String.html'>String</a> </td><td>Format specifier.</td></tr><tr class='param'><td class='param'>args: <a href='Array.html'>Array</a> </td><td>Variables to print.</td></tr></table></dd>
+</dl><dl><dt>Specified</dt>
+<dd>ejscript-2.3</dd></dl>
+</div>
+</div>
+<hr />
+<a name='pwd'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.unix  pwd(): <a href='Path.html'>Path</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Get the current working directory. </dd></dl>
+<dl><dt>Returns</dt>
+<dd>A Path containing the current working directory.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='rm'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.unix  rm(patterns, options = expression): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Remove files from the file system. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>patterns </td><td>Pattern to match files to remove. This can be a String, Path or array of String/Paths.  The wildcards "*"", "***"" and "?" are the only wild card patterns supported. The "***"" pattern matches every directory. The Posix "[]" and "{a,b}" style expressions are not supported.</td></tr><tr class='param'><td class='param'>options </td><td>Options to modify the removal. [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>exclude</td><td>Regular expression pattern of files to exclude from removal. Matches the entire path.</td></tr>
+<td class='param'>hidden</td><td>Remove hidden files starting with "." Defaults to true.</td></tr>
+<td class='param'>include</td><td>Regular expression pattern of files to remove. Matches the entire returned path.</td></tr>
+<td class='param'>nodirs</td><td>Exclude directories from removal. The default is to include directories.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if all the contents are sucessfully deleted. Otherwise return false.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='rmdir'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.unix  rmdir(patterns, options = expression): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Removes a directory and contents. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>patterns </td><td>Pattern to match files to delete. This can be a String, Path or array of String/Paths.  The wildcards "*"", "***"" and "?" are the only wild card patterns supported. The "***"" pattern matches every directory. The Posix "[]" and "{a,b}" style expressions are not supported.</td></tr><tr class='param'><td class='param'>options </td><td>Options to modify the removal. [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>exclude</td><td>Regular expression pattern of files to exclude from removal. Matches the entire path.</td></tr>
+<td class='param'>hidden</td><td>Remove hidden files starting with ".".</td></tr>
+<td class='param'>include</td><td>Regular expression pattern of files to remove. Matches the entire returned path.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if all the contents are sucessfully deleted or if the directory does not exist. Otherwise return false.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='serialize'></a>
+<div class='api'>
+<div class='apiSig'>    serialize(obj: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Encode an object as a string. This function returns a literal string for the object and all its properties. 
+If <a href='#maxDepth'>maxDepth</a> is sufficiently large (or zero for infinite depth), each property will be processed recursively 
+until all properties are rendered.  NOTE: the maxDepth, all and base properties are not yet supported.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>obj: <a href='Object.html'>Object</a> </td><td>Object to serialize. If options is null, each option takes the defaults described.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Serialization options. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>baseClasses</td><td>Boolean determining if base class properties will be serialized. Defaults to false.</td></tr>
+<td class='param'>commas</td><td>Boolean Always put commas after the last property in an object. Defaults to false.</td></tr>
+<td class='param'>depth</td><td>Number indiciating the depth to recurse when converting properties to literals. If set to zero,  the depth is infinite. Defaults to zero.</td></tr>
+<td class='param'>indent</td><td>Number|String Indentation of nested structures. If omitted, the result is packed without any whitespace. If a number, it represents the number of spaces to indent at each level. If a string, it is contains the characters to indent. If the <a href='#pretty'>pretty</a> argument is true, it overrides indent.</td></tr>
+<td class='param'>hidden</td><td>Booean determining if hidden properties are serialized. If true, hidden properties will be serialized. Defaults to false.</td></tr>
+<td class='param'>namespaces</td><td>Boolean determining if properties will also display their namespace attributes. Default is false.</td></tr>
+<td class='param'>pretty</td><td>Boolean determining if a human readable output is used with new lines after each property.  Default is false.</td></tr>
+<td class='param'>quotes</td><td>Boolean If false, emit property names without quotes if they do not contain spaces. Defaults to true.</td></tr>
+<td class='param'>replacer</td><td>An optional parameter that determines how object values are stringified for objects without a  toJSON method.  The replace has the following signature:  function replacer(key: String, value: String): String.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>This function returns a string containing an object literal that can be used to reinstantiate an object.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='TypeError.html'>TypeError</a>: If the object could not be converted to a string.
+</dd>
+</dl><dl><dt>Specified</dt>
+<dd>ejs
+P</dd></dl>
+</div>
+</div>
+<hr />
+<a name='setInterval'></a>
+<div class='api'>
+<div class='apiSig'>    setInterval(callback: <a href='Function.html'>Function</a>, delay: <a href='Number.html'>Number</a>, args: <a href='Array.html'>Array</a>): <a href='Timer.html'>Timer</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Create an interval timer. This will invoke the callback every <a href='#delay'>delay</a> milliseconds.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>callback: <a href='Function.html'>Function</a> </td><td>Function to invoke when the timer is due.</td></tr><tr class='param'><td class='param'>delay: <a href='Number.html'>Number</a> </td><td>Time period in milliseconds between invocations of the callback.</td></tr><tr class='param'><td class='param'>args: <a href='Array.html'>Array</a> </td><td>Function arguments to provide to the callback.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Timer ID that can be used with <a href='#clearInterval'>clearInterval</a>. </dd></dl>
+</div>
+</div>
+<hr />
+<a name='setTimeout'></a>
+<div class='api'>
+<div class='apiSig'>    setTimeout(callback: <a href='Function.html'>Function</a>, delay: <a href='Number.html'>Number</a>, args: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Run a function after a delay. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>callback: <a href='Function.html'>Function</a> </td><td>Function to invoke when the timer expires.</td></tr><tr class='param'><td class='param'>delay: <a href='Number.html'>Number</a> </td><td>Time in milliseconds until the timer expires and the callback is invoked.</td></tr><tr class='param'><td class='param'>args: <a href='Array.html'>Array</a> </td><td>Function arguments.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Timer that can be used with <a href='#clearTimeout'>clearTimeout</a>. </dd></dl>
+</div>
+</div>
+<hr />
+<a name='sleep'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.unix  sleep(delay: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Sleep the application for the given number of milliseconds. Events will be serviced while asleep.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>delay: <a href='Number.html'>Number</a> </td><td>Time in milliseconds to sleep. Set to -1 to sleep forever.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='tempname'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.unix  tempname(directory: <a href='String.html'>String</a> = null): <a href='File.html'>File</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Create a temporary file. Creates a new, uniquely named temporary file.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>directory: <a href='String.html'>String</a> </td><td>Directory in which to create the temp file. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A closed File object after creating an empty temporary file.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='toOrdinal'></a>
+<div class='api'>
+<div class='apiSig'>    toOrdinal(number: <a href='Number.html'>Number</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Convert a number to an ordinal string. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>number: <a href='Number.html'>Number</a> </td><td>To convert.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>An ordinal string matching the number.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='toPlural'></a>
+<div class='api'>
+<div class='apiSig'>    toPlural(word: <a href='String.html'>String</a>, count: <a href='Number.html'>Number</a> = null): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Convert a singular word to its plural form. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>word: <a href='String.html'>String</a> </td><td>Word to transform.</td></tr><tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>Set to a number greater than 1 to force a plural. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The plural form of a word.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='toSingular'></a>
+<div class='api'>
+<div class='apiSig'>    toSingular(word: <a href='String.html'>String</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Convert a singular word to its plural form. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>word: <a href='String.html'>String</a> </td><td>Plural word to transform.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The plural form of a word.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='typeOf'></a>
+<div class='api'>
+<div class='apiSig'>    typeOf(o): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Return the name of a type. This is a fixed version of the standard "typeof" operator. It returns the real
+Ejscript underlying type name. This call is an alias for Object.getTypeName(o).</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>o </td><td>Object or value to examine.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A string type name.</dd></dl>
+<dl><dt>Specified</dt>
+<dd>ejscript-2.3</dd></dl>
+</div>
+</div>
+<hr />
+<a name='unescapeHtml'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.web  unescapeHtml(s: <a href='String.html'>String</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Transform an escaped string into its original contents. This reverses the transformation done by escapeHtml.
+ It does this by changing &quot, &gt, &lt back into ", < and >.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>s: <a href='String.html'>String</a> </td><td>Input string.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A transformed string.</dd></dl>
+<dl><dt>Specified</dt>
+<dd>ejscript-2.3</dd></dl>
+<dl><dt>Stability</dt>
+<dd>Prototype
+8.</dd></dl>
+</div>
+</div>
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>
