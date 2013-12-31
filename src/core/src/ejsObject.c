@@ -299,8 +299,12 @@ static EjsObj *nextObjectKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
     EjsObj      *obj;
     EjsName     qname;
     EjsTrait    *trait;
+    int         count;
 
     obj = ip->target;
+    if ((count = ejsGetLength(ejs, obj)) < ip->length) {
+        ip->length = count;
+    }
     for (; ip->index < ip->length; ip->index++) {
         qname = ejsGetPropertyName(ejs, obj, ip->index);
         if (qname.name == NULL) {
@@ -338,8 +342,12 @@ static EjsObj *nextObjectValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
 {
     EjsObj      *obj;
     EjsTrait    *trait;
+    int         count;
 
     obj = ip->target;
+    if ((count = ejsGetLength(ejs, obj)) < ip->length) {
+        ip->length = count;
+    }
     for (; ip->index < ip->length; ip->index++) {
         trait = ejsGetPropertyTraits(ejs, obj, ip->index);
         if (trait && trait->attributes & 
