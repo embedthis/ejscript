@@ -61,6 +61,15 @@
             <ul>
                 <li>Add support for multi-line strings using back-tick. E.g. `string`
                     <a href="https://github.com/embedthis/ejs-2/issues/41">[issue 41].</a></li>
+                <li>Add support for <a href="http://embedthis.com/products/pak/">Pak</a> packages.
+                    Remove ejs.jem in favor of Pak. Use <a href="http://semver.org/">SemVer</a> for versioning.
+                    <a href="https://github.com/embedthis/ejs-2/issues/50">[issue 50].</a></li>
+                <li>Add App.getpass to read a password from the console
+                    <a href="https://github.com/embedthis/ejs-2/issues/51">[issue 51].</a></li>
+                <li>Add Path.trimComponents
+                    <a href="https://github.com/embedthis/ejs-2/issues/52">[issue 52].</a></li>
+                <li>Add App.home and add ~/.ejs to the module search path.
+                    <a href="https://github.com/embedthis/ejs-2/issues/54">[issue 54].</a></li>
             </ul>
             <h3>Fixes</h3>
             <ul>
@@ -80,6 +89,8 @@
                     <a href="https://github.com/embedthis/ejs-2/issues/48">[issue 48].</a></li>
                 <li>GC when loading modules fails to retain module file.
                     <a href="https://github.com/embedthis/ejs-2/issues/49">[issue 49].</a></li>
+                <li>Iterating over arrays and object where elements are deleted in the loop body.
+                    <a href="https://github.com/embedthis/ejs-2/issues/53">[issue 53].</a></li>
             </ul>
             <a id="r232"></a>
             <h2 class="section">Changes in 2.3.2</h2>
