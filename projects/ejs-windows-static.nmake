@@ -4309,7 +4309,6 @@ installBinary: $(DEPS_146)
 	copy /Y $(CONFIG)\bin\ejsman.exe "$(BIT_VAPP_PREFIX)\bin\ejsman.exe"
 	copy /Y $(CONFIG)\bin\ejsmod.exe "$(BIT_VAPP_PREFIX)\bin\ejsmod.exe"
 	copy /Y $(CONFIG)\bin\ejsrun.exe "$(BIT_VAPP_PREFIX)\bin\ejsrun.exe"
-	copy /Y $(CONFIG)\bin\jem.exe "$(BIT_VAPP_PREFIX)\bin\jem.exe"
 	copy /Y $(CONFIG)\bin\mvc.exe "$(BIT_VAPP_PREFIX)\bin\mvc.exe"
 	copy /Y $(CONFIG)\bin\utest.exe "$(BIT_VAPP_PREFIX)\bin\utest.exe"
 	copy /Y $(CONFIG)\bin\ejs.db.mapper.mod "$(BIT_VAPP_PREFIX)\bin\ejs.db.mapper.mod"

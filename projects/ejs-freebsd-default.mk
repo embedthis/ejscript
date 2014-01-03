@@ -4320,9 +4320,6 @@ installBinary: $(DEPS_144)
 	cp $(CONFIG)/bin/ejsrun $(BIT_VAPP_PREFIX)/bin/ejsrun
 	rm -f "$(BIT_BIN_PREFIX)/ejsrun"
 	ln -s "$(BIT_VAPP_PREFIX)/bin/ejsrun" "$(BIT_BIN_PREFIX)/ejsrun"
-	cp $(CONFIG)/bin/jem $(BIT_VAPP_PREFIX)/bin/jem
-	rm -f "$(BIT_BIN_PREFIX)/jem"
-	ln -s "$(BIT_VAPP_PREFIX)/bin/jem" "$(BIT_BIN_PREFIX)/jem"
 	cp $(CONFIG)/bin/mvc $(BIT_VAPP_PREFIX)/bin/mvc
 	rm -f "$(BIT_BIN_PREFIX)/mvc"
 	ln -s "$(BIT_VAPP_PREFIX)/bin/mvc" "$(BIT_BIN_PREFIX)/mvc"
