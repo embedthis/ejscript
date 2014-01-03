@@ -45,7 +45,6 @@ Bit.load({
                     '${BIN}/ejsman${EXE}',
                     '${BIN}/ejsmod${EXE}',
                     '${BIN}/ejsrun${EXE}',
-                    '${BIN}/jem${EXE}',
                     '${BIN}/mvc${EXE}',
                     '${BIN}/utest${EXE}',
                 ],
@@ -249,7 +248,7 @@ Bit.load({
                 from:       ['src/core/**.es', 'src/**.es'],
                 to:         '${src}/ejs.es',
                 cat:        true,                                                                                         
-                exclude:    /ejs.bit|ejs.debugger|test|sample|ejspage.es|ejs.jem|ejs.mvc/,                            
+                exclude:    /ejs.bit|ejs.debugger|test|sample|ejspage.es|ejs.mvc/,                            
                 title:      '${settings.title} Script Library',
                 set:        'pak',
 

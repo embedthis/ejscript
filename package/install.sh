@@ -252,7 +252,7 @@ removeOld() {
     rm -f "${APP_PREFIX}/latest"
     rm -fr "${VAPP_PREFIX}"
     rm -fr "${INC_PREFIX}/${PRODUCT}"
-    for n in ejs ejsc ejsman ejsmod ejsrun jem mvc utest
+    for n in ejs ejsc ejsman ejsmod ejsrun mvc utest
     do
         rm -f "${BIN_PREFIX}/$n"
     done
