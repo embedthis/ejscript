@@ -232,8 +232,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         }
         sp->endpoint = endpoint;
         host = httpCreateHost(NULL);
-        httpSetHostIpAddr(host, sp->ip, sp->port);
-
+        httpSetHostName(host, sfmt("%s:%d", sp->ip, sp->port));
         route = httpCreateConfiguredRoute(host, 1);
         httpAddRouteMethods(route, "DELETE, HEAD, OPTIONS, PUT");
         httpSetRouteName(route, "default");
@@ -253,7 +252,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
             httpSecureEndpoint(endpoint, sp->ssl);
         }
         if (sp->name) {
-            httpSetHostIpAddr(host, sp->name, -1);
+            httpSetHostName(host, sp->name);
         }
         httpSetSoftware(endpoint->http, EJS_HTTPSERVER_NAME);
         httpSetEndpointAsync(endpoint, sp->async);
