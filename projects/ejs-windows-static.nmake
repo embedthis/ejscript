@@ -4299,10 +4299,12 @@ $(CONFIG)\bin\utest.exe: $(DEPS_144)
 stop: $(DEPS_145)
 #  Omit build script stop
 
+	@echo '   [Install] Complete'
 #
 #   installBinary
 #
 installBinary: $(DEPS_146)
+	cd .
 	if not exist "$(BIT_VAPP_PREFIX)\bin" md "$(BIT_VAPP_PREFIX)\bin"
 	copy /Y $(CONFIG)\bin\ejs.exe "$(BIT_VAPP_PREFIX)\bin\ejs.exe"
 	copy /Y $(CONFIG)\bin\ejsc.exe "$(BIT_VAPP_PREFIX)\bin\ejsc.exe"
@@ -4406,6 +4408,7 @@ installBinary: $(DEPS_146)
 	copy /Y src\slots\ejs.web.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.web.slots.h"
 	copy /Y src\slots\ejs.zlib.slots.h "$(BIT_VAPP_PREFIX)\inc\ejs.zlib.slots.h"
 	copy /Y src\vm\ejsByteGoto.h "$(BIT_VAPP_PREFIX)\inc\ejsByteGoto.h"
+	cd .
 
 #
 #   start
@@ -4421,7 +4424,7 @@ DEPS_148 = $(DEPS_148) installBinary
 DEPS_148 = $(DEPS_148) start
 
 install: $(DEPS_148)
-
+#  Omit build script install
 
 #
 #   uninstall
@@ -4429,10 +4432,12 @@ install: $(DEPS_148)
 DEPS_149 = $(DEPS_149) stop
 
 uninstall: $(DEPS_149)
+	cd .
 	if exist "$(BIT_VAPP_PREFIX)" rd /Q /S "$(BIT_VAPP_PREFIX)"
 	if exist "$(BIT_VAPP_PREFIX)\bin" rd /Q "$(BIT_VAPP_PREFIX)\bin"
 	if exist "$(BIT_VAPP_PREFIX)\inc" rd /Q "$(BIT_VAPP_PREFIX)\inc"
 	if exist "$(BIT_VAPP_PREFIX)\man" rd /Q "$(BIT_VAPP_PREFIX)\man"
 	if exist "$(BIT_VAPP_PREFIX)\latest" del /Q "$(BIT_VAPP_PREFIX)\latest"
 	if exist "$(BIT_VAPP_PREFIX)" rd /Q "$(BIT_VAPP_PREFIX)"
+	cd .
 
