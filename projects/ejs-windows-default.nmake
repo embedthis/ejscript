@@ -4364,7 +4364,6 @@ $(CONFIG)\bin\utest.exe: $(DEPS_144)
 stop: $(DEPS_145)
 #  Omit build script stop
 
-	@echo '   [Install] Complete'
 #
 #   installBinary
 #

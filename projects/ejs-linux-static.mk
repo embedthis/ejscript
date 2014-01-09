@@ -4264,7 +4264,6 @@ $(CONFIG)/bin/utest: $(DEPS_142)
 #
 stop: $(DEPS_143)
 
-	@echo '   [Install] Complete'
 #
 #   installBinary
 #
