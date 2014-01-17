@@ -17,7 +17,7 @@
     #define BIT_COMPANY "Embedthis Software"
 #endif
 #ifndef BIT_COMPATIBLE
-    #define BIT_COMPATIBLE "2.3.3"
+    #define BIT_COMPATIBLE "2.3.4"
 #endif
 #ifndef BIT_DEBUG
     #define BIT_DEBUG 1
@@ -164,7 +164,7 @@
     #define BIT_TUNE "size"
 #endif
 #ifndef BIT_VERSION
-    #define BIT_VERSION "2.3.3"
+    #define BIT_VERSION "2.3.4"
 #endif
 #ifndef BIT_WARN64TO32
     #define BIT_WARN64TO32 0
@@ -226,7 +226,7 @@
     #define BIT_VAPP_PREFIX "deploy"
 #endif
 #ifndef BIT_SRC_PREFIX
-    #define BIT_SRC_PREFIX "/usr/src/ejs-2.3.3"
+    #define BIT_SRC_PREFIX "/usr/src/ejs-2.3.4"
 #endif
 
 /* Suffixes */
@@ -268,10 +268,10 @@
     #define BIT_MINOR_VERSION 3
 #endif
 #ifndef BIT_PATCH_VERSION
-    #define BIT_PATCH_VERSION 3
+    #define BIT_PATCH_VERSION 4
 #endif
 #ifndef BIT_VNUM
-    #define BIT_VNUM 200030003
+    #define BIT_VNUM 200030004
 #endif
 
 /* Packs */

@@ -17,7 +17,7 @@
     #define BIT_COMPANY "Embedthis Software"
 #endif
 #ifndef BIT_COMPATIBLE
-    #define BIT_COMPATIBLE "2.3.3"
+    #define BIT_COMPATIBLE "2.3.4"
 #endif
 #ifndef BIT_DEBUG
     #define BIT_DEBUG 1
@@ -155,7 +155,7 @@
     #define BIT_TUNE "size"
 #endif
 #ifndef BIT_VERSION
-    #define BIT_VERSION "2.3.3"
+    #define BIT_VERSION "2.3.4"
 #endif
 #ifndef BIT_WITHOUT_ALL
     #define BIT_WITHOUT_ALL "doxygen,dsi,est,man,man2html"
@@ -256,10 +256,10 @@
     #define BIT_MINOR_VERSION 3
 #endif
 #ifndef BIT_PATCH_VERSION
-    #define BIT_PATCH_VERSION 3
+    #define BIT_PATCH_VERSION 4
 #endif
 #ifndef BIT_VNUM
-    #define BIT_VNUM 200030003
+    #define BIT_VNUM 200030004
 #endif
 
 /* Packs */

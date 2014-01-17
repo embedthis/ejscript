@@ -143,6 +143,11 @@ Bit.load({
             See src/cmd/cmd.bit for building the language commands
             See package/package.bit for the install/package targets
          */
+        'bower.json': {
+            type: 'file',
+            path: 'bower.json',
+            files: [ 'package.json' ],
+        },
     },
 
     packs: {

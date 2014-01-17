@@ -48,7 +48,7 @@ trigger the GC to run. This roughly corresponds to the number of allocated objec
 <h2 class='classSection'>GC Class Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#run'><b>run</b></a>(deep: <a href='Boolean.html'>Boolean</a> = false): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run the garbage collector and reclaim memory allocated to objects and properties that are no longer reachable.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#run'><b>run</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run the garbage collector and reclaim memory allocated to objects and properties that are no longer reachable.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
@@ -66,17 +66,14 @@ trigger the GC to run. This roughly corresponds to the number of allocated objec
 <h2>Method Detail</h2>
 <a name='run'></a>
 <div class='api'>
-<div class='apiSig'>static     run(deep: <a href='Boolean.html'>Boolean</a> = false): <a href='Void.html'>Void</a>
+<div class='apiSig'>static     run(): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Run the garbage collector and reclaim memory allocated to objects and properties that are no longer reachable. When objects and properties are freed, any registered native destructors will be called. The run function will 
 run the garbage collector even if the <a href='#enable'>enable</a> property is set to false. 
 It is normally not required to manually call the <a href='#run'>run</a> method as the ejs virtual machine runtime will 
 automatically run the garbage collector as required.</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>deep: <a href='Boolean.html'>Boolean</a> </td><td>If set to true, will collect from all generations. The default is to collect only the youngest geneartion of objects. [default: false]</td></tr></table></dd>
-</dl></div>
+</div>
 </div>
 <hr />
 <div class="terms">

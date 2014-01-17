@@ -11,7 +11,7 @@
 
 static EjsDate  *getDateHeader(Ejs *ejs, EjsHttp *hp, cchar *key);
 static EjsString *getStringHeader(Ejs *ejs, EjsHttp *hp, cchar *key);
-static void     httpIOEvent(HttpConn *conn, MprEvent *event);
+static void     httpEvent(HttpConn *conn, MprEvent *event);
 static void     httpEventChange(HttpConn *conn, int event, int arg);
 static void     prepForm(Ejs *ejs, EjsHttp *hp, cchar *prefix, EjsObj *data);
 static ssize    readHttpData(Ejs *ejs, EjsHttp *hp, ssize count);
@@ -68,7 +68,7 @@ static EjsObj *http_set_async(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     conn = hp->conn;
     async = (argv[0] == ESV(true));
     httpSetAsync(conn, async);
-    httpSetIOCallback(conn, httpIOEvent);
+    httpSetIOCallback(conn, httpEvent);
     return 0;
 }
 
@@ -123,7 +123,9 @@ static EjsObj *http_set_ca(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (hp->conn) {
-        httpFinalize(hp->conn);
+        if (hp->conn->state > HTTP_STATE_BEGIN) {
+            httpFinalize(hp->conn);
+        }
         sendHttpCloseEvent(ejs, hp);
         httpDestroyConn(hp->conn);
         //  TODO OPT - Better to do this on demand. This consumes a conn until GC.
@@ -207,7 +209,8 @@ static EjsDate *http_date(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsObj *http_finalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (hp->conn) {
-        httpFinalize(hp->conn);
+        httpFinalizeOutput(hp->conn);
+        httpFlush(hp->conn);
     }
     return 0;
 }
@@ -298,7 +301,8 @@ static EjsHttp *http_get(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     startHttpRequest(ejs, hp, "GET", argc, argv);
     if (!ejs->exception && hp->conn) {
-        httpFinalize(hp->conn);
+        httpFinalizeOutput(hp->conn);
+        httpFlush(hp->conn);
     }
     return hp;
 }
@@ -1100,8 +1104,7 @@ static EjsHttp *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, 
         return 0;
     }
     if (mprGetBufLength(hp->requestContent) > 0) {
-        nbytes = httpWriteBlock(conn->writeq, mprGetBufStart(hp->requestContent), mprGetBufLength(hp->requestContent),
-            HTTP_BLOCK);
+        nbytes = httpWriteBlock(conn->writeq, mprGetBufStart(hp->requestContent), mprGetBufLength(hp->requestContent), HTTP_BLOCK);
         if (nbytes < 0) {
             ejsThrowIOError(ejs, "Cannot write request data for \"%s\"", hp->uri);
             return 0;
@@ -1110,7 +1113,8 @@ static EjsHttp *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, 
             mprAdjustBufStart(hp->requestContent, nbytes);
             hp->requestContentCount += nbytes;
         }
-        httpFinalize(conn);
+        httpFinalizeOutput(conn);
+        httpFlush(conn);
     }
     httpNotify(conn, HTTP_EVENT_WRITABLE, 0);
     if (conn->async) {
@@ -1229,15 +1233,15 @@ static ssize writeHttpData(Ejs *ejs, EjsHttp *hp)
         }
         ba->readPosition += nbytes;
     }
-    httpServiceQueues(conn);
+    httpServiceQueues(conn, HTTP_BLOCK);
     return nbytes;
 }
 
 
 /*  
-    Respond to an IO event. This wraps the standard httpEvent() call.
+    Respond to an IO event. This wraps the standard httpIOEvent() call.
  */
-static void httpIOEvent(HttpConn *conn, MprEvent *event)
+static void httpEvent(HttpConn *conn, MprEvent *event)
 {
     EjsHttp     *hp;
     Ejs         *ejs;
@@ -1247,7 +1251,7 @@ static void httpIOEvent(HttpConn *conn, MprEvent *event)
     hp = conn->context;
     ejs = hp->ejs;
 
-    httpEvent(conn, event);
+    httpIOEvent(conn, event);
     if (event->mask & MPR_WRITABLE) {
         if (hp->data) {
             writeHttpData(ejs, hp);
@@ -1425,13 +1429,15 @@ static bool waitForState(EjsHttp *hp, int state, MprTicks timeout, int throw)
         return 0;
     }
     if (!conn->async) {
-        httpFinalize(conn);
+        httpFinalizeOutput(conn);
     }
+    httpFlush(conn);
     redirectCount = 0;
     success = count = 0;
     mark = mprGetTicks();
     remaining = timeout;
-    while (conn->state < state && count <= conn->retries && redirectCount < 16 && !conn->error && !ejs->exiting && !mprIsStopping(conn)) {
+    while (conn->state < state && count <= conn->retries && redirectCount < 16 && !conn->error && 
+            !ejs->exiting && !mprIsStopping(conn)) {
         count++;
         if ((rc = httpWait(conn, HTTP_STATE_PARSED, remaining)) == 0) {
             if (httpNeedRetry(conn, &url)) {
@@ -1490,7 +1496,8 @@ static bool waitForState(EjsHttp *hp, int state, MprTicks timeout, int throw)
             return 0;
         }
         if (!conn->async) {
-            httpFinalize(conn);
+            httpFinalizeOutput(conn);
+            httpFlush(conn);
         }
     }
     if (!success) {

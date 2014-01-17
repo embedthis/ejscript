@@ -360,8 +360,9 @@ module ejs.web {
 
         /** 
             @duplicate Stream.close
-            This closes the current request by finalizing all transmission data and sending a "close" event. It may 
-            not actually close the socket connection if the reuse limit has not been exceeded (see limits).
+            This closes the current request by finalizing all transmission data and sending a "close" event. HttpServer
+            attemps to reuse socket connections so calling close(), may not actually close the socket connection 
+            if the reuse limit has not been exceeded (see limits).
             It is normally not necessary to explicitly call close a request as the web framework will automatically 
             close finalized requests when all input data has fully been read. Calling close on an already closed
             request is silently ignored. 

@@ -92,6 +92,10 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             mprPrintf("%s-%s\n", BIT_VERSION, BIT_BUILD_NUMBER);
             return 0;
 
+        } else if (*argp == '-' && isdigit((uchar) argp[1])) {
+            mprStartLogging(sfmt("stderr:%s", &argp[1]), 0);
+            mprSetCmdlineLogging(1);
+
         } else {
             /* Ignore */
         }

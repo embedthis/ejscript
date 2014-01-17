@@ -1071,9 +1071,9 @@ static EjsObj *req_finalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
     if (req->conn) {
         if (!req->writeBuffer || req->writeBuffer == ESV(null)) {
-            //  TODO - should separate these 
-            // httpFinalize(req->conn);
             httpFinalize(req->conn);
+            httpFlush(req->conn);
+            httpEnableConnEvents(req->conn);
         } else {
             httpSetResponded(req->conn);
         }
@@ -1293,8 +1293,7 @@ static ssize writeResponseData(Ejs *ejs, EjsRequest *req, cchar *buf, ssize len)
         httpSetResponded(req->conn);
         return written;
     } else {
-        //  TODO - or should this be non-blocking
-        return httpWriteBlock(req->conn->writeq, buf, len, HTTP_BLOCK);
+        return httpWriteBlock(req->conn->writeq, buf, len, HTTP_BUFFER);
     }
 }
 
