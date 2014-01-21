@@ -4,7 +4,6 @@
 
 PRODUCT            := ejs
 VERSION            := 2.3.4
-BUILD_NUMBER       := 0
 PROFILE            := static
 ARCH               := $(shell echo $(WIND_HOST_TYPE) | sed 's/-.*//')
 CPU                := $(subst X86,PENTIUM,$(shell echo $(ARCH) | tr a-z A-Z))
@@ -296,7 +295,7 @@ clobber: clean
 #   version
 #
 version: $(DEPS_1)
-	echo 2.3.4-0
+	echo 2.3.4
 
 #
 #   mpr.h

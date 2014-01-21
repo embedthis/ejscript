@@ -4,13 +4,12 @@
 Summary: ${settings.title} -- Embeddable Javascript
 Name: ${settings.product}
 Version: ${settings.version}
-Release: ${settings.buildNumber}
 License: Dual GPL/commercial
 Group: Development/Other
 URL: http://ejscript.org
 Distribution: Embedthis
 Vendor: Embedthis Software
-BuildRoot: ${prefixes.rpm}/BUILDROOT/${settings.product}-${settings.version}-${settings.buildNumber}.${platform.mappedCpu}
+BuildRoot: ${prefixes.rpm}/BUILDROOT/${settings.product}-${settings.version}.${platform.mappedCpu}
 AutoReqProv: no
 
 %description
@@ -21,8 +20,8 @@ Embedthis Ejscript is an enhanced, embeddable implementation of Javascript
 %build
 
 %install
-    mkdir -p ${prefixes.rpm}/BUILDROOT/${settings.product}-${settings.version}-${settings.buildNumber}.${platform.mappedCpu}
-    cp -r ${prefixes.content}/* ${prefixes.rpm}/BUILDROOT/${settings.product}-${settings.version}-${settings.buildNumber}.${platform.mappedCpu}
+    mkdir -p ${prefixes.rpm}/BUILDROOT/${settings.product}-${settings.version}.${platform.mappedCpu}
+    cp -r ${prefixes.content}/* ${prefixes.rpm}/BUILDROOT/${settings.product}-${settings.version}.${platform.mappedCpu}
 
 %clean
 

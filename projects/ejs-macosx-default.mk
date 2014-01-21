@@ -4,7 +4,6 @@
 
 PRODUCT            := ejs
 VERSION            := 2.3.4
-BUILD_NUMBER       := 0
 PROFILE            := default
 ARCH               := $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/')
 CC_ARCH            := $(shell echo $(ARCH) | sed 's/x86/i686/;s/x64/x86_64/')
@@ -289,7 +288,7 @@ clobber: clean
 #   version
 #
 version: $(DEPS_1)
-	echo 2.3.4-0
+	echo 2.3.4
 
 #
 #   mpr.h

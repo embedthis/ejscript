@@ -89,7 +89,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             mprSetCmdlineLogging(1);
 
         } else if (smatch(argp, "--version") || smatch(argp, "-V")) {
-            mprPrintf("%s-%s\n", BIT_VERSION, BIT_BUILD_NUMBER);
+            mprPrintf("%s\n", EJS_VERSION);
             return 0;
 
         } else if (*argp == '-' && isdigit((uchar) argp[1])) {

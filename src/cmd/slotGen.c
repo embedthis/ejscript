@@ -28,7 +28,7 @@ int emCreateSlotFiles(EjsMod *bp, EjsModule *mp, MprFile *outfile)
     int     rc;
 
     rc = 0;
-    defaultVersion = sfmt("-%d", ejsParseModuleVersion(BIT_VERSION));
+    defaultVersion = sfmt("-%d", ejsParseModuleVersion(EJS_VERSION));
     if (bp->cslots) {
         rc += createSlotFile(bp, mp, outfile);
     }
@@ -96,6 +96,9 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
         "#define _h_SLOTS_%s 1\n\n",
         slotsName, slotsName);
 
+    if (smatch(ejsToMulti(ejs, mp->name), "ejs")) {
+        mprFprintf(file, "#ifndef EJS_VERSION\n    #define EJS_VERSION \"%s\"\n#endif\n", EJS_VERSION);
+    }
     mprFprintf(file, "\n/*\n   Slots for the \"%@\" module \n */\n", mp->name);
 
     type = ejsCreateType(ejs, N(EJS_EJS_NAMESPACE, EJS_GLOBAL), NULL, NULL, NULL, -1, 

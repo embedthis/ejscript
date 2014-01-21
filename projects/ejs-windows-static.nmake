@@ -4,7 +4,6 @@
 
 PRODUCT            = ejs
 VERSION            = 2.3.4
-BUILD_NUMBER       = 0
 PROFILE            = static
 PA                 = $(PROCESSOR_ARCHITECTURE)
 
@@ -317,7 +316,7 @@ clean:
 #   version
 #
 version: $(DEPS_1)
-	echo 2.3.4-0
+	echo 2.3.4
 
 #
 #   bit.h
