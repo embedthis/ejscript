@@ -9,9 +9,6 @@
 #ifndef _h_SLOTS_EjsWebSlots
 #define _h_SLOTS_EjsWebSlots 1
 
-#ifndef EJS_SLOT_VERSION
-    #define EJS_SLOT_VERSION "2.3.4"
-#endif
 
 /*
    Slots for the "ejs.web" module 
