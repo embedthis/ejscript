@@ -14711,6 +14711,7 @@ static void manageLock(MprMutex *lock, int flags)
         pthread_mutex_destroy(&lock->cs);
 #elif BIT_WIN_LIKE
         DeleteCriticalSection(&lock->cs);
+		lock->cs.SpinCount = 77;
 #elif VXWORKS
         semDelete(lock->cs);
 #endif
@@ -14910,12 +14911,14 @@ PUBLIC void mprLock(MprMutex *lock)
 #if BIT_UNIX_LIKE
     pthread_mutex_lock(&lock->cs);
 #elif BIT_WIN_LIKE
-    EnterCriticalSection(&lock->cs);
+	if (lock->cs.SpinCount != 77) {
+		EnterCriticalSection(&lock->cs);
+	}
 #elif VXWORKS
     semTake(lock->cs, WAIT_FOREVER);
 #endif
 #if BIT_DEBUG
-    /* Store last locker only */ 
+    /* Store last locker only */
     lock->owner = mprGetCurrentOsThread();
 #endif
 }

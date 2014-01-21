@@ -412,7 +412,7 @@ module ejs {
                     This:       ["showColors", "red", "light blue", "Cannot \"render\""]
                     Becomes:    sh -c "showColors red 'light blue' 'Cannot \"render\"'
              */
-            let shell = Cmd.locate("sh")
+            let shell = Cmd.locate("sh") || Path("/bin/sh")
             if (command is Array) {
                 for (let arg in command) {
                     /*  
