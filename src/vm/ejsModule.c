@@ -156,7 +156,9 @@ void ejsRemoveModuleFromAll(EjsModule *mp)
     EjsService  *sp;
     int         next;
 
-    sp = MPR->ejsService;
+    if ((sp = MPR->ejsService) == 0) {
+        return;
+    }
     lock(sp);
     for (ITERATE_ITEMS(sp->vmlist, ejs, next)) {
         mprRemoveItem(ejs->modules, mp);

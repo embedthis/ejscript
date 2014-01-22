@@ -44,9 +44,6 @@ static EjsService *createService()
     sp->nativeModules = mprCreateHash(-1, MPR_HASH_STATIC_KEYS);
     sp->mutex = mprCreateLock();
     sp->vmlist = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
-#if UNUSED
-    sp->vmpool = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
-#endif
     sp->intern = ejsCreateIntern(sp);
     sp->dtoaSpin[0] = mprCreateSpinLock();
     sp->dtoaSpin[1] = mprCreateSpinLock();
@@ -62,9 +59,6 @@ static void manageEjsService(EjsService *sp, int flags)
         mprMark(sp->http);
         mprMark(sp->mutex);
         mprMark(sp->vmlist);
-#if UNUSED
-        mprMark(sp->vmpool);
-#endif
         mprMark(sp->nativeModules);
         mprMark(sp->intern);
         mprMark(sp->immutable);
@@ -77,6 +71,17 @@ static void manageEjsService(EjsService *sp, int flags)
     }
 }
 
+
+PUBLIC void ejsDestroy(Ejs *ejs)
+{
+    if (ejs) {
+        if (ejs->http) {
+            httpStopConnections(ejs);
+        }
+        ejsDestroyVM(ejs);
+    }
+    MPR->ejsService = 0;
+}
 
 
 Ejs *ejsCreateVM(int argc, cchar **argv, int flags)

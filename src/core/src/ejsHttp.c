@@ -35,6 +35,7 @@ static EjsHttp *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         ejsThrowMemoryError(ejs);
         return 0;
     }
+    httpSetConnData(hp->conn, ejs);
     httpPrepClientConn(hp->conn, 0);
     httpSetConnNotifier(hp->conn, httpEventChange);
     httpSetConnContext(hp->conn, hp);
@@ -1628,28 +1629,28 @@ static void sendHttpErrorEvent(Ejs *ejs, EjsHttp *hp)
 /*  
     Manage the object properties for the garbage collector
  */
-static void manageHttp(EjsHttp *http, int flags)
+static void manageHttp(EjsHttp *hp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
-        mprMark(http->emitter);
-        mprMark(http->data);
-        mprMark(http->limits);
-        mprMark(http->responseCache);
-        mprMark(http->conn);
-        mprMark(http->ssl);
-        mprMark(http->requestContent);
-        mprMark(http->responseContent);
-        mprMark(http->uri);
-        mprMark(http->method);
-        mprMark(http->caFile);
-        mprMark(http->certFile);
-        mprMark(TYPE(http));
+        mprMark(hp->emitter);
+        mprMark(hp->data);
+        mprMark(hp->limits);
+        mprMark(hp->responseCache);
+        mprMark(hp->conn);
+        mprMark(hp->ssl);
+        mprMark(hp->requestContent);
+        mprMark(hp->responseContent);
+        mprMark(hp->uri);
+        mprMark(hp->method);
+        mprMark(hp->caFile);
+        mprMark(hp->certFile);
+        mprMark(TYPE(hp));
 
     } else if (flags & MPR_MANAGE_FREE) {
-        if (http->conn) {
-            sendHttpCloseEvent(http->ejs, http);
-            httpDestroyConn(http->conn);
-            http->conn = 0;
+        if (hp->conn && hp->conn->http) {
+            sendHttpCloseEvent(hp->ejs, hp);
+            httpDestroyConn(hp->conn);
+            hp->conn = 0;
         }
     }
 }

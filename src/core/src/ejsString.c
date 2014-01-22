@@ -2764,19 +2764,21 @@ PUBLIC void ejsManageString(EjsString *sp, int flags)
         mprMark(TYPE(sp));
 
     } else if (flags & MPR_MANAGE_FREE) {
-        ip = ((EjsService*) MPR->ejsService)->intern;
         mp = MPR_GET_MEM(sp);
         /*
             Other threads race with this if doing parallel GC (the default). The revive() routine may have 
             marked the string, so test here if it has been revived and only free if not.
             OPT - better to be lock free and try lock. If failed, GC will get next time
          */
-        lock(ip);
-        if (mp->mark != MPR->heap->mark) {
-            ip->count--;
-            unlinkString(sp);
+        if (MPR->ejsService) {
+            ip = ((EjsService*) MPR->ejsService)->intern;
+            lock(ip);
+            if (mp->mark != MPR->heap->mark) {
+                ip->count--;
+                unlinkString(sp);
+            }
+            unlock(ip);
         }
-        unlock(ip);
     }
 }
 
