@@ -2478,6 +2478,7 @@
             children = (
 				6BAC1DF86BAC2D8E00000265 /* bit.h */,
 				6BAC1DF86BAC2D8E00000271 /* zlib.h */,
+				6BAC1DF86BAC2D8E00000267 /* bitos.h */,
 				6BAC1DF86BAC2D8E000000A5 /* zlib.c */,
 			);
             name = "libzlib";

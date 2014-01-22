@@ -675,6 +675,7 @@ $(CONFIG)/inc/zlib.h: $(DEPS_30)
 #
 DEPS_31 += $(CONFIG)/inc/bit.h
 DEPS_31 += $(CONFIG)/inc/zlib.h
+DEPS_31 += $(CONFIG)/inc/bitos.h
 
 $(CONFIG)/obj/zlib.o: \
     src/paks/zlib/zlib.c $(DEPS_31)
@@ -687,6 +688,7 @@ ifeq ($(BIT_PACK_ZLIB),1)
 #
 DEPS_32 += $(CONFIG)/inc/zlib.h
 DEPS_32 += $(CONFIG)/inc/bit.h
+DEPS_32 += $(CONFIG)/inc/bitos.h
 DEPS_32 += $(CONFIG)/obj/zlib.o
 
 $(CONFIG)/bin/libzlib.so: $(DEPS_32)

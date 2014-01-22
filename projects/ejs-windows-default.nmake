@@ -756,6 +756,7 @@ $(CONFIG)\inc\zlib.h: $(DEPS_32)
 #
 DEPS_33 = $(DEPS_33) $(CONFIG)\inc\bit.h
 DEPS_33 = $(DEPS_33) $(CONFIG)\inc\zlib.h
+DEPS_33 = $(DEPS_33) $(CONFIG)\inc\bitos.h
 
 $(CONFIG)\obj\zlib.obj: \
     src\paks\zlib\zlib.c $(DEPS_33)
@@ -768,6 +769,7 @@ $(CONFIG)\obj\zlib.obj: \
 #
 DEPS_34 = $(DEPS_34) $(CONFIG)\inc\zlib.h
 DEPS_34 = $(DEPS_34) $(CONFIG)\inc\bit.h
+DEPS_34 = $(DEPS_34) $(CONFIG)\inc\bitos.h
 DEPS_34 = $(DEPS_34) $(CONFIG)\obj\zlib.obj
 
 $(CONFIG)\bin\libzlib.dll: $(DEPS_34)
