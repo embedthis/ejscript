@@ -2887,14 +2887,15 @@ PUBLIC void httpEnableConnEvents(HttpConn *conn)
     eventMask = 0;
     if (rx) {
         if (conn->connError || 
+           //   TODO - are the next two terms equivalent?
            (tx->writeBlocked) || 
-           (conn->connectorq && (conn->connectorq->count > 0 || conn->connectorq->ioCount)) || 
+           (conn->connectorq && (conn->connectorq->count > 0 || conn->connectorq->ioCount > 0)) || 
            (httpQueuesNeedService(conn)) || 
            (mprSocketHasBufferedWrite(sp)) ||
            (tx->finalized && conn->state < HTTP_STATE_FINALIZED)) {
 
             if (!mprSocketHandshaking(sp)) {
-                /* Must not pollute the data stream if the SSL stack is doing manual handshaking still */
+                /* Must not pollute the data stream if the SSL stack is still doing manual handshaking */
                 eventMask |= MPR_WRITABLE;
             }
         }
