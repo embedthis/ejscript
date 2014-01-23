@@ -9259,32 +9259,20 @@ PUBLIC int mprServiceEvents(MprTicks timeout, int flags)
                 queueDispatcher(es->pendingQ, dp);
                 continue;
             }
-#if UNUSED
-            /* Moved below so we service all pending events instead of just one */
-            if (justOne) {
-                expires = 0;
-                break;
-            }
-#endif
         } 
         if (flags & MPR_SERVICE_NO_BLOCK) {
             expires = 0;
-            break;
         }
         if (es->eventCount == eventCount) {
             lock(es);
             delay = getIdleTicks(es, expires - es->now);
-            if (delay > 0) {
-                es->willAwake = es->now + delay;
-                es->waiting = 1;
-                unlock(es);
-                /*
-                    Wait for something to happen
-                 */
-                mprWaitForIO(MPR->waitService, delay);
-            } else {
-                unlock(es);
-            }
+            es->willAwake = es->now + delay;
+            es->waiting = 1;
+            unlock(es);
+            /*
+                Service IO events
+             */
+            mprWaitForIO(MPR->waitService, delay);
         }
         es->now = mprGetTicks();
         if ((flags & MPR_SERVICE_NO_BLOCK) || mprIsStopping()) {
@@ -9661,7 +9649,7 @@ static MprTicks getIdleTicks(MprEventService *es, MprTicks timeout)
         delay = min(delay, timeout);
         es->delay = 0;
     }
-    return delay;
+    return delay < 0 ? 0 : delay;
 }
 
 
@@ -13642,13 +13630,11 @@ PUBLIC void mprWaitForIO(MprWaitService *ws, MprTicks timeout)
     struct kevent   events[BIT_MAX_EVENTS];
     int             nevents;
 
-    assert(timeout > 0);
-
     if (ws->needRecall) {
         mprDoWaitRecall(ws);
         return;
     }
-    if (timeout < 0) {
+    if (timeout < 0 || timeout > MAXINT) {
         timeout = MAXINT;
     }
 #if BIT_DEBUG
