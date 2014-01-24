@@ -2628,7 +2628,7 @@ PUBLIC void httpConnTimeout(HttpConn *conn)
         if (conn->state < HTTP_STATE_FIRST) {
             httpDisconnect(conn);
             if (msg) {
-                mprError(msg);
+                mprLog(5, msg);
             }
         } else {
             httpError(conn, HTTP_CODE_REQUEST_TIMEOUT, msg);
@@ -3735,7 +3735,7 @@ PUBLIC HttpEndpoint *httpCreateEndpoint(cchar *ip, int port, MprDispatcher *disp
     http = MPR->httpService;
     endpoint->http = http;
     endpoint->async = 1;
-    endpoint->http = MPR->httpService;
+    endpoint->http = http;
     endpoint->port = port;
     endpoint->ip = sclone(ip);
     endpoint->dispatcher = dispatcher;
@@ -14196,7 +14196,9 @@ PUBLIC void httpAddEndpoint(Http *http, HttpEndpoint *endpoint)
 
 PUBLIC void httpRemoveEndpoint(Http *http, HttpEndpoint *endpoint)
 {
-    mprRemoveItem(http->endpoints, endpoint);
+    if (http) {
+        mprRemoveItem(http->endpoints, endpoint);
+    }
 }
 
 
@@ -14240,7 +14242,9 @@ PUBLIC void httpAddHost(Http *http, HttpHost *host)
 
 PUBLIC void httpRemoveHost(Http *http, HttpHost *host)
 {
-    mprRemoveItem(http->hosts, host);
+    if (http) {
+        mprRemoveItem(http->hosts, host);
+    }
 }
 
 
@@ -14543,7 +14547,9 @@ PUBLIC void httpAddConn(Http *http, HttpConn *conn)
 
 PUBLIC void httpRemoveConn(Http *http, HttpConn *conn)
 {
-    mprRemoveItem(http->connections, conn);
+    if (http) {
+        mprRemoveItem(http->connections, conn);
+    }
 }
 
 
