@@ -9303,7 +9303,7 @@ PUBLIC int mprServiceEvents(MprTicks timeout, int flags)
             mprWaitForIO(MPR->waitService, delay);
         }
         es->now = mprGetTicks();
-        if ((flags & MPR_SERVICE_NO_BLOCK) || mprIsStopping()) {
+        if ((flags & MPR_SERVICE_NO_BLOCK) || MPR->state >= MPR_DESTROYING) {
             break;
         }
     }
