@@ -158,7 +158,7 @@
     #define BIT_SYNC "bitos,est,http,mpr,pcre,sqlite,zlib"
 #endif
 #ifndef BIT_TITLE
-    #define BIT_TITLE "Embethis Ejscript"
+    #define BIT_TITLE "Embedthis Ejscript"
 #endif
 #ifndef BIT_TUNE
     #define BIT_TUNE "size"

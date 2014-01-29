@@ -1,5 +1,5 @@
 #
-#   ejs-linux-default.mk -- Makefile to build Embethis Ejscript for linux
+#   ejs-linux-default.mk -- Makefile to build Embedthis Ejscript for linux
 #
 
 PRODUCT            := ejs

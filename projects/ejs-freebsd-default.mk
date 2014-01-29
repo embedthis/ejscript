@@ -1,5 +1,5 @@
 #
-#   ejs-freebsd-default.mk -- Makefile to build Embethis Ejscript for freebsd
+#   ejs-freebsd-default.mk -- Makefile to build Embedthis Ejscript for freebsd
 #
 
 PRODUCT            := ejs

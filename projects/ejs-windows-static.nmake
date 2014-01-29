@@ -1,5 +1,5 @@
 #
-#   ejs-windows-static.nmake -- Makefile to build Embethis Ejscript for windows
+#   ejs-windows-static.nmake -- Makefile to build Embedthis Ejscript for windows
 #
 
 PRODUCT            = ejs
@@ -85,7 +85,7 @@ LIBS               = ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.li
 
 BIT_ROOT_PREFIX    = C:
 BIT_BASE_PREFIX    = $(BIT_ROOT_PREFIX)\Program Files
-BIT_APP_PREFIX     = $(BIT_BASE_PREFIX)\Embethis Ejscript
+BIT_APP_PREFIX     = $(BIT_BASE_PREFIX)\Embedthis Ejscript
 BIT_VAPP_PREFIX    = $(BIT_APP_PREFIX)
 BIT_DATA_PREFIX    = $(BIT_VAPP_PREFIX)
 BIT_STATE_PREFIX   = $(BIT_VAPP_PREFIX)

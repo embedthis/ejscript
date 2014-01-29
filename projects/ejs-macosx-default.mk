@@ -1,5 +1,5 @@
 #
-#   ejs-macosx-default.mk -- Makefile to build Embethis Ejscript for macosx
+#   ejs-macosx-default.mk -- Makefile to build Embedthis Ejscript for macosx
 #
 
 PRODUCT            := ejs

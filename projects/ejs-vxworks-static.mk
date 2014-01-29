@@ -1,5 +1,5 @@
 #
-#   ejs-vxworks-static.mk -- Makefile to build Embethis Ejscript for vxworks
+#   ejs-vxworks-static.mk -- Makefile to build Embedthis Ejscript for vxworks
 #
 
 PRODUCT            := ejs
