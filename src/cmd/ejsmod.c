@@ -36,7 +36,6 @@ MAIN(ejsmodMain, int argc, char **argv, char **envp)
         Initialze the Multithreaded Portable Runtime (MPR)
      */
     mpr = mprCreate(argc, argv, 0);
-    mprSetAppName(argv[0], 0, 0);
 
     /*
         Allocate the primary control structure

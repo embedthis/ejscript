@@ -42,7 +42,6 @@ MAIN(ejscMain, int argc, char **argv, char **envp)
         Initialize the Multithreaded Portable Runtime (MPR)
      */
     mpr = mprCreate(argc, argv, 0);
-    mprSetAppName(argv[0], 0, 0);
     app = mprAllocObj(App, manageApp);
     mprAddRoot(app);
     mprAddStandardSignals();
