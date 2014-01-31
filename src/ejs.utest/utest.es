@@ -18,7 +18,7 @@ enumerable class Test {
     /*
          Directories to omit from unit tests
      */
-    const skipDirs = [ "extensions", "out", "build", "package", "projects", "samples" ]
+    const skipDirs = [ "extensions", "out", "build", "package", "projects", "samples", "releases" ]
 
     /*
         Parsed args
