@@ -206,7 +206,7 @@ MAIN(ejsmodMain, int argc, char **argv, char **envp)
     mprRemoveRoot(mp);
     mp->ejs = 0;
     ejsDestroy(ejs);
-    mprDestroy(MPR_EXIT_DEFAULT);
+    mprDestroy(MPR_EXIT_IMMEDIATE);
     return err;
 }
 

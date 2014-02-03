@@ -1646,7 +1646,7 @@ static void manageHttp(EjsHttp *hp, int flags)
         mprMark(TYPE(hp));
 
     } else if (flags & MPR_MANAGE_FREE) {
-        if (hp->conn && hp->conn->http) {
+        if (hp->conn && !hp->conn->destroyed) {
             sendHttpCloseEvent(hp->ejs, hp);
             httpDestroyConn(hp->conn);
             hp->conn = 0;
