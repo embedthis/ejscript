@@ -3110,10 +3110,11 @@ PUBLIC void httpCreatePipeline(HttpConn *conn);
     Steal a socket from a connection 
     @description Steal the MprSocket object from a connection so the caller can assume total responsibility for the socket.
     This routine returns a clone of the connection's socket object with the socket O/S handle. The handle is removed from the
-    connection's socket object. This is done to preserve the HttpConn.sock object but remove the socket handle from its management.
+    connection's socket object. The connection retains ownership of the original socket object. This is done to preserve 
+    the HttpConn.sock object but remove the socket handle from its management.
     \n\n
-    The current request is aborted and queue data is discarded.
-    After calling, the normal Appweb request and inactivity timeouts will not apply to the returned socket.
+    Note: The current request is aborted and queue data is discarded.
+    After calling, the normal Appweb request and inactivity timeouts will not apply to the returned socket object.
     It is the callers responsibility to call mprCloseSocket on the returned MprSocket when ready.
     @param conn HttpConn object created via #httpCreateConn
     @return A clone of the connection's MprSocket object with the socket handle.
@@ -3127,9 +3128,9 @@ PUBLIC MprSocket *httpStealSocket(HttpConn *conn);
 #endif
 
 /**
-    Steal the O/S socket handle from the connection 
+    Steal the O/S socket handle from the connection socket object.
     @description This removes the O/S socket handle from active management by the connection. After calling, 
-    normal request and inactivity timeouts will apply, but will not disturbe the actual socket. 
+    normal request and inactivity timeouts will apply to the connection, but will not disturb the underlying actual socket handle. 
     It is the callers responsibility to call close() on the socket handle when ready.
     @param conn HttpConn object created via #httpCreateConn
     @return The O/S Socket handle.
