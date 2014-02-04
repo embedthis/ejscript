@@ -2377,7 +2377,6 @@
 				6BAC1DF86BAC2D8E00000265 /* bit.h */,
 				6BAC1DF86BAC2D8E00000266 /* mpr.h */,
 				6BAC1DF86BAC2D8E00000268 /* est.h */,
-				6BAC1DF86BAC2D8E00000267 /* bitos.h */,
 				6BAC1DF86BAC2D8E00000093 /* mprSsl.c */,
 			);
             name = "libmprssl";
