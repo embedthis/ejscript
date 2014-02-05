@@ -3,7 +3,7 @@
 #
 
 PRODUCT            := ejs
-VERSION            := 2.3.4
+VERSION            := 2.3.5
 PROFILE            := static
 ARCH               := $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/')
 CC_ARCH            := $(shell echo $(ARCH) | sed 's/x86/i686/;s/x64/x86_64/')
@@ -288,7 +288,7 @@ clobber: clean
 #   version
 #
 version: $(DEPS_1)
-	echo 2.3.4
+	echo 2.3.5
 
 #
 #   mpr.h
@@ -4285,7 +4285,7 @@ installBinary: $(DEPS_145)
 	cd .; \
 	mkdir -p "$(BIT_APP_PREFIX)" ; \
 	rm -f "$(BIT_APP_PREFIX)/latest" ; \
-	ln -s "2.3.4" "$(BIT_APP_PREFIX)/latest" ; \
+	ln -s "2.3.5" "$(BIT_APP_PREFIX)/latest" ; \
 	mkdir -p "$(BIT_VAPP_PREFIX)/bin" ; \
 	cp $(CONFIG)/bin/ejs $(BIT_VAPP_PREFIX)/bin/ejs ; \
 	mkdir -p "$(BIT_BIN_PREFIX)" ; \

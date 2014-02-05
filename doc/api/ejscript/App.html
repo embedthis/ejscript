@@ -105,7 +105,7 @@ Initialized to the ejs version.</td></tr>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#chdir'><b>chdir</b></a>(value: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Change the application's working directory.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#createSearch'><b>createSearch</b></a>(searchPath: <a href='String.html'>String</a> = null): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a search path array for locating ejs modules.</td></tr>
-   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#exit'><b>exit</b></a>(status: <a href='Number.html'>Number</a> = 0, how: <a href='String.html'>String</a> = normal): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Stop the program and exit.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#exit'><b>exit</b></a>(status: <a href='Number.html'>Number</a> = 0, how: <a href='String.html'>String</a> = immediate): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Stop the program and exit.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#getenv'><b>getenv</b></a>(name: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get an environment variable.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#getpass'><b>getpass</b></a>(prompt: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a password from the user's /dev/tty.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#loadrc'><b>loadrc</b></a>(path: <a href='Path.html'>Path</a>, overwrite: <a href='Boolean.html'>Boolean</a> = true)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Load an "ejsrc" configuration file
@@ -159,13 +159,13 @@ paths suitable for use by the <a href='#search'>search</a> property. NOTE: this 
 <hr />
 <a name='exit'></a>
 <div class='api'>
-<div class='apiSig'>static     exit(status: <a href='Number.html'>Number</a> = 0, how: <a href='String.html'>String</a> = normal): <a href='Void.html'>Void</a>
+<div class='apiSig'>static     exit(status: <a href='Number.html'>Number</a> = 0, how: <a href='String.html'>String</a> = immediate): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Stop the program and exit. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>status: <a href='Number.html'>Number</a> </td><td>The optional exit code to provide the environment. If running inside the ejs command program, the status is used as process exit status. [default: 0]</td></tr><tr class='param'><td class='param'>how: <a href='String.html'>String</a> </td><td>How the exit should proceed. Options are: "normal", "immediate" or "graceful". A normal exit will flush buffered data and close files and resources and then exit without waiting.   An immediate exit will exit without writing buffered data or closing files. A graceful exit will wait until the system is idle and then do a normal exit. A system is idle when it has no running commands,  sockets, Http requests or worker threads. [default: normal]</td></tr></table></dd>
+<tr class='param'><td class='param'>status: <a href='Number.html'>Number</a> </td><td>The optional exit code to provide the environment. If running inside the ejs command program, the status is used as process exit status. [default: 0]</td></tr><tr class='param'><td class='param'>how: <a href='String.html'>String</a> </td><td>How the exit should proceed. Options are: "abort", "immediate" or "graceful". An abort exit will call exit() without flushing buffered data or closing files. An immediate exit will flush buffered data and close files and resources and then exit without waiting.   A graceful exit will wait until the system is idle before exiting.  A system is idle when it has no running commands, sockets, Http requests or worker threads. The default is an 'immediate' exit. [default: immediate]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
