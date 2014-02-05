@@ -193,13 +193,14 @@ module ejs {
             Stop the program and exit.
             @param status The optional exit code to provide the environment. If running inside the ejs command program,
                 the status is used as process exit status.
-            @param how How the exit should proceed. Options are: "normal", "immediate" or "graceful". A normal exit
+            @param how How the exit should proceed. Options are: "abort", "immediate" or "graceful". An abort exit
+                will call exit() without flushing buffered data or closing files. An immediate exit
                 will flush buffered data and close files and resources and then exit without waiting.  
-                An immediate exit will exit without writing buffered data or closing files. A graceful exit will wait
-                until the system is idle and then do a normal exit. A system is idle when it has no running commands, 
-                sockets, Http requests or worker threads.
+                A graceful exit will wait until the system is idle before exiting. 
+                A system is idle when it has no running commands, sockets, Http requests or worker threads.
+                The default is an 'immediate' exit.
          */
-        native static function exit(status: Number = 0, how: String = "normal"): Void
+        native static function exit(status: Number = 0, how: String = "immediate"): Void
 
         /** 
             Get an environment variable.
@@ -213,6 +214,12 @@ module ejs {
          */
         native static function get gid(): Number
         
+        /** 
+            The user's home directory
+            @return the path to the home directory
+         */
+        static function get home(): Path App.getenv('HOME')
+
         /** 
             Set the standard input stream. Changing the input stream will close and reopen stdin.
          */
@@ -279,7 +286,7 @@ module ejs {
          */
         native static function putenv(name: String, value: String): Void
 
-        //  MOB - should this be renamed App.pump()
+        //  TODO - should this be renamed App.pump()
         /** 
             Run the application event loop. 
             A script may call run() to service events. Calling run() will cause the ejs shell to wait and service 
@@ -298,7 +305,7 @@ module ejs {
         native static function get search(): Array
         native static function set search(paths: Array): Void
 
-        //  MOB - sleep should not throw
+        //  TODO - sleep should not throw
         /** 
             Sleep the application for the given number of milliseconds. Events will be serviced while asleep.
             An alternative to sleep is $App.run which can be configured to sleep and return early if an event is received.
@@ -355,6 +362,12 @@ module ejs {
          */
         native static function get uid(): Number
         
+        /**
+            Get a password from the user's /dev/tty
+            @return A clear-text password string
+         */
+        native static function getpass(prompt: String): String
+
         /**
             Redirect the Application's logger based on the App.config.log setting
             Ignored if app is invoked with --log on the command line.
@@ -442,7 +455,7 @@ module ejs {
             }
         }
         if (config.cache) {
-            //  MOB - should there be a config.cache.enable instead
+            //  TODO - should there be a config.cache.enable instead
             App.cache = new Cache(null, blend({shared: true}, config.cache))
         }
     }
@@ -453,7 +466,7 @@ module ejs {
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

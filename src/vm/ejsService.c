@@ -44,9 +44,6 @@ static EjsService *createService()
     sp->nativeModules = mprCreateHash(-1, MPR_HASH_STATIC_KEYS);
     sp->mutex = mprCreateLock();
     sp->vmlist = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
-#if UNUSED
-    sp->vmpool = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
-#endif
     sp->intern = ejsCreateIntern(sp);
     sp->dtoaSpin[0] = mprCreateSpinLock();
     sp->dtoaSpin[1] = mprCreateSpinLock();
@@ -62,9 +59,6 @@ static void manageEjsService(EjsService *sp, int flags)
         mprMark(sp->http);
         mprMark(sp->mutex);
         mprMark(sp->vmlist);
-#if UNUSED
-        mprMark(sp->vmpool);
-#endif
         mprMark(sp->nativeModules);
         mprMark(sp->intern);
         mprMark(sp->immutable);
@@ -77,6 +71,14 @@ static void manageEjsService(EjsService *sp, int flags)
     }
 }
 
+
+PUBLIC void ejsDestroy(Ejs *ejs)
+{
+    if (ejs) {
+        ejsDestroyVM(ejs);
+    }
+    MPR->ejsService = 0;
+}
 
 
 Ejs *ejsCreateVM(int argc, cchar **argv, int flags)
@@ -110,9 +112,10 @@ Ejs *ejsCreateVM(int argc, cchar **argv, int flags)
     /*
         Modules are not marked in the modules list. This way, modules are collected when not referenced.
         Workers are marked. This way workers are preserved to run in the background until they exit.
+        Stable lists without locking.
      */
-    ejs->modules = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
-    ejs->workers = mprCreateList(0, 0);
+    ejs->modules = mprCreateList(-1, MPR_LIST_STATIC_VALUES | MPR_LIST_STABLE);
+    ejs->workers = mprCreateList(0, MPR_LIST_STABLE);
 
     initStack(ejs);
     initSearchPath(ejs, 0);
@@ -194,14 +197,17 @@ void ejsDestroyVM(Ejs *ejs)
     EjsService  *sp;
     EjsState    *state;
     EjsModule   *mp;   
+    MprList     *modules;
+    int         next;
 
     ejs->destroying = 1;
     sp = ejs->service;
     if (sp) {
-        while ((mp = mprGetFirstItem(ejs->modules)) != 0) {
+        modules = ejs->modules;
+        ejs->modules = 0;
+        for (ITERATE_ITEMS(modules, mp, next)) {
             ejsRemoveModule(ejs, mp);
         }
-        assert(ejs->modules->length == 0);
         ejsRemoveWorkers(ejs);
         state = ejs->state;
         if (state && state->stackBase) {
@@ -214,6 +220,9 @@ void ejsDestroyVM(Ejs *ejs)
         ejs->result = 0;
         if (ejs->dispatcher) {
             mprDestroyDispatcher(ejs->dispatcher);
+        }
+        if (ejs->http) {
+            httpStopConnections(ejs);
         }
     }
     mprTrace(6, "ejs: destroy VM");
@@ -690,7 +699,7 @@ void ejsSetSearchPath(Ejs *ejs, EjsArray *paths)
 EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
 {
     EjsArray    *ap;
-    char        *dir, *next, *tok;
+    char        *dir, *next, *tok, *home;
 
     ap = ejsCreateArray(ejs, 0);
 
@@ -706,14 +715,18 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
 
     /*
         Create a default search path
-        "." : APP_EXE_DIR/../lib : /usr/lib/ejs/1.0.0/lib
+        . : APP_EXE_DIR : /usr/local/lib/ejs/VERSION/bin : ~/.ejs
      */
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, "."));
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAppDir()));
-    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAppDir()));
 #if !VXWORKS
-    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, BIT_VAPP_PREFIX "/bin"));
+    if (!smatch(mprGetAppDir(), BIT_VAPP_PREFIX "/bin")) {
+        ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, BIT_VAPP_PREFIX "/bin"));
+    }
 #endif
+    if ((home = getenv("HOME")) != 0) {
+        ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, sfmt("%s/.ejs", home)));
+    }
     return (EjsArray*) ap;
 }
 
@@ -1154,7 +1167,7 @@ void ejsDisableExit(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

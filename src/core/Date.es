@@ -152,7 +152,7 @@ module ejs {
          */
         native function formatUTC(layout: String): String 
 
-//  MOB -- rethink name
+//  TODO -- rethink name
         /**
             Calculate a time that is $msec in the future
             @param msec Period into the future in milliseconds. Can be negative for the past.
@@ -348,12 +348,12 @@ module ejs {
             The date parsing logic uses heuristics and attempts to intelligently parse a range of dates. Some of the
             possible formats are:
             <ul>
-                <li>07/28/2013</li>
+                <li>07/28/2014</li>
                 <li>07/28/08</li>
-                <li>Jan/28/2013</li>
-                <li>Jaunuary-28-2013</li>
-                <li>28-jan-2013</li>
-                <li>[29] Jan [15] [2013]</li>
+                <li>Jan/28/2014</li>
+                <li>Jaunuary-28-2014</li>
+                <li>28-jan-2014</li>
+                <li>[29] Jan [15] [2014]</li>
                 <li>dd/mm/yy, dd.mm.yy, dd-mm-yy</li>
                 <li>mm/dd/yy, mm.dd.yy, mm-dd-yy</li>
                 <li>yyyy/mm/dd, yyyy.mm.dd, yyyy-mm-dd</li>
@@ -520,7 +520,7 @@ module ejs {
         /**
             Return a string containing the date portion excluding the time portion of the date in local time.
             The format is American English.
-            Sample: "Fri Jan 15 2013"
+            Sample: "Fri Jan 15 2014"
             @return A string representing the date portion.
          */
         function toDateString(): String 
@@ -547,8 +547,8 @@ module ejs {
             and locale.
             Sample: "Fri 15 Dec 2006 GMT-0800". (Note: Other platforms render as:
             V8  format: "Fri, 15 Dec 2006 GMT-0800"
-            JS  format: "01/15/2013"
-            JSC format: "January 15, 2013")
+            JS  format: "01/15/2014"
+            JSC format: "January 15, 2014")
             @return A string representing the date portion.
          */
         function toLocaleDateString(): String 
@@ -559,8 +559,8 @@ module ejs {
             conventions.
             Sample:  "Fri 15 Dec 2006 23:45:09 GMT-0800 (PST)". (Note: Other JavaScript platforms render as:
             V8 format:  "Fri, 15 Dec 2006 23:45:09 GMT-0800 (PST)"
-            JS format:  "Fri Jan 15 13:09:02 2013"
-            JSC format: "January 15, 2013 1:09:06 PM PST"
+            JS format:  "Fri Jan 15 13:09:02 2014"
+            JSC format: "January 15, 2014 1:09:06 PM PST"
             @return A string representing the date.
          */
         override function toLocaleString(): String
@@ -635,7 +635,7 @@ module ejs {
             @param The operand date
             @return Return a new Date.
          */
-//  MOB -- reconsider
+//  TODO -- reconsider
         # TODO
         native function -(date: Date): Date
     }
@@ -645,7 +645,7 @@ module ejs {
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

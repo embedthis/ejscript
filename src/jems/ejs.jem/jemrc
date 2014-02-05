@@ -1,6 +1,0 @@
-locations: {
-    ejs: "/usr/lib/ejs/latest",
-    jems: "/usr/lib/ejs/jems",
-    modules: "/usr/lib/ejs/latest/bin",
-    repositories: [ "http://jems.ejscript.org", "/usr/lib/ejs/latest/jems" ],
-}

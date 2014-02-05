@@ -82,7 +82,7 @@ module ejs {
             Default is false.
         @option pretty Boolean determining if a human readable output is used with new lines after each property. 
             Default is false.
-        @option quotes Boolean If false, emit property names without quotes if they do not contain spaces.
+        @option quotes Boolean If false, emit property names without quotes if they do not contain spaces. Defaults to true.
         @option replacer an optional parameter that determines how object values are stringified for objects without a 
             toJSON method.  The replace has the following signature:
 
@@ -98,7 +98,7 @@ module ejs {
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

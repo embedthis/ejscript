@@ -299,8 +299,12 @@ static EjsObj *nextObjectKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
     EjsObj      *obj;
     EjsName     qname;
     EjsTrait    *trait;
+    int         count;
 
     obj = ip->target;
+    if ((count = ejsGetLength(ejs, obj)) < ip->length) {
+        ip->length = count;
+    }
     for (; ip->index < ip->length; ip->index++) {
         qname = ejsGetPropertyName(ejs, obj, ip->index);
         if (qname.name == NULL) {
@@ -338,8 +342,12 @@ static EjsObj *nextObjectValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
 {
     EjsObj      *obj;
     EjsTrait    *trait;
+    int         count;
 
     obj = ip->target;
+    if ((count = ejsGetLength(ejs, obj)) < ip->length) {
+        ip->length = count;
+    }
     for (; ip->index < ip->length; ip->index++) {
         trait = ejsGetPropertyTraits(ejs, obj, ip->index);
         if (trait && trait->attributes & 
@@ -951,7 +959,7 @@ PUBLIC void ejsConfigureObjectType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

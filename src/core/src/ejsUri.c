@@ -712,7 +712,7 @@ static EjsUri *uri_replaceExtension(Ejs *ejs, EjsUri *up, int argc, EjsObj **arg
 }
 
 
-//  MOB - Uri should get a cast helper. Then this API and others can be typed.
+//  TODO - Uri should get a cast helper. Then this API and others can be typed.
 /*  
     function resolve(target): Uri
  */
@@ -862,7 +862,7 @@ static EjsUri *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
                     }
                 }
                 if (!ejsIsDefined(ejs, value)) {
-                    //  MOB - remove this. Should not be erasing the prior "/"
+                    //  TODO - remove this. Should not be erasing the prior "/"
                     if (cp >= &pattern[2] && cp[-2] == '/') {
                         mprAdjustBufEnd(buf, -1);
                     }
@@ -1177,7 +1177,7 @@ PUBLIC void ejsConfigureUriType(Ejs *ejs)
     if ((type = ejsFinalizeScriptType(ejs, N("ejs", "Uri"), sizeof(EjsUri), manageUri,
             EJS_TYPE_OBJ | EJS_TYPE_MUTABLE_INSTANCES)) != 0) {
         type->helpers.clone = (EjsCloneHelper) cloneUri;
-        //  MOB - Add cast helper to cast from Strings, Paths etc.
+        //  TODO - Add cast helper to cast from Strings, Paths etc.
         type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeUriOperator;
 
         ejsBindMethod(ejs, type, ES_Uri_decode, uri_decode);
@@ -1231,7 +1231,7 @@ PUBLIC void ejsConfigureUriType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

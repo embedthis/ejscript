@@ -39,7 +39,7 @@ module ejs {
          */
         meta function get(name: String): Object
 
-//  MOB -- what about NS
+//  TODO -- what about NS
         /**
             Called to set a named property
             @param name Given property name.
@@ -47,7 +47,7 @@ module ejs {
          */
         meta function set(name: String, value: Object): Void
 
-//  MOB -- how to do an explicit NS
+//  TODO -- how to do an explicit NS
         /**
             Called to determine if an object has a given named property. 
             The property is searched using the set of currently open namespaces.
@@ -65,7 +65,7 @@ module ejs {
 
         /**
             Called to cast an object instance to another type
-            MOB -- who calls this?
+            TODO -- who calls this?
          */
         meta cast function to(otherType: Type): Object
     }
@@ -75,7 +75,7 @@ module ejs {
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

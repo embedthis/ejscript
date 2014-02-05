@@ -96,7 +96,7 @@ module ejs {
          */
         static native function getOwnPropertyDescriptor(obj: Object, prop: String): Object?
 
-//  MOB -- inconsistent with JSON.baseClasses
+//  TODO -- inconsistent with JSON.baseClasses
         /** 
             Return an array of all property names including non-enumerable properties. This returns the bare names
             and does not include the namespace portions of the names. Use getOwnPropertyDescriptor to access property
@@ -295,7 +295,7 @@ module ejs {
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

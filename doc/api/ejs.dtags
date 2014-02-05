@@ -945,6 +945,13 @@
     <class kind="struct">EjsDebug</class>
     <class kind="struct">EjsEx</class>
     <class kind="struct">EjsLine</class>
+    <member kind="typedef">
+      <type>EjsObj *(*</type>
+      <name>EjsProc</name>
+      <anchorfile>group___ejs_function.html</anchorfile>
+      <anchor>ga154ff59b6e236d13c28765946349c884</anchor>
+      <arglist>)(Ejs *ejs, EjsAny *thisObj, int argc, struct EjsObj **argv)</arglist>
+    </member>
     <member kind="function">
       <type>EjsEx *</type>
       <name>ejsAddException</name>
@@ -2511,17 +2518,6 @@
       <name>useThis</name>
       <anchorfile>struct_ejs_lookup.html</anchorfile>
       <anchor>a4c1ddf4708b32bc57e8a285a4eac9e2f</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="struct">
-    <name>EjsObj</name>
-    <filename>struct_ejs_obj.html</filename>
-    <member kind="variable">
-      <type>ssize</type>
-      <name>xtype</name>
-      <anchorfile>struct_ejs_obj.html</anchorfile>
-      <anchor>ae77aebd518fe6f8f40071a106b6d8ba9</anchor>
       <arglist></arglist>
     </member>
   </compound>

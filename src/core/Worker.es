@@ -42,7 +42,7 @@ module ejs {
          */
         var name: String
 
-//  MOB -- should the worker exit when the script completes. Same question for terminate
+//  TODO -- should the worker exit when the script completes. Same question for terminate
         /**
             Create a new Worker instance. This call returns an outside worker object for using in the calling interpreter.
                 Inside the worker interpreter, a corresponding "inside" worker object is created that is paired to the
@@ -139,7 +139,7 @@ module ejs {
          */
         native function postMessage(data: Object, ports: Array? = null): Void
 
-        //  MOB - more description?
+        //  TODO - more description?
         /**
             Terminate the worker
          */
@@ -222,7 +222,7 @@ module ejs {
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

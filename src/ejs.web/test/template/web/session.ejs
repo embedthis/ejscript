@@ -1,0 +1,26 @@
+<html>
+<body>
+    <% 	
+        //  TODO -- remove need for request. prefix on request.session
+        if (request.method == "POST") {
+            if (request.params.submit == "OK") {
+            } else if (request.params.submit == "New Session") {
+                request.destroySession()
+            }
+            //  This will use or create a session
+            request.session["field"] = 1234
+            assert(request.session["field"] == 1234)
+        }
+        if (request.sessionID) {
+            write("Session ID: SET to \"" + request.sessionID + "\"")
+        } else {
+            write("Session ID: " + request.sessionID)
+        }
+    %>
+        <form name="details" method="post" action="session.ejs">
+            <input type="submit" name="submit" value="OK">
+            <input type="submit" name="submit" value="New Session">
+        </form>
+    </body>
+</html>
+

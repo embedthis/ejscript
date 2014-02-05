@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
    <title>Class Request</title>
 
@@ -315,8 +315,9 @@ request must supply the same token with all POST requests. This helps mitigate p
 <div class='apiSig'>    close(): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Close the stream.This closes the current request by finalizing all transmission data and sending a "close" event. It may 
-not actually close the socket connection if the reuse limit has not been exceeded (see limits).
+<dl><dt>Description</dt></dd><dd>Close the stream.This closes the current request by finalizing all transmission data and sending a "close" event. HttpServer
+attemps to reuse socket connections so calling close(), may not actually close the socket connection 
+if the reuse limit has not been exceeded (see limits).
 It is normally not necessary to explicitly call close a request as the web framework will automatically 
 close finalized requests when all input data has fully been read. Calling close on an already closed
 request is silently ignored.</dd></dl>
@@ -836,7 +837,7 @@ body properties. The respond method replaces previously defined status and heade
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2013. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>

@@ -11,7 +11,7 @@
 
 static EjsDate  *getDateHeader(Ejs *ejs, EjsHttp *hp, cchar *key);
 static EjsString *getStringHeader(Ejs *ejs, EjsHttp *hp, cchar *key);
-static void     httpIOEvent(HttpConn *conn, MprEvent *event);
+static void     httpEvent(HttpConn *conn, MprEvent *event);
 static void     httpEventChange(HttpConn *conn, int event, int arg);
 static void     prepForm(Ejs *ejs, EjsHttp *hp, cchar *prefix, EjsObj *data);
 static ssize    readHttpData(Ejs *ejs, EjsHttp *hp, ssize count);
@@ -35,6 +35,7 @@ static EjsHttp *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         ejsThrowMemoryError(ejs);
         return 0;
     }
+    httpSetConnData(hp->conn, ejs);
     httpPrepClientConn(hp->conn, 0);
     httpSetConnNotifier(hp->conn, httpEventChange);
     httpSetConnContext(hp->conn, hp);
@@ -68,7 +69,7 @@ static EjsObj *http_set_async(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     conn = hp->conn;
     async = (argv[0] == ESV(true));
     httpSetAsync(conn, async);
-    httpSetIOCallback(conn, httpIOEvent);
+    httpSetIOCallback(conn, httpEvent);
     return 0;
 }
 
@@ -123,10 +124,11 @@ static EjsObj *http_set_ca(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (hp->conn) {
-        httpFinalize(hp->conn);
+        if (hp->conn->state > HTTP_STATE_BEGIN) {
+            httpFinalize(hp->conn);
+        }
         sendHttpCloseEvent(ejs, hp);
         httpDestroyConn(hp->conn);
-        //  TODO OPT - Better to do this on demand. This consumes a conn until GC.
         hp->conn = httpCreateConn(ejs->http, NULL, ejs->dispatcher);
         httpPrepClientConn(hp->conn, 0);
         httpSetConnNotifier(hp->conn, httpEventChange);
@@ -207,7 +209,8 @@ static EjsDate *http_date(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsObj *http_finalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (hp->conn) {
-        httpFinalize(hp->conn);
+        httpFinalizeOutput(hp->conn);
+        httpFlush(hp->conn);
     }
     return 0;
 }
@@ -298,7 +301,8 @@ static EjsHttp *http_get(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     startHttpRequest(ejs, hp, "GET", argc, argv);
     if (!ejs->exception && hp->conn) {
-        httpFinalize(hp->conn);
+        httpFinalizeOutput(hp->conn);
+        httpFlush(hp->conn);
     }
     return hp;
 }
@@ -1100,8 +1104,7 @@ static EjsHttp *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, 
         return 0;
     }
     if (mprGetBufLength(hp->requestContent) > 0) {
-        nbytes = httpWriteBlock(conn->writeq, mprGetBufStart(hp->requestContent), mprGetBufLength(hp->requestContent),
-            HTTP_BLOCK);
+        nbytes = httpWriteBlock(conn->writeq, mprGetBufStart(hp->requestContent), mprGetBufLength(hp->requestContent), HTTP_BLOCK);
         if (nbytes < 0) {
             ejsThrowIOError(ejs, "Cannot write request data for \"%s\"", hp->uri);
             return 0;
@@ -1110,7 +1113,8 @@ static EjsHttp *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, 
             mprAdjustBufStart(hp->requestContent, nbytes);
             hp->requestContentCount += nbytes;
         }
-        httpFinalize(conn);
+        httpFinalizeOutput(conn);
+        httpFlush(conn);
     }
     httpNotify(conn, HTTP_EVENT_WRITABLE, 0);
     if (conn->async) {
@@ -1221,7 +1225,7 @@ static ssize writeHttpData(Ejs *ejs, EjsHttp *hp)
             ejsThrowIOError(ejs, "Cannot write to socket");
             return 0;
         }
-        //  MOB - or should this be non-blocking
+        //  TODO - or should this be non-blocking
         nbytes = httpWriteBlock(conn->writeq, (cchar*) &ba->value[ba->readPosition], count, HTTP_BLOCK);
         if (nbytes < 0) {
             ejsThrowIOError(ejs, "Cannot write to socket");
@@ -1229,15 +1233,15 @@ static ssize writeHttpData(Ejs *ejs, EjsHttp *hp)
         }
         ba->readPosition += nbytes;
     }
-    httpServiceQueues(conn);
+    httpServiceQueues(conn, HTTP_BLOCK);
     return nbytes;
 }
 
 
 /*  
-    Respond to an IO event. This wraps the standard httpEvent() call.
+    Respond to an IO event. This wraps the standard httpIOEvent() call.
  */
-static void httpIOEvent(HttpConn *conn, MprEvent *event)
+static void httpEvent(HttpConn *conn, MprEvent *event)
 {
     EjsHttp     *hp;
     Ejs         *ejs;
@@ -1247,7 +1251,7 @@ static void httpIOEvent(HttpConn *conn, MprEvent *event)
     hp = conn->context;
     ejs = hp->ejs;
 
-    httpEvent(conn, event);
+    httpIOEvent(conn, event);
     if (event->mask & MPR_WRITABLE) {
         if (hp->data) {
             writeHttpData(ejs, hp);
@@ -1408,7 +1412,7 @@ static bool waitForState(EjsHttp *hp, int state, MprTicks timeout, int throw)
     Ejs             *ejs;
     MprTicks        mark, remaining;
     HttpConn        *conn;
-    HttpUri         *uri;
+    HttpUri         *location, *uri;
     HttpRx          *rx;
     char            *url;
     int             count, redirectCount, success, rc;
@@ -1425,19 +1429,22 @@ static bool waitForState(EjsHttp *hp, int state, MprTicks timeout, int throw)
         return 0;
     }
     if (!conn->async) {
-        httpFinalize(conn);
+        httpFinalizeOutput(conn);
     }
+    httpFlush(conn);
     redirectCount = 0;
     success = count = 0;
     mark = mprGetTicks();
     remaining = timeout;
-    while (conn->state < state && count <= conn->retries && redirectCount < 16 && !conn->error && !ejs->exiting && !mprIsStopping(conn)) {
+    while (conn->state < state && count <= conn->retries && redirectCount < 16 && !conn->error && 
+            !ejs->exiting && !mprIsStopping(conn)) {
         count++;
         if ((rc = httpWait(conn, HTTP_STATE_PARSED, remaining)) == 0) {
             if (httpNeedRetry(conn, &url)) {
                 if (url) {
-                    uri = httpCreateUri(url, 0);
-                    httpCompleteUri(uri, httpCreateUri(hp->uri, 0));
+                    httpRemoveHeader(conn, "Host");
+                    location = httpCreateUri(url, 0);
+                    uri = httpJoinUri(conn->tx->parsedUri, 1, &location);
                     hp->uri = httpUriToString(uri, HTTP_COMPLETE_URI);
                 }
                 count--; 
@@ -1489,7 +1496,8 @@ static bool waitForState(EjsHttp *hp, int state, MprTicks timeout, int throw)
             return 0;
         }
         if (!conn->async) {
-            httpFinalize(conn);
+            httpFinalizeOutput(conn);
+            httpFlush(conn);
         }
     }
     if (!success) {
@@ -1620,28 +1628,28 @@ static void sendHttpErrorEvent(Ejs *ejs, EjsHttp *hp)
 /*  
     Manage the object properties for the garbage collector
  */
-static void manageHttp(EjsHttp *http, int flags)
+static void manageHttp(EjsHttp *hp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
-        mprMark(http->emitter);
-        mprMark(http->data);
-        mprMark(http->limits);
-        mprMark(http->responseCache);
-        mprMark(http->conn);
-        mprMark(http->ssl);
-        mprMark(http->requestContent);
-        mprMark(http->responseContent);
-        mprMark(http->uri);
-        mprMark(http->method);
-        mprMark(http->caFile);
-        mprMark(http->certFile);
-        mprMark(TYPE(http));
+        mprMark(hp->emitter);
+        mprMark(hp->data);
+        mprMark(hp->limits);
+        mprMark(hp->responseCache);
+        mprMark(hp->conn);
+        mprMark(hp->ssl);
+        mprMark(hp->requestContent);
+        mprMark(hp->responseContent);
+        mprMark(hp->uri);
+        mprMark(hp->method);
+        mprMark(hp->caFile);
+        mprMark(hp->certFile);
+        mprMark(TYPE(hp));
 
     } else if (flags & MPR_MANAGE_FREE) {
-        if (http->conn) {
-            sendHttpCloseEvent(http->ejs, http);
-            httpDestroyConn(http->conn);
-            http->conn = 0;
+        if (hp->conn && !hp->conn->destroyed) {
+            sendHttpCloseEvent(hp->ejs, hp);
+            httpDestroyConn(hp->conn);
+            hp->conn = 0;
         }
     }
 }
@@ -1716,7 +1724,7 @@ PUBLIC void ejsConfigureHttpType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

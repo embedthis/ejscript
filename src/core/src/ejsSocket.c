@@ -165,7 +165,7 @@ static EjsObj *sock_listen(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
             address = ejsToString(ejs, address);
         }
         sp->address = ejsToMulti(ejs, address);
-        //  MOB - should listen to secure and permit https://IP:PORT
+        //  TODO - should listen to secure and permit https://IP:PORT
         mprParseSocketAddress(sp->address, &sp->address, &sp->port, NULL, 80);
     }
     if (!sp->sock) {
@@ -437,7 +437,7 @@ PUBLIC void ejsConfigureSocketType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

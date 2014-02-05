@@ -1561,7 +1561,9 @@ static EcNode *parseLiteralField(EcCompiler *cp)
             return LEAVE(cp, 0);
         }
         cp->state->currentFunctionNode = fp;
-        fp = parseFunctionSignature(cp, fp);
+        if ((fp = parseFunctionSignature(cp, fp)) == 0) {
+            return LEAVE(cp, 0);
+        }
         fp->function.body = linkNode(fp, parseFunctionBody(cp, fp));
         if (fp->function.body == 0) {
             return LEAVE(cp, 0);
@@ -3892,7 +3894,7 @@ static EcNode *parseLetExpression(EcCompiler *cp)
     if (getToken(cp) != T_RPAREN) {
         return LEAVE(cp, expected(cp, ")"));
     }
-    //  MOB - was return 0
+    //  TODO - was return 0
     return np;
 }
 
@@ -8783,7 +8785,7 @@ static EcNode *parsePragmas(EcCompiler *cp, EcNode *np)
     }
     return LEAVE(cp, np);
 #else
-    //  MOB - does this allow multiple pragmas?
+    //  TODO - does this allow multiple pragmas?
     return LEAVE(cp, parsePragma(cp, np));
 #endif
 }
@@ -9411,7 +9413,7 @@ PUBLIC EcNode *ecResetError(EcCompiler *cp, EcNode *np, bool eatInput)
     /*
         Try to resync by eating input up to the next statement / directive
      */
-    //  MOB - workaround
+    //  TODO - workaround
     count = 0;
     while (!cp->interactive && count++ < 50) {
         tid = peekToken(cp);
@@ -10394,7 +10396,7 @@ static void dummy(int junk) { }
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

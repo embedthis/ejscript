@@ -4,6 +4,10 @@
 
 function check(s, expected) {
     let norm = Uri(s).normalize
+    if (norm != expected) {
+        print("Expected:  ", expected);
+        print("Normalized:", norm);
+    }
     assert(norm == expected)
 }
 
@@ -28,7 +32,7 @@ check("/abc/../def", "/def")
 check("../abc", "abc")
 check("abc/..", "")
 check("/abc/..", "/")
-check("/..", "/")
+check("/..", "")
 check("../", "")
 check("/../", "/")
 

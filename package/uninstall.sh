@@ -2,13 +2,13 @@
 #
 #	uninstall: Ejscript uninstall script
 #
-#	Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+#	Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 #
 #	Usage: uninstall [configFile]
 #
 ################################################################################
 #
-#	Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+#	Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 #	The latest version of this code is available at http://www.embedthis.com
 #
 #	This software is open source; you can redistribute it and/or modify it 
@@ -35,7 +35,6 @@ PRODUCT="${settings.product}"
 COMPANY="${settings.company}"
 NAME="${settings.title}"
 VERSION="${settings.version}"
-NUMBER="${settings.buildNumber}"
 OS="${platform.os}"
 CPU="${platform.arch}"
 
@@ -235,7 +234,7 @@ setup() {
 		exit 0
 	fi
 	binDir=${binDir:-$VAPP_PREFIX}
-	echo -e "\n$NAME ${VERSION}-${NUMBER} Removal\n"
+	echo -e "\n$NAME ${VERSION} Removal\n"
 }
 
 askUser() {

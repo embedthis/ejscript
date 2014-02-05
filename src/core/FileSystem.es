@@ -15,7 +15,7 @@ module ejs {
 
         use default namespace public
 
-        //  MOB - getter
+        //  TODO - getter
         /**
             Get a list of file system drives
             @return An array of drives. Returns an empty list on systems without drive specifiers in filenames.
@@ -96,7 +96,7 @@ module ejs {
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

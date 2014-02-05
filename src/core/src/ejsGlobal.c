@@ -224,15 +224,16 @@ PUBLIC int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
             continue;
         }
         qname = ejsGetPropertyName(ejs, src, i);
+        if (!qname.name || !qname.space) {
+            continue;
+        }
         if (!privateProps && ejsContainsAsc(ejs, qname.space, ",private") >= 0) {
             continue;
         }
         if (trace) {
             mprLog(0, "Blend name %N", qname);
         }
-
-        //  MOB - refactor into a function
-        if (combine) {
+        if (combine && qname.name) {
             cflags = flags;
             kind = qname.name->value[0];
             if (kind == '+') {
@@ -341,7 +342,6 @@ PUBLIC int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
                 }
             } else {
                 /*  Primitive type (including arrays) */
-                //  MOB - rethink this. Should the array be cloned?
                 if (overwrite) {
                     ejsSetPropertyByName(ejs, dest, qname, vp);
                 } else if (ejsLookupProperty(ejs, dest, qname) < 0) {
@@ -527,7 +527,7 @@ PUBLIC void ejsConfigureGlobalBlock(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

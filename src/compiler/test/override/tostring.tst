@@ -2,7 +2,7 @@
     Test override tostring
  */
 
-/* MOB - String is now final
+/* TODO - String is now final
 
 class Font extends String {
     var thickness: String

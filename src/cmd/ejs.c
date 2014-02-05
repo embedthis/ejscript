@@ -238,7 +238,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             mprSetCmdlineLogging(1);
 
         } else if (smatch(argp, "--version") || smatch(argp, "-V")) {
-            mprPrintf("%s-%s\n", BIT_VERSION, BIT_BUILD_NUMBER);
+            mprPrintf("%s\n", EJS_VERSION);
             return 0;
 
         } else if (smatch(argp, "--warn")) {
@@ -247,6 +247,10 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             } else {
                 warnLevel = atoi(argv[++nextArg]);
             }
+
+        } else if (*argp == '-' && isdigit((uchar) argp[1])) {
+            mprStartLogging(sfmt("stderr:%s", &argp[1]), 0);
+            mprSetCmdlineLogging(1);
 
         } else {
             err++;
@@ -291,10 +295,14 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
         return MPR_ERR_MEMORY;
     }
     app->ejs = ejs;
+#if UNUSED
+    mprRunDispatcher(ejs->dispatcher);
+#endif
+
     if (ejsLoadModules(ejs, searchPath, app->modules) < 0) {
         return MPR_ERR_CANT_READ;
     }
-    mprRequestGC(MPR_GC_FORCE | MPR_GC_COMPLETE);
+    mprGC(MPR_GC_FORCE);
     ecFlags = 0;
     ecFlags |= (merge) ? EC_FLAGS_MERGE: 0;
     ecFlags |= (bind) ? EC_FLAGS_BIND: 0;
@@ -352,9 +360,9 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
         err = mpr->exitStatus;
     }
     app->ejs = 0;
-    mprTerminate(MPR_EXIT_DEFAULT, err);
-    ejsDestroyVM(ejs);
-    mprDestroy(MPR_EXIT_DEFAULT);
+    app->compiler = 0;
+    ejsDestroy(ejs);
+    mprDestroy(MPR_EXIT_GRACEFUL);
     return err;
 }
 
@@ -430,7 +438,7 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
             }
         }
         if (!ejs->exception && ejs->result != ESV(undefined)) {
-            if (ejsIs(ejs, ejs->result, Date) /* MOB || ejsIsType(ejs, ejs->result) */) {
+            if (ejsIs(ejs, ejs->result, Date) /* TODO || ejsIsType(ejs, ejs->result) */) {
                 if ((result = (EjsString*) ejsToString(ejs, ejs->result)) != 0) {
                     mprPrintf("%@\n", result);
                 }
@@ -584,7 +592,7 @@ int main(int argc, char **argv)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

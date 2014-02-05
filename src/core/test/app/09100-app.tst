@@ -24,9 +24,9 @@ elapsed = new Date - d
 
 
 //  getenv
-assert(App.getenv("PATH"))
+assert(App.getenv("PATH") || App.getenv("path"))
 
 
 //  env
-assert(App.env["PATH"])
+assert(App.env["PATH"] || App.env["path"])
 assert(Object.getOwnPropertyCount(App.env) > 0)

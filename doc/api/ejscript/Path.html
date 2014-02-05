@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
    <title>Class Path</title>
 
@@ -171,7 +171,7 @@ path.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#removeAll'><b>removeAll</b></a>(): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Removes a directory and its contents
 If the path is a directory, this call will remove all subdirectories and their contents and finally the
 directory itself.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#rename'><b>rename</b></a>(target: <a href='Path.html'>Path</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Rename a file.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#rename'><b>rename</b></a>(target: <a href='Path.html'>Path</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Rename a file.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#replace'><b>replace</b></a>(pattern, replacement): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Search and replace.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#replaceExt'><b>replaceExt</b></a>(ext: <a href='String.html'>String</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Replace the path extension and return a new path.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#resolve'><b>resolve</b></a>(otherPaths: <a href='Array.html'>Array</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Resolve paths in the neighborhood of this path.</td></tr>
@@ -182,6 +182,7 @@ directory itself.</td></tr>
    <tr class='apiDef'><td class='apiType'> override </td><td><a href='#toJSON'><b>toJSON</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the path to a JSON string.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#toLowerCase'><b>toLowerCase</b></a>(): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the path to lower case.</td></tr>
    <tr class='apiDef'><td class='apiType'> override </td><td><a href='#toString'><b>toString</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return the path as a string.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#trimComponents'><b>trimComponents</b></a>(count: <a href='Number.html'>Number</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Trim the requested number of path components from the start or end of the path.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#trimEnd'><b>trimEnd</b></a>(pat: <a href='String.html'>String</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Trim a pattern from the end of the path
 NOTE: this does a case-sensitive match.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#trimExt'><b>trimExt</b></a>(): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Trim a file extension from a path.</td></tr>
@@ -603,16 +604,17 @@ directory itself. If the directory does not exist, this call does not error and 
 <hr />
 <a name='rename'></a>
 <div class='api'>
-<div class='apiSig'>    rename(target: <a href='Path.html'>Path</a>): <a href='Boolean.html'>Boolean</a>
+<div class='apiSig'>    rename(target: <a href='Path.html'>Path</a>): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Rename a file. If the new path exists it is removed before the rename.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>target: <a href='Path.html'>Path</a> </td><td>New name of the path.</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>True if the file is renamed.</dd></dl>
-</div>
+</dl><dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: if the rename fails.
+</dd>
+</dl></div>
 </div>
 <hr />
 <a name='replace'></a>
@@ -755,6 +757,20 @@ system location for temp files. This is typically /tmp or /temp.</dd></dl>
 </div>
 </div>
 <hr />
+<a name='trimComponents'></a>
+<div class='api'>
+<div class='apiSig'>    trimComponents(count: <a href='Number.html'>Number</a>): <a href='Path.html'>Path</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Trim the requested number of path components from the start or end of the path. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>count: <a href='Number.html'>Number</a> </td><td>Number of directory components to remove. If negative, trim from the end.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Trimmed path.</dd></dl>
+</div>
+</div>
+<hr />
 <a name='trimEnd'></a>
 <div class='api'>
 <div class='apiSig'>    trimEnd(pat: <a href='String.html'>String</a>): <a href='Path.html'>Path</a>
@@ -822,7 +838,7 @@ NOTE: this does a case-sensitive match. </dd></dl>
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2013. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>

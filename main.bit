@@ -5,29 +5,28 @@
 Bit.load({
     blend: [
         '${BITS}/embedthis.bit',
-        'src/deps/mpr/mpr.bit',
-        'src/deps/est/est.bit',
-        'src/deps/pcre/pcre.bit',
-        'src/deps/http/http.bit',
-        'src/deps/sqlite/sqlite.bit',
-        'src/deps/zlib/zlib.bit',
+        'src/paks/mpr/mpr.bit',
+        'src/paks/est/est.bit',
+        'src/paks/pcre/pcre.bit',
+        'src/paks/http/http.bit',
+        'src/paks/sqlite/sqlite.bit',
+        'src/paks/zlib/zlib.bit',
 
         'src/libejs.bit',
         'src/cmd/cmd.bit',
         'src/core/core.bit',
 
-        'src/jems/ejs.unix/unix.bit',
-        'src/jems/ejs.jem/jem.bit',
-        'src/jems/ejs.db/db.bit',
-        'src/jems/ejs.db.mapper/mapper.bit',
-        'src/jems/ejs.db.sqlite/sqlite.bit',
-        'src/jems/ejs.mail/mail.bit',
-        'src/jems/ejs.web/web.bit',
-        'src/jems/ejs.template/template.bit',
-        'src/jems/ejs.zlib/zlib.bit',
-        'src/jems/ejs.tar/tar.bit',
-        'src/jems/ejs.mvc/mvc.bit',
-        'src/jems/ejs.utest/utest.bit',
+        'src/ejs.unix/unix.bit',
+        'src/ejs.db/db.bit',
+        'src/ejs.db.mapper/mapper.bit',
+        'src/ejs.db.sqlite/sqlite.bit',
+        'src/ejs.mail/mail.bit',
+        'src/ejs.web/web.bit',
+        'src/ejs.template/template.bit',
+        'src/ejs.zlib/zlib.bit',
+        'src/ejs.tar/tar.bit',
+        'src/ejs.mvc/mvc.bit',
+        'src/ejs.utest/utest.bit',
         'doc/doc.bit',
     ],
 
@@ -40,12 +39,7 @@ Bit.load({
     ],
 
     settings: {
-        product: 'ejs',
-        title: 'Embedthis Ejscript',
-        company: 'Embedthis',
-        version: '2.3.2',
-        buildNumber: '0',
-        bit: '0.8.6',
+        bit: '0.9.3',
 
         /*
             Installation prefix set
@@ -149,6 +143,11 @@ Bit.load({
             See src/cmd/cmd.bit for building the language commands
             See package/package.bit for the install/package targets
          */
+        'bower.json': {
+            type: 'file',
+            path: 'bower.json',
+            files: [ 'package.json' ],
+        },
     },
 
     packs: {

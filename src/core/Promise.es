@@ -83,7 +83,7 @@ module ejs {
             try {
                 issue("success", ...args)
             } catch (e) {
-                //  MOB
+                //  TODO
                 print("CATCH", e)
                 emitError(e)
             }
@@ -102,7 +102,7 @@ module ejs {
             try {
                 issue("error", ...args)
             } catch (e) {
-                //  MOB -- use logging
+                //  TODO -- use logging
                 print("EmitError CATCH", e)
             }
         }
@@ -115,7 +115,7 @@ module ejs {
         function emitCancel(...args): Void
             issue("cancel", ...args)
 
-//  MOB -- why have cancel and emitCancel
+//  TODO -- why have cancel and emitCancel
         /** 
             Cancels the promise and removes "success" and "error" observers then issues a cancel event.
             @param args Args to pass to the "cancel" event observer
@@ -129,7 +129,7 @@ module ejs {
             issue("cancel", ...args)
         }
 
-//  MOB -- what about cancel?
+//  TODO -- what about cancel?
         /** 
             Convenience function to register callbacks. 
             @param success Success callback passed to onSuccess
@@ -186,7 +186,7 @@ module ejs {
             return this
         }
         
-        //  MOB - fix MaxInt
+        //  TODO - fix MaxInt
         /** 
             Wait for the promise to complete for a given period. This blocks execution until the promise completes or 
             is cancelled.
@@ -227,7 +227,7 @@ module ejs {
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

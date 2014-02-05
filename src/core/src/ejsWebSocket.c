@@ -74,7 +74,7 @@ static EjsWebSocket *wsConstructor(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj 
         mprVerifySslPeer(ws->ssl, verify);
 #if FUTURE
         if (!hp->caFile) {
-            //MOB - Some define for this.
+            //TODO - Some define for this.
             hp->caFile = mprJoinPath(mprGetAppDir(), "http-ca.crt");
         }
         mprSetSslCaFile(hp->ssl, hp->caFile);
@@ -169,10 +169,10 @@ static EjsWebSocket *ws_on(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 
     conn = ws->conn;
     if (conn->readq && conn->readq->count > 0) {
-        //  MOB - can't have NULL as data
+        //  TODO - can't have NULL as data
         onWebSocketEvent(ws, HTTP_EVENT_READABLE, 0, 0);
     }
-    //  MOB - don't need to test finalizedConnector
+    //  TODO - don't need to test finalizedConnector
     if (!conn->tx->finalizedConnector && 
             !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_FINALIZED &&
             conn->writeq->ioCount == 0) {
@@ -196,7 +196,7 @@ static EjsString *ws_protocol(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **arg
  */
 static EjsNumber *ws_readyState(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 {
-    //  MOB - should have API for this
+    //  TODO - should have API for this
     return ejsCreateNumber(ejs, (MprNumber) ws->conn->rx->webSocket->state);
 }
 
@@ -483,7 +483,7 @@ static bool waitForHttpState(EjsWebSocket *ws, int state, MprTicks timeout, int 
     Ejs             *ejs;
     MprTicks        mark, remaining;
     HttpConn        *conn;
-    HttpUri         *uri;
+    HttpUri         *location, *uri;
     char            *url;
     int             count, redirectCount, success, rc;
 
@@ -515,8 +515,8 @@ static bool waitForHttpState(EjsWebSocket *ws, int state, MprTicks timeout, int 
         if ((rc = httpWait(conn, HTTP_STATE_PARSED, remaining)) == 0) {
             if (httpNeedRetry(conn, &url)) {
                 if (url) {
-                    uri = httpCreateUri(url, 0);
-                    httpCompleteUri(uri, httpCreateUri(ws->uri, 0));
+                    location = httpCreateUri(url, 0);
+                    uri = httpJoinUri(conn->tx->parsedUri, 1, &location);
                     ws->uri = httpUriToString(uri, HTTP_COMPLETE_URI);
                 }
                 count--; 
@@ -670,7 +670,7 @@ PUBLIC void ejsConfigureWebSocketType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

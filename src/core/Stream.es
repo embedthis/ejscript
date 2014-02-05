@@ -65,7 +65,7 @@ module ejs {
          */
         function off(name, observer: Function): Void
 
-        //  MOB - define what this is set to in the callback
+        //  TODO - define what this is set to in the callback
         /** 
             Add an observer to the stream for the named events. 
             @param name :[String|Array] Name of the event to listen for. The name may be an array of events.
@@ -126,7 +126,7 @@ module ejs {
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

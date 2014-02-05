@@ -42,13 +42,13 @@ static EjsNumber *lf_emit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
             break;
 
         case S_String:
-            //  MOB - use NULL instead of &len
+            //  TODO - use NULL instead of &len
             arg = awtom(((EjsString*) vp)->value, &len);
             break;
 
         default:
             str = ejsToString(ejs, vp);
-            //  MOB - use NULL instead of &len
+            //  TODO - use NULL instead of &len
             arg = awtom(((EjsString*) str)->value, &len);
             break;
         }
@@ -143,7 +143,7 @@ PUBLIC void ejsConfigureMprLogType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

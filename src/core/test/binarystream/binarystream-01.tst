@@ -34,7 +34,7 @@ assert((data.readString(-1)).size == 490)
 
 //	Write binary data
 
-/* MOB BUG
+/* TODO BUG
 bs = Path("temp.dat").openBinaryStream("w")
 bs.write("Hello world")
 bs.flush()
@@ -46,7 +46,7 @@ f.close()
 
 /*XXX
 //	endian encodings. TODO - this is not really testing much
-//  MOB -- more here
+//  TODO -- more here
 
 bs = Path("temp.dat").openBinaryStream("w")
 bs.endian = BinaryStream.BigEndian

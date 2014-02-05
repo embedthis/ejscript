@@ -18,7 +18,7 @@ module test.api.c {
             let flags = ejsFlags[i]
             let command = "ejs " + flags
 
-            //  MOB - not scripts exist yet
+            //  TODO - not scripts exist yet
             for each (f in Path("../scripts").glob("*.es")) {
                 testCmd(valgrind + command + f)
             }

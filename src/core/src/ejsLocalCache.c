@@ -10,7 +10,7 @@
 
 /************************************ Locals **********************************/
 
-//  MOB - should this be refactored to use MprCache?
+//  TODO - should this be refactored to use MprCache?
 
 #define CACHE_TIMER_PERIOD  (60 * MPR_TICKS_PER_SEC)
 #define CACHE_HASH_SIZE     257
@@ -219,7 +219,7 @@ static EjsAny *sl_read(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **argv)
         return ESV(null);
     }
 #if UNUSED && FUTURE
-    //  MOB - should reading refresh cache
+    //  TODO - should reading refresh cache
     //  Perhaps option "read-refresh"
     if (item->lifespan) {
         item->expires = mprGetTime() + item->lifespan;
@@ -593,7 +593,7 @@ PUBLIC void ejsConfigureLocalCacheType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

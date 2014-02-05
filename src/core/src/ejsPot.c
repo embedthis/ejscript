@@ -815,7 +815,7 @@ static int hashProperty(Ejs *ejs, EjsPot *obj, int slotNum, EjsName qname)
     If numInstanceProp is < 0, then grow the number of properties by an increment. Otherwise, set the number of properties 
     to numInstanceProp. We currently don't allow reductions.
  */
-//  TODO MOB -- rename
+//  TODO TODO -- rename
 PUBLIC int ejsIndexProperties(Ejs *ejs, EjsPot *obj)
 {
     EjsSlot         *sp;
@@ -1067,7 +1067,7 @@ PUBLIC void ejsCreatePotHelpers(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

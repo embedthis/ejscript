@@ -3,7 +3,7 @@
     DEPRECATED
  */
 
-/* MOB
+/* TODO
 
 let HTTP = App.config.uris.http
 let http = new Http

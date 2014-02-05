@@ -448,8 +448,8 @@ FUTURE & KEEP
          */
         native function off(name, observer: Function): Void
 
-        //   MOB - rename "headers" => open
-        //   MOB - rename "complete" => close
+        //   TODO - rename "headers" => open
+        //   TODO - rename "complete" => close
         /** 
             @duplicate Stream.on
             All events are called with the following signature.  The "this" object will be set to the instance object
@@ -773,7 +773,7 @@ FUTURE & KEEP
             @param data Body data to send with the request. Set to null for no data. If set to null, the request
                 will be finalized. If not set to null, $finalize() must be called after writing all data.
             @param callback Optional function to invoke on completion of the request.
-            MOB - reimplement using pure Http and not XMLHttp
+            TODO - reimplement using pure Http and not XMLHttp
           */
         function afetch(method: String, uri: Uri, data: *, callback: Function? = null) {
             let xh = XMLHttp(this)
@@ -902,14 +902,14 @@ FUTURE & KEEP
         # Config.Legacy
         native function trace_old(uri: Uri? = null): Void
 
-        //  MOB - missing timeout legacy getter/setter method
+        //  TODO - missing timeout legacy getter/setter method
     }
 }
 
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

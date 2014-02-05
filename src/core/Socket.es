@@ -38,7 +38,7 @@ module ejs {
         /** @duplicate Stream.close */
         native function close(): Void
 
-        //  MOB - what about ipv6
+        //  TODO - what about ipv6
         /** 
             Establish a connection to a client from this socket to the supplied address. After a successful call to 
             connect() the socket may be used for sending and receiving.
@@ -120,7 +120,7 @@ module ejs {
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

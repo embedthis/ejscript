@@ -4,7 +4,7 @@
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
-//  MOB - rethink various throws
+//  TODO - rethink various throws
 
 module ejs {
 
@@ -111,7 +111,7 @@ module ejs {
          */
         native function on(name, observer: Function): File
 
-        //  MOB - would it be better not to throw?
+        //  TODO - would it be better not to throw?
         /**  
             Open a file. This opens the file designated when the File constructor was called.
             @params options Optional options. If ommitted, the options default to open the file in read mode.
@@ -177,7 +177,7 @@ module ejs {
          */
         native function readBytes(count: Number = -1): ByteArray?
 
-        //  MOB UNICODE encoding. Should this do UTF-8 to Unicode-16?
+        //  TODO UNICODE encoding. Should this do UTF-8 to Unicode-16?
         /** 
             Read data from a file as a string.
             @param count Number of bytes to read. If -1, read the entire file.
@@ -202,7 +202,7 @@ module ejs {
          */
         native function get size(): Number 
 
-        //  MOB -- perhaps better to not throw
+        //  TODO -- perhaps better to not throw
         /**     
             Truncate the file. 
             @param value the new length of the file
@@ -220,7 +220,7 @@ module ejs {
          */
         native function write(...items): Number
 
-        //  MOB writeln would be useful
+        //  TODO writeln would be useful
     }
 }
 
@@ -228,7 +228,7 @@ module ejs {
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

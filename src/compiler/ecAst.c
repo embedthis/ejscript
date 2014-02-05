@@ -3771,7 +3771,7 @@ static EjsNamespace *lookupNamespace(Ejs *ejs, EjsString *nspace)
 }
 
 
-//  MOB - common this with the slow-path version in the VM
+//  TODO - common this with the slow-path version in the VM
 
 /*
     Look for a variable by name in the scope chain and return the location in "cp->lookup" and a positive slot 
@@ -3950,7 +3950,7 @@ static void badAst(EcCompiler *cp, EcNode *np)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

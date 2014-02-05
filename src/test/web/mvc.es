@@ -4,7 +4,7 @@ require ejs.web
     Pure script View
 class MyView extends View {
 
-    //  MOB -- if you don't have a constructor, could it use this constructor by default?
+    //  TODO -- if you don't have a constructor, could it use this constructor by default?
     function MyView(request) {
         super(request)
     }
@@ -17,9 +17,9 @@ class MyView extends View {
 
 exports.app = function(request: Request) {
 
-    //  MOB -- why is render being called  with this as an arg. Why with request as an arg and not view
+    //  TODO -- why is render being called  with this as an arg. Why with request as an arg and not view
     View(request).render(function(request: Request) {
-        //  MOB -- this == view
+        //  TODO -- this == view
         write("Hello World\r\n")
         print("URI " + makeUri("/logout.es"))
     })

@@ -46,7 +46,7 @@ module ejs {
          */
         native function close(): Void 
 
-        //  MOB - should be a function. Need flags MPR_CMD_EXACT_ENV support.
+        //  TODO - should be a function. Need flags MPR_CMD_EXACT_ENV support.
         /**
             Hash of environment strings to pass to the command.
          */
@@ -412,7 +412,7 @@ module ejs {
                     This:       ["showColors", "red", "light blue", "Cannot \"render\""]
                     Becomes:    sh -c "showColors red 'light blue' 'Cannot \"render\"'
              */
-            let shell = Cmd.locate("sh")
+            let shell = Cmd.locate("sh") || Path("/bin/sh")
             if (command is Array) {
                 for (let arg in command) {
                     /*  
@@ -443,7 +443,7 @@ module ejs {
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

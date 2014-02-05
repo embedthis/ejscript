@@ -20,7 +20,7 @@
  */
 #define top                     (*state->stack)
 
-//  MOB - ejs arg not used
+//  TODO - ejs arg not used
 #define pop(ejs)                (*state->stack--)
 
 #define push(value)             (*(++(state->stack))) = ((EjsObj*) (value))
@@ -2718,7 +2718,7 @@ EjsAny *ejsRunFunctionBySlot(Ejs *ejs, EjsAny *thisObj, int slotNum, int argc, v
 }
 
 
-//  MOB - this is inconsistent with ejsRunBySlot. This has a separate container and thisObj, whereas RunBySlot
+//  TODO - this is inconsistent with ejsRunBySlot. This has a separate container and thisObj, whereas RunBySlot
 //  has only one arg
 
 EjsAny *ejsRunFunctionByName(Ejs *ejs, EjsAny *container, EjsName qname, EjsAny *thisObj, int argc, void *argv)
@@ -3820,7 +3820,7 @@ void ejsShowOpFrequency(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

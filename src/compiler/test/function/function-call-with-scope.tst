@@ -64,7 +64,7 @@ assert(         fn(10)                              == 10)
 var instance = circ
 
 /*
-    MOB - if statics not visible to instances
+    TODO - if statics not visible to instances
 assert(instance.cfun == undefined)
 assert(instance.sfun == undefined)
 */

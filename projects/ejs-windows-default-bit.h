@@ -7,20 +7,29 @@
 
 
 /* Settings */
+#ifndef BIT_AUTHOR
+    #define BIT_AUTHOR "Embedthis Software"
+#endif
 #ifndef BIT_BIT
-    #define BIT_BIT "0.8.6"
+    #define BIT_BIT "0.9.3"
 #endif
 #ifndef BIT_BUILD_NUMBER
-    #define BIT_BUILD_NUMBER "0"
+    #define BIT_BUILD_NUMBER 0
 #endif
 #ifndef BIT_COMPANY
-    #define BIT_COMPANY "Embedthis"
+    #define BIT_COMPANY "embedthis"
+#endif
+#ifndef BIT_COMPATIBLE
+    #define BIT_COMPATIBLE "2.3.4"
 #endif
 #ifndef BIT_DEBUG
     #define BIT_DEBUG 1
 #endif
 #ifndef BIT_DEPTH
     #define BIT_DEPTH 1
+#endif
+#ifndef BIT_DESCRIPTION
+    #define BIT_DESCRIPTION "Embedthis Ejscript Javascript Language"
 #endif
 #ifndef BIT_DISCOVER
     #define BIT_DISCOVER "doxygen,dsi,man,man2html,pmaker,sqlite,ssl,zip"
@@ -124,6 +133,9 @@
 #ifndef BIT_MPR_MANAGER
     #define BIT_MPR_MANAGER "ejsman"
 #endif
+#ifndef BIT_NAME
+    #define BIT_NAME "ejs"
+#endif
 #ifndef BIT_PACKS
     #define BIT_PACKS "bits/packs"
 #endif
@@ -152,7 +164,7 @@
     #define BIT_TUNE "size"
 #endif
 #ifndef BIT_VERSION
-    #define BIT_VERSION "2.3.2"
+    #define BIT_VERSION "2.3.4"
 #endif
 #ifndef BIT_WITHOUT_ALL
     #define BIT_WITHOUT_ALL "doxygen,dsi,est,man,man2html"
@@ -253,10 +265,10 @@
     #define BIT_MINOR_VERSION 3
 #endif
 #ifndef BIT_PATCH_VERSION
-    #define BIT_PATCH_VERSION 2
+    #define BIT_PATCH_VERSION 4
 #endif
 #ifndef BIT_VNUM
-    #define BIT_VNUM 200030002
+    #define BIT_VNUM 200030004
 #endif
 
 /* Packs */

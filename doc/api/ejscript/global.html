@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
    <title>Global Functions and Variables</title>
 
@@ -1382,7 +1382,7 @@ If the overwrite option is false, the property will only be copied if it does no
 <tr class='param'><td class='param'>dest: <a href='Object.html'>Object</a> </td><td>Destination object.</td></tr><tr class='param'><td class='param'>src: <a href='Object.html'>Object</a> </td><td>Source object.</td></tr><tr class='param'><td class='param'>options </td><td>Control options. [default: null]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
-<td class='param'>combine</td><td>Boolean. If true, then support key prefixes "+", "=", "-", "?" to add, assign and subtract  and conditionally assign key values. When adding string properties, values will be appended using a space separator. Extra spaces will not  be removed on subtraction. Arrays with string values may also be combined using the key prefixes.</td></tr>
+<td class='param'>combine</td><td>Boolean. If true, then support key prefixes "+", "=", "-", "?" to add, assign and subtract  and conditionally assign key values. When adding string properties, values will be appended using a  space separator. Extra spaces will not be removed on subtraction. Arrays with string values may also be combined using these key prefixes.</td></tr>
 <td class='param'>overwrite</td><td>Boolean. If true, then overwrite existing properties in the destination object. Defaults to true.</td></tr>
 <td class='param'>deep</td><td>Boolean. If true, then recursively copy the properties of any objects referenced in the source object. Otherwise, the copy is only one level deep. Defaults to true.</td></tr>
 <td class='param'>functions</td><td>Boolean. If true, then copy functions. Defaults to false.</td></tr>
@@ -1467,7 +1467,7 @@ embedded wildcards. If a src element is a directory, then it all all files and s
 preserving its directory structure under dest.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>src </td><td>Source files/directories to copy. This can be a String, Path or array of String/Paths.  The wildcards "*"", "***"" and "?" are the only wild card patterns supported. The "***"" pattern matches every directory and file. The Posix "[]" and "{a,b}" style expressions are not supported. If src is an existing directory, then the pattern is converted to 'dir/ *  *'' (without spaces)  and the tree option is enabled.</td></tr><tr class='param'><td class='param'>dest: <a href='Path.html'>Path</a> </td><td>Destination file or directory. If multiple files are copied, dest is assumed to be a directory and  will be created if required.  If dest has a trailing "/", it is assumed to be a directory.</td></tr><tr class='param'><td class='param'>options </td><td>Processing and file attributes. [default: expression]</td></tr></table></dd>
+<tr class='param'><td class='param'>src </td><td>Source files/directories to copy. This can be a String, Path or array of String/Paths.  The wildcards "*"", "***"" and "?" are the only wild card patterns supported. The "***"" pattern matches every directory and file. The Posix "[]" and "{a,b}" style expressions are not supported. If src is an existing directory, then the pattern is converted to 'dir/ *  *'' (without spaces)  and the tree option is enabled. This will copy the directories contents and not the directory itself.</td></tr><tr class='param'><td class='param'>dest: <a href='Path.html'>Path</a> </td><td>Destination file or directory. If multiple files are copied, dest is assumed to be a directory and  will be created if required.  If dest has a trailing "/", it is assumed to be a directory.</td></tr><tr class='param'><td class='param'>options </td><td>Processing and file attributes. [default: expression]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>owner</td><td>String representing the file owner.</td></tr>
@@ -2047,7 +2047,7 @@ until all properties are rendered.  NOTE: the maxDepth, all and base properties 
 <td class='param'>hidden</td><td>Booean determining if hidden properties are serialized. If true, hidden properties will be serialized. Defaults to false.</td></tr>
 <td class='param'>namespaces</td><td>Boolean determining if properties will also display their namespace attributes. Default is false.</td></tr>
 <td class='param'>pretty</td><td>Boolean determining if a human readable output is used with new lines after each property.  Default is false.</td></tr>
-<td class='param'>quotes</td><td>Boolean If false, emit property names without quotes if they do not contain spaces.</td></tr>
+<td class='param'>quotes</td><td>Boolean If false, emit property names without quotes if they do not contain spaces. Defaults to true.</td></tr>
 <td class='param'>replacer</td><td>An optional parameter that determines how object values are stringified for objects without a  toJSON method.  The replace has the following signature:  function replacer(key: String, value: String): String.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
@@ -2056,7 +2056,8 @@ until all properties are rendered.  NOTE: the maxDepth, all and base properties 
 <a href='TypeError.html'>TypeError</a>: If the object could not be converted to a string.
 </dd>
 </dl><dl><dt>Specified</dt>
-<dd>ejscript-2.3</dd></dl>
+<dd>ejs
+P</dd></dl>
 </div>
 </div>
 <hr />
@@ -2195,7 +2196,7 @@ Ejscript underlying type name. This call is an alias for Object.getTypeName(o).<
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2013. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>

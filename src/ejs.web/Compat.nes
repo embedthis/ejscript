@@ -1,0 +1,173 @@
+NewRequest {
+    function get log(): Logger 
+
+        function cachable(enable: Boolean = false): Void 
+        function destroySession(): Void
+        function finalize(): Void 
+        function getResponseHeaders(): Object
+        function header(key: String): String
+        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number?
+        function redirect(url: String, code: Number = 302): Void 
+        function sendResponse(response: Object): Void 
+        function setCookie(name: String, options: Object) 
+        function setHeader(key: String, value: String, overwrite: Boolean = true): Void
+        function setHeaders(headers: Object, overwrite: Boolean = true) 
+        function write(...data): Number
+        function writeError(msg: String, code: Number = Http.ServerError): Void 
+        function writeHtml(...args): Void
+}
+//  OLD 3.X environment
+
+    var view: View
+
+    class Controller {
+        var actionName: String 
+        var absUrl: String
+        var appUrl: String
+        var controllerName: String
+        var config: Object
+        var flash: Object
+        var home: String
+        var host: Host
+        var params: Object
+        var request: Request
+        var response: Response
+        var session: Object
+
+        function cache(enable: Boolean = true): Void
+        function createSession(timeout: Number = 0): Void
+        function destroySession(): Void
+        function discardOutput(): Void
+        function sendError(code: Number, msg: String): Void
+        function escapeHtml(s: String): String
+        function html(...args): String {
+        function inform(msg: String): Void
+        function error(msg: String): Void
+        function keepAlive(on: Boolean): Void
+        function loadView(path: String = null): Void
+        function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String {
+        function redirectUrl(url: String, code: Number = 302): Void
+        function redirect(action: String, id: String = null, options: Object = {}): Void {
+        function render(...args): Void { 
+        function renderFile(filename: String): Void { 
+        function renderRaw(...args): Void {
+        function renderView(viewName: String = null): Void {
+        function setCookie(name: String, value: String, path: String = null, domain: String = null, 
+                lifetime: Number = 0, secure: Boolean = false): Void
+        function setHeader(key: String, value: String, allowMultiple: Boolean = false): Void
+        function setHttpCode(code: Number): Void
+        function setMimeType(format: String): Void
+        function unescapeHtml(s: String): String
+        function warn(msg: String): Void
+        function write(...args): Void
+        function writeHtml(...args): Void
+        function writeRaw(...args): Void
+    }
+    class View {
+
+        use default namespace "ejs.web"
+
+        var controller: Controller
+
+        function render(): Void {}
+        function aform(action: String, record: Object = null, options: Object = {}): Void 
+        function alink(text: String, action: String = null, options: Object = {}): Void 
+        function button(value: String, buttonName: String = null, options: Object = {}): Void 
+        function buttonLink(text: String, action: String, options: Object = {}): Void 
+        function chart(initialData: Array, options: Object = {}): Void 
+        function checkbox(field: String, choice: String = "true", options: Object = {}): Void 
+        function endform(): Void 
+        function form(action: String, record: Object = null, options: Object = {}): Void 
+        function image(src: String, options: Object = {}): Void 
+        function imageLink(image: String, action: String, options: Object = {}): Void 
+        function input(field: String, options: Object = {}): Void 
+        function label(text: String, options: Object = {}): Void 
+        function link(text: String, action: String = null, options: Object = {}): Void 
+        function extlink(text: String, url: String, options: Object = {}): Void 
+        function list(field: String, choices: Object = null, options: Object = {}): Void 
+        function mail(nameText: String, address: String, options: Object = {}): Void  
+        function progress(initialData: Object, options: Object = {}): Void 
+        function radio(field: String, choices: Object, options: Object = {}): Void 
+        function script(url: Object?, options: Object = {}): Void 
+        function status(initialData: Object, options: Object = {}): Void 
+        function stylesheet(url: Object, options: Object = {}): Void 
+        function table(data, options: Object = {}): Void 
+        function tabs(initialData: Array, options: Object = {}): Void 
+        function text(field: String, options: Object = {}): Void 
+        function textarea(field: String, options: Object = {}): Void 
+        function tree(initialData: XML, options: Object = {}): Void 
+        function flash(kinds = null, options: Object = {}): Void 
+            
+        function createSession(timeout: Number = 0): Void
+        function destroySession(): Void
+        function html(...args): String
+        function makeUrl(action: String, id: String = null, options: Object = {}): String
+        function redirectUrl(url: String, code: Number = 302): Void
+        function redirect(action: String, id: String = null, options: Object = {}): Void
+        function setCookie(name: String, value: String, lifetime: Number, path: String, secure: Boolean = false): Void
+        function setHeader(key: String, value: String, allowMultiple: Boolean = false): Void
+        function setHttpCode(code: Number): Void
+        function setMimeType(format: String): Void
+        function write(...args): Void
+        function writeHtml(...args): Void
+        function writeRaw(...args): Void 
+        function d(...args): Void 
+    }
+
+    class Response {
+        var code: Number
+        var filename: String
+        var headers: Array
+        var mimeType: String
+    }
+
+    class Request {
+        var accept: String
+        var acceptCharset: String
+        var acceptEncoding: String
+        var authAcl: String
+        var authGroup: String
+        var authType: String
+        var authUser: String
+        var connection: String
+        var contentLength: Number
+        var cookies: Object
+        var extension: String
+        var files: Object
+        var headers: Object
+        var hostName: String
+        var method: String
+        var mimeType: String
+        var pathInfo: String
+        var pathTranslated
+        var pragma: String
+        var query: String
+        var originalUri: String
+        var referrer: String
+        var remoteAddress: String
+        var remoteHost: String
+        var sessionID: String
+        var url: String
+        var userAgent: String
+    }
+}
+
+/*
+    @copy   default
+
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
+
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a 
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
+
+    Local variables:
+    tab-width: 4
+    c-basic-offset: 4
+    End:
+    vim: sw=4 ts=4 expandtab
+
+    @end
+ */

@@ -754,7 +754,7 @@ static void genClassName(EcCompiler *cp, EjsType *type)
     }
     slotNum = ejsLookupProperty(ejs, ejs->global, type->qname);
     if (cp->bind && slotNum < ES_global_NUM_CLASS_PROP) {
-        //  MOB - WARNING: this won't work if classes are implemented like Record.
+        //  TODO - WARNING: this won't work if classes are implemented like Record.
         assert(slotNum >= 0);
         genGlobalName(cp, slotNum);
 
@@ -4401,7 +4401,7 @@ static void badNode(EcCompiler *cp, EcNode *np)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

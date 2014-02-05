@@ -75,9 +75,6 @@ static EjsWorker *initWorker(Ejs *ejs, EjsWorker *worker, Ejs *baseVM, cchar *na
     self->inside = 1;
     self->pair = worker;
     self->name = sjoin("inside-", worker->name, NULL);
-#if MOB
-    mprEnableDispatcher(wejs->dispatcher);
-#endif
     if (search) {
         ejsSetSearchPath(ejs, (EjsArray*) search);
     }
@@ -189,7 +186,11 @@ PUBLIC void ejsRemoveWorkers(Ejs *ejs)
     int         next;
 
     for (next = 0; (worker = mprGetNextItem(ejs->workers, &next)) != NULL; ) {
+#if UNUSED
         worker->ejs = 0;
+#else
+        removeWorker(worker);
+#endif
     }
     ejs->workers = 0;
 }
@@ -886,7 +887,7 @@ PUBLIC void ejsConfigureWorkerType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

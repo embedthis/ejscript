@@ -56,7 +56,7 @@ module ejs {
         # FUTURE
         native function addNamespace(ns: Namespace): XML
 
-        //  MOB - should be native
+        //  TODO - should be native
         /**
             Append a child to this XML object.
             @param child The child to add.
@@ -212,7 +212,7 @@ module ejs {
         # FUTURE
         native function inScopeNamespaces(): Array
 
-        //  MOB TODO - if marker is null. Insert at beginning or end?
+        //  TODO TODO - if marker is null. Insert at beginning or end?
         /**
             Insert a child object into an XML object immediately after a specified marker object. If the marker object 
             is null then the new object is inserted at the end. If the marker object is not found then the insertion 
@@ -224,7 +224,7 @@ module ejs {
         # FUTURE
         native function insertChildAfter(marker: Object?, child: Object): XML
 
-            // MOB - if marker is null. Insert at beginning or end?
+            // TODO - if marker is null. Insert at beginning or end?
         /**
             Insert a child object into an XML object immediately before a specified marker object. If the marker 
             object is null then the new object is inserted at the end. If the marker object is not found then the
@@ -395,7 +395,7 @@ module ejs {
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

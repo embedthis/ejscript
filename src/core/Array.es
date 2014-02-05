@@ -399,6 +399,7 @@ module ejs {
             return false
         }
 
+	//TODO - comparator differ from ECMA
         /**
             Sort the array. The array is sorted in lexical order. A compare function may be supplied.
             @param compare Function to use to compare. A null comparator will use a text compare. The compare signature is:
@@ -489,7 +490,7 @@ module ejs {
         # DOC_ONLY
         native function << (elements: Array): Array
 
-        //  MOB - need a function equivalent for this
+        //  TODO - need a function equivalent for this
         /**
             Array subtraction. Remove any items that appear in the supplied array.
             @param arr The array to remove.
@@ -523,7 +524,7 @@ module ejs {
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

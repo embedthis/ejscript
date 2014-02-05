@@ -47,9 +47,9 @@ o = {
 }
 assert(o.name == "Peter")
 assert(o.details == "[object Object]")
-assert(serialize(o.details, { pretty: true }) == "{
-  \"location\": \"Australia\",
-  \"age\": 99
+assert(serialize(o.details, { pretty: true }), "{
+    \"location\": \"Australia\",
+    \"age\": 99
 }")
 
 
@@ -79,13 +79,13 @@ user = {
 
 s = serialize(user, { pretty: true })
 assert(s == '{
-  "name": "Peter",
-  "age": 27,
-  "color": "blue",
-  "hobby": {
-    "name": "Sailing"
-  },
-  "profession": "coder"
+    "name": "Peter",
+    "age": 27,
+    "color": "blue",
+    "hobby": {
+        "name": "Sailing"
+    },
+    "profession": "coder"
 }')
 
 o = deserialize(s)

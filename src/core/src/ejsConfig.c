@@ -24,7 +24,6 @@ PUBLIC void ejsCreateConfigType(Ejs *ejs)
 PUBLIC void ejsDefineConfigProperties(Ejs *ejs)
 {
     EjsType     *type;
-    char        version[16];
     int         att;
 
     if ((type = ejsFinalizeCoreType(ejs, N("ejs", "Config"))) == 0) {
@@ -61,8 +60,7 @@ PUBLIC void ejsDefineConfigProperties(Ejs *ejs)
     ejsDefineProperty(ejs, type, -1, N("public", "Product"), 0, att, 
         ejsCreateStringFromAsc(ejs, BIT_PRODUCT));
     ejsDefineProperty(ejs, type, -1, N("public", "Title"), 0, att, ejsCreateStringFromAsc(ejs, BIT_TITLE));
-    fmt(version, sizeof(version), "%s-%s", BIT_VERSION, BIT_BUILD_NUMBER);
-    ejsDefineProperty(ejs, type, -1, N("public", "Version"), 0, att, ejsCreateStringFromAsc(ejs, version));
+    ejsDefineProperty(ejs, type, -1, N("public", "Version"), 0, att, ejsCreateStringFromAsc(ejs, BIT_VERSION));
 
     ejsDefineProperty(ejs, type, -1, N("public", "Legacy"), 0, att, ejsCreateBoolean(ejs, 0));
     ejsDefineProperty(ejs, type, -1, N("public", "SSL"), 0, att, ejsCreateBoolean(ejs, BIT_PACK_SSL));
@@ -90,7 +88,7 @@ PUBLIC void ejsDefineConfigProperties(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

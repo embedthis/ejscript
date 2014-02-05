@@ -69,7 +69,7 @@ module ejs {
         function destroy(): Void
             adapter.destroy()
 
-        //  MOB - bit inconsistent that expires takes only a date and not a lifespan too
+        //  TODO - bit inconsistent that expires takes only a date and not a lifespan too
         /**
             Set a new expire date for a key
             @param key Key to modify
@@ -201,7 +201,7 @@ module ejs {
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

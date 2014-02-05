@@ -36,7 +36,6 @@ MAIN(ejsmodMain, int argc, char **argv, char **envp)
         Initialze the Multithreaded Portable Runtime (MPR)
      */
     mpr = mprCreate(argc, argv, 0);
-    mprSetAppName(argv[0], 0, 0);
 
     /*
         Allocate the primary control structure
@@ -119,7 +118,7 @@ MAIN(ejsmodMain, int argc, char **argv, char **envp)
             }
 
         } else if (strcmp(argp, "--version") == 0 || strcmp(argp, "-V") == 0) {
-            mprPrintf("%s-%s\n", BIT_VERSION, BIT_BUILD_NUMBER);  
+            mprPrintf("%s\n", EJS_VERSION);  
             return 0;
 
         } else if (strcmp(argp, "--require") == 0) {
@@ -205,8 +204,9 @@ MAIN(ejsmodMain, int argc, char **argv, char **envp)
         err = -1;
     }
     mprRemoveRoot(mp);
-    ejsDestroyVM(ejs);
-    mprDestroy(MPR_EXIT_DEFAULT);
+    mp->ejs = 0;
+    ejsDestroy(ejs);
+    mprDestroy(MPR_EXIT_IMMEDIATE);
     return err;
 }
 
@@ -328,7 +328,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

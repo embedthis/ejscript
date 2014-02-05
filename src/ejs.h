@@ -70,7 +70,7 @@ extern "C" {
 #define EC_MAX_INCLUDE              32              /**< Max number of nested includes */
 #define EC_LINE_INCR                1024            /**< Growth increment for input lines */
 #define EC_TOKEN_INCR               64              /**< Growth increment for tokens */
-#define EC_MAX_LOOK_AHEAD           8
+#define EC_MAX_LOOK_AHEAD           12
 #define EC_BUFSIZE                  4096            /**< General buffer size */
 #define EC_MAX_ERRORS               25              /**< Max compilation errors before giving up */
 #define EC_CODE_BUFSIZE             4096            /**< Initial size of code gen buffer */
@@ -797,7 +797,7 @@ PUBLIC struct EjsTrait *ejsGetPropertyTraits(Ejs *ejs, EjsAny *obj, int slotNum)
  */
 PUBLIC EjsAny *ejsInvokeOperator(Ejs *ejs, EjsAny *obj, int opCode, EjsAny *rhs);
 
-//  MOB rename
+//  TODO rename
 /** 
     Default implementation for operator invoke
     @description Invoke an Ejscript byte code operator on the specified variable given the expression right hand side.
@@ -1339,7 +1339,7 @@ PUBLIC struct EjsString *ejsObjToJSON(Ejs *ejs, EjsObj *obj, int argc, EjsObj **
 #define EJS_BLEND_ASSIGN        0x200       /**< Flag for ejsBlendObject for "=" property blend */
 #define EJS_BLEND_COND_ASSIGN   0x400       /**< Flag for ejsBlendObject for "?" property blend */
 
-//  MOB - rename ejsBlend
+//  TODO - rename ejsBlend
 /**
     Blend objects
     @description Merge one object into another. This is useful for inheriting and optionally overwriting option 
@@ -1677,7 +1677,7 @@ PUBLIC int ejsStartsWithAsc(Ejs *ejs, EjsString *sp, cchar *pat);
  */
 PUBLIC char *ejsToMulti(Ejs *ejs, void *obj);
 
-//  MOB - rename ejsFormat
+//  TODO - rename ejsFormat
 /** 
     Format arguments
     @param ejs Ejs reference returned from #ejsCreateVM
@@ -1990,7 +1990,7 @@ typedef struct EjsBlock {
     struct EjsBlock *scope;                         /**< Lexical scope chain for this block */
     struct EjsBlock *prev;                          /**< Previous block in activation chain */
 
-    //  MOB -- OPT and compress / eliminate some of these fields. Every function has these.
+    //  TODO -- OPT and compress / eliminate some of these fields. Every function has these.
     EjsObj          *prevException;                 /**< Previous exception if nested exceptions */
     EjsObj          **stackBase;                    /**< Start of stack in this block */
     uchar           *restartAddress;                /**< Restart instruction address */
@@ -2197,7 +2197,11 @@ typedef struct EjsCode {
     @ingroup EjsFunction
     @stability Evolving.
  */
+#if DOXYGEN
+typedef EjsObj* (*EjsProc)(Ejs *ejs, EjsAny *thisObj, int argc, struct EjsObj **argv);
+#else
 typedef struct EjsObj *(*EjsProc)(Ejs *ejs, EjsAny *thisObj, int argc, struct EjsObj **argv);
+#endif
 
 /** 
     Function class
@@ -2206,7 +2210,7 @@ typedef struct EjsObj *(*EjsProc)(Ejs *ejs, EjsAny *thisObj, int argc, struct Ej
     @defgroup EjsFunction EjsFunction
     @see EjsFunction ejsIsFunction ejsIsNativeFunction ejsIsInitializer ejsCreateFunction ejsCloneFunction
         ejsRunFunctionBySlot ejsRunFunction ejsRunInitializer
-        EjsProc ejsIsFunction ejsBindFunction ejsCloneFunction ejsCreateFunction ejsInitFunction
+        ejsIsFunction ejsBindFunction ejsCloneFunction ejsCreateFunction ejsInitFunction
         ejsCreateBareFunction ejsCreateActivation ejsRemoveConstructor ejsRunInitializer ejsRunFunction
         ejsRunFunctionBySlot ejsrunFunctionByName 
     @stability Internal
@@ -2322,7 +2326,7 @@ PUBLIC int ejsBindFunction(Ejs *ejs, EjsAny *obj, int slotNum, void *fun);
  */
 PUBLIC EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *fun, int deep);
 
-//  MOB - refactor into several functions
+//  TODO - refactor into several functions
 /** 
     Create a function object
     @description This creates a function object and optionally associates byte code with the function.
@@ -2796,7 +2800,7 @@ PUBLIC EjsAny *ejsCacheReadObj(Ejs *ejs, EjsObj *cache, struct EjsString *key, E
  */
 PUBLIC EjsBoolean *ejsCacheRemove(Ejs *ejs, EjsObj *cache, struct EjsString *key);
 
-//  MOB - rename ejsSetCacheLimits
+//  TODO - rename ejsSetCacheLimits
 /** 
     Set the cache limits
     @param ejs Interpreter instance returned from #ejsCreateVM
@@ -2921,7 +2925,7 @@ PUBLIC EjsDate *ejsCreateDate(Ejs *ejs, MprTime value);
 #endif
 
 /******************************************** Error ***********************************************/
-//  MOB - missing SecurityException PermissionsException
+//  TODO - missing SecurityException PermissionsException
 /** 
     Error classes
     @description Base class for error exception objects. Exception objects are created by programs and by the system 
@@ -3900,7 +3904,7 @@ typedef struct EjsXmlTagState {
     @stability Internal
  */
 typedef struct EjsXmlState {
-    //  MOB -- should not be fixed but should be growable
+    //  TODO -- should not be fixed but should be growable
     EjsXmlTagState  nodeStack[BIT_XML_MAX_NODE_DEPTH];      /**< nodeStack */
     Ejs             *ejs;                                   /**< Convenient reference to ejs */
     struct EjsType  *xmlType;                               /**< Xml type reference */
@@ -4710,6 +4714,9 @@ PUBLIC void ejsSetDispatcher(Ejs *ejs, MprDispatcher *dispatcher);
  */
 PUBLIC void ejsDestroyVM(Ejs *ejs);
 
+//  MOB
+PUBLIC void ejsDestroy(Ejs *ejs);
+
 /**
     Evaluate a file
     @description Evaluate a file containing an Ejscript. This requires linking with the Ejscript compiler library (libec). 
@@ -4753,7 +4760,7 @@ PUBLIC int ejsEvalFile(cchar *path);
  */
 PUBLIC int ejsLoadScriptFile(Ejs *ejs, cchar *script, cchar *cache, int flags);
 
-//  MOB - rename ejsLoadScriptString
+//  TODO - rename ejsLoadScriptString
 /** 
     Load a script from a string
     @description This will compile the script string and then run it. If the cache path argument is provided, 
@@ -4813,7 +4820,7 @@ PUBLIC void ejsExit(Ejs *ejs, int status);
  */
 PUBLIC void *ejsGetHandle(Ejs *ejs);
 
-//  MOB - variable is the wrong name. ejsGetPropByName?
+//  TODO - variable is the wrong name. ejsGetPropByName?
 /** 
     Get a variable by name
     @description This looks for a property name in an object, its prototype or base classes.
@@ -5124,7 +5131,13 @@ typedef void (*EjsLoaderCallback)(struct Ejs *ejs, int kind, ...);
     #define EJS_MINOR(version)      ((version / EJS_VERSION_FACTOR) % EJS_VERSION_FACTOR)
     #define EJS_PATCH(version)      (version % EJS_VERSION_FACTOR)
     #define EJS_MAX_VERSION         EJS_MAKE_VERSION(EJS_VERSION_FACTOR-1, EJS_VERSION_FACTOR-1, EJS_VERSION_FACTOR-1)
+#if UNUSED
     #define EJS_VERSION             EJS_MAKE_VERSION(BIT_MAJOR_VERSION, BIT_MINOR_VERSION, BIT_PATCH_VERSION)
+#endif
+#endif
+
+#ifndef EJS_VERSION
+    #define EJS_VERSION BIT_VERSION
 #endif
 
 /*
@@ -5175,7 +5188,7 @@ typedef struct EjsModuleHdr {
  */
 typedef struct EjsModule {
     EjsString       *name;                  /**< Name of this module - basename of the filename without .mod extension */
-    //  MOB - document the version format
+    //  TODO - document the version format
     EjsString       *vname;                 /**< Versioned name - name with optional version suffix */
     MprMutex        *mutex;                 /**< Multithread locking */
     int             version;                /**< Made with EJS_MAKE_VERSION */
@@ -5186,7 +5199,7 @@ typedef struct EjsModule {
     EjsConstants    *constants;             /**< Constant pool */
     EjsFunction     *initializer;           /**< Initializer method */
 
-    //  MOB - should have isDefault bit
+    //  TODO - should have isDefault bit
     uint            compiling       : 1;    /**< Module currently being compiled from source */
     uint            configured      : 1;    /**< Module types have been configured with native code */
     uint            loaded          : 1;    /**< Module has been loaded from an external file */
@@ -5406,7 +5419,7 @@ PUBLIC int64 ejsSwapInt64(Ejs *ejs, int64 word);
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

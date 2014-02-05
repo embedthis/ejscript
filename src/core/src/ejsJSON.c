@@ -60,7 +60,7 @@ static EjsString *g_serialize(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-//  MOB - convert to use MPR json parser
+//  TODO - convert to use MPR json parser
 
 PUBLIC EjsAny *ejsDeserialize(Ejs *ejs, EjsString *str)
 {
@@ -251,7 +251,7 @@ Token getNextJsonToken(MprBuf *buf, wchar **token, JsonState *js)
                     continue;
                 }
                 /* 
-                    Not an allowable character outside quotes (MOB - removed space 
+                    Not an allowable character outside quotes (TODO - removed space 
                     Should really keep state for parsing keys or values and not allow -,+,. in keys
                  */
                 if (!(isalnum((uchar) *cp) || *cp == '_' || *cp == '-' || *cp == '+' || *cp == '.')) {
@@ -265,6 +265,7 @@ Token getNextJsonToken(MprBuf *buf, wchar **token, JsonState *js)
         if (buf) {
             mprAddNullToBuf(buf);
         }
+        while (*cp && isspace((int) *cp)) cp++;
         if (*cp == ',' || *cp == ':') {
             cp++;
         } else if (*cp != '}' && *cp != ']' && *cp != '\0' && *cp != '\n' && *cp != '\r' && *cp != ' ') {
@@ -434,7 +435,7 @@ PUBLIC EjsString *ejsToJSON(Ejs *ejs, EjsAny *vp, EjsObj *options)
 }
 
 
-//  MOB - should merge this with MPR routines
+//  TODO - should merge this with MPR routines
 
 PUBLIC EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *vp, EjsObj *options)
 {
@@ -446,7 +447,7 @@ PUBLIC EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *vp, EjsObj *options)
     memset(&json, 0, sizeof(Json));
     json.depth = 99;
     json.quotes = 1;
-    json.indent = sclone("  ");
+    json.indent = sclone("    ");
 
     if (options) {
         json.options = options;
@@ -683,7 +684,7 @@ PUBLIC void ejsConfigureJSONType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

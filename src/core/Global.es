@@ -6,7 +6,7 @@
 
 module ejs {
 
-    //  MOB - fix order
+    //  TODO - fix order
 
     /**
         Constant set to true in all Ejscript interpreters
@@ -26,14 +26,14 @@ module ejs {
      */
     public namespace public
 
-    //  MOB - is this used as a global?
+    //  TODO - is this used as a global?
     /** 
         The internal namespace used to make entities visible within a single module only.
         @spec ejs
      */
     public namespace internal
 
-    //  MOB -- remove iterator namespace
+    //  TODO -- remove iterator namespace
     /** 
         The iterator namespace used to define iterators.
         @spec ejs
@@ -138,7 +138,7 @@ module ejs {
      */
     native function assert(condition: Boolean): Void
 
-    //  MOB - is this used?
+    //  TODO - is this used?
     /** 
         Replace the base type of a type with an exact clone. 
         @param klass Class in which to replace the base class.
@@ -194,10 +194,9 @@ module ejs {
         @param src Source object
         @param options Control options
         @option combine Boolean. If true, then support key prefixes "+", "=", "-", "?" to add, assign and subtract 
-            and conditionally assign key values.
-            When adding string properties, values will be appended using a space separator. Extra spaces will not 
-            be removed on subtraction.
-            Arrays with string values may also be combined using the key prefixes. 
+            and conditionally assign key values. When adding string properties, values will be appended using a 
+            space separator. Extra spaces will not be removed on subtraction.
+            Arrays with string values may also be combined using these key prefixes. 
         @option overwrite Boolean. If true, then overwrite existing properties in the destination object. Defaults to true.
         @option deep Boolean. If true, then recursively copy the properties of any objects referenced in the source object.
             Otherwise, the copy is only one level deep. Defaults to true.
@@ -312,7 +311,7 @@ module ejs {
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

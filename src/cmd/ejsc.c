@@ -42,7 +42,6 @@ MAIN(ejscMain, int argc, char **argv, char **envp)
         Initialize the Multithreaded Portable Runtime (MPR)
      */
     mpr = mprCreate(argc, argv, 0);
-    mprSetAppName(argv[0], 0, 0);
     app = mprAllocObj(App, manageApp);
     mprAddRoot(app);
     mprAddStandardSignals();
@@ -194,7 +193,7 @@ MAIN(ejscMain, int argc, char **argv, char **envp)
             }
 
         } else if (strcmp(argp, "--version") == 0 || strcmp(argp, "-V") == 0) {
-            mprPrintf("%s-%s\n", BIT_TITLE, BIT_VERSION, BIT_BUILD_NUMBER);
+            mprPrintf("%s\n", BIT_TITLE, EJS_VERSION);
             return 0;
 
         } else if (strcmp(argp, "--warn") == 0) {
@@ -271,6 +270,9 @@ MAIN(ejscMain, int argc, char **argv, char **envp)
     if ((ejs = ejsCreateVM(0, 0, ejsFlags)) == 0) {
         return MPR_ERR_MEMORY;
     }
+#if UNUSED
+    mprRunDispatcher(ejs->dispatcher);
+#endif
     if (ejsLoadModules(ejs, searchPath, app->modules) < 0) {
         return MPR_ERR_CANT_READ;
     }
@@ -314,7 +316,10 @@ MAIN(ejscMain, int argc, char **argv, char **envp)
     if (cp->errorCount > 0) {
         err++;
     }
-    mprDestroy(MPR_EXIT_DEFAULT);
+    app->ejs = 0;
+    app->compiler = 0;
+    ejsDestroy(ejs);
+    mprDestroy(MPR_EXIT_IMMEDIATE);
     return err;
 }
 
@@ -380,7 +385,7 @@ int main(int argc, char **argv)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

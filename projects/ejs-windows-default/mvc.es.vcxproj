@@ -95,9 +95,9 @@
   </Link>
 
   <CustomBuildStep>
-    <Command>cd ..\..\src\jems\ejs.mvc
+    <Command>cd ..\..\src\ejs.mvc
 copy mvc.es $(BinDir)
-cd ..\..\..\projects\ejs-windows-default</Command>
+cd ..\..\projects\ejs-windows-default</Command>
     <Outputs>$(BinDir)\mvc.es</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>

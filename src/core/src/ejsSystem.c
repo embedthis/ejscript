@@ -23,7 +23,7 @@ static EjsString *system_hostname(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
  */
 static EjsString *system_ipaddr(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    //  MOB - move this into MPR and call mprSetIpAddr
+    //  TODO - move this into MPR and call mprSetIpAddr
 #if BIT_UNIX_LIKE || BIT_WIN_LIKE
     struct addrinfo *res, *reslist, hints;
     cchar           *ip;
@@ -111,7 +111,7 @@ PUBLIC void ejsConfigureSystemType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

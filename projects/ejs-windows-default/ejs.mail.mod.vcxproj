@@ -95,9 +95,9 @@
   </Link>
 
   <CustomBuildStep>
-    <Command>cd ..\..\src\jems\ejs.mail
+    <Command>cd ..\..\src\ejs.mail
 "$(BinDir)\ejsc" --out "$(BinDir)/ejs.mail.mod"  --optimize 9 *.es
-cd ..\..\..\projects\ejs-windows-default</Command>
+cd ..\..\projects\ejs-windows-default</Command>
     <Outputs>$(BinDir)\ejs.mail.mod</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>

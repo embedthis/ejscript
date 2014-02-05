@@ -127,6 +127,10 @@ static EjsArray *regex_exec(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
     } else {
         start = rp->endLastMatch;
     }
+    if (start < 0 || start >= str->length) {
+        rp->endLastMatch = 0;
+        return ESV(null);
+    }
     rp->matched = 0;
     assert(rp->compiled);
     count = pcre_exec(rp->compiled, NULL, str->value, (int) str->length, start, 0, matches, sizeof(matches) / sizeof(int));
@@ -424,7 +428,7 @@ PUBLIC void ejsConfigureRegExpType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

@@ -19,11 +19,11 @@ extern "C" {
 /*
     Compiler validation modes. From "use standard|strict"
  */
-//  MOB DOC
+//  TODO DOC
 #define PRAGMA_MODE_STANDARD    1               /* Standard unstrict mode */
 #define PRAGMA_MODE_STRICT      2               /* Strict mode */
 
-//  MOB DOC
+//  TODO DOC
 #define STRICT_MODE(cp)         (cp->fileState->strict)
 
 /*
@@ -36,7 +36,7 @@ extern "C" {
 /*
     Phases for AST processing
  */
-//  MOB DOC
+//  TODO DOC
 #define EC_PHASE_DEFINE         0           /* Define types, functions and properties in types */
 #define EC_PHASE_CONDITIONAL    1           /* Do conditional processing, hoisting and then type fixups */
 #define EC_PHASE_FIXUP          2           /* Fixup type references */
@@ -114,12 +114,12 @@ typedef struct EcLocation {
 typedef struct EcNode   *Node;
 #endif
 
-//  MOB DOC
+//  TODO DOC
 /*
     Structure for code generation buffers
  */
 typedef struct EcCodeGen {
-//  MOB DOC
+//  TODO DOC
     MprBuf      *buf;                           /* Code generation buffer */
     MprList     *jumps;                         /* Break/continues to patch for this code block */
     MprList     *exceptions;                    /* Exception handlers for this code block */
@@ -133,7 +133,7 @@ typedef struct EcCodeGen {
 } EcCodeGen;
 
 
-//  MOB DOC
+//  TODO DOC
 typedef struct EcNode {
     char                *kindName;              /* Node kind string */
 #if BIT_DEBUG
@@ -293,7 +293,7 @@ typedef struct EcNode {
         struct {
             Node        nameExpr;           /* Name expression */
             Node        qualifierExpr;      /* Qualifier expression */
-            EjsObj      *nsvalue;           /* Initialization value (MOB - remove) */
+            EjsObj      *nsvalue;           /* Initialization value (TODO - remove) */
             uint        instanceVar  : 1;   /* Instance or static var (if defined in class) */
             uint        isAttribute  : 1;   /* Attribute identifier "@" */
             uint        isDefault    : 1;   /* use default namespace */
@@ -572,7 +572,7 @@ typedef int (*EcStreamGet)(struct EcStream *stream);
  */
 #define EC_STREAM_EOL       0x1                 /* End of line */
 
-//  MOB DOC
+//  TODO DOC
 
 typedef struct EcStream {
     struct EcCompiler *compiler;                /* Compiler back reference */
@@ -590,7 +590,7 @@ typedef struct EcStream {
 /*
     Parse source code from a file
  */
-//  MOB DOC
+//  TODO DOC
 typedef struct EcFileStream {
     EcStream    stream;
     MprFile     *file;
@@ -600,7 +600,7 @@ typedef struct EcFileStream {
 /*
     Parse source code from a memory block
  */
-//  MOB DOC
+//  TODO DOC
 typedef struct EcMemStream {
     EcStream    stream;
 } EcMemStream;
@@ -609,7 +609,7 @@ typedef struct EcMemStream {
 /*
     Parse input from the console (or file if using ejsh)
  */
-//  MOB DOC
+//  TODO DOC
 typedef struct EcConsoleStream {
     EcStream    stream;
 } EcConsoleStream;
@@ -618,7 +618,7 @@ typedef struct EcConsoleStream {
 /*
     Program source input tokens
  */
-//  MOB DOC
+//  TODO DOC
 typedef struct EcToken {
     wchar       *text;                  /* Token text */
     int         length;                 /* Length of text in characters */
@@ -643,7 +643,7 @@ typedef struct EcToken {
 #define EC_JUMP_CONTINUE    0x2
 #define EC_JUMP_GOTO        0x4
 
-//  MOB DOC
+//  TODO DOC
 typedef struct EcJump {
     int             kind;               /* Break, continue */
     int             offset;             /* Code offset to patch */
@@ -655,7 +655,7 @@ typedef struct EcJump {
     Current parse state. Each non-terminal production has its own state.
     Some state fields are inherited. We keep a linked list from EcCompiler.
  */
-//  MOB DOC
+//  TODO DOC
 typedef struct EcState {
     struct EcState  *next;                  /* State stack */
     uint            blockIsMethod    : 1;   /* Current function is a method */
@@ -717,7 +717,7 @@ PUBLIC void     ecStartBreakableStatement(struct EcCompiler *cp, int kinds);
 /*
     Primary compiler control structure
  */
-//  MOB DOC
+//  TODO DOC
 typedef struct EcCompiler {
     /*
         Properties ordered to make debugging easier
@@ -734,7 +734,7 @@ typedef struct EcCompiler {
     char        *docToken;                  /* Last doc token */
 
     EcState     *fileState;                 /* Top level state for the file */
-//  MOB -- these are risky and should be moved into state. A nested block, directive class etc willl modify
+//  TODO -- these are risky and should be moved into state. A nested block, directive class etc willl modify
     EcState     *directiveState;            /* State for the current directive - used in parse and CodeGen */
     EcState     *blockState;                /* State for the current block */
 
@@ -792,8 +792,8 @@ typedef struct EcCompiler {
 
 /********************************** Prototypes *******************************/
 
-//  MOB -- reorder
-//  MOB DOC
+//  TODO -- reorder
+//  TODO DOC
 PUBLIC int          ecAddModule(EcCompiler *cp, EjsModule *mp);
 PUBLIC EcNode       *ecAppendNode(EcNode *np, EcNode *child);
 PUBLIC int          ecAstFixup(EcCompiler *cp, struct EcNode *np);
@@ -891,7 +891,7 @@ PUBLIC void     ecAdjustCodeLength(EcCompiler *cp, int adj);
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

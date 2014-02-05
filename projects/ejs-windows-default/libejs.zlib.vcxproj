@@ -100,7 +100,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <ClCompile Include="..\..\src\jems\ejs.zlib\ejsZlib.c" />
+    <ClCompile Include="..\..\src\ejs.zlib\ejsZlib.c" />
   </ItemGroup>
 
   <ItemDefinitionGroup>

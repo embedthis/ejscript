@@ -89,8 +89,12 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             mprSetCmdlineLogging(1);
 
         } else if (smatch(argp, "--version") || smatch(argp, "-V")) {
-            mprPrintf("%s-%s\n", BIT_VERSION, BIT_BUILD_NUMBER);
+            mprPrintf("%s\n", EJS_VERSION);
             return 0;
+
+        } else if (*argp == '-' && isdigit((uchar) argp[1])) {
+            mprStartLogging(sfmt("stderr:%s", &argp[1]), 0);
+            mprSetCmdlineLogging(1);
 
         } else {
             /* Ignore */
@@ -103,6 +107,9 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     if ((ejs = ejsCreateVM(argc, (cchar **) &argv[0], 0)) == 0) {
         return MPR_ERR_MEMORY;
     }
+#if UNUSED
+    mprRunDispatcher(ejs->dispatcher);
+#endif
     app->ejs = ejs;
     if (ejsLoadModules(ejs, searchPath, NULL) < 0) {
         return MPR_ERR_CANT_READ;
@@ -132,8 +139,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
         err = mpr->exitStatus;
     }
     app->ejs = 0;
-    mprTerminate(MPR_EXIT_DEFAULT, err);
-    ejsDestroyVM(ejs);
+    ejsDestroy(ejs);
     mprDestroy(MPR_EXIT_DEFAULT);
     return err;
 }
@@ -150,7 +156,7 @@ static void manageApp(App *app, int flags)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

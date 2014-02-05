@@ -959,7 +959,7 @@ PUBLIC EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsO
             /*
                 Note: this only copies between the read/write positions of the source byte array
              */
-            //  MOB - should use RC value (== len)
+            //  TODO - should use RC value (== len)
             ejsCopyToByteArray(ejs, ap, ap->writePosition, (char*) &bp->value[bp->readPosition], len);
             ap->writePosition += len;
             wrote += len;
@@ -1160,7 +1160,7 @@ PUBLIC bool ejsMakeRoomInByteArray(Ejs *ejs, EjsByteArray *ap, ssize require)
     ssize   newLen;
 
     /*
-        MOB - should this do ejsResetByteArray if empty
+        TODO - should this do ejsResetByteArray if empty
      */
     if (room(ap) < require) {
         if (ap->emitter && availableBytes(ap)) {
@@ -1326,7 +1326,7 @@ PUBLIC ssize ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, ssize offset, cchar 
         return EJS_ERR;
     }
     for (i = 0; i < length; i++) {
-        //  MOB OPT - memcpy
+        //  TODO OPT - memcpy
         ba->value[offset++] = data[i];
     }
     return length;
@@ -1443,7 +1443,7 @@ PUBLIC void ejsConfigureByteArrayType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

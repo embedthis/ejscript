@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
    <title>Class View</title>
 
@@ -88,7 +88,7 @@ Objects are stored in the session state using JSON serialization.</td></tr>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#View'><b>View</b></a>(request: <a href='Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Constructor method to initialize a new View.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#alert'><b>alert</b></a>(text: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a status alert area
-MOB - review?.</td></tr>
+TODO - review?.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#anchor'><b>anchor</b></a>(text: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit an anchor.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#button'><b>button</b></a>(name: <a href='String.html'>String</a>, label: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render a form button.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#buttonLink'><b>buttonLink</b></a>(text: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render a link button.</td></tr>
@@ -150,7 +150,7 @@ MOB - review?.</td></tr>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Emit a status alert area
-MOB - review?. </dd></dl>
+TODO - review?. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>text: <a href='String.html'>String</a> </td><td>Initial message text to display. Status messages may be updated by calling the  Controller.status function.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional extra options. See <a href='#View'>View</a> for a list of the standard options. [default: expression]</td></tr></table></dd>
@@ -210,7 +210,7 @@ is clicked, the associated URI will be invoked.</dd></dl>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Render a chart. The chart control can display static or dynamic tabular data. The client chart control manages
 sorting by column, dynamic data refreshes, pagination and clicking on rows.
-MOB -- update.</dd></dl>
+TODO -- update.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>data: <a href='Array.html'>Array</a> </td><td>Optional initial data for the control. The data option may be used with the refresh option to  dynamically refresh the data.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Object Optional extra options. See also <a href='#View'>View</a> for a list of the standard options. [default: expression]</td></tr></table></dd>
@@ -242,7 +242,7 @@ MOB -- update.</dd></dl>
 <div class='apiSig'>  ejs.web  currency(fmt: <a href='String.html'>String</a>): <a href='String.html'>String</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Temporary helper function to format a number as currency. MOB.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Temporary helper function to format a number as currency. TODO.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>fmt: <a href='String.html'>String</a> </td><td>Format string.</td></tr></table></dd>
@@ -256,7 +256,7 @@ MOB -- update.</dd></dl>
 <div class='apiSig'>  ejs.web  date(fmt: <a href='String.html'>String</a>): <a href='String.html'>String</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Temporary helper function to format the date. MOB - should move to helpers somewhere.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Temporary helper function to format the date. TODO - should move to helpers somewhere.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>fmt: <a href='String.html'>String</a> </td><td>Format string.</td></tr></table></dd>
@@ -300,7 +300,7 @@ a dynamically refreshing division.</dd></dl>
 <tr class='param'><td class='param'>kinds: <a href='Object.html'>Object</a> </td><td>Kinds of flash messages to display. May be a single string  ("error", "inform", "message", "warning"), an array of strings or null. If set to null (or omitted),  then all flash messages will be displayed. [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional extra options. See <a href='#View'>View</a> for a list of the standard options. [default: expression]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
-<td class='param'>retain</td><td>Number. Number of seconds to retain the message. If <= 0, the message is retained until another message is displayed. Default is 0. MOB - this default implies it is displayed for zero seconds.</td></tr>
+<td class='param'>retain</td><td>Number. Number of seconds to retain the message. If <= 0, the message is retained until another message is displayed. Default is 0. TODO - this default implies it is displayed for zero seconds.</td></tr>
 </table></dd>
 </dl><dl><dt>Example</dt>
 <dd><pre>&lt;% flash("status") %&gt;
@@ -318,7 +318,7 @@ a dynamically refreshing division.</dd></dl>
 This token will automatically be included when the form is submitted and will be validated by the 
 receiving Controller. To disable this functionality, set options.nosecurity to true. This security token
 will be generated once for the view and the same token will be used by all forms on the view page. To use
-security tokens outside a form, you need to manually call <a href='#securityToken'>securityToken</a> in the &lt;head> section of the page.<br/><br/>MOB -- much more doc here
+security tokens outside a form, you need to manually call <a href='#securityToken'>securityToken</a> in the &lt;head> section of the page.<br/><br/>TODO -- much more doc here
 - Talk about controllers updating the record.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
@@ -498,12 +498,12 @@ list("priority", [{id: 77, field: "value", ...}, ...])</pre></dd></dl>
 <div class='apiSig'>  ejs.web  number(fmt: <a href='String.html'>String</a>): <a href='String.html'>String</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Temporary helper function to format a number. MOB.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Temporary helper function to format a number. TODO.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>fmt: <a href='String.html'>String</a> </td><td>Format string.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A formatted string.</dd></dl>
+<dd>A formatted string 0.</dd></dl>
 </div>
 </div>
 <hr />
@@ -674,7 +674,7 @@ manages sorting by column, dynamic data refreshes and clicking on rows or cells.
 <td class='param'>styleCells</td><td>2D Array of styles to use for the table body cells. Can also provide an array to the  column.style property.</td></tr>
 <td class='param'>styleColumns</td><td>Array of styles to use for the table body columns. Can also use the style option in the columns option.</td></tr>
 <td class='param'>styleRows</td><td>Array of styles to use for the table body rows.</td></tr>
-<td class='param'>title</td><td>String Table title. Column options: <ul> <li>align - Will right-align numbers by default</li> <li>click - URI to invoke if the cell is clicked</li> <li>edit - MOB </li> <li>formatter - Function to invoke to format the value to display</li> <li>header - Header text for the column</li> <li>style - Cell styles</li> <li>width - Column width. Can be a string percentage or numeric pixel width</li> </ul></td></tr>
+<td class='param'>title</td><td>String Table title. Column options: <ul> <li>align - Will right-align numbers by default</li> <li>click - URI to invoke if the cell is clicked</li> <li>edit - TODO </li> <li>formatter - Function to invoke to format the value to display</li> <li>header - Header text for the column</li> <li>style - Cell styles</li> <li>width - Column width. Can be a string percentage or numeric pixel width</li> </ul></td></tr>
 </table></dd>
 </dl><dl><dt>Example</dt>
 <dd><pre>&lt;% table(gridData, { refresh: "\@update", period: 1000, pivot: true" }) %&gt;
@@ -811,7 +811,7 @@ A "writable" event will be issued when the stream can again absorb more data.Thi
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2013. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>

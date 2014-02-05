@@ -93,7 +93,7 @@ static EjsPath *app_exePath(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 /*  
     Exit the application
     static function exit(status: Number, how: String = "default"): void
-    MOB - status is not implemented
+    TODO - status is not implemented
  */
 static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
@@ -109,14 +109,18 @@ static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
     if (scmp(how, "default") == 0) {
         mode = MPR_EXIT_DEFAULT;
+    } else if (scmp(how, "abort") == 0) {
+        mode = MPR_EXIT_ABORT;
     } else if (scmp(how, "immediate") == 0) {
         mode = MPR_EXIT_IMMEDIATE;
     } else if (scmp(how, "graceful") == 0) {
         mode = MPR_EXIT_GRACEFUL;
+    } else if (scmp(how, "safe") == 0) {
+        mode = MPR_EXIT_GRACEFUL | MPR_EXIT_SAFE;
     } else {
-        mode = MPR_EXIT_NORMAL;
+        mode = MPR_EXIT_IMMEDIATE;
     }
-    mprTerminate(mode, status);
+    mprShutdown(mode, status);
     ejsAttention(ejs);
     return 0;
 }
@@ -264,7 +268,7 @@ static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 /*  
     Pause the application. This services events while asleep.
     static function sleep(delay: Number = -1): void
-    MOB - sleep currently throws if an exception is generated in an event callback (worker).
+    TODO - sleep currently throws if an exception is generated in an event callback (worker).
     It should not.
  */
 static EjsObj *app_sleep(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
@@ -299,6 +303,15 @@ static EjsNumber *app_uid(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
+/*  
+    static function getpass(prompt: String): String
+ */
+static EjsString *app_getpass(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    return ejsCreateStringFromAsc(ejs, mprGetPassword((argc > 0) ? ejsToMulti(ejs, argv[0]) : "Password: "));
+}
+
+
 /*********************************** Factory **********************************/
 
 PUBLIC void ejsConfigureAppType(Ejs *ejs)
@@ -321,24 +334,21 @@ PUBLIC void ejsConfigureAppType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_App_env, app_env);
     ejsBindMethod(ejs, type, ES_App_exit, app_exit);
     ejsBindMethod(ejs, type, ES_App_getenv, app_getenv);
-#if ES_App_gid
     ejsBindMethod(ejs, type, ES_App_gid, app_gid);
-#endif
     ejsBindMethod(ejs, type, ES_App_putenv, app_putenv);
     ejsBindMethod(ejs, type, ES_App_pid, app_pid);
     ejsBindMethod(ejs, type, ES_App_run, app_run);
     ejsBindAccess(ejs, type, ES_App_search, app_search, app_set_search);
     ejsBindMethod(ejs, type, ES_App_sleep, app_sleep);
-#if ES_App_uid
     ejsBindMethod(ejs, type, ES_App_uid, app_uid);
-#endif
+    ejsBindMethod(ejs, type, ES_App_getpass, app_getpass);
 }
 
 
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

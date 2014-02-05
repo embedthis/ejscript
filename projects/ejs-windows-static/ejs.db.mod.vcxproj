@@ -95,9 +95,9 @@
   </Link>
 
   <CustomBuildStep>
-    <Command>cd ..\..\src\jems\ejs.db
+    <Command>cd ..\..\src\ejs.db
 $(BinDir)/ejsc --out $(BinDir)/ejs.db.mod  --optimize 9 *.es
-cd ..\..\..\projects\ejs-windows-static</Command>
+cd ..\..\projects\ejs-windows-static</Command>
     <Outputs>$(BinDir)\ejs.db.mod</Outputs>
   </CustomBuildStep>
   </ItemDefinitionGroup>

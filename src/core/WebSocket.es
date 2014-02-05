@@ -162,14 +162,17 @@ module ejs {
          */
         native function send(...content): Number
 
+        /* 
+            WARNING: these must match the equivalent http.h definitions 
+         */
+        /**< sendBlock mode to not block and absorb only what can fit into the queue */
+        static const NON_BLOCK = 0x1
+
         /**< sendBlock mode to buffer the content */
-        static const BUFFER = 0x1
+        static const BUFFER = 0x2
 
         /**< sendBlock mode to block waiting for the content to be sent */
-        static const BLOCK = 0x2
-
-        /**< sendBlock mode to not block and absorb only what can fit into the queue */
-        static const NON_BLOCK = 0x4
+        static const BLOCK = 0x4
 
         /**
             Send a block of data with options to control message framing and buffering. 
@@ -209,7 +212,7 @@ module ejs {
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

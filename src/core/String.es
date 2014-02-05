@@ -134,7 +134,7 @@ module ejs {
          */
         native function indexOf(pattern: String, startIndex: Number = 0): Number
 
-        //  MOB - should be isNumber
+        //  TODO - should be isNumber
         /**
             Is there is at least one character in the string and all characters are digits.
             @spec ejs
@@ -207,7 +207,7 @@ module ejs {
         /**
             Match a pattern using a regular expression
             @param pattern The regular expression pattern to search for
-            @return Returns an array of matching substrings.
+            @return If matches found, returns an array of matching substrings. Otherwise returns null.
          */
         native function match(pattern: RegExp): Array
 
@@ -517,7 +517,7 @@ module ejs {
         function % (arg: Object): String
             format(arg)
 
-//  MOB - Cleanup
+//  TODO - Cleanup
         /** 
             @hide 
             @deprecated 2.0.0
@@ -540,7 +540,7 @@ module ejs {
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

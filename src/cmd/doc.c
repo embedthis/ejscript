@@ -600,8 +600,8 @@ static void generateHtmlHeader(EjsMod *mp, cchar *script, cchar *fmt, ... )
     /*
         Header + Style sheet
      */
-    out(mp, "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n");
-    out(mp, "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n");
+    out(mp, "<!DOCTYPE html>\n");
+    out(mp, "<html>\n");
     out(mp, "<head>\n   <title>%s</title>\n\n", title);
 
     out(mp, "   <link rel=\"stylesheet\" type=\"text/css\" href=\"doc.css\" />\n");
@@ -635,7 +635,7 @@ static void generateTerms(EjsMod *mp)
         "<div class=\"terms\">\n"
         "   <p class=\"terms\">\n"
         "       <a href=\"http://embedthis.com/\">"
-        "       Embedthis Software LLC, 2003-2013. All rights reserved. "
+        "       Embedthis Software LLC, 2003-2014. All rights reserved. "
         "Embedthis is a trademark of Embedthis Software LLC.</a>\n"
         "   </p>\n"
         "</div>");
@@ -2578,7 +2578,7 @@ static MprKeyValue *createKeyPair(wchar *key, wchar *value)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

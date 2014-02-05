@@ -10,7 +10,7 @@
 
 /*********************************** Locals ***********************************/
 
-//  MOB - should not be fixed
+//  TODO - should not be fixed
 #if !defined(BIT_MAX_REGEX_MATCHES)
     #define BIT_MAX_REGEX_MATCHES 128
 #endif
@@ -1738,13 +1738,11 @@ static EjsString *trimString(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 {
     EjsString   *pattern;
 
-    assert(argc == 0 || (argc == 1 && ejsIs(ejs, argv[0], String)));
-
     if (argc == 0) {
         return trim(ejs, sp, NULL, MPR_TRIM_START | MPR_TRIM_END);
 
     } else {
-        pattern = (EjsString*) argv[0];
+        pattern = (EjsString*) ejsToString(ejs, argv[0]);
         return trim(ejs, sp, pattern, MPR_TRIM_START | MPR_TRIM_END);
     }
 }
@@ -2153,7 +2151,6 @@ PUBLIC int ejsContainsAsc(Ejs *ejs, EjsString *sp, cchar *pat)
     int     i, j, k;
 
     assert(sp);
-    assert(pat);
 
     if (pat == 0 || *pat == '\0' || sp == 0) {
         return 0;
@@ -2439,7 +2436,7 @@ PUBLIC EjsString *ejsInternWide(Ejs *ejs, wchar *value, ssize len)
     step = 0;
 
     lock(ip);
-    //  MOB - accesses should be debug only
+    //  TODO - accesses should be debug only
     ip->accesses++;
     index = whash(value, len) % ip->size;
     if ((head = &ip->buckets[index]) != NULL) {
@@ -2767,19 +2764,21 @@ PUBLIC void ejsManageString(EjsString *sp, int flags)
         mprMark(TYPE(sp));
 
     } else if (flags & MPR_MANAGE_FREE) {
-        ip = ((EjsService*) MPR->ejsService)->intern;
         mp = MPR_GET_MEM(sp);
         /*
             Other threads race with this if doing parallel GC (the default). The revive() routine may have 
             marked the string, so test here if it has been revived and only free if not.
             OPT - better to be lock free and try lock. If failed, GC will get next time
          */
-        lock(ip);
-        if (mp->mark != MPR->heap->mark) {
-            ip->count--;
-            unlinkString(sp);
+        if (MPR->ejsService) {
+            ip = ((EjsService*) MPR->ejsService)->intern;
+            lock(ip);
+            if (mp->mark != MPR->heap->mark) {
+                ip->count--;
+                unlinkString(sp);
+            }
+            unlock(ip);
         }
-        unlock(ip);
     }
 }
 
@@ -2908,7 +2907,7 @@ PUBLIC void ejsConfigureStringType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

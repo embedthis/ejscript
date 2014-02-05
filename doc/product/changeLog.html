@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Embedthis Ejscript 2.3.2 Documentation</title>
+    <title>Embedthis Ejscript 2.3.4 Documentation</title>
     <meta name="keywords" content="Ejscript, JavaScript, ECMAScript, Server-Side JavaScript, Dynamic languages, 
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
@@ -34,9 +34,8 @@
         <div class="contentRight">
             <h1>Quick Nav</h1>
             <ul>
+                <li><a href="#r232">Release 2.3.4</a></li>
                 <li><a href="#r232">Release 2.3.2</a></li>
-                <li><a href="#r231">Release 2.3.1</a></li>
-                <li><a href="#r230">Release 2.3.0</a></li>
                 <li><a href="#r210">Release 2.1.0</a></li>
                 <li><a href="#r200">Release 2.0.0</a></li>
                 <li><a href="#r113">Release 1.1.4</a></li>
@@ -56,16 +55,74 @@
             <p>Please do not mine this list and create security advisories.
             Please see the <a href="http://github.com/embedthis/ejs-2/issues">Ejscript Issue Database</a> 
             for the official product issue list and for comprehensive CVE dispositions.</p>
+
+            <a id="r234"></a>
+            <h2 class="section">Changes in 2.3.4</h2>
+            <h3>Minor Features</h3>
+            <ul>
+                <li>Update MPR and HTTP packs to latest versions
+                    <a href="https://github.com/embedthis/ejs-2/issues/61">[issue 61].</a></li>
+                <li>Sign installation packages
+                    <a href="https://github.com/embedthis/ejs-2/issues/59">[issue 59].</a></li>
+            </ul>
+            <h3>Fixes</h3>
+            <ul>
+                <li>Improved shutdown support.
+                    <a href="https://github.com/embedthis/ejs-2/issues/56">[issue 56].</a></li>
+                <li>Fix package.json title
+                    <a href="https://github.com/embedthis/ejs-2/issues/57">[issue 57].</a></li>
+                <li>Better support for SemVer, remove build numbers
+                    <a href="https://github.com/embedthis/ejs-2/issues/58">[issue 58].</a></li>
+                <li>Fix MPR handling of time zone warping
+                    <a href="https://github.com/embedthis/ejs-2/issues/53">[issue 53].</a></li>
+            </ul>
+
+            <a id="r233"></a>
+            <h2 class="section">Changes in 2.3.3</h2>
+            <h3>Minor Features</h3>
+            <ul>
+                <li>Add support for multi-line strings using back-tick. E.g. `string`
+                    <a href="https://github.com/embedthis/ejs-2/issues/41">[issue 41].</a></li>
+                <li>Add support for <a href="http://embedthis.com/products/pak/">Pak</a> packages.
+                    Remove ejs.jem in favor of Pak. Use <a href="http://semver.org/">SemVer</a> for versioning.
+                    <a href="https://github.com/embedthis/ejs-2/issues/50">[issue 50].</a></li>
+                <li>Add App.getpass to read a password from the console
+                    <a href="https://github.com/embedthis/ejs-2/issues/51">[issue 51].</a></li>
+                <li>Add Path.trimComponents
+                    <a href="https://github.com/embedthis/ejs-2/issues/52">[issue 52].</a></li>
+                <li>Add App.home and add ~/.ejs to the module search path.
+                    <a href="https://github.com/embedthis/ejs-2/issues/54">[issue 54].</a></li>
+            </ul>
+            <h3>Fixes</h3>
+            <ul>
+                <li>ejs.unix cp() command. Was incorrectly handling destination paths when options.tree == true.
+                    <a href="https://github.com/embedthis/ejs-2/issues/42">[issue 42].</a></li>
+                <li>Added Add Path.trimDirs to trim directory components.
+                    <a href="https://github.com/embedthis/ejs-2/issues/43">[issue 43].</a></li>
+                <li>Parse bad literal causes compiler crash.
+                    <a href="https://github.com/embedthis/ejs-2/issues/44">[issue 44].</a></li>
+                <li>Fix Http and WebSocket retries to different hosts. Was setting Host header incorrectl
+                    <a href="https://github.com/embedthis/ejs-2/issues/45">[issue 45].</a></li>
+                <li>Fix RegExp.exec with bad start argument.
+                    <a href="https://github.com/embedthis/ejs-2/issues/46">[issue 46].</a></li>
+                <li>ejs.tar for handling directories and hidden headers.
+                    <a href="https://github.com/embedthis/ejs-2/issues/47">[issue 47].</a></li>
+                <li>Fix name of Zlib uncompress destination filename.
+                    <a href="https://github.com/embedthis/ejs-2/issues/48">[issue 48].</a></li>
+                <li>GC when loading modules fails to retain module file.
+                    <a href="https://github.com/embedthis/ejs-2/issues/49">[issue 49].</a></li>
+                <li>Iterating over arrays and object where elements are deleted in the loop body.
+                    <a href="https://github.com/embedthis/ejs-2/issues/53">[issue 53].</a></li>
+            </ul>
+
+
             <a id="r232"></a>
             <h2 class="section">Changes in 2.3.2</h2>
             <h3>Minor Features</h3>
             <ul>
                 <li>Add support for Ecmascript6 functions in object literals. <br/> 
                     E.g. o = { fun() { print("Hello"); }}
-                    <a href="https://github.com/embedthis/ejs-2/issues/NN">[issue NN].</a></li>
-            </ul>
-            <h3>Fixes</h3>
-            <ul>
+                    <a href="https://github.com/embedthis/ejs-2/issues/40">[issue 40].</a></li>
             </ul>
             <a id="r231"></a>
             <h2 class="section">Changes in 2.3.1</h2>
@@ -808,7 +865,7 @@
 <!-- BeginDsi "dsi/bottom.html" -->
 	<div class="bottom">
 		<p class="footnote"> 
-            <a href="../product/copyright.html" >&copy; Embedthis Software LLC, 2003-2013. 
+            <a href="../product/copyright.html" >&copy; Embedthis Software LLC, 2003-2014. 
             All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
 		</p>
 	</div>

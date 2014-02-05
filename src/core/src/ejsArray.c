@@ -677,7 +677,9 @@ static EjsNumber *nextArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
         return 0;
     }
     data = ap->data;
-
+    if (ap->length < ip->length) {
+        ip->length = ap->length;
+    }
     for (; ip->index < ip->length; ip->index++) {
         vp = data[ip->index];
         assert(vp);
@@ -709,15 +711,17 @@ static EjsIterator *getArrayIterator(Ejs *ejs, EjsArray *ap, int argc, EjsObj **
 static EjsObj *nextArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 {
     EjsArray    *ap;
-    EjsObj          *vp, **data;
+    EjsObj      *vp, **data;
 
     ap = (EjsArray*) ip->target;
     if (!ejsIs(ejs, ap, Array)) {
         ejsThrowReferenceError(ejs, "Wrong type");
         return 0;
     }
-
     data = ap->data;
+    if (ap->length < ip->length) {
+        ip->length = ap->length;
+    }
     for (; ip->index < ip->length; ip->index++) {
         vp = data[ip->index];
         assert(vp);
@@ -804,7 +808,7 @@ static bool compareArrayElement(Ejs *ejs, EjsObj *v1, EjsObj *v2)
     if (ejsIs(ejs, v1, Path)) {
         return smatch(((EjsPath*) v1)->value, ((EjsPath*) v2)->value);
     }
-    //  MOB - should expand for other types 
+    //  TODO - should expand for other types 
     return 0;
 }
 
@@ -1893,7 +1897,7 @@ PUBLIC void ejsConfigureArrayType(Ejs *ejs)
 /*
     @copy   default
 
-    Copyright (c) Embedthis Software LLC, 2003-2013. All Rights Reserved.
+    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
     You may use the Embedthis Open Source license or you may acquire a 

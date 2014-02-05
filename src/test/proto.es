@@ -57,7 +57,7 @@ print(Cube)
 // Cube.prototype.constructor = Cube
 
 Cube.prototype.toString = function() {
-    //  MOB -- this is not being called
+    //  TODO -- this is not being called
     print("TOSTRING")
 }
 
