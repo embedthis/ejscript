@@ -97,7 +97,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
         slotsName, slotsName);
 
     if (smatch(ejsToMulti(ejs, mp->name), "ejs")) {
-        mprFprintf(file, "#ifndef EJS_VERSION\n    #define EJS_VERSION \"%s\"\n#endif\n", EJS_VERSION);
+        mprFprintf(file, "#ifndef EJS_VERSION\n    #define EJS_VERSION \"%s\"\n#endif\n", BIT_VERSION);
     }
     mprFprintf(file, "\n/*\n   Slots for the \"%@\" module \n */\n", mp->name);
 
