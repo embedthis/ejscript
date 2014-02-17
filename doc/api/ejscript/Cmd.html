@@ -156,16 +156,6 @@ creating a new process.</dd></dl>
 </dl></div>
 </div>
 <hr />
-<a name='finalize'></a>
-<div class='api'>
-<div class='apiSig'>    finalize(): <a href='Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Signal the end of writing data to the command. The finalize() call must be invoked to properly 
-signify the end of write data.</dd></dl>
-</div>
-</div>
-<hr />
 <a name='kill'></a>
 <div class='api'>
 <div class='apiSig'>static     kill(pid: <a href='Number.html'>Number</a>, signal: <a href='Number.html'>Number</a> = 2): <a href='Boolean.html'>Boolean</a>
@@ -181,6 +171,16 @@ signify the end of write data.</dd></dl>
 <a href='IOError.html'>IOError</a>: if the pid is invalid or if the requesting process does not have sufficient privilege to send the signal.
 </dd>
 </dl></div>
+</div>
+<hr />
+<a name='finalize'></a>
+<div class='api'>
+<div class='apiSig'>    finalize(): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Signal the end of writing data to the command. The finalize() call must be invoked to properly 
+signify the end of write data.</dd></dl>
+</div>
 </div>
 <hr />
 <a name='locate'></a>

@@ -101,13 +101,6 @@ the Request <a href='#uri'>uri</a> does not correspond to any physical resource 
 Each element is named by the file upload HTML input element ID in the HTML page form.</td></tr>
 <a name='finalized'></a>
    <tr><td nowrap align='center'> get </td><td>finalized</td><td><a href='Boolean.html'>Boolean</a></td><td>Has the request output been finalized. </td></tr>
-<a name='flash'></a>
-   <tr><td nowrap align='center'> </td><td>flash</td><td><a href='Object.html'>Object</a></td><td>Notification "flash" messages to pass to the next request (only). By convention, the following keys are used.
-error: Negative errors (Warnings and errors), inform: Informational / postitive feedback (note),
-warn: Negative feedback (Warnings and errors), *:: Other feedback (reminders, suggestions...).</td></tr>
-<a name='formData'></a>
-   <tr><td nowrap align='center'> </td><td>formData</td><td><a href='String.html'>String</a></td><td>The request form parameters as a string. This parameters are www-url decoded from the POST request body data. 
-This is useful to get a stable, sorted string representing the form parameters.</td></tr>
 <a name='headers'></a>
    <tr><td nowrap align='center'> </td><td>headers</td><td><a href='Object.html'>Object</a></td><td>Request Http headers. This is an object hash filled with lower-case request headers from the client. If multiple 
 headers of the same key value are defined, their contents will be catenated with a ", " separator as per the 
@@ -122,18 +115,25 @@ the top-most directory level of the application.</td></tr>
 configured.  Otherwise it will use Http "Host" header value if supplied by the client else the server IP 
 address of the accepting interface. This algorithm attempts to use the most public address available for 
 the server.</td></tr>
-<a name='input'></a>
-   <tr><td nowrap align='center'> get </td><td>input</td><td><a href='Stream.html'>Stream</a></td><td>Request content stream. This is equivalent to using "this" as Request objects are streams connected to the
-input content. Added for JSGI compliance.</td></tr>
+<a name='flash'></a>
+   <tr><td nowrap align='center'> </td><td>flash</td><td><a href='Object.html'>Object</a></td><td>Notification "flash" messages to pass to the next request (only). By convention, the following keys are used.
+error: Negative errors (Warnings and errors), inform: Informational / postitive feedback (note),
+warn: Negative feedback (Warnings and errors), *:: Other feedback (reminders, suggestions...).</td></tr>
 <a name='isSecure'></a>
    <tr><td nowrap align='center'> </td><td>isSecure</td><td><a href='Boolean.html'>Boolean</a></td><td>Flag indicating if the request is using secure communications. This means that TLS/SSL is the underlying
 protocol scheme.</td></tr>
-<a name='jsgi'></a>
-   <tr><td nowrap align='center'> static </td><td>jsgi</td><td><a href='Object.html'>Object</a></td><td>JSGI specification configuration object. </td></tr>
+<a name='formData'></a>
+   <tr><td nowrap align='center'> </td><td>formData</td><td><a href='String.html'>String</a></td><td>The request form parameters as a string. This parameters are www-url decoded from the POST request body data. 
+This is useful to get a stable, sorted string representing the form parameters.</td></tr>
 <a name='limits'></a>
    <tr><td nowrap align='center'> </td><td>limits</td><td><a href='Object.html'>Object</a></td><td>Resource limits for the request. The limits have initial default values defined by the owning HttpServer.</td></tr>
 <a name='localAddress'></a>
    <tr><td nowrap align='center'> </td><td>localAddress</td><td><a href='String.html'>String</a></td><td>Server IP address of the accepting interface. </td></tr>
+<a name='input'></a>
+   <tr><td nowrap align='center'> get </td><td>input</td><td><a href='Stream.html'>Stream</a></td><td>Request content stream. This is equivalent to using "this" as Request objects are streams connected to the
+input content. Added for JSGI compliance.</td></tr>
+<a name='jsgi'></a>
+   <tr><td nowrap align='center'> static </td><td>jsgi</td><td><a href='Object.html'>Object</a></td><td>JSGI specification configuration object. </td></tr>
 <a name='log'></a>
    <tr><td nowrap align='center'> </td><td>log</td><td><a href='Logger.html'>Logger</a></td><td>Logger object. Set to App.log. This is configured from the "log" section of the "ejsrc" config file.</td></tr>
 <a name='method'></a>
@@ -151,18 +151,6 @@ The "uri" property is read-only.
 0.</td></tr>
 <a name='params'></a>
    <tr><td nowrap align='center'> </td><td>params</td><td><a href='Object.html'>Object</a></td><td>The request form parameters plus other routing parameters. The form parameters are www-url decoded from the POST request body data. See also <a href='#form'>form</a>. </td></tr>
-<a name='pathInfo'></a>
-   <tr><td nowrap align='center'> </td><td>pathInfo</td><td><a href='String.html'>String</a></td><td>Location of the request within the application. This is the portion of the request URL after the scriptName. 
-The pathInfo is originally derrived from uri.path after splitting off the scriptName. Changes to the uri or 
-scriptName properties will not affect the pathInfo property.</td></tr>
-<a name='port'></a>
-   <tr><td nowrap align='center'> </td><td>port</td><td><a href='Number.html'>Number</a></td><td>TCP/IP port number for the server of this request. </td></tr>
-<a name='protocol'></a>
-   <tr><td nowrap align='center'> </td><td>protocol</td><td><a href='String.html'>String</a></td><td>Http request protocol (HTTP/1.0 | HTTP/1.1). </td></tr>
-<a name='query'></a>
-   <tr><td nowrap align='center'> </td><td>query</td><td><a href='String.html'>String</a></td><td>Request query string. This is the portion of the Uri after the "?". Set to null if there is no query.</td></tr>
-<a name='queryString'></a>
-   <tr><td nowrap align='center'> get </td><td>queryString</td><td><a href='String.html'>String</a></td><td>Decoded query string (URL query string). Eqivalent to the <a href='#query'>query</a> property. Added for JSGI compliance.</td></tr>
 <a name='reference'></a>
    <tr><td nowrap align='center'> </td><td>reference</td><td><a href='String.html'>String</a></td><td>Request reference string. This is the portion of the Uri after the "#". Set to null if there is no reference.</td></tr>
 <a name='referrer'></a>
@@ -177,6 +165,10 @@ output or setting status.</td></tr>
 <a name='responseHeaders'></a>
    <tr><td nowrap align='center'> </td><td>responseHeaders</td><td><a href='Object.html'>Object</a></td><td>Http response headers. This is the proposed set of headers to send with the response.
 The case of header keys is preserved.</td></tr>
+<a name='pathInfo'></a>
+   <tr><td nowrap align='center'> </td><td>pathInfo</td><td><a href='String.html'>String</a></td><td>Location of the request within the application. This is the portion of the request URL after the scriptName. 
+The pathInfo is originally derrived from uri.path after splitting off the scriptName. Changes to the uri or 
+scriptName properties will not affect the pathInfo property.</td></tr>
 <a name='route'></a>
    <tr><td nowrap align='center'> </td><td>route</td><td><a href='ejs.web-Route.html'>Route</a></td><td>Route used for the request. The route is the matching entry in the route table for the request.
 The route has properties two properties of particular interest: "name" which is the name of the route and
@@ -189,11 +181,19 @@ corresponding to the application, but middleware may modify this to be an arbitr
 the application.  The script name is often determined by the Router as it parses the request using 
 the routing tables. The scriptName will be set to the empty string if not defined, otherwise is should begin
 with a "/" character. NOTE: changing script name will not update the home property.</td></tr>
+<a name='server'></a>
+   <tr><td nowrap align='center'> </td><td>server</td><td><a href='ejs.web-HttpServer.html'>HttpServer</a></td><td>Owning server for the request. This is the HttpServer object that created this request.</td></tr>
+<a name='port'></a>
+   <tr><td nowrap align='center'> </td><td>port</td><td><a href='Number.html'>Number</a></td><td>TCP/IP port number for the server of this request. </td></tr>
+<a name='protocol'></a>
+   <tr><td nowrap align='center'> </td><td>protocol</td><td><a href='String.html'>String</a></td><td>Http request protocol (HTTP/1.0 | HTTP/1.1). </td></tr>
+<a name='query'></a>
+   <tr><td nowrap align='center'> </td><td>query</td><td><a href='String.html'>String</a></td><td>Request query string. This is the portion of the Uri after the "?". Set to null if there is no query.</td></tr>
+<a name='queryString'></a>
+   <tr><td nowrap align='center'> get </td><td>queryString</td><td><a href='String.html'>String</a></td><td>Decoded query string (URL query string). Eqivalent to the <a href='#query'>query</a> property. Added for JSGI compliance.</td></tr>
 <a name='securityToken'></a>
    <tr><td nowrap align='center'> get </td><td>securityToken</td><td><a href='Object.html'>Object</a></td><td>Get a security token to help mitigate CSRF threats. The security token is submitted by forms and requests and
 can be validated by controllers. The token is stored in session["__ejs-security-token__"].</td></tr>
-<a name='server'></a>
-   <tr><td nowrap align='center'> </td><td>server</td><td><a href='ejs.web-HttpServer.html'>HttpServer</a></td><td>Owning server for the request. This is the HttpServer object that created this request.</td></tr>
 <a name='serverPort'></a>
    <tr><td nowrap align='center'> get </td><td>serverPort</td><td><a href='Number.html'>Number</a></td><td>Listening port number for the server. </td></tr>
 <a name='session'></a>
