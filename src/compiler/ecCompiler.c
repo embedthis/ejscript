@@ -348,7 +348,7 @@ PUBLIC int ejsEvalFile(cchar *path)
         mprDestroy(0);
         return MPR_ERR;
     }
-    mprDestroy(MPR_EXIT_DEFAULT);
+    mprDestroy();
     return 0;
 }
 
@@ -375,7 +375,7 @@ PUBLIC int ejsEvalScript(cchar *script)
         mprDestroy(0);
         return MPR_ERR;
     }
-    mprDestroy(MPR_EXIT_DEFAULT);
+    mprDestroy();
     return 0;
 }
 
