@@ -750,7 +750,7 @@ int ejsEvalModule(cchar *path)
     } else if (ejsRun(ejs) < 0) {
         status = EJS_ERR;
     }
-    mprDestroy(MPR_EXIT_DEFAULT);
+    mprDestroy();
     return status;
 }
 
