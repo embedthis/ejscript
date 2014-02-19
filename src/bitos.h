@@ -75,7 +75,7 @@
     #define BIT_CPU_ARCH BIT_CPU_ITANIUM
     #define CPU_ENDIAN BIT_LITTLE_ENDIAN
 
-#elif defined(__mips__) || __defined(__mips64)
+#elif defined(__mips__) || defined(__mips64)
     #define BIT_CPU "mips"
     #define BIT_CPU_ARCH BIT_CPU_MIPS
     #define CPU_ENDIAN BIT_BIG_ENDIAN
