@@ -10686,12 +10686,7 @@ static void serviceIO(MprWaitService *ws, struct epoll_event *events, int count)
             continue;
         }
         mask = 0;
-        if (ev->events & (EPOLLERR)) {
-            mprRemoveWaitHandler(wp);
-            wp->desiredMask = MPR_READABLE;
-            mask |= MPR_READABLE;
-        }
-        if (ev->events & (EPOLLIN | EPOLLHUP)) {
+        if (ev->events & (EPOLLIN | EPOLLHUP | EPOLLERR)) {
             mask |= MPR_READABLE;
         }
         if (ev->events & (EPOLLOUT | EPOLLHUP)) {
@@ -10699,6 +10694,9 @@ static void serviceIO(MprWaitService *ws, struct epoll_event *events, int count)
         }
         wp->presentMask = mask & wp->desiredMask;
 
+        if (ev->events & EPOLLERR) {
+            mprRemoveWaitHandler(wp);
+        }
         if (wp->presentMask) {
             if (wp->flags & MPR_WAIT_IMMEDIATE) {
                 (wp->proc)(wp->handlerData, NULL);
@@ -14032,6 +14030,15 @@ static void serviceIO(MprWaitService *ws, struct kevent *events, int count)
         }
         assert(mprIsValid(wp));
         mask = 0;
+        if (kev->filter == EVFILT_READ) {
+            mask |= MPR_READABLE;
+        }
+        if (kev->filter == EVFILT_WRITE) {
+            mask |= MPR_WRITABLE;
+        }
+        assert(mprIsValid(wp));
+        wp->presentMask = mask & wp->desiredMask;
+
         if (kev->flags & EV_ERROR) {
             err = (int) kev->data;
             if (err == ENOENT) {
@@ -14045,19 +14052,8 @@ static void serviceIO(MprWaitService *ws, struct kevent *events, int count)
             } else if (err == EBADF || err == EINVAL) {
                 mprError("kqueue: invalid file descriptor %d, fd %d", wp->fd);
                 mprRemoveWaitHandler(wp);
-                wp->desiredMask = MPR_READABLE;
-                mask |= MPR_READABLE;
             }
         }
-        if (kev->filter == EVFILT_READ) {
-            mask |= MPR_READABLE;
-        }
-        if (kev->filter == EVFILT_WRITE) {
-            mask |= MPR_WRITABLE;
-        }
-        assert(mprIsValid(wp));
-        wp->presentMask = mask & wp->desiredMask;
-
         if (wp->presentMask) {
             if (wp->flags & MPR_WAIT_IMMEDIATE) {
                 (wp->proc)(wp->handlerData, NULL);
