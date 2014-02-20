@@ -1983,12 +1983,11 @@ static void allocException(int cause, size_t size)
          */
         if (heap->allocPolicy == MPR_ALLOC_POLICY_RESTART) {
             mprError("Application restarting due to low memory condition.");
-            //  MOB - fix these 
             mprShutdown(MPR_EXIT_RESTART, -1, 0);
 
         } else if (heap->allocPolicy == MPR_ALLOC_POLICY_EXIT) {
             mprError("Application exiting due to memory depletion.");
-            mprShutdown(0, -1, 0);
+            mprShutdown(MPR_EXIT_NORMAL, -1, MPR_EXIT_TIMEOUT);
         }
     }
     heap->stats.inMemException = 0;
@@ -2709,7 +2708,7 @@ PUBLIC void mprShutdown(int how, int status, MprTicks timeout)
 
     MPR->exitStrategy = how;
     mprExitStatus = status;
-    MPR->exitTimeout = (timeout >= 0) ? timeout : MPR_TIMEOUT_STOP;
+    MPR->exitTimeout = (timeout >= 0) ? timeout : MPR->exitTimeout;
     if (mprGetDebugMode()) {
         MPR->exitTimeout = MPR_MAX_TIMEOUT;
     }
@@ -2767,7 +2766,6 @@ PUBLIC bool mprDestroy()
     int             i, next;
 
     if (mprState < MPR_STOPPING) {
-        //  MOB - check these default values. Should be (0, 0, 0)
         mprShutdown(MPR->exitStrategy, mprExitStatus, MPR->exitTimeout);
     }
     timeout = MPR->exitTimeout;
@@ -3617,7 +3615,7 @@ PUBLIC void mprWaitForIO(MprWaitService *ws, MprTicks timeout)
         SetTimer(hwnd, 0, (UINT) timeout, NULL);
         if (GetMessage(&msg, NULL, 0, 0) == 0) {
             mprResetYield();
-            mprShutdown(0, 0, 0);
+            mprShutdown(MPR_EXIT_NORMAL, 0, MPR_EXIT_TIMEOUT);
         } else {
             mprClearWaiting();
             mprResetYield();
@@ -3694,7 +3692,7 @@ static LRESULT CALLBACK msgProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     ws = MPR->waitService;
 
     if (msg == WM_DESTROY || msg == WM_QUIT) {
-        mprShutdown(0, 0, 0);
+        mprShutdown(MPR_EXIT_NORMAL, 0, MPR_EXIT_TIMEOUT);
 
     } else if (msg && msg == ws->socketMessage) {
         sock = (int) wp;
@@ -21166,16 +21164,16 @@ static void standardSignalHandler(void *ignored, MprSignal *sp)
 {
     mprTrace(6, "standardSignalHandler signo %d, flags %x", sp->signo, sp->flags);
     if (sp->signo == SIGTERM) {
-        mprShutdown(0, -1, 0);
+        mprShutdown(MPR_EXIT_NORMAL, -1, MPR_EXIT_TIMEOUT);
 
-    } else if (sp->signo == SIGINT) {
+    } else if (sp->signo == SIGINT || sp->signo == SIGQUIT) {
 #if BIT_UNIX_LIKE
         /*  Ensure shell input goes to a new line */
         if (isatty(1)) {
             if (write(1, "\n", 1) < 0) {}
         }
 #endif
-        mprShutdown(0, 0, -1);
+        mprShutdown(MPR_EXIT_ABORT, -1, 0);
 
     } else if (sp->signo == SIGUSR1) {
         mprShutdown(MPR_EXIT_RESTART, 0, 0);
@@ -21193,7 +21191,7 @@ static void standardSignalHandler(void *ignored, MprSignal *sp)
 #endif
 #endif
     } else {
-        mprShutdown(0, -1, 0);
+        mprShutdown(MPR_EXIT_ABORT, -1, 0);
     }
 }
 
@@ -25174,7 +25172,7 @@ static void adjustThreadCount(int adj)
     mprLock(sp->mutex);
     sp->activeThreadCount += adj;
     if (sp->activeThreadCount <= 0) {
-        mprShutdown(0, 0, 0);
+        mprShutdown(MPR_EXIT_NORMAL, 0, 0);
     }
     mprUnlock(sp->mutex);
 }

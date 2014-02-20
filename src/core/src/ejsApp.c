@@ -109,7 +109,7 @@ static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     timeout = argc >= 2 ? ejsGetInt(ejs, argv[1]) : 0;
     how = ejsToMulti(ejs, argc >= 2 ? ejsToString(ejs, argv[1]): ESV(empty));
 
-    if (scmp(how, "standard") == 0) {
+    if (scmp(how, "normal") == 0) {
         mode = 0;
     } else if (scmp(how, "abort") == 0) {
         mode = MPR_EXIT_ABORT;
