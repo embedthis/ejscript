@@ -1073,7 +1073,7 @@ typedef struct MprFreeQueue {
 #define MPR_ALLOC_POLICY_NOTHING    0       /**< Do nothing */
 #define MPR_ALLOC_POLICY_PRUNE      1       /**< Prune all non-essential memory and continue */
 #define MPR_ALLOC_POLICY_RESTART    2       /**< Gracefully restart the app if memory maxHeap level is exceeded */
-#define MPR_ALLOC_POLICY_EXIT       3       /**< Exit the app if max exceeded with a MPR_EXIT_IMMEDIATE exit */
+#define MPR_ALLOC_POLICY_EXIT       3       /**< Exit the app if maxHeap exceeded with a MPR_EXIT_IMMEDIATE exit */
 
 /*
     MprMemNotifier cause argument

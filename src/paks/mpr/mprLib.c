@@ -9486,7 +9486,7 @@ PUBLIC void mprDestroyDispatcher(MprDispatcher *dispatcher)
         }
         dequeueDispatcher(dispatcher);
         dispatcher->owner = 0;
-        dispatcher->flags = MPR_DISPATCHER_DESTROYED;
+        dispatcher->flags |= MPR_DISPATCHER_DESTROYED;
         unlock(es);
     }
 }
@@ -9864,8 +9864,12 @@ static int dispatchEvents(MprDispatcher *dispatcher)
  */
 static void dispatchEventsWorker(MprDispatcher *dispatcher)
 {
+    if (dispatcher->flags & MPR_DISPATCHER_DESTROYED) {
+        /* Dispatcher destroyed after worker started */
+        return;
+    }
     dispatchEvents(dispatcher);
-    if (!(dispatcher->flags == MPR_DISPATCHER_DESTROYED)) {
+    if (!(dispatcher->flags & MPR_DISPATCHER_DESTROYED)) {
         dequeueDispatcher(dispatcher);
         mprScheduleDispatcher(dispatcher);
     }
