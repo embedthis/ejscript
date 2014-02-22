@@ -3577,6 +3577,9 @@ PUBLIC int mprWaitForSingleIO(int fd, int mask, MprTicks timeout)
         FD_SET(fd, &writeMask);
     }
     mprYield(MPR_YIELD_STICKY);
+    /*
+        The select() API has no impact on masks registered via WSAAsyncSelect. i.e. no need to save/restore.
+     */
     rc = select(fd + 1, &readMask, &writeMask, NULL, &tval);
     mprResetYield();
 
@@ -10682,9 +10685,16 @@ static void serviceIO(MprWaitService *ws, struct epoll_event *events, int count)
         }
         wp->presentMask = mask & wp->desiredMask;
 
+#if UNUSED && KEEP
         if (ev->events & EPOLLERR) {
+            int error = 0;
+            socklen_t errlen = sizeof(error);
+            getsockopt(wp->fd, SOL_SOCKET, SO_ERROR, (void*) &error, &errlen);
+            printf("error %d\n", error);
+            /* Get EPOLLERR for broken pipe */
             mprRemoveWaitHandler(wp);
         }
+#endif
         if (wp->presentMask) {
             if (wp->flags & MPR_WAIT_IMMEDIATE) {
                 (wp->proc)(wp->handlerData, NULL);
@@ -13856,6 +13866,7 @@ PUBLIC int mprNotifyOn(MprWaitHandler *wp, int mask)
     assert(wp);
     ws = wp->service;
     fd = wp->fd;
+    assert(fd >= 0);
     kp = &interest[0];
 
     lock(ws);
@@ -14035,6 +14046,7 @@ static void serviceIO(MprWaitService *ws, struct kevent *events, int count)
             } else if (err == EBADF || err == EINVAL) {
                 mprError("kqueue: invalid file descriptor %d, fd %d", wp->fd);
                 mprRemoveWaitHandler(wp);
+                wp->presentMask = 0;
             }
         }
         if (wp->presentMask) {
