@@ -1013,7 +1013,7 @@ static EjsObj *makePathDir(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 }
 
 
-#if DEPRECATE || 1
+#if DEPRECATED || 1
 /*
     function makeLink(target: Path, hard: Boolean = false): Void
     Deprected in 2.3.0 

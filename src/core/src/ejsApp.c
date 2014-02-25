@@ -117,7 +117,7 @@ static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         mode = MPR_EXIT_SAFE;
     } else if (scmp(how, "restart") == 0) {
         mode = MPR_EXIT_RESTART;
-#if DEPRECATE || 1
+#if DEPRECATED || 1
     } else if (scmp(how, "immediate") == 0) {
         mode = 0;
     } else if (scmp(how, "graceful") == 0) {

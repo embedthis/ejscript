@@ -8994,7 +8994,7 @@ static EcNode *parsePragmaItem(EcCompiler *cp)
         break;
 #endif
     case T_MODULE:
-        /* TODO DEPRECATE */
+        /* TODO DEPRECATED */
         np = parseRequireItem(cp);
         break;
 
