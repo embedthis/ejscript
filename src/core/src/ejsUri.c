@@ -109,7 +109,6 @@ static EjsAny *coerceUriOperands(Ejs *ejs, EjsUri *lhs, int opcode,  EjsAny *rhs
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
         return ESV(undefined);
     }
-    return 0;
 }
 
 

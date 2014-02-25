@@ -311,15 +311,15 @@ static EjsObj *createResponseHeaders(Ejs *ejs, EjsRequest *req)
 
 static EjsString *getSessionKey(Ejs *ejs, EjsRequest *req)
 {
-    cchar   *cookies, *cookie;
+    cchar   *cookie;
     char    *id, *cp, *value;
     int     quoted, len;
 
     if (!req->conn) {
         return 0;
     }
-    cookies = httpGetCookies(req->conn);
-    for (cookie = cookies; cookie && (value = strstr(cookie, EJS_SESSION)) != 0; cookie = value) {
+    cookie = httpGetCookies(req->conn);
+    if (cookie && (value = strstr(cookie, EJS_SESSION)) != 0) {
         value += strlen(EJS_SESSION);
         while (isspace((uchar) *value) || *value == '=') {
             value++;

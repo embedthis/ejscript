@@ -88,10 +88,8 @@ static EjsAny *coerceNumberOperands(Ejs *ejs, EjsAny *lhs, int opcode, EjsAny *r
             return lhs;
         } else if (ejsIs(ejs, rhs, Boolean) || ejsIs(ejs, rhs, Date)) {
             return ejsInvokeOperator(ejs, lhs, opcode, ejsToNumber(ejs, rhs));
-        } else {
-            return ejsInvokeOperator(ejs, ejsToString(ejs, lhs), opcode, rhs);
         }
-        break;
+        return ejsInvokeOperator(ejs, ejsToString(ejs, lhs), opcode, rhs);
 
     case EJS_OP_AND: case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_OR: case EJS_OP_REM:
     case EJS_OP_SHL: case EJS_OP_SHR: case EJS_OP_SUB: case EJS_OP_USHR: case EJS_OP_XOR:
@@ -137,7 +135,6 @@ static EjsAny *coerceNumberOperands(Ejs *ejs, EjsAny *lhs, int opcode, EjsAny *r
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
         return ESV(undefined);
     }
-    return 0;
 }
 
 

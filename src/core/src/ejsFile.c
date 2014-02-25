@@ -801,7 +801,7 @@ static int mapMode(cchar *mode)
         omode |= O_RDONLY;
     }
     if (strchr(mode, 'w')) {
-        if (omode & O_RDONLY) {
+        if (omode == O_RDONLY) {
             omode &= ~O_RDONLY;
             omode |= O_RDWR;
         } else {

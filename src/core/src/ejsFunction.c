@@ -50,7 +50,6 @@ static EjsAny *castFunction(Ejs *ejs, EjsFunction *vp, EjsType *type)
         ejsThrowTypeError(ejs, "Cannot cast type \"%@\"", type->qname.name);
         return 0;
     }
-    return 0;
 }
 
 

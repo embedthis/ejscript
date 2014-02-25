@@ -274,6 +274,7 @@ typedef void (*HttpEnvCallback)(struct HttpConn *conn);
  */
 typedef int (*HttpListenCallback)(struct HttpEndpoint *endpoint);
 
+#if UNUSED
 /** 
     Define an callback for IO events on this connection.
     @description The event callback will be invoked in response to I/O events.
@@ -285,6 +286,7 @@ typedef int (*HttpListenCallback)(struct HttpEndpoint *endpoint);
     @stability Stable
  */
 typedef cchar *(*HttpRedirectCallback)(struct HttpConn *conn, int *code, struct HttpUri *uri);
+#endif
 
 /**
     Timeout callback
@@ -571,7 +573,9 @@ typedef struct Http {
     HttpEnvCallback     envCallback;        /**< SetEnv callback */
     MprForkCallback     forkCallback;       /**< Callback in child after fork() */
     HttpListenCallback  listenCallback;     /**< Invoked when creating listeners */
+#if UNUSED
     HttpRedirectCallback redirectCallback;  /**< Redirect callback */
+#endif
 } Http;
 
 /*

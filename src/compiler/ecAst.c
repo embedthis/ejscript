@@ -69,7 +69,9 @@ static void     astWith(EcCompiler *cp, EcNode *np);
 static void     badAst(EcCompiler *cp, EcNode *np);
 static void     bindVariableDefinition(EcCompiler *cp, EcNode *np);
 static void     closeBlock(EcCompiler *cp);
+#if KEEP
 static EjsNamespace *createHoistNamespace(EcCompiler *cp, EjsObj *obj);
+#endif
 static EjsModule    *createModule(EcCompiler *cp, EcNode *np);
 static EjsFunction *createModuleInitializer(EcCompiler *cp, EcNode *np, EjsModule *mp);
 static int      defineParameters(EcCompiler *cp, EcNode *np);
@@ -78,7 +80,9 @@ static void     fixupClass(EcCompiler *cp, EjsType *type);
 static EjsBlock *getBlockForDefinition(EcCompiler *cp, EcNode *np, EjsBlock *block, int attributes);
 static EcNode   *getNextAstNode(EcCompiler *cp, EcNode *np, int *next);
 static EjsObj   *getTypeProperty(EcCompiler *cp, EjsObj *vp, EjsName name);
+#if KEEP
 static bool     hoistBlockVar(EcCompiler *cp, EcNode *np);
+#endif
 static void     openBlock(EcCompiler *cp, EcNode *np, EjsBlock *block);
 static void     processAstNode(EcCompiler *cp, EcNode *np);
 static void     removeProperty(EcCompiler *cp, EjsObj *block, EcNode *np);
@@ -349,7 +353,7 @@ static void astBlock(EcCompiler *cp, EcNode *np)
         defineBlock(cp, np);
 
         /* Try to hoist the block object itself */
-        if (np->blockCreated && !hoistBlockVar(cp, np)) {
+        if (np->blockCreated /* KEEP && !hoistBlockVar(cp, np) */) {
             cp->state->letBlockNode->createBlockObject = 1;
         }
     }
@@ -2522,6 +2526,7 @@ static void defineVar(EcCompiler *cp, EcNode *np, int varKind, EjsObj *value)
 }
 
 
+#if KEEP
 /*
     Hoist a block scoped variable and define in the nearest function, class or global block. This runs during the
     Hoist conditional phase. We hoist the variable by defining with a "-hoisted-%d" namespace which is added to the set of
@@ -2538,7 +2543,7 @@ static bool hoistBlockVar(EcCompiler *cp, EcNode *np)
     assert(cp->phase == EC_PHASE_CONDITIONAL);
 
     //  TODO -- all hoisting is currently disabled.
-    if (1 || cp->optimizeLevel == 0) {
+    if (1 /* TODO || cp->optimizeLevel == 0 */) {
         return 0;
     }
     ejs = cp->ejs;
@@ -2599,6 +2604,7 @@ static bool hoistBlockVar(EcCompiler *cp, EcNode *np)
     np->name.letScope = 0;
     return 1;
 }
+#endif
 
 
 /*
@@ -2761,12 +2767,16 @@ static void astVar(EcCompiler *cp, EcNode *np, int varKind, EjsObj *value)
         defineVar(cp, np, varKind, value);
 
     } else if (cp->phase == EC_PHASE_CONDITIONAL && np->name.letScope) {
+#if KEEP
         if (!hoistBlockVar(cp, np)) {
             /*
                 Unhoisted let scoped variable.
              */
+#endif
             state->letBlockNode->createBlockObject = 1;
+#if KEEP
         }
+#endif
 
     } else if (cp->phase >= EC_PHASE_BIND) {
         if (np->namespaceRef) {
@@ -3689,6 +3699,7 @@ static void closeBlock(EcCompiler *cp)
 }
 
 
+#if UNUSED && KEEP
 static EjsNamespace *createHoistNamespace(EcCompiler *cp, EjsObj *obj)
 {
     EjsNamespace    *namespace;
@@ -3708,6 +3719,7 @@ static EjsNamespace *createHoistNamespace(EcCompiler *cp, EjsObj *obj)
     ejsAddNamespaceToBlock(ejs, (EjsBlock*) cp->state->optimizedLetBlock, namespace);
     return namespace;
 }
+#endif
 
 
 /*

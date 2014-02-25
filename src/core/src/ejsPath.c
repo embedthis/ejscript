@@ -73,7 +73,6 @@ static EjsAny *coercePathOperands(Ejs *ejs, EjsPath *lhs, int opcode,  EjsAny *r
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
         return ESV(undefined);
     }
-    return 0;
 }
 
 

@@ -124,7 +124,6 @@ static EjsAny *castXml(Ejs *ejs, EjsXML *xml, EjsType *type)
         ejsThrowTypeError(ejs, "Cannot cast to this type");
         return 0;
     }
-    return 0;
 }
 
 
@@ -174,7 +173,6 @@ static EjsObj *getXmlNodeName(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 }
 
 
-
 /*
     Function to iterate and return the next element name.
     NOTE: this is not a method of Xml. Rather, it is a callback function for Iterator
@@ -189,7 +187,7 @@ static EjsObj *nextXmlKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
         return 0;
     }
 
-    for (; ip->index < mprGetListLength(xml->elements); ip->index++) {
+    if (ip->index < mprGetListLength(xml->elements)) {
         return (EjsObj*) ejsCreateNumber(ejs, ip->index++);
     }
     ejsThrowStopIteration(ejs);

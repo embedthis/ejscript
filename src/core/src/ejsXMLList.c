@@ -221,7 +221,7 @@ static EjsObj *nextXmlListKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv
         return 0;
     }
 
-    for (; ip->index < mprGetListLength(xml->elements); ip->index++) {
+    if (ip->index < mprGetListLength(xml->elements)) {
         return (EjsObj*) ejsCreateNumber(ejs, ip->index++);
     }
     ejsThrowStopIteration(ejs);
