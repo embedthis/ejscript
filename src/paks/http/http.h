@@ -289,6 +289,14 @@ typedef cchar *(*HttpRedirectCallback)(struct HttpConn *conn, int *code, struct 
 #endif
 
 /**
+    Request completion callback
+    @param conn HttpConn object
+    @ingroup HttpRx
+    @stability Prototype
+  */
+typedef void (*HttpRequestCallback)(struct HttpConn *conn);
+
+/**
     Timeout callback
     @description The timeout callback for the request inactivity and duration timeouts
     @param conn HttpConn connection object created via #httpCreateConn
@@ -573,6 +581,7 @@ typedef struct Http {
     HttpEnvCallback     envCallback;        /**< SetEnv callback */
     MprForkCallback     forkCallback;       /**< Callback in child after fork() */
     HttpListenCallback  listenCallback;     /**< Invoked when creating listeners */
+    HttpRequestCallback logCallback;        /**< Request completion callback */
 #if UNUSED
     HttpRedirectCallback redirectCallback;  /**< Redirect callback */
 #endif
@@ -691,7 +700,7 @@ PUBLIC struct HttpEndpoint *httpLookupEndpoint(Http *http, cchar *ip, int port);
     Set the http context object
     @param http Http object created via #httpCreate
     @param context New context object
-    @ingroup HttpConn
+    @ingroup Http
     @stability Stable
  */
 PUBLIC void httpSetContext(Http *http, void *context);
@@ -701,7 +710,7 @@ PUBLIC void httpSetContext(Http *http, void *context);
     @description Define a default host to use for client connections if the URI does not specify a host
     @param http Http object created via #httpCreateConn
     @param host Host or IP address
-    @ingroup HttpConn
+    @ingroup Http
     @stability Stable
  */
 PUBLIC void httpSetDefaultClientHost(Http *http, cchar *host);
@@ -711,10 +720,20 @@ PUBLIC void httpSetDefaultClientHost(Http *http, cchar *host);
     @description Define a default port to use for client connections if the URI does not define a port
     @param http Http object created via #httpCreateConn
     @param port Integer port number
-    @ingroup HttpConn
+    @ingroup Http
     @stability Stable
  */
 PUBLIC void httpSetDefaultClientPort(Http *http, int port);
+
+/**
+    Define a request completion callback
+    @description This routine is used to define a callback that is invoked when each request is completed.
+    The callback is passed the HttpConn object prior to destruction.
+    @param callback HttpRequestCallback function
+    @ingroup Http
+    @stability Prototype
+ */
+PUBLIC void httpSetRequestLogCallback(HttpRequestCallback callback);
 
 /** 
     Define a Http proxy host to use for all client connect requests.
