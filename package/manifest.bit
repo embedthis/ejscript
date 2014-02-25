@@ -238,7 +238,7 @@ Bit.load({
                 to:         '${src}/ejsLib.c',
                 cat:        true,                                                                                         
                 filter:     /^#inc.*ejs.*$|^#inc.*ec.*$|^#inc.*customize.*$|#include.*zlib.h.*$|#inc.*ejs.zlib.slots.h.*/mg,
-                exclude:    /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|\/mpr|\/http|\/est|\/pcre|\/sqlite|ejs.debugger|samples|utils|ejsrun\.c/,                                                                         
+                exclude:    /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|\/mpr|\/http|\/est|\/pcre|\/sqlite|\/zlib\/|ejs.debugger|samples|utils|ejsrun\.c/,
                 header:     '#define EJS_DEFINE_OPTABLE 1\n#include \"ejs.h\"\n\n#if BIT_PACK_EJSCRIPT',
                 footer:     '#endif /* BIT_PACK_EJSCRIPT */',
                 title:      '${settings.title} Library Source',
