@@ -18,7 +18,7 @@ server.on("readable", function (event, request: Request) {
         assert(l.chunk > 1024)
         assert(l.connReuse == 200)
         assert(l.inactivityTimeout >= 30)
-        assert(l.receive == 256 * 1024)
+        assert(l.receive == 512 * 1024)
         assert(l.requestTimeout == 300)
         assert(l.sessionTimeout >= 300)
         assert(l.transmission == 2147483647)
