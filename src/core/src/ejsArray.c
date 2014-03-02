@@ -67,7 +67,6 @@ static EjsAny *castArray(Ejs *ejs, EjsArray *vp, EjsType *type)
         ejsThrowTypeError(ejs, "Cannot cast to this type");
         return 0;
     }
-    return 0;
 }
 
 
@@ -247,7 +246,6 @@ static EjsObj *coerceArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rh
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
         return ESV(undefined);
     }
-    return 0;
 }
 
 

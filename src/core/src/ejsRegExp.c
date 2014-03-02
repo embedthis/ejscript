@@ -62,7 +62,6 @@ static EjsAny *castRegExp(Ejs *ejs, EjsRegExp *rp, EjsType *type)
         ejsThrowTypeError(ejs, "Cannot cast to this type");
         return 0;
     }
-    return 0;
 }
 
 

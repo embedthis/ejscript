@@ -356,14 +356,14 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
         mprPrintMem("Memory Usage", 1);
 #endif
     }
-    if (!err) {
-        err = mpr->exitStatus;
+    if (err) {
+        mprSetExitStatus(err);
     }
     app->ejs = 0;
     app->compiler = 0;
     ejsDestroy(ejs);
-    mprDestroy(MPR_EXIT_GRACEFUL);
-    return err;
+    mprDestroy();
+    return mprGetExitStatus();
 }
 
 

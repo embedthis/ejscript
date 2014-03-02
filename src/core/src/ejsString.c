@@ -63,7 +63,6 @@ static EjsAny *castString(Ejs *ejs, EjsString *sp, EjsType *type)
         ejsThrowTypeError(ejs, "Cannot cast to required type");
         return 0;
     }
-    return 0;
 }
 
 
@@ -148,7 +147,6 @@ static EjsAny *coerceStringOperands(Ejs *ejs, EjsAny *lhs, int opcode,  EjsAny *
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
         return ESV(undefined);
     }
-    return 0;
 }
 
 

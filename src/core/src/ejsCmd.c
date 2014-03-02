@@ -458,7 +458,7 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
             err = "Bad command arguments";
         } else if (rc == MPR_ERR_CANT_ACCESS) {
             err = "Cannot access command";
-        } else if (MPR_ERR_CANT_OPEN) {
+        } else if (rc == MPR_ERR_CANT_OPEN) {
             err = "Cannot open standard I/O for command";
         } else if (rc == MPR_ERR_CANT_CREATE) {
             err = "Cannot create process";

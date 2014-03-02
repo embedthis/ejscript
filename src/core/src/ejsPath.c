@@ -73,7 +73,6 @@ static EjsAny *coercePathOperands(Ejs *ejs, EjsPath *lhs, int opcode,  EjsAny *r
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
         return ESV(undefined);
     }
-    return 0;
 }
 
 
@@ -1014,7 +1013,7 @@ static EjsObj *makePathDir(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 }
 
 
-#if DEPRECATE || 1
+#if DEPRECATED || 1
 /*
     function makeLink(target: Path, hard: Boolean = false): Void
     Deprected in 2.3.0 

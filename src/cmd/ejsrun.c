@@ -135,13 +135,13 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             err = MPR_ERR;
         }
     }
-    if (!err) {
-        err = mpr->exitStatus;
+    if (err) {
+        mprSetExitStatus(err);
     }
     app->ejs = 0;
     ejsDestroy(ejs);
-    mprDestroy(MPR_EXIT_DEFAULT);
-    return err;
+    mprDestroy();
+    return mprGetExitStatus();
 }
 
 

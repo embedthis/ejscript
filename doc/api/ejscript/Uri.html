@@ -191,21 +191,6 @@ is regarded as POST data and not integral to the base URI.</dd></dl>
 </div>
 </div>
 <hr />
-<a name='complete'></a>
-<div class='api'>
-<div class='apiSig'>    complete(missing = null): <a href='Uri.html'>Uri</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Create a complete absolute URI from "this" URI with all mandatory components present including scheme and host. The resulting URI path will be normalized and missing (mandatory) components will be completed with values 
-from the given "missing" argument.</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>missing </td><td>Optional URI to provide the missing components. The missing argument can be a string, URI or an object hash of URI component. If this missing argument is not provided, the following defaults are used: "http://localhost:80/". [default: null]</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>A complete, absolute URI.</dd></dl>
-</div>
-</div>
-<hr />
 <a name='decode'></a>
 <div class='api'>
 <div class='apiSig'>static     decode(str: <a href='String.html'>String</a>): <a href='String.html'>String</a>
@@ -216,7 +201,7 @@ from the given "missing" argument.</dd></dl>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String to decode.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A decoded string Ð.</dd></dl>
+<dd>A decoded string.</dd></dl>
 </div>
 </div>
 <hr />
@@ -231,6 +216,21 @@ from the given "missing" argument.</dd></dl>
 <tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String to decode.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A decoded string.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='complete'></a>
+<div class='api'>
+<div class='apiSig'>    complete(missing = null): <a href='Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Create a complete absolute URI from "this" URI with all mandatory components present including scheme and host. The resulting URI path will be normalized and missing (mandatory) components will be completed with values 
+from the given "missing" argument.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>missing </td><td>Optional URI to provide the missing components. The missing argument can be a string, URI or an object hash of URI component. If this missing argument is not provided, the following defaults are used: "http://localhost:80/". [default: null]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A complete, absolute URI.</dd></dl>
 </div>
 </div>
 <hr />

@@ -51,7 +51,6 @@ static EjsAny *castDate(Ejs *ejs, EjsDate *dp, EjsType *type)
         ejsThrowTypeError(ejs, "Cannot cast to this type");
         return 0;
     }
-    return 0;
 }
 
 

@@ -32,7 +32,6 @@ static EjsAny *castError(Ejs *ejs, EjsError *error, EjsType *type)
             ejsThrowMemoryError(ejs);
         }
         return ejsCreateStringFromAsc(ejs, buf);
-        break;
 
     default:
         ejsThrowTypeError(ejs, "Unknown type");

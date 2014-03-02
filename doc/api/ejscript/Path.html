@@ -158,24 +158,24 @@ path.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#makeDir'><b>makeDir</b></a>(options: <a href='Object.html'>Object</a> = null): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Make a new directory and all required intervening directories.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#map'><b>map</b></a>(sep: <a href='String.html'>String</a> = separator): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a path after mapping the path directory separator.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#match'><b>match</b></a>(pattern: <a href='RegExp.html'>RegExp</a>): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Match the path to a regular expression pattern.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#readJSON'><b>readJSON</b></a>(): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file containing a JSON string and return a deserialized object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#open'><b>open</b></a>(options: <a href='Object.html'>Object</a> = null): <a href='File.html'>File</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Open a path and return a File object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#openBinaryStream'><b>openBinaryStream</b></a>(options: <a href='Object.html'>Object</a> = null): <a href='BinaryStream.html'>BinaryStream</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Open a file and return a BinaryStream object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#openTextStream'><b>openTextStream</b></a>(options: <a href='Object.html'>Object</a> = null): <a href='TextStream.html'>TextStream</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Open a file and return a TextStream object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readBytes'><b>readBytes</b></a>(): <a href='ByteArray.html'>ByteArray</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file contents as a ByteArray.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#readJSON'><b>readJSON</b></a>(): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file containing a JSON string and return a deserialized object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readLines'><b>readLines</b></a>(): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file contents as an array of lines.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readString'><b>readString</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file contents as a string.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#readXML'><b>readXML</b></a>(): <a href='XML.html'>XML</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file contents as an XML object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#relativeTo'><b>relativeTo</b></a>(origin: <a href='Path.html'>Path</a> = null): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a relative path to an origin.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#readXML'><b>readXML</b></a>(): <a href='XML.html'>XML</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file contents as an XML object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#remove'><b>remove</b></a>(): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Delete the file associated with the Path object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#removeAll'><b>removeAll</b></a>(): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Removes a directory and its contents
 If the path is a directory, this call will remove all subdirectories and their contents and finally the
 directory itself.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#rename'><b>rename</b></a>(target: <a href='Path.html'>Path</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Rename a file.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#same'><b>same</b></a>(other: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Compare two paths test if they represent the same file.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#replace'><b>replace</b></a>(pattern, replacement): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Search and replace.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#replaceExt'><b>replaceExt</b></a>(ext: <a href='String.html'>String</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Replace the path extension and return a new path.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#resolve'><b>resolve</b></a>(otherPaths: <a href='Array.html'>Array</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Resolve paths in the neighborhood of this path.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#same'><b>same</b></a>(other: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Compare two paths test if they represent the same file.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#setAttributes'><b>setAttributes</b></a>(attributes: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define file security permissions.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#startsWith'><b>startsWith</b></a>(prefix: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return true if the path starts with the given prefix.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#temp'><b>temp</b></a>(): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new temporary file.</td></tr>
@@ -411,6 +411,22 @@ the function returns without any further action.</dd></dl>
 </div>
 </div>
 <hr />
+<a name='readJSON'></a>
+<div class='api'>
+<div class='apiSig'>    readJSON(): <a href='Object.html'>Object</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Read the file containing a JSON string and return a deserialized object. This method opens the file, reads the contents, deserializes the object and closes the file.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>An object.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: if the file cannot be read
+</dd>
+</dl><dl><dt>Example</dt>
+<dd><pre>data = Path("/tmp/a.json").readJson()</pre></dd></dl>
+</div>
+</div>
+<hr />
 <a name='open'></a>
 <div class='api'>
 <div class='apiSig'>    open(options: <a href='Object.html'>Object</a> = null): <a href='File.html'>File</a>
@@ -501,22 +517,6 @@ returns a new ByteArray with the contents.</dd></dl>
 </div>
 </div>
 <hr />
-<a name='readJSON'></a>
-<div class='api'>
-<div class='apiSig'>    readJSON(): <a href='Object.html'>Object</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Read the file containing a JSON string and return a deserialized object. This method opens the file, reads the contents, deserializes the object and closes the file.</dd></dl>
-<dl><dt>Returns</dt>
-<dd>An object.</dd></dl>
-<dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: if the file cannot be read
-</dd>
-</dl><dl><dt>Example</dt>
-<dd><pre>data = Path("/tmp/a.json").readJson()</pre></dd></dl>
-</div>
-</div>
-<hr />
 <a name='readLines'></a>
 <div class='api'>
 <div class='apiSig'>    readLines(): <a href='Array.html'>Array</a>
@@ -550,20 +550,6 @@ contents and closes the file.</dd></dl>
 </div>
 </div>
 <hr />
-<a name='readXML'></a>
-<div class='api'>
-<div class='apiSig'>    readXML(): <a href='XML.html'>XML</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Read the file contents as an XML object. This method opens the file, reads the contents and closes the file.</dd></dl>
-<dl><dt>Returns</dt>
-<dd>An XML object.</dd></dl>
-<dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: if the file cannot be read
-</dd>
-</dl></div>
-</div>
-<hr />
 <a name='relativeTo'></a>
 <div class='api'>
 <div class='apiSig'>    relativeTo(origin: <a href='Path.html'>Path</a> = null): <a href='Path.html'>Path</a>
@@ -576,6 +562,20 @@ contents and closes the file.</dd></dl>
 </dl><dl><dt>Returns</dt>
 <dd>A new relative path.</dd></dl>
 </div>
+</div>
+<hr />
+<a name='readXML'></a>
+<div class='api'>
+<div class='apiSig'>    readXML(): <a href='XML.html'>XML</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Read the file contents as an XML object. This method opens the file, reads the contents and closes the file.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>An XML object.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: if the file cannot be read
+</dd>
+</dl></div>
 </div>
 <hr />
 <a name='remove'></a>
@@ -615,6 +615,20 @@ directory itself. If the directory does not exist, this call does not error and 
 <a href='IOError.html'>IOError</a>: if the rename fails.
 </dd>
 </dl></div>
+</div>
+<hr />
+<a name='same'></a>
+<div class='api'>
+<div class='apiSig'>    same(other: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Compare two paths test if they represent the same file. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>other: <a href='Object.html'>Object</a> </td><td>Other path to compare with.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the paths represent the same underlying filename 8.</dd></dl>
+</div>
 </div>
 <hr />
 <a name='replace'></a>
@@ -663,20 +677,6 @@ absolute and relative path segments.</dd></dl>
 <tr class='param'><td class='param'>otherPaths: <a href='Array.html'>Array</a> </td><td>Paths to resolve in the region of this path.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A new Path object that is resolved against the prior path.</dd></dl>
-</div>
-</div>
-<hr />
-<a name='same'></a>
-<div class='api'>
-<div class='apiSig'>    same(other: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Compare two paths test if they represent the same file. </dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>other: <a href='Object.html'>Object</a> </td><td>Other path to compare with.</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>True if the paths represent the same underlying filename 8.</dd></dl>
 </div>
 </div>
 <hr />

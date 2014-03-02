@@ -65,8 +65,6 @@ and other Request properties. Return true to continue serving the request on thi
 after rewriting the request.</td></tr>
 <a name='routeSetName'></a>
    <tr><td nowrap align='center'> </td><td>routeSetName</td><td><a href='String.html'>String</a></td><td>Route set owning the route. This is the first component of the template.</td></tr>
-<a name='router'></a>
-   <tr><td nowrap align='center'> </td><td>router</td><td><a href='ejs.web-Router.html'>Router</a></td><td>Router instance reference. </td></tr>
 <a name='target'></a>
    <tr><td nowrap align='center'> </td><td>target</td><td><a href='String.html'>String</a></td><td>Target mapping for the route. The route maps from the template to the target.</td></tr>
 <a name='template'></a>
@@ -77,6 +75,8 @@ are extracted and stored as items in the Request.params collection.<br/><br/>If 
 then sub-expressions may be referenced in the <a href='#params'>params</a> values by using <a href='#1'>1</a> <a href='#2'>2</a> and so on. 
 e.g. params: { priority: "<a href='#1"'>1"</a> }<br/><br/>If the template is a function, it is run to test for a request match. The function should return true to 
 match the request. The function can directly set parameters in request.params.</td></tr>
+<a name='router'></a>
+   <tr><td nowrap align='center'> </td><td>router</td><td><a href='ejs.web-Router.html'>Router</a></td><td>Router instance reference. </td></tr>
 <a name='tokens'></a>
    <tr><td nowrap align='center'> </td><td>tokens</td><td><a href='Array.html'>Array</a></td><td>Key tokens in the route template. </td></tr>
 <a name='trace'></a>

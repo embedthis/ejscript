@@ -182,7 +182,6 @@ static EjsAny *coerceByteArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
         ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
         return ESV(undefined);
     }
-    return 0;
 }
 
 
@@ -865,7 +864,6 @@ static EjsNumber *ba_room(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 static EjsNumber *ba_size(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     return ejsCreateNumber(ejs, (int) ap->size);
-    return ejsCreateNumber(ejs, (MprNumber) (ap->writePosition - ap->readPosition));
 }
 
 
