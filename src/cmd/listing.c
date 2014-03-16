@@ -638,7 +638,7 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
     EjsCode     *code;
     wchar       *currentLine;
     uchar       *start;
-    char        argbuf[BIT_MAX_PATH], lineInfo[BIT_MAX_PATH], name[BIT_MAX_PATH];
+    char        argbuf[ME_MAX_PATH], lineInfo[ME_MAX_PATH], name[ME_MAX_PATH];
     char        *currentFile, *src, *dest;
     int         maxOp, opcode, lineNumber, stack, codeLen, address, stackEffect, nbytes, i, lastLine;
 

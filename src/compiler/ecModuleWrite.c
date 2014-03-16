@@ -1094,9 +1094,9 @@ static int swapShortField(EcCompiler *cp, int word)
 
 static int swapCodePoint(EcCompiler *cp, int word)
 {
-#if BIT_CHAR_LEN == 4
+#if ME_CHAR_LEN == 4
     return swapWordField(cp, word);
-#elif BIT_CHAR_LEN == 2
+#elif ME_CHAR_LEN == 2
     return swapShortField(cp, word);
 #else
     return word;

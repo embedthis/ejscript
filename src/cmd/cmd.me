@@ -1,0 +1,44 @@
+/*
+    cmd.me -- MakeMe file for the Ejs commands
+ */
+
+Me.load({
+
+    targets: {
+        ejs: {
+            type: 'exe',
+            sources: [ 'ejs.c', ],
+            depends: [ 'libejs' ],
+            scripts: {
+                prebuild: "
+                    if (me.settings.hasLibEdit) {
+                        me.target.libraries.push('edit')
+                    }
+                ",
+            },
+        },
+
+        ejsc: {
+            type: 'exe',
+            sources: [ 'ejsc.c', ],
+            depends: [ 'libejs' ],
+            platforms: [ 'local' ],
+        },
+
+        ejsmod: {
+            type: 'exe',
+            sources: [ 'ejsmod.c', 'doc.c', 'docFiles.c', 'listing.c', 'slotGen.c' ],
+            '+includes': [ '.' ],
+            depends: [ 'libejs' ],
+            platforms: [ 'local' ],
+        },
+
+        ejsrun: {
+            type: 'exe',
+            sources: [ 'ejsrun.c', ],
+            depends: [ 'libejs' ],
+            platforms: [ 'local' ],
+        },
+
+	},
+})

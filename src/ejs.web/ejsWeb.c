@@ -5,9 +5,9 @@
  */
 /********************************** Includes **********************************/
 
-#include    "bit.h"
+#include    "me.h"
 
-#if BIT_EJS_WEB
+#if ME_EJS_WEB
 #include    "ejs.h"
 #include    "ejsCompiler.h"
 #include    "ejsWeb.h"

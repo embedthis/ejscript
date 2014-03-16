@@ -1,0 +1,134 @@
+/*
+    main.me -- MakeMe file for Ejscript
+ */
+
+Me.load({
+    blend: [
+        'src/paks/*/*.me',
+
+        'src/libejs.me',
+        'src/cmd/cmd.me',
+        'src/core/core.me',
+
+        'src/ejs.unix/unix.me',
+        'src/ejs.db/db.me',
+        'src/ejs.db.mapper/mapper.me',
+        'src/ejs.db.sqlite/sqlite.me',
+        'src/ejs.mail/mail.me',
+        'src/ejs.web/web.me',
+        'src/ejs.template/template.me',
+        'src/ejs.zlib/zlib.me',
+        'src/ejs.tar/tar.me',
+        'src/ejs.mvc/mvc.me',
+        'src/ejs.utest/utest.me',
+        'doc/doc.me',
+    ],
+
+    customize: [
+        /* 
+            The optional custom.me file is loaded after main.me is fully processed. It can
+            thus override any setting. Feel free to create and customize. 
+         */
+        'custom.me',
+    ],
+
+    settings: {
+        makeme: '0.8.0',
+
+        /*
+            Installation prefix set
+         */
+        prefixes: 'package-prefixes',
+        manifest: 'package/manifest.me',
+
+        /* Must build locally to build tools */
+        platforms: [ 'local' ],
+
+        extensions: {
+            require:  [ 'compiler', 'osdep', 'http', 'mpr', 'pcre', 'zlib' ]
+            discover: [ 'doxygen', 'dsi', 'man', 'man2html', 'pak', 'pmaker', 'sqlite', 'ssl', 'zip' ],
+            omit:     [ 'matrixssl', 'openssl', 'nanossl' ],
+        },
+
+        /*
+            Set to true for a static (non-shared library) build                                            
+         */
+        static: false,
+
+        /*
+            EJS configuration
+         */
+        ejs: {
+            /*
+                Control if ejs.* is enabled or disabled
+             */
+            db: true,
+            mail: true,
+            mapper: true,
+            tar: true,
+            template: true,
+            web: true,
+            zlib: true,
+        },
+
+        /*
+            EST SSL stack configuration
+         */
+        est: {
+            camellia: false,
+            padlock: false,                                                                                
+            sslClient: false,                                                                              
+            des: false,                                                                                    
+            testCerts: false,                                                                              
+            xtea: false,                                                                                   
+            romTables: false,                                                                              
+            genPrime: false,                                                                               
+        }, 
+                                                                                                           
+        http: {                                                                                            
+            /* Use PAM (Plugable Authentication Module) to store passwords */                              
+            pam: true,
+            webSockets: true,
+        },
+
+        mpr: {
+            /*
+                Enable logging via mprLog to the log file. Error messages are always enabled.
+                The default is to enable logging for both debug and release builds.
+             */
+            logging: true,
+
+            manager: 'ejsman',
+
+            /*
+                Enable debug trace and asserts to the log file.
+                This is enabled by default for debug builds.
+                tracing: true,
+             */
+
+            alloc: {
+                parallel: true
+            },
+        },
+
+        /*
+            Tailor the optimization for size|speed
+         */
+        tune: 'size',
+    },
+
+    usage: {
+        'http.pam':         'Enable Unix Pluggable Auth Module (true|false)',
+        'http.webSockets':  'Enable WebSockets (true|false)',                
+        'mpr.logging':      'Enable application logging (true|false)',
+        'mpr.tracing':      'Enable debug tracing (true|false)',
+    },
+
+    targets: {
+        /*
+            See src/core/core.me for building the core library
+            See src/cmd/cmd.me for building the language commands
+            See package/package.me for the install/package targets
+         */
+    },
+})

@@ -11,8 +11,8 @@
 /*********************************** Locals ***********************************/
 
 //  TODO - should not be fixed
-#if !defined(BIT_MAX_REGEX_MATCHES)
-    #define BIT_MAX_REGEX_MATCHES 128
+#if !defined(ME_MAX_REGEX_MATCHES)
+    #define ME_MAX_REGEX_MATCHES 128
 #endif
 
 static int internHashSizes[] = {
@@ -578,7 +578,7 @@ static EjsString *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             args = inner;
         }
     }
-    if ((result = ejsCreateBareString(ejs, BIT_MAX_BUFFER)) == NULL) {
+    if ((result = ejsCreateBareString(ejs, ME_MAX_BUFFER)) == NULL) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
@@ -954,7 +954,7 @@ static EjsArray *match(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     EjsRegExp   *rp;
     EjsArray    *results;
     EjsString   *match;
-    int         matches[BIT_MAX_REGEX_MATCHES * 3];
+    int         matches[ME_MAX_REGEX_MATCHES * 3];
     int         i, count, len, resultCount;
 
     rp = (EjsRegExp*) argv[0];
@@ -1099,7 +1099,7 @@ static EjsString *removeCharsFromString(Ejs *ejs, EjsString *sp, int argc, EjsOb
 
 static EjsString *getReplacementText(Ejs *ejs, EjsFunction *fn, int count, int *matches, EjsString *sp)
 {
-    EjsAny  *result, *argv[BIT_MAX_REGEX_MATCHES * 3];
+    EjsAny  *result, *argv[ME_MAX_REGEX_MATCHES * 3];
     int     i, offset, argc;
 
     assert(fn);
@@ -1130,7 +1130,7 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     EjsFunction *replacementFunction;
     wchar       cbuf[1];
     ssize       patternLength, index;
-    int         matches[BIT_MAX_REGEX_MATCHES * 3], enabled;
+    int         matches[ME_MAX_REGEX_MATCHES * 3], enabled;
 
     result = 0;
     if (argc == 1) {
@@ -1151,7 +1151,7 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
         rp = (EjsRegExp*) argv[0];
 
-        result = ejsCreateBareString(ejs, BIT_MAX_BUFFER);
+        result = ejsCreateBareString(ejs, ME_MAX_BUFFER);
         result->length = 0;
         startNextMatch = endLastMatch = 0;
         do {
@@ -1249,7 +1249,7 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         patternLength = pattern->length;
         index = indexof(sp->value, sp->length, pattern, patternLength, 1);
         if (index >= 0) {
-            if ((result = ejsCreateBareString(ejs, BIT_MAX_BUFFER)) == NULL) {
+            if ((result = ejsCreateBareString(ejs, ME_MAX_BUFFER)) == NULL) {
                 return 0;
             }
             result->length = 0;
@@ -1303,7 +1303,7 @@ static EjsNumber *searchString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     EjsRegExp   *rp;
     EjsString   *pattern;
     ssize       index, patternLength;
-    int         count, matches[BIT_MAX_REGEX_MATCHES * 3];
+    int         count, matches[ME_MAX_REGEX_MATCHES * 3];
 
     if (ejsIs(ejs, argv[0], String)) {
         pattern = (EjsString*) argv[0];
@@ -1428,7 +1428,7 @@ static EjsArray *split(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     } else if (ejsIs(ejs, argv[0], RegExp)) {
         EjsRegExp   *rp;
         EjsString   *match;
-        int         matches[BIT_MAX_REGEX_MATCHES * 3], count, resultCount;
+        int         matches[ME_MAX_REGEX_MATCHES * 3], count, resultCount;
         
         rp = (EjsRegExp*) argv[0];
         rp->endLastMatch = 0;
@@ -2206,7 +2206,7 @@ PUBLIC char *ejsToMulti(Ejs *ejs, EjsAny *ev)
     }
     assert(ejsIs(ejs, ev, String));
     //  UNICODE
-#if BIT_CHAR_LEN == 1
+#if ME_CHAR_LEN == 1
 {
     EjsString   *s = (EjsString*) ev;
     char        *ptr;
@@ -2508,7 +2508,7 @@ PUBLIC EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
         }
     }
     if ((sp = ejsAlloc(ejs, ESV(String), (len + 1) * sizeof(wchar))) != NULL) {
-#if BIT_CHAR_LEN > 1
+#if ME_CHAR_LEN > 1
         for (i = 0; i < len; i++) {
             sp->value[i] = value[i];
         }
@@ -2531,13 +2531,13 @@ PUBLIC EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
 }
 
 
-#if BIT_CHAR_LEN == 1
+#if ME_CHAR_LEN == 1
 PUBLIC EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
 {
     return ejsInternAsc(ejs, value, len);
 }
 
-#else /* BIT_CHAR_LEN > 1 */
+#else /* ME_CHAR_LEN > 1 */
 
 PUBLIC EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
 {
@@ -2587,7 +2587,7 @@ PUBLIC EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
     unlock(ip);
     return sp;
 }
-#endif /* BIT_CHAR_LEN > 1 */
+#endif /* ME_CHAR_LEN > 1 */
 
 
 static int getInternHashSize(int size)

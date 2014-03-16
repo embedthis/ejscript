@@ -8,7 +8,7 @@
 
 #include    "ejs.h"
 
-#if BIT_EJS_ZLIB
+#if ME_EJS_ZLIB
 #include    "zlib.h"
 #include    "ejs.zlib.slots.h"
 
@@ -23,7 +23,7 @@ static EjsObj *zlib_compress(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     MprFile     *in;
     gzFile      out;
     cchar       *src, *dest;
-    uchar       inbuf[BIT_MAX_BUFFER];
+    uchar       inbuf[ME_MAX_BUFFER];
     ssize       nbytes;
 
     src = ((EjsPath*) argv[0])->value;
@@ -65,7 +65,7 @@ static EjsObj *zlib_uncompress(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv
     MprFile     *out;
     gzFile      in;
     cchar       *src, *dest;
-    uchar       inbuf[BIT_MAX_BUFFER];
+    uchar       inbuf[ME_MAX_BUFFER];
     ssize       nbytes;
 
     src = ((EjsPath*) argv[0])->value;
@@ -344,7 +344,7 @@ PUBLIC int ejs_zlib_Init(Ejs *ejs, MprModule *mp)
 {
     return ejsAddNativeModule(ejs, "ejs.zlib", configureZlibTypes, _ES_CHECKSUM_ejs_zlib, EJS_LOADER_ETERNAL);
 }
-#endif /* BIT_EJS_ZLIB */
+#endif /* ME_EJS_ZLIB */
 
 /*
     @copy   default

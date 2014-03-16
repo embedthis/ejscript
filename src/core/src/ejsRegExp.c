@@ -10,8 +10,8 @@
 
 /********************************** Defines ***********************************/
 
-#if !defined(BIT_MAX_REGEX_MATCHES)
-    #define BIT_MAX_REGEX_MATCHES 64
+#if !defined(ME_MAX_REGEX_MATCHES)
+    #define ME_MAX_REGEX_MATCHES 64
 #endif
 
 /********************************* Forwards ***********************************/
@@ -117,7 +117,7 @@ static EjsArray *regex_exec(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
     EjsArray    *results;
     EjsString   *match, *str;
-    int         matches[BIT_MAX_REGEX_MATCHES * 3];
+    int         matches[ME_MAX_REGEX_MATCHES * 3];
     int         count, start, len, i, index;
 
     str = (EjsString*) argv[0];

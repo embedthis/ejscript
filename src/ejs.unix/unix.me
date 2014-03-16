@@ -1,0 +1,20 @@
+/*
+    unix.me -- MakeMe file for ejs.unix
+ */
+
+Me.load({
+
+    targets: {
+        'ejs.unix.mod': {
+            path: '${BIN}/ejs.unix.mod',
+            files: [ '*.es' ],
+            precious: true,
+            build: "
+                trace('Compile', 'ejs.unix.mod')
+                run('${LBIN}/ejsc --out ${BIN}/ejs.unix.mod ${settings.esflags} --optimize 9 ' + Path('.').files('*.es').sort().join(' '))
+            ",
+            generate: '${BIN}/ejsc --out ${BIN}/ejs.unix.mod ${settings.esflags} --optimize 9 Unix.es',
+            depends: [ 'ejsc', 'ejs.mod' ],
+        },
+	},
+})

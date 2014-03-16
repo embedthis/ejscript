@@ -1,0 +1,20 @@
+/*
+    tar.me -- Bit File for ejs.tar
+ */
+
+Me.load({
+
+    targets: {
+        'ejs.tar.mod': {
+            path: '${BIN}/ejs.tar.mod',
+            files: [ '*.es' ],
+            precious: true,
+            build: "
+                trace('Compile', 'ejs.tar.mod')
+                run('${LBIN}/ejsc --out ${BIN}/ejs.tar.mod ${settings.esflags} --optimize 9 ' + Path('.').files('*.es').sort().join(' '))
+            ",
+            'generate': '${BIN}/ejsc --out ${BIN}/ejs.tar.mod ${settings.esflags} --optimize 9 *.es',
+            depends: [ 'ejsc', 'ejs.mod' ],
+        },
+	},
+})

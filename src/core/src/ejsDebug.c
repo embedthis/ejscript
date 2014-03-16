@@ -15,10 +15,10 @@
  */
 static EjsObj *debug_breakpoint(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-#if BIT_DEBUG && DEBUG_IDE
-    #if BIT_WIN_LIKE && !BIT_64
+#if ME_DEBUG && DEBUG_IDE
+    #if ME_WIN_LIKE && !ME_64
         __asm { int 3 };
-    #elif (MACOSX || LINUX) && (BIT_CPU_ARCH == MPR_CPU_IX86 || BIT_CPU_ARCH == MPR_CPU_IX64)
+    #elif (MACOSX || LINUX) && (ME_CPU_ARCH == MPR_CPU_IX86 || ME_CPU_ARCH == MPR_CPU_IX64)
         asm("int $03");
         /*  __asm__ __volatile__ ("int $03"); */
     #endif

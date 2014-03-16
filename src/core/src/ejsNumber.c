@@ -402,7 +402,7 @@ static EjsObj *numberToString(Ejs *ejs, EjsNumber *vp, int argc, EjsObj **argv)
 #ifndef ejsIsNan
 PUBLIC int ejsIsNan(double f)
 {
-#if BIT_WIN_LIKE
+#if ME_WIN_LIKE
     return _isnan(f);
 #elif VXWORKS
     return isnan(f);
@@ -415,7 +415,7 @@ PUBLIC int ejsIsNan(double f)
 
 PUBLIC bool ejsIsInfinite(MprNumber f)
 {
-#if BIT_WIN_LIKE
+#if ME_WIN_LIKE
     return !_finite(f);
 #elif VXWORKS
     return isinf(f);

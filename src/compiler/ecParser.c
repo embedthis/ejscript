@@ -183,13 +183,13 @@ static EcNode   *removeNode(EcNode *np, EcNode *child);
 static void     setNodeDoc(EcCompiler *cp, EcNode *np);
 static EcNode   *unexpected(EcCompiler *cp);
 
-#if BIT_DEBUG
+#if ME_DEBUG
 static void     updateDebug(EcCompiler *cp);
 #else
 #define         updateDebug(cp)
 #endif
 
-#if BIT_DEBUG
+#if ME_DEBUG
 /*
     Just for debugging. Generated via tokens.ksh
  */
@@ -415,7 +415,7 @@ char *nodes[] = {
     0,
 };
 
-#endif  /* BIT_DEBUG */
+#endif  /* ME_DEBUG */
 
 /************************************ Code ************************************/
 /*
@@ -9469,7 +9469,7 @@ static char *detab(EcCompiler *cp, char *src)
 #endif
 
 
-#if BIT_DEBUG
+#if ME_DEBUG
 static void updateDebug(EcCompiler *cp)
 {
     assert(cp);
@@ -9596,7 +9596,7 @@ static void appendDocString(EcCompiler *cp, EcNode *np, EcNode *parameter, EcNod
 {
     EjsString   *defaultValue;
     Ejs         *ejs;
-    char        arg[BIT_MAX_BUFFER];
+    char        arg[ME_MAX_BUFFER];
     int         found;
     
     ejs = cp->ejs;
@@ -10340,7 +10340,7 @@ static EcNode *createNode(EcCompiler *cp, int kind, EjsString *name)
     if (token && token->loc.source) {
         np->loc = token->loc;
     }
-#if BIT_DEBUG
+#if ME_DEBUG
     np->kindName = nodes[kind];
     if (token && token->tokenId >= 0) {
         np->tokenName = tokenNames[token->tokenId];

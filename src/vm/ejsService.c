@@ -517,14 +517,14 @@ static void defineSharedTypes(Ejs *ejs)
     ejsCreateGlobalNamespaces(ejs);
     ejsAddNativeModule(ejs, "ejs", configureEjs, _ES_CHECKSUM_ejs, 0);
 
-#if BIT_EJS_ONE_MODULE
-    #if BIT_PACK_SQLITE && BIT_EJS_DB
+#if ME_EJS_ONE_MODULE
+    #if ME_EXT_SQLITE && ME_EJS_DB
         ejs_db_sqlite_Init(ejs, NULL);
     #endif
-#if BIT_EJS_WEB
+#if ME_EJS_WEB
     ejs_web_Init(ejs, NULL);
 #endif
-#if BIT_EJS_ZLIB
+#if ME_EJS_ZLIB
     ejs_zlib_Init(ejs, NULL);
 #endif
 #endif
@@ -579,7 +579,7 @@ static void initStack(Ejs *ejs)
         This will allocate memory virtually for systems with virutal memory. Otherwise, it will just use malloc.
      */
     state = ejs->state;
-    state->stackSize = MPR_PAGE_ALIGN(BIT_MAX_EJS_STACK, mprGetPageSize(ejs));
+    state->stackSize = MPR_PAGE_ALIGN(ME_MAX_EJS_STACK, mprGetPageSize(ejs));
     if ((state->stackBase = mprVirtAlloc(state->stackSize, MPR_MAP_READ | MPR_MAP_WRITE)) != 0) {
         state->stack = &state->stackBase[-1];
     }
@@ -626,7 +626,7 @@ static int configureEjs(Ejs *ejs)
         ejsConfigureWorkerType(ejs);
         ejsConfigureXMLType(ejs);
         ejsConfigureXMLListType(ejs);
-#if BIT_HTTP_WEB_SOCKETS
+#if ME_HTTP_WEB_SOCKETS
         ejsConfigureWebSocketType(ejs);
 #endif
         ejs->service->immutableInitialized = 1;
@@ -720,8 +720,8 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, "."));
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAppDir()));
 #if !VXWORKS
-    if (!smatch(mprGetAppDir(), BIT_VAPP_PREFIX "/bin")) {
-        ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, BIT_VAPP_PREFIX "/bin"));
+    if (!smatch(mprGetAppDir(), ME_VAPP_PREFIX "/bin")) {
+        ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, ME_VAPP_PREFIX "/bin"));
     }
 #endif
     if ((home = getenv("HOME")) != 0) {

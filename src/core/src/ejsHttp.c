@@ -43,8 +43,8 @@ static EjsHttp *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         hp->uri = httpUriToString(((EjsUri*) argv[0])->uri, HTTP_COMPLETE_URI);
     }
     hp->method = sclone("GET");
-    hp->requestContent = mprCreateBuf(BIT_MAX_BUFFER, -1);
-    hp->responseContent = mprCreateBuf(BIT_MAX_BUFFER, -1);
+    hp->requestContent = mprCreateBuf(ME_MAX_BUFFER, -1);
+    hp->responseContent = mprCreateBuf(ME_MAX_BUFFER, -1);
     return hp;
 }
 
@@ -570,16 +570,16 @@ static EjsArray *http_providers(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
     result = ejsCreateArray(ejs, 0);
     i = 0;
-#if BIT_PACK_EST
+#if ME_EXT_EST
     ejsSetProperty(ejs, result, i++, ejsCreateStringFromAsc(ejs, "est"));
 #endif
-#if BIT_PACK_OPENSSL
+#if ME_EXT_OPENSSL
     ejsSetProperty(ejs, result, i++, ejsCreateStringFromAsc(ejs, "openssl"));
 #endif
-#if BIT_PACK_MATRIXSSL
+#if ME_EXT_MATRIXSSL
     ejsSetProperty(ejs, result, i++, ejsCreateStringFromAsc(ejs, "matrixssl"));
 #endif
-#if BIT_PACK_MOCANA
+#if ME_EXT_MOCANA
     ejsSetProperty(ejs, result, i++, ejsCreateStringFromAsc(ejs, "mocana"));
 #endif
     return result;
@@ -1187,7 +1187,7 @@ static ssize readHttpData(Ejs *ejs, EjsHttp *hp, ssize count)
     buf = hp->responseContent;
     mprResetBufIfEmpty(buf);
     while (count < 0 || mprGetBufLength(buf) < count) {
-        len = (count < 0) ? BIT_MAX_BUFFER : (count - mprGetBufLength(buf));
+        len = (count < 0) ? ME_MAX_BUFFER : (count - mprGetBufLength(buf));
         space = mprGetBufSpace(buf);
         if (space < len) {
             mprGrowBuf(buf, len - space);

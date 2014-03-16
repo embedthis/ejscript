@@ -927,7 +927,7 @@ static EjsString *joinArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         len += (ap->length * sep->length);
     }
     if (nonString) {
-        len += BIT_MAX_BUFFER;
+        len += ME_MAX_BUFFER;
     }
     buf = mprCreateBuf(len + 1, -1);
 

@@ -37,7 +37,7 @@ PUBLIC void ejsDefineConfigProperties(Ejs *ejs)
         There will still be a -Config- property in slot[0]
      */
     att = EJS_PROP_STATIC | EJS_PROP_ENUMERABLE;
-    ejsDefineProperty(ejs, type, -1, N("public", "Debug"), 0, att, BIT_DEBUG ? ESV(true): ESV(false));
+    ejsDefineProperty(ejs, type, -1, N("public", "Debug"), 0, att, ME_DEBUG ? ESV(true): ESV(false));
 
 #if WINDOWS
 {
@@ -54,29 +54,29 @@ PUBLIC void ejsDefineConfigProperties(Ejs *ejs)
     ejsDefineProperty(ejs, type, -1, N("public", "CPU"), 0, att, ejsCreateStringFromAsc(ejs, cpu));
 }
 #else
-    ejsDefineProperty(ejs, type, -1, N("public", "CPU"), 0, att, ejsCreateStringFromAsc(ejs, BIT_CPU));
+    ejsDefineProperty(ejs, type, -1, N("public", "CPU"), 0, att, ejsCreateStringFromAsc(ejs, ME_CPU));
 #endif
-    ejsDefineProperty(ejs, type, -1, N("public", "OS"), 0, att, ejsCreateStringFromAsc(ejs, BIT_OS));
+    ejsDefineProperty(ejs, type, -1, N("public", "OS"), 0, att, ejsCreateStringFromAsc(ejs, ME_OS));
     ejsDefineProperty(ejs, type, -1, N("public", "Product"), 0, att, 
-        ejsCreateStringFromAsc(ejs, BIT_PRODUCT));
-    ejsDefineProperty(ejs, type, -1, N("public", "Title"), 0, att, ejsCreateStringFromAsc(ejs, BIT_TITLE));
-    ejsDefineProperty(ejs, type, -1, N("public", "Version"), 0, att, ejsCreateStringFromAsc(ejs, BIT_VERSION));
+        ejsCreateStringFromAsc(ejs, ME_NAME));
+    ejsDefineProperty(ejs, type, -1, N("public", "Title"), 0, att, ejsCreateStringFromAsc(ejs, ME_TITLE));
+    ejsDefineProperty(ejs, type, -1, N("public", "Version"), 0, att, ejsCreateStringFromAsc(ejs, ME_VERSION));
 
     ejsDefineProperty(ejs, type, -1, N("public", "Legacy"), 0, att, ejsCreateBoolean(ejs, 0));
-    ejsDefineProperty(ejs, type, -1, N("public", "SSL"), 0, att, ejsCreateBoolean(ejs, BIT_PACK_SSL));
-    ejsDefineProperty(ejs, type, -1, N("public", "SQLITE"), 0, att, ejsCreateBoolean(ejs, BIT_PACK_SQLITE));
-#if defined(BIT_EJS_DB)
-    ejsDefineProperty(ejs, type, -1, N("public", "DB"), 0, att, ejsCreateBoolean(ejs, BIT_EJS_DB));
-    ejsDefineProperty(ejs, type, -1, N("public", "MAPPER"), 0, att, ejsCreateBoolean(ejs, BIT_EJS_MAPPER));
-    ejsDefineProperty(ejs, type, -1, N("public", "WEB"), 0, att, ejsCreateBoolean(ejs, BIT_EJS_WEB));
-    ejsDefineProperty(ejs, type, -1, N("public", "MAIL"), 0, att, ejsCreateBoolean(ejs, BIT_EJS_MAIL));
-    ejsDefineProperty(ejs, type, -1, N("public", "TEMPLATE"), 0, att, ejsCreateBoolean(ejs, BIT_EJS_TEMPLATE));
-    ejsDefineProperty(ejs, type, -1, N("public", "TAR"), 0, att, ejsCreateBoolean(ejs, BIT_EJS_TAR));
+    ejsDefineProperty(ejs, type, -1, N("public", "SSL"), 0, att, ejsCreateBoolean(ejs, ME_EXT_SSL));
+    ejsDefineProperty(ejs, type, -1, N("public", "SQLITE"), 0, att, ejsCreateBoolean(ejs, ME_EXT_SQLITE));
+#if defined(ME_EJS_DB)
+    ejsDefineProperty(ejs, type, -1, N("public", "DB"), 0, att, ejsCreateBoolean(ejs, ME_EJS_DB));
+    ejsDefineProperty(ejs, type, -1, N("public", "MAPPER"), 0, att, ejsCreateBoolean(ejs, ME_EJS_MAPPER));
+    ejsDefineProperty(ejs, type, -1, N("public", "WEB"), 0, att, ejsCreateBoolean(ejs, ME_EJS_WEB));
+    ejsDefineProperty(ejs, type, -1, N("public", "MAIL"), 0, att, ejsCreateBoolean(ejs, ME_EJS_MAIL));
+    ejsDefineProperty(ejs, type, -1, N("public", "TEMPLATE"), 0, att, ejsCreateBoolean(ejs, ME_EJS_TEMPLATE));
+    ejsDefineProperty(ejs, type, -1, N("public", "TAR"), 0, att, ejsCreateBoolean(ejs, ME_EJS_TAR));
 #endif
 
-    if (mprSamePath(mprGetAppDir(), BIT_VAPP_PREFIX "/bin")) {
-        ejsDefineProperty(ejs, type, -1, N("public", "Bin"), 0, att, ejsCreatePathFromAsc(ejs, BIT_VAPP_PREFIX "/bin"));
-        ejsDefineProperty(ejs, type, -1, N("public", "Inc"), 0, att, ejsCreatePathFromAsc(ejs, BIT_VAPP_PREFIX "/inc"));
+    if (mprSamePath(mprGetAppDir(), ME_VAPP_PREFIX "/bin")) {
+        ejsDefineProperty(ejs, type, -1, N("public", "Bin"), 0, att, ejsCreatePathFromAsc(ejs, ME_VAPP_PREFIX "/bin"));
+        ejsDefineProperty(ejs, type, -1, N("public", "Inc"), 0, att, ejsCreatePathFromAsc(ejs, ME_VAPP_PREFIX "/inc"));
     } else {
         ejsDefineProperty(ejs, type, -1, N("public", "Bin"), 0, att, ejsCreatePathFromAsc(ejs, mprGetAppDir()));
         ejsDefineProperty(ejs, type, -1, N("public", "Inc"), 0, att, 

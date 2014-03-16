@@ -41,7 +41,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
     Ejs         *ejs;
     EjsType     *type;
     MprFile     *localFile;
-    char        *path, slotsName[BIT_MAX_FNAME], moduleName[BIT_MAX_FNAME];
+    char        *path, slotsName[ME_MAX_FNAME], moduleName[ME_MAX_FNAME];
     char        *cp, *sp, *dp;
 
     assert(bp);
@@ -89,7 +89,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
         "  \n"
         "   Slot definitions. Version %s.\n"
         " */\n"
-        "\n", path, mp->name, BIT_VERSION);
+        "\n", path, mp->name, ME_VERSION);
 
     mprFprintf(file,
         "#ifndef _h_SLOTS_%s\n"
@@ -97,7 +97,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
         slotsName, slotsName);
 
     if (smatch(ejsToMulti(ejs, mp->name), "ejs")) {
-        mprFprintf(file, "#ifndef EJS_VERSION\n    #define EJS_VERSION \"%s\"\n#endif\n", BIT_VERSION);
+        mprFprintf(file, "#ifndef EJS_VERSION\n    #define EJS_VERSION \"%s\"\n#endif\n", ME_VERSION);
     }
     mprFprintf(file, "\n/*\n   Slots for the \"%@\" module \n */\n", mp->name);
 
@@ -123,7 +123,7 @@ static void defineSlot(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, 
         EjsName *name)
 {
     Ejs     *ejs;
-    char    nameBuf[BIT_MAX_PATH];
+    char    nameBuf[ME_MAX_PATH];
     char    *funSep, *sp, *typeStr, *funStr, *nameStr;
     ejs = bp->ejs;
 
@@ -156,7 +156,7 @@ static void defineSlot(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, 
 
 static void defineSlotCount(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, char *suffix, int numProp)
 {
-    char        name[BIT_MAX_PATH], *typeStr, *sp;
+    char        name[ME_MAX_PATH], *typeStr, *sp;
 
     typeStr = mapFullName(bp->ejs, &type->qname, 1);
     if (*typeStr == '\0') {

@@ -1,0 +1,29 @@
+/*
+    libejs.me -- MakeMe file for the Ejs library
+ */
+
+Me.load({
+
+    targets: {
+        libejs: {
+            type: 'lib',
+            headers: [ 'slots/*.h', '*.h' ], 
+            sources: [ 
+                'compiler/*.c',
+                'core/src/*.c',
+                'vm/*.c'
+            ],
+            depends: [ 'libhttp' ],
+        },
+
+        importSlots: {
+            action: "
+                for each (file in Path('slots').files('*.h')) {
+                    let src = me.dir.inc.join(file.basename)
+                    trace('Import', src)
+                    src.copy(file)
+                }
+            ",
+        },
+	},
+})

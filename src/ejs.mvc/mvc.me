@@ -1,0 +1,45 @@
+/*
+    mvc.me -- MakeMe file for ejs.mvc
+ */
+
+Me.load({
+
+    targets: {
+        'mvc.es': {
+            enable: 'me.settings.ejs.db',
+            path: '${BIN}/mvc.es',
+            files: [ 'mvc.es' ],
+            build: "
+                trace('Export', me.target.files)
+                cp('mvc.es', me.dir.bin.join('mvc.es'))
+            "
+            generate: 'cp mvc.es ${BIN}',
+            platforms: [ 'local' ],
+        },
+
+        mvc: {
+            enable: 'me.settings.ejs.db',
+            type: 'exe',
+            path: '${BIN}/mvc${EXE}',
+            sources: [
+                '${SRC}/src/cmd/ejsrun.c',
+            ],
+            active: true,
+            precious: true,
+            depends: ['libejs', 'mvc.es'],
+            platforms: [ 'local' ],
+        },
+
+        'ejs.mvc.mod': {
+            enable: 'me.settings.ejs.db',
+            path: '${BIN}/ejs.mvc.mod',
+            files: [ '*.es' ],
+            build: "
+                trace('Compile', 'ejs.mvc.mod')
+                run('${LBIN}/ejsc --out ${BIN}/ejs.mvc.mod ${settings.esflags} --optimize 9 ' + Path('.').files('*.es').sort().join(' '))
+            ",
+            generate: '${BIN}/ejsc --out ${BIN}/ejs.mvc.mod ${settings.esflags} --optimize 9 *.es',
+            depends: [ 'ejsc', 'ejs.mod', 'ejs.web.mod', 'ejs.template.mod', 'ejs.unix.mod' ],
+        },
+	},
+})

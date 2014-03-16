@@ -16,10 +16,10 @@ static int  flushByteArray(Ejs *ejs, EjsByteArray *ap);
 static ssize  getInput(Ejs *ejs, EjsByteArray *ap, ssize required);
 static int  lookupByteArrayProperty(Ejs *ejs, EjsByteArray *ap, EjsName qname);
 
-static BIT_INLINE int swap16(EjsByteArray *ap, int a);
-static BIT_INLINE int swap32(EjsByteArray *ap, int a);
-static BIT_INLINE int64 swap64(EjsByteArray *ap, int64 a);
-static BIT_INLINE double swapDouble(EjsByteArray *ap, double a);
+static ME_INLINE int swap16(EjsByteArray *ap, int a);
+static ME_INLINE int swap32(EjsByteArray *ap, int a);
+static ME_INLINE int64 swap64(EjsByteArray *ap, int64 a);
+static ME_INLINE double swapDouble(EjsByteArray *ap, double a);
 static int putByte(EjsByteArray *ap, int value);
 static int putInteger(EjsByteArray *ap, int value);
 static int putLong(EjsByteArray *ap, int64 value);
@@ -268,12 +268,12 @@ static EjsByteArray *ba_ByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj *
 
     assert(0 <= argc && argc <= 2);
 
-    size = (argc >= 1) ? ejsGetInt(ejs, argv[0]) : BIT_MAX_BUFFER;
+    size = (argc >= 1) ? ejsGetInt(ejs, argv[0]) : ME_MAX_BUFFER;
     if (size <= 0) {
         size = 1;
     }
     resizable = (argc == 2) ? ejsGetBoolean(ejs, argv[1]): 1;
-    ap->growInc = (resizable) ? BIT_MAX_BUFFER : 0;
+    ap->growInc = (resizable) ? ME_MAX_BUFFER : 0;
     ap->endian = mprGetEndian(ejs);
     ap->resizable = 1;
     if (ejsGrowByteArray(ejs, ap, size) < 0) {
@@ -1175,7 +1175,7 @@ PUBLIC bool ejsMakeRoomInByteArray(Ejs *ejs, EjsByteArray *ap, ssize require)
 }
 
 
-static BIT_INLINE int swap16(EjsByteArray *ap, int a)
+static ME_INLINE int swap16(EjsByteArray *ap, int a)
 {
     if (!ap->swap) {
         return a;
@@ -1184,7 +1184,7 @@ static BIT_INLINE int swap16(EjsByteArray *ap, int a)
 }
 
 
-static BIT_INLINE int swap32(EjsByteArray *ap, int a)
+static ME_INLINE int swap32(EjsByteArray *ap, int a)
 {
     if (!ap->swap) {
         return a;
@@ -1193,7 +1193,7 @@ static BIT_INLINE int swap32(EjsByteArray *ap, int a)
 }
 
 
-static BIT_INLINE int64 swap64(EjsByteArray *ap, int64 a)
+static ME_INLINE int64 swap64(EjsByteArray *ap, int64 a)
 {
     int64   low, high;
 
@@ -1207,7 +1207,7 @@ static BIT_INLINE int64 swap64(EjsByteArray *ap, int64 a)
 }
 
 
-static BIT_INLINE double swapDouble(EjsByteArray *ap, double a)
+static ME_INLINE double swapDouble(EjsByteArray *ap, double a)
 {
     int64   low, high;
 
@@ -1356,11 +1356,11 @@ PUBLIC EjsByteArray *ejsCreateByteArray(Ejs *ejs, ssize size)
         return 0;
     }
     if (size <= 0) {
-        size = BIT_MAX_BUFFER;
+        size = ME_MAX_BUFFER;
     }
     ap->async = -1;
     ap->resizable = 1;
-    ap->growInc = BIT_MAX_BUFFER;
+    ap->growInc = ME_MAX_BUFFER;
     ap->endian = mprGetEndian(ejs);
     if (ejsGrowByteArray(ejs, ap, size) < 0) {
         return 0;

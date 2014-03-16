@@ -182,3 +182,5 @@ ejs.old
 package.old
 ejs.sublime-*
 test.sdb
+start.me
+macosx-x64*

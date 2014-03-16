@@ -144,7 +144,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
      */
     for (i = 0; i < argc && !cp->fatalError; i++) {
         ext = mprGetPathExt(argv[i]);
-        if (scaselesscmp(ext, "mod") == 0 || scaselesscmp(ext, BIT_SHOBJ) == 0) {
+        if (scaselesscmp(ext, "mod") == 0 || scaselesscmp(ext, ME_SHOBJ) == 0) {
             nextModule = mprGetListLength(ejs->modules);
             lflags = cp->strict ? EJS_LOADER_STRICT : 0;
             if ((rc = ejsLoadModule(cp->ejs, ejsCreateStringFromAsc(ejs, argv[i]), -1, -1, lflags)) < 0) {

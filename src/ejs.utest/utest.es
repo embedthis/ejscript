@@ -36,8 +36,8 @@ enumerable class Test {
     var echo: Boolean = false               // Echo the command line 
     var errorMsg: String                    // Worker callback error msg
     var failed: Boolean                     // Did the test pass
-    var env: Object                         // bit.h exports
-    var features: Object                    // bit.h features
+    var env: Object                         // Environment
+    var features: Object                    // me.h features
     var filters: Array = []                 // Filter tests by pattern x.y.z... 
     var finish: Boolean                     // Set to true when time to exit 
     var iterations: Number = 1              // Number of iterations to run the test 
@@ -197,13 +197,19 @@ enumerable class Test {
         //  TODO - this is not reliable. If multiple platforms, it may pick the wrong one.
         _cfg = _top.files(Config.OS + '-' + Config.CPU + '-*').sort()[0]
         if (!_cfg) {
-            let bith = _top.files('*/inc/bit.h').sort()[0]
-            if (!bith) {
-                throw 'Cannot locate configure files, run configure'
+            let hdr = _top.files('*/inc/me.h').sort()[0]
+            if (!hdr) {
+                let hdr = _top.files('*/inc/bit.h').sort()[0]
+                if (!hdr) {
+                    throw 'Cannot locate configure files, run configure'
+                }
+                _cfg = hdr.trimEnd('/inc/bit.h')
+                parseBitConfig(_cfg.join('inc/bit.h'))
+            } else {
+                _cfg = hdr.trimEnd('/inc/me.h')
+                parseMeConfig(_cfg.join('inc/me.h'))
             }
-            _cfg = bith.trimEnd('/inc/bit.h')
         }
-        parseBuildConfig(_cfg.join('inc/bit.h'))
         _bin = _lib = _cfg.join('bin')
     }
 
@@ -498,18 +504,43 @@ enumerable class Test {
         return null
     }
 
-    function parseBuildConfig(path: Path) {
+    function parseBitConfig(path: Path) {
         let data = Path(path).readString()
         features = {}
         let str = data.match(/BIT_.*/g)
         for each (item in str) {
             let [key, value] = item.split(" ")
-            key = key.replace(/BIT_PACK_/, "")
+            key = key.replace(/BIT_COMP_/, "")
             key = key.replace(/BIT_/, "").toLowerCase()
             if (value == "1" || value == "0") {
                 value = value cast Number
             }
             features["bit_" + key] = value
+        }
+        str = data.match(/export.*/g)
+        env = {}
+        for each (item in str) {
+            if (!item.contains("=")) {
+                continue
+            }
+            let [key, value] = item.split(":=")
+            key = key.replace(/export /, "")
+            env[key] = value
+        }
+    }
+
+    function parseMeConfig(path: Path) {
+        let data = Path(path).readString()
+        features = {}
+        let str = data.match(/ME_.*/g)
+        for each (item in str) {
+            let [key, value] = item.split(" ")
+            key = key.replace(/ME_EXT_/, "")
+            key = key.replace(/ME_/, "").toLowerCase()
+            if (value == "1" || value == "0") {
+                value = value cast Number
+            }
+            features["me_" + key] = value
         }
         str = data.match(/export.*/g)
         env = {}

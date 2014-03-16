@@ -18,8 +18,8 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv);
  */
 static EjsCmd *cmd_constructor(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
-    cmd->stdoutBuf = mprCreateBuf(BIT_MAX_BUFFER, -1);
-    cmd->stderrBuf = mprCreateBuf(BIT_MAX_BUFFER, -1);
+    cmd->stdoutBuf = mprCreateBuf(ME_MAX_BUFFER, -1);
+    cmd->stderrBuf = mprCreateBuf(ME_MAX_BUFFER, -1);
     cmd->ejs = ejs;
     cmd->timeout = -1;
     if (argc >= 1) {
@@ -104,7 +104,7 @@ static EjsObj *cmd_kill(Ejs *ejs, EjsAny *unused, int argc, EjsObj **argv)
 {
     int     rc, pid, signal;
 
-#if BIT_UNIX_LIKE
+#if ME_UNIX_LIKE
     signal = SIGINT;
 #else
     signal = 2;
@@ -117,7 +117,7 @@ static EjsObj *cmd_kill(Ejs *ejs, EjsAny *unused, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "No process to kill");
         return 0;
     }
-#if BIT_WIN_LIKE
+#if ME_WIN_LIKE
 {
     HANDLE	handle;
 	handle = OpenProcess(PROCESS_TERMINATE, 0, pid);
@@ -209,7 +209,7 @@ static EjsNumber *cmd_read(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     }
     count = buffer->size - buffer->writePosition;
     if (count <= 0) {
-        if (ejsGrowByteArray(ejs, buffer, BIT_MAX_BUFFER) < 0) {
+        if (ejsGrowByteArray(ejs, buffer, ME_MAX_BUFFER) < 0) {
             return 0;
         }
         count = buffer->size - buffer->writePosition;
@@ -297,8 +297,8 @@ static void cmdIOCallback(MprCmd *mc, int channel, void *data)
      */
     mprResetBufIfEmpty(buf);
     space = mprGetBufSpace(buf);
-    if (space < (BIT_MAX_BUFFER / 4)) {
-        if (mprGrowBuf(buf, BIT_MAX_BUFFER) < 0) {
+    if (space < (ME_MAX_BUFFER / 4)) {
+        if (mprGrowBuf(buf, ME_MAX_BUFFER) < 0) {
             mprCloseCmdFd(mc, channel);
             return;
         }
@@ -614,7 +614,7 @@ static EjsNumber *cmd_write(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
  */
 static EjsObj *cmd_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-#if BIT_UNIX_LIKE
+#if ME_UNIX_LIKE
     cchar   **argVector, *path;
 
 #if FUTURE

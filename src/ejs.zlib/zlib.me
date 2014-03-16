@@ -1,0 +1,25 @@
+/*
+    zlib.me -- MakeMe file for ejs.zlib
+ */
+
+Me.load({
+    targets: {
+        'ejs.zlib.mod': {
+            path: '${BIN}/ejs.zlib.mod',
+            files: [ '*.es' ],
+            precious: true,
+            build: "
+                trace('Compile', 'ejs.zlib.mod')
+                run('${LBIN}/ejsc --out ${BIN}/ejs.zlib.mod ${settings.esflags} --optimize 9 ' + Path('.').files('*.es').sort().join(' '))
+            ",
+            'generate': '${BIN}/ejsc --out ${BIN}/ejs.zlib.mod ${settings.esflags} --optimize 9 *.es',
+            depends: [ 'ejsc', 'ejs.mod' ],
+        },
+
+        'libejs.zlib': {
+            type: 'lib',
+            sources: [ '*.c' ],
+            depends: [ 'libejs', 'ejs.mod', 'ejs.zlib.mod', 'libzlib' ],
+        },
+	},
+})

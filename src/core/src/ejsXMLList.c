@@ -83,7 +83,7 @@ static EjsObj *xlCast(Ejs *ejs, EjsXML *vp, EjsType *type)
         return result;
 
     case S_String:
-        buf = mprCreateBuf(BIT_MAX_BUFFER, -1);
+        buf = mprCreateBuf(ME_MAX_BUFFER, -1);
         if (mprGetListLength(vp->elements) == 1) {
             elt = mprGetFirstItem(vp->elements);
             if (elt->kind == EJS_XML_ELEMENT) {
