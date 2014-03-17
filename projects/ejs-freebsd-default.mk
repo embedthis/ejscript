@@ -26,7 +26,7 @@ ME_EXT_ZLIB           ?= 1
 ME_EXT_COMPILER_PATH  ?= gcc
 ME_EXT_DOXYGEN_PATH   ?= doxygen
 ME_EXT_DSI_PATH       ?= dsi
-ME_EXT_EST_PATH       ?= src/paks/est/estLib.c
+ME_EXT_EST_PATH       ?= src/paks/est
 ME_EXT_HTTP_PATH      ?= src/paks/http/http.me
 ME_EXT_LIB_PATH       ?= ar
 ME_EXT_LINK_PATH      ?= ld
@@ -43,7 +43,7 @@ ME_EXT_PMAKER_PATH    ?= [function Function]
 ME_EXT_SQLITE_PATH    ?= src/paks/sqlite
 ME_EXT_VXWORKS_PATH   ?= $(WIND_BASE)
 ME_EXT_ZIP_PATH       ?= zip
-ME_EXT_ZLIB_PATH      ?= src/paks/zlib/zlib.me
+ME_EXT_ZLIB_PATH      ?= src/paks/zlib
 
 export WIND_HOME      ?= $(WIND_BASE)/..
 

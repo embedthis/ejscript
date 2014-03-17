@@ -224,7 +224,7 @@
    Define the base integer type, architecture-wise
  */
 //  TODO -remove wordsize 8
-//  TODO -remove t_int, t_dbl and use bitos types
+//  TODO -remove t_int, t_dbl and use osdep types
 
 #if ME_WORDSIZE == 8
     typedef uchar t_int;
@@ -2373,7 +2373,7 @@ extern "C" {
 #ifndef EST_BN_MUL_H
 #define EST_BN_MUL_H
 
-//  TODO - convert to bitos.h
+//  TODO - convert to osdep.h
 
 #if defined(EST_HAVE_ASM)
 
