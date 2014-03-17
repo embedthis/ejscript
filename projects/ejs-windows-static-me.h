@@ -142,7 +142,7 @@
     #define ME_PLATFORMS "local"
 #endif
 #ifndef ME_PREFIXES
-    #define ME_PREFIXES "embedthis-prefixes"
+    #define ME_PREFIXES "package-prefixes"
 #endif
 #ifndef ME_STATIC
     #define ME_STATIC 1
@@ -234,8 +234,8 @@
 #ifndef ME_CONFIG_CMD
     #define ME_CONFIG_CMD "me -d -q -platform windows-x86-static -static -configure . -gen vs"
 #endif
-#ifndef ME_EJS_NAME
-    #define ME_EJS_NAME 1
+#ifndef ME_EJS_PRODUCT
+    #define ME_EJS_PRODUCT 1
 #endif
 #ifndef ME_PROFILE
     #define ME_PROFILE "static"
@@ -308,10 +308,10 @@
     #define ME_EXT_PCRE 1
 #endif
 #ifndef ME_EXT_PMAKER
-    #define ME_EXT_PMAKER 1
+    #define ME_EXT_PMAKER 0
 #endif
 #ifndef ME_EXT_RC
-    #define ME_EXT_RC 1
+    #define ME_EXT_RC 0
 #endif
 #ifndef ME_EXT_SQLITE
     #define ME_EXT_SQLITE 1
@@ -323,7 +323,7 @@
     #define ME_EXT_VXWORKS 1
 #endif
 #ifndef ME_EXT_WINSDK
-    #define ME_EXT_WINSDK 1
+    #define ME_EXT_WINSDK 0
 #endif
 #ifndef ME_EXT_ZIP
     #define ME_EXT_ZIP 1

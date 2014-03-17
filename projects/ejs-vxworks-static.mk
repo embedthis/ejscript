@@ -2,161 +2,130 @@
 #   ejs-vxworks-static.mk -- Makefile to build Embedthis Ejscript for vxworks
 #
 
-NAME               := ejs
-VERSION            := 2.3.5
-PROFILE            := static
-ARCH               := $(shell echo $(WIND_HOST_TYPE) | sed 's/-.*//')
-CPU                := $(subst X86,PENTIUM,$(shell echo $(ARCH) | tr a-z A-Z))
-OS                 := vxworks
-CC                 := cc$(subst x86,pentium,$(ARCH))
-LD                 := link
-CONFIG             := $(OS)-$(ARCH)-$(PROFILE)
-LBIN               := $(CONFIG)/bin
+NAME                  := ejs
+VERSION               := 2.3.5
+PROFILE               ?= static
+ARCH                  ?= $(shell echo $(WIND_HOST_TYPE) | sed 's/-.*//')
+CPU                   ?= $(subst X86,PENTIUM,$(shell echo $(ARCH) | tr a-z A-Z))
+OS                    ?= vxworks
+CC                    ?= cc$(subst x86,pentium,$(ARCH))
+LD                    ?= ld
+CONFIG                ?= $(OS)-$(ARCH)-$(PROFILE)
+LBIN                  ?= $(CONFIG)/bin
+PATH                  := $(LBIN):$(PATH)
+
+ME_EXT_EST            ?= 1
+ME_EXT_MATRIXSSL      ?= 0
+ME_EXT_NANOSSL        ?= 0
+ME_EXT_OPENSSL        ?= 0
+ME_EXT_PCRE           ?= 1
+ME_EXT_SQLITE         ?= 1
+ME_EXT_SSL            ?= 1
+ME_EXT_ZLIB           ?= 1
+
+ME_EXT_COMPILER_PATH  ?= cc$(subst x86,pentium,$(ARCH))
+ME_EXT_DOXYGEN_PATH   ?= doxygen
+ME_EXT_DSI_PATH       ?= dsi
+ME_EXT_EST_PATH       ?= src/paks/est/estLib.c
+ME_EXT_HTTP_PATH      ?= src/paks/http/http.me
+ME_EXT_LIB_PATH       ?= ar
+ME_EXT_LINK_PATH      ?= ld
+ME_EXT_MAN_PATH       ?= man
+ME_EXT_MAN2HTML_PATH  ?= man2html
+ME_EXT_MATRIXSSL_PATH ?= /usr/src/matrixssl
+ME_EXT_MPR_PATH       ?= src/paks/mpr/mpr.me
+ME_EXT_NANOSSL_PATH   ?= /usr/src/nanossl
+ME_EXT_OPENSSL_PATH   ?= /usr/src/openssl
+ME_EXT_OSDEP_PATH     ?= src/paks/osdep/osdep.me
+ME_EXT_PAK_PATH       ?= pak
+ME_EXT_PCRE_PATH      ?= src/paks/pcre/pcre.me
+ME_EXT_PMAKER_PATH    ?= [function Function]
+ME_EXT_SQLITE_PATH    ?= src/paks/sqlite
+ME_EXT_VXWORKS_PATH   ?= $(WIND_BASE)
+ME_EXT_ZIP_PATH       ?= zip
+ME_EXT_ZLIB_PATH      ?= src/paks/zlib/zlib.me
+
+export WIND_HOME      ?= $(WIND_BASE)/..
+export PATH           := $(WIND_GNU_PATH)/$(WIND_HOST_TYPE)/bin:$(PATH)
+
+CFLAGS                += -fno-builtin -fno-defer-pop -fvolatile -w
+DFLAGS                += -DVXWORKS -DRW_MULTI_THREAD -D_GNU_TOOL -DCPU=PENTIUM $(patsubst %,-D%,$(filter ME_%,$(MAKEFLAGS))) -DME_EXT_EST=$(ME_EXT_EST) -DME_EXT_MATRIXSSL=$(ME_EXT_MATRIXSSL) -DME_EXT_NANOSSL=$(ME_EXT_NANOSSL) -DME_EXT_OPENSSL=$(ME_EXT_OPENSSL) -DME_EXT_PCRE=$(ME_EXT_PCRE) -DME_EXT_SQLITE=$(ME_EXT_SQLITE) -DME_EXT_SSL=$(ME_EXT_SSL) -DME_EXT_ZLIB=$(ME_EXT_ZLIB) 
+IFLAGS                += "-I$(CONFIG)/inc -I$(WIND_BASE)/target/h -I$(WIND_BASE)/target/h/wrn/coreip"
+LDFLAGS               += '-Wl,-r'
+LIBPATHS              += -L$(CONFIG)/bin
+LIBS                  += -lgcc
+
+DEBUG                 ?= debug
+CFLAGS-debug          ?= -g
+DFLAGS-debug          ?= -DME_DEBUG
+LDFLAGS-debug         ?= -g
+DFLAGS-release        ?= 
+CFLAGS-release        ?= -O2
+LDFLAGS-release       ?= 
+CFLAGS                += $(CFLAGS-$(DEBUG))
+DFLAGS                += $(DFLAGS-$(DEBUG))
+LDFLAGS               += $(LDFLAGS-$(DEBUG))
+
+ME_ROOT_PREFIX        ?= deploy
+ME_BASE_PREFIX        ?= $(ME_ROOT_PREFIX)
+ME_DATA_PREFIX        ?= $(ME_VAPP_PREFIX)
+ME_STATE_PREFIX       ?= $(ME_VAPP_PREFIX)
+ME_BIN_PREFIX         ?= $(ME_VAPP_PREFIX)
+ME_INC_PREFIX         ?= $(ME_VAPP_PREFIX)/inc
+ME_LIB_PREFIX         ?= $(ME_VAPP_PREFIX)
+ME_MAN_PREFIX         ?= $(ME_VAPP_PREFIX)
+ME_SBIN_PREFIX        ?= $(ME_VAPP_PREFIX)
+ME_ETC_PREFIX         ?= $(ME_VAPP_PREFIX)
+ME_WEB_PREFIX         ?= $(ME_VAPP_PREFIX)/web
+ME_LOG_PREFIX         ?= $(ME_VAPP_PREFIX)
+ME_SPOOL_PREFIX       ?= $(ME_VAPP_PREFIX)
+ME_CACHE_PREFIX       ?= $(ME_VAPP_PREFIX)
+ME_APP_PREFIX         ?= $(ME_BASE_PREFIX)
+ME_VAPP_PREFIX        ?= $(ME_APP_PREFIX)
+ME_SRC_PREFIX         ?= $(ME_ROOT_PREFIX)/usr/src/$(NAME)-$(VERSION)
+
 
 ifeq ($(ME_EXT_EST),1)
-    ME_EXT_EST            := 1
+    TARGETS           += $(CONFIG)/bin/libest.a
 endif
-ifeq ($(ME_EXT_MATRIXSSL),1)
-    ME_EXT_MATRIXSSL      := 0
-endif
-ifeq ($(ME_EXT_NANOSSL),1)
-    ME_EXT_NANOSSL        := 0
-endif
-ifeq ($(ME_EXT_OPENSSL),1)
-    ME_EXT_OPENSSL        := 0
-endif
-ifeq ($(ME_EXT_PCRE),1)
-    ME_EXT_PCRE           := 1
+TARGETS               += $(CONFIG)/bin/ca.crt
+TARGETS               += $(CONFIG)/bin/libhttp.a
+TARGETS               += $(CONFIG)/bin/http.out
+TARGETS               += $(CONFIG)/bin/ejsman.out
+ifeq ($(ME_EXT_SQLITE),1)
+    TARGETS           += $(CONFIG)/bin/libsql.a
 endif
 ifeq ($(ME_EXT_SQLITE),1)
-    ME_EXT_SQLITE         := 1
-endif
-ifeq ($(ME_EXT_SSL),1)
-    ME_EXT_SSL            := 1
+    TARGETS           += $(CONFIG)/bin/sqlite.out
 endif
 ifeq ($(ME_EXT_ZLIB),1)
-    ME_EXT_ZLIB           := 1
+    TARGETS           += $(CONFIG)/bin/libzlib.a
 endif
-
-ifeq ($(ME_EXT_EST),1)
-    ME_EXT_SSL            := 1
-endif
-ifeq ($(ME_EXT_MATRIXSSL),1)
-    ME_EXT_SSL            := 1
-endif
-ifeq ($(ME_EXT_NANOSSL),1)
-    ME_EXT_SSL            := 1
-endif
-ifeq ($(ME_EXT_OPENSSL),1)
-    ME_EXT_SSL            := 1
-endif
-
-ME_EXT_COMPILER_PATH      := cc$(subst x86,pentium,$(ARCH))
-ME_EXT_DOXYGEN_PATH       := doxygen
-ME_EXT_DSI_PATH           := dsi
-ME_EXT_EST_PATH           := src/paks/est/estLib.c
-ME_EXT_HTTP_PATH          := src/paks/http
-ME_EXT_LIB_PATH           := ar
-ME_EXT_LINK_PATH          := link
-ME_EXT_MAN_PATH           := man
-ME_EXT_MAN2HTML_PATH      := man2html
-ME_EXT_MATRIXSSL_PATH     := /usr/src/matrixssl
-ME_EXT_MPR_PATH           := src/paks/mpr
-ME_EXT_NANOSSL_PATH       := /usr/src/nanossl
-ME_EXT_OPENSSL_PATH       := /usr/src/openssl
-ME_EXT_OSDEP_PATH         := src/paks/osdep
-ME_EXT_PAK_PATH           := pak
-ME_EXT_PCRE_PATH          := src/paks/pcre
-ME_EXT_PMAKER_PATH        := pmaker
-ME_EXT_SQLITE_PATH        := src/paks/sqlite
-ME_EXT_SSL_PATH           := ssl
-ME_EXT_VXWORKS_PATH       := $(WIND_BASE)
-ME_EXT_WINSDK_PATH        := winsdk
-ME_EXT_ZIP_PATH           := zip
-ME_EXT_ZLIB_PATH          := src/paks/zlib
-
-export WIND_HOME          := $(WIND_BASE)/..
-export PATH               := $(WIND_GNU_PATH)/$(WIND_HOST_TYPE)/bin:$(PATH)
-
-CFLAGS             += -fno-builtin -fno-defer-pop -fvolatile -w
-DFLAGS             += -DVXWORKS -DRW_MULTI_THREAD -D_GNU_TOOL -DCPU=PENTIUM $(patsubst %,-D%,$(filter ME_%,$(MAKEFLAGS))) -DME_EXT_EST=$(ME_EXT_EST) -DME_EXT_MATRIXSSL=$(ME_EXT_MATRIXSSL) -DME_EXT_NANOSSL=$(ME_EXT_NANOSSL) -DME_EXT_OPENSSL=$(ME_EXT_OPENSSL) -DME_EXT_PCRE=$(ME_EXT_PCRE) -DME_EXT_SQLITE=$(ME_EXT_SQLITE) -DME_EXT_SSL=$(ME_EXT_SSL) -DME_EXT_ZLIB=$(ME_EXT_ZLIB) 
-IFLAGS             += "-I$(CONFIG)/inc -I$(WIND_BASE)/target/h -I$(WIND_BASE)/target/h/wrn/coreip"
-LDFLAGS            += '-Wl,-r'
-LIBPATHS           += -L$(CONFIG)/bin
-LIBS               += -lgcc
-
-DEBUG              := debug
-CFLAGS-debug       := -g
-DFLAGS-debug       := -DME_DEBUG
-LDFLAGS-debug      := -g
-DFLAGS-release     := 
-CFLAGS-release     := -O2
-LDFLAGS-release    := 
-CFLAGS             += $(CFLAGS-$(DEBUG))
-DFLAGS             += $(DFLAGS-$(DEBUG))
-LDFLAGS            += $(LDFLAGS-$(DEBUG))
-
-ME_ROOT_PREFIX     := deploy
-ME_BASE_PREFIX     := $(ME_ROOT_PREFIX)
-ME_DATA_PREFIX     := $(ME_VAPP_PREFIX)
-ME_STATE_PREFIX    := $(ME_VAPP_PREFIX)
-ME_BIN_PREFIX      := $(ME_VAPP_PREFIX)
-ME_INC_PREFIX      := $(ME_VAPP_PREFIX)/inc
-ME_LIB_PREFIX      := $(ME_VAPP_PREFIX)
-ME_MAN_PREFIX      := $(ME_VAPP_PREFIX)
-ME_SBIN_PREFIX     := $(ME_VAPP_PREFIX)
-ME_ETC_PREFIX      := $(ME_VAPP_PREFIX)
-ME_WEB_PREFIX      := $(ME_VAPP_PREFIX)/web
-ME_LOG_PREFIX      := $(ME_VAPP_PREFIX)
-ME_SPOOL_PREFIX    := $(ME_VAPP_PREFIX)
-ME_CACHE_PREFIX    := $(ME_VAPP_PREFIX)
-ME_APP_PREFIX      := $(ME_BASE_PREFIX)
-ME_VAPP_PREFIX     := $(ME_APP_PREFIX)
-ME_SRC_PREFIX      := $(ME_ROOT_PREFIX)/usr/src/$(NAME)-$(VERSION)
-
-
-ifeq ($(ME_EXT_EST),1)
-    TARGETS        += $(CONFIG)/bin/libest.a
-endif
-TARGETS            += $(CONFIG)/bin/ca.crt
-TARGETS            += $(CONFIG)/bin/libhttp.a
-TARGETS            += $(CONFIG)/bin/httpcmd.out
-TARGETS            += $(CONFIG)/bin/ejsman.out
-ifeq ($(ME_EXT_SQLITE),1)
-    TARGETS        += $(CONFIG)/bin/libsql.a
-endif
-ifeq ($(ME_EXT_SQLITE),1)
-    TARGETS        += $(CONFIG)/bin/sqlite.out
-endif
-ifeq ($(ME_EXT_ZLIB),1)
-    TARGETS        += $(CONFIG)/bin/libzlib.a
-endif
-TARGETS            += $(CONFIG)/bin/libejs.a
-TARGETS            += $(CONFIG)/bin/ejs.out
-TARGETS            += $(CONFIG)/bin/ejsc.out
-TARGETS            += $(CONFIG)/bin/ejsmod.out
-TARGETS            += $(CONFIG)/bin/ejsrun.out
-TARGETS            += $(CONFIG)/bin/ejs.mod
-TARGETS            += $(CONFIG)/bin/ejs.unix.mod
-TARGETS            += $(CONFIG)/bin/ejs.db.mod
-TARGETS            += $(CONFIG)/bin/ejs.db.mapper.mod
-TARGETS            += $(CONFIG)/bin/ejs.db.sqlite.mod
-TARGETS            += $(CONFIG)/bin/libejs.db.sqlite.a
-TARGETS            += $(CONFIG)/bin/ejs.mail.mod
-TARGETS            += $(CONFIG)/bin/ejs.web.mod
-TARGETS            += $(CONFIG)/bin/libejs.web.a
-TARGETS            += $(CONFIG)/bin/www
-TARGETS            += $(CONFIG)/bin/ejs.template.mod
-TARGETS            += $(CONFIG)/bin/ejs.zlib.mod
-TARGETS            += $(CONFIG)/bin/libejs.zlib.a
-TARGETS            += $(CONFIG)/bin/ejs.tar.mod
-TARGETS            += $(CONFIG)/bin/mvc.es
-TARGETS            += $(CONFIG)/bin/mvc.out
-TARGETS            += $(CONFIG)/bin/ejs.mvc.mod
-TARGETS            += $(CONFIG)/bin/utest.es
-TARGETS            += $(CONFIG)/bin/utest.worker
-TARGETS            += $(CONFIG)/bin/utest.out
-TARGETS            += bower.json
+TARGETS               += $(CONFIG)/bin/libejs.a
+TARGETS               += $(CONFIG)/bin/ejs.out
+TARGETS               += $(CONFIG)/bin/ejsc.out
+TARGETS               += $(CONFIG)/bin/ejsmod.out
+TARGETS               += $(CONFIG)/bin/ejsrun.out
+TARGETS               += $(CONFIG)/bin/ejs.mod
+TARGETS               += $(CONFIG)/bin/ejs.unix.mod
+TARGETS               += $(CONFIG)/bin/ejs.db.mod
+TARGETS               += $(CONFIG)/bin/ejs.db.mapper.mod
+TARGETS               += $(CONFIG)/bin/ejs.db.sqlite.mod
+TARGETS               += $(CONFIG)/bin/libejs.db.sqlite.a
+TARGETS               += $(CONFIG)/bin/ejs.mail.mod
+TARGETS               += $(CONFIG)/bin/ejs.web.mod
+TARGETS               += $(CONFIG)/bin/libejs.web.a
+TARGETS               += $(CONFIG)/bin/www
+TARGETS               += $(CONFIG)/bin/ejs.template.mod
+TARGETS               += $(CONFIG)/bin/ejs.zlib.mod
+TARGETS               += $(CONFIG)/bin/libejs.zlib.a
+TARGETS               += $(CONFIG)/bin/ejs.tar.mod
+TARGETS               += $(CONFIG)/bin/mvc.es
+TARGETS               += $(CONFIG)/bin/mvc.out
+TARGETS               += $(CONFIG)/bin/ejs.mvc.mod
+TARGETS               += $(CONFIG)/bin/utest.es
+TARGETS               += $(CONFIG)/bin/utest.worker
+TARGETS               += $(CONFIG)/bin/utest.out
 
 unexport CDPATH
 
@@ -197,7 +166,7 @@ clean:
 	rm -f "$(CONFIG)/bin/libest.a"
 	rm -f "$(CONFIG)/bin/ca.crt"
 	rm -f "$(CONFIG)/bin/libhttp.a"
-	rm -f "$(CONFIG)/bin/httpcmd.out"
+	rm -f "$(CONFIG)/bin/http.out"
 	rm -f "$(CONFIG)/bin/libmpr.a"
 	rm -f "$(CONFIG)/bin/libmprssl.a"
 	rm -f "$(CONFIG)/bin/ejsman.out"
@@ -215,7 +184,6 @@ clean:
 	rm -f "$(CONFIG)/bin/libejs.web.a"
 	rm -f "$(CONFIG)/bin/libejs.zlib.a"
 	rm -f "$(CONFIG)/bin/utest.out"
-	rm -f "bower.json"
 	rm -f "$(CONFIG)/obj/estLib.o"
 	rm -f "$(CONFIG)/obj/httpLib.o"
 	rm -f "$(CONFIG)/obj/http.o"
@@ -551,9 +519,9 @@ ifeq ($(ME_EXT_EST),1)
     LIBS_20 += -lest
 endif
 
-$(CONFIG)/bin/httpcmd.out: $(DEPS_20)
-	@echo '      [Link] $(CONFIG)/bin/httpcmd.out'
-	 -o $(CONFIG)/bin/httpcmd.out $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/http.o" $(LIBPATHS_20) $(LIBS_20) $(LIBS_20) $(LIBS) -Wl,-r 
+$(CONFIG)/bin/http.out: $(DEPS_20)
+	@echo '      [Link] $(CONFIG)/bin/http.out'
+	 -o $(CONFIG)/bin/http.out $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/http.o" $(LIBPATHS_20) $(LIBS_20) $(LIBS_20) $(LIBS) -Wl,-r 
 
 #
 #   manager.o
@@ -4240,43 +4208,33 @@ $(CONFIG)/bin/utest.out: $(DEPS_140)
 	 -o $(CONFIG)/bin/utest.out $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_140) $(LIBS_140) $(LIBS_140) $(LIBS) -Wl,-r 
 
 #
-#   bower.json
-#
-DEPS_141 += package.json
-
-bower.json: $(DEPS_141)
-	@echo '      [Copy] bower.json'
-	mkdir -p "."
-	cp package.json bower.json
-
-#
 #   stop
 #
-stop: $(DEPS_142)
+stop: $(DEPS_141)
 
 #
 #   installBinary
 #
-installBinary: $(DEPS_143)
+installBinary: $(DEPS_142)
 
 #
 #   start
 #
-start: $(DEPS_144)
+start: $(DEPS_143)
 
 #
 #   install
 #
-DEPS_145 += stop
-DEPS_145 += installBinary
-DEPS_145 += start
+DEPS_144 += stop
+DEPS_144 += installBinary
+DEPS_144 += start
 
-install: $(DEPS_145)
+install: $(DEPS_144)
 
 #
 #   uninstall
 #
-DEPS_146 += stop
+DEPS_145 += stop
 
-uninstall: $(DEPS_146)
+uninstall: $(DEPS_145)
 
