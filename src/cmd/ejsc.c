@@ -11,7 +11,7 @@
 #include    "ejsCompiler.h"
 
 //  UNUSED
-#if ME_EXT_EJS || 1
+#if ME_COM_EJS || 1
 
 /********************************** Forwards **********************************/
 
@@ -382,7 +382,7 @@ int main(int argc, char **argv)
     return 0;
 }
 
-#endif /* ME_EXT_EJS */
+#endif /* ME_COM_EJS */
 /*
     @copy   default
 

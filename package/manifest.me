@@ -91,7 +91,7 @@ Me.load({
                 ],
                 to:         '${abin}/',
                 set:        'core',
-                extensions: 'ssl',
+                ifdef:      'ssl',
                 enable:     '!me.settings.static', 
 
             },{ from:        [
@@ -99,7 +99,7 @@ Me.load({
                 ],
                 to:         '${abin}/',
                 set:        'core',
-                extensions: 'ssl',
+                ifdef:      'ssl',
 
             },{ from:        [
                     '${BIN}/libssl*${SHOBJ}*',
@@ -108,7 +108,7 @@ Me.load({
                 to:         '${abin}/',
                 set:        'core',
                 enable:     "me.platform.os != 'windows'",
-                extensions: 'openssl',
+                ifdef:      'openssl',
 
             },{ from:        [
                     '${BIN}/libeay32${SHOBJ}',
@@ -117,14 +117,14 @@ Me.load({
                 to:         '${abin}/',
                 set:        'core',
                 enable:     "me.platform.os == 'windows'",
-                extensions: 'openssl',
+                ifdef:      'openssl',
 
             },{ from:        [
                     '${BIN}/libest${SHOBJ}',
                 ],
                 to:         '${abin}/',
                 set:        'core',
-                extensions: 'est',
+                ifdef:      'est',
                 enable:     '!me.settings.static', 
 
             },{ from:        [
@@ -207,8 +207,8 @@ Me.load({
                 to:         '${src}/ejs.h',
                 cat:        true, 
                 filter:     /^#inc.*ejs.*$|^#inc.*ec.*$|^#inc.*customize.*$|#include.*zlib.h.*$|#inc.*ejs.zlib.slots.h.*/mg,
-                header:     '#include \"me.h\"\n#if ME_EXT_EJS\n\n#include \"osdep.h\"\n#include \"mpr.h\"\n#include \"http.h\"\n#include \"ejs.slots.h\"\n#include \"pcre.h\"\n#include \"zlib.h\"\n',
-                footer:     '#endif /* ME_EXT_EJS */',
+                header:     '#include \"me.h\"\n#if ME_COM_EJS\n\n#include \"osdep.h\"\n#include \"mpr.h\"\n#include \"http.h\"\n#include \"ejs.slots.h\"\n#include \"pcre.h\"\n#include \"zlib.h\"\n',
+                footer:     '#endif /* ME_COM_EJS */',
                 title:      '${settings.title} Library Source',
                 set:        'pak',
 
@@ -236,8 +236,8 @@ Me.load({
                 cat:        true,                                                                                         
                 filter:     /^#inc.*ejs.*$|^#inc.*ec.*$|^#inc.*customize.*$|#include.*zlib.h.*$|#inc.*ejs.zlib.slots.h.*/mg,
                 exclude:    /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|\/mpr|\/http|\/est|\/pcre|\/sqlite|\/zlib\/|ejs.debugger|samples|utils|ejsrun\.c/,
-                header:     '#define EJS_DEFINE_OPTABLE 1\n#include \"ejs.h\"\n\n#if ME_EXT_EJS',
-                footer:     '#endif /* ME_EXT_EJS */',
+                header:     '#define EJS_DEFINE_OPTABLE 1\n#include \"ejs.h\"\n\n#if ME_COM_EJS',
+                footer:     '#endif /* ME_COM_EJS */',
                 title:      '${settings.title} Library Source',
                 set:        'pak',
 
@@ -245,7 +245,7 @@ Me.load({
                 from:       ['src/core/**.es', 'src/**.es'],
                 to:         '${src}/ejs.es',
                 cat:        true,                                                                                         
-                exclude:    /ejs.me|ejs.debugger|test|sample|ejspage.es|ejs.mvc/,                            
+                exclude:    /\/paks\/|ejs.me|ejs.debugger|test|sample|ejspage.es|ejs.mvc/,                            
                 title:      '${settings.title} Script Library',
                 set:        'pak',
 

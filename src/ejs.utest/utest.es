@@ -204,11 +204,16 @@ enumerable class Test {
                     throw 'Cannot locate configure files, run configure'
                 }
                 _cfg = hdr.trimEnd('/inc/bit.h')
-                parseBitConfig(_cfg.join('inc/bit.h'))
             } else {
                 _cfg = hdr.trimEnd('/inc/me.h')
-                parseMeConfig(_cfg.join('inc/me.h'))
             }
+        }
+        if (_cfg.join('inc/me.h').exists) {
+            parseMeConfig(_cfg.join('inc/me.h'))
+        } else if (_cfg.join('inc/bit.h').exists) {
+            parseBitConfig(_cfg.join('inc/bit.h'))
+        } else {
+            throw 'Cannot locate configure files, run configure'
         }
         _bin = _lib = _cfg.join('bin')
     }
@@ -510,7 +515,7 @@ enumerable class Test {
         let str = data.match(/BIT_.*/g)
         for each (item in str) {
             let [key, value] = item.split(" ")
-            key = key.replace(/BIT_COMP_/, "")
+            key = key.replace(/BIT_PACK_/, "")
             key = key.replace(/BIT_/, "").toLowerCase()
             if (value == "1" || value == "0") {
                 value = value cast Number
@@ -535,7 +540,7 @@ enumerable class Test {
         let str = data.match(/ME_.*/g)
         for each (item in str) {
             let [key, value] = item.split(" ")
-            key = key.replace(/ME_EXT_/, "")
+            key = key.replace(/ME_COM_/, "")
             key = key.replace(/ME_/, "").toLowerCase()
             if (value == "1" || value == "0") {
                 value = value cast Number

@@ -93,13 +93,6 @@
     <AdditionalDependencies>libejs.lib;libhttp.lib;libmpr.lib;libpcre.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
-
-  <CustomBuildStep>
-    <Command>cd ..\..\src\ejs.tar
-$(BinDir)/ejsc --out $(BinDir)/ejs.tar.mod  --optimize 9 *.es
-cd ..\..\projects\ejs-windows-default</Command>
-    <Outputs>$(BinDir)\ejs.tar.mod</Outputs>
-  </CustomBuildStep>
   </ItemDefinitionGroup>
 
 <ItemGroup>

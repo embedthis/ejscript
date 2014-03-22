@@ -570,16 +570,16 @@ static EjsArray *http_providers(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
     result = ejsCreateArray(ejs, 0);
     i = 0;
-#if ME_EXT_EST
+#if ME_COM_EST
     ejsSetProperty(ejs, result, i++, ejsCreateStringFromAsc(ejs, "est"));
 #endif
-#if ME_EXT_OPENSSL
+#if ME_COM_OPENSSL
     ejsSetProperty(ejs, result, i++, ejsCreateStringFromAsc(ejs, "openssl"));
 #endif
-#if ME_EXT_MATRIXSSL
+#if ME_COM_MATRIXSSL
     ejsSetProperty(ejs, result, i++, ejsCreateStringFromAsc(ejs, "matrixssl"));
 #endif
-#if ME_EXT_MOCANA
+#if ME_COM_MOCANA
     ejsSetProperty(ejs, result, i++, ejsCreateStringFromAsc(ejs, "mocana"));
 #endif
     return result;

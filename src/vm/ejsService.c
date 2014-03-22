@@ -518,7 +518,7 @@ static void defineSharedTypes(Ejs *ejs)
     ejsAddNativeModule(ejs, "ejs", configureEjs, _ES_CHECKSUM_ejs, 0);
 
 #if ME_EJS_ONE_MODULE
-    #if ME_EXT_SQLITE && ME_EJS_DB
+    #if ME_COM_SQLITE && ME_EJS_DB
         ejs_db_sqlite_Init(ejs, NULL);
     #endif
 #if ME_EJS_WEB

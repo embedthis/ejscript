@@ -32,6 +32,11 @@ Me.load({
         'custom.me',
     ],
 
+    configure: {
+        requires:  [ 'osdep', 'http', 'mpr', 'pcre', 'zlib' ]
+        discovers: [ 'sqlite', 'ssl' ],
+    },
+
     settings: {
         makeme: '0.8.0',
 
@@ -43,12 +48,6 @@ Me.load({
 
         /* Must build locally to build tools */
         platforms: [ 'local' ],
-
-        extensions: {
-            require:  [ 'compiler', 'osdep', 'http', 'mpr', 'pcre', 'zlib' ]
-            discover: [ 'doxygen', 'dsi', 'man', 'man2html', 'pak', 'pmaker', 'sqlite', 'ssl', 'zip' ],
-            omit:     [ 'matrixssl', 'openssl', 'nanossl' ],
-        },
 
         /*
             Set to true for a static (non-shared library) build                                            

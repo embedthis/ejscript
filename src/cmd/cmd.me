@@ -11,7 +11,7 @@ Me.load({
             depends: [ 'libejs' ],
             scripts: {
                 prebuild: "
-                    if (me.settings.hasLibEdit) {
+                    if (me.settings.compiler.hasLibEdit) {
                         me.target.libraries.push('edit')
                     }
                 ",

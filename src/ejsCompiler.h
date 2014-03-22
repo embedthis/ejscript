@@ -178,7 +178,7 @@ typedef struct EcNode {
 
     struct EcCompiler   *cp;                    /* Compiler instance reference */
 
-#if ME_HAS_UNNAMED_UNIONS
+#if ME_COMPILER_HAS_UNNAMED_UNIONS
     union {
 #endif
         struct {
@@ -352,7 +352,7 @@ typedef struct EcNode {
             Node        object;
             Node        statement;
         } with;
-#if ME_HAS_UNNAMED_UNIONS
+#if ME_COMPILER_HAS_UNNAMED_UNIONS
     };
 #endif
 } EcNode;

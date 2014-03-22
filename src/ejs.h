@@ -25,7 +25,7 @@ extern "C" {
     #define ME_XML_MAX_NODE_DEPTH  64
 #endif
 #ifndef ME_MAX_EJS_STACK
-#if ME_HAS_MMU
+#if ME_COMPILER_HAS_MMU
     #define ME_MAX_EJS_STACK       (1024 * 1024)   /**< Stack size on virtual memory systems */
 #else
     #define ME_MAX_EJS_STACK       (1024 * 32)     /**< Stack size without MMU */
@@ -81,8 +81,8 @@ extern "C" {
 /*
     Pack defaults
  */
-#ifndef ME_EXT_SQLITE
-    #define ME_EXT_SQLITE 0
+#ifndef ME_COM_SQLITE
+    #define ME_COM_SQLITE 0
 #endif
 
 #if !DOXYGEN
@@ -4574,10 +4574,10 @@ PUBLIC void     ejsSetSqliteMemCtx(MprThreadLocal *tls);
 PUBLIC void     ejsSetSqliteTls(MprThreadLocal *tls);
 PUBLIC void     ejsDefineConfigProperties(Ejs *ejs);
 
-#if ME_EXT_SQLITE
+#if ME_COM_SQLITE
     PUBLIC int   ejs_db_sqlite_Init(Ejs *ejs, MprModule *mp);
 #endif
-#if ME_EXT_ZLIB
+#if ME_COM_ZLIB
     PUBLIC int   ejs_zlib_Init(Ejs *ejs, MprModule *mp);
 #endif
 PUBLIC int       ejs_web_Init(Ejs *ejs, MprModule *mp);

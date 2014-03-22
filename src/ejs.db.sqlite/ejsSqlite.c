@@ -11,7 +11,7 @@
 
 #include    "ejs.h"
 
-#if ME_EXT_SQLITE && ME_EJS_DB
+#if ME_COM_SQLITE && ME_EJS_DB
     /* Indent to no create dependency */
     #include    "sqlite3.h"
 #include    "ejs.db.sqlite.slots.h"
@@ -433,7 +433,7 @@ PUBLIC int ejs_db_sqlite_Init(Ejs *ejs, MprModule *mp)
     return ejsAddNativeModule(ejs, "ejs.db.sqlite", configureSqliteTypes, _ES_CHECKSUM_ejs_db_sqlite, EJS_LOADER_ETERNAL);
 }
 
-#endif /* ME_EXT_SQLITE */
+#endif /* ME_COM_SQLITE */
 
 /*
     @copy   default

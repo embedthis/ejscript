@@ -838,7 +838,7 @@ EjsAny *ejsParse(Ejs *ejs, wchar *str, int preferredType)
     case S_Boolean:
         return ejsCreateBoolean(ejs, parseBoolean(ejs, buf));
 
-#if ME_EXT_PCRE
+#if ME_COM_PCRE
     case S_RegExp:
         return ejsParseRegExp(ejs, ejsCreateStringFromAsc(ejs, buf));
 #endif

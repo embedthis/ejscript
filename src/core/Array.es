@@ -500,6 +500,7 @@ module ejs {
         # DOC_ONLY
         native function - (arr: Array): Array
 
+        //  TODO - need a function equivalent for this
         /**
             Array union. Return the union of two arrays. 
             @param arr The array to join.

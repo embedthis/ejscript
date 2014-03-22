@@ -9,7 +9,7 @@
 #include    "ejsmod.h"
 
 //  UNUSED
-#if ME_EXT_EJS || 1
+#if ME_COM_EJS || 1
 
 /****************************** Forward Declarations **************************/
 
@@ -325,7 +325,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     return 255;
 }
 
-#endif /* ME_EXT_EJS */
+#endif /* ME_COM_EJS */
 /*
     @copy   default
 

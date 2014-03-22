@@ -442,7 +442,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         [RegExp]
          */
         CASE (EJS_OP_LOAD_REGEXP):
-#if ME_EXT_PCRE
+#if ME_COM_PCRE
             str = GET_STRING();
             v1 = (EjsObj*) ejsParseRegExp(ejs, str);
             push(v1);
@@ -3616,7 +3616,7 @@ void ejsLog(Ejs *ejs, cchar *fmt, ...)
 
 
 #if FUTURE
-#if ME_HAS_LIB_EDIT
+#if ME_COMPILER_HAS_LIB_EDIT
 static History  *cmdHistory;
 static EditLine *eh; 
 static cchar    *prompt;
