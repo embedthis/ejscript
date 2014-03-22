@@ -6,7 +6,7 @@ Me.load({
 
     targets: {
         'ejs.db.sqlite.mod': {
-            enable: 'me.extensions.sqlite.enable && me.settings.ejs.db',
+            enable: 'me.targets.sqlite.enable && me.settings.ejs.db',
             path: '${BIN}/ejs.db.sqlite.mod',
             files: [ '*.es' ],
             build: "
@@ -25,7 +25,7 @@ Me.load({
         },
 
         'libejs.db.sqlite': {
-            enable: 'me.extensions.sqlite.enable && me.settings.ejs.db',
+            enable: 'me.targets.sqlite.enable && me.settings.ejs.db',
             type: 'lib',
             sources: [ 
                 '*.c',
