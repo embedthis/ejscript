@@ -9,11 +9,11 @@ Me.load({
             enable: 'me.settings.ejs.db',
             path: '${BIN}/ejs.db.mapper.mod',
             files: [ '*.es' ],
-            build: "
+            build: `
                 trace('Compile', 'ejs.db.mapper.mod')
                 run('${LBIN}/ejsc --out ${OUTPUT} ${settings.esflags} --optimize 9 ' + Path('.').files('*.es').sort().join(' '))
-            ",
-            'generate': "${BIN}/ejsc --out ${BIN}/ejs.db.mapper.mod ${settings.esflags} --optimize 9 *.es",
+            `,
+            generate: "${BIN}/ejsc --out ${BIN}/ejs.db.mapper.mod ${settings.esflags} --optimize 9 *.es",
             depends: [ 'ejsc', 'ejs.mod', 'ejs.db.mod' ],
         },
 	},

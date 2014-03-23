@@ -2091,13 +2091,11 @@ $(CONFIG)/bin/ejs.mod: $(DEPS_94)
 	rm -f ejs.slots.h ; \
 	)
 
-
-
-
 #
-#   ejs.mail.mod
+#   ejs.db.mod
 #
-DEPS_95 += src/ejs.mail/Mail.es
+DEPS_95 += src/ejs.db/Database.es
+DEPS_95 += src/ejs.db/DatabaseConnector.es
 DEPS_95 += $(CONFIG)/inc/mpr.h
 DEPS_95 += $(CONFIG)/inc/me.h
 DEPS_95 += $(CONFIG)/inc/osdep.h
@@ -2194,38 +2192,12 @@ DEPS_95 += $(CONFIG)/obj/slotGen.o
 DEPS_95 += $(CONFIG)/bin/ejsmod
 DEPS_95 += $(CONFIG)/bin/ejs.mod
 
-$(CONFIG)/bin/ejs.mail.mod: $(DEPS_95)
-	( \
-	cd src/ejs.mail; \
-	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.mail.mod  --optimize 9 *.es ; \
-	)
+$(CONFIG)/bin/ejs.db.mod: $(DEPS_95)
 
 #
-#   ejs.web.mod
+#   ejs.db.mapper.mod
 #
-DEPS_96 += src/ejs.web/Cascade.es
-DEPS_96 += src/ejs.web/CommonLog.es
-DEPS_96 += src/ejs.web/ContentType.es
-DEPS_96 += src/ejs.web/Controller.es
-DEPS_96 += src/ejs.web/Dir.es
-DEPS_96 += src/ejs.web/Google.es
-DEPS_96 += src/ejs.web/Head.es
-DEPS_96 += src/ejs.web/Html.es
-DEPS_96 += src/ejs.web/HttpServer.es
-DEPS_96 += src/ejs.web/MethodOverride.es
-DEPS_96 += src/ejs.web/Middleware.es
-DEPS_96 += src/ejs.web/Mvc.es
-DEPS_96 += src/ejs.web/Request.es
-DEPS_96 += src/ejs.web/Router.es
-DEPS_96 += src/ejs.web/Script.es
-DEPS_96 += src/ejs.web/Session.es
-DEPS_96 += src/ejs.web/ShowExceptions.es
-DEPS_96 += src/ejs.web/Static.es
-DEPS_96 += src/ejs.web/Template.es
-DEPS_96 += src/ejs.web/UploadFile.es
-DEPS_96 += src/ejs.web/UrlMap.es
-DEPS_96 += src/ejs.web/Utils.es
-DEPS_96 += src/ejs.web/View.es
+DEPS_96 += src/ejs.db.mapper/Record.es
 DEPS_96 += $(CONFIG)/inc/mpr.h
 DEPS_96 += $(CONFIG)/inc/me.h
 DEPS_96 += $(CONFIG)/inc/osdep.h
@@ -2321,35 +2293,116 @@ DEPS_96 += $(CONFIG)/obj/listing.o
 DEPS_96 += $(CONFIG)/obj/slotGen.o
 DEPS_96 += $(CONFIG)/bin/ejsmod
 DEPS_96 += $(CONFIG)/bin/ejs.mod
+DEPS_96 += $(CONFIG)/bin/ejs.db.mod
 
-$(CONFIG)/bin/ejs.web.mod: $(DEPS_96)
-	( \
-	cd src/ejs.web; \
-	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.web.mod  --optimize 9 *.es ; \
-	../../$(CONFIG)/bin/ejsmod --cslots ../../$(CONFIG)/bin/ejs.web.mod ; \
-	if ! diff ejs.web.slots.h ../../$(CONFIG)/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../$(CONFIG)/inc; fi ; \
-	rm -f ejs.web.slots.h ; \
-	)
-
-
-
-
-
+$(CONFIG)/bin/ejs.db.mapper.mod: $(DEPS_96)
 
 #
-#   ejsrun.o
+#   ejs.db.sqlite.mod
 #
+DEPS_97 += src/ejs.db.sqlite/Sqlite.es
+DEPS_97 += $(CONFIG)/inc/mpr.h
 DEPS_97 += $(CONFIG)/inc/me.h
+DEPS_97 += $(CONFIG)/inc/osdep.h
+DEPS_97 += $(CONFIG)/obj/mprLib.o
+DEPS_97 += $(CONFIG)/bin/libmpr.a
+DEPS_97 += $(CONFIG)/inc/pcre.h
+DEPS_97 += $(CONFIG)/obj/pcre.o
+ifeq ($(ME_COM_PCRE),1)
+    DEPS_97 += $(CONFIG)/bin/libpcre.a
+endif
+DEPS_97 += $(CONFIG)/inc/http.h
+DEPS_97 += $(CONFIG)/obj/httpLib.o
+ifeq ($(ME_COM_HTTP),1)
+    DEPS_97 += $(CONFIG)/bin/libhttp.a
+endif
+DEPS_97 += $(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_97 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_97 += $(CONFIG)/inc/ejs.slots.h
+DEPS_97 += $(CONFIG)/inc/ejs.web.slots.h
+DEPS_97 += $(CONFIG)/inc/ejs.zlib.slots.h
+DEPS_97 += $(CONFIG)/inc/ejsByteCode.h
+DEPS_97 += $(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_97 += $(CONFIG)/inc/ejsCustomize.h
+DEPS_97 += $(CONFIG)/inc/ejs.h
 DEPS_97 += $(CONFIG)/inc/ejsCompiler.h
+DEPS_97 += $(CONFIG)/obj/ecAst.o
+DEPS_97 += $(CONFIG)/obj/ecCodeGen.o
+DEPS_97 += $(CONFIG)/obj/ecCompiler.o
+DEPS_97 += $(CONFIG)/obj/ecLex.o
+DEPS_97 += $(CONFIG)/obj/ecModuleWrite.o
+DEPS_97 += $(CONFIG)/obj/ecParser.o
+DEPS_97 += $(CONFIG)/obj/ecState.o
+DEPS_97 += $(CONFIG)/obj/dtoa.o
+DEPS_97 += $(CONFIG)/obj/ejsApp.o
+DEPS_97 += $(CONFIG)/obj/ejsArray.o
+DEPS_97 += $(CONFIG)/obj/ejsBlock.o
+DEPS_97 += $(CONFIG)/obj/ejsBoolean.o
+DEPS_97 += $(CONFIG)/obj/ejsByteArray.o
+DEPS_97 += $(CONFIG)/obj/ejsCache.o
+DEPS_97 += $(CONFIG)/obj/ejsCmd.o
+DEPS_97 += $(CONFIG)/obj/ejsConfig.o
+DEPS_97 += $(CONFIG)/obj/ejsDate.o
+DEPS_97 += $(CONFIG)/obj/ejsDebug.o
+DEPS_97 += $(CONFIG)/obj/ejsError.o
+DEPS_97 += $(CONFIG)/obj/ejsFile.o
+DEPS_97 += $(CONFIG)/obj/ejsFileSystem.o
+DEPS_97 += $(CONFIG)/obj/ejsFrame.o
+DEPS_97 += $(CONFIG)/obj/ejsFunction.o
+DEPS_97 += $(CONFIG)/obj/ejsGC.o
+DEPS_97 += $(CONFIG)/obj/ejsGlobal.o
+DEPS_97 += $(CONFIG)/obj/ejsHttp.o
+DEPS_97 += $(CONFIG)/obj/ejsIterator.o
+DEPS_97 += $(CONFIG)/obj/ejsJSON.o
+DEPS_97 += $(CONFIG)/obj/ejsLocalCache.o
+DEPS_97 += $(CONFIG)/obj/ejsMath.o
+DEPS_97 += $(CONFIG)/obj/ejsMemory.o
+DEPS_97 += $(CONFIG)/obj/ejsMprLog.o
+DEPS_97 += $(CONFIG)/obj/ejsNamespace.o
+DEPS_97 += $(CONFIG)/obj/ejsNull.o
+DEPS_97 += $(CONFIG)/obj/ejsNumber.o
+DEPS_97 += $(CONFIG)/obj/ejsObject.o
+DEPS_97 += $(CONFIG)/obj/ejsPath.o
+DEPS_97 += $(CONFIG)/obj/ejsPot.o
+DEPS_97 += $(CONFIG)/obj/ejsRegExp.o
+DEPS_97 += $(CONFIG)/obj/ejsSocket.o
+DEPS_97 += $(CONFIG)/obj/ejsString.o
+DEPS_97 += $(CONFIG)/obj/ejsSystem.o
+DEPS_97 += $(CONFIG)/obj/ejsTimer.o
+DEPS_97 += $(CONFIG)/obj/ejsType.o
+DEPS_97 += $(CONFIG)/obj/ejsUri.o
+DEPS_97 += $(CONFIG)/obj/ejsVoid.o
+DEPS_97 += $(CONFIG)/obj/ejsWebSocket.o
+DEPS_97 += $(CONFIG)/obj/ejsWorker.o
+DEPS_97 += $(CONFIG)/obj/ejsXML.o
+DEPS_97 += $(CONFIG)/obj/ejsXMLList.o
+DEPS_97 += $(CONFIG)/obj/ejsXMLLoader.o
+DEPS_97 += $(CONFIG)/obj/ejsByteCode.o
+DEPS_97 += $(CONFIG)/obj/ejsException.o
+DEPS_97 += $(CONFIG)/obj/ejsHelper.o
+DEPS_97 += $(CONFIG)/obj/ejsInterp.o
+DEPS_97 += $(CONFIG)/obj/ejsLoader.o
+DEPS_97 += $(CONFIG)/obj/ejsModule.o
+DEPS_97 += $(CONFIG)/obj/ejsScope.o
+DEPS_97 += $(CONFIG)/obj/ejsService.o
+DEPS_97 += $(CONFIG)/bin/libejs.a
+DEPS_97 += $(CONFIG)/obj/ejsc.o
+DEPS_97 += $(CONFIG)/bin/ejsc
+DEPS_97 += src/cmd/ejsmod.h
+DEPS_97 += $(CONFIG)/obj/ejsmod.o
+DEPS_97 += $(CONFIG)/obj/doc.o
+DEPS_97 += $(CONFIG)/obj/docFiles.o
+DEPS_97 += $(CONFIG)/obj/listing.o
+DEPS_97 += $(CONFIG)/obj/slotGen.o
+DEPS_97 += $(CONFIG)/bin/ejsmod
+DEPS_97 += $(CONFIG)/bin/ejs.mod
 
-$(CONFIG)/obj/ejsrun.o: \
-    src/cmd/ejsrun.c $(DEPS_97)
-	@echo '   [Compile] $(CONFIG)/obj/ejsrun.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsrun.o -arch $(CC_ARCH) $(IFLAGS) src/cmd/ejsrun.c
+$(CONFIG)/bin/ejs.db.sqlite.mod: $(DEPS_97)
 
 #
-#   ejsrun
+#   ejs.mail.mod
 #
+DEPS_98 += src/ejs.mail/Mail.es
 DEPS_98 += $(CONFIG)/inc/mpr.h
 DEPS_98 += $(CONFIG)/inc/me.h
 DEPS_98 += $(CONFIG)/inc/osdep.h
@@ -2435,26 +2488,786 @@ DEPS_98 += $(CONFIG)/obj/ejsModule.o
 DEPS_98 += $(CONFIG)/obj/ejsScope.o
 DEPS_98 += $(CONFIG)/obj/ejsService.o
 DEPS_98 += $(CONFIG)/bin/libejs.a
-DEPS_98 += $(CONFIG)/obj/ejsrun.o
+DEPS_98 += $(CONFIG)/obj/ejsc.o
+DEPS_98 += $(CONFIG)/bin/ejsc
+DEPS_98 += src/cmd/ejsmod.h
+DEPS_98 += $(CONFIG)/obj/ejsmod.o
+DEPS_98 += $(CONFIG)/obj/doc.o
+DEPS_98 += $(CONFIG)/obj/docFiles.o
+DEPS_98 += $(CONFIG)/obj/listing.o
+DEPS_98 += $(CONFIG)/obj/slotGen.o
+DEPS_98 += $(CONFIG)/bin/ejsmod
+DEPS_98 += $(CONFIG)/bin/ejs.mod
 
-LIBS_98 += -lejs
-ifeq ($(ME_COM_HTTP),1)
-    LIBS_98 += -lhttp
-endif
-LIBS_98 += -lmpr
+$(CONFIG)/bin/ejs.mail.mod: $(DEPS_98)
+	( \
+	cd src/ejs.mail; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.mail.mod  --optimize 9 *.es ; \
+	)
+
+#
+#   ejs.web.mod
+#
+DEPS_99 += src/ejs.web/Cascade.es
+DEPS_99 += src/ejs.web/CommonLog.es
+DEPS_99 += src/ejs.web/ContentType.es
+DEPS_99 += src/ejs.web/Controller.es
+DEPS_99 += src/ejs.web/Dir.es
+DEPS_99 += src/ejs.web/Google.es
+DEPS_99 += src/ejs.web/Head.es
+DEPS_99 += src/ejs.web/Html.es
+DEPS_99 += src/ejs.web/HttpServer.es
+DEPS_99 += src/ejs.web/MethodOverride.es
+DEPS_99 += src/ejs.web/Middleware.es
+DEPS_99 += src/ejs.web/Mvc.es
+DEPS_99 += src/ejs.web/Request.es
+DEPS_99 += src/ejs.web/Router.es
+DEPS_99 += src/ejs.web/Script.es
+DEPS_99 += src/ejs.web/Session.es
+DEPS_99 += src/ejs.web/ShowExceptions.es
+DEPS_99 += src/ejs.web/Static.es
+DEPS_99 += src/ejs.web/Template.es
+DEPS_99 += src/ejs.web/UploadFile.es
+DEPS_99 += src/ejs.web/UrlMap.es
+DEPS_99 += src/ejs.web/Utils.es
+DEPS_99 += src/ejs.web/View.es
+DEPS_99 += $(CONFIG)/inc/mpr.h
+DEPS_99 += $(CONFIG)/inc/me.h
+DEPS_99 += $(CONFIG)/inc/osdep.h
+DEPS_99 += $(CONFIG)/obj/mprLib.o
+DEPS_99 += $(CONFIG)/bin/libmpr.a
+DEPS_99 += $(CONFIG)/inc/pcre.h
+DEPS_99 += $(CONFIG)/obj/pcre.o
 ifeq ($(ME_COM_PCRE),1)
-    LIBS_98 += -lpcre
+    DEPS_99 += $(CONFIG)/bin/libpcre.a
+endif
+DEPS_99 += $(CONFIG)/inc/http.h
+DEPS_99 += $(CONFIG)/obj/httpLib.o
+ifeq ($(ME_COM_HTTP),1)
+    DEPS_99 += $(CONFIG)/bin/libhttp.a
+endif
+DEPS_99 += $(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_99 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_99 += $(CONFIG)/inc/ejs.slots.h
+DEPS_99 += $(CONFIG)/inc/ejs.web.slots.h
+DEPS_99 += $(CONFIG)/inc/ejs.zlib.slots.h
+DEPS_99 += $(CONFIG)/inc/ejsByteCode.h
+DEPS_99 += $(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_99 += $(CONFIG)/inc/ejsCustomize.h
+DEPS_99 += $(CONFIG)/inc/ejs.h
+DEPS_99 += $(CONFIG)/inc/ejsCompiler.h
+DEPS_99 += $(CONFIG)/obj/ecAst.o
+DEPS_99 += $(CONFIG)/obj/ecCodeGen.o
+DEPS_99 += $(CONFIG)/obj/ecCompiler.o
+DEPS_99 += $(CONFIG)/obj/ecLex.o
+DEPS_99 += $(CONFIG)/obj/ecModuleWrite.o
+DEPS_99 += $(CONFIG)/obj/ecParser.o
+DEPS_99 += $(CONFIG)/obj/ecState.o
+DEPS_99 += $(CONFIG)/obj/dtoa.o
+DEPS_99 += $(CONFIG)/obj/ejsApp.o
+DEPS_99 += $(CONFIG)/obj/ejsArray.o
+DEPS_99 += $(CONFIG)/obj/ejsBlock.o
+DEPS_99 += $(CONFIG)/obj/ejsBoolean.o
+DEPS_99 += $(CONFIG)/obj/ejsByteArray.o
+DEPS_99 += $(CONFIG)/obj/ejsCache.o
+DEPS_99 += $(CONFIG)/obj/ejsCmd.o
+DEPS_99 += $(CONFIG)/obj/ejsConfig.o
+DEPS_99 += $(CONFIG)/obj/ejsDate.o
+DEPS_99 += $(CONFIG)/obj/ejsDebug.o
+DEPS_99 += $(CONFIG)/obj/ejsError.o
+DEPS_99 += $(CONFIG)/obj/ejsFile.o
+DEPS_99 += $(CONFIG)/obj/ejsFileSystem.o
+DEPS_99 += $(CONFIG)/obj/ejsFrame.o
+DEPS_99 += $(CONFIG)/obj/ejsFunction.o
+DEPS_99 += $(CONFIG)/obj/ejsGC.o
+DEPS_99 += $(CONFIG)/obj/ejsGlobal.o
+DEPS_99 += $(CONFIG)/obj/ejsHttp.o
+DEPS_99 += $(CONFIG)/obj/ejsIterator.o
+DEPS_99 += $(CONFIG)/obj/ejsJSON.o
+DEPS_99 += $(CONFIG)/obj/ejsLocalCache.o
+DEPS_99 += $(CONFIG)/obj/ejsMath.o
+DEPS_99 += $(CONFIG)/obj/ejsMemory.o
+DEPS_99 += $(CONFIG)/obj/ejsMprLog.o
+DEPS_99 += $(CONFIG)/obj/ejsNamespace.o
+DEPS_99 += $(CONFIG)/obj/ejsNull.o
+DEPS_99 += $(CONFIG)/obj/ejsNumber.o
+DEPS_99 += $(CONFIG)/obj/ejsObject.o
+DEPS_99 += $(CONFIG)/obj/ejsPath.o
+DEPS_99 += $(CONFIG)/obj/ejsPot.o
+DEPS_99 += $(CONFIG)/obj/ejsRegExp.o
+DEPS_99 += $(CONFIG)/obj/ejsSocket.o
+DEPS_99 += $(CONFIG)/obj/ejsString.o
+DEPS_99 += $(CONFIG)/obj/ejsSystem.o
+DEPS_99 += $(CONFIG)/obj/ejsTimer.o
+DEPS_99 += $(CONFIG)/obj/ejsType.o
+DEPS_99 += $(CONFIG)/obj/ejsUri.o
+DEPS_99 += $(CONFIG)/obj/ejsVoid.o
+DEPS_99 += $(CONFIG)/obj/ejsWebSocket.o
+DEPS_99 += $(CONFIG)/obj/ejsWorker.o
+DEPS_99 += $(CONFIG)/obj/ejsXML.o
+DEPS_99 += $(CONFIG)/obj/ejsXMLList.o
+DEPS_99 += $(CONFIG)/obj/ejsXMLLoader.o
+DEPS_99 += $(CONFIG)/obj/ejsByteCode.o
+DEPS_99 += $(CONFIG)/obj/ejsException.o
+DEPS_99 += $(CONFIG)/obj/ejsHelper.o
+DEPS_99 += $(CONFIG)/obj/ejsInterp.o
+DEPS_99 += $(CONFIG)/obj/ejsLoader.o
+DEPS_99 += $(CONFIG)/obj/ejsModule.o
+DEPS_99 += $(CONFIG)/obj/ejsScope.o
+DEPS_99 += $(CONFIG)/obj/ejsService.o
+DEPS_99 += $(CONFIG)/bin/libejs.a
+DEPS_99 += $(CONFIG)/obj/ejsc.o
+DEPS_99 += $(CONFIG)/bin/ejsc
+DEPS_99 += src/cmd/ejsmod.h
+DEPS_99 += $(CONFIG)/obj/ejsmod.o
+DEPS_99 += $(CONFIG)/obj/doc.o
+DEPS_99 += $(CONFIG)/obj/docFiles.o
+DEPS_99 += $(CONFIG)/obj/listing.o
+DEPS_99 += $(CONFIG)/obj/slotGen.o
+DEPS_99 += $(CONFIG)/bin/ejsmod
+DEPS_99 += $(CONFIG)/bin/ejs.mod
+
+$(CONFIG)/bin/ejs.web.mod: $(DEPS_99)
+	( \
+	cd src/ejs.web; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.web.mod  --optimize 9 *.es ; \
+	../../$(CONFIG)/bin/ejsmod --cslots ../../$(CONFIG)/bin/ejs.web.mod ; \
+	if ! diff ejs.web.slots.h ../../$(CONFIG)/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../$(CONFIG)/inc; fi ; \
+	rm -f ejs.web.slots.h ; \
+	)
+
+#
+#   ejs.template.mod
+#
+DEPS_100 += src/ejs.template/TemplateParser.es
+DEPS_100 += $(CONFIG)/inc/mpr.h
+DEPS_100 += $(CONFIG)/inc/me.h
+DEPS_100 += $(CONFIG)/inc/osdep.h
+DEPS_100 += $(CONFIG)/obj/mprLib.o
+DEPS_100 += $(CONFIG)/bin/libmpr.a
+DEPS_100 += $(CONFIG)/inc/pcre.h
+DEPS_100 += $(CONFIG)/obj/pcre.o
+ifeq ($(ME_COM_PCRE),1)
+    DEPS_100 += $(CONFIG)/bin/libpcre.a
+endif
+DEPS_100 += $(CONFIG)/inc/http.h
+DEPS_100 += $(CONFIG)/obj/httpLib.o
+ifeq ($(ME_COM_HTTP),1)
+    DEPS_100 += $(CONFIG)/bin/libhttp.a
+endif
+DEPS_100 += $(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_100 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_100 += $(CONFIG)/inc/ejs.slots.h
+DEPS_100 += $(CONFIG)/inc/ejs.web.slots.h
+DEPS_100 += $(CONFIG)/inc/ejs.zlib.slots.h
+DEPS_100 += $(CONFIG)/inc/ejsByteCode.h
+DEPS_100 += $(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_100 += $(CONFIG)/inc/ejsCustomize.h
+DEPS_100 += $(CONFIG)/inc/ejs.h
+DEPS_100 += $(CONFIG)/inc/ejsCompiler.h
+DEPS_100 += $(CONFIG)/obj/ecAst.o
+DEPS_100 += $(CONFIG)/obj/ecCodeGen.o
+DEPS_100 += $(CONFIG)/obj/ecCompiler.o
+DEPS_100 += $(CONFIG)/obj/ecLex.o
+DEPS_100 += $(CONFIG)/obj/ecModuleWrite.o
+DEPS_100 += $(CONFIG)/obj/ecParser.o
+DEPS_100 += $(CONFIG)/obj/ecState.o
+DEPS_100 += $(CONFIG)/obj/dtoa.o
+DEPS_100 += $(CONFIG)/obj/ejsApp.o
+DEPS_100 += $(CONFIG)/obj/ejsArray.o
+DEPS_100 += $(CONFIG)/obj/ejsBlock.o
+DEPS_100 += $(CONFIG)/obj/ejsBoolean.o
+DEPS_100 += $(CONFIG)/obj/ejsByteArray.o
+DEPS_100 += $(CONFIG)/obj/ejsCache.o
+DEPS_100 += $(CONFIG)/obj/ejsCmd.o
+DEPS_100 += $(CONFIG)/obj/ejsConfig.o
+DEPS_100 += $(CONFIG)/obj/ejsDate.o
+DEPS_100 += $(CONFIG)/obj/ejsDebug.o
+DEPS_100 += $(CONFIG)/obj/ejsError.o
+DEPS_100 += $(CONFIG)/obj/ejsFile.o
+DEPS_100 += $(CONFIG)/obj/ejsFileSystem.o
+DEPS_100 += $(CONFIG)/obj/ejsFrame.o
+DEPS_100 += $(CONFIG)/obj/ejsFunction.o
+DEPS_100 += $(CONFIG)/obj/ejsGC.o
+DEPS_100 += $(CONFIG)/obj/ejsGlobal.o
+DEPS_100 += $(CONFIG)/obj/ejsHttp.o
+DEPS_100 += $(CONFIG)/obj/ejsIterator.o
+DEPS_100 += $(CONFIG)/obj/ejsJSON.o
+DEPS_100 += $(CONFIG)/obj/ejsLocalCache.o
+DEPS_100 += $(CONFIG)/obj/ejsMath.o
+DEPS_100 += $(CONFIG)/obj/ejsMemory.o
+DEPS_100 += $(CONFIG)/obj/ejsMprLog.o
+DEPS_100 += $(CONFIG)/obj/ejsNamespace.o
+DEPS_100 += $(CONFIG)/obj/ejsNull.o
+DEPS_100 += $(CONFIG)/obj/ejsNumber.o
+DEPS_100 += $(CONFIG)/obj/ejsObject.o
+DEPS_100 += $(CONFIG)/obj/ejsPath.o
+DEPS_100 += $(CONFIG)/obj/ejsPot.o
+DEPS_100 += $(CONFIG)/obj/ejsRegExp.o
+DEPS_100 += $(CONFIG)/obj/ejsSocket.o
+DEPS_100 += $(CONFIG)/obj/ejsString.o
+DEPS_100 += $(CONFIG)/obj/ejsSystem.o
+DEPS_100 += $(CONFIG)/obj/ejsTimer.o
+DEPS_100 += $(CONFIG)/obj/ejsType.o
+DEPS_100 += $(CONFIG)/obj/ejsUri.o
+DEPS_100 += $(CONFIG)/obj/ejsVoid.o
+DEPS_100 += $(CONFIG)/obj/ejsWebSocket.o
+DEPS_100 += $(CONFIG)/obj/ejsWorker.o
+DEPS_100 += $(CONFIG)/obj/ejsXML.o
+DEPS_100 += $(CONFIG)/obj/ejsXMLList.o
+DEPS_100 += $(CONFIG)/obj/ejsXMLLoader.o
+DEPS_100 += $(CONFIG)/obj/ejsByteCode.o
+DEPS_100 += $(CONFIG)/obj/ejsException.o
+DEPS_100 += $(CONFIG)/obj/ejsHelper.o
+DEPS_100 += $(CONFIG)/obj/ejsInterp.o
+DEPS_100 += $(CONFIG)/obj/ejsLoader.o
+DEPS_100 += $(CONFIG)/obj/ejsModule.o
+DEPS_100 += $(CONFIG)/obj/ejsScope.o
+DEPS_100 += $(CONFIG)/obj/ejsService.o
+DEPS_100 += $(CONFIG)/bin/libejs.a
+DEPS_100 += $(CONFIG)/obj/ejsc.o
+DEPS_100 += $(CONFIG)/bin/ejsc
+DEPS_100 += src/cmd/ejsmod.h
+DEPS_100 += $(CONFIG)/obj/ejsmod.o
+DEPS_100 += $(CONFIG)/obj/doc.o
+DEPS_100 += $(CONFIG)/obj/docFiles.o
+DEPS_100 += $(CONFIG)/obj/listing.o
+DEPS_100 += $(CONFIG)/obj/slotGen.o
+DEPS_100 += $(CONFIG)/bin/ejsmod
+DEPS_100 += $(CONFIG)/bin/ejs.mod
+
+$(CONFIG)/bin/ejs.template.mod: $(DEPS_100)
+
+#
+#   ejs.unix.mod
+#
+DEPS_101 += src/ejs.unix/Unix.es
+DEPS_101 += $(CONFIG)/inc/mpr.h
+DEPS_101 += $(CONFIG)/inc/me.h
+DEPS_101 += $(CONFIG)/inc/osdep.h
+DEPS_101 += $(CONFIG)/obj/mprLib.o
+DEPS_101 += $(CONFIG)/bin/libmpr.a
+DEPS_101 += $(CONFIG)/inc/pcre.h
+DEPS_101 += $(CONFIG)/obj/pcre.o
+ifeq ($(ME_COM_PCRE),1)
+    DEPS_101 += $(CONFIG)/bin/libpcre.a
+endif
+DEPS_101 += $(CONFIG)/inc/http.h
+DEPS_101 += $(CONFIG)/obj/httpLib.o
+ifeq ($(ME_COM_HTTP),1)
+    DEPS_101 += $(CONFIG)/bin/libhttp.a
+endif
+DEPS_101 += $(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_101 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_101 += $(CONFIG)/inc/ejs.slots.h
+DEPS_101 += $(CONFIG)/inc/ejs.web.slots.h
+DEPS_101 += $(CONFIG)/inc/ejs.zlib.slots.h
+DEPS_101 += $(CONFIG)/inc/ejsByteCode.h
+DEPS_101 += $(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_101 += $(CONFIG)/inc/ejsCustomize.h
+DEPS_101 += $(CONFIG)/inc/ejs.h
+DEPS_101 += $(CONFIG)/inc/ejsCompiler.h
+DEPS_101 += $(CONFIG)/obj/ecAst.o
+DEPS_101 += $(CONFIG)/obj/ecCodeGen.o
+DEPS_101 += $(CONFIG)/obj/ecCompiler.o
+DEPS_101 += $(CONFIG)/obj/ecLex.o
+DEPS_101 += $(CONFIG)/obj/ecModuleWrite.o
+DEPS_101 += $(CONFIG)/obj/ecParser.o
+DEPS_101 += $(CONFIG)/obj/ecState.o
+DEPS_101 += $(CONFIG)/obj/dtoa.o
+DEPS_101 += $(CONFIG)/obj/ejsApp.o
+DEPS_101 += $(CONFIG)/obj/ejsArray.o
+DEPS_101 += $(CONFIG)/obj/ejsBlock.o
+DEPS_101 += $(CONFIG)/obj/ejsBoolean.o
+DEPS_101 += $(CONFIG)/obj/ejsByteArray.o
+DEPS_101 += $(CONFIG)/obj/ejsCache.o
+DEPS_101 += $(CONFIG)/obj/ejsCmd.o
+DEPS_101 += $(CONFIG)/obj/ejsConfig.o
+DEPS_101 += $(CONFIG)/obj/ejsDate.o
+DEPS_101 += $(CONFIG)/obj/ejsDebug.o
+DEPS_101 += $(CONFIG)/obj/ejsError.o
+DEPS_101 += $(CONFIG)/obj/ejsFile.o
+DEPS_101 += $(CONFIG)/obj/ejsFileSystem.o
+DEPS_101 += $(CONFIG)/obj/ejsFrame.o
+DEPS_101 += $(CONFIG)/obj/ejsFunction.o
+DEPS_101 += $(CONFIG)/obj/ejsGC.o
+DEPS_101 += $(CONFIG)/obj/ejsGlobal.o
+DEPS_101 += $(CONFIG)/obj/ejsHttp.o
+DEPS_101 += $(CONFIG)/obj/ejsIterator.o
+DEPS_101 += $(CONFIG)/obj/ejsJSON.o
+DEPS_101 += $(CONFIG)/obj/ejsLocalCache.o
+DEPS_101 += $(CONFIG)/obj/ejsMath.o
+DEPS_101 += $(CONFIG)/obj/ejsMemory.o
+DEPS_101 += $(CONFIG)/obj/ejsMprLog.o
+DEPS_101 += $(CONFIG)/obj/ejsNamespace.o
+DEPS_101 += $(CONFIG)/obj/ejsNull.o
+DEPS_101 += $(CONFIG)/obj/ejsNumber.o
+DEPS_101 += $(CONFIG)/obj/ejsObject.o
+DEPS_101 += $(CONFIG)/obj/ejsPath.o
+DEPS_101 += $(CONFIG)/obj/ejsPot.o
+DEPS_101 += $(CONFIG)/obj/ejsRegExp.o
+DEPS_101 += $(CONFIG)/obj/ejsSocket.o
+DEPS_101 += $(CONFIG)/obj/ejsString.o
+DEPS_101 += $(CONFIG)/obj/ejsSystem.o
+DEPS_101 += $(CONFIG)/obj/ejsTimer.o
+DEPS_101 += $(CONFIG)/obj/ejsType.o
+DEPS_101 += $(CONFIG)/obj/ejsUri.o
+DEPS_101 += $(CONFIG)/obj/ejsVoid.o
+DEPS_101 += $(CONFIG)/obj/ejsWebSocket.o
+DEPS_101 += $(CONFIG)/obj/ejsWorker.o
+DEPS_101 += $(CONFIG)/obj/ejsXML.o
+DEPS_101 += $(CONFIG)/obj/ejsXMLList.o
+DEPS_101 += $(CONFIG)/obj/ejsXMLLoader.o
+DEPS_101 += $(CONFIG)/obj/ejsByteCode.o
+DEPS_101 += $(CONFIG)/obj/ejsException.o
+DEPS_101 += $(CONFIG)/obj/ejsHelper.o
+DEPS_101 += $(CONFIG)/obj/ejsInterp.o
+DEPS_101 += $(CONFIG)/obj/ejsLoader.o
+DEPS_101 += $(CONFIG)/obj/ejsModule.o
+DEPS_101 += $(CONFIG)/obj/ejsScope.o
+DEPS_101 += $(CONFIG)/obj/ejsService.o
+DEPS_101 += $(CONFIG)/bin/libejs.a
+DEPS_101 += $(CONFIG)/obj/ejsc.o
+DEPS_101 += $(CONFIG)/bin/ejsc
+DEPS_101 += src/cmd/ejsmod.h
+DEPS_101 += $(CONFIG)/obj/ejsmod.o
+DEPS_101 += $(CONFIG)/obj/doc.o
+DEPS_101 += $(CONFIG)/obj/docFiles.o
+DEPS_101 += $(CONFIG)/obj/listing.o
+DEPS_101 += $(CONFIG)/obj/slotGen.o
+DEPS_101 += $(CONFIG)/bin/ejsmod
+DEPS_101 += $(CONFIG)/bin/ejs.mod
+
+$(CONFIG)/bin/ejs.unix.mod: $(DEPS_101)
+
+#
+#   ejs.mvc.mod
+#
+DEPS_102 += src/ejs.mvc/mvc.es
+DEPS_102 += $(CONFIG)/inc/mpr.h
+DEPS_102 += $(CONFIG)/inc/me.h
+DEPS_102 += $(CONFIG)/inc/osdep.h
+DEPS_102 += $(CONFIG)/obj/mprLib.o
+DEPS_102 += $(CONFIG)/bin/libmpr.a
+DEPS_102 += $(CONFIG)/inc/pcre.h
+DEPS_102 += $(CONFIG)/obj/pcre.o
+ifeq ($(ME_COM_PCRE),1)
+    DEPS_102 += $(CONFIG)/bin/libpcre.a
+endif
+DEPS_102 += $(CONFIG)/inc/http.h
+DEPS_102 += $(CONFIG)/obj/httpLib.o
+ifeq ($(ME_COM_HTTP),1)
+    DEPS_102 += $(CONFIG)/bin/libhttp.a
+endif
+DEPS_102 += $(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_102 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_102 += $(CONFIG)/inc/ejs.slots.h
+DEPS_102 += $(CONFIG)/inc/ejs.web.slots.h
+DEPS_102 += $(CONFIG)/inc/ejs.zlib.slots.h
+DEPS_102 += $(CONFIG)/inc/ejsByteCode.h
+DEPS_102 += $(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_102 += $(CONFIG)/inc/ejsCustomize.h
+DEPS_102 += $(CONFIG)/inc/ejs.h
+DEPS_102 += $(CONFIG)/inc/ejsCompiler.h
+DEPS_102 += $(CONFIG)/obj/ecAst.o
+DEPS_102 += $(CONFIG)/obj/ecCodeGen.o
+DEPS_102 += $(CONFIG)/obj/ecCompiler.o
+DEPS_102 += $(CONFIG)/obj/ecLex.o
+DEPS_102 += $(CONFIG)/obj/ecModuleWrite.o
+DEPS_102 += $(CONFIG)/obj/ecParser.o
+DEPS_102 += $(CONFIG)/obj/ecState.o
+DEPS_102 += $(CONFIG)/obj/dtoa.o
+DEPS_102 += $(CONFIG)/obj/ejsApp.o
+DEPS_102 += $(CONFIG)/obj/ejsArray.o
+DEPS_102 += $(CONFIG)/obj/ejsBlock.o
+DEPS_102 += $(CONFIG)/obj/ejsBoolean.o
+DEPS_102 += $(CONFIG)/obj/ejsByteArray.o
+DEPS_102 += $(CONFIG)/obj/ejsCache.o
+DEPS_102 += $(CONFIG)/obj/ejsCmd.o
+DEPS_102 += $(CONFIG)/obj/ejsConfig.o
+DEPS_102 += $(CONFIG)/obj/ejsDate.o
+DEPS_102 += $(CONFIG)/obj/ejsDebug.o
+DEPS_102 += $(CONFIG)/obj/ejsError.o
+DEPS_102 += $(CONFIG)/obj/ejsFile.o
+DEPS_102 += $(CONFIG)/obj/ejsFileSystem.o
+DEPS_102 += $(CONFIG)/obj/ejsFrame.o
+DEPS_102 += $(CONFIG)/obj/ejsFunction.o
+DEPS_102 += $(CONFIG)/obj/ejsGC.o
+DEPS_102 += $(CONFIG)/obj/ejsGlobal.o
+DEPS_102 += $(CONFIG)/obj/ejsHttp.o
+DEPS_102 += $(CONFIG)/obj/ejsIterator.o
+DEPS_102 += $(CONFIG)/obj/ejsJSON.o
+DEPS_102 += $(CONFIG)/obj/ejsLocalCache.o
+DEPS_102 += $(CONFIG)/obj/ejsMath.o
+DEPS_102 += $(CONFIG)/obj/ejsMemory.o
+DEPS_102 += $(CONFIG)/obj/ejsMprLog.o
+DEPS_102 += $(CONFIG)/obj/ejsNamespace.o
+DEPS_102 += $(CONFIG)/obj/ejsNull.o
+DEPS_102 += $(CONFIG)/obj/ejsNumber.o
+DEPS_102 += $(CONFIG)/obj/ejsObject.o
+DEPS_102 += $(CONFIG)/obj/ejsPath.o
+DEPS_102 += $(CONFIG)/obj/ejsPot.o
+DEPS_102 += $(CONFIG)/obj/ejsRegExp.o
+DEPS_102 += $(CONFIG)/obj/ejsSocket.o
+DEPS_102 += $(CONFIG)/obj/ejsString.o
+DEPS_102 += $(CONFIG)/obj/ejsSystem.o
+DEPS_102 += $(CONFIG)/obj/ejsTimer.o
+DEPS_102 += $(CONFIG)/obj/ejsType.o
+DEPS_102 += $(CONFIG)/obj/ejsUri.o
+DEPS_102 += $(CONFIG)/obj/ejsVoid.o
+DEPS_102 += $(CONFIG)/obj/ejsWebSocket.o
+DEPS_102 += $(CONFIG)/obj/ejsWorker.o
+DEPS_102 += $(CONFIG)/obj/ejsXML.o
+DEPS_102 += $(CONFIG)/obj/ejsXMLList.o
+DEPS_102 += $(CONFIG)/obj/ejsXMLLoader.o
+DEPS_102 += $(CONFIG)/obj/ejsByteCode.o
+DEPS_102 += $(CONFIG)/obj/ejsException.o
+DEPS_102 += $(CONFIG)/obj/ejsHelper.o
+DEPS_102 += $(CONFIG)/obj/ejsInterp.o
+DEPS_102 += $(CONFIG)/obj/ejsLoader.o
+DEPS_102 += $(CONFIG)/obj/ejsModule.o
+DEPS_102 += $(CONFIG)/obj/ejsScope.o
+DEPS_102 += $(CONFIG)/obj/ejsService.o
+DEPS_102 += $(CONFIG)/bin/libejs.a
+DEPS_102 += $(CONFIG)/obj/ejsc.o
+DEPS_102 += $(CONFIG)/bin/ejsc
+DEPS_102 += src/cmd/ejsmod.h
+DEPS_102 += $(CONFIG)/obj/ejsmod.o
+DEPS_102 += $(CONFIG)/obj/doc.o
+DEPS_102 += $(CONFIG)/obj/docFiles.o
+DEPS_102 += $(CONFIG)/obj/listing.o
+DEPS_102 += $(CONFIG)/obj/slotGen.o
+DEPS_102 += $(CONFIG)/bin/ejsmod
+DEPS_102 += $(CONFIG)/bin/ejs.mod
+DEPS_102 += $(CONFIG)/bin/ejs.web.mod
+DEPS_102 += $(CONFIG)/bin/ejs.template.mod
+DEPS_102 += $(CONFIG)/bin/ejs.unix.mod
+
+$(CONFIG)/bin/ejs.mvc.mod: $(DEPS_102)
+
+#
+#   ejs.tar.mod
+#
+DEPS_103 += src/ejs.tar/Tar.es
+DEPS_103 += $(CONFIG)/inc/mpr.h
+DEPS_103 += $(CONFIG)/inc/me.h
+DEPS_103 += $(CONFIG)/inc/osdep.h
+DEPS_103 += $(CONFIG)/obj/mprLib.o
+DEPS_103 += $(CONFIG)/bin/libmpr.a
+DEPS_103 += $(CONFIG)/inc/pcre.h
+DEPS_103 += $(CONFIG)/obj/pcre.o
+ifeq ($(ME_COM_PCRE),1)
+    DEPS_103 += $(CONFIG)/bin/libpcre.a
+endif
+DEPS_103 += $(CONFIG)/inc/http.h
+DEPS_103 += $(CONFIG)/obj/httpLib.o
+ifeq ($(ME_COM_HTTP),1)
+    DEPS_103 += $(CONFIG)/bin/libhttp.a
+endif
+DEPS_103 += $(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_103 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_103 += $(CONFIG)/inc/ejs.slots.h
+DEPS_103 += $(CONFIG)/inc/ejs.web.slots.h
+DEPS_103 += $(CONFIG)/inc/ejs.zlib.slots.h
+DEPS_103 += $(CONFIG)/inc/ejsByteCode.h
+DEPS_103 += $(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_103 += $(CONFIG)/inc/ejsCustomize.h
+DEPS_103 += $(CONFIG)/inc/ejs.h
+DEPS_103 += $(CONFIG)/inc/ejsCompiler.h
+DEPS_103 += $(CONFIG)/obj/ecAst.o
+DEPS_103 += $(CONFIG)/obj/ecCodeGen.o
+DEPS_103 += $(CONFIG)/obj/ecCompiler.o
+DEPS_103 += $(CONFIG)/obj/ecLex.o
+DEPS_103 += $(CONFIG)/obj/ecModuleWrite.o
+DEPS_103 += $(CONFIG)/obj/ecParser.o
+DEPS_103 += $(CONFIG)/obj/ecState.o
+DEPS_103 += $(CONFIG)/obj/dtoa.o
+DEPS_103 += $(CONFIG)/obj/ejsApp.o
+DEPS_103 += $(CONFIG)/obj/ejsArray.o
+DEPS_103 += $(CONFIG)/obj/ejsBlock.o
+DEPS_103 += $(CONFIG)/obj/ejsBoolean.o
+DEPS_103 += $(CONFIG)/obj/ejsByteArray.o
+DEPS_103 += $(CONFIG)/obj/ejsCache.o
+DEPS_103 += $(CONFIG)/obj/ejsCmd.o
+DEPS_103 += $(CONFIG)/obj/ejsConfig.o
+DEPS_103 += $(CONFIG)/obj/ejsDate.o
+DEPS_103 += $(CONFIG)/obj/ejsDebug.o
+DEPS_103 += $(CONFIG)/obj/ejsError.o
+DEPS_103 += $(CONFIG)/obj/ejsFile.o
+DEPS_103 += $(CONFIG)/obj/ejsFileSystem.o
+DEPS_103 += $(CONFIG)/obj/ejsFrame.o
+DEPS_103 += $(CONFIG)/obj/ejsFunction.o
+DEPS_103 += $(CONFIG)/obj/ejsGC.o
+DEPS_103 += $(CONFIG)/obj/ejsGlobal.o
+DEPS_103 += $(CONFIG)/obj/ejsHttp.o
+DEPS_103 += $(CONFIG)/obj/ejsIterator.o
+DEPS_103 += $(CONFIG)/obj/ejsJSON.o
+DEPS_103 += $(CONFIG)/obj/ejsLocalCache.o
+DEPS_103 += $(CONFIG)/obj/ejsMath.o
+DEPS_103 += $(CONFIG)/obj/ejsMemory.o
+DEPS_103 += $(CONFIG)/obj/ejsMprLog.o
+DEPS_103 += $(CONFIG)/obj/ejsNamespace.o
+DEPS_103 += $(CONFIG)/obj/ejsNull.o
+DEPS_103 += $(CONFIG)/obj/ejsNumber.o
+DEPS_103 += $(CONFIG)/obj/ejsObject.o
+DEPS_103 += $(CONFIG)/obj/ejsPath.o
+DEPS_103 += $(CONFIG)/obj/ejsPot.o
+DEPS_103 += $(CONFIG)/obj/ejsRegExp.o
+DEPS_103 += $(CONFIG)/obj/ejsSocket.o
+DEPS_103 += $(CONFIG)/obj/ejsString.o
+DEPS_103 += $(CONFIG)/obj/ejsSystem.o
+DEPS_103 += $(CONFIG)/obj/ejsTimer.o
+DEPS_103 += $(CONFIG)/obj/ejsType.o
+DEPS_103 += $(CONFIG)/obj/ejsUri.o
+DEPS_103 += $(CONFIG)/obj/ejsVoid.o
+DEPS_103 += $(CONFIG)/obj/ejsWebSocket.o
+DEPS_103 += $(CONFIG)/obj/ejsWorker.o
+DEPS_103 += $(CONFIG)/obj/ejsXML.o
+DEPS_103 += $(CONFIG)/obj/ejsXMLList.o
+DEPS_103 += $(CONFIG)/obj/ejsXMLLoader.o
+DEPS_103 += $(CONFIG)/obj/ejsByteCode.o
+DEPS_103 += $(CONFIG)/obj/ejsException.o
+DEPS_103 += $(CONFIG)/obj/ejsHelper.o
+DEPS_103 += $(CONFIG)/obj/ejsInterp.o
+DEPS_103 += $(CONFIG)/obj/ejsLoader.o
+DEPS_103 += $(CONFIG)/obj/ejsModule.o
+DEPS_103 += $(CONFIG)/obj/ejsScope.o
+DEPS_103 += $(CONFIG)/obj/ejsService.o
+DEPS_103 += $(CONFIG)/bin/libejs.a
+DEPS_103 += $(CONFIG)/obj/ejsc.o
+DEPS_103 += $(CONFIG)/bin/ejsc
+DEPS_103 += src/cmd/ejsmod.h
+DEPS_103 += $(CONFIG)/obj/ejsmod.o
+DEPS_103 += $(CONFIG)/obj/doc.o
+DEPS_103 += $(CONFIG)/obj/docFiles.o
+DEPS_103 += $(CONFIG)/obj/listing.o
+DEPS_103 += $(CONFIG)/obj/slotGen.o
+DEPS_103 += $(CONFIG)/bin/ejsmod
+DEPS_103 += $(CONFIG)/bin/ejs.mod
+
+$(CONFIG)/bin/ejs.tar.mod: $(DEPS_103)
+
+#
+#   ejs.zlib.mod
+#
+DEPS_104 += src/ejs.zlib/Zlib.es
+DEPS_104 += $(CONFIG)/inc/mpr.h
+DEPS_104 += $(CONFIG)/inc/me.h
+DEPS_104 += $(CONFIG)/inc/osdep.h
+DEPS_104 += $(CONFIG)/obj/mprLib.o
+DEPS_104 += $(CONFIG)/bin/libmpr.a
+DEPS_104 += $(CONFIG)/inc/pcre.h
+DEPS_104 += $(CONFIG)/obj/pcre.o
+ifeq ($(ME_COM_PCRE),1)
+    DEPS_104 += $(CONFIG)/bin/libpcre.a
+endif
+DEPS_104 += $(CONFIG)/inc/http.h
+DEPS_104 += $(CONFIG)/obj/httpLib.o
+ifeq ($(ME_COM_HTTP),1)
+    DEPS_104 += $(CONFIG)/bin/libhttp.a
+endif
+DEPS_104 += $(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_104 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_104 += $(CONFIG)/inc/ejs.slots.h
+DEPS_104 += $(CONFIG)/inc/ejs.web.slots.h
+DEPS_104 += $(CONFIG)/inc/ejs.zlib.slots.h
+DEPS_104 += $(CONFIG)/inc/ejsByteCode.h
+DEPS_104 += $(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_104 += $(CONFIG)/inc/ejsCustomize.h
+DEPS_104 += $(CONFIG)/inc/ejs.h
+DEPS_104 += $(CONFIG)/inc/ejsCompiler.h
+DEPS_104 += $(CONFIG)/obj/ecAst.o
+DEPS_104 += $(CONFIG)/obj/ecCodeGen.o
+DEPS_104 += $(CONFIG)/obj/ecCompiler.o
+DEPS_104 += $(CONFIG)/obj/ecLex.o
+DEPS_104 += $(CONFIG)/obj/ecModuleWrite.o
+DEPS_104 += $(CONFIG)/obj/ecParser.o
+DEPS_104 += $(CONFIG)/obj/ecState.o
+DEPS_104 += $(CONFIG)/obj/dtoa.o
+DEPS_104 += $(CONFIG)/obj/ejsApp.o
+DEPS_104 += $(CONFIG)/obj/ejsArray.o
+DEPS_104 += $(CONFIG)/obj/ejsBlock.o
+DEPS_104 += $(CONFIG)/obj/ejsBoolean.o
+DEPS_104 += $(CONFIG)/obj/ejsByteArray.o
+DEPS_104 += $(CONFIG)/obj/ejsCache.o
+DEPS_104 += $(CONFIG)/obj/ejsCmd.o
+DEPS_104 += $(CONFIG)/obj/ejsConfig.o
+DEPS_104 += $(CONFIG)/obj/ejsDate.o
+DEPS_104 += $(CONFIG)/obj/ejsDebug.o
+DEPS_104 += $(CONFIG)/obj/ejsError.o
+DEPS_104 += $(CONFIG)/obj/ejsFile.o
+DEPS_104 += $(CONFIG)/obj/ejsFileSystem.o
+DEPS_104 += $(CONFIG)/obj/ejsFrame.o
+DEPS_104 += $(CONFIG)/obj/ejsFunction.o
+DEPS_104 += $(CONFIG)/obj/ejsGC.o
+DEPS_104 += $(CONFIG)/obj/ejsGlobal.o
+DEPS_104 += $(CONFIG)/obj/ejsHttp.o
+DEPS_104 += $(CONFIG)/obj/ejsIterator.o
+DEPS_104 += $(CONFIG)/obj/ejsJSON.o
+DEPS_104 += $(CONFIG)/obj/ejsLocalCache.o
+DEPS_104 += $(CONFIG)/obj/ejsMath.o
+DEPS_104 += $(CONFIG)/obj/ejsMemory.o
+DEPS_104 += $(CONFIG)/obj/ejsMprLog.o
+DEPS_104 += $(CONFIG)/obj/ejsNamespace.o
+DEPS_104 += $(CONFIG)/obj/ejsNull.o
+DEPS_104 += $(CONFIG)/obj/ejsNumber.o
+DEPS_104 += $(CONFIG)/obj/ejsObject.o
+DEPS_104 += $(CONFIG)/obj/ejsPath.o
+DEPS_104 += $(CONFIG)/obj/ejsPot.o
+DEPS_104 += $(CONFIG)/obj/ejsRegExp.o
+DEPS_104 += $(CONFIG)/obj/ejsSocket.o
+DEPS_104 += $(CONFIG)/obj/ejsString.o
+DEPS_104 += $(CONFIG)/obj/ejsSystem.o
+DEPS_104 += $(CONFIG)/obj/ejsTimer.o
+DEPS_104 += $(CONFIG)/obj/ejsType.o
+DEPS_104 += $(CONFIG)/obj/ejsUri.o
+DEPS_104 += $(CONFIG)/obj/ejsVoid.o
+DEPS_104 += $(CONFIG)/obj/ejsWebSocket.o
+DEPS_104 += $(CONFIG)/obj/ejsWorker.o
+DEPS_104 += $(CONFIG)/obj/ejsXML.o
+DEPS_104 += $(CONFIG)/obj/ejsXMLList.o
+DEPS_104 += $(CONFIG)/obj/ejsXMLLoader.o
+DEPS_104 += $(CONFIG)/obj/ejsByteCode.o
+DEPS_104 += $(CONFIG)/obj/ejsException.o
+DEPS_104 += $(CONFIG)/obj/ejsHelper.o
+DEPS_104 += $(CONFIG)/obj/ejsInterp.o
+DEPS_104 += $(CONFIG)/obj/ejsLoader.o
+DEPS_104 += $(CONFIG)/obj/ejsModule.o
+DEPS_104 += $(CONFIG)/obj/ejsScope.o
+DEPS_104 += $(CONFIG)/obj/ejsService.o
+DEPS_104 += $(CONFIG)/bin/libejs.a
+DEPS_104 += $(CONFIG)/obj/ejsc.o
+DEPS_104 += $(CONFIG)/bin/ejsc
+DEPS_104 += src/cmd/ejsmod.h
+DEPS_104 += $(CONFIG)/obj/ejsmod.o
+DEPS_104 += $(CONFIG)/obj/doc.o
+DEPS_104 += $(CONFIG)/obj/docFiles.o
+DEPS_104 += $(CONFIG)/obj/listing.o
+DEPS_104 += $(CONFIG)/obj/slotGen.o
+DEPS_104 += $(CONFIG)/bin/ejsmod
+DEPS_104 += $(CONFIG)/bin/ejs.mod
+
+$(CONFIG)/bin/ejs.zlib.mod: $(DEPS_104)
+
+#
+#   ejsrun.o
+#
+DEPS_105 += $(CONFIG)/inc/me.h
+DEPS_105 += $(CONFIG)/inc/ejsCompiler.h
+
+$(CONFIG)/obj/ejsrun.o: \
+    src/cmd/ejsrun.c $(DEPS_105)
+	@echo '   [Compile] $(CONFIG)/obj/ejsrun.o'
+	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsrun.o -arch $(CC_ARCH) $(IFLAGS) src/cmd/ejsrun.c
+
+#
+#   ejsrun
+#
+DEPS_106 += $(CONFIG)/inc/mpr.h
+DEPS_106 += $(CONFIG)/inc/me.h
+DEPS_106 += $(CONFIG)/inc/osdep.h
+DEPS_106 += $(CONFIG)/obj/mprLib.o
+DEPS_106 += $(CONFIG)/bin/libmpr.a
+DEPS_106 += $(CONFIG)/inc/pcre.h
+DEPS_106 += $(CONFIG)/obj/pcre.o
+ifeq ($(ME_COM_PCRE),1)
+    DEPS_106 += $(CONFIG)/bin/libpcre.a
+endif
+DEPS_106 += $(CONFIG)/inc/http.h
+DEPS_106 += $(CONFIG)/obj/httpLib.o
+ifeq ($(ME_COM_HTTP),1)
+    DEPS_106 += $(CONFIG)/bin/libhttp.a
+endif
+DEPS_106 += $(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_106 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_106 += $(CONFIG)/inc/ejs.slots.h
+DEPS_106 += $(CONFIG)/inc/ejs.web.slots.h
+DEPS_106 += $(CONFIG)/inc/ejs.zlib.slots.h
+DEPS_106 += $(CONFIG)/inc/ejsByteCode.h
+DEPS_106 += $(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_106 += $(CONFIG)/inc/ejsCustomize.h
+DEPS_106 += $(CONFIG)/inc/ejs.h
+DEPS_106 += $(CONFIG)/inc/ejsCompiler.h
+DEPS_106 += $(CONFIG)/obj/ecAst.o
+DEPS_106 += $(CONFIG)/obj/ecCodeGen.o
+DEPS_106 += $(CONFIG)/obj/ecCompiler.o
+DEPS_106 += $(CONFIG)/obj/ecLex.o
+DEPS_106 += $(CONFIG)/obj/ecModuleWrite.o
+DEPS_106 += $(CONFIG)/obj/ecParser.o
+DEPS_106 += $(CONFIG)/obj/ecState.o
+DEPS_106 += $(CONFIG)/obj/dtoa.o
+DEPS_106 += $(CONFIG)/obj/ejsApp.o
+DEPS_106 += $(CONFIG)/obj/ejsArray.o
+DEPS_106 += $(CONFIG)/obj/ejsBlock.o
+DEPS_106 += $(CONFIG)/obj/ejsBoolean.o
+DEPS_106 += $(CONFIG)/obj/ejsByteArray.o
+DEPS_106 += $(CONFIG)/obj/ejsCache.o
+DEPS_106 += $(CONFIG)/obj/ejsCmd.o
+DEPS_106 += $(CONFIG)/obj/ejsConfig.o
+DEPS_106 += $(CONFIG)/obj/ejsDate.o
+DEPS_106 += $(CONFIG)/obj/ejsDebug.o
+DEPS_106 += $(CONFIG)/obj/ejsError.o
+DEPS_106 += $(CONFIG)/obj/ejsFile.o
+DEPS_106 += $(CONFIG)/obj/ejsFileSystem.o
+DEPS_106 += $(CONFIG)/obj/ejsFrame.o
+DEPS_106 += $(CONFIG)/obj/ejsFunction.o
+DEPS_106 += $(CONFIG)/obj/ejsGC.o
+DEPS_106 += $(CONFIG)/obj/ejsGlobal.o
+DEPS_106 += $(CONFIG)/obj/ejsHttp.o
+DEPS_106 += $(CONFIG)/obj/ejsIterator.o
+DEPS_106 += $(CONFIG)/obj/ejsJSON.o
+DEPS_106 += $(CONFIG)/obj/ejsLocalCache.o
+DEPS_106 += $(CONFIG)/obj/ejsMath.o
+DEPS_106 += $(CONFIG)/obj/ejsMemory.o
+DEPS_106 += $(CONFIG)/obj/ejsMprLog.o
+DEPS_106 += $(CONFIG)/obj/ejsNamespace.o
+DEPS_106 += $(CONFIG)/obj/ejsNull.o
+DEPS_106 += $(CONFIG)/obj/ejsNumber.o
+DEPS_106 += $(CONFIG)/obj/ejsObject.o
+DEPS_106 += $(CONFIG)/obj/ejsPath.o
+DEPS_106 += $(CONFIG)/obj/ejsPot.o
+DEPS_106 += $(CONFIG)/obj/ejsRegExp.o
+DEPS_106 += $(CONFIG)/obj/ejsSocket.o
+DEPS_106 += $(CONFIG)/obj/ejsString.o
+DEPS_106 += $(CONFIG)/obj/ejsSystem.o
+DEPS_106 += $(CONFIG)/obj/ejsTimer.o
+DEPS_106 += $(CONFIG)/obj/ejsType.o
+DEPS_106 += $(CONFIG)/obj/ejsUri.o
+DEPS_106 += $(CONFIG)/obj/ejsVoid.o
+DEPS_106 += $(CONFIG)/obj/ejsWebSocket.o
+DEPS_106 += $(CONFIG)/obj/ejsWorker.o
+DEPS_106 += $(CONFIG)/obj/ejsXML.o
+DEPS_106 += $(CONFIG)/obj/ejsXMLList.o
+DEPS_106 += $(CONFIG)/obj/ejsXMLLoader.o
+DEPS_106 += $(CONFIG)/obj/ejsByteCode.o
+DEPS_106 += $(CONFIG)/obj/ejsException.o
+DEPS_106 += $(CONFIG)/obj/ejsHelper.o
+DEPS_106 += $(CONFIG)/obj/ejsInterp.o
+DEPS_106 += $(CONFIG)/obj/ejsLoader.o
+DEPS_106 += $(CONFIG)/obj/ejsModule.o
+DEPS_106 += $(CONFIG)/obj/ejsScope.o
+DEPS_106 += $(CONFIG)/obj/ejsService.o
+DEPS_106 += $(CONFIG)/bin/libejs.a
+DEPS_106 += $(CONFIG)/obj/ejsrun.o
+
+LIBS_106 += -lejs
+ifeq ($(ME_COM_HTTP),1)
+    LIBS_106 += -lhttp
+endif
+LIBS_106 += -lmpr
+ifeq ($(ME_COM_PCRE),1)
+    LIBS_106 += -lpcre
 endif
 
-$(CONFIG)/bin/ejsrun: $(DEPS_98)
+$(CONFIG)/bin/ejsrun: $(DEPS_106)
 	@echo '      [Link] $(CONFIG)/bin/ejsrun'
-	$(CC) -o $(CONFIG)/bin/ejsrun -arch $(CC_ARCH) -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_98) $(LIBS_98) $(LIBS_98) $(LIBS) -lpam 
+	$(CC) -o $(CONFIG)/bin/ejsrun -arch $(CC_ARCH) -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_106) $(LIBS_106) $(LIBS_106) $(LIBS) -lpam 
 
 
 #
 #   est.h
 #
-$(CONFIG)/inc/est.h: $(DEPS_99)
+$(CONFIG)/inc/est.h: $(DEPS_107)
 	@echo '      [Copy] $(CONFIG)/inc/est.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp src/paks/est/est.h $(CONFIG)/inc/est.h
@@ -2462,12 +3275,12 @@ $(CONFIG)/inc/est.h: $(DEPS_99)
 #
 #   estLib.o
 #
-DEPS_100 += $(CONFIG)/inc/me.h
-DEPS_100 += $(CONFIG)/inc/est.h
-DEPS_100 += $(CONFIG)/inc/osdep.h
+DEPS_108 += $(CONFIG)/inc/me.h
+DEPS_108 += $(CONFIG)/inc/est.h
+DEPS_108 += $(CONFIG)/inc/osdep.h
 
 $(CONFIG)/obj/estLib.o: \
-    src/paks/est/estLib.c $(DEPS_100)
+    src/paks/est/estLib.c $(DEPS_108)
 	@echo '   [Compile] $(CONFIG)/obj/estLib.o'
 	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/estLib.o -arch $(CC_ARCH) $(IFLAGS) src/paks/est/estLib.c
 
@@ -2475,12 +3288,12 @@ ifeq ($(ME_COM_EST),1)
 #
 #   libest
 #
-DEPS_101 += $(CONFIG)/inc/est.h
-DEPS_101 += $(CONFIG)/inc/me.h
-DEPS_101 += $(CONFIG)/inc/osdep.h
-DEPS_101 += $(CONFIG)/obj/estLib.o
+DEPS_109 += $(CONFIG)/inc/est.h
+DEPS_109 += $(CONFIG)/inc/me.h
+DEPS_109 += $(CONFIG)/inc/osdep.h
+DEPS_109 += $(CONFIG)/obj/estLib.o
 
-$(CONFIG)/bin/libest.a: $(DEPS_101)
+$(CONFIG)/bin/libest.a: $(DEPS_109)
 	@echo '      [Link] $(CONFIG)/bin/libest.a'
 	ar -cr $(CONFIG)/bin/libest.a "$(CONFIG)/obj/estLib.o"
 endif
@@ -2488,42 +3301,42 @@ endif
 #
 #   mprSsl.o
 #
-DEPS_102 += $(CONFIG)/inc/me.h
-DEPS_102 += $(CONFIG)/inc/mpr.h
-DEPS_102 += $(CONFIG)/inc/est.h
+DEPS_110 += $(CONFIG)/inc/me.h
+DEPS_110 += $(CONFIG)/inc/mpr.h
+DEPS_110 += $(CONFIG)/inc/est.h
 
 $(CONFIG)/obj/mprSsl.o: \
-    src/paks/mpr/mprSsl.c $(DEPS_102)
+    src/paks/mpr/mprSsl.c $(DEPS_110)
 	@echo '   [Compile] $(CONFIG)/obj/mprSsl.o'
 	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/mprSsl.o -arch $(CC_ARCH) $(IFLAGS) "-I$(ME_COM_MATRIXSSL_PATH)" "-I$(ME_COM_MATRIXSSL_PATH)/matrixssl" "-I$(ME_COM_NANOSSL_PATH)/src" "-I$(ME_COM_OPENSSL_PATH)/include" src/paks/mpr/mprSsl.c
 
 #
 #   libmprssl
 #
-DEPS_103 += $(CONFIG)/inc/mpr.h
-DEPS_103 += $(CONFIG)/inc/me.h
-DEPS_103 += $(CONFIG)/inc/osdep.h
-DEPS_103 += $(CONFIG)/obj/mprLib.o
-DEPS_103 += $(CONFIG)/bin/libmpr.a
-DEPS_103 += $(CONFIG)/inc/est.h
-DEPS_103 += $(CONFIG)/obj/estLib.o
+DEPS_111 += $(CONFIG)/inc/mpr.h
+DEPS_111 += $(CONFIG)/inc/me.h
+DEPS_111 += $(CONFIG)/inc/osdep.h
+DEPS_111 += $(CONFIG)/obj/mprLib.o
+DEPS_111 += $(CONFIG)/bin/libmpr.a
+DEPS_111 += $(CONFIG)/inc/est.h
+DEPS_111 += $(CONFIG)/obj/estLib.o
 ifeq ($(ME_COM_EST),1)
-    DEPS_103 += $(CONFIG)/bin/libest.a
+    DEPS_111 += $(CONFIG)/bin/libest.a
 endif
-DEPS_103 += $(CONFIG)/obj/mprSsl.o
+DEPS_111 += $(CONFIG)/obj/mprSsl.o
 
-$(CONFIG)/bin/libmprssl.a: $(DEPS_103)
+$(CONFIG)/bin/libmprssl.a: $(DEPS_111)
 	@echo '      [Link] $(CONFIG)/bin/libmprssl.a'
 	ar -cr $(CONFIG)/bin/libmprssl.a "$(CONFIG)/obj/mprSsl.o"
 
 #
 #   http.o
 #
-DEPS_104 += $(CONFIG)/inc/me.h
-DEPS_104 += $(CONFIG)/inc/http.h
+DEPS_112 += $(CONFIG)/inc/me.h
+DEPS_112 += $(CONFIG)/inc/http.h
 
 $(CONFIG)/obj/http.o: \
-    src/paks/http/http.c $(DEPS_104)
+    src/paks/http/http.c $(DEPS_112)
 	@echo '   [Compile] $(CONFIG)/obj/http.o'
 	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/http.o -arch $(CC_ARCH) $(IFLAGS) "-I$(ME_COM_MATRIXSSL_PATH)" "-I$(ME_COM_MATRIXSSL_PATH)/matrixssl" "-I$(ME_COM_NANOSSL_PATH)/src" "-I$(ME_COM_OPENSSL_PATH)/include" src/paks/http/http.c
 
@@ -2531,63 +3344,63 @@ ifeq ($(ME_COM_HTTP),1)
 #
 #   httpcmd
 #
-DEPS_105 += $(CONFIG)/inc/mpr.h
-DEPS_105 += $(CONFIG)/inc/me.h
-DEPS_105 += $(CONFIG)/inc/osdep.h
-DEPS_105 += $(CONFIG)/obj/mprLib.o
-DEPS_105 += $(CONFIG)/bin/libmpr.a
-DEPS_105 += $(CONFIG)/inc/pcre.h
-DEPS_105 += $(CONFIG)/obj/pcre.o
+DEPS_113 += $(CONFIG)/inc/mpr.h
+DEPS_113 += $(CONFIG)/inc/me.h
+DEPS_113 += $(CONFIG)/inc/osdep.h
+DEPS_113 += $(CONFIG)/obj/mprLib.o
+DEPS_113 += $(CONFIG)/bin/libmpr.a
+DEPS_113 += $(CONFIG)/inc/pcre.h
+DEPS_113 += $(CONFIG)/obj/pcre.o
 ifeq ($(ME_COM_PCRE),1)
-    DEPS_105 += $(CONFIG)/bin/libpcre.a
+    DEPS_113 += $(CONFIG)/bin/libpcre.a
 endif
-DEPS_105 += $(CONFIG)/inc/http.h
-DEPS_105 += $(CONFIG)/obj/httpLib.o
-DEPS_105 += $(CONFIG)/bin/libhttp.a
-DEPS_105 += $(CONFIG)/inc/est.h
-DEPS_105 += $(CONFIG)/obj/estLib.o
+DEPS_113 += $(CONFIG)/inc/http.h
+DEPS_113 += $(CONFIG)/obj/httpLib.o
+DEPS_113 += $(CONFIG)/bin/libhttp.a
+DEPS_113 += $(CONFIG)/inc/est.h
+DEPS_113 += $(CONFIG)/obj/estLib.o
 ifeq ($(ME_COM_EST),1)
-    DEPS_105 += $(CONFIG)/bin/libest.a
+    DEPS_113 += $(CONFIG)/bin/libest.a
 endif
-DEPS_105 += $(CONFIG)/obj/mprSsl.o
-DEPS_105 += $(CONFIG)/bin/libmprssl.a
-DEPS_105 += $(CONFIG)/obj/http.o
+DEPS_113 += $(CONFIG)/obj/mprSsl.o
+DEPS_113 += $(CONFIG)/bin/libmprssl.a
+DEPS_113 += $(CONFIG)/obj/http.o
 
-LIBS_105 += -lhttp
-LIBS_105 += -lmpr
+LIBS_113 += -lhttp
+LIBS_113 += -lmpr
 ifeq ($(ME_COM_PCRE),1)
-    LIBS_105 += -lpcre
+    LIBS_113 += -lpcre
 endif
-LIBS_105 += -lmprssl
+LIBS_113 += -lmprssl
 ifeq ($(ME_COM_EST),1)
-    LIBS_105 += -lest
+    LIBS_113 += -lest
 endif
 ifeq ($(ME_COM_MATRIXSSL),1)
-    LIBS_105 += -lmatrixssl
-    LIBPATHS_105 += -L$(ME_COM_MATRIXSSL_PATH)
+    LIBS_113 += -lmatrixssl
+    LIBPATHS_113 += -L$(ME_COM_MATRIXSSL_PATH)
 endif
 ifeq ($(ME_COM_NANOSSL),1)
-    LIBS_105 += -lssls
-    LIBPATHS_105 += -L$(ME_COM_NANOSSL_PATH)/bin
+    LIBS_113 += -lssls
+    LIBPATHS_113 += -L$(ME_COM_NANOSSL_PATH)/bin
 endif
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_105 += -lssl
-    LIBPATHS_105 += -L$(ME_COM_OPENSSL_PATH)
+    LIBS_113 += -lssl
+    LIBPATHS_113 += -L$(ME_COM_OPENSSL_PATH)
 endif
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_105 += -lcrypto
-    LIBPATHS_105 += -L$(ME_COM_OPENSSL_PATH)
+    LIBS_113 += -lcrypto
+    LIBPATHS_113 += -L$(ME_COM_OPENSSL_PATH)
 endif
 
-$(CONFIG)/bin/http: $(DEPS_105)
+$(CONFIG)/bin/http: $(DEPS_113)
 	@echo '      [Link] $(CONFIG)/bin/http'
-	$(CC) -o $(CONFIG)/bin/http -arch $(CC_ARCH) -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ $(LIBPATHS)    "$(CONFIG)/obj/http.o" $(LIBPATHS_105) $(LIBS_105) $(LIBS_105) $(LIBS) -lpam 
+	$(CC) -o $(CONFIG)/bin/http -arch $(CC_ARCH) -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ $(LIBPATHS)    "$(CONFIG)/obj/http.o" $(LIBPATHS_113) $(LIBS_113) $(LIBS_113) $(LIBS) -lpam 
 endif
 
 #
 #   sqlite3.h
 #
-$(CONFIG)/inc/sqlite3.h: $(DEPS_106)
+$(CONFIG)/inc/sqlite3.h: $(DEPS_114)
 	@echo '      [Copy] $(CONFIG)/inc/sqlite3.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp src/paks/sqlite/sqlite3.h $(CONFIG)/inc/sqlite3.h
@@ -2595,11 +3408,11 @@ $(CONFIG)/inc/sqlite3.h: $(DEPS_106)
 #
 #   sqlite3.o
 #
-DEPS_107 += $(CONFIG)/inc/me.h
-DEPS_107 += $(CONFIG)/inc/sqlite3.h
+DEPS_115 += $(CONFIG)/inc/me.h
+DEPS_115 += $(CONFIG)/inc/sqlite3.h
 
 $(CONFIG)/obj/sqlite3.o: \
-    src/paks/sqlite/sqlite3.c $(DEPS_107)
+    src/paks/sqlite/sqlite3.c $(DEPS_115)
 	@echo '   [Compile] $(CONFIG)/obj/sqlite3.o'
 	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/sqlite3.o -arch $(CC_ARCH) $(IFLAGS) src/paks/sqlite/sqlite3.c
 
@@ -2607,11 +3420,11 @@ ifeq ($(ME_COM_SQLITE),1)
 #
 #   libsql
 #
-DEPS_108 += $(CONFIG)/inc/sqlite3.h
-DEPS_108 += $(CONFIG)/inc/me.h
-DEPS_108 += $(CONFIG)/obj/sqlite3.o
+DEPS_116 += $(CONFIG)/inc/sqlite3.h
+DEPS_116 += $(CONFIG)/inc/me.h
+DEPS_116 += $(CONFIG)/obj/sqlite3.o
 
-$(CONFIG)/bin/libsql.a: $(DEPS_108)
+$(CONFIG)/bin/libsql.a: $(DEPS_116)
 	@echo '      [Link] $(CONFIG)/bin/libsql.a'
 	ar -cr $(CONFIG)/bin/libsql.a "$(CONFIG)/obj/sqlite3.o"
 endif
@@ -2619,359 +3432,141 @@ endif
 #
 #   ejsSqlite.o
 #
-DEPS_109 += $(CONFIG)/inc/me.h
-DEPS_109 += $(CONFIG)/inc/mpr.h
-DEPS_109 += $(CONFIG)/inc/http.h
-DEPS_109 += $(CONFIG)/inc/ejsByteCode.h
-DEPS_109 += $(CONFIG)/inc/ejsByteCodeTable.h
-DEPS_109 += $(CONFIG)/inc/ejs.slots.h
-DEPS_109 += $(CONFIG)/inc/ejsCustomize.h
-DEPS_109 += $(CONFIG)/inc/ejs.h
-DEPS_109 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_117 += $(CONFIG)/inc/me.h
+DEPS_117 += $(CONFIG)/inc/mpr.h
+DEPS_117 += $(CONFIG)/inc/http.h
+DEPS_117 += $(CONFIG)/inc/ejsByteCode.h
+DEPS_117 += $(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_117 += $(CONFIG)/inc/ejs.slots.h
+DEPS_117 += $(CONFIG)/inc/ejsCustomize.h
+DEPS_117 += $(CONFIG)/inc/ejs.h
+DEPS_117 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
 
 $(CONFIG)/obj/ejsSqlite.o: \
-    src/ejs.db.sqlite/ejsSqlite.c $(DEPS_109)
+    src/ejs.db.sqlite/ejsSqlite.c $(DEPS_117)
 	@echo '   [Compile] $(CONFIG)/obj/ejsSqlite.o'
 	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsSqlite.o -arch $(CC_ARCH) $(IFLAGS) "-Isrc/cmd" src/ejs.db.sqlite/ejsSqlite.c
 
 #
 #   libejs.db.sqlite
 #
-DEPS_110 += $(CONFIG)/inc/mpr.h
-DEPS_110 += $(CONFIG)/inc/me.h
-DEPS_110 += $(CONFIG)/inc/osdep.h
-DEPS_110 += $(CONFIG)/obj/mprLib.o
-DEPS_110 += $(CONFIG)/bin/libmpr.a
-DEPS_110 += $(CONFIG)/inc/pcre.h
-DEPS_110 += $(CONFIG)/obj/pcre.o
+DEPS_118 += $(CONFIG)/inc/mpr.h
+DEPS_118 += $(CONFIG)/inc/me.h
+DEPS_118 += $(CONFIG)/inc/osdep.h
+DEPS_118 += $(CONFIG)/obj/mprLib.o
+DEPS_118 += $(CONFIG)/bin/libmpr.a
+DEPS_118 += $(CONFIG)/inc/pcre.h
+DEPS_118 += $(CONFIG)/obj/pcre.o
 ifeq ($(ME_COM_PCRE),1)
-    DEPS_110 += $(CONFIG)/bin/libpcre.a
+    DEPS_118 += $(CONFIG)/bin/libpcre.a
 endif
-DEPS_110 += $(CONFIG)/inc/http.h
-DEPS_110 += $(CONFIG)/obj/httpLib.o
+DEPS_118 += $(CONFIG)/inc/http.h
+DEPS_118 += $(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
-    DEPS_110 += $(CONFIG)/bin/libhttp.a
+    DEPS_118 += $(CONFIG)/bin/libhttp.a
 endif
-DEPS_110 += $(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_110 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_110 += $(CONFIG)/inc/ejs.slots.h
-DEPS_110 += $(CONFIG)/inc/ejs.web.slots.h
-DEPS_110 += $(CONFIG)/inc/ejs.zlib.slots.h
-DEPS_110 += $(CONFIG)/inc/ejsByteCode.h
-DEPS_110 += $(CONFIG)/inc/ejsByteCodeTable.h
-DEPS_110 += $(CONFIG)/inc/ejsCustomize.h
-DEPS_110 += $(CONFIG)/inc/ejs.h
-DEPS_110 += $(CONFIG)/inc/ejsCompiler.h
-DEPS_110 += $(CONFIG)/obj/ecAst.o
-DEPS_110 += $(CONFIG)/obj/ecCodeGen.o
-DEPS_110 += $(CONFIG)/obj/ecCompiler.o
-DEPS_110 += $(CONFIG)/obj/ecLex.o
-DEPS_110 += $(CONFIG)/obj/ecModuleWrite.o
-DEPS_110 += $(CONFIG)/obj/ecParser.o
-DEPS_110 += $(CONFIG)/obj/ecState.o
-DEPS_110 += $(CONFIG)/obj/dtoa.o
-DEPS_110 += $(CONFIG)/obj/ejsApp.o
-DEPS_110 += $(CONFIG)/obj/ejsArray.o
-DEPS_110 += $(CONFIG)/obj/ejsBlock.o
-DEPS_110 += $(CONFIG)/obj/ejsBoolean.o
-DEPS_110 += $(CONFIG)/obj/ejsByteArray.o
-DEPS_110 += $(CONFIG)/obj/ejsCache.o
-DEPS_110 += $(CONFIG)/obj/ejsCmd.o
-DEPS_110 += $(CONFIG)/obj/ejsConfig.o
-DEPS_110 += $(CONFIG)/obj/ejsDate.o
-DEPS_110 += $(CONFIG)/obj/ejsDebug.o
-DEPS_110 += $(CONFIG)/obj/ejsError.o
-DEPS_110 += $(CONFIG)/obj/ejsFile.o
-DEPS_110 += $(CONFIG)/obj/ejsFileSystem.o
-DEPS_110 += $(CONFIG)/obj/ejsFrame.o
-DEPS_110 += $(CONFIG)/obj/ejsFunction.o
-DEPS_110 += $(CONFIG)/obj/ejsGC.o
-DEPS_110 += $(CONFIG)/obj/ejsGlobal.o
-DEPS_110 += $(CONFIG)/obj/ejsHttp.o
-DEPS_110 += $(CONFIG)/obj/ejsIterator.o
-DEPS_110 += $(CONFIG)/obj/ejsJSON.o
-DEPS_110 += $(CONFIG)/obj/ejsLocalCache.o
-DEPS_110 += $(CONFIG)/obj/ejsMath.o
-DEPS_110 += $(CONFIG)/obj/ejsMemory.o
-DEPS_110 += $(CONFIG)/obj/ejsMprLog.o
-DEPS_110 += $(CONFIG)/obj/ejsNamespace.o
-DEPS_110 += $(CONFIG)/obj/ejsNull.o
-DEPS_110 += $(CONFIG)/obj/ejsNumber.o
-DEPS_110 += $(CONFIG)/obj/ejsObject.o
-DEPS_110 += $(CONFIG)/obj/ejsPath.o
-DEPS_110 += $(CONFIG)/obj/ejsPot.o
-DEPS_110 += $(CONFIG)/obj/ejsRegExp.o
-DEPS_110 += $(CONFIG)/obj/ejsSocket.o
-DEPS_110 += $(CONFIG)/obj/ejsString.o
-DEPS_110 += $(CONFIG)/obj/ejsSystem.o
-DEPS_110 += $(CONFIG)/obj/ejsTimer.o
-DEPS_110 += $(CONFIG)/obj/ejsType.o
-DEPS_110 += $(CONFIG)/obj/ejsUri.o
-DEPS_110 += $(CONFIG)/obj/ejsVoid.o
-DEPS_110 += $(CONFIG)/obj/ejsWebSocket.o
-DEPS_110 += $(CONFIG)/obj/ejsWorker.o
-DEPS_110 += $(CONFIG)/obj/ejsXML.o
-DEPS_110 += $(CONFIG)/obj/ejsXMLList.o
-DEPS_110 += $(CONFIG)/obj/ejsXMLLoader.o
-DEPS_110 += $(CONFIG)/obj/ejsByteCode.o
-DEPS_110 += $(CONFIG)/obj/ejsException.o
-DEPS_110 += $(CONFIG)/obj/ejsHelper.o
-DEPS_110 += $(CONFIG)/obj/ejsInterp.o
-DEPS_110 += $(CONFIG)/obj/ejsLoader.o
-DEPS_110 += $(CONFIG)/obj/ejsModule.o
-DEPS_110 += $(CONFIG)/obj/ejsScope.o
-DEPS_110 += $(CONFIG)/obj/ejsService.o
-DEPS_110 += $(CONFIG)/bin/libejs.a
-DEPS_110 += $(CONFIG)/obj/ejsc.o
-DEPS_110 += $(CONFIG)/bin/ejsc
-DEPS_110 += src/cmd/ejsmod.h
-DEPS_110 += $(CONFIG)/obj/ejsmod.o
-DEPS_110 += $(CONFIG)/obj/doc.o
-DEPS_110 += $(CONFIG)/obj/docFiles.o
-DEPS_110 += $(CONFIG)/obj/listing.o
-DEPS_110 += $(CONFIG)/obj/slotGen.o
-DEPS_110 += $(CONFIG)/bin/ejsmod
-DEPS_110 += $(CONFIG)/bin/ejs.mod
-DEPS_110 += $(CONFIG)/bin/ejs.db.sqlite.mod
-DEPS_110 += $(CONFIG)/inc/sqlite3.h
-DEPS_110 += $(CONFIG)/obj/sqlite3.o
+DEPS_118 += $(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_118 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_118 += $(CONFIG)/inc/ejs.slots.h
+DEPS_118 += $(CONFIG)/inc/ejs.web.slots.h
+DEPS_118 += $(CONFIG)/inc/ejs.zlib.slots.h
+DEPS_118 += $(CONFIG)/inc/ejsByteCode.h
+DEPS_118 += $(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_118 += $(CONFIG)/inc/ejsCustomize.h
+DEPS_118 += $(CONFIG)/inc/ejs.h
+DEPS_118 += $(CONFIG)/inc/ejsCompiler.h
+DEPS_118 += $(CONFIG)/obj/ecAst.o
+DEPS_118 += $(CONFIG)/obj/ecCodeGen.o
+DEPS_118 += $(CONFIG)/obj/ecCompiler.o
+DEPS_118 += $(CONFIG)/obj/ecLex.o
+DEPS_118 += $(CONFIG)/obj/ecModuleWrite.o
+DEPS_118 += $(CONFIG)/obj/ecParser.o
+DEPS_118 += $(CONFIG)/obj/ecState.o
+DEPS_118 += $(CONFIG)/obj/dtoa.o
+DEPS_118 += $(CONFIG)/obj/ejsApp.o
+DEPS_118 += $(CONFIG)/obj/ejsArray.o
+DEPS_118 += $(CONFIG)/obj/ejsBlock.o
+DEPS_118 += $(CONFIG)/obj/ejsBoolean.o
+DEPS_118 += $(CONFIG)/obj/ejsByteArray.o
+DEPS_118 += $(CONFIG)/obj/ejsCache.o
+DEPS_118 += $(CONFIG)/obj/ejsCmd.o
+DEPS_118 += $(CONFIG)/obj/ejsConfig.o
+DEPS_118 += $(CONFIG)/obj/ejsDate.o
+DEPS_118 += $(CONFIG)/obj/ejsDebug.o
+DEPS_118 += $(CONFIG)/obj/ejsError.o
+DEPS_118 += $(CONFIG)/obj/ejsFile.o
+DEPS_118 += $(CONFIG)/obj/ejsFileSystem.o
+DEPS_118 += $(CONFIG)/obj/ejsFrame.o
+DEPS_118 += $(CONFIG)/obj/ejsFunction.o
+DEPS_118 += $(CONFIG)/obj/ejsGC.o
+DEPS_118 += $(CONFIG)/obj/ejsGlobal.o
+DEPS_118 += $(CONFIG)/obj/ejsHttp.o
+DEPS_118 += $(CONFIG)/obj/ejsIterator.o
+DEPS_118 += $(CONFIG)/obj/ejsJSON.o
+DEPS_118 += $(CONFIG)/obj/ejsLocalCache.o
+DEPS_118 += $(CONFIG)/obj/ejsMath.o
+DEPS_118 += $(CONFIG)/obj/ejsMemory.o
+DEPS_118 += $(CONFIG)/obj/ejsMprLog.o
+DEPS_118 += $(CONFIG)/obj/ejsNamespace.o
+DEPS_118 += $(CONFIG)/obj/ejsNull.o
+DEPS_118 += $(CONFIG)/obj/ejsNumber.o
+DEPS_118 += $(CONFIG)/obj/ejsObject.o
+DEPS_118 += $(CONFIG)/obj/ejsPath.o
+DEPS_118 += $(CONFIG)/obj/ejsPot.o
+DEPS_118 += $(CONFIG)/obj/ejsRegExp.o
+DEPS_118 += $(CONFIG)/obj/ejsSocket.o
+DEPS_118 += $(CONFIG)/obj/ejsString.o
+DEPS_118 += $(CONFIG)/obj/ejsSystem.o
+DEPS_118 += $(CONFIG)/obj/ejsTimer.o
+DEPS_118 += $(CONFIG)/obj/ejsType.o
+DEPS_118 += $(CONFIG)/obj/ejsUri.o
+DEPS_118 += $(CONFIG)/obj/ejsVoid.o
+DEPS_118 += $(CONFIG)/obj/ejsWebSocket.o
+DEPS_118 += $(CONFIG)/obj/ejsWorker.o
+DEPS_118 += $(CONFIG)/obj/ejsXML.o
+DEPS_118 += $(CONFIG)/obj/ejsXMLList.o
+DEPS_118 += $(CONFIG)/obj/ejsXMLLoader.o
+DEPS_118 += $(CONFIG)/obj/ejsByteCode.o
+DEPS_118 += $(CONFIG)/obj/ejsException.o
+DEPS_118 += $(CONFIG)/obj/ejsHelper.o
+DEPS_118 += $(CONFIG)/obj/ejsInterp.o
+DEPS_118 += $(CONFIG)/obj/ejsLoader.o
+DEPS_118 += $(CONFIG)/obj/ejsModule.o
+DEPS_118 += $(CONFIG)/obj/ejsScope.o
+DEPS_118 += $(CONFIG)/obj/ejsService.o
+DEPS_118 += $(CONFIG)/bin/libejs.a
+DEPS_118 += $(CONFIG)/obj/ejsc.o
+DEPS_118 += $(CONFIG)/bin/ejsc
+DEPS_118 += src/cmd/ejsmod.h
+DEPS_118 += $(CONFIG)/obj/ejsmod.o
+DEPS_118 += $(CONFIG)/obj/doc.o
+DEPS_118 += $(CONFIG)/obj/docFiles.o
+DEPS_118 += $(CONFIG)/obj/listing.o
+DEPS_118 += $(CONFIG)/obj/slotGen.o
+DEPS_118 += $(CONFIG)/bin/ejsmod
+DEPS_118 += $(CONFIG)/bin/ejs.mod
+DEPS_118 += $(CONFIG)/bin/ejs.db.sqlite.mod
+DEPS_118 += $(CONFIG)/inc/sqlite3.h
+DEPS_118 += $(CONFIG)/obj/sqlite3.o
 ifeq ($(ME_COM_SQLITE),1)
-    DEPS_110 += $(CONFIG)/bin/libsql.a
+    DEPS_118 += $(CONFIG)/bin/libsql.a
 endif
-DEPS_110 += $(CONFIG)/obj/ejsSqlite.o
+DEPS_118 += $(CONFIG)/obj/ejsSqlite.o
 
-$(CONFIG)/bin/libejs.db.sqlite.a: $(DEPS_110)
+$(CONFIG)/bin/libejs.db.sqlite.a: $(DEPS_118)
 	@echo '      [Link] $(CONFIG)/bin/libejs.db.sqlite.a'
 	ar -cr $(CONFIG)/bin/libejs.db.sqlite.a "$(CONFIG)/obj/ejsSqlite.o"
 
 #
 #   ejsWeb.h
 #
-$(CONFIG)/inc/ejsWeb.h: $(DEPS_111)
+$(CONFIG)/inc/ejsWeb.h: $(DEPS_119)
 	@echo '      [Copy] $(CONFIG)/inc/ejsWeb.h'
 	mkdir -p "$(CONFIG)/inc"
 	cp src/ejs.web/ejsWeb.h $(CONFIG)/inc/ejsWeb.h
 
 #
 #   ejsHttpServer.o
-#
-DEPS_112 += $(CONFIG)/inc/me.h
-DEPS_112 += $(CONFIG)/inc/mpr.h
-DEPS_112 += $(CONFIG)/inc/http.h
-DEPS_112 += $(CONFIG)/inc/ejsByteCode.h
-DEPS_112 += $(CONFIG)/inc/ejsByteCodeTable.h
-DEPS_112 += $(CONFIG)/inc/ejs.slots.h
-DEPS_112 += $(CONFIG)/inc/ejsCustomize.h
-DEPS_112 += $(CONFIG)/inc/ejs.h
-DEPS_112 += $(CONFIG)/inc/ejsCompiler.h
-DEPS_112 += $(CONFIG)/inc/ejsWeb.h
-DEPS_112 += $(CONFIG)/inc/ejs.web.slots.h
-
-$(CONFIG)/obj/ejsHttpServer.o: \
-    src/ejs.web/ejsHttpServer.c $(DEPS_112)
-	@echo '   [Compile] $(CONFIG)/obj/ejsHttpServer.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsHttpServer.o -arch $(CC_ARCH) $(IFLAGS) "-Isrc/cmd" src/ejs.web/ejsHttpServer.c
-
-#
-#   ejsRequest.o
-#
-DEPS_113 += $(CONFIG)/inc/me.h
-DEPS_113 += $(CONFIG)/inc/mpr.h
-DEPS_113 += $(CONFIG)/inc/http.h
-DEPS_113 += $(CONFIG)/inc/ejsByteCode.h
-DEPS_113 += $(CONFIG)/inc/ejsByteCodeTable.h
-DEPS_113 += $(CONFIG)/inc/ejs.slots.h
-DEPS_113 += $(CONFIG)/inc/ejsCustomize.h
-DEPS_113 += $(CONFIG)/inc/ejs.h
-DEPS_113 += $(CONFIG)/inc/ejsCompiler.h
-DEPS_113 += $(CONFIG)/inc/ejsWeb.h
-DEPS_113 += $(CONFIG)/inc/ejs.web.slots.h
-
-$(CONFIG)/obj/ejsRequest.o: \
-    src/ejs.web/ejsRequest.c $(DEPS_113)
-	@echo '   [Compile] $(CONFIG)/obj/ejsRequest.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsRequest.o -arch $(CC_ARCH) $(IFLAGS) "-Isrc/cmd" src/ejs.web/ejsRequest.c
-
-#
-#   ejsSession.o
-#
-DEPS_114 += $(CONFIG)/inc/me.h
-DEPS_114 += $(CONFIG)/inc/mpr.h
-DEPS_114 += $(CONFIG)/inc/http.h
-DEPS_114 += $(CONFIG)/inc/ejsByteCode.h
-DEPS_114 += $(CONFIG)/inc/ejsByteCodeTable.h
-DEPS_114 += $(CONFIG)/inc/ejs.slots.h
-DEPS_114 += $(CONFIG)/inc/ejsCustomize.h
-DEPS_114 += $(CONFIG)/inc/ejs.h
-DEPS_114 += $(CONFIG)/inc/ejsWeb.h
-
-$(CONFIG)/obj/ejsSession.o: \
-    src/ejs.web/ejsSession.c $(DEPS_114)
-	@echo '   [Compile] $(CONFIG)/obj/ejsSession.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsSession.o -arch $(CC_ARCH) $(IFLAGS) "-Isrc/cmd" src/ejs.web/ejsSession.c
-
-#
-#   ejsWeb.o
-#
-DEPS_115 += $(CONFIG)/inc/me.h
-DEPS_115 += $(CONFIG)/inc/mpr.h
-DEPS_115 += $(CONFIG)/inc/http.h
-DEPS_115 += $(CONFIG)/inc/ejsByteCode.h
-DEPS_115 += $(CONFIG)/inc/ejsByteCodeTable.h
-DEPS_115 += $(CONFIG)/inc/ejs.slots.h
-DEPS_115 += $(CONFIG)/inc/ejsCustomize.h
-DEPS_115 += $(CONFIG)/inc/ejs.h
-DEPS_115 += $(CONFIG)/inc/ejsCompiler.h
-DEPS_115 += $(CONFIG)/inc/ejsWeb.h
-DEPS_115 += $(CONFIG)/inc/ejs.web.slots.h
-
-$(CONFIG)/obj/ejsWeb.o: \
-    src/ejs.web/ejsWeb.c $(DEPS_115)
-	@echo '   [Compile] $(CONFIG)/obj/ejsWeb.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsWeb.o -arch $(CC_ARCH) $(IFLAGS) "-Isrc/cmd" src/ejs.web/ejsWeb.c
-
-#
-#   libejs.web
-#
-DEPS_116 += $(CONFIG)/inc/mpr.h
-DEPS_116 += $(CONFIG)/inc/me.h
-DEPS_116 += $(CONFIG)/inc/osdep.h
-DEPS_116 += $(CONFIG)/obj/mprLib.o
-DEPS_116 += $(CONFIG)/bin/libmpr.a
-DEPS_116 += $(CONFIG)/inc/pcre.h
-DEPS_116 += $(CONFIG)/obj/pcre.o
-ifeq ($(ME_COM_PCRE),1)
-    DEPS_116 += $(CONFIG)/bin/libpcre.a
-endif
-DEPS_116 += $(CONFIG)/inc/http.h
-DEPS_116 += $(CONFIG)/obj/httpLib.o
-ifeq ($(ME_COM_HTTP),1)
-    DEPS_116 += $(CONFIG)/bin/libhttp.a
-endif
-DEPS_116 += $(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_116 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_116 += $(CONFIG)/inc/ejs.slots.h
-DEPS_116 += $(CONFIG)/inc/ejs.web.slots.h
-DEPS_116 += $(CONFIG)/inc/ejs.zlib.slots.h
-DEPS_116 += $(CONFIG)/inc/ejsByteCode.h
-DEPS_116 += $(CONFIG)/inc/ejsByteCodeTable.h
-DEPS_116 += $(CONFIG)/inc/ejsCustomize.h
-DEPS_116 += $(CONFIG)/inc/ejs.h
-DEPS_116 += $(CONFIG)/inc/ejsCompiler.h
-DEPS_116 += $(CONFIG)/obj/ecAst.o
-DEPS_116 += $(CONFIG)/obj/ecCodeGen.o
-DEPS_116 += $(CONFIG)/obj/ecCompiler.o
-DEPS_116 += $(CONFIG)/obj/ecLex.o
-DEPS_116 += $(CONFIG)/obj/ecModuleWrite.o
-DEPS_116 += $(CONFIG)/obj/ecParser.o
-DEPS_116 += $(CONFIG)/obj/ecState.o
-DEPS_116 += $(CONFIG)/obj/dtoa.o
-DEPS_116 += $(CONFIG)/obj/ejsApp.o
-DEPS_116 += $(CONFIG)/obj/ejsArray.o
-DEPS_116 += $(CONFIG)/obj/ejsBlock.o
-DEPS_116 += $(CONFIG)/obj/ejsBoolean.o
-DEPS_116 += $(CONFIG)/obj/ejsByteArray.o
-DEPS_116 += $(CONFIG)/obj/ejsCache.o
-DEPS_116 += $(CONFIG)/obj/ejsCmd.o
-DEPS_116 += $(CONFIG)/obj/ejsConfig.o
-DEPS_116 += $(CONFIG)/obj/ejsDate.o
-DEPS_116 += $(CONFIG)/obj/ejsDebug.o
-DEPS_116 += $(CONFIG)/obj/ejsError.o
-DEPS_116 += $(CONFIG)/obj/ejsFile.o
-DEPS_116 += $(CONFIG)/obj/ejsFileSystem.o
-DEPS_116 += $(CONFIG)/obj/ejsFrame.o
-DEPS_116 += $(CONFIG)/obj/ejsFunction.o
-DEPS_116 += $(CONFIG)/obj/ejsGC.o
-DEPS_116 += $(CONFIG)/obj/ejsGlobal.o
-DEPS_116 += $(CONFIG)/obj/ejsHttp.o
-DEPS_116 += $(CONFIG)/obj/ejsIterator.o
-DEPS_116 += $(CONFIG)/obj/ejsJSON.o
-DEPS_116 += $(CONFIG)/obj/ejsLocalCache.o
-DEPS_116 += $(CONFIG)/obj/ejsMath.o
-DEPS_116 += $(CONFIG)/obj/ejsMemory.o
-DEPS_116 += $(CONFIG)/obj/ejsMprLog.o
-DEPS_116 += $(CONFIG)/obj/ejsNamespace.o
-DEPS_116 += $(CONFIG)/obj/ejsNull.o
-DEPS_116 += $(CONFIG)/obj/ejsNumber.o
-DEPS_116 += $(CONFIG)/obj/ejsObject.o
-DEPS_116 += $(CONFIG)/obj/ejsPath.o
-DEPS_116 += $(CONFIG)/obj/ejsPot.o
-DEPS_116 += $(CONFIG)/obj/ejsRegExp.o
-DEPS_116 += $(CONFIG)/obj/ejsSocket.o
-DEPS_116 += $(CONFIG)/obj/ejsString.o
-DEPS_116 += $(CONFIG)/obj/ejsSystem.o
-DEPS_116 += $(CONFIG)/obj/ejsTimer.o
-DEPS_116 += $(CONFIG)/obj/ejsType.o
-DEPS_116 += $(CONFIG)/obj/ejsUri.o
-DEPS_116 += $(CONFIG)/obj/ejsVoid.o
-DEPS_116 += $(CONFIG)/obj/ejsWebSocket.o
-DEPS_116 += $(CONFIG)/obj/ejsWorker.o
-DEPS_116 += $(CONFIG)/obj/ejsXML.o
-DEPS_116 += $(CONFIG)/obj/ejsXMLList.o
-DEPS_116 += $(CONFIG)/obj/ejsXMLLoader.o
-DEPS_116 += $(CONFIG)/obj/ejsByteCode.o
-DEPS_116 += $(CONFIG)/obj/ejsException.o
-DEPS_116 += $(CONFIG)/obj/ejsHelper.o
-DEPS_116 += $(CONFIG)/obj/ejsInterp.o
-DEPS_116 += $(CONFIG)/obj/ejsLoader.o
-DEPS_116 += $(CONFIG)/obj/ejsModule.o
-DEPS_116 += $(CONFIG)/obj/ejsScope.o
-DEPS_116 += $(CONFIG)/obj/ejsService.o
-DEPS_116 += $(CONFIG)/bin/libejs.a
-DEPS_116 += $(CONFIG)/obj/ejsc.o
-DEPS_116 += $(CONFIG)/bin/ejsc
-DEPS_116 += src/cmd/ejsmod.h
-DEPS_116 += $(CONFIG)/obj/ejsmod.o
-DEPS_116 += $(CONFIG)/obj/doc.o
-DEPS_116 += $(CONFIG)/obj/docFiles.o
-DEPS_116 += $(CONFIG)/obj/listing.o
-DEPS_116 += $(CONFIG)/obj/slotGen.o
-DEPS_116 += $(CONFIG)/bin/ejsmod
-DEPS_116 += $(CONFIG)/bin/ejs.mod
-DEPS_116 += $(CONFIG)/inc/ejsWeb.h
-DEPS_116 += $(CONFIG)/obj/ejsHttpServer.o
-DEPS_116 += $(CONFIG)/obj/ejsRequest.o
-DEPS_116 += $(CONFIG)/obj/ejsSession.o
-DEPS_116 += $(CONFIG)/obj/ejsWeb.o
-
-$(CONFIG)/bin/libejs.web.a: $(DEPS_116)
-	@echo '      [Link] $(CONFIG)/bin/libejs.web.a'
-	ar -cr $(CONFIG)/bin/libejs.web.a "$(CONFIG)/obj/ejsHttpServer.o" "$(CONFIG)/obj/ejsRequest.o" "$(CONFIG)/obj/ejsSession.o" "$(CONFIG)/obj/ejsWeb.o"
-
-#
-#   zlib.h
-#
-$(CONFIG)/inc/zlib.h: $(DEPS_117)
-	@echo '      [Copy] $(CONFIG)/inc/zlib.h'
-	mkdir -p "$(CONFIG)/inc"
-	cp src/paks/zlib/zlib.h $(CONFIG)/inc/zlib.h
-
-#
-#   zlib.o
-#
-DEPS_118 += $(CONFIG)/inc/me.h
-DEPS_118 += $(CONFIG)/inc/zlib.h
-
-$(CONFIG)/obj/zlib.o: \
-    src/paks/zlib/zlib.c $(DEPS_118)
-	@echo '   [Compile] $(CONFIG)/obj/zlib.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/zlib.o -arch $(CC_ARCH) $(IFLAGS) src/paks/zlib/zlib.c
-
-ifeq ($(ME_COM_ZLIB),1)
-#
-#   libzlib
-#
-DEPS_119 += $(CONFIG)/inc/zlib.h
-DEPS_119 += $(CONFIG)/inc/me.h
-DEPS_119 += $(CONFIG)/obj/zlib.o
-
-$(CONFIG)/bin/libzlib.a: $(DEPS_119)
-	@echo '      [Link] $(CONFIG)/bin/libzlib.a'
-	ar -cr $(CONFIG)/bin/libzlib.a "$(CONFIG)/obj/zlib.o"
-endif
-
-#
-#   ejsZlib.o
 #
 DEPS_120 += $(CONFIG)/inc/me.h
 DEPS_120 += $(CONFIG)/inc/mpr.h
@@ -2981,154 +3576,75 @@ DEPS_120 += $(CONFIG)/inc/ejsByteCodeTable.h
 DEPS_120 += $(CONFIG)/inc/ejs.slots.h
 DEPS_120 += $(CONFIG)/inc/ejsCustomize.h
 DEPS_120 += $(CONFIG)/inc/ejs.h
-DEPS_120 += $(CONFIG)/inc/zlib.h
-DEPS_120 += $(CONFIG)/inc/ejs.zlib.slots.h
+DEPS_120 += $(CONFIG)/inc/ejsCompiler.h
+DEPS_120 += $(CONFIG)/inc/ejsWeb.h
+DEPS_120 += $(CONFIG)/inc/ejs.web.slots.h
 
-$(CONFIG)/obj/ejsZlib.o: \
-    src/ejs.zlib/ejsZlib.c $(DEPS_120)
-	@echo '   [Compile] $(CONFIG)/obj/ejsZlib.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsZlib.o -arch $(CC_ARCH) $(IFLAGS) "-Isrc/cmd" src/ejs.zlib/ejsZlib.c
+$(CONFIG)/obj/ejsHttpServer.o: \
+    src/ejs.web/ejsHttpServer.c $(DEPS_120)
+	@echo '   [Compile] $(CONFIG)/obj/ejsHttpServer.o'
+	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsHttpServer.o -arch $(CC_ARCH) $(IFLAGS) "-Isrc/cmd" src/ejs.web/ejsHttpServer.c
 
 #
-#   libejs.zlib
+#   ejsRequest.o
 #
-DEPS_121 += $(CONFIG)/inc/mpr.h
 DEPS_121 += $(CONFIG)/inc/me.h
-DEPS_121 += $(CONFIG)/inc/osdep.h
-DEPS_121 += $(CONFIG)/obj/mprLib.o
-DEPS_121 += $(CONFIG)/bin/libmpr.a
-DEPS_121 += $(CONFIG)/inc/pcre.h
-DEPS_121 += $(CONFIG)/obj/pcre.o
-ifeq ($(ME_COM_PCRE),1)
-    DEPS_121 += $(CONFIG)/bin/libpcre.a
-endif
+DEPS_121 += $(CONFIG)/inc/mpr.h
 DEPS_121 += $(CONFIG)/inc/http.h
-DEPS_121 += $(CONFIG)/obj/httpLib.o
-ifeq ($(ME_COM_HTTP),1)
-    DEPS_121 += $(CONFIG)/bin/libhttp.a
-endif
-DEPS_121 += $(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_121 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_121 += $(CONFIG)/inc/ejs.slots.h
-DEPS_121 += $(CONFIG)/inc/ejs.web.slots.h
-DEPS_121 += $(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_121 += $(CONFIG)/inc/ejsByteCode.h
 DEPS_121 += $(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_121 += $(CONFIG)/inc/ejs.slots.h
 DEPS_121 += $(CONFIG)/inc/ejsCustomize.h
 DEPS_121 += $(CONFIG)/inc/ejs.h
 DEPS_121 += $(CONFIG)/inc/ejsCompiler.h
-DEPS_121 += $(CONFIG)/obj/ecAst.o
-DEPS_121 += $(CONFIG)/obj/ecCodeGen.o
-DEPS_121 += $(CONFIG)/obj/ecCompiler.o
-DEPS_121 += $(CONFIG)/obj/ecLex.o
-DEPS_121 += $(CONFIG)/obj/ecModuleWrite.o
-DEPS_121 += $(CONFIG)/obj/ecParser.o
-DEPS_121 += $(CONFIG)/obj/ecState.o
-DEPS_121 += $(CONFIG)/obj/dtoa.o
-DEPS_121 += $(CONFIG)/obj/ejsApp.o
-DEPS_121 += $(CONFIG)/obj/ejsArray.o
-DEPS_121 += $(CONFIG)/obj/ejsBlock.o
-DEPS_121 += $(CONFIG)/obj/ejsBoolean.o
-DEPS_121 += $(CONFIG)/obj/ejsByteArray.o
-DEPS_121 += $(CONFIG)/obj/ejsCache.o
-DEPS_121 += $(CONFIG)/obj/ejsCmd.o
-DEPS_121 += $(CONFIG)/obj/ejsConfig.o
-DEPS_121 += $(CONFIG)/obj/ejsDate.o
-DEPS_121 += $(CONFIG)/obj/ejsDebug.o
-DEPS_121 += $(CONFIG)/obj/ejsError.o
-DEPS_121 += $(CONFIG)/obj/ejsFile.o
-DEPS_121 += $(CONFIG)/obj/ejsFileSystem.o
-DEPS_121 += $(CONFIG)/obj/ejsFrame.o
-DEPS_121 += $(CONFIG)/obj/ejsFunction.o
-DEPS_121 += $(CONFIG)/obj/ejsGC.o
-DEPS_121 += $(CONFIG)/obj/ejsGlobal.o
-DEPS_121 += $(CONFIG)/obj/ejsHttp.o
-DEPS_121 += $(CONFIG)/obj/ejsIterator.o
-DEPS_121 += $(CONFIG)/obj/ejsJSON.o
-DEPS_121 += $(CONFIG)/obj/ejsLocalCache.o
-DEPS_121 += $(CONFIG)/obj/ejsMath.o
-DEPS_121 += $(CONFIG)/obj/ejsMemory.o
-DEPS_121 += $(CONFIG)/obj/ejsMprLog.o
-DEPS_121 += $(CONFIG)/obj/ejsNamespace.o
-DEPS_121 += $(CONFIG)/obj/ejsNull.o
-DEPS_121 += $(CONFIG)/obj/ejsNumber.o
-DEPS_121 += $(CONFIG)/obj/ejsObject.o
-DEPS_121 += $(CONFIG)/obj/ejsPath.o
-DEPS_121 += $(CONFIG)/obj/ejsPot.o
-DEPS_121 += $(CONFIG)/obj/ejsRegExp.o
-DEPS_121 += $(CONFIG)/obj/ejsSocket.o
-DEPS_121 += $(CONFIG)/obj/ejsString.o
-DEPS_121 += $(CONFIG)/obj/ejsSystem.o
-DEPS_121 += $(CONFIG)/obj/ejsTimer.o
-DEPS_121 += $(CONFIG)/obj/ejsType.o
-DEPS_121 += $(CONFIG)/obj/ejsUri.o
-DEPS_121 += $(CONFIG)/obj/ejsVoid.o
-DEPS_121 += $(CONFIG)/obj/ejsWebSocket.o
-DEPS_121 += $(CONFIG)/obj/ejsWorker.o
-DEPS_121 += $(CONFIG)/obj/ejsXML.o
-DEPS_121 += $(CONFIG)/obj/ejsXMLList.o
-DEPS_121 += $(CONFIG)/obj/ejsXMLLoader.o
-DEPS_121 += $(CONFIG)/obj/ejsByteCode.o
-DEPS_121 += $(CONFIG)/obj/ejsException.o
-DEPS_121 += $(CONFIG)/obj/ejsHelper.o
-DEPS_121 += $(CONFIG)/obj/ejsInterp.o
-DEPS_121 += $(CONFIG)/obj/ejsLoader.o
-DEPS_121 += $(CONFIG)/obj/ejsModule.o
-DEPS_121 += $(CONFIG)/obj/ejsScope.o
-DEPS_121 += $(CONFIG)/obj/ejsService.o
-DEPS_121 += $(CONFIG)/bin/libejs.a
-DEPS_121 += $(CONFIG)/obj/ejsc.o
-DEPS_121 += $(CONFIG)/bin/ejsc
-DEPS_121 += src/cmd/ejsmod.h
-DEPS_121 += $(CONFIG)/obj/ejsmod.o
-DEPS_121 += $(CONFIG)/obj/doc.o
-DEPS_121 += $(CONFIG)/obj/docFiles.o
-DEPS_121 += $(CONFIG)/obj/listing.o
-DEPS_121 += $(CONFIG)/obj/slotGen.o
-DEPS_121 += $(CONFIG)/bin/ejsmod
-DEPS_121 += $(CONFIG)/bin/ejs.mod
-DEPS_121 += $(CONFIG)/bin/ejs.zlib.mod
-DEPS_121 += $(CONFIG)/inc/zlib.h
-DEPS_121 += $(CONFIG)/obj/zlib.o
-ifeq ($(ME_COM_ZLIB),1)
-    DEPS_121 += $(CONFIG)/bin/libzlib.a
-endif
-DEPS_121 += $(CONFIG)/obj/ejsZlib.o
+DEPS_121 += $(CONFIG)/inc/ejsWeb.h
+DEPS_121 += $(CONFIG)/inc/ejs.web.slots.h
 
-$(CONFIG)/bin/libejs.zlib.a: $(DEPS_121)
-	@echo '      [Link] $(CONFIG)/bin/libejs.zlib.a'
-	ar -cr $(CONFIG)/bin/libejs.zlib.a "$(CONFIG)/obj/ejsZlib.o"
+$(CONFIG)/obj/ejsRequest.o: \
+    src/ejs.web/ejsRequest.c $(DEPS_121)
+	@echo '   [Compile] $(CONFIG)/obj/ejsRequest.o'
+	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsRequest.o -arch $(CC_ARCH) $(IFLAGS) "-Isrc/cmd" src/ejs.web/ejsRequest.c
 
 #
-#   manager.o
+#   ejsSession.o
 #
 DEPS_122 += $(CONFIG)/inc/me.h
 DEPS_122 += $(CONFIG)/inc/mpr.h
+DEPS_122 += $(CONFIG)/inc/http.h
+DEPS_122 += $(CONFIG)/inc/ejsByteCode.h
+DEPS_122 += $(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_122 += $(CONFIG)/inc/ejs.slots.h
+DEPS_122 += $(CONFIG)/inc/ejsCustomize.h
+DEPS_122 += $(CONFIG)/inc/ejs.h
+DEPS_122 += $(CONFIG)/inc/ejsWeb.h
 
-$(CONFIG)/obj/manager.o: \
-    src/paks/mpr/manager.c $(DEPS_122)
-	@echo '   [Compile] $(CONFIG)/obj/manager.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/manager.o -arch $(CC_ARCH) $(IFLAGS) src/paks/mpr/manager.c
+$(CONFIG)/obj/ejsSession.o: \
+    src/ejs.web/ejsSession.c $(DEPS_122)
+	@echo '   [Compile] $(CONFIG)/obj/ejsSession.o'
+	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsSession.o -arch $(CC_ARCH) $(IFLAGS) "-Isrc/cmd" src/ejs.web/ejsSession.c
 
 #
-#   manager
+#   ejsWeb.o
 #
-DEPS_123 += $(CONFIG)/inc/mpr.h
 DEPS_123 += $(CONFIG)/inc/me.h
-DEPS_123 += $(CONFIG)/inc/osdep.h
-DEPS_123 += $(CONFIG)/obj/mprLib.o
-DEPS_123 += $(CONFIG)/bin/libmpr.a
-DEPS_123 += $(CONFIG)/obj/manager.o
+DEPS_123 += $(CONFIG)/inc/mpr.h
+DEPS_123 += $(CONFIG)/inc/http.h
+DEPS_123 += $(CONFIG)/inc/ejsByteCode.h
+DEPS_123 += $(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_123 += $(CONFIG)/inc/ejs.slots.h
+DEPS_123 += $(CONFIG)/inc/ejsCustomize.h
+DEPS_123 += $(CONFIG)/inc/ejs.h
+DEPS_123 += $(CONFIG)/inc/ejsCompiler.h
+DEPS_123 += $(CONFIG)/inc/ejsWeb.h
+DEPS_123 += $(CONFIG)/inc/ejs.web.slots.h
 
-LIBS_123 += -lmpr
-
-$(CONFIG)/bin/ejsman: $(DEPS_123)
-	@echo '      [Link] $(CONFIG)/bin/ejsman'
-	$(CC) -o $(CONFIG)/bin/ejsman -arch $(CC_ARCH) -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ $(LIBPATHS) "$(CONFIG)/obj/manager.o" $(LIBPATHS_123) $(LIBS_123) $(LIBS_123) $(LIBS) 
-
+$(CONFIG)/obj/ejsWeb.o: \
+    src/ejs.web/ejsWeb.c $(DEPS_123)
+	@echo '   [Compile] $(CONFIG)/obj/ejsWeb.o'
+	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsWeb.o -arch $(CC_ARCH) $(IFLAGS) "-Isrc/cmd" src/ejs.web/ejsWeb.c
 
 #
-#   mvc
+#   libejs.web
 #
 DEPS_124 += $(CONFIG)/inc/mpr.h
 DEPS_124 += $(CONFIG)/inc/me.h
@@ -3215,30 +3731,333 @@ DEPS_124 += $(CONFIG)/obj/ejsModule.o
 DEPS_124 += $(CONFIG)/obj/ejsScope.o
 DEPS_124 += $(CONFIG)/obj/ejsService.o
 DEPS_124 += $(CONFIG)/bin/libejs.a
-DEPS_124 += $(CONFIG)/bin/mvc.es
-DEPS_124 += $(CONFIG)/obj/ejsrun.o
+DEPS_124 += $(CONFIG)/obj/ejsc.o
+DEPS_124 += $(CONFIG)/bin/ejsc
+DEPS_124 += src/cmd/ejsmod.h
+DEPS_124 += $(CONFIG)/obj/ejsmod.o
+DEPS_124 += $(CONFIG)/obj/doc.o
+DEPS_124 += $(CONFIG)/obj/docFiles.o
+DEPS_124 += $(CONFIG)/obj/listing.o
+DEPS_124 += $(CONFIG)/obj/slotGen.o
+DEPS_124 += $(CONFIG)/bin/ejsmod
+DEPS_124 += $(CONFIG)/bin/ejs.mod
+DEPS_124 += $(CONFIG)/inc/ejsWeb.h
+DEPS_124 += $(CONFIG)/obj/ejsHttpServer.o
+DEPS_124 += $(CONFIG)/obj/ejsRequest.o
+DEPS_124 += $(CONFIG)/obj/ejsSession.o
+DEPS_124 += $(CONFIG)/obj/ejsWeb.o
 
-LIBS_124 += -lejs
-ifeq ($(ME_COM_HTTP),1)
-    LIBS_124 += -lhttp
+$(CONFIG)/bin/libejs.web.a: $(DEPS_124)
+	@echo '      [Link] $(CONFIG)/bin/libejs.web.a'
+	ar -cr $(CONFIG)/bin/libejs.web.a "$(CONFIG)/obj/ejsHttpServer.o" "$(CONFIG)/obj/ejsRequest.o" "$(CONFIG)/obj/ejsSession.o" "$(CONFIG)/obj/ejsWeb.o"
+
+#
+#   zlib.h
+#
+$(CONFIG)/inc/zlib.h: $(DEPS_125)
+	@echo '      [Copy] $(CONFIG)/inc/zlib.h'
+	mkdir -p "$(CONFIG)/inc"
+	cp src/paks/zlib/zlib.h $(CONFIG)/inc/zlib.h
+
+#
+#   zlib.o
+#
+DEPS_126 += $(CONFIG)/inc/me.h
+DEPS_126 += $(CONFIG)/inc/zlib.h
+
+$(CONFIG)/obj/zlib.o: \
+    src/paks/zlib/zlib.c $(DEPS_126)
+	@echo '   [Compile] $(CONFIG)/obj/zlib.o'
+	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/zlib.o -arch $(CC_ARCH) $(IFLAGS) src/paks/zlib/zlib.c
+
+ifeq ($(ME_COM_ZLIB),1)
+#
+#   libzlib
+#
+DEPS_127 += $(CONFIG)/inc/zlib.h
+DEPS_127 += $(CONFIG)/inc/me.h
+DEPS_127 += $(CONFIG)/obj/zlib.o
+
+$(CONFIG)/bin/libzlib.a: $(DEPS_127)
+	@echo '      [Link] $(CONFIG)/bin/libzlib.a'
+	ar -cr $(CONFIG)/bin/libzlib.a "$(CONFIG)/obj/zlib.o"
 endif
-LIBS_124 += -lmpr
+
+#
+#   ejsZlib.o
+#
+DEPS_128 += $(CONFIG)/inc/me.h
+DEPS_128 += $(CONFIG)/inc/mpr.h
+DEPS_128 += $(CONFIG)/inc/http.h
+DEPS_128 += $(CONFIG)/inc/ejsByteCode.h
+DEPS_128 += $(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_128 += $(CONFIG)/inc/ejs.slots.h
+DEPS_128 += $(CONFIG)/inc/ejsCustomize.h
+DEPS_128 += $(CONFIG)/inc/ejs.h
+DEPS_128 += $(CONFIG)/inc/zlib.h
+DEPS_128 += $(CONFIG)/inc/ejs.zlib.slots.h
+
+$(CONFIG)/obj/ejsZlib.o: \
+    src/ejs.zlib/ejsZlib.c $(DEPS_128)
+	@echo '   [Compile] $(CONFIG)/obj/ejsZlib.o'
+	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsZlib.o -arch $(CC_ARCH) $(IFLAGS) "-Isrc/cmd" src/ejs.zlib/ejsZlib.c
+
+#
+#   libejs.zlib
+#
+DEPS_129 += $(CONFIG)/inc/mpr.h
+DEPS_129 += $(CONFIG)/inc/me.h
+DEPS_129 += $(CONFIG)/inc/osdep.h
+DEPS_129 += $(CONFIG)/obj/mprLib.o
+DEPS_129 += $(CONFIG)/bin/libmpr.a
+DEPS_129 += $(CONFIG)/inc/pcre.h
+DEPS_129 += $(CONFIG)/obj/pcre.o
 ifeq ($(ME_COM_PCRE),1)
-    LIBS_124 += -lpcre
+    DEPS_129 += $(CONFIG)/bin/libpcre.a
+endif
+DEPS_129 += $(CONFIG)/inc/http.h
+DEPS_129 += $(CONFIG)/obj/httpLib.o
+ifeq ($(ME_COM_HTTP),1)
+    DEPS_129 += $(CONFIG)/bin/libhttp.a
+endif
+DEPS_129 += $(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_129 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_129 += $(CONFIG)/inc/ejs.slots.h
+DEPS_129 += $(CONFIG)/inc/ejs.web.slots.h
+DEPS_129 += $(CONFIG)/inc/ejs.zlib.slots.h
+DEPS_129 += $(CONFIG)/inc/ejsByteCode.h
+DEPS_129 += $(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_129 += $(CONFIG)/inc/ejsCustomize.h
+DEPS_129 += $(CONFIG)/inc/ejs.h
+DEPS_129 += $(CONFIG)/inc/ejsCompiler.h
+DEPS_129 += $(CONFIG)/obj/ecAst.o
+DEPS_129 += $(CONFIG)/obj/ecCodeGen.o
+DEPS_129 += $(CONFIG)/obj/ecCompiler.o
+DEPS_129 += $(CONFIG)/obj/ecLex.o
+DEPS_129 += $(CONFIG)/obj/ecModuleWrite.o
+DEPS_129 += $(CONFIG)/obj/ecParser.o
+DEPS_129 += $(CONFIG)/obj/ecState.o
+DEPS_129 += $(CONFIG)/obj/dtoa.o
+DEPS_129 += $(CONFIG)/obj/ejsApp.o
+DEPS_129 += $(CONFIG)/obj/ejsArray.o
+DEPS_129 += $(CONFIG)/obj/ejsBlock.o
+DEPS_129 += $(CONFIG)/obj/ejsBoolean.o
+DEPS_129 += $(CONFIG)/obj/ejsByteArray.o
+DEPS_129 += $(CONFIG)/obj/ejsCache.o
+DEPS_129 += $(CONFIG)/obj/ejsCmd.o
+DEPS_129 += $(CONFIG)/obj/ejsConfig.o
+DEPS_129 += $(CONFIG)/obj/ejsDate.o
+DEPS_129 += $(CONFIG)/obj/ejsDebug.o
+DEPS_129 += $(CONFIG)/obj/ejsError.o
+DEPS_129 += $(CONFIG)/obj/ejsFile.o
+DEPS_129 += $(CONFIG)/obj/ejsFileSystem.o
+DEPS_129 += $(CONFIG)/obj/ejsFrame.o
+DEPS_129 += $(CONFIG)/obj/ejsFunction.o
+DEPS_129 += $(CONFIG)/obj/ejsGC.o
+DEPS_129 += $(CONFIG)/obj/ejsGlobal.o
+DEPS_129 += $(CONFIG)/obj/ejsHttp.o
+DEPS_129 += $(CONFIG)/obj/ejsIterator.o
+DEPS_129 += $(CONFIG)/obj/ejsJSON.o
+DEPS_129 += $(CONFIG)/obj/ejsLocalCache.o
+DEPS_129 += $(CONFIG)/obj/ejsMath.o
+DEPS_129 += $(CONFIG)/obj/ejsMemory.o
+DEPS_129 += $(CONFIG)/obj/ejsMprLog.o
+DEPS_129 += $(CONFIG)/obj/ejsNamespace.o
+DEPS_129 += $(CONFIG)/obj/ejsNull.o
+DEPS_129 += $(CONFIG)/obj/ejsNumber.o
+DEPS_129 += $(CONFIG)/obj/ejsObject.o
+DEPS_129 += $(CONFIG)/obj/ejsPath.o
+DEPS_129 += $(CONFIG)/obj/ejsPot.o
+DEPS_129 += $(CONFIG)/obj/ejsRegExp.o
+DEPS_129 += $(CONFIG)/obj/ejsSocket.o
+DEPS_129 += $(CONFIG)/obj/ejsString.o
+DEPS_129 += $(CONFIG)/obj/ejsSystem.o
+DEPS_129 += $(CONFIG)/obj/ejsTimer.o
+DEPS_129 += $(CONFIG)/obj/ejsType.o
+DEPS_129 += $(CONFIG)/obj/ejsUri.o
+DEPS_129 += $(CONFIG)/obj/ejsVoid.o
+DEPS_129 += $(CONFIG)/obj/ejsWebSocket.o
+DEPS_129 += $(CONFIG)/obj/ejsWorker.o
+DEPS_129 += $(CONFIG)/obj/ejsXML.o
+DEPS_129 += $(CONFIG)/obj/ejsXMLList.o
+DEPS_129 += $(CONFIG)/obj/ejsXMLLoader.o
+DEPS_129 += $(CONFIG)/obj/ejsByteCode.o
+DEPS_129 += $(CONFIG)/obj/ejsException.o
+DEPS_129 += $(CONFIG)/obj/ejsHelper.o
+DEPS_129 += $(CONFIG)/obj/ejsInterp.o
+DEPS_129 += $(CONFIG)/obj/ejsLoader.o
+DEPS_129 += $(CONFIG)/obj/ejsModule.o
+DEPS_129 += $(CONFIG)/obj/ejsScope.o
+DEPS_129 += $(CONFIG)/obj/ejsService.o
+DEPS_129 += $(CONFIG)/bin/libejs.a
+DEPS_129 += $(CONFIG)/obj/ejsc.o
+DEPS_129 += $(CONFIG)/bin/ejsc
+DEPS_129 += src/cmd/ejsmod.h
+DEPS_129 += $(CONFIG)/obj/ejsmod.o
+DEPS_129 += $(CONFIG)/obj/doc.o
+DEPS_129 += $(CONFIG)/obj/docFiles.o
+DEPS_129 += $(CONFIG)/obj/listing.o
+DEPS_129 += $(CONFIG)/obj/slotGen.o
+DEPS_129 += $(CONFIG)/bin/ejsmod
+DEPS_129 += $(CONFIG)/bin/ejs.mod
+DEPS_129 += $(CONFIG)/bin/ejs.zlib.mod
+DEPS_129 += $(CONFIG)/inc/zlib.h
+DEPS_129 += $(CONFIG)/obj/zlib.o
+ifeq ($(ME_COM_ZLIB),1)
+    DEPS_129 += $(CONFIG)/bin/libzlib.a
+endif
+DEPS_129 += $(CONFIG)/obj/ejsZlib.o
+
+$(CONFIG)/bin/libejs.zlib.a: $(DEPS_129)
+	@echo '      [Link] $(CONFIG)/bin/libejs.zlib.a'
+	ar -cr $(CONFIG)/bin/libejs.zlib.a "$(CONFIG)/obj/ejsZlib.o"
+
+#
+#   manager.o
+#
+DEPS_130 += $(CONFIG)/inc/me.h
+DEPS_130 += $(CONFIG)/inc/mpr.h
+
+$(CONFIG)/obj/manager.o: \
+    src/paks/mpr/manager.c $(DEPS_130)
+	@echo '   [Compile] $(CONFIG)/obj/manager.o'
+	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/manager.o -arch $(CC_ARCH) $(IFLAGS) src/paks/mpr/manager.c
+
+#
+#   manager
+#
+DEPS_131 += $(CONFIG)/inc/mpr.h
+DEPS_131 += $(CONFIG)/inc/me.h
+DEPS_131 += $(CONFIG)/inc/osdep.h
+DEPS_131 += $(CONFIG)/obj/mprLib.o
+DEPS_131 += $(CONFIG)/bin/libmpr.a
+DEPS_131 += $(CONFIG)/obj/manager.o
+
+LIBS_131 += -lmpr
+
+$(CONFIG)/bin/ejsman: $(DEPS_131)
+	@echo '      [Link] $(CONFIG)/bin/ejsman'
+	$(CC) -o $(CONFIG)/bin/ejsman -arch $(CC_ARCH) -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ $(LIBPATHS) "$(CONFIG)/obj/manager.o" $(LIBPATHS_131) $(LIBS_131) $(LIBS_131) $(LIBS) 
+
+#
+#   mvc.es
+#
+DEPS_132 += src/ejs.mvc/mvc.es
+
+$(CONFIG)/bin/mvc.es: $(DEPS_132)
+
+#
+#   mvc
+#
+DEPS_133 += $(CONFIG)/inc/mpr.h
+DEPS_133 += $(CONFIG)/inc/me.h
+DEPS_133 += $(CONFIG)/inc/osdep.h
+DEPS_133 += $(CONFIG)/obj/mprLib.o
+DEPS_133 += $(CONFIG)/bin/libmpr.a
+DEPS_133 += $(CONFIG)/inc/pcre.h
+DEPS_133 += $(CONFIG)/obj/pcre.o
+ifeq ($(ME_COM_PCRE),1)
+    DEPS_133 += $(CONFIG)/bin/libpcre.a
+endif
+DEPS_133 += $(CONFIG)/inc/http.h
+DEPS_133 += $(CONFIG)/obj/httpLib.o
+ifeq ($(ME_COM_HTTP),1)
+    DEPS_133 += $(CONFIG)/bin/libhttp.a
+endif
+DEPS_133 += $(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_133 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_133 += $(CONFIG)/inc/ejs.slots.h
+DEPS_133 += $(CONFIG)/inc/ejs.web.slots.h
+DEPS_133 += $(CONFIG)/inc/ejs.zlib.slots.h
+DEPS_133 += $(CONFIG)/inc/ejsByteCode.h
+DEPS_133 += $(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_133 += $(CONFIG)/inc/ejsCustomize.h
+DEPS_133 += $(CONFIG)/inc/ejs.h
+DEPS_133 += $(CONFIG)/inc/ejsCompiler.h
+DEPS_133 += $(CONFIG)/obj/ecAst.o
+DEPS_133 += $(CONFIG)/obj/ecCodeGen.o
+DEPS_133 += $(CONFIG)/obj/ecCompiler.o
+DEPS_133 += $(CONFIG)/obj/ecLex.o
+DEPS_133 += $(CONFIG)/obj/ecModuleWrite.o
+DEPS_133 += $(CONFIG)/obj/ecParser.o
+DEPS_133 += $(CONFIG)/obj/ecState.o
+DEPS_133 += $(CONFIG)/obj/dtoa.o
+DEPS_133 += $(CONFIG)/obj/ejsApp.o
+DEPS_133 += $(CONFIG)/obj/ejsArray.o
+DEPS_133 += $(CONFIG)/obj/ejsBlock.o
+DEPS_133 += $(CONFIG)/obj/ejsBoolean.o
+DEPS_133 += $(CONFIG)/obj/ejsByteArray.o
+DEPS_133 += $(CONFIG)/obj/ejsCache.o
+DEPS_133 += $(CONFIG)/obj/ejsCmd.o
+DEPS_133 += $(CONFIG)/obj/ejsConfig.o
+DEPS_133 += $(CONFIG)/obj/ejsDate.o
+DEPS_133 += $(CONFIG)/obj/ejsDebug.o
+DEPS_133 += $(CONFIG)/obj/ejsError.o
+DEPS_133 += $(CONFIG)/obj/ejsFile.o
+DEPS_133 += $(CONFIG)/obj/ejsFileSystem.o
+DEPS_133 += $(CONFIG)/obj/ejsFrame.o
+DEPS_133 += $(CONFIG)/obj/ejsFunction.o
+DEPS_133 += $(CONFIG)/obj/ejsGC.o
+DEPS_133 += $(CONFIG)/obj/ejsGlobal.o
+DEPS_133 += $(CONFIG)/obj/ejsHttp.o
+DEPS_133 += $(CONFIG)/obj/ejsIterator.o
+DEPS_133 += $(CONFIG)/obj/ejsJSON.o
+DEPS_133 += $(CONFIG)/obj/ejsLocalCache.o
+DEPS_133 += $(CONFIG)/obj/ejsMath.o
+DEPS_133 += $(CONFIG)/obj/ejsMemory.o
+DEPS_133 += $(CONFIG)/obj/ejsMprLog.o
+DEPS_133 += $(CONFIG)/obj/ejsNamespace.o
+DEPS_133 += $(CONFIG)/obj/ejsNull.o
+DEPS_133 += $(CONFIG)/obj/ejsNumber.o
+DEPS_133 += $(CONFIG)/obj/ejsObject.o
+DEPS_133 += $(CONFIG)/obj/ejsPath.o
+DEPS_133 += $(CONFIG)/obj/ejsPot.o
+DEPS_133 += $(CONFIG)/obj/ejsRegExp.o
+DEPS_133 += $(CONFIG)/obj/ejsSocket.o
+DEPS_133 += $(CONFIG)/obj/ejsString.o
+DEPS_133 += $(CONFIG)/obj/ejsSystem.o
+DEPS_133 += $(CONFIG)/obj/ejsTimer.o
+DEPS_133 += $(CONFIG)/obj/ejsType.o
+DEPS_133 += $(CONFIG)/obj/ejsUri.o
+DEPS_133 += $(CONFIG)/obj/ejsVoid.o
+DEPS_133 += $(CONFIG)/obj/ejsWebSocket.o
+DEPS_133 += $(CONFIG)/obj/ejsWorker.o
+DEPS_133 += $(CONFIG)/obj/ejsXML.o
+DEPS_133 += $(CONFIG)/obj/ejsXMLList.o
+DEPS_133 += $(CONFIG)/obj/ejsXMLLoader.o
+DEPS_133 += $(CONFIG)/obj/ejsByteCode.o
+DEPS_133 += $(CONFIG)/obj/ejsException.o
+DEPS_133 += $(CONFIG)/obj/ejsHelper.o
+DEPS_133 += $(CONFIG)/obj/ejsInterp.o
+DEPS_133 += $(CONFIG)/obj/ejsLoader.o
+DEPS_133 += $(CONFIG)/obj/ejsModule.o
+DEPS_133 += $(CONFIG)/obj/ejsScope.o
+DEPS_133 += $(CONFIG)/obj/ejsService.o
+DEPS_133 += $(CONFIG)/bin/libejs.a
+DEPS_133 += $(CONFIG)/bin/mvc.es
+DEPS_133 += $(CONFIG)/obj/ejsrun.o
+
+LIBS_133 += -lejs
+ifeq ($(ME_COM_HTTP),1)
+    LIBS_133 += -lhttp
+endif
+LIBS_133 += -lmpr
+ifeq ($(ME_COM_PCRE),1)
+    LIBS_133 += -lpcre
 endif
 
-$(CONFIG)/bin/mvc: $(DEPS_124)
+$(CONFIG)/bin/mvc: $(DEPS_133)
 	@echo '      [Link] $(CONFIG)/bin/mvc'
-	$(CC) -o $(CONFIG)/bin/mvc -arch $(CC_ARCH) -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_124) $(LIBS_124) $(LIBS_124) $(LIBS) -lpam 
+	$(CC) -o $(CONFIG)/bin/mvc -arch $(CC_ARCH) -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_133) $(LIBS_133) $(LIBS_133) $(LIBS) -lpam 
 
 #
 #   sqlite.o
 #
-DEPS_125 += $(CONFIG)/inc/me.h
-DEPS_125 += $(CONFIG)/inc/sqlite3.h
+DEPS_134 += $(CONFIG)/inc/me.h
+DEPS_134 += $(CONFIG)/inc/sqlite3.h
 
 $(CONFIG)/obj/sqlite.o: \
-    src/paks/sqlite/sqlite.c $(DEPS_125)
+    src/paks/sqlite/sqlite.c $(DEPS_134)
 	@echo '   [Compile] $(CONFIG)/obj/sqlite.o'
 	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/sqlite.o -arch $(CC_ARCH) $(IFLAGS) src/paks/sqlite/sqlite.c
 
@@ -3246,132 +4065,144 @@ ifeq ($(ME_COM_SQLITE),1)
 #
 #   sqliteshell
 #
-DEPS_126 += $(CONFIG)/inc/sqlite3.h
-DEPS_126 += $(CONFIG)/inc/me.h
-DEPS_126 += $(CONFIG)/obj/sqlite3.o
-DEPS_126 += $(CONFIG)/bin/libsql.a
-DEPS_126 += $(CONFIG)/obj/sqlite.o
+DEPS_135 += $(CONFIG)/inc/sqlite3.h
+DEPS_135 += $(CONFIG)/inc/me.h
+DEPS_135 += $(CONFIG)/obj/sqlite3.o
+DEPS_135 += $(CONFIG)/bin/libsql.a
+DEPS_135 += $(CONFIG)/obj/sqlite.o
 
-LIBS_126 += -lsql
+LIBS_135 += -lsql
 
-$(CONFIG)/bin/sqlite: $(DEPS_126)
+$(CONFIG)/bin/sqlite: $(DEPS_135)
 	@echo '      [Link] $(CONFIG)/bin/sqlite'
-	$(CC) -o $(CONFIG)/bin/sqlite -arch $(CC_ARCH) -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ $(LIBPATHS) "$(CONFIG)/obj/sqlite.o" $(LIBPATHS_126) $(LIBS_126) $(LIBS_126) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/sqlite -arch $(CC_ARCH) -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ $(LIBPATHS) "$(CONFIG)/obj/sqlite.o" $(LIBPATHS_135) $(LIBS_135) $(LIBS_135) $(LIBS) 
 endif
 
+#
+#   utest.es
+#
+DEPS_136 += src/ejs.utest/utest.es
 
+$(CONFIG)/bin/utest.es: $(DEPS_136)
+
+#
+#   utest.worker
+#
+DEPS_137 += src/ejs.utest/utest.worker
+
+$(CONFIG)/bin/utest.worker: $(DEPS_137)
 
 #
 #   utest
 #
-DEPS_127 += $(CONFIG)/inc/mpr.h
-DEPS_127 += $(CONFIG)/inc/me.h
-DEPS_127 += $(CONFIG)/inc/osdep.h
-DEPS_127 += $(CONFIG)/obj/mprLib.o
-DEPS_127 += $(CONFIG)/bin/libmpr.a
-DEPS_127 += $(CONFIG)/inc/pcre.h
-DEPS_127 += $(CONFIG)/obj/pcre.o
+DEPS_138 += $(CONFIG)/inc/mpr.h
+DEPS_138 += $(CONFIG)/inc/me.h
+DEPS_138 += $(CONFIG)/inc/osdep.h
+DEPS_138 += $(CONFIG)/obj/mprLib.o
+DEPS_138 += $(CONFIG)/bin/libmpr.a
+DEPS_138 += $(CONFIG)/inc/pcre.h
+DEPS_138 += $(CONFIG)/obj/pcre.o
 ifeq ($(ME_COM_PCRE),1)
-    DEPS_127 += $(CONFIG)/bin/libpcre.a
+    DEPS_138 += $(CONFIG)/bin/libpcre.a
 endif
-DEPS_127 += $(CONFIG)/inc/http.h
-DEPS_127 += $(CONFIG)/obj/httpLib.o
+DEPS_138 += $(CONFIG)/inc/http.h
+DEPS_138 += $(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
-    DEPS_127 += $(CONFIG)/bin/libhttp.a
+    DEPS_138 += $(CONFIG)/bin/libhttp.a
 endif
-DEPS_127 += $(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_127 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_127 += $(CONFIG)/inc/ejs.slots.h
-DEPS_127 += $(CONFIG)/inc/ejs.web.slots.h
-DEPS_127 += $(CONFIG)/inc/ejs.zlib.slots.h
-DEPS_127 += $(CONFIG)/inc/ejsByteCode.h
-DEPS_127 += $(CONFIG)/inc/ejsByteCodeTable.h
-DEPS_127 += $(CONFIG)/inc/ejsCustomize.h
-DEPS_127 += $(CONFIG)/inc/ejs.h
-DEPS_127 += $(CONFIG)/inc/ejsCompiler.h
-DEPS_127 += $(CONFIG)/obj/ecAst.o
-DEPS_127 += $(CONFIG)/obj/ecCodeGen.o
-DEPS_127 += $(CONFIG)/obj/ecCompiler.o
-DEPS_127 += $(CONFIG)/obj/ecLex.o
-DEPS_127 += $(CONFIG)/obj/ecModuleWrite.o
-DEPS_127 += $(CONFIG)/obj/ecParser.o
-DEPS_127 += $(CONFIG)/obj/ecState.o
-DEPS_127 += $(CONFIG)/obj/dtoa.o
-DEPS_127 += $(CONFIG)/obj/ejsApp.o
-DEPS_127 += $(CONFIG)/obj/ejsArray.o
-DEPS_127 += $(CONFIG)/obj/ejsBlock.o
-DEPS_127 += $(CONFIG)/obj/ejsBoolean.o
-DEPS_127 += $(CONFIG)/obj/ejsByteArray.o
-DEPS_127 += $(CONFIG)/obj/ejsCache.o
-DEPS_127 += $(CONFIG)/obj/ejsCmd.o
-DEPS_127 += $(CONFIG)/obj/ejsConfig.o
-DEPS_127 += $(CONFIG)/obj/ejsDate.o
-DEPS_127 += $(CONFIG)/obj/ejsDebug.o
-DEPS_127 += $(CONFIG)/obj/ejsError.o
-DEPS_127 += $(CONFIG)/obj/ejsFile.o
-DEPS_127 += $(CONFIG)/obj/ejsFileSystem.o
-DEPS_127 += $(CONFIG)/obj/ejsFrame.o
-DEPS_127 += $(CONFIG)/obj/ejsFunction.o
-DEPS_127 += $(CONFIG)/obj/ejsGC.o
-DEPS_127 += $(CONFIG)/obj/ejsGlobal.o
-DEPS_127 += $(CONFIG)/obj/ejsHttp.o
-DEPS_127 += $(CONFIG)/obj/ejsIterator.o
-DEPS_127 += $(CONFIG)/obj/ejsJSON.o
-DEPS_127 += $(CONFIG)/obj/ejsLocalCache.o
-DEPS_127 += $(CONFIG)/obj/ejsMath.o
-DEPS_127 += $(CONFIG)/obj/ejsMemory.o
-DEPS_127 += $(CONFIG)/obj/ejsMprLog.o
-DEPS_127 += $(CONFIG)/obj/ejsNamespace.o
-DEPS_127 += $(CONFIG)/obj/ejsNull.o
-DEPS_127 += $(CONFIG)/obj/ejsNumber.o
-DEPS_127 += $(CONFIG)/obj/ejsObject.o
-DEPS_127 += $(CONFIG)/obj/ejsPath.o
-DEPS_127 += $(CONFIG)/obj/ejsPot.o
-DEPS_127 += $(CONFIG)/obj/ejsRegExp.o
-DEPS_127 += $(CONFIG)/obj/ejsSocket.o
-DEPS_127 += $(CONFIG)/obj/ejsString.o
-DEPS_127 += $(CONFIG)/obj/ejsSystem.o
-DEPS_127 += $(CONFIG)/obj/ejsTimer.o
-DEPS_127 += $(CONFIG)/obj/ejsType.o
-DEPS_127 += $(CONFIG)/obj/ejsUri.o
-DEPS_127 += $(CONFIG)/obj/ejsVoid.o
-DEPS_127 += $(CONFIG)/obj/ejsWebSocket.o
-DEPS_127 += $(CONFIG)/obj/ejsWorker.o
-DEPS_127 += $(CONFIG)/obj/ejsXML.o
-DEPS_127 += $(CONFIG)/obj/ejsXMLList.o
-DEPS_127 += $(CONFIG)/obj/ejsXMLLoader.o
-DEPS_127 += $(CONFIG)/obj/ejsByteCode.o
-DEPS_127 += $(CONFIG)/obj/ejsException.o
-DEPS_127 += $(CONFIG)/obj/ejsHelper.o
-DEPS_127 += $(CONFIG)/obj/ejsInterp.o
-DEPS_127 += $(CONFIG)/obj/ejsLoader.o
-DEPS_127 += $(CONFIG)/obj/ejsModule.o
-DEPS_127 += $(CONFIG)/obj/ejsScope.o
-DEPS_127 += $(CONFIG)/obj/ejsService.o
-DEPS_127 += $(CONFIG)/bin/libejs.a
-DEPS_127 += $(CONFIG)/bin/utest.es
-DEPS_127 += $(CONFIG)/bin/utest.worker
-DEPS_127 += $(CONFIG)/obj/ejsrun.o
+DEPS_138 += $(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_138 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_138 += $(CONFIG)/inc/ejs.slots.h
+DEPS_138 += $(CONFIG)/inc/ejs.web.slots.h
+DEPS_138 += $(CONFIG)/inc/ejs.zlib.slots.h
+DEPS_138 += $(CONFIG)/inc/ejsByteCode.h
+DEPS_138 += $(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_138 += $(CONFIG)/inc/ejsCustomize.h
+DEPS_138 += $(CONFIG)/inc/ejs.h
+DEPS_138 += $(CONFIG)/inc/ejsCompiler.h
+DEPS_138 += $(CONFIG)/obj/ecAst.o
+DEPS_138 += $(CONFIG)/obj/ecCodeGen.o
+DEPS_138 += $(CONFIG)/obj/ecCompiler.o
+DEPS_138 += $(CONFIG)/obj/ecLex.o
+DEPS_138 += $(CONFIG)/obj/ecModuleWrite.o
+DEPS_138 += $(CONFIG)/obj/ecParser.o
+DEPS_138 += $(CONFIG)/obj/ecState.o
+DEPS_138 += $(CONFIG)/obj/dtoa.o
+DEPS_138 += $(CONFIG)/obj/ejsApp.o
+DEPS_138 += $(CONFIG)/obj/ejsArray.o
+DEPS_138 += $(CONFIG)/obj/ejsBlock.o
+DEPS_138 += $(CONFIG)/obj/ejsBoolean.o
+DEPS_138 += $(CONFIG)/obj/ejsByteArray.o
+DEPS_138 += $(CONFIG)/obj/ejsCache.o
+DEPS_138 += $(CONFIG)/obj/ejsCmd.o
+DEPS_138 += $(CONFIG)/obj/ejsConfig.o
+DEPS_138 += $(CONFIG)/obj/ejsDate.o
+DEPS_138 += $(CONFIG)/obj/ejsDebug.o
+DEPS_138 += $(CONFIG)/obj/ejsError.o
+DEPS_138 += $(CONFIG)/obj/ejsFile.o
+DEPS_138 += $(CONFIG)/obj/ejsFileSystem.o
+DEPS_138 += $(CONFIG)/obj/ejsFrame.o
+DEPS_138 += $(CONFIG)/obj/ejsFunction.o
+DEPS_138 += $(CONFIG)/obj/ejsGC.o
+DEPS_138 += $(CONFIG)/obj/ejsGlobal.o
+DEPS_138 += $(CONFIG)/obj/ejsHttp.o
+DEPS_138 += $(CONFIG)/obj/ejsIterator.o
+DEPS_138 += $(CONFIG)/obj/ejsJSON.o
+DEPS_138 += $(CONFIG)/obj/ejsLocalCache.o
+DEPS_138 += $(CONFIG)/obj/ejsMath.o
+DEPS_138 += $(CONFIG)/obj/ejsMemory.o
+DEPS_138 += $(CONFIG)/obj/ejsMprLog.o
+DEPS_138 += $(CONFIG)/obj/ejsNamespace.o
+DEPS_138 += $(CONFIG)/obj/ejsNull.o
+DEPS_138 += $(CONFIG)/obj/ejsNumber.o
+DEPS_138 += $(CONFIG)/obj/ejsObject.o
+DEPS_138 += $(CONFIG)/obj/ejsPath.o
+DEPS_138 += $(CONFIG)/obj/ejsPot.o
+DEPS_138 += $(CONFIG)/obj/ejsRegExp.o
+DEPS_138 += $(CONFIG)/obj/ejsSocket.o
+DEPS_138 += $(CONFIG)/obj/ejsString.o
+DEPS_138 += $(CONFIG)/obj/ejsSystem.o
+DEPS_138 += $(CONFIG)/obj/ejsTimer.o
+DEPS_138 += $(CONFIG)/obj/ejsType.o
+DEPS_138 += $(CONFIG)/obj/ejsUri.o
+DEPS_138 += $(CONFIG)/obj/ejsVoid.o
+DEPS_138 += $(CONFIG)/obj/ejsWebSocket.o
+DEPS_138 += $(CONFIG)/obj/ejsWorker.o
+DEPS_138 += $(CONFIG)/obj/ejsXML.o
+DEPS_138 += $(CONFIG)/obj/ejsXMLList.o
+DEPS_138 += $(CONFIG)/obj/ejsXMLLoader.o
+DEPS_138 += $(CONFIG)/obj/ejsByteCode.o
+DEPS_138 += $(CONFIG)/obj/ejsException.o
+DEPS_138 += $(CONFIG)/obj/ejsHelper.o
+DEPS_138 += $(CONFIG)/obj/ejsInterp.o
+DEPS_138 += $(CONFIG)/obj/ejsLoader.o
+DEPS_138 += $(CONFIG)/obj/ejsModule.o
+DEPS_138 += $(CONFIG)/obj/ejsScope.o
+DEPS_138 += $(CONFIG)/obj/ejsService.o
+DEPS_138 += $(CONFIG)/bin/libejs.a
+DEPS_138 += $(CONFIG)/bin/utest.es
+DEPS_138 += $(CONFIG)/bin/utest.worker
+DEPS_138 += $(CONFIG)/obj/ejsrun.o
 
-LIBS_127 += -lejs
+LIBS_138 += -lejs
 ifeq ($(ME_COM_HTTP),1)
-    LIBS_127 += -lhttp
+    LIBS_138 += -lhttp
 endif
-LIBS_127 += -lmpr
+LIBS_138 += -lmpr
 ifeq ($(ME_COM_PCRE),1)
-    LIBS_127 += -lpcre
+    LIBS_138 += -lpcre
 endif
 
-$(CONFIG)/bin/utest: $(DEPS_127)
+$(CONFIG)/bin/utest: $(DEPS_138)
 	@echo '      [Link] $(CONFIG)/bin/utest'
-	$(CC) -o $(CONFIG)/bin/utest -arch $(CC_ARCH) -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_127) $(LIBS_127) $(LIBS_127) $(LIBS) -lpam 
+	$(CC) -o $(CONFIG)/bin/utest -arch $(CC_ARCH) -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_138) $(LIBS_138) $(LIBS_138) $(LIBS) -lpam 
 
 #
 #   www
 #
-DEPS_128 += src/ejs.web/www
+DEPS_139 += src/ejs.web/www
 
-$(CONFIG)/bin/www: $(DEPS_128)
+$(CONFIG)/bin/www: $(DEPS_139)
 	( \
 	cd src/ejs.web; \
 	rm -fr ../../$(CONFIG)/bin/www ; \
@@ -3379,9 +4210,14 @@ $(CONFIG)/bin/www: $(DEPS_128)
 	)
 
 #
+#   stop
+#
+stop: $(DEPS_140)
+
+#
 #   installBinary
 #
-installBinary: $(DEPS_129)
+installBinary: $(DEPS_141)
 	( \
 	cd .; \
 	mkdir -p "$(ME_APP_PREFIX)" ; \
@@ -3524,18 +4360,12 @@ installBinary: $(DEPS_129)
 	cp src/core/default.slots.h $(ME_VAPP_PREFIX)/inc/default.slots.h ; \
 	rm -f "$(ME_INC_PREFIX)/ejs/default.slots.h" ; \
 	ln -s "$(ME_VAPP_PREFIX)/inc/default.slots.h" "$(ME_INC_PREFIX)/ejs/default.slots.h" ; \
-	cp src/core/ejs.slots.h $(ME_VAPP_PREFIX)/inc/ejs.slots.h ; \
-	rm -f "$(ME_INC_PREFIX)/ejs/ejs.slots.h" ; \
-	ln -s "$(ME_VAPP_PREFIX)/inc/ejs.slots.h" "$(ME_INC_PREFIX)/ejs/ejs.slots.h" ; \
 	cp src/ejs.db.sqlite/ejs.db.sqlite.slots.h $(ME_VAPP_PREFIX)/inc/ejs.db.sqlite.slots.h ; \
 	rm -f "$(ME_INC_PREFIX)/ejs/ejs.db.sqlite.slots.h" ; \
 	ln -s "$(ME_VAPP_PREFIX)/inc/ejs.db.sqlite.slots.h" "$(ME_INC_PREFIX)/ejs/ejs.db.sqlite.slots.h" ; \
 	cp src/ejs.h $(ME_VAPP_PREFIX)/inc/ejs.h ; \
 	rm -f "$(ME_INC_PREFIX)/ejs/ejs.h" ; \
 	ln -s "$(ME_VAPP_PREFIX)/inc/ejs.h" "$(ME_INC_PREFIX)/ejs/ejs.h" ; \
-	cp src/ejs.web/ejs.web.slots.h $(ME_VAPP_PREFIX)/inc/ejs.web.slots.h ; \
-	rm -f "$(ME_INC_PREFIX)/ejs/ejs.web.slots.h" ; \
-	ln -s "$(ME_VAPP_PREFIX)/inc/ejs.web.slots.h" "$(ME_INC_PREFIX)/ejs/ejs.web.slots.h" ; \
 	cp src/ejs.web/ejsWeb.h $(ME_VAPP_PREFIX)/inc/ejsWeb.h ; \
 	rm -f "$(ME_INC_PREFIX)/ejs/ejsWeb.h" ; \
 	ln -s "$(ME_VAPP_PREFIX)/inc/ejsWeb.h" "$(ME_INC_PREFIX)/ejs/ejsWeb.h" ; \
@@ -3618,23 +4448,32 @@ installBinary: $(DEPS_129)
 #
 #   start
 #
-start: $(DEPS_130)
+start: $(DEPS_142)
 
 #
-#   stop
+#   install
 #
-stop: $(DEPS_131)
+DEPS_143 += stop
+DEPS_143 += installBinary
+DEPS_143 += start
+
+install: $(DEPS_143)
 
 #
 #   uninstall
 #
-DEPS_132 += stop
+DEPS_144 += stop
 
-uninstall: $(DEPS_132)
+uninstall: $(DEPS_144)
 	( \
 	cd .; \
 	rm -fr "$(ME_VAPP_PREFIX)" ; \
 	rm -f "$(ME_APP_PREFIX)/latest" ; \
 	rmdir -p "$(ME_APP_PREFIX)" 2>/dev/null ; true ; \
 	)
+
+#
+#   version
+#
+version: $(DEPS_145)
 
