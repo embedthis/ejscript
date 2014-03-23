@@ -75,47 +75,40 @@ ME_COM_SSL            = 1
 
 
 ME_COM_COMPILER_PATH  = cl
-ME_COM_EST_PATH       = src/paks/est
-ME_COM_HTTP_PATH      = src/paks/http
 ME_COM_LIB_PATH       = lib.exe
 ME_COM_LINK_PATH      = link.exe
 ME_COM_MATRIXSSL_PATH = /usr/src/matrixssl
-ME_COM_MPR_PATH       = src/paks/mpr
 ME_COM_NANOSSL_PATH   = /usr/src/nanossl
-ME_COM_OPENSSL_PATH   = [object Object]
-ME_COM_OSDEP_PATH     = src/paks/osdep
-ME_COM_PCRE_PATH      = src/paks/pcre
+ME_COM_OPENSSL_PATH   = /usr/src/openssl
 ME_COM_RC_PATH        = rc.exe
-ME_COM_SQLITE_PATH    = src/paks/sqlite
-ME_COM_SSL_PATH       = src/paks/ssl
-ME_COM_ZLIB_PATH      = src/paks/zlib
 
 CC                    = cl
 LD                    = link
 RC                    = rc
-CFLAGS                = -nologo -GR- -W3  -MD
+CFLAGS                = -nologo -GR- -W3 -Zi d -MDd
 DFLAGS                = -D_REENTRANT -D_MT -DME_COM_EST=$(ME_COM_EST) -DME_COM_HTTP=$(ME_COM_HTTP) -DME_COM_MATRIXSSL=$(ME_COM_MATRIXSSL) -DME_COM_NANOSSL=$(ME_COM_NANOSSL) -DME_COM_OPENSSL=$(ME_COM_OPENSSL) -DME_COM_PCRE=$(ME_COM_PCRE) -DME_COM_SQLITE=$(ME_COM_SQLITE) -DME_COM_SSL=$(ME_COM_SSL) -DME_COM_VXWORKS=$(ME_COM_VXWORKS) -DME_COM_ZLIB=$(ME_COM_ZLIB) 
 IFLAGS                = -I$(CONFIG)\inc
-LDFLAGS               = -nologo -nodefaultlib -incremental:no -machine:$(ARCH)
+LDFLAGS               = -nologo -nodefaultlib -incremental:no -debug -machine:$(ARCH)
 LIBPATHS              = "-libpath:$(CONFIG)\bin"
 LIBS                  = ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.lib msvcrt.lib shell32.lib
 
-ME_ROOT_PREFIX        = C:
-ME_BASE_PREFIX        = $(ME_ROOT_PREFIX)\Program Files
-ME_APP_PREFIX         = $(ME_BASE_PREFIX)\Embedthis Ejscript
-ME_VAPP_PREFIX        = $(ME_APP_PREFIX)
-ME_DATA_PREFIX        = $(ME_VAPP_PREFIX)
-ME_STATE_PREFIX       = $(ME_VAPP_PREFIX)
-ME_BIN_PREFIX         = $(ME_VAPP_PREFIX)\bin
-ME_INC_PREFIX         = $(ME_VAPP_PREFIX)\inc
-ME_LIB_PREFIX         = $(ME_VAPP_PREFIX)\lib
-ME_MAN_PREFIX         = $(ME_VAPP_PREFIX)\man
-ME_ETC_PREFIX         = $(ME_VAPP_PREFIX)
-ME_WEB_PREFIX         = $(ME_VAPP_PREFIX)\web
-ME_LOG_PREFIX         = $(ME_VAPP_PREFIX)\log
-ME_SPOOL_PREFIX       = $(ME_VAPP_PREFIX)\tmp
-ME_CACHE_PREFIX       = $(ME_VAPP_PREFIX)\cache
-ME_SRC_PREFIX         = $(ME_VAPP_PREFIX)\src
+ME_ROOT_PREFIX        = 
+ME_BASE_PREFIX        = $(ME_ROOT_PREFIX)\usr\local
+ME_DATA_PREFIX        = $(ME_ROOT_PREFIX)\
+ME_STATE_PREFIX       = $(ME_ROOT_PREFIX)\var
+ME_APP_PREFIX         = \usr\local\lib\$(NAME)
+ME_VAPP_PREFIX        = \usr\local\lib\$(NAME)\$(VERSION)
+ME_BIN_PREFIX         = $(ME_ROOT_PREFIX)\usr\local\bin
+ME_INC_PREFIX         = $(ME_ROOT_PREFIX)\usr\local\include
+ME_LIB_PREFIX         = $(ME_ROOT_PREFIX)\usr\local\lib
+ME_MAN_PREFIX         = $(ME_ROOT_PREFIX)\usr\local\share\man
+ME_SBIN_PREFIX        = $(ME_ROOT_PREFIX)\usr\local\sbin
+ME_ETC_PREFIX         = $(ME_ROOT_PREFIX)\etc\$(NAME)
+ME_WEB_PREFIX         = $(ME_ROOT_PREFIX)\var\www\$(NAME)-default
+ME_LOG_PREFIX         = $(ME_ROOT_PREFIX)\var\log\$(NAME)
+ME_SPOOL_PREFIX       = $(ME_ROOT_PREFIX)\var\spool\$(NAME)
+ME_CACHE_PREFIX       = $(ME_ROOT_PREFIX)\var\spool\$(NAME)\cache
+ME_SRC_PREFIX         = $(ME_ROOT_PREFIX)$(NAME)-$(VERSION)
 
 
 !IF "$(ME_COM_EST)" == "1"
@@ -123,6 +116,7 @@ TARGETS               = $(TARGETS) $(CONFIG)\bin\ca.crt
 !ENDIF
 TARGETS               = $(TARGETS) $(CONFIG)\bin\ejs.exe
 TARGETS               = $(TARGETS) $(CONFIG)\bin\ejs.db.mapper.mod
+TARGETS               = $(TARGETS) $(CONFIG)\bin\ejs.db.sqlite.mod
 TARGETS               = $(TARGETS) $(CONFIG)\bin\ejs.mail.mod
 TARGETS               = $(TARGETS) $(CONFIG)\bin\ejs.mvc.mod
 TARGETS               = $(TARGETS) $(CONFIG)\bin\ejs.tar.mod
@@ -131,15 +125,13 @@ TARGETS               = $(TARGETS) $(CONFIG)\bin\ejsrun.exe
 !IF "$(ME_COM_HTTP)" == "1"
 TARGETS               = $(TARGETS) $(CONFIG)\bin\http.exe
 !ENDIF
+TARGETS               = $(TARGETS) $(CONFIG)\bin\libejs.db.sqlite.dll
 TARGETS               = $(TARGETS) $(CONFIG)\bin\libejs.web.dll
 TARGETS               = $(TARGETS) $(CONFIG)\bin\libejs.zlib.dll
 !IF "$(ME_COM_EST)" == "1"
 TARGETS               = $(TARGETS) $(CONFIG)\bin\libest.dll
 !ENDIF
 TARGETS               = $(TARGETS) $(CONFIG)\bin\libmprssl.dll
-!IF "$(ME_COM_SQLITE)" == "1"
-TARGETS               = $(TARGETS) $(CONFIG)\bin\libsql.dll
-!ENDIF
 TARGETS               = $(TARGETS) $(CONFIG)\bin\ejsman.exe
 TARGETS               = $(TARGETS) $(CONFIG)\bin\mvc.exe
 TARGETS               = $(TARGETS) $(CONFIG)\bin\removeFiles.exe
@@ -226,6 +218,7 @@ clean:
 	if exist "$(CONFIG)\obj\ejsService.obj" del /Q "$(CONFIG)\obj\ejsService.obj"
 	if exist "$(CONFIG)\obj\ejsSession.obj" del /Q "$(CONFIG)\obj\ejsSession.obj"
 	if exist "$(CONFIG)\obj\ejsSocket.obj" del /Q "$(CONFIG)\obj\ejsSocket.obj"
+	if exist "$(CONFIG)\obj\ejsSqlite.obj" del /Q "$(CONFIG)\obj\ejsSqlite.obj"
 	if exist "$(CONFIG)\obj\ejsString.obj" del /Q "$(CONFIG)\obj\ejsString.obj"
 	if exist "$(CONFIG)\obj\ejsSystem.obj" del /Q "$(CONFIG)\obj\ejsSystem.obj"
 	if exist "$(CONFIG)\obj\ejsTimer.obj" del /Q "$(CONFIG)\obj\ejsTimer.obj"
@@ -281,6 +274,10 @@ clean:
 	if exist "$(CONFIG)\bin\libejs.lib" del /Q "$(CONFIG)\bin\libejs.lib"
 	if exist "$(CONFIG)\bin\libejs.pdb" del /Q "$(CONFIG)\bin\libejs.pdb"
 	if exist "$(CONFIG)\bin\libejs.exp" del /Q "$(CONFIG)\bin\libejs.exp"
+	if exist "$(CONFIG)\bin\libejs.db.sqlite.dll" del /Q "$(CONFIG)\bin\libejs.db.sqlite.dll"
+	if exist "$(CONFIG)\bin\libejs.db.sqlite.lib" del /Q "$(CONFIG)\bin\libejs.db.sqlite.lib"
+	if exist "$(CONFIG)\bin\libejs.db.sqlite.pdb" del /Q "$(CONFIG)\bin\libejs.db.sqlite.pdb"
+	if exist "$(CONFIG)\bin\libejs.db.sqlite.exp" del /Q "$(CONFIG)\bin\libejs.db.sqlite.exp"
 	if exist "$(CONFIG)\bin\libejs.web.dll" del /Q "$(CONFIG)\bin\libejs.web.dll"
 	if exist "$(CONFIG)\bin\libejs.web.lib" del /Q "$(CONFIG)\bin\libejs.web.lib"
 	if exist "$(CONFIG)\bin\libejs.web.pdb" del /Q "$(CONFIG)\bin\libejs.web.pdb"
@@ -2195,6 +2192,7 @@ $(CONFIG)\bin\ejs.mod: $(DEPS_94)
 
 
 
+
 #
 #   ejs.mail.mod
 #
@@ -2592,55 +2590,39 @@ $(CONFIG)\bin\http.exe: $(DEPS_100)
 !ENDIF
 
 #
-#   ejsWeb.h
+#   sqlite3.h
 #
-$(CONFIG)\inc\ejsWeb.h: $(DEPS_101)
-	@echo '      [Copy] $(CONFIG)/inc/ejsWeb.h'
+$(CONFIG)\inc\sqlite3.h: $(DEPS_101)
+	@echo '      [Copy] $(CONFIG)/inc/sqlite3.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
-	copy /Y src\ejs.web\ejsWeb.h $(CONFIG)\inc\ejsWeb.h
+	copy /Y src\paks\sqlite\sqlite3.h $(CONFIG)\inc\sqlite3.h
 
 #
-#   ejsHttpServer.obj
+#   sqlite3.obj
 #
 DEPS_102 = $(DEPS_102) $(CONFIG)\inc\me.h
-DEPS_102 = $(DEPS_102) $(CONFIG)\inc\mpr.h
-DEPS_102 = $(DEPS_102) $(CONFIG)\inc\http.h
-DEPS_102 = $(DEPS_102) $(CONFIG)\inc\ejsByteCode.h
-DEPS_102 = $(DEPS_102) $(CONFIG)\inc\ejsByteCodeTable.h
-DEPS_102 = $(DEPS_102) $(CONFIG)\inc\ejs.slots.h
-DEPS_102 = $(DEPS_102) $(CONFIG)\inc\ejsCustomize.h
-DEPS_102 = $(DEPS_102) $(CONFIG)\inc\ejs.h
-DEPS_102 = $(DEPS_102) $(CONFIG)\inc\ejsCompiler.h
-DEPS_102 = $(DEPS_102) $(CONFIG)\inc\ejsWeb.h
-DEPS_102 = $(DEPS_102) $(CONFIG)\inc\ejs.web.slots.h
+DEPS_102 = $(DEPS_102) $(CONFIG)\inc\sqlite3.h
 
-$(CONFIG)\obj\ejsHttpServer.obj: \
-    src\ejs.web\ejsHttpServer.c $(DEPS_102)
-	@echo '   [Compile] $(CONFIG)/obj/ejsHttpServer.obj'
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsHttpServer.obj -Fd$(CONFIG)\obj\ejsHttpServer.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc\cmd" src\ejs.web\ejsHttpServer.c
+$(CONFIG)\obj\sqlite3.obj: \
+    src\paks\sqlite\sqlite3.c $(DEPS_102)
+	@echo '   [Compile] $(CONFIG)/obj/sqlite3.obj'
+	"$(CC)" -c -Fo$(CONFIG)\obj\sqlite3.obj -Fd$(CONFIG)\obj\sqlite3.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\sqlite\sqlite3.c
 
+!IF "$(ME_COM_SQLITE)" == "1"
 #
-#   ejsRequest.obj
+#   libsql
 #
+DEPS_103 = $(DEPS_103) $(CONFIG)\inc\sqlite3.h
 DEPS_103 = $(DEPS_103) $(CONFIG)\inc\me.h
-DEPS_103 = $(DEPS_103) $(CONFIG)\inc\mpr.h
-DEPS_103 = $(DEPS_103) $(CONFIG)\inc\http.h
-DEPS_103 = $(DEPS_103) $(CONFIG)\inc\ejsByteCode.h
-DEPS_103 = $(DEPS_103) $(CONFIG)\inc\ejsByteCodeTable.h
-DEPS_103 = $(DEPS_103) $(CONFIG)\inc\ejs.slots.h
-DEPS_103 = $(DEPS_103) $(CONFIG)\inc\ejsCustomize.h
-DEPS_103 = $(DEPS_103) $(CONFIG)\inc\ejs.h
-DEPS_103 = $(DEPS_103) $(CONFIG)\inc\ejsCompiler.h
-DEPS_103 = $(DEPS_103) $(CONFIG)\inc\ejsWeb.h
-DEPS_103 = $(DEPS_103) $(CONFIG)\inc\ejs.web.slots.h
+DEPS_103 = $(DEPS_103) $(CONFIG)\obj\sqlite3.obj
 
-$(CONFIG)\obj\ejsRequest.obj: \
-    src\ejs.web\ejsRequest.c $(DEPS_103)
-	@echo '   [Compile] $(CONFIG)/obj/ejsRequest.obj'
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsRequest.obj -Fd$(CONFIG)\obj\ejsRequest.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc\cmd" src\ejs.web\ejsRequest.c
+$(CONFIG)\bin\libsql.dll: $(DEPS_103)
+	@echo '      [Link] $(CONFIG)/bin/libsql.dll'
+	"$(LD)" -dll -out:$(CONFIG)\bin\libsql.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) "$(CONFIG)\obj\sqlite3.obj" $(LIBS) 
+!ENDIF
 
 #
-#   ejsSession.obj
+#   ejsSqlite.obj
 #
 DEPS_104 = $(DEPS_104) $(CONFIG)\inc\me.h
 DEPS_104 = $(DEPS_104) $(CONFIG)\inc\mpr.h
@@ -2650,184 +2632,203 @@ DEPS_104 = $(DEPS_104) $(CONFIG)\inc\ejsByteCodeTable.h
 DEPS_104 = $(DEPS_104) $(CONFIG)\inc\ejs.slots.h
 DEPS_104 = $(DEPS_104) $(CONFIG)\inc\ejsCustomize.h
 DEPS_104 = $(DEPS_104) $(CONFIG)\inc\ejs.h
-DEPS_104 = $(DEPS_104) $(CONFIG)\inc\ejsWeb.h
+DEPS_104 = $(DEPS_104) $(CONFIG)\inc\ejs.db.sqlite.slots.h
+
+$(CONFIG)\obj\ejsSqlite.obj: \
+    src\ejs.db.sqlite\ejsSqlite.c $(DEPS_104)
+	@echo '   [Compile] $(CONFIG)/obj/ejsSqlite.obj'
+	"$(CC)" -c -Fo$(CONFIG)\obj\ejsSqlite.obj -Fd$(CONFIG)\obj\ejsSqlite.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc\cmd" src\ejs.db.sqlite\ejsSqlite.c
+
+#
+#   libejs.db.sqlite
+#
+DEPS_105 = $(DEPS_105) $(CONFIG)\inc\mpr.h
+DEPS_105 = $(DEPS_105) $(CONFIG)\inc\me.h
+DEPS_105 = $(DEPS_105) $(CONFIG)\inc\osdep.h
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\mprLib.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\bin\libmpr.dll
+DEPS_105 = $(DEPS_105) $(CONFIG)\inc\pcre.h
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\pcre.obj
+!IF "$(ME_COM_PCRE)" == "1"
+DEPS_105 = $(DEPS_105) $(CONFIG)\bin\libpcre.dll
+!ENDIF
+DEPS_105 = $(DEPS_105) $(CONFIG)\inc\http.h
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\httpLib.obj
+!IF "$(ME_COM_HTTP)" == "1"
+DEPS_105 = $(DEPS_105) $(CONFIG)\bin\libhttp.dll
+!ENDIF
+DEPS_105 = $(DEPS_105) $(CONFIG)\inc\ejs.cache.local.slots.h
+DEPS_105 = $(DEPS_105) $(CONFIG)\inc\ejs.db.sqlite.slots.h
+DEPS_105 = $(DEPS_105) $(CONFIG)\inc\ejs.slots.h
+DEPS_105 = $(DEPS_105) $(CONFIG)\inc\ejs.web.slots.h
+DEPS_105 = $(DEPS_105) $(CONFIG)\inc\ejs.zlib.slots.h
+DEPS_105 = $(DEPS_105) $(CONFIG)\inc\ejsByteCode.h
+DEPS_105 = $(DEPS_105) $(CONFIG)\inc\ejsByteCodeTable.h
+DEPS_105 = $(DEPS_105) $(CONFIG)\inc\ejsCustomize.h
+DEPS_105 = $(DEPS_105) $(CONFIG)\inc\ejs.h
+DEPS_105 = $(DEPS_105) $(CONFIG)\inc\ejsCompiler.h
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ecAst.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ecCodeGen.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ecCompiler.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ecLex.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ecModuleWrite.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ecParser.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ecState.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\dtoa.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsApp.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsArray.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsBlock.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsBoolean.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsByteArray.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsCache.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsCmd.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsConfig.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsDate.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsDebug.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsError.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsFile.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsFileSystem.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsFrame.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsFunction.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsGC.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsGlobal.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsHttp.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsIterator.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsJSON.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsLocalCache.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsMath.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsMemory.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsMprLog.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsNamespace.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsNull.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsNumber.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsObject.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsPath.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsPot.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsRegExp.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsSocket.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsString.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsSystem.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsTimer.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsType.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsUri.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsVoid.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsWebSocket.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsWorker.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsXML.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsXMLList.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsXMLLoader.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsByteCode.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsException.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsHelper.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsInterp.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsLoader.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsModule.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsScope.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsService.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\bin\libejs.dll
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsc.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\bin\ejsc.exe
+DEPS_105 = $(DEPS_105) src\cmd\ejsmod.h
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsmod.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\doc.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\docFiles.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\listing.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\slotGen.obj
+DEPS_105 = $(DEPS_105) $(CONFIG)\bin\ejsmod.exe
+DEPS_105 = $(DEPS_105) $(CONFIG)\bin\ejs.mod
+DEPS_105 = $(DEPS_105) $(CONFIG)\bin\ejs.db.sqlite.mod
+DEPS_105 = $(DEPS_105) $(CONFIG)\inc\sqlite3.h
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\sqlite3.obj
+!IF "$(ME_COM_SQLITE)" == "1"
+DEPS_105 = $(DEPS_105) $(CONFIG)\bin\libsql.dll
+!ENDIF
+DEPS_105 = $(DEPS_105) $(CONFIG)\obj\ejsSqlite.obj
+
+LIBS_105 = $(LIBS_105) libmpr.lib
+LIBS_105 = $(LIBS_105) libejs.lib
+!IF "$(ME_COM_HTTP)" == "1"
+LIBS_105 = $(LIBS_105) libhttp.lib
+!ENDIF
+!IF "$(ME_COM_PCRE)" == "1"
+LIBS_105 = $(LIBS_105) libpcre.lib
+!ENDIF
+!IF "$(ME_COM_SQLITE)" == "1"
+LIBS_105 = $(LIBS_105) libsql.lib
+!ENDIF
+
+$(CONFIG)\bin\libejs.db.sqlite.dll: $(DEPS_105)
+	@echo '      [Link] $(CONFIG)/bin/libejs.db.sqlite.dll'
+	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.db.sqlite.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) "$(CONFIG)\obj\ejsSqlite.obj" $(LIBPATHS_105) $(LIBS_105) $(LIBS_105) $(LIBS) 
+
+#
+#   ejsWeb.h
+#
+$(CONFIG)\inc\ejsWeb.h: $(DEPS_106)
+	@echo '      [Copy] $(CONFIG)/inc/ejsWeb.h'
+	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
+	copy /Y src\ejs.web\ejsWeb.h $(CONFIG)\inc\ejsWeb.h
+
+#
+#   ejsHttpServer.obj
+#
+DEPS_107 = $(DEPS_107) $(CONFIG)\inc\me.h
+DEPS_107 = $(DEPS_107) $(CONFIG)\inc\mpr.h
+DEPS_107 = $(DEPS_107) $(CONFIG)\inc\http.h
+DEPS_107 = $(DEPS_107) $(CONFIG)\inc\ejsByteCode.h
+DEPS_107 = $(DEPS_107) $(CONFIG)\inc\ejsByteCodeTable.h
+DEPS_107 = $(DEPS_107) $(CONFIG)\inc\ejs.slots.h
+DEPS_107 = $(DEPS_107) $(CONFIG)\inc\ejsCustomize.h
+DEPS_107 = $(DEPS_107) $(CONFIG)\inc\ejs.h
+DEPS_107 = $(DEPS_107) $(CONFIG)\inc\ejsCompiler.h
+DEPS_107 = $(DEPS_107) $(CONFIG)\inc\ejsWeb.h
+DEPS_107 = $(DEPS_107) $(CONFIG)\inc\ejs.web.slots.h
+
+$(CONFIG)\obj\ejsHttpServer.obj: \
+    src\ejs.web\ejsHttpServer.c $(DEPS_107)
+	@echo '   [Compile] $(CONFIG)/obj/ejsHttpServer.obj'
+	"$(CC)" -c -Fo$(CONFIG)\obj\ejsHttpServer.obj -Fd$(CONFIG)\obj\ejsHttpServer.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc\cmd" src\ejs.web\ejsHttpServer.c
+
+#
+#   ejsRequest.obj
+#
+DEPS_108 = $(DEPS_108) $(CONFIG)\inc\me.h
+DEPS_108 = $(DEPS_108) $(CONFIG)\inc\mpr.h
+DEPS_108 = $(DEPS_108) $(CONFIG)\inc\http.h
+DEPS_108 = $(DEPS_108) $(CONFIG)\inc\ejsByteCode.h
+DEPS_108 = $(DEPS_108) $(CONFIG)\inc\ejsByteCodeTable.h
+DEPS_108 = $(DEPS_108) $(CONFIG)\inc\ejs.slots.h
+DEPS_108 = $(DEPS_108) $(CONFIG)\inc\ejsCustomize.h
+DEPS_108 = $(DEPS_108) $(CONFIG)\inc\ejs.h
+DEPS_108 = $(DEPS_108) $(CONFIG)\inc\ejsCompiler.h
+DEPS_108 = $(DEPS_108) $(CONFIG)\inc\ejsWeb.h
+DEPS_108 = $(DEPS_108) $(CONFIG)\inc\ejs.web.slots.h
+
+$(CONFIG)\obj\ejsRequest.obj: \
+    src\ejs.web\ejsRequest.c $(DEPS_108)
+	@echo '   [Compile] $(CONFIG)/obj/ejsRequest.obj'
+	"$(CC)" -c -Fo$(CONFIG)\obj\ejsRequest.obj -Fd$(CONFIG)\obj\ejsRequest.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc\cmd" src\ejs.web\ejsRequest.c
+
+#
+#   ejsSession.obj
+#
+DEPS_109 = $(DEPS_109) $(CONFIG)\inc\me.h
+DEPS_109 = $(DEPS_109) $(CONFIG)\inc\mpr.h
+DEPS_109 = $(DEPS_109) $(CONFIG)\inc\http.h
+DEPS_109 = $(DEPS_109) $(CONFIG)\inc\ejsByteCode.h
+DEPS_109 = $(DEPS_109) $(CONFIG)\inc\ejsByteCodeTable.h
+DEPS_109 = $(DEPS_109) $(CONFIG)\inc\ejs.slots.h
+DEPS_109 = $(DEPS_109) $(CONFIG)\inc\ejsCustomize.h
+DEPS_109 = $(DEPS_109) $(CONFIG)\inc\ejs.h
+DEPS_109 = $(DEPS_109) $(CONFIG)\inc\ejsWeb.h
 
 $(CONFIG)\obj\ejsSession.obj: \
-    src\ejs.web\ejsSession.c $(DEPS_104)
+    src\ejs.web\ejsSession.c $(DEPS_109)
 	@echo '   [Compile] $(CONFIG)/obj/ejsSession.obj'
 	"$(CC)" -c -Fo$(CONFIG)\obj\ejsSession.obj -Fd$(CONFIG)\obj\ejsSession.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc\cmd" src\ejs.web\ejsSession.c
 
 #
 #   ejsWeb.obj
-#
-DEPS_105 = $(DEPS_105) $(CONFIG)\inc\me.h
-DEPS_105 = $(DEPS_105) $(CONFIG)\inc\mpr.h
-DEPS_105 = $(DEPS_105) $(CONFIG)\inc\http.h
-DEPS_105 = $(DEPS_105) $(CONFIG)\inc\ejsByteCode.h
-DEPS_105 = $(DEPS_105) $(CONFIG)\inc\ejsByteCodeTable.h
-DEPS_105 = $(DEPS_105) $(CONFIG)\inc\ejs.slots.h
-DEPS_105 = $(DEPS_105) $(CONFIG)\inc\ejsCustomize.h
-DEPS_105 = $(DEPS_105) $(CONFIG)\inc\ejs.h
-DEPS_105 = $(DEPS_105) $(CONFIG)\inc\ejsCompiler.h
-DEPS_105 = $(DEPS_105) $(CONFIG)\inc\ejsWeb.h
-DEPS_105 = $(DEPS_105) $(CONFIG)\inc\ejs.web.slots.h
-
-$(CONFIG)\obj\ejsWeb.obj: \
-    src\ejs.web\ejsWeb.c $(DEPS_105)
-	@echo '   [Compile] $(CONFIG)/obj/ejsWeb.obj'
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsWeb.obj -Fd$(CONFIG)\obj\ejsWeb.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc\cmd" src\ejs.web\ejsWeb.c
-
-#
-#   libejs.web
-#
-DEPS_106 = $(DEPS_106) $(CONFIG)\inc\mpr.h
-DEPS_106 = $(DEPS_106) $(CONFIG)\inc\me.h
-DEPS_106 = $(DEPS_106) $(CONFIG)\inc\osdep.h
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\mprLib.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\bin\libmpr.dll
-DEPS_106 = $(DEPS_106) $(CONFIG)\inc\pcre.h
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\pcre.obj
-!IF "$(ME_COM_PCRE)" == "1"
-DEPS_106 = $(DEPS_106) $(CONFIG)\bin\libpcre.dll
-!ENDIF
-DEPS_106 = $(DEPS_106) $(CONFIG)\inc\http.h
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\httpLib.obj
-!IF "$(ME_COM_HTTP)" == "1"
-DEPS_106 = $(DEPS_106) $(CONFIG)\bin\libhttp.dll
-!ENDIF
-DEPS_106 = $(DEPS_106) $(CONFIG)\inc\ejs.cache.local.slots.h
-DEPS_106 = $(DEPS_106) $(CONFIG)\inc\ejs.db.sqlite.slots.h
-DEPS_106 = $(DEPS_106) $(CONFIG)\inc\ejs.slots.h
-DEPS_106 = $(DEPS_106) $(CONFIG)\inc\ejs.web.slots.h
-DEPS_106 = $(DEPS_106) $(CONFIG)\inc\ejs.zlib.slots.h
-DEPS_106 = $(DEPS_106) $(CONFIG)\inc\ejsByteCode.h
-DEPS_106 = $(DEPS_106) $(CONFIG)\inc\ejsByteCodeTable.h
-DEPS_106 = $(DEPS_106) $(CONFIG)\inc\ejsCustomize.h
-DEPS_106 = $(DEPS_106) $(CONFIG)\inc\ejs.h
-DEPS_106 = $(DEPS_106) $(CONFIG)\inc\ejsCompiler.h
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ecAst.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ecCodeGen.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ecCompiler.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ecLex.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ecModuleWrite.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ecParser.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ecState.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\dtoa.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsApp.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsArray.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsBlock.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsBoolean.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsByteArray.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsCache.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsCmd.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsConfig.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsDate.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsDebug.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsError.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsFile.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsFileSystem.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsFrame.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsFunction.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsGC.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsGlobal.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsHttp.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsIterator.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsJSON.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsLocalCache.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsMath.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsMemory.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsMprLog.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsNamespace.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsNull.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsNumber.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsObject.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsPath.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsPot.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsRegExp.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsSocket.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsString.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsSystem.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsTimer.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsType.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsUri.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsVoid.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsWebSocket.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsWorker.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsXML.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsXMLList.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsXMLLoader.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsByteCode.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsException.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsHelper.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsInterp.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsLoader.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsModule.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsScope.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsService.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\bin\libejs.dll
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsc.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\bin\ejsc.exe
-DEPS_106 = $(DEPS_106) src\cmd\ejsmod.h
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsmod.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\doc.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\docFiles.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\listing.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\slotGen.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\bin\ejsmod.exe
-DEPS_106 = $(DEPS_106) $(CONFIG)\bin\ejs.mod
-DEPS_106 = $(DEPS_106) $(CONFIG)\inc\ejsWeb.h
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsHttpServer.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsRequest.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsSession.obj
-DEPS_106 = $(DEPS_106) $(CONFIG)\obj\ejsWeb.obj
-
-LIBS_106 = $(LIBS_106) libejs.lib
-!IF "$(ME_COM_HTTP)" == "1"
-LIBS_106 = $(LIBS_106) libhttp.lib
-!ENDIF
-LIBS_106 = $(LIBS_106) libmpr.lib
-!IF "$(ME_COM_PCRE)" == "1"
-LIBS_106 = $(LIBS_106) libpcre.lib
-!ENDIF
-
-$(CONFIG)\bin\libejs.web.dll: $(DEPS_106)
-	@echo '      [Link] $(CONFIG)/bin/libejs.web.dll'
-	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.web.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) "$(CONFIG)\obj\ejsHttpServer.obj" "$(CONFIG)\obj\ejsRequest.obj" "$(CONFIG)\obj\ejsSession.obj" "$(CONFIG)\obj\ejsWeb.obj" $(LIBPATHS_106) $(LIBS_106) $(LIBS_106) $(LIBS) 
-
-#
-#   zlib.h
-#
-$(CONFIG)\inc\zlib.h: $(DEPS_107)
-	@echo '      [Copy] $(CONFIG)/inc/zlib.h'
-	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
-	copy /Y src\paks\zlib\zlib.h $(CONFIG)\inc\zlib.h
-
-#
-#   zlib.obj
-#
-DEPS_108 = $(DEPS_108) $(CONFIG)\inc\me.h
-DEPS_108 = $(DEPS_108) $(CONFIG)\inc\zlib.h
-
-$(CONFIG)\obj\zlib.obj: \
-    src\paks\zlib\zlib.c $(DEPS_108)
-	@echo '   [Compile] $(CONFIG)/obj/zlib.obj'
-	"$(CC)" -c -Fo$(CONFIG)\obj\zlib.obj -Fd$(CONFIG)\obj\zlib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\zlib\zlib.c
-
-!IF "$(ME_COM_ZLIB)" == "1"
-#
-#   libzlib
-#
-DEPS_109 = $(DEPS_109) $(CONFIG)\inc\zlib.h
-DEPS_109 = $(DEPS_109) $(CONFIG)\inc\me.h
-DEPS_109 = $(DEPS_109) $(CONFIG)\obj\zlib.obj
-
-$(CONFIG)\bin\libzlib.dll: $(DEPS_109)
-	@echo '      [Link] $(CONFIG)/bin/libzlib.dll'
-	"$(LD)" -dll -out:$(CONFIG)\bin\libzlib.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) "$(CONFIG)\obj\zlib.obj" $(LIBS) 
-!ENDIF
-
-#
-#   ejsZlib.obj
 #
 DEPS_110 = $(DEPS_110) $(CONFIG)\inc\me.h
 DEPS_110 = $(DEPS_110) $(CONFIG)\inc\mpr.h
@@ -2837,16 +2838,17 @@ DEPS_110 = $(DEPS_110) $(CONFIG)\inc\ejsByteCodeTable.h
 DEPS_110 = $(DEPS_110) $(CONFIG)\inc\ejs.slots.h
 DEPS_110 = $(DEPS_110) $(CONFIG)\inc\ejsCustomize.h
 DEPS_110 = $(DEPS_110) $(CONFIG)\inc\ejs.h
-DEPS_110 = $(DEPS_110) $(CONFIG)\inc\zlib.h
-DEPS_110 = $(DEPS_110) $(CONFIG)\inc\ejs.zlib.slots.h
+DEPS_110 = $(DEPS_110) $(CONFIG)\inc\ejsCompiler.h
+DEPS_110 = $(DEPS_110) $(CONFIG)\inc\ejsWeb.h
+DEPS_110 = $(DEPS_110) $(CONFIG)\inc\ejs.web.slots.h
 
-$(CONFIG)\obj\ejsZlib.obj: \
-    src\ejs.zlib\ejsZlib.c $(DEPS_110)
-	@echo '   [Compile] $(CONFIG)/obj/ejsZlib.obj'
-	"$(CC)" -c -Fo$(CONFIG)\obj\ejsZlib.obj -Fd$(CONFIG)\obj\ejsZlib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc\cmd" src\ejs.zlib\ejsZlib.c
+$(CONFIG)\obj\ejsWeb.obj: \
+    src\ejs.web\ejsWeb.c $(DEPS_110)
+	@echo '   [Compile] $(CONFIG)/obj/ejsWeb.obj'
+	"$(CC)" -c -Fo$(CONFIG)\obj\ejsWeb.obj -Fd$(CONFIG)\obj\ejsWeb.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc\cmd" src\ejs.web\ejsWeb.c
 
 #
-#   libejs.zlib
+#   libejs.web
 #
 DEPS_111 = $(DEPS_111) $(CONFIG)\inc\mpr.h
 DEPS_111 = $(DEPS_111) $(CONFIG)\inc\me.h
@@ -2943,13 +2945,11 @@ DEPS_111 = $(DEPS_111) $(CONFIG)\obj\listing.obj
 DEPS_111 = $(DEPS_111) $(CONFIG)\obj\slotGen.obj
 DEPS_111 = $(DEPS_111) $(CONFIG)\bin\ejsmod.exe
 DEPS_111 = $(DEPS_111) $(CONFIG)\bin\ejs.mod
-DEPS_111 = $(DEPS_111) $(CONFIG)\bin\ejs.zlib.mod
-DEPS_111 = $(DEPS_111) $(CONFIG)\inc\zlib.h
-DEPS_111 = $(DEPS_111) $(CONFIG)\obj\zlib.obj
-!IF "$(ME_COM_ZLIB)" == "1"
-DEPS_111 = $(DEPS_111) $(CONFIG)\bin\libzlib.dll
-!ENDIF
-DEPS_111 = $(DEPS_111) $(CONFIG)\obj\ejsZlib.obj
+DEPS_111 = $(DEPS_111) $(CONFIG)\inc\ejsWeb.h
+DEPS_111 = $(DEPS_111) $(CONFIG)\obj\ejsHttpServer.obj
+DEPS_111 = $(DEPS_111) $(CONFIG)\obj\ejsRequest.obj
+DEPS_111 = $(DEPS_111) $(CONFIG)\obj\ejsSession.obj
+DEPS_111 = $(DEPS_111) $(CONFIG)\obj\ejsWeb.obj
 
 LIBS_111 = $(LIBS_111) libejs.lib
 !IF "$(ME_COM_HTTP)" == "1"
@@ -2959,18 +2959,188 @@ LIBS_111 = $(LIBS_111) libmpr.lib
 !IF "$(ME_COM_PCRE)" == "1"
 LIBS_111 = $(LIBS_111) libpcre.lib
 !ENDIF
+
+$(CONFIG)\bin\libejs.web.dll: $(DEPS_111)
+	@echo '      [Link] $(CONFIG)/bin/libejs.web.dll'
+	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.web.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) "$(CONFIG)\obj\ejsHttpServer.obj" "$(CONFIG)\obj\ejsRequest.obj" "$(CONFIG)\obj\ejsSession.obj" "$(CONFIG)\obj\ejsWeb.obj" $(LIBPATHS_111) $(LIBS_111) $(LIBS_111) $(LIBS) 
+
+#
+#   zlib.h
+#
+$(CONFIG)\inc\zlib.h: $(DEPS_112)
+	@echo '      [Copy] $(CONFIG)/inc/zlib.h'
+	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
+	copy /Y src\paks\zlib\zlib.h $(CONFIG)\inc\zlib.h
+
+#
+#   zlib.obj
+#
+DEPS_113 = $(DEPS_113) $(CONFIG)\inc\me.h
+DEPS_113 = $(DEPS_113) $(CONFIG)\inc\zlib.h
+
+$(CONFIG)\obj\zlib.obj: \
+    src\paks\zlib\zlib.c $(DEPS_113)
+	@echo '   [Compile] $(CONFIG)/obj/zlib.obj'
+	"$(CC)" -c -Fo$(CONFIG)\obj\zlib.obj -Fd$(CONFIG)\obj\zlib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\zlib\zlib.c
+
 !IF "$(ME_COM_ZLIB)" == "1"
-LIBS_111 = $(LIBS_111) libzlib.lib
+#
+#   libzlib
+#
+DEPS_114 = $(DEPS_114) $(CONFIG)\inc\zlib.h
+DEPS_114 = $(DEPS_114) $(CONFIG)\inc\me.h
+DEPS_114 = $(DEPS_114) $(CONFIG)\obj\zlib.obj
+
+$(CONFIG)\bin\libzlib.dll: $(DEPS_114)
+	@echo '      [Link] $(CONFIG)/bin/libzlib.dll'
+	"$(LD)" -dll -out:$(CONFIG)\bin\libzlib.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) "$(CONFIG)\obj\zlib.obj" $(LIBS) 
 !ENDIF
 
-$(CONFIG)\bin\libejs.zlib.dll: $(DEPS_111)
+#
+#   ejsZlib.obj
+#
+DEPS_115 = $(DEPS_115) $(CONFIG)\inc\me.h
+DEPS_115 = $(DEPS_115) $(CONFIG)\inc\mpr.h
+DEPS_115 = $(DEPS_115) $(CONFIG)\inc\http.h
+DEPS_115 = $(DEPS_115) $(CONFIG)\inc\ejsByteCode.h
+DEPS_115 = $(DEPS_115) $(CONFIG)\inc\ejsByteCodeTable.h
+DEPS_115 = $(DEPS_115) $(CONFIG)\inc\ejs.slots.h
+DEPS_115 = $(DEPS_115) $(CONFIG)\inc\ejsCustomize.h
+DEPS_115 = $(DEPS_115) $(CONFIG)\inc\ejs.h
+DEPS_115 = $(DEPS_115) $(CONFIG)\inc\zlib.h
+DEPS_115 = $(DEPS_115) $(CONFIG)\inc\ejs.zlib.slots.h
+
+$(CONFIG)\obj\ejsZlib.obj: \
+    src\ejs.zlib\ejsZlib.c $(DEPS_115)
+	@echo '   [Compile] $(CONFIG)/obj/ejsZlib.obj'
+	"$(CC)" -c -Fo$(CONFIG)\obj\ejsZlib.obj -Fd$(CONFIG)\obj\ejsZlib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) "-Isrc\cmd" src\ejs.zlib\ejsZlib.c
+
+#
+#   libejs.zlib
+#
+DEPS_116 = $(DEPS_116) $(CONFIG)\inc\mpr.h
+DEPS_116 = $(DEPS_116) $(CONFIG)\inc\me.h
+DEPS_116 = $(DEPS_116) $(CONFIG)\inc\osdep.h
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\mprLib.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\bin\libmpr.dll
+DEPS_116 = $(DEPS_116) $(CONFIG)\inc\pcre.h
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\pcre.obj
+!IF "$(ME_COM_PCRE)" == "1"
+DEPS_116 = $(DEPS_116) $(CONFIG)\bin\libpcre.dll
+!ENDIF
+DEPS_116 = $(DEPS_116) $(CONFIG)\inc\http.h
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\httpLib.obj
+!IF "$(ME_COM_HTTP)" == "1"
+DEPS_116 = $(DEPS_116) $(CONFIG)\bin\libhttp.dll
+!ENDIF
+DEPS_116 = $(DEPS_116) $(CONFIG)\inc\ejs.cache.local.slots.h
+DEPS_116 = $(DEPS_116) $(CONFIG)\inc\ejs.db.sqlite.slots.h
+DEPS_116 = $(DEPS_116) $(CONFIG)\inc\ejs.slots.h
+DEPS_116 = $(DEPS_116) $(CONFIG)\inc\ejs.web.slots.h
+DEPS_116 = $(DEPS_116) $(CONFIG)\inc\ejs.zlib.slots.h
+DEPS_116 = $(DEPS_116) $(CONFIG)\inc\ejsByteCode.h
+DEPS_116 = $(DEPS_116) $(CONFIG)\inc\ejsByteCodeTable.h
+DEPS_116 = $(DEPS_116) $(CONFIG)\inc\ejsCustomize.h
+DEPS_116 = $(DEPS_116) $(CONFIG)\inc\ejs.h
+DEPS_116 = $(DEPS_116) $(CONFIG)\inc\ejsCompiler.h
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ecAst.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ecCodeGen.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ecCompiler.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ecLex.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ecModuleWrite.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ecParser.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ecState.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\dtoa.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsApp.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsArray.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsBlock.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsBoolean.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsByteArray.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsCache.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsCmd.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsConfig.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsDate.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsDebug.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsError.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsFile.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsFileSystem.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsFrame.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsFunction.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsGC.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsGlobal.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsHttp.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsIterator.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsJSON.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsLocalCache.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsMath.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsMemory.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsMprLog.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsNamespace.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsNull.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsNumber.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsObject.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsPath.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsPot.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsRegExp.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsSocket.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsString.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsSystem.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsTimer.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsType.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsUri.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsVoid.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsWebSocket.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsWorker.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsXML.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsXMLList.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsXMLLoader.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsByteCode.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsException.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsHelper.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsInterp.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsLoader.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsModule.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsScope.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsService.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\bin\libejs.dll
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsc.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\bin\ejsc.exe
+DEPS_116 = $(DEPS_116) src\cmd\ejsmod.h
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsmod.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\doc.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\docFiles.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\listing.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\slotGen.obj
+DEPS_116 = $(DEPS_116) $(CONFIG)\bin\ejsmod.exe
+DEPS_116 = $(DEPS_116) $(CONFIG)\bin\ejs.mod
+DEPS_116 = $(DEPS_116) $(CONFIG)\bin\ejs.zlib.mod
+DEPS_116 = $(DEPS_116) $(CONFIG)\inc\zlib.h
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\zlib.obj
+!IF "$(ME_COM_ZLIB)" == "1"
+DEPS_116 = $(DEPS_116) $(CONFIG)\bin\libzlib.dll
+!ENDIF
+DEPS_116 = $(DEPS_116) $(CONFIG)\obj\ejsZlib.obj
+
+LIBS_116 = $(LIBS_116) libejs.lib
+!IF "$(ME_COM_HTTP)" == "1"
+LIBS_116 = $(LIBS_116) libhttp.lib
+!ENDIF
+LIBS_116 = $(LIBS_116) libmpr.lib
+!IF "$(ME_COM_PCRE)" == "1"
+LIBS_116 = $(LIBS_116) libpcre.lib
+!ENDIF
+!IF "$(ME_COM_ZLIB)" == "1"
+LIBS_116 = $(LIBS_116) libzlib.lib
+!ENDIF
+
+$(CONFIG)\bin\libejs.zlib.dll: $(DEPS_116)
 	@echo '      [Link] $(CONFIG)/bin/libejs.zlib.dll'
-	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.zlib.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) "$(CONFIG)\obj\ejsZlib.obj" $(LIBPATHS_111) $(LIBS_111) $(LIBS_111) $(LIBS) 
+	"$(LD)" -dll -out:$(CONFIG)\bin\libejs.zlib.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) "$(CONFIG)\obj\ejsZlib.obj" $(LIBPATHS_116) $(LIBS_116) $(LIBS_116) $(LIBS) 
 
 #
 #   est.h
 #
-$(CONFIG)\inc\est.h: $(DEPS_112)
+$(CONFIG)\inc\est.h: $(DEPS_117)
 	@echo '      [Copy] $(CONFIG)/inc/est.h'
 	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
 	copy /Y src\paks\est\est.h $(CONFIG)\inc\est.h
@@ -2978,12 +3148,12 @@ $(CONFIG)\inc\est.h: $(DEPS_112)
 #
 #   estLib.obj
 #
-DEPS_113 = $(DEPS_113) $(CONFIG)\inc\me.h
-DEPS_113 = $(DEPS_113) $(CONFIG)\inc\est.h
-DEPS_113 = $(DEPS_113) $(CONFIG)\inc\osdep.h
+DEPS_118 = $(DEPS_118) $(CONFIG)\inc\me.h
+DEPS_118 = $(DEPS_118) $(CONFIG)\inc\est.h
+DEPS_118 = $(DEPS_118) $(CONFIG)\inc\osdep.h
 
 $(CONFIG)\obj\estLib.obj: \
-    src\paks\est\estLib.c $(DEPS_113)
+    src\paks\est\estLib.c $(DEPS_118)
 	@echo '   [Compile] $(CONFIG)/obj/estLib.obj'
 	"$(CC)" -c -Fo$(CONFIG)\obj\estLib.obj -Fd$(CONFIG)\obj\estLib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\est\estLib.c
 
@@ -2991,12 +3161,12 @@ $(CONFIG)\obj\estLib.obj: \
 #
 #   libest
 #
-DEPS_114 = $(DEPS_114) $(CONFIG)\inc\est.h
-DEPS_114 = $(DEPS_114) $(CONFIG)\inc\me.h
-DEPS_114 = $(DEPS_114) $(CONFIG)\inc\osdep.h
-DEPS_114 = $(DEPS_114) $(CONFIG)\obj\estLib.obj
+DEPS_119 = $(DEPS_119) $(CONFIG)\inc\est.h
+DEPS_119 = $(DEPS_119) $(CONFIG)\inc\me.h
+DEPS_119 = $(DEPS_119) $(CONFIG)\inc\osdep.h
+DEPS_119 = $(DEPS_119) $(CONFIG)\obj\estLib.obj
 
-$(CONFIG)\bin\libest.dll: $(DEPS_114)
+$(CONFIG)\bin\libest.dll: $(DEPS_119)
 	@echo '      [Link] $(CONFIG)/bin/libest.dll'
 	"$(LD)" -dll -out:$(CONFIG)\bin\libest.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) "$(CONFIG)\obj\estLib.obj" $(LIBS) 
 !ENDIF
@@ -3004,239 +3174,199 @@ $(CONFIG)\bin\libest.dll: $(DEPS_114)
 #
 #   mprSsl.obj
 #
-DEPS_115 = $(DEPS_115) $(CONFIG)\inc\me.h
-DEPS_115 = $(DEPS_115) $(CONFIG)\inc\mpr.h
-DEPS_115 = $(DEPS_115) $(CONFIG)\inc\est.h
+DEPS_120 = $(DEPS_120) $(CONFIG)\inc\me.h
+DEPS_120 = $(DEPS_120) $(CONFIG)\inc\mpr.h
+DEPS_120 = $(DEPS_120) $(CONFIG)\inc\est.h
 
 $(CONFIG)\obj\mprSsl.obj: \
-    src\paks\mpr\mprSsl.c $(DEPS_115)
+    src\paks\mpr\mprSsl.c $(DEPS_120)
 	@echo '   [Compile] $(CONFIG)/obj/mprSsl.obj'
-	"$(CC)" -c -Fo$(CONFIG)\obj\mprSsl.obj -Fd$(CONFIG)\obj\mprSsl.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) "-I$(ME_COM_MATRIXSSL_PATH)" "-I$(ME_COM_MATRIXSSL_PATH)\matrixssl" "-I$(ME_COM_NANOSSL_PATH)\src" src\paks\mpr\mprSsl.c
+	"$(CC)" -c -Fo$(CONFIG)\obj\mprSsl.obj -Fd$(CONFIG)\obj\mprSsl.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\mpr\mprSsl.c
 
 #
 #   libmprssl
-#
-DEPS_116 = $(DEPS_116) $(CONFIG)\inc\mpr.h
-DEPS_116 = $(DEPS_116) $(CONFIG)\inc\me.h
-DEPS_116 = $(DEPS_116) $(CONFIG)\inc\osdep.h
-DEPS_116 = $(DEPS_116) $(CONFIG)\obj\mprLib.obj
-DEPS_116 = $(DEPS_116) $(CONFIG)\bin\libmpr.dll
-DEPS_116 = $(DEPS_116) $(CONFIG)\inc\est.h
-DEPS_116 = $(DEPS_116) $(CONFIG)\obj\estLib.obj
-!IF "$(ME_COM_EST)" == "1"
-DEPS_116 = $(DEPS_116) $(CONFIG)\bin\libest.dll
-!ENDIF
-DEPS_116 = $(DEPS_116) $(CONFIG)\obj\mprSsl.obj
-
-LIBS_116 = $(LIBS_116) libmpr.lib
-!IF "$(ME_COM_EST)" == "1"
-LIBS_116 = $(LIBS_116) libest.lib
-!ENDIF
-!IF "$(ME_COM_MATRIXSSL)" == "1"
-LIBS_116 = $(LIBS_116) libmatrixssl.lib
-LIBPATHS_116 = $(LIBPATHS_116) -libpath:$(ME_COM_MATRIXSSL_PATH)
-!ENDIF
-!IF "$(ME_COM_NANOSSL)" == "1"
-LIBS_116 = $(LIBS_116) libssls.lib
-LIBPATHS_116 = $(LIBPATHS_116) -libpath:$(ME_COM_NANOSSL_PATH)/bin
-!ENDIF
-
-$(CONFIG)\bin\libmprssl.dll: $(DEPS_116)
-	@echo '      [Link] $(CONFIG)/bin/libmprssl.dll'
-	"$(LD)" -dll -out:$(CONFIG)\bin\libmprssl.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS)   "$(CONFIG)\obj\mprSsl.obj" $(LIBPATHS_116) $(LIBS_116) $(LIBS_116) $(LIBS) 
-
-#
-#   sqlite3.h
-#
-$(CONFIG)\inc\sqlite3.h: $(DEPS_117)
-	@echo '      [Copy] $(CONFIG)/inc/sqlite3.h'
-	if not exist "$(CONFIG)\inc" md "$(CONFIG)\inc"
-	copy /Y src\paks\sqlite\sqlite3.h $(CONFIG)\inc\sqlite3.h
-
-#
-#   sqlite3.obj
-#
-DEPS_118 = $(DEPS_118) $(CONFIG)\inc\me.h
-DEPS_118 = $(DEPS_118) $(CONFIG)\inc\sqlite3.h
-
-$(CONFIG)\obj\sqlite3.obj: \
-    src\paks\sqlite\sqlite3.c $(DEPS_118)
-	@echo '   [Compile] $(CONFIG)/obj/sqlite3.obj'
-	"$(CC)" -c -Fo$(CONFIG)\obj\sqlite3.obj -Fd$(CONFIG)\obj\sqlite3.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\sqlite\sqlite3.c
-
-!IF "$(ME_COM_SQLITE)" == "1"
-#
-#   libsql
-#
-DEPS_119 = $(DEPS_119) $(CONFIG)\inc\sqlite3.h
-DEPS_119 = $(DEPS_119) $(CONFIG)\inc\me.h
-DEPS_119 = $(DEPS_119) $(CONFIG)\obj\sqlite3.obj
-
-$(CONFIG)\bin\libsql.dll: $(DEPS_119)
-	@echo '      [Link] $(CONFIG)/bin/libsql.dll'
-	"$(LD)" -dll -out:$(CONFIG)\bin\libsql.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) "$(CONFIG)\obj\sqlite3.obj" $(LIBS) 
-!ENDIF
-
-#
-#   manager.obj
-#
-DEPS_120 = $(DEPS_120) $(CONFIG)\inc\me.h
-DEPS_120 = $(DEPS_120) $(CONFIG)\inc\mpr.h
-
-$(CONFIG)\obj\manager.obj: \
-    src\paks\mpr\manager.c $(DEPS_120)
-	@echo '   [Compile] $(CONFIG)/obj/manager.obj'
-	"$(CC)" -c -Fo$(CONFIG)\obj\manager.obj -Fd$(CONFIG)\obj\manager.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\mpr\manager.c
-
-#
-#   manager
 #
 DEPS_121 = $(DEPS_121) $(CONFIG)\inc\mpr.h
 DEPS_121 = $(DEPS_121) $(CONFIG)\inc\me.h
 DEPS_121 = $(DEPS_121) $(CONFIG)\inc\osdep.h
 DEPS_121 = $(DEPS_121) $(CONFIG)\obj\mprLib.obj
 DEPS_121 = $(DEPS_121) $(CONFIG)\bin\libmpr.dll
-DEPS_121 = $(DEPS_121) $(CONFIG)\obj\manager.obj
+DEPS_121 = $(DEPS_121) $(CONFIG)\inc\est.h
+DEPS_121 = $(DEPS_121) $(CONFIG)\obj\estLib.obj
+!IF "$(ME_COM_EST)" == "1"
+DEPS_121 = $(DEPS_121) $(CONFIG)\bin\libest.dll
+!ENDIF
+DEPS_121 = $(DEPS_121) $(CONFIG)\obj\mprSsl.obj
 
 LIBS_121 = $(LIBS_121) libmpr.lib
+!IF "$(ME_COM_EST)" == "1"
+LIBS_121 = $(LIBS_121) libest.lib
+!ENDIF
 
-$(CONFIG)\bin\ejsman.exe: $(DEPS_121)
+$(CONFIG)\bin\libmprssl.dll: $(DEPS_121)
+	@echo '      [Link] $(CONFIG)/bin/libmprssl.dll'
+	"$(LD)" -dll -out:$(CONFIG)\bin\libmprssl.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) "$(CONFIG)\obj\mprSsl.obj" $(LIBPATHS_121) $(LIBS_121) $(LIBS_121) $(LIBS) 
+
+#
+#   manager.obj
+#
+DEPS_122 = $(DEPS_122) $(CONFIG)\inc\me.h
+DEPS_122 = $(DEPS_122) $(CONFIG)\inc\mpr.h
+
+$(CONFIG)\obj\manager.obj: \
+    src\paks\mpr\manager.c $(DEPS_122)
+	@echo '   [Compile] $(CONFIG)/obj/manager.obj'
+	"$(CC)" -c -Fo$(CONFIG)\obj\manager.obj -Fd$(CONFIG)\obj\manager.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\mpr\manager.c
+
+#
+#   manager
+#
+DEPS_123 = $(DEPS_123) $(CONFIG)\inc\mpr.h
+DEPS_123 = $(DEPS_123) $(CONFIG)\inc\me.h
+DEPS_123 = $(DEPS_123) $(CONFIG)\inc\osdep.h
+DEPS_123 = $(DEPS_123) $(CONFIG)\obj\mprLib.obj
+DEPS_123 = $(DEPS_123) $(CONFIG)\bin\libmpr.dll
+DEPS_123 = $(DEPS_123) $(CONFIG)\obj\manager.obj
+
+LIBS_123 = $(LIBS_123) libmpr.lib
+
+$(CONFIG)\bin\ejsman.exe: $(DEPS_123)
 	@echo '      [Link] $(CONFIG)/bin/ejsman.exe'
-	"$(LD)" -out:$(CONFIG)\bin\ejsman.exe -entry:WinMainCRTStartup -subsystem:windows $(LDFLAGS) $(LIBPATHS) "$(CONFIG)\obj\manager.obj" $(LIBPATHS_121) $(LIBS_121) $(LIBS_121) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\ejsman.exe -entry:WinMainCRTStartup -subsystem:windows $(LDFLAGS) $(LIBPATHS) "$(CONFIG)\obj\manager.obj" $(LIBPATHS_123) $(LIBS_123) $(LIBS_123) $(LIBS) 
 
 
 #
 #   mvc
 #
-DEPS_122 = $(DEPS_122) $(CONFIG)\inc\mpr.h
-DEPS_122 = $(DEPS_122) $(CONFIG)\inc\me.h
-DEPS_122 = $(DEPS_122) $(CONFIG)\inc\osdep.h
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\mprLib.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\bin\libmpr.dll
-DEPS_122 = $(DEPS_122) $(CONFIG)\inc\pcre.h
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\pcre.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\inc\mpr.h
+DEPS_124 = $(DEPS_124) $(CONFIG)\inc\me.h
+DEPS_124 = $(DEPS_124) $(CONFIG)\inc\osdep.h
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\mprLib.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\bin\libmpr.dll
+DEPS_124 = $(DEPS_124) $(CONFIG)\inc\pcre.h
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\pcre.obj
 !IF "$(ME_COM_PCRE)" == "1"
-DEPS_122 = $(DEPS_122) $(CONFIG)\bin\libpcre.dll
+DEPS_124 = $(DEPS_124) $(CONFIG)\bin\libpcre.dll
 !ENDIF
-DEPS_122 = $(DEPS_122) $(CONFIG)\inc\http.h
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\httpLib.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\inc\http.h
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\httpLib.obj
 !IF "$(ME_COM_HTTP)" == "1"
-DEPS_122 = $(DEPS_122) $(CONFIG)\bin\libhttp.dll
+DEPS_124 = $(DEPS_124) $(CONFIG)\bin\libhttp.dll
 !ENDIF
-DEPS_122 = $(DEPS_122) $(CONFIG)\inc\ejs.cache.local.slots.h
-DEPS_122 = $(DEPS_122) $(CONFIG)\inc\ejs.db.sqlite.slots.h
-DEPS_122 = $(DEPS_122) $(CONFIG)\inc\ejs.slots.h
-DEPS_122 = $(DEPS_122) $(CONFIG)\inc\ejs.web.slots.h
-DEPS_122 = $(DEPS_122) $(CONFIG)\inc\ejs.zlib.slots.h
-DEPS_122 = $(DEPS_122) $(CONFIG)\inc\ejsByteCode.h
-DEPS_122 = $(DEPS_122) $(CONFIG)\inc\ejsByteCodeTable.h
-DEPS_122 = $(DEPS_122) $(CONFIG)\inc\ejsCustomize.h
-DEPS_122 = $(DEPS_122) $(CONFIG)\inc\ejs.h
-DEPS_122 = $(DEPS_122) $(CONFIG)\inc\ejsCompiler.h
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ecAst.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ecCodeGen.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ecCompiler.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ecLex.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ecModuleWrite.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ecParser.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ecState.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\dtoa.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsApp.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsArray.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsBlock.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsBoolean.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsByteArray.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsCache.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsCmd.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsConfig.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsDate.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsDebug.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsError.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsFile.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsFileSystem.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsFrame.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsFunction.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsGC.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsGlobal.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsHttp.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsIterator.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsJSON.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsLocalCache.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsMath.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsMemory.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsMprLog.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsNamespace.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsNull.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsNumber.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsObject.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsPath.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsPot.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsRegExp.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsSocket.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsString.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsSystem.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsTimer.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsType.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsUri.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsVoid.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsWebSocket.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsWorker.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsXML.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsXMLList.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsXMLLoader.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsByteCode.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsException.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsHelper.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsInterp.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsLoader.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsModule.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsScope.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsService.obj
-DEPS_122 = $(DEPS_122) $(CONFIG)\bin\libejs.dll
-DEPS_122 = $(DEPS_122) $(CONFIG)\bin\mvc.es
-DEPS_122 = $(DEPS_122) $(CONFIG)\obj\ejsrun.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\inc\ejs.cache.local.slots.h
+DEPS_124 = $(DEPS_124) $(CONFIG)\inc\ejs.db.sqlite.slots.h
+DEPS_124 = $(DEPS_124) $(CONFIG)\inc\ejs.slots.h
+DEPS_124 = $(DEPS_124) $(CONFIG)\inc\ejs.web.slots.h
+DEPS_124 = $(DEPS_124) $(CONFIG)\inc\ejs.zlib.slots.h
+DEPS_124 = $(DEPS_124) $(CONFIG)\inc\ejsByteCode.h
+DEPS_124 = $(DEPS_124) $(CONFIG)\inc\ejsByteCodeTable.h
+DEPS_124 = $(DEPS_124) $(CONFIG)\inc\ejsCustomize.h
+DEPS_124 = $(DEPS_124) $(CONFIG)\inc\ejs.h
+DEPS_124 = $(DEPS_124) $(CONFIG)\inc\ejsCompiler.h
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ecAst.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ecCodeGen.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ecCompiler.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ecLex.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ecModuleWrite.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ecParser.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ecState.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\dtoa.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsApp.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsArray.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsBlock.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsBoolean.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsByteArray.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsCache.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsCmd.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsConfig.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsDate.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsDebug.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsError.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsFile.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsFileSystem.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsFrame.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsFunction.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsGC.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsGlobal.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsHttp.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsIterator.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsJSON.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsLocalCache.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsMath.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsMemory.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsMprLog.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsNamespace.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsNull.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsNumber.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsObject.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsPath.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsPot.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsRegExp.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsSocket.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsString.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsSystem.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsTimer.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsType.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsUri.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsVoid.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsWebSocket.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsWorker.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsXML.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsXMLList.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsXMLLoader.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsByteCode.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsException.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsHelper.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsInterp.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsLoader.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsModule.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsScope.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsService.obj
+DEPS_124 = $(DEPS_124) $(CONFIG)\bin\libejs.dll
+DEPS_124 = $(DEPS_124) $(CONFIG)\bin\mvc.es
+DEPS_124 = $(DEPS_124) $(CONFIG)\obj\ejsrun.obj
 
-LIBS_122 = $(LIBS_122) libejs.lib
+LIBS_124 = $(LIBS_124) libejs.lib
 !IF "$(ME_COM_HTTP)" == "1"
-LIBS_122 = $(LIBS_122) libhttp.lib
+LIBS_124 = $(LIBS_124) libhttp.lib
 !ENDIF
-LIBS_122 = $(LIBS_122) libmpr.lib
+LIBS_124 = $(LIBS_124) libmpr.lib
 !IF "$(ME_COM_PCRE)" == "1"
-LIBS_122 = $(LIBS_122) libpcre.lib
+LIBS_124 = $(LIBS_124) libpcre.lib
 !ENDIF
 
-$(CONFIG)\bin\mvc.exe: $(DEPS_122)
+$(CONFIG)\bin\mvc.exe: $(DEPS_124)
 	@echo '      [Link] $(CONFIG)/bin/mvc.exe'
-	"$(LD)" -out:$(CONFIG)\bin\mvc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) "$(CONFIG)\obj\ejsrun.obj" $(LIBPATHS_122) $(LIBS_122) $(LIBS_122) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\mvc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) "$(CONFIG)\obj\ejsrun.obj" $(LIBPATHS_124) $(LIBS_124) $(LIBS_124) $(LIBS) 
 
 #
 #   removeFiles.obj
 #
-DEPS_123 = $(DEPS_123) $(CONFIG)\inc\me.h
+DEPS_125 = $(DEPS_125) $(CONFIG)\inc\me.h
 
 $(CONFIG)\obj\removeFiles.obj: \
-    package\windows\removeFiles.c $(DEPS_123)
+    package\windows\removeFiles.c $(DEPS_125)
 	@echo '   [Compile] $(CONFIG)/obj/removeFiles.obj'
 	"$(CC)" -c -Fo$(CONFIG)\obj\removeFiles.obj -Fd$(CONFIG)\obj\removeFiles.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) package\windows\removeFiles.c
 
 #
 #   removeFiles
 #
-DEPS_124 = $(DEPS_124) $(CONFIG)\inc\me.h
-DEPS_124 = $(DEPS_124) $(CONFIG)\obj\removeFiles.obj
+DEPS_126 = $(DEPS_126) $(CONFIG)\inc\me.h
+DEPS_126 = $(DEPS_126) $(CONFIG)\obj\removeFiles.obj
 
-$(CONFIG)\bin\removeFiles.exe: $(DEPS_124)
+$(CONFIG)\bin\removeFiles.exe: $(DEPS_126)
 	@echo '      [Link] $(CONFIG)/bin/removeFiles.exe'
 	"$(LD)" -out:$(CONFIG)\bin\removeFiles.exe -entry:WinMainCRTStartup -subsystem:windows $(LDFLAGS) $(LIBPATHS) "$(CONFIG)\obj\removeFiles.obj" $(LIBS) 
 
 #
 #   sqlite.obj
 #
-DEPS_125 = $(DEPS_125) $(CONFIG)\inc\me.h
-DEPS_125 = $(DEPS_125) $(CONFIG)\inc\sqlite3.h
+DEPS_127 = $(DEPS_127) $(CONFIG)\inc\me.h
+DEPS_127 = $(DEPS_127) $(CONFIG)\inc\sqlite3.h
 
 $(CONFIG)\obj\sqlite.obj: \
-    src\paks\sqlite\sqlite.c $(DEPS_125)
+    src\paks\sqlite\sqlite.c $(DEPS_127)
 	@echo '   [Compile] $(CONFIG)/obj/sqlite.obj'
 	"$(CC)" -c -Fo$(CONFIG)\obj\sqlite.obj -Fd$(CONFIG)\obj\sqlite.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\sqlite\sqlite.c
 
@@ -3244,17 +3374,17 @@ $(CONFIG)\obj\sqlite.obj: \
 #
 #   sqliteshell
 #
-DEPS_126 = $(DEPS_126) $(CONFIG)\inc\sqlite3.h
-DEPS_126 = $(DEPS_126) $(CONFIG)\inc\me.h
-DEPS_126 = $(DEPS_126) $(CONFIG)\obj\sqlite3.obj
-DEPS_126 = $(DEPS_126) $(CONFIG)\bin\libsql.dll
-DEPS_126 = $(DEPS_126) $(CONFIG)\obj\sqlite.obj
+DEPS_128 = $(DEPS_128) $(CONFIG)\inc\sqlite3.h
+DEPS_128 = $(DEPS_128) $(CONFIG)\inc\me.h
+DEPS_128 = $(DEPS_128) $(CONFIG)\obj\sqlite3.obj
+DEPS_128 = $(DEPS_128) $(CONFIG)\bin\libsql.dll
+DEPS_128 = $(DEPS_128) $(CONFIG)\obj\sqlite.obj
 
-LIBS_126 = $(LIBS_126) libsql.lib
+LIBS_128 = $(LIBS_128) libsql.lib
 
-$(CONFIG)\bin\sqlite.exe: $(DEPS_126)
+$(CONFIG)\bin\sqlite.exe: $(DEPS_128)
 	@echo '      [Link] $(CONFIG)/bin/sqlite.exe'
-	"$(LD)" -out:$(CONFIG)\bin\sqlite.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) "$(CONFIG)\obj\sqlite.obj" $(LIBPATHS_126) $(LIBS_126) $(LIBS_126) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\sqlite.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) "$(CONFIG)\obj\sqlite.obj" $(LIBPATHS_128) $(LIBS_128) $(LIBS_128) $(LIBS) 
 !ENDIF
 
 
@@ -3262,114 +3392,114 @@ $(CONFIG)\bin\sqlite.exe: $(DEPS_126)
 #
 #   utest
 #
-DEPS_127 = $(DEPS_127) $(CONFIG)\inc\mpr.h
-DEPS_127 = $(DEPS_127) $(CONFIG)\inc\me.h
-DEPS_127 = $(DEPS_127) $(CONFIG)\inc\osdep.h
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\mprLib.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\bin\libmpr.dll
-DEPS_127 = $(DEPS_127) $(CONFIG)\inc\pcre.h
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\pcre.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\inc\mpr.h
+DEPS_129 = $(DEPS_129) $(CONFIG)\inc\me.h
+DEPS_129 = $(DEPS_129) $(CONFIG)\inc\osdep.h
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\mprLib.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\bin\libmpr.dll
+DEPS_129 = $(DEPS_129) $(CONFIG)\inc\pcre.h
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\pcre.obj
 !IF "$(ME_COM_PCRE)" == "1"
-DEPS_127 = $(DEPS_127) $(CONFIG)\bin\libpcre.dll
+DEPS_129 = $(DEPS_129) $(CONFIG)\bin\libpcre.dll
 !ENDIF
-DEPS_127 = $(DEPS_127) $(CONFIG)\inc\http.h
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\httpLib.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\inc\http.h
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\httpLib.obj
 !IF "$(ME_COM_HTTP)" == "1"
-DEPS_127 = $(DEPS_127) $(CONFIG)\bin\libhttp.dll
+DEPS_129 = $(DEPS_129) $(CONFIG)\bin\libhttp.dll
 !ENDIF
-DEPS_127 = $(DEPS_127) $(CONFIG)\inc\ejs.cache.local.slots.h
-DEPS_127 = $(DEPS_127) $(CONFIG)\inc\ejs.db.sqlite.slots.h
-DEPS_127 = $(DEPS_127) $(CONFIG)\inc\ejs.slots.h
-DEPS_127 = $(DEPS_127) $(CONFIG)\inc\ejs.web.slots.h
-DEPS_127 = $(DEPS_127) $(CONFIG)\inc\ejs.zlib.slots.h
-DEPS_127 = $(DEPS_127) $(CONFIG)\inc\ejsByteCode.h
-DEPS_127 = $(DEPS_127) $(CONFIG)\inc\ejsByteCodeTable.h
-DEPS_127 = $(DEPS_127) $(CONFIG)\inc\ejsCustomize.h
-DEPS_127 = $(DEPS_127) $(CONFIG)\inc\ejs.h
-DEPS_127 = $(DEPS_127) $(CONFIG)\inc\ejsCompiler.h
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ecAst.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ecCodeGen.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ecCompiler.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ecLex.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ecModuleWrite.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ecParser.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ecState.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\dtoa.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsApp.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsArray.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsBlock.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsBoolean.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsByteArray.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsCache.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsCmd.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsConfig.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsDate.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsDebug.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsError.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsFile.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsFileSystem.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsFrame.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsFunction.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsGC.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsGlobal.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsHttp.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsIterator.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsJSON.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsLocalCache.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsMath.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsMemory.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsMprLog.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsNamespace.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsNull.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsNumber.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsObject.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsPath.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsPot.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsRegExp.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsSocket.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsString.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsSystem.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsTimer.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsType.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsUri.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsVoid.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsWebSocket.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsWorker.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsXML.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsXMLList.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsXMLLoader.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsByteCode.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsException.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsHelper.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsInterp.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsLoader.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsModule.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsScope.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsService.obj
-DEPS_127 = $(DEPS_127) $(CONFIG)\bin\libejs.dll
-DEPS_127 = $(DEPS_127) $(CONFIG)\bin\utest.es
-DEPS_127 = $(DEPS_127) $(CONFIG)\bin\utest.worker
-DEPS_127 = $(DEPS_127) $(CONFIG)\obj\ejsrun.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\inc\ejs.cache.local.slots.h
+DEPS_129 = $(DEPS_129) $(CONFIG)\inc\ejs.db.sqlite.slots.h
+DEPS_129 = $(DEPS_129) $(CONFIG)\inc\ejs.slots.h
+DEPS_129 = $(DEPS_129) $(CONFIG)\inc\ejs.web.slots.h
+DEPS_129 = $(DEPS_129) $(CONFIG)\inc\ejs.zlib.slots.h
+DEPS_129 = $(DEPS_129) $(CONFIG)\inc\ejsByteCode.h
+DEPS_129 = $(DEPS_129) $(CONFIG)\inc\ejsByteCodeTable.h
+DEPS_129 = $(DEPS_129) $(CONFIG)\inc\ejsCustomize.h
+DEPS_129 = $(DEPS_129) $(CONFIG)\inc\ejs.h
+DEPS_129 = $(DEPS_129) $(CONFIG)\inc\ejsCompiler.h
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ecAst.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ecCodeGen.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ecCompiler.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ecLex.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ecModuleWrite.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ecParser.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ecState.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\dtoa.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsApp.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsArray.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsBlock.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsBoolean.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsByteArray.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsCache.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsCmd.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsConfig.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsDate.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsDebug.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsError.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsFile.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsFileSystem.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsFrame.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsFunction.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsGC.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsGlobal.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsHttp.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsIterator.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsJSON.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsLocalCache.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsMath.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsMemory.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsMprLog.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsNamespace.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsNull.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsNumber.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsObject.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsPath.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsPot.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsRegExp.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsSocket.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsString.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsSystem.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsTimer.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsType.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsUri.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsVoid.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsWebSocket.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsWorker.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsXML.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsXMLList.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsXMLLoader.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsByteCode.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsException.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsHelper.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsInterp.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsLoader.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsModule.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsScope.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsService.obj
+DEPS_129 = $(DEPS_129) $(CONFIG)\bin\libejs.dll
+DEPS_129 = $(DEPS_129) $(CONFIG)\bin\utest.es
+DEPS_129 = $(DEPS_129) $(CONFIG)\bin\utest.worker
+DEPS_129 = $(DEPS_129) $(CONFIG)\obj\ejsrun.obj
 
-LIBS_127 = $(LIBS_127) libejs.lib
+LIBS_129 = $(LIBS_129) libejs.lib
 !IF "$(ME_COM_HTTP)" == "1"
-LIBS_127 = $(LIBS_127) libhttp.lib
+LIBS_129 = $(LIBS_129) libhttp.lib
 !ENDIF
-LIBS_127 = $(LIBS_127) libmpr.lib
+LIBS_129 = $(LIBS_129) libmpr.lib
 !IF "$(ME_COM_PCRE)" == "1"
-LIBS_127 = $(LIBS_127) libpcre.lib
+LIBS_129 = $(LIBS_129) libpcre.lib
 !ENDIF
 
-$(CONFIG)\bin\utest.exe: $(DEPS_127)
+$(CONFIG)\bin\utest.exe: $(DEPS_129)
 	@echo '      [Link] $(CONFIG)/bin/utest.exe'
-	"$(LD)" -out:$(CONFIG)\bin\utest.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) "$(CONFIG)\obj\ejsrun.obj" $(LIBPATHS_127) $(LIBS_127) $(LIBS_127) $(LIBS) 
+	"$(LD)" -out:$(CONFIG)\bin\utest.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) "$(CONFIG)\obj\ejsrun.obj" $(LIBPATHS_129) $(LIBS_129) $(LIBS_129) $(LIBS) 
 
 #
 #   www
 #
-DEPS_128 = $(DEPS_128) src\ejs.web\www
+DEPS_130 = $(DEPS_130) src\ejs.web\www
 
-$(CONFIG)\bin\www: $(DEPS_128)
+$(CONFIG)\bin\www: $(DEPS_130)
 	cd src\ejs.web
 	if exist "..\..\$(CONFIG)\bin\www" rd /Q /S "..\..\$(CONFIG)\bin\www"
 	if not exist "..\..\$(CONFIG)\bin\www" md "..\..\$(CONFIG)\bin\www"
@@ -3379,153 +3509,150 @@ $(CONFIG)\bin\www: $(DEPS_128)
 #
 #   installBinary
 #
-installBinary: $(DEPS_129)
+installBinary: $(DEPS_131)
 	cd .
 	if not exist "$(ME_VAPP_PREFIX)\bin" md "$(ME_VAPP_PREFIX)\bin"
-	copy /Y $(CONFIG)\bin\ejs.exe "$(ME_VAPP_PREFIX)\bin\ejs.exe"
-	copy /Y $(CONFIG)\bin\ejsc.exe "$(ME_VAPP_PREFIX)\bin\ejsc.exe"
-	copy /Y $(CONFIG)\bin\ejsman.exe "$(ME_VAPP_PREFIX)\bin\ejsman.exe"
-	copy /Y $(CONFIG)\bin\ejsmod.exe "$(ME_VAPP_PREFIX)\bin\ejsmod.exe"
-	copy /Y $(CONFIG)\bin\ejsrun.exe "$(ME_VAPP_PREFIX)\bin\ejsrun.exe"
-	copy /Y $(CONFIG)\bin\mvc.exe "$(ME_VAPP_PREFIX)\bin\mvc.exe"
-	copy /Y $(CONFIG)\bin\utest.exe "$(ME_VAPP_PREFIX)\bin\utest.exe"
-	copy /Y $(CONFIG)\bin\libejs.db.sqlite.dll "$(ME_VAPP_PREFIX)\bin\libejs.db.sqlite.dll"
-	copy /Y $(CONFIG)\bin\libejs.dll "$(ME_VAPP_PREFIX)\bin\libejs.dll"
-	copy /Y $(CONFIG)\bin\libejs.web.dll "$(ME_VAPP_PREFIX)\bin\libejs.web.dll"
-	copy /Y $(CONFIG)\bin\libejs.zlib.dll "$(ME_VAPP_PREFIX)\bin\libejs.zlib.dll"
-	copy /Y $(CONFIG)\bin\libhttp.dll "$(ME_VAPP_PREFIX)\bin\libhttp.dll"
-	copy /Y $(CONFIG)\bin\libmpr.dll "$(ME_VAPP_PREFIX)\bin\libmpr.dll"
-	copy /Y $(CONFIG)\bin\libpcre.dll "$(ME_VAPP_PREFIX)\bin\libpcre.dll"
-	copy /Y $(CONFIG)\bin\libsql.dll "$(ME_VAPP_PREFIX)\bin\libsql.dll"
-	copy /Y $(CONFIG)\bin\libzlib.dll "$(ME_VAPP_PREFIX)\bin\libzlib.dll"
-	copy /Y $(CONFIG)\bin\ejs.db.mapper.mod "$(ME_VAPP_PREFIX)\bin\ejs.db.mapper.mod"
-	copy /Y $(CONFIG)\bin\ejs.db.mod "$(ME_VAPP_PREFIX)\bin\ejs.db.mod"
-	copy /Y $(CONFIG)\bin\ejs.db.sqlite.mod "$(ME_VAPP_PREFIX)\bin\ejs.db.sqlite.mod"
-	copy /Y $(CONFIG)\bin\ejs.mod "$(ME_VAPP_PREFIX)\bin\ejs.mod"
-	copy /Y $(CONFIG)\bin\ejs.mvc.mod "$(ME_VAPP_PREFIX)\bin\ejs.mvc.mod"
-	copy /Y $(CONFIG)\bin\ejs.tar.mod "$(ME_VAPP_PREFIX)\bin\ejs.tar.mod"
-	copy /Y $(CONFIG)\bin\ejs.template.mod "$(ME_VAPP_PREFIX)\bin\ejs.template.mod"
-	copy /Y $(CONFIG)\bin\ejs.unix.mod "$(ME_VAPP_PREFIX)\bin\ejs.unix.mod"
-	copy /Y $(CONFIG)\bin\ejs.web.mod "$(ME_VAPP_PREFIX)\bin\ejs.web.mod"
-	copy /Y $(CONFIG)\bin\ejs.zlib.mod "$(ME_VAPP_PREFIX)\bin\ejs.zlib.mod"
-	copy /Y $(CONFIG)\bin\mvc.es "$(ME_VAPP_PREFIX)\bin\mvc.es"
-	copy /Y $(CONFIG)\bin\utest.es "$(ME_VAPP_PREFIX)\bin\utest.es"
-	copy /Y $(CONFIG)\bin\utest.worker "$(ME_VAPP_PREFIX)\bin\utest.worker"
+	copy /Y $(CONFIG)\bin\ejs.exe $(ME_VAPP_PREFIX)\bin\ejs.exe
+	copy /Y $(CONFIG)\bin\ejsc.exe $(ME_VAPP_PREFIX)\bin\ejsc.exe
+	copy /Y $(CONFIG)\bin\ejsman.exe $(ME_VAPP_PREFIX)\bin\ejsman.exe
+	copy /Y $(CONFIG)\bin\ejsmod.exe $(ME_VAPP_PREFIX)\bin\ejsmod.exe
+	copy /Y $(CONFIG)\bin\ejsrun.exe $(ME_VAPP_PREFIX)\bin\ejsrun.exe
+	copy /Y $(CONFIG)\bin\mvc.exe $(ME_VAPP_PREFIX)\bin\mvc.exe
+	copy /Y $(CONFIG)\bin\utest.exe $(ME_VAPP_PREFIX)\bin\utest.exe
+	copy /Y $(CONFIG)\bin\libejs.db.sqlite.dll $(ME_VAPP_PREFIX)\bin\libejs.db.sqlite.dll
+	copy /Y $(CONFIG)\bin\libejs.dll $(ME_VAPP_PREFIX)\bin\libejs.dll
+	copy /Y $(CONFIG)\bin\libejs.web.dll $(ME_VAPP_PREFIX)\bin\libejs.web.dll
+	copy /Y $(CONFIG)\bin\libejs.zlib.dll $(ME_VAPP_PREFIX)\bin\libejs.zlib.dll
+	copy /Y $(CONFIG)\bin\libhttp.dll $(ME_VAPP_PREFIX)\bin\libhttp.dll
+	copy /Y $(CONFIG)\bin\libmpr.dll $(ME_VAPP_PREFIX)\bin\libmpr.dll
+	copy /Y $(CONFIG)\bin\libpcre.dll $(ME_VAPP_PREFIX)\bin\libpcre.dll
+	copy /Y $(CONFIG)\bin\libsql.dll $(ME_VAPP_PREFIX)\bin\libsql.dll
+	copy /Y $(CONFIG)\bin\libzlib.dll $(ME_VAPP_PREFIX)\bin\libzlib.dll
+	copy /Y $(CONFIG)\bin\ejs.db.mapper.mod $(ME_VAPP_PREFIX)\bin\ejs.db.mapper.mod
+	copy /Y $(CONFIG)\bin\ejs.db.mod $(ME_VAPP_PREFIX)\bin\ejs.db.mod
+	copy /Y $(CONFIG)\bin\ejs.db.sqlite.mod $(ME_VAPP_PREFIX)\bin\ejs.db.sqlite.mod
+	copy /Y $(CONFIG)\bin\ejs.mod $(ME_VAPP_PREFIX)\bin\ejs.mod
+	copy /Y $(CONFIG)\bin\ejs.mvc.mod $(ME_VAPP_PREFIX)\bin\ejs.mvc.mod
+	copy /Y $(CONFIG)\bin\ejs.tar.mod $(ME_VAPP_PREFIX)\bin\ejs.tar.mod
+	copy /Y $(CONFIG)\bin\ejs.template.mod $(ME_VAPP_PREFIX)\bin\ejs.template.mod
+	copy /Y $(CONFIG)\bin\ejs.unix.mod $(ME_VAPP_PREFIX)\bin\ejs.unix.mod
+	copy /Y $(CONFIG)\bin\ejs.web.mod $(ME_VAPP_PREFIX)\bin\ejs.web.mod
+	copy /Y $(CONFIG)\bin\ejs.zlib.mod $(ME_VAPP_PREFIX)\bin\ejs.zlib.mod
+	copy /Y $(CONFIG)\bin\mvc.es $(ME_VAPP_PREFIX)\bin\mvc.es
+	copy /Y $(CONFIG)\bin\utest.es $(ME_VAPP_PREFIX)\bin\utest.es
+	copy /Y $(CONFIG)\bin\utest.worker $(ME_VAPP_PREFIX)\bin\utest.worker
 !IF "$(ME_COM_SSL)" == "1"
-	copy /Y $(CONFIG)\bin\libmprssl.dll "$(ME_VAPP_PREFIX)\bin\libmprssl.dll"
+	copy /Y $(CONFIG)\bin\libmprssl.dll $(ME_VAPP_PREFIX)\bin\libmprssl.dll
 !ENDIF
 !IF "$(ME_COM_SSL)" == "1"
-	copy /Y $(CONFIG)\bin\ca.crt "$(ME_VAPP_PREFIX)\bin\ca.crt"
+	copy /Y $(CONFIG)\bin\ca.crt $(ME_VAPP_PREFIX)\bin\ca.crt
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-	copy /Y $(CONFIG)\bin\libeay32.dll "$(ME_VAPP_PREFIX)\bin\libeay32.dll"
-	copy /Y $(CONFIG)\bin\ssleay32.dll "$(ME_VAPP_PREFIX)\bin\ssleay32.dll"
+	copy /Y $(CONFIG)\bin\libeay32.dll $(ME_VAPP_PREFIX)\bin\libeay32.dll
+	copy /Y $(CONFIG)\bin\ssleay32.dll $(ME_VAPP_PREFIX)\bin\ssleay32.dll
 !ENDIF
 !IF "$(ME_COM_EST)" == "1"
-	copy /Y $(CONFIG)\bin\libest.dll "$(ME_VAPP_PREFIX)\bin\libest.dll"
+	copy /Y $(CONFIG)\bin\libest.dll $(ME_VAPP_PREFIX)\bin\libest.dll
 !ENDIF
-	copy /Y $(CONFIG)\bin\libejs.lib "$(ME_VAPP_PREFIX)\bin\libejs.lib"
+	copy /Y $(CONFIG)\bin\libejs.lib $(ME_VAPP_PREFIX)\bin\libejs.lib
 	if not exist "$(ME_VAPP_PREFIX)\bin\www\images" md "$(ME_VAPP_PREFIX)\bin\www\images"
-	copy /Y src\ejs.web\www\images\banner.jpg "$(ME_VAPP_PREFIX)\bin\www\images\banner.jpg"
-	copy /Y src\ejs.web\www\images\favicon.ico "$(ME_VAPP_PREFIX)\bin\www\images\favicon.ico"
-	copy /Y src\ejs.web\www\images\splash.jpg "$(ME_VAPP_PREFIX)\bin\www\images\splash.jpg"
+	copy /Y src\ejs.web\www\images\banner.jpg $(ME_VAPP_PREFIX)\bin\www\images\banner.jpg
+	copy /Y src\ejs.web\www\images\favicon.ico $(ME_VAPP_PREFIX)\bin\www\images\favicon.ico
+	copy /Y src\ejs.web\www\images\splash.jpg $(ME_VAPP_PREFIX)\bin\www\images\splash.jpg
 	if not exist "$(ME_VAPP_PREFIX)\bin\www\js" md "$(ME_VAPP_PREFIX)\bin\www\js"
-	copy /Y src\ejs.web\www\js\jquery.ejs.min.js "$(ME_VAPP_PREFIX)\bin\www\js\jquery.ejs.min.js"
-	copy /Y src\ejs.web\www\js\jquery.min.js "$(ME_VAPP_PREFIX)\bin\www\js\jquery.min.js"
-	copy /Y src\ejs.web\www\js\jquery.simplemodal.min.js "$(ME_VAPP_PREFIX)\bin\www\js\jquery.simplemodal.min.js"
-	copy /Y src\ejs.web\www\js\jquery.tablesorter.js "$(ME_VAPP_PREFIX)\bin\www\js\jquery.tablesorter.js"
-	copy /Y src\ejs.web\www\js\jquery.tablesorter.min.js "$(ME_VAPP_PREFIX)\bin\www\js\jquery.tablesorter.min.js"
-	copy /Y src\ejs.web\www\js\jquery.treeview.min.js "$(ME_VAPP_PREFIX)\bin\www\js\jquery.treeview.min.js"
+	copy /Y src\ejs.web\www\js\jquery.ejs.min.js $(ME_VAPP_PREFIX)\bin\www\js\jquery.ejs.min.js
+	copy /Y src\ejs.web\www\js\jquery.min.js $(ME_VAPP_PREFIX)\bin\www\js\jquery.min.js
+	copy /Y src\ejs.web\www\js\jquery.simplemodal.min.js $(ME_VAPP_PREFIX)\bin\www\js\jquery.simplemodal.min.js
+	copy /Y src\ejs.web\www\js\jquery.tablesorter.js $(ME_VAPP_PREFIX)\bin\www\js\jquery.tablesorter.js
+	copy /Y src\ejs.web\www\js\jquery.tablesorter.min.js $(ME_VAPP_PREFIX)\bin\www\js\jquery.tablesorter.min.js
+	copy /Y src\ejs.web\www\js\jquery.treeview.min.js $(ME_VAPP_PREFIX)\bin\www\js\jquery.treeview.min.js
 	if not exist "$(ME_VAPP_PREFIX)\bin\www\js\tree-images" md "$(ME_VAPP_PREFIX)\bin\www\js\tree-images"
-	copy /Y src\ejs.web\www\js\tree-images\file.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\file.gif"
-	copy /Y src\ejs.web\www\js\tree-images\folder-closed.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\folder-closed.gif"
-	copy /Y src\ejs.web\www\js\tree-images\folder.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\folder.gif"
-	copy /Y src\ejs.web\www\js\tree-images\minus.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\minus.gif"
-	copy /Y src\ejs.web\www\js\tree-images\plus.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\plus.gif"
-	copy /Y src\ejs.web\www\js\tree-images\treeview-black-line.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-black-line.gif"
-	copy /Y src\ejs.web\www\js\tree-images\treeview-black.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-black.gif"
-	copy /Y src\ejs.web\www\js\tree-images\treeview-default-line.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-default-line.gif"
-	copy /Y src\ejs.web\www\js\tree-images\treeview-default.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-default.gif"
-	copy /Y src\ejs.web\www\js\tree-images\treeview-famfamfam-line.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-famfamfam-line.gif"
-	copy /Y src\ejs.web\www\js\tree-images\treeview-famfamfam.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-famfamfam.gif"
-	copy /Y src\ejs.web\www\js\tree-images\treeview-gray-line.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-gray-line.gif"
-	copy /Y src\ejs.web\www\js\tree-images\treeview-gray.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-gray.gif"
-	copy /Y src\ejs.web\www\js\tree-images\treeview-red-line.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-red-line.gif"
-	copy /Y src\ejs.web\www\js\tree-images\treeview-red.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-red.gif"
-	copy /Y src\ejs.web\www\js\treeview.css "$(ME_VAPP_PREFIX)\bin\www\js\treeview.css"
+	copy /Y src\ejs.web\www\js\tree-images\file.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\file.gif
+	copy /Y src\ejs.web\www\js\tree-images\folder-closed.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\folder-closed.gif
+	copy /Y src\ejs.web\www\js\tree-images\folder.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\folder.gif
+	copy /Y src\ejs.web\www\js\tree-images\minus.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\minus.gif
+	copy /Y src\ejs.web\www\js\tree-images\plus.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\plus.gif
+	copy /Y src\ejs.web\www\js\tree-images\treeview-black-line.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-black-line.gif
+	copy /Y src\ejs.web\www\js\tree-images\treeview-black.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-black.gif
+	copy /Y src\ejs.web\www\js\tree-images\treeview-default-line.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-default-line.gif
+	copy /Y src\ejs.web\www\js\tree-images\treeview-default.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-default.gif
+	copy /Y src\ejs.web\www\js\tree-images\treeview-famfamfam-line.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-famfamfam-line.gif
+	copy /Y src\ejs.web\www\js\tree-images\treeview-famfamfam.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-famfamfam.gif
+	copy /Y src\ejs.web\www\js\tree-images\treeview-gray-line.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-gray-line.gif
+	copy /Y src\ejs.web\www\js\tree-images\treeview-gray.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-gray.gif
+	copy /Y src\ejs.web\www\js\tree-images\treeview-red-line.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-red-line.gif
+	copy /Y src\ejs.web\www\js\tree-images\treeview-red.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-red.gif
+	copy /Y src\ejs.web\www\js\treeview.css $(ME_VAPP_PREFIX)\bin\www\js\treeview.css
 	if not exist "$(ME_VAPP_PREFIX)\bin\www" md "$(ME_VAPP_PREFIX)\bin\www"
-	copy /Y src\ejs.web\www\layout.css "$(ME_VAPP_PREFIX)\bin\www\layout.css"
+	copy /Y src\ejs.web\www\layout.css $(ME_VAPP_PREFIX)\bin\www\layout.css
 	if not exist "$(ME_VAPP_PREFIX)\bin\www\themes" md "$(ME_VAPP_PREFIX)\bin\www\themes"
-	copy /Y src\ejs.web\www\themes\default.css "$(ME_VAPP_PREFIX)\bin\www\themes\default.css"
+	copy /Y src\ejs.web\www\themes\default.css $(ME_VAPP_PREFIX)\bin\www\themes\default.css
 	if not exist "$(ME_VAPP_PREFIX)\inc" md "$(ME_VAPP_PREFIX)\inc"
-	copy /Y src\ejs.h "$(ME_VAPP_PREFIX)\inc\ejs.h"
-	copy /Y src\ejsByteCode.h "$(ME_VAPP_PREFIX)\inc\ejsByteCode.h"
-	copy /Y src\ejsByteCodeTable.h "$(ME_VAPP_PREFIX)\inc\ejsByteCodeTable.h"
-	copy /Y src\ejsCompiler.h "$(ME_VAPP_PREFIX)\inc\ejsCompiler.h"
-	copy /Y src\ejsCustomize.h "$(ME_VAPP_PREFIX)\inc\ejsCustomize.h"
-	copy /Y src\vm\ejsByteGoto.h "$(ME_VAPP_PREFIX)\inc\ejsByteGoto.h"
-	copy /Y src\slots\ejs.cache.local.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.cache.local.slots.h"
-	copy /Y src\slots\ejs.db.sqlite.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.db.sqlite.slots.h"
-	copy /Y src\slots\ejs.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.slots.h"
-	copy /Y src\slots\ejs.web.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.web.slots.h"
-	copy /Y src\slots\ejs.zlib.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.zlib.slots.h"
-	copy /Y src\paks\est\est.h "$(ME_VAPP_PREFIX)\inc\est.h"
-	copy /Y src\paks\http\http.h "$(ME_VAPP_PREFIX)\inc\http.h"
-	copy /Y src\paks\mpr\mpr.h "$(ME_VAPP_PREFIX)\inc\mpr.h"
-	copy /Y src\paks\osdep\osdep.h "$(ME_VAPP_PREFIX)\inc\osdep.h"
-	copy /Y src\paks\pcre\pcre.h "$(ME_VAPP_PREFIX)\inc\pcre.h"
-	copy /Y src\paks\sqlite\sqlite3.h "$(ME_VAPP_PREFIX)\inc\sqlite3.h"
-	copy /Y src\paks\zlib\zlib.h "$(ME_VAPP_PREFIX)\inc\zlib.h"
-	copy /Y src\cmd\ejsmod.h "$(ME_VAPP_PREFIX)\inc\ejsmod.h"
-	copy /Y src\core\default.slots.h "$(ME_VAPP_PREFIX)\inc\default.slots.h"
-	copy /Y src\core\ejs.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.slots.h"
-	copy /Y src\ejs.db.sqlite\ejs.db.sqlite.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.db.sqlite.slots.h"
-	copy /Y src\ejs.h "$(ME_VAPP_PREFIX)\inc\ejs.h"
-	copy /Y src\ejs.web\ejs.web.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.web.slots.h"
-	copy /Y src\ejs.web\ejsWeb.h "$(ME_VAPP_PREFIX)\inc\ejsWeb.h"
-	copy /Y src\ejsByteCode.h "$(ME_VAPP_PREFIX)\inc\ejsByteCode.h"
-	copy /Y src\ejsByteCodeTable.h "$(ME_VAPP_PREFIX)\inc\ejsByteCodeTable.h"
-	copy /Y src\ejsCompiler.h "$(ME_VAPP_PREFIX)\inc\ejsCompiler.h"
-	copy /Y src\ejsCustomize.h "$(ME_VAPP_PREFIX)\inc\ejsCustomize.h"
-	copy /Y src\paks\est\est.h "$(ME_VAPP_PREFIX)\inc\est.h"
-	copy /Y src\paks\http\http.h "$(ME_VAPP_PREFIX)\inc\http.h"
-	copy /Y src\paks\mpr\mpr.h "$(ME_VAPP_PREFIX)\inc\mpr.h"
-	copy /Y src\paks\osdep\osdep.h "$(ME_VAPP_PREFIX)\inc\osdep.h"
-	copy /Y src\paks\pcre\pcre.h "$(ME_VAPP_PREFIX)\inc\pcre.h"
-	copy /Y src\paks\sqlite\sqlite3.h "$(ME_VAPP_PREFIX)\inc\sqlite3.h"
-	copy /Y src\paks\zlib\zlib.h "$(ME_VAPP_PREFIX)\inc\zlib.h"
-	copy /Y src\slots\ejs.cache.local.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.cache.local.slots.h"
-	copy /Y src\slots\ejs.db.sqlite.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.db.sqlite.slots.h"
-	copy /Y src\slots\ejs.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.slots.h"
-	copy /Y src\slots\ejs.web.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.web.slots.h"
-	copy /Y src\slots\ejs.zlib.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.zlib.slots.h"
-	copy /Y src\vm\ejsByteGoto.h "$(ME_VAPP_PREFIX)\inc\ejsByteGoto.h"
+	copy /Y src\ejs.h $(ME_VAPP_PREFIX)\inc\ejs.h
+	copy /Y src\ejsByteCode.h $(ME_VAPP_PREFIX)\inc\ejsByteCode.h
+	copy /Y src\ejsByteCodeTable.h $(ME_VAPP_PREFIX)\inc\ejsByteCodeTable.h
+	copy /Y src\ejsCompiler.h $(ME_VAPP_PREFIX)\inc\ejsCompiler.h
+	copy /Y src\ejsCustomize.h $(ME_VAPP_PREFIX)\inc\ejsCustomize.h
+	copy /Y src\vm\ejsByteGoto.h $(ME_VAPP_PREFIX)\inc\ejsByteGoto.h
+	copy /Y src\slots\ejs.cache.local.slots.h $(ME_VAPP_PREFIX)\inc\ejs.cache.local.slots.h
+	copy /Y src\slots\ejs.db.sqlite.slots.h $(ME_VAPP_PREFIX)\inc\ejs.db.sqlite.slots.h
+	copy /Y src\slots\ejs.slots.h $(ME_VAPP_PREFIX)\inc\ejs.slots.h
+	copy /Y src\slots\ejs.web.slots.h $(ME_VAPP_PREFIX)\inc\ejs.web.slots.h
+	copy /Y src\slots\ejs.zlib.slots.h $(ME_VAPP_PREFIX)\inc\ejs.zlib.slots.h
+	copy /Y src\paks\est\est.h $(ME_VAPP_PREFIX)\inc\est.h
+	copy /Y src\paks\http\http.h $(ME_VAPP_PREFIX)\inc\http.h
+	copy /Y src\paks\mpr\mpr.h $(ME_VAPP_PREFIX)\inc\mpr.h
+	copy /Y src\paks\osdep\osdep.h $(ME_VAPP_PREFIX)\inc\osdep.h
+	copy /Y src\paks\pcre\pcre.h $(ME_VAPP_PREFIX)\inc\pcre.h
+	copy /Y src\paks\sqlite\sqlite3.h $(ME_VAPP_PREFIX)\inc\sqlite3.h
+	copy /Y src\paks\zlib\zlib.h $(ME_VAPP_PREFIX)\inc\zlib.h
+	copy /Y src\cmd\ejsmod.h $(ME_VAPP_PREFIX)\inc\ejsmod.h
+	copy /Y src\core\default.slots.h $(ME_VAPP_PREFIX)\inc\default.slots.h
+	copy /Y src\core\ejs.slots.h $(ME_VAPP_PREFIX)\inc\ejs.slots.h
+	copy /Y src\ejs.db.sqlite\ejs.db.sqlite.slots.h $(ME_VAPP_PREFIX)\inc\ejs.db.sqlite.slots.h
+	copy /Y src\ejs.h $(ME_VAPP_PREFIX)\inc\ejs.h
+	copy /Y src\ejs.web\ejs.web.slots.h $(ME_VAPP_PREFIX)\inc\ejs.web.slots.h
+	copy /Y src\ejs.web\ejsWeb.h $(ME_VAPP_PREFIX)\inc\ejsWeb.h
+	copy /Y src\ejsByteCode.h $(ME_VAPP_PREFIX)\inc\ejsByteCode.h
+	copy /Y src\ejsByteCodeTable.h $(ME_VAPP_PREFIX)\inc\ejsByteCodeTable.h
+	copy /Y src\ejsCompiler.h $(ME_VAPP_PREFIX)\inc\ejsCompiler.h
+	copy /Y src\ejsCustomize.h $(ME_VAPP_PREFIX)\inc\ejsCustomize.h
+	copy /Y src\paks\est\est.h $(ME_VAPP_PREFIX)\inc\est.h
+	copy /Y src\paks\http\http.h $(ME_VAPP_PREFIX)\inc\http.h
+	copy /Y src\paks\mpr\mpr.h $(ME_VAPP_PREFIX)\inc\mpr.h
+	copy /Y src\paks\osdep\osdep.h $(ME_VAPP_PREFIX)\inc\osdep.h
+	copy /Y src\paks\pcre\pcre.h $(ME_VAPP_PREFIX)\inc\pcre.h
+	copy /Y src\paks\sqlite\sqlite3.h $(ME_VAPP_PREFIX)\inc\sqlite3.h
+	copy /Y src\paks\zlib\zlib.h $(ME_VAPP_PREFIX)\inc\zlib.h
+	copy /Y src\slots\ejs.cache.local.slots.h $(ME_VAPP_PREFIX)\inc\ejs.cache.local.slots.h
+	copy /Y src\slots\ejs.db.sqlite.slots.h $(ME_VAPP_PREFIX)\inc\ejs.db.sqlite.slots.h
+	copy /Y src\slots\ejs.slots.h $(ME_VAPP_PREFIX)\inc\ejs.slots.h
+	copy /Y src\slots\ejs.web.slots.h $(ME_VAPP_PREFIX)\inc\ejs.web.slots.h
+	copy /Y src\slots\ejs.zlib.slots.h $(ME_VAPP_PREFIX)\inc\ejs.zlib.slots.h
+	copy /Y src\vm\ejsByteGoto.h $(ME_VAPP_PREFIX)\inc\ejsByteGoto.h
 	cd .
 
 #
 #   start
 #
-start: $(DEPS_130)
+start: $(DEPS_132)
 #  Omit build script start
 
 #
 #   stop
 #
-stop: $(DEPS_131)
+stop: $(DEPS_133)
 #  Omit build script stop
 
 #
 #   uninstall
 #
-DEPS_132 = $(DEPS_132) stop
+DEPS_134 = $(DEPS_134) stop
 
-uninstall: $(DEPS_132)
+uninstall: $(DEPS_134)
 	cd .
 	if exist "$(ME_VAPP_PREFIX)" rd /Q /S "$(ME_VAPP_PREFIX)"
-	if exist "$(ME_VAPP_PREFIX)\bin" rd /Q "$(ME_VAPP_PREFIX)\bin"
-	if exist "$(ME_VAPP_PREFIX)\inc" rd /Q "$(ME_VAPP_PREFIX)\inc"
-	if exist "$(ME_VAPP_PREFIX)\man" rd /Q "$(ME_VAPP_PREFIX)\man"
-	if exist "$(ME_VAPP_PREFIX)\latest" del /Q "$(ME_VAPP_PREFIX)\latest"
-	if exist "$(ME_VAPP_PREFIX)" rd /Q "$(ME_VAPP_PREFIX)"
+	if exist "$(ME_APP_PREFIX)\latest" del /Q "$(ME_APP_PREFIX)\latest"
+	if exist "$(ME_APP_PREFIX)" rd /Q "$(ME_APP_PREFIX)"
 	cd .
 
