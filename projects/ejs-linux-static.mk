@@ -44,7 +44,7 @@ ME_COM_MATRIXSSL_PATH ?= /usr/src/matrixssl
 ME_COM_NANOSSL_PATH   ?= /usr/src/nanossl
 ME_COM_OPENSSL_PATH   ?= /usr/src/openssl
 
-CFLAGS                += -w
+CFLAGS                += -g -w
 DFLAGS                +=  $(patsubst %,-D%,$(filter ME_%,$(MAKEFLAGS))) -DME_COM_EST=$(ME_COM_EST) -DME_COM_HTTP=$(ME_COM_HTTP) -DME_COM_MATRIXSSL=$(ME_COM_MATRIXSSL) -DME_COM_NANOSSL=$(ME_COM_NANOSSL) -DME_COM_OPENSSL=$(ME_COM_OPENSSL) -DME_COM_PCRE=$(ME_COM_PCRE) -DME_COM_SQLITE=$(ME_COM_SQLITE) -DME_COM_SSL=$(ME_COM_SSL) -DME_COM_VXWORKS=$(ME_COM_VXWORKS) -DME_COM_WINSDK=$(ME_COM_WINSDK) -DME_COM_ZLIB=$(ME_COM_ZLIB) 
 IFLAGS                += "-I$(CONFIG)/inc"
 LDFLAGS               += 
@@ -293,7 +293,7 @@ DEPS_5 += $(CONFIG)/inc/osdep.h
 $(CONFIG)/obj/mprLib.o: \
     src/paks/mpr/mprLib.c $(DEPS_5)
 	@echo '   [Compile] $(CONFIG)/obj/mprLib.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/mprLib.o $(LDFLAGS) $(IFLAGS) src/paks/mpr/mprLib.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/mprLib.o $(LDFLAGS) $(IFLAGS) src/paks/mpr/mprLib.c
 
 #
 #   libmpr
@@ -324,7 +324,7 @@ DEPS_8 += $(CONFIG)/inc/pcre.h
 $(CONFIG)/obj/pcre.o: \
     src/paks/pcre/pcre.c $(DEPS_8)
 	@echo '   [Compile] $(CONFIG)/obj/pcre.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/pcre.o $(LDFLAGS) $(IFLAGS) src/paks/pcre/pcre.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/pcre.o $(LDFLAGS) $(IFLAGS) src/paks/pcre/pcre.c
 
 ifeq ($(ME_COM_PCRE),1)
 #
@@ -357,7 +357,7 @@ DEPS_11 += $(CONFIG)/inc/mpr.h
 $(CONFIG)/obj/httpLib.o: \
     src/paks/http/httpLib.c $(DEPS_11)
 	@echo '   [Compile] $(CONFIG)/obj/httpLib.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/httpLib.o $(LDFLAGS) $(IFLAGS) src/paks/http/httpLib.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/httpLib.o $(LDFLAGS) $(IFLAGS) src/paks/http/httpLib.c
 
 ifeq ($(ME_COM_HTTP),1)
 #
@@ -484,7 +484,7 @@ DEPS_23 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ecAst.o: \
     src/compiler/ecAst.c $(DEPS_23)
 	@echo '   [Compile] $(CONFIG)/obj/ecAst.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ecAst.o $(LDFLAGS) $(IFLAGS) src/compiler/ecAst.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ecAst.o $(LDFLAGS) $(IFLAGS) src/compiler/ecAst.c
 
 #
 #   ecCodeGen.o
@@ -495,7 +495,7 @@ DEPS_24 += $(CONFIG)/inc/ejsCompiler.h
 $(CONFIG)/obj/ecCodeGen.o: \
     src/compiler/ecCodeGen.c $(DEPS_24)
 	@echo '   [Compile] $(CONFIG)/obj/ecCodeGen.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ecCodeGen.o $(LDFLAGS) $(IFLAGS) src/compiler/ecCodeGen.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ecCodeGen.o $(LDFLAGS) $(IFLAGS) src/compiler/ecCodeGen.c
 
 #
 #   ecCompiler.o
@@ -506,7 +506,7 @@ DEPS_25 += $(CONFIG)/inc/ejsCompiler.h
 $(CONFIG)/obj/ecCompiler.o: \
     src/compiler/ecCompiler.c $(DEPS_25)
 	@echo '   [Compile] $(CONFIG)/obj/ecCompiler.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ecCompiler.o $(LDFLAGS) $(IFLAGS) src/compiler/ecCompiler.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ecCompiler.o $(LDFLAGS) $(IFLAGS) src/compiler/ecCompiler.c
 
 #
 #   ecLex.o
@@ -517,7 +517,7 @@ DEPS_26 += $(CONFIG)/inc/ejsCompiler.h
 $(CONFIG)/obj/ecLex.o: \
     src/compiler/ecLex.c $(DEPS_26)
 	@echo '   [Compile] $(CONFIG)/obj/ecLex.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ecLex.o $(LDFLAGS) $(IFLAGS) src/compiler/ecLex.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ecLex.o $(LDFLAGS) $(IFLAGS) src/compiler/ecLex.c
 
 #
 #   ecModuleWrite.o
@@ -528,7 +528,7 @@ DEPS_27 += $(CONFIG)/inc/ejsCompiler.h
 $(CONFIG)/obj/ecModuleWrite.o: \
     src/compiler/ecModuleWrite.c $(DEPS_27)
 	@echo '   [Compile] $(CONFIG)/obj/ecModuleWrite.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ecModuleWrite.o $(LDFLAGS) $(IFLAGS) src/compiler/ecModuleWrite.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ecModuleWrite.o $(LDFLAGS) $(IFLAGS) src/compiler/ecModuleWrite.c
 
 #
 #   ecParser.o
@@ -539,7 +539,7 @@ DEPS_28 += $(CONFIG)/inc/ejsCompiler.h
 $(CONFIG)/obj/ecParser.o: \
     src/compiler/ecParser.c $(DEPS_28)
 	@echo '   [Compile] $(CONFIG)/obj/ecParser.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ecParser.o $(LDFLAGS) $(IFLAGS) src/compiler/ecParser.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ecParser.o $(LDFLAGS) $(IFLAGS) src/compiler/ecParser.c
 
 #
 #   ecState.o
@@ -550,7 +550,7 @@ DEPS_29 += $(CONFIG)/inc/ejsCompiler.h
 $(CONFIG)/obj/ecState.o: \
     src/compiler/ecState.c $(DEPS_29)
 	@echo '   [Compile] $(CONFIG)/obj/ecState.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ecState.o $(LDFLAGS) $(IFLAGS) src/compiler/ecState.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ecState.o $(LDFLAGS) $(IFLAGS) src/compiler/ecState.c
 
 #
 #   dtoa.o
@@ -561,7 +561,7 @@ DEPS_30 += $(CONFIG)/inc/mpr.h
 $(CONFIG)/obj/dtoa.o: \
     src/core/src/dtoa.c $(DEPS_30)
 	@echo '   [Compile] $(CONFIG)/obj/dtoa.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/dtoa.o $(LDFLAGS) $(IFLAGS) src/core/src/dtoa.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/dtoa.o $(LDFLAGS) $(IFLAGS) src/core/src/dtoa.c
 
 #
 #   ejsApp.o
@@ -578,7 +578,7 @@ DEPS_31 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsApp.o: \
     src/core/src/ejsApp.c $(DEPS_31)
 	@echo '   [Compile] $(CONFIG)/obj/ejsApp.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsApp.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsApp.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsApp.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsApp.c
 
 #
 #   ejsArray.o
@@ -595,7 +595,7 @@ DEPS_32 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsArray.o: \
     src/core/src/ejsArray.c $(DEPS_32)
 	@echo '   [Compile] $(CONFIG)/obj/ejsArray.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsArray.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsArray.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsArray.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsArray.c
 
 #
 #   ejsBlock.o
@@ -612,7 +612,7 @@ DEPS_33 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsBlock.o: \
     src/core/src/ejsBlock.c $(DEPS_33)
 	@echo '   [Compile] $(CONFIG)/obj/ejsBlock.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsBlock.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsBlock.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsBlock.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsBlock.c
 
 #
 #   ejsBoolean.o
@@ -629,7 +629,7 @@ DEPS_34 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsBoolean.o: \
     src/core/src/ejsBoolean.c $(DEPS_34)
 	@echo '   [Compile] $(CONFIG)/obj/ejsBoolean.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsBoolean.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsBoolean.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsBoolean.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsBoolean.c
 
 #
 #   ejsByteArray.o
@@ -646,7 +646,7 @@ DEPS_35 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsByteArray.o: \
     src/core/src/ejsByteArray.c $(DEPS_35)
 	@echo '   [Compile] $(CONFIG)/obj/ejsByteArray.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsByteArray.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsByteArray.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsByteArray.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsByteArray.c
 
 #
 #   ejsCache.o
@@ -663,7 +663,7 @@ DEPS_36 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsCache.o: \
     src/core/src/ejsCache.c $(DEPS_36)
 	@echo '   [Compile] $(CONFIG)/obj/ejsCache.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsCache.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsCache.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsCache.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsCache.c
 
 #
 #   ejsCmd.o
@@ -680,7 +680,7 @@ DEPS_37 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsCmd.o: \
     src/core/src/ejsCmd.c $(DEPS_37)
 	@echo '   [Compile] $(CONFIG)/obj/ejsCmd.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsCmd.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsCmd.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsCmd.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsCmd.c
 
 #
 #   ejsConfig.o
@@ -697,7 +697,7 @@ DEPS_38 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsConfig.o: \
     src/core/src/ejsConfig.c $(DEPS_38)
 	@echo '   [Compile] $(CONFIG)/obj/ejsConfig.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsConfig.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsConfig.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsConfig.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsConfig.c
 
 #
 #   ejsDate.o
@@ -714,7 +714,7 @@ DEPS_39 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsDate.o: \
     src/core/src/ejsDate.c $(DEPS_39)
 	@echo '   [Compile] $(CONFIG)/obj/ejsDate.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsDate.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsDate.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsDate.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsDate.c
 
 #
 #   ejsDebug.o
@@ -731,7 +731,7 @@ DEPS_40 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsDebug.o: \
     src/core/src/ejsDebug.c $(DEPS_40)
 	@echo '   [Compile] $(CONFIG)/obj/ejsDebug.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsDebug.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsDebug.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsDebug.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsDebug.c
 
 #
 #   ejsError.o
@@ -748,7 +748,7 @@ DEPS_41 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsError.o: \
     src/core/src/ejsError.c $(DEPS_41)
 	@echo '   [Compile] $(CONFIG)/obj/ejsError.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsError.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsError.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsError.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsError.c
 
 #
 #   ejsFile.o
@@ -765,7 +765,7 @@ DEPS_42 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsFile.o: \
     src/core/src/ejsFile.c $(DEPS_42)
 	@echo '   [Compile] $(CONFIG)/obj/ejsFile.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsFile.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsFile.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsFile.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsFile.c
 
 #
 #   ejsFileSystem.o
@@ -782,7 +782,7 @@ DEPS_43 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsFileSystem.o: \
     src/core/src/ejsFileSystem.c $(DEPS_43)
 	@echo '   [Compile] $(CONFIG)/obj/ejsFileSystem.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsFileSystem.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsFileSystem.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsFileSystem.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsFileSystem.c
 
 #
 #   ejsFrame.o
@@ -799,7 +799,7 @@ DEPS_44 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsFrame.o: \
     src/core/src/ejsFrame.c $(DEPS_44)
 	@echo '   [Compile] $(CONFIG)/obj/ejsFrame.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsFrame.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsFrame.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsFrame.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsFrame.c
 
 #
 #   ejsFunction.o
@@ -816,7 +816,7 @@ DEPS_45 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsFunction.o: \
     src/core/src/ejsFunction.c $(DEPS_45)
 	@echo '   [Compile] $(CONFIG)/obj/ejsFunction.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsFunction.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsFunction.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsFunction.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsFunction.c
 
 #
 #   ejsGC.o
@@ -833,7 +833,7 @@ DEPS_46 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsGC.o: \
     src/core/src/ejsGC.c $(DEPS_46)
 	@echo '   [Compile] $(CONFIG)/obj/ejsGC.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsGC.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsGC.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsGC.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsGC.c
 
 #
 #   ejsGlobal.o
@@ -850,7 +850,7 @@ DEPS_47 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsGlobal.o: \
     src/core/src/ejsGlobal.c $(DEPS_47)
 	@echo '   [Compile] $(CONFIG)/obj/ejsGlobal.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsGlobal.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsGlobal.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsGlobal.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsGlobal.c
 
 #
 #   ejsHttp.o
@@ -867,7 +867,7 @@ DEPS_48 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsHttp.o: \
     src/core/src/ejsHttp.c $(DEPS_48)
 	@echo '   [Compile] $(CONFIG)/obj/ejsHttp.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsHttp.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsHttp.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsHttp.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsHttp.c
 
 #
 #   ejsIterator.o
@@ -884,7 +884,7 @@ DEPS_49 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsIterator.o: \
     src/core/src/ejsIterator.c $(DEPS_49)
 	@echo '   [Compile] $(CONFIG)/obj/ejsIterator.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsIterator.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsIterator.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsIterator.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsIterator.c
 
 #
 #   ejsJSON.o
@@ -901,7 +901,7 @@ DEPS_50 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsJSON.o: \
     src/core/src/ejsJSON.c $(DEPS_50)
 	@echo '   [Compile] $(CONFIG)/obj/ejsJSON.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsJSON.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsJSON.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsJSON.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsJSON.c
 
 #
 #   ejsLocalCache.o
@@ -918,7 +918,7 @@ DEPS_51 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsLocalCache.o: \
     src/core/src/ejsLocalCache.c $(DEPS_51)
 	@echo '   [Compile] $(CONFIG)/obj/ejsLocalCache.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsLocalCache.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsLocalCache.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsLocalCache.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsLocalCache.c
 
 #
 #   ejsMath.o
@@ -935,7 +935,7 @@ DEPS_52 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsMath.o: \
     src/core/src/ejsMath.c $(DEPS_52)
 	@echo '   [Compile] $(CONFIG)/obj/ejsMath.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsMath.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsMath.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsMath.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsMath.c
 
 #
 #   ejsMemory.o
@@ -952,7 +952,7 @@ DEPS_53 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsMemory.o: \
     src/core/src/ejsMemory.c $(DEPS_53)
 	@echo '   [Compile] $(CONFIG)/obj/ejsMemory.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsMemory.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsMemory.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsMemory.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsMemory.c
 
 #
 #   ejsMprLog.o
@@ -969,7 +969,7 @@ DEPS_54 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsMprLog.o: \
     src/core/src/ejsMprLog.c $(DEPS_54)
 	@echo '   [Compile] $(CONFIG)/obj/ejsMprLog.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsMprLog.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsMprLog.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsMprLog.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsMprLog.c
 
 #
 #   ejsNamespace.o
@@ -986,7 +986,7 @@ DEPS_55 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsNamespace.o: \
     src/core/src/ejsNamespace.c $(DEPS_55)
 	@echo '   [Compile] $(CONFIG)/obj/ejsNamespace.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsNamespace.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsNamespace.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsNamespace.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsNamespace.c
 
 #
 #   ejsNull.o
@@ -1003,7 +1003,7 @@ DEPS_56 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsNull.o: \
     src/core/src/ejsNull.c $(DEPS_56)
 	@echo '   [Compile] $(CONFIG)/obj/ejsNull.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsNull.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsNull.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsNull.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsNull.c
 
 #
 #   ejsNumber.o
@@ -1020,7 +1020,7 @@ DEPS_57 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsNumber.o: \
     src/core/src/ejsNumber.c $(DEPS_57)
 	@echo '   [Compile] $(CONFIG)/obj/ejsNumber.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsNumber.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsNumber.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsNumber.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsNumber.c
 
 #
 #   ejsObject.o
@@ -1037,7 +1037,7 @@ DEPS_58 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsObject.o: \
     src/core/src/ejsObject.c $(DEPS_58)
 	@echo '   [Compile] $(CONFIG)/obj/ejsObject.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsObject.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsObject.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsObject.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsObject.c
 
 #
 #   ejsPath.o
@@ -1055,7 +1055,7 @@ DEPS_59 += $(CONFIG)/inc/pcre.h
 $(CONFIG)/obj/ejsPath.o: \
     src/core/src/ejsPath.c $(DEPS_59)
 	@echo '   [Compile] $(CONFIG)/obj/ejsPath.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsPath.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsPath.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsPath.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsPath.c
 
 #
 #   ejsPot.o
@@ -1072,7 +1072,7 @@ DEPS_60 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsPot.o: \
     src/core/src/ejsPot.c $(DEPS_60)
 	@echo '   [Compile] $(CONFIG)/obj/ejsPot.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsPot.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsPot.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsPot.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsPot.c
 
 #
 #   ejsRegExp.o
@@ -1090,7 +1090,7 @@ DEPS_61 += $(CONFIG)/inc/pcre.h
 $(CONFIG)/obj/ejsRegExp.o: \
     src/core/src/ejsRegExp.c $(DEPS_61)
 	@echo '   [Compile] $(CONFIG)/obj/ejsRegExp.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsRegExp.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsRegExp.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsRegExp.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsRegExp.c
 
 #
 #   ejsSocket.o
@@ -1107,7 +1107,7 @@ DEPS_62 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsSocket.o: \
     src/core/src/ejsSocket.c $(DEPS_62)
 	@echo '   [Compile] $(CONFIG)/obj/ejsSocket.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsSocket.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsSocket.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsSocket.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsSocket.c
 
 #
 #   ejsString.o
@@ -1125,7 +1125,7 @@ DEPS_63 += $(CONFIG)/inc/pcre.h
 $(CONFIG)/obj/ejsString.o: \
     src/core/src/ejsString.c $(DEPS_63)
 	@echo '   [Compile] $(CONFIG)/obj/ejsString.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsString.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsString.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsString.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsString.c
 
 #
 #   ejsSystem.o
@@ -1142,7 +1142,7 @@ DEPS_64 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsSystem.o: \
     src/core/src/ejsSystem.c $(DEPS_64)
 	@echo '   [Compile] $(CONFIG)/obj/ejsSystem.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsSystem.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsSystem.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsSystem.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsSystem.c
 
 #
 #   ejsTimer.o
@@ -1159,7 +1159,7 @@ DEPS_65 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsTimer.o: \
     src/core/src/ejsTimer.c $(DEPS_65)
 	@echo '   [Compile] $(CONFIG)/obj/ejsTimer.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsTimer.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsTimer.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsTimer.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsTimer.c
 
 #
 #   ejsType.o
@@ -1176,7 +1176,7 @@ DEPS_66 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsType.o: \
     src/core/src/ejsType.c $(DEPS_66)
 	@echo '   [Compile] $(CONFIG)/obj/ejsType.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsType.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsType.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsType.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsType.c
 
 #
 #   ejsUri.o
@@ -1193,7 +1193,7 @@ DEPS_67 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsUri.o: \
     src/core/src/ejsUri.c $(DEPS_67)
 	@echo '   [Compile] $(CONFIG)/obj/ejsUri.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsUri.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsUri.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsUri.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsUri.c
 
 #
 #   ejsVoid.o
@@ -1210,7 +1210,7 @@ DEPS_68 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsVoid.o: \
     src/core/src/ejsVoid.c $(DEPS_68)
 	@echo '   [Compile] $(CONFIG)/obj/ejsVoid.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsVoid.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsVoid.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsVoid.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsVoid.c
 
 #
 #   ejsWebSocket.o
@@ -1227,7 +1227,7 @@ DEPS_69 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsWebSocket.o: \
     src/core/src/ejsWebSocket.c $(DEPS_69)
 	@echo '   [Compile] $(CONFIG)/obj/ejsWebSocket.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsWebSocket.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsWebSocket.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsWebSocket.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsWebSocket.c
 
 #
 #   ejsWorker.o
@@ -1244,7 +1244,7 @@ DEPS_70 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsWorker.o: \
     src/core/src/ejsWorker.c $(DEPS_70)
 	@echo '   [Compile] $(CONFIG)/obj/ejsWorker.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsWorker.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsWorker.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsWorker.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsWorker.c
 
 #
 #   ejsXML.o
@@ -1261,7 +1261,7 @@ DEPS_71 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsXML.o: \
     src/core/src/ejsXML.c $(DEPS_71)
 	@echo '   [Compile] $(CONFIG)/obj/ejsXML.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsXML.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsXML.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsXML.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsXML.c
 
 #
 #   ejsXMLList.o
@@ -1278,7 +1278,7 @@ DEPS_72 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsXMLList.o: \
     src/core/src/ejsXMLList.c $(DEPS_72)
 	@echo '   [Compile] $(CONFIG)/obj/ejsXMLList.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsXMLList.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsXMLList.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsXMLList.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsXMLList.c
 
 #
 #   ejsXMLLoader.o
@@ -1295,7 +1295,7 @@ DEPS_73 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsXMLLoader.o: \
     src/core/src/ejsXMLLoader.c $(DEPS_73)
 	@echo '   [Compile] $(CONFIG)/obj/ejsXMLLoader.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsXMLLoader.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsXMLLoader.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsXMLLoader.o $(LDFLAGS) $(IFLAGS) src/core/src/ejsXMLLoader.c
 
 #
 #   ejsByteCode.o
@@ -1312,7 +1312,7 @@ DEPS_74 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsByteCode.o: \
     src/vm/ejsByteCode.c $(DEPS_74)
 	@echo '   [Compile] $(CONFIG)/obj/ejsByteCode.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsByteCode.o $(LDFLAGS) $(IFLAGS) src/vm/ejsByteCode.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsByteCode.o $(LDFLAGS) $(IFLAGS) src/vm/ejsByteCode.c
 
 #
 #   ejsException.o
@@ -1329,7 +1329,7 @@ DEPS_75 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsException.o: \
     src/vm/ejsException.c $(DEPS_75)
 	@echo '   [Compile] $(CONFIG)/obj/ejsException.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsException.o $(LDFLAGS) $(IFLAGS) src/vm/ejsException.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsException.o $(LDFLAGS) $(IFLAGS) src/vm/ejsException.c
 
 #
 #   ejsHelper.o
@@ -1346,7 +1346,7 @@ DEPS_76 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsHelper.o: \
     src/vm/ejsHelper.c $(DEPS_76)
 	@echo '   [Compile] $(CONFIG)/obj/ejsHelper.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsHelper.o $(LDFLAGS) $(IFLAGS) src/vm/ejsHelper.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsHelper.o $(LDFLAGS) $(IFLAGS) src/vm/ejsHelper.c
 
 #
 #   ejsInterp.o
@@ -1363,7 +1363,7 @@ DEPS_77 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsInterp.o: \
     src/vm/ejsInterp.c $(DEPS_77)
 	@echo '   [Compile] $(CONFIG)/obj/ejsInterp.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsInterp.o $(LDFLAGS) $(IFLAGS) src/vm/ejsInterp.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsInterp.o $(LDFLAGS) $(IFLAGS) src/vm/ejsInterp.c
 
 #
 #   ejsLoader.o
@@ -1380,7 +1380,7 @@ DEPS_78 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsLoader.o: \
     src/vm/ejsLoader.c $(DEPS_78)
 	@echo '   [Compile] $(CONFIG)/obj/ejsLoader.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsLoader.o $(LDFLAGS) $(IFLAGS) src/vm/ejsLoader.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsLoader.o $(LDFLAGS) $(IFLAGS) src/vm/ejsLoader.c
 
 #
 #   ejsModule.o
@@ -1397,7 +1397,7 @@ DEPS_79 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsModule.o: \
     src/vm/ejsModule.c $(DEPS_79)
 	@echo '   [Compile] $(CONFIG)/obj/ejsModule.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsModule.o $(LDFLAGS) $(IFLAGS) src/vm/ejsModule.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsModule.o $(LDFLAGS) $(IFLAGS) src/vm/ejsModule.c
 
 #
 #   ejsScope.o
@@ -1414,7 +1414,7 @@ DEPS_80 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsScope.o: \
     src/vm/ejsScope.c $(DEPS_80)
 	@echo '   [Compile] $(CONFIG)/obj/ejsScope.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsScope.o $(LDFLAGS) $(IFLAGS) src/vm/ejsScope.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsScope.o $(LDFLAGS) $(IFLAGS) src/vm/ejsScope.c
 
 #
 #   ejsService.o
@@ -1431,7 +1431,7 @@ DEPS_81 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsService.o: \
     src/vm/ejsService.c $(DEPS_81)
 	@echo '   [Compile] $(CONFIG)/obj/ejsService.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsService.o $(LDFLAGS) $(IFLAGS) src/vm/ejsService.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsService.o $(LDFLAGS) $(IFLAGS) src/vm/ejsService.c
 
 #
 #   libejs
@@ -1534,7 +1534,7 @@ DEPS_83 += $(CONFIG)/inc/ejsCompiler.h
 $(CONFIG)/obj/ejs.o: \
     src/cmd/ejs.c $(DEPS_83)
 	@echo '   [Compile] $(CONFIG)/obj/ejs.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejs.o $(LDFLAGS) $(IFLAGS) src/cmd/ejs.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejs.o $(LDFLAGS) $(IFLAGS) src/cmd/ejs.c
 
 #
 #   ejs
@@ -1648,7 +1648,7 @@ DEPS_85 += $(CONFIG)/inc/ejsCompiler.h
 $(CONFIG)/obj/ejsc.o: \
     src/cmd/ejsc.c $(DEPS_85)
 	@echo '   [Compile] $(CONFIG)/obj/ejsc.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsc.o $(LDFLAGS) $(IFLAGS) src/cmd/ejsc.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsc.o $(LDFLAGS) $(IFLAGS) src/cmd/ejsc.c
 
 #
 #   ejsc
@@ -1775,7 +1775,7 @@ DEPS_88 += $(CONFIG)/inc/ejs.h
 $(CONFIG)/obj/ejsmod.o: \
     src/cmd/ejsmod.c $(DEPS_88)
 	@echo '   [Compile] $(CONFIG)/obj/ejsmod.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsmod.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/cmd/ejsmod.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsmod.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/cmd/ejsmod.c
 
 #
 #   doc.o
@@ -1786,7 +1786,7 @@ DEPS_89 += src/cmd/ejsmod.h
 $(CONFIG)/obj/doc.o: \
     src/cmd/doc.c $(DEPS_89)
 	@echo '   [Compile] $(CONFIG)/obj/doc.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/doc.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/cmd/doc.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/doc.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/cmd/doc.c
 
 #
 #   docFiles.o
@@ -1797,7 +1797,7 @@ DEPS_90 += src/cmd/ejsmod.h
 $(CONFIG)/obj/docFiles.o: \
     src/cmd/docFiles.c $(DEPS_90)
 	@echo '   [Compile] $(CONFIG)/obj/docFiles.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/docFiles.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/cmd/docFiles.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/docFiles.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/cmd/docFiles.c
 
 #
 #   listing.o
@@ -1809,7 +1809,7 @@ DEPS_91 += $(CONFIG)/inc/ejsByteCodeTable.h
 $(CONFIG)/obj/listing.o: \
     src/cmd/listing.c $(DEPS_91)
 	@echo '   [Compile] $(CONFIG)/obj/listing.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/listing.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/cmd/listing.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/listing.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/cmd/listing.c
 
 #
 #   slotGen.o
@@ -1820,7 +1820,7 @@ DEPS_92 += src/cmd/ejsmod.h
 $(CONFIG)/obj/slotGen.o: \
     src/cmd/slotGen.c $(DEPS_92)
 	@echo '   [Compile] $(CONFIG)/obj/slotGen.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/slotGen.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/cmd/slotGen.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/slotGen.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/cmd/slotGen.c
 
 #
 #   ejsmod
@@ -3158,7 +3158,7 @@ DEPS_105 += $(CONFIG)/inc/ejsCompiler.h
 $(CONFIG)/obj/ejsrun.o: \
     src/cmd/ejsrun.c $(DEPS_105)
 	@echo '   [Compile] $(CONFIG)/obj/ejsrun.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsrun.o $(LDFLAGS) $(IFLAGS) src/cmd/ejsrun.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsrun.o $(LDFLAGS) $(IFLAGS) src/cmd/ejsrun.c
 
 #
 #   ejsrun
@@ -3282,7 +3282,7 @@ DEPS_108 += $(CONFIG)/inc/osdep.h
 $(CONFIG)/obj/estLib.o: \
     src/paks/est/estLib.c $(DEPS_108)
 	@echo '   [Compile] $(CONFIG)/obj/estLib.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/estLib.o $(LDFLAGS) $(IFLAGS) src/paks/est/estLib.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/estLib.o $(LDFLAGS) $(IFLAGS) src/paks/est/estLib.c
 
 ifeq ($(ME_COM_EST),1)
 #
@@ -3308,7 +3308,7 @@ DEPS_110 += $(CONFIG)/inc/est.h
 $(CONFIG)/obj/mprSsl.o: \
     src/paks/mpr/mprSsl.c $(DEPS_110)
 	@echo '   [Compile] $(CONFIG)/obj/mprSsl.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/mprSsl.o $(LDFLAGS) $(IFLAGS) "-I$(ME_COM_MATRIXSSL_PATH)" "-I$(ME_COM_MATRIXSSL_PATH)/matrixssl" "-I$(ME_COM_NANOSSL_PATH)/src" "-I$(ME_COM_OPENSSL_PATH)/include" src/paks/mpr/mprSsl.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/mprSsl.o $(LDFLAGS) $(IFLAGS) "-I$(ME_COM_MATRIXSSL_PATH)" "-I$(ME_COM_MATRIXSSL_PATH)/matrixssl" "-I$(ME_COM_NANOSSL_PATH)/src" "-I$(ME_COM_OPENSSL_PATH)/include" src/paks/mpr/mprSsl.c
 
 #
 #   libmprssl
@@ -3338,7 +3338,7 @@ DEPS_112 += $(CONFIG)/inc/http.h
 $(CONFIG)/obj/http.o: \
     src/paks/http/http.c $(DEPS_112)
 	@echo '   [Compile] $(CONFIG)/obj/http.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/http.o $(LDFLAGS) $(IFLAGS) "-I$(ME_COM_MATRIXSSL_PATH)" "-I$(ME_COM_MATRIXSSL_PATH)/matrixssl" "-I$(ME_COM_NANOSSL_PATH)/src" "-I$(ME_COM_OPENSSL_PATH)/include" src/paks/http/http.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/http.o $(LDFLAGS) $(IFLAGS) "-I$(ME_COM_MATRIXSSL_PATH)" "-I$(ME_COM_MATRIXSSL_PATH)/matrixssl" "-I$(ME_COM_NANOSSL_PATH)/src" "-I$(ME_COM_OPENSSL_PATH)/include" src/paks/http/http.c
 
 ifeq ($(ME_COM_HTTP),1)
 #
@@ -3414,7 +3414,7 @@ DEPS_115 += $(CONFIG)/inc/sqlite3.h
 $(CONFIG)/obj/sqlite3.o: \
     src/paks/sqlite/sqlite3.c $(DEPS_115)
 	@echo '   [Compile] $(CONFIG)/obj/sqlite3.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/sqlite3.o $(LDFLAGS) $(IFLAGS) src/paks/sqlite/sqlite3.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/sqlite3.o $(LDFLAGS) $(IFLAGS) src/paks/sqlite/sqlite3.c
 
 ifeq ($(ME_COM_SQLITE),1)
 #
@@ -3445,7 +3445,7 @@ DEPS_117 += $(CONFIG)/inc/ejs.db.sqlite.slots.h
 $(CONFIG)/obj/ejsSqlite.o: \
     src/ejs.db.sqlite/ejsSqlite.c $(DEPS_117)
 	@echo '   [Compile] $(CONFIG)/obj/ejsSqlite.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsSqlite.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/ejs.db.sqlite/ejsSqlite.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsSqlite.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/ejs.db.sqlite/ejsSqlite.c
 
 #
 #   libejs.db.sqlite
@@ -3583,7 +3583,7 @@ DEPS_120 += $(CONFIG)/inc/ejs.web.slots.h
 $(CONFIG)/obj/ejsHttpServer.o: \
     src/ejs.web/ejsHttpServer.c $(DEPS_120)
 	@echo '   [Compile] $(CONFIG)/obj/ejsHttpServer.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsHttpServer.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/ejs.web/ejsHttpServer.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsHttpServer.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/ejs.web/ejsHttpServer.c
 
 #
 #   ejsRequest.o
@@ -3603,7 +3603,7 @@ DEPS_121 += $(CONFIG)/inc/ejs.web.slots.h
 $(CONFIG)/obj/ejsRequest.o: \
     src/ejs.web/ejsRequest.c $(DEPS_121)
 	@echo '   [Compile] $(CONFIG)/obj/ejsRequest.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsRequest.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/ejs.web/ejsRequest.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsRequest.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/ejs.web/ejsRequest.c
 
 #
 #   ejsSession.o
@@ -3621,7 +3621,7 @@ DEPS_122 += $(CONFIG)/inc/ejsWeb.h
 $(CONFIG)/obj/ejsSession.o: \
     src/ejs.web/ejsSession.c $(DEPS_122)
 	@echo '   [Compile] $(CONFIG)/obj/ejsSession.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsSession.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/ejs.web/ejsSession.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsSession.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/ejs.web/ejsSession.c
 
 #
 #   ejsWeb.o
@@ -3641,7 +3641,7 @@ DEPS_123 += $(CONFIG)/inc/ejs.web.slots.h
 $(CONFIG)/obj/ejsWeb.o: \
     src/ejs.web/ejsWeb.c $(DEPS_123)
 	@echo '   [Compile] $(CONFIG)/obj/ejsWeb.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsWeb.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/ejs.web/ejsWeb.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsWeb.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/ejs.web/ejsWeb.c
 
 #
 #   libejs.web
@@ -3768,7 +3768,7 @@ DEPS_126 += $(CONFIG)/inc/zlib.h
 $(CONFIG)/obj/zlib.o: \
     src/paks/zlib/zlib.c $(DEPS_126)
 	@echo '   [Compile] $(CONFIG)/obj/zlib.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/zlib.o $(LDFLAGS) $(IFLAGS) src/paks/zlib/zlib.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/zlib.o $(LDFLAGS) $(IFLAGS) src/paks/zlib/zlib.c
 
 ifeq ($(ME_COM_ZLIB),1)
 #
@@ -3800,7 +3800,7 @@ DEPS_128 += $(CONFIG)/inc/ejs.zlib.slots.h
 $(CONFIG)/obj/ejsZlib.o: \
     src/ejs.zlib/ejsZlib.c $(DEPS_128)
 	@echo '   [Compile] $(CONFIG)/obj/ejsZlib.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/ejsZlib.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/ejs.zlib/ejsZlib.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/ejsZlib.o $(LDFLAGS) $(IFLAGS) "-Isrc/cmd" src/ejs.zlib/ejsZlib.c
 
 #
 #   libejs.zlib
@@ -3921,7 +3921,7 @@ DEPS_130 += $(CONFIG)/inc/mpr.h
 $(CONFIG)/obj/manager.o: \
     src/paks/mpr/manager.c $(DEPS_130)
 	@echo '   [Compile] $(CONFIG)/obj/manager.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/manager.o $(LDFLAGS) $(IFLAGS) src/paks/mpr/manager.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/manager.o $(LDFLAGS) $(IFLAGS) src/paks/mpr/manager.c
 
 #
 #   manager
@@ -4059,7 +4059,7 @@ DEPS_134 += $(CONFIG)/inc/sqlite3.h
 $(CONFIG)/obj/sqlite.o: \
     src/paks/sqlite/sqlite.c $(DEPS_134)
 	@echo '   [Compile] $(CONFIG)/obj/sqlite.o'
-	$(CC) -c $(CFLAGS) $(DFLAGS) -o $(CONFIG)/obj/sqlite.o $(LDFLAGS) $(IFLAGS) src/paks/sqlite/sqlite.c
+	$(CC) -c $(DFLAGS) -o $(CONFIG)/obj/sqlite.o $(LDFLAGS) $(IFLAGS) src/paks/sqlite/sqlite.c
 
 ifeq ($(ME_COM_SQLITE),1)
 #
