@@ -1637,7 +1637,7 @@ endif
 
 $(CONFIG)/bin/ejs: $(DEPS_84)
 	@echo '      [Link] $(CONFIG)/bin/ejs'
-	$(CC) -o $(CONFIG)/bin/ejs -arch $(CC_ARCH) -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ $(LIBPATHS) "$(CONFIG)/obj/ejs.o" $(LIBPATHS_84) $(LIBS_84) $(LIBS_84) $(LIBS) -lpam -ledit 
+	$(CC) -o $(CONFIG)/bin/ejs -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/ejs.o" $(LIBPATHS_84) $(LIBS_84) $(LIBS_84) $(LIBS) -lpam -ledit 
 
 #
 #   ejsc.o
@@ -1751,7 +1751,7 @@ endif
 
 $(CONFIG)/bin/ejsc: $(DEPS_86)
 	@echo '      [Link] $(CONFIG)/bin/ejsc'
-	$(CC) -o $(CONFIG)/bin/ejsc -arch $(CC_ARCH) -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ $(LIBPATHS) "$(CONFIG)/obj/ejsc.o" $(LIBPATHS_86) $(LIBS_86) $(LIBS_86) $(LIBS) -lpam 
+	$(CC) -o $(CONFIG)/bin/ejsc -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/ejsc.o" $(LIBPATHS_86) $(LIBS_86) $(LIBS_86) $(LIBS) -lpam 
 
 #
 #   ejsmod.h
@@ -1928,7 +1928,7 @@ endif
 
 $(CONFIG)/bin/ejsmod: $(DEPS_93)
 	@echo '      [Link] $(CONFIG)/bin/ejsmod'
-	$(CC) -o $(CONFIG)/bin/ejsmod -arch $(CC_ARCH) -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ $(LIBPATHS) "$(CONFIG)/obj/ejsmod.o" "$(CONFIG)/obj/doc.o" "$(CONFIG)/obj/docFiles.o" "$(CONFIG)/obj/listing.o" "$(CONFIG)/obj/slotGen.o" $(LIBPATHS_93) $(LIBS_93) $(LIBS_93) $(LIBS) -lpam 
+	$(CC) -o $(CONFIG)/bin/ejsmod -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/ejsmod.o" "$(CONFIG)/obj/doc.o" "$(CONFIG)/obj/docFiles.o" "$(CONFIG)/obj/listing.o" "$(CONFIG)/obj/slotGen.o" $(LIBPATHS_93) $(LIBS_93) $(LIBS_93) $(LIBS) -lpam 
 
 #
 #   ejs.mod
@@ -3261,7 +3261,7 @@ endif
 
 $(CONFIG)/bin/ejsrun: $(DEPS_106)
 	@echo '      [Link] $(CONFIG)/bin/ejsrun'
-	$(CC) -o $(CONFIG)/bin/ejsrun -arch $(CC_ARCH) -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_106) $(LIBS_106) $(LIBS_106) $(LIBS) -lpam 
+	$(CC) -o $(CONFIG)/bin/ejsrun -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_106) $(LIBS_106) $(LIBS_106) $(LIBS) -lpam 
 
 
 #
@@ -3394,7 +3394,7 @@ endif
 
 $(CONFIG)/bin/http: $(DEPS_113)
 	@echo '      [Link] $(CONFIG)/bin/http'
-	$(CC) -o $(CONFIG)/bin/http -arch $(CC_ARCH) -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ $(LIBPATHS)    "$(CONFIG)/obj/http.o" $(LIBPATHS_113) $(LIBS_113) $(LIBS_113) $(LIBS) -lpam 
+	$(CC) -o $(CONFIG)/bin/http -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS)    "$(CONFIG)/obj/http.o" $(LIBPATHS_113) $(LIBS_113) $(LIBS_113) $(LIBS) -lpam 
 endif
 
 #
@@ -3937,7 +3937,7 @@ LIBS_131 += -lmpr
 
 $(CONFIG)/bin/ejsman: $(DEPS_131)
 	@echo '      [Link] $(CONFIG)/bin/ejsman'
-	$(CC) -o $(CONFIG)/bin/ejsman -arch $(CC_ARCH) -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ $(LIBPATHS) "$(CONFIG)/obj/manager.o" $(LIBPATHS_131) $(LIBS_131) $(LIBS_131) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/ejsman -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/manager.o" $(LIBPATHS_131) $(LIBS_131) $(LIBS_131) $(LIBS) 
 
 #
 #   mvc.es
@@ -4048,7 +4048,7 @@ endif
 
 $(CONFIG)/bin/mvc: $(DEPS_133)
 	@echo '      [Link] $(CONFIG)/bin/mvc'
-	$(CC) -o $(CONFIG)/bin/mvc -arch $(CC_ARCH) -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_133) $(LIBS_133) $(LIBS_133) $(LIBS) -lpam 
+	$(CC) -o $(CONFIG)/bin/mvc -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_133) $(LIBS_133) $(LIBS_133) $(LIBS) -lpam 
 
 #
 #   sqlite.o
@@ -4075,7 +4075,7 @@ LIBS_135 += -lsql
 
 $(CONFIG)/bin/sqlite: $(DEPS_135)
 	@echo '      [Link] $(CONFIG)/bin/sqlite'
-	$(CC) -o $(CONFIG)/bin/sqlite -arch $(CC_ARCH) -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ $(LIBPATHS) "$(CONFIG)/obj/sqlite.o" $(LIBPATHS_135) $(LIBS_135) $(LIBS_135) $(LIBS) 
+	$(CC) -o $(CONFIG)/bin/sqlite -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/sqlite.o" $(LIBPATHS_135) $(LIBS_135) $(LIBS_135) $(LIBS) 
 endif
 
 #
@@ -4195,7 +4195,7 @@ endif
 
 $(CONFIG)/bin/utest: $(DEPS_138)
 	@echo '      [Link] $(CONFIG)/bin/utest'
-	$(CC) -o $(CONFIG)/bin/utest -arch $(CC_ARCH) -Wl,-rpath,@executable_path/ -Wl,-rpath,@loader_path/ $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_138) $(LIBS_138) $(LIBS_138) $(LIBS) -lpam 
+	$(CC) -o $(CONFIG)/bin/utest -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) "$(CONFIG)/obj/ejsrun.o" $(LIBPATHS_138) $(LIBS_138) $(LIBS_138) $(LIBS) -lpam 
 
 #
 #   www
