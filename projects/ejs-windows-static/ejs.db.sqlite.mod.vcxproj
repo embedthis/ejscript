@@ -93,6 +93,13 @@
     <AdditionalDependencies>libejs.lib;libhttp.lib;libmpr.lib;libpcre.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
+
+  <CustomBuildStep>
+    <Command>cd ..\..\src\ejs.db.sqlite
+$(BinDir)/ejsc --out $(BinDir)/ejs.db.sqlite.mod  --optimize 9 *.es
+cd ..\..\projects\ejs-windows-static</Command>
+    <Outputs>$(BinDir)\ejs.db.sqlite.mod</Outputs>
+  </CustomBuildStep>
   </ItemDefinitionGroup>
 
 <ItemGroup>

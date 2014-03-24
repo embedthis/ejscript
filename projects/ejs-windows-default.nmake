@@ -2292,7 +2292,9 @@ DEPS_95 = $(DEPS_95) $(CONFIG)\bin\ejsmod.exe
 DEPS_95 = $(DEPS_95) $(CONFIG)\bin\ejs.mod
 
 $(CONFIG)\bin\ejs.db.mod: $(DEPS_95)
-#  Omit build script ejs.db.mod
+	cd src\ejs.db
+	..\..\$(CONFIG)\bin\ejsc --out ..\..\$(CONFIG)\bin\ejs.db.mod  --optimize 9 *.es
+	cd ..\..
 
 #
 #   ejs.db.mapper.mod
@@ -2396,7 +2398,9 @@ DEPS_96 = $(DEPS_96) $(CONFIG)\bin\ejs.mod
 DEPS_96 = $(DEPS_96) $(CONFIG)\bin\ejs.db.mod
 
 $(CONFIG)\bin\ejs.db.mapper.mod: $(DEPS_96)
-#  Omit build script ejs.db.mapper.mod
+	cd src\ejs.db.mapper
+	..\..\$(CONFIG)\bin\ejsc --out ..\..\$(CONFIG)\bin\ejs.db.mapper.mod  --optimize 9 *.es
+	cd ..\..
 
 #
 #   ejs.db.sqlite.mod
@@ -2499,7 +2503,9 @@ DEPS_97 = $(DEPS_97) $(CONFIG)\bin\ejsmod.exe
 DEPS_97 = $(DEPS_97) $(CONFIG)\bin\ejs.mod
 
 $(CONFIG)\bin\ejs.db.sqlite.mod: $(DEPS_97)
-#  Omit build script ejs.db.sqlite.mod
+	cd src\ejs.db.sqlite
+	..\..\$(CONFIG)\bin\ejsc --out ..\..\$(CONFIG)\bin\ejs.db.sqlite.mod  --optimize 9 *.es
+	cd ..\..
 
 #
 #   ejs.mail.mod
@@ -2837,7 +2843,9 @@ DEPS_100 = $(DEPS_100) $(CONFIG)\bin\ejsmod.exe
 DEPS_100 = $(DEPS_100) $(CONFIG)\bin\ejs.mod
 
 $(CONFIG)\bin\ejs.template.mod: $(DEPS_100)
-#  Omit build script ejs.template.mod
+	cd src\ejs.template
+	..\..\$(CONFIG)\bin\ejsc --out ..\..\$(CONFIG)\bin\ejs.template.mod  --optimize 9 TemplateParser.es
+	cd ..\..
 
 #
 #   ejs.unix.mod
@@ -2940,7 +2948,9 @@ DEPS_101 = $(DEPS_101) $(CONFIG)\bin\ejsmod.exe
 DEPS_101 = $(DEPS_101) $(CONFIG)\bin\ejs.mod
 
 $(CONFIG)\bin\ejs.unix.mod: $(DEPS_101)
-#  Omit build script ejs.unix.mod
+	cd src\ejs.unix
+	..\..\$(CONFIG)\bin\ejsc --out ..\..\$(CONFIG)\bin\ejs.unix.mod  --optimize 9 Unix.es
+	cd ..\..
 
 #
 #   ejs.mvc.mod
@@ -3046,7 +3056,9 @@ DEPS_102 = $(DEPS_102) $(CONFIG)\bin\ejs.template.mod
 DEPS_102 = $(DEPS_102) $(CONFIG)\bin\ejs.unix.mod
 
 $(CONFIG)\bin\ejs.mvc.mod: $(DEPS_102)
-#  Omit build script ejs.mvc.mod
+	cd src\ejs.mvc
+	..\..\$(CONFIG)\bin\ejsc --out ..\..\$(CONFIG)\bin\ejs.mvc.mod  --optimize 9 *.es
+	cd ..\..
 
 #
 #   ejs.tar.mod
@@ -3149,7 +3161,9 @@ DEPS_103 = $(DEPS_103) $(CONFIG)\bin\ejsmod.exe
 DEPS_103 = $(DEPS_103) $(CONFIG)\bin\ejs.mod
 
 $(CONFIG)\bin\ejs.tar.mod: $(DEPS_103)
-#  Omit build script ejs.tar.mod
+	cd src\ejs.tar
+	..\..\$(CONFIG)\bin\ejsc --out ..\..\$(CONFIG)\bin\ejs.tar.mod  --optimize 9 *.es
+	cd ..\..
 
 #
 #   ejs.zlib.mod
@@ -3252,7 +3266,9 @@ DEPS_104 = $(DEPS_104) $(CONFIG)\bin\ejsmod.exe
 DEPS_104 = $(DEPS_104) $(CONFIG)\bin\ejs.mod
 
 $(CONFIG)\bin\ejs.zlib.mod: $(DEPS_104)
-#  Omit build script ejs.zlib.mod
+	cd src\ejs.zlib
+	..\..\$(CONFIG)\bin\ejsc --out ..\..\$(CONFIG)\bin\ejs.zlib.mod  --optimize 9 *.es
+	cd ..\..
 
 #
 #   ejsrun.obj
@@ -4077,7 +4093,9 @@ $(CONFIG)\bin\ejsman.exe: $(DEPS_131)
 DEPS_132 = $(DEPS_132) src\ejs.mvc\mvc.es
 
 $(CONFIG)\bin\mvc.es: $(DEPS_132)
-#  Omit build script mvc.es
+	cd src\ejs.mvc
+	copy mvc.es ..\..\$(CONFIG)\bin
+	cd ..\..
 
 #
 #   mvc
@@ -4237,7 +4255,9 @@ $(CONFIG)\bin\sqlite.exe: $(DEPS_137)
 DEPS_138 = $(DEPS_138) src\ejs.utest\utest.es
 
 $(CONFIG)\bin\utest.es: $(DEPS_138)
-#  Omit build script utest.es
+	cd src\ejs.utest
+	copy utest.es ..\..\$(CONFIG)\bin
+	cd ..\..
 
 #
 #   utest.worker
@@ -4245,7 +4265,9 @@ $(CONFIG)\bin\utest.es: $(DEPS_138)
 DEPS_139 = $(DEPS_139) src\ejs.utest\utest.worker
 
 $(CONFIG)\bin\utest.worker: $(DEPS_139)
-#  Omit build script utest.worker
+	cd src\ejs.utest
+	copy utest.worker ..\..\$(CONFIG)\bin
+	cd ..\..
 
 #
 #   utest
@@ -4528,5 +4550,5 @@ uninstall: $(DEPS_146)
 #   version
 #
 version: $(DEPS_147)
-#  Omit build script version
+	echo 2.3.5
 

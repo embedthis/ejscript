@@ -93,6 +93,13 @@
     <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
+
+  <CustomBuildStep>
+    <Command>cd ..\..\src\ejs.utest
+copy utest.worker $(BinDir)
+cd ..\..\projects\ejs-windows-static</Command>
+    <Outputs>$(BinDir)\utest.worker</Outputs>
+  </CustomBuildStep>
   </ItemDefinitionGroup>
 
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />

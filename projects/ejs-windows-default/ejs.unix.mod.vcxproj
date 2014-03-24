@@ -93,6 +93,13 @@
     <AdditionalDependencies>libejs.lib;libhttp.lib;libmpr.lib;libpcre.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
+
+  <CustomBuildStep>
+    <Command>cd ..\..\src\ejs.unix
+$(BinDir)/ejsc --out $(BinDir)/ejs.unix.mod  --optimize 9 Unix.es
+cd ..\..\projects\ejs-windows-default</Command>
+    <Outputs>$(BinDir)\ejs.unix.mod</Outputs>
+  </CustomBuildStep>
   </ItemDefinitionGroup>
 
 <ItemGroup>

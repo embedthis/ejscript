@@ -93,6 +93,13 @@
     <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
     <AdditionalLibraryDirectories>$(OutDir);;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
   </Link>
+
+  <CustomBuildStep>
+    <Command>cd ..\..\src\ejs.mvc
+copy mvc.es $(BinDir)
+cd ..\..\projects\ejs-windows-static</Command>
+    <Outputs>$(BinDir)\mvc.es</Outputs>
+  </CustomBuildStep>
   </ItemDefinitionGroup>
 
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />

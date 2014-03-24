@@ -2178,6 +2178,10 @@ DEPS_95 += $(CONFIG)/bin/ejsmod.out
 DEPS_95 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.db.mod: $(DEPS_95)
+	( \
+	cd src/ejs.db; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.db.mod  --optimize 9 *.es ; \
+	)
 
 #
 #   ejs.db.mapper.mod
@@ -2281,6 +2285,10 @@ DEPS_96 += $(CONFIG)/bin/ejs.mod
 DEPS_96 += $(CONFIG)/bin/ejs.db.mod
 
 $(CONFIG)/bin/ejs.db.mapper.mod: $(DEPS_96)
+	( \
+	cd src/ejs.db.mapper; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.db.mapper.mod  --optimize 9 *.es ; \
+	)
 
 #
 #   ejs.db.sqlite.mod
@@ -2383,6 +2391,10 @@ DEPS_97 += $(CONFIG)/bin/ejsmod.out
 DEPS_97 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.db.sqlite.mod: $(DEPS_97)
+	( \
+	cd src/ejs.db.sqlite; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.db.sqlite.mod  --optimize 9 *.es ; \
+	)
 
 #
 #   ejs.mail.mod
@@ -2722,6 +2734,10 @@ DEPS_100 += $(CONFIG)/bin/ejsmod.out
 DEPS_100 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.template.mod: $(DEPS_100)
+	( \
+	cd src/ejs.template; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.template.mod  --optimize 9 TemplateParser.es ; \
+	)
 
 #
 #   ejs.unix.mod
@@ -2824,6 +2840,10 @@ DEPS_101 += $(CONFIG)/bin/ejsmod.out
 DEPS_101 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.unix.mod: $(DEPS_101)
+	( \
+	cd src/ejs.unix; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.unix.mod  --optimize 9 Unix.es ; \
+	)
 
 #
 #   ejs.mvc.mod
@@ -2929,6 +2949,10 @@ DEPS_102 += $(CONFIG)/bin/ejs.template.mod
 DEPS_102 += $(CONFIG)/bin/ejs.unix.mod
 
 $(CONFIG)/bin/ejs.mvc.mod: $(DEPS_102)
+	( \
+	cd src/ejs.mvc; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.mvc.mod  --optimize 9 *.es ; \
+	)
 
 #
 #   ejs.tar.mod
@@ -3031,6 +3055,10 @@ DEPS_103 += $(CONFIG)/bin/ejsmod.out
 DEPS_103 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.tar.mod: $(DEPS_103)
+	( \
+	cd src/ejs.tar; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.tar.mod  --optimize 9 *.es ; \
+	)
 
 #
 #   ejs.zlib.mod
@@ -3133,6 +3161,10 @@ DEPS_104 += $(CONFIG)/bin/ejsmod.out
 DEPS_104 += $(CONFIG)/bin/ejs.mod
 
 $(CONFIG)/bin/ejs.zlib.mod: $(DEPS_104)
+	( \
+	cd src/ejs.zlib; \
+	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.zlib.mod  --optimize 9 *.es ; \
+	)
 
 #
 #   ejsrun.o
@@ -3903,6 +3935,10 @@ $(CONFIG)/bin/ejsman.out: $(DEPS_131)
 DEPS_132 += src/ejs.mvc/mvc.es
 
 $(CONFIG)/bin/mvc.es: $(DEPS_132)
+	( \
+	cd src/ejs.mvc; \
+	cp mvc.es ../../$(CONFIG)/bin ; \
+	)
 
 #
 #   mvc
@@ -4031,6 +4067,10 @@ endif
 DEPS_136 += src/ejs.utest/utest.es
 
 $(CONFIG)/bin/utest.es: $(DEPS_136)
+	( \
+	cd src/ejs.utest; \
+	cp utest.es ../../$(CONFIG)/bin ; \
+	)
 
 #
 #   utest.worker
@@ -4038,6 +4078,10 @@ $(CONFIG)/bin/utest.es: $(DEPS_136)
 DEPS_137 += src/ejs.utest/utest.worker
 
 $(CONFIG)/bin/utest.worker: $(DEPS_137)
+	( \
+	cd src/ejs.utest; \
+	cp utest.worker ../../$(CONFIG)/bin ; \
+	)
 
 #
 #   utest
@@ -4182,4 +4226,5 @@ uninstall: $(DEPS_144)
 #   version
 #
 version: $(DEPS_145)
+	echo 2.3.5
 

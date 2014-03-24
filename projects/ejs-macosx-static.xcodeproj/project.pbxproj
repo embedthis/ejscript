@@ -3140,6 +3140,58 @@ mkdir -p ../../${OUT_DIR}/bin
 cp -r ca.crt ../../${OUT_DIR}/bin/ca.crt
 ";
 		};
+		9AD78D7E9AD79CB40000000B /* ShellScript for ejs.db.mapper.mod */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+../src/ejs.db.mapper/Record.es
+			);
+			outputPaths = (
+../macosx-x64-static/bin/ejs.db.mapper.mod
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "PATH=$PATH:/usr/local/bin
+cd ../src/ejs.db.mapper
+../../macosx-x64-static/bin/ejsc --out ../../macosx-x64-static/bin/ejs.db.mapper.mod  --optimize 9 *.es";
+		};
+		9AD78D7E9AD79CB400000012 /* ShellScript for ejs.db.mod */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+../src/ejs.db/Database.es,
+../src/ejs.db/DatabaseConnector.es
+			);
+			outputPaths = (
+../macosx-x64-static/bin/ejs.db.mod
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "PATH=$PATH:/usr/local/bin
+cd ../src/ejs.db
+../../macosx-x64-static/bin/ejsc --out ../../macosx-x64-static/bin/ejs.db.mod  --optimize 9 *.es";
+		};
+		9AD78D7E9AD79CB400000018 /* ShellScript for ejs.db.sqlite.mod */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+../src/ejs.db.sqlite/Sqlite.es
+			);
+			outputPaths = (
+../macosx-x64-static/bin/ejs.db.sqlite.mod
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "PATH=$PATH:/usr/local/bin
+cd ../src/ejs.db.sqlite
+../../macosx-x64-static/bin/ejsc --out ../../macosx-x64-static/bin/ejs.db.sqlite.mod  --optimize 9 *.es";
+		};
 		9AD78D7E9AD79CB40000001F /* ShellScript for ejs.mail.mod */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -3230,6 +3282,74 @@ cd ../src/core
 if ! diff ejs.slots.h ../../macosx-x64-static/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ../../macosx-x64-static/inc; fi
 rm -f ejs.slots.h";
 		};
+		9AD78D7E9AD79CB40000002B /* ShellScript for ejs.mvc.mod */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+../src/ejs.mvc/mvc.es
+			);
+			outputPaths = (
+../macosx-x64-static/bin/ejs.mvc.mod
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "PATH=$PATH:/usr/local/bin
+cd ../src/ejs.mvc
+../../macosx-x64-static/bin/ejsc --out ../../macosx-x64-static/bin/ejs.mvc.mod  --optimize 9 *.es";
+		};
+		9AD78D7E9AD79CB400000034 /* ShellScript for ejs.tar.mod */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+../src/ejs.tar/Tar.es
+			);
+			outputPaths = (
+../macosx-x64-static/bin/ejs.tar.mod
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "PATH=$PATH:/usr/local/bin
+cd ../src/ejs.tar
+../../macosx-x64-static/bin/ejsc --out ../../macosx-x64-static/bin/ejs.tar.mod  --optimize 9 *.es";
+		};
+		9AD78D7E9AD79CB40000003A /* ShellScript for ejs.template.mod */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+../src/ejs.template/TemplateParser.es
+			);
+			outputPaths = (
+../macosx-x64-static/bin/ejs.template.mod
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "PATH=$PATH:/usr/local/bin
+cd ../src/ejs.template
+../../macosx-x64-static/bin/ejsc --out ../../macosx-x64-static/bin/ejs.template.mod  --optimize 9 TemplateParser.es";
+		};
+		9AD78D7E9AD79CB400000040 /* ShellScript for ejs.unix.mod */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+../src/ejs.unix/Unix.es
+			);
+			outputPaths = (
+../macosx-x64-static/bin/ejs.unix.mod
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "PATH=$PATH:/usr/local/bin
+cd ../src/ejs.unix
+../../macosx-x64-static/bin/ejsc --out ../../macosx-x64-static/bin/ejs.unix.mod  --optimize 9 Unix.es";
+		};
 		9AD78D7E9AD79CB400000046 /* ShellScript for ejs.web.mod */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -3271,6 +3391,74 @@ cd ../src/ejs.web
 ../../macosx-x64-static/bin/ejsmod --cslots ../../macosx-x64-static/bin/ejs.web.mod
 if ! diff ejs.web.slots.h ../../macosx-x64-static/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../macosx-x64-static/inc; fi
 rm -f ejs.web.slots.h";
+		};
+		9AD78D7E9AD79CB40000004D /* ShellScript for ejs.zlib.mod */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+../src/ejs.zlib/Zlib.es
+			);
+			outputPaths = (
+../macosx-x64-static/bin/ejs.zlib.mod
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "PATH=$PATH:/usr/local/bin
+cd ../src/ejs.zlib
+../../macosx-x64-static/bin/ejsc --out ../../macosx-x64-static/bin/ejs.zlib.mod  --optimize 9 *.es";
+		};
+		9AD78D7E9AD79CB400000053 /* ShellScript for mvc.es */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+../src/ejs.mvc/mvc.es
+			);
+			outputPaths = (
+../macosx-x64-static/bin/mvc.es
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "PATH=$PATH:/usr/local/bin
+cd ../src/ejs.mvc
+cp mvc.es ../../macosx-x64-static/bin";
+		};
+		9AD78D7E9AD79CB400000057 /* ShellScript for utest.es */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+../src/ejs.utest/utest.es
+			);
+			outputPaths = (
+../macosx-x64-static/bin/utest.es
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "PATH=$PATH:/usr/local/bin
+cd ../src/ejs.utest
+cp utest.es ../../macosx-x64-static/bin";
+		};
+		9AD78D7E9AD79CB40000005B /* ShellScript for utest.worker */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+../src/ejs.utest/utest.worker
+			);
+			outputPaths = (
+../macosx-x64-static/bin/utest.worker
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "PATH=$PATH:/usr/local/bin
+cd ../src/ejs.utest
+cp utest.worker ../../macosx-x64-static/bin";
 		};
 		9AD78D7E9AD79CB40000005F /* ShellScript for www */ = {
 			isa = PBXShellScriptBuildPhase;
