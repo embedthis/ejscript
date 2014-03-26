@@ -560,14 +560,14 @@ enumerable class Test {
     }
 
     function searchUp(path: Path): Path? {
-        if (path.exists) {
+        if (path.exists && !path.isDir) {
             return path
         }
         path = Path(path).relative
         dir = Path("..")
         while (true) {
             up = Path(dir.relative).join(path)
-            if (up.exists) {
+            if (up.exists && !up.isDir) {
                 return up
             }
             if (dir.parent == dir) {
