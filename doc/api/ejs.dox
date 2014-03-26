@@ -1258,16 +1258,16 @@ INCLUDE_FILE_PATTERNS  =
 PREDEFINED             = DOXYGEN=1 \
                          WIN=1 \
 						 LINUX=1 \
-                         BLD_UNIX_LIKE=1 \
-                         BLD_WIN_LIKE=1 \
-                         BLD_ASSERT=1 \
-                         BLD_FLOAT=1 \
-                         BLD_COMP_PCRE=1 \
-                         BLD_COMP_SQLITE=1 \
-                         BLD_COMP_SSL=1 \
-                         BLD_COMP_OPENSSL=1 \
-                         BLD_COMP_MATRIXSSL=1 \
-                         BLD_COMP_ZLIB=1 \
+                         ME_UNIX_LIKE=1 \
+                         ME_WIN_LIKE=1 \
+                         ME_ASSERT=1 \
+                         ME_FLOAT=1 \
+                         ME_COM_PCRE=1 \
+                         ME_COM_SQLITE=1 \
+                         ME_COM_SSL=1 \
+                         ME_COM_OPENSSL=1 \
+                         ME_COM_MATRIXSSL=1 \
+                         ME_COM_ZLIB=1 \
                          PUBLIC=
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
