@@ -8826,7 +8826,7 @@ typedef struct MprCmdFile {
         read, write and error data with the command. 
     @stability Stable.
     @see mprCloseCmdFd mprCreateCmd mprDestroyCmd mprDisableCmdEvents mprDisconnectCmd mprEnableCmdEvents 
-        mprFinalizeCmd mprGetCmdBuf mprGetCmdExitStatus mprGetCmdFd mprIsCmdComplete mprIsCmdRunning mprPollCmd 
+        mprFinalizeCmd mprGetCmdBuf mprGetCmdExitStatus mprGetCmdFd mprIsCmdComplete mprIsCmdRunning
         mprReadCmd mprReapCmd mprRunCmd mprRunCmdV mprSetCmdCallback mprSetCmdDir mprSetCmdEnv mprSetCmdSearchPath 
         mprStartCmd mprStopCmd mprWaitForCmd mprWriteCmd mprWriteCmdBlock
     @defgroup MprCmd MprCmd
@@ -9016,6 +9016,7 @@ PUBLIC int mprIsCmdComplete(MprCmd *cmd);
  */
 PUBLIC bool mprIsCmdRunning(MprCmd *cmd);
 
+#if ME_WIN_LIKE
 /**
     Poll for I/O on the command pipes. This is only used on windows which can't adequately detect EOF on a named pipe.
     @param cmd MprCmd object created via mprCreateCmd
@@ -9024,6 +9025,16 @@ PUBLIC bool mprIsCmdRunning(MprCmd *cmd);
     @stability Stable
  */
 PUBLIC void mprPollWinCmd(MprCmd *cmd, MprTicks timeout);
+
+/**
+    Start a timer calling mprPollWinCmd.
+    @description This is useful for detached commands.
+    @param cmd MprCmd object created via mprCreateCmd
+    @ingroup MprCmd
+    @stability Prototype
+ */
+PUBLIC void mprStartWinPollTimer(MprCmd *cmd);
+#endif
 
 /**
     Make the I/O channels to send and receive data to and from the command.
