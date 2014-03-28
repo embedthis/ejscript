@@ -40,7 +40,7 @@ struct HttpWebSocket;
 
 #if ME_TUNE_SIZE
     #ifndef ME_MAX_QBUFFER
-        #define ME_MAX_QBUFFER         (4 * 1024)          /**< Maximum buffer for any pipeline queue */
+        #define ME_MAX_QBUFFER         (4 * 1024)       /**< Maximum buffer for any pipeline queue */
     #endif
     #ifndef ME_MAX_CHUNK
         #define ME_MAX_CHUNK           (4 * 1024)          /**< Maximum chunk size for transfer chunk encoding */
