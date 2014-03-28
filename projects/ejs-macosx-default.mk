@@ -4360,7 +4360,7 @@ installBinary: $(DEPS_141)
 	cp $(CONFIG)/bin/libmprssl.dylib $(ME_VAPP_PREFIX)/bin/libmprssl.dylib ; \
 	fi ; \
 	if [ "$(ME_COM_SSL)" = 1 ]; then true ; \
-	cp $(CONFIG)/bin/ca.crt $(ME_VAPP_PREFIX)/bin/ca.crt ; \
+	cp src/paks/est/ca.crt $(ME_VAPP_PREFIX)/bin/ca.crt ; \
 	fi ; \
 	if [ "$(ME_COM_OPENSSL)" = 1 ]; then true ; \
 	cp $(CONFIG)/bin/libssl*.dylib* $(ME_VAPP_PREFIX)/bin/libssl*.dylib* ; \

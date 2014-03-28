@@ -1,5 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>$(IncDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -10,11 +11,13 @@
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
+
   <PropertyGroup Label="Globals">
     <ProjectGuid>{b097bc45-c299-4dfa-944c-cc5c047cd785}</ProjectGuid>
     <RootNamespace />
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
+
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -33,28 +36,27 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
+
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.Default.props" />
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.props" />
+
   <ImportGroup Label="PropertySheets" />
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="product.props" />
@@ -76,21 +78,27 @@
     <Import Project="release.props" />
     <Import Project="x64.props" />
   </ImportGroup>
+
   <PropertyGroup>
     <_ProjectFileVersion>10</_ProjectFileVersion>
+
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(BinDir)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ObjDir)\libejs\</IntDir>
     <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
+
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(BinDir)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ObjDir)\libejs\</IntDir>
     <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">PreBuildEvent</CustomBuildBeforeTargets>
+
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(BinDir)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ObjDir)\libejs\</IntDir>
     <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PreBuildEvent</CustomBuildBeforeTargets>
+
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(BinDir)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ObjDir)\libejs\</IntDir>
     <CustomBuildBeforeTargets Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PreBuildEvent</CustomBuildBeforeTargets>
   </PropertyGroup>
+  
   <ItemGroup>
     <ClCompile Include="..\..\src\compiler\ecAst.c" />
     <ClCompile Include="..\..\src\compiler\ecCodeGen.c" />
@@ -152,43 +160,55 @@
     <ClCompile Include="..\..\src\vm\ejsScope.c" />
     <ClCompile Include="..\..\src\vm\ejsService.c" />
   </ItemGroup>
+
   <ItemGroup>
     <ClInclude Include="$(IncDir)\ejs.cache.local.slots.h" />
   </ItemGroup>
+
   <ItemGroup>
     <ClInclude Include="$(IncDir)\ejs.db.sqlite.slots.h" />
   </ItemGroup>
+
   <ItemGroup>
     <ClInclude Include="$(IncDir)\ejs.slots.h" />
   </ItemGroup>
+
   <ItemGroup>
     <ClInclude Include="$(IncDir)\ejs.web.slots.h" />
   </ItemGroup>
+
   <ItemGroup>
     <ClInclude Include="$(IncDir)\ejs.zlib.slots.h" />
   </ItemGroup>
+
   <ItemGroup>
     <ClInclude Include="$(IncDir)\ejs.h" />
   </ItemGroup>
+
   <ItemGroup>
     <ClInclude Include="$(IncDir)\ejsByteCode.h" />
   </ItemGroup>
+
   <ItemGroup>
     <ClInclude Include="$(IncDir)\ejsByteCodeTable.h" />
   </ItemGroup>
+
   <ItemGroup>
     <ClInclude Include="$(IncDir)\ejsCompiler.h" />
   </ItemGroup>
+
   <ItemGroup>
     <ClInclude Include="$(IncDir)\ejsCustomize.h" />
   </ItemGroup>
+
   <ItemDefinitionGroup>
-    <Link>
-      <AdditionalDependencies>libhttp.lib;libmpr.lib;libpcre.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Link>
-    <CustomBuildStep>
-      <Command>cd ..\..\src
+  <Link>
+    <AdditionalDependencies>libhttp.lib;libmpr.lib;libpcre.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    <AdditionalLibraryDirectories>$(OutDir);$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+  </Link>
+
+  <CustomBuildStep>
+    <Command>cd ..\..\src
 copy /Y slots\ejs.cache.local.slots.h $(IncDir)
 copy /Y slots\ejs.db.sqlite.slots.h $(IncDir)
 copy /Y slots\ejs.slots.h $(IncDir)
@@ -200,16 +220,19 @@ copy /Y ejsByteCodeTable.h $(IncDir)
 copy /Y ejsCompiler.h $(IncDir)
 copy /Y ejsCustomize.h $(IncDir)
 cd ..\projects\ejs-windows-default</Command>
-      <Outputs>$(BinDir)\libejs.dll</Outputs>
-    </CustomBuildStep>
+    <Outputs>$(BinDir)\libejs.dll</Outputs>
+  </CustomBuildStep>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ProjectReference Include="libhttp.vcxproj">
-      <Project>236a87b9-87d7-430d-b73f-d139f8471900</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
+
+<ItemGroup>
+  <ProjectReference Include="libhttp.vcxproj">
+  <Project>236a87b9-87d7-430d-b73f-d139f8471900</Project>
+  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+  </ProjectReference>
+</ItemGroup>
+
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+
 </Project>

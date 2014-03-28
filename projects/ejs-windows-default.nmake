@@ -92,23 +92,22 @@ LDFLAGS               = -nologo -nodefaultlib -incremental:no -debug -machine:$(
 LIBPATHS              = "-libpath:$(CONFIG)\bin"
 LIBS                  = ws2_32.lib advapi32.lib user32.lib kernel32.lib oldnames.lib msvcrt.lib shell32.lib
 
-ME_ROOT_PREFIX        = 
-ME_BASE_PREFIX        = $(ME_ROOT_PREFIX)\usr\local
-ME_DATA_PREFIX        = $(ME_ROOT_PREFIX)\
-ME_STATE_PREFIX       = $(ME_ROOT_PREFIX)\var
-ME_APP_PREFIX         = \usr\local\lib\$(NAME)
-ME_VAPP_PREFIX        = \usr\local\lib\$(NAME)\$(VERSION)
-ME_BIN_PREFIX         = $(ME_ROOT_PREFIX)\usr\local\bin
-ME_INC_PREFIX         = $(ME_ROOT_PREFIX)\usr\local\include
-ME_LIB_PREFIX         = $(ME_ROOT_PREFIX)\usr\local\lib
-ME_MAN_PREFIX         = $(ME_ROOT_PREFIX)\usr\local\share\man
-ME_SBIN_PREFIX        = $(ME_ROOT_PREFIX)\usr\local\sbin
-ME_ETC_PREFIX         = $(ME_ROOT_PREFIX)\etc\$(NAME)
-ME_WEB_PREFIX         = $(ME_ROOT_PREFIX)\var\www\$(NAME)-default
-ME_LOG_PREFIX         = $(ME_ROOT_PREFIX)\var\log\$(NAME)
-ME_SPOOL_PREFIX       = $(ME_ROOT_PREFIX)\var\spool\$(NAME)
-ME_CACHE_PREFIX       = $(ME_ROOT_PREFIX)\var\spool\$(NAME)\cache
-ME_SRC_PREFIX         = $(ME_ROOT_PREFIX)$(NAME)-$(VERSION)
+ME_ROOT_PREFIX        = C:
+ME_BASE_PREFIX        = $(ME_ROOT_PREFIX)\Program Files
+ME_APP_PREFIX         = $(ME_BASE_PREFIX)\Embedthis Ejscript
+ME_VAPP_PREFIX        = $(ME_APP_PREFIX)
+ME_DATA_PREFIX        = $(ME_VAPP_PREFIX)
+ME_STATE_PREFIX       = $(ME_VAPP_PREFIX)
+ME_BIN_PREFIX         = $(ME_VAPP_PREFIX)\bin
+ME_INC_PREFIX         = $(ME_VAPP_PREFIX)\inc
+ME_LIB_PREFIX         = $(ME_VAPP_PREFIX)\lib
+ME_MAN_PREFIX         = $(ME_VAPP_PREFIX)\man
+ME_ETC_PREFIX         = $(ME_VAPP_PREFIX)
+ME_WEB_PREFIX         = $(ME_VAPP_PREFIX)\web
+ME_LOG_PREFIX         = $(ME_VAPP_PREFIX)\log
+ME_SPOOL_PREFIX       = $(ME_VAPP_PREFIX)\tmp
+ME_CACHE_PREFIX       = $(ME_VAPP_PREFIX)\cache
+ME_SRC_PREFIX         = $(ME_VAPP_PREFIX)\src
 
 
 !IF "$(ME_COM_EST)" == "1"
@@ -4398,124 +4397,124 @@ stop: $(DEPS_142)
 installBinary: $(DEPS_143)
 	cd .
 	if not exist "$(ME_VAPP_PREFIX)\bin" md "$(ME_VAPP_PREFIX)\bin"
-	copy /Y $(CONFIG)\bin\ejs.exe $(ME_VAPP_PREFIX)\bin\ejs.exe
-	copy /Y $(CONFIG)\bin\ejsc.exe $(ME_VAPP_PREFIX)\bin\ejsc.exe
-	copy /Y $(CONFIG)\bin\ejsman.exe $(ME_VAPP_PREFIX)\bin\ejsman.exe
-	copy /Y $(CONFIG)\bin\ejsmod.exe $(ME_VAPP_PREFIX)\bin\ejsmod.exe
-	copy /Y $(CONFIG)\bin\ejsrun.exe $(ME_VAPP_PREFIX)\bin\ejsrun.exe
-	copy /Y $(CONFIG)\bin\mvc.exe $(ME_VAPP_PREFIX)\bin\mvc.exe
-	copy /Y $(CONFIG)\bin\utest.exe $(ME_VAPP_PREFIX)\bin\utest.exe
-	copy /Y $(CONFIG)\bin\libejs.db.sqlite.dll $(ME_VAPP_PREFIX)\bin\libejs.db.sqlite.dll
-	copy /Y $(CONFIG)\bin\libejs.dll $(ME_VAPP_PREFIX)\bin\libejs.dll
-	copy /Y $(CONFIG)\bin\libejs.web.dll $(ME_VAPP_PREFIX)\bin\libejs.web.dll
-	copy /Y $(CONFIG)\bin\libejs.zlib.dll $(ME_VAPP_PREFIX)\bin\libejs.zlib.dll
-	copy /Y $(CONFIG)\bin\libhttp.dll $(ME_VAPP_PREFIX)\bin\libhttp.dll
-	copy /Y $(CONFIG)\bin\libmpr.dll $(ME_VAPP_PREFIX)\bin\libmpr.dll
-	copy /Y $(CONFIG)\bin\libpcre.dll $(ME_VAPP_PREFIX)\bin\libpcre.dll
-	copy /Y $(CONFIG)\bin\libsql.dll $(ME_VAPP_PREFIX)\bin\libsql.dll
-	copy /Y $(CONFIG)\bin\libzlib.dll $(ME_VAPP_PREFIX)\bin\libzlib.dll
-	copy /Y $(CONFIG)\bin\ejs.db.mapper.mod $(ME_VAPP_PREFIX)\bin\ejs.db.mapper.mod
-	copy /Y $(CONFIG)\bin\ejs.db.mod $(ME_VAPP_PREFIX)\bin\ejs.db.mod
-	copy /Y $(CONFIG)\bin\ejs.db.sqlite.mod $(ME_VAPP_PREFIX)\bin\ejs.db.sqlite.mod
-	copy /Y $(CONFIG)\bin\ejs.mod $(ME_VAPP_PREFIX)\bin\ejs.mod
-	copy /Y $(CONFIG)\bin\ejs.mvc.mod $(ME_VAPP_PREFIX)\bin\ejs.mvc.mod
-	copy /Y $(CONFIG)\bin\ejs.tar.mod $(ME_VAPP_PREFIX)\bin\ejs.tar.mod
-	copy /Y $(CONFIG)\bin\ejs.template.mod $(ME_VAPP_PREFIX)\bin\ejs.template.mod
-	copy /Y $(CONFIG)\bin\ejs.unix.mod $(ME_VAPP_PREFIX)\bin\ejs.unix.mod
-	copy /Y $(CONFIG)\bin\ejs.web.mod $(ME_VAPP_PREFIX)\bin\ejs.web.mod
-	copy /Y $(CONFIG)\bin\ejs.zlib.mod $(ME_VAPP_PREFIX)\bin\ejs.zlib.mod
-	copy /Y $(CONFIG)\bin\mvc.es $(ME_VAPP_PREFIX)\bin\mvc.es
-	copy /Y $(CONFIG)\bin\utest.es $(ME_VAPP_PREFIX)\bin\utest.es
-	copy /Y $(CONFIG)\bin\utest.worker $(ME_VAPP_PREFIX)\bin\utest.worker
+	copy /Y $(CONFIG)\bin\ejs.exe "$(ME_VAPP_PREFIX)\bin\ejs.exe"
+	copy /Y $(CONFIG)\bin\ejsc.exe "$(ME_VAPP_PREFIX)\bin\ejsc.exe"
+	copy /Y $(CONFIG)\bin\ejsman.exe "$(ME_VAPP_PREFIX)\bin\ejsman.exe"
+	copy /Y $(CONFIG)\bin\ejsmod.exe "$(ME_VAPP_PREFIX)\bin\ejsmod.exe"
+	copy /Y $(CONFIG)\bin\ejsrun.exe "$(ME_VAPP_PREFIX)\bin\ejsrun.exe"
+	copy /Y $(CONFIG)\bin\mvc.exe "$(ME_VAPP_PREFIX)\bin\mvc.exe"
+	copy /Y $(CONFIG)\bin\utest.exe "$(ME_VAPP_PREFIX)\bin\utest.exe"
+	copy /Y $(CONFIG)\bin\libejs.db.sqlite.dll "$(ME_VAPP_PREFIX)\bin\libejs.db.sqlite.dll"
+	copy /Y $(CONFIG)\bin\libejs.dll "$(ME_VAPP_PREFIX)\bin\libejs.dll"
+	copy /Y $(CONFIG)\bin\libejs.web.dll "$(ME_VAPP_PREFIX)\bin\libejs.web.dll"
+	copy /Y $(CONFIG)\bin\libejs.zlib.dll "$(ME_VAPP_PREFIX)\bin\libejs.zlib.dll"
+	copy /Y $(CONFIG)\bin\libhttp.dll "$(ME_VAPP_PREFIX)\bin\libhttp.dll"
+	copy /Y $(CONFIG)\bin\libmpr.dll "$(ME_VAPP_PREFIX)\bin\libmpr.dll"
+	copy /Y $(CONFIG)\bin\libpcre.dll "$(ME_VAPP_PREFIX)\bin\libpcre.dll"
+	copy /Y $(CONFIG)\bin\libsql.dll "$(ME_VAPP_PREFIX)\bin\libsql.dll"
+	copy /Y $(CONFIG)\bin\libzlib.dll "$(ME_VAPP_PREFIX)\bin\libzlib.dll"
+	copy /Y $(CONFIG)\bin\ejs.db.mapper.mod "$(ME_VAPP_PREFIX)\bin\ejs.db.mapper.mod"
+	copy /Y $(CONFIG)\bin\ejs.db.mod "$(ME_VAPP_PREFIX)\bin\ejs.db.mod"
+	copy /Y $(CONFIG)\bin\ejs.db.sqlite.mod "$(ME_VAPP_PREFIX)\bin\ejs.db.sqlite.mod"
+	copy /Y $(CONFIG)\bin\ejs.mod "$(ME_VAPP_PREFIX)\bin\ejs.mod"
+	copy /Y $(CONFIG)\bin\ejs.mvc.mod "$(ME_VAPP_PREFIX)\bin\ejs.mvc.mod"
+	copy /Y $(CONFIG)\bin\ejs.tar.mod "$(ME_VAPP_PREFIX)\bin\ejs.tar.mod"
+	copy /Y $(CONFIG)\bin\ejs.template.mod "$(ME_VAPP_PREFIX)\bin\ejs.template.mod"
+	copy /Y $(CONFIG)\bin\ejs.unix.mod "$(ME_VAPP_PREFIX)\bin\ejs.unix.mod"
+	copy /Y $(CONFIG)\bin\ejs.web.mod "$(ME_VAPP_PREFIX)\bin\ejs.web.mod"
+	copy /Y $(CONFIG)\bin\ejs.zlib.mod "$(ME_VAPP_PREFIX)\bin\ejs.zlib.mod"
+	copy /Y $(CONFIG)\bin\mvc.es "$(ME_VAPP_PREFIX)\bin\mvc.es"
+	copy /Y $(CONFIG)\bin\utest.es "$(ME_VAPP_PREFIX)\bin\utest.es"
+	copy /Y $(CONFIG)\bin\utest.worker "$(ME_VAPP_PREFIX)\bin\utest.worker"
 !IF "$(ME_COM_SSL)" == "1"
-	copy /Y $(CONFIG)\bin\libmprssl.dll $(ME_VAPP_PREFIX)\bin\libmprssl.dll
+	copy /Y $(CONFIG)\bin\libmprssl.dll "$(ME_VAPP_PREFIX)\bin\libmprssl.dll"
 !ENDIF
 !IF "$(ME_COM_SSL)" == "1"
-	copy /Y $(CONFIG)\bin\ca.crt $(ME_VAPP_PREFIX)\bin\ca.crt
+	copy /Y src\paks\est\ca.crt "$(ME_VAPP_PREFIX)\bin\ca.crt"
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-	copy /Y $(CONFIG)\bin\libeay32.dll $(ME_VAPP_PREFIX)\bin\libeay32.dll
-	copy /Y $(CONFIG)\bin\ssleay32.dll $(ME_VAPP_PREFIX)\bin\ssleay32.dll
+	copy /Y $(CONFIG)\bin\libeay32.dll "$(ME_VAPP_PREFIX)\bin\libeay32.dll"
+	copy /Y $(CONFIG)\bin\ssleay32.dll "$(ME_VAPP_PREFIX)\bin\ssleay32.dll"
 !ENDIF
 !IF "$(ME_COM_EST)" == "1"
-	copy /Y $(CONFIG)\bin\libest.dll $(ME_VAPP_PREFIX)\bin\libest.dll
+	copy /Y $(CONFIG)\bin\libest.dll "$(ME_VAPP_PREFIX)\bin\libest.dll"
 !ENDIF
-	copy /Y $(CONFIG)\bin\libejs.lib $(ME_VAPP_PREFIX)\bin\libejs.lib
+	copy /Y $(CONFIG)\bin\libejs.lib "$(ME_VAPP_PREFIX)\bin\libejs.lib"
 	if not exist "$(ME_VAPP_PREFIX)\bin\www\images" md "$(ME_VAPP_PREFIX)\bin\www\images"
-	copy /Y src\ejs.web\www\images\banner.jpg $(ME_VAPP_PREFIX)\bin\www\images\banner.jpg
-	copy /Y src\ejs.web\www\images\favicon.ico $(ME_VAPP_PREFIX)\bin\www\images\favicon.ico
-	copy /Y src\ejs.web\www\images\splash.jpg $(ME_VAPP_PREFIX)\bin\www\images\splash.jpg
+	copy /Y src\ejs.web\www\images\banner.jpg "$(ME_VAPP_PREFIX)\bin\www\images\banner.jpg"
+	copy /Y src\ejs.web\www\images\favicon.ico "$(ME_VAPP_PREFIX)\bin\www\images\favicon.ico"
+	copy /Y src\ejs.web\www\images\splash.jpg "$(ME_VAPP_PREFIX)\bin\www\images\splash.jpg"
 	if not exist "$(ME_VAPP_PREFIX)\bin\www\js" md "$(ME_VAPP_PREFIX)\bin\www\js"
-	copy /Y src\ejs.web\www\js\jquery.ejs.min.js $(ME_VAPP_PREFIX)\bin\www\js\jquery.ejs.min.js
-	copy /Y src\ejs.web\www\js\jquery.min.js $(ME_VAPP_PREFIX)\bin\www\js\jquery.min.js
-	copy /Y src\ejs.web\www\js\jquery.simplemodal.min.js $(ME_VAPP_PREFIX)\bin\www\js\jquery.simplemodal.min.js
-	copy /Y src\ejs.web\www\js\jquery.tablesorter.js $(ME_VAPP_PREFIX)\bin\www\js\jquery.tablesorter.js
-	copy /Y src\ejs.web\www\js\jquery.tablesorter.min.js $(ME_VAPP_PREFIX)\bin\www\js\jquery.tablesorter.min.js
-	copy /Y src\ejs.web\www\js\jquery.treeview.min.js $(ME_VAPP_PREFIX)\bin\www\js\jquery.treeview.min.js
+	copy /Y src\ejs.web\www\js\jquery.ejs.min.js "$(ME_VAPP_PREFIX)\bin\www\js\jquery.ejs.min.js"
+	copy /Y src\ejs.web\www\js\jquery.min.js "$(ME_VAPP_PREFIX)\bin\www\js\jquery.min.js"
+	copy /Y src\ejs.web\www\js\jquery.simplemodal.min.js "$(ME_VAPP_PREFIX)\bin\www\js\jquery.simplemodal.min.js"
+	copy /Y src\ejs.web\www\js\jquery.tablesorter.js "$(ME_VAPP_PREFIX)\bin\www\js\jquery.tablesorter.js"
+	copy /Y src\ejs.web\www\js\jquery.tablesorter.min.js "$(ME_VAPP_PREFIX)\bin\www\js\jquery.tablesorter.min.js"
+	copy /Y src\ejs.web\www\js\jquery.treeview.min.js "$(ME_VAPP_PREFIX)\bin\www\js\jquery.treeview.min.js"
 	if not exist "$(ME_VAPP_PREFIX)\bin\www\js\tree-images" md "$(ME_VAPP_PREFIX)\bin\www\js\tree-images"
-	copy /Y src\ejs.web\www\js\tree-images\file.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\file.gif
-	copy /Y src\ejs.web\www\js\tree-images\folder-closed.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\folder-closed.gif
-	copy /Y src\ejs.web\www\js\tree-images\folder.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\folder.gif
-	copy /Y src\ejs.web\www\js\tree-images\minus.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\minus.gif
-	copy /Y src\ejs.web\www\js\tree-images\plus.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\plus.gif
-	copy /Y src\ejs.web\www\js\tree-images\treeview-black-line.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-black-line.gif
-	copy /Y src\ejs.web\www\js\tree-images\treeview-black.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-black.gif
-	copy /Y src\ejs.web\www\js\tree-images\treeview-default-line.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-default-line.gif
-	copy /Y src\ejs.web\www\js\tree-images\treeview-default.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-default.gif
-	copy /Y src\ejs.web\www\js\tree-images\treeview-famfamfam-line.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-famfamfam-line.gif
-	copy /Y src\ejs.web\www\js\tree-images\treeview-famfamfam.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-famfamfam.gif
-	copy /Y src\ejs.web\www\js\tree-images\treeview-gray-line.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-gray-line.gif
-	copy /Y src\ejs.web\www\js\tree-images\treeview-gray.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-gray.gif
-	copy /Y src\ejs.web\www\js\tree-images\treeview-red-line.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-red-line.gif
-	copy /Y src\ejs.web\www\js\tree-images\treeview-red.gif $(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-red.gif
-	copy /Y src\ejs.web\www\js\treeview.css $(ME_VAPP_PREFIX)\bin\www\js\treeview.css
+	copy /Y src\ejs.web\www\js\tree-images\file.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\file.gif"
+	copy /Y src\ejs.web\www\js\tree-images\folder-closed.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\folder-closed.gif"
+	copy /Y src\ejs.web\www\js\tree-images\folder.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\folder.gif"
+	copy /Y src\ejs.web\www\js\tree-images\minus.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\minus.gif"
+	copy /Y src\ejs.web\www\js\tree-images\plus.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\plus.gif"
+	copy /Y src\ejs.web\www\js\tree-images\treeview-black-line.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-black-line.gif"
+	copy /Y src\ejs.web\www\js\tree-images\treeview-black.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-black.gif"
+	copy /Y src\ejs.web\www\js\tree-images\treeview-default-line.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-default-line.gif"
+	copy /Y src\ejs.web\www\js\tree-images\treeview-default.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-default.gif"
+	copy /Y src\ejs.web\www\js\tree-images\treeview-famfamfam-line.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-famfamfam-line.gif"
+	copy /Y src\ejs.web\www\js\tree-images\treeview-famfamfam.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-famfamfam.gif"
+	copy /Y src\ejs.web\www\js\tree-images\treeview-gray-line.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-gray-line.gif"
+	copy /Y src\ejs.web\www\js\tree-images\treeview-gray.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-gray.gif"
+	copy /Y src\ejs.web\www\js\tree-images\treeview-red-line.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-red-line.gif"
+	copy /Y src\ejs.web\www\js\tree-images\treeview-red.gif "$(ME_VAPP_PREFIX)\bin\www\js\tree-images\treeview-red.gif"
+	copy /Y src\ejs.web\www\js\treeview.css "$(ME_VAPP_PREFIX)\bin\www\js\treeview.css"
 	if not exist "$(ME_VAPP_PREFIX)\bin\www" md "$(ME_VAPP_PREFIX)\bin\www"
-	copy /Y src\ejs.web\www\layout.css $(ME_VAPP_PREFIX)\bin\www\layout.css
+	copy /Y src\ejs.web\www\layout.css "$(ME_VAPP_PREFIX)\bin\www\layout.css"
 	if not exist "$(ME_VAPP_PREFIX)\bin\www\themes" md "$(ME_VAPP_PREFIX)\bin\www\themes"
-	copy /Y src\ejs.web\www\themes\default.css $(ME_VAPP_PREFIX)\bin\www\themes\default.css
+	copy /Y src\ejs.web\www\themes\default.css "$(ME_VAPP_PREFIX)\bin\www\themes\default.css"
 	if not exist "$(ME_VAPP_PREFIX)\inc" md "$(ME_VAPP_PREFIX)\inc"
-	copy /Y src\ejs.h $(ME_VAPP_PREFIX)\inc\ejs.h
-	copy /Y src\ejsByteCode.h $(ME_VAPP_PREFIX)\inc\ejsByteCode.h
-	copy /Y src\ejsByteCodeTable.h $(ME_VAPP_PREFIX)\inc\ejsByteCodeTable.h
-	copy /Y src\ejsCompiler.h $(ME_VAPP_PREFIX)\inc\ejsCompiler.h
-	copy /Y src\ejsCustomize.h $(ME_VAPP_PREFIX)\inc\ejsCustomize.h
-	copy /Y src\vm\ejsByteGoto.h $(ME_VAPP_PREFIX)\inc\ejsByteGoto.h
-	copy /Y src\slots\ejs.cache.local.slots.h $(ME_VAPP_PREFIX)\inc\ejs.cache.local.slots.h
-	copy /Y src\slots\ejs.db.sqlite.slots.h $(ME_VAPP_PREFIX)\inc\ejs.db.sqlite.slots.h
-	copy /Y src\slots\ejs.slots.h $(ME_VAPP_PREFIX)\inc\ejs.slots.h
-	copy /Y src\slots\ejs.web.slots.h $(ME_VAPP_PREFIX)\inc\ejs.web.slots.h
-	copy /Y src\slots\ejs.zlib.slots.h $(ME_VAPP_PREFIX)\inc\ejs.zlib.slots.h
-	copy /Y src\paks\est\est.h $(ME_VAPP_PREFIX)\inc\est.h
-	copy /Y src\paks\http\http.h $(ME_VAPP_PREFIX)\inc\http.h
-	copy /Y src\paks\mpr\mpr.h $(ME_VAPP_PREFIX)\inc\mpr.h
-	copy /Y src\paks\osdep\osdep.h $(ME_VAPP_PREFIX)\inc\osdep.h
-	copy /Y src\paks\pcre\pcre.h $(ME_VAPP_PREFIX)\inc\pcre.h
-	copy /Y src\paks\sqlite\sqlite3.h $(ME_VAPP_PREFIX)\inc\sqlite3.h
-	copy /Y src\paks\zlib\zlib.h $(ME_VAPP_PREFIX)\inc\zlib.h
-	copy /Y src\cmd\ejsmod.h $(ME_VAPP_PREFIX)\inc\ejsmod.h
-	copy /Y src\core\default.slots.h $(ME_VAPP_PREFIX)\inc\default.slots.h
-	copy /Y src\core\ejs.slots.h $(ME_VAPP_PREFIX)\inc\ejs.slots.h
-	copy /Y src\ejs.db.sqlite\ejs.db.sqlite.slots.h $(ME_VAPP_PREFIX)\inc\ejs.db.sqlite.slots.h
-	copy /Y src\ejs.h $(ME_VAPP_PREFIX)\inc\ejs.h
-	copy /Y src\ejs.web\ejs.web.slots.h $(ME_VAPP_PREFIX)\inc\ejs.web.slots.h
-	copy /Y src\ejs.web\ejsWeb.h $(ME_VAPP_PREFIX)\inc\ejsWeb.h
-	copy /Y src\ejsByteCode.h $(ME_VAPP_PREFIX)\inc\ejsByteCode.h
-	copy /Y src\ejsByteCodeTable.h $(ME_VAPP_PREFIX)\inc\ejsByteCodeTable.h
-	copy /Y src\ejsCompiler.h $(ME_VAPP_PREFIX)\inc\ejsCompiler.h
-	copy /Y src\ejsCustomize.h $(ME_VAPP_PREFIX)\inc\ejsCustomize.h
-	copy /Y src\paks\est\est.h $(ME_VAPP_PREFIX)\inc\est.h
-	copy /Y src\paks\http\http.h $(ME_VAPP_PREFIX)\inc\http.h
-	copy /Y src\paks\mpr\mpr.h $(ME_VAPP_PREFIX)\inc\mpr.h
-	copy /Y src\paks\osdep\osdep.h $(ME_VAPP_PREFIX)\inc\osdep.h
-	copy /Y src\paks\pcre\pcre.h $(ME_VAPP_PREFIX)\inc\pcre.h
-	copy /Y src\paks\sqlite\sqlite3.h $(ME_VAPP_PREFIX)\inc\sqlite3.h
-	copy /Y src\paks\zlib\zlib.h $(ME_VAPP_PREFIX)\inc\zlib.h
-	copy /Y src\slots\ejs.cache.local.slots.h $(ME_VAPP_PREFIX)\inc\ejs.cache.local.slots.h
-	copy /Y src\slots\ejs.db.sqlite.slots.h $(ME_VAPP_PREFIX)\inc\ejs.db.sqlite.slots.h
-	copy /Y src\slots\ejs.slots.h $(ME_VAPP_PREFIX)\inc\ejs.slots.h
-	copy /Y src\slots\ejs.web.slots.h $(ME_VAPP_PREFIX)\inc\ejs.web.slots.h
-	copy /Y src\slots\ejs.zlib.slots.h $(ME_VAPP_PREFIX)\inc\ejs.zlib.slots.h
-	copy /Y src\vm\ejsByteGoto.h $(ME_VAPP_PREFIX)\inc\ejsByteGoto.h
+	copy /Y src\ejs.h "$(ME_VAPP_PREFIX)\inc\ejs.h"
+	copy /Y src\ejsByteCode.h "$(ME_VAPP_PREFIX)\inc\ejsByteCode.h"
+	copy /Y src\ejsByteCodeTable.h "$(ME_VAPP_PREFIX)\inc\ejsByteCodeTable.h"
+	copy /Y src\ejsCompiler.h "$(ME_VAPP_PREFIX)\inc\ejsCompiler.h"
+	copy /Y src\ejsCustomize.h "$(ME_VAPP_PREFIX)\inc\ejsCustomize.h"
+	copy /Y src\vm\ejsByteGoto.h "$(ME_VAPP_PREFIX)\inc\ejsByteGoto.h"
+	copy /Y src\slots\ejs.cache.local.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.cache.local.slots.h"
+	copy /Y src\slots\ejs.db.sqlite.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.db.sqlite.slots.h"
+	copy /Y src\slots\ejs.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.slots.h"
+	copy /Y src\slots\ejs.web.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.web.slots.h"
+	copy /Y src\slots\ejs.zlib.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.zlib.slots.h"
+	copy /Y src\paks\est\est.h "$(ME_VAPP_PREFIX)\inc\est.h"
+	copy /Y src\paks\http\http.h "$(ME_VAPP_PREFIX)\inc\http.h"
+	copy /Y src\paks\mpr\mpr.h "$(ME_VAPP_PREFIX)\inc\mpr.h"
+	copy /Y src\paks\osdep\osdep.h "$(ME_VAPP_PREFIX)\inc\osdep.h"
+	copy /Y src\paks\pcre\pcre.h "$(ME_VAPP_PREFIX)\inc\pcre.h"
+	copy /Y src\paks\sqlite\sqlite3.h "$(ME_VAPP_PREFIX)\inc\sqlite3.h"
+	copy /Y src\paks\zlib\zlib.h "$(ME_VAPP_PREFIX)\inc\zlib.h"
+	copy /Y src\cmd\ejsmod.h "$(ME_VAPP_PREFIX)\inc\ejsmod.h"
+	copy /Y src\core\default.slots.h "$(ME_VAPP_PREFIX)\inc\default.slots.h"
+	copy /Y src\core\ejs.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.slots.h"
+	copy /Y src\ejs.db.sqlite\ejs.db.sqlite.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.db.sqlite.slots.h"
+	copy /Y src\ejs.h "$(ME_VAPP_PREFIX)\inc\ejs.h"
+	copy /Y src\ejs.web\ejs.web.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.web.slots.h"
+	copy /Y src\ejs.web\ejsWeb.h "$(ME_VAPP_PREFIX)\inc\ejsWeb.h"
+	copy /Y src\ejsByteCode.h "$(ME_VAPP_PREFIX)\inc\ejsByteCode.h"
+	copy /Y src\ejsByteCodeTable.h "$(ME_VAPP_PREFIX)\inc\ejsByteCodeTable.h"
+	copy /Y src\ejsCompiler.h "$(ME_VAPP_PREFIX)\inc\ejsCompiler.h"
+	copy /Y src\ejsCustomize.h "$(ME_VAPP_PREFIX)\inc\ejsCustomize.h"
+	copy /Y src\paks\est\est.h "$(ME_VAPP_PREFIX)\inc\est.h"
+	copy /Y src\paks\http\http.h "$(ME_VAPP_PREFIX)\inc\http.h"
+	copy /Y src\paks\mpr\mpr.h "$(ME_VAPP_PREFIX)\inc\mpr.h"
+	copy /Y src\paks\osdep\osdep.h "$(ME_VAPP_PREFIX)\inc\osdep.h"
+	copy /Y src\paks\pcre\pcre.h "$(ME_VAPP_PREFIX)\inc\pcre.h"
+	copy /Y src\paks\sqlite\sqlite3.h "$(ME_VAPP_PREFIX)\inc\sqlite3.h"
+	copy /Y src\paks\zlib\zlib.h "$(ME_VAPP_PREFIX)\inc\zlib.h"
+	copy /Y src\slots\ejs.cache.local.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.cache.local.slots.h"
+	copy /Y src\slots\ejs.db.sqlite.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.db.sqlite.slots.h"
+	copy /Y src\slots\ejs.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.slots.h"
+	copy /Y src\slots\ejs.web.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.web.slots.h"
+	copy /Y src\slots\ejs.zlib.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.zlib.slots.h"
+	copy /Y src\vm\ejsByteGoto.h "$(ME_VAPP_PREFIX)\inc\ejsByteGoto.h"
 	cd .
 
 #
@@ -4542,8 +4541,11 @@ DEPS_146 = $(DEPS_146) stop
 uninstall: $(DEPS_146)
 	cd .
 	if exist "$(ME_VAPP_PREFIX)" rd /Q /S "$(ME_VAPP_PREFIX)"
-	if exist "$(ME_APP_PREFIX)\latest" del /Q "$(ME_APP_PREFIX)\latest"
-	if exist "$(ME_APP_PREFIX)" rd /Q "$(ME_APP_PREFIX)"
+	if exist "$(ME_VAPP_PREFIX)\bin" rd /Q "$(ME_VAPP_PREFIX)\bin"
+	if exist "$(ME_VAPP_PREFIX)\inc" rd /Q "$(ME_VAPP_PREFIX)\inc"
+	if exist "$(ME_VAPP_PREFIX)\man" rd /Q "$(ME_VAPP_PREFIX)\man"
+	if exist "$(ME_VAPP_PREFIX)\latest" del /Q "$(ME_VAPP_PREFIX)\latest"
+	if exist "$(ME_VAPP_PREFIX)" rd /Q "$(ME_VAPP_PREFIX)"
 	cd .
 
 #

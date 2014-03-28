@@ -4304,7 +4304,7 @@ installBinary: $(DEPS_141)
 	cp $(CONFIG)/bin/utest.es $(ME_VAPP_PREFIX)/bin/utest.es ; \
 	cp $(CONFIG)/bin/utest.worker $(ME_VAPP_PREFIX)/bin/utest.worker ; \
 	if [ "$(ME_COM_SSL)" = 1 ]; then true ; \
-	cp $(CONFIG)/bin/ca.crt $(ME_VAPP_PREFIX)/bin/ca.crt ; \
+	cp src/paks/est/ca.crt $(ME_VAPP_PREFIX)/bin/ca.crt ; \
 	fi ; \
 	if [ "$(ME_COM_OPENSSL)" = 1 ]; then true ; \
 	cp $(CONFIG)/bin/libssl*.dylib* $(ME_VAPP_PREFIX)/bin/libssl*.dylib* ; \
