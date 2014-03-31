@@ -755,6 +755,7 @@ int ejsEvalModule(cchar *path)
 }
 
 
+//  MOB - remove event
 static int runProgram(Ejs *ejs, MprEvent *event)
 {
     /*
@@ -780,8 +781,11 @@ int ejsRunProgram(Ejs *ejs, cchar *className, cchar *methodName)
     if (methodName) {
         ejs->methodName = sclone(methodName);
     }
+#if UNUSED
     mprRelayEvent(ejs->dispatcher, (MprEventProc) runProgram, ejs, NULL);
-
+#else
+    runProgram(ejs, NULL);
+#endif
     if (ejs->exception) {
         return EJS_ERR;
     }
