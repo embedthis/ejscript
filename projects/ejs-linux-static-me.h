@@ -157,7 +157,7 @@
     #define ME_TITLE "Embedthis Ejscript"
 #endif
 #ifndef ME_TUNE
-    #define ME_TUNE "size"
+    #define ME_TUNE "speed"
 #endif
 #ifndef ME_VERSION
     #define ME_VERSION "2.3.5"
@@ -243,8 +243,8 @@
 #ifndef ME_PROFILE
     #define ME_PROFILE "static"
 #endif
-#ifndef ME_TUNE_SIZE
-    #define ME_TUNE_SIZE 1
+#ifndef ME_TUNE_SPEED
+    #define ME_TUNE_SPEED 1
 #endif
 
 /* Miscellaneous */
