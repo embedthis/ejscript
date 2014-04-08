@@ -1938,7 +1938,7 @@ static int checkCert(MprSocket *sp)
         target = osp->peerName;
         certName = peer;
 
-        if (target == 0 || *target == '\0' || !strchr(target, '.')) {
+        if (target == 0 || *target == '\0' || strchr(target, '.') == 0) {
             sp->errorMsg = sfmt("Bad peer name");
             return -1;
         }
