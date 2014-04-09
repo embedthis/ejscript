@@ -124,6 +124,12 @@ Me.load({
         'mpr.tracing':      'Enable debug tracing (true|false)',
     },
 
+    scripts: {
+        loaded: `
+            me.targets.httpcmd.enable = false
+        `,
+    },
+
     targets: {
         /*
             See src/core/core.me for building the core library
