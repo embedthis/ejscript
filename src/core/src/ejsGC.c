@@ -48,7 +48,7 @@ static EjsObj *gc_run(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
  */
 static EjsNumber *gc_newQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    return ejsCreateNumber(ejs, mprGetMpr()->heap->workQuota);
+    return ejsCreateNumber(ejs, (MprNumber) mprGetMpr()->heap->workQuota);
 }
 
 
