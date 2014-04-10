@@ -5514,7 +5514,7 @@ fi";
 		D244D5BCD244E59600000366 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = ca.crt;
+				PRODUCT_NAME = http-ca-crt;
 
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
@@ -5526,7 +5526,7 @@ fi";
 		D244D5BCD244E59600000367 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = ca.crt;
+				PRODUCT_NAME = http-ca-crt;
 
 
 			};
@@ -5535,7 +5535,7 @@ fi";
 		D244D5BCD244E59600000368 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libejs.dylib;
+				PRODUCT_NAME = libejs;
 
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
@@ -5552,7 +5552,7 @@ fi";
 		D244D5BCD244E59600000369 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libejs.dylib;
+				PRODUCT_NAME = libejs;
 
 				OTHER_LDFLAGS = (
 					"-lpam",
@@ -5565,7 +5565,7 @@ fi";
 		D244D5BCD244E5960000036A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libejs.db.sqlite.dylib;
+				PRODUCT_NAME = libejs.db.sqlite;
 
 				HEADER_SEARCH_PATHS = (
 					"../src/cmd",
@@ -5586,7 +5586,7 @@ fi";
 		D244D5BCD244E5960000036B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libejs.db.sqlite.dylib;
+				PRODUCT_NAME = libejs.db.sqlite;
 
 				HEADER_SEARCH_PATHS = (
 					"../src/cmd",
@@ -5604,7 +5604,7 @@ fi";
 		D244D5BCD244E5960000036C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libejs.web.dylib;
+				PRODUCT_NAME = libejs.web;
 
 				HEADER_SEARCH_PATHS = (
 					"../src/cmd",
@@ -5625,7 +5625,7 @@ fi";
 		D244D5BCD244E5960000036D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libejs.web.dylib;
+				PRODUCT_NAME = libejs.web;
 
 				HEADER_SEARCH_PATHS = (
 					"../src/cmd",
@@ -5643,7 +5643,7 @@ fi";
 		D244D5BCD244E5960000036E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libejs.zlib.dylib;
+				PRODUCT_NAME = libejs.zlib;
 
 				HEADER_SEARCH_PATHS = (
 					"../src/cmd",
@@ -5664,7 +5664,7 @@ fi";
 		D244D5BCD244E5960000036F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libejs.zlib.dylib;
+				PRODUCT_NAME = libejs.zlib;
 
 				HEADER_SEARCH_PATHS = (
 					"../src/cmd",
@@ -5682,7 +5682,7 @@ fi";
 		D244D5BCD244E59600000370 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libest.dylib;
+				PRODUCT_NAME = libest;
 
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
@@ -5694,7 +5694,7 @@ fi";
 		D244D5BCD244E59600000371 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libest.dylib;
+				PRODUCT_NAME = libest;
 
 
 			};
@@ -5703,7 +5703,7 @@ fi";
 		D244D5BCD244E59600000372 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libhttp.dylib;
+				PRODUCT_NAME = libhttp;
 
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
@@ -5720,7 +5720,7 @@ fi";
 		D244D5BCD244E59600000373 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libhttp.dylib;
+				PRODUCT_NAME = libhttp;
 
 				OTHER_LDFLAGS = (
 					"-lpam",
@@ -5733,7 +5733,7 @@ fi";
 		D244D5BCD244E59600000374 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libmpr.dylib;
+				PRODUCT_NAME = libmpr;
 
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
@@ -5745,7 +5745,7 @@ fi";
 		D244D5BCD244E59600000375 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libmpr.dylib;
+				PRODUCT_NAME = libmpr;
 
 
 			};
@@ -5754,7 +5754,7 @@ fi";
 		D244D5BCD244E59600000376 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libmprssl.dylib;
+				PRODUCT_NAME = libmprssl;
 
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
@@ -5766,7 +5766,7 @@ fi";
 		D244D5BCD244E59600000377 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libmprssl.dylib;
+				PRODUCT_NAME = libmprssl;
 
 
 			};
@@ -5775,7 +5775,7 @@ fi";
 		D244D5BCD244E59600000378 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libpcre.dylib;
+				PRODUCT_NAME = libpcre;
 
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"PCRE_CHAR=char",
@@ -5788,7 +5788,7 @@ fi";
 		D244D5BCD244E59600000379 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libpcre.dylib;
+				PRODUCT_NAME = libpcre;
 
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"PCRE_CHAR=char",
@@ -5800,7 +5800,7 @@ fi";
 		D244D5BCD244E5960000037A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libsql.dylib;
+				PRODUCT_NAME = libsql;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5813,7 +5813,7 @@ fi";
 		D244D5BCD244E5960000037B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libsql.dylib;
+				PRODUCT_NAME = libsql;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 
 
@@ -5823,7 +5823,7 @@ fi";
 		D244D5BCD244E5960000037C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libzlib.dylib;
+				PRODUCT_NAME = libzlib;
 
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
@@ -5835,7 +5835,7 @@ fi";
 		D244D5BCD244E5960000037D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = libzlib.dylib;
+				PRODUCT_NAME = libzlib;
 
 
 			};
@@ -5865,7 +5865,7 @@ fi";
 		D244D5BCD244E59600000380 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = ejsman;
+				PRODUCT_NAME = manager;
 
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
@@ -5877,7 +5877,7 @@ fi";
 		D244D5BCD244E59600000381 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = ejsman;
+				PRODUCT_NAME = manager;
 
 
 			};
@@ -5937,7 +5937,7 @@ fi";
 		D244D5BCD244E59600000386 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = sqlite;
+				PRODUCT_NAME = sqliteshell;
 
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
@@ -5949,7 +5949,7 @@ fi";
 		D244D5BCD244E59600000387 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = sqlite;
+				PRODUCT_NAME = sqliteshell;
 
 
 			};
