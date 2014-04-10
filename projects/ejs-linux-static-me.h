@@ -235,7 +235,7 @@
 
 /* Profile */
 #ifndef ME_CONFIG_CMD
-    #define ME_CONFIG_CMD "me -d -q -platform linux-x86-static -static -configure . -gen make"
+    #define ME_CONFIG_CMD "me -d -q -platform linux-x86-static -static -configure . -with est -gen make"
 #endif
 #ifndef ME_EJS_PRODUCT
     #define ME_EJS_PRODUCT 1
