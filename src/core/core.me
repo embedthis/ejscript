@@ -31,14 +31,14 @@ Me.load({
                 }
             ",
             'generate-nmake': '\
-                "${BIN}\\ejsc" --out "${BIN}/ejs.mod" ${settings.esflags} --optimize 9 --bind --require null "*.es"
-                "${BIN}\\ejsmod" --require null --cslots "${BIN}/ejs.mod"
+                "${LBIN}\\ejsc" --out "${BIN}/ejs.mod" ${settings.esflags} --optimize 9 --bind --require null "*.es"
+                "${LBIN}\\ejsmod" --require null --cslots "${BIN}/ejs.mod"
                 copy ejs.slots.h "${INC}\\ejs.slots.h"
                 del ejs.slots.h
             ',
             'generate-sh': '\
-                ${BIN}/ejsc --out ${BIN}/ejs.mod ${settings.esflags} --optimize 9 --bind --require null *.es 
-                ${BIN}/ejsmod --require null --cslots ${BIN}/ejs.mod
+                ${LBIN}/ejsc --out ${BIN}/ejs.mod ${settings.esflags} --optimize 9 --bind --require null *.es 
+                ${LBIN}/ejsmod --require null --cslots ${BIN}/ejs.mod
                 if ! diff ejs.slots.h ${INC}/ejs.slots.h >/dev/null; then cp ejs.slots.h ${INC}; fi
                 rm -f ejs.slots.h
             ',

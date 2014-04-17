@@ -2051,8 +2051,8 @@ DEPS_93 += $(CONFIG)/bin/ejsmod.out
 $(CONFIG)/bin/ejs.mod: $(DEPS_93)
 	( \
 	cd src/core; \
-	../../$(CONFIG)/bin/ejsc --out ../../$(CONFIG)/bin/ejs.mod  --optimize 9 --bind --require null *.es  ; \
-	../../$(CONFIG)/bin/ejsmod --require null --cslots ../../$(CONFIG)/bin/ejs.mod ; \
+	../../$(LBIN)/ejsc --out ../../$(CONFIG)/bin/ejs.mod  --optimize 9 --bind --require null *.es  ; \
+	../../$(LBIN)/ejsmod --require null --cslots ../../$(CONFIG)/bin/ejs.mod ; \
 	if ! diff ejs.slots.h ../../$(CONFIG)/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ../../$(CONFIG)/inc; fi ; \
 	rm -f ejs.slots.h ; \
 	)
