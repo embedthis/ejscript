@@ -2115,8 +2115,8 @@ DEPS_93 = $(DEPS_93) $(CONFIG)\bin\ejsmod.exe
 
 $(CONFIG)\bin\ejs.mod: $(DEPS_93)
 	cd src\core
-	"$(LBIN)\ejsc" --out "..\..\$(CONFIG)\bin\ejs.mod"  --optimize 9 --bind --require null "*.es"
-	"$(LBIN)\ejsmod" --require null --cslots "..\..\$(CONFIG)\bin\ejs.mod"
+	"..\..\$(LBIN)\ejsc" --out "..\..\$(CONFIG)\bin\ejs.mod"  --optimize 9 --bind --require null "*.es"
+	"..\..\$(LBIN)\ejsmod" --require null --cslots "..\..\$(CONFIG)\bin\ejs.mod"
 	copy ejs.slots.h "..\..\$(CONFIG)\inc\ejs.slots.h"
 	del ejs.slots.h
 	cd ..\..
