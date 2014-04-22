@@ -13,7 +13,7 @@
   "license": [
     "GPLv2 (http://www.ejscript.org/products/ejs/doc/licenses/gpl.html)"
   ],
-  "location": "https://github.com/embedthis/ejs-2",
+  "location": "https://github.com/embedthis/ejs",
   "keywords": [
     "archive",
     "tar"
