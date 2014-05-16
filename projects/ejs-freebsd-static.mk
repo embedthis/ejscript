@@ -3,7 +3,7 @@
 #
 
 NAME                  := ejs
-VERSION               := 2.3.5
+VERSION               := 2.3.6
 PROFILE               ?= static
 ARCH                  ?= $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/')
 CC_ARCH               ?= $(shell echo $(ARCH) | sed 's/x86/i686/;s/x64/x86_64/')
@@ -4193,7 +4193,7 @@ installBinary: $(DEPS_139)
 	cd .; \
 	mkdir -p "$(ME_APP_PREFIX)" ; \
 	rm -f "$(ME_APP_PREFIX)/latest" ; \
-	ln -s "2.3.5" "$(ME_APP_PREFIX)/latest" ; \
+	ln -s "2.3.6" "$(ME_APP_PREFIX)/latest" ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
 	cp $(CONFIG)/bin/ejs $(ME_VAPP_PREFIX)/bin/ejs ; \
 	mkdir -p "$(ME_BIN_PREFIX)" ; \
@@ -4447,5 +4447,5 @@ uninstall: $(DEPS_142)
 #   version
 #
 version: $(DEPS_143)
-	echo 2.3.5
+	echo 2.3.6
 
