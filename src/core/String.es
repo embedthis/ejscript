@@ -229,6 +229,7 @@ module ejs {
          */
         native function toCamel(): String
 
+        //  TODO - rename toTitleCase()
         /**
             Copy the string into a new string and capitalize the first character if there is one. If the first non-white 
             character is not a character or if it is already capitalized there is no change.

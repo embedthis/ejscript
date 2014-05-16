@@ -208,7 +208,7 @@ static EjsObj *getAttributes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     ejsSetPropertyByName(ejs, attributes, EN("uid"), ejsCreateNumber(ejs, info.owner));
     ejsSetPropertyByName(ejs, attributes, EN("gid"), ejsCreateNumber(ejs, info.group));
 
-#if BIT_UNIX_LIKE
+#if ME_UNIX_LIKE
     struct passwd   *pw;
     struct group    *gp;
     if ((pw = getpwuid(info.owner)) != 0) {
@@ -290,7 +290,7 @@ PUBLIC int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *attributes)
     if (attributes == 0) {
         return 0;
     }
-#if BIT_UNIX_LIKE
+#if ME_UNIX_LIKE
 {
     int     uid, gid;
     getUserGroup(ejs, attributes, &uid, &gid);
@@ -347,13 +347,13 @@ static EjsObj *copyPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     if (options) {
         ejsSetPathAttributes(ejs, toPath, options);
     }
-    if ((buf = mprAlloc(BIT_MAX_BUFFER)) == NULL) {
+    if ((buf = mprAlloc(ME_MAX_BUFFER)) == NULL) {
         ejsThrowMemoryError(ejs);
         mprCloseFile(to);
         mprCloseFile(from);
         return 0;
     }
-    while ((bytes = mprReadFile(from, buf, BIT_MAX_BUFFER)) > 0) {
+    while ((bytes = mprReadFile(from, buf, ME_MAX_BUFFER)) > 0) {
         if (mprWriteFile(to, buf, bytes) != bytes) {
             ejsThrowIOError(ejs, "Write error to %s", toPath);
             break;
@@ -899,7 +899,7 @@ static EjsVoid *path_link(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         return 0;
     }
     unlink(target);
-#if BIT_UNIX_LIKE
+#if ME_UNIX_LIKE
     if (mprMakeLink(fp->value, target, hard) < 0) {
         ejsThrowIOError(ejs, "Cannot create link %s to refer to %s, error %d", target, fp->value, errno);
     }
@@ -934,7 +934,7 @@ static EjsPath *pathLinkTarget(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static void getUserGroup(Ejs *ejs, EjsObj *attributes, int *uid, int *gid)
 {
-#if BIT_UNIX_LIKE
+#if ME_UNIX_LIKE
     EjsAny          *vp;
     struct passwd   *pp;
     struct group    *gp;
@@ -1198,7 +1198,7 @@ static EjsByteArray *readBytes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     MprFile         *file;
     EjsByteArray    *result;
     cchar           *path;
-    char            buffer[BIT_MAX_BUFFER];
+    char            buffer[ME_MAX_BUFFER];
     int             bytes, offset, rc;
 
     assert(argc == 1 && ejsIs(ejs, argv[0], String));
@@ -1222,7 +1222,7 @@ static EjsByteArray *readBytes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
     rc = 0;
     offset = 0;
-    while ((bytes = mprReadFile(file, buffer, BIT_MAX_BUFFER)) > 0) {
+    while ((bytes = mprReadFile(file, buffer, ME_MAX_BUFFER)) > 0) {
         //  TODO - should use RC Value (== bytes)
         if (ejsCopyToByteArray(ejs, result, offset, buffer, bytes) < 0) {
             ejsThrowMemoryError(ejs);
@@ -1248,7 +1248,7 @@ static EjsArray *readLines(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     MprBuf      *data;
     EjsArray    *result;
     cchar       *path;
-    char        *start, *end, *cp, buffer[BIT_MAX_BUFFER];
+    char        *start, *end, *cp, buffer[ME_MAX_BUFFER];
     int         bytes, rc, lineno;
 
     assert(argc == 1 && ejsIs(ejs, argv[0], String));
@@ -1278,7 +1278,7 @@ static EjsArray *readLines(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     }
 
     rc = 0;
-    while ((bytes = mprReadFile(file, buffer, BIT_MAX_BUFFER)) > 0) {
+    while ((bytes = mprReadFile(file, buffer, ME_MAX_BUFFER)) > 0) {
         if (mprPutBlockToBuf(data, buffer, bytes) != bytes) {
             ejsThrowMemoryError(ejs);
             rc = -1;
@@ -1318,7 +1318,7 @@ static EjsString *readFileAsString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **arg
     MprFile     *file;
     MprBuf      *data;
     cchar       *path;
-    char        buffer[BIT_MAX_BUFFER];
+    char        buffer[ME_MAX_BUFFER];
     int         bytes;
 
     assert(argc == 1 && ejsIs(ejs, argv[0], String));
@@ -1339,7 +1339,7 @@ static EjsString *readFileAsString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **arg
         mprCloseFile(file);
         return 0;
     }
-    while ((bytes = mprReadFile(file, buffer, BIT_MAX_BUFFER)) > 0) {
+    while ((bytes = mprReadFile(file, buffer, ME_MAX_BUFFER)) > 0) {
         if (mprPutBlockToBuf(data, buffer, bytes) != bytes) {
             ejsThrowMemoryError(ejs);
             break;
@@ -1546,7 +1546,7 @@ static EjsVoid *path_symlink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         return 0;
     }
     unlink(fp->value);
-#if BIT_UNIX_LIKE
+#if ME_UNIX_LIKE
     if (symlink(target, fp->value) < 0) {
         ejsThrowIOError(ejs, "Cannot create symlink %s to refer to %s, error %d", fp->value, target, errno);
         return 0;

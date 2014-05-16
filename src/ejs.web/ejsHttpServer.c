@@ -5,9 +5,9 @@
  */
 /********************************** Includes **********************************/
 
-#include    "bit.h"
+#include    "me.h"
 
-#if BIT_EJS_WEB
+#if ME_EJS_WEB
 #include    "ejs.h"
 #include    "ejsCompiler.h"
 #include    "ejsWeb.h"
@@ -367,7 +367,7 @@ static EjsVoid *hs_run(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
  */
 static EjsObj *hs_secure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-#if BIT_PACK_SSL
+#if ME_COM_SSL
     EjsArray    *protocols;
     cchar       *token;
     int         mask, protoMask, i;

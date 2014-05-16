@@ -1,0 +1,20 @@
+/*
+    mapper.me -- MakeMe file for ejs.db.mapper
+ */
+
+Me.load({
+
+    targets: {
+        'ejs.db.mapper.mod': {
+            enable: 'me.settings.ejs.db',
+            path: '${BIN}/ejs.db.mapper.mod',
+            files: [ '*.es' ],
+            build: `
+                trace('Compile', 'ejs.db.mapper.mod')
+                run('${LBIN}/ejsc --out ${OUTPUT} ${settings.esflags} --optimize 9 ' + Path('.').files('*.es').sort().join(' '))
+            `,
+            generate: "${BIN}/ejsc --out ${BIN}/ejs.db.mapper.mod ${settings.esflags} --optimize 9 *.es",
+            depends: [ 'ejsc', 'ejs.mod', 'ejs.db.mod' ],
+        },
+	},
+})

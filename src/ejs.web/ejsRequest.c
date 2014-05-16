@@ -5,9 +5,9 @@
  */
 /********************************** Includes **********************************/
 
-#include    "bit.h"
+#include    "me.h"
 
-#if BIT_EJS_WEB
+#if ME_EJS_WEB
 #include    "ejs.h"
 #include    "ejsCompiler.h"
 #include    "ejsWeb.h"
@@ -1184,7 +1184,7 @@ static EjsNumber *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     count = (argc >= 3) ? ejsGetInt(ejs, argv[2]) : -1;
 
     ejsResetByteArray(ejs, ba);
-    if (!ejsMakeRoomInByteArray(ejs, ba, count >= 0 ? count : BIT_MAX_BUFFER)) {
+    if (!ejsMakeRoomInByteArray(ejs, ba, count >= 0 ? count : ME_MAX_BUFFER)) {
         return 0;
     }
     if (offset < 0) {

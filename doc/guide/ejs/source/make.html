@@ -42,7 +42,7 @@
                 <li><a href="#cross">Cross Compiling</a></li>
                 <li><a href="#toolchain">Specifying a Tool Chain</a></li>
                 <li><a href="#ejs">Supporting Ejscript</a></li>
-                <li><a href="bit.html">Building with Bit</a></li>
+                <li><a href="me.html">Building with MakeMe</a></li>
                 <li><a href="ide.html">Building with an IDE</a></li>
             </ul>
 <!-- BeginDsi "dsi/sourceSeeAlso.html" -->
@@ -87,13 +87,13 @@ nmake -f projects\ejs-windows.nmake
 </pre>
             <a name="modifying"></a>
             <h3>Modifying the Makefile Defaults</h3>
-            <p>You do not use the configure program when building via Make, that is used only for building with Bit. 
+            <p>You do not use the configure program when building via Make, that is used only for building with MakeMe. 
             Rather, you supply configuration options directly to Make. These options override default values defined by the
-            projects/ejs-OS-default.mk makefile and by the projects/ejs-OS-debug-bit.h file. For example, to disable
+            projects/ejs-OS-default.mk makefile and by the projects/ejs-OS-debug-me.h file. For example, to disable
             use of SQLite:</p>
-            <pre>$ make <b>BIT_PACK_SQLITE=0</b> </pre>
-            <p>Extension packs are enabled by setting their corresponing BIT_PACK_NAME option to 1. Disable by setting
-            to zero. Some packs requires a path to locate libraries and headers. Use BIT_PACK_NAME_PATH to define
+            <pre>$ make <b>ME_COM_SQLITE=0</b> </pre>
+            <p>Extension packs are enabled by setting their corresponing ME_COM_NAME option to 1. Disable by setting
+            to zero. Some packs requires a path to locate libraries and headers. Use ME_COM_NAME_PATH to define
             the path to the extension pack.</p>
             <p>To see the list of configurable options, run:</p>
             <pre>$ <b>make help</b>
@@ -102,15 +102,15 @@ The default configuration can be modified by setting make variables
 Set to 0 to disable and 1 to enable:
 variables. Set to 0 to disable and 1 to enable:
   PROFILE            # Select default or static for static linking
-  BIT_MPR_LOGGING    # Enable application logging
-  BIT_MPR_TRACING    # Enable debug tracing
-  BIT_PACK_EST       # Enable the EST SSL stack
-  BIT_PACK_MATRIXSSL # Enable the MatrixSSL SSL stack
-  BIT_PACK_NANOSSL   # Enable the Mocana NanoSSL stack
-  BIT_PACK_OPENSSL   # Enable the OpenSSL SSL stack
-  BIT_PACK_SQLITE    # Enable the SQLite database
+  ME_MPR_LOGGING     # Enable application logging
+  ME_MPR_TRACING     # Enable debug tracing
+  ME_COM_EST         # Enable the EST SSL stack
+  ME_COM_MATRIXSSL   # Enable the MatrixSSL SSL stack
+  ME_COM_NANOSSL     # Enable the Mocana NanoSSL stack
+  ME_COM_OPENSSL     # Enable the OpenSSL SSL stack
+  ME_COM_SQLITE      # Enable the SQLite database
 For example, to disable EST:
-  BIT_PACK_EST=0 make
+  ME_COM_EST=0 make
 Other make variables:
   ARCH               # CPU architecture (x86, x64, ppc, ...)
   OS                 # Operating system (linux, macosx, windows, vxworks, ...)
@@ -142,8 +142,8 @@ sudo make uninstall
                 as you did when compiling. This is because the Makefile will conditionally install only the selected
                 components for those options.</p>
             <p>For example, to build and install OpenSSL:</p>
-                <pre>$ make <b>BIT_PACK_OPENSSL=1 BIT_PACK_OPENSSL_PATH=/usr/src/openssl</b> compile
-$ sudo make <b>BIT_PACK_OPENSSL=1 BIT_PACK_OPENSSL_PATH=/usr/src/openssl</b> install</pre>
+                <pre>$ make <b>ME_COM_OPENSSL=1 ME_COM_OPENSSL_PATH=/usr/src/openssl</b> compile
+$ sudo make <b>ME_COM_OPENSSL=1 ME_COM_OPENSSL_PATH=/usr/src/openssl</b> install</pre>
             <a name="deploy"></a>
             <h3>Deploying</h3>
             <p>If you need to deploy to a different system or capture the build products, you can install to a specific
@@ -187,7 +187,7 @@ make CC=/opt/bin/ccarm.exe LD=/opt/bin/ccarm.exe ARCH=arm PROFILE=release
             <h2>Supporting OpenSSL</h2>
             <p>If OpenSSL is required to provide SSL support, you must specify the path to the OpenSSL source
               directory. For example:</p>
-            <pre>make BIT_PACK_OPENSSL=1 BIT_PACK_OPENSSL_PATH=/path/to/openssl compile</pre>
+            <pre>make ME_COM_OPENSSL=1 ME_COM_OPENSSL_PATH=/path/to/openssl compile</pre>
             <a name="static"></a>
             <h2>Static Building</h2>
             <p>If you require a static build without the ability to dynamically load modules, use the <em>static</em>

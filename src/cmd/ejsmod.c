@@ -8,7 +8,8 @@
 
 #include    "ejsmod.h"
 
-#if BIT_PACK_EJSCRIPT
+//  UNUSED
+#if ME_COM_EJS || 1
 
 /****************************** Forward Declarations **************************/
 
@@ -324,7 +325,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     return 255;
 }
 
-#endif /* BIT_PACK_EJSCRIPT */
+#endif /* ME_COM_EJS */
 /*
     @copy   default
 

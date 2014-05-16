@@ -24,10 +24,10 @@ static EjsString *system_hostname(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
 static EjsString *system_ipaddr(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     //  TODO - move this into MPR and call mprSetIpAddr
-#if BIT_UNIX_LIKE || BIT_WIN_LIKE
+#if ME_UNIX_LIKE || ME_WIN_LIKE
     struct addrinfo *res, *reslist, hints;
     cchar           *ip;
-    char            ipaddr[BIT_MAX_PATH], service[BIT_MAX_PATH];
+    char            ipaddr[ME_MAX_PATH], service[ME_MAX_PATH];
     int             rc;
 
     if ((ip = mprGetIpAddr(ejs)) != 0) {
@@ -74,7 +74,7 @@ static EjsPath *system_tmpdir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 #if WINCE
     dir = "/Temp";
-#elif BIT_WIN_LIKE
+#elif ME_WIN_LIKE
 {
     MprFileSystem   *fs;
     fs = mprLookupFileSystem("/");

@@ -4174,7 +4174,7 @@ static void addModule(EcCompiler *cp, EjsModule *mp)
 
 
 //  TODO -- cleanup
-#if BIT_MPR_TRACING
+#if ME_MPR_TRACING
 static int level = 8;
 #endif
 

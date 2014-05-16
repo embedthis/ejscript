@@ -185,13 +185,13 @@
  */
 
 #if EMBEDTHIS || 1
- #include    "bit.h"
- #include    "bitos.h"
+ #include    "me.h"
+ #include    "osdep.h"
 #endif
-#ifndef BIT_FLOAT
-    #define BIT_FLOAT 1
+#ifndef ME_FLOAT
+    #define ME_FLOAT 1
 #endif
-#if BIT_FLOAT
+#if ME_FLOAT
 
 #if EMBEDTHIS || 1
 #include    "mpr.h"
@@ -204,7 +204,7 @@
     #endif
     #define Long int32_t
     #define ULong uint32_t
-#if BIT_ENDIAN == MPR_BIG_ENDIAN
+#if ME_ENDIAN == MPR_BIG_ENDIAN
     #define IEEE_MC68k 1
 #else
     #define IEEE_8087 1
@@ -326,8 +326,8 @@ static double private_mem[PRIVATE_mem], *pmem_next = private_mem;
  #include "math.h"
 #endif
 
-#if !EMBEDTHIS
-#define strtod unused_strtod
+#if EMBEDTHIS || 1
+#define strtod own_strtod
 #endif
 
 #ifdef __cplusplus
@@ -4291,7 +4291,7 @@ dtoa
 #undef ACQUIRE_DTOA_LOCK
 #undef Avoid_Underflow
 #undef BBias
-#undef BIT_FLOAT
+#undef ME_FLOAT
 #undef Bcopy
 #undef Big0
 #undef Big1
@@ -4371,7 +4371,7 @@ dtoa
 #undef strtod_diglim
 #undef word0
 #undef word1
-#endif /* BIT_FLOAT */
+#endif /* ME_FLOAT */
 
 /*
     @copy   default

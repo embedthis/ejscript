@@ -21,14 +21,14 @@ extern "C" {
 
 /******************************* Tunable Constants ****************************/
 
-#ifndef BIT_XML_MAX_NODE_DEPTH
-    #define BIT_XML_MAX_NODE_DEPTH  64
+#ifndef ME_XML_MAX_NODE_DEPTH
+    #define ME_XML_MAX_NODE_DEPTH  64
 #endif
-#ifndef BIT_MAX_EJS_STACK
-#if BIT_HAS_MMU
-    #define BIT_MAX_EJS_STACK       (1024 * 1024)   /**< Stack size on virtual memory systems */
+#ifndef ME_MAX_EJS_STACK
+#if ME_COMPILER_HAS_MMU
+    #define ME_MAX_EJS_STACK       (1024 * 1024)   /**< Stack size on virtual memory systems */
 #else
-    #define BIT_MAX_EJS_STACK       (1024 * 32)     /**< Stack size without MMU */
+    #define ME_MAX_EJS_STACK       (1024 * 32)     /**< Stack size without MMU */
 #endif
 #endif
 
@@ -77,6 +77,13 @@ extern "C" {
 #define EC_NUM_PAK_PROP             32              /**< Initial number of properties */
 
 /********************************* Defines ************************************/
+
+/*
+    Pack defaults
+ */
+#ifndef ME_COM_SQLITE
+    #define ME_COM_SQLITE 0
+#endif
 
 #if !DOXYGEN
 /*
@@ -169,8 +176,8 @@ struct EjsVoid;
 /** 
     Configured numeric type
  */
-#define BIT_NUM_TYPE double
-typedef BIT_NUM_TYPE MprNumber;
+#define ME_NUM_TYPE double
+typedef ME_NUM_TYPE MprNumber;
 
 /*  
     Sizes (in bytes) of encoded types in a ByteArray
@@ -261,7 +268,7 @@ typedef BIT_NUM_TYPE MprNumber;
                                     ((value) << EJS_SHIFT_VISITED) | (((EjsObj*) obj)->xtype & ~EJS_MASK_VISITED)
 #define SET_DYNAMIC(obj, value) ((EjsObj*) obj)->xtype = \
                                     (((size_t) value) << EJS_SHIFT_DYNAMIC) | (((EjsObj*) obj)->xtype & ~EJS_MASK_DYNAMIC)
-#if BIT_DEBUG
+#if ME_DEBUG
     #define SET_TYPE_NAME(obj, t) \
     if (1) { \
         if (t && ((EjsType*) t)->qname.name) { \
@@ -282,7 +289,7 @@ typedef BIT_NUM_TYPE MprNumber;
 
 typedef void EjsAny;
 
-#if BIT_DEBUG
+#if ME_DEBUG
     #define ejsSetMemRef(obj) if (1) { ((EjsObj*) obj)->mem = MPR_GET_MEM(obj); } else 
 #else
     #define ejsSetMemRef(obj) 
@@ -616,7 +623,7 @@ PUBLIC void ejsFreePoolVM(EjsPool *pool, Ejs *ejs);
 typedef struct EjsObj {
     //  WARNING: changes to this structure require changes to mpr/src/mprPrintf.c
     ssize           xtype;              /**< xtype: typeBits | dynamic << 1 | visited */
-#if BIT_DEBUG
+#if ME_DEBUG
     char            *kind;              /**< If DEBUG, Type name of object (Type->qname.name) */
     struct EjsType  *type;              /**< If DEBUG, Pointer to object type */
     MprMem          *mem;               /**< If DEBUG, Pointer to underlying memory block */
@@ -974,7 +981,7 @@ typedef struct EjsTrait {
 #define visundefined(v) (viscore(v) && (v)->word & TAG_MASK) == TAG_UNDEFINED)
 #define visstring(v)    (viscore(v) && (v)->word & TAG_MASK) == TAG_STRING)
 
-#if BIT_64
+#if ME_64
     #define vpointer(v) ((v)->pointer & POINTER_VALUE)
     #define vinteger(v) ((v)->integer & INTEGER_VALUE)
 #else
@@ -988,11 +995,11 @@ typedef struct EjsTrait {
 typedef union EjsValue {
     uint64  word;
     double  number;
-#if BIT_64
+#if ME_64
     void    *pointer;
     int     integer;
 #else
-    #if CPU_ENDIAN == BIT_LITTLE_ENDIAN
+    #if CPU_ENDIAN == ME_LITTLE_ENDIAN
         struct {
             void    *pointer;
             int32   filler1;
@@ -1995,7 +2002,7 @@ typedef struct EjsBlock {
     EjsObj          **stackBase;                    /**< Start of stack in this block */
     uchar           *restartAddress;                /**< Restart instruction address */
     uint            nobind: 1;                      /**< Don't bind to properties in this block */
-#if BIT_DEBUG
+#if ME_DEBUG
     struct EjsLine  *line;
 #endif
 } EjsBlock;
@@ -2027,7 +2034,7 @@ PUBLIC void ejsManageBlock(EjsBlock *block, int flags);
 PUBLIC void ejsPopBlockNamespaces(EjsBlock *block, int count);
 PUBLIC void ejsResetBlockNamespaces(Ejs *ejs, EjsBlock *block);
 
-#if BIT_DEBUG
+#if ME_DEBUG
     #define ejsSetBlockLocation(block, loc) block->line = loc
 #else
     #define ejsSetBlockLocation(block, loc)
@@ -3905,7 +3912,7 @@ typedef struct EjsXmlTagState {
  */
 typedef struct EjsXmlState {
     //  TODO -- should not be fixed but should be growable
-    EjsXmlTagState  nodeStack[BIT_XML_MAX_NODE_DEPTH];      /**< nodeStack */
+    EjsXmlTagState  nodeStack[ME_XML_MAX_NODE_DEPTH];      /**< nodeStack */
     Ejs             *ejs;                                   /**< Convenient reference to ejs */
     struct EjsType  *xmlType;                               /**< Xml type reference */
     struct EjsType  *xmlListType;                           /**< Xml list type reference */
@@ -4477,8 +4484,8 @@ PUBLIC bool ejsIsTypeSubType(Ejs *ejs, EjsType *target, EjsType *baseType);
 /*
     Internal
  */
-#define VSPACE(space) space "-" BIT_VNUM
-#define ejsGetVType(ejs, space, name) ejsGetTypeByName(ejs, space "-" BIT_VNUM, name)
+#define VSPACE(space) space "-" ME_VNUM
+#define ejsGetVType(ejs, space, name) ejsGetTypeByName(ejs, space "-" ME_VNUM, name)
 PUBLIC void     ejsDefineTypeNamespaces(Ejs *ejs, EjsType *type);
 PUBLIC int      ejsFixupType(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom);
 PUBLIC int      ejsGetTypeSize(Ejs *ejs, EjsType *type);
@@ -4567,10 +4574,10 @@ PUBLIC void     ejsSetSqliteMemCtx(MprThreadLocal *tls);
 PUBLIC void     ejsSetSqliteTls(MprThreadLocal *tls);
 PUBLIC void     ejsDefineConfigProperties(Ejs *ejs);
 
-#if BIT_PACK_SQLITE
+#if ME_COM_SQLITE
     PUBLIC int   ejs_db_sqlite_Init(Ejs *ejs, MprModule *mp);
 #endif
-#if BIT_PACK_ZLIB
+#if ME_COM_ZLIB
     PUBLIC int   ejs_zlib_Init(Ejs *ejs, MprModule *mp);
 #endif
 PUBLIC int       ejs_web_Init(Ejs *ejs, MprModule *mp);
@@ -5131,13 +5138,10 @@ typedef void (*EjsLoaderCallback)(struct Ejs *ejs, int kind, ...);
     #define EJS_MINOR(version)      ((version / EJS_VERSION_FACTOR) % EJS_VERSION_FACTOR)
     #define EJS_PATCH(version)      (version % EJS_VERSION_FACTOR)
     #define EJS_MAX_VERSION         EJS_MAKE_VERSION(EJS_VERSION_FACTOR-1, EJS_VERSION_FACTOR-1, EJS_VERSION_FACTOR-1)
-#if UNUSED
-    #define EJS_VERSION             EJS_MAKE_VERSION(BIT_MAJOR_VERSION, BIT_MINOR_VERSION, BIT_PATCH_VERSION)
-#endif
 #endif
 
 #ifndef EJS_VERSION
-    #define EJS_VERSION BIT_VERSION
+    #define EJS_VERSION ME_VERSION
 #endif
 
 /*

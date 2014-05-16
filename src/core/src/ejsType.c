@@ -173,7 +173,7 @@ PUBLIC EjsType *ejsCreateCoreType(Ejs *ejs, EjsName qname, int size, int sid, in
 {
     EjsType     *type;
 
-#if BIT_DEBUG
+#if ME_DEBUG
     if (attributes & EJS_TYPE_POT) {
         if (size > sizeof(EjsPot)) {
             assert(attributes & EJS_TYPE_DYNAMIC_INSTANCES);
@@ -990,7 +990,7 @@ static int setTypeProperty(Ejs *ejs, EjsType *type, int slotNum, EjsObj *value)
  */
 static void manageDefault(EjsObj *ev, int flags)
 {
-#if BIT_DEBUG
+#if ME_DEBUG
     if (flags & MPR_MANAGE_MARK) {
         assert(!TYPE(ev)->isPot);
     }

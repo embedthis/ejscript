@@ -10,7 +10,7 @@
 
 /********************************** Defines ***********************************/
 
-#if BIT_WIN_LIKE
+#if ME_WIN_LIKE
 #define isDelim(fp, c)  (c == '/' || c == fp->delimiter)
 #else
 #define isDelim(fp, c)  (c == fp->delimiter)
@@ -27,7 +27,7 @@ static int mapMode(cchar *mode);
 static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv);
 static ssize readData(Ejs *ejs, EjsFile *fp, EjsByteArray *ap, ssize offset, ssize count);
 
-#if BIT_CC_MMU && FUTURE
+#if ME_CC_MMU && FUTURE
 static void *mapFile(EjsFile *fp, uint size, int mode);
 static void unmapFile(EjsFile *fp);
 #endif
@@ -58,7 +58,7 @@ static EjsNumber *getFileProperty(Ejs *ejs, EjsFile *fp, int slotNum)
     }
 #endif
 
-#if BIT_CC_MMU && FUTURE
+#if ME_CC_MMU && FUTURE
     //  must check against mapped size here.
     c = fp->mapped[slotNum];
 #else
@@ -123,7 +123,7 @@ static int setFileProperty(Ejs *ejs, EjsFile *fp, int slotNum, EjsObj *value)
         slotNum = (int) offset;
     }
 
-#if BIT_CC_MMU && FUTURE
+#if ME_CC_MMU && FUTURE
     fp->mapped[slotNum] = c;
 #else
     if (offset != slotNum && mprSeekFile(fp->file, SEEK_SET, slotNum) != slotNum) {
@@ -254,7 +254,7 @@ static EjsObj *closeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         mprCloseFile(fp->file);
         fp->file = 0;
     }
-#if BIT_CC_MMU && FUTURE
+#if ME_CC_MMU && FUTURE
     if (fp->mapped) {
         unmapFile(fp);
         fp->mapped = 0;
@@ -313,7 +313,7 @@ static EjsObj *nextValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
     }
 
     if (ip->index < fp->info.size) {
-#if !BIT_CC_MMU || 1
+#if !ME_CC_MMU || 1
         if (mprSeekFile(fp->file, SEEK_CUR, 0) != ip->index) {
             if (mprSeekFile(fp->file, SEEK_SET, ip->index) != ip->index) {
                 ejsThrowIOError(ejs, "Cannot seek to %d", ip->index);
@@ -327,7 +327,7 @@ static EjsObj *nextValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 #endif
     }
 
-#if BIT_CC_MMU && FUTURE
+#if ME_CC_MMU && FUTURE
     unmapFile(fp);
     fp->mapped = 0;
 #endif
@@ -459,7 +459,7 @@ static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     if (options) {
         ejsSetPathAttributes(ejs, fp->path, options);
     }
-#if BIT_CC_MMU && FUTURE
+#if ME_CC_MMU && FUTURE
     mprGetPathInfo(&fp->info);
     fp->mapped = mapFile(fp, fp->info.size, MPR_MAP_READ | MPR_MAP_WRITE);
 #endif
@@ -512,7 +512,7 @@ static EjsObj *readFileBytes(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
             count = (int) info.size;
             count -= (int) mprGetFilePosition(fp->file);
         } else {
-            count = BIT_MAX_BUFFER;
+            count = ME_MAX_BUFFER;
         }
         assert(count >= 0);
     }
@@ -568,7 +568,7 @@ static EjsString *readFileString(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
             count = (int) info.size;
             count -= (int) mprGetFilePosition(fp->file);
         } else {
-            count = BIT_MAX_BUFFER;
+            count = ME_MAX_BUFFER;
         }
         assert(count >= 0);
     }
@@ -624,7 +624,7 @@ static EjsNumber *readFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
             count = (int) info.size;
             count -= (int) mprGetFilePosition(fp->file);
         } else {
-            count = BIT_MAX_BUFFER;
+            count = ME_MAX_BUFFER;
         }
         assert(count >= 0);
     }
@@ -719,7 +719,7 @@ PUBLIC EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
             break;
         }
         if (mprWriteFile(fp->file, buf, len) != len) {
-            mprLog(0, "Write IO error %d\n", mprGetOsError());
+            mprLog(0, "Write IO error %d", mprGetOsError());
             ejsThrowIOError(ejs, "Cannot write to %s", fp->path);
             return 0;
         }
@@ -758,7 +758,7 @@ static ssize readData(Ejs *ejs, EjsFile *fp, EjsByteArray *ap, ssize offset, ssi
 }
 
 
-#if BIT_CC_MMU && FUTURE
+#if ME_CC_MMU && FUTURE
 static void *mapFile(EjsFile *fp, uint size, int mode)
 {
     Mpr         *mpr;

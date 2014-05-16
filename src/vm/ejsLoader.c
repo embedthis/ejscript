@@ -912,7 +912,7 @@ static int loadDocSection(Ejs *ejs, EjsModule *mp)
 static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
 {
     MprModule   *native;
-    char        *base, *bare, *path, *moduleName, initName[BIT_MAX_PATH], *cp;
+    char        *base, *bare, *path, *moduleName, initName[ME_MAX_PATH], *cp;
 
     /*
         Replace ".mod" with ".so", ".dll" or ".dylib"
@@ -923,9 +923,9 @@ static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
     }
     base = mprGetPathBase(bare);
     if (!sstarts(base, "lib")) {
-        path = mprJoinPath(mprGetPathDir(bare), sjoin("lib", base, BIT_SHOBJ, NULL));
+        path = mprJoinPath(mprGetPathDir(bare), sjoin("lib", base, ME_SHOBJ, NULL));
     } else {
-        path = sjoin(bare, BIT_SHOBJ, NULL);
+        path = sjoin(bare, ME_SHOBJ, NULL);
     }
     if (! mprPathExists(path, R_OK)) {
         mprError("Native module not found %s", path);

@@ -4,21 +4,21 @@
 #	Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 #
 
-BIT_PRODUCT=${settings.product}
-BIT_NAME="${settings.title}"
-BIT_CACHE_PREFIX="${prefixes.cache}"
+ME_PRODUCT=${settings.product}
+ME_NAME="${settings.title}"
+ME_CACHE_PREFIX="${prefixes.cache}"
 
 ###############################################################################
 
 remove() {
 	local cdir=`pwd`
 
-    if [ -x $BIT_CACHE_PREFIX ] ; then
-        cd $BIT_CACHE_PREFIX
-        removeIntermediateFiles access.log error.log '*.log.old' .dummy $BIT_PRODUCT.conf .*.log make.log *.mod
+    if [ -x $ME_CACHE_PREFIX ] ; then
+        cd $ME_CACHE_PREFIX
+        removeIntermediateFiles access.log error.log '*.log.old' .dummy $ME_PRODUCT.conf .*.log make.log *.mod
         cleanDir
         cd $cdir
-        rmdir $BIT_LIB_PREFIX 2>/dev/null || true
+        rmdir $ME_LIB_PREFIX 2>/dev/null || true
     fi
 }
 
@@ -92,5 +92,5 @@ case $action in
 esac
 
 echo
-echo "$BIT_NAME $action successful"
+echo "$ME_NAME $action successful"
 exit 0

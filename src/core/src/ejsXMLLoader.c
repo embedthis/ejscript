@@ -10,8 +10,8 @@
 
 /********************************** Defines ***********************************/
 
-#if !defined(BIT_XML_MAX_NODE_DEPTH)
-    #define BIT_XML_MAX_NODE_DEPTH 2048
+#if !defined(ME_XML_MAX_NODE_DEPTH)
+    #define ME_XML_MAX_NODE_DEPTH 2048
 #endif
 
 /****************************** Forward Declarations **************************/
@@ -37,7 +37,7 @@ MprXml *ejsCreateXmlParser(Ejs *ejs, EjsXML *xml, cchar *filename)
     EjsXmlState *parser;
     MprXml      *xp;
     
-    xp = mprXmlOpen(BIT_MAX_BUFFER, -1);
+    xp = mprXmlOpen(ME_MAX_BUFFER, -1);
     assert(xp);
 
     /*
@@ -107,7 +107,7 @@ static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, 
         break;
 
     case MPR_XML_NEW_ELT:
-        if (parser->topOfStack > BIT_XML_MAX_NODE_DEPTH) {
+        if (parser->topOfStack > ME_XML_MAX_NODE_DEPTH) {
             ejsThrowSyntaxError(ejs,  "XML nodes nested too deeply in %s at line %d", parser->filename, 
                 mprXmlGetLineNumber(xp));
             return MPR_ERR_BAD_SYNTAX;

@@ -1,0 +1,21 @@
+/*
+    mail.me -- MakeMe file for ejs.mail
+ */
+
+Me.load({
+
+    targets: {
+        'ejs.mail.mod': {
+            enable: 'me.settings.ejs.mail',
+            path: '${BIN}/ejs.mail.mod',
+            files: [ '*.es' ],
+            build: "
+                trace('Compile', 'ejs.mail.mod')
+                run('${LBIN}/ejsc --out ${BIN}/ejs.mail.mod ${settings.esflags} --optimize 9 ' + Path('.').files('*.es').sort().join(' '))
+            ",
+            'generate-nmake': '"${BIN}\\ejsc" --out "${BIN}/ejs.mail.mod" ${settings.esflags} --optimize 9 *.es',
+            'generate-sh': '${BIN}/ejsc --out ${BIN}/ejs.mail.mod ${settings.esflags} --optimize 9 *.es',
+            depends: [ 'ejsc', 'ejs.mod' ],
+        },
+	},
+})

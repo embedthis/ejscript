@@ -40,7 +40,7 @@
 
 static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, int stackAdjust);
 
-static BIT_INLINE void getPropertyFromSlot(Ejs *ejs, EjsAny *thisObj, EjsAny *obj, int slotNum) 
+static ME_INLINE void getPropertyFromSlot(Ejs *ejs, EjsAny *thisObj, EjsAny *obj, int slotNum) 
 {
     EjsFunction     *fun, *value;
 
@@ -69,7 +69,7 @@ static BIT_INLINE void getPropertyFromSlot(Ejs *ejs, EjsAny *thisObj, EjsAny *ob
 
 #define GET_SLOT(thisObj, obj, slotNum) getPropertyFromSlot(ejs, thisObj, obj, slotNum)
 
-static BIT_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, EjsAny *obj, int slotNum) 
+static ME_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, EjsAny *obj, int slotNum) 
 {
     EjsFunction     *fun;
 
@@ -142,7 +142,7 @@ static BIT_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
     #define traceCode(ejs, opcode) opcode
 #endif
 
-#if BIT_UNIX_LIKE || (VXWORKS && !BIT_DIAB)
+#if ME_UNIX_LIKE || (VXWORKS && !ME_DIAB)
     #define CASE(opcode) opcode
     #define BREAK goto *opcodeJump[opcode = traceCode(ejs, GET_BYTE())]
 #else
@@ -200,7 +200,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     EjsString   *str;
     int         i, offset, count, opcode, attributes, paused;
 
-#if BIT_UNIX_LIKE || (VXWORKS && !BIT_DIAB)
+#if ME_UNIX_LIKE || (VXWORKS && !ME_DIAB)
     /*
         Direct threading computed goto processing. Include computed goto jump table.
      */
@@ -225,7 +225,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     assert(state->fp);
     FRAME->caller = 0;
 
-#if BIT_UNIX_LIKE || (VXWORKS && !BIT_DIAB)
+#if ME_UNIX_LIKE || (VXWORKS && !ME_DIAB)
     /*
         Direct threading computed goto processing. Include computed goto jump table.
      */
@@ -442,7 +442,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         [RegExp]
          */
         CASE (EJS_OP_LOAD_REGEXP):
-#if BIT_PACK_PCRE
+#if ME_COM_PCRE
             str = GET_STRING();
             v1 = (EjsObj*) ejsParseRegExp(ejs, str);
             push(v1);
@@ -2406,13 +2406,13 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             assert(0);
             BREAK;
 
-#if !BIT_UNIX_LIKE && !(VXWORKS && !BIT_DIAB)
+#if !ME_UNIX_LIKE && !(VXWORKS && !ME_DIAB)
         }
     }
 #endif
     
 done:
-#if BIT_DEBUG && FUTURE
+#if ME_DEBUG && FUTURE
     if (ejs->initialized) {
         ejsShowOpFrequency(ejs);
     }
@@ -3289,7 +3289,7 @@ int ejsGrowStack(Ejs *ejs, int incr)
         /*
             Allocate a stack
          */
-        if (sp->top >= &sp->bottom[BIT_MAX_EJS_STACK]) {
+        if (sp->top >= &sp->bottom[ME_MAX_EJS_STACK]) {
             return MPR_ERR_MEMORY;
         }
         size = (sizeof(EjsObj*) * incr);
@@ -3606,7 +3606,7 @@ static EjsAny *getNthBlock(Ejs *ejs, int nth)
 void ejsLog(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     args;
-    char        buf[BIT_MAX_BUFFER];
+    char        buf[ME_MAX_BUFFER];
 
     va_start(args, fmt);
     fmtv(buf, sizeof(buf) - 1, fmt, args);
@@ -3616,7 +3616,7 @@ void ejsLog(Ejs *ejs, cchar *fmt, ...)
 
 
 #if FUTURE
-#if BIT_HAS_LIB_EDIT
+#if ME_COMPILER_HAS_LIB_EDIT
 static History  *cmdHistory;
 static EditLine *eh; 
 static cchar    *prompt;
@@ -3786,7 +3786,7 @@ void ejsShowOpFrequency(Ejs *ejs)
 }
 #endif
 
-#endif /* BIT_DEBUG */
+#endif /* ME_DEBUG */
 
 
 /*

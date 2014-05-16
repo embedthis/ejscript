@@ -234,7 +234,7 @@ static void generateHomeTitle(EjsMod *mp)
         "       <input class=\"smallText\" type=\"text\" name=\"search\" align=\"right\" id=\"searchInput\" size=\"15\" \n"
         "           maxlength=\"50\" value=\"Search\"/>\n"
         "   </div>\n"
-        "</div>\n", BIT_TITLE, BIT_VERSION);
+        "</div>\n", ME_TITLE, ME_VERSION);
 
     generateHtmlFooter(mp);
 
@@ -502,7 +502,7 @@ static void generateClassList(EjsMod *mp, cchar *namespace)
     MprList     *classes;
     ClassRec    *crec;
     cchar       *className, *fmtName;
-    char        *path, script[BIT_MAX_PATH], *cp;
+    char        *path, script[ME_MAX_PATH], *cp;
     int         next;
 
     ejs = mp->ejs;
@@ -569,7 +569,7 @@ static void generateOverview(EjsMod *mp)
     }
     generateContentHeader(mp, "Overview");
 
-    out(mp, "<h1>%s %s</h1>", BIT_TITLE, BIT_VERSION);
+    out(mp, "<h1>%s %s</h1>", ME_TITLE, ME_VERSION);
     out(mp, "<p>Embedthis Ejscript is an implementation of the Javascript (ECMA 262) language.</p>");
     out(mp, "<p>See <a href='http://www.ejscript.org' target='new'>http://www.ejscript.org</a> for "
         "product details and downloads.</p>");
@@ -2148,7 +2148,7 @@ static void fixupDoc(Ejs *ejs, EjsDoc *doc)
     doc->requires = wikiFormat(ejs, fixSentence(doc->requires));
     if (doc->spec) {
         if (mcmp(doc->spec, "ejs") == 0) {
-            doc->spec = mfmt("ejscript-%d.%d", BIT_MAJOR_VERSION, BIT_MINOR_VERSION);
+            doc->spec = mfmt("ejscript-%d.%d", ME_MAJOR_VERSION, ME_MINOR_VERSION);
         }
     } else {
         doc->spec = NULL;
@@ -2252,7 +2252,7 @@ static char *fmtNamespace(Ejs *ejs, EjsName qname)
 
 static char *fmtType(Ejs *ejs, EjsName qname)
 {
-    static char buf[BIT_MAX_PATH];
+    static char buf[ME_MAX_PATH];
     char        *namespace;
 
     namespace = fmtNamespace(ejs, qname);
@@ -2278,7 +2278,7 @@ static char *fmtType(Ejs *ejs, EjsName qname)
  */
 static char *getFilename(cchar *name)
 {
-    static char buf[BIT_MAX_PATH];
+    static char buf[ME_MAX_PATH];
     char        *cp, *sp;
 
     scopy(buf, sizeof(buf), name);
@@ -2305,7 +2305,7 @@ static char *getFilename(cchar *name)
 
 static char *fmtTypeReference(Ejs *ejs, EjsName qname)
 {
-    static char buf[BIT_MAX_PATH];
+    static char buf[ME_MAX_PATH];
     char        *typeName;
 
     typeName = fmtType(ejs, qname);
@@ -2316,7 +2316,7 @@ static char *fmtTypeReference(Ejs *ejs, EjsName qname)
 
 static char *fmtSpace(Ejs *ejs, EjsName qname)
 {
-    static char buf[BIT_MAX_PATH];
+    static char buf[ME_MAX_PATH];
     char        *namespace;
 
     namespace = fmtNamespace(ejs, qname);
@@ -2331,7 +2331,7 @@ static char *fmtSpace(Ejs *ejs, EjsName qname)
 
 static char *fmtDeclaration(Ejs *ejs, EjsName qname)
 {
-    static char buf[BIT_MAX_PATH];
+    static char buf[ME_MAX_PATH];
     char        *namespace;
 
     namespace = fmtNamespace(ejs, qname);

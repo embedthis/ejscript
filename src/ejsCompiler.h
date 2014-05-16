@@ -136,7 +136,7 @@ typedef struct EcCodeGen {
 //  TODO DOC
 typedef struct EcNode {
     char                *kindName;              /* Node kind string */
-#if BIT_DEBUG
+#if ME_DEBUG
     char                *tokenName;
 #endif
     EjsName             qname;
@@ -178,7 +178,7 @@ typedef struct EcNode {
 
     struct EcCompiler   *cp;                    /* Compiler instance reference */
 
-#if BIT_HAS_UNNAMED_UNIONS
+#if ME_COMPILER_HAS_UNNAMED_UNIONS
     union {
 #endif
         struct {
@@ -352,7 +352,7 @@ typedef struct EcNode {
             Node        object;
             Node        statement;
         } with;
-#if BIT_HAS_UNNAMED_UNIONS
+#if ME_COMPILER_HAS_UNNAMED_UNIONS
     };
 #endif
 } EcNode;
@@ -630,7 +630,7 @@ typedef struct EcToken {
     EcLocation  loc;                    /* Source code debug info */
     struct EcToken *next;               /* Putback and freelist linkage */
     EcStream    *stream;
-#if BIT_DEBUG
+#if ME_DEBUG
     char        *name;                  /* Debug token name */
 #endif
 } EcToken;

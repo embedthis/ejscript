@@ -18,7 +18,6 @@
     "ejs",
     "core",
   ],
-  "dependencies": ,
   "os": "*",
   "cpu": "*",
   "patchable": false,

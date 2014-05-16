@@ -8,13 +8,13 @@
 
 #include    "ejs.h"
 
-#if BIT_HAS_LIB_EDIT
+#if ME_COMPILER_HAS_LIB_EDIT
     #include <histedit.h>
 #endif
 
 /*********************************** Locals ***********************************/
 
-#if BIT_HAS_LIB_EDIT
+#if ME_COMPILER_HAS_LIB_EDIT
 static History *cmdHistory;
 static EditLine *eh; 
 static cchar *prompt;
@@ -24,7 +24,7 @@ static cchar *prompt;
 
 /************************************* Code ***********************************/
 
-#if BIT_HAS_LIB_EDIT
+#if ME_COMPILER_HAS_LIB_EDIT
 
 
 EditLine *ejsReadlineOpen(MprCtx ctx)
@@ -72,7 +72,7 @@ char *ejsReadline(MprCtx ctx, cchar *msg)
     return NULL; 
 } 
 
-#else /* BIT_HAS_LIB_EDIT */
+#else /* ME_COMPILER_HAS_LIB_EDIT */
 
 char *ejsReadline(MprCtx ctx, cchar *msg)
 {
@@ -84,7 +84,7 @@ char *ejsReadline(MprCtx ctx, cchar *msg)
     }
     return strdup(buf);
 }
-#endif /* BIT_HAS_LIB_EDIT */
+#endif /* ME_COMPILER_HAS_LIB_EDIT */
 
 /*
     @copy   default

@@ -64,7 +64,7 @@
             Runtime (MPR).</p>
             <p><b>NOTE:</b> When attempting a port, you should get the latest copy of the development source 
             rather than using the download source package. You can get the latest development source by checking out a
-            copy from the <a href="https://github.com/embedthis/ejs-2">repository</a>.</p>
+            copy from the <a href="https://github.com/embedthis/ejs">repository</a>.</p>
             <p><b>NOTE:</b> Please read <a href="building.html">Building from Source</a> before your read this
             document. It provides valuable background about building from source.</p>
             
@@ -74,7 +74,7 @@
                 <li>
                     <h3>Pick a Name</h3>
                     <p>If you are doing a port for a new operating system, you need to pick a symbolic name that will
-                    be used in conditional compilation, Makefiles, bit files, and operating system specific 
+                    be used in conditional compilation, Makefiles, MakeMe files, and operating system specific 
                     directories. Some existing O/S names are: "linux", "windows", "freebsd", and "macosx".</p>
                 </li>
                 <li>
@@ -91,7 +91,7 @@
                     appropriate compiler and linker switches. Edit the top level Makefile if required to chain to this
                     new Makefile.</p>
                     <pre>
-bit --without all configure 
+me --without all configure 
 cp -r linux-x86-debug qnx-x86-debug
 cp projects/ejs-linux.mk projects/ejs-qnx.mk
 </pre>
@@ -149,14 +149,6 @@ make
                     <pre>
 ejs
 </pre>
-                </li>
-                <li>
-                    <h3>Adding support to Bit for the new operating system.</h3>
-                    <p>Add a new bit O/S support file under <em>src/ejs.bit/bits/os</em>. Copy the from your BASEOS and
-                    then customize as required.</p>
-                    <p>Then edit <em>src/ejs.bit/bit.es</em> and add your operating system name to the 
-                    declaration for <em>supportedOS</em>. If you are adding a new architecture, add it to the
-                    <em>supportedArch</em> declaration.</p>
                 </li>
             </ol>
             

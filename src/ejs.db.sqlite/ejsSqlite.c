@@ -11,16 +11,16 @@
 
 #include    "ejs.h"
 
-#if BIT_PACK_SQLITE && BIT_EJS_DB
+#if ME_COM_SQLITE && ME_EJS_DB
     /* Indent to no create dependency */
     #include    "sqlite3.h"
 #include    "ejs.db.sqlite.slots.h"
 
-#ifndef BIT_MAX_SQLITE_MEM
-    #define BIT_MAX_SQLITE_MEM      (2*1024*1024)   /**< Maximum buffering for Sqlite */
+#ifndef ME_MAX_SQLITE_MEM
+    #define ME_MAX_SQLITE_MEM      (2*1024*1024)   /**< Maximum buffering for Sqlite */
 #endif
-#ifndef BIT_MAX_SQLITE_DURATION
-    #define BIT_MAX_SQLITE_DURATION 30000           /**< Database busy timeout */
+#ifndef ME_MAX_SQLITE_DURATION
+    #define ME_MAX_SQLITE_DURATION 30000           /**< Database busy timeout */
 #endif
 
 /*********************************** Locals ***********************************/
@@ -96,8 +96,8 @@ static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **arg
                 ejsThrowIOError(ejs, "Cannot open database %s", path);
                 return 0;
             }
-            sqlite3_soft_heap_limit(BIT_MAX_SQLITE_MEM);
-            sqlite3_busy_timeout(sdb, BIT_MAX_SQLITE_DURATION);
+            sqlite3_soft_heap_limit(ME_MAX_SQLITE_MEM);
+            sqlite3_busy_timeout(sdb, ME_MAX_SQLITE_DURATION);
 
         } else {
             ejsThrowArgError(ejs, "Unknown SQLite database URI %s", path);
@@ -433,7 +433,7 @@ PUBLIC int ejs_db_sqlite_Init(Ejs *ejs, MprModule *mp)
     return ejsAddNativeModule(ejs, "ejs.db.sqlite", configureSqliteTypes, _ES_CHECKSUM_ejs_db_sqlite, EJS_LOADER_ETERNAL);
 }
 
-#endif /* BIT_PACK_SQLITE */
+#endif /* ME_COM_SQLITE */
 
 /*
     @copy   default
