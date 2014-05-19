@@ -13,17 +13,19 @@ Me.load({
                 'core/src/*.c',
                 'vm/*.c'
             ],
-            depends: [ 'libhttp' ],
+            depends: [ 'slots', 'libhttp' ],
         },
 
-        importSlots: {
-            action: "
+        slots: {
+            build: `
                 for each (file in Path('slots').files('*.h')) {
                     let src = me.dir.inc.join(file.basename)
-                    trace('Import', src)
-                    src.copy(file)
+                    if (src.readString() != file.readString()) {
+                        trace('Import', src)
+                        src.copy(file)
+                    }
                 }
-            ",
+            `,
         },
 	},
 })
