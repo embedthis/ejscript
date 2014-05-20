@@ -10,9 +10,6 @@
 
 #include    "ejsCompiler.h"
 
-//  UNUSED
-#if ME_COM_EJS || 1
-
 /********************************** Forwards **********************************/
 
 typedef struct App {
@@ -375,14 +372,6 @@ static void require(cchar *name)
     }
 }
 
-
-#else
-int main(int argc, char **argv)
-{
-    return 0;
-}
-
-#endif /* ME_COM_EJS */
 /*
     @copy   default
 
