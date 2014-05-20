@@ -3,7 +3,7 @@
 #
 
 NAME                  := ejs
-VERSION               := 2.3.6
+VERSION               := 2.4.0
 PROFILE               ?= static
 ARCH                  ?= $(shell echo $(WIND_HOST_TYPE) | sed 's/-.*//')
 CPU                   ?= $(subst X86,PENTIUM,$(shell echo $(ARCH) | tr a-z A-Z))
@@ -252,6 +252,7 @@ clean:
 
 clobber: clean
 	rm -fr ./$(CONFIG)
+
 
 
 #
@@ -1429,6 +1430,7 @@ $(CONFIG)/obj/ejsService.o: \
 #
 #   libejs
 #
+DEPS_81 += slots
 DEPS_81 += $(CONFIG)/inc/mpr.h
 DEPS_81 += $(CONFIG)/inc/me.h
 DEPS_81 += $(CONFIG)/inc/osdep.h
@@ -1532,6 +1534,7 @@ $(CONFIG)/obj/ejs.o: \
 #
 #   ejs
 #
+DEPS_83 += slots
 DEPS_83 += $(CONFIG)/inc/mpr.h
 DEPS_83 += $(CONFIG)/inc/me.h
 DEPS_83 += $(CONFIG)/inc/osdep.h
@@ -1646,6 +1649,7 @@ $(CONFIG)/obj/ejsc.o: \
 #
 #   ejsc
 #
+DEPS_85 += slots
 DEPS_85 += $(CONFIG)/inc/mpr.h
 DEPS_85 += $(CONFIG)/inc/me.h
 DEPS_85 += $(CONFIG)/inc/osdep.h
@@ -1818,6 +1822,7 @@ $(CONFIG)/obj/slotGen.o: \
 #
 #   ejsmod
 #
+DEPS_92 += slots
 DEPS_92 += $(CONFIG)/inc/mpr.h
 DEPS_92 += $(CONFIG)/inc/me.h
 DEPS_92 += $(CONFIG)/inc/osdep.h
@@ -1980,6 +1985,7 @@ DEPS_93 += src/core/Worker.es
 DEPS_93 += src/core/XML.es
 DEPS_93 += src/core/XMLHttp.es
 DEPS_93 += src/core/XMLList.es
+DEPS_93 += slots
 DEPS_93 += $(CONFIG)/inc/mpr.h
 DEPS_93 += $(CONFIG)/inc/me.h
 DEPS_93 += $(CONFIG)/inc/osdep.h
@@ -2089,6 +2095,7 @@ $(CONFIG)/bin/ejs.mod: $(DEPS_93)
 #
 DEPS_94 += src/ejs.db/Database.es
 DEPS_94 += src/ejs.db/DatabaseConnector.es
+DEPS_94 += slots
 DEPS_94 += $(CONFIG)/inc/mpr.h
 DEPS_94 += $(CONFIG)/inc/me.h
 DEPS_94 += $(CONFIG)/inc/osdep.h
@@ -2195,6 +2202,7 @@ $(CONFIG)/bin/ejs.db.mod: $(DEPS_94)
 #   ejs.db.mapper.mod
 #
 DEPS_95 += src/ejs.db.mapper/Record.es
+DEPS_95 += slots
 DEPS_95 += $(CONFIG)/inc/mpr.h
 DEPS_95 += $(CONFIG)/inc/me.h
 DEPS_95 += $(CONFIG)/inc/osdep.h
@@ -2302,6 +2310,7 @@ $(CONFIG)/bin/ejs.db.mapper.mod: $(DEPS_95)
 #   ejs.db.sqlite.mod
 #
 DEPS_96 += src/ejs.db.sqlite/Sqlite.es
+DEPS_96 += slots
 DEPS_96 += $(CONFIG)/inc/mpr.h
 DEPS_96 += $(CONFIG)/inc/me.h
 DEPS_96 += $(CONFIG)/inc/osdep.h
@@ -2408,6 +2417,7 @@ $(CONFIG)/bin/ejs.db.sqlite.mod: $(DEPS_96)
 #   ejs.mail.mod
 #
 DEPS_97 += src/ejs.mail/Mail.es
+DEPS_97 += slots
 DEPS_97 += $(CONFIG)/inc/mpr.h
 DEPS_97 += $(CONFIG)/inc/me.h
 DEPS_97 += $(CONFIG)/inc/osdep.h
@@ -2536,6 +2546,7 @@ DEPS_98 += src/ejs.web/UploadFile.es
 DEPS_98 += src/ejs.web/UrlMap.es
 DEPS_98 += src/ejs.web/Utils.es
 DEPS_98 += src/ejs.web/View.es
+DEPS_98 += slots
 DEPS_98 += $(CONFIG)/inc/mpr.h
 DEPS_98 += $(CONFIG)/inc/me.h
 DEPS_98 += $(CONFIG)/inc/osdep.h
@@ -2645,6 +2656,7 @@ $(CONFIG)/bin/ejs.web.mod: $(DEPS_98)
 #   ejs.template.mod
 #
 DEPS_99 += src/ejs.template/TemplateParser.es
+DEPS_99 += slots
 DEPS_99 += $(CONFIG)/inc/mpr.h
 DEPS_99 += $(CONFIG)/inc/me.h
 DEPS_99 += $(CONFIG)/inc/osdep.h
@@ -2751,6 +2763,7 @@ $(CONFIG)/bin/ejs.template.mod: $(DEPS_99)
 #   ejs.unix.mod
 #
 DEPS_100 += src/ejs.unix/Unix.es
+DEPS_100 += slots
 DEPS_100 += $(CONFIG)/inc/mpr.h
 DEPS_100 += $(CONFIG)/inc/me.h
 DEPS_100 += $(CONFIG)/inc/osdep.h
@@ -2857,6 +2870,7 @@ $(CONFIG)/bin/ejs.unix.mod: $(DEPS_100)
 #   ejs.mvc.mod
 #
 DEPS_101 += src/ejs.mvc/mvc.es
+DEPS_101 += slots
 DEPS_101 += $(CONFIG)/inc/mpr.h
 DEPS_101 += $(CONFIG)/inc/me.h
 DEPS_101 += $(CONFIG)/inc/osdep.h
@@ -2966,6 +2980,7 @@ $(CONFIG)/bin/ejs.mvc.mod: $(DEPS_101)
 #   ejs.tar.mod
 #
 DEPS_102 += src/ejs.tar/Tar.es
+DEPS_102 += slots
 DEPS_102 += $(CONFIG)/inc/mpr.h
 DEPS_102 += $(CONFIG)/inc/me.h
 DEPS_102 += $(CONFIG)/inc/osdep.h
@@ -3072,6 +3087,7 @@ $(CONFIG)/bin/ejs.tar.mod: $(DEPS_102)
 #   ejs.zlib.mod
 #
 DEPS_103 += src/ejs.zlib/Zlib.es
+DEPS_103 += slots
 DEPS_103 += $(CONFIG)/inc/mpr.h
 DEPS_103 += $(CONFIG)/inc/me.h
 DEPS_103 += $(CONFIG)/inc/osdep.h
@@ -3188,6 +3204,7 @@ $(CONFIG)/obj/ejsrun.o: \
 #
 #   ejsrun
 #
+DEPS_105 += slots
 DEPS_105 += $(CONFIG)/inc/mpr.h
 DEPS_105 += $(CONFIG)/inc/me.h
 DEPS_105 += $(CONFIG)/inc/osdep.h
@@ -3357,6 +3374,7 @@ DEPS_111 += $(CONFIG)/inc/me.h
 DEPS_111 += $(CONFIG)/inc/osdep.h
 DEPS_111 += $(CONFIG)/obj/mprLib.o
 DEPS_111 += $(CONFIG)/bin/libmpr.a
+DEPS_111 += slots
 DEPS_111 += $(CONFIG)/inc/pcre.h
 DEPS_111 += $(CONFIG)/obj/pcre.o
 ifeq ($(ME_COM_PCRE),1)
@@ -3548,6 +3566,7 @@ $(CONFIG)/obj/ejsWeb.o: \
 #
 #   libejs.web
 #
+DEPS_117 += slots
 DEPS_117 += $(CONFIG)/inc/mpr.h
 DEPS_117 += $(CONFIG)/inc/me.h
 DEPS_117 += $(CONFIG)/inc/osdep.h
@@ -3707,6 +3726,7 @@ $(CONFIG)/obj/ejsZlib.o: \
 #
 #   libejs.zlib
 #
+DEPS_122 += slots
 DEPS_122 += $(CONFIG)/inc/mpr.h
 DEPS_122 += $(CONFIG)/inc/me.h
 DEPS_122 += $(CONFIG)/inc/osdep.h
@@ -3920,6 +3940,7 @@ $(CONFIG)/bin/mvc.es: $(DEPS_130)
 #
 #   mvc
 #
+DEPS_131 += slots
 DEPS_131 += $(CONFIG)/inc/mpr.h
 DEPS_131 += $(CONFIG)/inc/me.h
 DEPS_131 += $(CONFIG)/inc/osdep.h
@@ -4074,6 +4095,7 @@ $(CONFIG)/bin/utest.worker: $(DEPS_135)
 #
 #   utest
 #
+DEPS_136 += slots
 DEPS_136 += $(CONFIG)/inc/mpr.h
 DEPS_136 += $(CONFIG)/inc/me.h
 DEPS_136 += $(CONFIG)/inc/osdep.h
@@ -4223,5 +4245,5 @@ uninstall: $(DEPS_142)
 #   version
 #
 version: $(DEPS_143)
-	echo 2.3.6
+	echo 2.4.0
 
