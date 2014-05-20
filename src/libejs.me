@@ -20,7 +20,7 @@ Me.load({
             build: `
                 for each (file in Path('slots').files('*.h')) {
                     let src = me.dir.inc.join(file.basename)
-                    if (src.readString() != file.readString()) {
+                    if (src.exists && src.readString() != file.readString()) {
                         trace('Import', src)
                         src.copy(file)
                     }
