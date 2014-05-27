@@ -6,9 +6,21 @@ NAME
        ejsc - Ejscript compiler.
 
 SYNOPSIS
-       ejsc  [--bind]  [--debug]  [--doc]  [--noout] [--optimize level] [--out
-       filename]  [--parse]  [--require  'module  ...']   [--search   ejsPath]
-       [--standard] [--strict] [--version] [--warn level] files...
+       ejsc
+           --bind
+           --debug
+           --doc
+           --noout
+           --optimize level
+           --out filename
+           --parse
+           --require 'module ...'
+           --search ejsPath
+           --standard
+           --strict
+           --version
+           --warn level
+           files...
 
 DESCRIPTION
        The  ejsc command compiles Ejscript programs to produce Ejscript module
@@ -150,7 +162,7 @@ COPYRIGHT
        Embedthis Software.
 
 SEE ALSO
-       ejsgen, ejs, ejsmod
+       ejs, ejsmod
 
 
 

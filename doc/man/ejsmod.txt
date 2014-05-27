@@ -6,8 +6,16 @@ NAME
        ejsmod - Ejscript Module Generator
 
 SYNOPSIS
-       ejsmod  [--cslots]  [--depends]  [--html  path]  [--listing] [--require
-       'module ...']  [--search ejsPath] [--showDebug] [--version] modules ...
+       ejsmod
+           --cslots
+           --depends
+           --html path
+           --listing
+           --require 'module ...'
+           --search ejsPath
+           --showDebug
+           --version
+           modules ...
 
 DESCRIPTION
        The  ejsmod  command  is a utility program for Ejscript module files to
@@ -110,7 +118,7 @@ COPYRIGHT
        Embedthis Software.
 
 SEE ALSO
-       ejsc, ejsgen, ejs
+       ejsc, ejs
 
 
 

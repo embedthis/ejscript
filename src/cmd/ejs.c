@@ -8,10 +8,9 @@
 
 /********************************** Includes **********************************/
 
+#include    "me.h"
 #include    "ejsCompiler.h"
 
-//  UNUSED
-#if ME_COM_EJS || 1
 #if ME_COMPILER_HAS_LIB_EDIT
   #include  <histedit.h>
 #endif
@@ -578,15 +577,6 @@ static void require(cchar *name)
         mprAddItem(app->modules, sclone(name));
     }
 }
-
-#else
-
-int main(int argc, char **argv)
-{
-    return 0;
-}
-
-#endif /* ME_COM_EJS */
 
 /*
     @copy   default

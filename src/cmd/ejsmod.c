@@ -8,9 +8,6 @@
 
 #include    "ejsmod.h"
 
-//  UNUSED
-#if ME_COM_EJS || 1
-
 /****************************** Forward Declarations **************************/
 
 static void getDepends(Ejs *ejs, MprList *list, EjsModule *mp);
@@ -317,15 +314,6 @@ static void getDepends(Ejs *ejs, MprList *list, EjsModule *mp)
     }
 }
 
-#else
-
-MAIN(ejsMain, int argc, char **argv, char **envp)
-{
-    printf("Ejscript not enabled\n");
-    return 255;
-}
-
-#endif /* ME_COM_EJS */
 /*
     @copy   default
 
