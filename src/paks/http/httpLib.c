@@ -3874,10 +3874,10 @@ static void parseTrace(HttpRoute *route, cchar *key, MprJson *prop)
         tlevels[HTTP_TRACE_COMPLETE] = (char) stoi(mprGetJson(levels, "complete"));
     }
     route->trace = httpCreateTrace(route->trace);
-    httpSetTraceFormatter(route->trace, 
-        (type && smatch(type, "common")) ? httpCommonTraceFormatter : httpDetailTraceFormatter);
+    httpSetTraceType(route->trace, type);
     httpSetTraceLogFile(route->trace, location, size, backup, format, anew ? MPR_LOG_ANEW : 0);
     httpSetTraceFormat(route->trace, format);
+    httpSetTraceLevel(level);
     httpSetTraceLevels(route->trace, tlevels, size);
 }
 
@@ -4089,7 +4089,7 @@ PUBLIC HttpConn *httpCreateConn(Http *http, HttpEndpoint *endpoint, MprDispatche
             conn->limits = route->limits;
             conn->trace = route->trace;
         } else {
-            //  MOB - better to guarantee we alsways have a host and default Route
+            //  TODO - better to guarantee we always have a host and default Route
             assert(0);
             conn->limits = http->serverLimits;
             conn->trace = http->trace;
@@ -5553,9 +5553,10 @@ PUBLIC int httpStartEndpoint(HttpEndpoint *endpoint)
     if (mprListenOnSocket(endpoint->sock, endpoint->ip, endpoint->port, 
                 MPR_SOCKET_NODELAY | MPR_SOCKET_THREAD) == SOCKET_ERROR) {
         if (mprGetError() == EADDRINUSE) {
-            mprError("Cannot open a socket on %s:%d, socket already bound.", *endpoint->ip ? endpoint->ip : "*", endpoint->port);
+            mprError("http endpoint", "Cannot open a socket on %s:%d, socket already bound.", 
+                *endpoint->ip ? endpoint->ip : "*", endpoint->port);
         } else {
-            mprError("Cannot open a socket on %s:%d", *endpoint->ip ? endpoint->ip : "*", endpoint->port);
+            mprError("http endpoint", "Cannot open a socket on %s:%d", *endpoint->ip ? endpoint->ip : "*", endpoint->port);
         }
         return MPR_ERR_CANT_OPEN;
     }
@@ -5641,7 +5642,7 @@ PUBLIC void httpMatchHost(HttpConn *conn)
     listenSock = conn->sock->listenSock;
 
     if ((endpoint = httpLookupEndpoint(http, listenSock->ip, listenSock->port)) == 0) {
-        mprError("No listening endpoint for request from %s:%d", listenSock->ip, listenSock->port);
+        mprError("http endpoint", "No listening endpoint for request from %s:%d", listenSock->ip, listenSock->port);
         mprCloseSocket(conn->sock, 0);
         return;
     }
@@ -5727,7 +5728,7 @@ PUBLIC int httpSecureEndpoint(HttpEndpoint *endpoint, struct MprSsl *ssl)
     endpoint->ssl = ssl;
     return 0;
 #else
-    mprError("Configuration lacks SSL support");
+    mprError("http endpoint", "Configuration lacks SSL support");
     return MPR_ERR_BAD_STATE;
 #endif
 }
@@ -6708,7 +6709,6 @@ static void invokeDefenses(HttpMonitor *monitor, MprHash *args)
                 }
                 sd->suppressUntil = http->now + defense->suppressPeriod;
             }
-            //  MOB - how to expire old suppressions
         }
         mprLog("http monitor", 4, "Defense \"%s\" running remedy \"%s\".", defense->name, defense->remedy);
 
@@ -8716,7 +8716,7 @@ PUBLIC void httpSetSendConnector(HttpConn *conn, cchar *path)
     tx->flags |= HTTP_TX_SENDFILE;
     tx->filename = sclone(path);
 #else
-    mprError("Send connector not available if ROMFS enabled");
+    mprError("http config", "Send connector not available if ROMFS enabled");
 #endif
 }
 
@@ -10494,7 +10494,7 @@ PUBLIC int httpAddRouteCondition(HttpRoute *route, cchar *name, cchar *details, 
             return MPR_ERR_BAD_SYNTAX;
         }
         if ((op->mdata = pcre_compile2(pattern, 0, 0, &errMsg, &column, NULL)) == 0) {
-            mprError("Cannot compile condition match pattern. Error %s at column %d", errMsg, column); 
+            mprError("http route", "Cannot compile condition match pattern. Error %s at column %d", errMsg, column); 
             return MPR_ERR_BAD_SYNTAX;
         }
         op->details = finalizeReplacement(route, value);
@@ -10519,13 +10519,13 @@ PUBLIC int httpAddRouteFilter(HttpRoute *route, cchar *name, cchar *extensions, 
 
     for (ITERATE_ITEMS(route->outputStages, stage, next)) {
         if (smatch(stage->name, name)) {
-            mprError("Stage \"%s\" is already configured for the route \"%s\". Ignoring.", name, route->name); 
+            mprError("http route", "Stage \"%s\" is already configured for the route \"%s\". Ignoring.", name, route->name); 
             return 0;
         }
     }
     stage = httpLookupStage(route->http, name);
     if (stage == 0) {
-        mprError("Cannot find filter %s", name); 
+        mprError("http route", "Cannot find filter %s", name); 
         return MPR_ERR_CANT_FIND;
     }
     /*
@@ -10577,14 +10577,15 @@ PUBLIC int httpAddRouteHandler(HttpRoute *route, cchar *name, cchar *extensions)
 
     http = route->http;
     if ((handler = httpLookupStage(http, name)) == 0) {
-        mprError("Cannot find stage %s", name); 
+        mprError("http route", "Cannot find stage %s", name); 
         return MPR_ERR_CANT_FIND;
     }
     if (route->handler) {
-        mprError("Cannot add handler \"%s\" to route \"%s\" once SetHandler used.", handler->name, route->name);
+        mprError("http route", "Cannot add handler \"%s\" to route \"%s\" once SetHandler used.", 
+            handler->name, route->name);
     }
     if (!extensions && !handler->match) {
-        mprError("Adding handler \"%s\" without extensions to match", handler->name);
+        mprError("http route", "Adding handler \"%s\" without extensions to match", handler->name);
     }
     if (extensions) {
         /*
@@ -10605,7 +10606,7 @@ PUBLIC int httpAddRouteHandler(HttpRoute *route, cchar *name, cchar *extensions)
                 }
                 prior = mprLookupKey(route->extensions, word);
                 if (prior && prior != handler) {
-                    mprError("Route \"%s\" has multiple handlers defined for extension \"%s\". "
+                    mprError("http route", "Route \"%s\" has multiple handlers defined for extension \"%s\". "
                             "Handlers: \"%s\", \"%s\".", route->name, word, handler->name, 
                             ((HttpStage*) mprLookupKey(route->extensions, word))->name);
                 } else {
@@ -10697,7 +10698,7 @@ PUBLIC void httpAddRouteParam(HttpRoute *route, cchar *field, cchar *value, int 
         return;
     }
     if ((op->mdata = pcre_compile2(value, 0, 0, &errMsg, &column, NULL)) == 0) {
-        mprError("Cannot compile field pattern. Error %s at column %d", errMsg, column); 
+        mprError("http route", "Cannot compile field pattern. Error %s at column %d", errMsg, column); 
     } else {
         mprAddItem(route->params, op);
     }
@@ -10722,7 +10723,7 @@ PUBLIC void httpAddRouteRequestHeaderCheck(HttpRoute *route, cchar *header, ccha
         return;
     }
     if ((op->mdata = pcre_compile2(pattern, 0, 0, &errMsg, &column, NULL)) == 0) {
-        mprError("Cannot compile header pattern. Error %s at column %d", errMsg, column); 
+        mprError("http route", "Cannot compile header pattern. Error %s at column %d", errMsg, column); 
     } else {
         mprAddItem(route->requestHeaders, op);
     }
@@ -10957,7 +10958,7 @@ PUBLIC int httpSetRouteConnector(HttpRoute *route, cchar *name)
 
     stage = httpLookupStage(route->http, name);
     if (stage == 0) {
-        mprError("Cannot find connector %s", name); 
+        mprError("http route", "Cannot find connector %s", name); 
         return MPR_ERR_CANT_FIND;
     }
     route->connector = stage;
@@ -11020,7 +11021,7 @@ PUBLIC int httpSetRouteHandler(HttpRoute *route, cchar *name)
     assert(name && *name);
 
     if ((handler = httpLookupStage(route->http, name)) == 0) {
-        mprError("Cannot find handler %s", name); 
+        mprError("http route", "Cannot find handler %s", name); 
         return MPR_ERR_CANT_FIND;
     }
     route->handler = handler;
@@ -11465,7 +11466,7 @@ static void finalizePattern(HttpRoute *route)
         free(route->patternCompiled);
     }
     if ((route->patternCompiled = pcre_compile2(route->optimizedPattern, 0, 0, &errMsg, &column, NULL)) == 0) {
-        mprError("Cannot compile route. Error %s at column %d", errMsg, column); 
+        mprError("http route", "Cannot compile route. Error %s at column %d", errMsg, column); 
     }
     route->flags |= HTTP_ROUTE_FREE_PATTERN;
 }
@@ -11523,7 +11524,7 @@ static char *finalizeReplacement(HttpRoute *route, cchar *str)
                             mprPutCharToBuf(buf, '$');
                             mprPutStringToBuf(buf, token);
                         } else {
-                            mprError("Cannot find token \"%s\" in template \"%s\"", token, route->pattern);
+                            mprError("http route", "Cannot find token \"%s\" in template \"%s\"", token, route->pattern);
                         }
                     }
                 }
@@ -12084,7 +12085,7 @@ static int cmdUpdate(HttpConn *conn, HttpRoute *route, HttpRouteOp *op)
     if ((status = mprRunCmd(cmd, command, NULL, NULL, &out, &err, -1, 0)) != 0) {
         /* Don't call httpError, just set errorMsg which can be retrieved via: ${request:error} */
         conn->errorMsg = sfmt("Command failed: %s\nStatus: %d\n%s\n%s", command, status, out, err);
-        mprError("%s", conn->errorMsg);
+        mprError("http route", "%s", conn->errorMsg);
         /* Continue */
     }
     return HTTP_ROUTE_OK;
@@ -14438,10 +14439,20 @@ static bool processCompletion(HttpConn *conn)
         conn->activeRequest = 0;
     }
     measure(conn);
-    if (rx->route && rx->route->logCallback) {
-        (rx->route->logCallback)(conn);
+    if (conn->http->requestCallback) {
+        (conn->http->requestCallback)(conn);
     }
     return 0;
+}
+
+
+PUBLIC void httpSetRequestCallback(HttpRequestCallback callback)
+{
+    Http    *http;
+
+    if ((http = MPR->httpService) != 0) {
+        http->requestCallback = callback;
+    }
 }
 
 
@@ -16401,18 +16412,6 @@ PUBLIC bool httpConfigure(HttpConfigureProc proc, void *data, MprTicks timeout)
 }
 
 
-#if UNUSED
-PUBLIC void httpSetRequestTraceCallback(HttpTraceCallback callback)
-{
-    Http    *http;
-
-    if ((http = MPR->httpService) != 0) {
-        http->traceCallback = callback;
-    }
-}
-#endif
-
-
 PUBLIC int httpApplyUserGroup() 
 {
 #if ME_UNIX_LIKE
@@ -17373,7 +17372,7 @@ PUBLIC HttpStage *httpCreateConnector(Http *http, cchar *name, MprModule *module
 
 /*********************************** Code *************************************/
 
-PUBLIC void httpManageTrace(HttpTrace *trace, int flags)
+static void manageTrace(HttpTrace *trace, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         mprMark(trace->file);
@@ -17398,7 +17397,7 @@ PUBLIC HttpTrace *httpCreateTrace(HttpTrace *parent)
     char        *levels;
     int         i;
 
-    if ((trace = mprAllocObj(HttpTrace, httpManageTrace)) == 0) {
+    if ((trace = mprAllocObj(HttpTrace, manageTrace)) == 0) {
         return 0;
     }
     if (parent) {
@@ -17477,6 +17476,24 @@ PUBLIC void httpSetTraceLogger(HttpTrace *trace, HttpTraceLogger callback)
 }
 
 
+PUBLIC void httpSetTraceType(HttpTrace *trace, cchar *type)
+{
+    HttpTraceFormatter  formatter;
+    int                 i;
+
+    if (type && smatch(type, "common")) {
+        for (i = HTTP_TRACE_5; i < HTTP_TRACE_MAX_ITEM; i++) {
+            trace->levels[i] = 6;
+        }
+        trace->levels[HTTP_TRACE_COMPLETE] = 0;
+        formatter = httpCommonTraceFormatter;
+    } else {
+       formatter = httpDetailTraceFormatter;
+    }
+    httpSetTraceFormatter(trace, formatter);
+}
+
+
 /*
     Trace a simple message
  */
@@ -17490,7 +17507,7 @@ PUBLIC void httpTrace(HttpConn *conn, int event, cchar *fmt, ...)
 
     if (httpShouldTrace(conn, event) && !conn->rx->skipTrace) {
         va_start(ap, fmt);
-        httpFormatTrace(conn, HTTP_TRACE_MSG, sfmtv(fmt, ap), 0, 0);
+        httpFormatTrace(conn, event, sfmtv(fmt, ap), 0, 0);
         va_end(ap);
     }
 }
@@ -17591,7 +17608,6 @@ static cchar *makePrintable(HttpConn *conn, int event, cchar *buf, ssize *lenp)
         Fast path, check the mime type
      */ 
     if (event == HTTP_TRACE_RX_BODY) {
-        //  MOB - mime type is empty at this stage
         if (sstarts(mprLookupMime(0, conn->rx->mimeType), "text/")) {
             return buf;
         }
@@ -17665,9 +17681,14 @@ static int backupTraceLogFile(HttpTrace *trace)
 {
     MprPath     info;
 
-    if (trace->backupCount > 0) {
+    assert(trace->path);
+
+    if (trace->file == MPR->logFile) {
+        return 0;
+    }
+    if (trace->backupCount > 0 || (trace->flags & MPR_LOG_ANEW)) {
         lock(trace);
-        if (trace->parent && trace->parent->file == trace->file) {
+        if (trace->path && trace->parent && smatch(trace->parent->path, trace->path)) {
             unlock(trace);
             return backupTraceLogFile(trace->parent);
         }
@@ -17677,8 +17698,9 @@ static int backupTraceLogFile(HttpTrace *trace)
                 mprCloseFile(trace->file);
                 trace->file = 0;
             }
-            mprBackupLog(trace->path, trace->backupCount);
-            trace->flags &= ~MPR_LOG_ANEW;
+            if (trace->backupCount > 0) {
+                mprBackupLog(trace->path, trace->backupCount);
+            }
         }
         unlock(trace);
     }
@@ -17695,17 +17717,25 @@ PUBLIC int httpOpenTraceLogFile(HttpTrace *trace)
     int         mode;
 
     if (!trace->file && trace->path) {
-        backupTraceLogFile(trace);
-        mode = O_CREAT | O_WRONLY | O_TEXT;
-        if (smatch(trace->path, "stdout")) {
-            file = MPR->stdOutput;
-        } else if (smatch(trace->path, "stderr")) {
-            file = MPR->stdError;
-        } else if ((file = mprOpenFile(trace->path, mode, 0664)) == 0) {
-            mprError("Cannot open log file %s", trace->path);
-            return MPR_ERR_CANT_OPEN;
+        if (smatch(trace->path, "-")) {
+            file = MPR->logFile;
+        } else {
+            backupTraceLogFile(trace);
+            mode = O_CREAT | O_WRONLY | O_TEXT;
+            if (trace->flags & MPR_LOG_ANEW) {
+                mode |= O_TRUNC;
+            }
+            if (smatch(trace->path, "stdout")) {
+                file = MPR->stdOutput;
+            } else if (smatch(trace->path, "stderr")) {
+                file = MPR->stdError;
+            } else if ((file = mprOpenFile(trace->path, mode, 0664)) == 0) {
+                mprError("Cannot open log file %s", trace->path);
+                return MPR_ERR_CANT_OPEN;
+            }
         }
         trace->file = file;
+        trace->flags &= ~MPR_LOG_ANEW;
     }
     return 0;
 }
@@ -18646,12 +18676,6 @@ PUBLIC void httpWriteHeaders(HttpQueue *q, HttpPacket *packet)
             }
         }
     }
-#if UNUSED
-    if (httpShouldTrace(conn, HTTP_TRACE_TX_FIRST)) {
-        mprAddNullToBuf(buf);
-        httpTrace(conn, HTTP_TRACE_TX_FIRST, "response; line=\"%s\"", mprGetBufStart(buf));
-    }
-#endif
     mprPutStringToBuf(buf, "\r\n");
 
     /* 
@@ -21378,7 +21402,7 @@ static int processFrame(HttpQueue *q, HttpPacket *packet)
 
     if (3 <= MPR->logLevel) {
         mprAddNullToBuf(content);
-        mprDebug("http websockets", 3, "WebSocket: %d: receive \"%s\" (%d) frame, last %d, length %d",
+        mprLog("http websockets", 3, "WebSocket: %d: receive \"%s\" (%d) frame, last %d, length %d",
              ws->rxSeq++, codetxt[packet->type], packet->type, packet->last, mprGetBufLength(content));
     }
     validated = 0;
@@ -21756,7 +21780,7 @@ static void outgoingWebSockService(HttpQueue *q)
             }
             *prefix = '\0';
             mprAdjustBufEnd(packet->prefix, prefix - packet->prefix->start);
-            mprDebug("http websockets", 3, "WebSocket: %d: send \"%s\" (%d) frame, last %d, length %d",
+            mprLog("http websockets", 3, "WebSocket: %d: send \"%s\" (%d) frame, last %d, length %d",
                 ws->txSeq++, codetxt[packet->type], packet->type, packet->last, httpGetPacketLength(packet));
         }
         httpPutPacketToNext(q, packet);

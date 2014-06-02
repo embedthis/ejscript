@@ -285,8 +285,7 @@ struct  MprXml;
 #define MPR_DIAG            3           /**< Diagnostic trace level */
 #define MPR_VERBOSE         5           /**< Highest level of trace */
 
-//  MOB - ren-enable
-#if DEPRECATED
+#if DEPRECATED || 1
 #define MPR_CONFIG          MPR_INFO
 #endif
 
@@ -3942,7 +3941,7 @@ typedef struct MprLog { int dummy; } MprLog;
     @param line Source line number. Derived by using __LINE__.
     @param flags Error flags.
     @param tags List of space separated tag words. May also be key=value.
-    @param level Message logging level. Levels are 0-9 with zero being the most verbose.
+    @param level Message logging level. Levels are 0-5 with zero being the most verbose.
     @param msg Message being logged.
     @ingroup MprLog
     @stability Stable
@@ -3993,7 +3992,8 @@ PUBLIC int mprBackupLog(cchar *path, int count);
 /**
     Default MPR log handler
     @param type Message type
-    @param level Logging level for this message. The level is 0-9 with zero being the most verbose.
+    @param tags Descriptive tag words to classify this message.
+    @param level Logging level for this message. The level is 0-5 with zero being the most verbose.
     @param msg Message to log
     @ingroup MprLog
     @stability Evolving
@@ -4044,20 +4044,6 @@ PUBLIC struct MprFile *mprGetLogFile();
  */
 PUBLIC MprLogHandler mprGetLogHandler();
 
-#if UNUSED
-/**
-    Log an informational message.
-    @description Send an informational message to the MPR debug logging subsystem. The 
-        message will be to the log handler defined by #mprSetLogHandler. It 
-        is up to the log handler to respond appropriately and log the message.
-    @param fmt Printf style format string. Variable number of arguments to 
-    @param ... Variable number of arguments for printf data
-    @ingroup MprLog
-    @stability Stable
- */
-PUBLIC void mprInfo(cchar *fmt, ...);
-#endif
-
 #if DOXYGEN
 /**
     Write a message to the log file.
@@ -4065,7 +4051,8 @@ PUBLIC void mprInfo(cchar *fmt, ...);
         define which is typically set via the Bit setting "logging: true".
         Logging typically is enabled in both debug and release builds.
         The mprLog function is a macro which translates into the mprLogProc function.
-    @param level Logging level for this message. The level is 0-9 with zero being the most verbose.
+    @param tags Descriptive tag words to classify this message.
+    @param level Logging level for this message. The level is 0-5 with zero being the most verbose.
     @param fmt Printf style format string. Variable number of arguments to 
     @param ... Variable number of arguments for printf data
     @remarks mprLog is highly useful as a debugging aid when integrating or when developing new modules. 
@@ -4087,28 +4074,12 @@ PUBLIC void mprLogConfig();
 #define mprLogHeader mprLogConfig
 #endif
 
-#if UNUSED
-/**
-    Write a raw log message to the diagnostic log file.
-    @description Send a raw message to the MPR logging subsystem. Raw messages do not have any application prefix
-        attached to the message and do not append a newline to the message.
-    @param level Logging level for this message. The level is 0-9 with zero being the most verbose.
-    @param fmt Printf style format string. Variable number of arguments to 
-    @param ... Variable number of arguments for printf data
-    @remarks mprLog is highly useful as a debugging aid when integrating or when developing new modules. 
-    @ingroup MprLog
-    @stability Stable
- */
-PUBLIC void mprRawLog(int level, cchar *fmt, ...);
-#endif
-
 /**
     Set the log rotation parameters
     @param logSize If the size is zero, then the log file will be rotated on each application boot. Otherwise,
         the log file will be rotated if on application boot, the log file is larger than this size.
     @param backupCount Count of the number of log files to keep
-    @param flags Set to MPR_LOG_APPEND to append to existing log files. Set to MPR_LOG_TRUNCATE to truncate log files
-        on application restart.
+    @param flags Set to MPR_LOG_ANEW to truncate existing files (after backup).
     @ingroup MprLog
     @stability Stable
  */
@@ -4162,7 +4133,7 @@ PUBLIC int mprStartLogging(cchar *logSpec, int flags);
         The mprDebug function is a macro which translates into the mprDebugProc function.
     @description Sends a debug trace message to the MPR logging subsystem. 
     @param tags List of space separated tag words. May also be key=value.
-    @param level Logging level for this message. The level is 0-9 with zero being the most verbose.
+    @param level Logging level for this message. The level is 0-5 with zero being the most verbose.
     @param fmt Printf style format string. Variable number of arguments to 
     @param ... Variable number of arguments for printf data
     @ingroup MprLog
@@ -9494,8 +9465,7 @@ PUBLIC int mprSetMimeProgram(MprHash *table, cchar *mimeType, cchar *program);
 /*
     MPR flags
  */
-#define MPR_LOG_APPEND              0x10    /**< Append to existing log files */
-#define MPR_LOG_ANEW                0x20    /**< Start anew on boot (rotate) */
+#define MPR_LOG_ANEW                0x10    /**< Start anew on restart after backup */
 
 typedef bool (*MprIdleCallback)(bool traceRequests);
 
@@ -10084,11 +10054,11 @@ PUBLIC void mprSetDebugMode(bool on);
 PUBLIC void mprSetExitStatus(int status);
 
 /**
-    Set the current logging level.
+    Set the current logging verbosity level.
     @description This call defines the maximum level of messages that will be
         logged. Calls to mprLog specify a message level. If the message level
         is greater than the defined logging level, the message is ignored.
-    @param level New logging level. Must be 0-9 inclusive.
+    @param level New logging level. Must be 0-5 inclusive.
     @return Returns the previous logging level.
     @ingroup MprLog
     @stability Stable.

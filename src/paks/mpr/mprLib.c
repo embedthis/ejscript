@@ -15670,7 +15670,7 @@ PUBLIC int mprStartLogging(cchar *logSpec, int flags)
         } else {
             MprPath     info;
             int         mode;
-            mode = (MPR->flags & MPR_LOG_APPEND) ? O_APPEND : O_TRUNC;
+            mode = (MPR->flags & MPR_LOG_ANEW) ? O_TRUNC : O_APPEND;
             mode |= O_CREAT | O_WRONLY | O_TEXT;
             if (MPR->logBackup > 0) {
                 mprGetPathInfo(path, &info);
@@ -15744,7 +15744,7 @@ PUBLIC void mprSetLogBackup(ssize size, int backup, int flags)
 {
     MPR->logBackup = backup;
     MPR->logSize = size;
-    MPR->flags |= (flags & (MPR_LOG_APPEND | MPR_LOG_ANEW));
+    MPR->flags |= (flags & MPR_LOG_ANEW);
 }
 
 
@@ -15768,21 +15768,6 @@ PUBLIC void mprLogProc(cchar *tags, int level, cchar *fmt, ...)
     logOutput(MPR_INFO_MSG, tags, level, fmtv(buf, sizeof(buf), fmt, args));
     va_end(args);
 }
-
-
-#if UNUSED
-/*
-    Warning: this will allocate
- */
-PUBLIC void mprRawLog(int level, cchar *fmt, ...)
-{
-    va_list     args;
-
-    va_start(args, fmt);
-    logOutput(MPR_RAW_MSG, level, sfmtv(fmt, args));
-    va_end(args);
-}
-#endif
 
 
 PUBLIC void mprCritical(cchar *tags, cchar *fmt, ...)
@@ -15820,20 +15805,6 @@ PUBLIC void mprFatal(cchar *tags, cchar *fmt, ...)
     logOutput(MPR_ERROR_MSG, tags, MPR_ERROR, buf);
     exit(2);
 }
-
-
-#if UNUSED
-PUBLIC void mprInfo(cchar *tags, cchar *fmt, ...)
-{
-    va_list     args;
-    char        buf[ME_MAX_LOGLINE];
-
-    va_start(args, fmt);
-    logOutput(MPR_INFO_MSG, tags, MPR_INFO, fmtv(buf, sizeof(buf), fmt, args));
-    va_end(args);
-    mprBreakpoint();
-}
-#endif
 
 
 PUBLIC void mprWarn(cchar *tags, cchar *fmt, ...)
