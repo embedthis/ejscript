@@ -436,7 +436,6 @@ static void webSocketNotify(HttpConn *conn, int event, int arg)
     case HTTP_EVENT_STATE:
         if (arg == HTTP_STATE_CONTENT) {
             ws->protocol = (char*) httpGetHeader(conn, "Sec-WebSocket-Protocol");
-            mprTrace(3, "Web socket protocol %s", ws->protocol);
             onWebSocketEvent(ws, HTTP_EVENT_APP_OPEN, 0, 0);
         }
         break;

@@ -2615,7 +2615,7 @@ EjsObj *ejsRunInitializer(Ejs *ejs, EjsModule *mp)
                 }
             }
         }
-        mprTrace(7, "Running initializer for module %@", mp->name);
+        mprDebug("ejs vm", 7, "Running initializer for module %@", mp->name);
         result = ejsRunFunction(ejs, mp->initializer, ejs->global, 0, NULL);
     }
     return result;
@@ -2655,7 +2655,7 @@ EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, vo
     assert(fun);
     assert(ejsIsFunction(ejs, fun));
     if (ejs->exception) {
-        mprTrace(0, "STOP");
+        mprDebug("ejs vm", 0, "STOP");
     }
     assert(ejs->exception == 0);
 
@@ -3611,7 +3611,7 @@ void ejsLog(Ejs *ejs, cchar *fmt, ...)
     va_start(args, fmt);
     fmtv(buf, sizeof(buf) - 1, fmt, args);
     va_end(args);
-    mprLog(0, "%s", buf);
+    mprLog("ejs", 0, "%s", buf);
 }
 
 
@@ -3779,15 +3779,13 @@ void ejsShowOpFrequency(Ejs *ejs)
         return;
     }
     optable = ejsGetOptable();
-    mprTrace(0, "Opcode Frequency");
+    mprDebug("ejs vm", 0, "Opcode Frequency");
     for (i = 0; i < 256 && optable[i].name; i++) {
-        mprTrace(6, "%4d %24s %8d", (uchar) i, optable[i].name, opcount[i]);
+        mprDebug("ejs vm", 6, "%4d %24s %8d", (uchar) i, optable[i].name, opcount[i]);
     }
 }
 #endif
-
 #endif /* ME_DEBUG */
-
 
 /*
     Cleanup defines for combo builds

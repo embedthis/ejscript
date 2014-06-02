@@ -305,7 +305,7 @@ PUBLIC int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int f
     }
     //  UNICODE -- should this API be multi or unicode
     if (ecOpenMemoryStream(cp, ejsToMulti(ejs, script), script->length) < 0) {
-        mprError("Cannot open memory stream");
+        mprError("ejs compiler", "Cannot open memory stream");
         mprRemoveRoot(cp);
         return EJS_ERR;
     }

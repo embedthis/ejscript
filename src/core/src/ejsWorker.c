@@ -212,7 +212,7 @@ static EjsObj *startWorker(Ejs *ejs, EjsWorker *outsideWorker, int timeout)
     assert(outsideWorker->pair);
     assert(outsideWorker->pair->ejs);
 
-    mprTrace(5, "Worker.startWorker");
+    mprDebug("ejs worker", 5, "Worker.startWorker");
 
     if (outsideWorker->state > EJS_WORKER_BEGIN) {
         ejsThrowStateError(ejs, "Worker has already started");
@@ -347,7 +347,7 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
     MprTicks    mark;
     int         result, remaining;
 
-    mprTrace(5, "Worker.join: joining %d", ejs->joining);
+    mprDebug("ejs worker", 5, "Worker.join: joining %d", ejs->joining);
     
     mark = mprGetTicks();
     remaining = timeout;
@@ -369,7 +369,7 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
     }
     result = (ejs->joining) ? MPR_ERR_TIMEOUT: 0;
     ejs->joining = 0;
-    mprTrace(7, "Worker.join: result %d", result);
+    mprDebug("ejs worker", 7, "Worker.join: result %d", result);
     return result;
 }
 
@@ -506,7 +506,7 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
 
     if (callback == 0 || ejsIs(ejs, callback, Null)) {
         if (msg->callbackSlot == ES_Worker_onmessage) {
-            mprTrace(6, "Discard message as no onmessage handler defined for worker");
+            mprDebug("ejs worker", 6, "Discard message as no onmessage handler defined for worker");
             
         } else if (msg->callbackSlot == ES_Worker_onerror) {
             if (ejsIs(ejs, msg->message, String)) {
@@ -529,7 +529,7 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     if (msg->callbackSlot == ES_Worker_onclose) {
         assert(!worker->inside);
         worker->state = EJS_WORKER_COMPLETE;
-        mprTrace(5, "Worker.doMessage: complete");
+        mprDebug("ejs worker", 5, "Worker.doMessage: complete");
         /* Worker and insider interpreter are now eligible for garbage collection */
         removeWorker(worker);
     }

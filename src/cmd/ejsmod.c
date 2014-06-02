@@ -264,12 +264,12 @@ static int process(EjsMod *mp, cchar *output, int argc, char **argv)
         moduleCount = mprGetListLength(ejs->modules);
         ejs->loadData = mp;
         if (!mprPathExists(argv[i], R_OK)) {
-            mprError("Cannot access module %s", argv[i]);
+            mprError("ejsmod", "Cannot access module %s", argv[i]);
             return EJS_ERR;
         }
         if ((ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, argv[i]), -1, -1, EJS_LOADER_NO_INIT)) < 0) {
             ejs->loaderCallback = NULL;
-            mprError("Cannot load module %s\n%s", argv[i], ejsGetErrorMsg(ejs, 0));
+            mprError("ejsmod", "Cannot load module %s\n%s", argv[i], ejsGetErrorMsg(ejs, 0));
             return EJS_ERR;
         }
         if (mp->genSlots) {

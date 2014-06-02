@@ -2619,9 +2619,6 @@ static int rebuildIntern(EjsIntern *ip)
             return 0;
         }
     }
-    mprTrace(6, "Grow string intern new size %d old size %d, count %d, sizeof(EjsString) %d", 
-        newSize, oldSize, ip->count, sizeof(EjsString));
-
     if ((ip->buckets = mprAllocZeroed((newSize * sizeof(EjsString)))) == NULL) {
         return MPR_ERR_MEMORY;
     }

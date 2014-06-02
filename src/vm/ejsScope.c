@@ -237,7 +237,6 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *l
                 for (next = -1; (nsp = (EjsNamespace*) mprGetPrevItem(&b->namespaces, &next)) != 0; ) {
                     qname.space = nsp->value;
                     if ((slotNum = ejsLookupProperty(ejs, obj, qname)) >= 0) {
-                        // mprTrace(5, "WARNING: Object has multiple properties of the same name \"%@\"", name.name); 
                         goto done;
                     }
                 }
@@ -245,7 +244,6 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *l
             for (next = -1; (nsp = mprGetPrevItem(globalSpaces, &next)) != 0; ) {
                 qname.space = nsp->value;
                 if ((slotNum = ejsLookupProperty(ejs, obj, qname)) >= 0) {
-                    // mprTrace(5, "WARNING: Object has multiple properties of the same name \"%@\"", name.name); 
                     goto done;
                 }
             }
@@ -304,13 +302,13 @@ void ejsShowBlockScope(Ejs *ejs, EjsBlock *block)
     MprList         *namespaces;
     int             nextNsp;
 
-    mprTrace(6, "\n  Block scope");
+    mprDebug("ejs vm", 6, "\n  Block scope");
     for (; block; block = block->scope) {
-        mprTrace(6, "    Block \"%s\" 0x%08x", mprGetName(block), block);
+        mprDebug("ejs vm", 6, "    Block \"%s\" 0x%08x", mprGetName(block), block);
         namespaces = &block->namespaces;
         if (namespaces) {
             for (nextNsp = 0; (nsp = (EjsNamespace*) mprGetNextItem(namespaces, &nextNsp)) != 0; ) {
-                mprTrace(6, "        \"%@\"", nsp->value);
+                mprDebug("ejs vm", 6, "        \"%@\"", nsp->value);
             }
         }
     }
@@ -326,13 +324,13 @@ void ejsShowCurrentScope(Ejs *ejs)
     EjsBlock        *block;
     int             nextNsp;
 
-    mprTrace(6, "\n  Current scope");
+    mprDebug("ejs vm", 6, "\n  Current scope");
     for (block = ejs->state->bp; block; block = block->scope) {
-        mprTrace(6, "    Block \"%s\" 0x%08x", mprGetName(block), block);
+        mprDebug("ejs vm", 6, "    Block \"%s\" 0x%08x", mprGetName(block), block);
         namespaces = &block->namespaces;
         if (namespaces) {
             for (nextNsp = 0; (nsp = (EjsNamespace*) mprGetNextItem(namespaces, &nextNsp)) != 0; ) {
-                mprTrace(6, "        \"%@\"", nsp->value);
+                mprDebug("ejs vm", 6, "        \"%@\"", nsp->value);
             }
         }
     }

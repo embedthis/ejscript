@@ -52,7 +52,7 @@ static EjsRequest *hs_accept(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **arg
     event.sock = sock;
     if ((conn = httpAcceptConn(sp->endpoint, &event)) == 0) {
         /* Just ignore */
-        mprError("Cannot accept connection");
+        mprError("ejs web", "Cannot accept connection");
         return 0;
     }
     return createRequest(sp, conn);
@@ -681,14 +681,11 @@ static void incomingEjs(HttpQueue *q, HttpPacket *packet)
 static void setupConnTrace(HttpConn *conn)
 {
     EjsHttpServer   *sp;
-    int             i;
 
     assert(conn->endpoint);
     if (conn->endpoint) {
         if ((sp = httpGetEndpointContext(conn->endpoint)) != 0) {
-            for (i = 0; i < HTTP_TRACE_MAX_DIR; i++) {
-                conn->trace[i] = sp->trace[i];
-            }
+            conn->trace = sp->trace;
         }
     }
 }
@@ -833,8 +830,7 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
         mprMark(sp->ejs);
         mprMark(sp->endpoint);
         mprMark(sp->ssl);
-        httpManageTrace(&sp->trace[0], flags);
-        httpManageTrace(&sp->trace[1], flags);
+        mprMark(sp->trace);
         mprMark(sp->connector);
         mprMark(sp->keyFile);
         mprMark(sp->certFile);
@@ -871,7 +867,7 @@ static EjsHttpServer *createHttpServer(Ejs *ejs, EjsType *type, int size)
     sp->ejs = ejs;
     sp->hosted = ejs->hosted;
     sp->async = 1;
-    httpInitTrace(sp->trace);
+    sp->trace = httpCreateTrace(0);
     return sp;
 }
 
@@ -896,7 +892,7 @@ EjsHttpServer *ejsCloneHttpServer(Ejs *ejs, EjsHttpServer *sp, bool deep)
     nsp->keyFile = sp->keyFile;
     nsp->ciphers = sp->ciphers;
     nsp->protocols = sp->protocols;
-    httpInitTrace(nsp->trace);
+    nsp->trace = httpCreateTrace(sp->trace);
     return nsp;
 }
 

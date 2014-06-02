@@ -231,7 +231,8 @@ PUBLIC int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
             continue;
         }
         if (trace) {
-            mprLog(0, "Blend name %N", qname);
+            //  TODO - remove
+            mprLog("ejs blend", 0, "Blend name %N", qname);
         }
         if (combine && qname.name) {
             cflags = flags;

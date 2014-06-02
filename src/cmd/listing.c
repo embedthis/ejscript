@@ -607,7 +607,7 @@ static int decodeOperands(EjsMod *mp, EjsOptable *opt, char *argbuf, int argbufL
             break;
 
         default:
-            mprError("Bad arg type in opcode table");
+            mprError("ejs", "Bad arg type in opcode table");
             break;
         }
         len = (int) strlen(bufp);
@@ -674,7 +674,7 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
         stackEffect = 0;
 
         if (opcode < 0 || opcode >= maxOp) {
-            mprError("Bad opcode %x at address %d.\n", opcode, address);
+            mprError("ejs listing", "Bad opcode %x at address %d.\n", opcode, address);
             return;
         }
         opt = &optable[opcode];

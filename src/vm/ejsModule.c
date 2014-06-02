@@ -274,7 +274,7 @@ int ejsAddConstant(Ejs *ejs, EjsModule *mp, cchar *str)
 
     cp = mp->constants;
     if (cp->locked) {
-        mprError("Constant pool for module is locked. Cannot add constant \"%s\".",  str);
+        mprError("ejs vm", "Constant pool for module is locked. Cannot add constant \"%s\".",  str);
         return MPR_ERR_CANT_WRITE;
     }
     lock(mp);
@@ -417,7 +417,7 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
     lock(mp);
     if (mp->file == 0) {
         if ((mp->file = mprOpenFile(mp->path, O_RDONLY | O_BINARY, 0666)) == NULL) {
-            mprTrace(5, "Cannot open module file %s", mp->path);
+            mprDebug("ejs vm", 5, "Cannot open module file %s", mp->path);
             unlock(mp);
             return NULL;
         }

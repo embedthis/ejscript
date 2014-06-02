@@ -123,10 +123,10 @@ Ejs *ejsCreateVM(int argc, cchar **argv, int flags)
 
     if (ejs->hasError || mprHasMemError(ejs)) {
         ejsDestroyVM(ejs);
-        mprError("Cannot create VM");
+        mprError("ejs vm", "Cannot create VM");
         return 0;
     }
-    mprTrace(5, "ejs: create VM");
+    mprDebug("ejs vm", 5, "create VM");
     return ejs;
 }
 
@@ -183,7 +183,7 @@ int ejsLoadModules(Ejs *ejs, cchar *search, MprList *require)
     }
     unlock(sp);
     if (mprHasMemError(ejs)) {
-        mprError("Memory allocation error during initialization");
+        mprError("ejs vm", "Memory allocation error during initialization");
         ejsDestroyVM(ejs);
         return MPR_ERR_MEMORY;
     }
@@ -225,7 +225,7 @@ void ejsDestroyVM(Ejs *ejs)
             httpStopConnections(ejs);
         }
     }
-    mprTrace(6, "ejs: destroy VM");
+    mprDebug("ejs vm", 6, "destroy VM");
 }
 
 
@@ -352,7 +352,7 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
 
     if ((ejs = mprPopItem(pool->list)) == 0) {
         if (pool->count >= pool->max) {
-            mprError("Too many ejs VMS: %d max %d", pool->count, pool->max);
+            mprError("ejs vm", "Too many ejs VMS: %d max %d", pool->count, pool->max);
             return 0;
         }
         lock(pool);
@@ -372,7 +372,7 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
                 script = ejsCreateStringFromAsc(pool->template, pool->templateScript);
                 paused = ejsBlockGC(pool->template);
                 if (ejsLoadScriptLiteral(pool->template, script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_BIND) < 0) {
-                    mprError("Cannot execute \"%@\"\n%s", script, ejsGetErrorMsg(pool->template, 1));
+                    mprError("ejs vm", "Cannot execute \"%@\"\n%s", script, ejsGetErrorMsg(pool->template, 1));
                     unlock(pool);
                     ejsUnblockGC(pool->template, paused);
                     return 0;
@@ -383,7 +383,7 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
         unlock(pool);
 
         if ((ejs = ejsCloneVM(pool->template)) == 0) {
-            mprError("Cannot alloc ejs VM");
+            mprError("ejs vm", "Cannot alloc ejs VM");
             return 0;
         }
         if (pool->hostedDocuments) {
@@ -395,14 +395,14 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
         mprAddRoot(ejs);
         if (pool->startScriptPath) {
             if (ejsLoadScriptFile(ejs, pool->startScriptPath, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_BIND) < 0) {
-                mprError("Cannot load \"%s\"\n%s", pool->startScriptPath, ejsGetErrorMsg(ejs, 1));
+                mprError("ejs vm", "Cannot load \"%s\"\n%s", pool->startScriptPath, ejsGetErrorMsg(ejs, 1));
                 mprRemoveRoot(ejs);
                 return 0;
             }
         } else if (pool->startScript) {
             script = ejsCreateStringFromAsc(ejs, pool->startScript);
             if (ejsLoadScriptLiteral(ejs, script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_BIND) < 0) {
-                mprError("Cannot load \"%@\"\n%s", script, ejsGetErrorMsg(ejs, 1));
+                mprError("ejs vm", "Cannot load \"%@\"\n%s", script, ejsGetErrorMsg(ejs, 1));
                 mprRemoveRoot(ejs);
                 return 0;
             }
@@ -411,7 +411,7 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
         pool->count++;
     }
     pool->lastActivity = mprGetTime();
-    mprTrace(5, "ejs: Alloc VM active %d, allocated %d, max %d", pool->count - mprGetListLength(pool->list), 
+    mprDebug("ejs", 5, "Alloc VM active %d, allocated %d, max %d", pool->count - mprGetListLength(pool->list), 
         pool->count, pool->max);
 
 #if UNUSED && OPT
@@ -436,7 +436,7 @@ void ejsFreePoolVM(EjsPool *pool, Ejs *ejs)
     ejs->exception = 0;
     pool->lastActivity = mprGetTime();
     mprPushItem(pool->list, ejs);
-    mprTrace(5, "ejs: Free VM, active %d, allocated %d, max %d", pool->count - mprGetListLength(pool->list), pool->count,
+    mprDebug("ejs", 5, "Free VM, active %d, allocated %d, max %d", pool->count - mprGetListLength(pool->list), pool->count,
         pool->max);
 }
 
@@ -454,7 +454,7 @@ static void poolTimer(EjsPool *pool, MprEvent *event)
         mprClearList(pool->list);
         pool->count = 0;
         pool->template = 0;
-        mprTrace(5, "ejs: Release %d VMs in inactive pool. Invoking GC.", pool->count);
+        mprDebug("ejs", 5, "Release %d VMs in inactive pool. Invoking GC.", pool->count);
         mprRequestGC(MPR_GC_FORCE);
         mprRemoveEvent(event);
         pool->timer = 0;
@@ -822,7 +822,7 @@ static int runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName)
         type = (EjsType*) ejsGetPropertyByName(ejs, ejs->global, N(EJS_PUBLIC_NAMESPACE, className));
     }
     if (type == 0 || !ejsIsType(ejs, type)) {
-        mprError("Cannot find class \"%s\"", className);
+        mprError("ejs vm", "Cannot find class \"%s\"", className);
         return EJS_ERR;
     }
     slotNum = ejsLookupProperty(ejs, type, N(EJS_PUBLIC_NAMESPACE, methodName));
@@ -831,11 +831,11 @@ static int runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName)
     }
     fun = (EjsFunction*) ejsGetProperty(ejs, type, slotNum);
     if (! ejsIsFunction(ejs, fun)) {
-        mprError("Property is not a function");
+        mprError("ejs vm", "Property is not a function");
         return MPR_ERR_BAD_STATE;
     }
     if (!ejsPropertyHasTrait(ejs, type, slotNum, EJS_PROP_STATIC)) {
-        mprError("Method is not declared static");
+        mprError("ejs vm", "Method is not declared static");
         return EJS_ERR;
     }
     args = ejsCreateArray(ejs, ejs->argc);
@@ -1079,9 +1079,9 @@ void ejsReportError(Ejs *ejs, char *fmt, ...)
     }
     if (ejs->exception) {
         char *name = MPR->name;
-        mprRawLog(0, "%s: %s\n", name, msg);
+        mprLog("ejs vm", 0, "%s: %s\n", name, msg);
     } else {
-        mprError("%s", msg);
+        mprError("ejs vm", "%s", msg);
     }
     va_end(arg);
 }
@@ -1119,7 +1119,7 @@ void ejsLoadHttpService(Ejs *ejs)
     }
     ejs->http = ejs->service->http = mprGetMpr()->httpService;
     if (ejs->http == 0) {
-        mprError("Cannot load Http Service");
+        mprError("ejs vm", "Cannot load Http Service");
     }
     ejsUnlockService();
 }

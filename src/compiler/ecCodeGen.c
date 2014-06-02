@@ -4190,7 +4190,7 @@ static void pushStack(EcCompiler *cp, int count)
     code->stackCount += count;
     assert(code->stackCount >= 0);
 
-    mprTrace(level, "Stack %d, after push %d", code->stackCount, count);
+    mprDebug("ejs compiler", level, "Stack %d, after push %d", code->stackCount, count);
 }
 
 
@@ -4206,7 +4206,7 @@ static void popStack(EcCompiler *cp, int count)
     code->stackCount -= count;
     assert(code->stackCount >= 0);
 
-    mprTrace(level, "Stack %d, after pop %d", code->stackCount, count);
+    mprDebug("ejs compiler", level, "Stack %d, after pop %d", code->stackCount, count);
 }
 
 
@@ -4247,7 +4247,7 @@ static void discardStackItems(EcCompiler *cp, int preserve)
     }
     code->stackCount -= count;
     assert(code->stackCount >= 0);
-    mprTrace(level, "Stack %d, after discard\n", code->stackCount);
+    mprDebug("ejs compiler", level, "Stack %d, after discard\n", code->stackCount);
 }
 
 
@@ -4265,7 +4265,7 @@ static void discardBlockItems(EcCompiler *cp, int preserve)
     }
     code->blockCount -= count;
     assert(code->blockCount >= 0);
-    mprTrace(level, "Block level %d, after discard\n", code->blockCount);
+    mprDebug("ejs compiler", level, "Block level %d, after discard\n", code->blockCount);
 }
 
 
@@ -4275,7 +4275,7 @@ static void discardBlockItems(EcCompiler *cp, int preserve)
 static void setCodeBuffer(EcCompiler *cp, EcCodeGen *saveCode)
 {
     cp->state->code = saveCode;
-    mprTrace(level, "Stack %d, after restore code buffer\n", cp->state->code->stackCount);
+    mprDebug("ejs compiler", level, "Stack %d, after restore code buffer\n", cp->state->code->stackCount);
 }
 
 
@@ -4394,7 +4394,7 @@ static void badNode(EcCompiler *cp, EcNode *np)
 {
     cp->fatalError = 1;
     cp->errorCount++;
-    mprError("Unsupported language feature\nUnknown AST node kind %d", np->kind);
+    mprError("ejs compiler", "Unsupported language feature\nUnknown AST node kind %d", np->kind);
 }
 
 

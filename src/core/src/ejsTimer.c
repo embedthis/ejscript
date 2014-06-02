@@ -137,7 +137,7 @@ static int timerCallback(EjsTimer *tp, MprEvent *e)
             ejsClearException(ejs);
             ejsRunFunction(ejs, tp->onerror, thisObj, 1, &error);
         } else {
-            mprError("Uncaught exception in timer\n%s", ejsGetErrorMsg(ejs, 1));
+            mprLog("ejs timer", 2, "Uncaught exception in timer\n%s", ejsGetErrorMsg(ejs, 1));
             ejsClearException(ejs);
         }
     }
