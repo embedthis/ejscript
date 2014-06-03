@@ -197,7 +197,7 @@ PUBLIC EjsType *ejsFinalizeCoreType(Ejs *ejs, EjsName qname)
     EjsType     *type;
 
     if ((type = ejsGetTypeByName(ejs, qname)) == 0) {
-        mprError("ejs type", "Cannot find %N type", qname);
+        mprLog("ejs type", 0, "Cannot find %N type", qname);
         return 0;
     }
     if (type->configured) {
@@ -216,7 +216,7 @@ PUBLIC EjsType *ejsFinalizeScriptType(Ejs *ejs, EjsName qname, int size, void *m
     EjsType     *type;
 
     if ((type = ejsGetTypeByName(ejs, qname)) == 0) {
-        mprError("ejs type", "Cannot find %N type", qname);
+        mprLog("ejs type", 0, "Cannot find %N type", qname);
         return 0;
     }
     if (type->configured) {
@@ -678,13 +678,13 @@ PUBLIC int ejsBindAccess(Ejs *ejs, void *obj, int slotNum, void *getter, void *s
         fun = ejsGetProperty(ejs, obj, slotNum);
         if (fun == 0 || !ejsIsFunction(ejs, fun) || fun->setter == 0 || !ejsIsFunction(ejs, fun->setter)) {
             ejs->hasError = 1;
-            mprError("ejs type", "Attempt to bind non-existant setter function for slot %d in \"%s\"", 
+            mprLog("ejs type", 0, "Attempt to bind non-existant setter function for slot %d in \"%s\"", 
                 slotNum, mprGetName(obj));
             return EJS_ERR;
         }
         fun = fun->setter;
         if (fun->body.code) {
-            mprError("ejs type", "Setting a native method on a non-native function \"%@\" in \"%s\"", 
+            mprLog("ejs type", 0, "Setting a native method on a non-native function \"%@\" in \"%s\"", 
                 fun->name, mprGetName(obj));
             ejs->hasError = 1;
         }
@@ -704,18 +704,18 @@ PUBLIC int ejsBindFunction(Ejs *ejs, EjsAny *obj, int slotNum, void *nativeProc)
 
     if (ejsGetLength(ejs, obj) < slotNum) {
         ejs->hasError = 1;
-        mprError("ejs type", "Attempt to bind non-existant function for slot %d in \"%s\"", slotNum, mprGetName(obj));
+        mprLog("ejs type", 0, "Attempt to bind non-existant function for slot %d in \"%s\"", slotNum, mprGetName(obj));
         return EJS_ERR;
     }
     fun = ejsGetProperty(ejs, obj, slotNum);
     if (fun == 0 || !ejsIsFunction(ejs, fun)) {
         assert(fun);
         ejs->hasError = 1;
-        mprError("ejs type", "Attempt to bind non-existant function for slot %d in \"%s\"", slotNum, mprGetName(obj));
+        mprLog("ejs type", 0, "Attempt to bind non-existant function for slot %d in \"%s\"", slotNum, mprGetName(obj));
         return EJS_ERR;
     }
     if (fun->body.code) {
-        mprError("ejs type", "Setting a native method on a non-native function \"%@\" in \"%s\"", 
+        mprLog("ejs type", 0, "Setting a native method on a non-native function \"%@\" in \"%s\"", 
             fun->name, mprGetName(obj));
         ejs->hasError = 1;
     }

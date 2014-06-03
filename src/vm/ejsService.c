@@ -123,7 +123,7 @@ Ejs *ejsCreateVM(int argc, cchar **argv, int flags)
 
     if (ejs->hasError || mprHasMemError(ejs)) {
         ejsDestroyVM(ejs);
-        mprError("ejs vm", "Cannot create VM");
+        mprLog("ejs vm", 0, "Cannot create VM");
         return 0;
     }
     mprDebug("ejs vm", 5, "create VM");
@@ -183,7 +183,7 @@ int ejsLoadModules(Ejs *ejs, cchar *search, MprList *require)
     }
     unlock(sp);
     if (mprHasMemError(ejs)) {
-        mprError("ejs vm", "Memory allocation error during initialization");
+        mprLog("ejs vm", 0, "Memory allocation error during initialization");
         ejsDestroyVM(ejs);
         return MPR_ERR_MEMORY;
     }
@@ -352,7 +352,7 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
 
     if ((ejs = mprPopItem(pool->list)) == 0) {
         if (pool->count >= pool->max) {
-            mprError("ejs vm", "Too many ejs VMS: %d max %d", pool->count, pool->max);
+            mprLog("ejs vm", 0, "Too many ejs VMS: %d max %d", pool->count, pool->max);
             return 0;
         }
         lock(pool);
@@ -372,7 +372,7 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
                 script = ejsCreateStringFromAsc(pool->template, pool->templateScript);
                 paused = ejsBlockGC(pool->template);
                 if (ejsLoadScriptLiteral(pool->template, script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_BIND) < 0) {
-                    mprError("ejs vm", "Cannot execute \"%@\"\n%s", script, ejsGetErrorMsg(pool->template, 1));
+                    mprLog("ejs vm", 0, "Cannot execute \"%@\"\n%s", script, ejsGetErrorMsg(pool->template, 1));
                     unlock(pool);
                     ejsUnblockGC(pool->template, paused);
                     return 0;
@@ -383,7 +383,7 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
         unlock(pool);
 
         if ((ejs = ejsCloneVM(pool->template)) == 0) {
-            mprError("ejs vm", "Cannot alloc ejs VM");
+            mprLog("ejs vm", 0, "Cannot alloc ejs VM");
             return 0;
         }
         if (pool->hostedDocuments) {
@@ -395,14 +395,14 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
         mprAddRoot(ejs);
         if (pool->startScriptPath) {
             if (ejsLoadScriptFile(ejs, pool->startScriptPath, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_BIND) < 0) {
-                mprError("ejs vm", "Cannot load \"%s\"\n%s", pool->startScriptPath, ejsGetErrorMsg(ejs, 1));
+                mprLog("ejs vm", 0, "Cannot load \"%s\"\n%s", pool->startScriptPath, ejsGetErrorMsg(ejs, 1));
                 mprRemoveRoot(ejs);
                 return 0;
             }
         } else if (pool->startScript) {
             script = ejsCreateStringFromAsc(ejs, pool->startScript);
             if (ejsLoadScriptLiteral(ejs, script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_BIND) < 0) {
-                mprError("ejs vm", "Cannot load \"%@\"\n%s", script, ejsGetErrorMsg(ejs, 1));
+                mprLog("ejs vm", 0, "Cannot load \"%@\"\n%s", script, ejsGetErrorMsg(ejs, 1));
                 mprRemoveRoot(ejs);
                 return 0;
             }
@@ -822,7 +822,7 @@ static int runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName)
         type = (EjsType*) ejsGetPropertyByName(ejs, ejs->global, N(EJS_PUBLIC_NAMESPACE, className));
     }
     if (type == 0 || !ejsIsType(ejs, type)) {
-        mprError("ejs vm", "Cannot find class \"%s\"", className);
+        mprLog("ejs vm", 0, "Cannot find class \"%s\"", className);
         return EJS_ERR;
     }
     slotNum = ejsLookupProperty(ejs, type, N(EJS_PUBLIC_NAMESPACE, methodName));
@@ -831,11 +831,11 @@ static int runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName)
     }
     fun = (EjsFunction*) ejsGetProperty(ejs, type, slotNum);
     if (! ejsIsFunction(ejs, fun)) {
-        mprError("ejs vm", "Property is not a function");
+        mprLog("ejs vm", 0, "Property is not a function");
         return MPR_ERR_BAD_STATE;
     }
     if (!ejsPropertyHasTrait(ejs, type, slotNum, EJS_PROP_STATIC)) {
-        mprError("ejs vm", "Method is not declared static");
+        mprLog("ejs vm", 0, "Method is not declared static");
         return EJS_ERR;
     }
     args = ejsCreateArray(ejs, ejs->argc);
@@ -1081,7 +1081,7 @@ void ejsReportError(Ejs *ejs, char *fmt, ...)
         char *name = MPR->name;
         mprLog("ejs vm", 0, "%s: %s\n", name, msg);
     } else {
-        mprError("ejs vm", "%s", msg);
+        mprLog("ejs vm", 0, "%s", msg);
     }
     va_end(arg);
 }
@@ -1119,7 +1119,7 @@ void ejsLoadHttpService(Ejs *ejs)
     }
     ejs->http = ejs->service->http = mprGetMpr()->httpService;
     if (ejs->http == 0) {
-        mprError("ejs vm", "Cannot load Http Service");
+        mprLog("ejs vm", 0, "Cannot load Http Service");
     }
     ejsUnlockService();
 }

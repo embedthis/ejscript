@@ -61,7 +61,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     mprAddStandardSignals();
 
     if (mprStart(mpr) < 0) {
-        mprError("ejs", "Cannot start mpr services");
+        mprLog("ejs", 0, "Cannot start mpr services");
         return EJS_ERR;
     }
     err = 0;
@@ -106,7 +106,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             } else {
                 homeDir = argv[++nextArg];
                 if (chdir((char*) homeDir) < 0) {
-                    mprError("ejs", "Cannot change directory to %s", homeDir);
+                    mprLog("ejs", 0, "Cannot change directory to %s", homeDir);
                 }
             }
 
@@ -436,7 +436,7 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
     cp->interactive = 1;
 
     if (ecOpenConsoleStream(cp, (cmd) ? commandGets: consoleGets, cmd) < 0) {
-        mprError("ejs", "Cannot open input");
+        mprLog("ejs", 0, "Cannot open input");
         return EJS_ERR;
     }
     tmpArgv[0] = EC_INPUT_STREAM;

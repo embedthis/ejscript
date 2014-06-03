@@ -52,7 +52,7 @@ static EjsRequest *hs_accept(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **arg
     event.sock = sock;
     if ((conn = httpAcceptConn(sp->endpoint, &event)) == 0) {
         /* Just ignore */
-        mprError("ejs web", "Cannot accept connection");
+        mprLog("ejs web", 0, "Cannot accept connection");
         return 0;
     }
     return createRequest(sp, conn);

@@ -157,7 +157,7 @@ static void createGlobalProperties(EcCompiler *cp)
         slotNum = ejsLookupProperty(ejs, ejs->global, *prop);
         if (slotNum < 0) {
             cp->fatalError = 1;
-            mprError("ejs compiler", "Code generation error. Cannot find global property %s.", prop->name);
+            mprLog("ejs compiler", 0, "Code generation error. Cannot find global property %s.", prop->name);
             return;
         }
         vp = ejsGetProperty(ejs, ejs->global, slotNum);
@@ -1007,7 +1007,7 @@ PUBLIC void ecEncodeByteAtPos(EcCompiler *cp, int offset, int value)
 PUBLIC void ecEncodeInt32AtPos(EcCompiler *cp, int offset, int value)
 {
     if (abs(value) > EJS_ENCODE_MAX_WORD) {
-        mprError("ejs compiler", "Code generation error. Word %d exceeds maximum %d", value, EJS_ENCODE_MAX_WORD);
+        mprLog("ejs compiler", 0, "Code generation error. Word %d exceeds maximum %d", value, EJS_ENCODE_MAX_WORD);
         cp->fatalError = 1;
         return;
     }

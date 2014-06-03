@@ -102,7 +102,7 @@ EjsAny *ejsCreateException(Ejs *ejs, int slot, cchar *fmt, va_list fmtArgs)
     EjsAny      *error;
 
     if (ejs->exception) {
-        mprError("ejs vm", "Double exception: %s", sfmtv(fmt, fmtArgs));
+        mprLog("ejs vm", 0, "Double exception: %s", sfmtv(fmt, fmtArgs));
         return ejs->exception;
     }
     type = (ejs->initialized) ? ejsGetProperty(ejs, ejs->global, slot) : NULL;

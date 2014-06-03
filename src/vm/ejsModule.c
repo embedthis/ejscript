@@ -274,7 +274,7 @@ int ejsAddConstant(Ejs *ejs, EjsModule *mp, cchar *str)
 
     cp = mp->constants;
     if (cp->locked) {
-        mprError("ejs vm", "Constant pool for module is locked. Cannot add constant \"%s\".",  str);
+        mprLog("ejs vm", 0, "Constant pool for module is locked. Cannot add constant \"%s\".",  str);
         return MPR_ERR_CANT_WRITE;
     }
     lock(mp);

@@ -169,7 +169,7 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
 
     while ((sectionType = (int) mprGetFileChar(file)) >= 0) {
         if (sectionType < 0 || sectionType >= EJS_SECT_MAX) {
-            mprError("ejs vm", "Bad section type %d in %@", sectionType, mp->name);
+            mprLog("ejs vm", 0, "Bad section type %d in %@", sectionType, mp->name);
             return MPR_ERR_CANT_LOAD;
         }
         assert(mp == NULL || mp->scope == NULL || mp->scope != mp->scope->scope);
@@ -503,12 +503,13 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
             Currently errors on Namespace
          */
         if (attributes & EJS_TYPE_HAS_CONSTRUCTOR && !type->hasConstructor) {
-            mprError("ejs vm", "WARNING: module indicates a constructor required but none exists for \"%@\"", type->qname.name);
+            mprLog("ejs vm", 0, "WARNING: module indicates a constructor required but none exists for \"%@\"", 
+                type->qname.name);
         }
 #endif
 #if UNUSED && KEEP
         if (!type->native) {
-            mprError("ejs vm", "WARNING: type not defined as native: \"%@\"", type->qname.name);
+            mprLog("ejs vm", 0, "WARNING: type not defined as native: \"%@\"", type->qname.name);
         }
 #endif
     }
@@ -910,7 +911,7 @@ static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
         path = sjoin(bare, ME_SHOBJ, NULL);
     }
     if (! mprPathExists(path, R_OK)) {
-        mprError("ejs vm", "Native module not found %s", path);
+        mprLog("ejs vm", 0, "Native module not found %s", path);
         return MPR_ERR_CANT_ACCESS;
     }
     /*

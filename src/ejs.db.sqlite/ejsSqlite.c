@@ -399,7 +399,7 @@ static void initSqlite()
 #endif
         sqlite3_config(THREAD_STYLE);
         if (sqlite3_initialize() != SQLITE_OK) {
-            mprError("ejs sqlite", "Cannot initialize SQLite");
+            mprLog("ejs sqlite", 0, "Cannot initialize SQLite");
             return;
         }
         sqliteInitialized = 1;

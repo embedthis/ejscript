@@ -39,7 +39,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     mprAddStandardSignals();
 
     if (mprStart(mpr) < 0) {
-        mprError("ejsrun", "Cannot start mpr services");
+        mprLog("ejsrun", 0, "Cannot start mpr services");
         return EJS_ERR;
     }
     err = 0;
@@ -58,7 +58,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             } else {
                 homeDir = argv[++nextArg];
                 if (chdir((char*) homeDir) < 0) {
-                    mprError("ejsrun", "Cannot change directory to %s", homeDir);
+                    mprLog("ejsrun", 0, "Cannot change directory to %s", homeDir);
                 }
             }
 
