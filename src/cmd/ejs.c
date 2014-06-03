@@ -48,7 +48,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     Mpr             *mpr;
     EcCompiler      *cp;
     Ejs             *ejs;
-    cchar           *cmd, *className, *method, *homeDir;
+    cchar           *cmd, *className, *method, *homeDir, *logSpec, *traceSpec;
     char            *argp, *searchPath, *modules, *name, *tok, *extraFiles;
     int             nextArg, err, ecFlags, stats, merge, bind, noout, debug, optimizeLevel, warnLevel, strict, i, next;
 
@@ -77,6 +77,9 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     warnLevel = 1;
     optimizeLevel = 9;
     strict = 0;
+    logSpec = 0;
+    traceSpec = 0;
+
     app->files = mprCreateList(-1, 0);
     app->iterations = 1;
     argc = mpr->argc;
@@ -171,8 +174,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             if (nextArg >= argc) {
                 err++;
             } else {
-                mprStartLogging(argv[++nextArg], 0);
-                mprSetCmdlineLogging(1);
+                logSpec = argv[++nextArg];
             }
 
         } else if (smatch(argp, "--method")) {
@@ -199,6 +201,21 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
                 optimizeLevel = atoi(argv[++nextArg]);
             }
 
+        } else if (smatch(argp, "--require")) {
+            if (nextArg >= argc) {
+                err++;
+            } else {
+                if (app->modules == 0) {
+                    app->modules = mprCreateList(-1, 0);
+                }
+                modules = sclone(argv[++nextArg]);
+                name = stok(modules, " \t", &tok);
+                while (name != NULL) {
+                    require(name);
+                    name = stok(NULL, " \t", &tok);
+                }
+            }
+
         } else if (smatch(argp, "-s")) {
             /* Compatibility with mozilla shell. Just ignore */
 
@@ -218,19 +235,11 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
         } else if (smatch(argp, "--strict")) {
             strict = 1;
 
-        } else if (smatch(argp, "--require")) {
+        } else if (smatch(argp, "--trace") || smatch(argp, "-t")) {
             if (nextArg >= argc) {
                 err++;
             } else {
-                if (app->modules == 0) {
-                    app->modules = mprCreateList(-1, 0);
-                }
-                modules = sclone(argv[++nextArg]);
-                name = stok(modules, " \t", &tok);
-                while (name != NULL) {
-                    require(name);
-                    name = stok(NULL, " \t", &tok);
-                }
+                traceSpec = argv[++nextArg];
             }
 
         } else if (smatch(argp, "--verbose") || smatch(argp, "-v")) {
@@ -249,8 +258,12 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             }
 
         } else if (*argp == '-' && isdigit((uchar) argp[1])) {
-            mprStartLogging(sfmt("stderr:%s", &argp[1]), 0);
-            mprSetCmdlineLogging(1);
+            if (!logSpec) {
+                logSpec = sfmt("stderr:%d", (int) stoi(&argp[1]));
+            }
+            if (!traceSpec) {
+                traceSpec = sfmt("stderr:%d", (int) stoi(&argp[1]));
+            }
 
         } else {
             err++;
@@ -285,11 +298,18 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             "  --standard               # Default compilation mode to standard (default)\n"
             "  --stats                  # Print memory stats on exit\n"
             "  --strict                 # Default compilation mode to strict\n"
+            "  --trace traceSpec        # HTTP request tracing\n"
             "  --verbose | -v           # Same as --log stderr:2 \n"
             "  --version                # Emit the compiler version information\n"
             "  --warn level             # Set the warning message level (0-9 default is 0)\n\n",
             mpr->name);
         return -1;
+    }
+    if (logSpec) {
+        mprStartLogging(logSpec, MPR_LOG_CONFIG | MPR_LOG_CMDLINE);
+    }
+    if (traceSpec) {
+        httpStartTracing(traceSpec);
     }
     if ((ejs = ejsCreateVM(argc - nextArg, (cchar **) &argv[nextArg], 0)) == 0) {
         return MPR_ERR_MEMORY;
