@@ -645,21 +645,21 @@ FUTURE & KEEP
             level 2 and to trace headers at level 3. The options argument contains optional properties.
             These may contain an object hash which describes the following fields:
             @param options. Set of trace options with properties for:
-                The conn property specifies that new connections should be traced.
+                The connection property specifies that new connections should be traced.
                 The error property specifies that new connections should be traced.
                 The info property specifies that new connections should be traced.
-                The rx-first property specifies that the first line of the request should be traced.
-                The rx-headers property specifies that the headers (including first line) of the request should be traced.
-                The rx-body property specifies that the body content of the request should be traced.
-                The tx-first property specifies that the first line of the response should be traced.
-                The tx-headers property specifies that the headers (including first line) of the response should be traced.
-                The tx-body property specifies that the body content of the request should be traced.
+                The rxFirst property specifies that the first line of the request should be traced.
+                The rxHeaders property specifies that the headers (including first line) of the request should be traced.
+                The rxBody property specifies that the body content of the request should be traced.
+                The txFirst property specifies that the first line of the response should be traced.
+                The txHeaders property specifies that the headers (including first line) of the response should be traced.
+                The txBody property specifies that the body content of the request should be traced.
                 The complete property specifies that the body content of the request should be traced.
                 The size property specifies a maximum body size in bytes that will be traced. Content beyond this limit 
                     will not be traced.
             @example:
                 trace({
-                    "rx-headers": 3, "rx-body": 4, size: 1000000 }
+                    "rxHeaders": 3, "rxBody": 4, size: 1000000 }
                 })
           */
         native function trace(options: Object): Void

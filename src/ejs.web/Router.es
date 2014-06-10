@@ -509,12 +509,7 @@ module ejs.web {
                 request.setLimits(r.limits)
             }
             if (r.trace) {
-                if (r.trace.include && (!r.trace.include.contains(request.extension)) ||
-                    r.trace.exclude && r.trace.exclude.contains(request.extension)) {
-                    request.trace(99)
-                } else {
-                    request.trace(r.trace.level || 0, r.trace.options, r.trace.size)
-                }
+                request.trace(r.trace.level || 0, r.trace.options, r.trace.size)
             }
             request.route = r
             return r
