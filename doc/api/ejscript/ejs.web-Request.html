@@ -261,7 +261,7 @@ not the actual number of bytes sent to the network connection.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#setLocation'><b>setLocation</b></a>(prefix: <a href='String.html'>String</a>, location: <a href='Path.html'>Path</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenience routine to define an application at a given Uri prefix and directory location.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#setStatus'><b>setStatus</b></a>(status: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenience routine to set the (proposed) Http response status code.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#setupFlash'><b>setupFlash</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Prepare the flash message area.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#trace'><b>trace</b></a>(options: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Configure tracing for this request.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#trace'><b>trace</b></a>(options: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Configure request tracing for the request.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#warn'><b>warn</b></a>(msg: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a warning flash notification.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#write'><b>write</b></a>(data: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.Write data to the client.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#writeError'><b>writeError</b></a>(status: <a href='Number.html'>Number</a>, msgs: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write an error message back to the user and finalize the request.</td></tr>
@@ -713,25 +713,15 @@ to the <a href='#status'>status</a> property.</dd></dl>
 <div class='apiSig'>    trace(options: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Configure tracing for this request. Tracing is initialized by the owning HttpServer and is typically
-defined to trace the first line of requests and responses at level 2, headers at level 3 and body content
-at level 4. Once the request has been created however, the first line and headers of the request are 
-already parsed and traced by the HttpServer, so modifying the trace level via trace() on the request object
-will only impact the tracing of response body content.<br/><br/>The options argument contains optional properties: rx and tx 
-(for receive and transmit tracing). The rx and tx properties may contain an object hash which describes 
-the tracing for that direction and includes any of the following fields:.</dd></dl>
+<dl><dt>Description</dt></dd><dd>Configure request tracing for the request. The default is to trace the first line of requests and responses at
+level 2 and to trace headers at level 3. The options argument contains optional properties.
+These may contain an object hash which describes the following fields:.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Set of trace options with properties "rx" and "tx" for receive and transmit direction tracing. The include property is an array of file extensions to include in tracing. The include property is an array of file extensions to exclude from tracing. The all property specifies that everything for this direction should be traced. The conn property specifies that new connections should be traced. (Rx only) The first property specifies that the first line of the request should be traced. The headers property specifies that the headers (including first line) of the request should be traced. The body property specifies that the body content of the request should be traced. The size property specifies a maximum body size in bytes that will be traced. Content beyond this limit  will not be traced.</td></tr></table></dd>
-</dl><dl><dt>Options</dt>
-<dd><table class='parameters' summary ='options'>
-<td class='param'>tx.</td><td>Object hash with optional properties: include, exclude, first, headers, body, size.</td></tr>
-<td class='param'>rx.</td><td>Object hash with optional properties: include, exclude, conn, first, headers, body, size.</td></tr>
-</table></dd>
+<tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Set of trace options with properties for: The connection property specifies that new connections should be traced. The error property specifies that new connections should be traced. The info property specifies that new connections should be traced. The rxFirst property specifies that the first line of the request should be traced. The rxHeaders property specifies that the headers (including first line) of the request should be traced. The rxBody property specifies that the body content of the request should be traced. The txFirst property specifies that the first line of the response should be traced. The txHeaders property specifies that the headers (including first line) of the response should be traced. The txBody property specifies that the body content of the request should be traced. The complete property specifies that the body content of the request should be traced. The size property specifies a maximum body size in bytes that will be traced. Content beyond this limit will not be traced.</td></tr></table></dd>
 </dl><dl><dt>Example</dt>
 <dd><pre>trace({
-    tx: { exclude: ["gif", "png"], "first": 2, "headers": 3, "body": 4, size: 1000000 }
-    rx: { "conn": 1, "first": 2, "headers": 3 , "body": 4, size: 1024 }
+    "rxHeaders": 3, "rxBody": 4, size: 1000000 
 })</pre></dd></dl>
 </div>
 </div>
