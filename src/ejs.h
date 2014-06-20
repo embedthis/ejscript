@@ -9,6 +9,11 @@
 #ifndef _h_EJS_CORE
 #define _h_EJS_CORE 1
 
+/*
+    Using custom mprPrintf specifiers
+ */
+#define PRINTF_ATTRIBUTE(x,y)
+
 #include    "mpr.h"
 #include    "http.h"
 #include    "ejsByteCode.h"
