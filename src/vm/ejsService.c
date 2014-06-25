@@ -755,7 +755,6 @@ int ejsEvalModule(cchar *path)
 }
 
 
-//  MOB - remove event
 static int runProgram(Ejs *ejs, MprEvent *event)
 {
     /*
