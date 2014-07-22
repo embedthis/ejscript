@@ -55,7 +55,7 @@ static EjsNumber *lf_emit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         msg = srejoin(msg, arg, NULL);
     }
     if (msg) {
-        mprLog("ejs", level, "%s", msg);
+        mprLog(NULL, level, "%s", strim(msg, "\n", MPR_TRIM_END));
         written += slen(msg);
     }
     ejsUnblockGC(ejs, paused);
