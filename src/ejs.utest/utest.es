@@ -195,9 +195,9 @@ enumerable class Test {
         }
         _top = path.dirname.absolute
         //  TODO - this is not reliable. If multiple platforms, it may pick the wrong one.
-        _cfg = _top.files(Config.OS + '-' + Config.CPU + '-*').sort()[0]
+        _cfg = _top.join('build').files(Config.OS + '-' + Config.CPU + '-*').sort()[0]
         if (!_cfg) {
-            let hdr = _top.files('*/inc/me.h').sort()[0]
+            let hdr = _top.files('build/*/inc/me.h').sort()[0]
             if (!hdr) {
                 let hdr = _top.files('*/inc/bit.h').sort()[0]
                 if (!hdr) {
