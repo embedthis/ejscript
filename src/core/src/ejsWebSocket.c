@@ -59,7 +59,7 @@ static EjsWebSocket *wsConstructor(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj 
             ws->certFile = ejsToMulti(ejs, argv[0]);
         }
     }
-    if ((ws->conn = httpCreateConn(MPR->httpService, NULL, ejs->dispatcher)) == 0) {
+    if ((ws->conn = httpCreateConn(NULL, ejs->dispatcher)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }

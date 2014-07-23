@@ -207,7 +207,7 @@ Me.load({
                 to:         '${src}/ejs.h',
                 cat:        true, 
                 filter:     /^#inc.*ejs.*$|^#inc.*ec.*$|^#inc.*customize.*$|#include.*zlib.h.*$|#inc.*ejs.zlib.slots.h.*/mg,
-                header:     '#include \"me.h\"\n#if ME_COM_EJS\n\n#define PRINTF_ATTRIBUTE(x,y)\n\n#include \"osdep.h\"\n#include \"mpr.h\"\n#include \"http.h\"\n#include \"ejs.slots.h\"\n#include \"pcre.h\"\n#include \"zlib.h\"\n',
+                header:     '#include \"me.h\"\n#if ME_COM_EJS\n\n#undef PRINTF_ATTRIBUTE\n#define PRINTF_ATTRIBUTE(x,y)\n\n#include \"osdep.h\"\n#include \"mpr.h\"\n#include \"http.h\"\n#include \"ejs.slots.h\"\n#include \"pcre.h\"\n#include \"zlib.h\"\n',
                 footer:     '#endif /* ME_COM_EJS */',
                 title:      '${settings.title} Library Source',
                 set:        'pak',

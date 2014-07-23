@@ -31,7 +31,7 @@ static EjsHttp *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     ejsLoadHttpService(ejs);
     hp->ejs = ejs;
 
-    if ((hp->conn = httpCreateConn(ejs->http, NULL, ejs->dispatcher)) == 0) {
+    if ((hp->conn = httpCreateConn(NULL, ejs->dispatcher)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
@@ -129,7 +129,7 @@ static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         }
         sendHttpCloseEvent(ejs, hp);
         httpDestroyConn(hp->conn);
-        hp->conn = httpCreateConn(ejs->http, NULL, ejs->dispatcher);
+        hp->conn = httpCreateConn(NULL, ejs->dispatcher);
         httpPrepClientConn(hp->conn, 0);
         httpSetConnNotifier(hp->conn, httpEventChange);
         httpSetConnContext(hp->conn, hp);

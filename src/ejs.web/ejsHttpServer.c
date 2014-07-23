@@ -254,7 +254,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         if (sp->name) {
             httpSetHostName(host, sp->name);
         }
-        httpSetSoftware(endpoint->http, EJS_HTTPSERVER_NAME);
+        httpSetSoftware(EJS_HTTPSERVER_NAME);
         httpSetEndpointAsync(endpoint, sp->async);
         httpSetEndpointContext(endpoint, sp);
         httpSetEndpointNotifier(endpoint, stateChangeNotifier);
@@ -537,13 +537,11 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
     EjsString       *vs;
     HttpHost        *host;
     HttpRoute       *route;
-    Http            *http;
     HttpStage       *stage;
     cchar           *name;
     int             i;
 
     assert(sp->endpoint);
-    http = sp->endpoint->http;
     host = mprGetFirstItem(sp->endpoint->hosts);
     route = mprGetFirstItem(host->routes);
 
@@ -553,7 +551,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
             vs = ejsGetProperty(ejs, sp->outgoingStages, i);
             if (vs && ejsIs(ejs, vs, String)) {
                 name = vs->value;
-                if (httpLookupStage(http, name) == 0) {
+                if (httpLookupStage(name) == 0) {
                     ejsThrowArgError(ejs, "Cannot find pipeline stage name %s", name);
                     return;
                 }
@@ -567,7 +565,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
             vs = ejsGetProperty(ejs, sp->incomingStages, i);
             if (vs && ejsIs(ejs, vs, String)) {
                 name = vs->value;
-                if (httpLookupStage(http, name) == 0) {
+                if (httpLookupStage(name) == 0) {
                     ejsThrowArgError(ejs, "Cannot find pipeline stage name %s", name);
                     return;
                 }
@@ -576,7 +574,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
         }
     }
     if (sp->connector) {
-        if ((stage = httpLookupStage(http, sp->connector)) == 0) {
+        if ((stage = httpLookupStage(sp->connector)) == 0) {
             ejsThrowArgError(ejs, "Cannot find pipeline stage name %s", sp->connector);
             return;
         }
@@ -807,7 +805,7 @@ HttpStage *ejsAddWebHandler(Http *http, MprModule *module)
 
     assert(http);
     if ((handler = http->ejsHandler) == 0) {
-        if ((handler = httpCreateHandler(http, "ejsHandler", module)) == 0) {
+        if ((handler = httpCreateHandler("ejsHandler", module)) == 0) {
             return 0;
         }
     }
