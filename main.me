@@ -132,5 +132,13 @@ Me.load({
         projects: {
             action: "genProjects('-with est')",
         },
+
+        test: {
+            type: 'test',
+            home: '${TOP}',
+            action: `
+                run(['utest', '-v', '-d', me.settings.depth], {noio: true})
+            `,
+        }
     },
 })
