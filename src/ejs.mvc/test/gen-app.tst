@@ -5,7 +5,7 @@
 require ejs.unix
 
 if (Config.SQLITE) {
-    let mvc = Cmd.locate(App.exeDir.join('mvc'))
+    let mvc = Cmd.locate(App.exeDir.join('mvc')).portable
     rmdir("junk")
     assert(!exists("junk"))
 
