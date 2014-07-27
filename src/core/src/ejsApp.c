@@ -255,6 +255,7 @@ static EjsNumber *app_pid(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprTicks    mark, remaining;
+    int64       dispatcherMark;
     int         rc, oneEvent, timeout;
 
     timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]) : MAXINT;
@@ -268,9 +269,11 @@ static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     }
     mark = mprGetTicks();
     remaining = timeout;
+    dispatcherMark = mprGetEventMark(ejs->dispatcher);
     do {
-        rc = mprWaitForEvent(ejs->dispatcher, remaining); 
+        rc = mprWaitForEvent(ejs->dispatcher, remaining, dispatcherMark); 
         remaining = mprGetRemainingTicks(mark, timeout);
+        dispatcherMark = mprGetEventMark(ejs->dispatcher);
     } while (!ejs->exception && !oneEvent && !ejs->exiting && remaining > 0 && !mprIsStopping());
     return (rc == 0) ? ESV(true) : ESV(false);
 }
@@ -285,6 +288,7 @@ static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 static EjsObj *app_sleep(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprTicks    mark, remaining;
+    int64       dispatcherMark;
     int         timeout;
 
     timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]) : MAXINT;
@@ -293,9 +297,11 @@ static EjsObj *app_sleep(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     }
     mark = mprGetTicks();
     remaining = timeout;
+    dispatcherMark = mprGetEventMark(ejs->dispatcher);
     do {
-        mprWaitForEvent(ejs->dispatcher, (int) remaining); 
+        mprWaitForEvent(ejs->dispatcher, remaining, dispatcherMark); 
         remaining = mprGetRemainingTicks(mark, timeout);
+        dispatcherMark = mprGetEventMark(ejs->dispatcher);
     } while (!ejs->exiting && remaining > 0 && !mprIsStopping());
     return 0;
 }

@@ -572,11 +572,12 @@ static bool waitForHttpState(EjsWebSocket *ws, int state, MprTicks timeout, int 
 
 static bool waitForReadyState(EjsWebSocket *ws, int state, MprTicks timeout, int throw)
 {
-    Ejs             *ejs;
-    HttpConn        *conn;
-    HttpRx          *rx;
-    MprTicks        mark, remaining, inactivityTimeout;
-    int             eventMask;
+    Ejs         *ejs;
+    HttpConn    *conn;
+    HttpRx      *rx;
+    MprTicks    mark, remaining, inactivityTimeout;
+    int64       dispatcherMark;
+    int         eventMask;
 
     ejs = ws->ejs;
     conn = ws->conn;
@@ -603,12 +604,14 @@ static bool waitForReadyState(EjsWebSocket *ws, int state, MprTicks timeout, int
     }
     mark = mprGetTicks();
     remaining = timeout;
+    dispatcherMark = mprGetEventMark(conn->dispatcher);
     while (conn->state < HTTP_STATE_CONTENT || rx->webSocket->state < state) {
         if (conn->error || ejs->exiting || mprIsStopping(conn) || remaining < 0) {
             break;
         }
-        mprWaitForEvent(conn->dispatcher, min(inactivityTimeout, remaining));
+        mprWaitForEvent(conn->dispatcher, min(inactivityTimeout, remaining), dispatcherMark);
         remaining = mprGetRemainingTicks(mark, timeout);
+        dispatcherMark = mprGetEventMark(conn->dispatcher);
     }
     return rx->webSocket->state >= state;
 }

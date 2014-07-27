@@ -345,12 +345,14 @@ static int reapJoins(Ejs *ejs, EjsObj *workers)
 static int join(Ejs *ejs, EjsObj *workers, int timeout)
 {
     MprTicks    mark;
+    int64       dispatcherMark;
     int         result, remaining;
 
     mprDebug("ejs worker", 5, "Worker.join: joining %d", ejs->joining);
     
     mark = mprGetTicks();
     remaining = timeout;
+    dispatcherMark = mprGetEventMark(ejs->dispatcher);
     do {
         ejs->joining = !reapJoins(ejs, workers);
         if (!ejs->joining) {
@@ -360,8 +362,9 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
             ejsThrowStateError(ejs, "Program instructed to exit");
             break;
         }
-        mprWaitForEvent(ejs->dispatcher, remaining);
+        mprWaitForEvent(ejs->dispatcher, remaining, dispatcherMark);
         remaining = (int) mprGetRemainingTicks(mark, timeout);
+        dispatcherMark = mprGetEventMark(ejs->dispatcher);
     } while (remaining > 0 && !ejs->exception);
 
     if (ejs->exception) {
@@ -749,8 +752,8 @@ static EjsObj *workerTerminate(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **a
  */
 static EjsBoolean *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
-    MprTicks    mark, remaining;
-    int         timeout;
+    MprTicks    mark, remaining, timeout;
+    int64       dispatcherMark;
 
     timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]): MAXINT;
     if (timeout < 0) {
@@ -760,9 +763,11 @@ static EjsBoolean *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, E
     remaining = timeout;
 
     worker->gotMessage = 0;
+    dispatcherMark = mprGetEventMark(ejs->dispatcher);
     do {
-        mprWaitForEvent(ejs->dispatcher, (int) remaining);
+        mprWaitForEvent(ejs->dispatcher, remaining, dispatcherMark);
         remaining = mprGetRemainingTicks(mark, timeout);
+        dispatcherMark = mprGetEventMark(ejs->dispatcher);
     } while (!worker->gotMessage && remaining > 0 && !ejs->exception);
 
     if (worker->gotMessage) {
