@@ -3206,7 +3206,7 @@
 			files = (
 			);
 			inputPaths = (
-../src/ejs.db.mapper/Record.es
+/Users/mob/git/ejs/src/ejs.db.mapper/Record.es
 			);
 			outputPaths = (
 ../build/macosx-x64-default/bin/ejs.db.mapper.mod
@@ -3223,8 +3223,8 @@ cd ../src/ejs.db.mapper
 			files = (
 			);
 			inputPaths = (
-../src/ejs.db/Database.es,
-../src/ejs.db/DatabaseConnector.es
+/Users/mob/git/ejs/src/ejs.db/Database.es,
+/Users/mob/git/ejs/src/ejs.db/DatabaseConnector.es
 			);
 			outputPaths = (
 ../build/macosx-x64-default/bin/ejs.db.mod
@@ -3241,7 +3241,7 @@ cd ../src/ejs.db
 			files = (
 			);
 			inputPaths = (
-../src/ejs.db.sqlite/Sqlite.es
+/Users/mob/git/ejs/src/ejs.db.sqlite/Sqlite.es
 			);
 			outputPaths = (
 ../build/macosx-x64-default/bin/ejs.db.sqlite.mod
@@ -3258,7 +3258,7 @@ cd ../src/ejs.db.sqlite
 			files = (
 			);
 			inputPaths = (
-../src/ejs.mail/Mail.es
+/Users/mob/git/ejs/src/ejs.mail/Mail.es
 			);
 			outputPaths = (
 ../build/macosx-x64-default/bin/ejs.mail.mod
@@ -3275,60 +3275,60 @@ cd ../src/ejs.mail
 			files = (
 			);
 			inputPaths = (
-../src/core/App.es,
-../src/core/Args.es,
-../src/core/Array.es,
-../src/core/BinaryStream.es,
-../src/core/Block.es,
-../src/core/Boolean.es,
-../src/core/ByteArray.es,
-../src/core/Cache.es,
-../src/core/Cmd.es,
-../src/core/Compat.es,
-../src/core/Config.es,
-../src/core/Date.es,
-../src/core/Debug.es,
-../src/core/Emitter.es,
-../src/core/Error.es,
-../src/core/File.es,
-../src/core/FileSystem.es,
-../src/core/Frame.es,
-../src/core/Function.es,
-../src/core/GC.es,
-../src/core/Global.es,
-../src/core/Http.es,
-../src/core/Inflector.es,
-../src/core/Iterator.es,
-../src/core/JSON.es,
-../src/core/Loader.es,
-../src/core/LocalCache.es,
-../src/core/Locale.es,
-../src/core/Logger.es,
-../src/core/Math.es,
-../src/core/Memory.es,
-../src/core/MprLog.es,
-../src/core/Name.es,
-../src/core/Namespace.es,
-../src/core/Null.es,
-../src/core/Number.es,
-../src/core/Object.es,
-../src/core/Path.es,
-../src/core/Promise.es,
-../src/core/RegExp.es,
-../src/core/Socket.es,
-../src/core/Stream.es,
-../src/core/String.es,
-../src/core/System.es,
-../src/core/TextStream.es,
-../src/core/Timer.es,
-../src/core/Type.es,
-../src/core/Uri.es,
-../src/core/Void.es,
-../src/core/WebSocket.es,
-../src/core/Worker.es,
-../src/core/XML.es,
-../src/core/XMLHttp.es,
-../src/core/XMLList.es
+/Users/mob/git/ejs/src/core/App.es,
+/Users/mob/git/ejs/src/core/Args.es,
+/Users/mob/git/ejs/src/core/Array.es,
+/Users/mob/git/ejs/src/core/BinaryStream.es,
+/Users/mob/git/ejs/src/core/Block.es,
+/Users/mob/git/ejs/src/core/Boolean.es,
+/Users/mob/git/ejs/src/core/ByteArray.es,
+/Users/mob/git/ejs/src/core/Cache.es,
+/Users/mob/git/ejs/src/core/Cmd.es,
+/Users/mob/git/ejs/src/core/Compat.es,
+/Users/mob/git/ejs/src/core/Config.es,
+/Users/mob/git/ejs/src/core/Date.es,
+/Users/mob/git/ejs/src/core/Debug.es,
+/Users/mob/git/ejs/src/core/Emitter.es,
+/Users/mob/git/ejs/src/core/Error.es,
+/Users/mob/git/ejs/src/core/File.es,
+/Users/mob/git/ejs/src/core/FileSystem.es,
+/Users/mob/git/ejs/src/core/Frame.es,
+/Users/mob/git/ejs/src/core/Function.es,
+/Users/mob/git/ejs/src/core/GC.es,
+/Users/mob/git/ejs/src/core/Global.es,
+/Users/mob/git/ejs/src/core/Http.es,
+/Users/mob/git/ejs/src/core/Inflector.es,
+/Users/mob/git/ejs/src/core/Iterator.es,
+/Users/mob/git/ejs/src/core/JSON.es,
+/Users/mob/git/ejs/src/core/Loader.es,
+/Users/mob/git/ejs/src/core/LocalCache.es,
+/Users/mob/git/ejs/src/core/Locale.es,
+/Users/mob/git/ejs/src/core/Logger.es,
+/Users/mob/git/ejs/src/core/Math.es,
+/Users/mob/git/ejs/src/core/Memory.es,
+/Users/mob/git/ejs/src/core/MprLog.es,
+/Users/mob/git/ejs/src/core/Name.es,
+/Users/mob/git/ejs/src/core/Namespace.es,
+/Users/mob/git/ejs/src/core/Null.es,
+/Users/mob/git/ejs/src/core/Number.es,
+/Users/mob/git/ejs/src/core/Object.es,
+/Users/mob/git/ejs/src/core/Path.es,
+/Users/mob/git/ejs/src/core/Promise.es,
+/Users/mob/git/ejs/src/core/RegExp.es,
+/Users/mob/git/ejs/src/core/Socket.es,
+/Users/mob/git/ejs/src/core/Stream.es,
+/Users/mob/git/ejs/src/core/String.es,
+/Users/mob/git/ejs/src/core/System.es,
+/Users/mob/git/ejs/src/core/TextStream.es,
+/Users/mob/git/ejs/src/core/Timer.es,
+/Users/mob/git/ejs/src/core/Type.es,
+/Users/mob/git/ejs/src/core/Uri.es,
+/Users/mob/git/ejs/src/core/Void.es,
+/Users/mob/git/ejs/src/core/WebSocket.es,
+/Users/mob/git/ejs/src/core/Worker.es,
+/Users/mob/git/ejs/src/core/XML.es,
+/Users/mob/git/ejs/src/core/XMLHttp.es,
+/Users/mob/git/ejs/src/core/XMLList.es
 			);
 			outputPaths = (
 ../build/macosx-x64-default/bin/ejs.mod
@@ -3348,7 +3348,7 @@ rm -f ejs.slots.h";
 			files = (
 			);
 			inputPaths = (
-../src/ejs.mvc/mvc.es
+/Users/mob/git/ejs/src/ejs.mvc/mvc.es
 			);
 			outputPaths = (
 ../build/macosx-x64-default/bin/ejs.mvc.mod
@@ -3365,7 +3365,7 @@ cd ../src/ejs.mvc
 			files = (
 			);
 			inputPaths = (
-../src/ejs.tar/Tar.es
+/Users/mob/git/ejs/src/ejs.tar/Tar.es
 			);
 			outputPaths = (
 ../build/macosx-x64-default/bin/ejs.tar.mod
@@ -3382,7 +3382,7 @@ cd ../src/ejs.tar
 			files = (
 			);
 			inputPaths = (
-../src/ejs.template/TemplateParser.es
+/Users/mob/git/ejs/src/ejs.template/TemplateParser.es
 			);
 			outputPaths = (
 ../build/macosx-x64-default/bin/ejs.template.mod
@@ -3399,7 +3399,7 @@ cd ../src/ejs.template
 			files = (
 			);
 			inputPaths = (
-../src/ejs.unix/Unix.es
+/Users/mob/git/ejs/src/ejs.unix/Unix.es
 			);
 			outputPaths = (
 ../build/macosx-x64-default/bin/ejs.unix.mod
@@ -3416,29 +3416,29 @@ cd ../src/ejs.unix
 			files = (
 			);
 			inputPaths = (
-../src/ejs.web/Cascade.es,
-../src/ejs.web/CommonLog.es,
-../src/ejs.web/ContentType.es,
-../src/ejs.web/Controller.es,
-../src/ejs.web/Dir.es,
-../src/ejs.web/Google.es,
-../src/ejs.web/Head.es,
-../src/ejs.web/Html.es,
-../src/ejs.web/HttpServer.es,
-../src/ejs.web/MethodOverride.es,
-../src/ejs.web/Middleware.es,
-../src/ejs.web/Mvc.es,
-../src/ejs.web/Request.es,
-../src/ejs.web/Router.es,
-../src/ejs.web/Script.es,
-../src/ejs.web/Session.es,
-../src/ejs.web/ShowExceptions.es,
-../src/ejs.web/Static.es,
-../src/ejs.web/Template.es,
-../src/ejs.web/UploadFile.es,
-../src/ejs.web/UrlMap.es,
-../src/ejs.web/Utils.es,
-../src/ejs.web/View.es
+/Users/mob/git/ejs/src/ejs.web/Cascade.es,
+/Users/mob/git/ejs/src/ejs.web/CommonLog.es,
+/Users/mob/git/ejs/src/ejs.web/ContentType.es,
+/Users/mob/git/ejs/src/ejs.web/Controller.es,
+/Users/mob/git/ejs/src/ejs.web/Dir.es,
+/Users/mob/git/ejs/src/ejs.web/Google.es,
+/Users/mob/git/ejs/src/ejs.web/Head.es,
+/Users/mob/git/ejs/src/ejs.web/Html.es,
+/Users/mob/git/ejs/src/ejs.web/HttpServer.es,
+/Users/mob/git/ejs/src/ejs.web/MethodOverride.es,
+/Users/mob/git/ejs/src/ejs.web/Middleware.es,
+/Users/mob/git/ejs/src/ejs.web/Mvc.es,
+/Users/mob/git/ejs/src/ejs.web/Request.es,
+/Users/mob/git/ejs/src/ejs.web/Router.es,
+/Users/mob/git/ejs/src/ejs.web/Script.es,
+/Users/mob/git/ejs/src/ejs.web/Session.es,
+/Users/mob/git/ejs/src/ejs.web/ShowExceptions.es,
+/Users/mob/git/ejs/src/ejs.web/Static.es,
+/Users/mob/git/ejs/src/ejs.web/Template.es,
+/Users/mob/git/ejs/src/ejs.web/UploadFile.es,
+/Users/mob/git/ejs/src/ejs.web/UrlMap.es,
+/Users/mob/git/ejs/src/ejs.web/Utils.es,
+/Users/mob/git/ejs/src/ejs.web/View.es
 			);
 			outputPaths = (
 ../build/macosx-x64-default/bin/ejs.web.mod
@@ -3458,7 +3458,7 @@ rm -f ejs.web.slots.h";
 			files = (
 			);
 			inputPaths = (
-../src/ejs.zlib/Zlib.es
+/Users/mob/git/ejs/src/ejs.zlib/Zlib.es
 			);
 			outputPaths = (
 ../build/macosx-x64-default/bin/ejs.zlib.mod
@@ -3475,7 +3475,7 @@ cd ../src/ejs.zlib
 			files = (
 			);
 			inputPaths = (
-../src/paks/http/ca.crt
+/Users/mob/git/ejs/src/paks/http/ca.crt
 			);
 			outputPaths = (
 ../build/macosx-x64-default/bin/ca.crt
@@ -3494,7 +3494,7 @@ cp -r ca.crt ../../${OUT_DIR}/bin/ca.crt
 			files = (
 			);
 			inputPaths = (
-../src/ejs.mvc/mvc.es
+/Users/mob/git/ejs/src/ejs.mvc/mvc.es
 			);
 			outputPaths = (
 ../build/macosx-x64-default/bin/mvc.es
@@ -3511,7 +3511,7 @@ cp mvc.es ../../build/macosx-x64-default/bin";
 			files = (
 			);
 			inputPaths = (
-../src/ejs.utest/utest.es
+/Users/mob/git/ejs/src/ejs.utest/utest.es
 			);
 			outputPaths = (
 ../build/macosx-x64-default/bin/utest.es
@@ -3528,7 +3528,7 @@ cp utest.es ../../build/macosx-x64-default/bin";
 			files = (
 			);
 			inputPaths = (
-../src/ejs.utest/utest.worker
+/Users/mob/git/ejs/src/ejs.utest/utest.worker
 			);
 			outputPaths = (
 ../build/macosx-x64-default/bin/utest.worker
@@ -3545,7 +3545,7 @@ cp utest.worker ../../build/macosx-x64-default/bin";
 			files = (
 			);
 			inputPaths = (
-../src/ejs.web/www
+/Users/mob/git/ejs/src/ejs.web/www
 			);
 			outputPaths = (
 ../build/macosx-x64-default/bin/www
@@ -3572,10 +3572,71 @@ cp -r www ../../build/macosx-x64-default/bin";
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 [ ! -x ${INC_DIR} ] && mkdir -p ${INC_DIR} ${OBJ_DIR} ${LIB_DIR} ${BIN_DIR}
-[ ! -f ${INC_DIR}/me.h ] && cp ejs-macosx-default-me.h ${INC_DIR}/me.h
-[ ! -f ${INC_DIR}/osdep.h ] && cp ${SRC_DIR}/src/paks/osdep/osdep.h ${INC_DIR}/osdep.h
-if ! diff ${INC_DIR}/me.h ejs-macosx-default-me.h >/dev/null ; then
+[ ! -f ${INC_DIR}/me.h -a -f cp ejs-macosx-default-me.h ] && cp ejs-macosx-default-me.h ${INC_DIR}/me.h
+if [ -f ejs-macosx-default-me.h ] ; then
+if ! diff ${INC_DIR}/me.h ejs-macosx-default-me.h >/dev/null 2>&1 ; then
 cp ejs-macosx-default-me.h ${INC_DIR}/me.h
+fi
+fi
+if [ ../src/slots/ejs.cache.local.slots.h -nt ${OUT_DIR}/inc/ejs.cache.local.slots.h ] ; then
+cp ../src/slots/ejs.cache.local.slots.h ${OUT_DIR}/inc/ejs.cache.local.slots.h
+fi
+if [ ../src/slots/ejs.db.sqlite.slots.h -nt ${OUT_DIR}/inc/ejs.db.sqlite.slots.h ] ; then
+cp ../src/slots/ejs.db.sqlite.slots.h ${OUT_DIR}/inc/ejs.db.sqlite.slots.h
+fi
+if [ ../src/ejs.h -nt ${OUT_DIR}/inc/ejs.h ] ; then
+cp ../src/ejs.h ${OUT_DIR}/inc/ejs.h
+fi
+if [ ../src/slots/ejs.slots.h -nt ${OUT_DIR}/inc/ejs.slots.h ] ; then
+cp ../src/slots/ejs.slots.h ${OUT_DIR}/inc/ejs.slots.h
+fi
+if [ ../src/slots/ejs.web.slots.h -nt ${OUT_DIR}/inc/ejs.web.slots.h ] ; then
+cp ../src/slots/ejs.web.slots.h ${OUT_DIR}/inc/ejs.web.slots.h
+fi
+if [ ../src/slots/ejs.zlib.slots.h -nt ${OUT_DIR}/inc/ejs.zlib.slots.h ] ; then
+cp ../src/slots/ejs.zlib.slots.h ${OUT_DIR}/inc/ejs.zlib.slots.h
+fi
+if [ ../src/ejsByteCode.h -nt ${OUT_DIR}/inc/ejsByteCode.h ] ; then
+cp ../src/ejsByteCode.h ${OUT_DIR}/inc/ejsByteCode.h
+fi
+if [ ../src/ejsByteCodeTable.h -nt ${OUT_DIR}/inc/ejsByteCodeTable.h ] ; then
+cp ../src/ejsByteCodeTable.h ${OUT_DIR}/inc/ejsByteCodeTable.h
+fi
+if [ ../src/ejsCompiler.h -nt ${OUT_DIR}/inc/ejsCompiler.h ] ; then
+cp ../src/ejsCompiler.h ${OUT_DIR}/inc/ejsCompiler.h
+fi
+if [ ../src/ejsCustomize.h -nt ${OUT_DIR}/inc/ejsCustomize.h ] ; then
+cp ../src/ejsCustomize.h ${OUT_DIR}/inc/ejsCustomize.h
+fi
+if [ ../src/ejs.web/ejsWeb.h -nt ${OUT_DIR}/inc/ejsWeb.h ] ; then
+cp ../src/ejs.web/ejsWeb.h ${OUT_DIR}/inc/ejsWeb.h
+fi
+if [ ../src/paks/est/est.h -nt ${OUT_DIR}/inc/est.h ] ; then
+cp ../src/paks/est/est.h ${OUT_DIR}/inc/est.h
+fi
+if [ ../src/paks/http/http.h -nt ${OUT_DIR}/inc/http.h ] ; then
+cp ../src/paks/http/http.h ${OUT_DIR}/inc/http.h
+fi
+if [ ${OUT_DIR}/inc/me.h -nt ${OUT_DIR}/inc/me.h ] ; then
+cp ${OUT_DIR}/inc/me.h ${OUT_DIR}/inc/me.h
+fi
+if [ ../src/paks/mpr/mpr.h -nt ${OUT_DIR}/inc/mpr.h ] ; then
+cp ../src/paks/mpr/mpr.h ${OUT_DIR}/inc/mpr.h
+fi
+if [ ../src/paks/osdep/osdep.h -nt ${OUT_DIR}/inc/osdep.h ] ; then
+cp ../src/paks/osdep/osdep.h ${OUT_DIR}/inc/osdep.h
+fi
+if [ ../src/paks/pcre/pcre.h -nt ${OUT_DIR}/inc/pcre.h ] ; then
+cp ../src/paks/pcre/pcre.h ${OUT_DIR}/inc/pcre.h
+fi
+if [ ../src/paks/sqlite/sqlite3.h -nt ${OUT_DIR}/inc/sqlite3.h ] ; then
+cp ../src/paks/sqlite/sqlite3.h ${OUT_DIR}/inc/sqlite3.h
+fi
+if [ ../src/paks/zlib/zlib.h -nt ${OUT_DIR}/inc/zlib.h ] ; then
+cp ../src/paks/zlib/zlib.h ${OUT_DIR}/inc/zlib.h
+fi
+if [ ../src/cmd/ejsmod.h -nt ../src/cmd/ejsmod.h ] ; then
+cp ../src/cmd/ejsmod.h ../src/cmd/ejsmod.h
 fi
 if [ ../src/slots/ejs.cache.local.slots.h -nt ${OUT_DIR}/inc/ejs.cache.local.slots.h ] ; then
 cp ../src/slots/ejs.cache.local.slots.h ${OUT_DIR}/inc/ejs.cache.local.slots.h
@@ -5139,7 +5200,7 @@ fi";
                 OBJ_DIR = "../build/macosx-x64-default/obj";
                 SRC_DIR = "..";
 
-                CONFIGURATION_TEMP_DIR = "$(OBJ_DIR)/tmp/$(CONFIGURATION)";
+                CONFIGURATION_TEMP_DIR = "$(OBJ_DIR)/ejs-xcode/$(CONFIGURATION)";
                 CONFIGURATION_BUILD_DIR = "$(BIN_DIR)";
                 INSTALL_PATH = "/usr/lib/ejs";
                 DSTROOT = "/tmp/ejs.dst";
@@ -5161,7 +5222,7 @@ fi";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"../build/macosx-x64-default/inc",
+					"/Users/mob/git/ejs/build/macosx-x64-default/inc",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5169,7 +5230,7 @@ fi";
 					"$(inherited)"
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"../build/macosx-x64-default/bin",
+					"/Users/mob/git/ejs/build/macosx-x64-default/bin",
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
@@ -5208,7 +5269,7 @@ fi";
                 OBJ_DIR = "../build/macosx-x64-default/obj";
                 SRC_DIR = "..";
 
-                CONFIGURATION_TEMP_DIR = "$(OBJ_DIR)/tmp/$(CONFIGURATION)";
+                CONFIGURATION_TEMP_DIR = "$(OBJ_DIR)/ejs-xcode/$(CONFIGURATION)";
                 CONFIGURATION_BUILD_DIR = "$(BIN_DIR)";
                 INSTALL_PATH = "/usr/lib/ejs";
                 DSTROOT = "/tmp/ejs.dst";
@@ -5231,12 +5292,12 @@ fi";
 				GCC_OPTIMIZATION_LEVEL = s;
                 GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				HEADER_SEARCH_PATHS = (
-					"../build/macosx-x64-default/inc",
+					"/Users/mob/git/ejs/build/macosx-x64-default/inc",
 					"$(inherited)"
 				);
 
 				LIBRARY_SEARCH_PATHS = (
-					"../build/macosx-x64-default/bin",
+					"/Users/mob/git/ejs/build/macosx-x64-default/bin",
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
@@ -5289,7 +5350,7 @@ fi";
 				PRODUCT_NAME = ejs.db.mapper.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5310,7 +5371,7 @@ fi";
 				PRODUCT_NAME = ejs.db.mapper.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5328,7 +5389,7 @@ fi";
 				PRODUCT_NAME = ejs.db.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5349,7 +5410,7 @@ fi";
 				PRODUCT_NAME = ejs.db.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5367,7 +5428,7 @@ fi";
 				PRODUCT_NAME = ejs.db.sqlite.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5388,7 +5449,7 @@ fi";
 				PRODUCT_NAME = ejs.db.sqlite.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5406,7 +5467,7 @@ fi";
 				PRODUCT_NAME = ejs.mail.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5427,7 +5488,7 @@ fi";
 				PRODUCT_NAME = ejs.mail.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5445,7 +5506,7 @@ fi";
 				PRODUCT_NAME = ejs.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5466,7 +5527,7 @@ fi";
 				PRODUCT_NAME = ejs.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5484,7 +5545,7 @@ fi";
 				PRODUCT_NAME = ejs.mvc.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5505,7 +5566,7 @@ fi";
 				PRODUCT_NAME = ejs.mvc.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5523,7 +5584,7 @@ fi";
 				PRODUCT_NAME = ejs.tar.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5544,7 +5605,7 @@ fi";
 				PRODUCT_NAME = ejs.tar.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5562,7 +5623,7 @@ fi";
 				PRODUCT_NAME = ejs.template.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5583,7 +5644,7 @@ fi";
 				PRODUCT_NAME = ejs.template.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5601,7 +5662,7 @@ fi";
 				PRODUCT_NAME = ejs.unix.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5622,7 +5683,7 @@ fi";
 				PRODUCT_NAME = ejs.unix.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5640,7 +5701,7 @@ fi";
 				PRODUCT_NAME = ejs.web.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5661,7 +5722,7 @@ fi";
 				PRODUCT_NAME = ejs.web.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5679,7 +5740,7 @@ fi";
 				PRODUCT_NAME = ejs.zlib.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5700,7 +5761,7 @@ fi";
 				PRODUCT_NAME = ejs.zlib.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5748,7 +5809,7 @@ fi";
 				PRODUCT_NAME = ejsmod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5769,7 +5830,7 @@ fi";
 				PRODUCT_NAME = ejsmod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5868,7 +5929,7 @@ fi";
 				PRODUCT_NAME = libejs.db.sqlite;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5889,7 +5950,7 @@ fi";
 				PRODUCT_NAME = libejs.db.sqlite;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5907,7 +5968,7 @@ fi";
 				PRODUCT_NAME = libejs.web;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5928,7 +5989,7 @@ fi";
 				PRODUCT_NAME = libejs.web;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5946,7 +6007,7 @@ fi";
 				PRODUCT_NAME = libejs.zlib;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5967,7 +6028,7 @@ fi";
 				PRODUCT_NAME = libejs.zlib;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 

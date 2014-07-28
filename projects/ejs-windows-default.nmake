@@ -21,7 +21,7 @@ ENTRY                 = _DllMainCRTStartup@12
 !ENDIF
 
 !IF "$(CONFIG)" == ""
-CONFIG                = build\$(OS)-$(ARCH)-$(PROFILE)
+CONFIG                = $(OS)-$(ARCH)-$(PROFILE)
 !ENDIF
 
 !IF "$(BUILD)" == ""
@@ -159,9 +159,6 @@ prep:
 	@if not exist $(BUILD)\bin md $(BUILD)\bin
 	@if not exist $(BUILD)\inc md $(BUILD)\inc
 	@if not exist $(BUILD)\obj md $(BUILD)\obj
-[ ! -f ${BUILD}/inc/osdep.h ] && cp ${SRC}/src/paks/osdep/osdep.h ${BUILD}/inc/osdep.h
-	@if not exist $(BUILD copy src\paks\osdep\osdep.h $(BUILD)\inc\osdep.h
-
 	@if not exist $(BUILD)\inc\me.h copy projects\ejs-windows-default-me.h $(BUILD)\inc\me.h
 
 clean:
@@ -4474,10 +4471,8 @@ installBinary: $(DEPS_142)
 	copy /Y src\paks\zlib\zlib.h "$(ME_VAPP_PREFIX)\inc\zlib.h"
 	copy /Y src\cmd\ejsmod.h "$(ME_VAPP_PREFIX)\inc\ejsmod.h"
 	copy /Y src\core\default.slots.h "$(ME_VAPP_PREFIX)\inc\default.slots.h"
-	copy /Y src\core\ejs.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.slots.h"
 	copy /Y src\ejs.db.sqlite\ejs.db.sqlite.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.db.sqlite.slots.h"
 	copy /Y src\ejs.h "$(ME_VAPP_PREFIX)\inc\ejs.h"
-	copy /Y src\ejs.web\ejs.web.slots.h "$(ME_VAPP_PREFIX)\inc\ejs.web.slots.h"
 	copy /Y src\ejs.web\ejsWeb.h "$(ME_VAPP_PREFIX)\inc\ejsWeb.h"
 	copy /Y src\ejsByteCode.h "$(ME_VAPP_PREFIX)\inc\ejsByteCode.h"
 	copy /Y src\ejsByteCodeTable.h "$(ME_VAPP_PREFIX)\inc\ejsByteCodeTable.h"
