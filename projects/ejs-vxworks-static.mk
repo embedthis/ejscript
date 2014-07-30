@@ -3874,7 +3874,6 @@ endif
 #
 DEPS_127 += build/$(CONFIG)/inc/me.h
 DEPS_127 += build/$(CONFIG)/inc/mpr.h
-DEPS_127 += build/$(CONFIG)/inc/est.h
 
 build/$(CONFIG)/obj/mprSsl.o: \
     src/paks/mpr/mprSsl.c $(DEPS_127)

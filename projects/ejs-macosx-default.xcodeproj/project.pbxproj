@@ -2659,7 +2659,6 @@
             children = (
 				F3F8966EF3F8A43E0000026E /* me.h */,
 				F3F8966EF3F8A43E00000277 /* mpr.h */,
-				F3F8966EF3F8A43E00000282 /* est.h */,
 				F3F8966EF3F8A43E00000128 /* mprSsl.c */,
 			);
             name = "libmprssl";
