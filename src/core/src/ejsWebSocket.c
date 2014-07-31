@@ -59,7 +59,7 @@ static EjsWebSocket *wsConstructor(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj 
             ws->certFile = ejsToMulti(ejs, argv[0]);
         }
     }
-    if ((ws->conn = httpCreateConn(MPR->httpService, NULL, ejs->dispatcher)) == 0) {
+    if ((ws->conn = httpCreateConn(NULL, ejs->dispatcher)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
@@ -436,7 +436,6 @@ static void webSocketNotify(HttpConn *conn, int event, int arg)
     case HTTP_EVENT_STATE:
         if (arg == HTTP_STATE_CONTENT) {
             ws->protocol = (char*) httpGetHeader(conn, "Sec-WebSocket-Protocol");
-            mprTrace(3, "Web socket protocol %s", ws->protocol);
             onWebSocketEvent(ws, HTTP_EVENT_APP_OPEN, 0, 0);
         }
         break;
@@ -573,11 +572,12 @@ static bool waitForHttpState(EjsWebSocket *ws, int state, MprTicks timeout, int 
 
 static bool waitForReadyState(EjsWebSocket *ws, int state, MprTicks timeout, int throw)
 {
-    Ejs             *ejs;
-    HttpConn        *conn;
-    HttpRx          *rx;
-    MprTicks        mark, remaining, inactivityTimeout;
-    int             eventMask;
+    Ejs         *ejs;
+    HttpConn    *conn;
+    HttpRx      *rx;
+    MprTicks    mark, remaining, inactivityTimeout;
+    int64       dispatcherMark;
+    int         eventMask;
 
     ejs = ws->ejs;
     conn = ws->conn;
@@ -604,12 +604,14 @@ static bool waitForReadyState(EjsWebSocket *ws, int state, MprTicks timeout, int
     }
     mark = mprGetTicks();
     remaining = timeout;
+    dispatcherMark = mprGetEventMark(conn->dispatcher);
     while (conn->state < HTTP_STATE_CONTENT || rx->webSocket->state < state) {
         if (conn->error || ejs->exiting || mprIsStopping(conn) || remaining < 0) {
             break;
         }
-        mprWaitForEvent(conn->dispatcher, min(inactivityTimeout, remaining));
+        mprWaitForEvent(conn->dispatcher, min(inactivityTimeout, remaining), dispatcherMark);
         remaining = mprGetRemainingTicks(mark, timeout);
+        dispatcherMark = mprGetEventMark(conn->dispatcher);
     }
     return rx->webSocket->state >= state;
 }

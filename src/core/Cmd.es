@@ -370,8 +370,10 @@ module ejs {
                 standard error output. 
          */
         static function run(command: Object, options: Object = {}, data: Object = null): String {
-            //  TODO - the above default arg should handle this
             options ||= {}
+            if (options.exception == null) {
+                options.exception = true
+            }
             let cmd = new Cmd
             cmd.start(command, blend({detach: true}, options))
             if (data) {
@@ -379,7 +381,7 @@ module ejs {
             }
             cmd.finalize()
             cmd.wait()
-            if (cmd.status != 0 && !options.exception) {
+            if (cmd.status != 0 && options.exception) {
                 throw new IOError(cmd.error)
             }
             return cmd.readString()
@@ -395,7 +397,7 @@ module ejs {
                 called to signify the end of data being written to the command's stdin.
             @options dir Path or String. Directory to set as the current working directory for the command.
             @options exception Boolean If true, throw exceptions if the command returns a non-zero status code. 
-                Defaults to false.
+                Defaults to true.
             @options timeout Number This is the default number of milliseconds for the command to complete.
             @options noio Don't capture stdout from the command. If true, the command's standard output will go to the 
                 application's current standard output. Defaults to false.

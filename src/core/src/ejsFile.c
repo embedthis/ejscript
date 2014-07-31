@@ -244,8 +244,6 @@ static EjsObj *closeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         if (mprFlushFile(fp->file) < 0) {
             if (ejs) {
                 ejsThrowIOError(ejs, "Cannot flush file data");
-            } else {
-                mprError("Cannot flush file data");
             }
             return 0;
         }
@@ -719,7 +717,6 @@ PUBLIC EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
             break;
         }
         if (mprWriteFile(fp->file, buf, len) != len) {
-            mprLog(0, "Write IO error %d", mprGetOsError());
             ejsThrowIOError(ejs, "Cannot write to %s", fp->path);
             return 0;
         }

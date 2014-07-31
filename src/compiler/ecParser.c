@@ -9932,7 +9932,6 @@ static void applyAttributes(EcCompiler *cp, EcNode *np, EcNode *attributeNode, E
     assert(nspace);
     np->qname.space = nspace;
 
-    mprTrace(7, "Parser apply attributes namespace = \"%@\", current line %w", nspace, np->loc.source);
     assert(np->qname.space);
     np->attributes |= attributes;
 }

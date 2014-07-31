@@ -76,3 +76,7 @@ assert(files.indexOf(Path('mid')) > files.indexOf(Path('mid/sub1')))
 
 //  Full path
 assert(Path('/anything').files(d.absolute.toString() + '/*').toString().contains(/files.tst/))
+
+//  Dot dot
+assert(d.files('../files/*').toString().contains(/files.tst/))
+

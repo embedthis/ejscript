@@ -52,7 +52,7 @@ static EjsRequest *hs_accept(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **arg
     event.sock = sock;
     if ((conn = httpAcceptConn(sp->endpoint, &event)) == 0) {
         /* Just ignore */
-        mprError("Cannot accept connection");
+        mprLog("ejs web", 0, "Cannot accept connection");
         return 0;
     }
     return createRequest(sp, conn);
@@ -254,7 +254,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         if (sp->name) {
             httpSetHostName(host, sp->name);
         }
-        httpSetSoftware(endpoint->http, EJS_HTTPSERVER_NAME);
+        httpSetSoftware(EJS_HTTPSERVER_NAME);
         httpSetEndpointAsync(endpoint, sp->async);
         httpSetEndpointContext(endpoint, sp);
         httpSetEndpointNotifier(endpoint, stateChangeNotifier);
@@ -353,9 +353,13 @@ static EjsNumber *hs_port(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
  */
 static EjsVoid *hs_run(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
+    int64   dispatcherMark;
+
     if (!sp->hosted) {
+        dispatcherMark = mprGetEventMark(ejs->dispatcher);
         while (!ejs->exiting && !mprIsStopping()) {
-            mprWaitForEvent(ejs->dispatcher, MAXINT); 
+            mprWaitForEvent(ejs->dispatcher, MPR_MAX_TIMEOUT, dispatcherMark); 
+            dispatcherMark = mprGetEventMark(ejs->dispatcher);
         }
     }
     return 0;
@@ -537,13 +541,11 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
     EjsString       *vs;
     HttpHost        *host;
     HttpRoute       *route;
-    Http            *http;
     HttpStage       *stage;
     cchar           *name;
     int             i;
 
     assert(sp->endpoint);
-    http = sp->endpoint->http;
     host = mprGetFirstItem(sp->endpoint->hosts);
     route = mprGetFirstItem(host->routes);
 
@@ -553,7 +555,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
             vs = ejsGetProperty(ejs, sp->outgoingStages, i);
             if (vs && ejsIs(ejs, vs, String)) {
                 name = vs->value;
-                if (httpLookupStage(http, name) == 0) {
+                if (httpLookupStage(name) == 0) {
                     ejsThrowArgError(ejs, "Cannot find pipeline stage name %s", name);
                     return;
                 }
@@ -567,7 +569,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
             vs = ejsGetProperty(ejs, sp->incomingStages, i);
             if (vs && ejsIs(ejs, vs, String)) {
                 name = vs->value;
-                if (httpLookupStage(http, name) == 0) {
+                if (httpLookupStage(name) == 0) {
                     ejsThrowArgError(ejs, "Cannot find pipeline stage name %s", name);
                     return;
                 }
@@ -576,7 +578,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
         }
     }
     if (sp->connector) {
-        if ((stage = httpLookupStage(http, sp->connector)) == 0) {
+        if ((stage = httpLookupStage(sp->connector)) == 0) {
             ejsThrowArgError(ejs, "Cannot find pipeline stage name %s", sp->connector);
             return;
         }
@@ -681,14 +683,11 @@ static void incomingEjs(HttpQueue *q, HttpPacket *packet)
 static void setupConnTrace(HttpConn *conn)
 {
     EjsHttpServer   *sp;
-    int             i;
 
     assert(conn->endpoint);
     if (conn->endpoint) {
         if ((sp = httpGetEndpointContext(conn->endpoint)) != 0) {
-            for (i = 0; i < HTTP_TRACE_MAX_DIR; i++) {
-                conn->trace[i] = sp->trace[i];
-            }
+            conn->trace = sp->trace;
         }
     }
 }
@@ -810,7 +809,7 @@ HttpStage *ejsAddWebHandler(Http *http, MprModule *module)
 
     assert(http);
     if ((handler = http->ejsHandler) == 0) {
-        if ((handler = httpCreateHandler(http, "ejsHandler", module)) == 0) {
+        if ((handler = httpCreateHandler("ejsHandler", module)) == 0) {
             return 0;
         }
     }
@@ -833,8 +832,7 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
         mprMark(sp->ejs);
         mprMark(sp->endpoint);
         mprMark(sp->ssl);
-        httpManageTrace(&sp->trace[0], flags);
-        httpManageTrace(&sp->trace[1], flags);
+        mprMark(sp->trace);
         mprMark(sp->connector);
         mprMark(sp->keyFile);
         mprMark(sp->certFile);
@@ -871,7 +869,7 @@ static EjsHttpServer *createHttpServer(Ejs *ejs, EjsType *type, int size)
     sp->ejs = ejs;
     sp->hosted = ejs->hosted;
     sp->async = 1;
-    httpInitTrace(sp->trace);
+    sp->trace = httpCreateTrace(0);
     return sp;
 }
 
@@ -896,7 +894,7 @@ EjsHttpServer *ejsCloneHttpServer(Ejs *ejs, EjsHttpServer *sp, bool deep)
     nsp->keyFile = sp->keyFile;
     nsp->ciphers = sp->ciphers;
     nsp->protocols = sp->protocols;
-    httpInitTrace(nsp->trace);
+    nsp->trace = httpCreateTrace(sp->trace);
     return nsp;
 }
 

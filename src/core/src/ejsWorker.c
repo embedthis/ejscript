@@ -212,7 +212,7 @@ static EjsObj *startWorker(Ejs *ejs, EjsWorker *outsideWorker, int timeout)
     assert(outsideWorker->pair);
     assert(outsideWorker->pair->ejs);
 
-    mprTrace(5, "Worker.startWorker");
+    mprDebug("ejs worker", 5, "Worker.startWorker");
 
     if (outsideWorker->state > EJS_WORKER_BEGIN) {
         ejsThrowStateError(ejs, "Worker has already started");
@@ -345,12 +345,14 @@ static int reapJoins(Ejs *ejs, EjsObj *workers)
 static int join(Ejs *ejs, EjsObj *workers, int timeout)
 {
     MprTicks    mark;
+    int64       dispatcherMark;
     int         result, remaining;
 
-    mprTrace(5, "Worker.join: joining %d", ejs->joining);
+    mprDebug("ejs worker", 5, "Worker.join: joining %d", ejs->joining);
     
     mark = mprGetTicks();
     remaining = timeout;
+    dispatcherMark = mprGetEventMark(ejs->dispatcher);
     do {
         ejs->joining = !reapJoins(ejs, workers);
         if (!ejs->joining) {
@@ -360,8 +362,9 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
             ejsThrowStateError(ejs, "Program instructed to exit");
             break;
         }
-        mprWaitForEvent(ejs->dispatcher, remaining);
+        mprWaitForEvent(ejs->dispatcher, remaining, dispatcherMark);
         remaining = (int) mprGetRemainingTicks(mark, timeout);
+        dispatcherMark = mprGetEventMark(ejs->dispatcher);
     } while (remaining > 0 && !ejs->exception);
 
     if (ejs->exception) {
@@ -369,7 +372,7 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
     }
     result = (ejs->joining) ? MPR_ERR_TIMEOUT: 0;
     ejs->joining = 0;
-    mprTrace(7, "Worker.join: result %d", result);
+    mprDebug("ejs worker", 7, "Worker.join: result %d", result);
     return result;
 }
 
@@ -506,7 +509,7 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
 
     if (callback == 0 || ejsIs(ejs, callback, Null)) {
         if (msg->callbackSlot == ES_Worker_onmessage) {
-            mprTrace(6, "Discard message as no onmessage handler defined for worker");
+            mprDebug("ejs worker", 6, "Discard message as no onmessage handler defined for worker");
             
         } else if (msg->callbackSlot == ES_Worker_onerror) {
             if (ejsIs(ejs, msg->message, String)) {
@@ -529,7 +532,7 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     if (msg->callbackSlot == ES_Worker_onclose) {
         assert(!worker->inside);
         worker->state = EJS_WORKER_COMPLETE;
-        mprTrace(5, "Worker.doMessage: complete");
+        mprDebug("ejs worker", 5, "Worker.doMessage: complete");
         /* Worker and insider interpreter are now eligible for garbage collection */
         removeWorker(worker);
     }
@@ -749,8 +752,8 @@ static EjsObj *workerTerminate(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **a
  */
 static EjsBoolean *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
-    MprTicks    mark, remaining;
-    int         timeout;
+    MprTicks    mark, remaining, timeout;
+    int64       dispatcherMark;
 
     timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]): MAXINT;
     if (timeout < 0) {
@@ -760,9 +763,11 @@ static EjsBoolean *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, E
     remaining = timeout;
 
     worker->gotMessage = 0;
+    dispatcherMark = mprGetEventMark(ejs->dispatcher);
     do {
-        mprWaitForEvent(ejs->dispatcher, (int) remaining);
+        mprWaitForEvent(ejs->dispatcher, remaining, dispatcherMark);
         remaining = mprGetRemainingTicks(mark, timeout);
+        dispatcherMark = mprGetEventMark(ejs->dispatcher);
     } while (!worker->gotMessage && remaining > 0 && !ejs->exception);
 
     if (worker->gotMessage) {

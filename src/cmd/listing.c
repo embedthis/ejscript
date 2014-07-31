@@ -221,7 +221,7 @@ static int lstOpen(EjsMod *mp, char *moduleFilename, EjsModuleHdr *hdr)
     path = sjoin(name, EJS_LISTING_EXT, NULL);
     path = mprJoinPath(mp->outputDir, path);
     if ((mp->file = mprOpenFile(path,  O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664)) == 0) {
-        mprError("Cannot create %s", path);
+        mprLog("Cannot create %s", 0, path);
         return EJS_ERR;
     }
     mprEnableFileBuffering(mp->file, 0, 0);
@@ -607,7 +607,7 @@ static int decodeOperands(EjsMod *mp, EjsOptable *opt, char *argbuf, int argbufL
             break;
 
         default:
-            mprError("Bad arg type in opcode table");
+            mprLog("ejs", 0, "Bad arg type in opcode table");
             break;
         }
         len = (int) strlen(bufp);
@@ -674,7 +674,7 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
         stackEffect = 0;
 
         if (opcode < 0 || opcode >= maxOp) {
-            mprError("Bad opcode %x at address %d.\n", opcode, address);
+            mprLog("ejs listing", 0, "Bad opcode %x at address %d.\n", opcode, address);
             return;
         }
         opt = &optable[opcode];

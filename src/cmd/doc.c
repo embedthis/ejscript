@@ -156,12 +156,12 @@ static void generateImages(EjsMod *mp)
         mprMakeDir(mprGetPathDir(path), 0775, -1, -1, 1);
         file = mprOpenFile(path, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0644);
         if (file == 0) {
-            mprError("Cannot create %s", path);
+            mprLog("ejs doc", 0, "Cannot create %s", path);
             mp->errorCount++;
             return;
         }
         if (mprWriteFile(file, df->data, df->size) != df->size) {
-            mprError("Cannot write to buffer");
+            mprLog("ejs doc", 0, "Cannot write to buffer");
             mp->errorCount++;
             return;
         }
@@ -665,7 +665,7 @@ static MprFile *createFile(EjsMod *mp, char *name)
     path = mp->path = mprJoinPath(mp->docDir, name);
     file = mprOpenFile(path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (file == 0) {
-        mprError("Cannot open %s", path);
+        mprLog("ejs doc", 0, "Cannot open %s", path);
         mp->errorCount++;
         return 0;
     }
@@ -1342,7 +1342,7 @@ static void checkArgs(EjsMod *mp, Ejs *ejs, EjsName ownerName, EjsFunction *fun,
         }
         if (param == 0) { 
             if (mp->warnOnError) {
-                mprWarn("Missing documentation for parameter \"%@\" in function \"%@\" in type \"%@\"", 
+                mprLog("ejs", 0, "Missing documentation for parameter \"%@\" in function \"%@\" in type \"%@\"", 
                      argName.name, qname.name, ownerName.name);
             }
         }
@@ -1420,7 +1420,7 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
             if (!ejsIsType(ejs, fun)) {
                 /* Don't warn about default constructors */
                 if (mp->warnOnError) {
-                    mprWarn("Missing documentation for \"%@.%@\"", fp->ownerName.name, qname.name);
+                    mprLog("ejs", 0, "Missing documentation for \"%@.%@\"", fp->ownerName.name, qname.name);
                 }
             }
         }
@@ -1479,7 +1479,7 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
                 defaultValue = getDefault(doc, param->key);
                 i = findArg(ejs, fun, param->key);
                 if (i < 0) {
-                    mprError("Bad @param reference for \"%s\" in function \"%@\" in type \"%@\"", param->key, 
+                    mprLog("ejs doc", 0, "Bad @param reference for \"%s\" in function \"%@\" in type \"%@\"", param->key, 
                         qname.name, fp->ownerName.name);
                 } else {
                     argName = ejsGetPropertyName(ejs, fun->activation, i);
@@ -1675,7 +1675,7 @@ static wchar *mergeDuplicates(Ejs *ejs, EjsMod *mp, EjsName qname, EjsDoc *doc, 
             break;
         }
         if ((dup = getDuplicateDoc(ejs, duplicate)) == 0) {
-            mprError("Cannot find @duplicate directive %s for %s", duplicate, qname.name);
+            mprLog("ejs doc", 0, "Cannot find @duplicate directive %s for %s", duplicate, qname.name);
         } else {
             crackDoc(mp, dup, WEN(duplicate));
             mprCopyListContents(doc->params, dup->params);
@@ -1829,7 +1829,7 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
         if (match(token, "duplicate")) {
             duplicate = mtrim(line, " \t\n", MPR_TRIM_BOTH);
             if ((dup = getDuplicateDoc(ejs, duplicate)) == 0) {
-                mprError("Cannot find @duplicate directive %s for %@", duplicate, qname.name);
+                mprLog("ejs doc", 0, "Cannot find @duplicate directive %s for %@", duplicate, qname.name);
             } else {
                 crackDoc(mp, dup, WEN(duplicate));
                 mprCopyListContents(doc->params, dup->params);
@@ -2179,7 +2179,7 @@ static void out(EjsMod *mp, char *fmt, ...)
     if (mp->file == 0) {
         mp->file = mprOpenFile(mp->path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
         if (mp->file == 0) {
-            mprError("Cannot open %s", mp->path);
+            mprLog("ejs doc", 0, "Cannot open %s", mp->path);
             mp->errorCount++;
             return;
         }
@@ -2187,7 +2187,7 @@ static void out(EjsMod *mp, char *fmt, ...)
     va_start(args, fmt);
     buf = sfmtv(fmt, args);
     if (mprWriteFileString(mp->file, buf) < 0) {
-        mprError("Cannot write to buffer");
+        mprLog("ejs doc", 0, "Cannot write to buffer");
     }
 }
 
@@ -2553,7 +2553,7 @@ static EjsDoc *getDuplicateDoc(Ejs *ejs, wchar *duplicate)
     }
     if (doc) {
         if (doc->docString == NULL || doc->docString->value[0] == '\0') {
-            mprError("Duplicate entry \"%s\" provides no description", duplicate);
+            mprLog("ejs doc", 0, "Duplicate entry \"%s\" provides no description", duplicate);
             return 0;
         }
     }

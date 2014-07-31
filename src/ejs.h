@@ -9,6 +9,12 @@
 #ifndef _h_EJS_CORE
 #define _h_EJS_CORE 1
 
+/*
+    Using custom mprPrintf specifiers
+ */
+#undef PRINTF_ATTRIBUTE
+#define PRINTF_ATTRIBUTE(x,y)
+
 #include    "mpr.h"
 #include    "http.h"
 #include    "ejsByteCode.h"
@@ -4720,8 +4726,6 @@ PUBLIC void ejsSetDispatcher(Ejs *ejs, MprDispatcher *dispatcher);
     @param ejs Interpreter to destroy
  */
 PUBLIC void ejsDestroyVM(Ejs *ejs);
-
-//  MOB
 PUBLIC void ejsDestroy(Ejs *ejs);
 
 /**

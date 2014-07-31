@@ -138,7 +138,7 @@ static char *search(Ejs *ejs, cchar *filename, int minVersion, int maxVersion)
     assert(filename && *filename);
 
     if ((path = ejsSearchForModule(ejs, filename, minVersion, maxVersion)) == 0) {
-        mprTrace(2, "Cannot find module file \"%s\"", filename);
+        mprDebug("ejs vm", 2, "Cannot find module file \"%s\"", filename);
         if (minVersion <= 0 && maxVersion <= 0) {
             ejsThrowReferenceError(ejs,  "Cannot find module file \"%s\"", filename);
         } else if (minVersion == 0 && maxVersion == EJS_MAX_VERSION) {
@@ -169,10 +169,9 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
 
     while ((sectionType = (int) mprGetFileChar(file)) >= 0) {
         if (sectionType < 0 || sectionType >= EJS_SECT_MAX) {
-            mprError("Bad section type %d in %@", sectionType, mp->name);
+            mprLog("ejs vm", 0, "Bad section type %d in %@", sectionType, mp->name);
             return MPR_ERR_CANT_LOAD;
         }
-        mprTrace(9, "Load section type %d", sectionType);
         assert(mp == NULL || mp->scope == NULL || mp->scope != mp->scope->scope);
 
         rc = 0;
@@ -336,15 +335,12 @@ static EjsModule *loadModuleSection(Ejs *ejs, MprFile *file, EjsModuleHdr *hdr, 
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_MODULE, mp);
     }
-    mprTrace(9, "Load module section %@", name);
     return mp;
 }
 
 
 static int loadEndModuleSection(Ejs *ejs, EjsModule *mp)
 {
-    mprTrace(9, "End module section %@", mp->name);
-
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_MODULE_END, mp);
     }
@@ -378,7 +374,6 @@ static int loadDependencySection(Ejs *ejs, EjsModule *mp)
         nextModule = mprGetListLength(ejs->modules);
         ejs->loaderCallback = NULL;
 
-        mprTrace(6, "    Load dependency section %@", name);
         rc = loadScriptModule(ejs, ejsToMulti(ejs, name), minVersion, maxVersion, mp->flags | EJS_LOADER_DEP);
         ejs->loaderCallback = saveCallback;
         if (rc < 0) {
@@ -448,8 +443,6 @@ static int loadBlockSection(Ejs *ejs, EjsModule *mp)
 
 static int loadEndBlockSection(Ejs *ejs, EjsModule *mp)
 {
-    mprTrace(9, "    End block section %@", mp->name);
-
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_BLOCK_END, mp);
     }
@@ -493,8 +486,6 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
                 fixup = createFixup(ejs, mp, (baseType) ? baseType->qname : EST(Object)->qname, -1);
             }
         }
-        mprTrace(9, "    Load %@ class %@ for module %@ at slotNum %d", qname.space, qname.name, mp->name, slotNum);
-
         type = ejsCreateType(ejs, qname, mp, baseType, NULL, slotNum, numTypeProp, numInstanceProp, 0, 0, attributes);
         if (type == 0) {
             ejsThrowInternalError(ejs, "Cannot create class %@", qname.name);
@@ -512,12 +503,13 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
             Currently errors on Namespace
          */
         if (attributes & EJS_TYPE_HAS_CONSTRUCTOR && !type->hasConstructor) {
-            mprError("WARNING: module indicates a constructor required but none exists for \"%@\"", type->qname.name);
+            mprLog("ejs vm", 0, "WARNING: module indicates a constructor required but none exists for \"%@\"", 
+                type->qname.name);
         }
 #endif
 #if UNUSED && KEEP
         if (!type->native) {
-            mprError("WARNING: type not defined as native: \"%@\"", type->qname.name);
+            mprLog("ejs vm", 0, "WARNING: type not defined as native: \"%@\"", type->qname.name);
         }
 #endif
     }
@@ -571,8 +563,6 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
 static int loadEndClassSection(Ejs *ejs, EjsModule *mp)
 {
     EjsType     *type;
-
-    mprTrace(9, "    End class section");
 
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_CLASS_END, mp, mp->scope);
@@ -633,8 +623,6 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
     assert(block);
     assert(numArgs >= 0 && numArgs < EJS_MAX_ARGS);
     assert(numExceptions >= 0 && numExceptions < EJS_MAX_EXCEPTIONS);
-
-    mprTrace(9, "Loading function %N at slot %d", qname, slotNum);
 
     if (attributes & EJS_PROP_NATIVE) {
         mp->hasNative = 1;
@@ -724,8 +712,6 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
 static int loadEndFunctionSection(Ejs *ejs, EjsModule *mp)
 {
     EjsFunction     *fun;
-
-    mprTrace(9, "    End function section");
 
     fun = (EjsFunction*) mp->scope;
     fun->endFunction = (int) mprGetFilePosition(mp->file) - 1;
@@ -832,7 +818,6 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
         /*  Only doing for namespaces currently */
         value = (EjsObj*) ejsCreateNamespace(ejs, str);
     }
-    mprTrace(9, "Loading property %N at slot %d", qname, slotNum);
 
     if (attributes & EJS_PROP_NATIVE) {
         mp->hasNative = 1;
@@ -891,8 +876,6 @@ static int loadDocSection(Ejs *ejs, EjsModule *mp)
 {
     EjsString   *doc;
 
-    mprTrace(9, "    Documentation section");
-
     doc = ejsModuleReadConst(ejs, mp);
 
     if (ejs->flags & EJS_FLAG_DOC) {
@@ -928,7 +911,7 @@ static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
         path = sjoin(bare, ME_SHOBJ, NULL);
     }
     if (! mprPathExists(path, R_OK)) {
-        mprError("Native module not found %s", path);
+        mprLog("ejs vm", 0, "Native module not found %s", path);
         return MPR_ERR_CANT_ACCESS;
     }
     /*
@@ -943,7 +926,6 @@ static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
             *cp = '_';
         }
     }
-    mprTrace(5, "Loading native module %s", path);
     native = mprCreateModule(mp->name->value, path, initName, ejs);
     if (mprLoadModule(native) < 0) {
         return MPR_ERR_CANT_READ;
@@ -971,7 +953,6 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
         return MPR_ERR_CANT_OPEN;
     }
     mprHold(file);
-    mprTrace(5, "Loading module %s", path);
     mprEnableFileBuffering(file, 0, 0);
     firstModule = mprGetListLength(ejs->modules);
 
@@ -1181,8 +1162,6 @@ static char *probe(Ejs *ejs, cchar *path, int minVersion, int maxVersion)
     assert(ejs);
     assert(path);
 
-    mprTrace(7, "Probe for file %s", path);
-
     if (maxVersion == 0) {
         if (mprPathExists(path, R_OK)) {
             return sclone(path);
@@ -1249,8 +1228,6 @@ static char *searchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int ma
     }
     withDotMod = makeModuleName(moduleName);
     name = mprNormalizePath(withDotMod);
-
-    mprTrace(7, "Search for module \"%s\"", name);
 
     /*
         1. Search for path directly
@@ -1352,7 +1329,7 @@ static char *searchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int ma
 
 char *ejsSearchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int maxVersion)
 {
-    char        *path, *withDotMod, *name;
+    char    *withDotMod, *name;
 
     assert(moduleName && *moduleName);
 
@@ -1361,12 +1338,7 @@ char *ejsSearchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int maxVer
     }
     withDotMod = makeModuleName(moduleName);
     name = mprNormalizePath(withDotMod);
-
-    path = searchForModule(ejs, name, minVersion, maxVersion);
-    if (path) {
-        mprTrace(6, "Found %s at %s", name, path);
-    }
-    return path;
+    return searchForModule(ejs, name, minVersion, maxVersion);
 }
 
 

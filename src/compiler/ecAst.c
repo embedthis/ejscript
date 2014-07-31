@@ -3955,7 +3955,7 @@ static void badAst(EcCompiler *cp, EcNode *np)
 {
     cp->fatalError = 1;
     cp->errorCount++;
-    mprError("Unsupported language feature\nUnknown AST node kind %d",  np->kind);
+    mprLog("ejs compiler", 0, "Unsupported language feature, unknown AST node kind %d",  np->kind);
 }
 
 

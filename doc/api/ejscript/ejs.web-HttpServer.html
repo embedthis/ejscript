@@ -398,21 +398,14 @@ the network.</dd></dl>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Configure request tracing for the server. The default is to trace the first line of requests and responses at
-level 2 and to trace headers at level 3. The options argument contains optional properties: rx and tx 
-(for receive and transmit tracing). The rx and tx properties may contain an object hash which describes 
-the tracing for that direction and includes any of the following fields:.</dd></dl>
+level 2 and to trace headers at level 3. The options argument contains optional properties.
+These contain an object hash which describes  the following fields:.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Set of trace options with properties "rx" and "tx" for receive and transmit direction tracing. The include property is an array of file extensions to include in tracing. The include property is an array of file extensions to exclude from tracing. The all property specifies that everything for this direction should be traced. The conn property specifies that new connections should be traced. The first property specifies that the first line of the request should be traced. The headers property specifies that the headers (including first line) of the request should be traced. The body property specifies that the body content of the request should be traced. The size property specifies a maximum body size in bytes that will be traced. Content beyond this limit  will not be traced.</td></tr></table></dd>
-</dl><dl><dt>Options</dt>
-<dd><table class='parameters' summary ='options'>
-<td class='param'>transmit.</td><td>Object hash with optional properties: include, exclude, first, headers, body, size.</td></tr>
-<td class='param'>receive.</td><td>Object hash with optional properties: include, exclude, conn, first, headers, body, size.</td></tr>
-</table></dd>
+<tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Set of trace options with properties for: The connection property specifies that new connections should be traced. The error property specifies that new connections should be traced. The info property specifies that new connections should be traced. The rxFirst property specifies that the first line of the request should be traced. The rxHeaders property specifies that the headers (including first line) of the request should be traced. The rxBody property specifies that the body content of the request should be traced. The txFirst property specifies that the first line of the response should be traced. The txHeaders property specifies that the headers (including first line) of the response should be traced. The txBody property specifies that the body content of the request should be traced. The complete property specifies that the body content of the request should be traced. The size property specifies a maximum body size in bytes that will be traced. Content beyond this limit will not be traced.</td></tr></table></dd>
 </dl><dl><dt>Example</dt>
 <dd><pre>trace({
-    transmit: { exclude: ["gif", "png"], "headers": 3, "body": 4, size: 1000000 }
-    receive:  { "conn": 1, "headers": 2 , "body": 4, size: 1024 }
+    "rxHeaders": 3, "rxBody": 4, size: 1000000 }
 })</pre></dd></dl>
 </div>
 </div>

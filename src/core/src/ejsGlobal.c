@@ -231,7 +231,8 @@ PUBLIC int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
             continue;
         }
         if (trace) {
-            mprLog(0, "Blend name %N", qname);
+            //  TODO - remove
+            mprLog("ejs blend", 0, "Blend name %N", qname);
         }
         if (combine && qname.name) {
             cflags = flags;
@@ -290,7 +291,6 @@ PUBLIC int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
                         ejsRemoveItem(ejs, (EjsArray*) dp, ejsToString(ejs, vp), 1);
                     }
                 } else if (cflags & EJS_BLEND_COND_ASSIGN) {
-                    //  MOB - but this is always true here
                     if (ejsLookupProperty(ejs, dest, trimmedName) < 0) {
                         ejsSetPropertyByName(ejs, dest, trimmedName, ejsClone(ejs, vp, deep));
                     }
@@ -304,7 +304,6 @@ PUBLIC int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
                     ejsSetPropertyByName(ejs, dest, trimmedName, ejsClone(ejs, vp, deep));
 
                 } else if (cflags & EJS_BLEND_COND_ASSIGN) {
-                    //  MOB - but this is always true here
                     if (ejsLookupProperty(ejs, dest, trimmedName) < 0) {
                         ejsSetPropertyByName(ejs, dest, trimmedName, ejsClone(ejs, vp, deep));
                     }

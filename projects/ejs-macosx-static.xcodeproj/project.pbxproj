@@ -2107,18 +2107,18 @@
 
 /* Begin PBXFileReference section */
 		900D453C900D53D600000090 /* ejs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejs.c; path = src/cmd/ejs.c; sourceTree = "<group>"; };
-		900D453C900D53D60000026E /* me.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = me.h; path = macosx-x64-static/inc/me.h; sourceTree = "<group>"; };
-		900D453C900D53D60000026F /* ejsCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsCompiler.h; path = macosx-x64-static/inc/ejsCompiler.h; sourceTree = "<group>"; };
+		900D453C900D53D60000026E /* me.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = me.h; path = build/macosx-x64-static/inc/me.h; sourceTree = "<group>"; };
+		900D453C900D53D60000026F /* ejsCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsCompiler.h; path = build/macosx-x64-static/inc/ejsCompiler.h; sourceTree = "<group>"; };
 		900D453C900D53D600000270 /* ejs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ejs; sourceTree = BUILT_PRODUCTS_DIR; };
 		900D453C900D53D600000092 /* ejsc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsc.c; path = src/cmd/ejsc.c; sourceTree = "<group>"; };
 		900D453C900D53D600000271 /* ejsc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ejsc; sourceTree = BUILT_PRODUCTS_DIR; };
 		900D453C900D53D600000094 /* ejsmod.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsmod.c; path = src/cmd/ejsmod.c; sourceTree = "<group>"; };
 		900D453C900D53D600000272 /* ejsmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsmod.h; path = src/cmd/ejsmod.h; sourceTree = "<group>"; };
-		900D453C900D53D600000273 /* ejs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.h; path = macosx-x64-static/inc/ejs.h; sourceTree = "<group>"; };
+		900D453C900D53D600000273 /* ejs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.h; path = build/macosx-x64-static/inc/ejs.h; sourceTree = "<group>"; };
 		900D453C900D53D600000096 /* doc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = doc.c; path = src/cmd/doc.c; sourceTree = "<group>"; };
 		900D453C900D53D600000098 /* docFiles.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = docFiles.c; path = src/cmd/docFiles.c; sourceTree = "<group>"; };
 		900D453C900D53D60000009A /* listing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = listing.c; path = src/cmd/listing.c; sourceTree = "<group>"; };
-		900D453C900D53D600000274 /* ejsByteCodeTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsByteCodeTable.h; path = macosx-x64-static/inc/ejsByteCodeTable.h; sourceTree = "<group>"; };
+		900D453C900D53D600000274 /* ejsByteCodeTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsByteCodeTable.h; path = build/macosx-x64-static/inc/ejsByteCodeTable.h; sourceTree = "<group>"; };
 		900D453C900D53D60000009C /* slotGen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = slotGen.c; path = src/cmd/slotGen.c; sourceTree = "<group>"; };
 		900D453C900D53D600000275 /* ejsmod */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ejsmod; sourceTree = BUILT_PRODUCTS_DIR; };
 		900D453C900D53D60000009E /* ejsrun.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsrun.c; path = src/cmd/ejsrun.c; sourceTree = "<group>"; };
@@ -2131,7 +2131,7 @@
 		900D453C900D53D6000000AA /* ecParser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ecParser.c; path = src/compiler/ecParser.c; sourceTree = "<group>"; };
 		900D453C900D53D6000000AC /* ecState.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ecState.c; path = src/compiler/ecState.c; sourceTree = "<group>"; };
 		900D453C900D53D6000000AE /* dtoa.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dtoa.c; path = src/core/src/dtoa.c; sourceTree = "<group>"; };
-		900D453C900D53D600000277 /* mpr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpr.h; path = macosx-x64-static/inc/mpr.h; sourceTree = "<group>"; };
+		900D453C900D53D600000277 /* mpr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpr.h; path = build/macosx-x64-static/inc/mpr.h; sourceTree = "<group>"; };
 		900D453C900D53D6000000B0 /* ejsApp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsApp.c; path = src/core/src/ejsApp.c; sourceTree = "<group>"; };
 		900D453C900D53D6000000B2 /* ejsArray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsArray.c; path = src/core/src/ejsArray.c; sourceTree = "<group>"; };
 		900D453C900D53D6000000B4 /* ejsBlock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsBlock.c; path = src/core/src/ejsBlock.c; sourceTree = "<group>"; };
@@ -2161,7 +2161,7 @@
 		900D453C900D53D6000000E4 /* ejsNumber.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsNumber.c; path = src/core/src/ejsNumber.c; sourceTree = "<group>"; };
 		900D453C900D53D6000000E6 /* ejsObject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsObject.c; path = src/core/src/ejsObject.c; sourceTree = "<group>"; };
 		900D453C900D53D6000000E8 /* ejsPath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsPath.c; path = src/core/src/ejsPath.c; sourceTree = "<group>"; };
-		900D453C900D53D600000278 /* pcre.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pcre.h; path = macosx-x64-static/inc/pcre.h; sourceTree = "<group>"; };
+		900D453C900D53D600000278 /* pcre.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pcre.h; path = build/macosx-x64-static/inc/pcre.h; sourceTree = "<group>"; };
 		900D453C900D53D6000000EA /* ejsPot.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsPot.c; path = src/core/src/ejsPot.c; sourceTree = "<group>"; };
 		900D453C900D53D6000000EC /* ejsRegExp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsRegExp.c; path = src/core/src/ejsRegExp.c; sourceTree = "<group>"; };
 		900D453C900D53D6000000EE /* ejsSocket.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsSocket.c; path = src/core/src/ejsSocket.c; sourceTree = "<group>"; };
@@ -2186,23 +2186,23 @@
 		900D453C900D53D600000114 /* ejsService.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsService.c; path = src/vm/ejsService.c; sourceTree = "<group>"; };
 		900D453C900D53D600000136 /* libejs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		900D453C900D53D600000116 /* ejsSqlite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsSqlite.c; path = src/ejs.db.sqlite/ejsSqlite.c; sourceTree = "<group>"; };
-		900D453C900D53D600000279 /* ejs.db.sqlite.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.db.sqlite.slots.h; path = macosx-x64-static/inc/ejs.db.sqlite.slots.h; sourceTree = "<group>"; };
+		900D453C900D53D600000279 /* ejs.db.sqlite.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.db.sqlite.slots.h; path = build/macosx-x64-static/inc/ejs.db.sqlite.slots.h; sourceTree = "<group>"; };
 		900D453C900D53D60000027A /* libejs.db.sqlite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.db.sqlite.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		900D453C900D53D600000118 /* ejsHttpServer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsHttpServer.c; path = src/ejs.web/ejsHttpServer.c; sourceTree = "<group>"; };
-		900D453C900D53D60000027B /* ejsWeb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsWeb.h; path = macosx-x64-static/inc/ejsWeb.h; sourceTree = "<group>"; };
-		900D453C900D53D60000027C /* ejs.web.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.web.slots.h; path = macosx-x64-static/inc/ejs.web.slots.h; sourceTree = "<group>"; };
-		900D453C900D53D60000027D /* http.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = http.h; path = macosx-x64-static/inc/http.h; sourceTree = "<group>"; };
+		900D453C900D53D60000027B /* ejsWeb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsWeb.h; path = build/macosx-x64-static/inc/ejsWeb.h; sourceTree = "<group>"; };
+		900D453C900D53D60000027C /* ejs.web.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.web.slots.h; path = build/macosx-x64-static/inc/ejs.web.slots.h; sourceTree = "<group>"; };
+		900D453C900D53D60000027D /* http.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = http.h; path = build/macosx-x64-static/inc/http.h; sourceTree = "<group>"; };
 		900D453C900D53D60000011A /* ejsRequest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsRequest.c; path = src/ejs.web/ejsRequest.c; sourceTree = "<group>"; };
 		900D453C900D53D60000011C /* ejsSession.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsSession.c; path = src/ejs.web/ejsSession.c; sourceTree = "<group>"; };
 		900D453C900D53D60000011E /* ejsWeb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsWeb.c; path = src/ejs.web/ejsWeb.c; sourceTree = "<group>"; };
 		900D453C900D53D60000027E /* libejs.web */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.web.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		900D453C900D53D600000120 /* ejsZlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsZlib.c; path = src/ejs.zlib/ejsZlib.c; sourceTree = "<group>"; };
-		900D453C900D53D60000027F /* zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zlib.h; path = macosx-x64-static/inc/zlib.h; sourceTree = "<group>"; };
-		900D453C900D53D600000280 /* ejs.zlib.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.zlib.slots.h; path = macosx-x64-static/inc/ejs.zlib.slots.h; sourceTree = "<group>"; };
+		900D453C900D53D60000027F /* zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zlib.h; path = build/macosx-x64-static/inc/zlib.h; sourceTree = "<group>"; };
+		900D453C900D53D600000280 /* ejs.zlib.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.zlib.slots.h; path = build/macosx-x64-static/inc/ejs.zlib.slots.h; sourceTree = "<group>"; };
 		900D453C900D53D600000281 /* libejs.zlib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.zlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		900D453C900D53D600000122 /* estLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = estLib.c; path = src/paks/est/estLib.c; sourceTree = "<group>"; };
-		900D453C900D53D600000282 /* est.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = est.h; path = macosx-x64-static/inc/est.h; sourceTree = "<group>"; };
-		900D453C900D53D600000283 /* osdep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = osdep.h; path = macosx-x64-static/inc/osdep.h; sourceTree = "<group>"; };
+		900D453C900D53D600000282 /* est.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = est.h; path = build/macosx-x64-static/inc/est.h; sourceTree = "<group>"; };
+		900D453C900D53D600000283 /* osdep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = osdep.h; path = build/macosx-x64-static/inc/osdep.h; sourceTree = "<group>"; };
 		900D453C900D53D600000160 /* libest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libest.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		900D453C900D53D600000124 /* httpLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = httpLib.c; path = src/paks/http/httpLib.c; sourceTree = "<group>"; };
 		900D453C900D53D600000138 /* libhttp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libhttp.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2213,7 +2213,7 @@
 		900D453C900D53D60000012A /* pcre.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pcre.c; path = src/paks/pcre/pcre.c; sourceTree = "<group>"; };
 		900D453C900D53D60000013C /* libpcre */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libpcre.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		900D453C900D53D60000012C /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sqlite3.c; path = src/paks/sqlite/sqlite3.c; sourceTree = "<group>"; };
-		900D453C900D53D600000285 /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = macosx-x64-static/inc/sqlite3.h; sourceTree = "<group>"; };
+		900D453C900D53D600000285 /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = build/macosx-x64-static/inc/sqlite3.h; sourceTree = "<group>"; };
 		900D453C900D53D600000151 /* libsql */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libsql.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		900D453C900D53D60000012E /* zlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = zlib.c; path = src/paks/zlib/zlib.c; sourceTree = "<group>"; };
 		900D453C900D53D60000015B /* libzlib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libzlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2659,7 +2659,6 @@
             children = (
 				900D453C900D53D60000026E /* me.h */,
 				900D453C900D53D600000277 /* mpr.h */,
-				900D453C900D53D600000282 /* est.h */,
 				900D453C900D53D600000128 /* mprSsl.c */,
 			);
             name = "libmprssl";
@@ -3206,16 +3205,16 @@
 			files = (
 			);
 			inputPaths = (
-../src/ejs.db.mapper/Record.es
+/Users/mob/git/ejs/src/ejs.db.mapper/Record.es
 			);
 			outputPaths = (
-../macosx-x64-static/bin/ejs.db.mapper.mod
+../build/macosx-x64-static/bin/ejs.db.mapper.mod
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.db.mapper
-../../macosx-x64-static/bin/ejsc --out ../../macosx-x64-static/bin/ejs.db.mapper.mod  --optimize 9 *.es";
+../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.db.mapper.mod  --optimize 9 *.es";
 		};
 		900D453C900D53D60000000E /* ShellScript for ejs.db.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3223,17 +3222,17 @@ cd ../src/ejs.db.mapper
 			files = (
 			);
 			inputPaths = (
-../src/ejs.db/Database.es,
-../src/ejs.db/DatabaseConnector.es
+/Users/mob/git/ejs/src/ejs.db/Database.es,
+/Users/mob/git/ejs/src/ejs.db/DatabaseConnector.es
 			);
 			outputPaths = (
-../macosx-x64-static/bin/ejs.db.mod
+../build/macosx-x64-static/bin/ejs.db.mod
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.db
-../../macosx-x64-static/bin/ejsc --out ../../macosx-x64-static/bin/ejs.db.mod  --optimize 9 *.es";
+../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.db.mod  --optimize 9 *.es";
 		};
 		900D453C900D53D600000014 /* ShellScript for ejs.db.sqlite.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3241,16 +3240,16 @@ cd ../src/ejs.db
 			files = (
 			);
 			inputPaths = (
-../src/ejs.db.sqlite/Sqlite.es
+/Users/mob/git/ejs/src/ejs.db.sqlite/Sqlite.es
 			);
 			outputPaths = (
-../macosx-x64-static/bin/ejs.db.sqlite.mod
+../build/macosx-x64-static/bin/ejs.db.sqlite.mod
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.db.sqlite
-../../macosx-x64-static/bin/ejsc --out ../../macosx-x64-static/bin/ejs.db.sqlite.mod  --optimize 9 *.es";
+../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.db.sqlite.mod  --optimize 9 *.es";
 		};
 		900D453C900D53D60000001B /* ShellScript for ejs.mail.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3258,16 +3257,16 @@ cd ../src/ejs.db.sqlite
 			files = (
 			);
 			inputPaths = (
-../src/ejs.mail/Mail.es
+/Users/mob/git/ejs/src/ejs.mail/Mail.es
 			);
 			outputPaths = (
-../macosx-x64-static/bin/ejs.mail.mod
+../build/macosx-x64-static/bin/ejs.mail.mod
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.mail
-../../macosx-x64-static/bin/ejsc --out ../../macosx-x64-static/bin/ejs.mail.mod  --optimize 9 *.es";
+../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.mail.mod  --optimize 9 *.es";
 		};
 		900D453C900D53D600000021 /* ShellScript for ejs.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3275,71 +3274,71 @@ cd ../src/ejs.mail
 			files = (
 			);
 			inputPaths = (
-../src/core/App.es,
-../src/core/Args.es,
-../src/core/Array.es,
-../src/core/BinaryStream.es,
-../src/core/Block.es,
-../src/core/Boolean.es,
-../src/core/ByteArray.es,
-../src/core/Cache.es,
-../src/core/Cmd.es,
-../src/core/Compat.es,
-../src/core/Config.es,
-../src/core/Date.es,
-../src/core/Debug.es,
-../src/core/Emitter.es,
-../src/core/Error.es,
-../src/core/File.es,
-../src/core/FileSystem.es,
-../src/core/Frame.es,
-../src/core/Function.es,
-../src/core/GC.es,
-../src/core/Global.es,
-../src/core/Http.es,
-../src/core/Inflector.es,
-../src/core/Iterator.es,
-../src/core/JSON.es,
-../src/core/Loader.es,
-../src/core/LocalCache.es,
-../src/core/Locale.es,
-../src/core/Logger.es,
-../src/core/Math.es,
-../src/core/Memory.es,
-../src/core/MprLog.es,
-../src/core/Name.es,
-../src/core/Namespace.es,
-../src/core/Null.es,
-../src/core/Number.es,
-../src/core/Object.es,
-../src/core/Path.es,
-../src/core/Promise.es,
-../src/core/RegExp.es,
-../src/core/Socket.es,
-../src/core/Stream.es,
-../src/core/String.es,
-../src/core/System.es,
-../src/core/TextStream.es,
-../src/core/Timer.es,
-../src/core/Type.es,
-../src/core/Uri.es,
-../src/core/Void.es,
-../src/core/WebSocket.es,
-../src/core/Worker.es,
-../src/core/XML.es,
-../src/core/XMLHttp.es,
-../src/core/XMLList.es
+/Users/mob/git/ejs/src/core/App.es,
+/Users/mob/git/ejs/src/core/Args.es,
+/Users/mob/git/ejs/src/core/Array.es,
+/Users/mob/git/ejs/src/core/BinaryStream.es,
+/Users/mob/git/ejs/src/core/Block.es,
+/Users/mob/git/ejs/src/core/Boolean.es,
+/Users/mob/git/ejs/src/core/ByteArray.es,
+/Users/mob/git/ejs/src/core/Cache.es,
+/Users/mob/git/ejs/src/core/Cmd.es,
+/Users/mob/git/ejs/src/core/Compat.es,
+/Users/mob/git/ejs/src/core/Config.es,
+/Users/mob/git/ejs/src/core/Date.es,
+/Users/mob/git/ejs/src/core/Debug.es,
+/Users/mob/git/ejs/src/core/Emitter.es,
+/Users/mob/git/ejs/src/core/Error.es,
+/Users/mob/git/ejs/src/core/File.es,
+/Users/mob/git/ejs/src/core/FileSystem.es,
+/Users/mob/git/ejs/src/core/Frame.es,
+/Users/mob/git/ejs/src/core/Function.es,
+/Users/mob/git/ejs/src/core/GC.es,
+/Users/mob/git/ejs/src/core/Global.es,
+/Users/mob/git/ejs/src/core/Http.es,
+/Users/mob/git/ejs/src/core/Inflector.es,
+/Users/mob/git/ejs/src/core/Iterator.es,
+/Users/mob/git/ejs/src/core/JSON.es,
+/Users/mob/git/ejs/src/core/Loader.es,
+/Users/mob/git/ejs/src/core/LocalCache.es,
+/Users/mob/git/ejs/src/core/Locale.es,
+/Users/mob/git/ejs/src/core/Logger.es,
+/Users/mob/git/ejs/src/core/Math.es,
+/Users/mob/git/ejs/src/core/Memory.es,
+/Users/mob/git/ejs/src/core/MprLog.es,
+/Users/mob/git/ejs/src/core/Name.es,
+/Users/mob/git/ejs/src/core/Namespace.es,
+/Users/mob/git/ejs/src/core/Null.es,
+/Users/mob/git/ejs/src/core/Number.es,
+/Users/mob/git/ejs/src/core/Object.es,
+/Users/mob/git/ejs/src/core/Path.es,
+/Users/mob/git/ejs/src/core/Promise.es,
+/Users/mob/git/ejs/src/core/RegExp.es,
+/Users/mob/git/ejs/src/core/Socket.es,
+/Users/mob/git/ejs/src/core/Stream.es,
+/Users/mob/git/ejs/src/core/String.es,
+/Users/mob/git/ejs/src/core/System.es,
+/Users/mob/git/ejs/src/core/TextStream.es,
+/Users/mob/git/ejs/src/core/Timer.es,
+/Users/mob/git/ejs/src/core/Type.es,
+/Users/mob/git/ejs/src/core/Uri.es,
+/Users/mob/git/ejs/src/core/Void.es,
+/Users/mob/git/ejs/src/core/WebSocket.es,
+/Users/mob/git/ejs/src/core/Worker.es,
+/Users/mob/git/ejs/src/core/XML.es,
+/Users/mob/git/ejs/src/core/XMLHttp.es,
+/Users/mob/git/ejs/src/core/XMLList.es
 			);
 			outputPaths = (
-../macosx-x64-static/bin/ejs.mod
+../build/macosx-x64-static/bin/ejs.mod
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/core
-../../macosx-x64-static/bin/ejsc --out ../../macosx-x64-static/bin/ejs.mod  --optimize 9 --bind --require null *.es 
-../../macosx-x64-static/bin/ejsmod --require null --cslots ../../macosx-x64-static/bin/ejs.mod
-if ! diff ejs.slots.h ../../macosx-x64-static/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ../../macosx-x64-static/inc; fi
+../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.mod  --optimize 9 --bind --require null *.es 
+../../build/macosx-x64-static/bin/ejsmod --require null --cslots ../../build/macosx-x64-static/bin/ejs.mod
+if ! diff ejs.slots.h ../../build/macosx-x64-static/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ../../build/macosx-x64-static/inc; fi
 rm -f ejs.slots.h";
 		};
 		900D453C900D53D600000027 /* ShellScript for ejs.mvc.mod */ = {
@@ -3348,16 +3347,16 @@ rm -f ejs.slots.h";
 			files = (
 			);
 			inputPaths = (
-../src/ejs.mvc/mvc.es
+/Users/mob/git/ejs/src/ejs.mvc/mvc.es
 			);
 			outputPaths = (
-../macosx-x64-static/bin/ejs.mvc.mod
+../build/macosx-x64-static/bin/ejs.mvc.mod
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.mvc
-../../macosx-x64-static/bin/ejsc --out ../../macosx-x64-static/bin/ejs.mvc.mod  --optimize 9 *.es";
+../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.mvc.mod  --optimize 9 *.es";
 		};
 		900D453C900D53D600000030 /* ShellScript for ejs.tar.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3365,16 +3364,16 @@ cd ../src/ejs.mvc
 			files = (
 			);
 			inputPaths = (
-../src/ejs.tar/Tar.es
+/Users/mob/git/ejs/src/ejs.tar/Tar.es
 			);
 			outputPaths = (
-../macosx-x64-static/bin/ejs.tar.mod
+../build/macosx-x64-static/bin/ejs.tar.mod
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.tar
-../../macosx-x64-static/bin/ejsc --out ../../macosx-x64-static/bin/ejs.tar.mod  --optimize 9 *.es";
+../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.tar.mod  --optimize 9 *.es";
 		};
 		900D453C900D53D600000036 /* ShellScript for ejs.template.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3382,16 +3381,16 @@ cd ../src/ejs.tar
 			files = (
 			);
 			inputPaths = (
-../src/ejs.template/TemplateParser.es
+/Users/mob/git/ejs/src/ejs.template/TemplateParser.es
 			);
 			outputPaths = (
-../macosx-x64-static/bin/ejs.template.mod
+../build/macosx-x64-static/bin/ejs.template.mod
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.template
-../../macosx-x64-static/bin/ejsc --out ../../macosx-x64-static/bin/ejs.template.mod  --optimize 9 TemplateParser.es";
+../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.template.mod  --optimize 9 TemplateParser.es";
 		};
 		900D453C900D53D60000003C /* ShellScript for ejs.unix.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3399,16 +3398,16 @@ cd ../src/ejs.template
 			files = (
 			);
 			inputPaths = (
-../src/ejs.unix/Unix.es
+/Users/mob/git/ejs/src/ejs.unix/Unix.es
 			);
 			outputPaths = (
-../macosx-x64-static/bin/ejs.unix.mod
+../build/macosx-x64-static/bin/ejs.unix.mod
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.unix
-../../macosx-x64-static/bin/ejsc --out ../../macosx-x64-static/bin/ejs.unix.mod  --optimize 9 Unix.es";
+../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.unix.mod  --optimize 9 Unix.es";
 		};
 		900D453C900D53D600000042 /* ShellScript for ejs.web.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3416,40 +3415,40 @@ cd ../src/ejs.unix
 			files = (
 			);
 			inputPaths = (
-../src/ejs.web/Cascade.es,
-../src/ejs.web/CommonLog.es,
-../src/ejs.web/ContentType.es,
-../src/ejs.web/Controller.es,
-../src/ejs.web/Dir.es,
-../src/ejs.web/Google.es,
-../src/ejs.web/Head.es,
-../src/ejs.web/Html.es,
-../src/ejs.web/HttpServer.es,
-../src/ejs.web/MethodOverride.es,
-../src/ejs.web/Middleware.es,
-../src/ejs.web/Mvc.es,
-../src/ejs.web/Request.es,
-../src/ejs.web/Router.es,
-../src/ejs.web/Script.es,
-../src/ejs.web/Session.es,
-../src/ejs.web/ShowExceptions.es,
-../src/ejs.web/Static.es,
-../src/ejs.web/Template.es,
-../src/ejs.web/UploadFile.es,
-../src/ejs.web/UrlMap.es,
-../src/ejs.web/Utils.es,
-../src/ejs.web/View.es
+/Users/mob/git/ejs/src/ejs.web/Cascade.es,
+/Users/mob/git/ejs/src/ejs.web/CommonLog.es,
+/Users/mob/git/ejs/src/ejs.web/ContentType.es,
+/Users/mob/git/ejs/src/ejs.web/Controller.es,
+/Users/mob/git/ejs/src/ejs.web/Dir.es,
+/Users/mob/git/ejs/src/ejs.web/Google.es,
+/Users/mob/git/ejs/src/ejs.web/Head.es,
+/Users/mob/git/ejs/src/ejs.web/Html.es,
+/Users/mob/git/ejs/src/ejs.web/HttpServer.es,
+/Users/mob/git/ejs/src/ejs.web/MethodOverride.es,
+/Users/mob/git/ejs/src/ejs.web/Middleware.es,
+/Users/mob/git/ejs/src/ejs.web/Mvc.es,
+/Users/mob/git/ejs/src/ejs.web/Request.es,
+/Users/mob/git/ejs/src/ejs.web/Router.es,
+/Users/mob/git/ejs/src/ejs.web/Script.es,
+/Users/mob/git/ejs/src/ejs.web/Session.es,
+/Users/mob/git/ejs/src/ejs.web/ShowExceptions.es,
+/Users/mob/git/ejs/src/ejs.web/Static.es,
+/Users/mob/git/ejs/src/ejs.web/Template.es,
+/Users/mob/git/ejs/src/ejs.web/UploadFile.es,
+/Users/mob/git/ejs/src/ejs.web/UrlMap.es,
+/Users/mob/git/ejs/src/ejs.web/Utils.es,
+/Users/mob/git/ejs/src/ejs.web/View.es
 			);
 			outputPaths = (
-../macosx-x64-static/bin/ejs.web.mod
+../build/macosx-x64-static/bin/ejs.web.mod
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.web
-../../macosx-x64-static/bin/ejsc --out ../../macosx-x64-static/bin/ejs.web.mod  --optimize 9 *.es
-../../macosx-x64-static/bin/ejsmod --cslots ../../macosx-x64-static/bin/ejs.web.mod
-if ! diff ejs.web.slots.h ../../macosx-x64-static/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../macosx-x64-static/inc; fi
+../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.web.mod  --optimize 9 *.es
+../../build/macosx-x64-static/bin/ejsmod --cslots ../../build/macosx-x64-static/bin/ejs.web.mod
+if ! diff ejs.web.slots.h ../../build/macosx-x64-static/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../build/macosx-x64-static/inc; fi
 rm -f ejs.web.slots.h";
 		};
 		900D453C900D53D600000049 /* ShellScript for ejs.zlib.mod */ = {
@@ -3458,16 +3457,16 @@ rm -f ejs.web.slots.h";
 			files = (
 			);
 			inputPaths = (
-../src/ejs.zlib/Zlib.es
+/Users/mob/git/ejs/src/ejs.zlib/Zlib.es
 			);
 			outputPaths = (
-../macosx-x64-static/bin/ejs.zlib.mod
+../build/macosx-x64-static/bin/ejs.zlib.mod
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.zlib
-../../macosx-x64-static/bin/ejsc --out ../../macosx-x64-static/bin/ejs.zlib.mod  --optimize 9 *.es";
+../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.zlib.mod  --optimize 9 *.es";
 		};
 		900D453C900D53D60000004F /* ShellScript for http-ca-crt */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3475,10 +3474,10 @@ cd ../src/ejs.zlib
 			files = (
 			);
 			inputPaths = (
-../src/paks/http/ca.crt
+/Users/mob/git/ejs/src/paks/http/ca.crt
 			);
 			outputPaths = (
-../macosx-x64-static/bin/ca.crt
+../build/macosx-x64-static/bin/ca.crt
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
@@ -3494,16 +3493,16 @@ cp -r ca.crt ../../${OUT_DIR}/bin/ca.crt
 			files = (
 			);
 			inputPaths = (
-../src/ejs.mvc/mvc.es
+/Users/mob/git/ejs/src/ejs.mvc/mvc.es
 			);
 			outputPaths = (
-../macosx-x64-static/bin/mvc.es
+../build/macosx-x64-static/bin/mvc.es
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.mvc
-cp mvc.es ../../macosx-x64-static/bin";
+cp mvc.es ../../build/macosx-x64-static/bin";
 		};
 		900D453C900D53D60000005B /* ShellScript for utest.es */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3511,16 +3510,16 @@ cp mvc.es ../../macosx-x64-static/bin";
 			files = (
 			);
 			inputPaths = (
-../src/ejs.utest/utest.es
+/Users/mob/git/ejs/src/ejs.utest/utest.es
 			);
 			outputPaths = (
-../macosx-x64-static/bin/utest.es
+../build/macosx-x64-static/bin/utest.es
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.utest
-cp utest.es ../../macosx-x64-static/bin";
+cp utest.es ../../build/macosx-x64-static/bin";
 		};
 		900D453C900D53D60000005F /* ShellScript for utest.worker */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3528,16 +3527,16 @@ cp utest.es ../../macosx-x64-static/bin";
 			files = (
 			);
 			inputPaths = (
-../src/ejs.utest/utest.worker
+/Users/mob/git/ejs/src/ejs.utest/utest.worker
 			);
 			outputPaths = (
-../macosx-x64-static/bin/utest.worker
+../build/macosx-x64-static/bin/utest.worker
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.utest
-cp utest.worker ../../macosx-x64-static/bin";
+cp utest.worker ../../build/macosx-x64-static/bin";
 		};
 		900D453C900D53D600000063 /* ShellScript for www */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3545,17 +3544,17 @@ cp utest.worker ../../macosx-x64-static/bin";
 			files = (
 			);
 			inputPaths = (
-../src/ejs.web/www
+/Users/mob/git/ejs/src/ejs.web/www
 			);
 			outputPaths = (
-../macosx-x64-static/bin/www
+../build/macosx-x64-static/bin/www
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.web
-rm -fr ../../macosx-x64-static/bin/www
-cp -r www ../../macosx-x64-static/bin";
+rm -fr ../../build/macosx-x64-static/bin/www
+cp -r www ../../build/macosx-x64-static/bin";
 		};
 		900D453C900D53D60000008E /* ShellScript for Prep */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3572,10 +3571,71 @@ cp -r www ../../macosx-x64-static/bin";
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 [ ! -x ${INC_DIR} ] && mkdir -p ${INC_DIR} ${OBJ_DIR} ${LIB_DIR} ${BIN_DIR}
-[ ! -f ${INC_DIR}/me.h ] && cp ejs-macosx-static-me.h ${INC_DIR}/me.h
-[ ! -f ${INC_DIR}/osdep.h ] && cp ${SRC_DIR}/src/paks/osdep/osdep.h ${INC_DIR}/osdep.h
-if ! diff ${INC_DIR}/me.h ejs-macosx-static-me.h >/dev/null ; then
+[ ! -f ${INC_DIR}/me.h -a -f cp ejs-macosx-static-me.h ] && cp ejs-macosx-static-me.h ${INC_DIR}/me.h
+if [ -f ejs-macosx-static-me.h ] ; then
+if ! diff ${INC_DIR}/me.h ejs-macosx-static-me.h >/dev/null 2>&1 ; then
 cp ejs-macosx-static-me.h ${INC_DIR}/me.h
+fi
+fi
+if [ ../src/slots/ejs.cache.local.slots.h -nt ${OUT_DIR}/inc/ejs.cache.local.slots.h ] ; then
+cp ../src/slots/ejs.cache.local.slots.h ${OUT_DIR}/inc/ejs.cache.local.slots.h
+fi
+if [ ../src/slots/ejs.db.sqlite.slots.h -nt ${OUT_DIR}/inc/ejs.db.sqlite.slots.h ] ; then
+cp ../src/slots/ejs.db.sqlite.slots.h ${OUT_DIR}/inc/ejs.db.sqlite.slots.h
+fi
+if [ ../src/ejs.h -nt ${OUT_DIR}/inc/ejs.h ] ; then
+cp ../src/ejs.h ${OUT_DIR}/inc/ejs.h
+fi
+if [ ../src/slots/ejs.slots.h -nt ${OUT_DIR}/inc/ejs.slots.h ] ; then
+cp ../src/slots/ejs.slots.h ${OUT_DIR}/inc/ejs.slots.h
+fi
+if [ ../src/slots/ejs.web.slots.h -nt ${OUT_DIR}/inc/ejs.web.slots.h ] ; then
+cp ../src/slots/ejs.web.slots.h ${OUT_DIR}/inc/ejs.web.slots.h
+fi
+if [ ../src/slots/ejs.zlib.slots.h -nt ${OUT_DIR}/inc/ejs.zlib.slots.h ] ; then
+cp ../src/slots/ejs.zlib.slots.h ${OUT_DIR}/inc/ejs.zlib.slots.h
+fi
+if [ ../src/ejsByteCode.h -nt ${OUT_DIR}/inc/ejsByteCode.h ] ; then
+cp ../src/ejsByteCode.h ${OUT_DIR}/inc/ejsByteCode.h
+fi
+if [ ../src/ejsByteCodeTable.h -nt ${OUT_DIR}/inc/ejsByteCodeTable.h ] ; then
+cp ../src/ejsByteCodeTable.h ${OUT_DIR}/inc/ejsByteCodeTable.h
+fi
+if [ ../src/ejsCompiler.h -nt ${OUT_DIR}/inc/ejsCompiler.h ] ; then
+cp ../src/ejsCompiler.h ${OUT_DIR}/inc/ejsCompiler.h
+fi
+if [ ../src/ejsCustomize.h -nt ${OUT_DIR}/inc/ejsCustomize.h ] ; then
+cp ../src/ejsCustomize.h ${OUT_DIR}/inc/ejsCustomize.h
+fi
+if [ ../src/ejs.web/ejsWeb.h -nt ${OUT_DIR}/inc/ejsWeb.h ] ; then
+cp ../src/ejs.web/ejsWeb.h ${OUT_DIR}/inc/ejsWeb.h
+fi
+if [ ../src/paks/est/est.h -nt ${OUT_DIR}/inc/est.h ] ; then
+cp ../src/paks/est/est.h ${OUT_DIR}/inc/est.h
+fi
+if [ ../src/paks/http/http.h -nt ${OUT_DIR}/inc/http.h ] ; then
+cp ../src/paks/http/http.h ${OUT_DIR}/inc/http.h
+fi
+if [ ${OUT_DIR}/inc/me.h -nt ${OUT_DIR}/inc/me.h ] ; then
+cp ${OUT_DIR}/inc/me.h ${OUT_DIR}/inc/me.h
+fi
+if [ ../src/paks/mpr/mpr.h -nt ${OUT_DIR}/inc/mpr.h ] ; then
+cp ../src/paks/mpr/mpr.h ${OUT_DIR}/inc/mpr.h
+fi
+if [ ../src/paks/osdep/osdep.h -nt ${OUT_DIR}/inc/osdep.h ] ; then
+cp ../src/paks/osdep/osdep.h ${OUT_DIR}/inc/osdep.h
+fi
+if [ ../src/paks/pcre/pcre.h -nt ${OUT_DIR}/inc/pcre.h ] ; then
+cp ../src/paks/pcre/pcre.h ${OUT_DIR}/inc/pcre.h
+fi
+if [ ../src/paks/sqlite/sqlite3.h -nt ${OUT_DIR}/inc/sqlite3.h ] ; then
+cp ../src/paks/sqlite/sqlite3.h ${OUT_DIR}/inc/sqlite3.h
+fi
+if [ ../src/paks/zlib/zlib.h -nt ${OUT_DIR}/inc/zlib.h ] ; then
+cp ../src/paks/zlib/zlib.h ${OUT_DIR}/inc/zlib.h
+fi
+if [ ../src/cmd/ejsmod.h -nt ../src/cmd/ejsmod.h ] ; then
+cp ../src/cmd/ejsmod.h ../src/cmd/ejsmod.h
 fi
 if [ ../src/slots/ejs.cache.local.slots.h -nt ${OUT_DIR}/inc/ejs.cache.local.slots.h ] ; then
 cp ../src/slots/ejs.cache.local.slots.h ${OUT_DIR}/inc/ejs.cache.local.slots.h
@@ -5132,14 +5192,14 @@ fi";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
 
-                OUT_DIR = "../macosx-x64-static";
-                BIN_DIR = "../macosx-x64-static/bin";
-                LIB_DIR = "../macosx-x64-static/bin";
-                INC_DIR = "../macosx-x64-static/inc";
-                OBJ_DIR = "../macosx-x64-static/obj";
+                OUT_DIR = "../build/macosx-x64-static";
+                BIN_DIR = "../build/macosx-x64-static/bin";
+                LIB_DIR = "../build/macosx-x64-static/bin";
+                INC_DIR = "../build/macosx-x64-static/inc";
+                OBJ_DIR = "../build/macosx-x64-static/obj";
                 SRC_DIR = "..";
 
-                CONFIGURATION_TEMP_DIR = "$(OBJ_DIR)/tmp/$(CONFIGURATION)";
+                CONFIGURATION_TEMP_DIR = "$(OBJ_DIR)/ejs-xcode/$(CONFIGURATION)";
                 CONFIGURATION_BUILD_DIR = "$(BIN_DIR)";
                 INSTALL_PATH = "/usr/lib/ejs";
                 DSTROOT = "/tmp/ejs.dst";
@@ -5161,7 +5221,7 @@ fi";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"../macosx-x64-static/inc",
+					"/Users/mob/git/ejs/build/macosx-x64-static/inc",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5169,7 +5229,7 @@ fi";
 					"$(inherited)"
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"../macosx-x64-static/bin",
+					"/Users/mob/git/ejs/build/macosx-x64-static/bin",
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
@@ -5201,14 +5261,14 @@ fi";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
 
-                OUT_DIR = "../macosx-x64-static";
-                BIN_DIR = "../macosx-x64-static/bin";
-                LIB_DIR = "../macosx-x64-static/bin";
-                INC_DIR = "../macosx-x64-static/inc";
-                OBJ_DIR = "../macosx-x64-static/obj";
+                OUT_DIR = "../build/macosx-x64-static";
+                BIN_DIR = "../build/macosx-x64-static/bin";
+                LIB_DIR = "../build/macosx-x64-static/bin";
+                INC_DIR = "../build/macosx-x64-static/inc";
+                OBJ_DIR = "../build/macosx-x64-static/obj";
                 SRC_DIR = "..";
 
-                CONFIGURATION_TEMP_DIR = "$(OBJ_DIR)/tmp/$(CONFIGURATION)";
+                CONFIGURATION_TEMP_DIR = "$(OBJ_DIR)/ejs-xcode/$(CONFIGURATION)";
                 CONFIGURATION_BUILD_DIR = "$(BIN_DIR)";
                 INSTALL_PATH = "/usr/lib/ejs";
                 DSTROOT = "/tmp/ejs.dst";
@@ -5231,12 +5291,12 @@ fi";
 				GCC_OPTIMIZATION_LEVEL = s;
                 GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				HEADER_SEARCH_PATHS = (
-					"../macosx-x64-static/inc",
+					"/Users/mob/git/ejs/build/macosx-x64-static/inc",
 					"$(inherited)"
 				);
 
 				LIBRARY_SEARCH_PATHS = (
-					"../macosx-x64-static/bin",
+					"/Users/mob/git/ejs/build/macosx-x64-static/bin",
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
@@ -5291,7 +5351,7 @@ fi";
 				PRODUCT_NAME = ejs.db.mapper.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5313,7 +5373,7 @@ fi";
 				PRODUCT_NAME = ejs.db.mapper.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5332,7 +5392,7 @@ fi";
 				PRODUCT_NAME = ejs.db.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5354,7 +5414,7 @@ fi";
 				PRODUCT_NAME = ejs.db.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5373,7 +5433,7 @@ fi";
 				PRODUCT_NAME = ejs.db.sqlite.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5395,7 +5455,7 @@ fi";
 				PRODUCT_NAME = ejs.db.sqlite.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5414,7 +5474,7 @@ fi";
 				PRODUCT_NAME = ejs.mail.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5436,7 +5496,7 @@ fi";
 				PRODUCT_NAME = ejs.mail.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5455,7 +5515,7 @@ fi";
 				PRODUCT_NAME = ejs.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5477,7 +5537,7 @@ fi";
 				PRODUCT_NAME = ejs.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5496,7 +5556,7 @@ fi";
 				PRODUCT_NAME = ejs.mvc.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5518,7 +5578,7 @@ fi";
 				PRODUCT_NAME = ejs.mvc.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5537,7 +5597,7 @@ fi";
 				PRODUCT_NAME = ejs.tar.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5559,7 +5619,7 @@ fi";
 				PRODUCT_NAME = ejs.tar.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5578,7 +5638,7 @@ fi";
 				PRODUCT_NAME = ejs.template.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5600,7 +5660,7 @@ fi";
 				PRODUCT_NAME = ejs.template.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5619,7 +5679,7 @@ fi";
 				PRODUCT_NAME = ejs.unix.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5641,7 +5701,7 @@ fi";
 				PRODUCT_NAME = ejs.unix.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5660,7 +5720,7 @@ fi";
 				PRODUCT_NAME = ejs.web.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5682,7 +5742,7 @@ fi";
 				PRODUCT_NAME = ejs.web.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5701,7 +5761,7 @@ fi";
 				PRODUCT_NAME = ejs.zlib.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5723,7 +5783,7 @@ fi";
 				PRODUCT_NAME = ejs.zlib.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5774,7 +5834,7 @@ fi";
 				PRODUCT_NAME = ejsmod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5796,7 +5856,7 @@ fi";
 				PRODUCT_NAME = ejsmod;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5910,7 +5970,7 @@ fi";
 				EXECUTABLE_EXTENSION = a;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5933,7 +5993,7 @@ fi";
 				EXECUTABLE_EXTENSION = a;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5953,7 +6013,7 @@ fi";
 				EXECUTABLE_EXTENSION = a;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5976,7 +6036,7 @@ fi";
 				EXECUTABLE_EXTENSION = a;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 
@@ -5996,7 +6056,7 @@ fi";
 				EXECUTABLE_EXTENSION = a;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -6019,7 +6079,7 @@ fi";
 				EXECUTABLE_EXTENSION = a;
 
 				HEADER_SEARCH_PATHS = (
-					"../src/cmd",
+					"/Users/mob/git/ejs/src/cmd",
 					"$(inherited)"
 				);
 

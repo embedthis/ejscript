@@ -31,7 +31,7 @@ static EjsHttp *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     ejsLoadHttpService(ejs);
     hp->ejs = ejs;
 
-    if ((hp->conn = httpCreateConn(ejs->http, NULL, ejs->dispatcher)) == 0) {
+    if ((hp->conn = httpCreateConn(NULL, ejs->dispatcher)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
@@ -129,7 +129,7 @@ static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         }
         sendHttpCloseEvent(ejs, hp);
         httpDestroyConn(hp->conn);
-        hp->conn = httpCreateConn(ejs->http, NULL, ejs->dispatcher);
+        hp->conn = httpCreateConn(NULL, ejs->dispatcher);
         httpPrepClientConn(hp->conn, 0);
         httpSetConnNotifier(hp->conn, httpEventChange);
         httpSetConnContext(hp->conn, hp);
@@ -812,63 +812,26 @@ static int getNumOption(Ejs *ejs, EjsObj *options, cchar *field)
 }
 
 
-static void setupTrace(Ejs *ejs, HttpTrace *trace, int dir, EjsObj *options)
+static void setupTrace(Ejs *ejs, HttpTrace *trace, EjsObj *options)
 {
-    EjsArray    *extensions;
-    EjsObj      *ext;
-    HttpTrace   *tp;
-    int         i, level, *levels;
+    httpSetTraceEventLevel(trace, "connection", getNumOption(ejs, options, "connection"));
+    httpSetTraceEventLevel(trace, "error", getNumOption(ejs, options, "error"));
+    httpSetTraceEventLevel(trace, "inform", getNumOption(ejs, options, "info"));
+    httpSetTraceEventLevel(trace, "rxFirst", getNumOption(ejs, options, "rxFirst"));
+    httpSetTraceEventLevel(trace, "rxHeaders", getNumOption(ejs, options, "rxHeaders"));
+    httpSetTraceEventLevel(trace, "rxBody", getNumOption(ejs, options, "rxBody"));
+    httpSetTraceEventLevel(trace, "txFirst", getNumOption(ejs, options, "txFirst"));
+    httpSetTraceEventLevel(trace, "txHeaders", getNumOption(ejs, options, "txHeaders"));
+    httpSetTraceEventLevel(trace, "txBody", getNumOption(ejs, options, "txBody"));
+    httpSetTraceEventLevel(trace, "complete", getNumOption(ejs, options, "complete"));
 
-    tp = &trace[dir];
-    levels = tp->levels;
-    if ((level = getNumOption(ejs, options, "all")) >= 0) {
-        for (i = 0; i < HTTP_TRACE_MAX_ITEM; i++) {
-            levels[i] = level;
-        }
-    } else {
-        levels[HTTP_TRACE_CONN] = getNumOption(ejs, options, "conn");
-        levels[HTTP_TRACE_FIRST] = getNumOption(ejs, options, "first");
-        levels[HTTP_TRACE_HEADER] = getNumOption(ejs, options, "headers");
-        levels[HTTP_TRACE_BODY] = getNumOption(ejs, options, "body");
-    }
-    tp->size = getNumOption(ejs, options, "size");
-    if ((extensions = (EjsArray*) ejsGetPropertyByName(ejs, options, EN("include"))) != 0) {
-        if (!ejsIs(ejs, extensions, Array)) {
-            ejsThrowArgError(ejs, "include is not an array");
-            return;
-        }
-        tp->include = mprCreateHash(0, 0);
-        for (i = 0; i < extensions->length; i++) {
-            if ((ext = ejsGetProperty(ejs, extensions, i)) != 0) {
-                mprAddKey(tp->include, ejsToMulti(ejs, ejsToString(ejs, ext)), "");
-            }
-        }
-    }
-    if ((extensions = (EjsArray*) ejsGetPropertyByName(ejs, options, EN("exclude"))) != 0) {
-        if (!ejsIs(ejs, extensions, Array)) {
-            ejsThrowArgError(ejs, "exclude is not an array");
-            return;
-        }
-        tp->exclude = mprCreateHash(0, 0);
-        for (i = 0; i < extensions->length; i++) {
-            if ((ext = ejsGetProperty(ejs, extensions, i)) != 0) {
-                mprAddKey(tp->exclude, ejsToMulti(ejs, ejsToString(ejs, ext)), MPR->emptyString);
-            }
-        }
-    }
+    httpSetTraceContentSize(trace, getNumOption(ejs, options, "size"));
 }
 
 
 PUBLIC int ejsSetupHttpTrace(Ejs *ejs, HttpTrace *trace, EjsObj *options)
 {
-    EjsObj      *rx, *tx;
-
-    if ((rx = ejsGetPropertyByName(ejs, options, EN("rx"))) != 0) {
-        setupTrace(ejs, trace, HTTP_TRACE_RX, rx);
-    }
-    if ((tx = ejsGetPropertyByName(ejs, options, EN("tx"))) != 0) {
-        setupTrace(ejs, trace, HTTP_TRACE_TX, tx);
-    }
+    setupTrace(ejs, trace, options);
     return 0;
 }
 
@@ -1389,13 +1352,13 @@ static bool expired(EjsHttp *hp)
     if (diff < 0) {
         if (conn->rx) {
             if (inactivity) {
-                mprTrace(4, "Inactive request timed out %s, exceeded inactivity timeout %d", 
+                mprDebug("ejs http", 4, "Inactive request timed out %s, exceeded inactivity timeout %d", 
                     conn->rx->uri, inactivityTimeout);
             } else {
-                mprTrace(4, "Request timed out %s, exceeded timeout %d", conn->rx->uri, requestTimeout);
+                mprDebug("ejs http", 4, "Request timed out %s, exceeded timeout %d", conn->rx->uri, requestTimeout);
             }
         } else {
-            mprTrace(4, "Idle connection timed out");
+            mprDebug("ejs http", 4, "Idle connection timed out");
         }
     }
 }

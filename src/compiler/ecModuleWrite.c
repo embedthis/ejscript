@@ -58,8 +58,6 @@ PUBLIC int ecCreateModuleSection(EcCompiler *cp)
     mp = state->currentModule;
     constants = mp->constants;
 
-    mprTrace(7, "Create module section %s", mp->name);
-
     ecEncodeByte(cp, EJS_SECT_MODULE);
     ecEncodeConst(cp, mp->name);
     ecEncodeNum(cp, mp->version);
@@ -133,7 +131,6 @@ static void createDependencySection(EcCompiler *cp)
                 return;
             }
             mp->checksum += sumString(module->name);
-            mprTrace(7, "    dependency section for %s from module %s", module->name, mp->name);
         }
     }
 }
@@ -160,7 +157,7 @@ static void createGlobalProperties(EcCompiler *cp)
         slotNum = ejsLookupProperty(ejs, ejs->global, *prop);
         if (slotNum < 0) {
             cp->fatalError = 1;
-            mprError("Code generation error. Cannot find global property %s.", prop->name);
+            mprLog("ejs compiler", 0, "Code generation error. Cannot find global property %s.", prop->name);
             return;
         }
         vp = ejsGetProperty(ejs, ejs->global, slotNum);
@@ -275,8 +272,6 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
     qname = ejsGetPropertyName(ejs, ejs->global, slotNum);
     assert(qname.name);
 
-    mprTrace(7, "    type section %@ for module %@", qname.name, mp->name);
-    
     type = ejsGetProperty(ejs, ejs->global, slotNum);
     assert(type);
     assert(ejsIsType(ejs, type));
@@ -578,8 +573,6 @@ static void createPropertySection(EcCompiler *cp, EjsPot *block, int slotNum, Ej
     trait = ejsGetPropertyTraits(ejs, block, slotNum);
     attributes = trait->attributes;
 
-    mprTrace(7, "    global property section %@", qname.name);
-
     if (trait->type) {
         if (trait->type == EST(Namespace) || (!ejs->initialized && trait->type->qname.name == EST(Namespace)->qname.name)){
             attributes |= EJS_PROP_HAS_VALUE;
@@ -779,7 +772,6 @@ PUBLIC int ecAddModuleConstant(EcCompiler *cp, EjsModule *mp, cchar *str)
         return PTOI(kp->data);
     }
     index = ejsAddConstant(cp->ejs, mp, str);
-    // mprTrace(0, "%6d %s", index, str);
     mprAddKey(constants->table, str, ITOP(index));
     return index;
 }
@@ -1015,7 +1007,7 @@ PUBLIC void ecEncodeByteAtPos(EcCompiler *cp, int offset, int value)
 PUBLIC void ecEncodeInt32AtPos(EcCompiler *cp, int offset, int value)
 {
     if (abs(value) > EJS_ENCODE_MAX_WORD) {
-        mprError("Code generation error. Word %d exceeds maximum %d", value, EJS_ENCODE_MAX_WORD);
+        mprLog("ejs compiler", 0, "Code generation error. Word %d exceeds maximum %d", value, EJS_ENCODE_MAX_WORD);
         cp->fatalError = 1;
         return;
     }

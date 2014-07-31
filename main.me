@@ -38,7 +38,7 @@ Me.load({
     },
 
     settings: {
-        me: '~0.8',
+        me: '>=0.8.2',
 
         /*
             Installation prefix set
@@ -92,18 +92,12 @@ Me.load({
 
         mpr: {
             /*
-                Enable logging via mprLog to the log file. Error messages are always enabled.
+                Enable logging via mprLog to the log file
                 The default is to enable logging for both debug and release builds.
              */
             logging: true,
 
             manager: 'ejsman',
-
-            /*
-                Enable debug trace and asserts to the log file.
-                This is enabled by default for debug builds.
-                tracing: true,
-             */
 
             alloc: {
                 parallel: true
@@ -121,7 +115,6 @@ Me.load({
         'http.pam':         'Enable Unix Pluggable Auth Module (true|false)',
         'http.webSockets':  'Enable WebSockets (true|false)',                
         'mpr.logging':      'Enable application logging (true|false)',
-        'mpr.tracing':      'Enable debug tracing (true|false)',
     },
 
     scripts: {
@@ -139,5 +132,14 @@ Me.load({
         projects: {
             action: "genProjects('-with est')",
         },
+
+        test: {
+            type: 'test',
+            home: '${TOP}',
+            action: `
+                run(['${LBIN}/utest', '-v', '-d', me.settings.depth], {noio: true})
+            `,
+            platforms: [ 'local' ],
+        }
     },
 })

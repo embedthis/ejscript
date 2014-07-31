@@ -74,7 +74,6 @@ PUBLIC EjsAny *ejsClonePot(Ejs *ejs, EjsAny *obj, bool deep)
 #if ME_MEMORY_DEBUG
                 EjsName qname = ejsGetPropertyName(ejs, src, i);
                 mprSetName(dp->value.ref, qname.name->value);
-                // mprTrace(0, "CLONE %N", qname);
 #endif
                 dp->value.ref = ejsClone(ejs, vp, deep);
             }

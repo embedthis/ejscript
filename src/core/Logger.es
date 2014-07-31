@@ -90,8 +90,9 @@ module ejs {
 
         /** 
             Redirect log output.
-            @param location Optional output stream or Logger to send messages to. If a parent Logger instance is 
-                provided for the output parameter, messages are sent to the parent for rendering.
+            @param location Optional output stream, Logger or location specification to send messages to. 
+                If a parent Logger instance is provided, messages are sent to the parent for rendering.
+                A location specification is of the form: file:level.
             @param level Optional integer verbosity level. Messages with a message level less than or equal to the defined
                 logger level will be emitted. Range is 0 (least verbose) to 9.
          */
@@ -238,7 +239,6 @@ module ejs {
         function info(...msgs): void
             emit("", Info, "INFO", msgs.join(" ") + "\n")
 
-        //  TODO - should activity take a level?
         /** 
             Emit an activity message
             @param tag Activity tag to prefix the message. The tag string is wraped in "[]".

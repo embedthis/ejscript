@@ -4,7 +4,7 @@
     This file is a catenation of all the source code. Amalgamating into a
     single file makes embedding simpler and the resulting application faster.
 
-    Prepared by: orion
+    Prepared by: orion.local
  */
 
 #include "mpr.h"
@@ -18,14 +18,14 @@
 /**
     mem.c - Memory Allocator and Garbage Collector. 
 
-    This is the MPR memory allocation service. It provides an application specific memory allocator to use instead of malloc. 
-    This allocator is tailored to the needs of embedded applications and is faster than most general purpose malloc allocators. 
-    It is deterministic and allocates and frees in constant time O(1). It exhibits very low fragmentation and accurate
-    coalescing.
+    This is the MPR memory allocation service. It provides an application specific memory allocator to use instead 
+    of malloc. This allocator is tailored to the needs of embedded applications and is faster than most general 
+    purpose malloc allocators. It is deterministic and allocates and frees in constant time O(1). It exhibits very 
+    low fragmentation and accurate coalescing.
 
     The allocator uses a garbage collector for freeing unused memory. The collector is a cooperative, non-compacting,
-    parallel collector.  The allocator is optimized for frequent allocations of small blocks (< 4K) and uses a scheme
-    of free queues for fast allocation.
+    parallel collector.  The allocator is optimized for frequent allocations of small blocks (< 4K) and uses a 
+    scheme of free queues for fast allocation.
     
     The allocator handles memory allocation errors globally. The application may configure a memory limit so that
     memory depletion can be proactively detected and handled before memory allocations actually fail.
@@ -891,7 +891,7 @@ PUBLIC void mprStartGCService()
 {
     if (heap->gcEnabled) {
         if ((heap->sweeper = mprCreateThread("sweeper", sweeperThread, NULL, 0)) == 0) {
-            mprError("Cannot create sweeper thread");
+            mprLog("critical mpr memory", 0, "Cannot create sweeper thread");
             MPR->hasError = 1;
         } else {
             mprStartThread(heap->sweeper);
@@ -972,7 +972,7 @@ PUBLIC void mprYield(int flags)
 
     ts = MPR->threadService;
     if ((tp = mprGetCurrentThread()) == 0) {
-        mprError("Yield called from an unknown thread");
+        mprLog("error mpr memory", 0, "Yield called from an unknown thread");
         return;
     }
     assert(!tp->waiting);
@@ -1037,7 +1037,7 @@ PUBLIC void mprResetYield()
 
     ts = MPR->threadService;
     if ((tp = mprGetCurrentThread()) == 0) {
-        mprError("Yield called from an unknown thread");
+        mprLog("error mpr memory", 0, "Yield called from an unknown thread");
         return;
     }
     assert(tp->stickyYield);
@@ -1078,7 +1078,6 @@ static int pauseThreads()
     timeout = MPR_TIMEOUT_GC_SYNC;
     ts = MPR->threadService;
 
-    mprTrace(7, "pauseThreads: wait for threads to yield, timeout %d", timeout);
     start = mprGetTicks();
     if (mprGetDebugMode()) {
         timeout = timeout * 500;
@@ -1093,9 +1092,6 @@ static int pauseThreads()
                 tp = (MprThread*) mprGetItem(ts->threads, i);
                 if (!tp->yielded) {
                     allYielded = 0;
-                    if (mprGetElapsedTicks(start) > 1000) {
-                        mprTrace(7, "Thread %s is not yielding", tp->name);
-                    }
                     break;
                 }
             }
@@ -1113,12 +1109,10 @@ static int pauseThreads()
             /* Do not wait for paused threads if shutting down */
             break;
         }
-        mprTrace(7, "pauseThreads: waiting for threads to yield");
         mprWaitForCond(ts->pauseThreads, 20);
 
     } while (mprGetElapsedTicks(start) < timeout);
 
-    mprTrace(7, "TIME: pauseThreads elapsed %,Ld msec %", mprGetElapsedTicks(start));
     return (allYielded) ? 1 : 0;
 }
 
@@ -1160,7 +1154,6 @@ static void resumeThreads(int flags)
  */
 static void sweeperThread(void *unused, MprThread *tp)
 {
-    mprTrace(5, "Sweeper thread started");
     tp->stickyYield = 1;
     tp->yielded = 1;
 
@@ -1192,9 +1185,9 @@ static void markAndSweep()
     if (!pauseThreads()) {
         if (!pauseGC && warnOnce == 0 && !mprGetDebugMode()) {
             warnOnce++;
-            mprTrace(5, "GC synchronization timed out, some threads did not yield.");
-            mprTrace(5, "This is most often caused by a thread doing a long running operation and not first calling mprYield.");
-            mprTrace(5, "If debugging, run the process with -D to enable debug mode.");
+            mprLog("error mpr memory", 5, "GC synchronization timed out, some threads did not yield.");
+            mprLog("error mpr memory", 5, "This can be caused by a thread doing a long running operation and not first calling mprYield.");
+            mprLog("error mpr memory", 5, "If debugging, run the process with -D to enable debug mode.");
         }
         resumeThreads(YIELDED_THREADS | WAITING_THREADS);
         return;
@@ -1214,7 +1207,7 @@ static void markAndSweep()
     /*
         Mark all roots. All user threads are paused here
      */
-    MPR_MEASURE(ME_MPR_ALLOC_LEVEL, "GC", "mark", markRoots());
+    markRoots();
 
     heap->sweeping = 1;
     mprAtomicBarrier();
@@ -1228,7 +1221,7 @@ static void markAndSweep()
     /*
         Sweep unused memory with user threads resumed
      */
-    MPR_MEASURE(ME_MPR_ALLOC_LEVEL, "GC", "sweep", sweep());
+    sweep();
     heap->sweeping = 0;
 
 #if ME_MPR_ALLOC_PARALLEL
@@ -1245,7 +1238,6 @@ static void markRoots()
     void    *root;
     int     next;
 
-    mprTrace(7, "GC: markRoots");
 #if ME_MPR_ALLOC_STATS
     heap->stats.markVisited = 0;
     heap->stats.marked = 0;
@@ -1329,7 +1321,6 @@ static void sweep()
     if (!heap->gcEnabled) {
         return;
     }
-    mprTrace(7, "GC: sweep started");
 #if ME_DEBUG || ME_MPR_ALLOC_STATS
     heap->stats.swept = 0;
     heap->stats.sweptBytes = 0;
@@ -1429,8 +1420,6 @@ static void sweep()
                 }
             }
             ATOMIC_ADD(bytesAllocated, - (int64) region->size);
-            mprTrace(9, "DEBUG: Unpin %p to %p size %d, used %d", region, ((char*) region) + region->size, 
-                region->size, mprGetMem());
             mprVirtFree(region, region->size);
             INC(unpins);
         } else {
@@ -1903,7 +1892,7 @@ PUBLIC void mprCheckBlock(MprMem *mp)
 {
     BREAKPOINT(mp);
     if (mp->magic != MPR_ALLOC_MAGIC || mp->size == 0) {
-        mprError("Memory corruption in memory block %x (MprBlk %x, seqno %d)\n"
+        mprLog("critical mpr memory", 0, "Memory corruption in memory block %x (MprBlk %x, seqno %d). " \
             "This most likely happend earlier in the program execution.", GET_PTR(mp), mp, mp->seqno);
     }
 }
@@ -2010,7 +1999,7 @@ static void printMemWarn(size_t used, bool critical)
     static int once = 0;
 
     if (once++ == 0 || critical) {
-        mprLog(0, "%s: Memory used %,d, redline %,d, limit %,d.", MPR->name, (int) used, (int) heap->stats.warnHeap,
+        mprLog("warn mpr memory", 0, "Memory used %'d, redline %'d, limit %'d.", (int) used, (int) heap->stats.warnHeap,
             (int) heap->stats.maxHeap);
     }
 }
@@ -2030,23 +2019,23 @@ static void allocException(int cause, size_t size)
 
     if (cause == MPR_MEM_FAIL) {
         heap->hasError = 1;
-        mprError("%s: Cannot allocate memory block of size %,Ld bytes.", MPR->name, size);
+        mprLog("error mpr memory", 0, "Cannot allocate memory block of size %'zd bytes.", size);
         printMemWarn(used, 1);
 
     } else if (cause == MPR_MEM_TOO_BIG) {
         heap->hasError = 1;
-        mprError("%s: Cannot allocate memory block of size %,Ld bytes.", MPR->name, size);
+        mprLog("error mpr memory", 0, "Cannot allocate memory block of size %'zd bytes.", size);
         printMemWarn(used, 1);
 
     } else if (cause == MPR_MEM_WARNING) {
         if (once++ == 0) {
-            mprWarn("%s: Memory request for %,Ld bytes exceeds memory red-line.", MPR->name, size);
+            mprLog("error mpr memory", 0, "Memory request for %'zd bytes exceeds memory red-line.", size);
         }
         mprPruneCache(NULL);
         printMemWarn(used, 0);
 
     } else if (cause == MPR_MEM_LIMIT) {
-        mprError("%s: Memory request for %,d bytes exceeds memory limit.", MPR->name, size);
+        mprLog("error mpr memory", 0, "Memory request for %'zd bytes exceeds memory limit.", size);
         printMemWarn(used, 1);
     }
 
@@ -2057,7 +2046,7 @@ static void allocException(int cause, size_t size)
         /*
             Allocation failed
          */
-        mprError("Application exiting immediately due to memory depletion.");
+        mprLog("critical mpr memory", 0, "Application exiting immediately due to memory depletion.");
         mprShutdown(MPR_EXIT_ABORT, -1, 0);
 
     } else if (cause & MPR_MEM_LIMIT) {
@@ -2065,11 +2054,11 @@ static void allocException(int cause, size_t size)
             Over memory max limit
          */
         if (heap->allocPolicy == MPR_ALLOC_POLICY_RESTART) {
-            mprError("Application restarting due to low memory condition.");
+            mprLog("critical mpr memory", 0, "Application restarting due to low memory condition.");
             mprShutdown(MPR_EXIT_RESTART, -1, 0);
 
         } else if (heap->allocPolicy == MPR_ALLOC_POLICY_EXIT) {
-            mprError("Application exiting due to memory depletion.");
+            mprLog("critical mpr memory", 0, "Application exiting due to memory depletion.");
             mprShutdown(MPR_EXIT_NORMAL, -1, MPR_EXIT_TIMEOUT);
         }
     }
@@ -2676,6 +2665,7 @@ PUBLIC Mpr *mprCreate(int argc, char **argv, int flags)
     mpr->socketService = mprCreateSocketService();
     mpr->pathEnv = sclone(getenv("PATH"));
     mpr->cond = mprCreateCond();
+    mpr->stopCond = mprCreateCond();
 
     mpr->dispatcher = mprCreateDispatcher("main", 0);
     mpr->nonBlock = mprCreateDispatcher("nonblock", 0);
@@ -2684,7 +2674,7 @@ PUBLIC Mpr *mprCreate(int argc, char **argv, int flags)
     if (flags & MPR_USER_EVENTS_THREAD) {
         if (!(flags & MPR_NO_WINDOW)) {
             /* Used by apps that need to use FindWindow after calling mprCreate() (appwebMonitor) */
-            mprSetNotifierThread(0);
+            mprSetWindowsThread(0);
         }
     } else {
         mprStartEventsThread();
@@ -2740,11 +2730,11 @@ static void manageMpr(Mpr *mpr, int flags)
         mprMark(mpr->ejsService);
         mprMark(mpr->espService);
         mprMark(mpr->httpService);
-        mprMark(mpr->testService);
         mprMark(mpr->terminators);
         mprMark(mpr->mutex);
         mprMark(mpr->spin);
         mprMark(mpr->cond);
+        mprMark(mpr->stopCond);
         mprMark(mpr->emptyString);
         mprMark(mpr->oneString);
         mprMark(mpr->argv);
@@ -2764,7 +2754,7 @@ static void shutdownMonitor(void *data, MprEvent *event)
 
     if (mprIsIdle(1)) {
         if (mprState <= MPR_STOPPING) {
-            mprLog(2, "Shutdown proceeding, system is idle");
+            mprLog("info mpr", 2, "Shutdown proceeding, system is idle");
             mprState = MPR_STOPPED;
         }
         return;
@@ -2772,15 +2762,15 @@ static void shutdownMonitor(void *data, MprEvent *event)
     remaining = mprGetRemainingTicks(MPR->shutdownStarted, MPR->exitTimeout);
     if (remaining <= 0) {
         if (MPR->exitStrategy & MPR_EXIT_SAFE && mprCancelShutdown()) {
-            mprLog(2, "Shutdown cancelled due to continuing requests");
+            mprLog("warn mpr", 2, "Shutdown cancelled due to continuing requests");
         } else {
-            mprLog(2, "Timeout while waiting for requests to complete");
+            mprLog("warn mpr", 2, "Timeout while waiting for requests to complete");
             if (mprState <= MPR_STOPPING) {
                 mprState = MPR_STOPPED;
             }
         }
     } else {
-        mprLog(2, "Waiting for requests to complete, %d secs remaining ...", remaining / MPR_TICKS_PER_SEC);
+        mprLog("info mpr", 2, "Waiting for requests to complete, %lld secs remaining ...", remaining / MPR_TICKS_PER_SEC);
         mprRescheduleEvent(event, 1000);
     }
 }
@@ -2803,6 +2793,7 @@ PUBLIC void mprShutdown(int how, int exitStatus, MprTicks timeout)
         return;
     }
     mprState = MPR_STOPPING;
+    mprSignalMultiCond(MPR->stopCond);
     mprGlobalUnlock();
 
     MPR->exitStrategy = how;
@@ -2815,15 +2806,15 @@ PUBLIC void mprShutdown(int how, int exitStatus, MprTicks timeout)
 
     if (how & MPR_EXIT_ABORT) {
         if (how & MPR_EXIT_RESTART) {
-            mprLog(3, "Abort with restart.");
+            mprLog("info mpr", 3, "Abort with restart.");
             mprRestart();
         } else {
-            mprLog(3, "Abortive exit.");
+            mprLog("info mpr", 3, "Abortive exit.");
             exit(exitStatus);
         }
         /* No continue */
     }
-    mprLog(3, "Application exit, waiting for existing requests to complete.");
+    mprLog("info mpr", 3, "Application exit, waiting for existing requests to complete.");
 
     if (!mprIsIdle(0)) {
         mprCreateTimerEvent(NULL, "shutdownMonitor", 0, shutdownMonitor, 0, MPR_EVENT_QUICK);
@@ -2884,7 +2875,7 @@ PUBLIC bool mprDestroy()
     if (!mprIsIdle(0)) {
         if (MPR->exitStrategy & MPR_EXIT_SAFE) {
             /* Note: Pending outside events will pause GC which will make mprIsIdle return false */
-            mprLog(2, "Cancel termination due to continuing requests, application resumed.");
+            mprLog("warn mpr", 2, "Cancel termination due to continuing requests, application resumed.");
             mprCancelShutdown();
         } else if (MPR->exitTimeout > 0) {
             /* If a non-zero graceful timeout applies, always exit with non-zero status */
@@ -2924,7 +2915,7 @@ PUBLIC bool mprDestroy()
     }
     mprState = MPR_DESTROYED;
 
-    mprLog(2, (MPR->exitStrategy & MPR_EXIT_RESTART) ? "Restarting\n\n" : "Exiting");
+    mprLog("info mpr", 2, (MPR->exitStrategy & MPR_EXIT_RESTART) ? "Restarting" : "Exiting");
     mprStopModuleService();
     mprStopSignalService();
     mprStopGCService();
@@ -3020,7 +3011,7 @@ PUBLIC void mprRestart()
     }
     printf("\n");
 #else
-    mprError("mprRestart not supported on this platform");
+    mprLog("error mpr", 0, "mprRestart not supported on this platform");
 #endif
 }
 
@@ -3033,11 +3024,10 @@ PUBLIC int mprStart()
     rc += mprStartModuleService();
     rc += mprStartWorkerService();
     if (rc != 0) {
-        mprError("Cannot start MPR services");
+        mprLog("error mpr", 0, "Cannot start MPR services");
         return MPR_ERR_CANT_INITIALIZE;
     }
     mprState = MPR_STARTED;
-    mprLog(3, "MPR services are ready");
     return 0;
 }
 
@@ -3062,8 +3052,8 @@ PUBLIC int mprStartEventsThread()
 
 static void serviceEventsThread(void *data, MprThread *tp)
 {
-    mprLog(MPR_INFO, "Service thread started");
-    mprSetNotifierThread(tp);
+    mprLog("info mpr", 2, "Service thread started");
+    mprSetWindowsThread(tp);
     mprSignalCond(MPR->cond);
     mprServiceEvents(-1, 0);
     mprRescheduleDispatcher(MPR->dispatcher);
@@ -3138,7 +3128,7 @@ PUBLIC bool mprServicesAreIdle(bool traceRequests)
      */
     idle = mprGetBusyWorkerCount() == 0 && mprGetActiveCmdCount() == 0 && !mprGCPaused();
     if (!idle && traceRequests) {
-        mprTrace(3, "MPR services are not idle: cmds %d, busy threads %d, eventing %d",
+        mprDebug("mpr", 3, "Services are not idle: cmds %d, busy threads %d, eventing %d",
             mprGetListLength(MPR->cmdService->cmds), mprGetListLength(MPR->workerService->busyThreads), MPR->eventing);
     }
     return idle;
@@ -3591,7 +3581,7 @@ PUBLIC int mprCreateNotifierService(MprWaitService *ws)
 }
 
 
-PUBLIC HWND mprSetNotifierThread(MprThread *tp)
+PUBLIC HWND mprSetWindowsThread(MprThread *tp)
 {
     MprWaitService  *ws;
 
@@ -3639,7 +3629,7 @@ PUBLIC int mprNotifyOn(MprWaitHandler *wp, int mask)
                 FUTURE: should use WaitForMultipleObjects in a wait thread for non-socket handles
              */
             if ((rc = WSAAsyncSelect(wp->fd, ws->hwnd, ws->socketMessage, winMask)) != 0) {
-                mprTrace(7, "mprNotifyOn WSAAsyncSelect failed %d, errno %d", rc, GetLastError());
+                mprDebug("mpr event", 5, "mprNotifyOn WSAAsyncSelect failed %d, errno %d", rc, GetLastError());
             }
         }
         if (wp->event) {
@@ -3685,7 +3675,7 @@ PUBLIC int mprWaitForSingleIO(int fd, int mask, MprTicks timeout)
 
     result = 0;
     if (rc < 0) {
-        mprError("Select returned %d, errno %d", rc, mprGetOsError());
+        mprLog("error mpr event", 0, "Select returned %d, errno %d", rc, mprGetOsError());
 
     } else if (rc > 0) {
         if (FD_ISSET(fd, &readMask)) {
@@ -3720,7 +3710,7 @@ PUBLIC void mprWaitForIO(MprWaitService *ws, MprTicks timeout)
         mprDoWaitRecall(ws);
         
     } else if ((hwnd = mprGetWindow(0)) == 0) {
-        mprError("mprWaitForIO: Cannot get window");
+        mprLog("critical mpr event", 0, "mprWaitForIO: Cannot get window");
 
     } else {
         /*
@@ -3843,7 +3833,7 @@ PUBLIC ATOM mprCreateWindowClass(cchar *name)
     wc.lpfnWndProc = msgProc;
 
     if ((atom = RegisterClass(&wc)) == 0) {
-        mprError("Cannot register windows class");
+        mprLog("critical mpr event", 0, "Cannot register windows class");
         return 0;
     }
     return atom;
@@ -3866,13 +3856,13 @@ PUBLIC HWND mprCreateWindow(MprThread *tp)
     ws = MPR->waitService;
     name = mprGetAppName();
     if (!ws->wclass && (ws->wclass = mprCreateWindowClass(name)) == 0) {
-        mprError("Cannot create window class");
+        mprLog("critical mpr event", 0, "Cannot create window class");
         return 0;
     }
     assert(!tp->hwnd);
     if ((tp->hwnd = CreateWindow((LPCTSTR) ws->wclass, wide(name), WS_OVERLAPPED, CW_USEDEFAULT, 0, 0, 0, 
             NULL, NULL, 0, NULL)) == 0) {
-        mprError("Cannot create window");
+        mprLog("critical mpr event", 0, "Cannot create window");
         return 0;
     }
     return tp->hwnd;
@@ -5200,7 +5190,6 @@ PUBLIC ssize mprWriteCache(MprCache *cache, cchar *key, cchar *value, MprTime mo
     cache->usedMem += (len - oldLen);
 
     if (cache->timer == 0) {
-        mprTrace(5, "Start Cache pruner with resolution %d", cache->resolution);
         cache->timer = mprCreateTimerEvent(MPR->dispatcher, "localCacheTimer", cache->resolution, pruneCache, cache, 
             MPR_EVENT_STATIC_DATA); 
     }
@@ -5303,10 +5292,8 @@ static void pruneCache(MprCache *cache, MprEvent *event)
          */
         for (kp = 0; (kp = mprGetNextKey(cache->store, kp)) != 0; ) {
             item = (CacheItem*) kp->data;
-            mprTrace(5, "Cache: \"%s\" lifespan %Ld, expires in %Ld secs", item->key, 
-                    item->lifespan / 1000, (item->expires - when) / 1000);
             if (item->expires && item->expires <= when) {
-                mprLog(3, "Cache prune expired key %s", kp->key);
+                mprDebug("debug mpr cache", 5, "Prune expired key %s", kp->key);
                 removeItem(cache, item);
             }
         }
@@ -5329,7 +5316,7 @@ static void pruneCache(MprCache *cache, MprEvent *event)
                 for (kp = 0; (kp = mprGetNextKey(cache->store, kp)) != 0; ) {
                     item = (CacheItem*) kp->data;
                     if (item->expires && item->expires <= when) {
-                        mprLog(3, "Cache too big, execess keys %Ld, mem %Ld, prune key %s", 
+                        mprDebug("debug mpr cache", 3, "Cache too big, execess keys %zd, mem %zd, prune key %s", 
                             excessKeys, (cache->maxMem - cache->usedMem), kp->key);
                         removeItem(cache, item);
                     }
@@ -5695,7 +5682,6 @@ PUBLIC void mprCloseCmdFd(MprCmd *cmd, int channel)
 
 PUBLIC void mprFinalizeCmd(MprCmd *cmd)
 {
-    mprTrace(6, "mprFinalizeCmd");
     assert(cmd);
     mprCloseCmdFd(cmd, MPR_CMD_STDIN);
 }
@@ -5894,21 +5880,21 @@ PUBLIC int mprStartCmd(MprCmd *cmd, int argc, cchar **argv, cchar **envp, int fl
     }
     search = cmd->searchPath ? cmd->searchPath : MPR->pathEnv;
     if ((program = mprSearchPath(program, MPR_SEARCH_EXE, search, NULL)) == 0) {
-        mprLog(1, "cmd: can't access %s, errno %d", cmd->program, mprGetOsError());
+        mprLog("error mpr cmd", 0, "Cannot access %s, errno %d", cmd->program, mprGetOsError());
         return MPR_ERR_CANT_ACCESS;
     }
     cmd->program = cmd->argv[0] = program;
 
     if (mprGetPathInfo(program, &info) == 0 && info.isDir) {
-        mprLog(1, "cmd: program \"%s\", is a directory", program);
+        mprLog("error mpr cmd", 0, "Program \"%s\", is a directory", program);
         return MPR_ERR_CANT_ACCESS;
     }
-    mprLog(4, "mprStartCmd %s", cmd->program);
+    mprLog("info mpr cmd", 5, "Program: %s", cmd->program);
     for (i = 0; i < cmd->argc; i++) {
-        mprLog(6, "    arg[%d]: %s", i, cmd->argv[i]);
+        mprLog("info mpr cmd", 5, "    arg[%d]: %s", i, cmd->argv[i]);
     }
     for (ITERATE_ITEMS(cmd->env, pair, next)) {
-        mprLog(6, "    env[%d]: %s", next, pair);
+        mprLog("info mpr cmd", 5, "    env[%d]: %s", next, pair);
     }
     slock(cmd);
     if (makeCmdIO(cmd) < 0) {
@@ -5926,7 +5912,7 @@ PUBLIC int mprStartCmd(MprCmd *cmd, int argc, cchar **argv, cchar **envp, int fl
         cmd->requiredEof++;
     }
     if (addCmdHandlers(cmd) < 0) {
-        mprTrace(4, "Cannot open command handlers - insufficient I/O handles");
+        mprLog("error mpr cmd", 0, "Cannot open command handlers - insufficient I/O handles");
         return MPR_ERR_CANT_OPEN;
     }
     rc = startProcess(cmd);
@@ -5965,8 +5951,7 @@ static int makeCmdIO(MprCmd *cmd)
  */
 PUBLIC int mprStopCmd(MprCmd *cmd, int signal)
 {
-    mprTrace(7, "cmd: stop");
-
+    mprDebug("mpr cmd", 5, "cmd: stop");
     if (signal < 0) {
         signal = SIGTERM;
     }
@@ -6016,7 +6001,7 @@ PUBLIC ssize mprReadCmd(MprCmd *cmd, int channel, char *buf, ssize bufsize)
     rc = read(cmd->files[channel].fd, buf, bufsize);
 
     /*
-        VxWorks can't signal EOF on non-blocking pipes. Need a pattern indicator.
+        VxWorks cannot signal EOF on non-blocking pipes. Need a pattern indicator.
      */
     if (rc == MPR_CMD_VXWORKS_EOF_LEN && strncmp(buf, MPR_CMD_VXWORKS_EOF, MPR_CMD_VXWORKS_EOF_LEN) == 0) {
         /* EOF */
@@ -6119,7 +6104,7 @@ PUBLIC void mprDisableCmdEvents(MprCmd *cmd, int channel)
 /*
     Windows only routine to wait for I/O on the channels to the gateway and the child process.
     This will queue events on the dispatcher queue when I/O occurs or the process dies.
-    NOTE: NamedPipes can't use WaitForMultipleEvents, so we dedicate a thread to polling.
+    NOTE: NamedPipes cannot use WaitForMultipleEvents, so we dedicate a thread to polling.
     WARNING: this should not be called from a dispatcher other than cmd->dispatcher.
  */
 static void pollWinCmd(MprCmd *cmd, MprTicks timeout)
@@ -6187,12 +6172,10 @@ static void pollWinTimer(MprCmd *cmd, MprEvent *event)
  */
 PUBLIC int mprWaitForCmd(MprCmd *cmd, MprTicks timeout)
 {
-    MprThreadService    *ts;
-    MprTicks            expires, remaining, delay;
+    MprTicks    expires, remaining, delay;
+    int64       dispatcherMark;
 
     assert(cmd);
-    ts = MPR->threadService;
-
     if (timeout < 0) {
         timeout = MAXINT;
     }
@@ -6207,30 +6190,21 @@ PUBLIC int mprWaitForCmd(MprCmd *cmd, MprTicks timeout)
 
     /* Add root to allow callers to use mprRunCmd without first managing the cmd */
     mprAddRoot(cmd);
+    dispatcherMark = mprGetEventMark(cmd->dispatcher);
 
     while (!cmd->complete && remaining > 0) {
         if (mprShouldAbortRequests()) {
             break;
         }
         delay = (cmd->eofCount >= cmd->requiredEof) ? 10 : remaining;
-        if (!ts->eventsThread && mprGetCurrentThread() == ts->mainThread) {
-            /*
-                Main program without any events loop
-             */
-            mprServiceEvents(10, MPR_SERVICE_NO_BLOCK);
-        } else {
-            if (cmd->dispatcher->owner != mprGetCurrentOsThread()) {
-                delay = 10;
-            }
-            mprWaitForEvent(cmd->dispatcher, delay);
-        }
+        mprWaitForEvent(cmd->dispatcher, delay, dispatcherMark);
         remaining = (expires - mprGetTicks());
+        dispatcherMark = mprGetEventMark(cmd->dispatcher);
     }
     mprRemoveRoot(cmd);
     if (cmd->pid) {
         return MPR_ERR_TIMEOUT;
     }
-    mprTrace(6, "cmd: waitForChild: status %d", cmd->status);
     return 0;
 }
 
@@ -6244,36 +6218,29 @@ static void reapCmd(MprCmd *cmd, bool finalizing)
 {
     int     status, rc;
 
-    mprTrace(6, "reapCmd CHECK pid %d, eof %d, required %d", cmd->pid, cmd->eofCount, cmd->requiredEof);
-
     status = 0;
     if (cmd->pid == 0) {
         return;
     }
 #if ME_UNIX_LIKE
     if ((rc = waitpid(cmd->pid, &status, WNOHANG | __WALL)) < 0) {
-        mprTrace(6, "waitpid failed for pid %d, errno %d", cmd->pid, errno);
+        mprLog("error mpr cmd", 0, "Waitpid failed for pid %d, errno %d", cmd->pid, errno);
 
     } else if (rc == cmd->pid) {
-        mprTrace(6, "waitpid pid %d, thread %s", cmd->pid, mprGetCurrentThreadName());
         if (!WIFSTOPPED(status)) {
             if (WIFEXITED(status)) {
                 cmd->status = WEXITSTATUS(status);
-                mprTrace(6, "waitpid exited pid %d, status %d", cmd->pid, cmd->status);
+                mprDebug("mpr cmd", 5, "Process exited pid %d, status %d", cmd->pid, cmd->status);
             } else if (WIFSIGNALED(status)) {
                 cmd->status = WTERMSIG(status);
-            } else {
-                mprTrace(7, "waitpid FUNNY pid %d, errno %d", cmd->pid, errno);
             }
             cmd->pid = 0;
             assert(cmd->signal);
             mprRemoveSignalHandler(cmd->signal);
             cmd->signal = 0;
-        } else {
-            mprTrace(7, "waitpid ELSE pid %d, errno %d", cmd->pid, errno);
         }
     } else {
-        mprTrace(6, "waitpid still running pid %d, thread %s", cmd->pid, mprGetCurrentThreadName());
+        mprDebug("mpr cmd", 5, "Still running pid %d, thread %s", cmd->pid, mprGetCurrentThreadName());
     }
 #endif
 #if VXWORKS
@@ -6282,7 +6249,7 @@ static void reapCmd(MprCmd *cmd, bool finalizing)
      */
     if (!cmd->stopped) {
         if (semTake(cmd->exitCond, MPR_TIMEOUT_STOP_TASK) != OK) {
-            mprError("cmd: child %s did not exit, errno %d", cmd->program);
+            mprLog("error mpr cmd", 0, "Child %s did not exit, errno %d", cmd->program);
             return;
         }
     }
@@ -6293,7 +6260,7 @@ static void reapCmd(MprCmd *cmd, bool finalizing)
 #endif
 #if ME_WIN_LIKE
     if (GetExitCodeProcess(cmd->process, (ulong*) &status) == 0) {
-        mprTrace(3, "cmd: GetExitProcess error");
+        mprLog("error mpr cmd", 0, "GetExitProcess error");
         return;
     }
     if (status != STILL_ACTIVE) {
@@ -6311,7 +6278,8 @@ static void reapCmd(MprCmd *cmd, bool finalizing)
         if (cmd->eofCount >= cmd->requiredEof) {
             completeCommand(cmd);
         }
-        mprTrace(6, "Cmd reaped: status %d, pid %d, eof %d / %d", cmd->status, cmd->pid, cmd->eofCount, cmd->requiredEof);
+        mprDebug("mpr cmd", 5, "Process reaped: status %d, pid %d, eof %d / %d", cmd->status, cmd->pid, 
+                cmd->eofCount, cmd->requiredEof);
         if (cmd->callback) {
             (cmd->callback)(cmd, -1, cmd->callbackData);
             /* WARNING - this above call may invoke httpPump and complete the request. HttpConn.tx may be null */
@@ -6360,8 +6328,10 @@ static void defaultCmdCallback(MprCmd *cmd, int channel, void *data)
     }
     len = mprReadCmd(cmd, channel, mprGetBufEnd(buf), space);
     errCode = mprGetError();
-    mprTrace(6, "defaultCmdCallback channel %d, read len %d, pid %d, eof %d/%d", channel, len, cmd->pid, cmd->eofCount,
-        cmd->requiredEof);
+#if KEEP
+    mprDebug("mpr cmd", 5, "defaultCmdCallback channel %d, read len %zd, pid %d, eof %d/%d", channel, len, cmd->pid, 
+            cmd->eofCount, cmd->requiredEof);
+#endif
     if (len <= 0) {
         if (len == 0 || (len < 0 && !(errCode == EAGAIN || errCode == EWOULDBLOCK))) {
             mprCloseCmdFd(cmd, channel);
@@ -6449,10 +6419,9 @@ PUBLIC MprBuf *mprGetCmdBuf(MprCmd *cmd, int channel)
 PUBLIC void mprSetCmdDir(MprCmd *cmd, cchar *dir)
 {
 #if VXWORKS
-    mprError("WARNING: Setting working directory on VxWorks is global: %s", dir);
+    mprLog("error mpr cmd", 0, "Setting working directory on VxWorks is global: %s", dir);
 #else
     assert(dir && *dir);
-
     cmd->dir = sclone(dir);
 #endif
 }
@@ -6643,7 +6612,7 @@ static int sanitizeArgs(MprCmd *cmd, int argc, cchar **argv, cchar **env, int fl
     cmd->command[len] = '\0';
 
     /*
-        Add quotes around all args that have spaces and backquote [", ', \\]
+        Add quotes around all args that have spaces and backquote double quotes.
         Example:    ["showColors", "red", "light blue", "Cannot \"render\""]
         Becomes:    "showColors" "red" "light blue" "Cannot \"render\""
      */
@@ -6651,7 +6620,7 @@ static int sanitizeArgs(MprCmd *cmd, int argc, cchar **argv, cchar **env, int fl
     for (ap = &argv[0]; *ap; ) {
         start = cp = *ap;
         quote = '"';
-        if (strchr(cp, ' ') != 0 && cp[0] != quote) {
+        if (cp[0] != quote && (strchr(cp, ' ') != 0 || strchr(cp, quote) != 0)) {
             for (*dp++ = quote; *cp; ) {
                 if (*cp == quote && !(cp > start && cp[-1] == '\\')) {
                     *dp++ = '\\';
@@ -6669,7 +6638,7 @@ static int sanitizeArgs(MprCmd *cmd, int argc, cchar **argv, cchar **env, int fl
     }
     *dp = '\0';
     argv[0] = saveArg0;
-    mprLog(5, "Windows command line: %s", cmd->command);
+    mprLog("info mpr cmd", 5, "Windows command line: %s", cmd->command);
 #endif /* ME_WIN_LIKE */
     return 0;
 }
@@ -6719,9 +6688,9 @@ static int startProcess(MprCmd *cmd)
     if (! CreateProcess(0, wide(cmd->command), 0, 0, 1, 0, (char*) envBlock, wide(cmd->dir), &startInfo, &procInfo)) {
         err = mprGetOsError();
         if (err == ERROR_DIRECTORY) {
-            mprError("Cannot create process: %s, directory %s is invalid", cmd->program, cmd->dir);
+            mprLog("error mpr cmd", 0, "Cannot create process: %s, directory %s is invalid", cmd->program, cmd->dir);
         } else {
-            mprError("Cannot create process: %s, %d", cmd->program, err);
+            mprLog("error mpr cmd", 0, "Cannot create process: %s, %d", cmd->program, err);
         }
         return MPR_ERR_CANT_CREATE;
     }
@@ -6771,7 +6740,7 @@ static int makeChannel(MprCmd *cmd, int index)
     att = (index == MPR_CMD_STDIN) ? &clientAtt : &serverAtt;
     readHandle = CreateNamedPipe(wide(pipeName), openMode, pipeMode, 1, 0, 256 * 1024, 1, att);
     if (readHandle == INVALID_HANDLE_VALUE) {
-        mprError("Cannot create stdio pipes %s. Err %d", pipeName, mprGetOsError());
+        mprLog("error mpr cmd", 0, "Cannot create stdio pipes %s. Err %d", pipeName, mprGetOsError());
         return MPR_ERR_CANT_CREATE;
     }
     readFd = (int) (int64) _open_osfhandle((long) readHandle, 0);
@@ -6781,7 +6750,7 @@ static int makeChannel(MprCmd *cmd, int index)
     writeFd = (int) _open_osfhandle((long) writeHandle, 0);
 
     if (readFd < 0 || writeFd < 0) {
-        mprError("Cannot create stdio pipes %s. Err %d", pipeName, mprGetOsError());
+        mprLog("error mpr cmd", 0, "Cannot create stdio pipes %s. Err %d", pipeName, mprGetOsError());
         return MPR_ERR_CANT_CREATE;
     }
     if (index == MPR_CMD_STDIN) {
@@ -6806,7 +6775,7 @@ static int makeChannel(MprCmd *cmd, int index)
     file = &cmd->files[index];
 
     if (pipe(fds) < 0) {
-        mprError("Cannot create stdio pipes. Err %d", mprGetOsError());
+        mprLog("error mpr cmd", 0, "Cannot create stdio pipes. Err %d", mprGetOsError());
         return MPR_ERR_CANT_CREATE;
     }
     if (index == MPR_CMD_STDIN) {
@@ -6817,7 +6786,6 @@ static int makeChannel(MprCmd *cmd, int index)
         file->fd = fds[0];              /* read fd */
     }
     fcntl(file->fd, F_SETFL, fcntl(file->fd, F_GETFL) | O_NONBLOCK);
-    mprTrace(7, "makeChannel: pipe handles[%d] read %d, write %d", index, fds[0], fds[1]);
     return 0;
 }
 
@@ -6832,7 +6800,7 @@ static int makeChannel(MprCmd *cmd, int index)
     file->name = sfmt("/pipe/%s_%d_%d", ME_NAME, taskIdSelf(), tempSeed++);
 
     if (pipeDevCreate(file->name, 5, ME_MAX_BUFFER) < 0) {
-        mprError("Cannot create pipes to run %s", cmd->program);
+        mprLog("error mpr cmd", 0, "Cannot create pipes to run %s", cmd->program);
         return MPR_ERR_CANT_OPEN;
     }
     /*
@@ -6844,7 +6812,7 @@ static int makeChannel(MprCmd *cmd, int index)
         file->fd = open(file->name, O_RDONLY, 0644);
     }
     if (file->fd < 0) {
-        mprError("Cannot create stdio pipes. Err %d", mprGetOsError());
+        mprLog("error mpr cmd", 0, "Cannot create stdio pipes. Err %d", mprGetOsError());
         return MPR_ERR_CANT_CREATE;
     }
     nonBlock = 1;
@@ -6879,7 +6847,7 @@ static int startProcess(MprCmd *cmd)
     cmd->pid = vfork();
 
     if (cmd->pid < 0) {
-        mprError("start: can't fork a new process to run %s, errno %d", cmd->program, mprGetOsError());
+        mprLog("error mpr cmd", 0, "Cannot fork a new process to run %s, errno %d", cmd->program, mprGetOsError());
         return MPR_ERR_CANT_INITIALIZE;
 
     } else if (cmd->pid == 0) {
@@ -6892,7 +6860,7 @@ static int startProcess(MprCmd *cmd)
         }
         if (cmd->dir) {
             if (chdir(cmd->dir) < 0) {
-                mprError("cmd: Cannot change directory to %s", cmd->dir);
+                mprLog("error mpr cmd", 0, "Cannot change directory to %s", cmd->dir);
                 return MPR_ERR_CANT_INITIALIZE;
             }
         }
@@ -6960,7 +6928,7 @@ PUBLIC int startProcess(MprCmd *cmd)
     char            *entryPoint, *program, *pair;
     int             pri, next;
 
-    mprLog(4, "cmd: start %s", cmd->program);
+    mprLog("info mpr cmd", 4, "Program %s", cmd->program);
     entryPoint = 0;
     if (cmd->env) {
         for (ITERATE_ITEMS(cmd->env, pair, next)) {
@@ -6982,15 +6950,15 @@ PUBLIC int startProcess(MprCmd *cmd)
 #endif
     if (mprFindVxSym(sysSymTbl, entryPoint, (char**) (void*) &entryFn) < 0) {
         if ((mp = mprCreateModule(cmd->program, cmd->program, NULL, NULL)) == 0) {
-            mprError("start: can't create module");
+            mprLog("error mpr cmd", 0, "Cannot create module");
             return MPR_ERR_CANT_CREATE;
         }
         if (mprLoadModule(mp) < 0) {
-            mprError("start: can't load DLL %s, errno %d", program, mprGetOsError());
+            mprLog("error mpr cmd", 0, "Cannot load DLL %s, errno %d", program, mprGetOsError());
             return MPR_ERR_CANT_READ;
         }
         if (mprFindVxSym(sysSymTbl, entryPoint, (char**) (void*) &entryFn) < 0) {
-            mprError("start: can't find symbol %s, errno %d", entryPoint, mprGetOsError());
+            mprLog("error mpr cmd", 0, "Cannot find symbol %s, errno %d", entryPoint, mprGetOsError());
             return MPR_ERR_CANT_ACCESS;
         }
     }
@@ -7000,13 +6968,11 @@ PUBLIC int startProcess(MprCmd *cmd)
         (int) cmd->program, (int) entryFn, (int) cmd, 0, 0, 0, 0, 0, 0, 0);
 
     if (cmd->pid < 0) {
-        mprError("start: can't create task %s, errno %d", entryPoint, mprGetOsError());
+        mprLog("error mpr cmd", 0, "Cannot create task %s, errno %d", entryPoint, mprGetOsError());
         return MPR_ERR_CANT_CREATE;
     }
-    mprTrace(7, "cmd, child taskId %d", cmd->pid);
-
     if (semTake(cmd->startCond, MPR_TIMEOUT_START_TASK) != OK) {
-        mprError("start: child %s did not initialize, errno %d", cmd->program, mprGetOsError());
+        mprLog("error mpr cmd", 0, "Child %s did not initialize, errno %d", cmd->program, mprGetOsError());
         return MPR_ERR_CANT_CREATE;
     }
     semDelete(cmd->startCond);
@@ -7075,7 +7041,7 @@ static void cmdTaskEntry(char *program, MprCmdTaskFn entry, int cmdArg)
         rc = chdir(dir);
     }
     if (rc < 0) {
-        mprError("cmd: Cannot change directory to %s", cmd->dir);
+        mprLog("error mpr cmd", 0, "Cannot change directory to %s", cmd->dir);
         exit(255);
     }
 }
@@ -7288,8 +7254,7 @@ PUBLIC int mprWaitForCond(MprCond *cp, MprTicks timeout)
             } else if (rc == EAGAIN) {
                 rc = 0;
             } else if (rc != 0) {
-                assert(rc == 0);
-                mprError("pthread_cond_timedwait error rc %d", rc);
+                mprLog("error mpr thread", 0, "pthread_cond_timedwait error rc %d", rc);
                 rc = MPR_ERR;
             }
         }
@@ -7645,7 +7610,7 @@ PUBLIC char *mprGetRandomString(ssize size)
     ascii = mprAlloc(size + 1);
 
     if (mprGetRandomBytes(bytes, sizeof(bytes), 0) < 0) {
-        mprError("Failed to get random bytes");
+        mprLog("critical mpr", 0, "Failed to get random bytes");
         now = mprGetTime();
         pid = (int) getpid();
         cp = (char*) &now;
@@ -9016,6 +8981,14 @@ static int makeDir(MprDiskFileSystem *fs, cchar *path, int perms, int owner, int
 {
     int     rc;
 
+#if ME_WIN_LIKE
+    if (sends(path, "/")) {
+        /* Windows mkdir fails with a trailing "/" */
+        path = strim(path, "/", MPR_TRIM_END);
+    } else if (sends(path, "\\")) {
+        path = strim(path, "\\", MPR_TRIM_END);
+    }
+#endif
 #if VXWORKS
     rc = mkdir((char*) path);
 #else
@@ -9597,7 +9570,7 @@ PUBLIC int mprServiceEvents(MprTicks timeout, int flags)
     int                 beginEventCount, eventCount;
 
     if (MPR->eventing) {
-        mprError("mprServiceEvents() called reentrantly");
+        mprLog("warn mpr event", 0, "mprServiceEvents called reentrantly");
         return 0;
     }
     MPR->eventing = 1;
@@ -9608,7 +9581,7 @@ PUBLIC int mprServiceEvents(MprTicks timeout, int flags)
     if (expires < 0) {
         expires = MPR_MAX_TIMEOUT;
     }
-    mprSetNotifierThread(0);
+    mprSetWindowsThread(0);
 
     while (es->now <= expires) {
         eventCount = es->eventCount;
@@ -9664,79 +9637,112 @@ PUBLIC int mprServiceEvents(MprTicks timeout, int flags)
 }
 
 
-/*
-    Must be called locked
- */
-static bool canRun(MprDispatcher *dispatcher)
+PUBLIC void mprSuspendThread(MprTicks timeout)
 {
-    return !isRunning(dispatcher) || !dispatcher->owner || dispatcher->owner == mprGetCurrentOsThread();
+    mprWaitForMultiCond(MPR->stopCond, timeout);
+}
+
+
+PUBLIC int64 mprGetEventMark(MprDispatcher *dispatcher)
+{
+    int64   result;
+
+    /*
+        Ensure all writes are flushed so user state will be valid across all threads
+     */
+    result = dispatcher->mark;
+    mprAtomicBarrier();
+    return result;
 }
 
 
 /*
-    Wait for an event to occur and dispatch the event. This is not called by mprServiceEvents.
-    Return 0 if an event was signalled. Return MPR_ERR_TIMEOUT if no event was seen before the timeout.
+    Wait for an event to occur on the dispatcher and service the event. This is not called by mprServiceEvents.
+    The dispatcher may be "started" and owned by the thread, or it may be unowned.
+    WARNING: the event may have already happened by the time this API is invoked.
     WARNING: this will enable GC while sleeping.
  */
-PUBLIC int mprWaitForEvent(MprDispatcher *dispatcher, MprTicks timeout)
+PUBLIC int mprWaitForEvent(MprDispatcher *dispatcher, MprTicks timeout, int64 mark)
 {
     MprEventService     *es;
     MprTicks            expires, delay;
-    int                 signalled, wasRunning, runEvents, nevents;
-
-    es = MPR->eventService;
-    es->now = mprGetTicks();
+    int                 runEvents, changed;
 
     if (dispatcher == NULL) {
         dispatcher = MPR->dispatcher;
     }
-    assert(!(dispatcher->flags & MPR_DISPATCHER_WAITING));
-    if (dispatcher->flags & MPR_DISPATCHER_WAITING) {
-        return MPR_ERR_BUSY;
+    if ((runEvents = (dispatcher->owner == mprGetCurrentOsThread())) != 0) {
+        /* Called from an event on a running dispatcher */
+        assert(isRunning(dispatcher));
+        if (dispatchEvents(dispatcher)) {
+            return 0;
+        }
     }
-    expires = timeout < 0 ? (es->now + MPR_MAX_TIMEOUT) : (es->now + timeout);
-    signalled = 0;
+    es = MPR->eventService;
+    es->now = mprGetTicks();
+    expires = timeout < 0 ? MPR_MAX_TIMEOUT : (es->now + timeout);
+    delay = expires - es->now;
 
     lock(es);
-    wasRunning = isRunning(dispatcher);
-    runEvents = canRun(dispatcher);
-    if (runEvents && !wasRunning) {
-        queueDispatcher(es->runQ, dispatcher);
-    }
+    delay = getDispatcherIdleTicks(dispatcher, delay);
+    dispatcher->flags |= MPR_DISPATCHER_WAITING;
+    changed = dispatcher->mark != mark && mark != -1;
     unlock(es);
 
-    for (; es->now <= expires && !mprIsDestroying(); es->now = mprGetTicks()) {
-        if (runEvents) {
-            if (dispatchEvents(dispatcher)) {
-                signalled++;
-                break;
-            }
-        }
-        lock(es);
-        delay = getDispatcherIdleTicks(dispatcher, expires - es->now);
-        dispatcher->flags |= MPR_DISPATCHER_WAITING;
-        unlock(es);
-
-        mprYield(MPR_YIELD_STICKY);
-
-        nevents = mprWaitForCond(dispatcher->cond, delay);
-        mprResetYield();
-        dispatcher->flags &= ~MPR_DISPATCHER_WAITING;
-
-        if (nevents == 0) {
-            if (runEvents) {
-                dispatchEvents(dispatcher);
-            }
-            signalled++;
-            break;
-        }
-        es->now = mprGetTicks();
+    if (changed) {
+        return 0;
     }
-    if (runEvents && !wasRunning) {
-        dequeueDispatcher(dispatcher);
-        mprScheduleDispatcher(dispatcher);
+    mprYield(MPR_YIELD_STICKY);
+    mprWaitForCond(dispatcher->cond, delay);
+    mprResetYield();
+    es->now = mprGetTicks();
+
+    lock(es);
+    dispatcher->flags &= ~MPR_DISPATCHER_WAITING;
+    unlock(es);
+
+    if (runEvents) {
+        dispatchEvents(dispatcher);
+        assert(isRunning(dispatcher));
     }
-    return signalled ? 0 : MPR_ERR_TIMEOUT;
+    return 0;
+}
+
+
+PUBLIC void mprSignalCompletion(MprDispatcher *dispatcher)
+{
+    if (dispatcher == 0) {
+        dispatcher = MPR->dispatcher;
+    }
+    dispatcher->flags |= MPR_DISPATCHER_COMPLETE;
+    mprSignalDispatcher(dispatcher);
+}
+
+
+/*
+    Wait for an event to complete signified by the 'completion' flag being set.
+    This will wait for events on the dispatcher.
+    The completion flag will be reset on return.
+ */
+PUBLIC bool mprWaitForCompletion(MprDispatcher *dispatcher, MprTicks timeout)
+{
+    MprTicks    mark;
+    bool        success;
+
+    assert(timeout >= 0);
+
+    if (dispatcher == 0) {
+        dispatcher = MPR->dispatcher;
+    }
+    if (mprGetDebugMode()) {
+        timeout *= 100;
+    }
+    for (mark = mprGetTicks(); !(dispatcher->flags & MPR_DISPATCHER_COMPLETE) && mprGetElapsedTicks(mark) < timeout; ) {
+        mprWaitForEvent(dispatcher, 10, -1);
+    }
+    success = (dispatcher->flags & MPR_DISPATCHER_COMPLETE) ? 1 : 0;
+    dispatcher->flags &= ~MPR_DISPATCHER_COMPLETE;
+    return success;
 }
 
 
@@ -9785,10 +9791,15 @@ PUBLIC int mprDispatchersAreIdle()
 }
 
 
+/*
+    Start the dispatcher by putting it on the runQ. This prevents the event service from 
+    starting any events in parallel. The invoking thread should service events directly by
+    calling mprServiceEvents or mprWaitForEvent.
+ */
 PUBLIC int mprStartDispatcher(MprDispatcher *dispatcher)
 {
     if (dispatcher->owner && dispatcher->owner != mprGetCurrentOsThread()) {
-        mprError("Cannot start dispatcher - owned by another thread");
+        mprLog("error mpr event", 0, "Cannot start dispatcher - owned by another thread");
         return MPR_ERR_BAD_STATE;
     }
     if (!isRunning(dispatcher)) {
@@ -9802,33 +9813,17 @@ PUBLIC int mprStartDispatcher(MprDispatcher *dispatcher)
 PUBLIC int mprStopDispatcher(MprDispatcher *dispatcher)
 {
     if (dispatcher->owner != mprGetCurrentOsThread()) {
+        assert(dispatcher->owner == mprGetCurrentOsThread());
         return MPR_ERR_BAD_STATE;
     }
     if (!isRunning(dispatcher)) {
+        assert(isRunning(dispatcher));
         return MPR_ERR_BAD_STATE;
     }
     dispatcher->owner = 0;
     dequeueDispatcher(dispatcher);
     mprScheduleDispatcher(dispatcher);
     return 0;
-}
-
-
-/*
-    Relay an event to a dispatcher. This invokes the callback proc as though it was invoked from the given dispatcher. 
- */
-PUBLIC void mprRelayEvent(MprDispatcher *dispatcher, void *proc, void *data, MprEvent *event)
-{
-    if (mprStartDispatcher(dispatcher) < 0) {
-        return;
-    }
-    if (proc) {
-        if (event) {
-            event->timestamp = dispatcher->service->now;
-        }
-        ((MprEventProc) proc)(data, event);
-    }
-    mprStopDispatcher(dispatcher);
 }
 
 
@@ -9849,16 +9844,16 @@ PUBLIC void mprScheduleDispatcher(MprDispatcher *dispatcher)
     }
     es = dispatcher->service;
     lock(es);
+    mustWakeWaitService = es->waiting;
+
     if (isRunning(dispatcher)) {
-        mustWakeWaitService = es->waiting;
+        mustWakeCond = dispatcher->flags & MPR_DISPATCHER_WAITING;
+
+    } else if (isEmpty(dispatcher)) {
+        queueDispatcher(es->idleQ, dispatcher);
         mustWakeCond = dispatcher->flags & MPR_DISPATCHER_WAITING;
 
     } else {
-        if (isEmpty(dispatcher)) {
-            queueDispatcher(es->idleQ, dispatcher);
-            unlock(es);
-            return;
-        }
         event = dispatcher->eventQ->next;
         mustWakeWaitService = mustWakeCond = 0;
         if (event->due > es->now) {
@@ -9903,7 +9898,6 @@ static int dispatchEvents(MprDispatcher *dispatcher)
     int                 count;
 
     assert(isRunning(dispatcher));
-    mprTrace(7, "dispatchEvents for %s", dispatcher->name);
     es = dispatcher->service;
 
     priorOwner = dispatcher->owner;
@@ -9920,11 +9914,12 @@ static int dispatchEvents(MprDispatcher *dispatcher)
         and neither would a running flag. See mprRemoveEvent().
      */
     for (count = 0; (event = mprGetNextEvent(dispatcher)) != 0; count++) {
-        mprTrace(7, "Call event %s", event->name);
         assert(!(event->flags & MPR_EVENT_RUNNING));
         event->flags |= MPR_EVENT_RUNNING;
 
         assert(event->proc);
+        mprAtomicAdd64(&dispatcher->mark, 1);
+
         (event->proc)(event->data, event);
 
         if (dispatcher->flags & MPR_DISPATCHER_DESTROYED) {
@@ -10554,13 +10549,13 @@ PUBLIC int mprCreateNotifierService(MprWaitService *ws)
         return MPR_ERR_CANT_INITIALIZE;
     }
     if ((ws->epoll = epoll_create(ME_MAX_EVENTS)) < 0) {
-        mprError("Call to epoll() failed");
+        mprLog("critical mpr event", 0, "Call to epoll failed");
         return MPR_ERR_CANT_INITIALIZE;
     }
 
 #if defined(EFD_NONBLOCK)
     if ((ws->breakFd[MPR_READ_PIPE] = eventfd(0, 0)) < 0) {
-        mprError("Cannot open breakout event");
+        mprLog("critical mpr event", 0, "Cannot open breakout event");
         return MPR_ERR_CANT_INITIALIZE;
     }
 #else
@@ -10568,7 +10563,7 @@ PUBLIC int mprCreateNotifierService(MprWaitService *ws)
         Initialize the "wakeup" pipe. This is used to wakeup the service thread if other threads need to wait for I/O.
      */
     if (pipe(ws->breakFd) < 0) {
-        mprError("Cannot open breakout pipe");
+        mprLog("critical mpr event", 0, "Cannot open breakout pipe");
         return MPR_ERR_CANT_INITIALIZE;
     }
     fcntl(ws->breakFd[0], F_SETFL, fcntl(ws->breakFd[0], F_GETFL) | O_NONBLOCK);
@@ -10626,7 +10621,7 @@ PUBLIC int mprNotifyOn(MprWaitHandler *wp, int mask)
         }
         if (ev.events) {
             if ((rc = epoll_ctl(ws->epoll, EPOLL_CTL_DEL, fd, &ev)) != 0) {
-                mprError("Epoll del error %d on fd %d", errno, fd);
+                mprLog("error mpr event", 0, "Epoll delete error %d on fd %d", errno, fd);
             }
         }
         ev.events = 0;
@@ -10638,7 +10633,7 @@ PUBLIC int mprNotifyOn(MprWaitHandler *wp, int mask)
         }
         if (ev.events) {
             if ((rc = epoll_ctl(ws->epoll, EPOLL_CTL_ADD, fd, &ev)) != 0) {
-                mprError("Epoll add error %d on fd %d", errno, fd);
+                mprLog("error mpr event", 0, "Epoll add error %d on fd %d", errno, fd);
             }
         }
         wp->desiredMask = mask;
@@ -10669,7 +10664,7 @@ PUBLIC int mprWaitForSingleIO(int fd, int mask, MprTicks timeout)
     memset(events, 0, sizeof(events));
     ev.data.fd = fd;
     if ((epfd = epoll_create(ME_MAX_EVENTS)) < 0) {
-        mprError("Call to epoll() failed");
+        mprLog("error mpr event", 0, "Epoll_create failed, errno=%d", errno);
         return MPR_ERR_CANT_INITIALIZE;
     }
     ev.events = 0;
@@ -10689,7 +10684,7 @@ PUBLIC int mprWaitForSingleIO(int fd, int mask, MprTicks timeout)
 
     result = 0;
     if (rc < 0) {
-        mprTrace(2, "Epoll returned %d, errno %d", rc, errno);
+        mprLog("error mpr event", 0, "Epoll returned %d, errno %d", rc, errno);
 
     } else if (rc > 0) {
         if (rc > 0) {
@@ -10729,7 +10724,7 @@ PUBLIC void mprWaitForIO(MprWaitService *ws, MprTicks timeout)
 
     if ((nevents = epoll_wait(ws->epoll, events, sizeof(events) / sizeof(struct epoll_event), timeout)) < 0) {
         if (errno != EINTR) {
-            mprTrace(7, "epoll returned %d, errno %d", nevents, mprGetOsError());
+            mprLog("error mpr event", 0, "epoll returned %d, errno %d", nevents, mprGetOsError());
         }
     }
     mprClearWaiting();
@@ -10762,7 +10757,7 @@ static void serviceIO(MprWaitService *ws, struct epoll_event *events, int count)
                 This can happen if a writable event has been triggered (e.g. MprCmd command stdin pipe) and the pipe is closed.
                 This thread may have waked from kevent before the pipe is closed and the wait handler removed from the map.
 
-                mprTrace(0, "WARNING: fd not in handler map. fd %d", fd);
+                mprLog("error mpr event", 0, "fd not in handler map. fd %d", fd);
              */
             continue;
         }
@@ -10818,7 +10813,7 @@ PUBLIC void mprWakeNotifier()
 #if defined(EFD_NONBLOCK)
         uint64 c = 1;
         if (write(ws->breakFd[MPR_READ_PIPE], &c, sizeof(c)) != sizeof(c)) {
-            mprError("Cannot write to break port %d\n", errno);
+            mprLog("error mpr event", 0, "Cannot write to break port errno=%d", errno);
         }
 #else
         int c = 1;
@@ -12065,7 +12060,7 @@ static void manageHashTable(MprHash *hash, int flags)
                 if (!(hash->flags & MPR_HASH_STATIC_VALUES)) {
 #if ME_DEBUG
                     if (sp->data && !mprIsValid(sp->data)) {
-                        mprLog(0, "Data in key %s is not valid", sp->key);
+                        mprDebug("error mpr hash", 0, "Data in key %s is not valid", sp->key);
                     }
                     assert(sp->data == 0 || mprIsValid(sp->data));
 #endif
@@ -12652,6 +12647,7 @@ PUBLIC MprJson *mprParseJsonEx(cchar *str, MprJsonCallback *callback, void *data
     parser->state = MPR_JSON_STATE_VALUE;
     parser->tolerant = 1;
     parser->buf = mprCreateBuf(128, 0); 
+    parser->lineNumber = 1;
 
     if ((result = jsonParse(parser, 0)) == 0) {
         if (errorMsg) {
@@ -12802,6 +12798,7 @@ static void eatRestOfComment(MprJsonParser *parser)
     cp = parser->input;
     if (*cp == '/') {
         for (cp++; *cp && *cp != '\n'; cp++) {}
+        parser->lineNumber++;
 
     } else if (*cp == '*') {
         for (cp++; cp[0] && (cp[0] != '*' || cp[1] != '/'); cp++) {
@@ -12942,7 +12939,8 @@ static int gettok(MprJsonParser *parser)
                         for (cp = parser->input; *cp; cp++) {
                             c = *cp;
                             if (c == '\\' && cp[1]) {
-                                if (isxdigit((uchar) cp[1]) && isxdigit((uchar) cp[2]) && isxdigit((uchar) cp[3]) && isxdigit((uchar) cp[4])) {
+                                if (isxdigit((uchar) cp[1]) && isxdigit((uchar) cp[2]) && 
+                                    isxdigit((uchar) cp[3]) && isxdigit((uchar) cp[4])) {
                                     c = (int) stoiradix(cp, 16, NULL);
                                     cp += 3;
                                 } else {
@@ -13092,8 +13090,14 @@ static void formatValue(MprBuf *buf, MprJson *obj, int flags)
     for (cp = obj->value; *cp; cp++) {
         if (*cp == '\"' || *cp == '\\') {
             mprPutCharToBuf(buf, '\\');
+            mprPutCharToBuf(buf, *cp);
+        } else if (*cp == '\r') {
+            mprPutStringToBuf(buf, "\\\\r");
+        } else if (*cp == '\n') {
+            mprPutStringToBuf(buf, "\\\\n");
+        } else {
+            mprPutCharToBuf(buf, *cp);
         }
-        mprPutCharToBuf(buf, *cp);
     }
     mprPutCharToBuf(buf, '"');
 }
@@ -13119,7 +13123,7 @@ static void jsonErrorCallback(MprJsonParser *parser, cchar *msg)
             parser->errorMsg = sfmt("JSON Parse Error: %s\nAt line %d. Token \"%s\"",
                 msg, parser->lineNumber + 1, parser->token);
         }
-        mprTrace(4, "%s", parser->errorMsg);
+        mprDebug("mpr json", 4, "%s", parser->errorMsg);
     }
 }
 
@@ -13908,11 +13912,9 @@ PUBLIC int mprSaveJson(MprJson *obj, cchar *path, int flags)
     }
     len = slen(buf);
     if ((file = mprOpenFile(path, O_WRONLY | O_TRUNC | O_CREAT | O_BINARY, 0644)) == 0) {
-        mprError("Cannot open %s", path);
         return MPR_ERR_CANT_OPEN;
     }
     if (mprWriteFile(file, buf, len) != len) {
-        mprError("Cannot write %s", path);
         mprCloseFile(file);
         return MPR_ERR_CANT_WRITE;
     }
@@ -13922,7 +13924,7 @@ PUBLIC int mprSaveJson(MprJson *obj, cchar *path, int flags)
 }
 
 
-PUBLIC void mprTraceJson(int level, MprJson *obj, cchar *fmt, ...)
+PUBLIC void mprLogJson(int level, MprJson *obj, cchar *fmt, ...)
 {
     va_list     ap;
     char        *msg;
@@ -13930,7 +13932,7 @@ PUBLIC void mprTraceJson(int level, MprJson *obj, cchar *fmt, ...)
     va_start(ap, fmt);
     msg = sfmtv(fmt, ap);
     va_end(ap);
-    mprLog(level, "%s: %s", msg, mprJsonToString(obj, MPR_JSON_PRETTY));
+    mprLog("info mpr json", level, "%s: %s", msg, mprJsonToString(obj, MPR_JSON_PRETTY));
 }
 
 
@@ -14166,12 +14168,12 @@ PUBLIC int mprCreateNotifierService(MprWaitService *ws)
     struct kevent   ev;
 
     if ((ws->kq = kqueue()) < 0) {
-        mprError("Call to kqueue() failed");
+        mprLog("critical mpr event", 0, "Call to kqueue failed, errno=%d", errno);
         return MPR_ERR_CANT_INITIALIZE;
     }
     EV_SET(&ev, 0, EVFILT_USER, EV_ADD | EV_CLEAR, 0, 0, NULL);
     if (kevent(ws->kq, &ev, 1, NULL, 0, NULL) < 0) {
-        mprError("Cannot issue notifier wakeup event, errno %d", errno);
+        mprLog("critical mpr event", 0, "Cannot issue notifier wakeup event, errno=%d", errno);
         return MPR_ERR_CANT_INITIALIZE;
     }
     if ((ws->handlerMap = mprCreateList(MPR_FD_MIN, 0)) == 0) {
@@ -14207,7 +14209,6 @@ PUBLIC int mprNotifyOn(MprWaitHandler *wp, int mask)
     kp = &interest[0];
 
     lock(ws);
-    mprTrace(7, "mprNotifyOn: fd %d, mask %x, old mask %x", wp->fd, mask, wp->desiredMask);
     if (wp->desiredMask != mask) {
         assert(fd >= 0);
         if (wp->desiredMask & MPR_READABLE && !(mask & MPR_READABLE)) {
@@ -14240,7 +14241,7 @@ PUBLIC int mprNotifyOn(MprWaitHandler *wp, int mask)
                 if (rc == 1 && interest[0].flags & EV_ERROR && interest[0].data == EPIPE) {
                     /* Broken PIPE - just ignore */
                 } else {
-                    mprError("Cannot issue notifier wakeup event, errno %d", errno);
+                    mprLog("error mpr event", 0, "Cannot issue notifier wakeup event, errno=%d", errno);
                 }
             }
         }
@@ -14272,7 +14273,7 @@ PUBLIC int mprWaitForSingleIO(int fd, int mask, MprTicks timeout)
         EV_SET(&interest[interestCount++], fd, EVFILT_WRITE, EV_ADD, 0, 0, 0);
     }
     if ((kq = kqueue()) < 0) {
-        mprError("Kqueue returned %d, errno %d", kq, errno);
+        mprLog("error mpr event", 0, "Kqueue returned %d, errno=%d", kq, errno);
         return MPR_ERR_CANT_OPEN;
     }
     ts.tv_sec = ((int) (timeout / 1000));
@@ -14284,7 +14285,7 @@ PUBLIC int mprWaitForSingleIO(int fd, int mask, MprTicks timeout)
 
     result = 0;
     if (rc < 0) {
-        mprError("Kevent returned %d, errno %d", rc, errno);
+        mprLog("error mpr event", 0, "Kevent returned %d, errno=%d", rc, errno);
     } else if (rc > 0) {
         if (events[0].filter & EVFILT_READ) {
             result |= MPR_READABLE;
@@ -14326,7 +14327,7 @@ PUBLIC void mprWaitForIO(MprWaitService *ws, MprTicks timeout)
 
     if ((nevents = kevent(ws->kq, NULL, 0, events, ME_MAX_EVENTS, &ts)) < 0) {
         if (errno != EINTR) {
-            mprTrace(7, "Kevent returned %d, errno %d", nevents, mprGetOsError());
+            mprLog("error mpr event", 0, "Kevent returned %d, errno %d", nevents, mprGetOsError());
         }
     }
     mprClearWaiting();
@@ -14354,8 +14355,9 @@ static void serviceIO(MprWaitService *ws, struct kevent *events, int count)
         }
         if (fd < 0 || (wp = mprGetItem(ws->handlerMap, fd)) == 0) {
             /*
-                This can happen if a writable event has been triggered (e.g. MprCmd command stdin pipe) and the pipe is closed.
-                This thread may have waked from kevent before the pipe is closed and the wait handler removed from the map.
+                This can happen if a writable event has been triggered (e.g. MprCmd command stdin pipe) and the 
+                pipe is closed. This thread may have waked from kevent before the pipe is closed and the wait 
+                handler removed from the map.
              */
             continue;
         }
@@ -14377,11 +14379,11 @@ static void serviceIO(MprWaitService *ws, struct kevent *events, int count)
                 mprNotifyOn(wp, 0);
                 wp->desiredMask = 0;
                 mprNotifyOn(wp, prior);
-                mprError("kqueue: file descriptor may have been closed and reopened, fd %d", wp->fd);
+                mprLog("error mpr event", 0, "Kqueue file descriptor may have been closed and reopened, fd %d", wp->fd);
                 continue;
 
             } else if (err == EBADF || err == EINVAL) {
-                mprError("kqueue: invalid file descriptor %d, fd %d", wp->fd);
+                mprLog("error mpr event", 0, "Kqueue invalid file descriptor fd %d", wp->fd);
                 mprRemoveWaitHandler(wp);
                 wp->presentMask = 0;
             }
@@ -14416,7 +14418,7 @@ PUBLIC void mprWakeNotifier()
         ws->wakeRequested = 1;
         EV_SET(&ev, 0, EVFILT_USER, 0, NOTE_TRIGGER, 0, NULL);
         if (kevent(ws->kq, &ev, 1, NULL, 0, NULL) < 0) {
-            mprError("Cannot issue notifier wakeup event, errno %d", errno);
+            mprLog("error mpr event", 0, "Cannot issue notifier wakeup event, errno=%d", errno);
         }
     }
 }
@@ -15646,7 +15648,7 @@ PUBLIC void mprSpinUnlock(MprSpin *lock)
 
 /********************************** Forwards **********************************/
 
-static void logOutput(int flags, int level, cchar *msg);
+static void logOutput(cchar *tags, int level, cchar *msg);
 
 /************************************ Code ************************************/
 /*
@@ -15668,77 +15670,80 @@ PUBLIC void mprBreakpoint()
 }
 
 
-PUBLIC void mprCreateLogService() 
+PUBLIC void mprCreateLogService()
 {
     MPR->logFile = MPR->stdError;
 }
 
 
-PUBLIC int mprStartLogging(cchar *logSpec, int showConfig)
+PUBLIC int mprStartLogging(cchar *logSpec, int flags)
 {
     MprFile     *file;
     char        *levelSpec, *path;
     int         level;
 
+    if (logSpec == 0 || strcmp(logSpec, "none") == 0) {
+        return 0;
+    }
     level = -1;
     file = 0;
-    if (logSpec == 0) {
-        logSpec = "stderr:0";
+    MPR->logPath = path = sclone(logSpec);
+    if ((levelSpec = strrchr(path, ':')) != 0 && isdigit((uchar) levelSpec[1])) {
+        *levelSpec++ = '\0';
+        level = atoi(levelSpec);
     }
-    if (*logSpec && strcmp(logSpec, "none") != 0) {
-        MPR->logPath = path = sclone(logSpec);
-        if ((levelSpec = strrchr(path, ':')) != 0 && isdigit((uchar) levelSpec[1])) {
-            *levelSpec++ = '\0';
-            level = atoi(levelSpec);
-        }
-        if (strcmp(path, "stdout") == 0) {
-            file = MPR->stdOutput;
-        } else if (strcmp(path, "stderr") == 0) {
-            file = MPR->stdError;
+    if (strcmp(path, "stdout") == 0) {
+        file = MPR->stdOutput;
+    } else if (strcmp(path, "stderr") == 0) {
+        file = MPR->stdError;
 #if !ME_ROM
-        } else {
-            MprPath     info;
-            int         mode;
-            mode = (MPR->flags & MPR_LOG_APPEND) ? O_APPEND : O_TRUNC;
-            mode |= O_CREAT | O_WRONLY | O_TEXT;
-            if (MPR->logBackup > 0) {
-                mprGetPathInfo(path, &info);
-                if (MPR->logSize <= 0 || (info.valid && info.size > MPR->logSize) || (MPR->flags & MPR_LOG_ANEW)) {
-                    mprBackupLog(path, MPR->logBackup);
-                }
+    } else {
+        MprPath     info;
+        int         mode;
+        mode = (flags & MPR_LOG_ANEW) ? O_TRUNC : O_APPEND;
+        mode |= O_CREAT | O_WRONLY | O_TEXT;
+        if (MPR->logBackup > 0) {
+            mprGetPathInfo(path, &info);
+            if (MPR->logSize <= 0 || (info.valid && info.size > MPR->logSize) || (flags & MPR_LOG_ANEW)) {
+                mprBackupLog(path, MPR->logBackup);
             }
-            if ((file = mprOpenFile(path, mode, 0664)) == 0) {
-                mprError("Cannot open log file %s", path);
-                return -1;
-            }
+        }
+        if ((file = mprOpenFile(path, mode, 0664)) == 0) {
+            mprLog("error mpr log", 0, "Cannot open log file %s, errno=%d", path, errno);
+            return MPR_ERR_CANT_OPEN;
+        }
 #endif
-        }
-        if (level >= 0) {
-            mprSetLogLevel(level);
-        }
-        if (file) {
-            mprSetLogFile(file);
-        }
-        if (showConfig) {
-            mprLogHeader();
-        }
+    }
+    MPR->flags |= (flags & (MPR_LOG_DETAILED | MPR_LOG_ANEW | MPR_LOG_CONFIG | MPR_LOG_CMDLINE));
+
+    if (level >= 0) {
+        mprSetLogLevel(level);
+    }
+    if (file) {
+        mprSetLogFile(file);
+    }
+    if (flags & MPR_LOG_CONFIG) {
+        mprLogConfig();
     }
     return 0;
 }
 
 
-PUBLIC void mprLogHeader()
+PUBLIC void mprLogConfig()
 {
-    mprLog(MPR_INFO, "Configuration for %s", mprGetAppTitle());
-    mprLog(MPR_INFO, "---------------------------------------------");
-    mprLog(MPR_INFO, "Version:            %s", ME_VERSION);
-    mprLog(MPR_INFO, "BuildType:          %s", ME_DEBUG ? "Debug" : "Release");
-    mprLog(MPR_INFO, "CPU:                %s", ME_CPU);
-    mprLog(MPR_INFO, "OS:                 %s", ME_OS);
-    mprLog(MPR_INFO, "Host:               %s", mprGetHostName());
-    mprLog(MPR_INFO, "Directory:          %s", mprGetCurrentPath());
-    mprLog(MPR_INFO, "Configure:          %s", ME_CONFIG_CMD);
-    mprLog(MPR_INFO, "---------------------------------------------");
+    cchar   *name;
+
+    name = MPR->name;
+    mprLog(name, 2, "Configuration for %s", mprGetAppTitle());
+    mprLog(name, 2, "----------------------------------");
+    mprLog(name, 2, "Version:            %s", ME_VERSION);
+    mprLog(name, 2, "BuildType:          %s", ME_DEBUG ? "Debug" : "Release");
+    mprLog(name, 2, "CPU:                %s", ME_CPU);
+    mprLog(name, 2, "OS:                 %s", ME_OS);
+    mprLog(name, 2, "Host:               %s", mprGetHostName());
+    mprLog(name, 2, "Directory:          %s", mprGetCurrentPath());
+    mprLog(name, 2, "Configure:          %s", ME_CONFIG_CMD);
+    mprLog(name, 2, "----------------------------------");
 }
 
 
@@ -15767,97 +15772,39 @@ PUBLIC void mprSetLogBackup(ssize size, int backup, int flags)
 {
     MPR->logBackup = backup;
     MPR->logSize = size;
-    MPR->flags |= (flags & (MPR_LOG_APPEND | MPR_LOG_ANEW));
-}
-
-
-PUBLIC void mprTraceProc(int level, cchar *fmt, ...)
-{
-    va_list     args;
-    char        buf[ME_MAX_LOGLINE];
-
-    va_start(args, fmt);
-    logOutput(MPR_LOG_MSG, level, fmtv(buf, sizeof(buf), fmt, args));
-    va_end(args);
-}
-
-
-PUBLIC void mprLogProc(int level, cchar *fmt, ...)
-{
-    va_list     args;
-    char        buf[ME_MAX_LOGLINE];
-
-    va_start(args, fmt);
-    logOutput(MPR_LOG_MSG, level, fmtv(buf, sizeof(buf), fmt, args));
-    va_end(args);
+    MPR->flags |= (flags & MPR_LOG_ANEW);
 }
 
 
 /*
-    Warning: this will allocate
+    Legacy error messages
  */
-PUBLIC void mprRawLog(int level, cchar *fmt, ...)
+PUBLIC void mprError(cchar *format, ...)
 {
     va_list     args;
+    char        buf[ME_MAX_LOGLINE], tagbuf[128];
 
-    va_start(args, fmt);
-    logOutput(MPR_RAW_MSG, level, sfmtv(fmt, args));
+    va_start(args, format);
+    fmt(tagbuf, sizeof(tagbuf), "%s error", MPR->name);
+    logOutput(tagbuf, 0, fmtv(buf, sizeof(buf), format, args));
     va_end(args);
 }
 
 
-PUBLIC void mprError(cchar *fmt, ...)
+PUBLIC void mprLogProc(cchar *tags, int level, cchar *fmt, ...)
 {
     va_list     args;
     char        buf[ME_MAX_LOGLINE];
 
     va_start(args, fmt);
-    logOutput(MPR_ERROR_MSG, MPR_ERROR, fmtv(buf, sizeof(buf), fmt, args));
+    logOutput(tags, level, fmtv(buf, sizeof(buf), fmt, args));
     va_end(args);
-    mprBreakpoint();
-}
-
-
-PUBLIC void mprFatal(cchar *fmt, ...)
-{
-    va_list     args;
-    char        buf[ME_MAX_LOGLINE];
-
-    va_start(args, fmt);
-    fmtv(buf, sizeof(buf), fmt, args);
-    va_end(args);
-    logOutput(MPR_ERROR_MSG | MPR_ERROR, 0, buf);
-    exit(2);
-}
-
-
-PUBLIC void mprInfo(cchar *fmt, ...)
-{
-    va_list     args;
-    char        buf[ME_MAX_LOGLINE];
-
-    va_start(args, fmt);
-    logOutput(MPR_INFO_MSG, MPR_INFO, fmtv(buf, sizeof(buf), fmt, args));
-    va_end(args);
-    mprBreakpoint();
-}
-
-
-PUBLIC void mprWarn(cchar *fmt, ...)
-{
-    va_list     args;
-    char        buf[ME_MAX_LOGLINE];
-
-    va_start(args, fmt);
-    logOutput(MPR_WARN_MSG, 0, fmtv(buf, sizeof(buf), fmt, args));
-    va_end(args);
-    mprBreakpoint();
 }
 
 
 PUBLIC void mprAssert(cchar *loc, cchar *msg)
 {
-#if ME_MPR_TRACING
+#if ME_MPR_DEBUG_LOGGING
     char    buf[ME_MAX_LOGLINE];
 
     if (loc) {
@@ -15868,8 +15815,7 @@ PUBLIC void mprAssert(cchar *loc, cchar *msg)
 #endif
         msg = buf;
     }
-    mprTrace(0, "%s", buf);
-    mprBreakpoint();
+    mprLogProc("debug assert", 0, "%s", buf);
 #if ME_DEBUG_WATSON
     fprintf(stderr, "Pause for debugger to attach\n");
     mprSleep(24 * 3600 * 1000);
@@ -15881,7 +15827,7 @@ PUBLIC void mprAssert(cchar *loc, cchar *msg)
 /*
     Output a log message to the log handler
  */
-static void logOutput(int flags, int level, cchar *msg)
+static void logOutput(cchar *tags, int level, cchar *msg)
 {
     MprLogHandler   handler;
 
@@ -15890,66 +15836,82 @@ static void logOutput(int flags, int level, cchar *msg)
     }
     handler = MPR->logHandler;
     if (handler != 0) {
-        (handler)(flags, level, msg);
+        (handler)(tags, level, msg);
         return;
     }
-    mprDefaultLogHandler(flags, level, msg);
+    mprDefaultLogHandler(tags, level, msg);
 }
 
 
-PUBLIC void mprDefaultLogHandler(int flags, int level, cchar *msg)
+static void backupLog()
+{
+#if !ME_ROM
+    MprPath     info;
+    MprFile     *file;
+    int         mode;
+
+    mprGetPathInfo(MPR->logPath, &info);
+    if (info.valid && info.size > MPR->logSize) {
+        lock(MPR);
+        mprSetLogFile(0);
+        mprBackupLog(MPR->logPath, MPR->logBackup);
+        mode = O_CREAT | O_WRONLY | O_TEXT;
+        if ((file = mprOpenFile(MPR->logPath, mode, 0664)) == 0) {
+            mprLog("error mpr log", 0, "Cannot open log file %s, errno=%d", MPR->logPath, errno);
+            MPR->logSize = MAXINT;
+            unlock(MPR);
+            return;
+        }
+        mprSetLogFile(file);
+        unlock(MPR);
+    }
+#endif
+}
+
+
+/*
+    If MPR_LOG_DETAILED with tags, the format is:
+        MM/DD/YY HH:MM:SS LEVEL TAGS, Message
+
+    else if tags provided and level 0
+        ProgramName: error: Message
+
+    else if level > 0
+        ProgramName: Message
+
+    else if tags are provided, output format is:
+
+    else if tags == null, the format is:
+        Message
+ */
+PUBLIC void mprDefaultLogHandler(cchar *tags, int level, cchar *msg)
 {
     MprFile     *file;
-    char        *prefix, buf[ME_MAX_LOGLINE], *tag;
+    char        tbuf[128];
+    ssize       len, width;
+    static int  check = 0;
 
     if ((file = MPR->logFile) == 0) {
         return;
     }
-    prefix = MPR->name;
-
-#if !ME_ROM
-    {
-        static int  check = 0;
-        MprPath     info;
-        int         mode;
-        if (MPR->logBackup > 0 && MPR->logSize && (check++ % 1000) == 0) {
-            mprGetPathInfo(MPR->logPath, &info);
-            if (info.valid && info.size > MPR->logSize) {
-                lock(MPR);
-                mprSetLogFile(0);
-                mprBackupLog(MPR->logPath, MPR->logBackup);
-                mode = O_CREAT | O_WRONLY | O_TEXT;
-                if ((file = mprOpenFile(MPR->logPath, mode, 0664)) == 0) {
-                    mprError("Cannot open log file %s", MPR->logPath);
-                    unlock(MPR);
-                    return;
-                }
-                mprSetLogFile(file);
-                unlock(MPR);
-            }
-        }
+    if (MPR->logBackup && MPR->logSize && (check++ % 1000) == 0) {
+        backupLog();
     }
-#endif
-    while (*msg == '\n') {
-        mprWriteFile(file, "\n", 1);
-        msg++;
-    }
-    if (flags & MPR_LOG_MSG) {
-        fmt(buf, sizeof(buf), "%s: %d: %s\n", prefix, level, msg);
-        mprWriteFileString(file, buf);
-
-    } else if (flags & MPR_RAW_MSG) {
-        mprWriteFileString(file, msg);
-
-    } else {
-        if (flags & MPR_WARN_MSG) {
-           tag = "Warning";
-        } else {
-           tag = "Error";
+    if (MPR->flags & MPR_LOG_DETAILED && tags && *tags) {
+        fmt(tbuf, sizeof(tbuf), "%s %d %s, ", mprGetDate(MPR_LOG_DATE), level, tags);
+        mprWriteFileString(file, tbuf);
+        len = slen(tbuf);
+        width = 40;
+        if (len < width) {
+            mprWriteFile(file, "                                          ", width - len);
         }
-        fmt(buf, sizeof(buf), "%s: %s: %s\n", prefix, tag, msg);
-        mprWriteToOsLog(buf, flags, level);
-        mprWriteFileString(file, buf);
+    } else if (tags && level == 0) {
+        mprWriteFileString(file, "error: ");
+    }
+    mprWriteFileString(file, msg);
+    mprWriteFileString(file, "\n");
+    if (level == 0) {
+        mprWriteToOsLog(sfmt("%s: %d %s: %s", MPR->name, level, tags, msg), level);
     }
 }
 
@@ -16055,6 +16017,97 @@ PUBLIC int mprGetError()
 }
 
 
+/*
+    Set the mapped (portable, Posix) error code
+ */
+PUBLIC void mprSetError(error)
+{
+#if !ME_WIN_LIKE
+    mprSetOsError(error);
+    return;
+#else
+    switch (error) {
+    case ENOENT:
+        error = ERROR_FILE_NOT_FOUND;
+        break;
+
+    case EPERM:
+        error = ERROR_ACCESS_DENIED;
+        break;
+
+    case EBADF:
+        error = ERROR_INVALID_HANDLE;
+        break;
+
+    case ENOMEM:
+        error = ERROR_NOT_ENOUGH_MEMORY;
+        break;
+
+    case EBUSY:
+        error = ERROR_BUSY;
+        break;
+
+    case EEXIST:
+        error = ERROR_FILE_EXISTS;
+        break;
+
+    case EINVAL:
+        error = ERROR_BAD_ARGUMENTS;
+        break;
+
+    case EINTR:
+        error = WSAEINTR;
+        break;
+
+    case EACCES:
+        error = WSAEACCES;
+        break;
+
+    case EINPROGRESS:
+        error = WSAEINPROGRESS;
+        break;
+
+    case EALREADY:
+        error = WSAEALREADY;
+        break;
+
+    case EADDRINUSE:
+        error = WSAEADDRINUSE;
+        break;
+
+    case EADDRNOTAVAIL:
+        error = WSAEADDRNOTAVAIL;
+        break;
+
+    case ENETDOWN:
+        error = WSAENETDOWN;
+        break;
+
+    case ENETUNREACH:
+        error = WSAENETUNREACH;
+        break;
+
+    case ECONNABORTED:
+        error = WSAECONNABORTED;
+        break;
+
+    case ECONNRESET:
+        error = WSAECONNRESET;
+        break;
+
+    case ECONNREFUSED:
+        error = WSAECONNREFUSED;
+        break;
+
+    case EAGAIN:
+        error = WSAEWOULDBLOCK;
+        break;
+    }
+    mprSetOsError(error);
+#endif
+}
+
+
 PUBLIC int mprGetLogLevel()
 {
     Mpr     *mpr;
@@ -16083,9 +16136,13 @@ PUBLIC MprFile *mprGetLogFile()
 }
 
 
-PUBLIC void mprSetLogHandler(MprLogHandler handler)
+PUBLIC MprLogHandler mprSetLogHandler(MprLogHandler handler)
 {
+    MprLogHandler   priorHandler;
+
+    priorHandler = MPR->logHandler;
     MPR->logHandler = handler;
+    return priorHandler;
 }
 
 
@@ -16108,15 +16165,18 @@ PUBLIC bool mprSetCmdlineLogging(bool on)
 {
     bool    wasLogging;
 
-    wasLogging = MPR->cmdlineLogging;
-    MPR->cmdlineLogging = on;
+    wasLogging = MPR->flags & MPR_LOG_CMDLINE;
+    MPR->flags &= ~MPR_LOG_CMDLINE;
+    if (on) {
+        MPR->flags |= MPR_LOG_CMDLINE;
+    }
     return wasLogging;
 }
 
 
 PUBLIC bool mprGetCmdlineLogging()
 {
-    return MPR->cmdlineLogging;
+    return MPR->flags & MPR_LOG_CMDLINE ? 1 : 0;
 }
 
 
@@ -16136,7 +16196,7 @@ PUBLIC int _cmp(char *s1, char *s2)
     Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the Embedthis Open Source license or you may acquire a 
+    You may use the Embedthis Open Source license or you may acquire a
     commercial license from Embedthis Software. You agree to be fully bound
     by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details and other copyrights.
@@ -16268,7 +16328,7 @@ PUBLIC MprHash *mprCreateMimeTypes(cchar *path)
             type = stok(buf, " \t\n\r", &tok);
             ext = stok(0, " \t\n\r", &tok);
             if (type == 0 || ext == 0) {
-                mprError("Bad mime type in %s at line %d", path, line);
+                mprLog("error mpr", 0, "Bad mime type in %s at line %d", path, line);
                 continue;
             }
             while (ext) {
@@ -16339,7 +16399,6 @@ PUBLIC int mprSetMimeProgram(MprHash *table, cchar *mimeType, cchar *program)
         }
     }
     if (mt == 0) {
-        mprError("Cannot find mime type %s for action program %s", mimeType, program);
         return MPR_ERR_CANT_FIND;
     }
     mt->program = sclone(program);
@@ -17088,8 +17147,8 @@ PUBLIC int mprLoadModule(MprModule *mp)
     mprStartModule(mp);
     return 0;
 #else
-    mprError("mprLoadModule: %s failed", mp->name);
-    mprError("Product built without the ability to load modules dynamically");
+    mprLog("error mpr", 0, "mprLoadModule: %s failed", mp->name);
+    mprLog("error mpr", 0, "Product built without the ability to load modules dynamically");
     return MPR_ERR_BAD_STATE;
 #endif
 }
@@ -17097,14 +17156,14 @@ PUBLIC int mprLoadModule(MprModule *mp)
 
 PUBLIC int mprUnloadModule(MprModule *mp)
 {
-    mprTrace(6, "Unloading native module %s from %s", mp->name, mp->path);
+    mprDebug("mpr", 5, "Unloading native module %s from %s", mp->name, mp->path);
     if (mprStopModule(mp) < 0) {
         return MPR_ERR_NOT_READY;
     }
 #if ME_COMPILER_HAS_DYN_LOAD
     if (mp->handle) {
         if (mprUnloadNativeModule(mp) != 0) {
-            mprError("Cannot unload module %s", mp->name);
+            mprLog("error mpr", 0, "Cannot unload module %s", mp->name);
         }
         mp->handle = 0;
     }
@@ -17125,13 +17184,11 @@ static char *probe(cchar *filename)
 
     assert(filename && *filename);
 
-    mprTrace(7, "Probe for native module %s", filename);
     if (mprPathExists(filename, R_OK)) {
         return sclone(filename);
     }
     if (strstr(filename, ME_SHOBJ) == 0) {
         path = sjoin(filename, ME_SHOBJ, NULL);
-        mprTrace(7, "Probe for native module %s", path);
         if (mprPathExists(path, R_OK)) {
             return path;
         }
@@ -17155,7 +17212,6 @@ PUBLIC char *mprSearchForModule(cchar *filename)
         Search for the path directly
      */
     if ((path = probe(filename)) != 0) {
-        mprTrace(6, "Found native module %s at %s", filename, path);
         return path;
     }
 
@@ -17168,7 +17224,6 @@ PUBLIC char *mprSearchForModule(cchar *filename)
     while (dir && *dir) {
         f = mprJoinPath(dir, filename);
         if ((path = probe(f)) != 0) {
-            mprTrace(6, "Found native module %s at %s", filename, path);
             return path;
         }
         dir = stok(0, MPR_SEARCH_SEP, &tok);
@@ -17367,11 +17422,9 @@ PUBLIC int mprCopyPath(cchar *fromName, cchar *toName, int mode)
     char        buf[ME_MAX_BUFFER];
 
     if ((from = mprOpenFile(fromName, O_RDONLY | O_BINARY, 0)) == 0) {
-        mprError("Cannot open %s", fromName);
         return MPR_ERR_CANT_OPEN;
     }
     if ((to = mprOpenFile(toName, O_WRONLY | O_TRUNC | O_CREAT | O_BINARY, mode)) == 0) {
-        mprError("Cannot open %s", toName);
         return MPR_ERR_CANT_OPEN;
     }
     while ((count = mprReadFile(from, buf, sizeof(buf))) > 0) {
@@ -18056,7 +18109,7 @@ static int globMatch(MprFileSystem *fs, cchar *s, cchar *pat, int isDir, int fla
             } else {
                 /* Single star */
                 if (count > 2000) {
-                    mprError("Glob match is too recursive");
+                    mprDebug("debug mpr", 0, "Glob file match is too recursive");
                     return 0;
                 }
                 if (*pat == fs->separators[0] || *pat == fs->separators[1]) {
@@ -18109,7 +18162,6 @@ static MprList *globPath(MprFileSystem *fs, MprList *results, cchar *path, cchar
     int             next, add;
 
     if ((list = mprGetPathFiles(path, flags | MPR_PATH_RELATIVE)) == 0) {
-        mprTrace(7, "Cannot read directory %s", path);
         return results;
     }
     for (next = 0; (dp = mprGetNextItem(list, &next)) != 0; ) {
@@ -19050,11 +19102,9 @@ static char* checkPath(cchar *path, int flags)
     if (mprPathExists(path, access)) {
         mprGetPathInfo(path, &info);
         if (flags & MPR_SEARCH_DIR && info.isDir) {
-            mprTrace(4, "mprSearchForFile: found %s", path);
             return sclone(path);
         }
         if (info.isReg) {
-            mprTrace(4, "mprSearchForFile: found %s", path);
             return sclone(path);
         }
     }
@@ -19069,7 +19119,6 @@ PUBLIC char *mprSearchPath(cchar *file, int flags, cchar *search, ...)
 
     va_start(args, search);
 
-    mprTrace(6, "mprSearchForFile: %s", file);
     if ((result = checkPath(file, flags)) != 0) {
         return result;
     }
@@ -19083,7 +19132,6 @@ PUBLIC char *mprSearchPath(cchar *file, int flags, cchar *search, ...)
         nextDir = sclone(nextDir);
         dir = stok(nextDir, MPR_SEARCH_SEP, &tok);
         while (dir && *dir) {
-            mprTrace(6, "mprSearchForFile: %s in search path %s", file, dir);
             path = mprJoinPath(dir, file);
             if ((result = checkPath(path, flags)) != 0) {
                 return mprNormalizePath(result);
@@ -19218,11 +19266,9 @@ PUBLIC ssize mprWritePathContents(cchar *path, cchar *buf, ssize len, int mode)
         len = slen(buf);
     }
     if ((file = mprOpenFile(path, O_WRONLY | O_TRUNC | O_CREAT | O_BINARY, mode)) == 0) {
-        mprError("Cannot open %s", path);
         return MPR_ERR_CANT_OPEN;
     }
     if (mprWriteFile(file, buf, len) != len) {
-        mprError("Cannot write %s", path);
         mprCloseFile(file);
         return MPR_ERR_CANT_WRITE;
     }
@@ -19347,39 +19393,39 @@ PUBLIC int mprLoadNativeModule(MprModule *mp)
 #endif
     if (!mp->entry || !dlsym(handle, mp->entry)) {
 #if ME_STATIC
-        mprError("Cannot load module %s, product built static", mp->name);
+        mprLog("error mpr", 0, "Cannot load module %s, product built static", mp->name);
         return MPR_ERR_BAD_STATE;
 #else
         MprPath info;
         char    *at;
         if ((at = mprSearchForModule(mp->path)) == 0) {
-            mprError("Cannot find module \"%s\", cwd: \"%s\", search path \"%s\"", mp->path, mprGetCurrentPath(),
+            mprLog("error mpr", 0, "Cannot find module \"%s\", cwd: \"%s\", search path \"%s\"", mp->path, mprGetCurrentPath(),
                 mprGetModuleSearchPath());
             return MPR_ERR_CANT_ACCESS;
         }
         mp->path = at;
         mprGetPathInfo(mp->path, &info);
         mp->modified = info.mtime;
-        mprLog(2, "Loading native module %s", mprGetPathBase(mp->path));
+        mprLog("info mpr", 4, "Loading native module %s", mprGetPathBase(mp->path));
         if ((handle = dlopen(mp->path, RTLD_LAZY | RTLD_GLOBAL)) == 0) {
-            mprError("Cannot load module %s\nReason: \"%s\"", mp->path, dlerror());
+            mprLog("error mpr", 0, "Cannot load module %s, reason: \"%s\"", mp->path, dlerror());
             return MPR_ERR_CANT_OPEN;
         } 
         mp->handle = handle;
 #endif /* !ME_STATIC */
 
     } else if (mp->entry) {
-        mprLog(2, "Activating native module %s", mp->name);
+        mprLog("info mpr", 4, "Activating native module %s", mp->name);
     }
     if (mp->entry) {
         if ((fn = (MprModuleEntry) dlsym(handle, mp->entry)) != 0) {
             if ((fn)(mp->moduleData, mp) < 0) {
-                mprError("Initialization for module %s failed", mp->name);
+                mprLog("error mpr", 0, "Initialization for module %s failed", mp->name);
                 dlclose(handle);
                 return MPR_ERR_CANT_INITIALIZE;
             }
         } else {
-            mprError("Cannot load module %s\nReason: can't find function \"%s\"", mp->path, mp->entry);
+            mprLog("error mpr", 0, "Cannot load module %s, reason: cannot find function \"%s\"", mp->path, mp->entry);
             dlclose(handle);
             return MPR_ERR_CANT_READ;
         }
@@ -19432,20 +19478,9 @@ PUBLIC void mprSleep(MprTicks timeout)
 /*
     Write a message in the O/S native log (syslog in the case of linux)
  */
-PUBLIC void mprWriteToOsLog(cchar *message, int flags, int level)
+PUBLIC void mprWriteToOsLog(cchar *message, int level)
 {
-    int     sflag;
-
-    if (flags & MPR_INFO_MSG) {
-        sflag = LOG_WARNING;
-    } else if (flags & MPR_ASSERT_MSG) {
-        sflag = LOG_WARNING;
-    } else if (flags & MPR_ERROR_MSG) {
-        sflag = LOG_ERR;
-    } else {
-        sflag = LOG_WARNING;
-    }
-    syslog(sflag, "%s", message);
+    syslog((level == 0) ? LOG_ERR : LOG_WARNING, "%s", message);
 }
 
 
@@ -19475,11 +19510,10 @@ PUBLIC void mprSetFilesLimit(int limit)
     } else {
         r.rlim_cur = r.rlim_max = limit;
         if (setrlimit(RLIMIT_NOFILE, &r) < 0) {
-            mprError("Can't set file limit to %d", limit);
+            mprLog("error mpr", 0, "Cannot set file limit to %d", limit);
         }
     }
     getrlimit(RLIMIT_NOFILE, &r);
-    mprTrace(6, "Set files limit to soft %d, max %d", r.rlim_cur, r.rlim_max);
 }
 
 #endif /* ME_UNIX_LIKE */
@@ -19527,19 +19561,19 @@ PUBLIC void mprSetFilesLimit(int limit)
 /*
     Class definitions
  */
-#define CLASS_NORMAL    0               /* [All other]      Normal characters */
-#define CLASS_PERCENT   1               /* [%]              Begin format */
-#define CLASS_MODIFIER  2               /* [-+ #,]          Modifiers */
-#define CLASS_ZERO      3               /* [0]              Special modifier - zero pad */
-#define CLASS_STAR      4               /* [*]              Width supplied by arg */
-#define CLASS_DIGIT     5               /* [1-9]            Field widths */
-#define CLASS_DOT       6               /* [.]              Introduce precision */
-#define CLASS_BITS      7               /* [hlL]            Length bits */
-#define CLASS_TYPE      8               /* [cdefginopsSuxX] Type specifiers */
+#define CLASS_NORMAL    0               /* [All other]       Normal characters */
+#define CLASS_PERCENT   1               /* [%]               Begin format */
+#define CLASS_MODIFIER  2               /* [-+ #,']          Modifiers */
+#define CLASS_ZERO      3               /* [0]               Special modifier - zero pad */
+#define CLASS_STAR      4               /* [*]               Width supplied by arg */
+#define CLASS_DIGIT     5               /* [1-9]             Field widths */
+#define CLASS_DOT       6               /* [.]               Introduce precision */
+#define CLASS_BITS      7               /* [hlLz]            Length bits */
+#define CLASS_TYPE      8               /* [cdefginopsSuxX]  Type specifiers */
 
 #define STATE_NORMAL    0               /* Normal chars in format string */
 #define STATE_PERCENT   1               /* "%" */
-#define STATE_MODIFIER  2               /* -+ #,*/
+#define STATE_MODIFIER  2               /* -+ #,' */
 #define STATE_WIDTH     3               /* Width spec */
 #define STATE_DOT       4               /* "." */
 #define STATE_PRECISION 5               /* Precision spec */
@@ -19568,7 +19602,7 @@ static char stateMap[] = {
  */
 static char classMap[] = {
     /*   0  ' '    !     "     #     $     %     &     ' */
-             2,    0,    0,    2,    0,    1,    0,    0,
+             2,    0,    0,    2,    0,    1,    0,    2,
     /*  07   (     )     *     +     ,     -     .     / */
              0,    0,    4,    2,    2,    2,    6,    0,
     /*  10   0     1     2     3     4     5     6     7 */
@@ -19590,7 +19624,7 @@ static char classMap[] = {
     /*  50   p     q     r     s     t     u     v     w */
              8,    0,    0,    8,    0,    8,    0,    8,
     /*  57   x     y     z  */
-             8,    0,    0,
+             8,    0,    7,
 };
 
 /*
@@ -19606,6 +19640,7 @@ static char classMap[] = {
 #define SPRINTF_INT64       0x80        /* 64-bit */
 #define SPRINTF_COMMA       0x100       /* Thousand comma separators */
 #define SPRINTF_UPPER_CASE  0x200       /* As the name says for numbers */
+#define SPRINTF_SSIZE       0x400       /* Size of ssize */
 
 typedef struct Format {
     uchar   *buf;
@@ -19899,6 +19934,7 @@ PUBLIC char *mprPrintfCore(char *buf, ssize maxsize, cchar *spec, va_list args)
                 fmt.flags |= SPRINTF_LEAD_SPACE;
                 break;
             case ',':
+            case '\'':
                 fmt.flags |= SPRINTF_COMMA;
                 break;
             }
@@ -19942,12 +19978,21 @@ PUBLIC char *mprPrintfCore(char *buf, ssize maxsize, cchar *spec, va_list args)
                 fmt.flags |= SPRINTF_INT64;
                 break;
 
-            case 'l':
-                fmt.flags |= SPRINTF_LONG;
-                break;
-
             case 'h':
                 fmt.flags |= SPRINTF_SHORT;
+                break;
+
+            case 'l':
+                if (fmt.flags & SPRINTF_LONG) {
+                    fmt.flags &= ~SPRINTF_LONG;
+                    fmt.flags |= SPRINTF_INT64;
+                } else {
+                    fmt.flags |= SPRINTF_LONG;
+                }
+                break;
+
+            case 'z':
+                fmt.flags |= SPRINTF_SSIZE;
                 break;
             }
             break;
@@ -20044,6 +20089,8 @@ PUBLIC char *mprPrintfCore(char *buf, ssize maxsize, cchar *spec, va_list args)
                     iValue = (short) va_arg(args, int);
                 } else if (fmt.flags & SPRINTF_LONG) {
                     iValue = (long) va_arg(args, long);
+                } else if (fmt.flags & SPRINTF_SSIZE) {
+                    iValue = (ssize) va_arg(args, ssize);
                 } else if (fmt.flags & SPRINTF_INT64) {
                     iValue = (int64) va_arg(args, int64);
                 } else {
@@ -20072,6 +20119,8 @@ PUBLIC char *mprPrintfCore(char *buf, ssize maxsize, cchar *spec, va_list args)
                     uValue = (ushort) va_arg(args, uint);
                 } else if (fmt.flags & SPRINTF_LONG) {
                     uValue = (ulong) va_arg(args, ulong);
+                } else if (fmt.flags & SPRINTF_SSIZE) {
+                    uValue = (ssize) va_arg(args, ssize);
                 } else if (fmt.flags & SPRINTF_INT64) {
                     uValue = (uint64) va_arg(args, uint64);
                 } else {
@@ -20828,7 +20877,7 @@ PUBLIC int mprCreateNotifierService(MprWaitService *ws)
     for (rc = retries = 0; retries < maxTries; retries++) {
         breakSock = socket(AF_INET, SOCK_DGRAM, 0);
         if (breakSock < 0) {
-            mprWarn("Cannot open port %d to use for select. Retrying.\n");
+            mprLog("critical mpr select", 0, "Cannot open port %d to use for select. Retrying.");
         }
 #if ME_UNIX_LIKE
         fcntl(breakSock, F_SETFD, FD_CLOEXEC);
@@ -20857,7 +20906,7 @@ PUBLIC int mprCreateNotifierService(MprWaitService *ws)
         breakPort++;
     }
     if (breakSock < 0 || rc < 0) {
-        mprWarn("Cannot bind any port to use for select. Tried %d-%d\n", breakPort, breakPort - maxTries);
+        mprLog("critical mpr select", 0, "Cannot bind any port to use for select. Tried %d-%d", breakPort, breakPort - maxTries);
         return MPR_ERR_CANT_OPEN;
     }
     ws->breakSock = breakSock;
@@ -20890,7 +20939,7 @@ PUBLIC int mprNotifyOn(MprWaitHandler *wp, int mask)
     assert(fd >= 0);
 
     if (fd >= FD_SETSIZE) {
-        mprError("File descriptor exceeds configured maximum in FD_SETSIZE (%d vs %d)", fd, FD_SETSIZE);
+        mprLog("error mpr event", 0, "File descriptor exceeds configured maximum in FD_SETSIZE (%d vs %d)", fd, FD_SETSIZE);
         return MPR_ERR_CANT_INITIALIZE;
     }
     lock(ws);
@@ -20959,7 +21008,7 @@ PUBLIC int mprWaitForSingleIO(int fd, int mask, MprTicks timeout)
 
     result = 0;
     if (rc < 0) {
-        mprError("Select returned %d, errno %d", rc, mprGetOsError());
+        mprLog("error mpr event", 0, "Select returned %d, errno %d", rc, mprGetOsError());
 
     } else if (rc > 0) {
         if (FD_ISSET(fd, &readMask)) {
@@ -21079,7 +21128,7 @@ PUBLIC void mprWakeNotifier()
         if (rc < 0) {
             static int warnOnce = 0;
             if (warnOnce++ == 0) {
-                mprError("Cannot send wakeup to breakout socket: errno %d", errno);
+                mprLog("error mpr event", 0, "Cannot send wakeup to breakout socket: errno %d", errno);
             }
         }
     }
@@ -21209,7 +21258,7 @@ static void hookSignal(int signo, MprSignal *sp)
         act.sa_flags &= ~SA_NODEFER;
         sigemptyset(&act.sa_mask);
         if (sigaction(signo, &act, 0) != 0) {
-            mprError("Cannot hook signal %d, errno %d", signo, mprGetOsError());
+            mprLog("error mpr", 0, "Cannot hook signal %d, errno %d", signo, mprGetOsError());
         }
     }
     unlock(ssp);
@@ -21227,7 +21276,7 @@ static void unhookSignal(int signo)
     rc = sigaction(signo, 0, &act);
     if (rc == 0 && act.sa_sigaction == signalHandler) {
         if (sigaction(signo, &ssp->prior[signo], 0) != 0) {
-            mprError("Cannot unhook signal %d, errno %d", signo, mprGetOsError());
+            mprLog("error mpr", 0, "Cannot unhook signal %d, errno %d", signo, mprGetOsError());
         }
     }
     unlock(ssp);
@@ -21240,7 +21289,7 @@ static void unhookSignal(int signo)
 
     NOTES: The problems here are several fold. The signalHandler may be invoked re-entrantly for different threads for
     the same signal (SIGCHLD). Masked signals are blocked by a single bit and so siginfo will only store one such instance, 
-    so you can't use siginfo to get the pid for SIGCHLD. So you really can't save state here, only set an indication that
+    so you cannot use siginfo to get the pid for SIGCHLD. So you really cannot save state here, only set an indication that
     a signal has occurred. MprServiceSignals will then process. Signal handlers must then all be invoked and they must
     test if the signal is valid for them. 
  */
@@ -21308,7 +21357,7 @@ static void signalEvent(MprSignal *sp, MprEvent *event)
     assert(sp);
     assert(event);
 
-    mprTrace(7, "signalEvent signo %d, flags %x", sp->signo, sp->flags);
+    mprDebug("mpr signal", 5, "Received signal %d, flags %x", sp->signo, sp->flags);
     np = sp->next;
 
     if (sp->flags & MPR_SIGNAL_BEFORE) {
@@ -21380,7 +21429,7 @@ PUBLIC MprSignal *mprAddSignalHandler(int signo, void *handler, void *data, MprD
     MprSignal           *sp;
 
     if (signo <= 0 || signo >= MPR_MAX_SIGNALS) {
-        mprError("Bad signal: %d", signo);
+        mprLog("error mpr", 0, "Bad signal: %d", signo);
         return 0;
     }
     if (!(flags & MPR_SIGNAL_BEFORE)) {
@@ -21450,7 +21499,6 @@ PUBLIC void mprAddStandardSignals()
 
 static void standardSignalHandler(void *ignored, MprSignal *sp)
 {
-    mprTrace(6, "standardSignalHandler signo %d, flags %x", sp->signo, sp->flags);
     if (sp->signo == SIGTERM) {
         mprShutdown(MPR_EXIT_NORMAL, -1, MPR_EXIT_TIMEOUT);
 
@@ -21587,7 +21635,7 @@ PUBLIC MprSocketService *mprCreateSocketService()
     hostName[0] = '\0';
     if (gethostname(serverName, sizeof(serverName)) < 0) {
         scopy(serverName, sizeof(serverName), "localhost");
-        mprError("Cannot get host name. Using \"localhost\".");
+        mprLog("error mpr", 0, "Cannot get host name. Using \"localhost\".");
         /* Keep going */
     }
     if ((dp = strchr(serverName, '.')) != 0) {
@@ -21607,7 +21655,7 @@ PUBLIC MprSocketService *mprCreateSocketService()
         ss->hasIPv6 = 1;
         closesocket(fd);
     } else {
-        mprLog(1, "This system does not have IPv6 support");
+        mprLog("info mpr socket", 1, "This system does not have IPv6 support");
     }
     return ss;
 }
@@ -21726,15 +21774,19 @@ PUBLIC MprSocket *mprCloneSocket(MprSocket *sp)
 static void manageSocket(MprSocket *sp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
-        mprMark(sp->service);
+        mprMark(sp->acceptIp);
+        mprMark(sp->cipher);
         mprMark(sp->errorMsg);
         mprMark(sp->handler);
-        mprMark(sp->acceptIp);
         mprMark(sp->ip);
-        mprMark(sp->provider);
         mprMark(sp->listenSock);
-        mprMark(sp->sslSocket);
+        mprMark(sp->peerName);
+        mprMark(sp->peerCert);
+        mprMark(sp->peerCertIssuer);
+        mprMark(sp->provider);
+        mprMark(sp->service);
         mprMark(sp->ssl);
+        mprMark(sp->sslSocket);
         mprMark(sp->mutex);
 
     } else if (flags & MPR_MANAGE_FREE) {
@@ -21799,11 +21851,6 @@ PUBLIC Socket mprListenOnSocket(MprSocket *sp, cchar *ip, int port, int flags)
     int                 datagram, family, protocol, rc, only;
 
     lock(sp);
-    if (ip == 0 || *ip == '\0') {
-        mprTrace(6, "mprListenOnSocket: %d, flags %x", port, flags);
-    } else {
-        mprTrace(6, "mprListenOnSocket: %s:%d, flags %x", ip, port, flags);
-    }
     resetSocket(sp);
 
     sp->ip = sclone(ip);
@@ -21869,9 +21916,9 @@ PUBLIC Socket mprListenOnSocket(MprSocket *sp, cchar *ip, int port, int flags)
     }
     if ((rc = bind(sp->fd, addr, addrlen)) < 0) {
         if (errno == EADDRINUSE) {
-            mprLog(3, "Cannot bind, address %s:%d already in use", ip, port);
+            mprLog("error mpr socket", 3, "Cannot bind, address %s:%d already in use", ip, port);
         } else {
-            mprLog(3, "Cannot bind, address %s:%d errno", ip, port, errno);
+            mprLog("error mpr socket", 3, "Cannot bind, address %s:%d errno %d", ip, port, errno);
         }
         rc = mprGetOsError();
         closesocket(sp->fd);
@@ -21885,7 +21932,7 @@ PUBLIC Socket mprListenOnSocket(MprSocket *sp, cchar *ip, int port, int flags)
     if (!datagram) {
         sp->flags |= MPR_SOCKET_LISTENER;
         if (listen(sp->fd, SOMAXCONN) < 0) {
-            mprLog(3, "Listen error %d", mprGetOsError());
+            mprLog("error mpr socket", 3, "Listen error %d", mprGetOsError());
             closesocket(sp->fd);
             sp->fd = INVALID_SOCKET;
             unlock(sp);
@@ -22011,8 +22058,6 @@ static int connectSocket(MprSocket *sp, cchar *ip, int port, int initialFlags)
     Socklen             addrlen;
     int                 broadcast, datagram, family, protocol, rc;
 
-    mprTrace(6, "openClient: %s:%d, flags %x", ip, port, initialFlags);
-
     lock(sp);
     resetSocket(sp);
 
@@ -22123,7 +22168,6 @@ static void disconnectSocket(MprSocket *sp)
             Read a reasonable amount of outstanding data to minimize resets. Then do a shutdown to send a FIN and read 
             outstanding data.  All non-blocking.
          */
-        mprTrace(6, "Disconnect socket %d", sp->fd);
         mprSetSocketBlockingMode(sp, 0);
         for (i = 0; i < 16; i++) {
             if (recv(sp->fd, buf, sizeof(buf), 0) <= 0) {
@@ -22180,7 +22224,6 @@ static void closeSocket(MprSocket *sp, bool gracefully)
             Read any outstanding read data to minimize resets. Then do a shutdown to send a FIN and read outstanding 
             data. All non-blocking.
          */
-        mprTrace(6, "Close socket %d, graceful %d", sp->fd, gracefully);
         if (gracefully) {
             mprSetSocketBlockingMode(sp, 0);
             while (recv(sp->fd, buf, sizeof(buf), 0) > 0) { }
@@ -22229,7 +22272,7 @@ PUBLIC MprSocket *mprAcceptSocket(MprSocket *listen)
     }
     if (fd == SOCKET_ERROR) {
         if (mprGetError() != EAGAIN) {
-            mprTrace(6, "socket: accept failed, errno %d", mprGetOsError());
+            mprDebug("mpr socket", 5, "Accept failed, errno %d", mprGetOsError());
         }
         return 0;
     }
@@ -22248,7 +22291,7 @@ PUBLIC MprSocket *mprAcceptSocket(MprSocket *listen)
     lock(ss);
     if (++ss->numAccept >= ss->maxAccept) {
         unlock(ss);
-        mprLog(2, "Rejecting connection, too many client connections (%d)", ss->numAccept);
+        mprLog("error mpr socket", 2, "Rejecting connection, too many client connections (%d)", ss->numAccept);
         mprCloseSocket(nsp, 0);
         return 0;
     }
@@ -22366,7 +22409,7 @@ again:
 
 /*
     Write data. Return the number of bytes written or -1 on errors. NOTE: this routine will return with a
-    short write if the underlying socket can't accept any more data.
+    short write if the underlying socket cannot accept any more data.
  */
 PUBLIC ssize mprWriteSocket(MprSocket *sp, cvoid *buf, ssize bufsize)
 {
@@ -22668,6 +22711,12 @@ PUBLIC char *mprGetSocketState(MprSocket *sp)
         return 0;
     }
     return sp->provider->socketState(sp);
+}
+
+
+PUBLIC bool mprSocketHasBuffered(MprSocket *sp)
+{
+    return (sp->flags & (MPR_SOCKET_BUFFERED_READ | MPR_SOCKET_BUFFERED_WRITE)) ? 1 : 0;
 }
 
 
@@ -23222,6 +23271,7 @@ static void manageSsl(MprSsl *ssl, int flags)
 PUBLIC MprSsl *mprCreateSsl(int server)
 {
     MprSsl      *ssl;
+    cchar       *path;
 
     if ((ssl = mprAllocObj(MprSsl, manageSsl)) == 0) {
         return 0;
@@ -23238,9 +23288,14 @@ PUBLIC MprSsl *mprCreateSsl(int server)
         ssl->verifyIssuer = 0;
     } else {
         ssl->verifyDepth = 10;
-        ssl->verifyPeer = MPR->verifySsl;
-        ssl->verifyIssuer = MPR->verifySsl;
-        ssl->caFile = mprJoinPath(mprGetAppDir(), MPR_CA_CERT);
+        if (MPR->verifySsl) {
+            ssl->verifyPeer = MPR->verifySsl;
+            ssl->verifyIssuer = MPR->verifySsl;
+            path = mprJoinPath(mprGetAppDir(), MPR_CA_CERT);
+            if (mprPathExists(path, R_OK)) {
+                ssl->caFile = path;
+            }
+        }
     }
     ssl->mutex = mprCreateLock();
     return ssl;
@@ -23276,16 +23331,19 @@ PUBLIC int mprLoadSsl()
         return 0;
     }
     path = mprJoinPath(mprGetAppDir(), "libmprssl");
+    if (!mprPathExists(path, R_OK)) {
+        path = mprSearchForModule("libmprssl");
+    }
     if ((mp = mprCreateModule("sslModule", path, "mprSslInit", NULL)) == 0) {
         return MPR_ERR_CANT_CREATE;
     }
     if (mprLoadModule(mp) < 0) {
-        mprError("Cannot load %s", path);
+        mprLog("error mpr", 0, "Cannot load %s", path);
         return MPR_ERR_CANT_READ;
     }
     return 0;
 #else
-    mprError("SSL communications support not included in build");
+    mprLog("error mpr", 0, "SSL communications support not included in build");
     return MPR_ERR_BAD_STATE;
 #endif
 }
@@ -23302,7 +23360,7 @@ static int loadProviders()
         return MPR_ERR_CANT_READ;
     }
     if (!ss->providers) {
-        mprError("Cannot load SSL provider");
+        mprLog("error mpr", 0, "Cannot load SSL provider");
         mprGlobalUnlock();
         return MPR_ERR_CANT_INITIALIZE;
     }
@@ -23317,7 +23375,7 @@ static int loadProviders()
 PUBLIC int mprUpgradeSocket(MprSocket *sp, MprSsl *ssl, cchar *peerName)
 {
     MprSocketService    *ss;
-    char                *providerName;
+    cchar               *providerName;
 
     ss  = sp->service;
     assert(sp);
@@ -23331,12 +23389,11 @@ PUBLIC int mprUpgradeSocket(MprSocket *sp, MprSsl *ssl, cchar *peerName)
         }
         providerName = (ssl->providerName) ? ssl->providerName : ss->sslProvider;
         if ((ssl->provider = mprLookupKey(ss->providers, providerName)) == 0) {
-            mprError("Cannot use SSL, missing SSL provider %s", providerName);
+            sp->errorMsg = sfmt("Cannot use SSL, missing SSL provider %s", providerName);
             return MPR_ERR_CANT_INITIALIZE;
         }
         ssl->providerName = providerName;
     }
-    mprLog(4, "Using SSL provider: %s", ssl->providerName);
     sp->provider = ssl->provider;
 #if KEEP
     /* session resumption can cause problems with Nagle. However, appweb opens sockets with nodelay by default */
@@ -24568,1033 +24625,6 @@ PUBLIC void serase(char *str)
 
 /************************************************************************/
 /*
-    Start of file "src/test.c"
- */
-/************************************************************************/
-
-/*
-    test.c - Embedthis Unit Test Framework
-
-    Copyright (c) All Rights Reserved. See details at the end of the file.
- */
-
-/********************************** Includes **********************************/
-
-
-
-#if ME_MPR_TEST
-/***************************** Forward Declarations ***************************/
-
-static void     adjustFailedCount(int adj);
-static void     adjustThreadCount(int adj);
-static void     buildFullNames(MprTestGroup *gp, cchar *runName);
-static MprList  *copyGroups(MprTestService *sp, MprList *groups);
-static MprTestFailure *createFailure(MprTestGroup *gp, cchar *loc, cchar *message);
-static MprTestGroup *createTestGroup(MprTestService *sp, MprTestDef *def, MprTestGroup *parent);
-static bool     filterTestGroup(MprTestGroup *gp);
-static bool     filterTestCast(MprTestGroup *gp, MprTestCase *tc);
-static char     *getErrorMessage(MprTestGroup *gp);
-static int      loadTestModule(MprTestService *sp, cchar *fileName);
-static void     manageTestService(MprTestService *ts, int flags);
-static int      parseFilter(MprTestService *sp, cchar *str);
-static void     relayEvent(MprList *groups, MprThread *tp);
-static void     runInit(MprTestGroup *parent);
-static void     runTerm(MprTestGroup *parent);
-static void     runTestGroup(MprTestGroup *gp);
-static void     runTestProc(MprTestGroup *gp, MprTestCase *test);
-static void     runTestThread(MprList *groups, MprThread *tp);
-static int      setLogging(char *logSpec);
-
-/******************************************************************************/
-
-PUBLIC MprTestService *mprCreateTestService()
-{
-    MprTestService      *sp;
-
-    if ((sp = mprAllocObj(MprTestService, manageTestService)) == 0) {
-        return 0;
-    }
-    MPR->testService = sp;
-    sp->iterations = 1;
-    sp->numThreads = 1;
-    sp->workers = 0;
-    sp->testFilter = mprCreateList(-1, 0);
-    sp->groups = mprCreateList(-1, 0);
-    sp->threadData = mprCreateList(-1, 0);
-    sp->start = mprGetTime();
-    sp->mutex = mprCreateLock();
-    return sp;
-}
-
-
-static void manageTestService(MprTestService *ts, int flags)
-{
-    if (flags & MPR_MANAGE_MARK) {
-        mprMark(ts->commandLine);
-        mprMark(ts->groups);
-        mprMark(ts->threadData);
-        mprMark(ts->name);
-        mprMark(ts->testFilter);
-        mprMark(ts->mutex);
-    }
-}
-
-
-PUBLIC int mprParseTestArgs(MprTestService *sp, int argc, char *argv[], MprTestParser extraParser)
-{
-    cchar       *programName;
-    char        *argp;
-    int         rc, err, i, depth, nextArg, outputVersion;
-
-    i = 0;
-    err = 0;
-    outputVersion = 0;
-
-    programName = mprGetPathBase(argv[0]);
-    sp->name = sclone(ME_NAME);
-
-    /*
-        Save the command line
-     */
-    sp->commandLine = sclone(mprGetPathBase(argv[i++]));
-    for (; i < argc; i++) {
-        sp->commandLine = sjoin(sp->commandLine, " ", argv[i], NULL);
-    }
-
-    for (nextArg = 1; nextArg < argc; nextArg++) {
-        argp = argv[nextArg];
-
-        if (strcmp(argp, "--continue") == 0) {
-            sp->continueOnFailures = 1; 
-
-        } else if (strcmp(argp, "--depth") == 0 || strcmp(argp, "-d") == 0) {
-            if (nextArg >= argc) {
-                err++;
-            } else {
-                depth = atoi(argv[++nextArg]);
-                if (depth < 0 || depth > 10) {
-                    mprError("Bad test depth %d, (range 0-9)", depth);
-                    err++;
-                } else {
-                    sp->testDepth = depth;
-                }
-            }
-
-        } else if (strcmp(argp, "--debugger") == 0 || strcmp(argp, "-D") == 0) {
-            mprSetDebugMode(1);
-            sp->debugOnFailures = 1;
-
-        } else if (strcmp(argp, "--echo") == 0) {
-            sp->echoCmdLine = 1;
-
-        } else if (strcmp(argp, "--filter") == 0 || strcmp(argp, "-f") == 0) {
-            if (nextArg >= argc) {
-                err++;
-            } else {
-                if (parseFilter(sp, argv[++nextArg]) < 0) {
-                    err++;
-                }
-            }
-
-        } else if (strcmp(argp, "--iterations") == 0 || (strcmp(argp, "-i") == 0)) {
-            if (nextArg >= argc) {
-                err++;
-            } else {
-                sp->iterations = atoi(argv[++nextArg]);
-            }
-
-        } else if (strcmp(argp, "--log") == 0 || strcmp(argp, "-l") == 0) {
-            if (nextArg >= argc) {
-                err++;
-            } else {
-                setLogging(argv[++nextArg]);
-            }
-
-        } else if (strcmp(argp, "--module") == 0) {
-            if (nextArg >= argc) {
-                err++;
-            } else if (loadTestModule(sp, argv[++nextArg]) < 0) {
-                return MPR_ERR_CANT_OPEN;
-            }
-
-        } else if (strcmp(argp, "--name") == 0) {
-            if (nextArg >= argc) {
-                err++;
-            } else {
-                sp->name = sclone(argv[++nextArg]);
-            }
-
-        } else if (strcmp(argp, "--step") == 0 || strcmp(argp, "-s") == 0) {
-            sp->singleStep = 1; 
-
-        } else if (strcmp(argp, "--threads") == 0 || strcmp(argp, "-t") == 0) {
-            if (nextArg >= argc) {
-                err++;
-            } else {
-                i = atoi(argv[++nextArg]);
-                if (i <= 0 || i > 100) {
-                    mprError("%s: Bad number of threads (1-100)", programName);
-                    return MPR_ERR_BAD_ARGS;
-                }
-                sp->numThreads = i;
-            }
-
-        } else if (strcmp(argp, "--verbose") == 0 || strcmp(argp, "-v") == 0) {
-            sp->verbose++;
-
-        } else if (strcmp(argp, "--version") == 0 || strcmp(argp, "-V") == 0) {
-            outputVersion++;
-
-        } else if (strcmp(argp, "--workers") == 0 || strcmp(argp, "-w") == 0) {
-            if (nextArg >= argc) {
-                err++;
-            } else {
-                i = atoi(argv[++nextArg]);
-                if (i < 0 || i > 100) {
-                    mprError("%s: Bad number of worker threads (0-100)", programName);
-                    return MPR_ERR_BAD_ARGS;
-                }
-                sp->workers = i;
-            }
-
-        } else if (strcmp(argp, "-?") == 0 || (strcmp(argp, "--help") == 0 || strcmp(argp, "--?") == 0)) {
-            err++;
-
-        } else if (*argp != '-') {
-            break;
-
-        } else if (extraParser) {
-            rc = extraParser(argc - nextArg, &argv[nextArg]);
-            if (rc < 0) {
-                err++;
-            } else {
-                nextArg += rc;
-            }
-        } else {
-            mprError("Unknown arg %s", argp);
-            err++;
-        }
-    }
-
-    if (sp->workers == 0) {
-        sp->workers = 2 + sp->numThreads * 2;
-    }
-    if (nextArg < argc) {
-        if (parseFilter(sp, argv[nextArg++]) < 0) {
-            err++;
-        }
-    }
-    if (err) {
-        mprEprintf("usage: %s [options] [filter paths]\n"
-        "    --continue            # Continue on errors\n"
-        "    --depth number        # Zero == basic, 1 == throrough, 2 extensive\n"
-        "    --debug               # Run in debug mode\n"
-        "    --echo                # Echo the command line\n"
-        "    --iterations count    # Number of iterations to run the test\n"
-        "    --log logFile:level   # Log to file file at verbosity level\n"
-        "    --name testName       # Set test name\n"
-        "    --step                # Single step tests\n"
-        "    --threads count       # Number of test threads\n"
-        "    --verbose             # Verbose mode\n"
-        "    --version             # Output version information\n"
-        "    --workers count       # Set maximum worker threads\n\n",
-        programName);
-        return MPR_ERR_BAD_ARGS;
-    }
-    if (outputVersion) {
-        mprEprintf("%s: Version: %s\n", ME_TITLE, ME_VERSION);
-        return MPR_ERR_BAD_ARGS;
-    }
-    sp->argc = argc;
-    sp->argv = argv;
-    sp->firstArg = nextArg;
-
-    mprSetMaxWorkers(sp->workers);
-    return 0;
-}
-
-
-static int parseFilter(MprTestService *sp, cchar *filter)
-{
-    char    *str, *word, *tok;
-
-    assert(filter);
-    if (filter == 0 || *filter == '\0') {
-        return 0;
-    }
-
-    tok = 0;
-    str = sclone(filter);
-    word = stok(str, " \t\r\n", &tok);
-    while (word) {
-        if (mprAddItem(sp->testFilter, sclone(word)) < 0) {
-            assert(!MPR_ERR_MEMORY);
-            return MPR_ERR_MEMORY;
-        }
-        word = stok(0, " \t\r\n", &tok);
-    }
-    return 0;
-}
-
-
-static int loadTestModule(MprTestService *sp, cchar *fileName)
-{
-    MprModule   *mp;
-    char        *cp, *base, entry[ME_MAX_FNAME], path[ME_MAX_FNAME];
-
-    assert(fileName && *fileName);
-
-    base = mprGetPathBase(fileName);
-    assert(base);
-    if ((cp = strrchr(base, '.')) != 0) {
-        *cp = '\0';
-    }
-    if (mprLookupModule(base)) {
-        return 0;
-    }
-    fmt(entry, sizeof(entry), "%sInit", base);
-    if (fileName[0] == '/' || (*fileName && fileName[1] == ':')) {
-        fmt(path, sizeof(path), "%s%s", fileName, ME_SHOBJ);
-    } else {
-        fmt(path, sizeof(path), "./%s%s", fileName, ME_SHOBJ);
-    }
-    if ((mp = mprCreateModule(base, path, entry, sp)) == 0) {
-        mprError("Cannot create module %s", path);
-        return -1;
-    }
-    if (mprLoadModule(mp) < 0) {
-        mprError("Cannot load module %s", path);
-        return -1;
-    }
-    return 0;
-}
-
-
-PUBLIC int mprRunTests(MprTestService *sp)
-{
-    MprTestGroup    *gp;
-    MprThread       *tp;
-    MprList         *lp;
-    char            tName[64];
-    int             i, next;
-
-    /*
-        Build the full names for all groups
-     */
-    next = 0; 
-    while ((gp = mprGetNextItem(sp->groups, &next)) != 0) {
-        buildFullNames(gp, gp->name);
-    }
-    sp->activeThreadCount = sp->numThreads;
-
-    if (sp->echoCmdLine) {
-        mprPrintf("%12s %s ... ", "[Test]", sp->commandLine);
-        if (sp->verbose) {
-            mprPrintf("\n");
-        }
-    }
-    sp->start = mprGetTime();
-
-    /*
-        Create worker threads for each test thread. 
-     */
-    for (i = 0; i < sp->numThreads; i++) {
-        fmt(tName, sizeof(tName), "test.%d", i);
-        if ((lp = copyGroups(sp, sp->groups)) == 0) {
-            assert(!MPR_ERR_MEMORY);
-            return MPR_ERR_MEMORY;
-        }
-        if (mprAddItem(sp->threadData, lp) < 0) {
-            assert(!MPR_ERR_MEMORY);
-            return MPR_ERR_MEMORY;
-        }
-        /*
-            Build the full names for all groups
-         */
-        next = 0; 
-        while ((gp = mprGetNextItem(lp, &next)) != 0) {
-            buildFullNames(gp, gp->name);
-        }
-        if ((tp = mprCreateThread(tName, relayEvent, lp, 0)) == 0) {
-            assert(!MPR_ERR_MEMORY);
-            return MPR_ERR_MEMORY;
-        }
-        if (mprStartThread(tp) < 0) {
-            mprError("Cannot start thread %d", i);
-            return MPR_ERR_CANT_INITIALIZE;
-        }
-    }
-    mprServiceEvents(-1, 0);
-    return (sp->totalFailedCount == 0) ? 0 : 1;
-}
-
-
-static MprList *copyGroups(MprTestService *sp, MprList *groups)
-{
-    MprTestGroup    *gp, *newGp;
-    MprList         *lp;
-    int             next;
-
-    if ((lp = mprCreateList(0, 0)) == NULL) {
-        return 0;
-    }
-    next = 0; 
-    while ((gp = mprGetNextItem(groups, &next)) != 0) {
-        newGp = createTestGroup(sp, gp->def, NULL);
-        if (newGp == 0) {
-            return 0;
-        }
-        if (mprAddItem(lp, newGp) < 0) {
-            return 0;
-        }
-    }
-    return lp;
-}
-
-
-/*
-    Relay the event to claim the dispatcher
- */
-static void relayEvent(MprList *groups, MprThread *tp)
-{
-    MprTestGroup    *gp;
-
-    gp = mprGetFirstItem(groups);
-    assert(gp);
-
-    mprRelayEvent(gp->dispatcher, runTestThread, groups, NULL);
-    if (tp) {
-        adjustThreadCount(-1);
-    }
-}
-
-
-/*
-    Run the test groups. One invocation per thread. Used even if not multithreaded.
- */
-static void runTestThread(MprList *groups, MprThread *tp)
-{
-    MprTestService  *sp;
-    MprTestGroup    *gp;
-    int             next, i, count;
-
-    sp = MPR->testService;
-    assert(sp);
-
-    for (next = 0; (gp = mprGetNextItem(groups, &next)) != 0; ) {
-        runInit(gp);
-    }
-    count = 0;
-    for (i = (sp->iterations + sp->numThreads - 1) / sp->numThreads; i > 0; i--) {
-        if (sp->totalFailedCount > 0 && !sp->continueOnFailures) {
-            break;
-        }
-        next = 0; 
-        while ((gp = mprGetNextItem(groups, &next)) != 0) {
-            runTestGroup(gp);
-        }
-        mprPrintf("%12s Iteration %d complete (%s)\n", "[Notice]", ++count, mprGetCurrentThreadName());
-    }
-    for (next = 0; (gp = mprGetNextItem(groups, &next)) != 0; ) {
-        runTerm(gp);
-    }
-}
-
-
-PUBLIC void mprReportTestResults(MprTestService *sp)
-{
-    if (sp->totalFailedCount == 0 && sp->verbose >= 1) {
-        mprPrintf("%12s All tests PASSED for \"%s\"\n", "[REPORT]", sp->name);
-    }
-    if (sp->totalFailedCount > 0 || sp->verbose >= 2) {
-        double  elapsed;
-        elapsed = ((mprGetTime() - sp->start) * 1.0 / 1000.0);
-        mprPrintf("%12s %d tests completed, %d test(s) failed.\n", 
-            "[DETAILS]", sp->totalTestCount, sp->totalFailedCount);
-        mprPrintf("%12s Elapsed time: %5.2f seconds.\n", "[BENCHMARK]", elapsed);
-    }
-    if (MPR->heap->track) {
-        mprPrintMem("Memory Results", MPR_MEM_DETAIL);
-    }
-}
-
-
-static void buildFullNames(MprTestGroup *gp, cchar *name)
-{
-    MprTestGroup    *np;
-    char            *nameBuf;
-    cchar           *nameStack[MPR_TEST_MAX_STACK];
-    int             next, tos;
-
-    tos = 0;
-
-    /*
-        Build the full name for this case
-     */
-    nameStack[tos++] = name;
-    for (np = gp->parent; np && np != np->parent && tos < MPR_TEST_MAX_STACK;  np = np->parent) {
-        nameStack[tos++] = np->name;
-    }
-    nameBuf = sclone(gp->service->name);
-    while (--tos >= 0) {
-        nameBuf = sjoin(nameBuf, ".", nameStack[tos], NULL);
-    }
-    assert(gp->fullName == 0);
-    gp->fullName = sclone(nameBuf);
-
-    /*
-        Recurse for all test case groups
-     */
-    next = 0;
-    np = mprGetNextItem(gp->groups, &next);
-    while (np) {
-        buildFullNames(np, np->name);
-        np = mprGetNextItem(gp->groups, &next);
-    }
-}
-
-
-/*
-    Used by main program to add the top level test group(s)
- */
-PUBLIC MprTestGroup *mprAddTestGroup(MprTestService *sp, MprTestDef *def)
-{
-    MprTestGroup    *gp;
-
-    gp = createTestGroup(sp, def, NULL);
-    if (gp == 0) {
-        return 0;
-    }
-    if (mprAddItem(sp->groups, gp) < 0) {
-        return 0;
-    }
-    return gp;
-}
-
-
-static void manageTestGroup(MprTestGroup *gp, int flags)
-{
-    if (flags & MPR_MANAGE_MARK) {
-        mprMark(gp->name);
-        mprMark(gp->fullName);
-        mprMark(gp->failures);
-        mprMark(gp->service);
-        mprMark(gp->dispatcher);
-        mprMark(gp->parent);
-        mprMark(gp->root);
-        mprMark(gp->groups);
-        mprMark(gp->cases);
-        mprMark(gp->http);
-        mprMark(gp->conn);
-        mprMark(gp->content);
-        mprMark(gp->data);
-        mprMark(gp->mutex);
-    }
-}
-
-
-static MprTestGroup *createTestGroup(MprTestService *sp, MprTestDef *def, MprTestGroup *parent)
-{
-    MprTestGroup    *gp, *child;
-    MprTestDef      **dp;
-    MprTestCase     *tc;
-    char            name[80];
-    static int      counter = 0;
-
-    assert(sp);
-    assert(def);
-
-    gp = mprAllocObj(MprTestGroup, manageTestGroup);
-    if (gp == 0) {
-        return 0;
-    }
-    gp->service = sp;
-    if (parent) {
-        gp->dispatcher = parent->dispatcher;
-    } else {
-        fmt(name, sizeof(name), "Test-%d", counter++);
-        gp->dispatcher = mprCreateDispatcher(name, 0);
-    }
-    gp->failures = mprCreateList(0, 0);
-    if (gp->failures == 0) {
-        return 0;
-    }
-    gp->cases = mprCreateList(0, MPR_LIST_STATIC_VALUES);
-    if (gp->cases == 0) {
-        return 0;
-    }
-    gp->groups = mprCreateList(0, 0);
-    if (gp->groups == 0) {
-        return 0;
-    }
-    gp->def = def;
-    gp->name = sclone(def->name);
-    gp->success = 1;
-
-    for (tc = def->caseDefs; tc->proc; tc++) {
-        if (mprAddItem(gp->cases, tc) < 0) {
-            return 0;
-        }
-    }
-    if (def->groupDefs) {
-        for (dp = &def->groupDefs[0]; *dp && (*dp)->name; dp++) {
-            child = createTestGroup(sp, *dp, gp);
-            if (child == 0) {
-                return 0;
-            }
-            if (mprAddItem(gp->groups, child) < 0) {
-                return 0;
-            }
-            child->parent = gp;
-            child->root = gp->parent;
-        }
-    }
-    return gp;
-}
-
-
-PUBLIC void mprResetTestGroup(MprTestGroup *gp)
-{
-    gp->success = 1;
-    gp->mutex = mprCreateLock();
-}
-
-
-static void runInit(MprTestGroup *parent)
-{
-    MprTestGroup    *gp;
-    int             next;
-
-    next = 0; 
-    while ((gp = mprGetNextItem(parent->groups, &next)) != 0) {
-        if (! filterTestGroup(gp)) {
-            continue;
-        }
-        if (gp->def->init && (*gp->def->init)(gp) < 0) {
-            gp->failedCount++;
-            if (!gp->service->continueOnFailures) {
-                break;
-            }
-        }
-        runInit(gp);
-    }
-}
-
-
-static void runTerm(MprTestGroup *parent)
-{
-    MprTestGroup    *gp;
-    int             next;
-
-    next = 0; 
-    while ((gp = mprGetNextItem(parent->groups, &next)) != 0) {
-        if (! filterTestGroup(gp)) {
-            continue;
-        }
-        if (gp->def->term && (*gp->def->term)(gp) < 0) {
-            gp->failedCount++;
-            if (!gp->service->continueOnFailures) {
-                break;
-            }
-        }
-        runInit(gp);
-    }
-}
-
-
-static void runTestGroup(MprTestGroup *parent)
-{
-    MprTestService  *sp;
-    MprTestGroup    *gp, *nextGroup;
-    MprTestCase     *tc;
-    int             nextItem, count;
-
-    sp = parent->service;
-
-    /*
-        Recurse over sub groups
-     */
-    nextItem = 0;
-    gp = mprGetNextItem(parent->groups, &nextItem);
-    while (gp && (parent->success || sp->continueOnFailures)) {
-        nextGroup = mprGetNextItem(parent->groups, &nextItem);
-        if (gp->testDepth > sp->testDepth) {
-            gp = nextGroup;
-            continue;
-        }
-
-        /*
-            See if this group has been filtered for execution
-         */
-        if (! filterTestGroup(gp)) {
-            gp = nextGroup;
-            continue;
-        }
-        count = sp->totalFailedCount;
-        if (count > 0 && !sp->continueOnFailures) {
-            return;
-        }
-
-        /*
-            Recurse over all tests in this group
-         */
-        runTestGroup(gp);
-        gp->testCount++;
-
-        if (! gp->success) {
-            /*  Propagate the failures up the parent chain */
-            parent->failedCount++;
-            parent->success = 0;
-        }
-        gp = nextGroup;
-    }
-
-    /*
-        Run test cases for this group
-     */
-    nextItem = 0;
-    tc = mprGetNextItem(parent->cases, &nextItem);
-    while (tc && (parent->success || sp->continueOnFailures)) {
-        if (parent->testDepth <= sp->testDepth) {
-            if (filterTestCast(parent, tc)) {
-                runTestProc(parent, tc);
-            }
-        }
-        tc = mprGetNextItem(parent->cases, &nextItem);
-    }
-}
-
-
-/*
-    Return true if we are to run the test group
- */
-static bool filterTestGroup(MprTestGroup *gp)
-{
-    MprTestService  *sp;
-    MprList         *testFilter;
-    char            *pattern;
-    ssize           len;
-    int             next;
-
-    sp = gp->service;
-    testFilter = sp->testFilter;
-
-    if (testFilter == 0) {
-        return 1;
-    }
-
-    /*
-        See if this test has been filtered
-     */
-    if (mprGetListLength(testFilter) > 0) {
-        next = 0;
-        pattern = mprGetNextItem(testFilter, &next);
-        while (pattern) {
-            len = min(slen(pattern), slen(gp->fullName));
-            if (sncaselesscmp(gp->fullName, pattern, len) == 0) {
-                break;
-            }
-            pattern = mprGetNextItem(testFilter, &next);
-        }
-        if (pattern == 0) {
-            return 0;
-        }
-    }
-    return 1;
-}
-
-
-/*
-    Return true if we are to run the test case
- */
-static bool filterTestCast(MprTestGroup *gp, MprTestCase *tc)
-{
-    MprTestService  *sp;
-    MprList         *testFilter;
-    char            *pattern, *fullName;
-    ssize           len;
-    int             next;
-
-    sp = gp->service;
-    testFilter = sp->testFilter;
-
-    if (testFilter == 0) {
-        return 1;
-    }
-
-    /*
-        See if this test has been filtered
-     */
-    if (mprGetListLength(testFilter) > 0) {
-        fullName = sfmt("%s.%s", gp->fullName, tc->name);
-        next = 0;
-        pattern = mprGetNextItem(testFilter, &next);
-        while (pattern) {
-            len = min(slen(pattern), slen(fullName));
-            if (sncaselesscmp(fullName, pattern, len) == 0) {
-                break;
-            }
-            pattern = mprGetNextItem(testFilter, &next);
-        }
-        if (pattern == 0) {
-            return 0;
-        }
-    }
-    return 1;
-}
-
-
-static void runTestProc(MprTestGroup *gp, MprTestCase *test)
-{
-    MprTestService      *sp;
-
-    if (test->proc == 0) {
-        return;
-    }
-    sp = gp->service;
-
-    mprResetTestGroup(gp);
-
-    if (sp->singleStep) {
-        mprPrintf("%12s Run test \"%s.%s\", press <ENTER>: ", "[Test]", gp->fullName, test->name);
-        getchar();
-
-    } else if (sp->verbose) {
-        mprPrintf("%12s Run test \"%s.%s\": ", "[Test]", gp->fullName, test->name);
-    }
-    if (gp->skip) {
-        if (sp->verbose) {
-            if (gp->skipWarned++ == 0) {
-                mprPrintf("%12s Skipping test: \"%s.%s\": \n", "[Skip]", gp->fullName, test->name);
-            }
-        }
-    } else {
-        (test->proc)(gp);
-        mprYield(0);
-
-        mprLock(sp->mutex);
-        if (gp->success) {
-            ++sp->totalTestCount;
-            if (sp->verbose) {
-                mprPrintf("PASSED\n");
-            }
-        } else {
-            mprEprintf("FAILED test \"%s.%s\"\nDetails: %s\n", gp->fullName, test->name, getErrorMessage(gp));
-        }
-    }
-    mprUnlock(sp->mutex);
-}
-
-
-static char *getErrorMessage(MprTestGroup *gp)
-{
-    MprTestFailure  *fp;
-    char            msg[ME_MAX_BUFFER], *errorMsg;
-    int             next;
-
-    next = 0;
-    errorMsg = sclone("");
-    fp = mprGetNextItem(gp->failures, &next);
-    while (fp) {
-        fmt(msg, sizeof(msg), "Failure in %s\nAssertion: \"%s\"\n", fp->loc, fp->message);
-        if ((errorMsg = sjoin(errorMsg, msg, NULL)) == NULL) {
-            break;
-        }
-        fp = mprGetNextItem(gp->failures, &next);
-    }
-    return errorMsg;
-}
-
-
-static int addFailure(MprTestGroup *gp, cchar *loc, cchar *message)
-{
-    MprTestFailure  *fp;
-
-    fp = createFailure(gp, loc, message);
-    if (fp == 0) {
-        assert(fp);
-        assert(!MPR_ERR_MEMORY);
-        return MPR_ERR_MEMORY;
-    }
-    mprAddItem(gp->failures, fp);
-    return 0;
-}
-
-
-static void manageTestFailure(MprTestFailure *fp, int flags)
-{
-    if (flags & MPR_MANAGE_MARK) {
-        mprMark(fp->loc);
-        mprMark(fp->message);
-    }
-}
-
-
-static MprTestFailure *createFailure(MprTestGroup *gp, cchar *loc, cchar *message)
-{
-    MprTestFailure  *fp;
-
-    if ((fp = mprAllocObj(MprTestFailure, manageTestFailure)) == 0) {
-        return 0;
-    }
-    fp->loc = sclone(loc);
-    fp->message = sclone(message);
-    return fp;
-}
-
-
-PUBLIC bool assertTrue(MprTestGroup *gp, cchar *loc, int isTrue, cchar *msg)
-{
-    if (! isTrue) {
-        gp->success = isTrue;
-    }
-    if (! isTrue) {
-        if (gp->service->debugOnFailures) {
-            mprBreakpoint();
-        }
-        addFailure(gp, loc, msg);
-        gp->failedCount++;
-        adjustFailedCount(1);
-    }
-    return isTrue;
-}
-
-
-PUBLIC bool mprWaitForTestToComplete(MprTestGroup *gp, MprTicks timeout)
-{
-    MprTicks    expires, remaining;
-    int         rc;
-
-    assert(gp->dispatcher);
-    assert(timeout >= 0);
-
-    if (mprGetDebugMode()) {
-        timeout *= 100;
-    }
-    expires = mprGetTicks() + timeout;
-    remaining = timeout;
-    do {
-        mprWaitForEvent(gp->dispatcher, remaining);
-        remaining = expires - mprGetTicks();
-    } while (!gp->testComplete && remaining > 0);
-    rc = gp->testComplete;
-    gp->testComplete = 0;
-    return rc;
-}
-
-
-PUBLIC void mprSignalTestComplete(MprTestGroup *gp)
-{
-    gp->testComplete = 1;
-    mprSignalDispatcher(gp->dispatcher);
-}
-
-
-static void adjustThreadCount(int adj)
-{
-    MprTestService  *sp;
-
-    sp = MPR->testService;
-    mprLock(sp->mutex);
-    sp->activeThreadCount += adj;
-    if (sp->activeThreadCount <= 0) {
-        mprShutdown(MPR_EXIT_NORMAL, 0, 0);
-    }
-    mprUnlock(sp->mutex);
-}
-
-
-static void adjustFailedCount(int adj)
-{
-    MprTestService  *sp;
-
-    sp = MPR->testService;
-    mprLock(sp->mutex);
-    sp->totalFailedCount += adj;
-    mprUnlock(sp->mutex);
-}
-
-
-static void logHandler(int flags, int level, cchar *msg)
-{
-    MprFile     *file;
-    char        *prefix;
-
-    file = MPR->logFile;
-    prefix = MPR->name;
-
-    while (*msg == '\n') {
-        mprFprintf(file, "\n");
-        msg++;
-    }
-    if (flags & MPR_LOG_MSG) {
-        mprFprintf(file, "%s: %d: %s\n", prefix, level, msg);
-    } else if (flags & MPR_ERROR_MSG) {
-        mprFprintf(file, "%s: Error: %s\n", prefix, msg);
-    } else if (flags & MPR_RAW_MSG) {
-        mprFprintf(file, "%s", msg);
-    }
-    if (flags & MPR_ERROR_MSG) {
-        mprBreakpoint();
-    }
-}
-
-
-static int setLogging(char *logSpec)
-{
-    MprFile     *file;
-    char        *levelSpec;
-    int         level;
-
-    level = 0;
-
-    if ((levelSpec = strchr(logSpec, ':')) != 0) {
-        *levelSpec++ = '\0';
-        level = atoi(levelSpec);
-    }
-
-    if (strcmp(logSpec, "stdout") == 0) {
-        file = MPR->stdOutput;
-
-    } else if (strcmp(logSpec, "stderr") == 0) {
-        file = MPR->stdError;
-
-    } else {
-        if ((file = mprOpenFile(logSpec, O_CREAT | O_WRONLY | O_TRUNC | O_TEXT, 0664)) == 0) {
-            mprEprintf("Cannot open log file %s\n", logSpec);
-            return MPR_ERR_CANT_OPEN;
-        }
-    }
-    mprSetLogLevel(level);
-    mprSetLogHandler(logHandler);
-    mprSetLogFile(file);
-    return 0;
-}
-
-#endif /* ME_MPR_TEST */
-
-/*
-    @copy   default
-
-    Copyright (c) Embedthis Software LLC, 2003-2014. All Rights Reserved.
-
-    This software is distributed under commercial and open source licenses.
-    You may use the Embedthis Open Source license or you may acquire a 
-    commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.md distributed with
-    this software for full details and other copyrights.
-
-    Local variables:
-    tab-width: 4
-    c-basic-offset: 4
-    End:
-    vim: sw=4 ts=4 expandtab
-
-    @end
- */
-
-/************************************************************************/
-/*
     Start of file "src/thread.c"
  */
 /************************************************************************/
@@ -25856,7 +24886,7 @@ PUBLIC int mprStartThread(MprThread *tp)
     taskHandle = taskSpawn(tp->name, pri, VX_FP_TASK, tp->stackSize, (FUNCPTR) threadProcWrapper, (int) tp, 
         0, 0, 0, 0, 0, 0, 0, 0, 0);
     if (taskHandle < 0) {
-        mprError("Cannot create thread %s", tp->name);
+        mprLog("error mpr thread", 0, "Cannot create thread %s", tp->name);
         unlock(tp);
         return MPR_ERR_CANT_INITIALIZE;
     }
@@ -26220,7 +25250,7 @@ PUBLIC void mprSetMinWorkers(int n)
     lock(ws);
     ws->minThreads = n; 
     if (n > 0) {
-        mprTrace(4, "Pre-start %d workers", ws->minThreads);
+        mprLog("info mpr thread", 1, "Pre-start %d workers", ws->minThreads);
     }
     while (ws->numThreads < ws->minThreads) {
         worker = createWorker(ws, ws->stackSize);
@@ -26432,7 +25462,7 @@ static void pruneWorkers(MprWorkerService *ws, MprEvent *timer)
         }
     }
     if (pruned) {
-        mprLog(4, "Pruned %d workers, pool has %d workers. Limits %d-%d.", 
+        mprLog("info mpr thread", 4, "Pruned %d workers, pool has %d workers. Limits %d-%d.", 
             pruned, ws->numThreads - pruned, ws->minThreads, ws->maxThreads);
     }
     if (timer && (ws->numThreads < ws->minThreads)) {
@@ -26480,7 +25510,7 @@ static MprWorker *createWorker(MprWorkerService *ws, ssize stackSize)
     worker->idleCond = mprCreateCond();
 
     fmt(name, sizeof(name), "worker.%u", getNextThreadNum(ws));
-    mprLog(4, "Create %s, pool has %d workers. Limits %d-%d.", name, ws->numThreads + 1, ws->minThreads, ws->maxThreads);
+    mprLog("info mpr thread", 4, "Create %s, pool has %d workers. Limits %d-%d.", name, ws->numThreads + 1, ws->minThreads, ws->maxThreads);
     worker->thread = mprCreateThread(name, (MprThreadProc) workerMain, worker, stackSize);
     return worker;
 }
@@ -26542,7 +25572,7 @@ static void workerMain(MprWorker *worker, MprThread *tp)
     worker->thread = 0;
     ws->numThreads--;
     unlock(ws);
-    mprLog(6, "Worker exiting. There are %d workers remaining in the pool.", ws->numThreads);
+    mprLog("info mpr thread", 5, "Worker exiting. There are %d workers remaining in the pool.", ws->numThreads);
 }
 
 
@@ -26684,7 +25714,7 @@ PUBLIC ssize mprGetBusyWorkerCount()
 #define MAX_YEAR    2037
 
 /*
-    MacOSX can't handle MIN_TIME == -0x7FFFFFFF
+    MacOSX cannot handle MIN_TIME == -0x7FFFFFFF
  */
 #define MAX_TIME    0x7FFFFFFF
 #define MIN_TIME    -0xFFFFFFF
@@ -28589,7 +27619,7 @@ PUBLIC int mprLoadNativeModule(MprModule *mp)
 #endif
     if (!mp->entry || mprFindFxSym(sysSymTbl, entry, (char**) (void*) &fn) == -1) {
         if ((at = mprSearchForModule(mp->path)) == 0) {
-            mprError("Cannot find module \"%s\", cwd: \"%s\", search path \"%s\"", mp->path, mprGetCurrentPath(),
+            mprLog("error mpr", 0, "Cannot find module \"%s\", cwd: \"%s\", search path \"%s\"", mp->path, mprGetCurrentPath(),
                 mprGetModuleSearchPath());
             return MPR_ERR_CANT_ACCESS;
         }
@@ -28597,9 +27627,9 @@ PUBLIC int mprLoadNativeModule(MprModule *mp)
         mprGetPathInfo(mp->path, &info);
         mp->modified = info.mtime;
 
-        mprLog(2, "Loading native module %s", mp->path);
+        mprLog("info mpr", 4, "Loading native module %s", mp->path);
         if ((fd = open(mp->path, O_RDONLY, 0664)) < 0) {
-            mprError("Cannot open module \"%s\"", mp->path);
+            mprLog("error mpr", 0, "Cannot open module \"%s\"", mp->path);
             return MPR_ERR_CANT_OPEN;
         }
         handle = loadModule(fd, LOAD_GLOBAL_SYMBOLS);
@@ -28608,22 +27638,22 @@ PUBLIC int mprLoadNativeModule(MprModule *mp)
             if (handle) {
                 unldByModuleId(handle, 0);
             }
-            mprError("Cannot load module %s", mp->path);
+            mprLog("error mpr", 0, "Cannot load module %s", mp->path);
             return MPR_ERR_CANT_READ;
         }
         close(fd);
         mp->handle = handle;
 
     } else if (mp->entry) {
-        mprLog(2, "Activating module %s", mp->name);
+        mprLog("info mpr", 2, "Activating module %s", mp->name);
     }
     if (mp->entry) {
         if (mprFindVxSym(sysSymTbl, entry, (char**) (void*) &fn) == -1) {
-            mprError("Cannot find symbol %s when loading %s", entry, mp->path);
+            mprLog("error mpr", 0, "Cannot find symbol %s when loading %s", entry, mp->path);
             return MPR_ERR_CANT_READ;
         }
         if ((fn)(mp->moduleData, mp) < 0) {
-            mprError("Initialization for %s failed.", mp->path);
+            mprLog("error mpr", 0, "Initialization for %s failed.", mp->path);
             return MPR_ERR_CANT_INITIALIZE;
         }
     }
@@ -28665,7 +27695,7 @@ PUBLIC void mprSleep(MprTicks timeout)
 }
 
 
-PUBLIC void mprWriteToOsLog(cchar *message, int flags, int level)
+PUBLIC void mprWriteToOsLog(cchar *message, int level)
 {
 }
 
@@ -28824,9 +27854,9 @@ static MprWaitHandler *initWaitHandler(MprWaitHandler *wp, int fd, int mask, Mpr
         for (ITERATE_ITEMS(ws->handlers, op, index)) {
             assert(op->fd >= 0);
             if (op->fd == fd) {
-                mprError("Duplicate fd in wait handlers");
+                mprLog("error mpr event", 0, "Duplicate fd in wait handlers");
             } else if (op->fd < 0) {
-                mprError("Invalid fd in wait handlers, probably forgot to call mprRemoveWaitHandler");
+                mprLog("error mpr event", 0, "Invalid fd in wait handlers, probably forgot to call mprRemoveWaitHandler");
             }
         }
     }
@@ -28841,13 +27871,13 @@ static MprWaitHandler *initWaitHandler(MprWaitHandler *wp, int fd, int mask, Mpr
     wp->flags           = flags;
 
     if (mprGetListLength(ws->handlers) >= FD_SETSIZE) {
-        mprTrace(6, "io: Too many io handlers: %d", FD_SETSIZE);
+        mprLog("error mpr event", 0, "Too many io handlers: %d", FD_SETSIZE);
         return 0;
     }
 #if ME_UNIX_LIKE || VXWORKS
 #if ME_EVENT_NOTIFIER == MPR_EVENT_SELECT
     if (fd >= FD_SETSIZE) {
-        mprError("File descriptor %d exceeds max io of %d", fd, FD_SETSIZE);
+        mprLog("error mpr event", 0, "File descriptor %d exceeds max io of %d", fd, FD_SETSIZE);
     }
 #endif
 #endif
@@ -30266,13 +29296,13 @@ PUBLIC int mprLoadNativeModule(MprModule *mp)
     }
     if (!handle || !mp->entry || !GetProcAddress(handle, mp->entry)) {
 #if ME_STATIC
-        mprError("Cannot load module %s, product built static", mp->name);
+        mprLog("error mpr", 0, "Cannot load module %s, product built static", mp->name);
         return MPR_ERR_BAD_STATE;
 #else
         MprPath info;
         char    *at, *baseName;
         if ((at = mprSearchForModule(mp->path)) == 0) {
-            mprError("Cannot find module \"%s\", cwd: \"%s\", search path \"%s\"", mp->path, mprGetCurrentPath(),
+            mprLog("error mpr", 0, "Cannot find module \"%s\", cwd=\"%s\", search=\"%s\"", mp->path, mprGetCurrentPath(),
                 mprGetModuleSearchPath());
             return MPR_ERR_CANT_ACCESS;
         }
@@ -30280,25 +29310,25 @@ PUBLIC int mprLoadNativeModule(MprModule *mp)
         mprGetPathInfo(mp->path, &info);
         mp->modified = info.mtime;
         baseName = mprGetPathBase(mp->path);
-        mprLog(2, "Loading native module %s", baseName);
+        mprLog("info mpr", 4, "Loading native module %s", baseName);
         if ((handle = LoadLibrary(wide(mp->path))) == 0) {
-            mprError("Cannot load module %s\nReason: \"%d\"\n", mp->path, mprGetOsError());
+            mprLog("error mpr", 0, "Cannot load module %s, errno=\"%d\"", mp->path, mprGetOsError());
             return MPR_ERR_CANT_READ;
         } 
         mp->handle = handle;
 #endif /* !ME_STATIC */
 
     } else if (mp->entry) {
-        mprLog(2, "Activating native module %s", mp->name);
+        mprLog("info mpr", 4, "Activating native module %s", mp->name);
     }
     if (mp->entry) {
         if ((fn = (MprModuleEntry) GetProcAddress((HINSTANCE) handle, mp->entry)) == 0) {
-            mprError("Cannot load module %s\nReason: can't find function \"%s\"\n", mp->name, mp->entry);
+            mprLog("error mpr", 0, "Cannot load module %s, cannot find function \"%s\"", mp->name, mp->entry);
             FreeLibrary((HINSTANCE) handle);
             return MPR_ERR_CANT_ACCESS;
         }
         if ((fn)(mp->moduleData, mp) < 0) {
-            mprError("Initialization for module %s failed", mp->name);
+            mprLog("error mpr", 0, "Initialization for module %s failed", mp->name);
             FreeLibrary((HINSTANCE) handle);
             return MPR_ERR_CANT_INITIALIZE;
         }
@@ -30355,7 +29385,7 @@ PUBLIC void mprSleep(MprTicks timeout)
 }
 
 
-PUBLIC void mprWriteToOsLog(cchar *message, int flags, int level)
+PUBLIC void mprWriteToOsLog(cchar *message, int level)
 {
     HKEY        hkey;
     void        *event;
@@ -30386,8 +29416,7 @@ PUBLIC void mprWriteToOsLog(cchar *message, int flags, int level)
         if (RegCreateKeyEx(HKEY_LOCAL_MACHINE, wide(logName), 0, NULL, 0, KEY_ALL_ACCESS, NULL, 
                 &hkey, &exists) == ERROR_SUCCESS) {
             value = "%SystemRoot%\\System32\\netmsg.dll";
-            if (RegSetValueEx(hkey, UT("EventMessageFile"), 0, REG_EXPAND_SZ, 
-                    (uchar*) value, (int) slen(value) + 1) != ERROR_SUCCESS) {
+            if (RegSetValueEx(hkey, UT("EventMessageFile"), 0, REG_EXPAND_SZ, (uchar*) value, (int) slen(value) + 1) != ERROR_SUCCESS) {
                 RegCloseKey(hkey);
                 return;
             }

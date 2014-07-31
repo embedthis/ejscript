@@ -430,7 +430,7 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
     cache->usedMem += (len - oldLen);
 
     if (cache->timer == 0) {
-        mprTrace(5, "Start LocalCache pruner with resolution %d", cache->resolution);
+        mprDebug("ejs cache", 5, "Start LocalCache pruner with resolution %d", cache->resolution);
         /* 
             Use the MPR dispatcher incase this VM is destroyed 
          */
@@ -471,11 +471,11 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
         for (kp = 0; (kp = mprGetNextKey(cache->store, kp)) != 0; ) {
             item = (CacheItem*) kp->data;
 #if KEEP
-            mprTrace(6, "LocalCache: \"%@\" lifespan %d, expires in %d secs", item->key, 
+            mprDebug("ejs cache", 6, "LocalCache: \"%@\" lifespan %d, expires in %d secs", item->key, 
                     item->lifespan / 1000, (item->expires - when) / 1000);
 #endif
             if (item->expires && item->expires <= when) {
-                mprTrace(5, "LocalCache prune expired key %s", kp->key);
+                mprDebug("ejs cache", 5, "LocalCache prune expired key %s", kp->key);
                 removeItem(cache, item);
             }
         }
@@ -491,7 +491,7 @@ static void localPruner(EjsLocalCache *cache, MprEvent *event)
                     for (kp = 0; (kp = mprGetNextKey(cache->store, kp)) != 0; ) {
                         item = (CacheItem*) kp->data;
                         if (item->expires && item->expires <= when) {
-                            mprTrace(5, "LocalCache too big execess keys %Ld, mem %Ld, prune key %s", 
+                            mprDebug("ejs cache", 5, "LocalCache too big execess keys %Ld, mem %Ld, prune key %s", 
                                     excessKeys, (cache->maxMem - cache->usedMem), kp->key);
                             removeItem(cache, item);
                             excessKeys--;

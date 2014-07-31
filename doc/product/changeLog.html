@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Embedthis Ejscript 2.4.0 Documentation</title>
+    <title>Embedthis Ejscript 2.4.1 Documentation</title>
     <meta name="keywords" content="Ejscript, JavaScript, ECMAScript, Server-Side JavaScript, Dynamic languages, 
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
@@ -34,11 +34,9 @@
         <div class="contentRight">
             <h1>Quick Nav</h1>
             <ul>
-                <li><a href="#2.4.0">Release 2.4.0</a></li>
-                <li><a href="#r232">Release 2.3.2</a></li>
-                <li><a href="#r210">Release 2.1.0</a></li>
-                <li><a href="#r200">Release 2.0.0</a></li>
-                <li><a href="#r113">Release 1.1.4</a></li>
+                <li><a href="#2.4.1">Release 2.4.1</a></li>
+                <li><a href="#2.3.2">Release 2.3.2</a></li>
+                <li><a href="#1.1.3">Release 1.1.4</a></li>
             </ul>
             <h1>See Also</h1>
             <ul>
@@ -55,21 +53,26 @@
             <p>Please do not mine this list and create security advisories.
             Please see the <a href="http://github.com/embedthis/ejs/issues">Ejscript Issue Database</a> 
             for the official product issue list and for comprehensive CVE dispositions.</p>
-
+            <a id="2.4.1"></a>
+            <h2 class="section">Changes in 2.4.1</h2>
+            <h3>Fixes</h3>
+            <ul>
+                <li>Fix Path.files with dot-dot in the argument.
+                    <a href="https://github.com/embedthis/ejs/issues/66">[issue 66].</a></li>
+            </ul>
             <a id="2.4.0"></a>
             <h2 class="section">Changes in 2.4.0</h2>
-            <h3>Minor Features</h3>
+            <h3>Fixes</h3>
             <ul>
-                <li>.</li>
+                <li>Fix parsing bad package.json files with missing commas
+                    <a href="https://github.com/embedthis/ejs/issues/63">[issue 63].</a></li>
             </ul>
-
             <a id="2.3.5"></a>
             <h2 class="section">Changes in 2.3.5</h2>
             <h3>Minor Features</h3>
             <ul>
                 <li>Convert to use MakeMe instead of Bit to build.</li>
             </ul>
-
             <a id="r234"></a>
             <h2 class="section">Changes in 2.3.4</h2>
             <h3>Minor Features</h3>
@@ -127,7 +130,7 @@
                 <li>Iterating over arrays and object where elements are deleted in the loop body.
                     <a href="https://github.com/embedthis/ejs/issues/53">[issue 53].</a></li>
             </ul>
-            <a id="r232"></a>
+            <a id="2.3.2"></a>
             <h2 class="section">Changes in 2.3.2</h2>
             <h3>Minor Features</h3>
             <ul>
@@ -284,7 +287,7 @@
                 <li>Idle threads consuming CPU after long delay</li>
                 <li>Prune workers not terminating idle threads</li>
             </ul>
-            <a id="r113"></a>
+            <a id="1.1.3"></a>
             <h2 class="section">Changes in 1.1.3</h2>
             <h3>Key Fixes</h3>
             <ul>

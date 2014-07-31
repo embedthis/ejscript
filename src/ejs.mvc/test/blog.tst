@@ -7,8 +7,8 @@ require ejs.unix
 if (Config.SQLITE) {
 
     const HTTP = App.config.uris.http
-    let mvc = Cmd.locate("mvc").portable
-    let ejs = Cmd.locate("ejs").portable
+    let mvc = Cmd.locate(App.exeDir.join('mvc'))
+    let ejs = Cmd.locate(App.exeDir.join('ejs'))
 
     //  Prepare
     rmdir("junk")

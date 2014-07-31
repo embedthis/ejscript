@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Embedthis Ejscript 2.4.0 Documentation</title>
+    <title>Embedthis Ejscript 2.4.1 Documentation</title>
     <meta name="keywords" content="Ejscript, JavaScript, ECMAScript, Server-Side JavaScript, Dynamic languages, 
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
@@ -101,7 +101,7 @@ usage: make [clean, compile, install, run, uninstall]
 The default configuration can be modified by setting make variables
 Set to 0 to disable and 1 to enable:
 variables. Set to 0 to disable and 1 to enable:
-  PROFILE            # Select default or static for static linking
+  PROFILE            # Select default
   ME_MPR_LOGGING     # Enable application logging
   ME_MPR_TRACING     # Enable debug tracing
   ME_COM_EST         # Enable the EST SSL stack
@@ -188,12 +188,6 @@ make CC=/opt/bin/ccarm.exe LD=/opt/bin/ccarm.exe ARCH=arm PROFILE=release
             <p>If OpenSSL is required to provide SSL support, you must specify the path to the OpenSSL source
               directory. For example:</p>
             <pre>make ME_COM_OPENSSL=1 ME_COM_OPENSSL_PATH=/path/to/openssl compile</pre>
-            <a name="static"></a>
-            <h2>Static Building</h2>
-            <p>If you require a static build without the ability to dynamically load modules, use the <em>static</em>
-                makefile profile. For example:</p>
-                <pre>make PROFILE=static</pre>
-            <p>Note that static builds cannot dynamically load native modules and may have reduced functionality.</p>
             <a name="vxworks"></a>
             <h2>Building for VxWorks</h2>
             <p>Before building for VxWorks, you must define the WIND_* environment variables via the 

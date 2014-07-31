@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 
     mpr = mprCreate(argc, argv, NULL);
     if (mprStart(mpr) < 0) {
-        mprError(mpr, "Cannot start mpr services");
+        mprError("genbyte", "Cannot start mpr services");
         return MPR_ERR;
     }
     dir = (argc == 2) ? argv[1] : ".";

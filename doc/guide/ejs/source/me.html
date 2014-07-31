@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Embedthis Ejscript 2.4.0 Documentation</title>
+    <title>Embedthis Ejscript 2.4.1 Documentation</title>
     <meta name="keywords" content="Ejscript, JavaScript, ECMAScript, Server-Side JavaScript, Dynamic languages, 
         Embedded, AJAX, language"/>
 	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
@@ -70,11 +70,13 @@
             See the <a href="http://embedthis.com/products/me/doc/">MakeMe Documentation</a> for information regarding installing MakeMe.</p>
             
             <a id="configuring"></a>
-            <h3 class="section">Configure Appweb</h3>
+            <h3 class="section">Configure Ejscript</h3>
             <p>Before building with MakeMe, you need to do a one-time <em>configuration</em>.
-            This customizes Appweb to select features, options, third-party packages available on your system. 
-            The <em>configure</em> script simply invokes <em>me configure</em> and passes all command 
-            line options to MakeMe.</p>
+            This customizes Ejscript to select features, options, third-party packages available on your system. 
+            The <em>configure</em> shell script simply invokes <em>me configure</em> and passes all command
+            line options to <em>me</em>. On windows, you should use <em>me configure</em> instead
+            unless you have cygwin installed.</p>
+            <pre>me configure</pre>
            
             <h3>Running Configure</h3>
             <p>You may run the configure script with no options to accept the defaults &mdash; this is a good
@@ -98,7 +100,7 @@
             is the build profile name, typically "debug" or "release". For example: linux-x86-debug.</p>
             <p>The generated MakeMe files are readable Javascript files that contain the settings to control the build
             when MakeMe is run. When compiling, source code may include the <em>me.h</em> header to read the 
-            Appweb configuration.</p>
+            Ejscript configuration.</p>
             <a id="options"></a>
             <h2 class="section">Configure Options</h2>
             <p>The tables below describe the key configuration options.
@@ -211,8 +213,8 @@
 configure --with openssl=/usr/src/openssl
 </pre>
             <h3>Packages</h3>
-            <p>The following table describes the packages that can extend the Appweb configuration. 
-            The use of the Integrated field states whether the package is shipped internally with the Appweb source
+            <p>The following table describes the packages that can extend the Ejscript configuration. 
+            The use of the Integrated field states whether the package is shipped internally with the Ejscript source
             code, or whether it is an external third party package.</p>
             <table title="env">
                 <thead>
@@ -251,8 +253,8 @@ configure --with openssl=/usr/src/openssl
                 </tbody>
             </table>
             <p>The following table describes the tool packages that can be used when building, running and 
-            managing Appweb. 
-            The use of the Internal/External field documents whether the package is shipped internally with the Appweb source
+            managing Ejscript. 
+            The use of the Internal/External field documents whether the package is shipped internally with the Ejscript source
             code, or whether it is an external third party package.</p>
             <table title="env">
                 <thead>
@@ -413,8 +415,8 @@ Extension Packages (--with PACK):
 </pre>
             <a id="packages"></a>
             <h3>Configuring External Packages</h3>
-            <p>The MakeMe configuration process supports the resolution of external packages that extend and enhance Appweb, 
-                such as OpenSSL and PHP. By default, Appweb can locate these packages if the source
+            <p>The MakeMe configuration process supports the resolution of external packages that extend and enhance Ejscript, 
+                such as OpenSSL and PHP. By default, Ejscript can locate these packages if the source
                 distributions are installed in standard locations. Otherwise, the packages can be identified by using
                 <em>configure --with PACKAGE=PATH</em> switch. This specifies the path to the package source directory.</p>
             <p>For example, to build with MatrixSSL, follow these steps:</p>
@@ -422,14 +424,14 @@ Extension Packages (--with PACK):
                 <li>Download MatrixSSL from
                 <a href="http://www.peersec.com">http://www.peersec.com</a>. 
                 <li>Build MatrixSSL (See <a href="ssl.html">Building SSL</a> for additional instructions)</li>
-                <li>Then, from the Appweb source directory run the Appweb configure:
+                <li>Then, from the Ejscript source directory run the Ejscript configure:
                 <pre>./configure --with matrixssl=/path/to/matrixssl
 </pre></li>
             </ol>
             <p>During configuration, the required Matrixssl libraries and headers will be copied into
-            the Appweb source tree. </p>
+            the Ejscript source tree. </p>
             <a id="building"></a>
-            <h2 class="section">Building Appweb with MakeMe</h2>
+            <h2 class="section">Building Ejscript with MakeMe</h2>
             <p>After configuring, you may proceed to build the source code by typing:</p>
             <pre>me</pre>
             <p>This will fully build the software. If cross compiling and depending on your configuration, 
@@ -482,7 +484,7 @@ sudo me uninstall
             tool chain, you can supply the tool chain details via the environment variables: CC, CFLAGS, DFLAGS, IFLAGS
             LD and LDFLAGS. These will be used to define and configure the cross-compilation tool chain. 
             <p>For example, here is a cross-compilation <b>configure</b> command line to create a debug build 
-            of Appweb for Linux on ARM7:</p>
+            of Ejscript for Linux on ARM7:</p>
             <pre>
 CC=/opt/bin/cc.exe \
 LD=/opt/bin/cc.exe \
