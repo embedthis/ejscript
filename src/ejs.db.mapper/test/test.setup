@@ -1,6 +1,6 @@
 require ejs.unix
 
 if (test.phase == "init") {
-    let sqlite = Cmd.locate(App.exeDir.join('sqlite'))
+    let sqlite = Cmd.locate(App.exeDir.join('sqlite')).portable
     Cmd.sh(sqlite.portable + " test.sdb < test.sql")
 }
