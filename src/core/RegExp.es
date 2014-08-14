@@ -55,6 +55,7 @@ module ejs {
             Create a regular expression object that can be used to process strings.
             @param pattern The pattern to associated with this regular expression.
             @param flags "g" for global match, "i" to ignore case, "m" match over multiple lines, "y" for sticky match.
+                "s" so that "." will match all characters.
          */
         native function RegExp(pattern: String, flags: String? = null)
 

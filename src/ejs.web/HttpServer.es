@@ -401,7 +401,6 @@ server.listen("127.0.0.1:7777")
             @param app Web application function 
          */
         function process(app: Function, request: Request, finalize: Boolean = true): Void {
-// let mark = new Date
             request.config = config
             try {
                 if (request.route && request.route.middleware) {
@@ -442,7 +441,6 @@ server.listen("127.0.0.1:7777")
                 App.log.debug(1, e)
                 request.writeError(Http.ServerError, e)
             }
-// App.log.debug(2, "LEAVE PROCESSING  " + mark.elapsed + " msec for " + request.uri)
         }
 
         private function processBody(request: Request, body: Object): Void {

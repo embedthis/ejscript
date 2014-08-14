@@ -213,6 +213,7 @@ module ejs {
     /** 
         Evaluate a script. Not present in ejsvm.
         @param script Script string to evaluate
+        @param cache Path to cache file to save compiled script
         @returns the the script expression value.
      */
     native function eval(script: String, cache: String? = null): Object

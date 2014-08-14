@@ -261,6 +261,7 @@ module ejs {
          */
         native function remove(start: Number, end: Number = -1): String
 
+        //  TODO - need options to do a global replace when pattern is a string
         /**
             Search and replace. Search for the given pattern which can be either a string or a regular expression 
             and replace it with the replace text. If the pattern is a string, only the first occurrence is replaced.
