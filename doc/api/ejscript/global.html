@@ -871,7 +871,7 @@ a X-HTTP-METHOD-OVERRIDE Http header.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Create a regular expression object that can be used to process strings. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>pattern: <a href='String.html'>String</a> </td><td>The pattern to associated with this regular expression.</td></tr><tr class='param'><td class='param'>flags: <a href='String.html'>String</a> </td><td>"g" for global match, "i" to ignore case, "m" match over multiple lines, "y" for sticky match. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>pattern: <a href='String.html'>String</a> </td><td>The pattern to associated with this regular expression.</td></tr><tr class='param'><td class='param'>flags: <a href='String.html'>String</a> </td><td>"g" for global match, "i" to ignore case, "m" match over multiple lines, "y" for sticky match. "s" so that "." will match all characters. [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -1630,7 +1630,7 @@ The encode call replaces all characters except: alphabetic, decimal digits, "-",
 <dl><dt>Description</dt></dd><dd>Evaluate a script. Not present in ejsvm.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>script: <a href='String.html'>String</a> </td><td>Script string to evaluate.</td></tr><tr class='param'><td class='param'>cache: <a href='String.html'>String</a> </td><td>null [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>script: <a href='String.html'>String</a> </td><td>Script string to evaluate.</td></tr><tr class='param'><td class='param'>cache: <a href='String.html'>String</a> </td><td>Path to cache file to save compiled script. [default: null]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>The the script expression value.</dd></dl>
 </div>
@@ -2111,7 +2111,7 @@ until all properties are rendered.  NOTE: the maxDepth, all and base properties 
 </dd>
 </dl><dl><dt>Specified</dt>
 <dd>ejs
-`</dd></dl>
+P</dd></dl>
 </div>
 </div>
 <hr />
