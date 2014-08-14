@@ -237,10 +237,21 @@ module ejs.template  {
                         }
                         pos++
                         c = script[pos++]
-                        while (c.isAlpha || c.isDigit || c == '[' || c == ']' || c == '.' || c == '$' || c == '_' || 
-                                c == "'") {
-                            token.write(c)
+                        if (c == '{') {
                             c = script[pos++]
+                            while (c && c != '}') {
+                                token.write(c)
+                                c = script[pos++]
+                            }
+                            if (c == '}') {
+                                pos++;
+                            }
+                        } else {
+                            while (c.isAlpha || c.isDigit || c == '[' || c == ']' || c == '.' || c == '$' || c == '_' || 
+                                    c == "'") {
+                                token.write(c)
+                                c = script[pos++]
+                            }
                         }
                         pos--
                         return Token.Var
