@@ -189,7 +189,6 @@ Token getNextJsonToken(MprBuf *buf, wchar **token, JsonState *js)
     } else if (*cp == '}' || *cp == ']') {
         tid = *cp == '}' ? TOK_RBRACE: TOK_RBRACKET;
         while (*++cp && isspace((uchar) *cp)) ;
-#if NEW || 1
         /*
             Detect missing comma after closing brace/bracket
          */
@@ -197,14 +196,13 @@ Token getNextJsonToken(MprBuf *buf, wchar **token, JsonState *js)
             js->error = cp;
             return TOK_ERR;
         }
-#endif
         if (*cp == ',' || *cp == ':') {
             cp++;
         }
         next = cp;
 
     } else {
-        if (*cp == '"' || *cp == '\'') {
+        if (*cp == '"' || *cp == '\'' || *cp == '`') {
             tid = TOK_QID;
             quote = *cp++;
             for (start = cp; cp < end; cp++) {
