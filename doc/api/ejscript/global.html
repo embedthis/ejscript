@@ -114,7 +114,7 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Error'><b>Error</b></a>(message: <a href='String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Construct a new Error object.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#ContentType'><b>ContentType</b></a>(app, options)</tr><tr class='apiBrief'><td>&nbsp;</td><td>ContentType wrapper middleware.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Controller'><b>Controller</b></a>(req: <a href='ejs.web-Request.html'>Request</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create and initialize a controller.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#DirApp'><b>DirApp</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Directory content handler.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#DirApp'><b>DirApp</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Directory redirection handler.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#ErrorEvent'><b>ErrorEvent</b></a>()</tr>   <tr class='apiDef'><td class='apiType'> </td><td><a href='#Event'><b>Event</b></a>()</tr>   <tr class='apiDef'><td class='apiType'> </td><td><a href='#File'><b>File</b></a>(path: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a File object and open the requested path.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#FileSystem'><b>FileSystem</b></a>(path: <a href='Path.html'>Path</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new FileSystem object for the file system that contains the given path.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#Frame'><b>Frame</b></a>()</tr>   <tr class='apiDef'><td class='apiType'> </td><td><a href='#Function'><b>Function</b></a>(args: <a href='Array.html'>Array</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a function from the supplied formal parameter names and function body expression.</td></tr>
@@ -541,7 +541,7 @@ mime type from the Request.pathInfo extension.</dd></dl>
 <div class='apiSig'>  ejs.web  DirApp(request: <a href='ejs.web-Request.html'>Request</a>): <a href='Object.html'>Object</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Directory content handler. This redirects requests for directories and serves directory index files.
+<dl><dt>Description</dt></dd><dd>Directory redirection handler. This redirects requests for directories and serves directory index files.
 If the request pathInfo ends with "/", the request is transparently redirected to an index file if one is present.
 The set of index files is defined by HttpServer.indicies. If the request is a directory but does not end in "/",
 the client is redirected to a URL equal to the pathInfo with a "/" appended.</dd></dl>
@@ -553,7 +553,8 @@ the client is redirected to a URL equal to the pathInfo with a "/" appended.</dd
 <dl><dt>Specified</dt>
 <dd>ejscript-2.4</dd></dl>
 <dl><dt>Stability</dt>
-<dd>Prototype.</dd></dl>
+<dd>Prototype
+8.</dd></dl>
 </div>
 </div>
 <hr />

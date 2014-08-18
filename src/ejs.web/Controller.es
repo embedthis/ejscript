@@ -297,7 +297,7 @@ module ejs.web {
                         response = "action"::missing()
                     }
                 } else {
-                    App.log.debug(4, "Run action " + actionName)
+                    App.log.debug(5, "Run action " + actionName)
                     response = (ns)::[actionName]()
                 }
                 if (response && !response.body) {
@@ -678,7 +678,7 @@ module ejs.web {
             @option layout Optional layout template. Defaults to config.dirs.layouts/default.ejs.
          */
         function writeTemplate(path: Path, options: Object = {}): Void {
-            log.debug(4, "writeTemplate: \"" + path + "\"")
+            log.debug(5, "writeTemplate: \"" + path + "\"")
             let saveFilename = request.filename
             request.filename = path
             request.setHeader("Content-Type", "text/html")
@@ -697,7 +697,7 @@ module ejs.web {
             @option layout Path layout template. Defaults to config.dirs.layouts/default.ejs.
          */
         function writeTemplateLiteral(page: String, options: Object = {}): Void {
-            log.debug(4, "writeTemplateLiteral")
+            log.debug(5, "writeTemplateLiteral")
             request.setHeader("Content-Type", "text/html")
             if (options.layout === undefined) {
                 options.layout = config.dirs.layouts.join(config.web.views.layout)

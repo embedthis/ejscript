@@ -75,7 +75,7 @@ module ejs.web {
           */
         public static function load(request: Request?, dir: Path = ".", config = App.config): Mvc {
             if ((mvc = Mvc.apps[dir]) == null) {
-                App.log.debug(2, "Load MVC application from \"" + dir + "\"")
+                App.log.debug(5, "Load MVC application from \"" + dir + "\"")
                 mvc = Mvc.apps[dir] = new Mvc(dir, config)
                 let appmod = config.dirs.cache.join(config.mvc.appmod)
 
@@ -112,7 +112,7 @@ module ejs.web {
             } else {
                 let ext = config.extensions
                 let dir = request.dir
-                request.log.debug(4, "MVC init at \"" + dir + "\"")
+                request.log.debug(5, "MVC init at \"" + dir + "\"")
 
                 /* Load App. Touch ejsrc triggers a complete reload */
                 let files, deps
@@ -167,11 +167,11 @@ module ejs.web {
                 request.log.debug(4, "Mvc.loadComponent: component already loaded: " + mod)
             } else {
                 try {
-                    request.log.debug(4, "Mvc.loadComponent: load component : " + mod)
+                    request.log.debug(5, "Mvc.loadComponent: load component : " + mod)
                     global.load(mod)
                     loaded[mod] = new Date
                 } catch (e) {
-                    request.log.debug(4, "Mvc.loadComponent: Load failed, rebuild component: " + mod)
+                    request.log.debug(5, "Mvc.loadComponent: Load failed, rebuild component: " + mod)
                     rebuildComponent(request, mod, files)
                 }
             }
@@ -214,7 +214,7 @@ module ejs.web {
                 }
                 code += path.readString()
             }
-            request.log.debug(4, "Rebuild component: " + mod + " files: " + files)
+            request.log.debug(5, "Rebuild component: " + mod + " files: " + files)
             eval(code, mod)
         }
 

@@ -20,9 +20,10 @@ module ejs.web {
         let filename = request.filename
         let status = Http.Ok, body
         let hdr
-
-        let headers = {
-            "Content-Type": Uri(request.uri).mimeType,
+        let headers = {}
+        let type = Uri(request.uri).mimeType
+        if (type) {
+            headers['Content-Type'] = type
         }
         if (request.method != "PUT") {
             if ((encoding = request.header("Accept-Encoding")) && encoding.contains("gzip")) {
@@ -45,7 +46,6 @@ module ejs.web {
             headers["ETag"] = etag
             headers["Last-Modified"] = filename.modified.toUTCString()
         }
-
         /*
             If a specified tag matches, then return the full resource
          */
@@ -71,10 +71,6 @@ module ejs.web {
                     match = false
                 }
             }
-            if (!match) {
-                status = Http.PrecondFailed
-                /* Keep going to allow If-Modified-Since to be analysed */
-            }
         }
 
         /*
@@ -88,7 +84,9 @@ module ejs.web {
             }
         }
         if (when = request.header("If-Unmodified-Since")) {
-            if (!filename.exists || Date.parse(when) < filename.modified) {
+            if (!filename.exists) {
+                status = Http.NotFound
+            } else if (Date.parse(when) < filename.modified) {
                 status = Http.PrecondFailed
             }
         }

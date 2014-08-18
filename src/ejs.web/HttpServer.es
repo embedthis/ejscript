@@ -331,7 +331,7 @@ server.listen("127.0.0.1:7777")
                 }
             }
             activeWorkers.push(w)
-            App.log.debug(4, "HttpServer.getWorker idle: " + idleWorkers.length + " active:" + activeWorkers.length)
+            App.log.debug(5, "HttpServer.getWorker idle: " + idleWorkers.length + " active:" + activeWorkers.length)
             return w
         }
 
@@ -527,7 +527,7 @@ server.listen("127.0.0.1:7777")
             if (config.cache.workers.enable) {
                 idleWorkers.push(w)
             }
-            App.log.debug(4, "HttpServer.releaseWorker idle: " + idleWorkers.length + " active:" + activeWorkers.length)
+            App.log.debug(5, "HttpServer.releaseWorker idle: " + idleWorkers.length + " active:" + activeWorkers.length)
         }
 
         /** 
@@ -577,7 +577,7 @@ server.listen("127.0.0.1:7777")
                     }
                     request.on("close", function() {
                         releaseWorker(w) 
-                        App.log.debug(3, "Elapsed " + request.mark.elapsed + " msec for " + request.uri)
+                        App.log.debug(5, "Elapsed " + request.mark.elapsed + " msec for " + request.uri)
                     })
                     passRequest(request, w)
                     /* Must not touch request from here on - the worker owns it now */
@@ -585,7 +585,7 @@ server.listen("127.0.0.1:7777")
                     //  TODO - rename response => responder
                     let mark = new Date
                     process(route.response, request)
-                    App.log.debug(3, "Elapsed " + mark.elapsed + " msec for " + request.uri)
+                    App.log.debug(5, "Elapsed " + mark.elapsed + " msec for " + request.uri)
                 }
             } catch (e) {
                 let status = request.status != Http.Ok ? request.status : Http.ServerError
