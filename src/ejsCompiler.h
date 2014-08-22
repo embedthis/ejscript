@@ -622,6 +622,7 @@ typedef struct EcConsoleStream {
 typedef struct EcToken {
     wchar       *text;                  /* Token text */
     int         length;                 /* Length of text in characters */
+    //  TODO should be ssize
     int         size;                   /* Size of text in characters */
     int         tokenId;
     int         subId;

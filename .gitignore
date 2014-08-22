@@ -42,7 +42,6 @@ src/test/t.es
 build/bin/api-diff
 *.pdb
 *.obj
-*.exp
 bin/*.def
 bin/mime.types
 src/jems/ejs.db.mapper/test/test.sdb
