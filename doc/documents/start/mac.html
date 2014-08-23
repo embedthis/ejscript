@@ -1,0 +1,73 @@
+{
+    title:  'Mac',
+    crumbs: [
+        'Getting Started': "index.html",
+        'Installing': "installing.html",
+    ],
+}
+            <h1>Installing on Mac</h1>
+            <p>The Embedthis Ejscript install distribution for Mac OS X is published as a an installable 
+            pkg file.</p>
+            <a id="pkg"></a>
+            <h2 class="section">Installing the Image</h2>
+            <ol>
+                <li>Double click on the PKG image.</li>
+            </ol>
+            
+            <a id="removing"></a>
+            <h2 class="section">Removing Ejscript</h2>
+            <ol>
+                <li>Run a terminal and change directory to the installation directory for Ejscript. This is typically
+                "/usr/lib/ejs/latest".</li>
+                <li>Run the uninstall script in the Ejscript install directory:</li>
+            </ol>
+            <pre class="ui code segment">sudo ./uninstall</pre>
+            
+            <a id="running"></a>
+            <h2 class="section">Running Ejscript</h2>
+            <p>To do a "Hello World" test, try typing the following. The "Hello World" is echoed back by ejs:</p>
+            <pre class="ui code segment">
+ejs
+ejs-0&gt; print("Hello World")
+<strong>
+Hello World</strong>
+ejs-0&gt;
+</pre>
+            <p>Use ^D to exit the ejs shell.</p>
+            <h3>Other Commands</h3>
+            <p>The installation will install five commands with links in /usr/local/bin.</p>
+            <table title="commands" class="ui table segment">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>bit</td>
+                    <td>The bit build and configuration tool is used to configure and build products. It is a
+                        modern replacement for autoconf and make.</td>
+                </tr>
+                <tr>
+                    <td>ejs</td>
+                    <td>The Ejscript command shell. This command can parse and execute ejs scripts from files or typed
+                    interactively on the console. This command contains both the Ejscript compiler and virtual
+                    machine.</td>
+                </tr>
+                <tr>
+                    <td>ejsc</td>
+                    <td>The Ejscript compiler. This command can compile scripts into byte code form for later running
+						via the <em>ejs</em> command.</td>
+                </tr>
+                <tr>
+                    <td>ejsmod</td>
+                    <td>The Ejscript module manager. This command generates assembler source code listings, HTML
+                    documentation and symbolic slot offset header files.</td>
+                </tr>
+                <tr>
+                    <td>mvc</td>
+					<td>The Ejscript Model-View-Controller web framework generator and manager. This command assists to
+						create Ejscript Web applications that use the Ejscript Web Framework.</td>
+                </tr>
+                </tbody>

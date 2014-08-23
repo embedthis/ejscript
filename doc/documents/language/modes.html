@@ -1,0 +1,66 @@
+{
+    title:  'Language Modes',
+    crumbs: [
+        "Language Guide": "index.html",
+    ],
+}
+            <h1>Language Modes</h1>
+            <p>Ejscript is fully compliant with the JavaScript (<a href=
+            "http://www.ecma-international.org/publications/standards/Ecma-262.htm">ECMA-262 3.X</a>) standards, but it
+            also offers a set of enhancements and fixes designed to improve the language and correct some longstanding
+            JavaScript design issues. Use of these enhancements and fixes is optional and controlled via <i>opt-in</i>
+            configuration and script pragma directives. Language modes can be selected on a source file-by-file basis.
+            So you can mix and match ECMA-262 pure JavaScript with enhanced Ejscript code if you wish.</p>
+            
+            <a id="modes"></a>
+            <h2 class="section">Compiler Checking Mode</h2>
+            <p>The Compiler checking mode controls how aggressively the compiler warns about potential program
+            errors.</p>
+            <p>Ejscript supports two checking modes:</p>
+            <ol>
+                <li><b>standard</b> &mdash; Traditional JavaScript compilation with little compile time checking</li>
+                <li><b>strict</b> &mdash; Uses strict static type checking at compile time</li>
+            </ol>
+            <p>Strict mode is useful for libraries where detecting errors before run-time is highly desirable. Strict
+            mode also assists the compiler to generate faster code as the compiler knows the location and type of all
+            variables ahead of time. However, it does restrict your coding style by requiring that all variables be
+            declared and typed &mdash; this should be used on a case-by-case basis.</p>
+            <p>For users of a module, it does not matter whether the module was created using strict or standard
+            checking. The checking mode only impacts the module source code itself and not the users of the module.</p>
+            <p>The compiler checking mode can be controlled by a <b>use standard</b> or <b>use strict</b> pragma
+            directive in your scripts. Like the Language Compliance pragma, this pragma takes effect on a file by file
+            basis.</p><a id="standard"></a>
+            <h2>Standard Mode</h2>
+            <p>Standard mode is the traditional JavaScript compilation behavior. Variables do not have to be declared
+            ahead of time and no warnings are issued for incompatible type usage. Issues are resolved at run-time, by
+            dynamic casting or by issuing exceptions.</p><a id="strict"></a>
+            <h2>Strict Mode</h2>
+            <p>Strict mode applies compile time static checking and type conversions to try to handle and catch errors
+            before run-time. In strict mode, variables must be declared before they are used. If the script code is not
+            using <b>ecma</b> language compliance, variables must also be typed. Functions must define a return type
+            and must type their parameters.</p>
+            
+            <a id="setCompiler"></a>
+            <h2 class="section">Setting the Compiler Checking Mode</h2>
+            <p>The compiler mode control is set to a default value by command line switches to the <b>ejs</b> shell or
+            <b>ec</b> compiler. This can be overridden by an Ejscript pragma directive in your script files on a
+            file-by-file basis.</p>
+            <h2>Command Line Compiler Checking Switch</h2>
+            <p>To set the compiler checking mode on the <b>ejs</b> or <b>ec</b> commands, use the <b>--strict</b> or
+            <b>--standard</b> switch. The default is --standard.</p>
+            <pre class="ui code segment">
+ejs --standard script1.es
+ejs --strict script2.es
+</pre>
+            <h2>Use Strict and Use Standard Pragmas</h2>
+            <p>To set the compiler checking mode for a source file, utilize the <b>use strict</b> or <b>use
+            standard</b> pragma directives. These pragmas will override the default value for the current source
+            file.</p>
+            <pre class="ui code segment">
+/* In source file 1 */
+use strict
+/* In source file 2 */
+use standard
+/* In source file 3 */
+/* No use pragma - just accept the current default */
+</pre>

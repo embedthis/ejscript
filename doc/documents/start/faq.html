@@ -1,0 +1,110 @@
+{
+    title:  'FAQ',
+    crumbs: [
+        'Getting Started': "index.html",
+    ],
+}
+            <h1>Ejscript FAQ</h1>
+            <p>If your question is not answered here, please see the support <a href=
+            "http://ejscript.org/forum/">Forum.</a></p><a id="questions"></a>
+            <h2 class="section">Questions</h2>
+            <div class="questions">
+                <p><a href="#print">How do I print to the console?</a></p>
+                <p><a href="#fileIO">How do I read from a file?</a></p>
+                <p><a href="#trace">How can I trouble-shoot with trace?</a></p>
+            </div>
+            <h2 class="section">Licensing Questions</h2>
+            <div class="questions">
+                <p><a href="#enhancements">Do I need to provide my enhancements back??</a></p>
+                <p><a href="#contributeGpl">Will my patches make it into the Open Source version?</a></p>
+                <p><a href="#standAlone">I'm using Ejscript stand-alone, can I use the GPL?</a></p>
+                <p><a href="#distributeGpl">Can I distribute my product under the GPL license?</a></p>
+                <p><a href="#prototypeGpl">Can I prototype using the GPL license?</a></p>
+                <p><a href="#prototypeGpl">When do I need to take out a commercial license?</a></p>
+                <p><a href="#linkNonGpl">Can I link in non-GPL code?</a></p>
+            </div><a id="answers"></a>
+            <h2 class="section">Answers</h2>
+            <p class="question"><a id="print"></a> How to print to the console?</p>
+            <div class="answer">
+                <p>Use the print global function:</p>
+                <pre class="ui code segment">
+<b>home&gt;</b> ejs
+print("Hello World")
+<b>Hello World</b>
+</pre>
+            </div>
+            <p class="question"><a id="fileIO"></a> How to read from a file?</p>
+            <div class="answer">
+                <p>There are several ways to read from a file. To read the entire file into a string:</p>
+                <pre class="ui code segment">
+str = File.getString("file.txt")
+</pre>
+                <p>To read a file line-by-line:</p>
+                <pre class="ui code segment">
+lines = File.getLines("file.txt")
+for each (l in lines) {
+    print(l)
+}
+</pre>
+            </div>
+            <p class="question"><a id="trace"></a> How can I trouble-shoot with trace?</p>
+            <div class="answer">
+                <p>Run ejscript with the logging switch "--log". The logging switch takes the following parameters:</p>
+                <pre class="ui code segment">
+ejs --log logName[:logLevel]
+</pre>
+                <p>Where logLevel is a number between 0 and 9. Zero is the least verbose.</p>
+                <p class="question"></p>
+                <p>In the default binary distribution or if ejs is built in debug mode, level 2 will trace each source
+                code and assembler instruction as it is executed.</p>
+            </div>
+            <p class="question"><a id="enhancements"></a>Do I need to provide my enhancements back
+            to ejscript.org?</p>
+            <div class="answer">
+                <p>If you are using the GPL license, you must make your enhancements available to all under the terms
+                of the <a href="../../../licenses/gpl.html">GPL License</a>. If you are using a commercial license, you
+                may keep your modifications private. You are however, very welcome to share your enhancements with us
+                for inclusion in future releases. See the <a href=
+                "http://ejscript.org/developers/index.html">Developers</a> section for details.</p>
+            </div>
+            <p class="question"><a id="contributeGpl"></a>Will my patches make it into the Open
+            Source version?</p>
+            <div class="answer">
+                <p>The <a href="http://ejscript.org/contributors.html">contributors agreement</a> ensures that if
+                your patches are included in the commercial version of Ejscript, they will always be included in the
+                open source version. All patches are examined for suitability and sometimes several individuals submit
+                similar patches. As such, we cannot guarantee that your code will be included in the product.</p>
+            </div>
+            <p class="question"><a id="standAlone"></a>I'm using Ejscript as a stand-alone program
+            can I use the GPL?</p>
+            <div class="answer">
+                <p>Probably Yes. If you distribute your application and you choose the GPL license, then you must also
+                make your source code that is linked with an of the Ejscript programs, available to others. If you do
+                not link (using either dynamic or static linking) with Ejscript, you may not need to share your code.
+                Read the <a href="../../../licenses/gpl.html">GPL License</a> for full details. If you want to keep
+                your source code private, Embedthis provides commercial licenses for that purpose.</p>
+            </div>
+            <p class="question"><a id="distributeGpl"></a>Can I distribute my product that
+            includes Ejscript under the GPL license?</p>
+            <div class="answer">
+                <p>Yes. You just need to make your source code that links with Ejscript available to all.</p>
+            </div>
+            <p class="question"><a id="prototypeGpl"></a>Can I prototype using the GPL license?</p>
+            <div class="answer">
+                <p>Yes. You can prototype and develop internally using the GPL license. If you distribute your product,
+                you must either provide source code to all, or you will need a commercial license.</p>
+            </div>
+            <p class="question"><a id="commercialLicense"></a>When do I need to take out a
+            commercial license?</p>
+            <div class="answer">
+                <p>If you want to keep your source code private or if you want support and a commercial warranty, then
+                a commercial license is probably necessary.</p>
+            </div>
+            <p class="question"><a id="linkNonGpl"></a>Can I link in non-GPL code?</p>
+            <div class="answer">
+                <p>If you are using the GPL license, you can link in code that has a GPL-compatible license. If you are
+                using the commercial license, you can link in any non-GPL code.</p>
+            </div>
+            <h2 class="section">More Questions</h2>
+            <p>If you have any further questions, please ask a question at the <a href=
+            "http://ejscript.org/forum/">Forum</a>.</p>

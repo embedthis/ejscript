@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Embedthis Appweb Documentation</title>
+    <!-- Copyright Embedthis Software, LLC, 2003-2014. All Rights Reserved. -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="keywords" content="appweb, embedded web server, embedded, devices, http server, internet of things, esp, goahead" />
+    <meta name="description" content="The fastest little web server" />
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
+        rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
+    <link href="../lib/semantic/packaged/css/semantic.css" rel="stylesheet" type="text/css" />
+    <link href="../css/all.css" rel="stylesheet" type="text/css" />
+    <link href="../images/favicon.ico" rel="shortcut icon" />
+
+</head>
+<body>
+        
+    <div class="ui large left vertical inverted labeled overlay sidebar menu">
+        <div class="item">
+            <a href="../">
+                <b>General</b>
+            </a>
+            <div class="menu">
+                <a class="item" href="../index.html">Ejscript Overview</a>
+                <a class="item" href="../users/features.html">Ejscript Features</a>
+                <a class="item" href="https://embedthis.com/ejs/download.html">Download</a> 
+                <a class="item" href="../licensing/index.html">Licensing</a>
+            </div>
+        </div>
+        <div class="item">
+            <a href="../start/index.html">
+                <b>Getting Started</b>
+            </a>
+            <div class="menu">
+                <a class="item" href="../start/quick.html">Quick Start</a>
+                <a class="item" href="../start/installing.html">Installing Ejscript</a>
+                <a class="item" href="../start/tour.html">Language Tour</a>
+                <a class="item" href="../start/faq.html">FAQ</a>
+                <a class="item" href="../start/releaseNotes.html">Release Notes</a>
+                <a class="item" href="../start/source.html">Building from Source</a>
+            </div>
+        </div>
+        <div class="item">
+            <a href="../users/index.html"><b>User's Guide</b></a>
+            <div class="menu">
+                <a class="item" href="../users/man.html">Man Pages</a>
+                <a class="item" href="../users/shell.html">Using the Command Shell</a>
+                <a class="item" href="../users/compiler.html">Using the Compiler</a>
+                <a class="item" href="../users/ejsmod.html">Using the Module Generator</a>
+                <a class="item" href="../users/doc.html">Generating Documentation</a>
+                <a class="item" href="../users/listing.html">Generating Listing</a>
+            </div>
+        </div>
+        <div class="item">
+            <a href="../language/index.html"><b>Language Guide</b></a>
+            <div class="menu">
+                <a class="item" href="../language/modes.html">Language Modes</a>
+                <a class="item" href="../language/syntax.html">Language Syntax</a>
+                <a class="item" href="../language/statements.html">Statements</a>
+                <a class="item" href="../language/expressions.html">Expressions and Operators</a>
+                <a class="item" href="../language/objects.html">Object and Arrays</a>
+                <a class="item" href="../language/functions.html">Functions and Methods</a>
+                <a class="item" href="../language/core.html">Core Language Types</a>
+                <a class="item" href="../language/types.html">Types and Declarations</a>
+                <a class="item" href="../language/classes.html">Classes and Instances</a>
+                <a class="item" href="../language/modules.html">Modules and Namespaces</a>
+                <a class="item" href="../language/library.html">System Library</a>
+                <a class="item" href="../language/events.html">Events and Timers</a>
+                <a class="item" href="../language/globals.html">Globals</a>
+            </div>
+        </div>
+        <div class="item">
+            <a href="../users/index.html"><b>Web Framework Guide</b></a>
+            <div class="menu">
+                <a class="item" href="../web/webTour.html">Web Framework Tour</a>
+                <a class="item" href="../web/mvc.html">Application Generator</a>
+                <a class="item" href="../web/routing.html">Routing</a>
+                <a class="item" href="../web/controllers.html">Controllers</a>
+                <a class="item" href="../web/views.html">Views and Layout Templates</a>
+                <a class="item" href="../web/controls.html">Ajax View Controls</a>
+                <a class="item" href="../web/models.html">Database Models</a>
+                <a class="item" href="../web/hosting.html">Hosting in Web Servers</a>
+            </div>
+        </div>
+        <div class="item">
+            <a href="../developers/index.html">Developer's Guide</a>
+            <div class="menu">
+                <a class="item" href="../developers/embedding.html">Embedding Ejscript</a>
+                <a class="item" href="../developers/extending.html">Extending Ejscript</a>
+            </div>
+        </div>
+        <div class="item">
+            <a href="../ref/index.html">Reference Guide</a>
+            <div class="menu">
+                <a class="item" href="../ref/compatibility.html">Compatibility</a>
+                <a class="item" href="../ref/native.html">Native APIs</a>
+                <a class="item" href="..//ref/api/ejscript/index.html" target="new">Script Library</a>
+                <a class="item" href="../ref/architecture.html">Ejscript Architecture</a>
+                <a class="item" href="../ref/webArchitecture.html">Web Framework Architecture</a>
+                <a class="item" href="../ref/memory.html">Ejscript Memory Allocation</a>
+                <a class="item" href="../ref/multithread.html">Multithreaded Programming</a>
+                <a class="item" href="../standards/references.html">Standards</a></li>
+            </div>
+        </div>
+        <div class="item">
+            <a href="../developers/project.html">Project Resources</a>
+            <div class="menu">
+                <a class="item" href="http://goo.gl/dGRDl4">Official Ejscript News</a>
+                <a class="item" href="https://embedthis.com/ejs/">Ejscript Web Site</a>
+                <a class="item" href="https://github.com/embedthis/ejs">Source Code Repository</a>
+                <a class="item" href="https://github.com/embedthis/ejs/issues">Project Issue Database</a>
+                <a class="item" href="https://github.com/embedthis/ejs/releases">Change Log</a>
+                <a class="item" href="https://github.com/embedthis/ejs/milestones">Roadmap</a>
+                <a class="item" href="https://embedthis.com/developers/contributors.html">Contributors Agreement</a>
+            </div>
+        </div>
+        <div class="item">
+            <b>Links</b>
+            <div class="menu">
+                <a class="item" href="https://embedthis.com/">Embedthis Web Site</a>
+                <a class="item" href="https://embedthis.com/blog/">Embedthis Blog</a>
+                <a class="item" href="http://twitter.com/mobstream">Twitter</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui inverted masthead">
+                <div class="column">
+            <div class="inverted secondary pointing ui menu">
+                <div class="header left item">
+                    <a href="/index.html">Embedthis Ejscript</a>
+                </div>
+                <div class="right menu">
+                    <div class="ui top right">
+                        <a class="item" href="http://goo.gl/dGRDl4">News</a>
+                        <a class="item" href="https://embedthis.com/ejs/">Ejscript Site</a>
+                        <a class="item" href="https://github.com/embedthis/ejs">Repository</a>
+                        <a class="item" href="https://embedthis.com/blog/">Blog</a>
+                        <a class="item" href="https://twitter.com/mobstream">Twitter</a>
+                    </div>
+                </div>
+            </div>
+            <div class="ui breadcrumb">
+                <a class="section" href="../">Home</a>
+                
+                <div class="divider">/</div>
+                <a class="section active" href="undefined">Embedthis Appweb Documentation</a>
+            </div>
+        </div>
+        <div class="ui black small launch right attached toggle button" style="width: 40px;">
+            <i class="icon list layout">
+                <span class="text" style="display: none;">Menu</span>
+            </i>
+        </div>
+
+    </div>
+    <div class="content">
+<h1>Views and Layouts</h1>
+            <p>Ejscript views are HTML pages with embedded JavaScript code. Views are created by merging content pages
+            with a layout page to create composite pages that resemble what the user will actually see. The composite
+            pages are rendered by <a href="controllers.html">Controllers</a> after they have finished processing the
+            requested <a href="controllers.html#actions">Action</a>. The view pages are processed by Ejscript, the code
+            is run and a final HTML page sent to the client. <img src="../../../images/webComposite.jpg" alt="" /></p>
+            <p>JavaScript code embedded in your web pages enables dynamic data to be inserted at runtime into what
+            would otherwise be static web pages. Ejscript provides a set of directives to make it easy to refer to
+            single JavaScript variables, expressions or code blocks in your web pages. A suite of <a href=
+            "controls.html">Ajax View Controls</a> provides high level components such as tables, charts, tabs, and
+            forms that are Ajax-enabled for a seamless dynamically updating user experience.</p>
+            <h2 class="section">Layouts &mdash; Creating a Consistent Look and Feel</h2>
+            <p>A web application typically consists of many web pages that share a common look and feel. Usable
+            applications have a consistent structure, menus and appearance so the user can easily navigate that
+            application. However, designing and maintaining that consistent look and feel is frequently quite
+            difficult.</p><a id="layoutPages"></a>
+            <h3>Layout Pages</h3>
+            <p>The Ejscript web framework provides a templating layout engine so that each page can reuse a common
+            layout page and not have to repeat the common application UI elements in each page. Ejscript does this by
+            automatically merging <b>layout</b> pages and content pages to create a composite page that matches what
+            the user actually will see.</p>
+            <p>For example: this is a layout page called "layouts/default.ejs" which defines the top level HTML
+            content for all content pages. It has a banner image and division tags that structure the page:</p>
+            <pre class="ui code segment">
+&lt;html&gt;
+&lt;body&gt;
+    &lt;div class="top"&gt;
+        &lt;img src="banner.jpg" /&gt;
+    &lt;/div&gt;
+    &lt;div class="content"&gt;
+        <b>&lt;%@ content %&gt;</b>
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+            <p>Modifications to this page, will be reflected automatically in all content pages.</p><a id="content"></a>
+            <h3>Content Pages</h3>
+            <p>A content page defines only the HTML and code that is different for a specific page. It is merged with a
+            layout page by inserting the content and replacing the <b>&lt;%@ content %&gt;</b> tag in the master
+            page.</p>
+            <p>For example, consider the content page named "views/Demo/index.ejs":</p>
+            <pre class="ui code segment">
+&lt;h1&gt;Content Page&lt;/h1&gt;
+&lt;p&gt;Hello World&lt;/p&gt;
+</pre>
+            <p>This would render a composite web page back to the user:</p>
+            <pre class="ui code segment">
+&lt;html&gt;
+&lt;body&gt;
+    &lt;div class="top"&gt;
+        &lt;img src="banner.jpg" /&gt;
+    &lt;/div&gt;
+    &lt;div class="content"&gt;
+        &lt;h1&gt;Content Page&lt;/h1&gt;
+        &lt;p&gt;Hello World&lt;/p&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre><a id="alternateLayout"></a>
+            <h3>Alternate Layout Pages</h3>
+            <p>A content page can request a specific layout page by using the <b>&lt;%@ layout "file"&gt;</b>
+            directive.</p>
+            <pre class="ui code segment">
+<b>&lt;%@ layout "alternateLayout "&gt;</b>
+&lt;h1&gt;Content Page&lt;/h1&gt;
+&lt;p&gt;Hello World&lt;/p&gt;
+</pre>
+            <p>This instructs the templating engine to use the "alternateLayout.ejs" file rather than the default
+            layout. The default layout page is called "layouts/default.ejs". <a id="multiple"></a></p>
+            <h3>Multiple Layout Pages</h3>
+            <p>You are not restricted to a simple two level layout and content page scheme. A layout page can itself
+            refer to another layout page to gradually build up the application's look and feel. To do this, the layout
+            page needs to include an explicit <b>&lt;%@ layout "file"&gt;</b> directive.</p><a id="dev"></a>
+            <h3>Development Time</h3>
+            <p>The combining of layout and contents pages occurs at development time, as does the compilation of the
+            composite page into byte code. At run-time, all that remains to be done is actually execute the byte code
+            and substitute dynamic data into the page. This results in the fastest run-time execution because the
+            layout processing and page compilation occur only once and at development time.</p><img src=
+            "../../../images/webView.jpg" alt="" /> <a id="dir"></a>
+            <h2 class="section">Directory Structure</h2>
+            <p>Ejscript follows the <a href="http://en.wikipedia.org/wiki/Convention_over_Configuration">Convention
+            over Configuration</a> design paradigm where developers only need to specify the unusual parts of their
+            application. This is exemplified by an expected directory structure for views and layouts.</p>
+            <pre class="ui code segment">
+layouts
+  |
+  + Layout pages...
+views
+  |
+  |
+  + ControllerName
+         |
+         + View pages...
+</pre>
+            <p>The <a href="generator.html"><b>mvc</b></a> application generator program will create these directories
+            for you when you run</p>
+            <pre class="ui code segment">
+mvc generate appName
+</pre>
+            <p>After creating the application, you should place all content views for a controller under the
+            "views/ControllerName" directory. The "ControllerName" directories should by convention begin with an upper
+            case letter. The "views" and "layouts" directories are lower case. <a id="static"></a></p>
+            <h2 class="section">Static Web Content</h2>
+            <p>Static web page content such as images, CSS pages and other similar content should be placed under the
+            <b>web</b> directory. While this content can be served by the Ejscript handler, it should ideally and
+            optimally be processed directly by the web server. The Ejscript module for Apache and Appweb will enable
+            this automatically. If you are using the CGI or FastCGI for hosting Ejscript, you may wish to configure
+            your web server to serve these pages directly.</p><a id="stand-alone"></a>
+            <h3>Stand-Alone Ejscript Web Pages</h3>
+            <p>Not all Ejscript web pages are views. You can create stand-alone Ejscript web pages. These do not use
+            layout pages and do not have access to Models, Controllers or View objects. Why create stand-alone Ejscript
+            pages you ask? Because it is sometimes convenient to have a little bit of scripting inside a mostly static
+            HTML page.</p>
+            <p>For example: This will insert a date into a web page footer:</p>
+            <pre class="ui code segment">
+&lt;html&gt;
+&lt;body&gt;
+    &lt;div class="top"&gt;
+        &lt;img src="banner.jpg" /&gt;
+    &lt;/div&gt;
+    &lt;div class="content"&gt;
+        &lt;h1&gt;Content Page&lt;/h1&gt;
+        &lt;p&gt;Hello World&lt;/p&gt;
+    &lt;/div&gt;
+    <b>&lt;p&gt;Created on &lt;%= new Date %&gt;&lt;/p&gt;</b>
+&lt;/body&gt;
+&lt;/html&gt;
+</pre><a id="dynamic"></a>
+            <h2 class="section">Dynamic Content</h2>
+            <p>One of the primary reasons for views is to make it easier to create web pages with dynamic data.</p>
+            <p>Ejscript provides a set of directives to easily embed JavaScript code in your web page.</p>
+            <p>The following directives are provided:</p>
+            <table title="directives" class="ui code segment">
+                <thead>
+                    <tr>
+                        <th>Directive</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>&lt;%= expression %&gt;</td>
+                        <td>JavaScript expression</td>
+                    </tr>
+                    <tr>
+                        <td>&lt;% statements %&gt;</td>
+                        <td>JavaScript statements</td>
+                    </tr>
+                    <tr>
+                        <td>&#64;&#64;variable</td>
+                        <td>JavaScript variable value</td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3>&lt;%= expression %&gt;</h3>
+            <p>Use this directive to embed the result of a JavaScript expression. The expression will be evaluated and
+            the result converted to a string using JavaScript conversion rules.</p>
+            <pre class="ui code segment">
+&lt;%= new Date().fullYear %&gt;
+</pre>
+            <h3>&lt;% statements %&gt;</h3>
+            <p>Use this directive to run JavaScript code statements. No value is substituted back into the page in
+            place of the directive.</p>
+            <pre class="ui code segment">
+&lt;% 
+    lines = File.getLines("test.txt")
+    for each (l in lines) {
+        write(l)
+    }
+%&gt;
+</pre>
+            <p>The code defined via this directive is placed inside the view's <b>render</b> function. Any code that is
+            valid to put in a function, is valid in this directive. NOTE: you cannot use the <b>class</b> keyword. A
+            better place for such code is not in views, but in either the controller or application code.</p>
+            <p>You can also iterate over regular HTML code. The following code will display <b>Hello World</b> ten
+            times in the web page.</p>
+            <pre class="ui code segment">
+&lt;% for (i in 10) { %&gt;
+    Hello World
+&lt;% } %&gt;
+</pre>
+            <h3>&#64;&#64;variables</h3>
+            <p>Ejscript provides a shorthand for the <b>&lt;%= expression %&gt;</b> directive via the
+            <b>&#64;&#64;variable</b>. This directive is a compact way of referencing a simple JavaScript variable.</p>
+            <pre class="ui code segment">
+&lt;% today = new Date %&gt;
+<b>&lt;h2&gt;Today is &#64;&#64;today&lt;/h2&gt;</b>
+</pre>
+            <p>This directive is very useful for accessing any controller, model, application, session, request or form
+            data.</p>
+            <p>Public variables in the controller are visible to views, as is the Model class. The application object
+            is accessible via the <b>app</b> object and session data is accessible via the <b>session</b> object. Form
+            data is stored in the <b>params</b> object.</p>
+            <pre class="ui code segment">
+&lt;%
+    &lt;h2&gt;Web Server Name: &#64;&#64;host.name running &#64;&#64;host.software&lt;/h2&gt;
+    &lt;p&gt;Application URL: &#64;&#64;app.url&lt;/p&gt;
+    table(Users.findAll())
+    dump(users)
+%&gt;
+</pre>
+            <p>See the <a href="../../../api/ejscript/index.html">Ejscript Library</a> for a full list of all the
+            properties and methods available to use in the various embedded Ejscript directives. Of particular
+            relevance are the classes in the ejs.web namespace which include the Application, Controller, Host,
+            Request, Response, Session and View classes.</p><a id="form"></a>
+            <h2 class="section">Accessing Form Data</h2>
+            <p>HTTP Form data is marshalled by Ejscript into the <b>params</b> object which is accessible in views and
+            controllers. Each HTML input element posted by the client will become a property of <b>params</b> and can
+            be accessed by embedded script code.</p><img src="../../../images/form.png" class="bare-screen" alt="" />
+            <p>This form was generated by the view code below:</p>
+            <pre class="ui code segment">
+&lt;form method="POST" action="&#64;&#64;request.uri"&gt;
+    &lt;p&gt;Name: &lt;input name="name" type="text"&gt;&lt;/p&gt;
+    &lt;p&gt;Address: &lt;input name="address" type="text"&gt;&lt;/p&gt;
+    &lt;input type="submit" name="ok" value="Ok"&gt;
+&lt;/form&gt;
+</pre>
+            <p>This view creates three HTML form inputs and will populate the <b>params</b> object when posted back to
+            the server with the properties: <b>params.name</b>, <b>params.address</b> and 
+            <b>params.ok</b>.</p><a id="structured"></a>
+            <h3>Structured Form Data</h3>
+            <p>This simple mapping of input element names to params properties works fine for simple forms, but what
+            about more complex forms? Ejscript can organize form data into nested objects. If an input element name
+            contains a period, then Ejscript will create nested objects to match the input element name.</p>
+            <p>For example, consider the view:</p>
+            <pre class="ui code segment">
+&lt;form method="POST" action="&#64;&#64;request.uri"&gt;
+    &lt;p&gt;Name: &lt;input name="user.name" type="text"&gt;&lt;/p&gt;
+    &lt;p&gt;Address: &lt;input name="user.address" type="text"&gt;&lt;/p&gt;
+    &lt;input type="submit" name="ok" value="Ok"&gt;
+&lt;/form&gt;
+</pre>
+            <p>This will create a <b>user</b> object in the params object. The user object will have properties
+            <b>user.name</b> and <b>user.address</b>. This form of structured form data makes handling form data much
+            simpler.</p><a id="database"></a>
+            <h3>Accessing Database Data</h3>
+            <p>Ejscript provides an Object Relational Mapping (ORM) layer for accessing database data via convenient
+            JavaScript objects. The ORM layer is represented by a collection of database Model classes for the
+            application. Views can read the database by using Model classes. A more typical paradigm is for controller
+            action routines to read a database record and store the record in a controller property. The view can then
+            simply access the database data by referencing that property.</p>
+            <p>For more details, see <a href="models.html">Database Models</a>.</p><a id="sessions"></a>
+            <h2 class="section">Session Data</h2>
+            <p>Data can be persistently stored between HTTP requests in the <b>sessions</b> object. Data stored to the
+            sessions object is serialized, so you cannot store object references. However, the session object is ideal
+            to store a request cookie or session key.</p><a id="themes"></a>
+            <h2 class="section">Themes and CSS</h2>
+            <p>Well structured web applications divide HTML data and presentation style into two separate documents.
+            Namely: HTML pages and cascading style sheets. In this way, a style sheet can be reused and shared by all
+            pages.</p>
+            <p>It is better still to divide the style sheet into two: a layout structure style sheet and a theme style
+            sheet. The structure style sheet specifies the order and positioning of the various sections on of the web
+            page, whereas the theme style sheet specifies the fonts, font sizes, weights and foreground and background
+            colors.</p>
+            <p>Ejscript supports this organization by providing a providing a directory for theme style sheet. The
+            <b>mvc</b> application will also generate a default theme style sheet for scaffolds and
+            views.</p><a id="compilation"></a>
+            <h2 class="section">Compilation</h2>
+            <p>When developing, Ejscript will automatically detect changes made to the applications code and will
+            intelligently recompile the necessary portions of the application. You can manually force a recompilation
+            via the <b>mvc</b> command.</p>
+            <pre class="ui code segment">
+mvc compile
+</pre>
+            <p>See the <a href="generator.html">Application Generator</a> documentation for full details about compiling
+            views and applications.</p><!--
+            <h2 class="section">Common Tasks</h2>
+                <h3>Managing Links</h3>
+                <h3>Writing Data</h3>
+                <h3>Redirecting</h3>
+                <h3>Setting the HTTP Resposne Code</h3>
+                <h3>Adding a HTTP Header</h3>
+        -->
+            <a id="debugging"></a>
+            <h2 class="section">Debugging</h2>
+            <p>You can inject debugging code into your views to trace data to the browser or to the console.</p>
+            <p>The <b>print</b> method will print its arguments to the console or web server log file. The <b>dump</b>
+            method will serialize objects and then send to the console or log.</p>
+            <p>To send trace to the browser, use the <b>write</b> method to write data back to the browser. The
+            <b>d()</b> method will serialize and dump objects to the browser.</p><a id="viewClass"></a>
+            <h2 class="section">View Class</h2>
+            <p>The View class has a large set of utility methods to assist you in creating your web views. See the
+            <a href="../../../api/ejscript/index.html">Ejscript Library</a> for details. Some of the important methods
+            are:</p>
+            <table title="viewClass" class="ui code segment">
+                <thead>
+                    <tr>
+                        <th>Method Name</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>anchor</td>
+                        <td>Emit an anchor label and reference</td>
+                    </tr>
+                    <tr>
+                        <td>button</td>
+                        <td>Emit a form button</td>
+                    </tr>
+                    <tr>
+                        <td>buttonLink</td>
+                        <td>Emit a button for use outside a form</td>
+                    </tr>
+                    <tr>
+                        <td>button</td>
+                        <td>Emit a form button</td>
+                    </tr>
+                    <tr>
+                        <td>chart</td>
+                        <td>Emit a graphic chart</td>
+                    </tr>
+                    <tr>
+                        <td>checkbox</td>
+                        <td>Emit an input form checkbox</td>
+                    </tr>
+                    <tr>
+                        <td>div</td>
+                        <td>Emit an HTML div</td>
+                    </tr>
+                    <tr>
+                        <td>endform</td>
+                        <td>End an input form</td>
+                    </tr>
+                    <tr>
+                        <td>flash</td>
+                        <td>Emit a flash message area field</td>
+                    </tr>
+                    <tr>
+                        <td>form</td>
+                        <td>Emit a HTML form</td>
+                    </tr>
+                    <tr>
+                        <td>html</td>
+                        <td>HTML encode the arguments</td>
+                    </tr>
+                    <tr>
+                        <td>icon</td>
+                        <td>Emit an ICON image</td>
+                    </tr>
+                    <tr>
+                        <td>image</td>
+                        <td>Emit an ICON image</td>
+                    </tr>
+                    <tr>
+                        <td>progress</td>
+                        <td>Emit a progress bar</td>
+                    </tr>
+                    <tr>
+                        <td>input</td>
+                        <td>Emit a generic input data-bound field</td>
+                    </tr>
+                    <tr>
+                        <td>label</td>
+                        <td>Emit a text label field</td>
+                    </tr>
+                    <tr>
+                        <td>list</td>
+                        <td>Emit a drop-down input list</td>
+                    </tr>
+                    <tr>
+                        <td>radio</td>
+                        <td>Emit an input radio button</td>
+                    </tr>
+                    <tr>
+                        <td>redirect</td>
+                        <td>Redirect the client to a new URL</td>
+                    </tr>
+                    <tr>
+                        <td>setHeader</td>
+                        <td>Set a HTTP response header</td>
+                    </tr>
+                    <tr>
+                        <td>setStatus</td>
+                        <td>Set the HTTP response status</td>
+                    </tr>
+                    <tr>
+                        <td>table</td>
+                        <td>Render a smart table</td>
+                    </tr>
+                    <tr>
+                        <td>write</td>
+                        <td>Write HTML data to the client</td>
+                    </tr>
+                    <tr>
+                        <td>write</td>
+                        <td>Write data to the client</td>
+                    </tr>
+                </tbody>
+            </table>
+    </div>
+    <div class="ui basic center aligned segment" id="terms">
+        <p>&copy; Embedthis Software, 2003-2014. All rights reserved.
+            Generated on Aug 22, 2014.
+        </p>
+    </div>
+
+    <script src="../lib/jquery/jquery.js"></script>
+    <script src="../lib/semantic/packaged/javascript/semantic.js"></script>
+    <script>
+        $('.sidebar').sidebar({overlay: false}).sidebar('toggle');
+        $('.sidebar').first().sidebar('attach events', '.toggle.button');
+    </script>
+</body>
+</html>
