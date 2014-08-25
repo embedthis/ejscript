@@ -239,10 +239,10 @@ Product.findAll({order: "price DESC", limit: 2})
             directly insert these values into web pages and controllers can use them just like any JavaScript
             property.</p>
             <pre class="ui code segment">
-&lt;p&gt;Price: @@Product.find(1).price &lt;/p&gt;
+&lt;p&gt;Price: &#64;&#64;Product.find(1).price &lt;/p&gt;
 </pre>
             <p>This is a fragment from a View that directly accesses the model to extract the price for the first
-            product. The <em>@@</em> is the way Views can substitute dynamic data from JavaScript variables at
+            product. The <em>&#64;&#64;</em> is the way Views can substitute dynamic data from JavaScript variables at
             run-time.</p>
             <h4>Bound Access</h4>
             <p>Ejscript models can also be <em>bound</em> to View Controls for easy display. Many of the View Controls
@@ -275,7 +275,7 @@ Product.findAll({order: "price DESC", limit: 2})
             validation. Validation checks continue and (potentially) a set of error messages for the model are
             accumulated. Views can access these messages for display and highlighting to the user. The standard
             Ejscript view controls intelligently use these error messages to highlight errors in input
-            forms.</p><img src="../../../images/webtour-validate.png" class="screen" alt="" />
+            forms.</p><img src="../images/webtour-validate.png" class="screen" alt="" />
             <p>Ejscript will also automatically verify and convert model data to ensure it is of the appropriate data
             type and will escape data to prevent SQL insertion exploits.</p>
             <h3>Validation Methods</h3>

@@ -7,8 +7,8 @@
             <h1>Ejscript Web Framework Tour</h1>
             <p>This quick tour of the Ejscript Web Framework provides an overview of the web framework and how to use
             it for your web applications.</p>
-            <p>First make sure you have read the <a href="../users/quickStart.html">Quick Start</a> and the Ejscript
-            <a href="../users/tour.html">Language Tour</a>, and that you have Ejscript installed on your system so you
+            <p>First make sure you have read the <a href="../start/quick.html">Quick Start</a> and the Ejscript
+            <a href="../start/tour.html">Language Tour</a>, and that you have Ejscript installed on your system so you
             can type along as you go. This web framework tour will work with the Ejscript <a href=
             "../users/shell.html">Command Shell</a> and the web framework <a href="generator.html">mvc</a> application
             generator to run scripts.</p><a id="blog"></a>
@@ -125,7 +125,7 @@ appweb: 1: Starting host named: "127.0.0.1:4000"
 appweb: 1: HTTP services are ready (single-threaded)</b>
 </pre>
             <p>Then enter <em>localhost:4000</em> in your browser. You should see your first application home
-            page.</p><img class="bare-screen" src="../../../images/webtour-home.png" alt="" />
+            page.</p><img class="bare-screen" src="../images/webtour-home.png" alt="" />
             <a id="hello"></a>
             <h2 class="section">Hello World</h2>
             <p>The next step is to create a simple "Hello World" web page. Ejscript web pages have an <em>.ejs</em>
@@ -138,7 +138,7 @@ appweb: 1: HTTP services are ready (single-threaded)</b>
 &lt;/body&gt;
 </pre>
             <p>To view the "Hello" web page in your browser, type in the following url:
-            http://localhost:4000/hello.ejs.</p><img src="../../../images/webtour-hello.png" alt="hello" class=
+            http://localhost:4000/hello.ejs.</p><img src="../images/webtour-hello.png" alt="hello" class=
             "bare-screen" /> <a id="dynamic"></a>
             <h2 class="section">Dynamic Content</h2>
             <p>While that was fun, the output is static and boring, so let's add some dynamic content. You can embed
@@ -154,7 +154,7 @@ appweb: 1: HTTP services are ready (single-threaded)</b>
 &lt;/body&gt;
 </pre>
             <p>Now when you re-run the page, it will display the current date and time:</p><img src=
-            "../../../images/webtour-helloDate.png" alt="hello" class="bare-screen" />
+            "../images/webtour-helloDate.png" alt="hello" class="bare-screen" />
             <h3>No Restart Require</h3>
             <p>Notice that you did not have to restart the web server, nor did you have to manually recompile the
             application. Rather, transparently in the background, the Ejscript web framework noticed that the hello.ejs
@@ -197,7 +197,7 @@ mvc generate scaffold Post title:string body:text
             <em>list</em> and <em>edit</em> views. It also created a database migration script to update the database
             and create a Post table with <em>title</em> and <em>body</em> columns.</p>
             <p>Now if you set your browser to the URL for the post controller, you will see your post listing screen.
-            <img src="../../../images/webtour-postList.png" alt="postList" class="bare-screen" /> <a id="newPosts"></a></p>
+            <img src="../images/webtour-postList.png" alt="postList" class="bare-screen" /> <a id="newPosts"></a></p>
             <h2 class="section">Create New Posts</h2>
             <p>The <em>new</em> post button directs your browser to the <em>/Post/init</em> URL. Behind the scenes, Ejscript
             parses this URL and identifies <em>Post</em> as the name of the controller and <em>init</em> as the name of an action to
@@ -225,7 +225,7 @@ public class PostController extends BaseController {
             Ejscript will automatically invoke a view of the same name. 
             
             <img src=
-            "../../../images/webtour-createPost.png" alt="createPost" class="bare-screen" />
+            "../images/webtour-createPost.png" alt="createPost" class="bare-screen" />
             <p>Click OK to add the new blog post.</p><a id="homePage"></a>
             <h2>Edit the Home Page</h2>
             <p>You can edit the application's home page to add an anchor link to your post listing page. Change
@@ -236,7 +236,7 @@ public class PostController extends BaseController {
 </pre>
             <p>Then reload the page and you will see:</p>
             
-            <img src="../../../images/webtour-homeLink.png" alt="homeLink"
+            <img src="../images/webtour-homeLink.png" alt="homeLink"
             class="bare-screen" /> <a id="layout"></a>
             <h2>Changing the Layout</h2>
             <p>Alternatively, you may wish to add some tabs to navigate your blog app. Ejscript provides a layout
@@ -262,7 +262,7 @@ public class PostController extends BaseController {
             <pre class="ui code segment">
 mvc compile
 </pre>
-            <img src="../../../images/webtour-tabs.png" alt="tabs" class="bare-screen" /> 
+            <img src="../images/webtour-tabs.png" alt="tabs" class="bare-screen" /> 
             <a id="validations"></a>
             <h2 class="section">Validations</h2>
             <p>Ejscript provides flexible validation methods to help ensure the data you save is correct.</p>
@@ -275,7 +275,7 @@ public dynamic class Post implements Record {
 </pre>
             <p>This will cause the model to automatically validate that the <em>title</em> and <em>body</em> fields are
             not blank and that the <em>title</em> is unique in the database. If you click OK without entering any data
-            you will see the following:</p><img src="../../../images/webtour-validate.png" alt="tabs" class="bare-screen" />
+            you will see the following:</p><img src="../images/webtour-validate.png" alt="tabs" class="bare-screen" />
             <p>This automatically identified the input fields in error and generated a summary of the errors above the
             form. Of course, this default error highlighting behavior can be overridden if desired. Other validation
             methods include <em>validateNumber</em> and <em>validateFormat</em>. You can also supply a model method
@@ -290,6 +290,6 @@ public function validate() {
 </pre><a id="learn"></a>
             <h2 class="section">Learn More ...</h2>
             <p>That concludes the a quick tour through some of the capabilities of the Ejscript web framework.</p>
-            <p>To learn more, please read the rest of the <a href="../../../index.html">Ejscript Documentation</a> and
-            the <a href="../../../ref/ejs/webArchitecture.html">Ejscript Web Framework Architecture</a>. You may also
-            like to ask questions at the <a href="http://ejscript.org/forum/">Ejscript Support Forum</a>.</p>
+            <p>To learn more, please read the rest of the <a href="../index.html">Ejscript Documentation</a> and
+            the <a href="../ref/webArchitecture.html">Ejscript Web Framework Architecture</a>. You may also
+            like to ask questions at the <a href="https://embedthis.com/forum/">Ejscript Support Forum</a>.</p>

@@ -7,6 +7,7 @@
             <h1>Controllers and Actions</h1>
             <p>Ejscript controllers manage the application and respond to client requests. They are the conductors of
             the application and orchestrate the application's activities. </p>
+
             <a id="flow"></a>
             <h2>Processing Flow</h2>
             <p>Ejscript controllers process requests in stages:</p>
@@ -21,6 +22,7 @@
             <p>When a request is received, Ejscript will parse and decode the request before routing to the appropriate
             Controller where it will create an instance of the controller class and invoke the requested
             action method.</p>
+
             <a id="anatomy"></a>
             <h2 class="section">Anatomy of a Controller</h2>
             <p>So what does a controller look like?</p>
@@ -60,6 +62,7 @@ https://embedthis.com/myApp/cart/create
 </pre>
             <p>The <em>create</em> action will be invoked. It will create a new product and then render the
             <em>edit.ejs</em> view back to the client.</p>
+
             <a id="actions"></a>
             <h2 class="section">Actions</h2>
             <p>Actions are where the controller does its work. In Ejscript, actions are simple JavaScript functions
@@ -69,6 +72,7 @@ https://embedthis.com/myApp/cart/create
             <p>When a request is received, the controller framework looks for an action method of the required name. If
             one is not found, it invokes the <em>missing</em> action method which renders a default error message back
             to the client.</p>
+
             <a id="context"></a>
             <h3>Controller Context</h3>
             <p>Ejscript establishes a request context for the controller before invoking the action. This consists of
@@ -85,6 +89,7 @@ https://embedthis.com/myApp/cart/create
             <p>The controller can add to this context by declaring public variables in the controller class or the
             ApplicationController which is the base class for all controllers. Views can automatically access any such
             public controller variables.</p>
+
             <a id="processing"></a>
             <h3>Processing the Request</h3>
             <p>The action method can perform any processing it desires. There are no real restrictions except you don't
@@ -92,6 +97,7 @@ https://embedthis.com/myApp/cart/create
             <p>Actions often retrieve a database record via the Model and store an object representing the model in a
             public variable for easy access by the view. NOTE: the controller is not persistent across client
             requests.</p>
+
             <a id="models"></a>
             <h2 class="section">Model Data</h2>
             <p>Ejscript provides an Object Relational Mapping (ORM) layer for accessing database data via convenient
@@ -100,12 +106,14 @@ https://embedthis.com/myApp/cart/create
             methods to read a database record and store the record in a public controller property. The view can then
             simply access the database data via this property.</p>
             <p>For more details, please see <a href="models.html">Database Models</a>.</p>
+
             <a id="forms"></a>
             <h2 class="section">Form Data</h2>
             <p>HTTP Form data is marshalled by Ejscript into the <em>params</em> object which is accessible to actions.
             Each HTML input element posted by the client will become a property of <em>params</em>. Ejscript can also
             organize form data into nested objects. If an input element name contains a period, then Ejscript will
             create nested objects to match the input element name.</p>
+
             <a id="views"></a>
             <h3>Rendering Views</h3>
             <p>After processing the request, the controller is responsible for rendering a view back to the client. If
@@ -113,6 +121,7 @@ https://embedthis.com/myApp/cart/create
             the action method.</p>
             <p>In the prior example, the <em>edit</em> action did not call any <em>render</em> function, so the
             framework will look for, and if found, run a view <em>views/cart/edit.ejs</em>.</p>
+
             <a id="generating"></a>
             <h2 class="section">Generating Controllers and Actions</h2>
             <p>Ejscript includes an an application generator, called <em>mvc</em> to make it quick and easy to
@@ -147,10 +156,11 @@ mvc generate scaffold MODEL [field:type ...]
             <em>edit</em> action and view that provides <em>add</em> and <em>edit</em> capability. The <em>list</em>
             action and view, provides the ability to list the database table rows and select an entry 
             to edit.</p>
+
             <a id="controller"></a>
             <h2 class="section">Controller Class</h2>
             <p>The Controller class has a large set of methods and properties. See the <a href=
-            "../../../api/ejscript/index.html">Ejscript Library</a> for full details. Some of the more important
+            "../ref/api/ejscript/index.html">Ejscript Library</a> for full details. Some of the more important
             properties:</p>
             <table title="controllerProperties" class="ui table segment">
                 <thead>
@@ -289,6 +299,7 @@ mvc generate scaffold MODEL [field:type ...]
                     </tr>
                 </tbody>
             </table>
+
             <a id="filters"></a>
             <h2 class="section">Filters</h2>
             <p>Filters enable a controller to perform processing before and after actions are run. Filters are useful

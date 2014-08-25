@@ -1,446 +1,956 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>https://embedthis.com/esp/doc/developers/embedding.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/developers/embedding.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/developers/extending.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/developers/extending.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/developers/index.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/developers/index.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/developers/man.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/developers/project.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/developers/project.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/historical/changeLog.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/historical/changeLog.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/historical/roadmap.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/historical/roadmap.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/index.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/index.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/language/classes.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/language/classes.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/language/core.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/language/core.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/language/events.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/language/events.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/language/expressions.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/language/expressions.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/language/functions.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/language/functions.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/language/globals.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/language/globals.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/language/index.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/language/index.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/language/library.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/language/library.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/language/modes.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/language/modes.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/language/modules.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/language/modules.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/language/objects.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/language/objects.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/language/statements.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/language/statements.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/language/syntax.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/language/syntax.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/language/types.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/language/types.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/licensing/gpl.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/man/ejs.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/licensing/index.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/man/ejsc.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/man/ejs.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/man/ejsmod.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/man/ejsc.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/man/http.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/man/ejsmod.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/man/makerom.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/man/http.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/man/manager.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/man/makerom.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/man/mvc.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/man/manager.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/man/regexp.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/man/mvc.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/ref/api/edi.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/man/regexp.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/ref/api/ejs.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejs.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/ref/api/esp.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/__all-classes.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/ref/api/http.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/__all-namespaces.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/ref/api/mpr.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/__all.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/ref/api/osdep.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/__navigation-left.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/ref/compatibility.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/__overview-page.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/ref/native.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/App.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/ref/stability.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ArgError.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/solutions/files.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Args.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/solutions/index.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ArithmeticError.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/solutions/samples.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Array.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/solutions/web.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/AssertError.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/standards/index.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/BinaryStream.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/standards/references.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Boolean.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/start/faq.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ByteArray.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/start/index.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Cache.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/start/installing.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Cmd.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/start/linux.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Config.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/start/mac.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Date.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/start/packages.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Debug.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/start/quick.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ejs.db-classes.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/start/releaseNotes.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ejs.db-Database.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/start/source.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ejs.db-DatabaseConnector.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/start/tour.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ejs.db.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/start/windows.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ejs.web-classes.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/users/compiler.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ejs.web-CommonLogClass.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/users/doc.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ejs.web-Controller.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/users/ejsmod.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ejs.web-HttpServer.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/users/features.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ejs.web-Mvc.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/users/index.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ejs.web-Request.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/users/listing.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ejs.web-Route.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/users/man.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ejs.web-Router.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/users/shell.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ejs.web-Session.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/web/controllers.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ejs.web-UploadFile.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/web/controls.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ejs.web-View.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/web/generator.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ejs.web.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/web/hosting.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Emitter.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/web/index.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Error.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/web/models.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ErrorEvent.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/web/mvc.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Event.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/web/routing.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/File.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/web/views.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/FileSystem.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
-        <loc>https://embedthis.com/esp/doc/web/webTour.html</loc>
-        <lastmod>2014-08-22</lastmod>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Frame.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Function.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/GC.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/global.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Http.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/index.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Inflector.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/InstructionError.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/IOError.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/iterator-classes.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/iterator-StopIteration.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/iterator.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/JSON.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Loader.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/LocalCache.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Logger.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Math.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Memory.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/MemoryError.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/MprLog.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Null.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Number.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Object.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Path.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Record.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ReferenceError.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/RegExp.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/ResourceError.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Socket.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/StateError.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Stream.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/String.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/SyntaxError.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/System.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/TemplateParser.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/TextStream.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Timer.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/title.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Type.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/TypeError.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Uri.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Void.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/WebSocket.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/Worker.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/ejscript/XML.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/http.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/mpr.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/api/osdep.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/architecture.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/compatibility.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/index.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/memory.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/multithread.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/native.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/stability.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/ref/webArchitecture.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/standards/index.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/standards/references.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/start/faq.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/start/index.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/start/installing.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/start/linux.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/start/mac.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/start/quick.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/start/releaseNotes.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/start/source.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/start/tour.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/start/windows.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/users/compiler.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/users/doc.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/users/ejsmod.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/users/features.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/users/index.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/users/listing.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/users/man.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/users/shell.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/web/controllers.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/web/controls.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/web/generator.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/web/hosting.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/web/index.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/web/models.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/web/mvc.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/web/routing.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/web/views.html</loc>
+        <lastmod>2014-08-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://embedthis.com/ejs/doc/web/webTour.html</loc>
+        <lastmod>2014-08-25</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>

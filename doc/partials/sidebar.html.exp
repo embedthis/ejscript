@@ -27,18 +27,17 @@
         <div class="item">
             <a href="@@{top}users/index.html"><b>User's Guide</b></a>
             <div class="menu">
-                <a class="item" href="@@{top}users/man.html">Man Pages</a>
                 <a class="item" href="@@{top}users/shell.html">Using the Command Shell</a>
                 <a class="item" href="@@{top}users/compiler.html">Using the Compiler</a>
                 <a class="item" href="@@{top}users/ejsmod.html">Using the Module Generator</a>
                 <a class="item" href="@@{top}users/doc.html">Generating Documentation</a>
                 <a class="item" href="@@{top}users/listing.html">Generating Listing</a>
+                <a class="item" href="@@{top}users/man.html">Man Pages</a>
             </div>
         </div>
         <div class="item">
             <a href="@@{top}language/index.html"><b>Language Guide</b></a>
             <div class="menu">
-                <a class="item" href="@@{top}language/modes.html">Language Modes</a>
                 <a class="item" href="@@{top}language/syntax.html">Language Syntax</a>
                 <a class="item" href="@@{top}language/statements.html">Statements</a>
                 <a class="item" href="@@{top}language/expressions.html">Expressions and Operators</a>
@@ -50,14 +49,15 @@
                 <a class="item" href="@@{top}language/modules.html">Modules and Namespaces</a>
                 <a class="item" href="@@{top}language/library.html">System Library</a>
                 <a class="item" href="@@{top}language/events.html">Events and Timers</a>
+                <a class="item" href="@@{top}language/modes.html">Language Modes</a>
                 <a class="item" href="@@{top}language/globals.html">Globals</a>
             </div>
         </div>
         <div class="item">
-            <a href="@@{top}users/index.html"><b>Web Framework Guide</b></a>
+            <a href="@@{top}web/index.html"><b>Web Framework Guide</b></a>
             <div class="menu">
                 <a class="item" href="@@{top}web/webTour.html">Web Framework Tour</a>
-                <a class="item" href="@@{top}web/mvc.html">Application Generator</a>
+                <a class="item" href="@@{top}web/generator.html">Application Generator</a>
                 <a class="item" href="@@{top}web/routing.html">Routing</a>
                 <a class="item" href="@@{top}web/controllers.html">Controllers</a>
                 <a class="item" href="@@{top}web/views.html">Views and Layout Templates</a>
@@ -83,13 +83,13 @@
                 <a class="item" href="@@{top}ref/webArchitecture.html">Web Framework Architecture</a>
                 <a class="item" href="@@{top}ref/memory.html">Ejscript Memory Allocation</a>
                 <a class="item" href="@@{top}ref/multithread.html">Multithreaded Programming</a>
-                <a class="item" href="@@{top}standards/references.html">Standards</a></li>
+                <a class="item" href="@@{top}standards/references.html">Standards</a>
             </div>
         </div>
         <div class="item">
             <a href="@@{top}developers/project.html">Project Resources</a>
             <div class="menu">
-                <a class="item" href="http://goo.gl/dGRDl4">Official Ejscript News</a>
+                <a class="item" href="http://goo.gl/g4oS2C">Official Ejscript News</a>
                 <a class="item" href="https://embedthis.com/ejs/">Ejscript Web Site</a>
                 <a class="item" href="https://github.com/embedthis/ejs">Source Code Repository</a>
                 <a class="item" href="https://github.com/embedthis/ejs/issues">Project Issue Database</a>

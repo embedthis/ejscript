@@ -1,123 +1,129 @@
-<BODY><PRE>
-EJSMOD(1)                        User Commands                       EJSMOD(1)
+<!DOCTYPE html>
+<html lang="eng">
+<head>
+<title>Ejsmod Man Page</title>
+</head>
+<body><pre>
+ejsmod(1)                        user commands                       ejsmod(1)
 
-<B>NAME</B>
-       ejsmod - Ejscript Module Generator
+<b>name</b>
+       ejsmod - ejscript module generator
 
-<B>SYNOPSIS</B>
-       <B>ejsmod</B>
-           <B>--cslots</B>
-           <B>--depends</B>
-           <B>--html path</B>
-           <B>--listing</B>
-           <B>--require 'module ...'</B>
-           <B>--search ejsPath</B>
-           <B>--showDebug</B>
-           <B>--version</B>
-           <B>modules ...</B>
+<b>synopsis</b>
+       <b>ejsmod</b>
+           <b>--cslots</b>
+           <b>--depends</b>
+           <b>--html path</b>
+           <b>--listing</b>
+           <b>--require 'module ...'</b>
+           <b>--search ejspath</b>
+           <b>--showdebug</b>
+           <b>--version</b>
+           <b>modules ...</b>
 
-<B>DESCRIPTION</B>
-       The  <B>ejsmod  </B>command  is a utility program for Ejscript module files to
+<b>description</b>
+       the  <b>ejsmod  </b>command  is a utility program for ejscript module files to
        generate symbolic assembler listings, slot defintion files  for  native
-       classes and HTML documentation.
+       classes and html documentation.
 
-<B>LISTINGS</B>
-       To  generate symbolic assembler listings, compile your source using the
-       <B>ejsc </B>command with the --debug  switch.  Then  invoke  <B>ejsmod  </B>with  the
-       <B>--listing  </B>switch and supply the required modules. An assembler listing
+<b>listings</b>
+       to  generate symbolic assembler listings, compile your source using the
+       <b>ejsc </b>command with the --debug  switch.  then  invoke  <b>ejsmod  </b>with  the
+       <b>--listing  </b>switch and supply the required modules. an assembler listing
        file with a ".lst" extension will be generated for  each  corresponding
        logical module directive.
 
-       The  listing  files interleave disassembled byte code with the relevant
-       source code statements. The listings describe each module and its  con-
-       stituent functions and initializers. The bindings for all types and the
+       the  listing  files interleave disassembled byte code with the relevant
+       source code statements. the listings describe each module and its  con-
+       stituent functions and initializers. the bindings for all types and the
        constant pool are also listed.
 
-<B>DOCUMENTATION</B>
-       To generate HTML documentation for your code, first compile  using  the
-       <B>ejsc  </B>command  with  the  --doc  switch. Then invoke <B>ejsmod </B>and use the
-       <B>--html </B>switch with the directory where you want the documentation  gen-
+<b>documentation</b>
+       to generate html documentation for your code, first compile  using  the
+       <b>ejsc  </b>command  with  the  --doc  switch. then invoke <b>ejsmod </b>and use the
+       <b>--html </b>switch with the directory where you want the documentation  gen-
        erated.
 
-       The  HTML  documentation  will  include all modules, namespaces, types,
+       the  html  documentation  will  include all modules, namespaces, types,
        functions, properties and variable declarations.
 
-<B>BINDING SLOT FILES</B>
-       Ejscript supports the creation of native types which are coded in the C
-       language. Native types are useful for core system types and for classes
-       that must run at near  binary  speed.  To  facilitate  creating  native
-       types,  <B>ejsmod  </B>generates  slot binding definition headers which define
-       symbolic offsets for declarations. See the  Native  class  samples  for
+<b>binding slot files</b>
+       ejscript supports the creation of native types which are coded in the c
+       language. native types are useful for core system types and for classes
+       that must run at near  binary  speed.  to  facilitate  creating  native
+       types,  <b>ejsmod  </b>generates  slot binding definition headers which define
+       symbolic offsets for declarations. see the  native  class  samples  for
        further information.
 
-<B>OPTIONS</B>
-       <B>--cslots</B>
-              Generate  slot binding definition headers for the input modules.
+<b>options</b>
+       <b>--cslots</b>
+              generate  slot binding definition headers for the input modules.
 
-       <B>--depends</B>
-              Generate the dependant modules required by the input modules.
+       <b>--depends</b>
+              generate the dependant modules required by the input modules.
 
-       <B>--html dir</B>
-              Generate HTML documentation  to  the  specified  directory.  The
-              source  files  must  have  been  compiled by <B>ejsc </B>with the --doc
+       <b>--html dir</b>
+              generate html documentation  to  the  specified  directory.  the
+              source  files  must  have  been  compiled by <b>ejsc </b>with the --doc
               switch to include the documentation strings in the module files.
 
-       <B>--listing</B>
-              Generate symbolic assembler files for each input module.
+       <b>--listing</b>
+              generate symbolic assembler files for each input module.
 
-       <B>--require 'module ...'</B>
-              List of modules to preload before loading the input modules.
+       <b>--require 'module ...'</b>
+              list of modules to preload before loading the input modules.
 
-       <B>--search ejsPath</B>
-              Set  the  module search path. The module search path is a set of
-              directories that the <B>ejsmod </B>command will use when  locating  and
-              loading Ejscript modules.  The search path will always have some
-              system directories appended to  the  end.  These  include  paths
-              specified  via  the  <B>EJSPATH </B>environment variable and key system
-              directories such as the Ejscript system module directory and the
-              directory containing the <B>ejsmod </B>command.
+       <b>--search ejspath</b>
+              set  the  module search path. the module search path is a set of
+              directories that the <b>ejsmod </b>command will use when  locating  and
+              loading ejscript modules.  the search path will always have some
+              system directories appended to  the  end.  these  include  paths
+              specified  via  the  <b>ejspath </b>environment variable and key system
+              directories such as the ejscript system module directory and the
+              directory containing the <b>ejsmod </b>command.
 
-              The  search  path  value is similar in format to the system PATH
-              variable format.  On windows, path segments are separated by ";"
-              and on Linux, Unix, FreeBSD and MAC, the path segments are sepa-
+              the  search  path  value is similar in format to the system path
+              variable format.  on windows, path segments are separated by ";"
+              and on linux, unix, freebsd and mac, the path segments are sepa-
               rated by ":" delimiters.
 
-              Given a module named "a.b.c" in a script, <B>ejsmod  </B>will  use  the
+              given a module named "a.b.c" in a script, <b>ejsmod  </b>will  use  the
               following search strategy to locate the module:
 
-              1. Search for a module file named "a.b.c.mod"
+              1. search for a module file named "a.b.c.mod"
 
-              2. Search for a module file named "a/b/c.mod"
+              2. search for a module file named "a/b/c.mod"
 
-              3. Search for a module file named "a.b.c.mod" in the search path
+              3. search for a module file named "a.b.c.mod" in the search path
 
-              4. Search for a module file named c.mod in the search path
+              4. search for a module file named c.mod in the search path
 
-       <B>--showDebug</B>
-              Show debug instructions in the symbolic assembler listings.
+       <b>--showdebug</b>
+              show debug instructions in the symbolic assembler listings.
 
-       <B>--version</B>
-              Print the <B>ejsmod </B>command version and exit.
+       <b>--version</b>
+              print the <b>ejsmod </b>command version and exit.
 
-<B>BACKGROUND</B>
-       Ejscript is an enhanced implementation of the JavaScript  language  for
+<b>background</b>
+       ejscript is an enhanced implementation of the javascript  language  for
        use  in embedded applications such as web servers, embedded devices and
-       mobile phones. It is especially well suited for Server-Side  JavaScript
+       mobile phones. it is especially well suited for server-side  javascript
        web applications.
 
-       Ejscript  is a dynamic, interpreted, object-oriented scripting language
+       ejscript  is a dynamic, interpreted, object-oriented scripting language
        that supports classes, objects, exceptions, statements, expressions and
        a powerful suite of data types.
 
-<B>REPORTING BUGS</B>
-       Report bugs to dev@embedthis.com.
+<b>reporting bugs</b>
+       report bugs to dev@embedthis.com.
 
-<B>COPYRIGHT</B>
-       Copyright (C) 2004-2014 Embedthis Software.  Ejscript is a trademark of
-       Embedthis Software.
+<b>copyright</b>
+       copyright (c) 2004-2014 embedthis software.  ejscript is a trademark of
+       embedthis software.
 
-<B>SEE ALSO</B>
+<b>see also</b>
        ejsc, ejs
 
-ejsmod                            March 2014                         EJSMOD(1)
-</PRE></BODY>
+ejsmod                            march 2014                         ejsmod(1)
+</pre></body>
+</html>

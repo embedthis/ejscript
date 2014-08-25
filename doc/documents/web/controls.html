@@ -14,12 +14,14 @@
             HTTP requests to get data and update the user interface without doing a complete browser refresh. This
             gives a more immediate and natural feel to a web application. Ejscript supports Ajax and Ajax frameworks
             via its ViewConnector which provides a plugable interface for Ajax libraries.</p><a id="interface"></a>
+
             <h2>ViewConnector Interface</h2>
             <p>The ViewConnector interface defines methods for common user interface controls such as: button and
             checkbox, but it also provides high level controls such as chart and table. Application <a href=
             "views.html">Views</a> can use these methods to render UI components with very little code or effort.</p>
             <p>However the ViewConnector is just an interface. It contains no implementation. The actual implementation
-            is provided by the Ajax Framework libraries.</p><img src="../../../images/viewConnector.jpg" alt="" />
+            is provided by the Ajax Framework libraries.</p><img src="../images/viewConnector.jpg" alt="" />
+
             <a id="libraries"></a>
             <h3>Ajax Libraries</h3>
             <p>The purpose of the ViewConnector is to provide a modular way to add Ajax Framework libraries and to give
@@ -36,7 +38,7 @@
             databases and refresh their contents automatically.</p>
             <p>Here is an example of a table configured to display stock market data in a grid with the current price
             for each stock. The grid will refresh its data every 2 seconds without updating the entire web page.</p>
-            <pre>
+            <pre class="ui code segment">
 &lt;%
     table(Stock.findAll(), {
         refresh: 2,
@@ -56,7 +58,7 @@
             <a id="viewConnector"></a>
             <h2>ViewConnector Methods</h2>
             <p>The ViewConnector interface defines the following methods:</p>
-            <table title="methods">
+            <table title="methods" class="ui table segment">
                 <thead>
                     <tr>
                         <th>Name</th>

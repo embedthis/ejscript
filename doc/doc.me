@@ -12,12 +12,11 @@ Me.load({
         nativeApi: {
             action: `
                 apidoc('api/ejs.dox', [
-                    '${SRC}/src/ejs.h'
+                    '${SRC}/src/ejs.h',
                     '${SRC}/src/ejs.web/ejsWeb.h',
                     '${SRC}/src/ejsCompiler.h',
                 ], 'Ejscript API', 'api/*.tags')
-                for each (let src: Path in ['api/ejs.html', 'api/http.html', 'api/mpr.html', 'api/osdep.html',
-                        'api/esp.html', 'api/edi.html']) {
+                for each (let src: Path in ['api/ejs.html', 'api/http.html', 'api/mpr.html', 'api/osdep.html']) {
                     apiLayout(src, Path('final/ref').join(src))
                 }
             `
@@ -28,17 +27,47 @@ Me.load({
                 trace('Generate', 'Script library documentation')
                 let src = me.dir.src.join('src')
                 let files = src.files('core/*.es')
-                //  FUTURE 'tar'
                 for each (p in ['unix', 'db', 'db.mapper', 'db.sqlite', 'web', 'template']) {
                     files += src.files('ejs.' + p + '/*.es')
                 }
                 let docmod = Path('').temp().replaceExt('mod')
                 run('ejsc --doc --bind --out ' + docmod + ' --require null ' + files.join(' '))
-                let edir = me.dir.src.join('doc/api/ejscript')
+                let edir = Path('documents/ref/api/ejscript')
                 rmdir([edir.join('*.html'), edir.join('*.css'), edir.join('images/*')])
                 run('ejsmod --warn --html ' + edir + ' --require null ' + docmod)
                 docmod.remove()
             `,
+        },
+
+        validate: {
+            depends: [ 'gen-doc' ],
+            action: `
+                for each (f in Path('final').files('**/*.html')) {
+                    let data = f.readString()
+                    data = data.replace('700|Open', '').
+                        replace(/ejs.download.html/g, 'download/ejs.html').
+                        replace(/pak.download.html/g, 'download/pak.html').
+                        replace(/developers.contributors.html/g, 'scripts/contributors.esp').
+                        replace(/nowrap="nowrap"/g, '').
+                        replace(/https:..embedthis.com.ejs.licensing.html/g, 'https://embedthis.com/').
+                        replace(/https:..embedthis.com.me.doc.guide.me.source.building.htm/g, 'https://embedthis.com/').
+                        replace(/https:..embedthis.com.me.doc.source.building.htm/g, 'https://embedthis.com/').
+                        replace(/https:..embedthis.com.me.doc.source/g, 'https://embedthis.com/').
+                        replace(/https:..embedthis.com.developers./g, 'https://embedthis.com/').
+
+                        replace(/nowrap/g, '')
+                    trace('Patch', f)
+                    f.write(data)
+                }
+                for each (f in Path('final/man').files('*.html')) {
+                    f.write(f.readString().toLowerCase())
+                }
+                let path = Path('final/ref/api/ejscript/index.html')
+                path.write('<!DOCTYPE html>\n<html lang="eng">\n<head>\n<title>Dummy</title>\n</head></html>')
+
+                trace('Listen', 'exp --nowatch')
+                Cmd.run('exp --nowatch')
+            `
         },
     },
 })

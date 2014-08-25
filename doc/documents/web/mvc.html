@@ -8,25 +8,31 @@
             <p>The Model-View-Controller (MVC) paradigm is a design pattern used for creating applications. It
             partitions the separate concerns of application data, user interface and application logic into three
             discrete components. It has proven highly successful in simplifying application design and
-            maintenance.</p><img src="../../../images/mvc.jpg" alt="" />
+            maintenance.</p><img src="../images/mvc.jpg" alt="" />
             <p>The Ejscript Web Framework is a Model-View-Controller environment that provides a structure and
             assistance for your MVC application. It provides the basis and connections between your models, views and
             controllers and routes messages between the various components.</p>
             <p>Ejscript makes MVC programming easy by providing base classes that implement most of the plumbing for an
-            MVC application.</p><a id="models"></a>
+            MVC application.</p>
+
+            <a id="models"></a>
             <h2>Models</h2>
             <p>The model is responsible for managing access to application data and state. It is also responsible for
             ensuring the data remains valid and consistent.</p>
             <p>Ejscript provides an Object Relational Mapper (ORM) via the the <b>Model</b> class. This wraps database
             data in JavaScript objects and allows you to use object-oriented programming (OOP) when dealing with
             database data stored in rows and columns. The model class makes SQL programming more natural in OOP
-            programs.</p><a id="views"></a>
+            programs.</p>
+
+            <a id="views"></a>
             <h2>Views</h2>
             <p>The view is responsible for rendering the user interface and presenting the application to the user.
             Views should not manage incoming requests &mdash; that is the job of Controllers.</p>
             <p>Ejscript provides the <b>View</b> class and a powerful embedded scripting environment. HTML pages with
             embedded JavaScript code are compiled and run to render the user interface. The view mechanism also provides
-            a templating engine so you can deal separately with layout pages and content pages.</p><a id="controllers"></a>
+            a templating engine so you can deal separately with layout pages and content pages.</p>
+
+            <a id="controllers"></a>
             <h2>Controllers</h2>
             <p>Controllers manage the application and respond to client requests. They orchestrate the application's
             response, access and update model data, and display views back to the client. Incoming requests invoke

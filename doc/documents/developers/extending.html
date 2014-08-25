@@ -1,7 +1,7 @@
 {
     title:  'Extending',
     crumbs: [
-        "Developer's Guide": "index.html",
+        { "Developer's Guide": "index.html" },
     ],
 }
             <h1>Extending Ejscript</h1>
@@ -70,12 +70,12 @@ ejs program.es
             <h3>Installing Modules</h3>
             <p>Once your module is created, you can install it by simply copying it to the Ejscript module repository.
             On Unix systems, the repository is typically at /usr/lib/ejs/modules. You should observe the <a href=
-            "../../../guide/ejs/language/modules.html#repository">Ejscript Module Repository</a> guidelines when you
+            "../language/modules.html#repository">Ejscript Module Repository</a> guidelines when you
             install your module.</p>
             <p>By using module directives, you can simply create a modular extension components and libraries for
             Ejscript that can be easily used by others. For more information, read the <a href=
-            "../../../guide/ejs/language/modules.html">Modules and Namespaces</a> and <a href=
-            "../../../guide/ejs/language/classes.html">Classes</a> documents.</p>
+            "../language/modules.html">Modules and Namespaces</a> and <a href=
+            "../language/classes.html">Classes</a> documents.</p>
             <h3>Declarations</h3>
             <p>You can define global functions and variables by placing such declarations outside any module blocks.
             Then by using the ejsc compiler <b>--out</b> switch, you can explicitly name the output module file. However,
@@ -215,12 +215,14 @@ static EjsObj *blastOff(Ejs *ejs, EjsObj *rocket, int argc, EjsObj **argv)
             <p>For each function, think if it should be created in script code or in native code. You can often code
             functions that are not executed as frequently in script code without impacting performance. It is a good
             strategy to prototype the module in script first and then convert the prototype to native code on a
-            function-by-function basis.</p><a id="api"></a>
+            function-by-function basis.</p>
+
+            <a id="api"></a>
             <h2 class="section">Native API</h2>
             <p>Ejscript has an extensive native API for interacting with the Ejscript virtual machine. Because types
             are themselves objects, the API offers a consistent way to access properties from objects or classes. Some
-            of the more important API functions are listed below. See the full <a href="../../../api/ejs.html">Ejscript
-            API</a> and the <a href="../../../api/mpr.html">MPR API</a> reference for full details.</p>
+            of the more important API functions are listed below. See the full <a href="../ref/api/ejs.html">Ejscript
+            API</a> and the <a href="../ref/api/mpr.html">MPR API</a> reference for full details.</p>
             <table title="details" class="ui table segment">
                 <thead>
                     <tr>
@@ -392,4 +394,3 @@ static EjsObj *blastOff(Ejs *ejs, EjsObj *rocket, int argc, EjsObj **argv)
             examples of embedding and extending Ejscript.</p>
             <p>For information about embedding Ejscript into applications, see the <a href="embedding.html">Embedding
             Ejscript</a></p><a href="embedding.html">document</a>.
-        </div>
