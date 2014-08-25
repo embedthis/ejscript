@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Class Session</title>
+
+   <link rel="stylesheet" type="text/css" href="doc.css" />
+</head>
+
+<body>
+<div class='body'>
+
+<div class="content">
+
+<a name='top'></a>
+<h1 class='className'>Session</h1>
+<div class='classBlock'>
+<table class='classHead' title='Session'>
+   <tr><td><strong>Module</strong></td><td>ejs.web</td></tr>
+   <tr><td><strong>Definition</strong></td><td>dynamic  class Session</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Session <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.4</td></tr>
+       </td></tr>
+</table>
+
+<p class='classBrief'>Session state storage class.</p>
+
+<p class='classDescription'>The session state objects can be used to share state between requests. The <a href='#Request'>Request</a> object has
+a <a href='ejs.web-Request.html#session'>Request.session</a> property that stores a Session object instance. Values stored into the session 
+state are serialized and deserialized upon retrieval.</p>
+
+</div>
+
+
+<hr />
+<a name='Properties'></a>
+<h2 class='classSection'>Properties</h2>
+   <p>(No own properties defined)</p><p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
+
+<hr />
+<a name='ClassMethods'></a>
+<h2 class='classSection'>Session Class Methods</h2>
+<table class='apiIndex' title='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#destorySession'><b>destorySession</b></a>(session: <a href='ejs.web-Session.html'>Session</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Destroy a session.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#key'><b>key</b></a>(session: <a href='ejs.web-Session.html'>Session</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the session ID key for a session.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<a name='InstanceMethods'></a>
+<h2 class='classSection'>Session Instance Methods</h2>
+<table class='apiIndex' title='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Session'><b>Session</b></a>(key, options: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new session state object.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<h2>Method Detail</h2>
+<a name='Session'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.web  Session(key, options: <a href='Object.html'>Object</a> = null)
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Create a new session state object. This uses the Store in-memory caching service.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>key </td><td>Optional key to provide. If omitted or null, a new key will be generated. If the given key has expired, a new key will be generated.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>null [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>null [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' title='options'>
+<td class='param'>lifespan</td><td>Lifespan in seconds for the session.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='destorySession'></a>
+<div class='api'>
+<div class='apiSig'>static     destorySession(session: <a href='ejs.web-Session.html'>Session</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Destroy a session. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>session: <a href='ejs.web-Session.html'>Session</a> </td><td>Session to destroy H.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='key'></a>
+<div class='api'>
+<div class='apiSig'>static     key(session: <a href='ejs.web-Session.html'>Session</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Get the session ID key for a session. This is a static method so as to not clash with session properties.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>session: <a href='ejs.web-Session.html'>Session</a> </td><td>Session to examine.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The session ID key.</dd></dl>
+</div>
+</div>
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>

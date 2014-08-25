@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Class Loader</title>
+
+   <link rel="stylesheet" type="text/css" href="doc.css" />
+</head>
+
+<body>
+<div class='body'>
+
+<div class="content">
+
+<a name='top'></a>
+<h1 class='className'>Loader</h1>
+<div class='classBlock'>
+<table class='classHead' title='Loader'>
+   <tr><td><strong>Module</strong></td><td>ejs</td></tr>
+   <tr><td><strong>Definition</strong></td><td> class Loader</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Loader <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.4</td></tr>
+<tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
+       </td></tr>
+</table>
+
+<p class='classBrief'>CommonJS loader class.</p>
+
+<p class='classDescription'>This is public do assist dynamic loading of ejs.cjs so namespace qualification is not needed.</p>
+
+</div>
+
+
+<hr />
+<a name='Properties'></a>
+<h2 class='classSection'>Properties</h2>
+<table class='itemTable' title='properties'>
+   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='initializers'></a>
+   <tr><td nowrap align='center'>static </td><td>initializers</td><td>&nbsp;</td><td>null </td></tr>
+<a name='mainId'></a>
+   <tr><td nowrap align='center'>static </td><td>mainId</td><td>&nbsp;</td><td>null </td></tr>
+<a name='signatures'></a>
+   <tr><td nowrap align='center'>static </td><td>signatures</td><td>&nbsp;</td><td>null </td></tr>
+</table>
+
+<p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
+
+<hr />
+<a name='ClassMethods'></a>
+<h2 class='classSection'>Loader Class Methods</h2>
+<table class='apiIndex' title='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'>static </td><td><a href='#load'><b>load</b></a>(id: <a href='String.html'>String</a>, path: <a href='Path.html'>Path</a>, config = expression, codeReader: <a href='Function.html'>Function</a> = null): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Load a CommonJS module and return the exports object.</td></tr>
+   <tr class='apiDef'><td class='apiType'>static </td><td><a href='#register'><b>register</b></a>(id, fn): <a href='Function.html'>Function</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Register a CommonJS module initializer.</td></tr>
+   <tr class='apiDef'><td class='apiType'>static </td><td><a href='#require'><b>require</b></a>(id: <a href='String.html'>String</a>, config: <a href='Object.html'>Object</a> = expression): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Load a CommonJS module.</td></tr>
+   <tr class='apiDef'><td class='apiType'>static </td><td><a href='#setConfig'><b>setConfig</b></a>(newConfig: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the configuration options hash for require to use.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<a name='InstanceMethods'></a>
+<h2 class='classSection'>Loader Instance Methods</h2>
+<table class='apiIndex' title='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <p>(No own instance methods defined)</p></table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<h2>Method Detail</h2>
+<a name='load'></a>
+<div class='api'>
+<div class='apiSig'>static  load(id: <a href='String.html'>String</a>, path: <a href='Path.html'>Path</a>, config = expression, codeReader: <a href='Function.html'>Function</a> = null): <a href='Object.html'>Object</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Load a CommonJS module and return the exports object. After the first load, the script module will be compiled
+and cached as a byte-code module. It will be recompiled if the script source is modified or missing.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>id: <a href='String.html'>String</a> </td><td>Unique name of the module to load. The id may be a unique ID, an absolute path, relative path or a  path fragment that is resolved relative to the App search path. Ids may or may not include a ".es" or  ".js" extension.</td></tr><tr class='param'><td class='param'>path: <a href='Path.html'>Path</a> </td><td>Optional path to the physical file corresponding to the module. If the module source code has changed, it will be re-compiled and then cached.</td></tr><tr class='param'><td class='param'>codeReader: <a href='Function.html'>Function</a> </td><td>Optional function to provide script code to use instead of reading from the path. [default: null]</td></tr><tr class='param'><td class='param'>config </td><td>null [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A hash of exported properties.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='register'></a>
+<div class='api'>
+<div class='apiSig'>static  register(id, fn): <a href='Function.html'>Function</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Register a CommonJS module initializer. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>id </td><td>Unique path ID for the module. This is typically a relative path to the module.</td></tr><tr class='param'><td class='param'>fn </td><td>Module initialization function.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The function.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='require'></a>
+<div class='api'>
+<div class='apiSig'>static  require(id: <a href='String.html'>String</a>, config: <a href='Object.html'>Object</a> = expression): <a href='Object.html'>Object</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Load a CommonJS module. The module is loaded only once unless it is modified.
+WARNING: this will not be supported in future releases as the Harmony loader will be supported instead.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>id: <a href='String.html'>String</a> </td><td>Name of the module to load. The id may be an absolute path, relative path or a path fragment that is resolved relative to the App search path. Ids may or may not include a ".es" or ".js" extension.</td></tr><tr class='param'><td class='param'>config: <a href='Object.html'>Object</a> </td><td>null [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A hash of exported properties `.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='setConfig'></a>
+<div class='api'>
+<div class='apiSig'>static  setConfig(newConfig: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Set the configuration options hash for require to use. Loader uses the config.extensions field to
+determine the eligible file extensions to use when searching for modules.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>newConfig: <a href='Object.html'>Object</a> </td><td>Configuration options hash.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>

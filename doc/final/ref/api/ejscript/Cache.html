@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Class Cache</title>
+
+   <link rel="stylesheet" type="text/css" href="doc.css" />
+</head>
+
+<body>
+<div class='body'>
+
+<div class="content">
+
+<a name='top'></a>
+<h1 class='className'>Cache</h1>
+<div class='classBlock'>
+<table class='classHead' title='Cache'>
+   <tr><td><strong>Module</strong></td><td>ejs</td></tr>
+   <tr><td><strong>Definition</strong></td><td> class Cache</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Cache <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
+       </td></tr>
+</table>
+
+<p class='classBrief'>Cache meta class to manage in-memory storage of key-value data.</p>
+
+<p class='classDescription'>The Cache class provides an abstraction over
+various in-memory and disk-based caching cache backends.</p>
+
+</div>
+
+
+<hr />
+<a name='Properties'></a>
+<h2 class='classSection'>Properties</h2>
+<table class='itemTable' title='properties'>
+   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='limits'></a>
+   <tr><td  align='center'> get </td><td>limits</td><td><a href='Object.html'>Object</a></td><td>Resource limits for the server and for initial resource limits for requests. </td></tr>
+</table>
+
+<p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
+
+<hr />
+<a name='ClassMethods'></a>
+<h2 class='classSection'>Cache Class Methods</h2>
+<table class='apiIndex' title='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <p>(No own class methods defined)</p></table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<a name='InstanceMethods'></a>
+<h2 class='classSection'>Cache Instance Methods</h2>
+<table class='apiIndex' title='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Cache'><b>Cache</b></a>(adapter: <a href='String.html'>String</a> = null, options: <a href='Object.html'>Object</a> = expression)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Cache constructor.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#destroy'><b>destroy</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Destroy the cache.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#expire'><b>expire</b></a>(key: <a href='String.html'>String</a>, when: <a href='Date.html'>Date</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a new expire date for a key.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#inc'><b>inc</b></a>(key: <a href='String.html'>String</a>, amount: <a href='Number.html'>Number</a> = 1): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Increment a key's value by a given amount.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#read'><b>read</b></a>(key: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = null): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a key.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#readObj'><b>readObj</b></a>(key: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = null): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a key and return an object 
+This will read the data for a key and then deserialize.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#remove'><b>remove</b></a>(key: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove the key and associated value from the cache.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#setLimits'><b>setLimits</b></a>(limits: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Update the cache cache resource limits.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#write'><b>write</b></a>(key: <a href='String.html'>String</a>, value: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = null): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write the key and associated value to the cache.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#writeObj'><b>writeObj</b></a>(key: <a href='String.html'>String</a>, value: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write the key and associated object value to the cache.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<h2>Method Detail</h2>
+<a name='Cache'></a>
+<div class='api'>
+<div class='apiSig'>    Cache(adapter: <a href='String.html'>String</a> = null, options: <a href='Object.html'>Object</a> = expression)
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Cache constructor. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>adapter: <a href='String.html'>String</a> </td><td>Adapter for the cache cache. E.g. "local". The Local cache is the only currently supported cache backend. [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Adapter options. The common options are described below, other options are passed through to the relevant caching backend. [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' title='options'>
+<td class='param'>lifespan</td><td>Default lifespan for key values in seconds.</td></tr>
+<td class='param'>resolution</td><td>Time in milliseconds to check for expired expired keys.</td></tr>
+<td class='param'>timeout</td><td>Timeout on cache I/O operations.</td></tr>
+<td class='param'>trace</td><td>Trace I/O operations for debug.</td></tr>
+<td class='param'>module</td><td>Module name containing the cache connector class. This is a bare module name without ".mod" or any leading path. If module is not present, a module name is derrived using "ejs.cache" + adapter.</td></tr>
+<td class='param'>class</td><td>Class name containing the cache backend. If the class property is not present, the  class is derived from the adapter name with "Cache" appended. The first letter of the adapter is converted to uppercase. For example, if the adapter was "mem", the class would be inferred to be "MemCache". H.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='destroy'></a>
+<div class='api'>
+<div class='apiSig'>    destroy(): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Destroy the cache. </dd></dl>
+</div>
+</div>
+<hr />
+<a name='expire'></a>
+<div class='api'>
+<div class='apiSig'>    expire(key: <a href='String.html'>String</a>, when: <a href='Date.html'>Date</a>): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Set a new expire date for a key. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>key: <a href='String.html'>String</a> </td><td>Key to modify.</td></tr><tr class='param'><td class='param'>when: <a href='Date.html'>Date</a> </td><td>Date at which to expire the data. Set to null to never expire.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the key's expiry can be updated.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='inc'></a>
+<div class='api'>
+<div class='apiSig'>    inc(key: <a href='String.html'>String</a>, amount: <a href='Number.html'>Number</a> = 1): <a href='Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Increment a key's value by a given amount. This operation is atomic.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>key: <a href='String.html'>String</a> </td><td>Key value to read.</td></tr><tr class='param'><td class='param'>amount: <a href='Number.html'>Number</a> </td><td>Amount by which to increment the value. This amount can be negative to achieve a decrement. [default: 1]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The new key value. If the key does not exist, it is initialized to the amount value.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='read'></a>
+<div class='api'>
+<div class='apiSig'>    read(key: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = null): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Read a key. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>key: <a href='String.html'>String</a> </td><td>Key value to read.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Read options. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' title='options'>
+<td class='param'>version</td><td>If set to true, the read will return an object hash containing the data and a unique version  identifier for the last update to this key. This version identifier can be specified to write to peform an atomic CAS (check and swap) operation.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Null if the key is not present. Otherwise return key data as a string or if the options parameter  specified "version == true", return an object with the properties "data" for the key data and  "version" for the CAS version identifier.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='readObj'></a>
+<div class='api'>
+<div class='apiSig'>    readObj(key: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = null): <a href='Object.html'>Object</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Read a key and return an object 
+This will read the data for a key and then deserialize. This assumes that <a href='#writeObj'>writeObj</a> was used to store the
+key value.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>key: <a href='String.html'>String</a> </td><td>Key value to read.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Read options. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' title='options'>
+<td class='param'>version</td><td>If set to true, the read will return an object hash containing the data and a unique version  identifier for the last update to this key. This version identifier can be specified to write to peform an atomic CAS (check and swap) operation.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Null if the key is not present. Otherwise return key data as an object. P.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='remove'></a>
+<div class='api'>
+<div class='apiSig'>    remove(key: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Remove the key and associated value from the cache. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>key: <a href='String.html'>String</a> </td><td>Key value to remove. If key is null, then all keys are removed.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the key was removed.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='setLimits'></a>
+<div class='api'>
+<div class='apiSig'>    setLimits(limits: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Update the cache cache resource limits. The supplied limit fields are updated.
+See the <a href='#limits'>limits</a> property for limit field details.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>limits: <a href='Object.html'>Object</a> </td><td>Object hash of limit fields and values.</td></tr></table></dd>
+</dl><dl><dt>See Also</dt>
+<dd>
+<a href='limits.html'>limits</a>
+</dd></dl>
+</div>
+</div>
+<hr />
+<a name='write'></a>
+<div class='api'>
+<div class='apiSig'>    write(key: <a href='String.html'>String</a>, value: <a href='String.html'>String</a>, options: <a href='Object.html'>Object</a> = null): <a href='Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Write the key and associated value to the cache. The value is written according to the optional mode option.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>key: <a href='String.html'>String</a> </td><td>Key to modify.</td></tr><tr class='param'><td class='param'>value: <a href='String.html'>String</a> </td><td>String value to associate with the key.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Options values. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' title='options'>
+<td class='param'>lifespan</td><td>Preservation time for the key in seconds.</td></tr>
+<td class='param'>expire</td><td>When to expire the key. Takes precedence over lifetime.</td></tr>
+<td class='param'>mode</td><td>Mode of writing: "set" is the default and means set a new value and create if required. "add" means set the value only if the key does not already exist. "append" means append to any existing value and create if required. "prepend" means prepend to any existing value and create if required.</td></tr>
+<td class='param'>version</td><td>Unique version identifier to be used for a conditional write. The write will only be  performed if the version id for the key has not changed. This implements an atomic compare and swap. See <a href='#read'>read</a>. </td></tr>
+<td class='param'>throw</td><td>Throw an exception rather than returning null if the version id has been updated for the key.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The number of bytes written, returns null if the write failed due to an updated version identifier for the key.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='writeObj'></a>
+<div class='api'>
+<div class='apiSig'>    writeObj(key: <a href='String.html'>String</a>, value: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Write the key and associated object value to the cache. The object value is serialized using JSON notation and
+written according to the optional mode option.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>key: <a href='String.html'>String</a> </td><td>Key to modify.</td></tr><tr class='param'><td class='param'>value: <a href='Object.html'>Object</a> </td><td>Object to associate with the key.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Options values. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' title='options'>
+<td class='param'>lifespan</td><td>Preservation time for the key in seconds. Set to zero for never expire.</td></tr>
+<td class='param'>expire</td><td>When to expire the key. Takes precedence over lifetime.</td></tr>
+<td class='param'>mode</td><td>Mode of writing: "set" is the default and means set a new value and create if required. "add" means set the value only if the key does not already exist. "append" means append to any existing value and create if required. "prepend" means prepend to any existing value and create if required.</td></tr>
+<td class='param'>version</td><td>Unique version identifier to be used for a conditional write. The write will only be  performed if the version id for the key has not changed. This implements an atomic compare and swap. See <a href='#read'>read</a>. </td></tr>
+<td class='param'>throw</td><td>Throw an exception rather than returning null if the version id has been updated for the key.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The number of bytes written, returns null if the write failed due to an updated version identifier for the key. X.</dd></dl>
+</div>
+</div>
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>
