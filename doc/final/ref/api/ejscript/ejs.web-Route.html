@@ -38,37 +38,37 @@ parameters previously set.</p>
 <table class='itemTable' title='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
 <a name='limits'></a>
-   <tr><td  align='center'> </td><td>limits</td><td><a href='Object.html'>Object</a></td><td>Resource limits for the request. See HttpServer.limits for details.</td></tr>
+   <tr><td nowrap align='center'> </td><td>limits</td><td><a href='Object.html'>Object</a></td><td>Resource limits for the request. See HttpServer.limits for details.</td></tr>
 <a name='location'></a>
-   <tr><td  align='center'> </td><td>location</td><td><a href='Object.html'>Object</a></td><td>Application location to serve the request. Location contains two properties: scriptName which is the string 
+   <tr><td nowrap align='center'> </td><td>location</td><td><a href='Object.html'>Object</a></td><td>Application location to serve the request. Location contains two properties: scriptName which is the string 
 URI prefix for the application and dir which is a Path to the physical file system directory containing 
 the applciation.</td></tr>
 <a name='method'></a>
-   <tr><td  align='center'> </td><td>method</td><td><a href='String.html'>String</a></td><td>HTTP method to match. If set to "" or "*"", all methods are matched.</td></tr>
+   <tr><td nowrap align='center'> </td><td>method</td><td><a href='String.html'>String</a></td><td>HTTP method to match. If set to "" or "*"", all methods are matched.</td></tr>
 <a name='middleware'></a>
-   <tr><td  align='center'> </td><td>middleware</td><td><a href='Array.html'>Array</a></td><td>Middleware to run on requests for this route. Middleware wraps the application function filtering and 
+   <tr><td nowrap align='center'> </td><td>middleware</td><td><a href='Array.html'>Array</a></td><td>Middleware to run on requests for this route. Middleware wraps the application function filtering and 
 modifying its inputs and outputs.</td></tr>
 <a name='moduleName'></a>
-   <tr><td  align='center'> </td><td>moduleName</td><td><a href='String.html'>String</a></td><td>Name of a required module containing code to serve requests on this route. </td></tr>
+   <tr><td nowrap align='center'> </td><td>moduleName</td><td><a href='String.html'>String</a></td><td>Name of a required module containing code to serve requests on this route. </td></tr>
 <a name='name'></a>
-   <tr><td  align='center'> </td><td>name</td><td><a href='String.html'>String</a></td><td>Route name. This is local to the route set (controller).</td></tr>
+   <tr><td nowrap align='center'> </td><td>name</td><td><a href='String.html'>String</a></td><td>Route name. This is local to the route set (controller).</td></tr>
 <a name='params'></a>
-   <tr><td  align='center'> </td><td>params</td><td><a href='Object.html'>Object</a></td><td>Request parameters to add to the Request.params. This optional override hash provides parameters which will 
+   <tr><td nowrap align='center'> </td><td>params</td><td><a href='Object.html'>Object</a></td><td>Request parameters to add to the Request.params. This optional override hash provides parameters which will 
 be defined in Request.params[].</td></tr>
 <a name='redirect'></a>
-   <tr><td  align='center'> </td><td>redirect</td><td><a href='String.html'>String</a></td><td>URI to redirect the request toward. </td></tr>
+   <tr><td nowrap align='center'> </td><td>redirect</td><td><a href='String.html'>String</a></td><td>URI to redirect the request toward. </td></tr>
 <a name='response'></a>
-   <tr><td  align='center'> </td><td>response</td><td><a href='Object.html'>Object</a></td><td>Response object hash or function to serve the request. </td></tr>
+   <tr><td nowrap align='center'> </td><td>response</td><td><a href='Object.html'>Object</a></td><td>Response object hash or function to serve the request. </td></tr>
 <a name='rewrite'></a>
-   <tr><td  align='center'> </td><td>rewrite</td><td><a href='Function.html'>Function</a></td><td>Rewrite function to rewrite the request before serving. It may update the request scriptName, pathInfo 
+   <tr><td nowrap align='center'> </td><td>rewrite</td><td><a href='Function.html'>Function</a></td><td>Rewrite function to rewrite the request before serving. It may update the request scriptName, pathInfo 
 and other Request properties. Return true to continue serving the request on this route. Otherwise re-route
 after rewriting the request.</td></tr>
 <a name='routeSetName'></a>
-   <tr><td  align='center'> </td><td>routeSetName</td><td><a href='String.html'>String</a></td><td>Route set owning the route. This is the first component of the template.</td></tr>
+   <tr><td nowrap align='center'> </td><td>routeSetName</td><td><a href='String.html'>String</a></td><td>Route set owning the route. This is the first component of the template.</td></tr>
 <a name='target'></a>
-   <tr><td  align='center'> </td><td>target</td><td><a href='String.html'>String</a></td><td>Target mapping for the route. The route maps from the template to the target.</td></tr>
+   <tr><td nowrap align='center'> </td><td>target</td><td><a href='String.html'>String</a></td><td>Target mapping for the route. The route maps from the template to the target.</td></tr>
 <a name='template'></a>
-   <tr><td  align='center'> </td><td>template</td><td><a href='Object.html'>Object</a></td><td>Template pattern for creating links. The template is used to match the request pathInfo. The template can be a 
+   <tr><td nowrap align='center'> </td><td>template</td><td><a href='Object.html'>Object</a></td><td>Template pattern for creating links. The template is used to match the request pathInfo. The template can be a 
 string, a regular expression or a function. If it is a string, it may contain tokens enclosed in braces 
 "{}" and it is converted to a regular expression for fast matching. At run-time, request tokens 
 are extracted and stored as items in the Request.params collection.<br/><br/>If the template is a regular expression, it is used to match against the request pathInfo. If it matches, 
@@ -76,15 +76,15 @@ then sub-expressions may be referenced in the <a href='#params'>params</a> value
 e.g. params: { priority: "<a href='#1"'>1"</a> }<br/><br/>If the template is a function, it is run to test for a request match. The function should return true to 
 match the request. The function can directly set parameters in request.params.</td></tr>
 <a name='router'></a>
-   <tr><td  align='center'> </td><td>router</td><td><a href='ejs.web-Router.html'>Router</a></td><td>Router instance reference. </td></tr>
+   <tr><td nowrap align='center'> </td><td>router</td><td><a href='ejs.web-Router.html'>Router</a></td><td>Router instance reference. </td></tr>
 <a name='tokens'></a>
-   <tr><td  align='center'> </td><td>tokens</td><td><a href='Array.html'>Array</a></td><td>Key tokens in the route template. </td></tr>
+   <tr><td nowrap align='center'> </td><td>tokens</td><td><a href='Array.html'>Array</a></td><td>Key tokens in the route template. </td></tr>
 <a name='trace'></a>
-   <tr><td  align='center'> </td><td>trace</td><td><a href='Object.html'>Object</a></td><td>Trace options for the request. Note: the route is created after the Request object is created so the tracing 
+   <tr><td nowrap align='center'> </td><td>trace</td><td><a href='Object.html'>Object</a></td><td>Trace options for the request. Note: the route is created after the Request object is created so the tracing 
 of the connections and request headers will be controlled by the owning server. 
 See HttpServer.trace for trace property fields.</td></tr>
 <a name='workers'></a>
-   <tr><td  align='center'> </td><td>workers</td><td><a href='Boolean.html'>Boolean</a></td><td>If true, requests should execute using a worker thread if possible. The worker thread will be pooled when
+   <tr><td nowrap align='center'> </td><td>workers</td><td><a href='Boolean.html'>Boolean</a></td><td>If true, requests should execute using a worker thread if possible. The worker thread will be pooled when
 the request completes and be available for use by subsequent requests.</td></tr>
 </table>
 
@@ -138,7 +138,7 @@ Route("/User/login", {name: "login" })</pre></dd></dl>
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="https://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>

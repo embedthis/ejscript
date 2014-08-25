@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <meta name="keywords" content="Ejscript, Javascript, Ecmascript, devices, http server, internet of things" />
     <meta name="description" content="Javacript Language Environment" />
-    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,+Sans:300italic,400,300,700'
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
         rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
     <link href="../lib/semantic/packaged/css/semantic.css" rel="stylesheet" type="text/css" />
@@ -27,7 +27,7 @@
             <div class="menu">
                 <a class="item" href="../index.html">Ejscript Overview</a>
                 <a class="item" href="../users/features.html">Ejscript Features</a>
-                <a class="item" href="https://embedthis.com/download/ejs.html">Download</a> 
+                <a class="item" href="https://embedthis.com/ejs/download.html">Download</a> 
                 <a class="item" href="../licensing/index.html">Licensing</a>
             </div>
         </div>
@@ -115,7 +115,7 @@
                 <a class="item" href="https://github.com/embedthis/ejs/issues">Project Issue Database</a>
                 <a class="item" href="https://github.com/embedthis/ejs/releases">Change Log</a>
                 <a class="item" href="https://github.com/embedthis/ejs/milestones">Roadmap</a>
-                <a class="item" href="https://embedthis.com/scripts/contributors.esp">Contributors Agreement</a>
+                <a class="item" href="https://embedthis.com/developers/contributors.html">Contributors Agreement</a>
             </div>
         </div>
         <div class="item">
@@ -173,7 +173,7 @@
             edit and regenerate without losing your changes. You can overwrite your changes if you wish to by using the
             <b>--overwrite</b> switch.</p>
             <p>Mvc can also be used to run your application by invoking a configured web server.</p><a id="app"></a>
-            <h2 class="section">Generating Applications</h2>
+            <h2 >Generating Applications</h2>
             <p>To start a new web application, run <b>mvc</b> to create the application directory and generate the
             essential application configuration and script files. For example:</p>
             <pre class="ui code segment">
@@ -274,7 +274,7 @@ mvc generate app myApp
             </table>
             
             <a id="controllers"></a>
-            <h2 class="section">Generating Controllers</h2>
+            <h2 >Generating Controllers</h2>
             <p>Controllers are the primary mechanism for responding to client requests. To generate a controller:</p>
             <pre class="ui code segment">
 mvc generate controller NAME [actions...]
@@ -301,7 +301,7 @@ public class AdminController extends BaseController {
     }
 }
 </pre><a id="models"></a>
-            <h2 class="section">Generating Models</h2>
+            <h2 >Generating Models</h2>
             <p>Database models are Ejscript classes that encapsulate database data and provide access methods. They
             provide a conduit to interact with the database. To generate a model:</p>
             <pre class="ui code segment">
@@ -312,7 +312,7 @@ mvc generate model MODEL [field:type ...]
             <p>If <em>field:type</em> values are supplied, the database migration will include code to create a column
             for each specified field of the requested type. The valid database types are: binary, boolean, date,
             datetime, decimal, float, integer, number, string, text, time, timestamp. <a id="scaffolds"></a></p>
-            <h2 class="section">Generating Scaffolds</h2>
+            <h2 >Generating Scaffolds</h2>
             <p>A scaffold is a generated database migration, database model, controller and a set of views that provide
             add, edit and list functionality for a database model. Scaffolds are useful to quickly generate prototype
             web pages and actions for managing a database table. To generate a scaffold:</p>
@@ -327,7 +327,7 @@ mvc generate scaffold MODEL [field:type ...]
             the database table rows and select an entry to edit.</p>
             <p>You can use the --apply switch to apply the generated database migration and upgrade the
             database.</p><a id="migrations"></a>
-            <h2 class="section">Generating Migrations</h2>
+            <h2 >Generating Migrations</h2>
             <p>Database migrations are scripts which modify the database schema or content. You can create database
             migrations by the "<em>mvc generate migration</em>" command. This command generates a migration for a
             specific model by creating or removing tables and columns. To generate a migration:</p>
@@ -340,14 +340,14 @@ mvc generate migration description MODEL [field:type ...]
             <p>For each specified <em>field:type</em> pair, mvc will generate add column code in the migration
             script. If the --reverse switch is specified, then remove column code will be generated. To change the type
             or name of a column, remove then re-add the column. <a id="runMigrations"></a></p>
-            <h2 class="section">Running Migrations</h2>
+            <h2 >Running Migrations</h2>
             <p>Migration scripts can be run via the "<em>mvc migrate</em>" command. Without other parameters, the
             command will run all migrations that have not yet been applied to the database. You can also use
             "<em>mvc migrate forward</em>" to apply the next unapplied migration. Similarly, "<em>mvc migrate
             backward</em>" will reverse the last applied migration. You can also use "<em>mvc migrate NNN</em>" to
             migrate forward or backward to a specific migration. NNN is the migration sequence number which is the
             number at the start of the migration script file name.</p><a id="compiling"></a>
-            <h2 class="section">Compiling</h2>
+            <h2 >Compiling</h2>
             <p>Ejscript compiles models, views and controllers into Ejscript byte code modules. These are then loaded
             and run by Ejscript in response to incoming client requests. Code is compiled only once but can be run many
             times to service incoming requests.</p>
@@ -386,19 +386,19 @@ mvc compile all
             <pre class="ui code segment">
 mvc compile path/name.ejs...
 </pre><a id="running"></a>
-            <h2 class="section">Running</h2>
+            <h2 >Running</h2>
             <p>To run your application:</p>
             <pre class="ui code segment">
 mvc run
 </pre>
             <p>This requires that your config/config.ecf file be modified to define command to run your web
             server.</p><a id="cleaning"></a>
-            <h2 class="section">Cleaning</h2>
+            <h2 >Cleaning</h2>
             <p>To clean all generated module files:</p>
             <pre class="ui code segment">
 mvc clean
 </pre><a id="options"></a>
-            <h2 class="section">Command Options</h2>
+            <h2 >Command Options</h2>
             <p>Mvc has the following command usage patterns:</p>
             <pre class="ui code segment">
 mvc clean
@@ -421,12 +421,12 @@ mvc run
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="">--apply</td>
+                        <td class="nowrap">--apply</td>
                         <td>Apply the database migration when generating a scaffold. This is the same as running
                         <em>mvc migrate</em>.</td>
                     </tr>
                     <tr>
-                        <td class="">--database connector</td>
+                        <td class="nowrap">--database connector</td>
                         <td>Select a database connector to use. Currently, this switch is not implemented and sqlite is
                         the only connector supported.</td>
                     </tr>

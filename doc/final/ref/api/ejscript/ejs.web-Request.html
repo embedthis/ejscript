@@ -41,180 +41,180 @@ set the response status, headers and body content respectively.</p>
 <table class='itemTable' title='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
 <a name='SecurityTokenName'></a>
-   <tr><td  align='center'> static const </td><td>SecurityTokenName</td><td>&nbsp;</td><td>Security Token for use to help mitigate CSRF security threats. </td></tr>
+   <tr><td nowrap align='center'> static const </td><td>SecurityTokenName</td><td>&nbsp;</td><td>Security Token for use to help mitigate CSRF security threats. </td></tr>
 <a name='absHome'></a>
-   <tr><td  align='center'> </td><td>absHome</td><td><a href='Uri.html'>Uri</a></td><td>Uri for the top-level of the application. This is an absolute Uri that includes scheme and host components.
+   <tr><td nowrap align='center'> </td><td>absHome</td><td><a href='Uri.html'>Uri</a></td><td>Uri for the top-level of the application. This is an absolute Uri that includes scheme and host components.
 See <a href='#home'>home</a> to get a relative Uri.</td></tr>
 <a name='async'></a>
-   <tr><td  align='center'> get set </td><td>async</td><td><a href='Boolean.html'>Boolean</a></td><td>The current async mode.Request does not support sync mode and only supports async mode. Set to true if the stream is in async mode.</td></tr>
+   <tr><td nowrap align='center'> get set </td><td>async</td><td><a href='Boolean.html'>Boolean</a></td><td>The current async mode.Request does not support sync mode and only supports async mode. Set to true if the stream is in async mode.</td></tr>
 <a name='authGroup'></a>
-   <tr><td  align='center'> </td><td>authGroup</td><td><a href='String.html'>String</a></td><td>Authentication group. This property is set to the value of the authentication group header. 
+   <tr><td nowrap align='center'> </td><td>authGroup</td><td><a href='String.html'>String</a></td><td>Authentication group. This property is set to the value of the authentication group header. 
 This field is read-only.</td></tr>
 <a name='authType'></a>
-   <tr><td  align='center'> </td><td>authType</td><td><a href='String.html'>String</a></td><td>Authentication method if authorization is being used (basic or digest). Set to null if not using authentication. 
+   <tr><td nowrap align='center'> </td><td>authType</td><td><a href='String.html'>String</a></td><td>Authentication method if authorization is being used (basic or digest). Set to null if not using authentication. 
 This field is read-only.
 0.</td></tr>
 <a name='authUser'></a>
-   <tr><td  align='center'> </td><td>authUser</td><td><a href='String.html'>String</a></td><td>Authentication user name. This property is set to the value of the authentication user header. Set to null if
+   <tr><td nowrap align='center'> </td><td>authUser</td><td><a href='String.html'>String</a></td><td>Authentication user name. This property is set to the value of the authentication user header. Set to null if
 not yet defined.
 This field is read-only.</td></tr>
 <a name='autoFinalizing'></a>
-   <tr><td  align='center'> </td><td>autoFinalizing</td><td><a href='Boolean.html'>Boolean</a></td><td>Control whether auto-finalizing will be used for the request. If autoFinalizing is false, a request must
+   <tr><td nowrap align='center'> </td><td>autoFinalizing</td><td><a href='Boolean.html'>Boolean</a></td><td>Control whether auto-finalizing will be used for the request. If autoFinalizing is false, a request must
 call <a href='#finalize'>finalize()</a> to signal the end of write data. If autoFinalize is true, the Request class will automatically 
 call finalize at the conclusion of the request.
 Applications that wish to keep the request open to the client can suppress auto-finalization by 
 setting autoFinalizing to false or by calling dontAutoFinalize(). This property defaults to true.</td></tr>
 <a name='config'></a>
-   <tr><td  align='center'> </td><td>config</td><td><a href='Object.html'>Object</a></td><td>Request configuration. Initially refers to <a href='App.html#config'>App.config</a> which is filled with the aggregated "ejsrc" content.
+   <tr><td nowrap align='center'> </td><td>config</td><td><a href='Object.html'>Object</a></td><td>Request configuration. Initially refers to <a href='App.html#config'>App.config</a> which is filled with the aggregated "ejsrc" content.
 Middleware may modify to refer to a request local configuration object.</td></tr>
 <a name='contentLength'></a>
-   <tr><td  align='center'> </td><td>contentLength</td><td><a href='Number.html'>Number</a></td><td>Get the request content length. This is the length of body data sent by the client with the request. 
+   <tr><td nowrap align='center'> </td><td>contentLength</td><td><a href='Number.html'>Number</a></td><td>Get the request content length. This is the length of body data sent by the client with the request. 
 This property is read-only and is set to the length of the request content body in bytes or -1 if not known.
 Body data is readable by using <a href='#read'>read()</a> or by using the request object as a stream.</td></tr>
 <a name='contentType'></a>
-   <tr><td  align='center'> </td><td>contentType</td><td><a href='String.html'>String</a></td><td>The request content type as specified by the "Content-Type" Http request header. This is set to null 
+   <tr><td nowrap align='center'> </td><td>contentType</td><td><a href='String.html'>String</a></td><td>The request content type as specified by the "Content-Type" Http request header. This is set to null 
 if not defined. This is the content type of the request body content sent with the request.</td></tr>
 <a name='controller'></a>
-   <tr><td  align='center'> </td><td>controller</td><td><a href='ejs.web-Controller.html'>Controller</a></td><td>Associated Controller object. Set to null if no associated controller.
+   <tr><td nowrap align='center'> </td><td>controller</td><td><a href='ejs.web-Controller.html'>Controller</a></td><td>Associated Controller object. Set to null if no associated controller.
 8.</td></tr>
 <a name='cookies'></a>
-   <tr><td  align='center'> </td><td>cookies</td><td><a href='Object.html'>Object</a></td><td>Cookie headers. Cookies are sent by the client browser via the Set-Cookie Http header. They are typically 
+   <tr><td nowrap align='center'> </td><td>cookies</td><td><a href='Object.html'>Object</a></td><td>Cookie headers. Cookies are sent by the client browser via the Set-Cookie Http header. They are typically 
 used used to specify the session state. If sessions are being used, an Ejscript session cookie will be 
 sent to and from the browser with each request.</td></tr>
 <a name='dir'></a>
-   <tr><td  align='center'> </td><td>dir</td><td><a href='Path.html'>Path</a></td><td>Application web document directory on the local file system. This is set to the directory containing the
+   <tr><td nowrap align='center'> </td><td>dir</td><td><a href='Path.html'>Path</a></td><td>Application web document directory on the local file system. This is set to the directory containing the
 application. For MVC applications, this is set to the base directory of the application. For non-MVC apps, 
 it is set to the document root directory specified when the HttpServer was instantiated.</td></tr>
 <a name='env'></a>
-   <tr><td  align='center'> </td><td>env</td><td><a href='Object.html'>Object</a></td><td>Storage for middleware specific state. Added for JSGI compliance.</td></tr>
+   <tr><td nowrap align='center'> </td><td>env</td><td><a href='Object.html'>Object</a></td><td>Storage for middleware specific state. Added for JSGI compliance.</td></tr>
 <a name='errorMessage'></a>
-   <tr><td  align='center'> </td><td>errorMessage</td><td><a href='String.html'>String</a></td><td>Descriptive error message for the request. This message is defined internally by the Request if a request
+   <tr><td nowrap align='center'> </td><td>errorMessage</td><td><a href='String.html'>String</a></td><td>Descriptive error message for the request. This message is defined internally by the Request if a request
 times out or has a communications error.
 8.</td></tr>
 <a name='extension'></a>
-   <tr><td  align='center'> get </td><td>extension</td><td><a href='String.html'>String</a></td><td>The request pathInfo file extension. </td></tr>
+   <tr><td nowrap align='center'> get </td><td>extension</td><td><a href='String.html'>String</a></td><td>The request pathInfo file extension. </td></tr>
 <a name='filename'></a>
-   <tr><td  align='center'> </td><td>filename</td><td><a href='Path.html'>Path</a></td><td>Physical filename for the resource supplying the response content for the request. Virtual requests where
+   <tr><td nowrap align='center'> </td><td>filename</td><td><a href='Path.html'>Path</a></td><td>Physical filename for the resource supplying the response content for the request. Virtual requests where
 the Request <a href='#uri'>uri</a> does not correspond to any physical resource may not define this property.</td></tr>
 <a name='files'></a>
-   <tr><td  align='center'> </td><td>files</td><td><a href='Object.html'>Object</a></td><td>Files uploaded as part of the request. For each uploaded file, an instance of UploadFile is created in files. 
+   <tr><td nowrap align='center'> </td><td>files</td><td><a href='Object.html'>Object</a></td><td>Files uploaded as part of the request. For each uploaded file, an instance of UploadFile is created in files. 
 Each element is named by the file upload HTML input element ID in the HTML page form.</td></tr>
 <a name='finalized'></a>
-   <tr><td  align='center'> get </td><td>finalized</td><td><a href='Boolean.html'>Boolean</a></td><td>Has the request output been finalized. </td></tr>
+   <tr><td nowrap align='center'> get </td><td>finalized</td><td><a href='Boolean.html'>Boolean</a></td><td>Has the request output been finalized. </td></tr>
 <a name='headers'></a>
-   <tr><td  align='center'> </td><td>headers</td><td><a href='Object.html'>Object</a></td><td>Request Http headers. This is an object hash filled with lower-case request headers from the client. If multiple 
+   <tr><td nowrap align='center'> </td><td>headers</td><td><a href='Object.html'>Object</a></td><td>Request Http headers. This is an object hash filled with lower-case request headers from the client. If multiple 
 headers of the same key value are defined, their contents will be catenated with a ", " separator as per the 
 HTTP/1.1 specification. Use the header() method if you want to retrieve a single header.
 Headers defined on the server-side by creating new header entries in <a href='#headers'>headers</a> will preserve case. 
 Use <a href='#header'>header()</a> if you want to match headers using a mixed case key. e.g. header("Content-Length").</td></tr>
 <a name='home'></a>
-   <tr><td  align='center'> </td><td>home</td><td><a href='Uri.html'>Uri</a></td><td>Home URI for the application. This is a relative Uri from the current URI to the 
+   <tr><td nowrap align='center'> </td><td>home</td><td><a href='Uri.html'>Uri</a></td><td>Home URI for the application. This is a relative Uri from the current URI to the 
 the top-most directory level of the application.</td></tr>
 <a name='host'></a>
-   <tr><td  align='center'> </td><td>host</td><td><a href='String.html'>String</a></td><td>Host serving the request. This is initialized to the authorized server hostname (HttpServer.name) if one is 
+   <tr><td nowrap align='center'> </td><td>host</td><td><a href='String.html'>String</a></td><td>Host serving the request. This is initialized to the authorized server hostname (HttpServer.name) if one is 
 configured.  Otherwise it will use Http "Host" header value if supplied by the client else the server IP 
 address of the accepting interface. This algorithm attempts to use the most public address available for 
 the server.</td></tr>
 <a name='flash'></a>
-   <tr><td  align='center'> </td><td>flash</td><td><a href='Object.html'>Object</a></td><td>Notification "flash" messages to pass to the next request (only). By convention, the following keys are used.
+   <tr><td nowrap align='center'> </td><td>flash</td><td><a href='Object.html'>Object</a></td><td>Notification "flash" messages to pass to the next request (only). By convention, the following keys are used.
 error: Negative errors (Warnings and errors), inform: Informational / postitive feedback (note),
 warn: Negative feedback (Warnings and errors), *:: Other feedback (reminders, suggestions...).</td></tr>
 <a name='isSecure'></a>
-   <tr><td  align='center'> </td><td>isSecure</td><td><a href='Boolean.html'>Boolean</a></td><td>Flag indicating if the request is using secure communications. This means that TLS/SSL is the underlying
+   <tr><td nowrap align='center'> </td><td>isSecure</td><td><a href='Boolean.html'>Boolean</a></td><td>Flag indicating if the request is using secure communications. This means that TLS/SSL is the underlying
 protocol scheme.</td></tr>
 <a name='formData'></a>
-   <tr><td  align='center'> </td><td>formData</td><td><a href='String.html'>String</a></td><td>The request form parameters as a string. This parameters are www-url decoded from the POST request body data. 
+   <tr><td nowrap align='center'> </td><td>formData</td><td><a href='String.html'>String</a></td><td>The request form parameters as a string. This parameters are www-url decoded from the POST request body data. 
 This is useful to get a stable, sorted string representing the form parameters.</td></tr>
 <a name='limits'></a>
-   <tr><td  align='center'> </td><td>limits</td><td><a href='Object.html'>Object</a></td><td>Resource limits for the request. The limits have initial default values defined by the owning HttpServer.</td></tr>
+   <tr><td nowrap align='center'> </td><td>limits</td><td><a href='Object.html'>Object</a></td><td>Resource limits for the request. The limits have initial default values defined by the owning HttpServer.</td></tr>
 <a name='localAddress'></a>
-   <tr><td  align='center'> </td><td>localAddress</td><td><a href='String.html'>String</a></td><td>Server IP address of the accepting interface. </td></tr>
+   <tr><td nowrap align='center'> </td><td>localAddress</td><td><a href='String.html'>String</a></td><td>Server IP address of the accepting interface. </td></tr>
 <a name='input'></a>
-   <tr><td  align='center'> get </td><td>input</td><td><a href='Stream.html'>Stream</a></td><td>Request content stream. This is equivalent to using "this" as Request objects are streams connected to the
+   <tr><td nowrap align='center'> get </td><td>input</td><td><a href='Stream.html'>Stream</a></td><td>Request content stream. This is equivalent to using "this" as Request objects are streams connected to the
 input content. Added for JSGI compliance.</td></tr>
 <a name='jsgi'></a>
-   <tr><td  align='center'> static </td><td>jsgi</td><td><a href='Object.html'>Object</a></td><td>JSGI specification configuration object. </td></tr>
+   <tr><td nowrap align='center'> static </td><td>jsgi</td><td><a href='Object.html'>Object</a></td><td>JSGI specification configuration object. </td></tr>
 <a name='log'></a>
-   <tr><td  align='center'> </td><td>log</td><td><a href='Logger.html'>Logger</a></td><td>Logger object. Set to App.log. This is configured from the "log" section of the "ejsrc" config file.</td></tr>
+   <tr><td nowrap align='center'> </td><td>log</td><td><a href='Logger.html'>Logger</a></td><td>Logger object. Set to App.log. This is configured from the "log" section of the "ejsrc" config file.</td></tr>
 <a name='method'></a>
-   <tr><td  align='center'> </td><td>method</td><td><a href='String.html'>String</a></td><td>Request HTTP method. String containing the Http method (DELETE | GET | POST | PUT | OPTIONS | TRACE).</td></tr>
+   <tr><td nowrap align='center'> </td><td>method</td><td><a href='String.html'>String</a></td><td>Request HTTP method. String containing the Http method (DELETE | GET | POST | PUT | OPTIONS | TRACE).</td></tr>
 <a name='originalMethod'></a>
-   <tr><td  align='center'> </td><td>originalMethod</td><td><a href='String.html'>String</a></td><td>Original HTTP request method used by the client. If the method is overridden by including a "-ejs-method-" 
+   <tr><td nowrap align='center'> </td><td>originalMethod</td><td><a href='String.html'>String</a></td><td>Original HTTP request method used by the client. If the method is overridden by including a "-ejs-method-" 
 parameter in a POST request or by defining an X-HTTP-METHOD-OVERRIDE Http header, the original method used by
 the client is stored in this property and the method property reflects the newly defined value. If method is
 not overridden, originalMethod will be null.</td></tr>
 <a name='originalUri'></a>
-   <tr><td  align='center'> </td><td>originalUri</td><td><a href='Uri.html'>Uri</a></td><td>The original request URI supplied by the client. This is the Uri path supplied by the client on the first
+   <tr><td nowrap align='center'> </td><td>originalUri</td><td><a href='Uri.html'>Uri</a></td><td>The original request URI supplied by the client. This is the Uri path supplied by the client on the first
 line of the Http request. It is combined with the HttpServer scheme, host and port components to yield a 
 fully qualified URI. The "uri" property has fields for: scheme, host, port, path, query and reference.
 The "uri" property is read-only.
 0.</td></tr>
 <a name='params'></a>
-   <tr><td  align='center'> </td><td>params</td><td><a href='Object.html'>Object</a></td><td>The request form parameters plus other routing parameters. The form parameters are www-url decoded from the POST request body data. See also <a href='#form'>form</a>. </td></tr>
+   <tr><td nowrap align='center'> </td><td>params</td><td><a href='Object.html'>Object</a></td><td>The request form parameters plus other routing parameters. The form parameters are www-url decoded from the POST request body data. See also <a href='#form'>form</a>. </td></tr>
 <a name='reference'></a>
-   <tr><td  align='center'> </td><td>reference</td><td><a href='String.html'>String</a></td><td>Request reference string. This is the portion of the Uri after the "#". Set to null if there is no reference.</td></tr>
+   <tr><td nowrap align='center'> </td><td>reference</td><td><a href='String.html'>String</a></td><td>Request reference string. This is the portion of the Uri after the "#". Set to null if there is no reference.</td></tr>
 <a name='referrer'></a>
-   <tr><td  align='center'> </td><td>referrer</td><td><a href='String.html'>String</a></td><td>Name of the referring URL. This comes from the request "Referrer" Http header. Set to null if there is
+   <tr><td nowrap align='center'> </td><td>referrer</td><td><a href='String.html'>String</a></td><td>Name of the referring URL. This comes from the request "Referrer" Http header. Set to null if there is
 no defined referrer. Note: the HTTP header is misspelt as "referer"
 0.</td></tr>
 <a name='remoteAddress'></a>
-   <tr><td  align='center'> </td><td>remoteAddress</td><td><a href='String.html'>String</a></td><td>IP address of the client issuing the request. 8.</td></tr>
+   <tr><td nowrap align='center'> </td><td>remoteAddress</td><td><a href='String.html'>String</a></td><td>IP address of the client issuing the request. 8.</td></tr>
 <a name='responded'></a>
-   <tr><td  align='center'> </td><td>responded</td><td><a href='Boolean.html'>Boolean</a></td><td>The application has responded in some way. The application has commenced a response by doing some 
+   <tr><td nowrap align='center'> </td><td>responded</td><td><a href='Boolean.html'>Boolean</a></td><td>The application has responded in some way. The application has commenced a response by doing some 
 output or setting status.</td></tr>
 <a name='responseHeaders'></a>
-   <tr><td  align='center'> </td><td>responseHeaders</td><td><a href='Object.html'>Object</a></td><td>Http response headers. This is the proposed set of headers to send with the response.
+   <tr><td nowrap align='center'> </td><td>responseHeaders</td><td><a href='Object.html'>Object</a></td><td>Http response headers. This is the proposed set of headers to send with the response.
 The case of header keys is preserved.</td></tr>
 <a name='pathInfo'></a>
-   <tr><td  align='center'> </td><td>pathInfo</td><td><a href='String.html'>String</a></td><td>Location of the request within the application. This is the portion of the request URL after the scriptName. 
+   <tr><td nowrap align='center'> </td><td>pathInfo</td><td><a href='String.html'>String</a></td><td>Location of the request within the application. This is the portion of the request URL after the scriptName. 
 The pathInfo is originally derrived from uri.path after splitting off the scriptName. Changes to the uri or 
 scriptName properties will not affect the pathInfo property.</td></tr>
 <a name='route'></a>
-   <tr><td  align='center'> </td><td>route</td><td><a href='ejs.web-Route.html'>Route</a></td><td>Route used for the request. The route is the matching entry in the route table for the request.
+   <tr><td nowrap align='center'> </td><td>route</td><td><a href='ejs.web-Route.html'>Route</a></td><td>Route used for the request. The route is the matching entry in the route table for the request.
 The route has properties two properties of particular interest: "name" which is the name of the route and
 and "type" which classifies the type of request.</td></tr>
 <a name='scheme'></a>
-   <tr><td  align='center'> </td><td>scheme</td><td><a href='String.html'>String</a></td><td>Http request scheme (http | https). </td></tr>
+   <tr><td nowrap align='center'> </td><td>scheme</td><td><a href='String.html'>String</a></td><td>Http request scheme (http | https). </td></tr>
 <a name='scriptName'></a>
-   <tr><td  align='center'> </td><td>scriptName</td><td><a href='String.html'>String</a></td><td>Script name for the current application serving the request. This is typically the leading Uri portion 
+   <tr><td nowrap align='center'> </td><td>scriptName</td><td><a href='String.html'>String</a></td><td>Script name for the current application serving the request. This is typically the leading Uri portion 
 corresponding to the application, but middleware may modify this to be an arbitrary string representing 
 the application.  The script name is often determined by the Router as it parses the request using 
 the routing tables. The scriptName will be set to the empty string if not defined, otherwise is should begin
 with a "/" character. NOTE: changing script name will not update the home property.</td></tr>
 <a name='server'></a>
-   <tr><td  align='center'> </td><td>server</td><td><a href='ejs.web-HttpServer.html'>HttpServer</a></td><td>Owning server for the request. This is the HttpServer object that created this request.</td></tr>
+   <tr><td nowrap align='center'> </td><td>server</td><td><a href='ejs.web-HttpServer.html'>HttpServer</a></td><td>Owning server for the request. This is the HttpServer object that created this request.</td></tr>
 <a name='port'></a>
-   <tr><td  align='center'> </td><td>port</td><td><a href='Number.html'>Number</a></td><td>TCP/IP port number for the server of this request. </td></tr>
+   <tr><td nowrap align='center'> </td><td>port</td><td><a href='Number.html'>Number</a></td><td>TCP/IP port number for the server of this request. </td></tr>
 <a name='protocol'></a>
-   <tr><td  align='center'> </td><td>protocol</td><td><a href='String.html'>String</a></td><td>Http request protocol (HTTP/1.0 | HTTP/1.1). </td></tr>
+   <tr><td nowrap align='center'> </td><td>protocol</td><td><a href='String.html'>String</a></td><td>Http request protocol (HTTP/1.0 | HTTP/1.1). </td></tr>
 <a name='query'></a>
-   <tr><td  align='center'> </td><td>query</td><td><a href='String.html'>String</a></td><td>Request query string. This is the portion of the Uri after the "?". Set to null if there is no query.</td></tr>
+   <tr><td nowrap align='center'> </td><td>query</td><td><a href='String.html'>String</a></td><td>Request query string. This is the portion of the Uri after the "?". Set to null if there is no query.</td></tr>
 <a name='queryString'></a>
-   <tr><td  align='center'> get </td><td>queryString</td><td><a href='String.html'>String</a></td><td>Decoded query string (URL query string). Eqivalent to the <a href='#query'>query</a> property. Added for JSGI compliance.</td></tr>
+   <tr><td nowrap align='center'> get </td><td>queryString</td><td><a href='String.html'>String</a></td><td>Decoded query string (URL query string). Eqivalent to the <a href='#query'>query</a> property. Added for JSGI compliance.</td></tr>
 <a name='securityToken'></a>
-   <tr><td  align='center'> get </td><td>securityToken</td><td><a href='Object.html'>Object</a></td><td>Get a security token to help mitigate CSRF threats. The security token is submitted by forms and requests and
+   <tr><td nowrap align='center'> get </td><td>securityToken</td><td><a href='Object.html'>Object</a></td><td>Get a security token to help mitigate CSRF threats. The security token is submitted by forms and requests and
 can be validated by controllers. The token is stored in session["__ejs-security-token__"].</td></tr>
 <a name='serverPort'></a>
-   <tr><td  align='center'> get </td><td>serverPort</td><td><a href='Number.html'>Number</a></td><td>Listening port number for the server. </td></tr>
+   <tr><td nowrap align='center'> get </td><td>serverPort</td><td><a href='Number.html'>Number</a></td><td>Listening port number for the server. </td></tr>
 <a name='session'></a>
-   <tr><td  align='center'> </td><td>session</td><td><a href='ejs.web-Session.html'>Session</a></td><td>Session state object. The session state object can be used to share state between requests.
+   <tr><td nowrap align='center'> </td><td>session</td><td><a href='ejs.web-Session.html'>Session</a></td><td>Session state object. The session state object can be used to share state between requests.
 If a session has not already been created, accessing this property automatically creates a new session 
 and sets the <a href='ejs.web-Request.html#sessionID'>Request.sessionID</a> property and a cookie containing a session ID sent to the client 
 with the response.
 To test if a session has been created, test the sessionID property which will not auto-create a session.
 Objects are stored in the session state using JSON serialization.</td></tr>
 <a name='sessionID'></a>
-   <tr><td  align='center'> </td><td>sessionID</td><td><a href='String.html'>String</a></td><td>Current session ID. Index into the <a href='#sessions'>sessions</a> object. Set to null if no session is defined.</td></tr>
+   <tr><td nowrap align='center'> </td><td>sessionID</td><td><a href='String.html'>String</a></td><td>Current session ID. Index into the <a href='#sessions'>sessions</a> object. Set to null if no session is defined.</td></tr>
 <a name='status'></a>
-   <tr><td  align='center'> </td><td>status</td><td><a href='Number.html'>Number</a></td><td>Set to the (proposed) Http response status code. </td></tr>
+   <tr><td nowrap align='center'> </td><td>status</td><td><a href='Number.html'>Number</a></td><td>Set to the (proposed) Http response status code. </td></tr>
 <a name='uri'></a>
-   <tr><td  align='center'> </td><td>uri</td><td><a href='Uri.html'>Uri</a></td><td>The current request URI. This property is read-only and is dynamically computed from the originalUri combined
+   <tr><td nowrap align='center'> </td><td>uri</td><td><a href='Uri.html'>Uri</a></td><td>The current request URI. This property is read-only and is dynamically computed from the originalUri combined
 with the current scheme, host, port, scriptName, pathInfo, query and reference property values. 
 The "uri" property has fields for: scheme, host, port, path, query and reference.</td></tr>
 <a name='writeBuffer'></a>
-   <tr><td  align='center'> </td><td>writeBuffer</td><td><a href='ByteArray.html'>ByteArray</a></td><td>Write buffer when capturing output. </td></tr>
+   <tr><td nowrap align='center'> </td><td>writeBuffer</td><td><a href='ByteArray.html'>ByteArray</a></td><td>Write buffer when capturing output. </td></tr>
 <a name='written'></a>
-   <tr><td  align='center'> get </td><td>written</td><td><a href='Number.html'>Number</a></td><td>The number of bytes written to the client. This is the count of bytes passed to <a href='#write'>write</a> and buffered, 
+   <tr><td nowrap align='center'> get </td><td>written</td><td><a href='Number.html'>Number</a></td><td>The number of bytes written to the client. This is the count of bytes passed to <a href='#write'>write</a> and buffered, 
 not the actual number of bytes sent to the network connection.</td></tr>
 </table>
 
@@ -827,7 +827,7 @@ body properties. The respond method replaces previously defined status and heade
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="https://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>

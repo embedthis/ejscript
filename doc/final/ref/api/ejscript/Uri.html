@@ -35,73 +35,73 @@
 <table class='itemTable' title='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
 <a name='address'></a>
-   <tr><td  align='center'> get </td><td>address</td><td><a href='String.html'>String</a></td><td>Return the TCP/IP address of the URI. This is the IP:PORT portion.</td></tr>
+   <tr><td nowrap align='center'> get </td><td>address</td><td><a href='String.html'>String</a></td><td>Return the TCP/IP address of the URI. This is the IP:PORT portion.</td></tr>
 <a name='basename'></a>
-   <tr><td  align='center'> get </td><td>basename</td><td><a href='Uri.html'>Uri</a></td><td>The base of portion of the URI. The base portion is the trailing portion of the path without any directory 
+   <tr><td nowrap align='center'> get </td><td>basename</td><td><a href='Uri.html'>Uri</a></td><td>The base of portion of the URI. The base portion is the trailing portion of the path without any directory 
 elements. Set to null if the Uri has no path.</td></tr>
 <a name='components'></a>
-   <tr><td  align='center'> get </td><td>components</td><td><a href='Object.html'>Object</a></td><td>Break a URI into its components by converting the URI to an absolute URI and breaking into components. The components are: scheme, host, port, path, reference and query.</td></tr>
+   <tr><td nowrap align='center'> get </td><td>components</td><td><a href='Object.html'>Object</a></td><td>Break a URI into its components by converting the URI to an absolute URI and breaking into components. The components are: scheme, host, port, path, reference and query.</td></tr>
 <a name='dirname'></a>
-   <tr><td  align='center'> get </td><td>dirname</td><td><a href='Uri.html'>Uri</a></td><td>The directory portion of a URI path. The directory portion is the leading portion including all directory 
+   <tr><td nowrap align='center'> get </td><td>dirname</td><td><a href='Uri.html'>Uri</a></td><td>The directory portion of a URI path. The directory portion is the leading portion including all directory 
 elements of the URI path excluding the base name. Set to null if the Uri has no path.</td></tr>
 <a name='extension'></a>
-   <tr><td  align='center'> get set </td><td>extension</td><td><a href='String.html'>String</a></td><td>The URI extension portion of the path. Set to a String containing the URI extension without the ".".
+   <tr><td nowrap align='center'> get set </td><td>extension</td><td><a href='String.html'>String</a></td><td>The URI extension portion of the path. Set to a String containing the URI extension without the ".".
 Set to null if no extension. If this is modified, the path property will be updated accordingly.</td></tr>
 <a name='filename'></a>
-   <tr><td  align='center'> get </td><td>filename</td><td><a href='Path.html'>Path</a></td><td>Set to a Path type corresponding to the Uri path property. The Path is relative to the current directory.
+   <tr><td nowrap align='center'> get </td><td>filename</td><td><a href='Path.html'>Path</a></td><td>Set to a Path type corresponding to the Uri path property. The Path is relative to the current directory.
 i.e. this removes the leading "/" from the path property.
 (.</td></tr>
 <a name='hasExtension'></a>
-   <tr><td  align='center'> get </td><td>hasExtension</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI has an explicit extension
+   <tr><td nowrap align='center'> get </td><td>hasExtension</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI has an explicit extension
 8. </td></tr>
 <a name='hasHost'></a>
-   <tr><td  align='center'> get </td><td>hasHost</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI have an explicit host component. For example: "www.example.com".</td></tr>
+   <tr><td nowrap align='center'> get </td><td>hasHost</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI have an explicit host component. For example: "www.example.com".</td></tr>
 <a name='hasPort'></a>
-   <tr><td  align='center'> get </td><td>hasPort</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI have an explicit port number. </td></tr>
+   <tr><td nowrap align='center'> get </td><td>hasPort</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI have an explicit port number. </td></tr>
 <a name='hasQuery'></a>
-   <tr><td  align='center'> get </td><td>hasQuery</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI have an explicit query component. </td></tr>
+   <tr><td nowrap align='center'> get </td><td>hasQuery</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI have an explicit query component. </td></tr>
 <a name='hasReference'></a>
-   <tr><td  align='center'> get </td><td>hasReference</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI have an explicit reference component. </td></tr>
+   <tr><td nowrap align='center'> get </td><td>hasReference</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI have an explicit reference component. </td></tr>
 <a name='hasScheme'></a>
-   <tr><td  align='center'> get </td><td>hasScheme</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI have an explicit scheme (protocol) specifier. For example: "http://".</td></tr>
+   <tr><td nowrap align='center'> get </td><td>hasScheme</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI have an explicit scheme (protocol) specifier. For example: "http://".</td></tr>
 <a name='host'></a>
-   <tr><td  align='center'> get set </td><td>host</td><td><a href='String.html'>String</a></td><td>The host portion of the URI. Set to null if there is no host component.</td></tr>
+   <tr><td nowrap align='center'> get set </td><td>host</td><td><a href='String.html'>String</a></td><td>The host portion of the URI. Set to null if there is no host component.</td></tr>
 <a name='isAbsolute'></a>
-   <tr><td  align='center'> get </td><td>isAbsolute</td><td><a href='Boolean.html'>Boolean</a></td><td>Is the URI is an absolute path. Set to true if the URI path component beginning with a "/".</td></tr>
+   <tr><td nowrap align='center'> get </td><td>isAbsolute</td><td><a href='Boolean.html'>Boolean</a></td><td>Is the URI is an absolute path. Set to true if the URI path component beginning with a "/".</td></tr>
 <a name='isDir'></a>
-   <tr><td  align='center'> get </td><td>isDir</td><td><a href='Boolean.html'>Boolean</a></td><td>Is the URI is a directory URI. Set to true if the URI ends with "/". NOTE: this only tests the URI and 
+   <tr><td nowrap align='center'> get </td><td>isDir</td><td><a href='Boolean.html'>Boolean</a></td><td>Is the URI is a directory URI. Set to true if the URI ends with "/". NOTE: this only tests the URI and 
 not any physical resource associated with the URI.
 0.</td></tr>
 <a name='isRegular'></a>
-   <tr><td  align='center'> get </td><td>isRegular</td><td><a href='Boolean.html'>Boolean</a></td><td>Is the URI is a regular resource and not a directory. Set to true if the URI does not end with "/". 
+   <tr><td nowrap align='center'> get </td><td>isRegular</td><td><a href='Boolean.html'>Boolean</a></td><td>Is the URI is a regular resource and not a directory. Set to true if the URI does not end with "/". 
 NOTE: this only tests the URI and not any physical resource associated with the URI.</td></tr>
 <a name='isRelative'></a>
-   <tr><td  align='center'> get </td><td>isRelative</td><td><a href='Boolean.html'>Boolean</a></td><td>Is if the URI path is relative. Set to true if the URI's path component does not begin with a "/".</td></tr>
+   <tr><td nowrap align='center'> get </td><td>isRelative</td><td><a href='Boolean.html'>Boolean</a></td><td>Is if the URI path is relative. Set to true if the URI's path component does not begin with a "/".</td></tr>
 <a name='local'></a>
-   <tr><td  align='center'> get </td><td>local</td><td><a href='Uri.html'>Uri</a></td><td>Create a local URI. A local URI has no scheme, host or port components.</td></tr>
+   <tr><td nowrap align='center'> get </td><td>local</td><td><a href='Uri.html'>Uri</a></td><td>Create a local URI. A local URI has no scheme, host or port components.</td></tr>
 <a name='mimeType'></a>
-   <tr><td  align='center'> get </td><td>mimeType</td><td><a href='String.html'>String</a></td><td>The mime type of the URI. This is set to a mime type string by examining the URI extension. 
+   <tr><td nowrap align='center'> get </td><td>mimeType</td><td><a href='String.html'>String</a></td><td>The mime type of the URI. This is set to a mime type string by examining the URI extension. 
 Set to "text/html" if the mime type cannot be determined from the extension. 
 Set to null if the URI has no extension.</td></tr>
 <a name='normalize'></a>
-   <tr><td  align='center'> get </td><td>normalize</td><td><a href='Uri.html'>Uri</a></td><td>Normalized URI by removing all redundant and invalid URI components. Set to a URI with "segment/.." 
+   <tr><td nowrap align='center'> get </td><td>normalize</td><td><a href='Uri.html'>Uri</a></td><td>Normalized URI by removing all redundant and invalid URI components. Set to a URI with "segment/.." 
 and "./" components removed. The value will not be converted to an absolute URI nor will it map character case.</td></tr>
 <a name='path'></a>
-   <tr><td  align='center'> get set </td><td>path</td><td><a href='String.html'>String</a></td><td>The URI path portion after the hostname
+   <tr><td nowrap align='center'> get set </td><td>path</td><td><a href='String.html'>String</a></td><td>The URI path portion after the hostname
 Set to null if there is no path. </td></tr>
 <a name='port'></a>
-   <tr><td  align='center'> get set </td><td>port</td><td><a href='Number.html'>Number</a></td><td>The port number of the URI. Set to null if the URI does not have an explicit port.</td></tr>
+   <tr><td nowrap align='center'> get set </td><td>port</td><td><a href='Number.html'>Number</a></td><td>The port number of the URI. Set to null if the URI does not have an explicit port.</td></tr>
 <a name='query'></a>
-   <tr><td  align='center'> get set </td><td>query</td><td><a href='String.html'>String</a></td><td>The URI query string. The query string is the fragment after a "?" character in the URI.
+   <tr><td nowrap align='center'> get set </td><td>query</td><td><a href='String.html'>String</a></td><td>The URI query string. The query string is the fragment after a "?" character in the URI.
 Set to null if there is no query.
 0.</td></tr>
 <a name='reference'></a>
-   <tr><td  align='center'> get set </td><td>reference</td><td><a href='String.html'>String</a></td><td>The URI reference portion. The reference portion is sometimes called the "anchor" and is the the fragment 
+   <tr><td nowrap align='center'> get set </td><td>reference</td><td><a href='String.html'>String</a></td><td>The URI reference portion. The reference portion is sometimes called the "anchor" and is the the fragment 
 after a "#" character in the URI.  Set to null if there is no reference.</td></tr>
 <a name='scheme'></a>
-   <tr><td  align='center'> get set </td><td>scheme</td><td><a href='String.html'>String</a></td><td>The URI protocol scheme. Set to null if no scheme defined.</td></tr>
+   <tr><td nowrap align='center'> get set </td><td>scheme</td><td><a href='String.html'>String</a></td><td>The URI protocol scheme. Set to null if no scheme defined.</td></tr>
 <a name='uri'></a>
-   <tr><td  align='center'> get set </td><td>uri</td><td><a href='String.html'>String</a></td><td>The full URI as a string. </td></tr>
+   <tr><td nowrap align='center'> get set </td><td>uri</td><td><a href='String.html'>String</a></td><td>The full URI as a string. </td></tr>
 </table>
 
 <p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
@@ -475,7 +475,7 @@ NOTE: this does a case-sensitive match. TODO - is this right?.</dd></dl>
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="https://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>

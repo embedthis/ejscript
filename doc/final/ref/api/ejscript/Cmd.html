@@ -32,24 +32,24 @@
 <table class='itemTable' title='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
 <a name='env'></a>
-   <tr><td  align='center'> get set </td><td>env</td><td><a href='Object.html'>Object</a></td><td>Hash of environment strings to pass to the command. </td></tr>
+   <tr><td nowrap align='center'> get set </td><td>env</td><td><a href='Object.html'>Object</a></td><td>Hash of environment strings to pass to the command. </td></tr>
 <a name='error'></a>
-   <tr><td  align='center'> get </td><td>error</td><td><a href='String.html'>String</a></td><td>Command error output data as a string. The first time this property is read, the error content will be read 
+   <tr><td nowrap align='center'> get </td><td>error</td><td><a href='String.html'>String</a></td><td>Command error output data as a string. The first time this property is read, the error content will be read 
 and buffered.</td></tr>
 <a name='errorStream'></a>
-   <tr><td  align='center'> get </td><td>errorStream</td><td><a href='Stream.html'>Stream</a></td><td>The error stream object for the command's standard error output. </td></tr>
+   <tr><td nowrap align='center'> get </td><td>errorStream</td><td><a href='Stream.html'>Stream</a></td><td>The error stream object for the command's standard error output. </td></tr>
 <a name='pid'></a>
-   <tr><td  align='center'> get </td><td>pid</td><td><a href='Number.html'>Number</a></td><td>Process ID of the the command. This is set to the process ID (PID) of the command. If no command has 
+   <tr><td nowrap align='center'> get </td><td>pid</td><td><a href='Number.html'>Number</a></td><td>Process ID of the the command. This is set to the process ID (PID) of the command. If no command has 
 started or the command has called <a href='#close'>close</a> the call with throw an exception.</td></tr>
 <a name='response'></a>
-   <tr><td  align='center'> get </td><td>response</td><td><a href='String.html'>String</a></td><td>Command output data as a string. This is an alias for <a href='#readString'>readString()</a> but it will cache the 
+   <tr><td nowrap align='center'> get </td><td>response</td><td><a href='String.html'>String</a></td><td>Command output data as a string. This is an alias for <a href='#readString'>readString()</a> but it will cache the 
 output data and may be called multiple times. This reads from the command's standard output.
 0.</td></tr>
 <a name='status'></a>
-   <tr><td  align='center'> get </td><td>status</td><td><a href='Number.html'>Number</a></td><td>Get the command exit status. This command will block until the command has completed. Use wait(0) to 
+   <tr><td nowrap align='center'> get </td><td>status</td><td><a href='Number.html'>Number</a></td><td>Get the command exit status. This command will block until the command has completed. Use wait(0) to 
 test if the command has completed.</td></tr>
 <a name='timeout'></a>
-   <tr><td  align='center'> get set </td><td>timeout</td><td><a href='Number.html'>Number</a></td><td>Default command timeout for wait(), read(), and blocking start(). If the timeout expires, the command is
+   <tr><td nowrap align='center'> get set </td><td>timeout</td><td><a href='Number.html'>Number</a></td><td>Default command timeout for wait(), read(), and blocking start(). If the timeout expires, the command is
 not killed. Rather any blocking calls will simply return. 
 This is the number of milliseconds for the call to complete.</td></tr>
 </table>
@@ -412,7 +412,7 @@ from exiting.</dd></dl>
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="https://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>

@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <meta name="keywords" content="Ejscript, Javascript, Ecmascript, devices, http server, internet of things" />
     <meta name="description" content="Javacript Language Environment" />
-    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,+Sans:300italic,400,300,700'
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
         rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
     <link href="../lib/semantic/packaged/css/semantic.css" rel="stylesheet" type="text/css" />
@@ -27,7 +27,7 @@
             <div class="menu">
                 <a class="item" href="../index.html">Ejscript Overview</a>
                 <a class="item" href="../users/features.html">Ejscript Features</a>
-                <a class="item" href="https://embedthis.com/download/ejs.html">Download</a> 
+                <a class="item" href="https://embedthis.com/ejs/download.html">Download</a> 
                 <a class="item" href="../licensing/index.html">Licensing</a>
             </div>
         </div>
@@ -115,7 +115,7 @@
                 <a class="item" href="https://github.com/embedthis/ejs/issues">Project Issue Database</a>
                 <a class="item" href="https://github.com/embedthis/ejs/releases">Change Log</a>
                 <a class="item" href="https://github.com/embedthis/ejs/milestones">Roadmap</a>
-                <a class="item" href="https://embedthis.com/scripts/contributors.esp">Contributors Agreement</a>
+                <a class="item" href="https://embedthis.com/developers/contributors.html">Contributors Agreement</a>
             </div>
         </div>
         <div class="item">
@@ -172,10 +172,10 @@
             can type along as you go. This web framework tour will work with the Ejscript <a href=
             "../users/shell.html">Command Shell</a> and the web framework <a href="generator.html">mvc</a> application
             generator to run scripts.</p><a id="blog"></a>
-            <h2 class="section">A Demonstration Blog Application</h2>
+            <h2 >A Demonstration Blog Application</h2>
             <p>Command sessions are presented in blue boxes. Output from the system is highlighted in yellow. Bold
             yellow is used to highlight some output of specific interest.</p>
-            <h2 class="section"><a id="create"></a>Creating a New Application</h2>
+            <h2 ><a id="create"></a>Creating a New Application</h2>
             <p>To create a new Ejscript application, you will use <em>mvc</em>, the Ejscript application generator
             program. Type the following mvc command in a command terminal window:</p>
             <pre class="ui code segment">
@@ -270,7 +270,7 @@ and point your browser at: http://localhost::4000/ to view your app.</b>
             directories.</p>
             
             <a id="run"></a>
-            <h2 class="section">Running your Application</h2>
+            <h2 >Running your Application</h2>
             <p>You can immediately run your application after generation. Ejscript includes a built-in web server so
             you can run your application without needing to deploy to an external web server. The Ejscript built-in web
             server is based on the <a href="http://www.appwebserver.org">Appweb</a> embedded web server which is a fast
@@ -287,7 +287,7 @@ appweb: 1: HTTP services are ready (single-threaded)</b>
             <p>Then enter <em>localhost:4000</em> in your browser. You should see your first application home
             page.</p><img class="bare-screen" src="../images/webtour-home.png" alt="" />
             <a id="hello"></a>
-            <h2 class="section">Hello World</h2>
+            <h2 >Hello World</h2>
             <p>The next step is to create a simple "Hello World" web page. Ejscript web pages have an <em>.ejs</em>
             extension. Create a file called <em>hello.ejs</em> in the top-level directory with the following
             content:</p>
@@ -300,7 +300,7 @@ appweb: 1: HTTP services are ready (single-threaded)</b>
             <p>To view the "Hello" web page in your browser, type in the following url:
             http://localhost:4000/hello.ejs.</p><img src="../images/webtour-hello.png" alt="hello" class=
             "bare-screen" /> <a id="dynamic"></a>
-            <h2 class="section">Dynamic Content</h2>
+            <h2 >Dynamic Content</h2>
             <p>While that was fun, the output is static and boring, so let's add some dynamic content. You can embed
             Ejscript expressions by including them inside a special Ejscript web page directive that will be executed
             and converted to HTML before being sent to the client. There are a variety of server-side Ejscript web page
@@ -358,7 +358,7 @@ mvc generate scaffold Post title:string body:text
             and create a Post table with <em>title</em> and <em>body</em> columns.</p>
             <p>Now if you set your browser to the URL for the post controller, you will see your post listing screen.
             <img src="../images/webtour-postList.png" alt="postList" class="bare-screen" /> <a id="newPosts"></a></p>
-            <h2 class="section">Create New Posts</h2>
+            <h2 >Create New Posts</h2>
             <p>The <em>new</em> post button directs your browser to the <em>/Post/init</em> URL. Behind the scenes, Ejscript
             parses this URL and identifies <em>Post</em> as the name of the controller and <em>init</em> as the name of an action to
             invoke. The controller file <em>controllers/Post.es</em> defines the controller class to respond to this request.</p>
@@ -424,7 +424,7 @@ mvc compile
 </pre>
             <img src="../images/webtour-tabs.png" alt="tabs" class="bare-screen" /> 
             <a id="validations"></a>
-            <h2 class="section">Validations</h2>
+            <h2 >Validations</h2>
             <p>Ejscript provides flexible validation methods to help ensure the data you save is correct.</p>
             <p>You can add calls to validate model data before it is saved to the database. Edit the
             <em>models/Post.es</em> file and add calls to <em>validatePresence</em> and <em>validateUnique</em>.</p>
@@ -448,11 +448,10 @@ public function validate() {
     }
 }
 </pre><a id="learn"></a>
-            <h2 class="section">Learn More ...</h2>
+            <h2 >Learn More ...</h2>
             <p>That concludes the a quick tour through some of the capabilities of the Ejscript web framework.</p>
             <p>To learn more, please read the rest of the <a href="../index.html">Ejscript Documentation</a> and
-            the <a href="../ref/webArchitecture.html">Ejscript Web Framework Architecture</a>. You may also
-            like to ask questions at the <a href="https://embedthis.com/forum/">Ejscript Support Forum</a>.</p>
+            the <a href="../ref/webArchitecture.html">Ejscript Web Framework Architecture</a>. </p>
     </div>
     <div class="ui basic center aligned segment" id="terms">
         <p>&copy; Embedthis Software, 2003-2014. All rights reserved.

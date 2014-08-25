@@ -42,35 +42,35 @@ by the "--log" command line switch and otherwise defaults to send messages to th
 <table class='itemTable' title='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
 <a name='All'></a>
-   <tr><td  align='center'> static const </td><td>All</td><td><a href='Number.html'>Number</a></td><td>Logging level to output all messages. </td></tr>
+   <tr><td nowrap align='center'> static const </td><td>All</td><td><a href='Number.html'>Number</a></td><td>Logging level to output all messages. </td></tr>
 <a name='Config'></a>
-   <tr><td  align='center'> static const </td><td>Config</td><td><a href='Number.html'>Number</a></td><td>Logging level for configuration output. </td></tr>
+   <tr><td nowrap align='center'> static const </td><td>Config</td><td><a href='Number.html'>Number</a></td><td>Logging level for configuration output. </td></tr>
 <a name='Error'></a>
-   <tr><td  align='center'> static const </td><td>Error</td><td><a href='Number.html'>Number</a></td><td>Logging level for most serious errors. (.</td></tr>
+   <tr><td nowrap align='center'> static const </td><td>Error</td><td><a href='Number.html'>Number</a></td><td>Logging level for most serious errors. (.</td></tr>
 <a name='Info'></a>
-   <tr><td  align='center'> static const </td><td>Info</td><td><a href='Number.html'>Number</a></td><td>Logging level for informational messages. </td></tr>
+   <tr><td nowrap align='center'> static const </td><td>Info</td><td><a href='Number.html'>Number</a></td><td>Logging level for informational messages. </td></tr>
 <a name='Off'></a>
-   <tr><td  align='center'> static const </td><td>Off</td><td><a href='Number.html'>Number</a></td><td>Logging level for no logging. </td></tr>
+   <tr><td nowrap align='center'> static const </td><td>Off</td><td><a href='Number.html'>Number</a></td><td>Logging level for no logging. </td></tr>
 <a name='Warn'></a>
-   <tr><td  align='center'> static const </td><td>Warn</td><td><a href='Number.html'>Number</a></td><td>Logging level for warnings. </td></tr>
+   <tr><td nowrap align='center'> static const </td><td>Warn</td><td><a href='Number.html'>Number</a></td><td>Logging level for warnings. </td></tr>
 <a name='filter'></a>
-   <tr><td  align='center'> get set </td><td>filter</td><td><a href='Function.html'>Function</a></td><td>Filter function for this logger. The filter function is called with the following signature:
+   <tr><td nowrap align='center'> get set </td><td>filter</td><td><a href='Function.html'>Function</a></td><td>Filter function for this logger. The filter function is called with the following signature:
 with "this" set to the Logger instance. The <a href='#log'>log</a> parameter is set to the original logger that created the
 message.
 function filter(log: Logger, name: String, level: Number, kind: String, msg: String): Boolean.</td></tr>
 <a name='level'></a>
-   <tr><td  align='center'> get set </td><td>level</td><td><a href='Number.html'>Number</a></td><td>The numeric verbosity setting (0-9) of this logger. Zero is least verbose, nine is the most verbose.
+   <tr><td nowrap align='center'> get set </td><td>level</td><td><a href='Number.html'>Number</a></td><td>The numeric verbosity setting (0-9) of this logger. Zero is least verbose, nine is the most verbose.
 Messages with a lower (or equal) verbosity level than the logger's level are emitted.
 (.</td></tr>
 <a name='location'></a>
-   <tr><td  align='center'> get </td><td>location</td><td>&nbsp;</td><td>The logging location parameter specified when constructing or redirecting the logger. </td></tr>
+   <tr><td nowrap align='center'> get </td><td>location</td><td>&nbsp;</td><td>The logging location parameter specified when constructing or redirecting the logger. </td></tr>
 <a name='match'></a>
-   <tr><td  align='center'> get set </td><td>match</td><td><a href='RegExp.html'>RegExp</a></td><td>Matching expression to filter log messages. The match regular expression is used to match 
+   <tr><td nowrap align='center'> get set </td><td>match</td><td><a href='RegExp.html'>RegExp</a></td><td>Matching expression to filter log messages. The match regular expression is used to match 
 against the Logger names.</td></tr>
 <a name='name'></a>
-   <tr><td  align='center'> get set </td><td>name</td><td><a href='String.html'>String</a></td><td>The name of this logger. </td></tr>
+   <tr><td nowrap align='center'> get set </td><td>name</td><td><a href='String.html'>String</a></td><td>The name of this logger. </td></tr>
 <a name='outStream'></a>
-   <tr><td  align='center'> get set </td><td>outStream</td><td><a href='Stream.html'>Stream</a></td><td>The output stream used by the logger. </td></tr>
+   <tr><td nowrap align='center'> get set </td><td>outStream</td><td><a href='Stream.html'>Stream</a></td><td>The output stream used by the logger. </td></tr>
 </table>
 
 <p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
@@ -231,7 +231,7 @@ A "writable" event will be issued when the stream can again absorb more data.NOT
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="https://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>

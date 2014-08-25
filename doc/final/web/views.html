@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <meta name="keywords" content="Ejscript, Javascript, Ecmascript, devices, http server, internet of things" />
     <meta name="description" content="Javacript Language Environment" />
-    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,+Sans:300italic,400,300,700'
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
         rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
     <link href="../lib/semantic/packaged/css/semantic.css" rel="stylesheet" type="text/css" />
@@ -27,7 +27,7 @@
             <div class="menu">
                 <a class="item" href="../index.html">Ejscript Overview</a>
                 <a class="item" href="../users/features.html">Ejscript Features</a>
-                <a class="item" href="https://embedthis.com/download/ejs.html">Download</a> 
+                <a class="item" href="https://embedthis.com/ejs/download.html">Download</a> 
                 <a class="item" href="../licensing/index.html">Licensing</a>
             </div>
         </div>
@@ -115,7 +115,7 @@
                 <a class="item" href="https://github.com/embedthis/ejs/issues">Project Issue Database</a>
                 <a class="item" href="https://github.com/embedthis/ejs/releases">Change Log</a>
                 <a class="item" href="https://github.com/embedthis/ejs/milestones">Roadmap</a>
-                <a class="item" href="https://embedthis.com/scripts/contributors.esp">Contributors Agreement</a>
+                <a class="item" href="https://embedthis.com/developers/contributors.html">Contributors Agreement</a>
             </div>
         </div>
         <div class="item">
@@ -175,7 +175,7 @@
             single JavaScript variables, expressions or code blocks in your web pages. A suite of <a href=
             "controls.html">Ajax View Controls</a> provides high level components such as tables, charts, tabs, and
             forms that are Ajax-enabled for a seamless dynamically updating user experience.</p>
-            <h2 class="section">Layouts &mdash; Creating a Consistent Look and Feel</h2>
+            <h2 >Layouts &mdash; Creating a Consistent Look and Feel</h2>
             <p>A web application typically consists of many web pages that share a common look and feel. Usable
             applications have a consistent structure, menus and appearance so the user can easily navigate that
             application. However, designing and maintaining that consistent look and feel is frequently quite
@@ -243,7 +243,7 @@
             and substitute dynamic data into the page. This results in the fastest run-time execution because the
             layout processing and page compilation occur only once and at development time.</p><img src=
             "../images/webView.jpg" alt="" /> <a id="dir"></a>
-            <h2 class="section">Directory Structure</h2>
+            <h2 >Directory Structure</h2>
             <p>Ejscript follows the <a href="http://en.wikipedia.org/wiki/Convention_over_Configuration">Convention
             over Configuration</a> design paradigm where developers only need to specify the unusual parts of their
             application. This is exemplified by an expected directory structure for views and layouts.</p>
@@ -266,7 +266,7 @@ mvc generate appName
             <p>After creating the application, you should place all content views for a controller under the
             "views/ControllerName" directory. The "ControllerName" directories should by convention begin with an upper
             case letter. The "views" and "layouts" directories are lower case. <a id="static"></a></p>
-            <h2 class="section">Static Web Content</h2>
+            <h2 >Static Web Content</h2>
             <p>Static web page content such as images, CSS pages and other similar content should be placed under the
             <b>web</b> directory. While this content can be served by the Ejscript handler, it should ideally and
             optimally be processed directly by the web server. The Ejscript module for Apache and Appweb will enable
@@ -292,7 +292,7 @@ mvc generate appName
 &lt;/body&gt;
 &lt;/html&gt;
 </pre><a id="dynamic"></a>
-            <h2 class="section">Dynamic Content</h2>
+            <h2 >Dynamic Content</h2>
             <p>One of the primary reasons for views is to make it easier to create web pages with dynamic data.</p>
             <p>Ejscript provides a set of directives to easily embed JavaScript code in your web page.</p>
             <p>The following directives are provided:</p>
@@ -369,7 +369,7 @@ mvc generate appName
             properties and methods available to use in the various embedded Ejscript directives. Of particular
             relevance are the classes in the ejs.web namespace which include the Application, Controller, Host,
             Request, Response, Session and View classes.</p><a id="form"></a>
-            <h2 class="section">Accessing Form Data</h2>
+            <h2 >Accessing Form Data</h2>
             <p>HTTP Form data is marshalled by Ejscript into the <b>params</b> object which is accessible in views and
             controllers. Each HTML input element posted by the client will become a property of <b>params</b> and can
             be accessed by embedded script code.</p><img src="../images/form.png" class="bare-screen" alt="" />
@@ -406,11 +406,11 @@ mvc generate appName
             action routines to read a database record and store the record in a controller property. The view can then
             simply access the database data by referencing that property.</p>
             <p>For more details, see <a href="models.html">Database Models</a>.</p><a id="sessions"></a>
-            <h2 class="section">Session Data</h2>
+            <h2 >Session Data</h2>
             <p>Data can be persistently stored between HTTP requests in the <b>sessions</b> object. Data stored to the
             sessions object is serialized, so you cannot store object references. However, the session object is ideal
             to store a request cookie or session key.</p><a id="themes"></a>
-            <h2 class="section">Themes and CSS</h2>
+            <h2 >Themes and CSS</h2>
             <p>Well structured web applications divide HTML data and presentation style into two separate documents.
             Namely: HTML pages and cascading style sheets. In this way, a style sheet can be reused and shared by all
             pages.</p>
@@ -421,7 +421,7 @@ mvc generate appName
             <p>Ejscript supports this organization by providing a providing a directory for theme style sheet. The
             <b>mvc</b> application will also generate a default theme style sheet for scaffolds and
             views.</p><a id="compilation"></a>
-            <h2 class="section">Compilation</h2>
+            <h2 >Compilation</h2>
             <p>When developing, Ejscript will automatically detect changes made to the applications code and will
             intelligently recompile the necessary portions of the application. You can manually force a recompilation
             via the <b>mvc</b> command.</p>
@@ -430,7 +430,7 @@ mvc compile
 </pre>
             <p>See the <a href="generator.html">Application Generator</a> documentation for full details about compiling
             views and applications.</p><!--
-            <h2 class="section">Common Tasks</h2>
+            <h2 >Common Tasks</h2>
                 <h3>Managing Links</h3>
                 <h3>Writing Data</h3>
                 <h3>Redirecting</h3>
@@ -438,13 +438,13 @@ mvc compile
                 <h3>Adding a HTTP Header</h3>
         -->
             <a id="debugging"></a>
-            <h2 class="section">Debugging</h2>
+            <h2 >Debugging</h2>
             <p>You can inject debugging code into your views to trace data to the browser or to the console.</p>
             <p>The <b>print</b> method will print its arguments to the console or web server log file. The <b>dump</b>
             method will serialize objects and then send to the console or log.</p>
             <p>To send trace to the browser, use the <b>write</b> method to write data back to the browser. The
             <b>d()</b> method will serialize and dump objects to the browser.</p><a id="viewClass"></a>
-            <h2 class="section">View Class</h2>
+            <h2 >View Class</h2>
             <p>The View class has a large set of utility methods to assist you in creating your web views. See the
             <a href="../ref/api/ejscript/index.html">Ejscript Library</a> for details. Some of the important methods
             are:</p>

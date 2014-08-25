@@ -37,22 +37,22 @@ to schedule events at the desired time.</p>
 <table class='itemTable' title='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
 <a name='drift'></a>
-   <tr><td  align='center'> get set </td><td>drift</td><td><a href='Boolean.html'>Boolean</a></td><td>The current drift setting. If drift is true, the timer is allowed to drift its execution time due to 
+   <tr><td nowrap align='center'> get set </td><td>drift</td><td><a href='Boolean.html'>Boolean</a></td><td>The current drift setting. If drift is true, the timer is allowed to drift its execution time due to 
 other system events when attempting to optimize overall system performance.
 If the drift value is set to false, the timer is scheduled so that the period between callback start 
 times does not gradually drift. When using non-drifting timers, the timer subsystem will 
 delay other low priority events or timers, if necessary to ensure non-drifting timers are scheduled exactly. 
 0.</td></tr>
 <a name='onerror'></a>
-   <tr><td  align='center'> get set </td><td>onerror</td><td><a href='Function.html'>Function</a></td><td>Error callback function for exceptions inside the Timer callback
+   <tr><td nowrap align='center'> get set </td><td>onerror</td><td><a href='Function.html'>Function</a></td><td>Error callback function for exceptions inside the Timer callback
 The callback is invoked with the following signature:
 function callback(error: Error): Void. </td></tr>
 <a name='period'></a>
-   <tr><td  align='center'> get set </td><td>period</td><td><a href='Number.html'>Number</a></td><td>Timer delay period in milliseconds. Changing a timer period will not reschedule a currently scheduled timer.
+   <tr><td nowrap align='center'> get set </td><td>period</td><td><a href='Number.html'>Number</a></td><td>Timer delay period in milliseconds. Changing a timer period will not reschedule a currently scheduled timer.
 The period will be used to schedule the next invocation. To change the current period, stop the timer and
 restart it.</td></tr>
 <a name='repeat'></a>
-   <tr><td  align='center'> get set </td><td>repeat</td><td><a href='Boolean.html'>Boolean</a></td><td>Timer repeatability. If true, the timer will be repeated invoked every <a href='#period'>period</a> milliseconds.</td></tr>
+   <tr><td nowrap align='center'> get set </td><td>repeat</td><td><a href='Boolean.html'>Boolean</a></td><td>Timer repeatability. If true, the timer will be repeated invoked every <a href='#period'>period</a> milliseconds.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
@@ -131,7 +131,7 @@ function has bound a "this" value via Function.bind.</dd></dl>
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="https://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>

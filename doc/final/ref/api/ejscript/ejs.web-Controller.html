@@ -41,56 +41,56 @@ before returning from the action.</p>
 <table class='itemTable' title='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
 <a name='absHome'></a>
-   <tr><td  align='center'>get </td><td>absHome</td><td><a href='Uri.html'>Uri</a></td><td>Uri for the top-level of the application. This is an absolute Uri that includes scheme and host components.
+   <tr><td nowrap align='center'>get </td><td>absHome</td><td><a href='Uri.html'>Uri</a></td><td>Uri for the top-level of the application. This is an absolute Uri that includes scheme and host components.
 See <a href='#home'>home</a> to get a relative Uri.</td></tr>
 <a name='actionName'></a>
-   <tr><td  align='center'></td><td>actionName</td><td><a href='String.html'>String</a></td><td>Name of the Controller action method being run for this request. </td></tr>
+   <tr><td nowrap align='center'></td><td>actionName</td><td><a href='String.html'>String</a></td><td>Name of the Controller action method being run for this request. </td></tr>
 <a name='autoFinalizing'></a>
-   <tr><td  align='center'>get </td><td>autoFinalizing</td><td><a href='Boolean.html'>Boolean</a></td><td>Control whether auto-finalizing will be used for the request. If autoFinalizing is false, a request must
+   <tr><td nowrap align='center'>get </td><td>autoFinalizing</td><td><a href='Boolean.html'>Boolean</a></td><td>Control whether auto-finalizing will be used for the request. If autoFinalizing is false, a request must
 call <a href='#finalize'>finalize()</a> to signal the end of write data. If autoFinalize is true, the Request class will automatically 
 call finalize at the conclusion of the request.
 Applications that wish to keep the request open to the client can suppress auto-finalization by 
 setting autoFinalizing to false or by calling dontAutoFinalize(). This property defaults to true.</td></tr>
 <a name='cacheIndex'></a>
-   <tr><td  align='center'></td><td>cacheIndex</td><td><a href='String.html'>String</a></td><td>null </td></tr>
+   <tr><td nowrap align='center'></td><td>cacheIndex</td><td><a href='String.html'>String</a></td><td>null </td></tr>
 <a name='cacheItem'></a>
-   <tr><td  align='center'></td><td>cacheItem</td><td><a href='Object.html'>Object</a></td><td>null </td></tr>
+   <tr><td nowrap align='center'></td><td>cacheItem</td><td><a href='Object.html'>Object</a></td><td>null </td></tr>
 <a name='cacheName'></a>
-   <tr><td  align='center'></td><td>cacheName</td><td><a href='String.html'>String</a></td><td>null </td></tr>
+   <tr><td nowrap align='center'></td><td>cacheName</td><td><a href='String.html'>String</a></td><td>null </td></tr>
 <a name='cacheOptions'></a>
-   <tr><td  align='center'></td><td>cacheOptions</td><td><a href='Object.html'>Object</a></td><td>null </td></tr>
+   <tr><td nowrap align='center'></td><td>cacheOptions</td><td><a href='Object.html'>Object</a></td><td>null </td></tr>
 <a name='config'></a>
-   <tr><td  align='center'></td><td>config</td><td><a href='Object.html'>Object</a></td><td>Configuration settings. This is a reference to <a href='ejs.web-Request.html#config.'>Request.config</a>. </td></tr>
+   <tr><td nowrap align='center'></td><td>config</td><td><a href='Object.html'>Object</a></td><td>Configuration settings. This is a reference to <a href='ejs.web-Request.html#config.'>Request.config</a>. </td></tr>
 <a name='controllerName'></a>
-   <tr><td  align='center'></td><td>controllerName</td><td><a href='String.html'>String</a></td><td>Pascal case controller name. </td></tr>
+   <tr><td nowrap align='center'></td><td>controllerName</td><td><a href='String.html'>String</a></td><td>Pascal case controller name. </td></tr>
 <a name='log'></a>
-   <tr><td  align='center'></td><td>log</td><td><a href='Logger.html'>Logger</a></td><td>Logger stream - reference to <a href='ejs.web-Request.html#log.'>Request.log</a>.  </td></tr>
+   <tr><td nowrap align='center'></td><td>log</td><td><a href='Logger.html'>Logger</a></td><td>Logger stream - reference to <a href='ejs.web-Request.html#log.'>Request.log</a>.  </td></tr>
 <a name='finalized'></a>
-   <tr><td  align='center'>get </td><td>finalized</td><td><a href='Boolean.html'>Boolean</a></td><td>Has the request output been finalized. </td></tr>
+   <tr><td nowrap align='center'>get </td><td>finalized</td><td><a href='Boolean.html'>Boolean</a></td><td>Has the request output been finalized. </td></tr>
 <a name='home'></a>
-   <tr><td  align='center'>get </td><td>home</td><td><a href='Uri.html'>Uri</a></td><td>Home URI for the application. This is a relative Uri from the current URI to the 
+   <tr><td nowrap align='center'>get </td><td>home</td><td><a href='Uri.html'>Uri</a></td><td>Home URI for the application. This is a relative Uri from the current URI to the 
 the top-most directory level of the application.</td></tr>
 <a name='flash'></a>
-   <tr><td  align='center'>get </td><td>flash</td><td><a href='Object.html'>Object</a></td><td>Notification "flash" messages to pass to the next request (only). By convention, the following keys are used.
+   <tr><td nowrap align='center'>get </td><td>flash</td><td><a href='Object.html'>Object</a></td><td>Notification "flash" messages to pass to the next request (only). By convention, the following keys are used.
 error: Negative errors (Warnings and errors), inform: Informational / postitive feedback (note),
 warn: Negative feedback (Warnings and errors), *:: Other feedback (reminders, suggestions...).</td></tr>
 <a name='params'></a>
-   <tr><td  align='center'></td><td>params</td><td><a href='Object.html'>Object</a></td><td>Form and query parameters. This is a reference to the <a href='ejs.web-Request.html#params'>Request.params</a> object.</td></tr>
+   <tr><td nowrap align='center'></td><td>params</td><td><a href='Object.html'>Object</a></td><td>Form and query parameters. This is a reference to the <a href='ejs.web-Request.html#params'>Request.params</a> object.</td></tr>
 <a name='pathInfo'></a>
-   <tr><td  align='center'>get </td><td>pathInfo</td><td><a href='String.html'>String</a></td><td>Location of the request within the application.0. This is the portion of the request URL after the scriptName. 
+   <tr><td nowrap align='center'>get </td><td>pathInfo</td><td><a href='String.html'>String</a></td><td>Location of the request within the application.0. This is the portion of the request URL after the scriptName. 
 The pathInfo is originally derrived from uri.path after splitting off the scriptName. Changes to the uri or 
 scriptName properties will not affect the pathInfo property.</td></tr>
 <a name='session'></a>
-   <tr><td  align='center'>get </td><td>session</td><td><a href='ejs.web-Session.html'>Session</a></td><td>Session state object. The session state object can be used to share state between requests.
+   <tr><td nowrap align='center'>get </td><td>session</td><td><a href='ejs.web-Session.html'>Session</a></td><td>Session state object. The session state object can be used to share state between requests.
 If a session has not already been created, accessing this property automatically creates a new session 
 and sets the <a href='ejs.web-Request.html#sessionID'>Request.sessionID</a> property and a cookie containing a session ID sent to the client 
 with the response.
 To test if a session has been created, test the sessionID property which will not auto-create a session.
 Objects are stored in the session state using JSON serialization.</td></tr>
 <a name='request'></a>
-   <tr><td  align='center'></td><td>request</td><td><a href='ejs.web-Request.html'>Request</a></td><td>Reference to the current <a href='#Request'>Request</a> object. </td></tr>
+   <tr><td nowrap align='center'></td><td>request</td><td><a href='ejs.web-Request.html'>Request</a></td><td>Reference to the current <a href='#Request'>Request</a> object. </td></tr>
 <a name='uri'></a>
-   <tr><td  align='center'>get </td><td>uri</td><td><a href='Uri.html'>Uri</a></td><td>The current request URI. This property is read-only and is dynamically computed from the originalUri combined
+   <tr><td nowrap align='center'>get </td><td>uri</td><td><a href='Uri.html'>Uri</a></td><td>The current request URI. This property is read-only and is dynamically computed from the originalUri combined
 with the current scheme, host, port, scriptName, pathInfo, query and reference property values. 
 The "uri" property has fields for: scheme, host, port, path, query and reference.</td></tr>
 </table>
@@ -718,7 +718,7 @@ Write content based on the requested accept mime type. </dd></dl>
 <hr />
 <div class="terms">
    <p class="terms">
-       <a href="http://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+       <a href="https://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
    </p>
 </div></div>
 </div>
