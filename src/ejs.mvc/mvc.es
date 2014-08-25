@@ -1813,26 +1813,26 @@ module App {
             <p>Review ejsrc and tailor if required. Update your database configuration and password.</p>
         </li>
 
-        <li><b><a href="http://ejscript.org/products/ejs/doc/guide/ejs/web/views.html">Create Views</b></a>
+        <li><b><a href="https://embedthis.com/ejs/doc/web/views.html">Create Views</b></a>
             <p>Create views under the <b>views</b> directory. Modify the layout in "layouts/default.ejs" and 
                customize the style sheet in the "web" directory for static content.</p>
         </li>
-        <li><b><a href="http://ejscript.org/products/ejs/doc/guide/ejs/web/controllers.html">Generate 
+        <li><b><a href="https://embedthis.com/ejs/doc/web/controllers.html">Generate 
             Models and Controllers</a></b>:
             <p>Create controllers to manage your app. Run 
-                <a href="http://ejscript.org/products/ejs/doc/guide/ejs/web/mvc.html"><b>mvc</b></a> 
+                <a href="https://embedthis.com/ejs/doc/web/mvc.html"><b>mvc</b></a> 
                 with no options to see its usage.</p>
             <pre>mvc generate controller NAME [action, ...]</pre>
         </li>
-        <li><b><a href="http://ejscript.org/products/ejs/doc/guide/ejs/web/mvc.html#scaffolds">Generate 
+        <li><b><a href="https://embedthis.com/ejs/doc/web/mvc.html#scaffolds">Generate 
             Scaffolds</a></b>:
             <p>Create entire scaffolds for large sections of your application. 
             <pre>mvc generate scaffold model [field:type, ...]</pre>
         </li>
         
-        <li><b><a href="http://ejscript.org/products/ejs/doc/product/index.html">Read the Documentation</b>
-            <p>Go to <a href="http://ejscript.org/products/ejs/doc/product/index.html">
-            http://ejscript.org/products/ejs/doc/product/index.html</a> for the latest Ejscript documentation. 
+        <li><b><a href="https://embedthis.com/ejs/doc/index.html">Read the Documentation</b>
+            <p>Go to <a href="https://embedthis.com/ejs/doc/index.html">
+            https://embedthis.com/ejs/doc/index.html</a> for the latest Ejscript documentation. 
             Here you can read quick tours, overviews and access all the Ejscript APIs.</b>
         </li>
         <li><b>Enjoy!</b></li>
@@ -1842,13 +1842,11 @@ module App {
 <div class="contentRight">
     <h2 class="section">Ejscript Links</h2>
     <ul>
-        <li><a href="http://ejscript.org">Official Web Site</li>
-        <li><a href="http://ejscript.org/forum/index.php">Support Forum</li>
-        <li><a href="http://ejscript.org/products/ejs/doc/product/index.html">Documentation</li>
-        <li><a href="http://ejscript.org/products/ejs/doc/ref/ejs/webArchitecture.html">Web Framework</li>
-        <li><a href="http://ejscript.org/products/ejs/doc/api/ejscript/index.html">Ejscript API</li>
-        <li><a href="http://embedthis.com/blog/">Blog</li>
-        <li><a href="http://appwebserver.org">Appweb</li>
+        <li><a href="https://embedthis.com">Official Web Site</li>
+        <li><a href="https://embedthis.com/ejs/doc/index.html">Documentation</li>
+        <li><a href="https://embedthis.com/ejs/doc/ref/webArchitecture.html">Web Framework</li>
+        <li><a href="https://embedthis.com/ejs/doc/api/ejscript/index.html">Ejscript API</li>
+        <li><a href="https://embedthis.com/blog/">Blog</li>
     </ul>
 </div>
 '

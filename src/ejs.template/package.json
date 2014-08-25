@@ -13,7 +13,7 @@
   ],
   "bugReports": "dev@embedthis.com",
   "license": [
-    "GPLv2 (http://www.ejscript.org/products/ejs/doc/licenses/gpl.html)"
+    "GPLv2 (https://embedthis.com/ejs/doc/licensing/gpl.html)"
   ],
   "stability": "prototype",
   "location": "https://github.com/embedthis/ejs",
