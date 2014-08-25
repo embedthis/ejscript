@@ -20,7 +20,7 @@
             route may also run commands as a side-effect during processing.</p>
 
             <a id="configuration"></a>
-            <h2 class="section">Route Configuration</h2>
+            <h2 >Route Configuration</h2>
             <p>Routes are defined using the Router class and the <em>add</em> method. 
             Here is an example of a simple web server with route configuration.</p>
 <pre class="ui code segment">
@@ -39,7 +39,7 @@ router.show()
             <p>Routes are processed in the order in which they are defined. Each route is tested in turn and the first
             matching route is used to process the request.  So ordering route definitions is very important. Routes
             with longer or more qualified route criteria should be defined first before more general routes.</p>
-            <h2 class="section">Route Processing</h2>
+            <h2 >Route Processing</h2>
             <p>To process a request, The Ejscript route engine examines each of the configured routes to determine the 
             best matching route for a request.  It does this by considering each route in the order they are defined in
             the configuration file. Each route is tested over a sequence of steps. 

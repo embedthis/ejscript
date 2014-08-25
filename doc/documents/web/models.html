@@ -11,7 +11,7 @@
             database records in JavaScript objects and allows you to use object-oriented programming (<a href=
             "http://en.wikipedia.org/wiki/Object-oriented_programming">OOP</a>) when dealing with tabular database
             data.</p><a id="record"></a>
-            <h2 class="section">Record Class</h2>
+            <h2 >Record Class</h2>
             <p>Ejscript Models map database tables to classes, rows to objects, and columns to object properties. The
             foundation for Models is the <em>Record</em> class. Record instances represent database records. New models
             are created by implementing the Record class.</p>
@@ -82,7 +82,7 @@ print(products)</b>
 /* Remove the product with id == 1 */ 
 <b>Product.remove(1)</b>
 </pre><a id="types"></a>
-            <h2 class="section">Data Types</h2>
+            <h2 >Data Types</h2>
             <p>JavaScript is a loosely typed language which is ideal for a dynamic ORM framework like Ejscript. When
             reading database data, Ejscript will select the best JavaScript type to hold the database data. The
             following type conversions will occur when reading and writing data to and from the database. Note: Mysql
@@ -123,10 +123,10 @@ print(products)</b>
                     </tr>
                 </tbody>
             </table><a id="keys"></a>
-            <h2 class="section">Table Keys</h2>
+            <h2 >Table Keys</h2>
             <p>Ejscript assumes that database tables will have a primary key column named <em>id</em>. If you need the
             primary key column to be some other name, use the <em>setKeyName</em> method.</p><a id="connections"></a>
-            <h2 class="section">Database Connections</h2>
+            <h2 >Database Connections</h2>
             <p>Database connections are one of the few items that are setup by configuration files. The application
             configuration file: "config/database.ecf" defines the database name, username, password and other
             configuration parameters.</p>
@@ -144,7 +144,7 @@ debug: {
             database. The <em>database</em> option is set to the filename of the database. Setting <em>trace</em> to
             true will trace all SQL statements that are executed against the database to the application
             log.</p><a id="modelClasses"></a>
-            <h2 class="section">Creating Model Classes</h2>
+            <h2 >Creating Model Classes</h2>
             <p>The Ejscript <em>mvc</em> command can be used to generate models and database migrations.</p>
             <pre class="ui code segment">
 mvc generate model [field:type ...]
@@ -156,7 +156,7 @@ mvc generate model [field:type ...]
             decimal, float, integer, number, string, text, time, timestamp</em>.</p>
             <p>Once the model is generated, you can add methods to implement logic to manage updates and validate model
             data. Models typically provide a suite of methods for controllers and views to access.</p><a id="crud"></a>
-            <h2 class="section">Create, Read, Update and Delete</h2>
+            <h2 >Create, Read, Update and Delete</h2>
             <p>It should be easy to do simple things like implementing the basic database operations: create, read,
             update and delete. Ejscripts Models make this easy. <a id="create"></a></p>
             <h3>Create a new Record</h3>
@@ -198,7 +198,7 @@ product.name = "Stock Car"
 id = Product.findWhere('name == "Stock Car"')
 Product.remove(id)
 </pre><a id="manual"></a>
-            <h2 class="section">Manual SQL Statements</h2>
+            <h2 >Manual SQL Statements</h2>
             <p>Ejscript supports the execution of manual SQL statements and provides routines to assist the creation of
             SQL statements. The <em>getDb</em> method will return a Database object on which, manual SQL queries can be
             performed</p>
@@ -216,7 +216,7 @@ Product.findAll({order: "price DESC", limit: 2})
             <p>This will find up to two products, and will sort the result grid by descending price. Other options
             include: group, limit, offset and joins.</p><!--
             <a id="relationships"></a>
-            <h2 class="section">Table Relationships</h2>
+            <h2 >Table Relationships</h2>
                 <h3>Foreign Keys</h3>
                 <h3>One to One</h3>
                 <h3>One to Many</h3>
@@ -224,7 +224,7 @@ Product.findAll({order: "price DESC", limit: 2})
                 - belongsTo, hasOne, hasMany, hasAndBelongsToMany
             -->
             <a id="accessing"></a>
-            <h2 class="section">Accessing Models</h2>
+            <h2 >Accessing Models</h2>
             <p>Ejscript Controllers and Views are the primary users of model data. Controllers will typically interact
             to create, read, update, and delete model data. Views will typically (or should) use read-only access.</p>
             <p>There are several means by which model data can be provided:</p>
@@ -266,7 +266,7 @@ Product.findAll({order: "price DESC", limit: 2})
             <p>Controller facilitated access is perhaps the most powerful access methodology whereby the controller
             creates a suite of methods to manage and control access to the model. These methods can then validate and
             enforce consistency checks on the data.</p>
-            <h2 class="section">Validation</h2>
+            <h2 >Validation</h2>
             <p>Ejscript provides a validation mechanism that is invoked prior to saving a model to the database. It
             also provides a set of pre-defined validation methods that you can use in your model. These cover the most
             common validation needs such as ensuring a field is unique or numeric, or conforms to a specific

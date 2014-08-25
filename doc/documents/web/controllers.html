@@ -24,7 +24,7 @@
             action method.</p>
 
             <a id="anatomy"></a>
-            <h2 class="section">Anatomy of a Controller</h2>
+            <h2 >Anatomy of a Controller</h2>
             <p>So what does a controller look like?</p>
             <pre class="ui code segment">
 public class CartController extends ApplicationController {
@@ -64,7 +64,7 @@ https://embedthis.com/myApp/cart/create
             <em>edit.ejs</em> view back to the client.</p>
 
             <a id="actions"></a>
-            <h2 class="section">Actions</h2>
+            <h2 >Actions</h2>
             <p>Actions are where the controller does its work. In Ejscript, actions are simple JavaScript functions
             prefixed with an <em>action</em> qualifier. They don't need to be registered or otherwise configured before
             use. When Ejscript receives a request from the client, it will parse the request and invoke the request
@@ -99,7 +99,7 @@ https://embedthis.com/myApp/cart/create
             requests.</p>
 
             <a id="models"></a>
-            <h2 class="section">Model Data</h2>
+            <h2 >Model Data</h2>
             <p>Ejscript provides an Object Relational Mapping (ORM) layer for accessing database data via convenient
             JavaScript objects. The ORM layer is a collection of database Model classes for the application.
             controllers use this layer to access the database via these Model classes. A typical paradigm is for action
@@ -108,7 +108,7 @@ https://embedthis.com/myApp/cart/create
             <p>For more details, please see <a href="models.html">Database Models</a>.</p>
 
             <a id="forms"></a>
-            <h2 class="section">Form Data</h2>
+            <h2 >Form Data</h2>
             <p>HTTP Form data is marshalled by Ejscript into the <em>params</em> object which is accessible to actions.
             Each HTML input element posted by the client will become a property of <em>params</em>. Ejscript can also
             organize form data into nested objects. If an input element name contains a period, then Ejscript will
@@ -123,7 +123,7 @@ https://embedthis.com/myApp/cart/create
             framework will look for, and if found, run a view <em>views/cart/edit.ejs</em>.</p>
 
             <a id="generating"></a>
-            <h2 class="section">Generating Controllers and Actions</h2>
+            <h2 >Generating Controllers and Actions</h2>
             <p>Ejscript includes an an application generator, called <em>mvc</em> to make it quick and easy to
             create controllers, actions and controller scaffolds. To generate a new controller, run:</p>
             <pre class="ui code segment">
@@ -158,7 +158,7 @@ mvc generate scaffold MODEL [field:type ...]
             to edit.</p>
 
             <a id="controller"></a>
-            <h2 class="section">Controller Class</h2>
+            <h2 >Controller Class</h2>
             <p>The Controller class has a large set of methods and properties. See the <a href=
             "../ref/api/ejscript/index.html">Ejscript Library</a> for full details. Some of the more important
             properties:</p>
@@ -301,7 +301,7 @@ mvc generate scaffold MODEL [field:type ...]
             </table>
 
             <a id="filters"></a>
-            <h2 class="section">Filters</h2>
+            <h2 >Filters</h2>
             <p>Filters enable a controller to perform processing before and after actions are run. Filters are useful
             to do authentication and logging. Filters run in the same context as an action method and can access the
             controller instance and the Request, Response, Http, session and flash objects.</p>
@@ -334,7 +334,7 @@ public class TaskController extends BaseController {
             
         <!--
         <a id="tips"></a>
-        <h2 class="section">Tips and Tricks</h2>
+        <h2 >Tips and Tricks</h2>
         <p>The following hits provide solutions for common tasks:</p>
         <h3>Redirect the Client</h3>
         <p>To redirect the client to a new URL, use the redirect method. This will construct a redirection URL 

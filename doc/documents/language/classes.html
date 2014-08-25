@@ -16,7 +16,7 @@
             and match techniques. If you prefer traditional <a href="#prototype">prototype-based</a> inheritance, then
             use that. If you prefer the simpler, more classical <a href="#class">class-based</a> inheritance, go for
             it.</p><a id="prototype"></a>
-            <h2 class="section">Prototype Inheritance</h2>
+            <h2 >Prototype Inheritance</h2>
             <p>Prototype Inheritance uses constructor functions to create and initialize instances. The object instance
             is created via the <b>new</b> operator. Given a constructor called <b>Rectangle</b>, the following
             statement will create a new Rectangle instance.</p>
@@ -138,7 +138,7 @@ print(square.getArea())
                 <li><a href="http://javascript.crockford.com/prototypal.html">Prototypal Inheritance in JavaScript -
                 Doug Crockford</a></li>
             </ul><a id="class"></a>
-            <h2 class="section">Class Inheritance</h2>
+            <h2 >Class Inheritance</h2>
             <p>Because the standard JavaScript Prototypal Inheritance mechanism is a little tedious to work with,
             Ejscript adds a classical class based inheritance facility. It is syntactic sugar over the prototype
             inheritance, but also it has support in the VM to provide higher performance than that offered by pure
@@ -237,7 +237,7 @@ class Square <b>extends Rectangle</b> {
             they reside in the object instance, class or sub-classes. Once found, the compiler generates direct
             references to the property and avoids the run-time scanning of the prototype chain. This is typically
             dramatically faster than runtime property lookup.</p><a id="reflection"></a>
-            <h2 class="section">Reflection</h2>
+            <h2 >Reflection</h2>
             <p>Ejscript provides a set of operators and classes to enable you to determine the type of an object and
             reflect upon its members.</p>
             <p>The JavaScript standard <b>typeof</b> operator can be used to test the type of an object. It returns a
@@ -274,7 +274,7 @@ print(examine.typeName)
 /* Emits */
 <b>Shape</b>
 </pre><a id="interface"></a>
-            <h2 class="section">Interfaces</h2>
+            <h2 >Interfaces</h2>
             <p>Interfaces are used to create contracts for classes. They specify the required methods (or contract) the
             class must implement to validly support a given interface. These are very similar to ActionScript or Java
             interfaces.</p>

@@ -13,7 +13,7 @@
             </ul>
             <p>Scripting is certainly quicker, easier and more secure than creating native C modules. However, Native C
             coding may run faster and gives you access to the full Ejscript Virtual Machine.</p><a id="script"></a>
-            <h2 class="section">Script Library Modules</h2>
+            <h2 >Script Library Modules</h2>
             <p>Script code can be compiled and the byte code saved for use by other users as a module file. When script
             code is compiled, the Ejscript <b>ejsc</b> compiler saves the output in a module file with a <b>.mod</b>
             extension. This is often referred to as a <b>mod</b> file.</p>
@@ -85,7 +85,7 @@ ejs program.es
             module directive purely to give the module a name. </p>
            
             <a id="native"></a>
-            <h2 class="section">Native Modules</h2>
+            <h2 >Native Modules</h2>
             <p>Native modules are Ejscript modules that have their implementation provided by native C code rather than
             by compiled byte code. Native modules have full access to the Ejscript Virtual Machine. If you need maximum
             control, then creating native modules is probably the way to go.</p>
@@ -218,7 +218,7 @@ static EjsObj *blastOff(Ejs *ejs, EjsObj *rocket, int argc, EjsObj **argv)
             function-by-function basis.</p>
 
             <a id="api"></a>
-            <h2 class="section">Native API</h2>
+            <h2 >Native API</h2>
             <p>Ejscript has an extensive native API for interacting with the Ejscript virtual machine. Because types
             are themselves objects, the API offers a consistent way to access properties from objects or classes. Some
             of the more important API functions are listed below. See the full <a href="../ref/api/ejs.html">Ejscript
@@ -389,7 +389,7 @@ static EjsObj *blastOff(Ejs *ejs, EjsObj *rocket, int argc, EjsObj **argv)
                     </tr>
                 </tbody>
             </table>
-            <h2 class="section">Samples</h2>
+            <h2 >Samples</h2>
             <p>A library of samples is provided with the Ejscript source code. See the samples directory for many
             examples of embedding and extending Ejscript.</p>
             <p>For information about embedding Ejscript into applications, see the <a href="embedding.html">Embedding
