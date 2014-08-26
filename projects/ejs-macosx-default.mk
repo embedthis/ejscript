@@ -3,7 +3,7 @@
 #
 
 NAME                  := ejs
-VERSION               := 2.4.1
+VERSION               := 2.5.0
 PROFILE               ?= default
 ARCH                  ?= $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/')
 CC_ARCH               ?= $(shell echo $(ARCH) | sed 's/x86/i686/;s/x64/x86_64/')
@@ -293,7 +293,7 @@ DEPS_6 += build/$(CONFIG)/obj/mprLib.o
 
 build/$(CONFIG)/bin/libmpr.dylib: $(DEPS_6)
 	@echo '      [Link] build/$(CONFIG)/bin/libmpr.dylib'
-	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libmpr.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libmpr.dylib -compatibility_version 2.4 -current_version 2.4 "build/$(CONFIG)/obj/mprLib.o" $(LIBS) 
+	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libmpr.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libmpr.dylib -compatibility_version 2.5 -current_version 2.5 "build/$(CONFIG)/obj/mprLib.o" $(LIBS) 
 
 #
 #   pcre.h
@@ -324,7 +324,7 @@ DEPS_9 += build/$(CONFIG)/obj/pcre.o
 
 build/$(CONFIG)/bin/libpcre.dylib: $(DEPS_9)
 	@echo '      [Link] build/$(CONFIG)/bin/libpcre.dylib'
-	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libpcre.dylib -arch $(CC_ARCH) $(LDFLAGS) -compatibility_version 2.4 -current_version 2.4 $(LIBPATHS) -install_name @rpath/libpcre.dylib -compatibility_version 2.4 -current_version 2.4 "build/$(CONFIG)/obj/pcre.o" $(LIBS) 
+	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libpcre.dylib -arch $(CC_ARCH) $(LDFLAGS) -compatibility_version 2.5 -current_version 2.5 $(LIBPATHS) -install_name @rpath/libpcre.dylib -compatibility_version 2.5 -current_version 2.5 "build/$(CONFIG)/obj/pcre.o" $(LIBS) 
 endif
 
 #
@@ -371,7 +371,7 @@ endif
 
 build/$(CONFIG)/bin/libhttp.dylib: $(DEPS_12)
 	@echo '      [Link] build/$(CONFIG)/bin/libhttp.dylib'
-	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libhttp.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libhttp.dylib -compatibility_version 2.4 -current_version 2.4 "build/$(CONFIG)/obj/httpLib.o" $(LIBPATHS_12) $(LIBS_12) $(LIBS_12) $(LIBS) -lpam 
+	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libhttp.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libhttp.dylib -compatibility_version 2.5 -current_version 2.5 "build/$(CONFIG)/obj/httpLib.o" $(LIBPATHS_12) $(LIBS_12) $(LIBS_12) $(LIBS) -lpam 
 endif
 
 #
@@ -1525,7 +1525,7 @@ endif
 
 build/$(CONFIG)/bin/libejs.dylib: $(DEPS_82)
 	@echo '      [Link] build/$(CONFIG)/bin/libejs.dylib'
-	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libejs.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.dylib -compatibility_version 2.4 -current_version 2.4 "build/$(CONFIG)/obj/ecAst.o" "build/$(CONFIG)/obj/ecCodeGen.o" "build/$(CONFIG)/obj/ecCompiler.o" "build/$(CONFIG)/obj/ecLex.o" "build/$(CONFIG)/obj/ecModuleWrite.o" "build/$(CONFIG)/obj/ecParser.o" "build/$(CONFIG)/obj/ecState.o" "build/$(CONFIG)/obj/dtoa.o" "build/$(CONFIG)/obj/ejsApp.o" "build/$(CONFIG)/obj/ejsArray.o" "build/$(CONFIG)/obj/ejsBlock.o" "build/$(CONFIG)/obj/ejsBoolean.o" "build/$(CONFIG)/obj/ejsByteArray.o" "build/$(CONFIG)/obj/ejsCache.o" "build/$(CONFIG)/obj/ejsCmd.o" "build/$(CONFIG)/obj/ejsConfig.o" "build/$(CONFIG)/obj/ejsDate.o" "build/$(CONFIG)/obj/ejsDebug.o" "build/$(CONFIG)/obj/ejsError.o" "build/$(CONFIG)/obj/ejsFile.o" "build/$(CONFIG)/obj/ejsFileSystem.o" "build/$(CONFIG)/obj/ejsFrame.o" "build/$(CONFIG)/obj/ejsFunction.o" "build/$(CONFIG)/obj/ejsGC.o" "build/$(CONFIG)/obj/ejsGlobal.o" "build/$(CONFIG)/obj/ejsHttp.o" "build/$(CONFIG)/obj/ejsIterator.o" "build/$(CONFIG)/obj/ejsJSON.o" "build/$(CONFIG)/obj/ejsLocalCache.o" "build/$(CONFIG)/obj/ejsMath.o" "build/$(CONFIG)/obj/ejsMemory.o" "build/$(CONFIG)/obj/ejsMprLog.o" "build/$(CONFIG)/obj/ejsNamespace.o" "build/$(CONFIG)/obj/ejsNull.o" "build/$(CONFIG)/obj/ejsNumber.o" "build/$(CONFIG)/obj/ejsObject.o" "build/$(CONFIG)/obj/ejsPath.o" "build/$(CONFIG)/obj/ejsPot.o" "build/$(CONFIG)/obj/ejsRegExp.o" "build/$(CONFIG)/obj/ejsSocket.o" "build/$(CONFIG)/obj/ejsString.o" "build/$(CONFIG)/obj/ejsSystem.o" "build/$(CONFIG)/obj/ejsTimer.o" "build/$(CONFIG)/obj/ejsType.o" "build/$(CONFIG)/obj/ejsUri.o" "build/$(CONFIG)/obj/ejsVoid.o" "build/$(CONFIG)/obj/ejsWebSocket.o" "build/$(CONFIG)/obj/ejsWorker.o" "build/$(CONFIG)/obj/ejsXML.o" "build/$(CONFIG)/obj/ejsXMLList.o" "build/$(CONFIG)/obj/ejsXMLLoader.o" "build/$(CONFIG)/obj/ejsByteCode.o" "build/$(CONFIG)/obj/ejsException.o" "build/$(CONFIG)/obj/ejsHelper.o" "build/$(CONFIG)/obj/ejsInterp.o" "build/$(CONFIG)/obj/ejsLoader.o" "build/$(CONFIG)/obj/ejsModule.o" "build/$(CONFIG)/obj/ejsScope.o" "build/$(CONFIG)/obj/ejsService.o" $(LIBPATHS_82) $(LIBS_82) $(LIBS_82) $(LIBS) -lpam 
+	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libejs.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.dylib -compatibility_version 2.5 -current_version 2.5 "build/$(CONFIG)/obj/ecAst.o" "build/$(CONFIG)/obj/ecCodeGen.o" "build/$(CONFIG)/obj/ecCompiler.o" "build/$(CONFIG)/obj/ecLex.o" "build/$(CONFIG)/obj/ecModuleWrite.o" "build/$(CONFIG)/obj/ecParser.o" "build/$(CONFIG)/obj/ecState.o" "build/$(CONFIG)/obj/dtoa.o" "build/$(CONFIG)/obj/ejsApp.o" "build/$(CONFIG)/obj/ejsArray.o" "build/$(CONFIG)/obj/ejsBlock.o" "build/$(CONFIG)/obj/ejsBoolean.o" "build/$(CONFIG)/obj/ejsByteArray.o" "build/$(CONFIG)/obj/ejsCache.o" "build/$(CONFIG)/obj/ejsCmd.o" "build/$(CONFIG)/obj/ejsConfig.o" "build/$(CONFIG)/obj/ejsDate.o" "build/$(CONFIG)/obj/ejsDebug.o" "build/$(CONFIG)/obj/ejsError.o" "build/$(CONFIG)/obj/ejsFile.o" "build/$(CONFIG)/obj/ejsFileSystem.o" "build/$(CONFIG)/obj/ejsFrame.o" "build/$(CONFIG)/obj/ejsFunction.o" "build/$(CONFIG)/obj/ejsGC.o" "build/$(CONFIG)/obj/ejsGlobal.o" "build/$(CONFIG)/obj/ejsHttp.o" "build/$(CONFIG)/obj/ejsIterator.o" "build/$(CONFIG)/obj/ejsJSON.o" "build/$(CONFIG)/obj/ejsLocalCache.o" "build/$(CONFIG)/obj/ejsMath.o" "build/$(CONFIG)/obj/ejsMemory.o" "build/$(CONFIG)/obj/ejsMprLog.o" "build/$(CONFIG)/obj/ejsNamespace.o" "build/$(CONFIG)/obj/ejsNull.o" "build/$(CONFIG)/obj/ejsNumber.o" "build/$(CONFIG)/obj/ejsObject.o" "build/$(CONFIG)/obj/ejsPath.o" "build/$(CONFIG)/obj/ejsPot.o" "build/$(CONFIG)/obj/ejsRegExp.o" "build/$(CONFIG)/obj/ejsSocket.o" "build/$(CONFIG)/obj/ejsString.o" "build/$(CONFIG)/obj/ejsSystem.o" "build/$(CONFIG)/obj/ejsTimer.o" "build/$(CONFIG)/obj/ejsType.o" "build/$(CONFIG)/obj/ejsUri.o" "build/$(CONFIG)/obj/ejsVoid.o" "build/$(CONFIG)/obj/ejsWebSocket.o" "build/$(CONFIG)/obj/ejsWorker.o" "build/$(CONFIG)/obj/ejsXML.o" "build/$(CONFIG)/obj/ejsXMLList.o" "build/$(CONFIG)/obj/ejsXMLLoader.o" "build/$(CONFIG)/obj/ejsByteCode.o" "build/$(CONFIG)/obj/ejsException.o" "build/$(CONFIG)/obj/ejsHelper.o" "build/$(CONFIG)/obj/ejsInterp.o" "build/$(CONFIG)/obj/ejsLoader.o" "build/$(CONFIG)/obj/ejsModule.o" "build/$(CONFIG)/obj/ejsScope.o" "build/$(CONFIG)/obj/ejsService.o" $(LIBPATHS_82) $(LIBS_82) $(LIBS_82) $(LIBS) -lpam 
 
 #
 #   ejs.o
@@ -3352,7 +3352,7 @@ DEPS_110 += build/$(CONFIG)/obj/sqlite3.o
 
 build/$(CONFIG)/bin/libsql.dylib: $(DEPS_110)
 	@echo '      [Link] build/$(CONFIG)/bin/libsql.dylib'
-	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libsql.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libsql.dylib -compatibility_version 2.4 -current_version 2.4 "build/$(CONFIG)/obj/sqlite3.o" $(LIBS) 
+	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libsql.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libsql.dylib -compatibility_version 2.5 -current_version 2.5 "build/$(CONFIG)/obj/sqlite3.o" $(LIBS) 
 endif
 
 #
@@ -3494,7 +3494,7 @@ endif
 
 build/$(CONFIG)/bin/libejs.db.sqlite.dylib: $(DEPS_112)
 	@echo '      [Link] build/$(CONFIG)/bin/libejs.db.sqlite.dylib'
-	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libejs.db.sqlite.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.db.sqlite.dylib -compatibility_version 2.4 -current_version 2.4 "build/$(CONFIG)/obj/ejsSqlite.o" $(LIBPATHS_112) $(LIBS_112) $(LIBS_112) $(LIBS) -lpam 
+	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libejs.db.sqlite.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.db.sqlite.dylib -compatibility_version 2.5 -current_version 2.5 "build/$(CONFIG)/obj/ejsSqlite.o" $(LIBPATHS_112) $(LIBS_112) $(LIBS_112) $(LIBS) -lpam 
 
 #
 #   ejsWeb.h
@@ -3698,7 +3698,7 @@ endif
 
 build/$(CONFIG)/bin/libejs.web.dylib: $(DEPS_118)
 	@echo '      [Link] build/$(CONFIG)/bin/libejs.web.dylib'
-	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libejs.web.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.web.dylib -compatibility_version 2.4 -current_version 2.4 "build/$(CONFIG)/obj/ejsHttpServer.o" "build/$(CONFIG)/obj/ejsRequest.o" "build/$(CONFIG)/obj/ejsSession.o" "build/$(CONFIG)/obj/ejsWeb.o" $(LIBPATHS_118) $(LIBS_118) $(LIBS_118) $(LIBS) -lpam 
+	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libejs.web.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.web.dylib -compatibility_version 2.5 -current_version 2.5 "build/$(CONFIG)/obj/ejsHttpServer.o" "build/$(CONFIG)/obj/ejsRequest.o" "build/$(CONFIG)/obj/ejsSession.o" "build/$(CONFIG)/obj/ejsWeb.o" $(LIBPATHS_118) $(LIBS_118) $(LIBS_118) $(LIBS) -lpam 
 
 #
 #   zlib.h
@@ -3729,7 +3729,7 @@ DEPS_121 += build/$(CONFIG)/obj/zlib.o
 
 build/$(CONFIG)/bin/libzlib.dylib: $(DEPS_121)
 	@echo '      [Link] build/$(CONFIG)/bin/libzlib.dylib'
-	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libzlib.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libzlib.dylib -compatibility_version 2.4 -current_version 2.4 "build/$(CONFIG)/obj/zlib.o" $(LIBS) 
+	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libzlib.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libzlib.dylib -compatibility_version 2.5 -current_version 2.5 "build/$(CONFIG)/obj/zlib.o" $(LIBS) 
 endif
 
 #
@@ -3872,7 +3872,7 @@ endif
 
 build/$(CONFIG)/bin/libejs.zlib.dylib: $(DEPS_123)
 	@echo '      [Link] build/$(CONFIG)/bin/libejs.zlib.dylib'
-	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libejs.zlib.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.zlib.dylib -compatibility_version 2.4 -current_version 2.4 "build/$(CONFIG)/obj/ejsZlib.o" $(LIBPATHS_123) $(LIBS_123) $(LIBS_123) $(LIBS) -lpam 
+	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libejs.zlib.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libejs.zlib.dylib -compatibility_version 2.5 -current_version 2.5 "build/$(CONFIG)/obj/ejsZlib.o" $(LIBPATHS_123) $(LIBS_123) $(LIBS_123) $(LIBS) -lpam 
 
 #
 #   est.h
@@ -3905,7 +3905,7 @@ DEPS_126 += build/$(CONFIG)/obj/estLib.o
 
 build/$(CONFIG)/bin/libest.dylib: $(DEPS_126)
 	@echo '      [Link] build/$(CONFIG)/bin/libest.dylib'
-	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libest.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libest.dylib -compatibility_version 2.4 -current_version 2.4 "build/$(CONFIG)/obj/estLib.o" $(LIBS) 
+	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libest.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libest.dylib -compatibility_version 2.5 -current_version 2.5 "build/$(CONFIG)/obj/estLib.o" $(LIBS) 
 endif
 
 #
@@ -3957,7 +3957,7 @@ endif
 
 build/$(CONFIG)/bin/libmprssl.dylib: $(DEPS_128)
 	@echo '      [Link] build/$(CONFIG)/bin/libmprssl.dylib'
-	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libmprssl.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS)    -install_name @rpath/libmprssl.dylib -compatibility_version 2.4 -current_version 2.4 "build/$(CONFIG)/obj/mprSsl.o" $(LIBPATHS_128) $(LIBS_128) $(LIBS_128) $(LIBS) 
+	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libmprssl.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS)    -install_name @rpath/libmprssl.dylib -compatibility_version 2.5 -current_version 2.5 "build/$(CONFIG)/obj/mprSsl.o" $(LIBPATHS_128) $(LIBS_128) $(LIBS_128) $(LIBS) 
 
 #
 #   manager.o
@@ -4283,7 +4283,7 @@ installBinary: $(DEPS_140)
 	cd .; \
 	mkdir -p "$(ME_APP_PREFIX)" ; \
 	rm -f "$(ME_APP_PREFIX)/latest" ; \
-	ln -s "2.4.1" "$(ME_APP_PREFIX)/latest" ; \
+	ln -s "2.5.0" "$(ME_APP_PREFIX)/latest" ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
 	cp build/$(CONFIG)/bin/ejs $(ME_VAPP_PREFIX)/bin/ejs ; \
 	mkdir -p "$(ME_BIN_PREFIX)" ; \
@@ -4559,5 +4559,5 @@ uninstall: $(DEPS_143)
 #   version
 #
 version: $(DEPS_144)
-	echo 2.4.1
+	echo 2.5.0
 

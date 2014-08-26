@@ -3,7 +3,7 @@
 #
 
 NAME                  = ejs
-VERSION               = 2.4.1
+VERSION               = 2.5.0
 
 OS                    = windows
 PA                    = $(PROCESSOR_ARCHITECTURE)
@@ -4532,5 +4532,5 @@ uninstall: $(DEPS_145)
 #   version
 #
 version: $(DEPS_146)
-	echo 2.4.1
+	echo 2.5.0
 
