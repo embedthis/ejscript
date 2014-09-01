@@ -153,6 +153,7 @@ module ejs {
 
         /**
             File extension portion of the path. The file extension is the portion after (and not including) the last ".".
+            Returns empty string if there is no extension
          */
         native function get extension(): String 
 

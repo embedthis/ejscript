@@ -336,6 +336,7 @@ server.listen("127.0.0.1:7777")
         }
 
         //  TODO - should take an array of endpoints (like GoAhead) and allow https:///
+        //  TODO - Should not throw
 
         /** 
             Listen for client connections. This creates a HTTP server listening on a single socket endpoint. It can

@@ -623,9 +623,8 @@ PUBLIC EjsArray *ejsGetPathFiles(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 static int globMatch(Ejs *ejs, cchar *s, cchar *pat, int isDir, int flags, cchar *seps, int count, cchar **nextPartPattern)
 {
     int     match;
-//  TODO - need recursion limits
-    *nextPartPattern = 0;
 
+    *nextPartPattern = 0;
     while (*s && *pat && *pat != seps[0] && *pat != seps[1]) {
         match = (flags & FILES_CASELESS) ? (*pat == *s) : (tolower((uchar) *pat) == tolower((uchar) *s));
         if (match || *pat == '?') {
@@ -638,6 +637,14 @@ static int globMatch(Ejs *ejs, cchar *s, cchar *pat, int isDir, int flags, cchar
             if (*pat == '*') {
                 /* Double star - matches zero or more directories */
                 if (isDir) {
+                    /*
+                        Check if next segment matches and match that
+                     */
+                    if (pat[1] == seps[0] || pat[1] == seps[1]) {
+                        if (globMatch(ejs, s, &pat[2], isDir, flags, seps, count, nextPartPattern)) {
+                            return 1;
+                        }
+                    }
                     *nextPartPattern = pat - 1;
                     return 1;
                 }
