@@ -137,7 +137,7 @@ Me.load({
             type: 'test',
             home: '${TOP}',
             action: `
-                run(['${LBIN}/utest', '-v', '-d', me.settings.depth], {noio: true})
+                run(['${LBIN}/utest', '-v', '-d', me.settings.depth])
             `,
             platforms: [ 'local' ],
         }

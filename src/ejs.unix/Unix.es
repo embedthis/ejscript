@@ -48,6 +48,7 @@ module ejs.unix {
         @param options Processing and file attributes
         @options owner String representing the file owner                                                     
         @options group String representing the file group                                                     
+        @options exceptions Set to false to disable exceptions if cp finds no files to copy. Defaults to true.
         @options permissions Number File Posix permissions mask
         @options tree Copy the src subtree and preserve the directory structure under the destination.
         @return Number of files copied
@@ -70,7 +71,7 @@ module ejs.unix {
             list = base.files(pattern, options)
 
             if (!list || list.length == 0) {
-                if (!options.nothrow) {
+                if (options.exceptions !== false) {
                     throw 'cp: Cannot find files to copy "' + pattern + '" to ' + dest
                 }
             }

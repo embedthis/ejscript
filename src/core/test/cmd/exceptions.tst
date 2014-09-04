@@ -11,7 +11,7 @@ if (!Path("/bin").exists) {
     //  Throw exceptions on errors
     let caught = false
     try {
-        cmd = Cmd("ls /asdf", {exception: true})
+        cmd = Cmd("ls /asdf", {exceptions: true})
     } catch (e) {
         caught = true
         assert(e.toString().contains("asdf: No such file or directory"))
@@ -19,5 +19,5 @@ if (!Path("/bin").exists) {
     assert(caught)
 
     //  Should not throw
-    Cmd("echo", {exception: true})
+    Cmd("echo", {exceptions: true})
 }

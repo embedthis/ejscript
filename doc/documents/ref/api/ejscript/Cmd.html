@@ -108,8 +108,7 @@ This is the number of milliseconds for the call to complete.</td></tr>
 <td class='param'>detach</td><td>Boolean If true, run the command and return immediately. If detached, finalize() must be called to signify the end of data being written to the command's stdin.</td></tr>
 <td class='param'>dir</td><td>Path or String. Directory to set as the current working directory for the command.</td></tr>
 <td class='param'>exception</td><td>Boolean If true, throw exceptions if the command returns a non-zero status code.  Defaults to false.</td></tr>
-<td class='param'>timeout</td><td>Number This is the default number of milliseconds for the command to complete.</td></tr>
-<td class='param'>noio</td><td>Don't capture stdout from the command. If true, the command's standard output will go to the  application's current standard output. Defaults to false.</td></tr>
+<td class='param'>timeout</td><td>Number This is the default number of milliseconds for the command to complete. P.</td></tr>
 </table></dd>
 </dl></div>
 </div>
@@ -301,9 +300,9 @@ In this case a "readable" event will be issued when data is available for readin
 <dd><table class='parameters' title='options'>
 <td class='param'>detach</td><td>Boolean If true, run the command and return immediately. If detached, finalize() must be called to signify the end of data being written to the command's stdin.</td></tr>
 <td class='param'>dir</td><td>Path or String. Directory to set as the current working directory for the command.</td></tr>
-<td class='param'>exception</td><td>Boolean If true, throw exceptions if the command returns a non-zero status code.  Defaults to true.</td></tr>
+<td class='param'>exceptions</td><td>Boolean If true, throw exceptions if the command returns a non-zero status code.  Defaults to true.</td></tr>
 <td class='param'>timeout</td><td>Number This is the default number of milliseconds for the command to complete.</td></tr>
-<td class='param'>noio</td><td>Don't capture stdout from the command. If true, the command's standard output will go to the  application's current standard output. Defaults to false.</td></tr>
+<td class='param'>stream</td><td>Stream the stdout from the command to the current standard output. Defaults to false.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>The command output from the standard output.</dd></dl>
@@ -327,9 +326,9 @@ sh.exe is installed (See Cygwin).</dd></dl>
 <dd><table class='parameters' title='options'>
 <td class='param'>detach</td><td>Boolean If true, run the command and return immediately. If detached, finalize() must be called to signify the end of data being written to the command's stdin.</td></tr>
 <td class='param'>dir</td><td>Path or String. Directory to set as the current working directory for the command.</td></tr>
-<td class='param'>exception</td><td>Boolean If true, throw exceptions if the command returns a non-zero status code.  Defaults to true.</td></tr>
+<td class='param'>exceptions</td><td>Boolean If true, throw exceptions if the command returns a non-zero status code.  Defaults to true.</td></tr>
 <td class='param'>timeout</td><td>Number This is the default number of milliseconds for the command to complete.</td></tr>
-<td class='param'>noio</td><td>Don't capture stdout from the command. If true, the command's standard output will go to the  application's current standard output. Defaults to false.</td></tr>
+<td class='param'>stream</td><td>Stream the stdout from the command to the current standard output. Defaults to false.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>The command output from the standard output.</dd></dl>
