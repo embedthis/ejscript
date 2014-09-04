@@ -96,7 +96,7 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\ejs.db
-$(BinDir)/ejsc --out $(BinDir)/ejs.db.mod  --optimize 9 *.es
+undefined\ejsc --out undefined\ejs.db.mod  --optimize 9
 cd ..\..\projects\ejs-windows-default</Command>
     <Outputs>$(BinDir)\ejs.db.mod</Outputs>
   </CustomBuildStep>

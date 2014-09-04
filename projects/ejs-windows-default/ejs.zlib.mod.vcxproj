@@ -96,7 +96,7 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\ejs.zlib
-$(BinDir)/ejsc --out $(BinDir)/ejs.zlib.mod  --optimize 9 *.es
+undefined\ejsc --out undefined\ejs.zlib.mod  --optimize 9
 cd ..\..\projects\ejs-windows-default</Command>
     <Outputs>$(BinDir)\ejs.zlib.mod</Outputs>
   </CustomBuildStep>

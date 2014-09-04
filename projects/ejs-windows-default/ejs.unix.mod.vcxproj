@@ -96,7 +96,7 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\ejs.unix
-$(BinDir)/ejsc --out $(BinDir)/ejs.unix.mod  --optimize 9 Unix.es
+undefined\ejsc --out undefined\ejs.unix.mod  --optimize 9
 cd ..\..\projects\ejs-windows-default</Command>
     <Outputs>$(BinDir)\ejs.unix.mod</Outputs>
   </CustomBuildStep>

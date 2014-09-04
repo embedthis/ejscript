@@ -16,8 +16,6 @@ PATH                  := $(LBIN):$(PATH)
 
 ME_COM_EST            ?= 1
 ME_COM_HTTP           ?= 1
-ME_COM_MATRIXSSL      ?= 0
-ME_COM_NANOSSL        ?= 0
 ME_COM_OPENSSL        ?= 0
 ME_COM_OSDEP          ?= 1
 ME_COM_PCRE           ?= 1
@@ -30,24 +28,16 @@ ME_COM_ZLIB           ?= 1
 ifeq ($(ME_COM_EST),1)
     ME_COM_SSL := 1
 endif
-ifeq ($(ME_COM_MATRIXSSL),1)
-    ME_COM_SSL := 1
-endif
-ifeq ($(ME_COM_NANOSSL),1)
-    ME_COM_SSL := 1
-endif
 ifeq ($(ME_COM_OPENSSL),1)
     ME_COM_SSL := 1
 endif
 
 ME_COM_COMPILER_PATH  ?= clang
 ME_COM_LIB_PATH       ?= ar
-ME_COM_MATRIXSSL_PATH ?= /usr/src/matrixssl
-ME_COM_NANOSSL_PATH   ?= /usr/src/nanossl
 ME_COM_OPENSSL_PATH   ?= /usr/src/openssl
 
 CFLAGS                += -g -w
-DFLAGS                +=  $(patsubst %,-D%,$(filter ME_%,$(MAKEFLAGS))) -DME_COM_EST=$(ME_COM_EST) -DME_COM_HTTP=$(ME_COM_HTTP) -DME_COM_MATRIXSSL=$(ME_COM_MATRIXSSL) -DME_COM_NANOSSL=$(ME_COM_NANOSSL) -DME_COM_OPENSSL=$(ME_COM_OPENSSL) -DME_COM_OSDEP=$(ME_COM_OSDEP) -DME_COM_PCRE=$(ME_COM_PCRE) -DME_COM_SQLITE=$(ME_COM_SQLITE) -DME_COM_SSL=$(ME_COM_SSL) -DME_COM_VXWORKS=$(ME_COM_VXWORKS) -DME_COM_WINSDK=$(ME_COM_WINSDK) -DME_COM_ZLIB=$(ME_COM_ZLIB) 
+DFLAGS                +=  $(patsubst %,-D%,$(filter ME_%,$(MAKEFLAGS))) -DME_COM_EST=$(ME_COM_EST) -DME_COM_HTTP=$(ME_COM_HTTP) -DME_COM_OPENSSL=$(ME_COM_OPENSSL) -DME_COM_OSDEP=$(ME_COM_OSDEP) -DME_COM_PCRE=$(ME_COM_PCRE) -DME_COM_SQLITE=$(ME_COM_SQLITE) -DME_COM_SSL=$(ME_COM_SSL) -DME_COM_VXWORKS=$(ME_COM_VXWORKS) -DME_COM_WINSDK=$(ME_COM_WINSDK) -DME_COM_ZLIB=$(ME_COM_ZLIB) 
 IFLAGS                += "-Ibuild/$(CONFIG)/inc"
 LDFLAGS               += '-Wl,-rpath,@executable_path/' '-Wl,-rpath,@loader_path/'
 LIBPATHS              += -Lbuild/$(CONFIG)/bin
@@ -237,8 +227,12 @@ clean:
 	rm -f "build/$(CONFIG)/bin/libzlib.dylib"
 	rm -f "build/$(CONFIG)/bin/makerom"
 	rm -f "build/$(CONFIG)/bin/ejsman"
+	rm -f "build/$(CONFIG)/bin/mvc.es"
 	rm -f "build/$(CONFIG)/bin/sqlite"
 	rm -f "build/$(CONFIG)/bin/utest"
+	rm -f "build/$(CONFIG)/bin/utest.es"
+	rm -f "build/$(CONFIG)/bin/utest.worker"
+	rm -f "build/$(CONFIG)/bin/www"
 
 clobber: clean
 	rm -fr ./$(BUILD)
@@ -2091,10 +2085,9 @@ DEPS_94 += build/$(CONFIG)/bin/ejsmod
 build/$(CONFIG)/bin/ejs.mod: $(DEPS_94)
 	( \
 	cd src/core; \
-	../../$(LBIN)/ejsc --out ../../build/$(CONFIG)/bin/ejs.mod  --optimize 9 --bind --require null *.es  ; \
-	../../$(LBIN)/ejsmod --require null --cslots ../../build/$(CONFIG)/bin/ejs.mod ; \
-	if ! diff ejs.slots.h ../../build/$(CONFIG)/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ../../build/$(CONFIG)/inc; fi ; \
-	rm -f ejs.slots.h ; \
+	echo '   [Compile] Core EJS classes' ; \
+	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.mod  --optimize 9 --bind --require null App.es Args.es Array.es BinaryStream.es Block.es Boolean.es ByteArray.es Cache.es Cmd.es Compat.es Config.es Date.es Debug.es Emitter.es Error.es File.es FileSystem.es Frame.es Function.es GC.es Global.es Http.es Inflector.es Iterator.es JSON.es Loader.es LocalCache.es Locale.es Logger.es Math.es Memory.es MprLog.es Name.es Namespace.es Null.es Number.es Object.es Path.es Promise.es RegExp.es Socket.es Stream.es String.es System.es TextStream.es Timer.es Type.es Uri.es Void.es WebSocket.es Worker.es XML.es XMLHttp.es XMLList.es ; \
+	../../build/$(CONFIG)/bin/ejsmod --cslots --dir ../../build/$(CONFIG)/bin --require null ../../build/$(CONFIG)/bin/ejs.mod ; \
 	)
 
 #
@@ -2202,7 +2195,8 @@ DEPS_95 += build/$(CONFIG)/bin/ejs.mod
 build/$(CONFIG)/bin/ejs.db.mod: $(DEPS_95)
 	( \
 	cd src/ejs.db; \
-	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.db.mod  --optimize 9 *.es ; \
+	echo '   [Compile] ejs.db.mod' ; \
+	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.db.mod  --optimize 9 Database.es DatabaseConnector.es ; \
 	)
 
 #
@@ -2310,7 +2304,8 @@ DEPS_96 += build/$(CONFIG)/bin/ejs.db.mod
 build/$(CONFIG)/bin/ejs.db.mapper.mod: $(DEPS_96)
 	( \
 	cd src/ejs.db.mapper; \
-	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.db.mapper.mod  --optimize 9 *.es ; \
+	echo '   [Compile] ejs.db.mapper.mod' ; \
+	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.db.mapper.mod  --optimize 9 Record.es ; \
 	)
 
 #
@@ -2417,7 +2412,9 @@ DEPS_97 += build/$(CONFIG)/bin/ejs.mod
 build/$(CONFIG)/bin/ejs.db.sqlite.mod: $(DEPS_97)
 	( \
 	cd src/ejs.db.sqlite; \
-	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.db.sqlite.mod  --optimize 9 *.es ; \
+	echo '   [Compile] ejs.db.sqlite.mod' ; \
+	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.db.sqlite.mod  --optimize 9 Sqlite.es ; \
+	../../build/$(CONFIG)/bin/ejsmod --cslots --dir ../../build/$(CONFIG)/bin ../../build/$(CONFIG)/bin/ejs.db.sqlite.mod ; \
 	)
 
 #
@@ -2524,7 +2521,7 @@ DEPS_98 += build/$(CONFIG)/bin/ejs.mod
 build/$(CONFIG)/bin/ejs.mail.mod: $(DEPS_98)
 	( \
 	cd src/ejs.mail; \
-	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.mail.mod  --optimize 9 *.es ; \
+	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.mail.mod  --optimize 9 Mail.es ; \
 	)
 
 #
@@ -2653,10 +2650,8 @@ DEPS_99 += build/$(CONFIG)/bin/ejs.mod
 build/$(CONFIG)/bin/ejs.web.mod: $(DEPS_99)
 	( \
 	cd src/ejs.web; \
-	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.web.mod  --optimize 9 *.es ; \
-	../../build/$(CONFIG)/bin/ejsmod --cslots ../../build/$(CONFIG)/bin/ejs.web.mod ; \
-	if ! diff ejs.web.slots.h ../../build/$(CONFIG)/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../build/$(CONFIG)/inc; fi ; \
-	rm -f ejs.web.slots.h ; \
+	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.web.mod  --optimize 9 Cascade.es CommonLog.es ContentType.es Controller.es Dir.es Google.es Head.es Html.es HttpServer.es MethodOverride.es Middleware.es Mvc.es Request.es Router.es Script.es Session.es ShowExceptions.es Static.es Template.es UploadFile.es UrlMap.es Utils.es View.es ; \
+	../../build/$(CONFIG)/bin/ejsmod --cslots --dir ../../build/$(CONFIG)/bin ../../build/$(CONFIG)/bin/ejs.web.mod ; \
 	)
 
 #
@@ -2763,6 +2758,7 @@ DEPS_100 += build/$(CONFIG)/bin/ejs.mod
 build/$(CONFIG)/bin/ejs.template.mod: $(DEPS_100)
 	( \
 	cd src/ejs.template; \
+	echo '   [Compile] ejs.template.mod' ; \
 	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.template.mod  --optimize 9 TemplateParser.es ; \
 	)
 
@@ -2870,6 +2866,7 @@ DEPS_101 += build/$(CONFIG)/bin/ejs.mod
 build/$(CONFIG)/bin/ejs.unix.mod: $(DEPS_101)
 	( \
 	cd src/ejs.unix; \
+	echo '   [Compile] ejs.unix.mod' ; \
 	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.unix.mod  --optimize 9 Unix.es ; \
 	)
 
@@ -2980,7 +2977,8 @@ DEPS_102 += build/$(CONFIG)/bin/ejs.unix.mod
 build/$(CONFIG)/bin/ejs.mvc.mod: $(DEPS_102)
 	( \
 	cd src/ejs.mvc; \
-	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.mvc.mod  --optimize 9 *.es ; \
+	echo '   [Compile] ejs.mvc.mod' ; \
+	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.mvc.mod  --optimize 9 mvc.es ; \
 	)
 
 #
@@ -3087,7 +3085,8 @@ DEPS_103 += build/$(CONFIG)/bin/ejs.mod
 build/$(CONFIG)/bin/ejs.tar.mod: $(DEPS_103)
 	( \
 	cd src/ejs.tar; \
-	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.tar.mod  --optimize 9 *.es ; \
+	echo '   [Compile] ejs.tar.mod' ; \
+	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.tar.mod  --optimize 9 Tar.es ; \
 	)
 
 #
@@ -3194,7 +3193,8 @@ DEPS_104 += build/$(CONFIG)/bin/ejs.mod
 build/$(CONFIG)/bin/ejs.zlib.mod: $(DEPS_104)
 	( \
 	cd src/ejs.zlib; \
-	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.zlib.mod  --optimize 9 *.es ; \
+	echo '   [Compile] ejs.zlib.mod' ; \
+	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.zlib.mod  --optimize 9 Zlib.es ; \
 	)
 
 #
@@ -3917,7 +3917,7 @@ DEPS_127 += build/$(CONFIG)/inc/mpr.h
 build/$(CONFIG)/obj/mprSsl.o: \
     src/paks/mpr/mprSsl.c $(DEPS_127)
 	@echo '   [Compile] build/$(CONFIG)/obj/mprSsl.o'
-	$(CC) -c $(DFLAGS) -o build/$(CONFIG)/obj/mprSsl.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)/include" "-I$(ME_COM_MATRIXSSL_PATH)" "-I$(ME_COM_MATRIXSSL_PATH)/matrixssl" "-I$(ME_COM_NANOSSL_PATH)/src" src/paks/mpr/mprSsl.c
+	$(CC) -c $(DFLAGS) -o build/$(CONFIG)/obj/mprSsl.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)/include" src/paks/mpr/mprSsl.c
 
 #
 #   libmprssl
@@ -3946,18 +3946,10 @@ endif
 ifeq ($(ME_COM_EST),1)
     LIBS_128 += -lest
 endif
-ifeq ($(ME_COM_MATRIXSSL),1)
-    LIBS_128 += -lmatrixssl
-    LIBPATHS_128 += -L$(ME_COM_MATRIXSSL_PATH)
-endif
-ifeq ($(ME_COM_NANOSSL),1)
-    LIBS_128 += -lssls
-    LIBPATHS_128 += -L$(ME_COM_NANOSSL_PATH)/bin
-endif
 
 build/$(CONFIG)/bin/libmprssl.dylib: $(DEPS_128)
 	@echo '      [Link] build/$(CONFIG)/bin/libmprssl.dylib'
-	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libmprssl.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS)    -install_name @rpath/libmprssl.dylib -compatibility_version 2.5 -current_version 2.5 "build/$(CONFIG)/obj/mprSsl.o" $(LIBPATHS_128) $(LIBS_128) $(LIBS_128) $(LIBS) 
+	$(CC) -dynamiclib -o build/$(CONFIG)/bin/libmprssl.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS)  -install_name @rpath/libmprssl.dylib -compatibility_version 2.5 -current_version 2.5 "build/$(CONFIG)/obj/mprSsl.o" $(LIBPATHS_128) $(LIBS_128) $(LIBS_128) $(LIBS) 
 
 #
 #   manager.o
@@ -3992,10 +3984,9 @@ build/$(CONFIG)/bin/ejsman: $(DEPS_130)
 DEPS_131 += src/ejs.mvc/mvc.es
 
 build/$(CONFIG)/bin/mvc.es: $(DEPS_131)
-	( \
-	cd src/ejs.mvc; \
-	cp mvc.es ../../build/$(CONFIG)/bin ; \
-	)
+	@echo '      [Copy] build/$(CONFIG)/bin/mvc.es'
+	mkdir -p "build/$(CONFIG)/bin"
+	cp src/ejs.mvc/mvc.es build/$(CONFIG)/bin/mvc.es
 
 #
 #   mvc
@@ -4136,10 +4127,9 @@ endif
 DEPS_135 += src/ejs.utest/utest.es
 
 build/$(CONFIG)/bin/utest.es: $(DEPS_135)
-	( \
-	cd src/ejs.utest; \
-	cp utest.es ../../build/$(CONFIG)/bin ; \
-	)
+	@echo '      [Copy] build/$(CONFIG)/bin/utest.es'
+	mkdir -p "build/$(CONFIG)/bin"
+	cp src/ejs.utest/utest.es build/$(CONFIG)/bin/utest.es
 
 #
 #   utest.worker
@@ -4147,10 +4137,9 @@ build/$(CONFIG)/bin/utest.es: $(DEPS_135)
 DEPS_136 += src/ejs.utest/utest.worker
 
 build/$(CONFIG)/bin/utest.worker: $(DEPS_136)
-	( \
-	cd src/ejs.utest; \
-	cp utest.worker ../../build/$(CONFIG)/bin ; \
-	)
+	@echo '      [Copy] build/$(CONFIG)/bin/utest.worker'
+	mkdir -p "build/$(CONFIG)/bin"
+	cp src/ejs.utest/utest.worker build/$(CONFIG)/bin/utest.worker
 
 #
 #   utest
@@ -4264,11 +4253,39 @@ build/$(CONFIG)/bin/utest: $(DEPS_137)
 DEPS_138 += src/ejs.web/www
 
 build/$(CONFIG)/bin/www: $(DEPS_138)
-	( \
-	cd src/ejs.web; \
-	rm -fr ../../build/$(CONFIG)/bin/www ; \
-	cp -r www ../../build/$(CONFIG)/bin ; \
-	)
+	@echo '      [Copy] build/$(CONFIG)/bin/www'
+	mkdir -p "build/$(CONFIG)/bin/www/images"
+	cp src/ejs.web/www/images/banner.jpg build/$(CONFIG)/bin/www/images/banner.jpg
+	cp src/ejs.web/www/images/favicon.ico build/$(CONFIG)/bin/www/images/favicon.ico
+	cp src/ejs.web/www/images/splash.jpg build/$(CONFIG)/bin/www/images/splash.jpg
+	mkdir -p "build/$(CONFIG)/bin/www/js"
+	cp src/ejs.web/www/js/jquery.ejs.min.js build/$(CONFIG)/bin/www/js/jquery.ejs.min.js
+	cp src/ejs.web/www/js/jquery.min.js build/$(CONFIG)/bin/www/js/jquery.min.js
+	cp src/ejs.web/www/js/jquery.simplemodal.min.js build/$(CONFIG)/bin/www/js/jquery.simplemodal.min.js
+	cp src/ejs.web/www/js/jquery.tablesorter.js build/$(CONFIG)/bin/www/js/jquery.tablesorter.js
+	cp src/ejs.web/www/js/jquery.tablesorter.min.js build/$(CONFIG)/bin/www/js/jquery.tablesorter.min.js
+	cp src/ejs.web/www/js/jquery.treeview.min.js build/$(CONFIG)/bin/www/js/jquery.treeview.min.js
+	mkdir -p "build/$(CONFIG)/bin/www/js/tree-images"
+	cp src/ejs.web/www/js/tree-images/file.gif build/$(CONFIG)/bin/www/js/tree-images/file.gif
+	cp src/ejs.web/www/js/tree-images/folder-closed.gif build/$(CONFIG)/bin/www/js/tree-images/folder-closed.gif
+	cp src/ejs.web/www/js/tree-images/folder.gif build/$(CONFIG)/bin/www/js/tree-images/folder.gif
+	cp src/ejs.web/www/js/tree-images/minus.gif build/$(CONFIG)/bin/www/js/tree-images/minus.gif
+	cp src/ejs.web/www/js/tree-images/plus.gif build/$(CONFIG)/bin/www/js/tree-images/plus.gif
+	cp src/ejs.web/www/js/tree-images/treeview-black-line.gif build/$(CONFIG)/bin/www/js/tree-images/treeview-black-line.gif
+	cp src/ejs.web/www/js/tree-images/treeview-black.gif build/$(CONFIG)/bin/www/js/tree-images/treeview-black.gif
+	cp src/ejs.web/www/js/tree-images/treeview-default-line.gif build/$(CONFIG)/bin/www/js/tree-images/treeview-default-line.gif
+	cp src/ejs.web/www/js/tree-images/treeview-default.gif build/$(CONFIG)/bin/www/js/tree-images/treeview-default.gif
+	cp src/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif build/$(CONFIG)/bin/www/js/tree-images/treeview-famfamfam-line.gif
+	cp src/ejs.web/www/js/tree-images/treeview-famfamfam.gif build/$(CONFIG)/bin/www/js/tree-images/treeview-famfamfam.gif
+	cp src/ejs.web/www/js/tree-images/treeview-gray-line.gif build/$(CONFIG)/bin/www/js/tree-images/treeview-gray-line.gif
+	cp src/ejs.web/www/js/tree-images/treeview-gray.gif build/$(CONFIG)/bin/www/js/tree-images/treeview-gray.gif
+	cp src/ejs.web/www/js/tree-images/treeview-red-line.gif build/$(CONFIG)/bin/www/js/tree-images/treeview-red-line.gif
+	cp src/ejs.web/www/js/tree-images/treeview-red.gif build/$(CONFIG)/bin/www/js/tree-images/treeview-red.gif
+	cp src/ejs.web/www/js/treeview.css build/$(CONFIG)/bin/www/js/treeview.css
+	mkdir -p "build/$(CONFIG)/bin/www"
+	cp src/ejs.web/www/layout.css build/$(CONFIG)/bin/www/layout.css
+	mkdir -p "build/$(CONFIG)/bin/www/themes"
+	cp src/ejs.web/www/themes/default.css build/$(CONFIG)/bin/www/themes/default.css
 
 #
 #   stop
@@ -4504,26 +4521,26 @@ installBinary: $(DEPS_140)
 	rm -f "$(ME_INC_PREFIX)/ejs/ejsByteGoto.h" ; \
 	ln -s "$(ME_VAPP_PREFIX)/inc/ejsByteGoto.h" "$(ME_INC_PREFIX)/ejs/ejsByteGoto.h" ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/doc/man1" ; \
-	cp doc/documents/man/ejs.1 $(ME_VAPP_PREFIX)/doc/man1/ejs.1 ; \
+	cp doc/public/man/ejs.1 $(ME_VAPP_PREFIX)/doc/man1/ejs.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/ejs.1" ; \
 	ln -s "$(ME_VAPP_PREFIX)/doc/man1/ejs.1" "$(ME_MAN_PREFIX)/man1/ejs.1" ; \
-	cp doc/documents/man/ejsc.1 $(ME_VAPP_PREFIX)/doc/man1/ejsc.1 ; \
+	cp doc/public/man/ejsc.1 $(ME_VAPP_PREFIX)/doc/man1/ejsc.1 ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/ejsc.1" ; \
 	ln -s "$(ME_VAPP_PREFIX)/doc/man1/ejsc.1" "$(ME_MAN_PREFIX)/man1/ejsc.1" ; \
-	cp doc/documents/man/ejsmod.1 $(ME_VAPP_PREFIX)/doc/man1/ejsmod.1 ; \
+	cp doc/public/man/ejsmod.1 $(ME_VAPP_PREFIX)/doc/man1/ejsmod.1 ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/ejsmod.1" ; \
 	ln -s "$(ME_VAPP_PREFIX)/doc/man1/ejsmod.1" "$(ME_MAN_PREFIX)/man1/ejsmod.1" ; \
-	cp doc/documents/man/http.1 $(ME_VAPP_PREFIX)/doc/man1/http.1 ; \
+	cp doc/public/man/http.1 $(ME_VAPP_PREFIX)/doc/man1/http.1 ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/http.1" ; \
 	ln -s "$(ME_VAPP_PREFIX)/doc/man1/http.1" "$(ME_MAN_PREFIX)/man1/http.1" ; \
-	cp doc/documents/man/makerom.1 $(ME_VAPP_PREFIX)/doc/man1/makerom.1 ; \
+	cp doc/public/man/makerom.1 $(ME_VAPP_PREFIX)/doc/man1/makerom.1 ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/makerom.1" ; \
 	ln -s "$(ME_VAPP_PREFIX)/doc/man1/makerom.1" "$(ME_MAN_PREFIX)/man1/makerom.1" ; \
-	cp doc/documents/man/manager.1 $(ME_VAPP_PREFIX)/doc/man1/manager.1 ; \
+	cp doc/public/man/manager.1 $(ME_VAPP_PREFIX)/doc/man1/manager.1 ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/manager.1" ; \
 	ln -s "$(ME_VAPP_PREFIX)/doc/man1/manager.1" "$(ME_MAN_PREFIX)/man1/manager.1" ; \
-	cp doc/documents/man/mvc.1 $(ME_VAPP_PREFIX)/doc/man1/mvc.1 ; \
+	cp doc/public/man/mvc.1 $(ME_VAPP_PREFIX)/doc/man1/mvc.1 ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/mvc.1" ; \
 	ln -s "$(ME_VAPP_PREFIX)/doc/man1/mvc.1" "$(ME_MAN_PREFIX)/man1/mvc.1" ; \
 	)

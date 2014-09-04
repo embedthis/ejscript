@@ -3214,7 +3214,8 @@
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.db.mapper
-../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.db.mapper.mod  --optimize 9 *.es";
+	../${OUT_DIR}/bin/ejsc --out   --optimize 9 
+";
 		};
 		900D453C900D53D60000000E /* ShellScript for ejs.db.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3232,7 +3233,8 @@ cd ../src/ejs.db.mapper
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.db
-../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.db.mod  --optimize 9 *.es";
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.db.mod  --optimize 9 
+";
 		};
 		900D453C900D53D600000014 /* ShellScript for ejs.db.sqlite.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3249,7 +3251,9 @@ cd ../src/ejs.db
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.db.sqlite
-../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.db.sqlite.mod  --optimize 9 *.es";
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.db.sqlite.mod  --optimize 9 
+	../${OUT_DIR}/bin/ejsmod --cslots --dir ../${OUT_DIR}/bin ../${OUT_DIR}/bin/ejs.db.sqlite.mod
+";
 		};
 		900D453C900D53D60000001B /* ShellScript for ejs.mail.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3266,7 +3270,8 @@ cd ../src/ejs.db.sqlite
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.mail
-../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.mail.mod  --optimize 9 *.es";
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.mail.mod  --optimize 9 
+";
 		};
 		900D453C900D53D600000021 /* ShellScript for ejs.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3336,10 +3341,9 @@ cd ../src/ejs.mail
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/core
-../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.mod  --optimize 9 --bind --require null *.es 
-../../build/macosx-x64-static/bin/ejsmod --require null --cslots ../../build/macosx-x64-static/bin/ejs.mod
-if ! diff ejs.slots.h ../../build/macosx-x64-static/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ../../build/macosx-x64-static/inc; fi
-rm -f ejs.slots.h";
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.mod  --optimize 9 --bind --require null 
+	../${OUT_DIR}/bin/ejsmod --cslots --dir ../${OUT_DIR}/bin --require null ../${OUT_DIR}/bin/ejs.mod
+";
 		};
 		900D453C900D53D600000027 /* ShellScript for ejs.mvc.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3356,7 +3360,8 @@ rm -f ejs.slots.h";
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.mvc
-../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.mvc.mod  --optimize 9 *.es";
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.mvc.mod  --optimize 9 
+";
 		};
 		900D453C900D53D600000030 /* ShellScript for ejs.tar.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3373,7 +3378,8 @@ cd ../src/ejs.mvc
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.tar
-../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.tar.mod  --optimize 9 *.es";
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.tar.mod  --optimize 9 
+";
 		};
 		900D453C900D53D600000036 /* ShellScript for ejs.template.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3390,7 +3396,8 @@ cd ../src/ejs.tar
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.template
-../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.template.mod  --optimize 9 TemplateParser.es";
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.template.mod  --optimize 9 
+";
 		};
 		900D453C900D53D60000003C /* ShellScript for ejs.unix.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3407,7 +3414,8 @@ cd ../src/ejs.template
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.unix
-../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.unix.mod  --optimize 9 Unix.es";
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.unix.mod  --optimize 9 
+";
 		};
 		900D453C900D53D600000042 /* ShellScript for ejs.web.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3446,10 +3454,9 @@ cd ../src/ejs.unix
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.web
-../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.web.mod  --optimize 9 *.es
-../../build/macosx-x64-static/bin/ejsmod --cslots ../../build/macosx-x64-static/bin/ejs.web.mod
-if ! diff ejs.web.slots.h ../../build/macosx-x64-static/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../build/macosx-x64-static/inc; fi
-rm -f ejs.web.slots.h";
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.web.mod  --optimize 9 
+	../${OUT_DIR}/bin/ejsmod --cslots --dir ../${OUT_DIR}/bin ../${OUT_DIR}/bin/ejs.web.mod
+";
 		};
 		900D453C900D53D600000049 /* ShellScript for ejs.zlib.mod */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3466,7 +3473,8 @@ rm -f ejs.web.slots.h";
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.zlib
-../../build/macosx-x64-static/bin/ejsc --out ../../build/macosx-x64-static/bin/ejs.zlib.mod  --optimize 9 *.es";
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.zlib.mod  --optimize 9 
+";
 		};
 		900D453C900D53D60000004F /* ShellScript for http-ca-crt */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3502,7 +3510,26 @@ cp -r ca.crt ../../${OUT_DIR}/bin/ca.crt
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.mvc
-cp mvc.es ../../build/macosx-x64-static/bin";
+mkdir -p ../${OUT_DIR}/bin
+cp -r mvc.es ../${OUT_DIR}/bin/mvc.es
+";
+		};
+		900D453C900D53D600000057 /* ShellScript for slots */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+
+			);
+			outputPaths = (
+
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "PATH=$PATH:/usr/local/bin
+cd ../src
+";
 		};
 		900D453C900D53D60000005B /* ShellScript for utest.es */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3553,8 +3580,10 @@ cp utest.worker ../../build/macosx-x64-static/bin";
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.web
-rm -fr ../../build/macosx-x64-static/bin/www
-cp -r www ../../build/macosx-x64-static/bin";
+	rm -fr \"../${OUT_DIR}/bin/www\"
+	mkdir -p \"../${OUT_DIR}/bin/www\"
+	cp www ../${OUT_DIR}/bin
+";
 		};
 		900D453C900D53D60000008E /* ShellScript for Prep */ = {
 			isa = PBXShellScriptBuildPhase;

@@ -9,6 +9,7 @@ SYNOPSIS
        ejsmod
            --cslots
            --depends
+           --dir directory
            --html path
            --listing
            --require 'module ...'
@@ -57,6 +58,9 @@ OPTIONS
 
        --depends
               Generate the dependant modules required by the input modules.
+
+       --dir directory
+              Set the output directory for slot files and listings.
 
        --html dir
               Generate HTML documentation  to  the  specified  directory.  The

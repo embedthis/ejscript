@@ -9,12 +9,11 @@ Me.load({
             path: '${BIN}/ejs.unix.mod',
             files: [ '*.es' ],
             precious: true,
-            build: "
-                trace('Compile', 'ejs.unix.mod')
-                run('${LBIN}/ejsc --out ${BIN}/ejs.unix.mod ${settings.esflags} --optimize 9 ' + Path('.').files('*.es').sort().join(' '))
-            ",
-            generate: '${BIN}/ejsc --out ${BIN}/ejs.unix.mod ${settings.esflags} --optimize 9 Unix.es',
+            build: `
+                run('${LBIN}/ejsc --out ${BIN}/ejs.unix.mod ${settings.esflags} --optimize 9 ${FILES}')
+            `,
+            message: ['Compile', 'ejs.unix.mod'],
             depends: [ 'ejsc', 'ejs.mod' ],
-        },
-	},
+        }
+	}
 })

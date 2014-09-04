@@ -16,6 +16,9 @@ Me.load({
             depends: [ 'slots', 'libhttp' ],
         },
 
+        /*
+            Update the saved slot files
+         */
         slots: {
             build: `
                 for each (file in Path('slots').files('*.h')) {
@@ -27,6 +30,6 @@ Me.load({
                 }
             `,
             generate: ''
-        },
-	},
+        }
+	}
 })

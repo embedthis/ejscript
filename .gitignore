@@ -186,3 +186,4 @@ macosx-x64*
 macosx-*.me
 /windows-*
 /linux-*
+/build/

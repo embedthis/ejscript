@@ -403,8 +403,7 @@ immutable, this constructor will return a reference to either the "true" or "fal
 <td class='param'>detach</td><td>Boolean If true, run the command and return immediately. If detached, finalize() must be called to signify the end of data being written to the command's stdin.</td></tr>
 <td class='param'>dir</td><td>Path or String. Directory to set as the current working directory for the command.</td></tr>
 <td class='param'>exception</td><td>Boolean If true, throw exceptions if the command returns a non-zero status code.  Defaults to false.</td></tr>
-<td class='param'>timeout</td><td>Number This is the default number of milliseconds for the command to complete.</td></tr>
-<td class='param'>noio</td><td>Don't capture stdout from the command. If true, the command's standard output will go to the  application's current standard output. Defaults to false.</td></tr>
+<td class='param'>timeout</td><td>Number This is the default number of milliseconds for the command to complete. P.</td></tr>
 </table></dd>
 </dl></div>
 </div>
@@ -837,7 +836,7 @@ a X-HTTP-METHOD-OVERRIDE Http header.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Number constructor. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>value: <a href='Object.html'>Object</a> </td><td>Value to use in creating the Number object. If the value cannot be converted to a number,  the value will ba NaN (or 0 if using integer numerics). 8. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>value: <a href='Object.html'>Object</a> </td><td>Value to use in creating the Number object. If the value cannot be converted to a number,  the value will ba NaN (or 0 if using integer numerics). Ð. [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -1522,6 +1521,7 @@ preserving its directory structure under dest.</dd></dl>
 <dd><table class='parameters' title='options'>
 <td class='param'>owner</td><td>String representing the file owner.</td></tr>
 <td class='param'>group</td><td>String representing the file group.</td></tr>
+<td class='param'>exceptions</td><td>Set to false to disable exceptions if cp finds no files to copy. Defaults to true.</td></tr>
 <td class='param'>permissions</td><td>Number File Posix permissions mask.</td></tr>
 <td class='param'>tree</td><td>Copy the src subtree and preserve the directory structure under the destination.</td></tr>
 </table></dd>

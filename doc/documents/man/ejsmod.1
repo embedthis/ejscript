@@ -5,6 +5,7 @@ ejsmod \- Ejscript Module Generator
 .B ejsmod
     \fB--cslots\fR 
     \fB--depends\fR
+    \fB--dir directory\fR
     \fB--html path\fR 
     \fB--listing\fR
     \fB--require 'module ...'\fR
@@ -41,6 +42,9 @@ Generate slot binding definition headers for the input modules.
 .TP
 \fB\--depends\fR
 Generate the dependant modules required by the input modules.
+.TP
+\fB\--dir directory\fR
+Set the output directory for slot files and listings.
 .TP
 \fB\--html dir\fR
 Generate HTML documentation to the specified directory. The source files must have been compiled by \fBejsc\fR 

@@ -9,12 +9,10 @@ Me.load({
             enable: 'me.settings.ejs.template',
             path: '${BIN}/ejs.template.mod',
             files: [ 'TemplateParser.es' ],
-            build: "
-                trace('Compile', 'ejs.template.mod')
-                run('${LBIN}/ejsc --out ${BIN}/ejs.template.mod ${settings.esflags} --optimize 9 ' + 
-                    Path('.').files('TemplateParser.es').sort().join(' '))
-            ",
-            'generate': '${BIN}/ejsc --out ${BIN}/ejs.template.mod ${settings.esflags} --optimize 9 TemplateParser.es',
+            build: `
+                run('${LBIN}/ejsc --out ${BIN}/ejs.template.mod ${settings.esflags} --optimize 9 ${FILES}')
+            `,
+            message: ['Compile', 'ejs.template.mod'],
             depends: [ 'ejsc', 'ejs.mod' ],
         },
 	},

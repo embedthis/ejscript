@@ -96,7 +96,7 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\ejs.db.mapper
-$(BinDir)/ejsc --out $(BinDir)/ejs.db.mapper.mod  --optimize 9 *.es
+undefined\ejsc --out   --optimize 9
 cd ..\..\projects\ejs-windows-static</Command>
     <Outputs>$(BinDir)\ejs.db.mapper.mod</Outputs>
   </CustomBuildStep>

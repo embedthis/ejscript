@@ -96,10 +96,8 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\core
-"$(BinDir)\ejsc" --out "$(BinDir)/ejs.mod"  --optimize 9 --bind --require null "*.es"
-"$(BinDir)\ejsmod" --require null --cslots "$(BinDir)/ejs.mod"
-copy ejs.slots.h "$(IncDir);..\..\src\cmd\ejs.slots.h"
-del ejs.slots.h
+undefined\ejsc --out undefined\ejs.mod  --optimize 9 --bind --require null 
+undefined\ejsmod --cslots --dir undefined --require null undefined\ejs.mod
 cd ..\..\projects\ejs-windows-default</Command>
     <Outputs>$(BinDir)\ejs.mod</Outputs>
   </CustomBuildStep>

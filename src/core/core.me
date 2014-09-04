@@ -5,9 +5,9 @@
 Me.load({
 
     scripts: {
-        preblend: "
+        preblend: `
             me.settings.esflags = (me.platform.profile == 'debug' || me.platform.profile == 'mine') ? '--debug' : ''
-        ",
+        `,
     },
 
     targets: {
@@ -15,33 +15,11 @@ Me.load({
             path: '${BIN}/ejs.mod',
             files: [ '*.es' ],
             precious: true,
-            build: "
-                trace('Compile', 'Core EJS classes')
-                run('${LBIN}/ejsc --out ${BIN}/ejs.mod ${settings.esflags} --optimize 9 --bind --require null ' + 
-                    Path('.').files('*.es').sort().join(' '))
-                trace('Generate', 'Core slot files and listings')
-                run('${LBIN}/ejsmod --require null --cslots ${BIN}/ejs.mod')
-                for each (file in Path('.').files('*.slots.h')) {
-                    let dest = me.dir.inc.join(file.basename)
-                    if (!dest.exists || file.readString() != dest.readString()) {
-                        trace('Install', dest)
-                        cp(file, dest)
-                        me.rebuild = 'Rebuild because slot files have been modified'
-                    }
-                }
-            ",
-            'generate-nmake': '\
-                "${LBIN}\\ejsc" --out "${BIN}/ejs.mod" ${settings.esflags} --optimize 9 --bind --require null "*.es"
-                "${LBIN}\\ejsmod" --require null --cslots "${BIN}/ejs.mod"
-                copy ejs.slots.h "${INC}\\ejs.slots.h"
-                del ejs.slots.h
-            ',
-            'generate-sh': '\
-                ${LBIN}/ejsc --out ${BIN}/ejs.mod ${settings.esflags} --optimize 9 --bind --require null *.es 
-                ${LBIN}/ejsmod --require null --cslots ${BIN}/ejs.mod
-                if ! diff ejs.slots.h ${INC}/ejs.slots.h >/dev/null; then cp ejs.slots.h ${INC}; fi
-                rm -f ejs.slots.h
-            ',
+            build: `
+                run('${LBIN}/ejsc --out ${BIN}/ejs.mod ${settings.esflags} --optimize 9 --bind --require null ${FILES}')
+                run('${LBIN}/ejsmod --cslots --dir ${BIN} --require null ${BIN}/ejs.mod')
+            `,
+            message: ['Compile', 'Core EJS classes'],
             depends: [ 'ejsc', 'ejsmod' ],
         },
 	},

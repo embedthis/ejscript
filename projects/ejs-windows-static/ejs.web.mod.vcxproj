@@ -96,10 +96,8 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\ejs.web
-"$(BinDir)\ejsc" --out "$(BinDir)/ejs.web.mod"  --optimize 9 *.es
-"$(BinDir)\ejsmod" --cslots "$(BinDir)/ejs.web.mod"
-copy ejs.web.slots.h $(IncDir);..\..\src\cmd\ejs.web.slots.h
-del ejs.web.slots.h
+undefined\ejsc --out undefined\ejs.web.mod  --optimize 9 
+undefined\ejsmod --cslots --dir undefined undefined\ejs.web.mod
 cd ..\..\projects\ejs-windows-static</Command>
     <Outputs>$(BinDir)\ejs.web.mod</Outputs>
   </CustomBuildStep>

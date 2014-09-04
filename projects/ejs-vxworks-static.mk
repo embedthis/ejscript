@@ -17,8 +17,6 @@ PATH                  := $(LBIN):$(PATH)
 
 ME_COM_EST            ?= 1
 ME_COM_HTTP           ?= 1
-ME_COM_MATRIXSSL      ?= 0
-ME_COM_NANOSSL        ?= 0
 ME_COM_OPENSSL        ?= 0
 ME_COM_OSDEP          ?= 1
 ME_COM_PCRE           ?= 1
@@ -30,12 +28,6 @@ ME_COM_ZLIB           ?= 1
 ifeq ($(ME_COM_EST),1)
     ME_COM_SSL := 1
 endif
-ifeq ($(ME_COM_MATRIXSSL),1)
-    ME_COM_SSL := 1
-endif
-ifeq ($(ME_COM_NANOSSL),1)
-    ME_COM_SSL := 1
-endif
 ifeq ($(ME_COM_OPENSSL),1)
     ME_COM_SSL := 1
 endif
@@ -43,8 +35,6 @@ endif
 ME_COM_COMPILER_PATH  ?= cc$(subst x86,pentium,$(ARCH))
 ME_COM_LIB_PATH       ?= ar
 ME_COM_LINK_PATH      ?= ld
-ME_COM_MATRIXSSL_PATH ?= /usr/src/matrixssl
-ME_COM_NANOSSL_PATH   ?= /usr/src/nanossl
 ME_COM_OPENSSL_PATH   ?= /usr/src/openssl
 ME_COM_VXWORKS_PATH   ?= $(WIND_BASE)
 
@@ -52,7 +42,7 @@ export WIND_HOME      ?= $(WIND_BASE)/..
 export PATH           := $(WIND_GNU_PATH)/$(WIND_HOST_TYPE)/bin:$(PATH)
 
 CFLAGS                += -fno-builtin -fno-defer-pop -fvolatile -w
-DFLAGS                += -DVXWORKS -DRW_MULTI_THREAD -D_GNU_TOOL -DCPU=PENTIUM $(patsubst %,-D%,$(filter ME_%,$(MAKEFLAGS))) -DME_COM_EST=$(ME_COM_EST) -DME_COM_HTTP=$(ME_COM_HTTP) -DME_COM_MATRIXSSL=$(ME_COM_MATRIXSSL) -DME_COM_NANOSSL=$(ME_COM_NANOSSL) -DME_COM_OPENSSL=$(ME_COM_OPENSSL) -DME_COM_OSDEP=$(ME_COM_OSDEP) -DME_COM_PCRE=$(ME_COM_PCRE) -DME_COM_SQLITE=$(ME_COM_SQLITE) -DME_COM_SSL=$(ME_COM_SSL) -DME_COM_WINSDK=$(ME_COM_WINSDK) -DME_COM_ZLIB=$(ME_COM_ZLIB) 
+DFLAGS                += -DVXWORKS -DRW_MULTI_THREAD -D_GNU_TOOL -DCPU=PENTIUM $(patsubst %,-D%,$(filter ME_%,$(MAKEFLAGS))) -DME_COM_EST=$(ME_COM_EST) -DME_COM_HTTP=$(ME_COM_HTTP) -DME_COM_OPENSSL=$(ME_COM_OPENSSL) -DME_COM_OSDEP=$(ME_COM_OSDEP) -DME_COM_PCRE=$(ME_COM_PCRE) -DME_COM_SQLITE=$(ME_COM_SQLITE) -DME_COM_SSL=$(ME_COM_SSL) -DME_COM_WINSDK=$(ME_COM_WINSDK) -DME_COM_ZLIB=$(ME_COM_ZLIB) 
 IFLAGS                += "-Ibuild/$(CONFIG)/inc -I$(WIND_BASE)/target/h -I$(WIND_BASE)/target/h/wrn/coreip"
 LDFLAGS               += '-Wl,-r'
 LIBPATHS              += -Lbuild/$(CONFIG)/bin
@@ -245,6 +235,7 @@ clean:
 	rm -f "build/$(CONFIG)/bin/libzlib.a"
 	rm -f "build/$(CONFIG)/bin/makerom.out"
 	rm -f "build/$(CONFIG)/bin/ejsman.out"
+	rm -f "build/$(CONFIG)/bin/mvc.es"
 	rm -f "build/$(CONFIG)/bin/sqlite.out"
 	rm -f "build/$(CONFIG)/bin/utest.out"
 
@@ -2086,10 +2077,9 @@ DEPS_94 += build/$(CONFIG)/bin/ejsmod.out
 build/$(CONFIG)/bin/ejs.mod: $(DEPS_94)
 	( \
 	cd src/core; \
-	../../$(LBIN)/ejsc --out ../../build/$(CONFIG)/bin/ejs.mod  --optimize 9 --bind --require null *.es  ; \
-	../../$(LBIN)/ejsmod --require null --cslots ../../build/$(CONFIG)/bin/ejs.mod ; \
-	if ! diff ejs.slots.h ../../build/$(CONFIG)/inc/ejs.slots.h >/dev/null; then cp ejs.slots.h ../../build/$(CONFIG)/inc; fi ; \
-	rm -f ejs.slots.h ; \
+	echo '   [Compile] Core EJS classes' ; \
+	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.mod  --optimize 9 --bind --require null App.es Args.es Array.es BinaryStream.es Block.es Boolean.es ByteArray.es Cache.es Cmd.es Compat.es Config.es Date.es Debug.es Emitter.es Error.es File.es FileSystem.es Frame.es Function.es GC.es Global.es Http.es Inflector.es Iterator.es JSON.es Loader.es LocalCache.es Locale.es Logger.es Math.es Memory.es MprLog.es Name.es Namespace.es Null.es Number.es Object.es Path.es Promise.es RegExp.es Socket.es Stream.es String.es System.es TextStream.es Timer.es Type.es Uri.es Void.es WebSocket.es Worker.es XML.es XMLHttp.es XMLList.es ; \
+	../../build/$(CONFIG)/bin/ejsmod --cslots --dir ../../build/$(CONFIG)/bin --require null ../../build/$(CONFIG)/bin/ejs.mod ; \
 	)
 
 #
@@ -2197,7 +2187,8 @@ DEPS_95 += build/$(CONFIG)/bin/ejs.mod
 build/$(CONFIG)/bin/ejs.db.mod: $(DEPS_95)
 	( \
 	cd src/ejs.db; \
-	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.db.mod  --optimize 9 *.es ; \
+	echo '   [Compile] ejs.db.mod' ; \
+	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.db.mod  --optimize 9 Database.es DatabaseConnector.es ; \
 	)
 
 #
@@ -2305,7 +2296,8 @@ DEPS_96 += build/$(CONFIG)/bin/ejs.db.mod
 build/$(CONFIG)/bin/ejs.db.mapper.mod: $(DEPS_96)
 	( \
 	cd src/ejs.db.mapper; \
-	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.db.mapper.mod  --optimize 9 *.es ; \
+	echo '   [Compile] ejs.db.mapper.mod' ; \
+	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.db.mapper.mod  --optimize 9 Record.es ; \
 	)
 
 #
@@ -2412,7 +2404,9 @@ DEPS_97 += build/$(CONFIG)/bin/ejs.mod
 build/$(CONFIG)/bin/ejs.db.sqlite.mod: $(DEPS_97)
 	( \
 	cd src/ejs.db.sqlite; \
-	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.db.sqlite.mod  --optimize 9 *.es ; \
+	echo '   [Compile] ejs.db.sqlite.mod' ; \
+	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.db.sqlite.mod  --optimize 9 Sqlite.es ; \
+	../../build/$(CONFIG)/bin/ejsmod --cslots --dir ../../build/$(CONFIG)/bin ../../build/$(CONFIG)/bin/ejs.db.sqlite.mod ; \
 	)
 
 #
@@ -2519,7 +2513,7 @@ DEPS_98 += build/$(CONFIG)/bin/ejs.mod
 build/$(CONFIG)/bin/ejs.mail.mod: $(DEPS_98)
 	( \
 	cd src/ejs.mail; \
-	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.mail.mod  --optimize 9 *.es ; \
+	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.mail.mod  --optimize 9 Mail.es ; \
 	)
 
 #
@@ -2648,10 +2642,8 @@ DEPS_99 += build/$(CONFIG)/bin/ejs.mod
 build/$(CONFIG)/bin/ejs.web.mod: $(DEPS_99)
 	( \
 	cd src/ejs.web; \
-	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.web.mod  --optimize 9 *.es ; \
-	../../build/$(CONFIG)/bin/ejsmod --cslots ../../build/$(CONFIG)/bin/ejs.web.mod ; \
-	if ! diff ejs.web.slots.h ../../build/$(CONFIG)/inc/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ../../build/$(CONFIG)/inc; fi ; \
-	rm -f ejs.web.slots.h ; \
+	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.web.mod  --optimize 9 Cascade.es CommonLog.es ContentType.es Controller.es Dir.es Google.es Head.es Html.es HttpServer.es MethodOverride.es Middleware.es Mvc.es Request.es Router.es Script.es Session.es ShowExceptions.es Static.es Template.es UploadFile.es UrlMap.es Utils.es View.es ; \
+	../../build/$(CONFIG)/bin/ejsmod --cslots --dir ../../build/$(CONFIG)/bin ../../build/$(CONFIG)/bin/ejs.web.mod ; \
 	)
 
 #
@@ -2758,6 +2750,7 @@ DEPS_100 += build/$(CONFIG)/bin/ejs.mod
 build/$(CONFIG)/bin/ejs.template.mod: $(DEPS_100)
 	( \
 	cd src/ejs.template; \
+	echo '   [Compile] ejs.template.mod' ; \
 	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.template.mod  --optimize 9 TemplateParser.es ; \
 	)
 
@@ -2865,6 +2858,7 @@ DEPS_101 += build/$(CONFIG)/bin/ejs.mod
 build/$(CONFIG)/bin/ejs.unix.mod: $(DEPS_101)
 	( \
 	cd src/ejs.unix; \
+	echo '   [Compile] ejs.unix.mod' ; \
 	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.unix.mod  --optimize 9 Unix.es ; \
 	)
 
@@ -2975,7 +2969,8 @@ DEPS_102 += build/$(CONFIG)/bin/ejs.unix.mod
 build/$(CONFIG)/bin/ejs.mvc.mod: $(DEPS_102)
 	( \
 	cd src/ejs.mvc; \
-	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.mvc.mod  --optimize 9 *.es ; \
+	echo '   [Compile] ejs.mvc.mod' ; \
+	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.mvc.mod  --optimize 9 mvc.es ; \
 	)
 
 #
@@ -3082,7 +3077,8 @@ DEPS_103 += build/$(CONFIG)/bin/ejs.mod
 build/$(CONFIG)/bin/ejs.tar.mod: $(DEPS_103)
 	( \
 	cd src/ejs.tar; \
-	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.tar.mod  --optimize 9 *.es ; \
+	echo '   [Compile] ejs.tar.mod' ; \
+	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.tar.mod  --optimize 9 Tar.es ; \
 	)
 
 #
@@ -3189,7 +3185,8 @@ DEPS_104 += build/$(CONFIG)/bin/ejs.mod
 build/$(CONFIG)/bin/ejs.zlib.mod: $(DEPS_104)
 	( \
 	cd src/ejs.zlib; \
-	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.zlib.mod  --optimize 9 *.es ; \
+	echo '   [Compile] ejs.zlib.mod' ; \
+	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.zlib.mod  --optimize 9 Zlib.es ; \
 	)
 
 #
@@ -3879,7 +3876,7 @@ DEPS_127 += build/$(CONFIG)/inc/mpr.h
 build/$(CONFIG)/obj/mprSsl.o: \
     src/paks/mpr/mprSsl.c $(DEPS_127)
 	@echo '   [Compile] build/$(CONFIG)/obj/mprSsl.o'
-	$(CC) -c -o build/$(CONFIG)/obj/mprSsl.o $(CFLAGS) $(DFLAGS) "-Ibuild/$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" "-I$(ME_COM_OPENSSL_PATH)/include" "-I$(ME_COM_MATRIXSSL_PATH)" "-I$(ME_COM_MATRIXSSL_PATH)/matrixssl" "-I$(ME_COM_NANOSSL_PATH)/src" src/paks/mpr/mprSsl.c
+	$(CC) -c -o build/$(CONFIG)/obj/mprSsl.o $(CFLAGS) $(DFLAGS) "-Ibuild/$(CONFIG)/inc" "-I$(WIND_BASE)/target/h" "-I$(WIND_BASE)/target/h/wrn/coreip" "-I$(ME_COM_OPENSSL_PATH)/include" src/paks/mpr/mprSsl.c
 
 #
 #   libmprssl
@@ -3933,10 +3930,9 @@ build/$(CONFIG)/bin/ejsman.out: $(DEPS_130)
 DEPS_131 += src/ejs.mvc/mvc.es
 
 build/$(CONFIG)/bin/mvc.es: $(DEPS_131)
-	( \
-	cd src/ejs.mvc; \
-	cp mvc.es ../../build/$(CONFIG)/bin ; \
-	)
+	@echo '      [Copy] build/$(CONFIG)/bin/mvc.es'
+	mkdir -p "build/$(CONFIG)/bin"
+	cp src/ejs.mvc/mvc.es build/$(CONFIG)/bin/mvc.es
 
 #
 #   mvc
@@ -4207,8 +4203,10 @@ DEPS_138 += src/ejs.web/www
 build/$(CONFIG)/bin/www: $(DEPS_138)
 	( \
 	cd src/ejs.web; \
-	rm -fr ../../build/$(CONFIG)/bin/www ; \
-	cp -r www ../../build/$(CONFIG)/bin ; \
+	echo '      [Copy] ejs.web www' ; \
+	rm -fr "../../build/$(CONFIG)/bin/www" ; \
+	mkdir -p "../../build/$(CONFIG)/bin/www" ; \
+	cp www ../../build/$(CONFIG)/bin ; \
 	)
 
 #

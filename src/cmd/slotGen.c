@@ -15,7 +15,7 @@ static char *defaultVersion;
 /***************************** Forward Declarations ***************************/
 
 static int  createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file);
-static int  genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int firstClassSlot, int lastClassSlot,
+static int  genType(EjsMod *bp, MprBuf *fbuf, EjsModule *mp, EjsType *type, int firstClassSlot, int lastClassSlot,
                 int isGlobal);
 static char *mapFullName(Ejs *ejs, EjsName *qname, int mapTypeName);
 static char *mapName(cchar *name, int mapTypeName);
@@ -40,16 +40,21 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
 {
     Ejs         *ejs;
     EjsType     *type;
-    MprFile     *localFile;
+    MprBuf      *fbuf;
     char        *path, slotsName[ME_MAX_FNAME], moduleName[ME_MAX_FNAME];
-    char        *cp, *sp, *dp;
+    char        *cp, *sp, *dp, *existing;
 
     assert(bp);
 
-    path = 0;
-    localFile = 0;
     ejs = bp->ejs;
+    fbuf = mprCreateBuf(0, 0);
 
+    if (file == 0) {
+        path = sjoin(ejsToMulti(ejs, mp->name), ".slots.h", NULL);
+        path = mprJoinPath(bp->outputDir, path);
+    } else {
+        path = sclone(file->path);
+    }
     scopy(moduleName, sizeof(moduleName), ejsToMulti(ejs, mp->name));
     for (cp = moduleName; *cp; cp++)  {
         if (*cp == '.') {
@@ -68,20 +73,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
     }
     *dp = '\0';
 
-    if (file == 0) {
-        path = sjoin(ejsToMulti(ejs, mp->name), ".slots.h", NULL);
-        path = mprJoinPath(bp->outputDir, path);
-        localFile = file = mprOpenFile(path, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664);
-    } else {
-        path = sclone(file->path);
-    }
-    if (file == 0) {
-        mprLog("ejs slots", 0, "Cannot open %s", path);
-        return MPR_ERR_CANT_OPEN;
-    }
-    mprEnableFileBuffering(file, 0, 0);
-
-    mprFprintf(file,
+    mprPutToBuf(fbuf,
         "/*\n"
         "   %s -- Native property slot definitions for the \"%@\" module\n"
         "  \n"
@@ -91,15 +83,15 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
         " */\n"
         "\n", path, mp->name, ME_VERSION);
 
-    mprFprintf(file,
+    mprPutToBuf(fbuf,
         "#ifndef _h_SLOTS_%s\n"
         "#define _h_SLOTS_%s 1\n\n",
         slotsName, slotsName);
 
     if (smatch(ejsToMulti(ejs, mp->name), "ejs")) {
-        mprFprintf(file, "#ifndef EJS_VERSION\n    #define EJS_VERSION \"%s\"\n#endif\n", ME_VERSION);
+        mprPutToBuf(fbuf, "#ifndef EJS_VERSION\n    #define EJS_VERSION \"%s\"\n#endif\n", ME_VERSION);
     }
-    mprFprintf(file, "\n/*\n   Slots for the \"%@\" module \n */\n", mp->name);
+    mprPutToBuf(fbuf, "\n/*\n   Slots for the \"%@\" module \n */\n", mp->name);
 
     type = ejsCreateType(ejs, N(EJS_EJS_NAMESPACE, EJS_GLOBAL), NULL, NULL, NULL, -1, 
         ejsGetLength(ejs, ejs->global), 0, sizeof(EjsType), 0, EJS_TYPE_POT);
@@ -107,19 +99,37 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
     SET_TYPE(type, EST(Type));
     type->constructor.block.pot.isType = 1;
 
-    if (genType(bp, file, mp, type, mp->firstGlobal, mp->lastGlobal, 1) < 0) {
+    if (genType(bp, fbuf, mp, type, mp->firstGlobal, mp->lastGlobal, 1) < 0) {
         mprLog("ejs slots", 0, "Cannot generate slot file for module %@", mp->name);
-        mprCloseFile(localFile);
         return EJS_ERR;
     }
-    mprFprintf(file, "\n#define _ES_CHECKSUM_%s   %d\n", moduleName, mp->checksum);
-    mprFprintf(file, "\n#endif\n");
-    mprCloseFile(localFile);
+    mprPutToBuf(fbuf, "\n#define _ES_CHECKSUM_%s   %d\n", moduleName, mp->checksum);
+    mprPutToBuf(fbuf, "\n#endif\n");
+
+    /*
+        Try to not modify slot files - helps with make
+     */
+    if ((existing = mprReadPathContents(path, NULL)) != 0) {
+        if (smatch(existing, mprBufToString(fbuf))) {
+            return 0;
+        }
+    }
+    if (file == 0) {
+        if (mprWritePathContents(path, mprBufToString(fbuf), -1, 0644) < 0) {
+            mprLog("ejs slots", 0, "Cannot write to %s", path);
+            return MPR_ERR_CANT_WRITE;
+        }
+    } else {
+        if (mprWriteFileString(file, mprBufToString(fbuf)) < 0) {
+            mprLog("ejs slots", 0, "Cannot write slots");
+            return MPR_ERR_CANT_WRITE;
+        }
+    }
     return 0;
 }
 
 
-static void defineSlot(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, EjsObj *obj, int slotNum, EjsName *funName, 
+static void defineSlot(EjsMod *bp, MprBuf *fbuf, EjsModule *mp, EjsType *type, EjsObj *obj, int slotNum, EjsName *funName, 
         EjsName *name)
 {
     Ejs     *ejs;
@@ -148,13 +158,13 @@ static void defineSlot(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, 
             }
         }
         if (nameBuf[0]) {
-            mprFprintf(file, "%-70s %d\n", nameBuf, slotNum);
+            mprPutToBuf(fbuf, "%-70s %d\n", nameBuf, slotNum);
         }
     }
 }
 
 
-static void defineSlotCount(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, char *suffix, int numProp)
+static void defineSlotCount(EjsMod *bp, MprBuf *fbuf, EjsModule *mp, EjsType *type, char *suffix, int numProp)
 {
     char        name[ME_MAX_PATH], *typeStr, *sp;
 
@@ -168,10 +178,10 @@ static void defineSlotCount(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *t
         }
     }
     fmt(name, sizeof(name), "#define ES_%s_NUM_%s_PROP", typeStr, suffix);
-    mprFprintf(file, "%-70s %d\n", name, numProp);
+    mprPutToBuf(fbuf, "%-70s %d\n", name, numProp);
     if (strcmp(suffix, "INSTANCE") == 0) {
         fmt(name, sizeof(name), "#define ES_%s_NUM_INHERITED_PROP", typeStr);
-        mprFprintf(file, "%-70s %d\n", name, type->numInherited);
+        mprPutToBuf(fbuf, "%-70s %d\n", name, type->numInherited);
     }
 }
 
@@ -179,7 +189,7 @@ static void defineSlotCount(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *t
 /*
     Generate the slot offsets for a type
  */
-static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int firstClassSlot, int lastClassSlot,
+static int genType(EjsMod *bp, MprBuf *fbuf, EjsModule *mp, EjsType *type, int firstClassSlot, int lastClassSlot,
     int isGlobal)
 {
     Ejs             *ejs;
@@ -203,9 +213,9 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
             Only emit global property slots for "ejs"
          */
         if (isGlobal) {
-            mprFprintf(file, "\n\n/*\n    Global property slots\n */\n");
+            mprPutToBuf(fbuf, "\n\n/*\n    Global property slots\n */\n");
         } else {
-            mprFprintf(file, "\n\n/*\n    Class property slots for the \"%@\" type \n */\n", type->qname.name);
+            mprPutToBuf(fbuf, "\n\n/*\n    Class property slots for the \"%@\" type \n */\n", type->qname.name);
         }
         if (firstClassSlot < lastClassSlot) {
             for (slotNum = firstClassSlot; slotNum < lastClassSlot; slotNum++) {
@@ -213,10 +223,10 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
                 if (qname.name == 0) {
                     continue;
                 }
-                defineSlot(bp, file, mp, type, (EjsObj*) type, slotNum, NULL, &qname);
+                defineSlot(bp, fbuf, mp, type, (EjsObj*) type, slotNum, NULL, &qname);
             }
         }
-        defineSlotCount(bp, file, mp, type, "CLASS", lastClassSlot);
+        defineSlotCount(bp, fbuf, mp, type, "CLASS", lastClassSlot);
     }
 
     /*
@@ -224,7 +234,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
      */
     prototype = type->prototype;
     if (prototype) {
-        mprFprintf(file, "\n/*\n   Prototype (instance) slots for \"%@\" type \n */\n", type->qname.name);
+        mprPutToBuf(fbuf, "\n/*\n   Prototype (instance) slots for \"%@\" type \n */\n", type->qname.name);
         count = ejsGetLength(ejs, prototype);
         offset = 0;
         for (slotNum = offset; slotNum < count; slotNum++) {
@@ -232,7 +242,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
             if (qname.name == 0) {
                 continue;
             }
-            defineSlot(bp, file, mp, type, (EjsObj*) prototype, slotNum, NULL, &qname);
+            defineSlot(bp, fbuf, mp, type, (EjsObj*) prototype, slotNum, NULL, &qname);
         }
     } else {
         slotNum = 0;
@@ -242,7 +252,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
         For the global type, only emit the count for the "ejs" module
      */
     if (!isGlobal || ejsCompareAsc(ejs, mp->name, "ejs") == 0) {
-        defineSlotCount(bp, file, mp, type, "INSTANCE", slotNum);
+        defineSlotCount(bp, fbuf, mp, type, "INSTANCE", slotNum);
     }
 
     /*
@@ -269,9 +279,9 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
         }
         if (!methodHeader) {
             if (isGlobal) {
-                mprFprintf(file, "\n/*\n    Local slots for global methods \n */\n");
+                mprPutToBuf(fbuf, "\n/*\n    Local slots for global methods \n */\n");
             } else {
-                mprFprintf(file, "\n/*\n    Local slots for methods in type \"%@\" \n */\n", type->qname.name);
+                mprPutToBuf(fbuf, "\n/*\n    Local slots for methods in type \"%@\" \n */\n", type->qname.name);
             }
             methodHeader++;
         }
@@ -280,11 +290,11 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
          */
         for (i = 0; i < (int) fun->numArgs; i++) {
             lqname = ejsGetPropertyName(ejs, activation, i);
-            defineSlot(bp, file, mp, type, (EjsObj*) activation, i, &qname, &lqname);
+            defineSlot(bp, fbuf, mp, type, (EjsObj*) activation, i, &qname, &lqname);
         }
         for (; i < fun->block.pot.numProp; i++) {
             lqname = ejsGetPropertyName(ejs, activation, i);
-            defineSlot(bp, file, mp, type, (EjsObj*) activation, i, &qname, &lqname);
+            defineSlot(bp, fbuf, mp, type, (EjsObj*) activation, i, &qname, &lqname);
         }
     }
 
@@ -311,7 +321,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
         SET_VISITED(vp, 1);
 
         count = ejsGetLength(ejs, (EjsObj*) nt);
-        if (genType(bp, file, mp, nt, 0, count, 0) < 0) {
+        if (genType(bp, fbuf, mp, nt, 0, count, 0) < 0) {
             SET_VISITED(vp, 0);
             return EJS_ERR;
         }

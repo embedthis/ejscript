@@ -9,27 +9,18 @@ Me.load({
             enable: 'me.targets.sqlite.enable && me.settings.ejs.db',
             path: '${BIN}/ejs.db.sqlite.mod',
             files: [ '*.es' ],
-            build: "
-                trace('Compile', 'ejs.db.sqlite.mod')
-                run('${LBIN}/ejsc --out ${BIN}/ejs.db.sqlite.mod ${settings.esflags} --optimize 9 ' + Path('.').files('*.es').sort().join(' '))
-                run('${LBIN}/ejsmod --cslots ${BIN}/ejs.db.sqlite.mod')
-                let header = Path('ejs.db.sqlite.slots.h')
-                let dest = me.dir.inc.join(header)
-                if (!dest.exists || header.readString() != dest.readString()) {
-                    trace('Install', header)
-                    cp(header, dest)
-                }
-            ",
-            'generate': "${BIN}/ejsc --out ${BIN}/ejs.db.sqlite.mod ${settings.esflags} --optimize 9 *.es",
+            build: `
+                run('${LBIN}/ejsc --out ${BIN}/ejs.db.sqlite.mod ${settings.esflags} --optimize 9 ${FILES}')
+                run('${LBIN}/ejsmod --cslots --dir ${BIN} ${BIN}/ejs.db.sqlite.mod')
+            `,
+            message: ['Compile', 'ejs.db.sqlite.mod'],
             depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
         },
 
         'libejs.db.sqlite': {
             enable: 'me.targets.sqlite.enable && me.settings.ejs.db',
             type: 'lib',
-            sources: [ 
-                '*.c',
-            ],
+            sources: [ '*.c' ],
             depends: [ 'libmpr', 'libejs', 'ejs.mod', 'ejs.db.sqlite.mod', 'libsql' ],
         },
 	},

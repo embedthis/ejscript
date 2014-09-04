@@ -48,14 +48,13 @@ typedef struct EjsMod {
     MprList     *blocks;                    /* List of blocks */
     EjsBlock    *currentBlock;              /* Current lexical block being read */
 
-    int         cslots;                     /* Create C slot definitions */
+    char        *cslots;                    /* Create C slot definitions */
     int         depends;                    /* Print module dependencies */
     int         error;                      /* Unresolved error */
     int         errorCount;                 /* Count of all errors */
     int         exitOnError;                /* Exit if module file errors are detected */
     int         fatalError;                 /* Any a fatal error - Can't continue */
     int         firstGlobal;                /* First global to examine */
-    int         genSlots;                   /* Set if either cslots || jsslots */
     int         listing;                    /* Generate listing file */
     int         memError;                   /* Memory error */
     int         showAsm;                    /* Show assembly bytes */

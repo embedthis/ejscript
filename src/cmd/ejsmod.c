@@ -54,7 +54,6 @@ MAIN(ejsmodMain, int argc, char **argv, char **envp)
         }
         if (strcmp(argp, "--cslots") == 0) {
             mp->cslots = 1;
-            mp->genSlots = 1;
             
         } else if (strcmp(argp, "--debugger") == 0 || strcmp(argp, "-D") == 0) {
             mprSetDebugMode(1);
@@ -105,7 +104,6 @@ MAIN(ejsmodMain, int argc, char **argv, char **envp)
             } else {
                 output = argv[++nextArg];
                 mp->cslots = 1;
-                mp->genSlots = 1;
             }
 
         } else if (strcmp(argp, "--search") == 0 || strcmp(argp, "--searchpath") == 0) {
@@ -152,7 +150,7 @@ MAIN(ejsmodMain, int argc, char **argv, char **envp)
     if (argc == nextArg) {
         err++;
     }
-    if (mp->genSlots == 0 && mp->listing == 0 && mp->html == 0 && mp->xml == 0 && mp->depends == 0) {
+    if (mp->cslots == 0 && mp->listing == 0 && mp->html == 0 && mp->xml == 0 && mp->depends == 0) {
         mp->listing = 1;
     }
     if (mp->depends && requiredModules == 0) {
@@ -272,7 +270,7 @@ static int process(EjsMod *mp, cchar *output, int argc, char **argv)
             mprLog("ejsmod", 0, "Cannot load module %s\n%s", argv[i], ejsGetErrorMsg(ejs, 0));
             return EJS_ERR;
         }
-        if (mp->genSlots) {
+        if (mp->cslots) {
             for (next = moduleCount; (module = mprGetNextItem(ejs->modules, &next)) != 0; ) {
                 emCreateSlotFiles(mp, module, outfile);
             }

@@ -96,7 +96,7 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\ejs.mail
-"$(BinDir)\ejsc" --out "$(BinDir)/ejs.mail.mod"  --optimize 9 *.es
+undefined\ejsc --out undefined\ejs.mail.mod  --optimize 9
 cd ..\..\projects\ejs-windows-default</Command>
     <Outputs>$(BinDir)\ejs.mail.mod</Outputs>
   </CustomBuildStep>
