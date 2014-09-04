@@ -1,7 +1,17 @@
+.publisher
 *.mod
 *.sdb
 .*.swp
 *.tmp
+*.dylib
+*.tdat
+/projects/.*.guid
+project.guid
 access.log
 /build/
 /start.me
+
+projects/*mine*
+projects/.flags
+*.o
+*.obj
