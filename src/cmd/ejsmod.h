@@ -48,7 +48,7 @@ typedef struct EjsMod {
     MprList     *blocks;                    /* List of blocks */
     EjsBlock    *currentBlock;              /* Current lexical block being read */
 
-    char        *cslots;                    /* Create C slot definitions */
+    int         cslots;                     /* Create C slot definitions */
     int         depends;                    /* Print module dependencies */
     int         error;                      /* Unresolved error */
     int         errorCount;                 /* Count of all errors */

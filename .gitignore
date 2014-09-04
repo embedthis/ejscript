@@ -99,7 +99,6 @@ projects/MACOSX/*/*/xcuserdata
 projects/MACOSX/*/*/project.xcworkspace
 src/jems/ejs.db.mapper/Model.nes
 src/jems/ejs.web/test/t.es
-src/include/ejs*.slots.h
 */x86_64-pc-win
 bin/.kdbgrc.*
 */i386-wrs-vxworks
@@ -153,13 +152,10 @@ src/core/test/cmd/TempWmicBatchFile.bat
 src/test/tt.es
 main
 val.log
-ejs.db.sqlite.slots.h
-ejs.web.slots.h
 xcode
 /*-*.bit
 /*-*-debug/
 /*-*-release/
-src/core/ejs.slots.h
 .*.guid
 releases
 xcuserdata
