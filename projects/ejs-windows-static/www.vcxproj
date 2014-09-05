@@ -96,9 +96,9 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\ejs.web
-if exist "\Users\mob\git\ejs\build\windows-x86-static\bin\www" rd /Q /S "\Users\mob\git\ejs\build\windows-x86-static\bin\www"
-if not exist "\Users\mob\git\ejs\build\windows-x86-static\bin\www" md "\Users\mob\git\ejs\build\windows-x86-static\bin\www"
-copy /Y www \Users\mob\git\ejs\build\windows-x86-static\bin
+if exist $(BinDir)\www del /Q $(BinDir)\www
+if not exist $(BinDir)\www md $(BinDir)\www
+xcopy /S /Y www $(BinDir)\www
 cd ..\..\projects\ejs-windows-static</Command>
     <Outputs>$(BinDir)\www</Outputs>
   </CustomBuildStep>

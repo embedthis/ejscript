@@ -96,7 +96,8 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\ejs.utest
-copy utest.es $(BinDir)
+if exist $(BinDir)\utest.es del /Q $(BinDir)\utest.es
+copy /Y utest.es $(BinDir)\utest.es
 cd ..\..\projects\ejs-windows-default</Command>
     <Outputs>$(BinDir)\utest.es</Outputs>
   </CustomBuildStep>

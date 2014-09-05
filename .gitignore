@@ -20,3 +20,4 @@ main
 src/compiler/test/bugs/
 src/core/src/dtoa.original
 src/ejs.zlib/ejsZlib.miniz
+.gitattributes

@@ -162,26 +162,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ClInclude Include="$(IncDir)\ejs.cache.local.slots.h" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ClInclude Include="$(IncDir)\ejs.db.sqlite.slots.h" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ClInclude Include="$(IncDir)\ejs.slots.h" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ClInclude Include="$(IncDir)\ejs.web.slots.h" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ClInclude Include="$(IncDir)\ejs.zlib.slots.h" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ClInclude Include="$(IncDir)\ejs.h" />
   </ItemGroup>
 
@@ -201,6 +181,26 @@
     <ClInclude Include="$(IncDir)\ejsCustomize.h" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ClInclude Include="$(IncDir)\ejs.cache.local.slots.h" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ClInclude Include="$(IncDir)\ejs.db.sqlite.slots.h" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ClInclude Include="$(IncDir)\ejs.slots.h" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ClInclude Include="$(IncDir)\ejs.web.slots.h" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ClInclude Include="$(IncDir)\ejs.zlib.slots.h" />
+  </ItemGroup>
+
   <ItemDefinitionGroup>
   <Link>
     <AdditionalDependencies>libhttp.lib;libmpr.lib;libpcre.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -209,16 +209,16 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src
-copy /Y slots\ejs.cache.local.slots.h $(IncDir)
-copy /Y slots\ejs.db.sqlite.slots.h $(IncDir)
-copy /Y slots\ejs.slots.h $(IncDir)
-copy /Y slots\ejs.web.slots.h $(IncDir)
-copy /Y slots\ejs.zlib.slots.h $(IncDir)
 copy /Y ejs.h $(IncDir)
 copy /Y ejsByteCode.h $(IncDir)
 copy /Y ejsByteCodeTable.h $(IncDir)
 copy /Y ejsCompiler.h $(IncDir)
 copy /Y ejsCustomize.h $(IncDir)
+copy /Y slots\ejs.cache.local.slots.h $(IncDir)
+copy /Y slots\ejs.db.sqlite.slots.h $(IncDir)
+copy /Y slots\ejs.slots.h $(IncDir)
+copy /Y slots\ejs.web.slots.h $(IncDir)
+copy /Y slots\ejs.zlib.slots.h $(IncDir)
 cd ..\projects\ejs-windows-default</Command>
     <Outputs>$(BinDir)\libejs.dll</Outputs>
   </CustomBuildStep>

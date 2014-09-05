@@ -230,6 +230,9 @@ clean:
 	rm -f "build/$(CONFIG)/bin/mvc.es"
 	rm -f "build/$(CONFIG)/bin/sqlite"
 	rm -f "build/$(CONFIG)/bin/utest"
+	rm -f "build/$(CONFIG)/bin/utest.es"
+	rm -f "build/$(CONFIG)/bin/utest.worker"
+	rm -f "build/$(CONFIG)/bin/www"
 
 clobber: clean
 	rm -fr ./$(BUILD)
@@ -243,6 +246,8 @@ slots: $(DEPS_1)
 #
 #   mpr.h
 #
+DEPS_2 += src/paks/mpr/mpr.h
+
 build/$(CONFIG)/inc/mpr.h: $(DEPS_2)
 	@echo '      [Copy] build/$(CONFIG)/inc/mpr.h'
 	mkdir -p "build/$(CONFIG)/inc"
@@ -257,6 +262,8 @@ build/$(CONFIG)/inc/me.h: $(DEPS_3)
 #
 #   osdep.h
 #
+DEPS_4 += src/paks/osdep/osdep.h
+
 build/$(CONFIG)/inc/osdep.h: $(DEPS_4)
 	@echo '      [Copy] build/$(CONFIG)/inc/osdep.h'
 	mkdir -p "build/$(CONFIG)/inc"
@@ -289,6 +296,8 @@ build/$(CONFIG)/bin/libmpr.a: $(DEPS_6)
 #
 #   pcre.h
 #
+DEPS_7 += src/paks/pcre/pcre.h
+
 build/$(CONFIG)/inc/pcre.h: $(DEPS_7)
 	@echo '      [Copy] build/$(CONFIG)/inc/pcre.h'
 	mkdir -p "build/$(CONFIG)/inc"
@@ -321,6 +330,8 @@ endif
 #
 #   http.h
 #
+DEPS_10 += src/paks/http/http.h
+
 build/$(CONFIG)/inc/http.h: $(DEPS_10)
 	@echo '      [Copy] build/$(CONFIG)/inc/http.h'
 	mkdir -p "build/$(CONFIG)/inc"
@@ -361,49 +372,11 @@ build/$(CONFIG)/bin/libhttp.a: $(DEPS_12)
 endif
 
 #
-#   ejs.cache.local.slots.h
-#
-build/$(CONFIG)/inc/ejs.cache.local.slots.h: $(DEPS_13)
-	@echo '      [Copy] build/$(CONFIG)/inc/ejs.cache.local.slots.h'
-	mkdir -p "build/$(CONFIG)/inc"
-	cp src/slots/ejs.cache.local.slots.h build/$(CONFIG)/inc/ejs.cache.local.slots.h
-
-#
-#   ejs.db.sqlite.slots.h
-#
-build/$(CONFIG)/inc/ejs.db.sqlite.slots.h: $(DEPS_14)
-	@echo '      [Copy] build/$(CONFIG)/inc/ejs.db.sqlite.slots.h'
-	mkdir -p "build/$(CONFIG)/inc"
-	cp src/slots/ejs.db.sqlite.slots.h build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-
-#
-#   ejs.slots.h
-#
-build/$(CONFIG)/inc/ejs.slots.h: $(DEPS_15)
-	@echo '      [Copy] build/$(CONFIG)/inc/ejs.slots.h'
-	mkdir -p "build/$(CONFIG)/inc"
-	cp src/slots/ejs.slots.h build/$(CONFIG)/inc/ejs.slots.h
-
-#
-#   ejs.web.slots.h
-#
-build/$(CONFIG)/inc/ejs.web.slots.h: $(DEPS_16)
-	@echo '      [Copy] build/$(CONFIG)/inc/ejs.web.slots.h'
-	mkdir -p "build/$(CONFIG)/inc"
-	cp src/slots/ejs.web.slots.h build/$(CONFIG)/inc/ejs.web.slots.h
-
-#
-#   ejs.zlib.slots.h
-#
-build/$(CONFIG)/inc/ejs.zlib.slots.h: $(DEPS_17)
-	@echo '      [Copy] build/$(CONFIG)/inc/ejs.zlib.slots.h'
-	mkdir -p "build/$(CONFIG)/inc"
-	cp src/slots/ejs.zlib.slots.h build/$(CONFIG)/inc/ejs.zlib.slots.h
-
-#
 #   ejsByteCode.h
 #
-build/$(CONFIG)/inc/ejsByteCode.h: $(DEPS_18)
+DEPS_13 += src/ejsByteCode.h
+
+build/$(CONFIG)/inc/ejsByteCode.h: $(DEPS_13)
 	@echo '      [Copy] build/$(CONFIG)/inc/ejsByteCode.h'
 	mkdir -p "build/$(CONFIG)/inc"
 	cp src/ejsByteCode.h build/$(CONFIG)/inc/ejsByteCode.h
@@ -411,15 +384,29 @@ build/$(CONFIG)/inc/ejsByteCode.h: $(DEPS_18)
 #
 #   ejsByteCodeTable.h
 #
-build/$(CONFIG)/inc/ejsByteCodeTable.h: $(DEPS_19)
+DEPS_14 += src/ejsByteCodeTable.h
+
+build/$(CONFIG)/inc/ejsByteCodeTable.h: $(DEPS_14)
 	@echo '      [Copy] build/$(CONFIG)/inc/ejsByteCodeTable.h'
 	mkdir -p "build/$(CONFIG)/inc"
 	cp src/ejsByteCodeTable.h build/$(CONFIG)/inc/ejsByteCodeTable.h
 
 #
+#   ejs.slots.h
+#
+DEPS_15 += src/slots/ejs.slots.h
+
+build/$(CONFIG)/inc/ejs.slots.h: $(DEPS_15)
+	@echo '      [Copy] build/$(CONFIG)/inc/ejs.slots.h'
+	mkdir -p "build/$(CONFIG)/inc"
+	cp src/slots/ejs.slots.h build/$(CONFIG)/inc/ejs.slots.h
+
+#
 #   ejsCustomize.h
 #
-build/$(CONFIG)/inc/ejsCustomize.h: $(DEPS_20)
+DEPS_16 += src/ejsCustomize.h
+
+build/$(CONFIG)/inc/ejsCustomize.h: $(DEPS_16)
 	@echo '      [Copy] build/$(CONFIG)/inc/ejsCustomize.h'
 	mkdir -p "build/$(CONFIG)/inc"
 	cp src/ejsCustomize.h build/$(CONFIG)/inc/ejsCustomize.h
@@ -427,14 +414,15 @@ build/$(CONFIG)/inc/ejsCustomize.h: $(DEPS_20)
 #
 #   ejs.h
 #
-DEPS_21 += build/$(CONFIG)/inc/mpr.h
-DEPS_21 += build/$(CONFIG)/inc/http.h
-DEPS_21 += build/$(CONFIG)/inc/ejsByteCode.h
-DEPS_21 += build/$(CONFIG)/inc/ejsByteCodeTable.h
-DEPS_21 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_21 += build/$(CONFIG)/inc/ejsCustomize.h
+DEPS_17 += src/ejs.h
+DEPS_17 += build/$(CONFIG)/inc/mpr.h
+DEPS_17 += build/$(CONFIG)/inc/http.h
+DEPS_17 += build/$(CONFIG)/inc/ejsByteCode.h
+DEPS_17 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_17 += build/$(CONFIG)/inc/ejs.slots.h
+DEPS_17 += build/$(CONFIG)/inc/ejsCustomize.h
 
-build/$(CONFIG)/inc/ejs.h: $(DEPS_21)
+build/$(CONFIG)/inc/ejs.h: $(DEPS_17)
 	@echo '      [Copy] build/$(CONFIG)/inc/ejs.h'
 	mkdir -p "build/$(CONFIG)/inc"
 	cp src/ejs.h build/$(CONFIG)/inc/ejs.h
@@ -442,10 +430,52 @@ build/$(CONFIG)/inc/ejs.h: $(DEPS_21)
 #
 #   ejsCompiler.h
 #
-build/$(CONFIG)/inc/ejsCompiler.h: $(DEPS_22)
+DEPS_18 += src/ejsCompiler.h
+
+build/$(CONFIG)/inc/ejsCompiler.h: $(DEPS_18)
 	@echo '      [Copy] build/$(CONFIG)/inc/ejsCompiler.h'
 	mkdir -p "build/$(CONFIG)/inc"
 	cp src/ejsCompiler.h build/$(CONFIG)/inc/ejsCompiler.h
+
+#
+#   ejs.cache.local.slots.h
+#
+DEPS_19 += src/slots/ejs.cache.local.slots.h
+
+build/$(CONFIG)/inc/ejs.cache.local.slots.h: $(DEPS_19)
+	@echo '      [Copy] build/$(CONFIG)/inc/ejs.cache.local.slots.h'
+	mkdir -p "build/$(CONFIG)/inc"
+	cp src/slots/ejs.cache.local.slots.h build/$(CONFIG)/inc/ejs.cache.local.slots.h
+
+#
+#   ejs.db.sqlite.slots.h
+#
+DEPS_20 += src/slots/ejs.db.sqlite.slots.h
+
+build/$(CONFIG)/inc/ejs.db.sqlite.slots.h: $(DEPS_20)
+	@echo '      [Copy] build/$(CONFIG)/inc/ejs.db.sqlite.slots.h'
+	mkdir -p "build/$(CONFIG)/inc"
+	cp src/slots/ejs.db.sqlite.slots.h build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+
+#
+#   ejs.web.slots.h
+#
+DEPS_21 += src/slots/ejs.web.slots.h
+
+build/$(CONFIG)/inc/ejs.web.slots.h: $(DEPS_21)
+	@echo '      [Copy] build/$(CONFIG)/inc/ejs.web.slots.h'
+	mkdir -p "build/$(CONFIG)/inc"
+	cp src/slots/ejs.web.slots.h build/$(CONFIG)/inc/ejs.web.slots.h
+
+#
+#   ejs.zlib.slots.h
+#
+DEPS_22 += src/slots/ejs.zlib.slots.h
+
+build/$(CONFIG)/inc/ejs.zlib.slots.h: $(DEPS_22)
+	@echo '      [Copy] build/$(CONFIG)/inc/ejs.zlib.slots.h'
+	mkdir -p "build/$(CONFIG)/inc"
+	cp src/slots/ejs.zlib.slots.h build/$(CONFIG)/inc/ejs.zlib.slots.h
 
 #
 #   ecAst.o
@@ -1431,16 +1461,16 @@ DEPS_82 += build/$(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
     DEPS_82 += build/$(CONFIG)/bin/libhttp.a
 endif
-DEPS_82 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_82 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_82 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_82 += build/$(CONFIG)/inc/ejs.web.slots.h
-DEPS_82 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_82 += build/$(CONFIG)/inc/ejsByteCode.h
 DEPS_82 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_82 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_82 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_82 += build/$(CONFIG)/inc/ejs.h
 DEPS_82 += build/$(CONFIG)/inc/ejsCompiler.h
+DEPS_82 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_82 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_82 += build/$(CONFIG)/inc/ejs.web.slots.h
+DEPS_82 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_82 += build/$(CONFIG)/obj/ecAst.o
 DEPS_82 += build/$(CONFIG)/obj/ecCodeGen.o
 DEPS_82 += build/$(CONFIG)/obj/ecCompiler.o
@@ -1535,16 +1565,16 @@ DEPS_84 += build/$(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
     DEPS_84 += build/$(CONFIG)/bin/libhttp.a
 endif
-DEPS_84 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_84 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_84 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_84 += build/$(CONFIG)/inc/ejs.web.slots.h
-DEPS_84 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_84 += build/$(CONFIG)/inc/ejsByteCode.h
 DEPS_84 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_84 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_84 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_84 += build/$(CONFIG)/inc/ejs.h
 DEPS_84 += build/$(CONFIG)/inc/ejsCompiler.h
+DEPS_84 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_84 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_84 += build/$(CONFIG)/inc/ejs.web.slots.h
+DEPS_84 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_84 += build/$(CONFIG)/obj/ecAst.o
 DEPS_84 += build/$(CONFIG)/obj/ecCodeGen.o
 DEPS_84 += build/$(CONFIG)/obj/ecCompiler.o
@@ -1650,16 +1680,16 @@ DEPS_86 += build/$(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
     DEPS_86 += build/$(CONFIG)/bin/libhttp.a
 endif
-DEPS_86 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_86 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_86 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_86 += build/$(CONFIG)/inc/ejs.web.slots.h
-DEPS_86 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_86 += build/$(CONFIG)/inc/ejsByteCode.h
 DEPS_86 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_86 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_86 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_86 += build/$(CONFIG)/inc/ejs.h
 DEPS_86 += build/$(CONFIG)/inc/ejsCompiler.h
+DEPS_86 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_86 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_86 += build/$(CONFIG)/inc/ejs.web.slots.h
+DEPS_86 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_86 += build/$(CONFIG)/obj/ecAst.o
 DEPS_86 += build/$(CONFIG)/obj/ecCodeGen.o
 DEPS_86 += build/$(CONFIG)/obj/ecCompiler.o
@@ -1742,7 +1772,7 @@ src/cmd/ejsmod.h: $(DEPS_87)
 	@echo '      [Copy] src/cmd/ejsmod.h'
 
 #
-#   ejsmod.o
+#   doc.o
 #
 DEPS_88 += build/$(CONFIG)/inc/me.h
 DEPS_88 += src/cmd/ejsmod.h
@@ -1754,32 +1784,32 @@ DEPS_88 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_88 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_88 += build/$(CONFIG)/inc/ejs.h
 
-build/$(CONFIG)/obj/ejsmod.o: \
-    src/cmd/ejsmod.c $(DEPS_88)
-	@echo '   [Compile] build/$(CONFIG)/obj/ejsmod.o'
-	$(CC) -c $(DFLAGS) -o build/$(CONFIG)/obj/ejsmod.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) "-Isrc/cmd" src/cmd/ejsmod.c
-
-#
-#   doc.o
-#
-DEPS_89 += build/$(CONFIG)/inc/me.h
-DEPS_89 += src/cmd/ejsmod.h
-
 build/$(CONFIG)/obj/doc.o: \
-    src/cmd/doc.c $(DEPS_89)
+    src/cmd/doc.c $(DEPS_88)
 	@echo '   [Compile] build/$(CONFIG)/obj/doc.o'
 	$(CC) -c $(DFLAGS) -o build/$(CONFIG)/obj/doc.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) "-Isrc/cmd" src/cmd/doc.c
 
 #
 #   docFiles.o
 #
+DEPS_89 += build/$(CONFIG)/inc/me.h
+DEPS_89 += src/cmd/ejsmod.h
+
+build/$(CONFIG)/obj/docFiles.o: \
+    src/cmd/docFiles.c $(DEPS_89)
+	@echo '   [Compile] build/$(CONFIG)/obj/docFiles.o'
+	$(CC) -c $(DFLAGS) -o build/$(CONFIG)/obj/docFiles.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) "-Isrc/cmd" src/cmd/docFiles.c
+
+#
+#   ejsmod.o
+#
 DEPS_90 += build/$(CONFIG)/inc/me.h
 DEPS_90 += src/cmd/ejsmod.h
 
-build/$(CONFIG)/obj/docFiles.o: \
-    src/cmd/docFiles.c $(DEPS_90)
-	@echo '   [Compile] build/$(CONFIG)/obj/docFiles.o'
-	$(CC) -c $(DFLAGS) -o build/$(CONFIG)/obj/docFiles.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) "-Isrc/cmd" src/cmd/docFiles.c
+build/$(CONFIG)/obj/ejsmod.o: \
+    src/cmd/ejsmod.c $(DEPS_90)
+	@echo '   [Compile] build/$(CONFIG)/obj/ejsmod.o'
+	$(CC) -c $(DFLAGS) -o build/$(CONFIG)/obj/ejsmod.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) "-Isrc/cmd" src/cmd/ejsmod.c
 
 #
 #   listing.o
@@ -1823,16 +1853,16 @@ DEPS_93 += build/$(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
     DEPS_93 += build/$(CONFIG)/bin/libhttp.a
 endif
-DEPS_93 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_93 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_93 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_93 += build/$(CONFIG)/inc/ejs.web.slots.h
-DEPS_93 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_93 += build/$(CONFIG)/inc/ejsByteCode.h
 DEPS_93 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_93 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_93 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_93 += build/$(CONFIG)/inc/ejs.h
 DEPS_93 += build/$(CONFIG)/inc/ejsCompiler.h
+DEPS_93 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_93 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_93 += build/$(CONFIG)/inc/ejs.web.slots.h
+DEPS_93 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_93 += build/$(CONFIG)/obj/ecAst.o
 DEPS_93 += build/$(CONFIG)/obj/ecCodeGen.o
 DEPS_93 += build/$(CONFIG)/obj/ecCompiler.o
@@ -1894,9 +1924,9 @@ DEPS_93 += build/$(CONFIG)/obj/ejsScope.o
 DEPS_93 += build/$(CONFIG)/obj/ejsService.o
 DEPS_93 += build/$(CONFIG)/bin/libejs.a
 DEPS_93 += src/cmd/ejsmod.h
-DEPS_93 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_93 += build/$(CONFIG)/obj/doc.o
 DEPS_93 += build/$(CONFIG)/obj/docFiles.o
+DEPS_93 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_93 += build/$(CONFIG)/obj/listing.o
 DEPS_93 += build/$(CONFIG)/obj/slotGen.o
 
@@ -1911,7 +1941,7 @@ endif
 
 build/$(CONFIG)/bin/ejsmod: $(DEPS_93)
 	@echo '      [Link] build/$(CONFIG)/bin/ejsmod'
-	$(CC) -o build/$(CONFIG)/bin/ejsmod -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) "build/$(CONFIG)/obj/ejsmod.o" "build/$(CONFIG)/obj/doc.o" "build/$(CONFIG)/obj/docFiles.o" "build/$(CONFIG)/obj/listing.o" "build/$(CONFIG)/obj/slotGen.o" $(LIBPATHS_93) $(LIBS_93) $(LIBS_93) $(LIBS) -lpam 
+	$(CC) -o build/$(CONFIG)/bin/ejsmod -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) "build/$(CONFIG)/obj/doc.o" "build/$(CONFIG)/obj/docFiles.o" "build/$(CONFIG)/obj/ejsmod.o" "build/$(CONFIG)/obj/listing.o" "build/$(CONFIG)/obj/slotGen.o" $(LIBPATHS_93) $(LIBS_93) $(LIBS_93) $(LIBS) -lpam 
 
 #
 #   ejs.mod
@@ -1986,16 +2016,16 @@ DEPS_94 += build/$(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
     DEPS_94 += build/$(CONFIG)/bin/libhttp.a
 endif
-DEPS_94 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_94 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_94 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_94 += build/$(CONFIG)/inc/ejs.web.slots.h
-DEPS_94 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_94 += build/$(CONFIG)/inc/ejsByteCode.h
 DEPS_94 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_94 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_94 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_94 += build/$(CONFIG)/inc/ejs.h
 DEPS_94 += build/$(CONFIG)/inc/ejsCompiler.h
+DEPS_94 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_94 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_94 += build/$(CONFIG)/inc/ejs.web.slots.h
+DEPS_94 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_94 += build/$(CONFIG)/obj/ecAst.o
 DEPS_94 += build/$(CONFIG)/obj/ecCodeGen.o
 DEPS_94 += build/$(CONFIG)/obj/ecCompiler.o
@@ -2059,9 +2089,9 @@ DEPS_94 += build/$(CONFIG)/bin/libejs.a
 DEPS_94 += build/$(CONFIG)/obj/ejsc.o
 DEPS_94 += build/$(CONFIG)/bin/ejsc
 DEPS_94 += src/cmd/ejsmod.h
-DEPS_94 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_94 += build/$(CONFIG)/obj/doc.o
 DEPS_94 += build/$(CONFIG)/obj/docFiles.o
+DEPS_94 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_94 += build/$(CONFIG)/obj/listing.o
 DEPS_94 += build/$(CONFIG)/obj/slotGen.o
 DEPS_94 += build/$(CONFIG)/bin/ejsmod
@@ -2095,16 +2125,16 @@ DEPS_95 += build/$(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
     DEPS_95 += build/$(CONFIG)/bin/libhttp.a
 endif
-DEPS_95 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_95 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_95 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_95 += build/$(CONFIG)/inc/ejs.web.slots.h
-DEPS_95 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_95 += build/$(CONFIG)/inc/ejsByteCode.h
 DEPS_95 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_95 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_95 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_95 += build/$(CONFIG)/inc/ejs.h
 DEPS_95 += build/$(CONFIG)/inc/ejsCompiler.h
+DEPS_95 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_95 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_95 += build/$(CONFIG)/inc/ejs.web.slots.h
+DEPS_95 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_95 += build/$(CONFIG)/obj/ecAst.o
 DEPS_95 += build/$(CONFIG)/obj/ecCodeGen.o
 DEPS_95 += build/$(CONFIG)/obj/ecCompiler.o
@@ -2168,9 +2198,9 @@ DEPS_95 += build/$(CONFIG)/bin/libejs.a
 DEPS_95 += build/$(CONFIG)/obj/ejsc.o
 DEPS_95 += build/$(CONFIG)/bin/ejsc
 DEPS_95 += src/cmd/ejsmod.h
-DEPS_95 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_95 += build/$(CONFIG)/obj/doc.o
 DEPS_95 += build/$(CONFIG)/obj/docFiles.o
+DEPS_95 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_95 += build/$(CONFIG)/obj/listing.o
 DEPS_95 += build/$(CONFIG)/obj/slotGen.o
 DEPS_95 += build/$(CONFIG)/bin/ejsmod
@@ -2203,16 +2233,16 @@ DEPS_96 += build/$(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
     DEPS_96 += build/$(CONFIG)/bin/libhttp.a
 endif
-DEPS_96 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_96 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_96 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_96 += build/$(CONFIG)/inc/ejs.web.slots.h
-DEPS_96 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_96 += build/$(CONFIG)/inc/ejsByteCode.h
 DEPS_96 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_96 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_96 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_96 += build/$(CONFIG)/inc/ejs.h
 DEPS_96 += build/$(CONFIG)/inc/ejsCompiler.h
+DEPS_96 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_96 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_96 += build/$(CONFIG)/inc/ejs.web.slots.h
+DEPS_96 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_96 += build/$(CONFIG)/obj/ecAst.o
 DEPS_96 += build/$(CONFIG)/obj/ecCodeGen.o
 DEPS_96 += build/$(CONFIG)/obj/ecCompiler.o
@@ -2276,9 +2306,9 @@ DEPS_96 += build/$(CONFIG)/bin/libejs.a
 DEPS_96 += build/$(CONFIG)/obj/ejsc.o
 DEPS_96 += build/$(CONFIG)/bin/ejsc
 DEPS_96 += src/cmd/ejsmod.h
-DEPS_96 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_96 += build/$(CONFIG)/obj/doc.o
 DEPS_96 += build/$(CONFIG)/obj/docFiles.o
+DEPS_96 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_96 += build/$(CONFIG)/obj/listing.o
 DEPS_96 += build/$(CONFIG)/obj/slotGen.o
 DEPS_96 += build/$(CONFIG)/bin/ejsmod
@@ -2312,16 +2342,16 @@ DEPS_97 += build/$(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
     DEPS_97 += build/$(CONFIG)/bin/libhttp.a
 endif
-DEPS_97 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_97 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_97 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_97 += build/$(CONFIG)/inc/ejs.web.slots.h
-DEPS_97 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_97 += build/$(CONFIG)/inc/ejsByteCode.h
 DEPS_97 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_97 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_97 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_97 += build/$(CONFIG)/inc/ejs.h
 DEPS_97 += build/$(CONFIG)/inc/ejsCompiler.h
+DEPS_97 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_97 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_97 += build/$(CONFIG)/inc/ejs.web.slots.h
+DEPS_97 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_97 += build/$(CONFIG)/obj/ecAst.o
 DEPS_97 += build/$(CONFIG)/obj/ecCodeGen.o
 DEPS_97 += build/$(CONFIG)/obj/ecCompiler.o
@@ -2385,9 +2415,9 @@ DEPS_97 += build/$(CONFIG)/bin/libejs.a
 DEPS_97 += build/$(CONFIG)/obj/ejsc.o
 DEPS_97 += build/$(CONFIG)/bin/ejsc
 DEPS_97 += src/cmd/ejsmod.h
-DEPS_97 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_97 += build/$(CONFIG)/obj/doc.o
 DEPS_97 += build/$(CONFIG)/obj/docFiles.o
+DEPS_97 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_97 += build/$(CONFIG)/obj/listing.o
 DEPS_97 += build/$(CONFIG)/obj/slotGen.o
 DEPS_97 += build/$(CONFIG)/bin/ejsmod
@@ -2421,16 +2451,16 @@ DEPS_98 += build/$(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
     DEPS_98 += build/$(CONFIG)/bin/libhttp.a
 endif
-DEPS_98 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_98 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_98 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_98 += build/$(CONFIG)/inc/ejs.web.slots.h
-DEPS_98 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_98 += build/$(CONFIG)/inc/ejsByteCode.h
 DEPS_98 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_98 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_98 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_98 += build/$(CONFIG)/inc/ejs.h
 DEPS_98 += build/$(CONFIG)/inc/ejsCompiler.h
+DEPS_98 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_98 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_98 += build/$(CONFIG)/inc/ejs.web.slots.h
+DEPS_98 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_98 += build/$(CONFIG)/obj/ecAst.o
 DEPS_98 += build/$(CONFIG)/obj/ecCodeGen.o
 DEPS_98 += build/$(CONFIG)/obj/ecCompiler.o
@@ -2494,9 +2524,9 @@ DEPS_98 += build/$(CONFIG)/bin/libejs.a
 DEPS_98 += build/$(CONFIG)/obj/ejsc.o
 DEPS_98 += build/$(CONFIG)/bin/ejsc
 DEPS_98 += src/cmd/ejsmod.h
-DEPS_98 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_98 += build/$(CONFIG)/obj/doc.o
 DEPS_98 += build/$(CONFIG)/obj/docFiles.o
+DEPS_98 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_98 += build/$(CONFIG)/obj/listing.o
 DEPS_98 += build/$(CONFIG)/obj/slotGen.o
 DEPS_98 += build/$(CONFIG)/bin/ejsmod
@@ -2550,16 +2580,16 @@ DEPS_99 += build/$(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
     DEPS_99 += build/$(CONFIG)/bin/libhttp.a
 endif
-DEPS_99 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_99 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_99 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_99 += build/$(CONFIG)/inc/ejs.web.slots.h
-DEPS_99 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_99 += build/$(CONFIG)/inc/ejsByteCode.h
 DEPS_99 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_99 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_99 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_99 += build/$(CONFIG)/inc/ejs.h
 DEPS_99 += build/$(CONFIG)/inc/ejsCompiler.h
+DEPS_99 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_99 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_99 += build/$(CONFIG)/inc/ejs.web.slots.h
+DEPS_99 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_99 += build/$(CONFIG)/obj/ecAst.o
 DEPS_99 += build/$(CONFIG)/obj/ecCodeGen.o
 DEPS_99 += build/$(CONFIG)/obj/ecCompiler.o
@@ -2623,9 +2653,9 @@ DEPS_99 += build/$(CONFIG)/bin/libejs.a
 DEPS_99 += build/$(CONFIG)/obj/ejsc.o
 DEPS_99 += build/$(CONFIG)/bin/ejsc
 DEPS_99 += src/cmd/ejsmod.h
-DEPS_99 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_99 += build/$(CONFIG)/obj/doc.o
 DEPS_99 += build/$(CONFIG)/obj/docFiles.o
+DEPS_99 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_99 += build/$(CONFIG)/obj/listing.o
 DEPS_99 += build/$(CONFIG)/obj/slotGen.o
 DEPS_99 += build/$(CONFIG)/bin/ejsmod
@@ -2658,16 +2688,16 @@ DEPS_100 += build/$(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
     DEPS_100 += build/$(CONFIG)/bin/libhttp.a
 endif
-DEPS_100 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_100 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_100 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_100 += build/$(CONFIG)/inc/ejs.web.slots.h
-DEPS_100 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_100 += build/$(CONFIG)/inc/ejsByteCode.h
 DEPS_100 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_100 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_100 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_100 += build/$(CONFIG)/inc/ejs.h
 DEPS_100 += build/$(CONFIG)/inc/ejsCompiler.h
+DEPS_100 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_100 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_100 += build/$(CONFIG)/inc/ejs.web.slots.h
+DEPS_100 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_100 += build/$(CONFIG)/obj/ecAst.o
 DEPS_100 += build/$(CONFIG)/obj/ecCodeGen.o
 DEPS_100 += build/$(CONFIG)/obj/ecCompiler.o
@@ -2731,9 +2761,9 @@ DEPS_100 += build/$(CONFIG)/bin/libejs.a
 DEPS_100 += build/$(CONFIG)/obj/ejsc.o
 DEPS_100 += build/$(CONFIG)/bin/ejsc
 DEPS_100 += src/cmd/ejsmod.h
-DEPS_100 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_100 += build/$(CONFIG)/obj/doc.o
 DEPS_100 += build/$(CONFIG)/obj/docFiles.o
+DEPS_100 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_100 += build/$(CONFIG)/obj/listing.o
 DEPS_100 += build/$(CONFIG)/obj/slotGen.o
 DEPS_100 += build/$(CONFIG)/bin/ejsmod
@@ -2766,16 +2796,16 @@ DEPS_101 += build/$(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
     DEPS_101 += build/$(CONFIG)/bin/libhttp.a
 endif
-DEPS_101 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_101 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_101 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_101 += build/$(CONFIG)/inc/ejs.web.slots.h
-DEPS_101 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_101 += build/$(CONFIG)/inc/ejsByteCode.h
 DEPS_101 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_101 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_101 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_101 += build/$(CONFIG)/inc/ejs.h
 DEPS_101 += build/$(CONFIG)/inc/ejsCompiler.h
+DEPS_101 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_101 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_101 += build/$(CONFIG)/inc/ejs.web.slots.h
+DEPS_101 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_101 += build/$(CONFIG)/obj/ecAst.o
 DEPS_101 += build/$(CONFIG)/obj/ecCodeGen.o
 DEPS_101 += build/$(CONFIG)/obj/ecCompiler.o
@@ -2839,9 +2869,9 @@ DEPS_101 += build/$(CONFIG)/bin/libejs.a
 DEPS_101 += build/$(CONFIG)/obj/ejsc.o
 DEPS_101 += build/$(CONFIG)/bin/ejsc
 DEPS_101 += src/cmd/ejsmod.h
-DEPS_101 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_101 += build/$(CONFIG)/obj/doc.o
 DEPS_101 += build/$(CONFIG)/obj/docFiles.o
+DEPS_101 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_101 += build/$(CONFIG)/obj/listing.o
 DEPS_101 += build/$(CONFIG)/obj/slotGen.o
 DEPS_101 += build/$(CONFIG)/bin/ejsmod
@@ -2874,16 +2904,16 @@ DEPS_102 += build/$(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
     DEPS_102 += build/$(CONFIG)/bin/libhttp.a
 endif
-DEPS_102 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_102 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_102 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_102 += build/$(CONFIG)/inc/ejs.web.slots.h
-DEPS_102 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_102 += build/$(CONFIG)/inc/ejsByteCode.h
 DEPS_102 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_102 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_102 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_102 += build/$(CONFIG)/inc/ejs.h
 DEPS_102 += build/$(CONFIG)/inc/ejsCompiler.h
+DEPS_102 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_102 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_102 += build/$(CONFIG)/inc/ejs.web.slots.h
+DEPS_102 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_102 += build/$(CONFIG)/obj/ecAst.o
 DEPS_102 += build/$(CONFIG)/obj/ecCodeGen.o
 DEPS_102 += build/$(CONFIG)/obj/ecCompiler.o
@@ -2947,9 +2977,9 @@ DEPS_102 += build/$(CONFIG)/bin/libejs.a
 DEPS_102 += build/$(CONFIG)/obj/ejsc.o
 DEPS_102 += build/$(CONFIG)/bin/ejsc
 DEPS_102 += src/cmd/ejsmod.h
-DEPS_102 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_102 += build/$(CONFIG)/obj/doc.o
 DEPS_102 += build/$(CONFIG)/obj/docFiles.o
+DEPS_102 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_102 += build/$(CONFIG)/obj/listing.o
 DEPS_102 += build/$(CONFIG)/obj/slotGen.o
 DEPS_102 += build/$(CONFIG)/bin/ejsmod
@@ -2985,16 +3015,16 @@ DEPS_103 += build/$(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
     DEPS_103 += build/$(CONFIG)/bin/libhttp.a
 endif
-DEPS_103 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_103 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_103 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_103 += build/$(CONFIG)/inc/ejs.web.slots.h
-DEPS_103 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_103 += build/$(CONFIG)/inc/ejsByteCode.h
 DEPS_103 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_103 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_103 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_103 += build/$(CONFIG)/inc/ejs.h
 DEPS_103 += build/$(CONFIG)/inc/ejsCompiler.h
+DEPS_103 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_103 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_103 += build/$(CONFIG)/inc/ejs.web.slots.h
+DEPS_103 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_103 += build/$(CONFIG)/obj/ecAst.o
 DEPS_103 += build/$(CONFIG)/obj/ecCodeGen.o
 DEPS_103 += build/$(CONFIG)/obj/ecCompiler.o
@@ -3058,9 +3088,9 @@ DEPS_103 += build/$(CONFIG)/bin/libejs.a
 DEPS_103 += build/$(CONFIG)/obj/ejsc.o
 DEPS_103 += build/$(CONFIG)/bin/ejsc
 DEPS_103 += src/cmd/ejsmod.h
-DEPS_103 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_103 += build/$(CONFIG)/obj/doc.o
 DEPS_103 += build/$(CONFIG)/obj/docFiles.o
+DEPS_103 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_103 += build/$(CONFIG)/obj/listing.o
 DEPS_103 += build/$(CONFIG)/obj/slotGen.o
 DEPS_103 += build/$(CONFIG)/bin/ejsmod
@@ -3093,16 +3123,16 @@ DEPS_104 += build/$(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
     DEPS_104 += build/$(CONFIG)/bin/libhttp.a
 endif
-DEPS_104 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_104 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_104 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_104 += build/$(CONFIG)/inc/ejs.web.slots.h
-DEPS_104 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_104 += build/$(CONFIG)/inc/ejsByteCode.h
 DEPS_104 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_104 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_104 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_104 += build/$(CONFIG)/inc/ejs.h
 DEPS_104 += build/$(CONFIG)/inc/ejsCompiler.h
+DEPS_104 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_104 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_104 += build/$(CONFIG)/inc/ejs.web.slots.h
+DEPS_104 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_104 += build/$(CONFIG)/obj/ecAst.o
 DEPS_104 += build/$(CONFIG)/obj/ecCodeGen.o
 DEPS_104 += build/$(CONFIG)/obj/ecCompiler.o
@@ -3166,9 +3196,9 @@ DEPS_104 += build/$(CONFIG)/bin/libejs.a
 DEPS_104 += build/$(CONFIG)/obj/ejsc.o
 DEPS_104 += build/$(CONFIG)/bin/ejsc
 DEPS_104 += src/cmd/ejsmod.h
-DEPS_104 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_104 += build/$(CONFIG)/obj/doc.o
 DEPS_104 += build/$(CONFIG)/obj/docFiles.o
+DEPS_104 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_104 += build/$(CONFIG)/obj/listing.o
 DEPS_104 += build/$(CONFIG)/obj/slotGen.o
 DEPS_104 += build/$(CONFIG)/bin/ejsmod
@@ -3211,16 +3241,16 @@ DEPS_106 += build/$(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
     DEPS_106 += build/$(CONFIG)/bin/libhttp.a
 endif
-DEPS_106 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_106 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_106 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_106 += build/$(CONFIG)/inc/ejs.web.slots.h
-DEPS_106 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_106 += build/$(CONFIG)/inc/ejsByteCode.h
 DEPS_106 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_106 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_106 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_106 += build/$(CONFIG)/inc/ejs.h
 DEPS_106 += build/$(CONFIG)/inc/ejsCompiler.h
+DEPS_106 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_106 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_106 += build/$(CONFIG)/inc/ejs.web.slots.h
+DEPS_106 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_106 += build/$(CONFIG)/obj/ecAst.o
 DEPS_106 += build/$(CONFIG)/obj/ecCodeGen.o
 DEPS_106 += build/$(CONFIG)/obj/ecCompiler.o
@@ -3310,6 +3340,8 @@ build/$(CONFIG)/bin/ca.crt: $(DEPS_107)
 #
 #   sqlite3.h
 #
+DEPS_108 += src/paks/sqlite/sqlite3.h
+
 build/$(CONFIG)/inc/sqlite3.h: $(DEPS_108)
 	@echo '      [Copy] build/$(CONFIG)/inc/sqlite3.h'
 	mkdir -p "build/$(CONFIG)/inc"
@@ -3376,16 +3408,16 @@ DEPS_112 += build/$(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
     DEPS_112 += build/$(CONFIG)/bin/libhttp.a
 endif
-DEPS_112 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_112 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_112 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_112 += build/$(CONFIG)/inc/ejs.web.slots.h
-DEPS_112 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_112 += build/$(CONFIG)/inc/ejsByteCode.h
 DEPS_112 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_112 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_112 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_112 += build/$(CONFIG)/inc/ejs.h
 DEPS_112 += build/$(CONFIG)/inc/ejsCompiler.h
+DEPS_112 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_112 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_112 += build/$(CONFIG)/inc/ejs.web.slots.h
+DEPS_112 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_112 += build/$(CONFIG)/obj/ecAst.o
 DEPS_112 += build/$(CONFIG)/obj/ecCodeGen.o
 DEPS_112 += build/$(CONFIG)/obj/ecCompiler.o
@@ -3449,9 +3481,9 @@ DEPS_112 += build/$(CONFIG)/bin/libejs.a
 DEPS_112 += build/$(CONFIG)/obj/ejsc.o
 DEPS_112 += build/$(CONFIG)/bin/ejsc
 DEPS_112 += src/cmd/ejsmod.h
-DEPS_112 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_112 += build/$(CONFIG)/obj/doc.o
 DEPS_112 += build/$(CONFIG)/obj/docFiles.o
+DEPS_112 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_112 += build/$(CONFIG)/obj/listing.o
 DEPS_112 += build/$(CONFIG)/obj/slotGen.o
 DEPS_112 += build/$(CONFIG)/bin/ejsmod
@@ -3471,6 +3503,8 @@ build/$(CONFIG)/bin/libejs.db.sqlite.a: $(DEPS_112)
 #
 #   ejsWeb.h
 #
+DEPS_113 += src/ejs.web/ejsWeb.h
+
 build/$(CONFIG)/inc/ejsWeb.h: $(DEPS_113)
 	@echo '      [Copy] build/$(CONFIG)/inc/ejsWeb.h'
 	mkdir -p "build/$(CONFIG)/inc"
@@ -3573,16 +3607,16 @@ DEPS_118 += build/$(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
     DEPS_118 += build/$(CONFIG)/bin/libhttp.a
 endif
-DEPS_118 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_118 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_118 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_118 += build/$(CONFIG)/inc/ejs.web.slots.h
-DEPS_118 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_118 += build/$(CONFIG)/inc/ejsByteCode.h
 DEPS_118 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_118 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_118 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_118 += build/$(CONFIG)/inc/ejs.h
 DEPS_118 += build/$(CONFIG)/inc/ejsCompiler.h
+DEPS_118 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_118 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_118 += build/$(CONFIG)/inc/ejs.web.slots.h
+DEPS_118 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_118 += build/$(CONFIG)/obj/ecAst.o
 DEPS_118 += build/$(CONFIG)/obj/ecCodeGen.o
 DEPS_118 += build/$(CONFIG)/obj/ecCompiler.o
@@ -3646,9 +3680,9 @@ DEPS_118 += build/$(CONFIG)/bin/libejs.a
 DEPS_118 += build/$(CONFIG)/obj/ejsc.o
 DEPS_118 += build/$(CONFIG)/bin/ejsc
 DEPS_118 += src/cmd/ejsmod.h
-DEPS_118 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_118 += build/$(CONFIG)/obj/doc.o
 DEPS_118 += build/$(CONFIG)/obj/docFiles.o
+DEPS_118 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_118 += build/$(CONFIG)/obj/listing.o
 DEPS_118 += build/$(CONFIG)/obj/slotGen.o
 DEPS_118 += build/$(CONFIG)/bin/ejsmod
@@ -3666,6 +3700,8 @@ build/$(CONFIG)/bin/libejs.web.a: $(DEPS_118)
 #
 #   zlib.h
 #
+DEPS_119 += src/paks/zlib/zlib.h
+
 build/$(CONFIG)/inc/zlib.h: $(DEPS_119)
 	@echo '      [Copy] build/$(CONFIG)/inc/zlib.h'
 	mkdir -p "build/$(CONFIG)/inc"
@@ -3733,16 +3769,16 @@ DEPS_123 += build/$(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
     DEPS_123 += build/$(CONFIG)/bin/libhttp.a
 endif
-DEPS_123 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_123 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_123 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_123 += build/$(CONFIG)/inc/ejs.web.slots.h
-DEPS_123 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_123 += build/$(CONFIG)/inc/ejsByteCode.h
 DEPS_123 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_123 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_123 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_123 += build/$(CONFIG)/inc/ejs.h
 DEPS_123 += build/$(CONFIG)/inc/ejsCompiler.h
+DEPS_123 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_123 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_123 += build/$(CONFIG)/inc/ejs.web.slots.h
+DEPS_123 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_123 += build/$(CONFIG)/obj/ecAst.o
 DEPS_123 += build/$(CONFIG)/obj/ecCodeGen.o
 DEPS_123 += build/$(CONFIG)/obj/ecCompiler.o
@@ -3806,9 +3842,9 @@ DEPS_123 += build/$(CONFIG)/bin/libejs.a
 DEPS_123 += build/$(CONFIG)/obj/ejsc.o
 DEPS_123 += build/$(CONFIG)/bin/ejsc
 DEPS_123 += src/cmd/ejsmod.h
-DEPS_123 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_123 += build/$(CONFIG)/obj/doc.o
 DEPS_123 += build/$(CONFIG)/obj/docFiles.o
+DEPS_123 += build/$(CONFIG)/obj/ejsmod.o
 DEPS_123 += build/$(CONFIG)/obj/listing.o
 DEPS_123 += build/$(CONFIG)/obj/slotGen.o
 DEPS_123 += build/$(CONFIG)/bin/ejsmod
@@ -3828,6 +3864,8 @@ build/$(CONFIG)/bin/libejs.zlib.a: $(DEPS_123)
 #
 #   est.h
 #
+DEPS_124 += src/paks/est/est.h
+
 build/$(CONFIG)/inc/est.h: $(DEPS_124)
 	@echo '      [Copy] build/$(CONFIG)/inc/est.h'
 	mkdir -p "build/$(CONFIG)/inc"
@@ -3945,16 +3983,16 @@ DEPS_132 += build/$(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
     DEPS_132 += build/$(CONFIG)/bin/libhttp.a
 endif
-DEPS_132 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_132 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_132 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_132 += build/$(CONFIG)/inc/ejs.web.slots.h
-DEPS_132 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_132 += build/$(CONFIG)/inc/ejsByteCode.h
 DEPS_132 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_132 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_132 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_132 += build/$(CONFIG)/inc/ejs.h
 DEPS_132 += build/$(CONFIG)/inc/ejsCompiler.h
+DEPS_132 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_132 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_132 += build/$(CONFIG)/inc/ejs.web.slots.h
+DEPS_132 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_132 += build/$(CONFIG)/obj/ecAst.o
 DEPS_132 += build/$(CONFIG)/obj/ecCodeGen.o
 DEPS_132 += build/$(CONFIG)/obj/ecCompiler.o
@@ -4065,10 +4103,9 @@ endif
 DEPS_135 += src/ejs.utest/utest.es
 
 build/$(CONFIG)/bin/utest.es: $(DEPS_135)
-	( \
-	cd src/ejs.utest; \
-	cp utest.es ../../build/$(CONFIG)/bin ; \
-	)
+	@echo '      [Copy] build/$(CONFIG)/bin/utest.es'
+	mkdir -p "build/$(CONFIG)/bin"
+	cp src/ejs.utest/utest.es build/$(CONFIG)/bin/utest.es
 
 #
 #   utest.worker
@@ -4076,10 +4113,9 @@ build/$(CONFIG)/bin/utest.es: $(DEPS_135)
 DEPS_136 += src/ejs.utest/utest.worker
 
 build/$(CONFIG)/bin/utest.worker: $(DEPS_136)
-	( \
-	cd src/ejs.utest; \
-	cp utest.worker ../../build/$(CONFIG)/bin ; \
-	)
+	@echo '      [Copy] build/$(CONFIG)/bin/utest.worker'
+	mkdir -p "build/$(CONFIG)/bin"
+	cp src/ejs.utest/utest.worker build/$(CONFIG)/bin/utest.worker
 
 #
 #   utest
@@ -4100,16 +4136,16 @@ DEPS_137 += build/$(CONFIG)/obj/httpLib.o
 ifeq ($(ME_COM_HTTP),1)
     DEPS_137 += build/$(CONFIG)/bin/libhttp.a
 endif
-DEPS_137 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
-DEPS_137 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
-DEPS_137 += build/$(CONFIG)/inc/ejs.slots.h
-DEPS_137 += build/$(CONFIG)/inc/ejs.web.slots.h
-DEPS_137 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_137 += build/$(CONFIG)/inc/ejsByteCode.h
 DEPS_137 += build/$(CONFIG)/inc/ejsByteCodeTable.h
+DEPS_137 += build/$(CONFIG)/inc/ejs.slots.h
 DEPS_137 += build/$(CONFIG)/inc/ejsCustomize.h
 DEPS_137 += build/$(CONFIG)/inc/ejs.h
 DEPS_137 += build/$(CONFIG)/inc/ejsCompiler.h
+DEPS_137 += build/$(CONFIG)/inc/ejs.cache.local.slots.h
+DEPS_137 += build/$(CONFIG)/inc/ejs.db.sqlite.slots.h
+DEPS_137 += build/$(CONFIG)/inc/ejs.web.slots.h
+DEPS_137 += build/$(CONFIG)/inc/ejs.zlib.slots.h
 DEPS_137 += build/$(CONFIG)/obj/ecAst.o
 DEPS_137 += build/$(CONFIG)/obj/ecCodeGen.o
 DEPS_137 += build/$(CONFIG)/obj/ecCompiler.o
@@ -4193,13 +4229,39 @@ build/$(CONFIG)/bin/utest: $(DEPS_137)
 DEPS_138 += src/ejs.web/www
 
 build/$(CONFIG)/bin/www: $(DEPS_138)
-	( \
-	cd src/ejs.web; \
-	echo '      [Copy] ejs.web www' ; \
-	rm -fr "../../build/$(CONFIG)/bin/www" ; \
-	mkdir -p "../../build/$(CONFIG)/bin/www" ; \
-	cp www ../../build/$(CONFIG)/bin ; \
-	)
+	@echo '      [Copy] build/$(CONFIG)/bin/www'
+	mkdir -p "build/$(CONFIG)/bin/www/images"
+	cp src/ejs.web/www/images/banner.jpg build/$(CONFIG)/bin/www/images/banner.jpg
+	cp src/ejs.web/www/images/favicon.ico build/$(CONFIG)/bin/www/images/favicon.ico
+	cp src/ejs.web/www/images/splash.jpg build/$(CONFIG)/bin/www/images/splash.jpg
+	mkdir -p "build/$(CONFIG)/bin/www/js"
+	cp src/ejs.web/www/js/jquery.ejs.min.js build/$(CONFIG)/bin/www/js/jquery.ejs.min.js
+	cp src/ejs.web/www/js/jquery.min.js build/$(CONFIG)/bin/www/js/jquery.min.js
+	cp src/ejs.web/www/js/jquery.simplemodal.min.js build/$(CONFIG)/bin/www/js/jquery.simplemodal.min.js
+	cp src/ejs.web/www/js/jquery.tablesorter.js build/$(CONFIG)/bin/www/js/jquery.tablesorter.js
+	cp src/ejs.web/www/js/jquery.tablesorter.min.js build/$(CONFIG)/bin/www/js/jquery.tablesorter.min.js
+	cp src/ejs.web/www/js/jquery.treeview.min.js build/$(CONFIG)/bin/www/js/jquery.treeview.min.js
+	mkdir -p "build/$(CONFIG)/bin/www/js/tree-images"
+	cp src/ejs.web/www/js/tree-images/file.gif build/$(CONFIG)/bin/www/js/tree-images/file.gif
+	cp src/ejs.web/www/js/tree-images/folder-closed.gif build/$(CONFIG)/bin/www/js/tree-images/folder-closed.gif
+	cp src/ejs.web/www/js/tree-images/folder.gif build/$(CONFIG)/bin/www/js/tree-images/folder.gif
+	cp src/ejs.web/www/js/tree-images/minus.gif build/$(CONFIG)/bin/www/js/tree-images/minus.gif
+	cp src/ejs.web/www/js/tree-images/plus.gif build/$(CONFIG)/bin/www/js/tree-images/plus.gif
+	cp src/ejs.web/www/js/tree-images/treeview-black-line.gif build/$(CONFIG)/bin/www/js/tree-images/treeview-black-line.gif
+	cp src/ejs.web/www/js/tree-images/treeview-black.gif build/$(CONFIG)/bin/www/js/tree-images/treeview-black.gif
+	cp src/ejs.web/www/js/tree-images/treeview-default-line.gif build/$(CONFIG)/bin/www/js/tree-images/treeview-default-line.gif
+	cp src/ejs.web/www/js/tree-images/treeview-default.gif build/$(CONFIG)/bin/www/js/tree-images/treeview-default.gif
+	cp src/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif build/$(CONFIG)/bin/www/js/tree-images/treeview-famfamfam-line.gif
+	cp src/ejs.web/www/js/tree-images/treeview-famfamfam.gif build/$(CONFIG)/bin/www/js/tree-images/treeview-famfamfam.gif
+	cp src/ejs.web/www/js/tree-images/treeview-gray-line.gif build/$(CONFIG)/bin/www/js/tree-images/treeview-gray-line.gif
+	cp src/ejs.web/www/js/tree-images/treeview-gray.gif build/$(CONFIG)/bin/www/js/tree-images/treeview-gray.gif
+	cp src/ejs.web/www/js/tree-images/treeview-red-line.gif build/$(CONFIG)/bin/www/js/tree-images/treeview-red-line.gif
+	cp src/ejs.web/www/js/tree-images/treeview-red.gif build/$(CONFIG)/bin/www/js/tree-images/treeview-red.gif
+	cp src/ejs.web/www/js/treeview.css build/$(CONFIG)/bin/www/js/treeview.css
+	mkdir -p "build/$(CONFIG)/bin/www"
+	cp src/ejs.web/www/layout.css build/$(CONFIG)/bin/www/layout.css
+	mkdir -p "build/$(CONFIG)/bin/www/themes"
+	cp src/ejs.web/www/themes/default.css build/$(CONFIG)/bin/www/themes/default.css
 
 #
 #   stop
@@ -4349,21 +4411,9 @@ installBinary: $(DEPS_140)
 	cp src/cmd/ejsmod.h $(ME_VAPP_PREFIX)/inc/ejsmod.h ; \
 	rm -f "$(ME_INC_PREFIX)/ejs/ejsmod.h" ; \
 	ln -s "$(ME_VAPP_PREFIX)/inc/ejsmod.h" "$(ME_INC_PREFIX)/ejs/ejsmod.h" ; \
-	cp src/core/default.slots.h $(ME_VAPP_PREFIX)/inc/default.slots.h ; \
-	rm -f "$(ME_INC_PREFIX)/ejs/default.slots.h" ; \
-	ln -s "$(ME_VAPP_PREFIX)/inc/default.slots.h" "$(ME_INC_PREFIX)/ejs/default.slots.h" ; \
-	cp src/core/ejs.slots.h $(ME_VAPP_PREFIX)/inc/ejs.slots.h ; \
-	rm -f "$(ME_INC_PREFIX)/ejs/ejs.slots.h" ; \
-	ln -s "$(ME_VAPP_PREFIX)/inc/ejs.slots.h" "$(ME_INC_PREFIX)/ejs/ejs.slots.h" ; \
-	cp src/ejs.db.sqlite/ejs.db.sqlite.slots.h $(ME_VAPP_PREFIX)/inc/ejs.db.sqlite.slots.h ; \
-	rm -f "$(ME_INC_PREFIX)/ejs/ejs.db.sqlite.slots.h" ; \
-	ln -s "$(ME_VAPP_PREFIX)/inc/ejs.db.sqlite.slots.h" "$(ME_INC_PREFIX)/ejs/ejs.db.sqlite.slots.h" ; \
 	cp src/ejs.h $(ME_VAPP_PREFIX)/inc/ejs.h ; \
 	rm -f "$(ME_INC_PREFIX)/ejs/ejs.h" ; \
 	ln -s "$(ME_VAPP_PREFIX)/inc/ejs.h" "$(ME_INC_PREFIX)/ejs/ejs.h" ; \
-	cp src/ejs.web/ejs.web.slots.h $(ME_VAPP_PREFIX)/inc/ejs.web.slots.h ; \
-	rm -f "$(ME_INC_PREFIX)/ejs/ejs.web.slots.h" ; \
-	ln -s "$(ME_VAPP_PREFIX)/inc/ejs.web.slots.h" "$(ME_INC_PREFIX)/ejs/ejs.web.slots.h" ; \
 	cp src/ejs.web/ejsWeb.h $(ME_VAPP_PREFIX)/inc/ejsWeb.h ; \
 	rm -f "$(ME_INC_PREFIX)/ejs/ejsWeb.h" ; \
 	ln -s "$(ME_VAPP_PREFIX)/inc/ejsWeb.h" "$(ME_INC_PREFIX)/ejs/ejsWeb.h" ; \

@@ -1,0 +1,24 @@
+/*
+	start.me - MakeMe file to minify client javascripts
+ */
+
+Me.load({
+	dir: {
+		js: '../www/js',
+	},
+
+    targets: {
+		minify: {
+            action: "
+                let names = ['jquery.ejs', 'jquery.simplemodal', 'jquery.tablesorter', 'jquery.treeview']
+                for each (name in names) {
+                    let file = Path(name + '.js')
+                    trace('Generate', 'minify ' + file)
+                    run('minify ' + file)
+                    let target = file.replaceExt('min.js')
+                    mv(target, Path('${dir.js}').join(target))
+                }
+            ",
+		},
+	}
+})

@@ -303,9 +303,9 @@
 /* Begin PBXBuildFile section */
 		F3F8966EF3F8A43E0000008F /* ejs.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8966EF3F8A43E00000090 /* ejs.c */; };
 		F3F8966EF3F8A43E00000091 /* ejsc.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8966EF3F8A43E00000092 /* ejsc.c */; };
-		F3F8966EF3F8A43E00000093 /* ejsmod.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8966EF3F8A43E00000094 /* ejsmod.c */; };
-		F3F8966EF3F8A43E00000095 /* doc.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8966EF3F8A43E00000096 /* doc.c */; };
-		F3F8966EF3F8A43E00000097 /* docFiles.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8966EF3F8A43E00000098 /* docFiles.c */; };
+		F3F8966EF3F8A43E00000093 /* doc.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8966EF3F8A43E00000094 /* doc.c */; };
+		F3F8966EF3F8A43E00000095 /* docFiles.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8966EF3F8A43E00000096 /* docFiles.c */; };
+		F3F8966EF3F8A43E00000097 /* ejsmod.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8966EF3F8A43E00000098 /* ejsmod.c */; };
 		F3F8966EF3F8A43E00000099 /* listing.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8966EF3F8A43E0000009A /* listing.c */; };
 		F3F8966EF3F8A43E0000009B /* slotGen.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8966EF3F8A43E0000009C /* slotGen.c */; };
 		F3F8966EF3F8A43E0000009D /* ejsrun.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8966EF3F8A43E0000009E /* ejsrun.c */; };
@@ -2112,11 +2112,11 @@
 		F3F8966EF3F8A43E00000270 /* ejs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ejs; sourceTree = BUILT_PRODUCTS_DIR; };
 		F3F8966EF3F8A43E00000092 /* ejsc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsc.c; path = src/cmd/ejsc.c; sourceTree = "<group>"; };
 		F3F8966EF3F8A43E00000271 /* ejsc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ejsc; sourceTree = BUILT_PRODUCTS_DIR; };
-		F3F8966EF3F8A43E00000094 /* ejsmod.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsmod.c; path = src/cmd/ejsmod.c; sourceTree = "<group>"; };
+		F3F8966EF3F8A43E00000094 /* doc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = doc.c; path = src/cmd/doc.c; sourceTree = "<group>"; };
 		F3F8966EF3F8A43E00000272 /* ejsmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsmod.h; path = src/cmd/ejsmod.h; sourceTree = "<group>"; };
 		F3F8966EF3F8A43E00000273 /* ejs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.h; path = build/macosx-x64-default/inc/ejs.h; sourceTree = "<group>"; };
-		F3F8966EF3F8A43E00000096 /* doc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = doc.c; path = src/cmd/doc.c; sourceTree = "<group>"; };
-		F3F8966EF3F8A43E00000098 /* docFiles.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = docFiles.c; path = src/cmd/docFiles.c; sourceTree = "<group>"; };
+		F3F8966EF3F8A43E00000096 /* docFiles.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = docFiles.c; path = src/cmd/docFiles.c; sourceTree = "<group>"; };
+		F3F8966EF3F8A43E00000098 /* ejsmod.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsmod.c; path = src/cmd/ejsmod.c; sourceTree = "<group>"; };
 		F3F8966EF3F8A43E0000009A /* listing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = listing.c; path = src/cmd/listing.c; sourceTree = "<group>"; };
 		F3F8966EF3F8A43E00000274 /* ejsByteCodeTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsByteCodeTable.h; path = build/macosx-x64-default/inc/ejsByteCodeTable.h; sourceTree = "<group>"; };
 		F3F8966EF3F8A43E0000009C /* slotGen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = slotGen.c; path = src/cmd/slotGen.c; sourceTree = "<group>"; };
@@ -2482,9 +2482,9 @@
 				F3F8966EF3F8A43E00000272 /* ejsmod.h */,
 				F3F8966EF3F8A43E00000273 /* ejs.h */,
 				F3F8966EF3F8A43E00000274 /* ejsByteCodeTable.h */,
-				F3F8966EF3F8A43E00000094 /* ejsmod.c */,
-				F3F8966EF3F8A43E00000096 /* doc.c */,
-				F3F8966EF3F8A43E00000098 /* docFiles.c */,
+				F3F8966EF3F8A43E00000094 /* doc.c */,
+				F3F8966EF3F8A43E00000096 /* docFiles.c */,
+				F3F8966EF3F8A43E00000098 /* ejsmod.c */,
 				F3F8966EF3F8A43E0000009A /* listing.c */,
 				F3F8966EF3F8A43E0000009C /* slotGen.c */,
 			);
@@ -3546,7 +3546,9 @@ cd ../src
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.utest
-cp utest.es ../../build/macosx-x64-default/bin";
+mkdir -p ../${OUT_DIR}/bin
+cp -r utest.es ../${OUT_DIR}/bin/utest.es
+";
 		};
 		F3F8966EF3F8A43E0000005F /* ShellScript for utest.worker */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3563,7 +3565,9 @@ cp utest.es ../../build/macosx-x64-default/bin";
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.utest
-cp utest.worker ../../build/macosx-x64-default/bin";
+mkdir -p ../${OUT_DIR}/bin
+cp -r utest.worker ../${OUT_DIR}/bin/utest.worker
+";
 		};
 		F3F8966EF3F8A43E00000063 /* ShellScript for www */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3571,7 +3575,7 @@ cp utest.worker ../../build/macosx-x64-default/bin";
 			files = (
 			);
 			inputPaths = (
-/Users/mob/git/ejs/src/ejs.web/www
+/Users/mob/git/ejs/src/ejs.web/www/
 			);
 			outputPaths = (
 ../build/macosx-x64-default/bin/www
@@ -3580,9 +3584,8 @@ cp utest.worker ../../build/macosx-x64-default/bin";
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.web
-	rm -fr \"../${OUT_DIR}/bin/www\"
-	mkdir -p \"../${OUT_DIR}/bin/www\"
-	cp www ../${OUT_DIR}/bin
+mkdir -p ../${OUT_DIR}/bin
+cp -r www ../${OUT_DIR}/bin/www
 ";
 		};
 		F3F8966EF3F8A43E0000008E /* ShellScript for Prep */ = {
@@ -3666,21 +3669,6 @@ fi
 if [ ../src/cmd/ejsmod.h -nt ../src/cmd/ejsmod.h ] ; then
 cp ../src/cmd/ejsmod.h ../src/cmd/ejsmod.h
 fi
-if [ ../src/slots/ejs.cache.local.slots.h -nt ${OUT_DIR}/inc/ejs.cache.local.slots.h ] ; then
-cp ../src/slots/ejs.cache.local.slots.h ${OUT_DIR}/inc/ejs.cache.local.slots.h
-fi
-if [ ../src/slots/ejs.db.sqlite.slots.h -nt ${OUT_DIR}/inc/ejs.db.sqlite.slots.h ] ; then
-cp ../src/slots/ejs.db.sqlite.slots.h ${OUT_DIR}/inc/ejs.db.sqlite.slots.h
-fi
-if [ ../src/slots/ejs.slots.h -nt ${OUT_DIR}/inc/ejs.slots.h ] ; then
-cp ../src/slots/ejs.slots.h ${OUT_DIR}/inc/ejs.slots.h
-fi
-if [ ../src/slots/ejs.web.slots.h -nt ${OUT_DIR}/inc/ejs.web.slots.h ] ; then
-cp ../src/slots/ejs.web.slots.h ${OUT_DIR}/inc/ejs.web.slots.h
-fi
-if [ ../src/slots/ejs.zlib.slots.h -nt ${OUT_DIR}/inc/ejs.zlib.slots.h ] ; then
-cp ../src/slots/ejs.zlib.slots.h ${OUT_DIR}/inc/ejs.zlib.slots.h
-fi
 if [ ../src/ejs.h -nt ${OUT_DIR}/inc/ejs.h ] ; then
 cp ../src/ejs.h ${OUT_DIR}/inc/ejs.h
 fi
@@ -3695,6 +3683,21 @@ cp ../src/ejsCompiler.h ${OUT_DIR}/inc/ejsCompiler.h
 fi
 if [ ../src/ejsCustomize.h -nt ${OUT_DIR}/inc/ejsCustomize.h ] ; then
 cp ../src/ejsCustomize.h ${OUT_DIR}/inc/ejsCustomize.h
+fi
+if [ ../src/slots/ejs.cache.local.slots.h -nt ${OUT_DIR}/inc/ejs.cache.local.slots.h ] ; then
+cp ../src/slots/ejs.cache.local.slots.h ${OUT_DIR}/inc/ejs.cache.local.slots.h
+fi
+if [ ../src/slots/ejs.db.sqlite.slots.h -nt ${OUT_DIR}/inc/ejs.db.sqlite.slots.h ] ; then
+cp ../src/slots/ejs.db.sqlite.slots.h ${OUT_DIR}/inc/ejs.db.sqlite.slots.h
+fi
+if [ ../src/slots/ejs.slots.h -nt ${OUT_DIR}/inc/ejs.slots.h ] ; then
+cp ../src/slots/ejs.slots.h ${OUT_DIR}/inc/ejs.slots.h
+fi
+if [ ../src/slots/ejs.web.slots.h -nt ${OUT_DIR}/inc/ejs.web.slots.h ] ; then
+cp ../src/slots/ejs.web.slots.h ${OUT_DIR}/inc/ejs.web.slots.h
+fi
+if [ ../src/slots/ejs.zlib.slots.h -nt ${OUT_DIR}/inc/ejs.zlib.slots.h ] ; then
+cp ../src/slots/ejs.zlib.slots.h ${OUT_DIR}/inc/ejs.zlib.slots.h
 fi
 if [ ../src/ejs.web/ejsWeb.h -nt ${OUT_DIR}/inc/ejsWeb.h ] ; then
 cp ../src/ejs.web/ejsWeb.h ${OUT_DIR}/inc/ejsWeb.h
@@ -3803,9 +3806,9 @@ fi";
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F3F8966EF3F8A43E00000093 /* ejsmod.c in Sources */,
-				F3F8966EF3F8A43E00000095 /* doc.c in Sources */,
-				F3F8966EF3F8A43E00000097 /* docFiles.c in Sources */,
+				F3F8966EF3F8A43E00000093 /* doc.c in Sources */,
+				F3F8966EF3F8A43E00000095 /* docFiles.c in Sources */,
+				F3F8966EF3F8A43E00000097 /* ejsmod.c in Sources */,
 				F3F8966EF3F8A43E00000099 /* listing.c in Sources */,
 				F3F8966EF3F8A43E0000009B /* slotGen.c in Sources */,
 			);
