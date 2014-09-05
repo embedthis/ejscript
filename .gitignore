@@ -15,3 +15,8 @@ projects/*mine*
 projects/.flags
 *.o
 *.obj
+main
+
+src/compiler/test/bugs/
+src/core/src/dtoa.original
+src/ejs.zlib/ejsZlib.miniz
