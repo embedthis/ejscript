@@ -96,7 +96,7 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\ejs.mail
-undefined\ejsc --out undefined\ejs.mail.mod  --optimize 9
+../../build/windows-x86-static/bin/ejsc --out ../../build/windows-x86-static/bin/ejs.mail.mod  --optimize 9 Mail.es
 cd ..\..\projects\ejs-windows-static</Command>
     <Outputs>$(BinDir)\ejs.mail.mod</Outputs>
   </CustomBuildStep>

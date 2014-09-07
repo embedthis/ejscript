@@ -96,7 +96,7 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\ejs.tar
-undefined\ejsc --out undefined\ejs.tar.mod  --optimize 9
+../../build/windows-x86-static/bin/ejsc --out ../../build/windows-x86-static/bin/ejs.tar.mod  --optimize 9 Tar.es
 cd ..\..\projects\ejs-windows-static</Command>
     <Outputs>$(BinDir)\ejs.tar.mod</Outputs>
   </CustomBuildStep>

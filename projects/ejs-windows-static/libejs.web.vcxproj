@@ -118,7 +118,7 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\ejs.web
-copy /Y ejsWeb.h $(IncDir)
+copy /Y /B ejsWeb.h $(IncDir)
 cd ..\..\projects\ejs-windows-static</Command>
     <Outputs>$(BinDir)\libejs.web.lib</Outputs>
   </CustomBuildStep>

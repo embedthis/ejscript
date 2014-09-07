@@ -2677,6 +2677,7 @@ DEPS_99 += build/$(CONFIG)/bin/ejs.mod
 build/$(CONFIG)/bin/ejs.web.mod: $(DEPS_99)
 	( \
 	cd src/ejs.web; \
+	echo '   [Compile] ejs.web.mod' ; \
 	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.web.mod  --optimize 9 Cascade.es CommonLog.es ContentType.es Controller.es Dir.es Google.es Head.es Html.es HttpServer.es MethodOverride.es Middleware.es Mvc.es Request.es Router.es Script.es Session.es ShowExceptions.es Static.es Template.es UploadFile.es UrlMap.es Utils.es View.es ; \
 	../../build/$(CONFIG)/bin/ejsmod --cslots --dir ../../build/$(CONFIG)/bin ../../build/$(CONFIG)/bin/ejs.web.mod ; \
 	)

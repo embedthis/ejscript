@@ -96,7 +96,7 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\ejs.template
-undefined\ejsc --out undefined\ejs.template.mod  --optimize 9
+../../build/windows-x86-static/bin/ejsc --out ../../build/windows-x86-static/bin/ejs.template.mod  --optimize 9 TemplateParser.es
 cd ..\..\projects\ejs-windows-static</Command>
     <Outputs>$(BinDir)\ejs.template.mod</Outputs>
   </CustomBuildStep>

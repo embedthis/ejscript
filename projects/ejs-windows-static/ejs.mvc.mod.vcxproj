@@ -96,7 +96,7 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\ejs.mvc
-undefined\ejsc --out undefined\ejs.mvc.mod  --optimize 9
+../../build/windows-x86-static/bin/ejsc --out ../../build/windows-x86-static/bin/ejs.mvc.mod  --optimize 9 mvc.es
 cd ..\..\projects\ejs-windows-static</Command>
     <Outputs>$(BinDir)\ejs.mvc.mod</Outputs>
   </CustomBuildStep>

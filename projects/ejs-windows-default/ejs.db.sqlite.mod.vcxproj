@@ -96,8 +96,8 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src\ejs.db.sqlite
-undefined\ejsc --out undefined\ejs.db.sqlite.mod  --optimize 9 
-undefined\ejsmod --cslots --dir undefined undefined\ejs.db.sqlite.mod
+../../build/windows-x86-default/bin/ejsc --out ../../build/windows-x86-default/bin/ejs.db.sqlite.mod  --optimize 9 Sqlite.es
+../../build/windows-x86-default/bin/ejsmod --cslots --dir ../../build/windows-x86-default/bin ../../build/windows-x86-default/bin/ejs.db.sqlite.mod
 cd ..\..\projects\ejs-windows-default</Command>
     <Outputs>$(BinDir)\ejs.db.sqlite.mod</Outputs>
   </CustomBuildStep>

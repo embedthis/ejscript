@@ -7,8 +7,6 @@ VERSION               = 2.5.0
 
 OS                    = windows
 PA                    = $(PROCESSOR_ARCHITECTURE)
-LOG                   = >>build\nmake.log
-
 !IF "$(PROFILE)" == ""
 PROFILE               = default
 !ENDIF
@@ -150,9 +148,13 @@ prep:
 	@if not exist $(BUILD)\obj md $(BUILD)\obj
 	@if not exist $(BUILD)\inc\me.h copy projects\ejs-windows-default-me.h $(BUILD)\inc\me.h
 
-!IF "$(LOG)" != ""
-	@echo ..... [Info] See build\nmake.log for any build errors.
+!IF "$(SHOW)" != ""
+	@echo ..... [Info] Use "make SHOW=1" to trace executed commands and errors.
+LOG =
+!ELSE
+LOG = >nul
 !ENDIF
+
 clean:
 	if exist "build\$(CONFIG)\obj\doc.obj" del /Q "build\$(CONFIG)\obj\doc.obj"
 	if exist "build\$(CONFIG)\obj\docFiles.obj" del /Q "build\$(CONFIG)\obj\docFiles.obj"
@@ -2200,8 +2202,8 @@ DEPS_94 = $(DEPS_94) build\$(CONFIG)\bin\ejsmod.exe
 build\$(CONFIG)\bin\ejs.mod: $(DEPS_94)
 	cd src\core
 	@echo .. [Compile] Core EJS classes
-	..\..\build\$(CONFIG)\bin\ejsc --out ..\..\build\$(CONFIG)\bin\ejs.mod  --optimize 9 --bind --require null App.es Args.es Array.es BinaryStream.es Block.es Boolean.es ByteArray.es Cache.es Cmd.es Compat.es Config.es Date.es Debug.es Emitter.es Error.es File.es FileSystem.es Frame.es Function.es GC.es Global.es Http.es Inflector.es Iterator.es JSON.es Loader.es LocalCache.es Locale.es Logger.es Math.es Memory.es MprLog.es Name.es Namespace.es Null.es Number.es Object.es Path.es Promise.es RegExp.es Socket.es Stream.es String.es System.es TextStream.es Timer.es Type.es Uri.es Void.es WebSocket.es Worker.es XML.es XMLHttp.es XMLList.es
-	..\..\build\$(CONFIG)\bin\ejsmod --cslots --dir ..\..\build\$(CONFIG)\bin --require null ..\..\build\$(CONFIG)\bin\ejs.mod
+	..\..\build\$(CONFIG)\bin\ejsc --out ../../build/$(CONFIG)/bin/ejs.mod  --optimize 9 --bind --require null App.es Args.es Array.es BinaryStream.es Block.es Boolean.es ByteArray.es Cache.es Cmd.es Compat.es Config.es Date.es Debug.es Emitter.es Error.es File.es FileSystem.es Frame.es Function.es GC.es Global.es Http.es Inflector.es Iterator.es JSON.es Loader.es LocalCache.es Locale.es Logger.es Math.es Memory.es MprLog.es Name.es Namespace.es Null.es Number.es Object.es Path.es Promise.es RegExp.es Socket.es Stream.es String.es System.es TextStream.es Timer.es Type.es Uri.es Void.es WebSocket.es Worker.es XML.es XMLHttp.es XMLList.es
+	..\..\build\$(CONFIG)\bin\ejsmod --cslots --dir ../../build/$(CONFIG)/bin --require null ../../build/$(CONFIG)/bin/ejs.mod
 	cd ..\..
 
 #
@@ -2309,7 +2311,7 @@ DEPS_95 = $(DEPS_95) build\$(CONFIG)\bin\ejs.mod
 build\$(CONFIG)\bin\ejs.db.mod: $(DEPS_95)
 	cd src\ejs.db
 	@echo .. [Compile] ejs.db.mod
-	..\..\build\$(CONFIG)\bin\ejsc --out ..\..\build\$(CONFIG)\bin\ejs.db.mod  --optimize 9 Database.es DatabaseConnector.es
+	..\..\build\$(CONFIG)\bin\ejsc --out ../../build/$(CONFIG)/bin/ejs.db.mod  --optimize 9 Database.es DatabaseConnector.es
 	cd ..\..
 
 #
@@ -2417,7 +2419,7 @@ DEPS_96 = $(DEPS_96) build\$(CONFIG)\bin\ejs.db.mod
 build\$(CONFIG)\bin\ejs.db.mapper.mod: $(DEPS_96)
 	cd src\ejs.db.mapper
 	@echo .. [Compile] ejs.db.mapper.mod
-	..\..\build\$(CONFIG)\bin\ejsc --out ..\..\build\$(CONFIG)\bin\ejs.db.mapper.mod  --optimize 9 Record.es
+	..\..\build\$(CONFIG)\bin\ejsc --out ../../build/$(CONFIG)/bin/ejs.db.mapper.mod  --optimize 9 Record.es
 	cd ..\..
 
 #
@@ -2524,8 +2526,8 @@ DEPS_97 = $(DEPS_97) build\$(CONFIG)\bin\ejs.mod
 build\$(CONFIG)\bin\ejs.db.sqlite.mod: $(DEPS_97)
 	cd src\ejs.db.sqlite
 	@echo .. [Compile] ejs.db.sqlite.mod
-	..\..\build\$(CONFIG)\bin\ejsc --out ..\..\build\$(CONFIG)\bin\ejs.db.sqlite.mod  --optimize 9 Sqlite.es
-	..\..\build\$(CONFIG)\bin\ejsmod --cslots --dir ..\..\build\$(CONFIG)\bin ..\..\build\$(CONFIG)\bin\ejs.db.sqlite.mod
+	..\..\build\$(CONFIG)\bin\ejsc --out ../../build/$(CONFIG)/bin/ejs.db.sqlite.mod  --optimize 9 Sqlite.es
+	..\..\build\$(CONFIG)\bin\ejsmod --cslots --dir ../../build/$(CONFIG)/bin ../../build/$(CONFIG)/bin/ejs.db.sqlite.mod
 	cd ..\..
 
 #
@@ -2631,7 +2633,7 @@ DEPS_98 = $(DEPS_98) build\$(CONFIG)\bin\ejs.mod
 
 build\$(CONFIG)\bin\ejs.mail.mod: $(DEPS_98)
 	cd src\ejs.mail
-	..\..\build\$(CONFIG)\bin\ejsc --out ..\..\build\$(CONFIG)\bin\ejs.mail.mod  --optimize 9 Mail.es
+	..\..\build\$(CONFIG)\bin\ejsc --out ../../build/$(CONFIG)/bin/ejs.mail.mod  --optimize 9 Mail.es
 	cd ..\..
 
 #
@@ -2759,8 +2761,9 @@ DEPS_99 = $(DEPS_99) build\$(CONFIG)\bin\ejs.mod
 
 build\$(CONFIG)\bin\ejs.web.mod: $(DEPS_99)
 	cd src\ejs.web
-	..\..\build\$(CONFIG)\bin\ejsc --out ..\..\build\$(CONFIG)\bin\ejs.web.mod  --optimize 9 Cascade.es CommonLog.es ContentType.es Controller.es Dir.es Google.es Head.es Html.es HttpServer.es MethodOverride.es Middleware.es Mvc.es Request.es Router.es Script.es Session.es ShowExceptions.es Static.es Template.es UploadFile.es UrlMap.es Utils.es View.es
-	..\..\build\$(CONFIG)\bin\ejsmod --cslots --dir ..\..\build\$(CONFIG)\bin ..\..\build\$(CONFIG)\bin\ejs.web.mod
+	@echo .. [Compile] ejs.web.mod
+	..\..\build\$(CONFIG)\bin\ejsc --out ../../build/$(CONFIG)/bin/ejs.web.mod  --optimize 9 Cascade.es CommonLog.es ContentType.es Controller.es Dir.es Google.es Head.es Html.es HttpServer.es MethodOverride.es Middleware.es Mvc.es Request.es Router.es Script.es Session.es ShowExceptions.es Static.es Template.es UploadFile.es UrlMap.es Utils.es View.es
+	..\..\build\$(CONFIG)\bin\ejsmod --cslots --dir ../../build/$(CONFIG)/bin ../../build/$(CONFIG)/bin/ejs.web.mod
 	cd ..\..
 
 #
@@ -2867,7 +2870,7 @@ DEPS_100 = $(DEPS_100) build\$(CONFIG)\bin\ejs.mod
 build\$(CONFIG)\bin\ejs.template.mod: $(DEPS_100)
 	cd src\ejs.template
 	@echo .. [Compile] ejs.template.mod
-	..\..\build\$(CONFIG)\bin\ejsc --out ..\..\build\$(CONFIG)\bin\ejs.template.mod  --optimize 9 TemplateParser.es
+	..\..\build\$(CONFIG)\bin\ejsc --out ../../build/$(CONFIG)/bin/ejs.template.mod  --optimize 9 TemplateParser.es
 	cd ..\..
 
 #
@@ -2974,7 +2977,7 @@ DEPS_101 = $(DEPS_101) build\$(CONFIG)\bin\ejs.mod
 build\$(CONFIG)\bin\ejs.unix.mod: $(DEPS_101)
 	cd src\ejs.unix
 	@echo .. [Compile] ejs.unix.mod
-	..\..\build\$(CONFIG)\bin\ejsc --out ..\..\build\$(CONFIG)\bin\ejs.unix.mod  --optimize 9 Unix.es
+	..\..\build\$(CONFIG)\bin\ejsc --out ../../build/$(CONFIG)/bin/ejs.unix.mod  --optimize 9 Unix.es
 	cd ..\..
 
 #
@@ -3084,7 +3087,7 @@ DEPS_102 = $(DEPS_102) build\$(CONFIG)\bin\ejs.unix.mod
 build\$(CONFIG)\bin\ejs.mvc.mod: $(DEPS_102)
 	cd src\ejs.mvc
 	@echo .. [Compile] ejs.mvc.mod
-	..\..\build\$(CONFIG)\bin\ejsc --out ..\..\build\$(CONFIG)\bin\ejs.mvc.mod  --optimize 9 mvc.es
+	..\..\build\$(CONFIG)\bin\ejsc --out ../../build/$(CONFIG)/bin/ejs.mvc.mod  --optimize 9 mvc.es
 	cd ..\..
 
 #
@@ -3191,7 +3194,7 @@ DEPS_103 = $(DEPS_103) build\$(CONFIG)\bin\ejs.mod
 build\$(CONFIG)\bin\ejs.tar.mod: $(DEPS_103)
 	cd src\ejs.tar
 	@echo .. [Compile] ejs.tar.mod
-	..\..\build\$(CONFIG)\bin\ejsc --out ..\..\build\$(CONFIG)\bin\ejs.tar.mod  --optimize 9 Tar.es
+	..\..\build\$(CONFIG)\bin\ejsc --out ../../build/$(CONFIG)/bin/ejs.tar.mod  --optimize 9 Tar.es
 	cd ..\..
 
 #
@@ -3298,7 +3301,7 @@ DEPS_104 = $(DEPS_104) build\$(CONFIG)\bin\ejs.mod
 build\$(CONFIG)\bin\ejs.zlib.mod: $(DEPS_104)
 	cd src\ejs.zlib
 	@echo .. [Compile] ejs.zlib.mod
-	..\..\build\$(CONFIG)\bin\ejsc --out ..\..\build\$(CONFIG)\bin\ejs.zlib.mod  --optimize 9 Zlib.es
+	..\..\build\$(CONFIG)\bin\ejsc --out ../../build/$(CONFIG)/bin/ejs.zlib.mod  --optimize 9 Zlib.es
 	cd ..\..
 
 #

@@ -209,16 +209,16 @@
 
   <CustomBuildStep>
     <Command>cd ..\..\src
-copy /Y ejs.h $(IncDir)
-copy /Y ejsByteCode.h $(IncDir)
-copy /Y ejsByteCodeTable.h $(IncDir)
-copy /Y ejsCompiler.h $(IncDir)
-copy /Y ejsCustomize.h $(IncDir)
-copy /Y slots\ejs.cache.local.slots.h $(IncDir)
-copy /Y slots\ejs.db.sqlite.slots.h $(IncDir)
-copy /Y slots\ejs.slots.h $(IncDir)
-copy /Y slots\ejs.web.slots.h $(IncDir)
-copy /Y slots\ejs.zlib.slots.h $(IncDir)
+copy /Y /B ejs.h $(IncDir)
+copy /Y /B ejsByteCode.h $(IncDir)
+copy /Y /B ejsByteCodeTable.h $(IncDir)
+copy /Y /B ejsCompiler.h $(IncDir)
+copy /Y /B ejsCustomize.h $(IncDir)
+copy /Y /B slots\ejs.cache.local.slots.h $(IncDir)
+copy /Y /B slots\ejs.db.sqlite.slots.h $(IncDir)
+copy /Y /B slots\ejs.slots.h $(IncDir)
+copy /Y /B slots\ejs.web.slots.h $(IncDir)
+copy /Y /B slots\ejs.zlib.slots.h $(IncDir)
 cd ..\projects\ejs-windows-static</Command>
     <Outputs>$(BinDir)\libejs.lib</Outputs>
   </CustomBuildStep>

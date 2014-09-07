@@ -3205,7 +3205,7 @@
 			files = (
 			);
 			inputPaths = (
-/Users/mob/git/ejs/src/ejs.db.mapper/Record.es
+../src/ejs.db.mapper/Record.es
 			);
 			outputPaths = (
 ../build/macosx-x64-static/bin/ejs.db.mapper.mod
@@ -3214,7 +3214,7 @@
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.db.mapper
-	../${OUT_DIR}/bin/ejsc --out   --optimize 9 
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.db.mapper.mod  --optimize 9 Record.es
 ";
 		};
 		900D453C900D53D60000000E /* ShellScript for ejs.db.mod */ = {
@@ -3223,8 +3223,8 @@ cd ../src/ejs.db.mapper
 			files = (
 			);
 			inputPaths = (
-/Users/mob/git/ejs/src/ejs.db/Database.es,
-/Users/mob/git/ejs/src/ejs.db/DatabaseConnector.es
+../src/ejs.db/Database.es,
+../src/ejs.db/DatabaseConnector.es
 			);
 			outputPaths = (
 ../build/macosx-x64-static/bin/ejs.db.mod
@@ -3233,7 +3233,7 @@ cd ../src/ejs.db.mapper
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.db
-	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.db.mod  --optimize 9 
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.db.mod  --optimize 9 Database.es DatabaseConnector.es
 ";
 		};
 		900D453C900D53D600000014 /* ShellScript for ejs.db.sqlite.mod */ = {
@@ -3242,7 +3242,7 @@ cd ../src/ejs.db
 			files = (
 			);
 			inputPaths = (
-/Users/mob/git/ejs/src/ejs.db.sqlite/Sqlite.es
+../src/ejs.db.sqlite/Sqlite.es
 			);
 			outputPaths = (
 ../build/macosx-x64-static/bin/ejs.db.sqlite.mod
@@ -3251,7 +3251,7 @@ cd ../src/ejs.db
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.db.sqlite
-	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.db.sqlite.mod  --optimize 9 
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.db.sqlite.mod  --optimize 9 Sqlite.es
 	../${OUT_DIR}/bin/ejsmod --cslots --dir ../${OUT_DIR}/bin ../${OUT_DIR}/bin/ejs.db.sqlite.mod
 ";
 		};
@@ -3261,7 +3261,7 @@ cd ../src/ejs.db.sqlite
 			files = (
 			);
 			inputPaths = (
-/Users/mob/git/ejs/src/ejs.mail/Mail.es
+../src/ejs.mail/Mail.es
 			);
 			outputPaths = (
 ../build/macosx-x64-static/bin/ejs.mail.mod
@@ -3270,7 +3270,7 @@ cd ../src/ejs.db.sqlite
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.mail
-	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.mail.mod  --optimize 9 
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.mail.mod  --optimize 9 Mail.es
 ";
 		};
 		900D453C900D53D600000021 /* ShellScript for ejs.mod */ = {
@@ -3279,60 +3279,60 @@ cd ../src/ejs.mail
 			files = (
 			);
 			inputPaths = (
-/Users/mob/git/ejs/src/core/App.es,
-/Users/mob/git/ejs/src/core/Args.es,
-/Users/mob/git/ejs/src/core/Array.es,
-/Users/mob/git/ejs/src/core/BinaryStream.es,
-/Users/mob/git/ejs/src/core/Block.es,
-/Users/mob/git/ejs/src/core/Boolean.es,
-/Users/mob/git/ejs/src/core/ByteArray.es,
-/Users/mob/git/ejs/src/core/Cache.es,
-/Users/mob/git/ejs/src/core/Cmd.es,
-/Users/mob/git/ejs/src/core/Compat.es,
-/Users/mob/git/ejs/src/core/Config.es,
-/Users/mob/git/ejs/src/core/Date.es,
-/Users/mob/git/ejs/src/core/Debug.es,
-/Users/mob/git/ejs/src/core/Emitter.es,
-/Users/mob/git/ejs/src/core/Error.es,
-/Users/mob/git/ejs/src/core/File.es,
-/Users/mob/git/ejs/src/core/FileSystem.es,
-/Users/mob/git/ejs/src/core/Frame.es,
-/Users/mob/git/ejs/src/core/Function.es,
-/Users/mob/git/ejs/src/core/GC.es,
-/Users/mob/git/ejs/src/core/Global.es,
-/Users/mob/git/ejs/src/core/Http.es,
-/Users/mob/git/ejs/src/core/Inflector.es,
-/Users/mob/git/ejs/src/core/Iterator.es,
-/Users/mob/git/ejs/src/core/JSON.es,
-/Users/mob/git/ejs/src/core/Loader.es,
-/Users/mob/git/ejs/src/core/LocalCache.es,
-/Users/mob/git/ejs/src/core/Locale.es,
-/Users/mob/git/ejs/src/core/Logger.es,
-/Users/mob/git/ejs/src/core/Math.es,
-/Users/mob/git/ejs/src/core/Memory.es,
-/Users/mob/git/ejs/src/core/MprLog.es,
-/Users/mob/git/ejs/src/core/Name.es,
-/Users/mob/git/ejs/src/core/Namespace.es,
-/Users/mob/git/ejs/src/core/Null.es,
-/Users/mob/git/ejs/src/core/Number.es,
-/Users/mob/git/ejs/src/core/Object.es,
-/Users/mob/git/ejs/src/core/Path.es,
-/Users/mob/git/ejs/src/core/Promise.es,
-/Users/mob/git/ejs/src/core/RegExp.es,
-/Users/mob/git/ejs/src/core/Socket.es,
-/Users/mob/git/ejs/src/core/Stream.es,
-/Users/mob/git/ejs/src/core/String.es,
-/Users/mob/git/ejs/src/core/System.es,
-/Users/mob/git/ejs/src/core/TextStream.es,
-/Users/mob/git/ejs/src/core/Timer.es,
-/Users/mob/git/ejs/src/core/Type.es,
-/Users/mob/git/ejs/src/core/Uri.es,
-/Users/mob/git/ejs/src/core/Void.es,
-/Users/mob/git/ejs/src/core/WebSocket.es,
-/Users/mob/git/ejs/src/core/Worker.es,
-/Users/mob/git/ejs/src/core/XML.es,
-/Users/mob/git/ejs/src/core/XMLHttp.es,
-/Users/mob/git/ejs/src/core/XMLList.es
+../src/core/App.es,
+../src/core/Args.es,
+../src/core/Array.es,
+../src/core/BinaryStream.es,
+../src/core/Block.es,
+../src/core/Boolean.es,
+../src/core/ByteArray.es,
+../src/core/Cache.es,
+../src/core/Cmd.es,
+../src/core/Compat.es,
+../src/core/Config.es,
+../src/core/Date.es,
+../src/core/Debug.es,
+../src/core/Emitter.es,
+../src/core/Error.es,
+../src/core/File.es,
+../src/core/FileSystem.es,
+../src/core/Frame.es,
+../src/core/Function.es,
+../src/core/GC.es,
+../src/core/Global.es,
+../src/core/Http.es,
+../src/core/Inflector.es,
+../src/core/Iterator.es,
+../src/core/JSON.es,
+../src/core/Loader.es,
+../src/core/LocalCache.es,
+../src/core/Locale.es,
+../src/core/Logger.es,
+../src/core/Math.es,
+../src/core/Memory.es,
+../src/core/MprLog.es,
+../src/core/Name.es,
+../src/core/Namespace.es,
+../src/core/Null.es,
+../src/core/Number.es,
+../src/core/Object.es,
+../src/core/Path.es,
+../src/core/Promise.es,
+../src/core/RegExp.es,
+../src/core/Socket.es,
+../src/core/Stream.es,
+../src/core/String.es,
+../src/core/System.es,
+../src/core/TextStream.es,
+../src/core/Timer.es,
+../src/core/Type.es,
+../src/core/Uri.es,
+../src/core/Void.es,
+../src/core/WebSocket.es,
+../src/core/Worker.es,
+../src/core/XML.es,
+../src/core/XMLHttp.es,
+../src/core/XMLList.es
 			);
 			outputPaths = (
 ../build/macosx-x64-static/bin/ejs.mod
@@ -3341,7 +3341,7 @@ cd ../src/ejs.mail
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/core
-	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.mod  --optimize 9 --bind --require null 
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.mod  --optimize 9 --bind --require null App.es Args.es Array.es BinaryStream.es Block.es Boolean.es ByteArray.es Cache.es Cmd.es Compat.es Config.es Date.es Debug.es Emitter.es Error.es File.es FileSystem.es Frame.es Function.es GC.es Global.es Http.es Inflector.es Iterator.es JSON.es Loader.es LocalCache.es Locale.es Logger.es Math.es Memory.es MprLog.es Name.es Namespace.es Null.es Number.es Object.es Path.es Promise.es RegExp.es Socket.es Stream.es String.es System.es TextStream.es Timer.es Type.es Uri.es Void.es WebSocket.es Worker.es XML.es XMLHttp.es XMLList.es
 	../${OUT_DIR}/bin/ejsmod --cslots --dir ../${OUT_DIR}/bin --require null ../${OUT_DIR}/bin/ejs.mod
 ";
 		};
@@ -3351,7 +3351,7 @@ cd ../src/core
 			files = (
 			);
 			inputPaths = (
-/Users/mob/git/ejs/src/ejs.mvc/mvc.es
+../src/ejs.mvc/mvc.es
 			);
 			outputPaths = (
 ../build/macosx-x64-static/bin/ejs.mvc.mod
@@ -3360,7 +3360,7 @@ cd ../src/core
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.mvc
-	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.mvc.mod  --optimize 9 
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.mvc.mod  --optimize 9 mvc.es
 ";
 		};
 		900D453C900D53D600000030 /* ShellScript for ejs.tar.mod */ = {
@@ -3369,7 +3369,7 @@ cd ../src/ejs.mvc
 			files = (
 			);
 			inputPaths = (
-/Users/mob/git/ejs/src/ejs.tar/Tar.es
+../src/ejs.tar/Tar.es
 			);
 			outputPaths = (
 ../build/macosx-x64-static/bin/ejs.tar.mod
@@ -3378,7 +3378,7 @@ cd ../src/ejs.mvc
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.tar
-	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.tar.mod  --optimize 9 
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.tar.mod  --optimize 9 Tar.es
 ";
 		};
 		900D453C900D53D600000036 /* ShellScript for ejs.template.mod */ = {
@@ -3387,7 +3387,7 @@ cd ../src/ejs.tar
 			files = (
 			);
 			inputPaths = (
-/Users/mob/git/ejs/src/ejs.template/TemplateParser.es
+../src/ejs.template/TemplateParser.es
 			);
 			outputPaths = (
 ../build/macosx-x64-static/bin/ejs.template.mod
@@ -3396,7 +3396,7 @@ cd ../src/ejs.tar
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.template
-	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.template.mod  --optimize 9 
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.template.mod  --optimize 9 TemplateParser.es
 ";
 		};
 		900D453C900D53D60000003C /* ShellScript for ejs.unix.mod */ = {
@@ -3405,7 +3405,7 @@ cd ../src/ejs.template
 			files = (
 			);
 			inputPaths = (
-/Users/mob/git/ejs/src/ejs.unix/Unix.es
+../src/ejs.unix/Unix.es
 			);
 			outputPaths = (
 ../build/macosx-x64-static/bin/ejs.unix.mod
@@ -3414,7 +3414,7 @@ cd ../src/ejs.template
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.unix
-	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.unix.mod  --optimize 9 
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.unix.mod  --optimize 9 Unix.es
 ";
 		};
 		900D453C900D53D600000042 /* ShellScript for ejs.web.mod */ = {
@@ -3423,29 +3423,29 @@ cd ../src/ejs.unix
 			files = (
 			);
 			inputPaths = (
-/Users/mob/git/ejs/src/ejs.web/Cascade.es,
-/Users/mob/git/ejs/src/ejs.web/CommonLog.es,
-/Users/mob/git/ejs/src/ejs.web/ContentType.es,
-/Users/mob/git/ejs/src/ejs.web/Controller.es,
-/Users/mob/git/ejs/src/ejs.web/Dir.es,
-/Users/mob/git/ejs/src/ejs.web/Google.es,
-/Users/mob/git/ejs/src/ejs.web/Head.es,
-/Users/mob/git/ejs/src/ejs.web/Html.es,
-/Users/mob/git/ejs/src/ejs.web/HttpServer.es,
-/Users/mob/git/ejs/src/ejs.web/MethodOverride.es,
-/Users/mob/git/ejs/src/ejs.web/Middleware.es,
-/Users/mob/git/ejs/src/ejs.web/Mvc.es,
-/Users/mob/git/ejs/src/ejs.web/Request.es,
-/Users/mob/git/ejs/src/ejs.web/Router.es,
-/Users/mob/git/ejs/src/ejs.web/Script.es,
-/Users/mob/git/ejs/src/ejs.web/Session.es,
-/Users/mob/git/ejs/src/ejs.web/ShowExceptions.es,
-/Users/mob/git/ejs/src/ejs.web/Static.es,
-/Users/mob/git/ejs/src/ejs.web/Template.es,
-/Users/mob/git/ejs/src/ejs.web/UploadFile.es,
-/Users/mob/git/ejs/src/ejs.web/UrlMap.es,
-/Users/mob/git/ejs/src/ejs.web/Utils.es,
-/Users/mob/git/ejs/src/ejs.web/View.es
+../src/ejs.web/Cascade.es,
+../src/ejs.web/CommonLog.es,
+../src/ejs.web/ContentType.es,
+../src/ejs.web/Controller.es,
+../src/ejs.web/Dir.es,
+../src/ejs.web/Google.es,
+../src/ejs.web/Head.es,
+../src/ejs.web/Html.es,
+../src/ejs.web/HttpServer.es,
+../src/ejs.web/MethodOverride.es,
+../src/ejs.web/Middleware.es,
+../src/ejs.web/Mvc.es,
+../src/ejs.web/Request.es,
+../src/ejs.web/Router.es,
+../src/ejs.web/Script.es,
+../src/ejs.web/Session.es,
+../src/ejs.web/ShowExceptions.es,
+../src/ejs.web/Static.es,
+../src/ejs.web/Template.es,
+../src/ejs.web/UploadFile.es,
+../src/ejs.web/UrlMap.es,
+../src/ejs.web/Utils.es,
+../src/ejs.web/View.es
 			);
 			outputPaths = (
 ../build/macosx-x64-static/bin/ejs.web.mod
@@ -3454,7 +3454,7 @@ cd ../src/ejs.unix
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.web
-	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.web.mod  --optimize 9 
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.web.mod  --optimize 9 Cascade.es CommonLog.es ContentType.es Controller.es Dir.es Google.es Head.es Html.es HttpServer.es MethodOverride.es Middleware.es Mvc.es Request.es Router.es Script.es Session.es ShowExceptions.es Static.es Template.es UploadFile.es UrlMap.es Utils.es View.es
 	../${OUT_DIR}/bin/ejsmod --cslots --dir ../${OUT_DIR}/bin ../${OUT_DIR}/bin/ejs.web.mod
 ";
 		};
@@ -3464,7 +3464,7 @@ cd ../src/ejs.web
 			files = (
 			);
 			inputPaths = (
-/Users/mob/git/ejs/src/ejs.zlib/Zlib.es
+../src/ejs.zlib/Zlib.es
 			);
 			outputPaths = (
 ../build/macosx-x64-static/bin/ejs.zlib.mod
@@ -3473,7 +3473,7 @@ cd ../src/ejs.web
 			shellPath = /bin/bash;
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.zlib
-	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.zlib.mod  --optimize 9 
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.zlib.mod  --optimize 9 Zlib.es
 ";
 		};
 		900D453C900D53D60000004F /* ShellScript for http-ca-crt */ = {
@@ -3482,7 +3482,7 @@ cd ../src/ejs.zlib
 			files = (
 			);
 			inputPaths = (
-/Users/mob/git/ejs/src/paks/http/ca.crt
+../src/paks/http/ca.crt
 			);
 			outputPaths = (
 ../build/macosx-x64-static/bin/ca.crt
@@ -3501,7 +3501,7 @@ cp -r ca.crt ../../${OUT_DIR}/bin/ca.crt
 			files = (
 			);
 			inputPaths = (
-/Users/mob/git/ejs/src/ejs.mvc/mvc.es
+../src/ejs.mvc/mvc.es
 			);
 			outputPaths = (
 ../build/macosx-x64-static/bin/mvc.es
@@ -3537,7 +3537,7 @@ cd ../src
 			files = (
 			);
 			inputPaths = (
-/Users/mob/git/ejs/src/ejs.utest/utest.es
+../src/ejs.utest/utest.es
 			);
 			outputPaths = (
 ../build/macosx-x64-static/bin/utest.es
@@ -3556,7 +3556,7 @@ cp -r utest.es ../${OUT_DIR}/bin/utest.es
 			files = (
 			);
 			inputPaths = (
-/Users/mob/git/ejs/src/ejs.utest/utest.worker
+../src/ejs.utest/utest.worker
 			);
 			outputPaths = (
 ../build/macosx-x64-static/bin/utest.worker
@@ -3575,7 +3575,7 @@ cp -r utest.worker ../${OUT_DIR}/bin/utest.worker
 			files = (
 			);
 			inputPaths = (
-/Users/mob/git/ejs/src/ejs.web/www/
+../src/ejs.web/www
 			);
 			outputPaths = (
 ../build/macosx-x64-static/bin/www
@@ -5253,7 +5253,7 @@ fi";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/build/macosx-x64-static/inc",
+					"../build/macosx-x64-static/inc",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5261,7 +5261,7 @@ fi";
 					"$(inherited)"
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/build/macosx-x64-static/bin",
+					"../build/macosx-x64-static/bin",
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
@@ -5323,12 +5323,12 @@ fi";
 				GCC_OPTIMIZATION_LEVEL = s;
                 GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/build/macosx-x64-static/inc",
+					"../build/macosx-x64-static/inc",
 					"$(inherited)"
 				);
 
 				LIBRARY_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/build/macosx-x64-static/bin",
+					"../build/macosx-x64-static/bin",
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
@@ -5383,7 +5383,7 @@ fi";
 				PRODUCT_NAME = ejs.db.mapper.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5405,7 +5405,7 @@ fi";
 				PRODUCT_NAME = ejs.db.mapper.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 
@@ -5424,7 +5424,7 @@ fi";
 				PRODUCT_NAME = ejs.db.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5446,7 +5446,7 @@ fi";
 				PRODUCT_NAME = ejs.db.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 
@@ -5465,7 +5465,7 @@ fi";
 				PRODUCT_NAME = ejs.db.sqlite.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5487,7 +5487,7 @@ fi";
 				PRODUCT_NAME = ejs.db.sqlite.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 
@@ -5506,7 +5506,7 @@ fi";
 				PRODUCT_NAME = ejs.mail.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5528,7 +5528,7 @@ fi";
 				PRODUCT_NAME = ejs.mail.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 
@@ -5547,7 +5547,7 @@ fi";
 				PRODUCT_NAME = ejs.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5569,7 +5569,7 @@ fi";
 				PRODUCT_NAME = ejs.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 
@@ -5588,7 +5588,7 @@ fi";
 				PRODUCT_NAME = ejs.mvc.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5610,7 +5610,7 @@ fi";
 				PRODUCT_NAME = ejs.mvc.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 
@@ -5629,7 +5629,7 @@ fi";
 				PRODUCT_NAME = ejs.tar.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5651,7 +5651,7 @@ fi";
 				PRODUCT_NAME = ejs.tar.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 
@@ -5670,7 +5670,7 @@ fi";
 				PRODUCT_NAME = ejs.template.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5692,7 +5692,7 @@ fi";
 				PRODUCT_NAME = ejs.template.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 
@@ -5711,7 +5711,7 @@ fi";
 				PRODUCT_NAME = ejs.unix.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5733,7 +5733,7 @@ fi";
 				PRODUCT_NAME = ejs.unix.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 
@@ -5752,7 +5752,7 @@ fi";
 				PRODUCT_NAME = ejs.web.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5774,7 +5774,7 @@ fi";
 				PRODUCT_NAME = ejs.web.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 
@@ -5793,7 +5793,7 @@ fi";
 				PRODUCT_NAME = ejs.zlib.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5815,7 +5815,7 @@ fi";
 				PRODUCT_NAME = ejs.zlib.mod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 
@@ -5866,7 +5866,7 @@ fi";
 				PRODUCT_NAME = ejsmod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5888,7 +5888,7 @@ fi";
 				PRODUCT_NAME = ejsmod;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 
@@ -6002,7 +6002,7 @@ fi";
 				EXECUTABLE_EXTENSION = a;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -6025,7 +6025,7 @@ fi";
 				EXECUTABLE_EXTENSION = a;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 
@@ -6045,7 +6045,7 @@ fi";
 				EXECUTABLE_EXTENSION = a;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -6068,7 +6068,7 @@ fi";
 				EXECUTABLE_EXTENSION = a;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 
@@ -6088,7 +6088,7 @@ fi";
 				EXECUTABLE_EXTENSION = a;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -6111,7 +6111,7 @@ fi";
 				EXECUTABLE_EXTENSION = a;
 
 				HEADER_SEARCH_PATHS = (
-					"/Users/mob/git/ejs/src/cmd",
+					"../src/cmd",
 					"$(inherited)"
 				);
 
