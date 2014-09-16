@@ -2892,6 +2892,14 @@ PUBLIC bool mprCancelShutdown()
     return 0;
 }
 
+static void check() {
+    char *p = 0;
+    if (MPR->eventing) {
+        print("STILL EVENTING\n");
+        print("INDUCED CORE DUMP\n");
+        *p = 77;
+    }
+}
 
 /*
     Destroy the Mpr and all services
@@ -2934,7 +2942,9 @@ PUBLIC bool mprDestroy()
         }
         return 0;
     }
+check();
     mprGlobalLock();
+check();
     if (mprState == MPR_STARTED) {
         mprGlobalUnlock();
         /* User cancelled shutdown */
@@ -2944,27 +2954,34 @@ PUBLIC bool mprDestroy()
         Point of no return 
      */
     mprState = MPR_DESTROYING;
+check();
     mprGlobalUnlock();
+check();
 
     for (ITERATE_ITEMS(MPR->terminators, terminator, next)) {
         (terminator)(mprState, MPR->exitStrategy, mprExitStatus & ~NO_STATUS);
     }
+check();
     mprStopWorkers();
     mprStopCmdService();
     mprStopModuleService();
     mprStopEventService();
     mprStopThreadService();
+check();
+
     mprStopWaitService();
 
     /*
         Run GC to finalize all memory until we are not freeing any memory. This IS deterministic.
      */
     for (i = 0; i < 25; i++) {
+check();
         if (mprGC(MPR_GC_FORCE | MPR_GC_COMPLETE) == 0) {
             break;
         }
     }
     mprState = MPR_DESTROYED;
+check();
 
     mprLog("info mpr", 2, (MPR->exitStrategy & MPR_EXIT_RESTART) ? "Restarting" : "Exiting");
     mprStopModuleService();
@@ -18506,7 +18523,7 @@ PUBLIC char *mprGetTempPath(cchar *tempDir)
     file = 0;
     path = 0;
     for (i = 0; i < 128; i++) {
-        path = sfmt("%s/MPR_%d_%d_%d.tmp", dir, getpid(), now, ++tempSeed);
+        path = sfmt("%s/MPR-%s-_%d_%d_%d.tmp", dir, mprGetPathBase(MPR->name), getpid(), now, ++tempSeed);
         file = mprOpenFile(path, O_CREAT | O_EXCL | O_BINARY, 0664);
         if (file) {
             mprCloseFile(file);
