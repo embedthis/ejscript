@@ -9,7 +9,6 @@
 
 #include "mpr.h"
 
-static int mprState;
 /************************************************************************/
 /*
     Start of file "src/mem.c"
@@ -2655,6 +2654,7 @@ static void monitorStack()
 #define NO_STATUS   0x100000
 
 static int mprExitStatus;
+static int mprState;
 
 /**************************** Forward Declarations ****************************/
 
@@ -2892,14 +2892,6 @@ PUBLIC bool mprCancelShutdown()
     return 0;
 }
 
-static void check() {
-    char *p = 0;
-    if (MPR->eventing) {
-        print("STILL EVENTING\n");
-        print("INDUCED CORE DUMP\n");
-        *p = 77;
-    }
-}
 
 /*
     Destroy the Mpr and all services
@@ -2942,9 +2934,7 @@ PUBLIC bool mprDestroy()
         }
         return 0;
     }
-check();
     mprGlobalLock();
-check();
     if (mprState == MPR_STARTED) {
         mprGlobalUnlock();
         /* User cancelled shutdown */
@@ -2954,34 +2944,27 @@ check();
         Point of no return 
      */
     mprState = MPR_DESTROYING;
-check();
     mprGlobalUnlock();
-check();
 
     for (ITERATE_ITEMS(MPR->terminators, terminator, next)) {
         (terminator)(mprState, MPR->exitStrategy, mprExitStatus & ~NO_STATUS);
     }
-check();
     mprStopWorkers();
     mprStopCmdService();
     mprStopModuleService();
     mprStopEventService();
     mprStopThreadService();
-check();
-
     mprStopWaitService();
 
     /*
         Run GC to finalize all memory until we are not freeing any memory. This IS deterministic.
      */
     for (i = 0; i < 25; i++) {
-check();
         if (mprGC(MPR_GC_FORCE | MPR_GC_COMPLETE) == 0) {
             break;
         }
     }
     mprState = MPR_DESTROYED;
-check();
 
     mprLog("info mpr", 2, (MPR->exitStrategy & MPR_EXIT_RESTART) ? "Restarting" : "Exiting");
     mprStopModuleService();
@@ -9635,12 +9618,11 @@ PUBLIC int mprServiceEvents(MprTicks timeout, int flags)
         mprLog("warn mpr event", 0, "mprServiceEvents called reentrantly");
         return 0;
     }
-if (mprIsDestroying()) {
-printf("SERVICES EVENTS BUT DESTROYING\n");
-    char *p = 0;
-    *p = 77;
-}
     MPR->eventing = 1;
+    mprAtomicBarrier();
+    if (mprIsDestroying()) {
+        return 0;
+    }
     es = MPR->eventService;
     beginEventCount = eventCount = es->eventCount;
     es->now = mprGetTicks();
