@@ -9,6 +9,7 @@
 
 #include "mpr.h"
 
+static int mprState;
 /************************************************************************/
 /*
     Start of file "src/mem.c"
@@ -2654,7 +2655,6 @@ static void monitorStack()
 #define NO_STATUS   0x100000
 
 static int mprExitStatus;
-static int mprState;
 
 /**************************** Forward Declarations ****************************/
 
@@ -9635,6 +9635,11 @@ PUBLIC int mprServiceEvents(MprTicks timeout, int flags)
         mprLog("warn mpr event", 0, "mprServiceEvents called reentrantly");
         return 0;
     }
+if (mprIsDestroying()) {
+printf("SERVICES EVENTS BUT DESTROYING\n");
+    char *p = 0;
+    *p = 77;
+}
     MPR->eventing = 1;
     es = MPR->eventService;
     beginEventCount = eventCount = es->eventCount;
