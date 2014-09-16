@@ -31,7 +31,7 @@ module ejs {
             @options detach Boolean If true, run the command and return immediately. If detached, finalize() must be
                 called to signify the end of data being written to the command's stdin.
             @options dir Path or String. Directory to set as the current working directory for the command.
-            @options exception Boolean If true, throw exceptions if the command returns a non-zero status code. 
+            @options exceptions Boolean If true, throw exceptions if the command returns a non-zero status code. 
                 Defaults to false.
             @options timeout Number This is the default number of milliseconds for the command to complete.
          */
@@ -355,7 +355,7 @@ module ejs {
             @param command Command or program to execute
             @param options Command options hash. Supported options are:
             @options detach Boolean If true, run the command and return immediately. If detached, finalize() must be
-                called to signify the end of data being written to the command's stdin.
+                called to signify the end of data being written to the command's stdin. In this case, run returns null.
             @options dir Path or String. Directory to set as the current working directory for the command.
             @options exceptions Boolean If true, throw exceptions if the command returns a non-zero status code. 
                 Defaults to true.
@@ -366,7 +366,7 @@ module ejs {
             @throws IOError if the command exits with non-zero status. The exception object will contain the command's
                 standard error output. 
          */
-        static function run(command: Object, options: Object = {}, data: Object = null): String {
+        static function run(command: Object, options: Object = {}, data: Object = null): String? {
             options ||= {}
             let cmd = new Cmd
             let results = new ByteArray
@@ -379,13 +379,16 @@ module ejs {
                 results.write(buf)
             })
             cmd.start(command, blend({detach: true}, options))
+            if (options.detach) {
+                return null
+            }
             if (data) {
                 cmd.write(data)
             }
             cmd.finalize()
             cmd.wait()
             if (cmd.status != 0 && options.exceptions !== false) {
-                throw new IOError(cmd.error)
+                throw new IOError('Command failed, status ' + cmd.status + '\n' + cmd.error)
             }
             return results.toString()
         }
@@ -397,7 +400,7 @@ module ejs {
                 an array of arguments. 
             @param options Command options hash. Supported options are:
             @options detach Boolean If true, run the command and return immediately. If detached, finalize() must be
-                called to signify the end of data being written to the command's stdin.
+                called to signify the end of data being written to the command's stdin. In this case, sh returns null.
             @options dir Path or String. Directory to set as the current working directory for the command.
             @options exceptions Boolean If true, throw exceptions if the command returns a non-zero status code. 
                 Defaults to true.

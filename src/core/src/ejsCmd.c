@@ -480,7 +480,7 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         if (cmd->throw) {
             status = mprGetCmdExitStatus(cmd->mc);
             if (status != 0) {
-                ejsThrowIOError(ejs, "Command failed status %d, %@", status, ejsToString(ejs, cmd->error));
+                ejsThrowIOError(ejs, "Command failed status %d\n%@", status, ejsToString(ejs, cmd->error));
             }
         }
     }
