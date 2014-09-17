@@ -116,11 +116,9 @@ the separators are mapped to "/". See also <a href='#natural'>natural</a> for co
 <a name='root'></a>
    <tr><td nowrap align='center'> get </td><td>root</td><td><a href='Path.html'>Path</a></td><td>That root directory component of the path. On windows, this includes the drive spec if present in the path.</td></tr>
 <a name='separator'></a>
-   <tr><td nowrap align='center'> get </td><td>separator</td><td><a href='String.html'>String</a></td><td>The path separator for this path. This will return the first valid path separator used by the path
-or the default file system path separator if the path has no separators. On Windows, a path may contain
-"/" and "\" separators.  This will be set to a string containing the first separator found in the path.
-Will typically be either "/" or "/\\" depending on the path, platform and file system.
-Use <a href='#natural'>natural</a> <a href='#portable'>portable</a> or <a href='#windows'>windows</a> to create a new path with different path separators.</td></tr>
+   <tr><td nowrap align='center'> get </td><td>separator</td><td><a href='String.html'>String</a></td><td>The path separator for this path. This will return the first path separator used by the path
+or the default file system path separator if the path has no separators. On Windows, a path may use
+"/" or "\" separators. Use <a href='#natural'>natural</a> <a href='#portable'>portable</a> or <a href='#windows'>windows</a> to create a new path with different path separators.</td></tr>
 <a name='size'></a>
    <tr><td nowrap align='center'> get </td><td>size</td><td><a href='Number.html'>Number</a></td><td>Size of the file associated with this Path object. Set to the number of bytes in the file or -1 if the
 size determination failed.</td></tr>
@@ -248,8 +246,8 @@ NOTE: this does a case-sensitive match.</td></tr>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' title='options'>
 <td class='param'>permissions</td><td>Set to a numeric Posix permissions mask. Not implemented.</td></tr>
-<td class='param'>user</td><td>String representing the file user name If both user and uid are specified, user takes precedence.</td></tr>
-<td class='param'>group</td><td>String representing the file group name If both group and gid are specified, group takes precedence.</td></tr>
+<td class='param'>user</td><td>String representing the file user name or numeric user id. If both user and uid are specified, user takes precedence.</td></tr>
+<td class='param'>group</td><td>String representing the file group name or numeric group id. If both group and gid are specified, group takes precedence.</td></tr>
 <td class='param'>uid</td><td>Number representing the file user id.</td></tr>
 <td class='param'>gid</td><td>Number representing the file group id.</td></tr>
 </table></dd>
@@ -278,15 +276,15 @@ NOTE: this does a case-sensitive match.</td></tr>
 <dl><dt>Description</dt></dd><dd>Do Posix glob style file matching. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>patterns: <a href='Object.html'>Object</a> </td><td>Pattern to match files. This can be a String, Path or array of String/Paths.  The wildcard '?' matches any single character, '*'' matches zero or more characters in a filename or  directory, '***  /' matches zero or more files or directories and matches recursively in a directory tree.  If a pattern terminates with "/" it will only match directories.  The pattern '***'' is equivalent to '***  / *'' (ignore spaces).  The Posix "[]" and "{a,b}" style expressions are not supported. [default: *]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional properties to control the matching. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>patterns: <a href='Object.html'>Object</a> </td><td>Pattern to match files. This can be a String, Path or array of String/Paths.  If the Path is a directory, then files that match the specified patterns are returned. If the Path is not a directory, then the path itself is matched against the pattern. The wildcard '?' matches any single character, '*'' matches zero or more characters in a filename or  directory, '***  /' matches zero or more files or directories and matches recursively in a directory tree.  If a pattern terminates with "/" it will only match directories.  The pattern '***'' is equivalent to '***  / *'' (ignore spaces).  The Posix "[]" and "{a,b}" style expressions are not supported. [default: *]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional properties to control the matching. [default: null]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' title='options'>
-<td class='param'>depthFirst</td><td>Do a depth first traversal. If "dirs" is specified, the directories will be shown after the files in the directory. Otherwise, directories will be listed first.</td></tr>
+<td class='param'>depthFirst</td><td>Do a depth first traversal of directories. If true, then the directories will be shown after the files in the directory. Otherwise, directories will be listed first.</td></tr>
 <td class='param'>exclude</td><td>Regular expression pattern of files to exclude from the results. Matches the entire path. Only for the purpose of this match, directories will have "/" appended. To exclude directories in the results, use {exclude: /\//}. The trailing "/" will not be returned in the results.</td></tr>
 <td class='param'>hidden</td><td>Include hidden files starting with ".".</td></tr>
 <td class='param'>include</td><td>Regular expression pattern of files to include in the results. Matches the entire returned path. Only for the purpose of this match, directories will have "/" appended. To include only directories in the results, use {include: /\/<a href='#/}'>/}</a>. </td></tr>
 <td class='param'>missing</td><td>Set to undefined to report patterns that don't resolve into any files or directories  by throwing an exception. Set to any non-null value to be used in the results when there are no matching files or directories. Set to the empty string to use the patterns in the results and set to null to do nothing.</td></tr>
-<td class='param'>relative</td><td>Return paths relative to the Path, otherwise result entries include the Path. Defaults to false.</td></tr>
+<td class='param'>relative</td><td>Return matching files relative to the Path, otherwise results include the Path. Defaults to false.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>An Array of Path objects for each file in the directory.</dd></dl>
