@@ -314,6 +314,13 @@ for each (f in p) {
 }
 assert(count > 2)
 
+//  ChildOf
+
+assert(Path('/usr/bin').childOf('/usr'))
+assert(Path('/usr/bin').childOf('/'))
+assert(!Path('/usr').childOf('/usr/bin'))
+assert(!Path('/tmp').childOf('/usr'))
+
 
 //  accessed, modified, created
 

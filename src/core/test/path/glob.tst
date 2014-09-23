@@ -12,3 +12,5 @@ assert(Path('dir/a.tst').glob('**.es') == false)
 //  Where 'app' is a directory that exists
 assert(Path('app').glob('**.tst') == false)
 
+assert(Path('dir/a.tst').glob('**') == true)
+

@@ -94,6 +94,9 @@ module ejs {
             The base of portion of the path. The base portion is the trailing portion without any directory elements.
          */
         native function get basename(): Path
+
+        function childOf(parent: Path): Boolean
+            absolute.startsWith(parent)
         
         /**
             Path components. The path is normalized and then broken into components for each directory level. 
@@ -255,9 +258,6 @@ module ejs {
             @hide
          */
         native function glob(pattern: String): Boolean
-        /* MOB
-            this.dirname.files(pattern, {relative: true}).contains(this.basename)
-            */
 
         /**
             Does the file path have a drive spec (C:) in it's name. Only relevant on Windows like systems.

@@ -144,6 +144,7 @@ size determination failed.</td></tr>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#Path'><b>Path</b></a>(path: <a href='String.html'>String</a> = .)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new Path object and set the path's location.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#append'><b>append</b></a>(data, options = atw): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Append data to a file.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#childOf'><b>childOf</b></a>(parent: <a href='Path.html'>Path</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>null</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#contains'><b>contains</b></a>(pattern: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Test if the path name contains a substring.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#copy'><b>copy</b></a>(destination: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Copy a file to the destination.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#endsWith'><b>endsWith</b></a>(suffix: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return true if the path ends with the given suffix.</td></tr>
@@ -157,8 +158,8 @@ This will remove any pre-existing target link and then create a symbolic link at
 path.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#makeDir'><b>makeDir</b></a>(options: <a href='Object.html'>Object</a> = null): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Make a new directory and all required intervening directories.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#map'><b>map</b></a>(sep: <a href='String.html'>String</a> = separator): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a path after mapping the path directory separator.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#match'><b>match</b></a>(pattern: <a href='RegExp.html'>RegExp</a>): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Match the path to a regular expression pattern.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readJSON'><b>readJSON</b></a>(): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file containing a JSON string and return a deserialized object.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#match'><b>match</b></a>(pattern: <a href='RegExp.html'>RegExp</a>): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Match the path to a regular expression pattern.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#open'><b>open</b></a>(options: <a href='Object.html'>Object</a> = null): <a href='File.html'>File</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Open a path and return a File object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#openBinaryStream'><b>openBinaryStream</b></a>(options: <a href='Object.html'>Object</a> = null): <a href='BinaryStream.html'>BinaryStream</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Open a file and return a BinaryStream object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#openTextStream'><b>openTextStream</b></a>(options: <a href='Object.html'>Object</a> = null): <a href='TextStream.html'>TextStream</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Open a file and return a TextStream object.</td></tr>
@@ -409,20 +410,6 @@ the function returns without any further action.</dd></dl>
 </div>
 </div>
 <hr />
-<a name='match'></a>
-<div class='api'>
-<div class='apiSig'>    match(pattern: <a href='RegExp.html'>RegExp</a>): <a href='Array.html'>Array</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Match the path to a regular expression pattern. </dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>pattern: <a href='RegExp.html'>RegExp</a> </td><td>The regular expression pattern to search for.</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>Returns an array of matching substrings in the path.</dd></dl>
-</div>
-</div>
-<hr />
 <a name='readJSON'></a>
 <div class='api'>
 <div class='apiSig'>    readJSON(): <a href='Object.html'>Object</a>
@@ -436,6 +423,20 @@ the function returns without any further action.</dd></dl>
 </dd>
 </dl><dl><dt>Example</dt>
 <dd><pre>data = Path('/tmp/a.json').readJSON()</pre></dd></dl>
+</div>
+</div>
+<hr />
+<a name='match'></a>
+<div class='api'>
+<div class='apiSig'>    match(pattern: <a href='RegExp.html'>RegExp</a>): <a href='Array.html'>Array</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Match the path to a regular expression pattern. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>pattern: <a href='RegExp.html'>RegExp</a> </td><td>The regular expression pattern to search for.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Returns an array of matching substrings in the path.</dd></dl>
 </div>
 </div>
 <hr />
