@@ -23,3 +23,5 @@ src/ejs.zlib/ejsZlib.miniz
 .gitattributes
 xcuserdata/
 *.xcworkspace/
+src/core/test/path/out
+src/core/test/t.es

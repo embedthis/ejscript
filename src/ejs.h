@@ -1783,6 +1783,7 @@ PUBLIC EjsString *ejsToLiteralString(Ejs *ejs, EjsObj *obj);
     Internal
  */
 PUBLIC void ejsManageString(struct EjsString *sp, int flags);
+PUBLIC EjsString *ejsExpandString(Ejs *ejs, EjsString *sp, EjsObj *tokens);
 
 /******************************************** EjsArray ********************************************/
 /** 
@@ -3278,7 +3279,7 @@ PUBLIC int ejsSetPathAttributes(Ejs *ejs, cchar *path, EjsObj *options);
     @param argv Args array. (Set to an array with a single element)
     @return Array of matching paths
   */
-PUBLIC EjsArray *ejsGetPathFiles(Ejs *ejs, EjsPath *path, int argc, EjsObj **argv);
+PUBLIC EjsArray *ejsGetPathFiles(Ejs *ejs, EjsPath *path, int argc, EjsAny **argv);
 
 /******************************************** FileSystem*******************************************/
 /** 

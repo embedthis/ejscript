@@ -38,21 +38,42 @@ module ejs.unix {
         embedded wildcards. If a src element is a directory, then it all all files and subdirectories will be copied
         preserving its directory structure under dest. 
 
+        This routine is implemented using the Path.tree method. All the options supported by Path.tree are supported.
+
         @param src Source files/directories to copy. This can be a String, Path or array of String/Paths. 
             The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches
             every directory and file. The Posix "[]" and "{a,b}" style expressions are not supported.
-            If src is an existing directory, then the pattern is converted to 'dir/ * *' (without spaces) 
-            and the tree option is enabled. This will copy the directories contents and not the directory itself.
+            If src is a directory, this routine functions recursively and copies the entire directory by converting
+            the source pattern to 'pattern / **' (without spaces) and enabling the 'tree' option.
         @param dest Destination file or directory. If multiple files are copied, dest is assumed to be a directory and 
             will be created if required.  If dest has a trailing "/", it is assumed to be a directory.
         @param options Processing and file attributes
-        @options owner String representing the file owner                                                     
-        @options group String representing the file group                                                     
-        @options exceptions Set to false to disable exceptions if cp finds no files to copy. Defaults to true.
+        @option dir Assume the destination is a directory. Create if it does not exist.
+        @option filter Function Callback function to test if a file should be processed.
+            Function(from: Path, to: Path, options: Object): Boolea
+        @option flatten Boolean Flatten the input source tree to a single level. Defaults to false.
+        @option group String representing the file group                                                     
+        @option missing String Determine what happens if source patterns do not match any files.
+            Set to undefined to report patterns that don't resolve by throwing an exception.
+            Set to any non-null value to be used in the results when there are no matching files or directories.
+                Set to the empty string to use the patterns in the results and set to null to do nothing.
+        @options user String representing the file user                                                     
         @options permissions Number File Posix permissions mask
-        @options tree Copy the src subtree and preserve the directory structure under the destination.
+        @option relative String|Path Create paths relative to this path option when constructing destination paths.
+        @option trim Number of path components to trim from the start of the source filename. Does not apply when using
+                'flatten'
         @return Number of files copied
     */
+    function cp(src, dest: Path, options = {}): Number {
+        //  DEPRECATED tree option
+        if (options.tree != undefined) {
+            options = options.clone()
+            options.flatten = !options.tree
+        }
+        return Path().tree(src, dest, options)
+    }
+
+/* UNUSED
     function cp(src, dest: Path, options = {}): Number {
         if (!(src is Array)) src = [src]
         let count = 0
@@ -97,6 +118,7 @@ module ejs.unix {
         }
         return count
     }
+*/
 
     /**
         Get the directory name portion of a file. The dirname name portion is the leading portion including all 
@@ -154,12 +176,17 @@ module ejs.unix {
             The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches
             every directory. The Posix "[]" and "{a,b}" style expressions are not supported.
         @param options If set to true, then files will include sub-directories in the returned list of files.
-        @option dirs Include directories in the file list
-        @option depthFirst Do a depth first traversal. If "dirs" is specified, the directories will be shown after
-        the files in the directory. Otherwise, directories will be listed first.
-        @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path.
+        @option depthFirst Do a depth first traversal of directories. If true, then the directories will be shown after
+            the files in the directory. Otherwise, directories will be listed first.
+        @option exclude String|Regular RegExp pattern of files to exclude from the results. Matches the entire path.
+            Only for the purpose of this match, directories will have "/" appended. May be set to the string
+            "directories" to exclude directories from the results which are by default included.
         @option hidden Show hidden files starting with "."
         @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
+        @option missing Set to undefined to report patterns that don't resolve into any files or directories 
+            by throwing an exception. Set to any non-null value to be used in the results when there are no matching
+            files or directories. Set to the empty string to use the patterns in the results and set
+            to null to do nothing.
         @return An Array of Path objects for each matching file.
      */
     function ls(patterns = "*", options: Object? = null): Array {
@@ -188,11 +215,11 @@ module ejs.unix {
             The pattern '**' is equivalent to '** / *' (ignore spaces). 
             The Posix "[]" and "{a,b}" style expressions are not supported.
         @param options Optional properties to control the matching.
-        @option depthFirst Do a depth first traversal. If "dirs" is specified, the directories will be shown after
+        @option depthFirst Do a depth first traversal of directories. If true, then the directories will be shown after
             the files in the directory. Otherwise, directories will be listed first.
-        @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path.
-            Only for the purpose of this match, directories will have "/" appended. To exclude directories in the
-            results, use {exclude: /\/$/}. The trailing "/" will not be returned in the results.
+        @option exclude String|Regular RegExp pattern of files to exclude from the results. Matches the entire path.
+            Only for the purpose of this match, directories will have "/" appended. May be set to the string
+            "directories" to exclude directories from the results which are by default included.
         @option hidden Include hidden files starting with "."
         @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
             Only for the purpose of this match, directories will have "/" appended. To include only directories in the

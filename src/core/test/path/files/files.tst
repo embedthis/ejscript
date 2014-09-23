@@ -1,82 +1,110 @@
 /*
-    Path.files
+    Path.files()
  */
 
-let d = Path('.')
+// Parameter formats
+assert(Path().files('**.dat').length > 5)
 
-//  Wild card patterns
-assert(d.files('file.dat') == 'file.dat')
-assert(d.files('*file.dat').sort() == 'file.dat,pre-file.dat')
-assert(d.files('*le.dat').sort() == 'file.dat,pre-file.dat')
-assert(d.files('*file.dat*').sort() == 'file.dat,pre-file.dat')
-assert(d.files('*file.d*').sort() == 'file.dat,pre-file.dat')
-assert(d.files('file*.dat').sort() == 'file-post.dat,file.dat')
-assert(d.files('fi*.dat').sort() == 'file-post.dat,file.dat')
-assert(d.files('file.*dat') == 'file.dat')
-assert(d.files('file.*at') == 'file.dat')
-assert(d.files('file.???').sort() == 'file.dat')
-assert(d.files('f?l?.dat') == 'file.dat')
+let numdat = Path().files('**.dat').length
+assert(Path().files('**.dat').length == numdat)
+assert(Path().files(['**.dat']).length == numdat)
 
-//  Must not match
-assert(d.files('zle.dat') == '')
-assert(d.files('file.datx') == '')
-assert(d.files('file*.t') == '')
+assert(Path().files({ files: '**.dat' }).length == numdat)
+assert(Path().files({ from: '**.dat' }).length == numdat)
+assert(Path().files([{ from: '**.dat' }]).length == numdat)
 
-//  Directory matching
-assert(d.files('*').length > 4)
-assert(d.files('*').contains(Path('mid')))
-assert(!d.files('*').contains(Path('mid/middle.dat')))
-assert(!d.files('*').contains(Path('mid/sub1')))
-assert(!d.files('*').contains(Path('mid/sub2')))
+//  Negate 
+let count = Path().files(['**', '!**.dat', '!**.dat']).length
+assert(count > 0 && count < numdat)
+let count = Path().files(['**.dat', '!**.dat', '!**.dat'], {noneg: true}).length
+assert(count == numdat)
 
-//  Directory wildcards
-assert(d.files('mid/su*/lea*').length == 4)
+//  No match returns zero
+assert(Path().files('**abc').length == 0)
 
-//  Trailing slash matches only directories
-assert(d.files('*/') == 'mid')
+//  Missing - throws exceptions if pattern does not match
+let caught 
+try {
+    Path().files('**abc', {missing: undefined})
+} catch {
+    caught = true
+}
+assert(caught)
 
-//  Double star 
-assert(d.files("**/*.dat").length == 8)
-assert(d.files("**").length > 8)
-assert(d.files("**").contains(Path('mid')))
-assert(d.files("**").contains(Path('file.dat')))
+//  Missing with replacement
+assert(Path().files('**abc', {missing: 'xxxx'}) == 'xxxx')
+assert(Path().files('**abc', {missing: null}) == '')
 
-//  Directories only
-assert(d.files("**/").length == 3)
-assert(d.files("**/").contains(Path('mid')))
-assert(!d.files("**/").contains(Path('file.dat')))
+//  Relative when path is relative
+assert(Path().files().every(function(e) !e.isAbsolute))
 
-//  Double star with suffix
-assert(d.files("**.dat").length == 8)
+//  Absolute when path is absolute
+let files = App.dir.files()
+assert(files.every(function(e) e.isAbsolute))
 
-//  Start with a base path 
+//  Must return absolute paths
+let files = Path().files(App.dir.name + '/**')
+assert(files.every(function(e) e.isAbsolute))
+
+//  Still absolute as relative means pattern relative to path. Pattern is absolute.
+let files = Path().files(App.dir.name + '/**', {relative: true})
+assert(files.every(function(e) e.isAbsolute))
+assert(Path().files('mid/*.dat', {relative: true})[0].portable == 'mid/middle.dat')
+
 assert(Path('../files').files('mid/*.dat') == '../files/mid/middle.dat')
 
-//  relative
-assert(d.files('mid/*.dat', {relative: true})[0].portable == 'mid/middle.dat')
+//  Exclude
+assert(Path().files('**.dat', {exclude: /.dat/}).length == 0)
+assert(Path().files('**.dat', {exclude: /.xx.dat/}).length == numdat)
+assert(!Path().files('*', {exclude: /\/$/}).toString().contains(',mid,'))
+assert(!Path().files('*', {exclude: /file/}).toString().contains('file'))
 
-//  exclude
-assert(!d.files('*', {exclude: /\/$/}).contains(Path('mid')))
-assert(!d.files('*', {exclude: /file/}).toString().contains("file"))
+//  Include 
+assert(Path().files('**.dat', {include: /.dat/}).length == numdat)
+assert(Path().files('**.dat', {include: /.xx.dat/}).length == 0)
+assert(Path().files('*', {include: /\/$/}).toString() == 'mid')
+assert(Path().files('*', {include: 'directories'}).toString() == 'mid')
+assert(Path().files('*', {include: /file.dat/}).sort() == 'file.dat,pre-file.dat')
+assert(Path().files('*', {include: /file/}).toString().contains('file.dat'))
 
-//  include
-assert(d.files('*', {include: /\/$/}) == 'mid')
-assert(d.files('*', {include: /file.dat/}).sort() == 'file.dat,pre-file.dat')
-assert(d.files('*', {include: /file/}).contains(Path("file.dat")))
+//  Filter in all files and count
+let count = 0
+let files = Path().files('**.dat', {
+    filter: function(file, base, options) {
+        count++
+        return true
+}})
+assert(count == numdat)
+assert(files.length == numdat)
 
-//  descend
-assert(d.files('*.tst') == 'files.tst')
-assert(d.parent.parent.files('**/*.tst').length > 200)
+//  Filter out files
+let files = Path().files('**.dat', {
+    filter: function(file, base, options) false
+})
+assert(files.length == 0)
 
-//  Depth first
-let files = d.files('**/').transform(function(p) p.portable)
-assert(files.indexOf(Path('mid')) < files.indexOf(Path('mid/sub1')))
-files = d.files('**/', {depthFirst: true})
-assert(files.indexOf(Path('mid')) > files.indexOf(Path('mid/sub1')))
+//  depthFirst: Directories before sub-directory contents
+let files = Path().files('m**')
+assert(files[0] == 'mid')
+let files = Path().files('m**', {depthFirst: false})
+assert(files[0] == 'mid')
 
-//  Full path
-assert(Path('/anything').files(d.absolute.toString() + '/*').toString().contains(/files.tst/))
+//  depthFirst: Directories last
+let files = Path().files('m**', {depthFirst: true})
+assert(files.pop() == 'mid')
 
-//  Dot dot
-assert(d.files('../files/*').toString().contains(/files.tst/))
+//  Expand
+let files = Path().files('${what}/**.dat', {
+    expand: { what: '.' }
+})
+assert(files.length == numdat)
+
+//  Hidden
+assert(Path().files('*').find(function(e) e.name == '.hidden') == null)
+assert(Path().files('*', {hidden: true}).find(function(e) e.name == '.hidden') == '.hidden')
+
+//  Special cases
+//  Trailing / on pattern
+assert(Path().files('mid/').length == 1)
+assert(Path().files('mid/', {contents: true}).length > 1)
 
