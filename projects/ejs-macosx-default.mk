@@ -232,7 +232,7 @@ clean:
 	rm -f "build/$(CONFIG)/bin/utest"
 	rm -f "build/$(CONFIG)/bin/utest.es"
 	rm -f "build/$(CONFIG)/bin/utest.worker"
-	rm -fr "build/$(CONFIG)/bin/www"
+	rm -f "build/$(CONFIG)/bin/www"
 
 clobber: clean
 	rm -fr ./$(BUILD)
@@ -2114,7 +2114,7 @@ build/$(CONFIG)/bin/ejs.mod: $(DEPS_94)
 	cd src/core; \
 	echo '   [Compile] Core EJS classes' ; \
 	../../build/$(CONFIG)/bin/ejsc --out ../../build/$(CONFIG)/bin/ejs.mod  --optimize 9 --bind --require null App.es Args.es Array.es BinaryStream.es Block.es Boolean.es ByteArray.es Cache.es Cmd.es Compat.es Config.es Date.es Debug.es Emitter.es Error.es File.es FileSystem.es Frame.es Function.es GC.es Global.es Http.es Inflector.es Iterator.es JSON.es Loader.es LocalCache.es Locale.es Logger.es Math.es Memory.es MprLog.es Name.es Namespace.es Null.es Number.es Object.es Path.es Promise.es RegExp.es Socket.es Stream.es String.es System.es TextStream.es Timer.es Type.es Uri.es Void.es WebSocket.es Worker.es XML.es XMLHttp.es XMLList.es ; \
-	../../build/$(CONFIG)/bin/ejsmod --cslots --dir ../../build/$(CONFIG)/bin --require null ../../build/$(CONFIG)/bin/ejs.mod ; \
+	../../build/$(CONFIG)/bin/ejsmod --cslots --dir ../../build/$(CONFIG)/inc --require null ../../build/$(CONFIG)/bin/ejs.mod ; \
 	)
 
 #

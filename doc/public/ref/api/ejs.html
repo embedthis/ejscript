@@ -435,7 +435,7 @@
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_obj_1ga54e1605894366dc559915afb024dc0b7" class="nameRef">ejsGetLength</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get a count of properties in a variable.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny*</a></td><td><a href="#group___ejs_array_1ga3a823345abdbbe6043de660356d163cc" class="nameRef">ejsGetNextItem</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_array" class="ref">EjsArray</a> *ap, int *next)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get the next item from an array.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#ejs_8h_1ad74c0abcb5f095bdae78bedeb710071f" class="ref">MprNumber</a></td><td><a href="#group___ejs_number_1ga45311f2f0ea79363270b212e9690546f" class="nameRef">ejsGetNumber</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get the numeric value stored in a EjsNumber object.</td></tr>
-<tr class="apiDef"><td class="apiType"><a href="#group___ejs_array" class="ref">EjsArray*</a></td><td><a href="#ejs_8h_1aa6c019e133498840e41753e65538a23b" class="nameRef">ejsGetPathFiles</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_path" class="ref">EjsPath</a> *path, int argc, <a href="#group___ejs_obj" class="ref">EjsObj</a> **argv)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get files below a path.</td></tr>
+<tr class="apiDef"><td class="apiType"><a href="#group___ejs_array" class="ref">EjsArray*</a></td><td><a href="#ejs_8h_1a587b962cb08be644eaf6b2c70dd37fd6" class="nameRef">ejsGetPathFiles</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_path" class="ref">EjsPath</a> *path, int argc, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> **argv)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get files below a path.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___ejs_name" class="ref">EjsName</a></td><td><a href="#group___ejs_pot_1gadf32714883ba4e6593eeded82e832b8d" class="nameRef">ejsGetPotPropertyName</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_pot" class="ref">EjsPot</a> *obj, int slotNum)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get a property name.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny*</a></td><td><a href="#group___ejs_array_1ga29dd01855d3fc312ccadee7003544144" class="nameRef">ejsGetPrevItem</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_array" class="ref">EjsArray</a> *ap, int *prev)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get the previous item from an array.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny*</a></td><td><a href="#group___ejs_obj_1ga1ed91c82c9413c3954a2bb8b23e100a0" class="nameRef">ejsGetProperty</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj, int slotNum)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get a property.</td></tr>
@@ -8423,12 +8423,12 @@ Value of text|attribute|comment|pi.
     </table></dd></dl>
   </div>
 </div>
-<a name="ejs_8h_1aa6c019e133498840e41753e65538a23b"></a>
+<a name="ejs_8h_1a587b962cb08be644eaf6b2c70dd37fd6"></a>
 <div class="api">
   <div class="prototype">
     <a href="#group___ejs_array" class="ref">EjsArray</a> *
     ejsGetPathFiles
-(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_path" class="ref">EjsPath</a> *path, int argc, <a href="#group___ejs_obj" class="ref">EjsObj</a> **argv)
+(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_path" class="ref">EjsPath</a> *path, int argc, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> **argv)
   </div>
   <div class="apiDetail">
 <p>Get files below a path.</p>
@@ -8957,9 +8957,7 @@ Current object.
 
     </div>
     <div class="terms ui basic center aligned segment">
-        <p>&copy; Embedthis Software, 2003-2014. All rights reserved.
-            Generated on Sep 17, 2014.
-        </p>
+        <p>&copy; Embedthis Software, 2003-2014. All rights reserved.</p>
     </div>
 
     <script src="../../lib/jquery/jquery.js"></script>
@@ -8977,18 +8975,14 @@ Current object.
             }
         });
         $('.sidebar-launch').trigger('click');
-
+        $('.sidebar a.item').click(function(e) {
+            sessionStorage.setItem('scroll-top', $('.sidebar').scrollTop());
+        });
         $(function() {
             var url = '../../ref/api/ejs.html';
             var active = $('.sidebar a[href="' + url +'"]');
             active.addClass('active');
-            var sidebar = $(".sidebar");
-            var height = sidebar.height();
-            var offset = active.offset();
-            if (offset && offset.top >= height) {
-                var diff = height - active.offset().top;
-                sidebar.scrollTop(height);
-            }
+            $('.sidebar').scrollTop(sessionStorage.getItem('scroll-top'));
         });
     </script> 
 

@@ -1513,17 +1513,21 @@ trailing portion without any directory elements.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Copy files
 The src argument can ba an array of Strings/Paths representing files/directories to copy. The may include
 embedded wildcards. If a src element is a directory, then it all all files and subdirectories will be copied
-preserving its directory structure under dest.</dd></dl>
+preserving its directory structure under dest. <br/><br/>This routine is implemented using the Path.tree method. All the options supported by Path.tree are supported.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>src </td><td>Source files/directories to copy. This can be a String, Path or array of String/Paths.  The wildcards "*"", "***"" and "?" are the only wild card patterns supported. The "***"" pattern matches every directory and file. The Posix "[]" and "{a,b}" style expressions are not supported. If src is an existing directory, then the pattern is converted to 'dir/ *  *'' (without spaces)  and the tree option is enabled. This will copy the directories contents and not the directory itself.</td></tr><tr class='param'><td class='param'>dest: <a href='Path.html'>Path</a> </td><td>Destination file or directory. If multiple files are copied, dest is assumed to be a directory and  will be created if required.  If dest has a trailing "/", it is assumed to be a directory.</td></tr><tr class='param'><td class='param'>options </td><td>Processing and file attributes. [default: expression]</td></tr></table></dd>
+<tr class='param'><td class='param'>src </td><td>Source files/directories to copy. This can be a String, Path or array of String/Paths.  The wildcards "*"", "***"" and "?" are the only wild card patterns supported. The "***"" pattern matches every directory and file. The Posix "[]" and "{a,b}" style expressions are not supported. If src is a directory, this routine functions recursively and copies the entire directory by converting the source pattern to 'pattern / ***'' (without spaces) and enabling the 'tree' option.</td></tr><tr class='param'><td class='param'>dest: <a href='Path.html'>Path</a> </td><td>Destination file or directory. If multiple files are copied, dest is assumed to be a directory and  will be created if required.  If dest has a trailing "/", it is assumed to be a directory.</td></tr><tr class='param'><td class='param'>options </td><td>Processing and file attributes. [default: expression]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' title='options'>
-<td class='param'>owner</td><td>String representing the file owner.</td></tr>
+<td class='param'>dir</td><td>Assume the destination is a directory. Create if it does not exist.</td></tr>
+<td class='param'>filter</td><td>Function Callback function to test if a file should be processed. Function(from: Path, to: Path, options: Object): Boolea.</td></tr>
+<td class='param'>flatten</td><td>Boolean Flatten the input source tree to a single level. Defaults to false.</td></tr>
 <td class='param'>group</td><td>String representing the file group.</td></tr>
-<td class='param'>exceptions</td><td>Set to false to disable exceptions if cp finds no files to copy. Defaults to true.</td></tr>
+<td class='param'>missing</td><td>String Determine what happens if source patterns do not match any files. Set to undefined to report patterns that don't resolve by throwing an exception. Set to any non-null value to be used in the results when there are no matching files or directories. Set to the empty string to use the patterns in the results and set to null to do nothing.</td></tr>
+<td class='param'>user</td><td>String representing the file user.</td></tr>
 <td class='param'>permissions</td><td>Number File Posix permissions mask.</td></tr>
-<td class='param'>tree</td><td>Copy the src subtree and preserve the directory structure under the destination.</td></tr>
+<td class='param'>relative</td><td>String|Path Create paths relative to this path option when constructing destination paths.</td></tr>
+<td class='param'>trim</td><td>Number of path components to trim from the start of the source filename. Does not apply when using 'flatten'.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>Number of files copied.</dd></dl>
@@ -1689,8 +1693,8 @@ in the path.</dd></dl>
 <tr class='param'><td class='param'>path: <a href='Object.html'>Object</a> </td><td>Path or array of paths from which to search.</td></tr><tr class='param'><td class='param'>patterns: <a href='Object.html'>Object</a> </td><td>Pattern to match files. This can be a String, Path or array of String/Paths.  The wildcard '?' matches any single character, '*'' matches zero or more characters in a filename or  directory, '***  /' matches zero or more files or directories and matches recursively in a directory tree.  If a pattern terminates with "/" it will only match directories.  The pattern '***'' is equivalent to '***  / *'' (ignore spaces).  The Posix "[]" and "{a,b}" style expressions are not supported. [default: *]</td></tr><tr class='param'><td class='param'>options </td><td>Optional properties to control the matching. [default: expression]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' title='options'>
-<td class='param'>depthFirst</td><td>Do a depth first traversal. If "dirs" is specified, the directories will be shown after the files in the directory. Otherwise, directories will be listed first.</td></tr>
-<td class='param'>exclude</td><td>Regular expression pattern of files to exclude from the results. Matches the entire path. Only for the purpose of this match, directories will have "/" appended. To exclude directories in the results, use {exclude: /\//}. The trailing "/" will not be returned in the results.</td></tr>
+<td class='param'>depthFirst</td><td>Do a depth first traversal of directories. If true, then the directories will be shown after the files in the directory. Otherwise, directories will be listed first.</td></tr>
+<td class='param'>exclude</td><td>String|Regular RegExp pattern of files to exclude from the results. Matches the entire path. Only for the purpose of this match, directories will have "/" appended. May be set to the string "directories" to exclude directories from the results which are by default included.</td></tr>
 <td class='param'>hidden</td><td>Include hidden files starting with ".".</td></tr>
 <td class='param'>include</td><td>Regular expression pattern of files to include in the results. Matches the entire returned path. Only for the purpose of this match, directories will have "/" appended. To include only directories in the results, use {include: /\/<a href='#/}'>/}</a>. </td></tr>
 <td class='param'>missing</td><td>Set to undefined to report patterns that don't resolve into any files or directories  by throwing an exception. Set to any non-null value to be used in the results when there are no matching files or directories. Set to the empty string to use the patterns in the results and set to null to do nothing.</td></tr>
@@ -1770,11 +1774,11 @@ in the path.</dd></dl>
 <tr class='param'><td class='param'>patterns </td><td>Pattern to match files. This can be a String, Path or array of String/Paths.  The wildcards "*"", "***"" and "?" are the only wild card patterns supported. The "***"" pattern matches every directory. The Posix "[]" and "{a,b}" style expressions are not supported. [default: *]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>If set to true, then files will include sub-directories in the returned list of files. [default: null]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' title='options'>
-<td class='param'>dirs</td><td>Include directories in the file list.</td></tr>
-<td class='param'>depthFirst</td><td>Do a depth first traversal. If "dirs" is specified, the directories will be shown after the files in the directory. Otherwise, directories will be listed first.</td></tr>
-<td class='param'>exclude</td><td>Regular expression pattern of files to exclude from the results. Matches the entire path.</td></tr>
+<td class='param'>depthFirst</td><td>Do a depth first traversal of directories. If true, then the directories will be shown after the files in the directory. Otherwise, directories will be listed first.</td></tr>
+<td class='param'>exclude</td><td>String|Regular RegExp pattern of files to exclude from the results. Matches the entire path. Only for the purpose of this match, directories will have "/" appended. May be set to the string "directories" to exclude directories from the results which are by default included.</td></tr>
 <td class='param'>hidden</td><td>Show hidden files starting with ".".</td></tr>
 <td class='param'>include</td><td>Regular expression pattern of files to include in the results. Matches the entire returned path.</td></tr>
+<td class='param'>missing</td><td>Set to undefined to report patterns that don't resolve into any files or directories  by throwing an exception. Set to any non-null value to be used in the results when there are no matching files or directories. Set to the empty string to use the patterns in the results and set to null to do nothing.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>An Array of Path objects for each matching file.</dd></dl>

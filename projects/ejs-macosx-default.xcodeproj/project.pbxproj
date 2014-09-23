@@ -3342,7 +3342,7 @@ cd ../src/ejs.mail
 			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/core
 	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.mod  --optimize 9 --bind --require null App.es Args.es Array.es BinaryStream.es Block.es Boolean.es ByteArray.es Cache.es Cmd.es Compat.es Config.es Date.es Debug.es Emitter.es Error.es File.es FileSystem.es Frame.es Function.es GC.es Global.es Http.es Inflector.es Iterator.es JSON.es Loader.es LocalCache.es Locale.es Logger.es Math.es Memory.es MprLog.es Name.es Namespace.es Null.es Number.es Object.es Path.es Promise.es RegExp.es Socket.es Stream.es String.es System.es TextStream.es Timer.es Type.es Uri.es Void.es WebSocket.es Worker.es XML.es XMLHttp.es XMLList.es
-	../${OUT_DIR}/bin/ejsmod --cslots --dir ../${OUT_DIR}/bin --require null ../${OUT_DIR}/bin/ejs.mod
+	../${OUT_DIR}/bin/ejsmod --cslots --dir ../${OUT_DIR}/inc --require null ../${OUT_DIR}/bin/ejs.mod
 ";
 		};
 		F3F8966EF3F8A43E00000027 /* ShellScript for ejs.mvc.mod */ = {
