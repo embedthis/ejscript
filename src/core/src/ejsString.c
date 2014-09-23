@@ -547,6 +547,12 @@ static EjsString *expandString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 }
 
 
+PUBLIC EjsString *ejsExpandString(Ejs *ejs, EjsString *sp, EjsObj *tokens)
+{
+    return expandString(ejs, sp, 1, &tokens);
+}
+
+
 /**
     Format the arguments
 
