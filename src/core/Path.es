@@ -4,24 +4,6 @@
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
-/*
-    FUTURE
-        Path.expand(hash: Object = null)        Expand $VARS or ${vars} in path. Also expand ~user
-        Path.split(): Array                     Return dir + base
-        Path.splitRoot(): Array                 Return root + rest
-        Path.splitExtension(): Array            Return rest + extension
-        Path.normalizeCase                      Map to lower case
-        Path.canonicalize()                     Resolve symbolic links and return normalized, validated, fully resolved path.
-                                                Error if the path does not exist.
-        Path.crc(): Number                      Calculate a 32 bit crc of the file contents
-        Path.md5(): Number                      Calculate an MD5 digest of the file contents
-        Path.touch(date: Date = null): Void     Update modified time. Create if non-existant
-        Path.perms = NNN                        Permissions getter / setter
-        Path.isReadable, isWritable, isHidden, isSpecial, is Mount
-        Path.rmtree()                           Recursive removal
-        Path.validate                           Validate a path.
- */
-
 module ejs {
 
     /**
@@ -174,7 +156,9 @@ module ejs {
         }
 
         /**
-            Do Posix glob style file matching on supplied patterns and return an array of matching files.
+            Get a list of matching files. This does
+            Posix style glob file matching on supplied patterns and returns an array of matching files.
+
             This method supports several invocation forms:
             <ul>
                 <li>files(pattern, {options})</li>
@@ -182,9 +166,11 @@ module ejs {
                 <li>files({files: pattern, options...})</li>
                 <li>files([{files: pattern, options...}])</li>
             </ul>
-            A single pattern may be supplied with or with out options. Multiple patterns may be provide in an array. 
-            Alternatively, the pattern or patterns may be provide via a object with a 'files' property. In this case, the
-            options are provided in the same object.
+
+            A single pattern may be supplied with or with out options. Multiple patterns may be provided in an array. 
+            Alternatively, the pattern or patterns may be provided via an object with a 'files' property. In this case, the
+            options are provided in the same object. If the pattern is omitted, the default is to search for all files
+            under the Path by using '**' as the pattern.
 
             @param patterns Pattern to match files. This can be a String, Path or array of String/Paths. 
             If the Path is a directory, then files that match the specified patterns are returned.
@@ -195,35 +181,68 @@ module ejs {
                 <li>* matches zero or more characters in a filename or directory</li>
                 <li>** matches zero or more files or directories and matches recursively in a directory tree</li>
             </ul>
-            If a pattern terminates with '/' it will only match directories. 
+            If a pattern ends with '/', then all the directory contents will match. 
+
             @param options Optional properties to control the matching.
-            @option contents Boolean If contents is set to tru and the path pattern matches a directory, then return the
+            @option contents Boolean If contents is set to true and the path pattern matches a directory, then return the
                 contents of the directory in addition to the directory itself. This applies if the pattern matches an 
                 existing directory or the pattern ends with '/'. This is implemented by appending '**' to the pattern.
+
             @option depthFirst Boolean Do a depth first traversal of directories. If true, then the directories will be 
                 shown after the files in the directory. Otherwise, directories will be listed first. Defaults to false.
-            @option exclude String|Regular RegExp pattern of files to exclude from the results. Matches the entire path.
-                Only for the purpose of this match, directories will have '/' appended. May be set to the string
-                'directories' to exclude directories from the results which are by default included.
-            @option expand Object Expand tokens in filenames using this object. Object hash containing properties to use 
-                when replacing tokens of the form ${token} in the patterns.
-            @option filter Function Callback function to test if a file should be processed.
+
+            @option directories Boolean Include directories in the results. Defaults to true.
+
+            @option exclude String | Regular | Function Blacklist of files to exclude from the results. 
+                Matches the full source path including the Path value. Only for the purpose of this match, 
+                directories will have '/' appended.
+
+                If 'exclude' is a function, the file is not processed if the function returns true. The function callback
+                has the form:
+
                 Function(filename: Path, options: Object): Boolean
-                The file argument is the filename being considered, it include the Path.
+
+                The file argument is the filename being considered, it include the Path value.
                 The value of "this" is set to the Path value.
-            @option hidden Include hidden files starting with '.' Defaults to false.
-            @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
-                Only for the purpose of this match, directories will have '/' appended. To include only directories in the
-                results, use {include: 'directories'}
-            @option missing Set to undefined to report patterns that don't resolve into any files or directories 
-                by throwing an exception. Set to any non-null value to be used in the results when there are no matching
-                files or directories. Set to the empty string to use the patterns in the results and set
-                to null to do nothing.
+
+                By default, exclude is set to exclude hidden files starting with '.' and files that look like temporary 
+                files. 
+
+            @option expand Object | Function Expand tokens in filenames using this object or function. If 'expand' 
+                is an object, then expand filename tokens of the form '${token}' using the object key values.
+                If 'expand' is a function, it should have the signature:
+
+                Function(filename: String, options: Object): String
+
+            @option hidden Boolean Include hidden files starting with '.' Defaults to false.
+
+            @option include String | RegExp | Function Whitelist of files to include in the results.
+                Matches the full source path including the Path value. Only for the purpose of this match, 
+                directories will have '/' appended.
+
+                If 'include' is a function, the file is processed if the function returns true. The function callback
+                has the form:
+
+                Function(filename: Path, options: Object): Boolean
+
+                The file argument is the filename being considered, it include the Path value.
+                The value of "this" is set to the Path value.
+
+            @option missing String Determine what happens if patterns do not match any files.
+                Set to undefined to report patterns that don't resolve by throwing an exception. 
+                Set to any non-null value to be used in the results when there are no matching files or directories. 
+                Set to the empty string to use the patterns in the results and set to null to do nothing.
+                Default is null.
+
             @option noneg Boolean Do not process negated file patterns.
-            @option relative Return matching files relative to the Path, otherwise results include the Path. 
-                Defaults to false. If a pattern includes a path portion, it will be included in the result regardless of
-                the value of this option, even if the pattern path is absolute.
+
+            @option relative Boolean | String | Path Return filesnames relative to the path provided by the 'relative'
+                option, otherwise results include the Path value. If set to true, the results will be relative to the 
+                current directory. Defaults to false. 
+
             @return An Array of Path objects for each file in the directory.
+                The returned file list includes the Path itself. If the 'relative' option is provided, a path
+                relative to that option is returned.
          */
         native function files(patterns: Object! = '*', options: Object? = null): Array 
 
@@ -719,191 +738,321 @@ module ejs {
         native override function toString(): String
 
         /**
-            Process a directory tree and perform operations on matching files.
-            This may be used to copy, move or process entire directory trees.
+            Operate on files.  This may be used to copy, move or process files.
+
             This method supports several invocation forms:
             <ul>
-                <li>tree(from, to, {options})</li>
-                <li>tree([from, from, ...], to, {options})</li>
-                <li>tree({from: pattern, to: directory, options...})</li>
-                <li>tree([{from: pattern, to: directory, options...}])</li>
+                <li>operate(from, to)</li>
+                <li>operate(from, to, {options})</li>
+                <li>operate([from, from, ...], to, {options})</li>
+                <li>operate({from: pattern, to: directory, options...})</li>
+                <li>operate([{from: pattern, to: directory, options...}])</li>
             </ul>
-            A single 'from' pattern may be supplied with a destination 'to' directory. 
-            Multiple 'from' patterns may be provide in an array. 
-            Alternatively, the arguments may be provide via a object with a 'from' property. In this case, the
-            'to' directory and options are provided in the same object.
+            The 'options' may supply a desired 'operation' property that may be set to 'copy', 'move', 'append' or custom
+            action. This defaults to 'copy'.
 
-            This method uses the Path.files() API to create a files list. All the options for Path.files are supported.
+            The 'from' patterns are resolved using the #Path.files method to create an input files list. 
+            All the options for Path.files are supported.
 
-            @return The number of files processed.
-            @param from Path|String|Object|Array This may be a String or Path containing the source directory/file to 
-                process. Or it may be an object that supplies 'from', 'to' and 'options' as processing instructions. 
-                It may also be an array of Paths, Strings or Objects. The patterns may contain:
+            Operate will resolve the input patterns relative to the Path itself. If copying, that directory portion relative
+            to the Path will be appended to the destination 'to' argument. In this manner, entire directory trees can be 
+            easily copied.
+
+            @return The number of files processed. If the operation is 'list', returns the expanded source file list.
+
+            @param from Path | String | Object | Array This may be a String or Path containing the source paths to 
+                process. Alternatively, it may be an object that supplies 'from', 'to' and 'options' as processing 
+                instructions. It may also be an array of Paths, Strings or Objects. The 'from' patterns may contain:
                     *
                     **
                     ?
                     {}  Comma separated patterns
                     !   Negates pattern. This removes matching patterns from the set. These are applied after all source
-                        patterns have been processed.
-                    If item starts with !, adds to exclusion set. !! to escape.
-                    If item is a directory, then appends / **
-            @param to String|Path|Undefined Destination target. If 'from' is a Path or String, then the 'to' argument must 
-                be a destination Path or String. If 'from' is an Object or Array of instruction objects, then 'to' may 
-                be omitted and will be ignored. In that case, the destination must be provided via a 'to' property in the
-                object instructions. If multiple source files are specified or the destination ends in the separator ('/'), 
-                the destination is assumed to be a directory. If the destination is a directory, the destination filename 
-                is created by appending the the source path to the directory.
-            @param options Object of additional processing instructions.
+                        patterns have been processed. Use !! to escape.
+                If item is a directory or ends with '/', then "**" is automatically appended to match the directory 
+                contents.
 
-            @option action Function Callback function to implement a single action. 
-                Function(from: Path, to: Path, options: Object): Void
+            @param to String | Path Destination target. If 'from' is a Path or String, then the 'to' argument 
+                must be a destination Path or String. If 'from' is an Object or Array of instruction objects that contains
+                a 'to' property, then 'to' should be omitted and will be ignored. If multiple source files are specified 
+                or the destination ends in the separator '/', the destination is assumed to be a directory. If the 
+                destination is a directory, the destination filename is created by appending the the source path to the 
+                directory.
+
+            @param options Additional processing instructions. All the options provided by #Path.files are 
+                also supported.
+
             @option active Boolean If destination is an active executable or library, rename the active file using a '.old' 
                 extension and retry.
-            @option append Boolean Set to true to append all input files into a single destination.
+
             @option compress Boolean Compress destination file using Zlib. Results in a '.gz' extension.
-            @option depthFirst Boolean: Do a depth first traversal. If true, the directories will be visited after
-                the files in the directory. Otherwise, directories will be visited first. Defaults to false.
-            @option dir Assume the destination is a directory. Create if it does not exist.
-            @option dot String Specifies where the filename extension begins for filenames with multiple dots. Set to 
-                'first' or 'last'.
-            @option exclude String|Regular RegExp pattern of files to exclude from the results. Matches the entire path.
-                Only for the purpose of this match, directories will have '/' appended. May be set to the string
-                'directories' to exclude directories from the results which are by default included.
-            @option expand Object Expand tokens in filenames using this object. Object hash containing properties to use 
-                when replacing tokens of the form ${token} in the src and dest filenames. 
-            @option extension String|Path Extension to use for the destination filenames.
-            @option files Array Output array to contain a list of processed destination filenames
-            @option filter Function Callback function to test if a file should be processed.
-                Function(filename: Path, options: Object): Boolean
-                The file argument is the filename being considered, it include the Path.
-                The value of "this" is set to the Path value.
-            @option flatten Boolean Flatten the input source tree to a single level. Defaults to false.
+
+            @option extension String | Path Extension to use for the destination filenames.
+
+            @option extensionDot String Specifies where the filename extension begins for filenames with multiple dots. 
+                Set to 'first' or 'last'.
+
+            @option filter RegExp Pattern of lines to filter out from appended files.
+
+            @option flatten Boolean Flatten the input source tree to a single level. Defaults to true.
+
+            @option footer String Footer to append when appending files.
+
             @option group String | Number System group name or number to use for the destination files.
-            @option hidden Boolean Include hidden files starting with '.'. Defaults to false.
-            @option include RegExp Regular expression pattern of files to include in the results.
+
+            @option header String Header prepend when appending files.
+
+            @option isDir Assume the destination is a directory. Create if it does not exist. Same as appending a 
+                trailing '/' to the 'to' argument.
+
             @option keep Boolean Keep uncompressed file after compressing.
-            @option missing String Determine what happens if source patterns do not match any files.
-                Set to undefined to report patterns that don't resolve by throwing an exception. 
-                Set to any non-null value to be used in the results when there are no matching files or directories. 
-                Set to the empty string to use the patterns in the results and set to null to do nothing.
-            @option noneg Boolean Do not process negated file patterns.
-            @option move Boolean If true, do a move instead of a copy.
+
+            @option operation String Set to 'append' to append files, 'copy' to copy files and 'move' to move files.
+                Set to 'list' to return a file list in options.list and perform no operations. Defaults to 'copy' if unset.
+
             @option patch Object. Expand file contents tokens using this object. Object hash containing properties to use 
                 when replacing tokens of the form ${token} in file contents.
+
+            @option perform Function Callback function to perform the operation on a matching file. 
+                This function should return true if it handles the file and default processing is not required.
+                Note that post processing still occurs including compression and stripping if required regardless of the 
+                return value.
+
+                Function(from: Path, to: Path, options: Object): Boolean
+
             @option permissions Number Posix style permissions mask. E.g. 0644.
-            @option relative String|Path Create destination filenames relative to this path value.
-                Each source filename is mapped relative to the relative value and then appended to the 'to' directory.
-                If a pattern includes a path portion, it will be included in destination filenames regardless of 
-                the value of this option.
+
+            @option postPerform Function. Callback function to invoke after performing the operation.
+                Function(from, to, options): Path
+
+            @option prePerform Function. Callback function to invoke before performing the operation.
+                Function(from, to, options): Path
+
+            @option relative Boolean | String | Path Create destination filenames relative to the path provided by the 
+                'relative' option, otherwise destination filenames include the Path value. If set to true, the destination
+                 will be relative to the current directory. If set, implies flatten == false. Defaults to false. 
+
             @option rename Function Callback function to provide a new destination filename. 
-                Function(from, to, options):Path
-            @option symlink String|Path Create a symbolic link to the destination in this directory
+                Function(from, to, options): Path
+
+            @option separator String Separator to use between appended files.
+
             @option strip Boolean Run 'strip' on the destination files.
-            @option trim Number of path components to trim from the start of the source filename. Does not apply when using
-                    'flatten'
+
+            @option symlink String | Path Create a symbolic link to the destination. If symlink has a trailing '/'
+                a link is created in the directory specified by 'symlink' using the source file basename as the link name.
+
+            @option trim Number of path components to trim from the start of the source filename. 
+                If set, implies flatten == false.
+
             @option user String | Number System user account name or number to use for destination files.
+
             @option verbose true | function. If true, then trace to stdout. Otherwise call function for each item.
         */
-        function tree(from, to, options): Number {
+        function operate(from, to, control) {
             let instructions
+            control ||= {}
             if (to == undefined) {
                 instructions = from
             } else {
-                options ||= {}
-                instructions = [ blend(options.clone(), { from: from, to: to }) ]
+                instructions = [ blend({ from: from, to: to }, control, {functions: true, overwrite: false}) ]
             }
             if (!(instructions is Array)) {
                 instructions = [instructions]
             }
-            let destHash = {}
+            let trace = control.verbose
+            if (trace && !(trace is Function)) {
+                trace = function(...args) {
+                    let msg = '%12s %s' % (['[' + args[0] + ']'] + [args.slice(1).join(' ')]) + '\n'
+                    stdout.write(msg)
+                }
+            }
+            let expand = control.expand
+            if (expand) {
+                if (!(expand is Function)) {
+                    let obj = expand
+                    expand = function(str, obj) str.expand(obj, {missing: true})
+                }
+            } else {
+                expand = function(str, obj) str
+            }
+            let srcHash = {}
+            let commands = []
 
-            let files = []
             for each (options in instructions) {
+                if (options.append) {
+                    options.operation = 'append'
+                }
+                if (options.move) {
+                    options.operation = 'move'
+                }
+                if (options.flatten == undefined) {
+                    options.flatten = true
+                }
+                //  LEGACY 
+                if (options.cat) {
+                    print('Warn: using legacy "cat" property for Path.operate, use "append" instead.')
+                    options.append = options.cat
+                }
+                if (options.remove) {
+                    print('Warn: using legacy "remove" property for Path.operate, use "filter" instead.')
+                    options.filter = options.remove
+                }
+                if (options.separator) {
+                    print('Warn: using legacy "separator" property for Path.operate, use "divider" instead.')
+                    options.divider = options.separator
+                }
+                //  LEGACY
+                if (options.title) {
+                    print('Warn', 'Manifest using legacy "title" property, use "header" instead')
+                }
+                let operation = options.operation || 'copy'
                 let from = options.from
-                let to = Path(options.to)
-                let trace = options.verbose
-                if (trace && !(trace is Function)) {
-                    trace = function(...args) {
-                        let msg = '%12s %s' % (['[' + args[0] + ']'] + [args.slice(1).join(' ')]) + '\n'
-                        stdout.write(msg)
-                    }
-                }
-                let home = options.home
-                let sep = to.separator
-
                 if (!(from is Array)) from = [from]
-                if (options.expand) {
-                    /* Do twice to allow two levels of nest */
-                    let eo = {fill: '${}'}
-                    to = Path(to.name.expand(options.expand, eo).expand(options.expand, eo))
-                }
-                list = this.files(from, blend({contents: true, relative: true}, options, {overwrite: false}))
-                let toDir = to.isDir || to.name.endsWith(sep) || options.dir
-                if (!options.append) {
-                    toDir ||= from.length > 1 || list.length > 1
-                }
+                from = from.transform(function(e) Path(expand(e, options)))
 
-                /* 
-                    Process matching files and build list of files to copy in 'files'
+                /*
+                    Do not sort this list as we want to preserve user supplied order in their files list
+                    The list files are relative to 'this'
                  */
-                for each (let src: Path in list) {
+                let files = this.files(from, blend({contents: true, relative: this}, options, {overwrite: false}))
+
+                let to = Path(expand(options.to, options))
+                let sep = to.separator
+                let toDir = to.isDir || to.name.endsWith(sep) || options.isDir
+                if (operation != 'append') {
+                    toDir ||= from.length > 1 || files.length > 1
+                }
+                if (operation == 'list') {
+                    let list = []
+                    for each (let file: Path in files) {
+                        let src = this.join(file)
+                        if (src.isDir && options.flatten) {
+                            continue
+                        }
+                        if (srcHash[src]) {
+                            continue
+                        }
+                        list.push(this.join(file))
+                        srcHash[src] = true
+                    }
+                    return list
+                }
+                /* 
+                    Process matching files and build list of commands
+                    Note: 'src' is relative to 'this' and may not be addressible unless 'this' is '.'
+                 */
+                for each (let file: Path in files) {
+                    let src = this.join(file)
                     let dest
                     if (toDir) {
-                        if (options.flatten) {
-                            dest = to.join(src.basename)
-                        } else if (options.relative) {
-                            dest = to.join(this.join(src).relativeTo(options.relative))
+                        if (options.relative) {
+                            let trimmed = file
+                            if (options.trim) {
+                                trimmed = trimmed.components.slice(options.trim).join(to.separator)
+                            }
+                            if (options.relative == true) {
+                                dest = to.join(this.join(trimmed).relative)
+                            } else {
+                                dest = to.join(this.join(trimmed).relativeTo(options.relative))
+                            }
+
                         } else if (options.trim) {
-                            dest = to.join(this.join(src).components.slice(options.trim).join(to.separator))
-                        } else if (src.isAbsolute) {
+                            dest = to.join(file.components.slice(options.trim).join(to.separator))
+
+                        } else if (options.flatten) {
+                            dest = to.join(file.basename)
+
+                        } else if (file.isAbsolute) {
                             /* Can happen if the from pattern is absolute */
-                            dest = Path(to.name + src.name)
+                            dest = Path(to.name + file.name)
+
                         } else {
-                            dest = to.join(src)
+                            dest = to.join(file)
                         }
                     } else {
                         dest = to
                     }
                     if (options.extension) {
-                        if (options.dot == 'first') {
+                        if (options.extensionDot == 'first') {
                             dest = dest.split('.')[0].joinExt(options.extension)
                         } else {
                             dest = dest.replaceExt(options.extension)
                         }
                     }
+                    if (src.isDir && options.flatten) {
+                        continue
+                    }
                     if (options.rename) {
-                        dest = options.rename.call(this, this.join(src), dest, options)
+                        dest = options.rename.call(this, src, dest, options)
                     }
-                    if (destHash[dest]) {
+                    if (srcHash[src]) {
                         continue
                     }
-                    if (options.temp && src.name.match(options.temp)) {
+                    if (src.same(dest) && operation != list) {
+                        print("WARNING: src same as dest for", src)
                         continue
                     }
-                    files.push({from: src, to: dest, base: this, options: options})
-                    destHash[dest] = true
+                    commands.push({base: this, from: file, to: dest, options: options})
+                    srcHash[src] = true
                 }
                 if (options.debug) {
-                    dump('Tree', files)
+                    dump('Operate File List', commands)
                 }
-
+                if (operation == 'commands') {
+                    return commands
+                }
+                let contents = []
+                if (operation == 'append') {
+                    //  LEGACY
+                    if (options.title) {
+                        options.header = '/* ' + options.title + ' */\n' + options.header
+                    }
+                    if (options.header) {
+                        contents.push(expand(options.header, options) + '\n')
+                    }
+                }
                 /*
                     Process all qualifying files
                  */
-                let data = []
-                for each (item in files) {
+                for each (item in commands) {
                     let src = this.join(item.from)
                     let dest = item.to
-                    if (options.dryrun) {
-                        print('DryRun', '\n    From:    ' + src + '\n    To:      ' + dest + '\n    Options: ' + 
+                    trace && trace(operation.toPascal(), src + ' => ' + dest)
+
+                    if (options.prePerform) {
+                        options.prePerform.call(this, src, dest, options)
+                    }
+                    if (options.dry) {
+                        print('Dry Run', '\n    From:    ' + src + '\n    To:      ' + dest + '\n    Options: ' + 
                             serialize(options, {pretty: true}))
-                    } else if (options.action) {
-                        options.action.call(this, src, dest, options)
-                    } else if (options.move) {
+
+                    } else if (options.perform && options.perform.call(this, src, dest, options)) {
+                        /* Done if 'action' returns true */
+
+                    //  UNUSED LEGACY
+                    } else if (options.action && options.action.call(this, src, dest, options)) {
+                        /* Done if 'action' returns true */
+
+                    } else if (operation == 'move') {
                         src.rename(dest)
-                    } else if (options.append) {
-                        data.push(src.readString())
-                    } else {
+
+                    } else if (operation == 'append') {
+                        if (options.divider) {
+                            if (options.divider == true) {
+                                contents.push('\n\n/********* Start of file ' + src + ' ************/\n\n')
+                            } else {
+                                contents.push(expand(options.divider, item))
+                            }
+                        }
+                        let data = src.readString()
+
+                        if (options.filter) {
+                            data = data.replace(options.filter, '')
+                        }
+                        contents.push(data)
+
+                    } else if (operation == 'copy') {
                         if (dest.endsWith(sep)) {
                             dest.makeDir()
                         } else {
@@ -913,10 +1062,9 @@ module ejs {
                             dest.makeDir()
                         } else {
                             try {
-                                trace && trace('Copy', src + ' => ' + dest)
                                 src.copy(dest, options)
                             } catch (e) {
-                                if (options.active) {
+                                if (options.active && Config.OS == 'windows' && dest.exists && !dest.isDir) {
                                     let active = dest.replaceExt('old')
                                     active.remove()
                                     try { dest.rename(active) } catch {}
@@ -926,57 +1074,53 @@ module ejs {
                         }
                     }
                 }
-                if (options.append) {
-                    files = files.slice(0, 1)
-                    files.to.write(data.join('\n'))
-                }
-                /*
-                    Post processing: patch, strip, compress, symlink
-                 */
-                for each (item in files) {
-                    let to = item.to
-                    if (options.patch) {
-                        to.write(to.readString().expand(options.patch, {fill: '${}'}))
-                        to.setAttributes(attributes)
-                    }
-                    if (options.strip) {
-                        Cmd.run('strip', to)
-                    }
-                    if (options.compress) {
-                        let zname = Path(to.name + '.gz')
-                        zname.remove()
-                        Zlib.compress(to.name, zname)
-                        if (!options.keep) {
-                            to.remove()
-                            item.to = zname
+                if (!options.perform) {
+                    if (operation == 'append') {
+                        /* Loop just once over the post processing */
+                        commands = commands.slice(0, 1)
+                        if (options.footer) {
+                            contents.push(expand(options.footer, options))
                         }
+                        to.write(contents.join('\n'))
+                        to.setAttributes(options)
                     }
-                    if (options.symlink) {
-                        let symlink = Path(options.symlink)
-                        symlink.makeDir(options)
-                        let lto = symlink.join(to.basename)
-                        linkFile(to.relativeTo(lto.dirname), lto, options)
-                        item.to = lto
-                    }
-                    if (options.post) {
-                        options.post.call(this, item.from, to, options)
-                    }
-                }
-                /*
-                    Return the expanded instruct list of files to process
-                 */
-                if (options.files) {
-                    for each (item in files) {
-                        options.files.push(item.to)
-                    }
-                }
-                if (options.instructions) {
-                    for each (item in files) {
-                        options.instructions.push(item)
+                    /*
+                        Post processing: patch, strip, compress, symlink
+                     */
+                    for each (item in commands) {
+                        let src = this.join(item.from)
+                        let dest = item.to
+                        if (options.patch) {
+                            dest.write(expand(dest.readString(), item))
+                        }
+                        if (options.strip) {
+                            Cmd.run('strip', dest)
+                        }
+                        if (options.compress) {
+                            let zname = Path(dest.name + '.gz')
+                            zname.remove()
+                            Zlib.compress(dest.name, zname)
+                            if (!options.keep) {
+                                dest.remove()
+                                item.dest = zname
+                            }
+                        }
+                        if (options.symlink && Config.OS != 'windows') {
+                            let symlink = Path(options.symlink)
+                            if (symlink.name.endsWith(sep) || symlink.isDir) {
+                                symlink.makeDir(options)
+                                symlink = symlink.join(dest.basename)
+                            }
+                            dest.relativeTo(symlink.dirname).link(symlink)
+                            item.to = symlink
+                        }
+                        if (options.postPerform) {
+                            options.postPerform.call(this, src, dest, options)
+                        }
                     }
                 }
             }
-            return files.length
+            return commands.length
         }
 
         /**
