@@ -148,7 +148,7 @@ size determination failed.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#contains'><b>contains</b></a>(pattern: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Test if the path name contains a substring.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#copy'><b>copy</b></a>(destination: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Copy a file to the destination.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#endsWith'><b>endsWith</b></a>(suffix: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return true if the path ends with the given suffix.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#files'><b>files</b></a>(patterns: <a href='Object.html'>Object</a> = *, options: <a href='Object.html'>Object</a> = null): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Do Posix glob style file matching on supplied patterns and return an array of matching files.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#files'><b>files</b></a>(patterns: <a href='Object.html'>Object</a> = *, options: <a href='Object.html'>Object</a> = null): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a list of matching files.</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator override </td><td><a href='#get'><b>get</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get iterate over any files contained under this path (assuming it is a directory) 'for (v in files)'.</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator override </td><td><a href='#getValues'><b>getValues</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get an iterator for this file to be used by 'for each (v in obj)'.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#join'><b>join</b></a>(other: <a href='Array.html'>Array</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Join paths.</td></tr>
@@ -158,32 +158,32 @@ This will remove any pre-existing target link and then create a symbolic link at
 path.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#makeDir'><b>makeDir</b></a>(options: <a href='Object.html'>Object</a> = null): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Make a new directory and all required intervening directories.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#map'><b>map</b></a>(sep: <a href='String.html'>String</a> = separator): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a path after mapping the path directory separator.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#readJSON'><b>readJSON</b></a>(): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file containing a JSON string and return a deserialized object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#match'><b>match</b></a>(pattern: <a href='RegExp.html'>RegExp</a>): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Match the path to a regular expression pattern.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#open'><b>open</b></a>(options: <a href='Object.html'>Object</a> = null): <a href='File.html'>File</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Open a path and return a File object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#openBinaryStream'><b>openBinaryStream</b></a>(options: <a href='Object.html'>Object</a> = null): <a href='BinaryStream.html'>BinaryStream</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Open a file and return a BinaryStream object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#openTextStream'><b>openTextStream</b></a>(options: <a href='Object.html'>Object</a> = null): <a href='TextStream.html'>TextStream</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Open a file and return a TextStream object.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#operate'><b>operate</b></a>(from, to, options): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Operate on a path.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readBytes'><b>readBytes</b></a>(): <a href='ByteArray.html'>ByteArray</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file contents as a ByteArray.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#readJSON'><b>readJSON</b></a>(): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file containing a JSON string and return a deserialized object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readLines'><b>readLines</b></a>(): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file contents as an array of lines.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readString'><b>readString</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file contents as a string.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#relativeTo'><b>relativeTo</b></a>(origin: <a href='Path.html'>Path</a> = null): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a relative path to an origin.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#readXML'><b>readXML</b></a>(): <a href='XML.html'>XML</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file contents as an XML object.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#relativeTo'><b>relativeTo</b></a>(origin: <a href='Path.html'>Path</a> = null): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a relative path to an origin.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#remove'><b>remove</b></a>(): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Delete the file associated with the Path object.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#removeAll'><b>removeAll</b></a>(): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Removes a directory and its contents
 If the path is a directory, this call will remove all subdirectories and their contents and finally the
 directory itself.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#rename'><b>rename</b></a>(target: <a href='Path.html'>Path</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Rename a file.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#same'><b>same</b></a>(other: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Compare two paths test if they represent the same file.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#replace'><b>replace</b></a>(pattern, replacement): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Search and replace.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#replaceExt'><b>replaceExt</b></a>(ext: <a href='String.html'>String</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Replace the path extension and return a new path.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#resolve'><b>resolve</b></a>(otherPaths: <a href='Array.html'>Array</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Resolve paths in the neighborhood of this path.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#same'><b>same</b></a>(other: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Compare two paths test if they represent the same file.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#setAttributes'><b>setAttributes</b></a>(attributes: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define file security permissions.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#startsWith'><b>startsWith</b></a>(prefix: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return true if the path starts with the given prefix.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#temp'><b>temp</b></a>(): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new temporary file.</td></tr>
    <tr class='apiDef'><td class='apiType'> override </td><td><a href='#toJSON'><b>toJSON</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the path to a JSON string.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#toLowerCase'><b>toLowerCase</b></a>(): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the path to lower case.</td></tr>
    <tr class='apiDef'><td class='apiType'> override </td><td><a href='#toString'><b>toString</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return the path as a string.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#tree'><b>tree</b></a>(from, to, options): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Process a directory tree and perform operations on matching files.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#trimComponents'><b>trimComponents</b></a>(count: <a href='Number.html'>Number</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Trim the requested number of path components from the start or end of the path.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#trimEnd'><b>trimEnd</b></a>(pat: <a href='String.html'>String</a>): <a href='Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Trim a pattern from the end of the path
 NOTE: this does a case-sensitive match.</td></tr>
@@ -273,31 +273,31 @@ NOTE: this does a case-sensitive match.</td></tr>
 <div class='apiSig'>    files(patterns: <a href='Object.html'>Object</a> = *, options: <a href='Object.html'>Object</a> = null): <a href='Array.html'>Array</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Do Posix glob style file matching on supplied patterns and return an array of matching files. This method supports several invocation forms:
+<dl><dt>Description</dt></dd><dd>Get a list of matching files. This does
+Posix style glob file matching on supplied patterns and returns an array of matching files.<br/><br/>This method supports several invocation forms:
 <ul>
 <li>files(pattern, {options})</li>
 <li>files([pattern, pattern, ...], {options})</li>
 <li>files({files: pattern, options...})</li>
 <li>files([{files: pattern, options...}])</li>
-</ul>
-A single pattern may be supplied with or with out options. Multiple patterns may be provide in an array. 
-Alternatively, the pattern or patterns may be provide via a object with a 'files' property. In this case, the
+</ul><br/><br/>A single pattern may be supplied with or with out options. Multiple patterns may be provided in an array. 
+Alternatively, the pattern or patterns may be provided via an object with a 'files' property. In this case, the
 options are provided in the same object.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' title='parameters'>
 <tr class='param'><td class='param'>patterns: <a href='Object.html'>Object</a> </td><td>Pattern to match files. This can be a String, Path or array of String/Paths.  If the Path is a directory, then files that match the specified patterns are returned. If the Path is not a directory, then the path itself is matched against the pattern. The following special sequences are supported: <ul> <li>The wildcard '?' matches any single character</li> <li>*  matches zero or more characters in a filename or directory</li> <li>***  matches zero or more files or directories and matches recursively in a directory tree</li> </ul> If a pattern terminates with '/' it will only match directories. [default: *]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Optional properties to control the matching. [default: null]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' title='options'>
-<td class='param'>contents</td><td>Boolean If contents is set to tru and the path pattern matches a directory, then return the contents of the directory in addition to the directory itself. This applies if the pattern matches an  existing directory or the pattern ends with '/'. This is implemented by appending '***'' to the pattern.</td></tr>
+<td class='param'>contents</td><td>Boolean If contents is set to true and the path pattern matches a directory, then return the contents of the directory in addition to the directory itself. This applies if the pattern matches an  existing directory or the pattern ends with '/'. This is implemented by appending '***'' to the pattern.</td></tr>
 <td class='param'>depthFirst</td><td>Boolean Do a depth first traversal of directories. If true, then the directories will be  shown after the files in the directory. Otherwise, directories will be listed first. Defaults to false.</td></tr>
-<td class='param'>exclude</td><td>String|Regular RegExp pattern of files to exclude from the results. Matches the entire path. Only for the purpose of this match, directories will have '/' appended. May be set to the string 'directories' to exclude directories from the results which are by default included.</td></tr>
-<td class='param'>expand</td><td>Object Expand tokens in filenames using this object. Object hash containing properties to use  when replacing tokens of the form <a href='#{token}'>{token}</a> in the patterns.</td></tr>
-<td class='param'>filter</td><td>Function Callback function to test if a file should be processed. Function(filename: Path, options: Object): Boolean The file argument is the filename being considered, it include the Path. The value of "this" is set to the Path value.</td></tr>
+<td class='param'>exclude</td><td>String | Regular | Function Blacklist of files to exclude from the results.  Matches the full source path including the Path value. Only for the purpose of this match,  directories will have '/' appended. May be set to the string 'directories' to exclude directories  from the results.  If 'exclude' is a function, the file is not processed if the function returns true. The function callback has the form:  Function(filename: Path, options: Object): Boolean  The file argument is the filename being considered, it include the Path value. The value of "this" is set to the Path value.  By default, exclude is set to exclude hidden files starting with '.' and files that look like temporary files.</td></tr>
+<td class='param'>expand</td><td>Object | Function Expand tokens in filenames using this object or function. If 'expand'  is an object, then expand filename tokens of the form '<a href='#{token}''>{token}'</a> using the object key values. If 'expand' is a function, it should have the signature:  Function(filename: String, options: Object): String.</td></tr>
 <td class='param'>hidden</td><td>Include hidden files starting with '.' Defaults to false.</td></tr>
+<td class='param'>include</td><td>String | RegExp | Function Whitelist of files to include in the results. Matches the full source path including the Path value. Only for the purpose of this match,  directories will have '/' appended. May be set to the string 'directories' to include only directories  in the results.  If 'include' is a function, the file is processed if the function returns true. The function callback has the form:  Function(filename: Path, options: Object): Boolean  The file argument is the filename being considered, it include the Path value. The value of "this" is set to the Path value.</td></tr>
 <td class='param'>include</td><td>Regular expression pattern of files to include in the results. Matches the entire returned path. Only for the purpose of this match, directories will have '/' appended. To include only directories in the results, use {include: 'directories'}.</td></tr>
-<td class='param'>missing</td><td>Set to undefined to report patterns that don't resolve into any files or directories  by throwing an exception. Set to any non-null value to be used in the results when there are no matching files or directories. Set to the empty string to use the patterns in the results and set to null to do nothing.</td></tr>
+<td class='param'>missing</td><td>String Determine what happens if patterns do not match any files. Set to undefined to report patterns that don't resolve by throwing an exception.  Set to any non-null value to be used in the results when there are no matching files or directories.  Set to the empty string to use the patterns in the results and set to null to do nothing.</td></tr>
 <td class='param'>noneg</td><td>Boolean Do not process negated file patterns.</td></tr>
-<td class='param'>relative</td><td>Return matching files relative to the Path, otherwise results include the Path.  Defaults to false. If a pattern includes a path portion, it will be included in the result regardless of the value of this option, even if the pattern path is absolute.</td></tr>
+<td class='param'>relative</td><td>String | Path Return matching files relative to the Path, otherwise results include the Path.  Defaults to false. If a pattern includes a path portion, it will be included in the result regardless of the value of this option, even if the pattern path is absolute.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>An Array of Path objects for each file in the directory. X.</dd></dl>
@@ -410,22 +410,6 @@ the function returns without any further action.</dd></dl>
 </div>
 </div>
 <hr />
-<a name='readJSON'></a>
-<div class='api'>
-<div class='apiSig'>    readJSON(): <a href='Object.html'>Object</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Read the file containing a JSON string and return a deserialized object. This method opens the file, reads the contents, deserializes the object and closes the file.</dd></dl>
-<dl><dt>Returns</dt>
-<dd>An object.</dd></dl>
-<dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: if the file cannot be read
-</dd>
-</dl><dl><dt>Example</dt>
-<dd><pre>data = Path('/tmp/a.json').readJSON()</pre></dd></dl>
-</div>
-</div>
-<hr />
 <a name='match'></a>
 <div class='api'>
 <div class='apiSig'>    match(pattern: <a href='RegExp.html'>RegExp</a>): <a href='Array.html'>Array</a>
@@ -513,6 +497,60 @@ the function returns without any further action.</dd></dl>
 </dl></div>
 </div>
 <hr />
+<a name='operate'></a>
+<div class='api'>
+<div class='apiSig'>    operate(from, to, options): <a href='Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Operate on a path. This performs operations on matching patterns for the path.
+This may be used to copy, move or process entire directory trees.
+This method supports several invocation forms:
+<ul>
+<li>operate(from, to)</li>
+<li>operate(from, to, {options})</li>
+<li>operate([from, from, ...], to, {options})</li>
+<li>operate({from: pattern, to: directory, options...})</li>
+<li>operate([{from: pattern, to: directory, options...}])</li>
+</ul>
+The 'options' should supply a desired 'operation' property that may be set to 'copy', 'move', 'append' or custom
+action.<br/><br/>The 'from' patterns are resolved using the #Path.files method to create an input files list. 
+All the options for Path.files are supported.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>from </td><td>Path | String | Object | Array This may be a String or Path containing the source paths to  process. Alternatively, it may be an object that supplies 'from', 'to' and 'options' as processing  instructions. It may also be an array of Paths, Strings or Objects. The 'from' patterns may contain:     ? {}  Comma separated patterns !   Negates pattern. This removes matching patterns from the set. These are applied after all source patterns have been processed. Use !! to escape. If item is a directory, then "***"" is automatically appended.</td></tr><tr class='param'><td class='param'>to </td><td>String | Path Destination target. If 'from' is a Path or String, then the 'to' argument  must be a destination Path or String. If 'from' is an Object or Array of instruction objects that contains a 'to' property, then 'to' should be omitted and will be ignored. If multiple source files are specified  or the destination ends in the separator ('/'), the destination is assumed to be a directory. If the  destination is a directory, the destination filename is created by appending the the source path to the  directory.</td></tr><tr class='param'><td class='param'>options </td><td>Additional processing instructions. All the options provided by #Path.files are  also supported.</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' title='options'>
+<td class='param'>action</td><td>Function Callback function to implement the operation on a matching file.  Function(from: Path, to: Path, options: Object): Void.</td></tr>
+<td class='param'>active</td><td>Boolean If destination is an active executable or library, rename the active file using a '.old'  extension and retry.</td></tr>
+<td class='param'>compress</td><td>Boolean Compress destination file using Zlib. Results in a '.gz' extension.</td></tr>
+<td class='param'>dir</td><td>Assume the destination is a directory. Create if it does not exist. Same as appending a trailing '/' to the 'to' argument.</td></tr>
+<td class='param'>dot</td><td>String Specifies where the filename extension begins for filenames with multiple dots. Set to  'first' or 'last'.</td></tr>
+<td class='param'>extension</td><td>String | Path Extension to use for the destination filenames.</td></tr>
+<td class='param'>filelist</td><td>Array Output array to contain a list of processed destination filenames.</td></tr>
+<td class='param'>filter</td><td>RegExp Pattern of lines to filter out from appended files.</td></tr>
+<td class='param'>flatten</td><td>Boolean Flatten the input source tree to a single level. Defaults to false.</td></tr>
+<td class='param'>footer</td><td>String Footer to append when appending files.</td></tr>
+<td class='param'>header</td><td>String Header prepend when appending files.</td></tr>
+<td class='param'>group</td><td>String | Number System group name or number to use for the destination files.</td></tr>
+<td class='param'>keep</td><td>Boolean Keep uncompressed file after compressing.</td></tr>
+<td class='param'>operation</td><td>String Set to 'append' to append files, 'copy' to copy files and 'move' to move files. Defaults to 'copy' if unset.</td></tr>
+<td class='param'>patch</td><td>Object. Expand file contents tokens using this object. Object hash containing properties to use  when replacing tokens of the form <a href='#{token}'>{token}</a> in file contents.</td></tr>
+<td class='param'>permissions</td><td>Number Posix style permissions mask. E.g. 0644.</td></tr>
+<td class='param'>post</td><td>Function. Callback function to invoke after performing the operation. Function(from, to, options): Path.</td></tr>
+<td class='param'>pre</td><td>Function. Callback function to invoke before performing the operation. Function(from, to, options): Path.</td></tr>
+<td class='param'>rename</td><td>Function Callback function to provide a new destination filename.  Function(from, to, options): Path.</td></tr>
+<td class='param'>separator</td><td>String Separator to use between appended files.</td></tr>
+<td class='param'>strip</td><td>Boolean Run 'strip' on the destination files.</td></tr>
+<td class='param'>symlink</td><td>String | Path Create a symbolic link to the destination. If symlink has a trailing '/' a link is created in the directory specified by 'symlink' using the source file basename as the link name.</td></tr>
+<td class='param'>trim</td><td>Number of path components to trim from the start of the source filename. Does not apply when using 'flatten'.</td></tr>
+<td class='param'>user</td><td>String | Number System user account name or number to use for destination files.</td></tr>
+<td class='param'>verbose</td><td>True | function. If true, then trace to stdout. Otherwise call function for each item.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The number of files processed.</dd></dl>
+</div>
+</div>
+<hr />
 <a name='readBytes'></a>
 <div class='api'>
 <div class='apiSig'>    readBytes(): <a href='ByteArray.html'>ByteArray</a>
@@ -527,6 +565,22 @@ returns a new ByteArray with the contents.</dd></dl>
 </dd>
 </dl><dl><dt>Example</dt>
 <dd><pre>var b: ByteArray = Path('/tmp/a.txt').readBytes()</pre></dd></dl>
+</div>
+</div>
+<hr />
+<a name='readJSON'></a>
+<div class='api'>
+<div class='apiSig'>    readJSON(): <a href='Object.html'>Object</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Read the file containing a JSON string and return a deserialized object. This method opens the file, reads the contents, deserializes the object and closes the file.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>An object.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: if the file cannot be read
+</dd>
+</dl><dl><dt>Example</dt>
+<dd><pre>data = Path('/tmp/a.json').readJSON()</pre></dd></dl>
 </div>
 </div>
 <hr />
@@ -563,20 +617,6 @@ contents and closes the file.</dd></dl>
 </div>
 </div>
 <hr />
-<a name='relativeTo'></a>
-<div class='api'>
-<div class='apiSig'>    relativeTo(origin: <a href='Path.html'>Path</a> = null): <a href='Path.html'>Path</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Get a relative path to an origin. </dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>origin: <a href='Path.html'>Path</a> </td><td>The origin path to use when calculating a relative path to the destination (this path). If origin is null, the current working directory is used as the origin. [default: null]</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>A new relative path.</dd></dl>
-</div>
-</div>
-<hr />
 <a name='readXML'></a>
 <div class='api'>
 <div class='apiSig'>    readXML(): <a href='XML.html'>XML</a>
@@ -589,6 +629,20 @@ contents and closes the file.</dd></dl>
 <a href='IOError.html'>IOError</a>: if the file cannot be read
 </dd>
 </dl></div>
+</div>
+<hr />
+<a name='relativeTo'></a>
+<div class='api'>
+<div class='apiSig'>    relativeTo(origin: <a href='Path.html'>Path</a> = null): <a href='Path.html'>Path</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Get a relative path to an origin. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>origin: <a href='Path.html'>Path</a> </td><td>The origin path to use when calculating a relative path to the destination (this path). If origin is null, the current working directory is used as the origin. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A new relative path.</dd></dl>
+</div>
 </div>
 <hr />
 <a name='remove'></a>
@@ -628,20 +682,6 @@ directory itself. If the directory does not exist, this call does not error and 
 <a href='IOError.html'>IOError</a>: if the rename fails.
 </dd>
 </dl></div>
-</div>
-<hr />
-<a name='same'></a>
-<div class='api'>
-<div class='apiSig'>    same(other: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Compare two paths test if they represent the same file. </dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>other: <a href='Object.html'>Object</a> </td><td>Other path to compare with.</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>True if the paths represent the same underlying filename 8.</dd></dl>
-</div>
 </div>
 <hr />
 <a name='replace'></a>
@@ -690,6 +730,20 @@ absolute and relative path segments.</dd></dl>
 <tr class='param'><td class='param'>otherPaths: <a href='Array.html'>Array</a> </td><td>Paths to resolve in the region of this path.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A new Path object that is resolved against the prior path.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='same'></a>
+<div class='api'>
+<div class='apiSig'>    same(other: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Compare two paths test if they represent the same file. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>other: <a href='Object.html'>Object</a> </td><td>Other path to compare with.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the paths represent the same underlying filename 8.</dd></dl>
 </div>
 </div>
 <hr />
@@ -767,63 +821,6 @@ system location for temp files. This is typically /tmp or /temp.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Return the path as a string. The path is not translated.</dd></dl>
 <dl><dt>Returns</dt>
 <dd>A string representing the path.</dd></dl>
-</div>
-</div>
-<hr />
-<a name='tree'></a>
-<div class='api'>
-<div class='apiSig'>    tree(from, to, options): <a href='Number.html'>Number</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Process a directory tree and perform operations on matching files. This may be used to copy, move or process entire directory trees.
-This method supports several invocation forms:
-<ul>
-<li>tree(from, to, {options})</li>
-<li>tree([from, from, ...], to, {options})</li>
-<li>tree({from: pattern, to: directory, options...})</li>
-<li>tree([{from: pattern, to: directory, options...}])</li>
-</ul>
-A single 'from' pattern may be supplied with a destination 'to' directory. 
-Multiple 'from' patterns may be provide in an array. 
-Alternatively, the arguments may be provide via a object with a 'from' property. In this case, the
-'to' directory and options are provided in the same object.<br/><br/>This method uses the Path.files() API to create a files list. All the options for Path.files are supported.</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>from </td><td>Path|String|Object|Array This may be a String or Path containing the source directory/file to  process. Or it may be an object that supplies 'from', 'to' and 'options' as processing instructions.  It may also be an array of Paths, Strings or Objects. The patterns may contain:     ? {}  Comma separated patterns !   Negates pattern. This removes matching patterns from the set. These are applied after all source patterns have been processed. If item starts with !, adds to exclusion set. !! to escape. If item is a directory, then appends / ***.</td></tr><tr class='param'><td class='param'>to </td><td>String|Path|Undefined Destination target. If 'from' is a Path or String, then the 'to' argument must  be a destination Path or String. If 'from' is an Object or Array of instruction objects, then 'to' may  be omitted and will be ignored. In that case, the destination must be provided via a 'to' property in the object instructions. If multiple source files are specified or the destination ends in the separator ('/'),  the destination is assumed to be a directory. If the destination is a directory, the destination filename  is created by appending the the source path to the directory.</td></tr><tr class='param'><td class='param'>options </td><td>Object of additional processing instructions.</td></tr></table></dd>
-</dl><dl><dt>Options</dt>
-<dd><table class='parameters' title='options'>
-<td class='param'>action</td><td>Function Callback function to implement a single action.  Function(from: Path, to: Path, options: Object): Void.</td></tr>
-<td class='param'>active</td><td>Boolean If destination is an active executable or library, rename the active file using a '.old'  extension and retry.</td></tr>
-<td class='param'>append</td><td>Boolean Set to true to append all input files into a single destination.</td></tr>
-<td class='param'>compress</td><td>Boolean Compress destination file using Zlib. Results in a '.gz' extension.</td></tr>
-<td class='param'>depthFirst</td><td>Boolean: Do a depth first traversal. If true, the directories will be visited after the files in the directory. Otherwise, directories will be visited first. Defaults to false.</td></tr>
-<td class='param'>dir</td><td>Assume the destination is a directory. Create if it does not exist.</td></tr>
-<td class='param'>dot</td><td>String Specifies where the filename extension begins for filenames with multiple dots. Set to  'first' or 'last'.</td></tr>
-<td class='param'>exclude</td><td>String|Regular RegExp pattern of files to exclude from the results. Matches the entire path. Only for the purpose of this match, directories will have '/' appended. May be set to the string 'directories' to exclude directories from the results which are by default included.</td></tr>
-<td class='param'>expand</td><td>Object Expand tokens in filenames using this object. Object hash containing properties to use  when replacing tokens of the form <a href='#{token}'>{token}</a> in the src and dest filenames.</td></tr>
-<td class='param'>extension</td><td>String|Path Extension to use for the destination filenames.</td></tr>
-<td class='param'>files</td><td>Array Output array to contain a list of processed destination filenames.</td></tr>
-<td class='param'>filter</td><td>Function Callback function to test if a file should be processed. Function(filename: Path, options: Object): Boolean The file argument is the filename being considered, it include the Path. The value of "this" is set to the Path value.</td></tr>
-<td class='param'>flatten</td><td>Boolean Flatten the input source tree to a single level. Defaults to false.</td></tr>
-<td class='param'>group</td><td>String | Number System group name or number to use for the destination files.</td></tr>
-<td class='param'>hidden</td><td>Boolean Include hidden files starting with '.'. Defaults to false.</td></tr>
-<td class='param'>include</td><td>RegExp Regular expression pattern of files to include in the results.</td></tr>
-<td class='param'>keep</td><td>Boolean Keep uncompressed file after compressing.</td></tr>
-<td class='param'>missing</td><td>String Determine what happens if source patterns do not match any files. Set to undefined to report patterns that don't resolve by throwing an exception.  Set to any non-null value to be used in the results when there are no matching files or directories.  Set to the empty string to use the patterns in the results and set to null to do nothing.</td></tr>
-<td class='param'>noneg</td><td>Boolean Do not process negated file patterns.</td></tr>
-<td class='param'>move</td><td>Boolean If true, do a move instead of a copy.</td></tr>
-<td class='param'>patch</td><td>Object. Expand file contents tokens using this object. Object hash containing properties to use  when replacing tokens of the form <a href='#{token}'>{token}</a> in file contents.</td></tr>
-<td class='param'>permissions</td><td>Number Posix style permissions mask. E.g. 0644.</td></tr>
-<td class='param'>relative</td><td>String|Path Create destination filenames relative to this path value. Each source filename is mapped relative to the relative value and then appended to the 'to' directory. If a pattern includes a path portion, it will be included in destination filenames regardless of  the value of this option.</td></tr>
-<td class='param'>rename</td><td>Function Callback function to provide a new destination filename.  Function(from, to, options):Path.</td></tr>
-<td class='param'>symlink</td><td>String|Path Create a symbolic link to the destination in this directory.</td></tr>
-<td class='param'>strip</td><td>Boolean Run 'strip' on the destination files.</td></tr>
-<td class='param'>trim</td><td>Number of path components to trim from the start of the source filename. Does not apply when using 'flatten'.</td></tr>
-<td class='param'>user</td><td>String | Number System user account name or number to use for destination files.</td></tr>
-<td class='param'>verbose</td><td>True | function. If true, then trace to stdout. Otherwise call function for each item.</td></tr>
-</table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>The number of files processed.</dd></dl>
 </div>
 </div>
 <hr />

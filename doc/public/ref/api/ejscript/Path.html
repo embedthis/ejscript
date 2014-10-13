@@ -802,7 +802,7 @@ Alternatively, the arguments may be provide via a object with a 'from' property.
 <td class='param'>exclude</td><td>String|Regular RegExp pattern of files to exclude from the results. Matches the entire path. Only for the purpose of this match, directories will have '/' appended. May be set to the string 'directories' to exclude directories from the results which are by default included.</td></tr>
 <td class='param'>expand</td><td>Object Expand tokens in filenames using this object. Object hash containing properties to use  when replacing tokens of the form <a href='#{token}'>{token}</a> in the src and dest filenames.</td></tr>
 <td class='param'>extension</td><td>String|Path Extension to use for the destination filenames.</td></tr>
-<td class='param'>files</td><td>Array Output array to contain a list of processed destination filenames.</td></tr>
+<td class='param'>filelist</td><td>Array Output array to contain a list of processed destination filenames.</td></tr>
 <td class='param'>filter</td><td>Function Callback function to test if a file should be processed. Function(filename: Path, options: Object): Boolean The file argument is the filename being considered, it include the Path. The value of "this" is set to the Path value.</td></tr>
 <td class='param'>flatten</td><td>Boolean Flatten the input source tree to a single level. Defaults to false.</td></tr>
 <td class='param'>group</td><td>String | Number System group name or number to use for the destination files.</td></tr>
@@ -814,10 +814,11 @@ Alternatively, the arguments may be provide via a object with a 'from' property.
 <td class='param'>move</td><td>Boolean If true, do a move instead of a copy.</td></tr>
 <td class='param'>patch</td><td>Object. Expand file contents tokens using this object. Object hash containing properties to use  when replacing tokens of the form <a href='#{token}'>{token}</a> in file contents.</td></tr>
 <td class='param'>permissions</td><td>Number Posix style permissions mask. E.g. 0644.</td></tr>
-<td class='param'>relative</td><td>String|Path Create destination filenames relative to this path value. Each source filename is mapped relative to the relative value and then appended to the 'to' directory. If a pattern includes a path portion, it will be included in destination filenames regardless of  the value of this option.</td></tr>
+<td class='param'>relative</td><td>String|Path When calculating the destination filename, compute the source filename  relative to this directory and append to the 'to' directory. If a pattern includes a path portion, it will be included in destination filenames regardless of  the value of this option.</td></tr>
 <td class='param'>rename</td><td>Function Callback function to provide a new destination filename.  Function(from, to, options):Path.</td></tr>
 <td class='param'>symlink</td><td>String|Path Create a symbolic link to the destination in this directory.</td></tr>
 <td class='param'>strip</td><td>Boolean Run 'strip' on the destination files.</td></tr>
+<td class='param'>temp</td><td>Boolean | RegExp Pattern matching temporary files that should not be processed. If true, use a standard pattern for temp files.</td></tr>
 <td class='param'>trim</td><td>Number of path components to trim from the start of the source filename. Does not apply when using 'flatten'.</td></tr>
 <td class='param'>user</td><td>String | Number System user account name or number to use for destination files.</td></tr>
 <td class='param'>verbose</td><td>True | function. If true, then trace to stdout. Otherwise call function for each item.</td></tr>
