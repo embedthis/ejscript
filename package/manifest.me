@@ -93,7 +93,7 @@ Me.load({
                     enable:     '!me.settings.static', 
 
                 }, { 
-                    from:       'src/paks/est/ca.crt',
+                    from:       '${SRC}/src/paks/est/ca.crt',
                     to:         '${abin}/',
                     ifdef:      'ssl',
 
@@ -127,7 +127,7 @@ Me.load({
                     enable:     "me.platform.os == 'windows' && !me.settings.static",
 
                 }, {
-                    from:       'src/ejs.web/www',
+                    from:       '${SRC}/src/ejs.web/www',
                     to:         '${abin}/',
                     relative:   'src/ejs.web',
                     flatten:    false,
@@ -135,6 +135,7 @@ Me.load({
             ],
             dev: [
                 {
+                    home:       '${SRC}',
                     from: [ 
                                 'src/*.h', 
                                 'src/vm/*.h', 
@@ -148,7 +149,7 @@ Me.load({
             ],
             doc: [
                 {
-                    from:       'doc/public/man/*.1',
+                    from:       '${SRC}/doc/public/man/*.1',
                     to:         '${adoc}/man1/',
                     enable:     "me.platform.like == 'unix'",
                     symlink:    '${man}/man1',
