@@ -11,7 +11,7 @@ Me.load({
             build: `
                 run('${LBIN}/ejsc --out ${BIN}/ejs.zlib.mod ${settings.esflags} --optimize 9 ${FILES}')
             `,
-            message: ['Compile', 'ejs.zlib.mod'],
+            message: 'Compile: ejs.zlib.mod',
             depends: [ 'ejsc', 'ejs.mod' ],
         },
 

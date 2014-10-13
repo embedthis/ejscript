@@ -34,91 +34,39 @@ module ejs.unix {
 
     /**
         Copy files
-        The src argument can ba an array of Strings/Paths representing files/directories to copy. The may include
-        embedded wildcards. If a src element is a directory, then it all all files and subdirectories will be copied
-        preserving its directory structure under dest. 
+        Copy files from source patterns to a destination. This is a wrapper over Path.operate() and it supports all
+        of its options.
 
-        This routine is implemented using the Path.tree method. All the options supported by Path.tree are supported.
+        The 'src' argument can be a Path or String or an array of Strings/Paths representing files/directories to copy and
+        may include wildcards. If a src element is a directory, then it all files and subdirectories underneath will be copied. 
 
-        @param src Source files/directories to copy. This can be a String, Path or array of String/Paths. 
-            The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches
-            every directory and file. The Posix "[]" and "{a,b}" style expressions are not supported.
-            If src is a directory, this routine functions recursively and copies the entire directory by converting
-            the source pattern to 'pattern / **' (without spaces) and enabling the 'tree' option.
+        By default, this method operates in 'flatten' mode where the source directory structure is not copied. To
+        copy an entire directory tree, set 'flatten' to false in the options. In this case, the entire source path is 
+        created under the destination.
+        
+        If the 'relative' or 'trim' options are defined, it is assumed that flatten mode is disabled.
+
+        @param src Path | String | Array This may be a String or Path containing the source paths to 
+        copy. It may also be an array of Paths or Strings. The 'src' patterns may contain:
+            *
+            **
+            ?
+            {}  Comma separated patterns
+            !   Negates pattern. This removes matching patterns from the set. These are applied after all source
+                patterns have been processed. Use !! to escape.
+        If item is a directory, then '**' is automatically appended.
+
+
         @param dest Destination file or directory. If multiple files are copied, dest is assumed to be a directory and 
-            will be created if required.  If dest has a trailing "/", it is assumed to be a directory.
-        @param options Processing and file attributes
-        @option dir Assume the destination is a directory. Create if it does not exist.
-        @option filter Function Callback function to test if a file should be processed.
-            Function(from: Path, to: Path, options: Object): Boolea
-        @option flatten Boolean Flatten the input source tree to a single level. Defaults to false.
-        @option group String representing the file group                                                     
-        @option missing String Determine what happens if source patterns do not match any files.
-            Set to undefined to report patterns that don't resolve by throwing an exception.
-            Set to any non-null value to be used in the results when there are no matching files or directories.
-                Set to the empty string to use the patterns in the results and set to null to do nothing.
-        @options user String representing the file user                                                     
-        @options permissions Number File Posix permissions mask
-        @option relative String|Path Create paths relative to this path option when constructing destination paths.
-        @option trim Number of path components to trim from the start of the source filename. Does not apply when using
-                'flatten'
+            will be created if required.  If dest has a trailing '/', it is assumed to be a directory.
+
+        @param options Additional processing instructions. All the options provided by #Path.operate are 
+            supported.
+
         @return Number of files copied
     */
-    function cp(src, dest: Path, options = {}): Number {
-        //  DEPRECATED tree option
-        if (options.tree != undefined) {
-            options = options.clone()
-            options.flatten = !options.tree
-        }
-        return Path().tree(src, dest, options)
-    }
-
-/* UNUSED
-    function cp(src, dest: Path, options = {}): Number {
-        if (!(src is Array)) src = [src]
-        let count = 0
-        for each (let pattern: Path in src) {
-            let base: Path = Path('.')
-            if (pattern.isDir) {
-                base = pattern
-                pattern = Path('**')
-                options = blend({tree: true, relative: true}, options)
-
-            } else if (options.tree) {
-                base = pattern.dirname
-                pattern = pattern.basename
-                options.relative = true
-            }
-            list = base.files(pattern, options)
-
-            if (!list || list.length == 0) {
-                if (options.exceptions !== false) {
-                    throw 'cp: Cannot find files to copy "' + pattern + '" to ' + dest
-                }
-            }
-            destIsDir = (dest.isDir || list.length > 1 || dest.name.endsWith('/'))
-
-            for each (let file: Path in list) {
-                let to, from = base.join(file)
-                if (options.tree) {
-                    to = dest.join(file).normalize
-                } else if (destIsDir) {
-                    to = dest.join(file.basename)
-                } else {
-                    to = dest
-                }
-                to.dirname.makeDir()
-                if (from.isDir) {
-                    to.makeDir()
-                } else {
-                    from.copy(to, options)
-                }
-                count++
-            }
-        }
-        return count
-    }
-*/
+    function cp(src, dest: Path, options = {}): Number
+        Path().operate(src, dest, options)
 
     /**
         Get the directory name portion of a file. The dirname name portion is the leading portion including all 

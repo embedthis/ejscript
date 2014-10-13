@@ -5,7 +5,7 @@
 Me.load({
 
     scripts: {
-        preblend: `
+        loaded: `
             me.settings.esflags = (me.platform.profile == 'debug' || me.platform.profile == 'mine') ? '--debug' : ''
         `,
     },
@@ -19,7 +19,7 @@ Me.load({
                 run('${LBIN}/ejsc --out ${BIN}/ejs.mod ${settings.esflags} --optimize 9 --bind --require null ${FILES}')
                 run('${LBIN}/ejsmod --cslots --dir ${INC} --require null ${BIN}/ejs.mod')
             `,
-            message: ['Compile', 'Core EJS classes'],
+            message: 'Compile: Core EJS classes',
             depends: [ 'ejsc', 'ejsmod' ],
         },
 	},

@@ -12,7 +12,7 @@ Me.load({
             build: `
                 run('${LBIN}/ejsc --out ${BIN}/ejs.db.mapper.mod ${settings.esflags} --optimize 9 ${FILES}')
             `,
-            message: ['Compile', 'ejs.db.mapper.mod' ],
+            message: 'Compile: ejs.db.mapper.mod',
             depends: [ 'ejsc', 'ejs.mod', 'ejs.db.mod' ],
         },
 	},

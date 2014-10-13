@@ -1351,6 +1351,7 @@ PUBLIC struct EjsString *ejsObjToJSON(Ejs *ejs, EjsObj *obj, int argc, EjsObj **
 #define EJS_BLEND_SUB           0x100       /**< Flag for ejsBlendObject for "-" property blend */
 #define EJS_BLEND_ASSIGN        0x200       /**< Flag for ejsBlendObject for "=" property blend */
 #define EJS_BLEND_COND_ASSIGN   0x400       /**< Flag for ejsBlendObject for "?" property blend */
+#define EJS_BLEND_PUBLIC        0x800       /**< Flag for ejsBlendObject for blending into public properties */
 
 //  TODO - rename ejsBlend
 /**
@@ -1721,6 +1722,7 @@ PUBLIC EjsString *ejsToJSON(Ejs *ejs, EjsAny *obj, EjsObj *options);
 #define EJS_JSON_SHOW_SUBCLASSES    0x10    /**< ejsSerialize flag to include subclass properties */
 #define EJS_JSON_SHOW_NOQUOTES      0x20    /**< ejsSerialize flag to omit quotes if property has no spaces */
 #define EJS_JSON_SHOW_REGEXP        0x40    /**< ejsSerialize flag to emit native RegExp literals */
+#define EJS_JSON_SHOW_NULLS         0x80    /**< ejsSerialize flag to emit null properties */
 
 /**
     Serialize a variable into JSON format
@@ -1732,6 +1734,7 @@ PUBLIC EjsString *ejsToJSON(Ejs *ejs, EjsAny *obj, EjsObj *options);
         <li> EJS_JSON_SHOW_HIDDEN - Include hidden properties </li>
         <li> EJS_JSON_SHOW_NOQUOTES - Omit quotes on properties if possible</li> 
         <li> EJS_JSON_SHOW_NAMESPACES - Include namespaces in property names </li>
+        <li> EJS_JSON_SHOW_NULLS      - Include null properties </li>
         <li> EJS_JSON_SHOW_REGEXP - Emit native regular expression literals</li>
         <li> EJS_JSON_SHOW_PRETTY - Use human-readable multiline presentation </li> 
         <li> EJS_JSON_SHOW_SUBCLASSES - Include subclass properties </li>

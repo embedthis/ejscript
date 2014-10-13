@@ -12,7 +12,7 @@ Me.load({
                 run('${LBIN}/ejsc --out ${BIN}/ejs.web.mod ${settings.esflags} --optimize 9 ${FILES}')
                 run('${LBIN}/ejsmod --cslots --dir ${BIN} ${BIN}/ejs.web.mod')
             `,
-            message: [ 'Compile', 'ejs.web.mod' ],
+            message: 'Compile: ejs.web.mod',
             depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
             enable: 'me.settings.ejs.web',
         },
@@ -28,7 +28,8 @@ Me.load({
         www: {
             type: 'file',
             path: '${BIN}/www',
-            files: [ 'www/' ],
+            files: [ 'www/**' ],
+            relative: 'www',
             platforms: [ 'local' ],
             enable: 'me.settings.ejs.web',
         }

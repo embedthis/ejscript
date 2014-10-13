@@ -12,7 +12,7 @@ Me.load({
             build: `
                 run('${LBIN}/ejsc --out ${BIN}/ejs.template.mod ${settings.esflags} --optimize 9 ${FILES}')
             `,
-            message: ['Compile', 'ejs.template.mod'],
+            message: 'Compile: ejs.template.mod',
             depends: [ 'ejsc', 'ejs.mod' ],
         },
 	},

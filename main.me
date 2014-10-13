@@ -118,9 +118,7 @@ Me.load({
     },
 
     scripts: {
-        loaded: `
-            me.targets.httpcmd.enable = false
-        `,
+        loaded: `me.targets.httpcmd.enable = false`,
     },
 
     targets: {
@@ -131,6 +129,10 @@ Me.load({
          */
         projects: {
             action: "genProjects('-with est')",
+        },
+
+        mine: {
+            action: `genProjects('', 'mine', Config.OS + '-' + Config.CPU)`,
         },
 
         test: {
