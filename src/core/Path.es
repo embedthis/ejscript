@@ -1090,6 +1090,7 @@ module ejs {
                     for each (item in commands) {
                         let src = this.join(item.from)
                         let dest = item.to
+                        let att = dest.attributes
                         if (options.patch) {
                             dest.write(expand(dest.readString(), item))
                         }
@@ -1113,6 +1114,9 @@ module ejs {
                             }
                             dest.relativeTo(symlink.dirname).link(symlink)
                             item.to = symlink
+                        }
+                        if (att && att.permissions) {
+                            dest.setAttributes({permissions: att.permissions})
                         }
                         if (options.postPerform) {
                             options.postPerform.call(this, src, dest, options)
