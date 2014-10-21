@@ -67,7 +67,7 @@ assert(!base.files('*', {exclude: /\/$/}).toString().contains(',mid,'))
 assert(!base.files('*', {exclude: /file/}).toString().contains('file'))
 
 //  Exclude string directories
-assert(!base.files('*', {exclude: 'directories'}).transform(function(path) path.name).contains('data/mid'))
+assert(base.files('*', {exclude: 'directories'}).transform(function(path) path.name).toString().match(/data.mid/) == null)
 
 //  Exclude function
 let count = 0
@@ -82,12 +82,12 @@ assert(files.length == numdat)
 //  Include RegExp
 assert(base.files('**.dat', {include: /.dat/}).length == numdat)
 assert(base.files('**.dat', {include: /.xx.dat/}).length == 0)
-assert(base.files('*', {include: /\/$/}).toString() == 'data/mid')
-assert(base.files('*', {include: /file.dat/}).sort() == 'data/file.dat,data/pre-file.dat')
+assert(base.files('*', {include: /\/$/}).toString().match(/data.mid/))
+assert(base.files('*', {include: /file.dat/}).sort().toString().match(/data.file.dat,data.pre-file.dat/))
 assert(base.files('*', {include: /file/}).toString().contains('file.dat'))
 
 //  Include string 'directories'
-assert(base.files('*', {include: 'directories'}).transform(function(path) path.name).contains('data/mid'))
+assert(base.files('*', {include: 'directories'}).transform(function(path) path.name).toString().match(/data.mid/))
 
 //  Include function
 let count = 0
@@ -101,13 +101,13 @@ assert(files.length == numdat)
 
 //  depthFirst: Directories before sub-directory contents
 let files = base.files('m**')
-assert(files[0] == 'data/mid')
+assert(files[0].toString().match(/data.mid/))
 let files = base.files('m**', {depthFirst: false})
-assert(files[0] == 'data/mid')
+assert(files[0].toString().match(/data.mid/))
 
 //  depthFirst: Directories last
 let files = base.files('m**', {depthFirst: true})
-assert(files.pop() == 'data/mid')
+assert(files.pop().toString().match(/data.mid/))
 
 //  Expand by object
 let files = base.files('${what}/**.dat', {
@@ -128,7 +128,7 @@ assert(files.length == numdat)
 
 //  Hidden
 assert(base.files('*').find(function(e) e.name == '.hidden') == null)
-assert(base.files('*', {hidden: true}).find(function(e) e.name == 'data/.hidden') == 'data/.hidden')
+assert(base.files('*', {hidden: true}).find(function(e) e.name.match(/data.\.hidden/)).match(/data.\.hidden/))
 
 //  Special cases
 //  Trailing / on pattern implies contents
