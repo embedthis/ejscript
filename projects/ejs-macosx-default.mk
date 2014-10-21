@@ -62,7 +62,7 @@ ME_LIB_PREFIX         ?= $(ME_ROOT_PREFIX)/usr/local/lib
 ME_MAN_PREFIX         ?= $(ME_ROOT_PREFIX)/usr/local/share/man
 ME_SBIN_PREFIX        ?= $(ME_ROOT_PREFIX)/usr/local/sbin
 ME_ETC_PREFIX         ?= $(ME_ROOT_PREFIX)/etc/$(NAME)
-ME_WEB_PREFIX         ?= $(ME_ROOT_PREFIX)/var/www/$(NAME)-default
+ME_WEB_PREFIX         ?= $(ME_ROOT_PREFIX)/var/www/$(NAME)
 ME_LOG_PREFIX         ?= $(ME_ROOT_PREFIX)/var/log/$(NAME)
 ME_SPOOL_PREFIX       ?= $(ME_ROOT_PREFIX)/var/spool/$(NAME)
 ME_CACHE_PREFIX       ?= $(ME_ROOT_PREFIX)/var/spool/$(NAME)/cache
@@ -234,7 +234,6 @@ clean:
 clobber: clean
 	rm -fr ./$(BUILD)
 
-
 #
 #   ejs.cache.local.slots.h
 #
@@ -258,6 +257,7 @@ $(BUILD)/inc/ejs.db.sqlite.slots.h: $(DEPS_2)
 #
 #   me.h
 #
+
 $(BUILD)/inc/me.h: $(DEPS_3)
 
 #
@@ -297,11 +297,13 @@ $(BUILD)/inc/http.h: $(DEPS_6)
 #
 #   ejsByteCode.h
 #
+
 src/ejsByteCode.h: $(DEPS_7)
 
 #
 #   ejsByteCodeTable.h
 #
+
 src/ejsByteCodeTable.h: $(DEPS_8)
 
 #
@@ -317,6 +319,7 @@ $(BUILD)/inc/ejs.slots.h: $(DEPS_9)
 #
 #   ejsCustomize.h
 #
+
 src/ejsCustomize.h: $(DEPS_10)
 
 #
@@ -378,6 +381,7 @@ $(BUILD)/inc/ejsByteCodeTable.h: $(DEPS_15)
 #
 #   ejs.h
 #
+
 src/ejs.h: $(DEPS_16)
 
 #
@@ -465,6 +469,7 @@ $(BUILD)/inc/zlib.h: $(DEPS_24)
 #
 #   ejsmod.h
 #
+
 src/cmd/ejsmod.h: $(DEPS_25)
 
 #
@@ -500,6 +505,7 @@ $(BUILD)/obj/dtoa.o: \
 #
 #   ejsCompiler.h
 #
+
 src/ejsCompiler.h: $(DEPS_29)
 
 #
@@ -796,6 +802,7 @@ $(BUILD)/obj/ejsHttp.o: \
 #
 #   ejsWeb.h
 #
+
 src/ejs.web/ejsWeb.h: $(DEPS_59)
 
 #
@@ -1211,6 +1218,7 @@ $(BUILD)/obj/ejsrun.o: \
 #
 #   est.h
 #
+
 src/paks/est/est.h: $(DEPS_99)
 
 #
@@ -1226,6 +1234,7 @@ $(BUILD)/obj/estLib.o: \
 #
 #   http.h
 #
+
 src/paks/http/http.h: $(DEPS_101)
 
 #
@@ -1252,6 +1261,7 @@ $(BUILD)/obj/listing.o: \
 #
 #   mpr.h
 #
+
 src/paks/mpr/mpr.h: $(DEPS_104)
 
 #
@@ -1298,6 +1308,7 @@ $(BUILD)/obj/mprSsl.o: \
 #
 #   pcre.h
 #
+
 src/paks/pcre/pcre.h: $(DEPS_109)
 
 #
@@ -1324,6 +1335,7 @@ $(BUILD)/obj/slotGen.o: \
 #
 #   sqlite3.h
 #
+
 src/paks/sqlite/sqlite3.h: $(DEPS_112)
 
 #
@@ -1351,6 +1363,7 @@ $(BUILD)/obj/sqlite3.o: \
 #
 #   zlib.h
 #
+
 src/paks/zlib/zlib.h: $(DEPS_115)
 
 #
@@ -1367,6 +1380,7 @@ $(BUILD)/obj/zlib.o: \
 #
 #   slots
 #
+
 slots: $(DEPS_117)
 
 #
@@ -1820,7 +1834,6 @@ $(BUILD)/bin/ejsrun: $(DEPS_136)
 	@echo '      [Link] $(BUILD)/bin/ejsrun'
 	$(CC) -o $(BUILD)/bin/ejsrun -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_136) $(LIBS_136) $(LIBS_136) $(LIBS) -lpam 
 
-
 #
 #   http-ca-crt
 #
@@ -1950,6 +1963,9 @@ endif
 #   libmprssl
 #
 DEPS_144 += $(BUILD)/bin/libmpr.dylib
+ifeq ($(ME_COM_EST),1)
+    DEPS_144 += $(BUILD)/bin/libest.dylib
+endif
 DEPS_144 += $(BUILD)/obj/mprSsl.o
 
 LIBS_144 += -lmpr
@@ -2081,7 +2097,33 @@ $(BUILD)/bin/utest: $(DEPS_152)
 #
 #   www
 #
-DEPS_153 += src/ejs.web/www
+DEPS_153 += src/ejs.web/www/images/banner.jpg
+DEPS_153 += src/ejs.web/www/images/favicon.ico
+DEPS_153 += src/ejs.web/www/images/splash.jpg
+DEPS_153 += src/ejs.web/www/js/jquery.ejs.min.js
+DEPS_153 += src/ejs.web/www/js/jquery.min.js
+DEPS_153 += src/ejs.web/www/js/jquery.simplemodal.min.js
+DEPS_153 += src/ejs.web/www/js/jquery.tablesorter.js
+DEPS_153 += src/ejs.web/www/js/jquery.tablesorter.min.js
+DEPS_153 += src/ejs.web/www/js/jquery.treeview.min.js
+DEPS_153 += src/ejs.web/www/js/tree-images/file.gif
+DEPS_153 += src/ejs.web/www/js/tree-images/folder-closed.gif
+DEPS_153 += src/ejs.web/www/js/tree-images/folder.gif
+DEPS_153 += src/ejs.web/www/js/tree-images/minus.gif
+DEPS_153 += src/ejs.web/www/js/tree-images/plus.gif
+DEPS_153 += src/ejs.web/www/js/tree-images/treeview-black-line.gif
+DEPS_153 += src/ejs.web/www/js/tree-images/treeview-black.gif
+DEPS_153 += src/ejs.web/www/js/tree-images/treeview-default-line.gif
+DEPS_153 += src/ejs.web/www/js/tree-images/treeview-default.gif
+DEPS_153 += src/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif
+DEPS_153 += src/ejs.web/www/js/tree-images/treeview-famfamfam.gif
+DEPS_153 += src/ejs.web/www/js/tree-images/treeview-gray-line.gif
+DEPS_153 += src/ejs.web/www/js/tree-images/treeview-gray.gif
+DEPS_153 += src/ejs.web/www/js/tree-images/treeview-red-line.gif
+DEPS_153 += src/ejs.web/www/js/tree-images/treeview-red.gif
+DEPS_153 += src/ejs.web/www/js/treeview.css
+DEPS_153 += src/ejs.web/www/layout.css
+DEPS_153 += src/ejs.web/www/themes/default.css
 
 $(BUILD)/bin/www: $(DEPS_153)
 	@echo '      [Copy] $(BUILD)/bin/www'
@@ -2122,9 +2164,10 @@ $(BUILD)/bin/www: $(DEPS_153)
 #
 #   installBinary
 #
+
 installBinary: $(DEPS_154)
 	( \
-	cd .; \
+	cd ../../.paks/me-package/0.8.3; \
 	mkdir -p "$(ME_APP_PREFIX)" ; \
 	rm -f "$(ME_APP_PREFIX)/latest" ; \
 	ln -s "2.5.0" "$(ME_APP_PREFIX)/latest" ; \
@@ -2157,6 +2200,7 @@ installBinary: $(DEPS_154)
 	mkdir -p "$(ME_BIN_PREFIX)" ; \
 	rm -f "$(ME_BIN_PREFIX)/utest" ; \
 	ln -s "$(ME_VAPP_PREFIX)/bin/utest" "$(ME_BIN_PREFIX)/utest" ; \
+	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
 	cp $(BUILD)/bin/libejs.db.sqlite.dylib $(ME_VAPP_PREFIX)/bin/libejs.db.sqlite.dylib ; \
 	cp $(BUILD)/bin/libejs.dylib $(ME_VAPP_PREFIX)/bin/libejs.dylib ; \
 	cp $(BUILD)/bin/libejs.web.dylib $(ME_VAPP_PREFIX)/bin/libejs.web.dylib ; \
@@ -2166,6 +2210,7 @@ installBinary: $(DEPS_154)
 	cp $(BUILD)/bin/libpcre.dylib $(ME_VAPP_PREFIX)/bin/libpcre.dylib ; \
 	cp $(BUILD)/bin/libsql.dylib $(ME_VAPP_PREFIX)/bin/libsql.dylib ; \
 	cp $(BUILD)/bin/libzlib.dylib $(ME_VAPP_PREFIX)/bin/libzlib.dylib ; \
+	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
 	cp $(BUILD)/bin/ejs.db.mapper.mod $(ME_VAPP_PREFIX)/bin/ejs.db.mapper.mod ; \
 	cp $(BUILD)/bin/ejs.db.mod $(ME_VAPP_PREFIX)/bin/ejs.db.mod ; \
 	cp $(BUILD)/bin/ejs.db.sqlite.mod $(ME_VAPP_PREFIX)/bin/ejs.db.sqlite.mod ; \
@@ -2180,50 +2225,58 @@ installBinary: $(DEPS_154)
 	cp $(BUILD)/bin/utest.es $(ME_VAPP_PREFIX)/bin/utest.es ; \
 	cp $(BUILD)/bin/utest.worker $(ME_VAPP_PREFIX)/bin/utest.worker ; \
 	if [ "$(ME_COM_SSL)" = 1 ]; then true ; \
+	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
 	cp $(BUILD)/bin/libmprssl.dylib $(ME_VAPP_PREFIX)/bin/libmprssl.dylib ; \
 	fi ; \
 	if [ "$(ME_COM_SSL)" = 1 ]; then true ; \
+	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
 	cp src/paks/est/ca.crt $(ME_VAPP_PREFIX)/bin/ca.crt ; \
 	fi ; \
 	if [ "$(ME_COM_OPENSSL)" = 1 ]; then true ; \
+	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
 	cp $(BUILD)/bin/libssl*.dylib* $(ME_VAPP_PREFIX)/bin/libssl*.dylib* ; \
 	cp $(BUILD)/bin/libcrypto*.dylib* $(ME_VAPP_PREFIX)/bin/libcrypto*.dylib* ; \
 	fi ; \
 	if [ "$(ME_COM_EST)" = 1 ]; then true ; \
+	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
 	cp $(BUILD)/bin/libest.dylib $(ME_VAPP_PREFIX)/bin/libest.dylib ; \
 	fi ; \
-	mkdir -p "$(ME_VAPP_PREFIX)/bin/www/images" ; \
-	cp src/ejs.web/www/images/banner.jpg $(ME_VAPP_PREFIX)/bin/www/images/banner.jpg ; \
-	cp src/ejs.web/www/images/favicon.ico $(ME_VAPP_PREFIX)/bin/www/images/favicon.ico ; \
-	cp src/ejs.web/www/images/splash.jpg $(ME_VAPP_PREFIX)/bin/www/images/splash.jpg ; \
-	mkdir -p "$(ME_VAPP_PREFIX)/bin/www/js" ; \
-	cp src/ejs.web/www/js/jquery.ejs.min.js $(ME_VAPP_PREFIX)/bin/www/js/jquery.ejs.min.js ; \
-	cp src/ejs.web/www/js/jquery.min.js $(ME_VAPP_PREFIX)/bin/www/js/jquery.min.js ; \
-	cp src/ejs.web/www/js/jquery.simplemodal.min.js $(ME_VAPP_PREFIX)/bin/www/js/jquery.simplemodal.min.js ; \
-	cp src/ejs.web/www/js/jquery.tablesorter.js $(ME_VAPP_PREFIX)/bin/www/js/jquery.tablesorter.js ; \
-	cp src/ejs.web/www/js/jquery.tablesorter.min.js $(ME_VAPP_PREFIX)/bin/www/js/jquery.tablesorter.min.js ; \
-	cp src/ejs.web/www/js/jquery.treeview.min.js $(ME_VAPP_PREFIX)/bin/www/js/jquery.treeview.min.js ; \
-	mkdir -p "$(ME_VAPP_PREFIX)/bin/www/js/tree-images" ; \
-	cp src/ejs.web/www/js/tree-images/file.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/file.gif ; \
-	cp src/ejs.web/www/js/tree-images/folder-closed.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/folder-closed.gif ; \
-	cp src/ejs.web/www/js/tree-images/folder.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/folder.gif ; \
-	cp src/ejs.web/www/js/tree-images/minus.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/minus.gif ; \
-	cp src/ejs.web/www/js/tree-images/plus.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/plus.gif ; \
-	cp src/ejs.web/www/js/tree-images/treeview-black-line.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/treeview-black-line.gif ; \
-	cp src/ejs.web/www/js/tree-images/treeview-black.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/treeview-black.gif ; \
-	cp src/ejs.web/www/js/tree-images/treeview-default-line.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/treeview-default-line.gif ; \
-	cp src/ejs.web/www/js/tree-images/treeview-default.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/treeview-default.gif ; \
-	cp src/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/treeview-famfamfam-line.gif ; \
-	cp src/ejs.web/www/js/tree-images/treeview-famfamfam.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/treeview-famfamfam.gif ; \
-	cp src/ejs.web/www/js/tree-images/treeview-gray-line.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/treeview-gray-line.gif ; \
-	cp src/ejs.web/www/js/tree-images/treeview-gray.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/treeview-gray.gif ; \
-	cp src/ejs.web/www/js/tree-images/treeview-red-line.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/treeview-red-line.gif ; \
-	cp src/ejs.web/www/js/tree-images/treeview-red.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/treeview-red.gif ; \
-	cp src/ejs.web/www/js/treeview.css $(ME_VAPP_PREFIX)/bin/www/js/treeview.css ; \
-	mkdir -p "$(ME_VAPP_PREFIX)/bin/www" ; \
-	cp src/ejs.web/www/layout.css $(ME_VAPP_PREFIX)/bin/www/layout.css ; \
-	mkdir -p "$(ME_VAPP_PREFIX)/bin/www/themes" ; \
-	cp src/ejs.web/www/themes/default.css $(ME_VAPP_PREFIX)/bin/www/themes/default.css ; \
+	mkdir -p "/usr/src/ejs.web/www" ; \
+	cp src/ejs.web/www/images /usr/src/ejs.web/www/images ; \
+	mkdir -p "/usr/src/ejs.web/www/images" ; \
+	cp src/ejs.web/www/images/banner.jpg /usr/src/ejs.web/www/images/banner.jpg ; \
+	cp src/ejs.web/www/images/favicon.ico /usr/src/ejs.web/www/images/favicon.ico ; \
+	cp src/ejs.web/www/images/splash.jpg /usr/src/ejs.web/www/images/splash.jpg ; \
+	cp src/ejs.web/www/js /usr/src/ejs.web/www/js ; \
+	mkdir -p "/usr/src/ejs.web/www/js" ; \
+	cp src/ejs.web/www/js/jquery.ejs.min.js /usr/src/ejs.web/www/js/jquery.ejs.min.js ; \
+	cp src/ejs.web/www/js/jquery.min.js /usr/src/ejs.web/www/js/jquery.min.js ; \
+	cp src/ejs.web/www/js/jquery.simplemodal.min.js /usr/src/ejs.web/www/js/jquery.simplemodal.min.js ; \
+	cp src/ejs.web/www/js/jquery.tablesorter.js /usr/src/ejs.web/www/js/jquery.tablesorter.js ; \
+	cp src/ejs.web/www/js/jquery.tablesorter.min.js /usr/src/ejs.web/www/js/jquery.tablesorter.min.js ; \
+	cp src/ejs.web/www/js/jquery.treeview.min.js /usr/src/ejs.web/www/js/jquery.treeview.min.js ; \
+	cp src/ejs.web/www/js/tree-images /usr/src/ejs.web/www/js/tree-images ; \
+	mkdir -p "/usr/src/ejs.web/www/js/tree-images" ; \
+	cp src/ejs.web/www/js/tree-images/file.gif /usr/src/ejs.web/www/js/tree-images/file.gif ; \
+	cp src/ejs.web/www/js/tree-images/folder-closed.gif /usr/src/ejs.web/www/js/tree-images/folder-closed.gif ; \
+	cp src/ejs.web/www/js/tree-images/folder.gif /usr/src/ejs.web/www/js/tree-images/folder.gif ; \
+	cp src/ejs.web/www/js/tree-images/minus.gif /usr/src/ejs.web/www/js/tree-images/minus.gif ; \
+	cp src/ejs.web/www/js/tree-images/plus.gif /usr/src/ejs.web/www/js/tree-images/plus.gif ; \
+	cp src/ejs.web/www/js/tree-images/treeview-black-line.gif /usr/src/ejs.web/www/js/tree-images/treeview-black-line.gif ; \
+	cp src/ejs.web/www/js/tree-images/treeview-black.gif /usr/src/ejs.web/www/js/tree-images/treeview-black.gif ; \
+	cp src/ejs.web/www/js/tree-images/treeview-default-line.gif /usr/src/ejs.web/www/js/tree-images/treeview-default-line.gif ; \
+	cp src/ejs.web/www/js/tree-images/treeview-default.gif /usr/src/ejs.web/www/js/tree-images/treeview-default.gif ; \
+	cp src/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif /usr/src/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif ; \
+	cp src/ejs.web/www/js/tree-images/treeview-famfamfam.gif /usr/src/ejs.web/www/js/tree-images/treeview-famfamfam.gif ; \
+	cp src/ejs.web/www/js/tree-images/treeview-gray-line.gif /usr/src/ejs.web/www/js/tree-images/treeview-gray-line.gif ; \
+	cp src/ejs.web/www/js/tree-images/treeview-gray.gif /usr/src/ejs.web/www/js/tree-images/treeview-gray.gif ; \
+	cp src/ejs.web/www/js/tree-images/treeview-red-line.gif /usr/src/ejs.web/www/js/tree-images/treeview-red-line.gif ; \
+	cp src/ejs.web/www/js/tree-images/treeview-red.gif /usr/src/ejs.web/www/js/tree-images/treeview-red.gif ; \
+	cp src/ejs.web/www/js/treeview.css /usr/src/ejs.web/www/js/treeview.css ; \
+	cp src/ejs.web/www/layout.css /usr/src/ejs.web/www/layout.css ; \
+	cp src/ejs.web/www/themes /usr/src/ejs.web/www/themes ; \
+	mkdir -p "/usr/src/ejs.web/www/themes" ; \
+	cp src/ejs.web/www/themes/default.css /usr/src/ejs.web/www/themes/default.css ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/inc" ; \
 	cp src/ejs.h $(ME_VAPP_PREFIX)/inc/ejs.h ; \
 	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
@@ -2305,35 +2358,35 @@ installBinary: $(DEPS_154)
 	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
 	rm -f "$(ME_INC_PREFIX)/ejs/ejsWeb.h" ; \
 	ln -s "$(ME_VAPP_PREFIX)/inc/ejsWeb.h" "$(ME_INC_PREFIX)/ejs/ejsWeb.h" ; \
-	mkdir -p "$(ME_VAPP_PREFIX)/doc/man1/doc/public/man" ; \
-	cp doc/public/man/ejs.1 $(ME_VAPP_PREFIX)/doc/man1/doc/public/man/ejs.1 ; \
+	mkdir -p "$(ME_VAPP_PREFIX)/doc/man1" ; \
+	cp doc/public/man/ejs.1 $(ME_VAPP_PREFIX)/doc/man1/ejs.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/ejs.1" ; \
-	ln -s "$(ME_VAPP_PREFIX)/doc/man1/doc/public/man/ejs.1" "$(ME_MAN_PREFIX)/man1/ejs.1" ; \
-	cp doc/public/man/ejsc.1 $(ME_VAPP_PREFIX)/doc/man1/doc/public/man/ejsc.1 ; \
+	ln -s "$(ME_VAPP_PREFIX)/doc/man1/ejs.1" "$(ME_MAN_PREFIX)/man1/ejs.1" ; \
+	cp doc/public/man/ejsc.1 $(ME_VAPP_PREFIX)/doc/man1/ejsc.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/ejsc.1" ; \
-	ln -s "$(ME_VAPP_PREFIX)/doc/man1/doc/public/man/ejsc.1" "$(ME_MAN_PREFIX)/man1/ejsc.1" ; \
-	cp doc/public/man/ejsmod.1 $(ME_VAPP_PREFIX)/doc/man1/doc/public/man/ejsmod.1 ; \
+	ln -s "$(ME_VAPP_PREFIX)/doc/man1/ejsc.1" "$(ME_MAN_PREFIX)/man1/ejsc.1" ; \
+	cp doc/public/man/ejsmod.1 $(ME_VAPP_PREFIX)/doc/man1/ejsmod.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/ejsmod.1" ; \
-	ln -s "$(ME_VAPP_PREFIX)/doc/man1/doc/public/man/ejsmod.1" "$(ME_MAN_PREFIX)/man1/ejsmod.1" ; \
-	cp doc/public/man/http.1 $(ME_VAPP_PREFIX)/doc/man1/doc/public/man/http.1 ; \
+	ln -s "$(ME_VAPP_PREFIX)/doc/man1/ejsmod.1" "$(ME_MAN_PREFIX)/man1/ejsmod.1" ; \
+	cp doc/public/man/http.1 $(ME_VAPP_PREFIX)/doc/man1/http.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/http.1" ; \
-	ln -s "$(ME_VAPP_PREFIX)/doc/man1/doc/public/man/http.1" "$(ME_MAN_PREFIX)/man1/http.1" ; \
-	cp doc/public/man/makerom.1 $(ME_VAPP_PREFIX)/doc/man1/doc/public/man/makerom.1 ; \
+	ln -s "$(ME_VAPP_PREFIX)/doc/man1/http.1" "$(ME_MAN_PREFIX)/man1/http.1" ; \
+	cp doc/public/man/makerom.1 $(ME_VAPP_PREFIX)/doc/man1/makerom.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/makerom.1" ; \
-	ln -s "$(ME_VAPP_PREFIX)/doc/man1/doc/public/man/makerom.1" "$(ME_MAN_PREFIX)/man1/makerom.1" ; \
-	cp doc/public/man/manager.1 $(ME_VAPP_PREFIX)/doc/man1/doc/public/man/manager.1 ; \
+	ln -s "$(ME_VAPP_PREFIX)/doc/man1/makerom.1" "$(ME_MAN_PREFIX)/man1/makerom.1" ; \
+	cp doc/public/man/manager.1 $(ME_VAPP_PREFIX)/doc/man1/manager.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/manager.1" ; \
-	ln -s "$(ME_VAPP_PREFIX)/doc/man1/doc/public/man/manager.1" "$(ME_MAN_PREFIX)/man1/manager.1" ; \
-	cp doc/public/man/mvc.1 $(ME_VAPP_PREFIX)/doc/man1/doc/public/man/mvc.1 ; \
+	ln -s "$(ME_VAPP_PREFIX)/doc/man1/manager.1" "$(ME_MAN_PREFIX)/man1/manager.1" ; \
+	cp doc/public/man/mvc.1 $(ME_VAPP_PREFIX)/doc/man1/mvc.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/mvc.1" ; \
-	ln -s "$(ME_VAPP_PREFIX)/doc/man1/doc/public/man/mvc.1" "$(ME_MAN_PREFIX)/man1/mvc.1" ; \
+	ln -s "$(ME_VAPP_PREFIX)/doc/man1/mvc.1" "$(ME_MAN_PREFIX)/man1/mvc.1" ; \
 	)
 
 
@@ -2353,7 +2406,7 @@ DEPS_156 += stop
 
 uninstall: $(DEPS_156)
 	( \
-	cd .; \
+	cd ../../.paks/me-package/0.8.3; \
 	rm -fr "$(ME_VAPP_PREFIX)" ; \
 	rm -f "$(ME_APP_PREFIX)/latest" ; \
 	rmdir -p "$(ME_APP_PREFIX)" 2>/dev/null ; true ; \
@@ -2362,6 +2415,7 @@ uninstall: $(DEPS_156)
 #
 #   version
 #
+
 version: $(DEPS_157)
 	echo 2.5.0
 

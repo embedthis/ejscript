@@ -130,7 +130,7 @@
     #define ME_MANIFEST "package/manifest.me"
 #endif
 #ifndef ME_ME
-    #define ME_ME ">=0.8.2"
+    #define ME_ME "=0.8.4"
 #endif
 #ifndef ME_MPR_ALLOC_PARALLEL
     #define ME_MPR_ALLOC_PARALLEL 1
@@ -235,7 +235,7 @@
 
 /* Profile */
 #ifndef ME_CONFIG_CMD
-    #define ME_CONFIG_CMD "me -d -q -platform macosx-x64-default -configure . --with est -gen xcode"
+    #define ME_CONFIG_CMD "me -d -q -platform macosx-x64-default -configure . -with est -gen xcode"
 #endif
 #ifndef ME_EJS_PRODUCT
     #define ME_EJS_PRODUCT 1

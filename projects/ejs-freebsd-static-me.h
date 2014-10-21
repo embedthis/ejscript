@@ -130,7 +130,7 @@
     #define ME_MANIFEST "package/manifest.me"
 #endif
 #ifndef ME_ME
-    #define ME_ME ">=0.8.2"
+    #define ME_ME "=0.8.4"
 #endif
 #ifndef ME_MPR_ALLOC_PARALLEL
     #define ME_MPR_ALLOC_PARALLEL 1
@@ -201,7 +201,7 @@
     #define ME_ETC_PREFIX "${prefixes.data}/etc/ejs"
 #endif
 #ifndef ME_WEB_PREFIX
-    #define ME_WEB_PREFIX "${prefixes.state}/www/ejs-default"
+    #define ME_WEB_PREFIX "${prefixes.state}/www/ejs"
 #endif
 #ifndef ME_LOG_PREFIX
     #define ME_LOG_PREFIX "${prefixes.state}/log/ejs"

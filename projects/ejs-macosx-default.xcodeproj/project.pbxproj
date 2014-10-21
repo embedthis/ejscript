@@ -3202,7 +3202,8 @@
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.db.mapper
-true";
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.db.mapper.mod  --optimize 9 Record.es
+";
     		};
 		F3F8966EF3F8A43E0000000E /* ShellScript for ejs.db.mod */ = {
     			isa = PBXShellScriptBuildPhase;
@@ -3220,7 +3221,8 @@ true";
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.db
-true";
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.db.mod  --optimize 9 Database.es DatabaseConnector.es
+";
     		};
 		F3F8966EF3F8A43E00000014 /* ShellScript for ejs.db.sqlite.mod */ = {
     			isa = PBXShellScriptBuildPhase;
@@ -3237,7 +3239,9 @@ true";
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.db.sqlite
-true";
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.db.sqlite.mod  --optimize 9 Sqlite.es
+	../${OUT_DIR}/bin/ejsmod --cslots --dir ../${OUT_DIR}/bin ../${OUT_DIR}/bin/ejs.db.sqlite.mod
+";
     		};
 		F3F8966EF3F8A43E0000001B /* ShellScript for ejs.mail.mod */ = {
     			isa = PBXShellScriptBuildPhase;
@@ -3254,7 +3258,8 @@ true";
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.mail
-true";
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.mail.mod  --optimize 9 Mail.es
+";
     		};
 		F3F8966EF3F8A43E00000021 /* ShellScript for ejs.mod */ = {
     			isa = PBXShellScriptBuildPhase;
@@ -3324,7 +3329,9 @@ true";
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/core
-true";
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.mod  --optimize 9 --bind --require null App.es Args.es Array.es BinaryStream.es Block.es Boolean.es ByteArray.es Cache.es Cmd.es Compat.es Config.es Date.es Debug.es Emitter.es Error.es File.es FileSystem.es Frame.es Function.es GC.es Global.es Http.es Inflector.es Iterator.es JSON.es Loader.es LocalCache.es Locale.es Logger.es Math.es Memory.es MprLog.es Name.es Namespace.es Null.es Number.es Object.es Path.es Promise.es RegExp.es Socket.es Stream.es String.es System.es TextStream.es Timer.es Type.es Uri.es Void.es WebSocket.es Worker.es XML.es XMLHttp.es XMLList.es
+	../${OUT_DIR}/bin/ejsmod --cslots --dir ../${OUT_DIR}/inc --require null ../${OUT_DIR}/bin/ejs.mod
+";
     		};
 		F3F8966EF3F8A43E00000027 /* ShellScript for ejs.mvc.mod */ = {
     			isa = PBXShellScriptBuildPhase;
@@ -3341,7 +3348,8 @@ true";
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.mvc
-true";
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.mvc.mod  --optimize 9 mvc.es
+";
     		};
 		F3F8966EF3F8A43E00000030 /* ShellScript for ejs.tar.mod */ = {
     			isa = PBXShellScriptBuildPhase;
@@ -3358,7 +3366,8 @@ true";
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.tar
-true";
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.tar.mod  --optimize 9 Tar.es
+";
     		};
 		F3F8966EF3F8A43E00000036 /* ShellScript for ejs.template.mod */ = {
     			isa = PBXShellScriptBuildPhase;
@@ -3375,7 +3384,8 @@ true";
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.template
-true";
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.template.mod  --optimize 9 TemplateParser.es
+";
     		};
 		F3F8966EF3F8A43E0000003C /* ShellScript for ejs.unix.mod */ = {
     			isa = PBXShellScriptBuildPhase;
@@ -3392,7 +3402,8 @@ true";
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.unix
-true";
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.unix.mod  --optimize 9 Unix.es
+";
     		};
 		F3F8966EF3F8A43E00000042 /* ShellScript for ejs.web.mod */ = {
     			isa = PBXShellScriptBuildPhase;
@@ -3431,7 +3442,9 @@ true";
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.web
-true";
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.web.mod  --optimize 9 Cascade.es CommonLog.es ContentType.es Controller.es Dir.es Google.es Head.es Html.es HttpServer.es MethodOverride.es Middleware.es Mvc.es Request.es Router.es Script.es Session.es ShowExceptions.es Static.es Template.es UploadFile.es UrlMap.es Utils.es View.es
+	../${OUT_DIR}/bin/ejsmod --cslots --dir ../${OUT_DIR}/bin ../${OUT_DIR}/bin/ejs.web.mod
+";
     		};
 		F3F8966EF3F8A43E00000049 /* ShellScript for ejs.zlib.mod */ = {
     			isa = PBXShellScriptBuildPhase;
@@ -3448,7 +3461,8 @@ true";
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.zlib
-true";
+	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.zlib.mod  --optimize 9 Zlib.es
+";
     		};
 		F3F8966EF3F8A43E0000004F /* ShellScript for http-ca-crt */ = {
     			isa = PBXShellScriptBuildPhase;
@@ -3464,7 +3478,8 @@ true";
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
-cd ../src/paks/http
+cd ..
+	mkdir -p \"build/macosx-x64-default/bin\"
 	cp src/paks/http/ca.crt build/macosx-x64-default/bin/ca.crt
 ";
     		};
@@ -3482,7 +3497,8 @@ cd ../src/paks/http
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
-cd ../src/ejs.mvc
+cd ..
+	mkdir -p \"build/macosx-x64-default/bin\"
 	cp src/ejs.mvc/mvc.es build/macosx-x64-default/bin/mvc.es
 ";
     		};
@@ -3501,7 +3517,7 @@ cd ../src/ejs.mvc
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src
-true";
+";
     		};
 		F3F8966EF3F8A43E0000005B /* ShellScript for utest.es */ = {
     			isa = PBXShellScriptBuildPhase;
@@ -3517,7 +3533,8 @@ true";
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
-cd ../src/ejs.utest
+cd ..
+	mkdir -p \"build/macosx-x64-default/bin\"
 	cp src/ejs.utest/utest.es build/macosx-x64-default/bin/utest.es
 ";
     		};
@@ -3535,7 +3552,8 @@ cd ../src/ejs.utest
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
-cd ../src/ejs.utest
+cd ..
+	mkdir -p \"build/macosx-x64-default/bin\"
 	cp src/ejs.utest/utest.worker build/macosx-x64-default/bin/utest.worker
 ";
     		};
@@ -3545,7 +3563,33 @@ cd ../src/ejs.utest
     			files = (
     			);
     			inputPaths = (
-    ../src/ejs.web/www
+    ../src/ejs.web/www/images/banner.jpg,
+../src/ejs.web/www/images/favicon.ico,
+../src/ejs.web/www/images/splash.jpg,
+../src/ejs.web/www/js/jquery.ejs.min.js,
+../src/ejs.web/www/js/jquery.min.js,
+../src/ejs.web/www/js/jquery.simplemodal.min.js,
+../src/ejs.web/www/js/jquery.tablesorter.js,
+../src/ejs.web/www/js/jquery.tablesorter.min.js,
+../src/ejs.web/www/js/jquery.treeview.min.js,
+../src/ejs.web/www/js/tree-images/file.gif,
+../src/ejs.web/www/js/tree-images/folder-closed.gif,
+../src/ejs.web/www/js/tree-images/folder.gif,
+../src/ejs.web/www/js/tree-images/minus.gif,
+../src/ejs.web/www/js/tree-images/plus.gif,
+../src/ejs.web/www/js/tree-images/treeview-black-line.gif,
+../src/ejs.web/www/js/tree-images/treeview-black.gif,
+../src/ejs.web/www/js/tree-images/treeview-default-line.gif,
+../src/ejs.web/www/js/tree-images/treeview-default.gif,
+../src/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif,
+../src/ejs.web/www/js/tree-images/treeview-famfamfam.gif,
+../src/ejs.web/www/js/tree-images/treeview-gray-line.gif,
+../src/ejs.web/www/js/tree-images/treeview-gray.gif,
+../src/ejs.web/www/js/tree-images/treeview-red-line.gif,
+../src/ejs.web/www/js/tree-images/treeview-red.gif,
+../src/ejs.web/www/js/treeview.css,
+../src/ejs.web/www/layout.css,
+../src/ejs.web/www/themes/default.css
     			);
     			outputPaths = (
     ../build/macosx-x64-default/bin/www
@@ -3553,16 +3597,19 @@ cd ../src/ejs.utest
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
-cd ../src/ejs.web
+cd ..
+	mkdir -p \"build/macosx-x64-default/bin/www/images\"
 	cp src/ejs.web/www/images/banner.jpg build/macosx-x64-default/bin/www/images/banner.jpg
 	cp src/ejs.web/www/images/favicon.ico build/macosx-x64-default/bin/www/images/favicon.ico
 	cp src/ejs.web/www/images/splash.jpg build/macosx-x64-default/bin/www/images/splash.jpg
+	mkdir -p \"build/macosx-x64-default/bin/www/js\"
 	cp src/ejs.web/www/js/jquery.ejs.min.js build/macosx-x64-default/bin/www/js/jquery.ejs.min.js
 	cp src/ejs.web/www/js/jquery.min.js build/macosx-x64-default/bin/www/js/jquery.min.js
 	cp src/ejs.web/www/js/jquery.simplemodal.min.js build/macosx-x64-default/bin/www/js/jquery.simplemodal.min.js
 	cp src/ejs.web/www/js/jquery.tablesorter.js build/macosx-x64-default/bin/www/js/jquery.tablesorter.js
 	cp src/ejs.web/www/js/jquery.tablesorter.min.js build/macosx-x64-default/bin/www/js/jquery.tablesorter.min.js
 	cp src/ejs.web/www/js/jquery.treeview.min.js build/macosx-x64-default/bin/www/js/jquery.treeview.min.js
+	mkdir -p \"build/macosx-x64-default/bin/www/js/tree-images\"
 	cp src/ejs.web/www/js/tree-images/file.gif build/macosx-x64-default/bin/www/js/tree-images/file.gif
 	cp src/ejs.web/www/js/tree-images/folder-closed.gif build/macosx-x64-default/bin/www/js/tree-images/folder-closed.gif
 	cp src/ejs.web/www/js/tree-images/folder.gif build/macosx-x64-default/bin/www/js/tree-images/folder.gif
@@ -3579,7 +3626,9 @@ cd ../src/ejs.web
 	cp src/ejs.web/www/js/tree-images/treeview-red-line.gif build/macosx-x64-default/bin/www/js/tree-images/treeview-red-line.gif
 	cp src/ejs.web/www/js/tree-images/treeview-red.gif build/macosx-x64-default/bin/www/js/tree-images/treeview-red.gif
 	cp src/ejs.web/www/js/treeview.css build/macosx-x64-default/bin/www/js/treeview.css
+	mkdir -p \"build/macosx-x64-default/bin/www\"
 	cp src/ejs.web/www/layout.css build/macosx-x64-default/bin/www/layout.css
+	mkdir -p \"build/macosx-x64-default/bin/www/themes\"
 	cp src/ejs.web/www/themes/default.css build/macosx-x64-default/bin/www/themes/default.css
 ";
     		};

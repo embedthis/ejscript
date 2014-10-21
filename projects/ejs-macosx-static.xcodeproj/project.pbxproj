@@ -3478,9 +3478,9 @@ cd ../src/ejs.zlib
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
-cd ../src/paks/http
-mkdir -p ../../${OUT_DIR}/bin
-cp -r ca.crt ../../${OUT_DIR}/bin/ca.crt
+cd ..
+	mkdir -p \"build/macosx-x64-static/bin\"
+	cp src/paks/http/ca.crt build/macosx-x64-static/bin/ca.crt
 ";
     		};
 		900D453C900D53D600000053 /* ShellScript for mvc.es */ = {
@@ -3497,9 +3497,9 @@ cp -r ca.crt ../../${OUT_DIR}/bin/ca.crt
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
-cd ../src/ejs.mvc
-mkdir -p ../${OUT_DIR}/bin
-cp -r mvc.es ../${OUT_DIR}/bin/mvc.es
+cd ..
+	mkdir -p \"build/macosx-x64-static/bin\"
+	cp src/ejs.mvc/mvc.es build/macosx-x64-static/bin/mvc.es
 ";
     		};
 		900D453C900D53D600000057 /* ShellScript for slots */ = {
@@ -3533,9 +3533,9 @@ cd ../src
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
-cd ../src/ejs.utest
-mkdir -p ../${OUT_DIR}/bin
-cp -r utest.es ../${OUT_DIR}/bin/utest.es
+cd ..
+	mkdir -p \"build/macosx-x64-static/bin\"
+	cp src/ejs.utest/utest.es build/macosx-x64-static/bin/utest.es
 ";
     		};
 		900D453C900D53D60000005F /* ShellScript for utest.worker */ = {
@@ -3552,9 +3552,9 @@ cp -r utest.es ../${OUT_DIR}/bin/utest.es
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
-cd ../src/ejs.utest
-mkdir -p ../${OUT_DIR}/bin
-cp -r utest.worker ../${OUT_DIR}/bin/utest.worker
+cd ..
+	mkdir -p \"build/macosx-x64-static/bin\"
+	cp src/ejs.utest/utest.worker build/macosx-x64-static/bin/utest.worker
 ";
     		};
 		900D453C900D53D600000063 /* ShellScript for www */ = {
@@ -3563,7 +3563,33 @@ cp -r utest.worker ../${OUT_DIR}/bin/utest.worker
     			files = (
     			);
     			inputPaths = (
-    ../src/ejs.web/www
+    ../src/ejs.web/www/images/banner.jpg,
+../src/ejs.web/www/images/favicon.ico,
+../src/ejs.web/www/images/splash.jpg,
+../src/ejs.web/www/js/jquery.ejs.min.js,
+../src/ejs.web/www/js/jquery.min.js,
+../src/ejs.web/www/js/jquery.simplemodal.min.js,
+../src/ejs.web/www/js/jquery.tablesorter.js,
+../src/ejs.web/www/js/jquery.tablesorter.min.js,
+../src/ejs.web/www/js/jquery.treeview.min.js,
+../src/ejs.web/www/js/tree-images/file.gif,
+../src/ejs.web/www/js/tree-images/folder-closed.gif,
+../src/ejs.web/www/js/tree-images/folder.gif,
+../src/ejs.web/www/js/tree-images/minus.gif,
+../src/ejs.web/www/js/tree-images/plus.gif,
+../src/ejs.web/www/js/tree-images/treeview-black-line.gif,
+../src/ejs.web/www/js/tree-images/treeview-black.gif,
+../src/ejs.web/www/js/tree-images/treeview-default-line.gif,
+../src/ejs.web/www/js/tree-images/treeview-default.gif,
+../src/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif,
+../src/ejs.web/www/js/tree-images/treeview-famfamfam.gif,
+../src/ejs.web/www/js/tree-images/treeview-gray-line.gif,
+../src/ejs.web/www/js/tree-images/treeview-gray.gif,
+../src/ejs.web/www/js/tree-images/treeview-red-line.gif,
+../src/ejs.web/www/js/tree-images/treeview-red.gif,
+../src/ejs.web/www/js/treeview.css,
+../src/ejs.web/www/layout.css,
+../src/ejs.web/www/themes/default.css
     			);
     			outputPaths = (
     ../build/macosx-x64-static/bin/www
@@ -3571,9 +3597,39 @@ cp -r utest.worker ../${OUT_DIR}/bin/utest.worker
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
-cd ../src/ejs.web
-mkdir -p /Users/mob/git/ejs/src/ejs.web
-cp -r www /Users/mob/git/ejs/src/ejs.web/www
+cd ..
+	mkdir -p \"build/macosx-x64-static/bin/www/images\"
+	cp src/ejs.web/www/images/banner.jpg build/macosx-x64-static/bin/www/images/banner.jpg
+	cp src/ejs.web/www/images/favicon.ico build/macosx-x64-static/bin/www/images/favicon.ico
+	cp src/ejs.web/www/images/splash.jpg build/macosx-x64-static/bin/www/images/splash.jpg
+	mkdir -p \"build/macosx-x64-static/bin/www/js\"
+	cp src/ejs.web/www/js/jquery.ejs.min.js build/macosx-x64-static/bin/www/js/jquery.ejs.min.js
+	cp src/ejs.web/www/js/jquery.min.js build/macosx-x64-static/bin/www/js/jquery.min.js
+	cp src/ejs.web/www/js/jquery.simplemodal.min.js build/macosx-x64-static/bin/www/js/jquery.simplemodal.min.js
+	cp src/ejs.web/www/js/jquery.tablesorter.js build/macosx-x64-static/bin/www/js/jquery.tablesorter.js
+	cp src/ejs.web/www/js/jquery.tablesorter.min.js build/macosx-x64-static/bin/www/js/jquery.tablesorter.min.js
+	cp src/ejs.web/www/js/jquery.treeview.min.js build/macosx-x64-static/bin/www/js/jquery.treeview.min.js
+	mkdir -p \"build/macosx-x64-static/bin/www/js/tree-images\"
+	cp src/ejs.web/www/js/tree-images/file.gif build/macosx-x64-static/bin/www/js/tree-images/file.gif
+	cp src/ejs.web/www/js/tree-images/folder-closed.gif build/macosx-x64-static/bin/www/js/tree-images/folder-closed.gif
+	cp src/ejs.web/www/js/tree-images/folder.gif build/macosx-x64-static/bin/www/js/tree-images/folder.gif
+	cp src/ejs.web/www/js/tree-images/minus.gif build/macosx-x64-static/bin/www/js/tree-images/minus.gif
+	cp src/ejs.web/www/js/tree-images/plus.gif build/macosx-x64-static/bin/www/js/tree-images/plus.gif
+	cp src/ejs.web/www/js/tree-images/treeview-black-line.gif build/macosx-x64-static/bin/www/js/tree-images/treeview-black-line.gif
+	cp src/ejs.web/www/js/tree-images/treeview-black.gif build/macosx-x64-static/bin/www/js/tree-images/treeview-black.gif
+	cp src/ejs.web/www/js/tree-images/treeview-default-line.gif build/macosx-x64-static/bin/www/js/tree-images/treeview-default-line.gif
+	cp src/ejs.web/www/js/tree-images/treeview-default.gif build/macosx-x64-static/bin/www/js/tree-images/treeview-default.gif
+	cp src/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif build/macosx-x64-static/bin/www/js/tree-images/treeview-famfamfam-line.gif
+	cp src/ejs.web/www/js/tree-images/treeview-famfamfam.gif build/macosx-x64-static/bin/www/js/tree-images/treeview-famfamfam.gif
+	cp src/ejs.web/www/js/tree-images/treeview-gray-line.gif build/macosx-x64-static/bin/www/js/tree-images/treeview-gray-line.gif
+	cp src/ejs.web/www/js/tree-images/treeview-gray.gif build/macosx-x64-static/bin/www/js/tree-images/treeview-gray.gif
+	cp src/ejs.web/www/js/tree-images/treeview-red-line.gif build/macosx-x64-static/bin/www/js/tree-images/treeview-red-line.gif
+	cp src/ejs.web/www/js/tree-images/treeview-red.gif build/macosx-x64-static/bin/www/js/tree-images/treeview-red.gif
+	cp src/ejs.web/www/js/treeview.css build/macosx-x64-static/bin/www/js/treeview.css
+	mkdir -p \"build/macosx-x64-static/bin/www\"
+	cp src/ejs.web/www/layout.css build/macosx-x64-static/bin/www/layout.css
+	mkdir -p \"build/macosx-x64-static/bin/www/themes\"
+	cp src/ejs.web/www/themes/default.css build/macosx-x64-static/bin/www/themes/default.css
 ";
     		};
 		900D453C900D53D600000090 /* ShellScript for Prep */ = {
@@ -3590,7 +3646,124 @@ cp -r www /Users/mob/git/ejs/src/ejs.web/www
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
-";
+[ ! -x ${INC_DIR} ] && mkdir -p ${INC_DIR} ${OBJ_DIR} ${LIB_DIR} ${BIN_DIR}
+[ ! -f ${INC_DIR}/me.h -a -f cp ejs-macosx-static-me.h ] && cp ejs-macosx-static-me.h ${INC_DIR}/me.h
+if [ -f ejs-macosx-static-me.h ] ; then
+if ! diff ${INC_DIR}/me.h ejs-macosx-static-me.h >/dev/null 2>&1 ; then
+cp ejs-macosx-static-me.h ${INC_DIR}/me.h
+fi
+fi
+if [ ../src/slots/ejs.cache.local.slots.h -nt ${OUT_DIR}/inc/ejs.cache.local.slots.h ] ; then
+cp ../src/slots/ejs.cache.local.slots.h ${OUT_DIR}/inc/ejs.cache.local.slots.h
+fi
+if [ ../src/slots/ejs.db.sqlite.slots.h -nt ${OUT_DIR}/inc/ejs.db.sqlite.slots.h ] ; then
+cp ../src/slots/ejs.db.sqlite.slots.h ${OUT_DIR}/inc/ejs.db.sqlite.slots.h
+fi
+if [ ../src/ejs.h -nt ${OUT_DIR}/inc/ejs.h ] ; then
+cp ../src/ejs.h ${OUT_DIR}/inc/ejs.h
+fi
+if [ ../src/slots/ejs.slots.h -nt ${OUT_DIR}/inc/ejs.slots.h ] ; then
+cp ../src/slots/ejs.slots.h ${OUT_DIR}/inc/ejs.slots.h
+fi
+if [ ../src/slots/ejs.web.slots.h -nt ${OUT_DIR}/inc/ejs.web.slots.h ] ; then
+cp ../src/slots/ejs.web.slots.h ${OUT_DIR}/inc/ejs.web.slots.h
+fi
+if [ ../src/slots/ejs.zlib.slots.h -nt ${OUT_DIR}/inc/ejs.zlib.slots.h ] ; then
+cp ../src/slots/ejs.zlib.slots.h ${OUT_DIR}/inc/ejs.zlib.slots.h
+fi
+if [ ../src/ejsByteCode.h -nt ${OUT_DIR}/inc/ejsByteCode.h ] ; then
+cp ../src/ejsByteCode.h ${OUT_DIR}/inc/ejsByteCode.h
+fi
+if [ ../src/ejsByteCodeTable.h -nt ${OUT_DIR}/inc/ejsByteCodeTable.h ] ; then
+cp ../src/ejsByteCodeTable.h ${OUT_DIR}/inc/ejsByteCodeTable.h
+fi
+if [ ../src/ejsCompiler.h -nt ${OUT_DIR}/inc/ejsCompiler.h ] ; then
+cp ../src/ejsCompiler.h ${OUT_DIR}/inc/ejsCompiler.h
+fi
+if [ ../src/ejsCustomize.h -nt ${OUT_DIR}/inc/ejsCustomize.h ] ; then
+cp ../src/ejsCustomize.h ${OUT_DIR}/inc/ejsCustomize.h
+fi
+if [ ../src/ejs.web/ejsWeb.h -nt ${OUT_DIR}/inc/ejsWeb.h ] ; then
+cp ../src/ejs.web/ejsWeb.h ${OUT_DIR}/inc/ejsWeb.h
+fi
+if [ ../src/cmd/ejsmod.h -nt ${OUT_DIR}/inc/ejsmod.h ] ; then
+cp ../src/cmd/ejsmod.h ${OUT_DIR}/inc/ejsmod.h
+fi
+if [ ../src/paks/est/est.h -nt ${OUT_DIR}/inc/est.h ] ; then
+cp ../src/paks/est/est.h ${OUT_DIR}/inc/est.h
+fi
+if [ ../src/paks/http/http.h -nt ${OUT_DIR}/inc/http.h ] ; then
+cp ../src/paks/http/http.h ${OUT_DIR}/inc/http.h
+fi
+if [ ../src/paks/mpr/mpr.h -nt ${OUT_DIR}/inc/mpr.h ] ; then
+cp ../src/paks/mpr/mpr.h ${OUT_DIR}/inc/mpr.h
+fi
+if [ ../src/paks/osdep/osdep.h -nt ${OUT_DIR}/inc/osdep.h ] ; then
+cp ../src/paks/osdep/osdep.h ${OUT_DIR}/inc/osdep.h
+fi
+if [ ../src/paks/pcre/pcre.h -nt ${OUT_DIR}/inc/pcre.h ] ; then
+cp ../src/paks/pcre/pcre.h ${OUT_DIR}/inc/pcre.h
+fi
+if [ ../src/paks/sqlite/sqlite3.h -nt ${OUT_DIR}/inc/sqlite3.h ] ; then
+cp ../src/paks/sqlite/sqlite3.h ${OUT_DIR}/inc/sqlite3.h
+fi
+if [ ../src/paks/zlib/zlib.h -nt ${OUT_DIR}/inc/zlib.h ] ; then
+cp ../src/paks/zlib/zlib.h ${OUT_DIR}/inc/zlib.h
+fi
+if [ ../src/cmd/ejsmod.h -nt ${OUT_DIR}/inc/ejsmod.h ] ; then
+cp ../src/cmd/ejsmod.h ${OUT_DIR}/inc/ejsmod.h
+fi
+if [ ../src/slots/ejs.cache.local.slots.h -nt ${OUT_DIR}/inc/ejs.cache.local.slots.h ] ; then
+cp ../src/slots/ejs.cache.local.slots.h ${OUT_DIR}/inc/ejs.cache.local.slots.h
+fi
+if [ ../src/slots/ejs.db.sqlite.slots.h -nt ${OUT_DIR}/inc/ejs.db.sqlite.slots.h ] ; then
+cp ../src/slots/ejs.db.sqlite.slots.h ${OUT_DIR}/inc/ejs.db.sqlite.slots.h
+fi
+if [ ../src/slots/ejs.slots.h -nt ${OUT_DIR}/inc/ejs.slots.h ] ; then
+cp ../src/slots/ejs.slots.h ${OUT_DIR}/inc/ejs.slots.h
+fi
+if [ ../src/slots/ejs.web.slots.h -nt ${OUT_DIR}/inc/ejs.web.slots.h ] ; then
+cp ../src/slots/ejs.web.slots.h ${OUT_DIR}/inc/ejs.web.slots.h
+fi
+if [ ../src/slots/ejs.zlib.slots.h -nt ${OUT_DIR}/inc/ejs.zlib.slots.h ] ; then
+cp ../src/slots/ejs.zlib.slots.h ${OUT_DIR}/inc/ejs.zlib.slots.h
+fi
+if [ ../src/ejs.h -nt ${OUT_DIR}/inc/ejs.h ] ; then
+cp ../src/ejs.h ${OUT_DIR}/inc/ejs.h
+fi
+if [ ../src/ejsByteCode.h -nt ${OUT_DIR}/inc/ejsByteCode.h ] ; then
+cp ../src/ejsByteCode.h ${OUT_DIR}/inc/ejsByteCode.h
+fi
+if [ ../src/ejsByteCodeTable.h -nt ${OUT_DIR}/inc/ejsByteCodeTable.h ] ; then
+cp ../src/ejsByteCodeTable.h ${OUT_DIR}/inc/ejsByteCodeTable.h
+fi
+if [ ../src/ejsCompiler.h -nt ${OUT_DIR}/inc/ejsCompiler.h ] ; then
+cp ../src/ejsCompiler.h ${OUT_DIR}/inc/ejsCompiler.h
+fi
+if [ ../src/ejsCustomize.h -nt ${OUT_DIR}/inc/ejsCustomize.h ] ; then
+cp ../src/ejsCustomize.h ${OUT_DIR}/inc/ejsCustomize.h
+fi
+if [ ../src/ejs.web/ejsWeb.h -nt ${OUT_DIR}/inc/ejsWeb.h ] ; then
+cp ../src/ejs.web/ejsWeb.h ${OUT_DIR}/inc/ejsWeb.h
+fi
+if [ ../src/paks/est/est.h -nt ${OUT_DIR}/inc/est.h ] ; then
+cp ../src/paks/est/est.h ${OUT_DIR}/inc/est.h
+fi
+if [ ../src/paks/http/http.h -nt ${OUT_DIR}/inc/http.h ] ; then
+cp ../src/paks/http/http.h ${OUT_DIR}/inc/http.h
+fi
+if [ ../src/paks/mpr/mpr.h -nt ${OUT_DIR}/inc/mpr.h ] ; then
+cp ../src/paks/mpr/mpr.h ${OUT_DIR}/inc/mpr.h
+fi
+if [ ../src/paks/pcre/pcre.h -nt ${OUT_DIR}/inc/pcre.h ] ; then
+cp ../src/paks/pcre/pcre.h ${OUT_DIR}/inc/pcre.h
+fi
+if [ ../src/paks/sqlite/sqlite3.h -nt ${OUT_DIR}/inc/sqlite3.h ] ; then
+cp ../src/paks/sqlite/sqlite3.h ${OUT_DIR}/inc/sqlite3.h
+fi
+if [ ../src/paks/zlib/zlib.h -nt ${OUT_DIR}/inc/zlib.h ] ; then
+cp ../src/paks/zlib/zlib.h ${OUT_DIR}/inc/zlib.h
+fi";
     		};
 /* End PBXShellScriptBuildPhase section */
 

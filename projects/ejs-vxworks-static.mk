@@ -213,7 +213,6 @@ clean:
 clobber: clean
 	rm -fr ./$(BUILD)
 
-
 #
 #   ejs.cache.local.slots.h
 #
@@ -237,6 +236,7 @@ $(BUILD)/inc/ejs.db.sqlite.slots.h: $(DEPS_2)
 #
 #   me.h
 #
+
 $(BUILD)/inc/me.h: $(DEPS_3)
 
 #
@@ -276,11 +276,13 @@ $(BUILD)/inc/http.h: $(DEPS_6)
 #
 #   ejsByteCode.h
 #
+
 src/ejsByteCode.h: $(DEPS_7)
 
 #
 #   ejsByteCodeTable.h
 #
+
 src/ejsByteCodeTable.h: $(DEPS_8)
 
 #
@@ -296,6 +298,7 @@ $(BUILD)/inc/ejs.slots.h: $(DEPS_9)
 #
 #   ejsCustomize.h
 #
+
 src/ejsCustomize.h: $(DEPS_10)
 
 #
@@ -357,6 +360,7 @@ $(BUILD)/inc/ejsByteCodeTable.h: $(DEPS_15)
 #
 #   ejs.h
 #
+
 src/ejs.h: $(DEPS_16)
 
 #
@@ -444,6 +448,7 @@ $(BUILD)/obj/dtoa.o: \
 #
 #   ejsCompiler.h
 #
+
 src/ejsCompiler.h: $(DEPS_25)
 
 #
@@ -740,6 +745,7 @@ $(BUILD)/obj/ejsHttp.o: \
 #
 #   ejsWeb.h
 #
+
 src/ejs.web/ejsWeb.h: $(DEPS_55)
 
 #
@@ -1125,6 +1131,7 @@ $(BUILD)/obj/ejsZlib.o: \
 #
 #   est.h
 #
+
 src/paks/est/est.h: $(DEPS_92)
 
 #
@@ -1140,6 +1147,7 @@ $(BUILD)/obj/estLib.o: \
 #
 #   http.h
 #
+
 src/paks/http/http.h: $(DEPS_94)
 
 #
@@ -1155,6 +1163,7 @@ $(BUILD)/obj/httpLib.o: \
 #
 #   mpr.h
 #
+
 src/paks/mpr/mpr.h: $(DEPS_96)
 
 #
@@ -1191,6 +1200,7 @@ $(BUILD)/obj/mprSsl.o: \
 #
 #   pcre.h
 #
+
 src/paks/pcre/pcre.h: $(DEPS_100)
 
 #
@@ -1207,6 +1217,7 @@ $(BUILD)/obj/pcre.o: \
 #
 #   sqlite3.h
 #
+
 src/paks/sqlite/sqlite3.h: $(DEPS_102)
 
 #
@@ -1223,6 +1234,7 @@ $(BUILD)/obj/sqlite3.o: \
 #
 #   zlib.h
 #
+
 src/paks/zlib/zlib.h: $(DEPS_104)
 
 #
@@ -1239,6 +1251,7 @@ $(BUILD)/obj/zlib.o: \
 #
 #   slots
 #
+
 slots: $(DEPS_106)
 
 #
@@ -1441,8 +1454,8 @@ $(BUILD)/bin/ejs.mod: $(DEPS_112)
 	( \
 	cd src/core; \
 	echo '   [Compile] Core EJS classes' ; \
-	null/ejsc --out ../../$(BUILD)/bin/ejs.mod  --optimize 9 --bind --require null App.es Args.es Array.es BinaryStream.es Block.es Boolean.es ByteArray.es Cache.es Cmd.es Compat.es Config.es Date.es Debug.es Emitter.es Error.es File.es FileSystem.es Frame.es Function.es GC.es Global.es Http.es Inflector.es Iterator.es JSON.es Loader.es LocalCache.es Locale.es Logger.es Math.es Memory.es MprLog.es Name.es Namespace.es Null.es Number.es Object.es Path.es Promise.es RegExp.es Socket.es Stream.es String.es System.es TextStream.es Timer.es Type.es Uri.es Void.es WebSocket.es Worker.es XML.es XMLHttp.es XMLList.es ; \
-	null/ejsmod --cslots --dir ../../$(BUILD)/inc --require null ../../$(BUILD)/bin/ejs.mod ; \
+	../../$(BUILD)/bin/ejsc --out ../../$(BUILD)/bin/ejs.mod  --optimize 9 --bind --require null App.es Args.es Array.es BinaryStream.es Block.es Boolean.es ByteArray.es Cache.es Cmd.es Compat.es Config.es Date.es Debug.es Emitter.es Error.es File.es FileSystem.es Frame.es Function.es GC.es Global.es Http.es Inflector.es Iterator.es JSON.es Loader.es LocalCache.es Locale.es Logger.es Math.es Memory.es MprLog.es Name.es Namespace.es Null.es Number.es Object.es Path.es Promise.es RegExp.es Socket.es Stream.es String.es System.es TextStream.es Timer.es Type.es Uri.es Void.es WebSocket.es Worker.es XML.es XMLHttp.es XMLList.es ; \
+	../../$(BUILD)/bin/ejsmod --cslots --dir ../../$(BUILD)/inc --require null ../../$(BUILD)/bin/ejs.mod ; \
 	)
 
 #
@@ -1456,7 +1469,7 @@ $(BUILD)/bin/ejs.db.mod: $(DEPS_113)
 	( \
 	cd src/ejs.db; \
 	echo '   [Compile] ejs.db.mod' ; \
-	null/ejsc --out ../../$(BUILD)/bin/ejs.db.mod  --optimize 9 Database.es DatabaseConnector.es ; \
+	../../$(BUILD)/bin/ejsc --out ../../$(BUILD)/bin/ejs.db.mod  --optimize 9 Database.es DatabaseConnector.es ; \
 	)
 
 #
@@ -1470,7 +1483,7 @@ $(BUILD)/bin/ejs.db.mapper.mod: $(DEPS_114)
 	( \
 	cd src/ejs.db.mapper; \
 	echo '   [Compile] ejs.db.mapper.mod' ; \
-	null/ejsc --out ../../$(BUILD)/bin/ejs.db.mapper.mod  --optimize 9 Record.es ; \
+	../../$(BUILD)/bin/ejsc --out ../../$(BUILD)/bin/ejs.db.mapper.mod  --optimize 9 Record.es ; \
 	)
 
 #
@@ -1483,8 +1496,8 @@ $(BUILD)/bin/ejs.db.sqlite.mod: $(DEPS_115)
 	( \
 	cd src/ejs.db.sqlite; \
 	echo '   [Compile] ejs.db.sqlite.mod' ; \
-	null/ejsc --out ../../$(BUILD)/bin/ejs.db.sqlite.mod  --optimize 9 Sqlite.es ; \
-	null/ejsmod --cslots --dir ../../$(BUILD)/bin ../../$(BUILD)/bin/ejs.db.sqlite.mod ; \
+	../../$(BUILD)/bin/ejsc --out ../../$(BUILD)/bin/ejs.db.sqlite.mod  --optimize 9 Sqlite.es ; \
+	../../$(BUILD)/bin/ejsmod --cslots --dir ../../$(BUILD)/bin ../../$(BUILD)/bin/ejs.db.sqlite.mod ; \
 	)
 
 #
@@ -1496,7 +1509,7 @@ DEPS_116 += $(BUILD)/bin/ejs.mod
 $(BUILD)/bin/ejs.mail.mod: $(DEPS_116)
 	( \
 	cd src/ejs.mail; \
-	null/ejsc --out ../../$(BUILD)/bin/ejs.mail.mod  --optimize 9 Mail.es ; \
+	../../$(BUILD)/bin/ejsc --out ../../$(BUILD)/bin/ejs.mail.mod  --optimize 9 Mail.es ; \
 	)
 
 #
@@ -1531,8 +1544,8 @@ $(BUILD)/bin/ejs.web.mod: $(DEPS_117)
 	( \
 	cd src/ejs.web; \
 	echo '   [Compile] ejs.web.mod' ; \
-	null/ejsc --out ../../$(BUILD)/bin/ejs.web.mod  --optimize 9 Cascade.es CommonLog.es ContentType.es Controller.es Dir.es Google.es Head.es Html.es HttpServer.es MethodOverride.es Middleware.es Mvc.es Request.es Router.es Script.es Session.es ShowExceptions.es Static.es Template.es UploadFile.es UrlMap.es Utils.es View.es ; \
-	null/ejsmod --cslots --dir ../../$(BUILD)/bin ../../$(BUILD)/bin/ejs.web.mod ; \
+	../../$(BUILD)/bin/ejsc --out ../../$(BUILD)/bin/ejs.web.mod  --optimize 9 Cascade.es CommonLog.es ContentType.es Controller.es Dir.es Google.es Head.es Html.es HttpServer.es MethodOverride.es Middleware.es Mvc.es Request.es Router.es Script.es Session.es ShowExceptions.es Static.es Template.es UploadFile.es UrlMap.es Utils.es View.es ; \
+	../../$(BUILD)/bin/ejsmod --cslots --dir ../../$(BUILD)/bin ../../$(BUILD)/bin/ejs.web.mod ; \
 	)
 
 #
@@ -1545,7 +1558,7 @@ $(BUILD)/bin/ejs.template.mod: $(DEPS_118)
 	( \
 	cd src/ejs.template; \
 	echo '   [Compile] ejs.template.mod' ; \
-	null/ejsc --out ../../$(BUILD)/bin/ejs.template.mod  --optimize 9 TemplateParser.es ; \
+	../../$(BUILD)/bin/ejsc --out ../../$(BUILD)/bin/ejs.template.mod  --optimize 9 TemplateParser.es ; \
 	)
 
 #
@@ -1558,7 +1571,7 @@ $(BUILD)/bin/ejs.unix.mod: $(DEPS_119)
 	( \
 	cd src/ejs.unix; \
 	echo '   [Compile] ejs.unix.mod' ; \
-	null/ejsc --out ../../$(BUILD)/bin/ejs.unix.mod  --optimize 9 Unix.es ; \
+	../../$(BUILD)/bin/ejsc --out ../../$(BUILD)/bin/ejs.unix.mod  --optimize 9 Unix.es ; \
 	)
 
 #
@@ -1574,7 +1587,7 @@ $(BUILD)/bin/ejs.mvc.mod: $(DEPS_120)
 	( \
 	cd src/ejs.mvc; \
 	echo '   [Compile] ejs.mvc.mod' ; \
-	null/ejsc --out ../../$(BUILD)/bin/ejs.mvc.mod  --optimize 9 mvc.es ; \
+	../../$(BUILD)/bin/ejsc --out ../../$(BUILD)/bin/ejs.mvc.mod  --optimize 9 mvc.es ; \
 	)
 
 #
@@ -1587,7 +1600,7 @@ $(BUILD)/bin/ejs.tar.mod: $(DEPS_121)
 	( \
 	cd src/ejs.tar; \
 	echo '   [Compile] ejs.tar.mod' ; \
-	null/ejsc --out ../../$(BUILD)/bin/ejs.tar.mod  --optimize 9 Tar.es ; \
+	../../$(BUILD)/bin/ejsc --out ../../$(BUILD)/bin/ejs.tar.mod  --optimize 9 Tar.es ; \
 	)
 
 #
@@ -1600,9 +1613,8 @@ $(BUILD)/bin/ejs.zlib.mod: $(DEPS_122)
 	( \
 	cd src/ejs.zlib; \
 	echo '   [Compile] ejs.zlib.mod' ; \
-	null/ejsc --out ../../$(BUILD)/bin/ejs.zlib.mod  --optimize 9 Zlib.es ; \
+	../../$(BUILD)/bin/ejsc --out ../../$(BUILD)/bin/ejs.zlib.mod  --optimize 9 Zlib.es ; \
 	)
-
 
 #
 #   http-ca-crt
@@ -1700,6 +1712,9 @@ endif
 #   libmprssl
 #
 DEPS_130 += $(BUILD)/bin/libmpr.out
+ifeq ($(ME_COM_EST),1)
+    DEPS_130 += $(BUILD)/bin/libest.out
+endif
 DEPS_130 += $(BUILD)/obj/mprSsl.o
 
 $(BUILD)/bin/libmprssl.out: $(DEPS_130)
@@ -1722,6 +1737,7 @@ $(BUILD)/bin/ejsman.out: $(DEPS_131)
 #
 #   installBinary
 #
+
 installBinary: $(DEPS_132)
 
 
@@ -1744,6 +1760,7 @@ uninstall: $(DEPS_134)
 #
 #   version
 #
+
 version: $(DEPS_135)
 	echo 2.5.0
 

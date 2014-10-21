@@ -280,11 +280,11 @@ for: comparison, concatenation, copying, searching, conversion, matching, replac
 <tr class='param'><td class='param'>obj: <a href='Object.html'>Object</a> </td><td>Containing tokens to expand.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Options hash. [default: null]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' title='options'>
-<td class='param'>fill</td><td>Set to a string to use for missing properties. Set to undefined or omit options to  throw an exception for missing properties. Set fill to '<a href='#{}''>{}'</a> to preserve undefined tokens as-is.  This permits multi-pass expansions.</td></tr>
+<td class='param'>fill</td><td>Set to a string to use for missing properties. Set to undefined, null or omit the fill option to  throw an exception for missing properties. Set fill to true to preserve undefined tokens as-is.  This permits multi-pass expansions. Set to false to remove the token. Otherwise set to any string to replace the token with the string value. Default is to throw an exception (undefined).</td></tr>
 <td class='param'>join</td><td>Character to use to join array elements. Defaults to space.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>Expanded string P.</dd></dl>
+<dd>Expanded string.</dd></dl>
 </div>
 </div>
 <hr />

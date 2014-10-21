@@ -513,6 +513,10 @@
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>Flag for ejsBlendObject to copy private properties.</td></tr>
 <tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a3102a437092fa3bd96881da39d0ab374" class="nameRef">EJS_BLEND_PUBLIC</a>&nbsp;&nbsp;&nbsp;0x800</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>Flag for ejsBlendObject for blending into public properties.</td></tr>
+<tr class="apiDef">
 <td>#define</td><td><a href="#ejs_8h_1a994326644bbd4e086425e90e9d67b525" class="nameRef">EJS_BLEND_SUB</a>&nbsp;&nbsp;&nbsp;0x100</td>
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>Flag for ejsBlendObject for &quot;-&quot; property blend.</td></tr>
@@ -648,6 +652,10 @@
 <td>#define</td><td><a href="#ejs_8h_1af614b24676ad8e371b07e54e597f23e8" class="nameRef">EJS_JSON_SHOW_NOQUOTES</a>&nbsp;&nbsp;&nbsp;0x20</td>
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>ejsSerialize flag to omit quotes if property has no spaces.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#ejs_8h_1a2b949955055c5df1bc28b2b10c32af65" class="nameRef">EJS_JSON_SHOW_NULLS</a>&nbsp;&nbsp;&nbsp;0x80</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>ejsSerialize flag to emit null properties.</td></tr>
 <tr class="apiDef">
 <td>#define</td><td><a href="#ejs_8h_1aec610e6a41336605af01594a2cf2ea01" class="nameRef">EJS_JSON_SHOW_PRETTY</a>&nbsp;&nbsp;&nbsp;0x8</td>
 </tr>
@@ -6746,7 +6754,7 @@ This creates an uninitialized string object of the requrired size. Once initiali
     <table class="parameters" title="Parameters">
     <tr><td class="param">ejs</td><td>Ejs reference returned from <a class="ref" href="#group___ejs_1ga98a567fe16481c6bf5368749d831ae77">ejsCreateVM</a></td>
     <tr><td class="param">obj</td><td>Value to cast.</td>
-    <tr><td class="param">flags</td><td>Serialization options. The supported options are: <ul><li>EJS_JSON_SHOW_COMMAS - Always use commas after properties </li><li>EJS_JSON_SHOW_HIDDEN - Include hidden properties  </li><li>EJS_JSON_SHOW_NOQUOTES - Omit quotes on properties if possible </li><li>EJS_JSON_SHOW_NAMESPACES - Include namespaces in property names  </li><li>EJS_JSON_SHOW_REGEXP - Emit native regular expression literals </li><li>EJS_JSON_SHOW_PRETTY - Use human-readable multiline presentation  </li><li>EJS_JSON_SHOW_SUBCLASSES - Include subclass properties  </li></ul></td>
+    <tr><td class="param">flags</td><td>Serialization options. The supported options are: <ul><li>EJS_JSON_SHOW_COMMAS - Always use commas after properties </li><li>EJS_JSON_SHOW_HIDDEN - Include hidden properties  </li><li>EJS_JSON_SHOW_NOQUOTES - Omit quotes on properties if possible </li><li>EJS_JSON_SHOW_NAMESPACES - Include namespaces in property names  </li><li>EJS_JSON_SHOW_NULLS - Include null properties  </li><li>EJS_JSON_SHOW_REGEXP - Emit native regular expression literals </li><li>EJS_JSON_SHOW_PRETTY - Use human-readable multiline presentation  </li><li>EJS_JSON_SHOW_SUBCLASSES - Include subclass properties  </li></ul></td>
     </table></dd></dl>
     <dl><dt>Returns:</dt><dd>A string object.</dd></dl>
     <dl><dt>See Also:</dt><dd>
