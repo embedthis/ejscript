@@ -724,7 +724,7 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
      */
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, "."));
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAppDir()));
-#if !VXWORKS
+#if !VXWORKS && defined(ME_VAPP_PREFIX)
     if (!smatch(mprGetAppDir(), ME_VAPP_PREFIX "/bin")) {
         ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, ME_VAPP_PREFIX "/bin"));
     }
