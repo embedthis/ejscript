@@ -72,7 +72,7 @@ assert(!base.files('*', {exclude: /\/$/}).toString().contains(',mid,'))
 assert(!base.files('*', {exclude: /file/}).toString().contains('file'))
 
 //  Exclude string directories
-assert(!base.files('*', {exclude: 'directories'}).contains('data/mid'))
+assert(!portable(base.files('*', {exclude: 'directories'})).contains('data/mid'))
 
 //  Exclude function
 let count = 0
