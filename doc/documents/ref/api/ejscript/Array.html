@@ -81,7 +81,7 @@ from the mapper.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#reduceRight'><b>reduceRight</b></a>(callback: <a href='Function.html'>Function</a>, initial = null): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Reduce array elements.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#reject'><b>reject</b></a>(match: <a href='Function.html'>Function</a>): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Find non-matching elements.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#remove'><b>remove</b></a>(start: <a href='Number.html'>Number</a>, end: <a href='Number.html'>Number</a> = -1): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove elements.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#removeElements'><b>removeElements</b></a>(elts: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove specified elements from the array.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#removeElements'><b>removeElements</b></a>(elts: <a href='Array.html'>Array</a>): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove specified elements from the array.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#reverse'><b>reverse</b></a>(): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Reverse the order of the objects in the array.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#shift'><b>shift</b></a>(): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove and return the first element in the array.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#slice'><b>slice</b></a>(start: <a href='Number.html'>Number</a>, end: <a href='Number.html'>Number</a> = -1, step: <a href='Number.html'>Number</a> = 1): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new array subset by taking a slice from an array.</td></tr>
@@ -135,7 +135,7 @@ strings are concatenated.</td></tr>
 <dl><dt>Description</dt></dd><dd>Clear an array. Remove all elements of the array.</dd></dl>
 <dl><dt>Specified</dt>
 <dd>ejs
-(</dd></dl>
+Ð</dd></dl>
 </div>
 </div>
 <hr />
@@ -481,7 +481,7 @@ to undefined as the delete operator will do. Indicies are renumbered. NOTE: this
 <hr />
 <a name='removeElements'></a>
 <div class='api'>
-<div class='apiSig'>    removeElements(elts: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>    removeElements(elts: <a href='Array.html'>Array</a>): <a href='Array.html'>Array</a>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Remove specified elements from the array. The elements are removed and not just set 
@@ -489,7 +489,9 @@ to undefined as the delete operator will do. Indicies are renumbered.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' title='parameters'>
 <tr class='param'><td class='param'>elts: <a href='Array.html'>Array</a> </td><td>List of elements to remove.</td></tr></table></dd>
-</dl><dl><dt>Specified</dt>
+</dl><dl><dt>Returns</dt>
+<dd>The original array.</dd></dl>
+<dl><dt>Specified</dt>
 <dd>ejscript-2.5</dd></dl>
 </div>
 </div>

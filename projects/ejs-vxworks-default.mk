@@ -1257,6 +1257,7 @@ slots: $(DEPS_106)
 #
 #   libmpr
 #
+DEPS_107 += $(BUILD)/inc/osdep.h
 DEPS_107 += $(BUILD)/inc/mpr.h
 DEPS_107 += $(BUILD)/obj/mprLib.o
 
@@ -1691,6 +1692,7 @@ ifeq ($(ME_COM_EST),1)
 #
 #   libest
 #
+DEPS_129 += $(BUILD)/inc/osdep.h
 DEPS_129 += $(BUILD)/inc/est.h
 DEPS_129 += $(BUILD)/obj/estLib.o
 

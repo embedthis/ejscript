@@ -1251,6 +1251,7 @@ slots: $(DEPS_106)
 #
 #   libmpr
 #
+DEPS_107 += $(BUILD)/inc/osdep.h
 DEPS_107 += $(BUILD)/inc/mpr.h
 DEPS_107 += $(BUILD)/obj/mprLib.o
 
@@ -1694,6 +1695,7 @@ ifeq ($(ME_COM_EST),1)
 #
 #   libest
 #
+DEPS_129 += $(BUILD)/inc/osdep.h
 DEPS_129 += $(BUILD)/inc/est.h
 DEPS_129 += $(BUILD)/obj/estLib.o
 
@@ -1734,7 +1736,7 @@ $(BUILD)/bin/ejsman: $(DEPS_131)
 
 installBinary: $(DEPS_132)
 	( \
-	cd ../../.paks/me-package/0.8.3; \
+	cd ../../.paks/me-package/0.8.4; \
 	mkdir -p "$(ME_APP_PREFIX)" ; \
 	rm -f "$(ME_APP_PREFIX)/latest" ; \
 	ln -s "2.5.0" "$(ME_APP_PREFIX)/latest" ; \

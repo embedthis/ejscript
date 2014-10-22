@@ -1386,6 +1386,7 @@ slots: $(DEPS_117)
 #
 #   libmpr
 #
+DEPS_118 += $(BUILD)/inc/osdep.h
 DEPS_118 += $(BUILD)/inc/mpr.h
 DEPS_118 += $(BUILD)/obj/mprLib.o
 
@@ -1951,6 +1952,7 @@ ifeq ($(ME_COM_EST),1)
 #
 #   libest
 #
+DEPS_143 += $(BUILD)/inc/osdep.h
 DEPS_143 += $(BUILD)/inc/est.h
 DEPS_143 += $(BUILD)/obj/estLib.o
 
@@ -2167,7 +2169,7 @@ $(BUILD)/bin/www: $(DEPS_153)
 
 installBinary: $(DEPS_154)
 	( \
-	cd ../../.paks/me-package/0.8.3; \
+	cd ../../.paks/me-package/0.8.4; \
 	mkdir -p "$(ME_APP_PREFIX)" ; \
 	rm -f "$(ME_APP_PREFIX)/latest" ; \
 	ln -s "2.5.0" "$(ME_APP_PREFIX)/latest" ; \
@@ -2406,7 +2408,7 @@ DEPS_156 += stop
 
 uninstall: $(DEPS_156)
 	( \
-	cd ../../.paks/me-package/0.8.3; \
+	cd ../../.paks/me-package/0.8.4; \
 	rm -fr "$(ME_VAPP_PREFIX)" ; \
 	rm -f "$(ME_APP_PREFIX)/latest" ; \
 	rmdir -p "$(ME_APP_PREFIX)" 2>/dev/null ; true ; \
