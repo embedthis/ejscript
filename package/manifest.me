@@ -50,7 +50,7 @@ Me.load({
                                 'utest${EXE}',
                     ],
                     to:         '${abin}/',
-                    symlink:    '${bin}',
+                    symlink:    '${bin}/',
 
                 }, { 
                     from: [
@@ -152,7 +152,7 @@ Me.load({
                     from:       '${SRC}/doc/public/man/*.1',
                     to:         '${adoc}/man1/',
                     enable:     "me.platform.like == 'unix'",
-                    symlink:    '${man}/man1',
+                    symlink:    '${man}/man1/',
                 }
             ],
             source: [
