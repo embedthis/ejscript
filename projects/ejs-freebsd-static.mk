@@ -1735,8 +1735,6 @@ $(BUILD)/bin/ejsman: $(DEPS_131)
 #
 
 installBinary: $(DEPS_132)
-	( \
-	cd ../../.paks/me-package/0.8.4; \
 	mkdir -p "$(ME_APP_PREFIX)" ; \
 	rm -f "$(ME_APP_PREFIX)/latest" ; \
 	ln -s "2.5.0" "$(ME_APP_PREFIX)/latest" ; \
@@ -1937,8 +1935,7 @@ installBinary: $(DEPS_132)
 	cp doc/public/man/mvc.1 $(ME_VAPP_PREFIX)/doc/man1/mvc.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/mvc.1" ; \
-	ln -s "$(ME_VAPP_PREFIX)/doc/man1/mvc.1" "$(ME_MAN_PREFIX)/man1/mvc.1" ; \
-	)
+	ln -s "$(ME_VAPP_PREFIX)/doc/man1/mvc.1" "$(ME_MAN_PREFIX)/man1/mvc.1"
 
 
 #
