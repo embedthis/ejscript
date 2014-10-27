@@ -1260,7 +1260,7 @@ LIBS_92 = $(LIBS_92) libpcre.lib
 
 build\$(CONFIG)\bin\ejs.exe: $(DEPS_92)
 	@echo ..... [Link] build\$(CONFIG)\bin\ejs.exe
-	"$(LD)" -out:$(BUILD)\bin\ejs.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) "$(BUILD)\obj\ejs.obj" $(LIBPATHS_92) $(LIBS_92) $(LIBS_92) $(LIBS)  $(LOG)
+	"$(LD)" -nologo -out:$(BUILD)\bin\ejs.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) "$(BUILD)\obj\ejs.obj" $(LIBPATHS_92) $(LIBS_92) $(LIBS_92) $(LIBS)  $(LOG)
 
 #
 #   ejs.mod
@@ -1786,7 +1786,7 @@ LIBS_131 = $(LIBS_131) libmpr.lib
 
 build\$(CONFIG)\bin\ejsman.exe: $(DEPS_131)
 	@echo ..... [Link] build\$(CONFIG)\bin\ejsman.exe
-	"$(LD)" -out:$(BUILD)\bin\ejsman.exe -entry:WinMainCRTStartup -subsystem:windows $(LDFLAGS) $(LIBPATHS) "$(BUILD)\obj\manager.obj" $(LIBPATHS_131) $(LIBS_131) $(LIBS_131) $(LIBS)  $(LOG)
+	"$(LD)" -nologo -out:$(BUILD)\bin\ejsman.exe -entry:WinMainCRTStartup -subsystem:windows $(LDFLAGS) $(LIBPATHS) "$(BUILD)\obj\manager.obj" $(LIBPATHS_131) $(LIBS_131) $(LIBS_131) $(LIBS)  $(LOG)
 
 #
 #   removeFiles.obj
@@ -1805,5 +1805,5 @@ DEPS_133 = $(DEPS_133) build\$(CONFIG)\obj\removeFiles.obj
 
 build\$(CONFIG)\bin\removeFiles.exe: $(DEPS_133)
 	@echo ..... [Link] build\$(CONFIG)\bin\removeFiles.exe
-	"$(LD)" -out:$(BUILD)\bin\removeFiles.exe -entry:WinMainCRTStartup -subsystem:windows "$(BUILD)\obj\removeFiles.obj"   $(LOG)
+	"$(LD)" -nologo -out:$(BUILD)\bin\removeFiles.exe -entry:WinMainCRTStartup -subsystem:windows "$(BUILD)\obj\removeFiles.obj"   $(LOG)
 

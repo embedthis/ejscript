@@ -1868,12 +1868,10 @@ installBinary: $(DEPS_132)
 	cp $(BUILD)/bin/libest.so $(ME_VAPP_PREFIX)/bin/libest.so ; \
 	fi ; \
 	mkdir -p "/usr/src/ejs.web/www" ; \
-	cp src/ejs.web/www/images /usr/src/ejs.web/www/images ; \
 	mkdir -p "/usr/src/ejs.web/www/images" ; \
 	cp src/ejs.web/www/images/banner.jpg /usr/src/ejs.web/www/images/banner.jpg ; \
 	cp src/ejs.web/www/images/favicon.ico /usr/src/ejs.web/www/images/favicon.ico ; \
 	cp src/ejs.web/www/images/splash.jpg /usr/src/ejs.web/www/images/splash.jpg ; \
-	cp src/ejs.web/www/js /usr/src/ejs.web/www/js ; \
 	mkdir -p "/usr/src/ejs.web/www/js" ; \
 	cp src/ejs.web/www/js/jquery.ejs.min.js /usr/src/ejs.web/www/js/jquery.ejs.min.js ; \
 	cp src/ejs.web/www/js/jquery.min.js /usr/src/ejs.web/www/js/jquery.min.js ; \
@@ -1881,7 +1879,6 @@ installBinary: $(DEPS_132)
 	cp src/ejs.web/www/js/jquery.tablesorter.js /usr/src/ejs.web/www/js/jquery.tablesorter.js ; \
 	cp src/ejs.web/www/js/jquery.tablesorter.min.js /usr/src/ejs.web/www/js/jquery.tablesorter.min.js ; \
 	cp src/ejs.web/www/js/jquery.treeview.min.js /usr/src/ejs.web/www/js/jquery.treeview.min.js ; \
-	cp src/ejs.web/www/js/tree-images /usr/src/ejs.web/www/js/tree-images ; \
 	mkdir -p "/usr/src/ejs.web/www/js/tree-images" ; \
 	cp src/ejs.web/www/js/tree-images/file.gif /usr/src/ejs.web/www/js/tree-images/file.gif ; \
 	cp src/ejs.web/www/js/tree-images/folder-closed.gif /usr/src/ejs.web/www/js/tree-images/folder-closed.gif ; \
@@ -1900,7 +1897,6 @@ installBinary: $(DEPS_132)
 	cp src/ejs.web/www/js/tree-images/treeview-red.gif /usr/src/ejs.web/www/js/tree-images/treeview-red.gif ; \
 	cp src/ejs.web/www/js/treeview.css /usr/src/ejs.web/www/js/treeview.css ; \
 	cp src/ejs.web/www/layout.css /usr/src/ejs.web/www/layout.css ; \
-	cp src/ejs.web/www/themes /usr/src/ejs.web/www/themes ; \
 	mkdir -p "/usr/src/ejs.web/www/themes" ; \
 	cp src/ejs.web/www/themes/default.css /usr/src/ejs.web/www/themes/default.css ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/inc" ; \
