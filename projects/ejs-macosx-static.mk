@@ -85,12 +85,8 @@ ifeq ($(ME_COM_EST),1)
     TARGETS           += $(BUILD)/bin/libest.dylib
 endif
 TARGETS               += $(BUILD)/bin/libmprssl.dylib
-TARGETS               += $(BUILD)/bin/makerom
 TARGETS               += $(BUILD)/bin/ejsman
 TARGETS               += $(BUILD)/bin/mvc
-ifeq ($(ME_COM_SQLITE),1)
-    TARGETS           += $(BUILD)/bin/sqlite
-endif
 TARGETS               += $(BUILD)/bin/utest
 TARGETS               += $(BUILD)/bin/www
 
@@ -222,10 +218,8 @@ clean:
 	rm -f "$(BUILD)/bin/libpcre.dylib"
 	rm -f "$(BUILD)/bin/libsql.dylib"
 	rm -f "$(BUILD)/bin/libzlib.dylib"
-	rm -f "$(BUILD)/bin/makerom"
 	rm -f "$(BUILD)/bin/ejsman"
 	rm -f "$(BUILD)/bin/mvc.es"
-	rm -f "$(BUILD)/bin/sqlite"
 	rm -f "$(BUILD)/bin/utest"
 	rm -f "$(BUILD)/bin/utest.es"
 	rm -f "$(BUILD)/bin/utest.worker"
@@ -1929,35 +1923,23 @@ $(BUILD)/bin/libmprssl.dylib: $(DEPS_144)
 	ar -cr $(BUILD)/bin/libmprssl.dylib "$(BUILD)/obj/mprSsl.o"
 
 #
-#   makerom
+#   manager
 #
 DEPS_145 += $(BUILD)/bin/libmpr.dylib
-DEPS_145 += $(BUILD)/obj/makerom.o
+DEPS_145 += $(BUILD)/obj/manager.o
 
 LIBS_145 += -lmpr
 
-$(BUILD)/bin/makerom: $(DEPS_145)
-	@echo '      [Link] $(BUILD)/bin/makerom'
-	$(CC) -o $(BUILD)/bin/makerom -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/makerom.o" $(LIBPATHS_145) $(LIBS_145) $(LIBS_145) $(LIBS) 
-
-#
-#   manager
-#
-DEPS_146 += $(BUILD)/bin/libmpr.dylib
-DEPS_146 += $(BUILD)/obj/manager.o
-
-LIBS_146 += -lmpr
-
-$(BUILD)/bin/ejsman: $(DEPS_146)
+$(BUILD)/bin/ejsman: $(DEPS_145)
 	@echo '      [Link] $(BUILD)/bin/ejsman'
-	$(CC) -o $(BUILD)/bin/ejsman -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/manager.o" $(LIBPATHS_146) $(LIBS_146) $(LIBS_146) $(LIBS) 
+	$(CC) -o $(BUILD)/bin/ejsman -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/manager.o" $(LIBPATHS_145) $(LIBS_145) $(LIBS_145) $(LIBS) 
 
 #
 #   mvc.es
 #
-DEPS_147 += src/ejs.mvc/mvc.es
+DEPS_146 += src/ejs.mvc/mvc.es
 
-$(BUILD)/bin/mvc.es: $(DEPS_147)
+$(BUILD)/bin/mvc.es: $(DEPS_146)
 	@echo '      [Copy] $(BUILD)/bin/mvc.es'
 	mkdir -p "$(BUILD)/bin"
 	cp src/ejs.mvc/mvc.es $(BUILD)/bin/mvc.es
@@ -1965,43 +1947,29 @@ $(BUILD)/bin/mvc.es: $(DEPS_147)
 #
 #   mvc
 #
-DEPS_148 += $(BUILD)/bin/libejs.dylib
-DEPS_148 += $(BUILD)/bin/mvc.es
-DEPS_148 += $(BUILD)/obj/ejsrun.o
+DEPS_147 += $(BUILD)/bin/libejs.dylib
+DEPS_147 += $(BUILD)/bin/mvc.es
+DEPS_147 += $(BUILD)/obj/ejsrun.o
 
-LIBS_148 += -lejs
+LIBS_147 += -lejs
 ifeq ($(ME_COM_HTTP),1)
-    LIBS_148 += -lhttp
+    LIBS_147 += -lhttp
 endif
-LIBS_148 += -lmpr
+LIBS_147 += -lmpr
 ifeq ($(ME_COM_PCRE),1)
-    LIBS_148 += -lpcre
+    LIBS_147 += -lpcre
 endif
 
-$(BUILD)/bin/mvc: $(DEPS_148)
+$(BUILD)/bin/mvc: $(DEPS_147)
 	@echo '      [Link] $(BUILD)/bin/mvc'
-	$(CC) -o $(BUILD)/bin/mvc -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_148) $(LIBS_148) $(LIBS_148) $(LIBS) -lpam 
-
-ifeq ($(ME_COM_SQLITE),1)
-#
-#   sqliteshell
-#
-DEPS_149 += $(BUILD)/bin/libsql.dylib
-DEPS_149 += $(BUILD)/obj/sqlite.o
-
-LIBS_149 += -lsql
-
-$(BUILD)/bin/sqlite: $(DEPS_149)
-	@echo '      [Link] $(BUILD)/bin/sqlite'
-	$(CC) -o $(BUILD)/bin/sqlite -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/sqlite.o" $(LIBPATHS_149) $(LIBS_149) $(LIBS_149) $(LIBS) 
-endif
+	$(CC) -o $(BUILD)/bin/mvc -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_147) $(LIBS_147) $(LIBS_147) $(LIBS) -lpam 
 
 #
 #   utest.es
 #
-DEPS_150 += src/ejs.utest/utest.es
+DEPS_148 += src/ejs.utest/utest.es
 
-$(BUILD)/bin/utest.es: $(DEPS_150)
+$(BUILD)/bin/utest.es: $(DEPS_148)
 	@echo '      [Copy] $(BUILD)/bin/utest.es'
 	mkdir -p "$(BUILD)/bin"
 	cp src/ejs.utest/utest.es $(BUILD)/bin/utest.es
@@ -2009,9 +1977,9 @@ $(BUILD)/bin/utest.es: $(DEPS_150)
 #
 #   utest.worker
 #
-DEPS_151 += src/ejs.utest/utest.worker
+DEPS_149 += src/ejs.utest/utest.worker
 
-$(BUILD)/bin/utest.worker: $(DEPS_151)
+$(BUILD)/bin/utest.worker: $(DEPS_149)
 	@echo '      [Copy] $(BUILD)/bin/utest.worker'
 	mkdir -p "$(BUILD)/bin"
 	cp src/ejs.utest/utest.worker $(BUILD)/bin/utest.worker
@@ -2019,56 +1987,56 @@ $(BUILD)/bin/utest.worker: $(DEPS_151)
 #
 #   utest
 #
-DEPS_152 += $(BUILD)/bin/libejs.dylib
-DEPS_152 += $(BUILD)/bin/utest.es
-DEPS_152 += $(BUILD)/bin/utest.worker
-DEPS_152 += $(BUILD)/obj/ejsrun.o
+DEPS_150 += $(BUILD)/bin/libejs.dylib
+DEPS_150 += $(BUILD)/bin/utest.es
+DEPS_150 += $(BUILD)/bin/utest.worker
+DEPS_150 += $(BUILD)/obj/ejsrun.o
 
-LIBS_152 += -lejs
+LIBS_150 += -lejs
 ifeq ($(ME_COM_HTTP),1)
-    LIBS_152 += -lhttp
+    LIBS_150 += -lhttp
 endif
-LIBS_152 += -lmpr
+LIBS_150 += -lmpr
 ifeq ($(ME_COM_PCRE),1)
-    LIBS_152 += -lpcre
+    LIBS_150 += -lpcre
 endif
 
-$(BUILD)/bin/utest: $(DEPS_152)
+$(BUILD)/bin/utest: $(DEPS_150)
 	@echo '      [Link] $(BUILD)/bin/utest'
-	$(CC) -o $(BUILD)/bin/utest -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_152) $(LIBS_152) $(LIBS_152) $(LIBS) -lpam 
+	$(CC) -o $(BUILD)/bin/utest -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_150) $(LIBS_150) $(LIBS_150) $(LIBS) -lpam 
 
 #
 #   www
 #
-DEPS_153 += src/ejs.web/www/images/banner.jpg
-DEPS_153 += src/ejs.web/www/images/favicon.ico
-DEPS_153 += src/ejs.web/www/images/splash.jpg
-DEPS_153 += src/ejs.web/www/js/jquery.ejs.min.js
-DEPS_153 += src/ejs.web/www/js/jquery.min.js
-DEPS_153 += src/ejs.web/www/js/jquery.simplemodal.min.js
-DEPS_153 += src/ejs.web/www/js/jquery.tablesorter.js
-DEPS_153 += src/ejs.web/www/js/jquery.tablesorter.min.js
-DEPS_153 += src/ejs.web/www/js/jquery.treeview.min.js
-DEPS_153 += src/ejs.web/www/js/tree-images/file.gif
-DEPS_153 += src/ejs.web/www/js/tree-images/folder-closed.gif
-DEPS_153 += src/ejs.web/www/js/tree-images/folder.gif
-DEPS_153 += src/ejs.web/www/js/tree-images/minus.gif
-DEPS_153 += src/ejs.web/www/js/tree-images/plus.gif
-DEPS_153 += src/ejs.web/www/js/tree-images/treeview-black-line.gif
-DEPS_153 += src/ejs.web/www/js/tree-images/treeview-black.gif
-DEPS_153 += src/ejs.web/www/js/tree-images/treeview-default-line.gif
-DEPS_153 += src/ejs.web/www/js/tree-images/treeview-default.gif
-DEPS_153 += src/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif
-DEPS_153 += src/ejs.web/www/js/tree-images/treeview-famfamfam.gif
-DEPS_153 += src/ejs.web/www/js/tree-images/treeview-gray-line.gif
-DEPS_153 += src/ejs.web/www/js/tree-images/treeview-gray.gif
-DEPS_153 += src/ejs.web/www/js/tree-images/treeview-red-line.gif
-DEPS_153 += src/ejs.web/www/js/tree-images/treeview-red.gif
-DEPS_153 += src/ejs.web/www/js/treeview.css
-DEPS_153 += src/ejs.web/www/layout.css
-DEPS_153 += src/ejs.web/www/themes/default.css
+DEPS_151 += src/ejs.web/www/images/banner.jpg
+DEPS_151 += src/ejs.web/www/images/favicon.ico
+DEPS_151 += src/ejs.web/www/images/splash.jpg
+DEPS_151 += src/ejs.web/www/js/jquery.ejs.min.js
+DEPS_151 += src/ejs.web/www/js/jquery.min.js
+DEPS_151 += src/ejs.web/www/js/jquery.simplemodal.min.js
+DEPS_151 += src/ejs.web/www/js/jquery.tablesorter.js
+DEPS_151 += src/ejs.web/www/js/jquery.tablesorter.min.js
+DEPS_151 += src/ejs.web/www/js/jquery.treeview.min.js
+DEPS_151 += src/ejs.web/www/js/tree-images/file.gif
+DEPS_151 += src/ejs.web/www/js/tree-images/folder-closed.gif
+DEPS_151 += src/ejs.web/www/js/tree-images/folder.gif
+DEPS_151 += src/ejs.web/www/js/tree-images/minus.gif
+DEPS_151 += src/ejs.web/www/js/tree-images/plus.gif
+DEPS_151 += src/ejs.web/www/js/tree-images/treeview-black-line.gif
+DEPS_151 += src/ejs.web/www/js/tree-images/treeview-black.gif
+DEPS_151 += src/ejs.web/www/js/tree-images/treeview-default-line.gif
+DEPS_151 += src/ejs.web/www/js/tree-images/treeview-default.gif
+DEPS_151 += src/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif
+DEPS_151 += src/ejs.web/www/js/tree-images/treeview-famfamfam.gif
+DEPS_151 += src/ejs.web/www/js/tree-images/treeview-gray-line.gif
+DEPS_151 += src/ejs.web/www/js/tree-images/treeview-gray.gif
+DEPS_151 += src/ejs.web/www/js/tree-images/treeview-red-line.gif
+DEPS_151 += src/ejs.web/www/js/tree-images/treeview-red.gif
+DEPS_151 += src/ejs.web/www/js/treeview.css
+DEPS_151 += src/ejs.web/www/layout.css
+DEPS_151 += src/ejs.web/www/themes/default.css
 
-$(BUILD)/bin/www: $(DEPS_153)
+$(BUILD)/bin/www: $(DEPS_151)
 	@echo '      [Copy] $(BUILD)/bin/www'
 	mkdir -p "$(BUILD)/bin/www/images"
 	cp src/ejs.web/www/images/banner.jpg $(BUILD)/bin/www/images/banner.jpg
@@ -2108,7 +2076,7 @@ $(BUILD)/bin/www: $(DEPS_153)
 #   installBinary
 #
 
-installBinary: $(DEPS_154)
+installBinary: $(DEPS_152)
 	mkdir -p "$(ME_APP_PREFIX)" ; \
 	rm -f "$(ME_APP_PREFIX)/latest" ; \
 	ln -s "2.5.0" "$(ME_APP_PREFIX)/latest" ; \
@@ -2311,18 +2279,18 @@ installBinary: $(DEPS_154)
 #
 #   install
 #
-DEPS_155 += stop
-DEPS_155 += installBinary
-DEPS_155 += start
+DEPS_153 += stop
+DEPS_153 += installBinary
+DEPS_153 += start
 
-install: $(DEPS_155)
+install: $(DEPS_153)
 
 #
 #   uninstall
 #
-DEPS_156 += stop
+DEPS_154 += stop
 
-uninstall: $(DEPS_156)
+uninstall: $(DEPS_154)
 	rm -fr "$(ME_VAPP_PREFIX)" ; \
 	rm -f "$(ME_APP_PREFIX)/latest" ; \
 	rmdir -p "$(ME_APP_PREFIX)" 2>/dev/null ; true
@@ -2331,6 +2299,6 @@ uninstall: $(DEPS_156)
 #   version
 #
 
-version: $(DEPS_157)
+version: $(DEPS_155)
 	echo 2.5.0
 

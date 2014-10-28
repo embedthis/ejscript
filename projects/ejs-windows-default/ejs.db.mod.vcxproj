@@ -27,19 +27,19 @@
   </ItemGroup>
     
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-        <ConfigurationType>DynamicLibrary</ConfigurationType>
+        <ConfigurationType></ConfigurationType>
         <CharacterSet>NotSet</CharacterSet>
       </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-        <ConfigurationType>DynamicLibrary</ConfigurationType>
+        <ConfigurationType></ConfigurationType>
         <CharacterSet>NotSet</CharacterSet>
       </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-        <ConfigurationType>DynamicLibrary</ConfigurationType>
+        <ConfigurationType></ConfigurationType>
         <CharacterSet>NotSet</CharacterSet>
       </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-        <ConfigurationType>DynamicLibrary</ConfigurationType>
+        <ConfigurationType></ConfigurationType>
         <CharacterSet>NotSet</CharacterSet>
       </PropertyGroup>
 
@@ -90,17 +90,24 @@
 
       <ItemDefinitionGroup>
       <Link>
-        <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
-        <AdditionalLibraryDirectories>$(OutDir);;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+        <AdditionalDependencies>libejs.lib;libhttp.lib;libmpr.lib;libpcre.lib;%(AdditionalDependencies)</AdditionalDependencies>
+        <AdditionalLibraryDirectories>$(OutDir);build\$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       </Link>
 
       <CustomBuildStep>
         <Command>cd ..\..\src\ejs.db
-../../build/windows-x86-default/bin/ejsc --out ../../build/windows-x86-default/bin/ejs.db.mod  --optimize 9 Database.es DatabaseConnector.es
+..\..\build\windows-x86-default\bin\ejsc --out ../../build/windows-x86-default/bin/ejs.db.mod  --optimize 9 Database.es DatabaseConnector.es
 cd ..\..\projects\ejs-windows-default</Command>
         <Outputs>$(BinDir)\ejs.db.mod</Outputs>
       </CustomBuildStep>
   </ItemDefinitionGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="ejsc.vcxproj">
+      <Project>d5245843-770a-44aa-9aa8-2a834be6411e</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      </ProjectReference>
+    </ItemGroup>
 
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
