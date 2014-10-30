@@ -4,10 +4,11 @@
 #
 
 PRODUCT=ejs
+ARCH=x86
 XCODE=/usr/bin/xcodebuild
 PROFILE=default
 BINARIES="ejs ejsc manager ejsmod ejsrun mvc utest"
-LIBRARIES="libejs libejs.web libejs.zlib libhttp libmpr libmprssl libsql libz"
+LIBRARIES="libejs libejs.web libejs.zlib libhttp libmpr libmprssl libsql libzlib"
 MODULES="ejs.db.mapper ejs.db ejs.db.sqlite ejs.mail ejs ejs.mvc ejs.tar ejs.template ejs.unix ejs.web ejs.zlib"
 
 # Just for VS
@@ -36,7 +37,7 @@ if [ -x "${VS}" ] ; then
     for f in $BINARIES
     do
         echo check $f
-        if [ ! -f build/windows-x86-${PROFILE}/bin/${f}.exe ] ; then
+        if [ ! -f build/windows-${ARCH}-${PROFILE}/bin/${f}.exe ] ; then
             echo "VS IDE build is missing $f.exe"
             exit 255
         fi
@@ -44,7 +45,7 @@ if [ -x "${VS}" ] ; then
     for f in $LIBRARIES
     do
         echo check $f
-        if [ ! -f build/windows-x86-${PROFILE}/bin/${f}.dll ] ; then
+        if [ ! -f build/windows-${ARCH}-${PROFILE}/bin/${f}.dll ] ; then
             echo "VS IDE build is missing $f.dll"
             exit 255
         fi
@@ -52,7 +53,7 @@ if [ -x "${VS}" ] ; then
     for f in $MODULES
     do
         echo check $f
-        if [ ! -f projects/${PRODUCT}-x86-${PROFILE}/bin/${f}.mod ] ; then
+        if [ ! -f build/windows-${ARCH}-${PROFILE}/bin/${f}.mod ] ; then
             echo "VS IDE build is missing $f.mod"
             exit 255
         fi
