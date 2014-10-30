@@ -2649,7 +2649,6 @@
 		900D453C900D53D6000002AD /* libmprssl */ = {
                 isa = PBXGroup;
                 children = (
-				900D453C900D53D600000270 /* me.h */,
 				900D453C900D53D600000287 /* mpr.h */,
 				900D453C900D53D60000012A /* mprSsl.c */,
 			);
