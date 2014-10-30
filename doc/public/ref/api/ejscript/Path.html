@@ -144,7 +144,7 @@ size determination failed.</td></tr>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#Path'><b>Path</b></a>(path: <a href='String.html'>String</a> = .)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new Path object and set the path's location.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#append'><b>append</b></a>(data, options = atw): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Append data to a file.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#childOf'><b>childOf</b></a>(parent: <a href='Path.html'>Path</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>null</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#childOf'><b>childOf</b></a>(dir: <a href='Path.html'>Path</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Test if the path is a child of a given directory.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#contains'><b>contains</b></a>(pattern: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Test if the path name contains a substring.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#copy'><b>copy</b></a>(destination: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Copy a file to the destination.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#endsWith'><b>endsWith</b></a>(suffix: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return true if the path ends with the given suffix.</td></tr>
@@ -220,6 +220,20 @@ NOTE: this does a case-sensitive match.</td></tr>
 <dd><table class='parameters' title='parameters'>
 <tr class='param'><td class='param'>data </td><td>Data to append to the file.</td></tr><tr class='param'><td class='param'>options </td><td>File open options. Defaults to 'atw'. [default: atw]</td></tr></table></dd>
 </dl></div>
+</div>
+<hr />
+<a name='childOf'></a>
+<div class='api'>
+<div class='apiSig'>    childOf(dir: <a href='Path.html'>Path</a>): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Test if the path is a child of a given directory. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>dir: <a href='Path.html'>Path</a> </td><td>Path Parent directory to test.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the Path is a child of the specified parent directory.</dd></dl>
+</div>
 </div>
 <hr />
 <a name='contains'></a>
@@ -518,7 +532,7 @@ to the Path will be appended to the destination 'to' argument. In this manner, e
 easily copied.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>from </td><td>Path | String | Object | Array This may be a String or Path containing the source paths to  process. Alternatively, it may be an object that supplies 'from', 'to' and 'options' as processing  instructions. It may also be an array of Paths, Strings or Objects. The 'from' patterns may contain:     ? !   Negates pattern. This removes matching patterns from the set. These are applied after all source patterns have been processed. Use !! to escape. If item is a directory or ends with '/', then "***"" is automatically appended to match the directory  contents.</td></tr><tr class='param'><td class='param'>to </td><td>String | Path Destination target. If 'from' is a Path or String, then the 'to' argument  must be a destination Path or String. If 'from' is an Object or Array of instruction objects that contains a 'to' property, then 'to' should be omitted and will be ignored. If multiple source files are specified  or the destination ends in the separator '/', the destination is assumed to be a directory. If the  destination is a directory, the destination filename is created by appending the the source path to the  directory.</td></tr></td></tr></table></dd>
+<tr class='param'><td class='param'>from </td><td>Path | String | Object | Array This may be a String or Path containing the source paths to  process. Alternatively, it may be an object that supplies 'from', 'to' and 'options' as processing  instructions. It may also be an array of Paths, Strings or Objects. The 'from' patterns may contain:     ? !   Negates pattern. This removes matching patterns from the set. These are applied after all source patterns have been processed. Use !! to escape. If item is a directory or ends with '/', then "***"" is automatically appended to match the directory  contents.</td></tr><tr class='param'><td class='param'>to </td><td>String | Path Destination target. If 'from' is a Path or String, then the 'to' argument  must be a destination Path or String. If 'from' is an Object or Array of instruction objects that contains a 'to' property, then 'to' should be omitted and will be ignored. If multiple source files are specified  or the destination ends in the separator '/', the destination is assumed to be a directory. If the  destination is a directory, the destination filename is created by appending the the source path to the  directory.</td></tr><tr class='param'><td class='param'>control </td><td>Additional processing instructions. All the options provided by #Path.files are  also supported.</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' title='options'>
 <td class='param'>active</td><td>Boolean If destination is an active executable or library, rename the active file using a '.old'  extension and retry.</td></tr>
