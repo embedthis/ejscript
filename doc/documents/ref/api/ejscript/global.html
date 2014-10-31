@@ -210,7 +210,7 @@ This function is prototype and may be renamed in a future release.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#parseInt'><b>parseInt</b></a>(str: <a href='String.html'>String</a>, radix: <a href='Number.html'>Number</a> = 10): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Parse a string and convert to an integral number using the specified radix.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#print'><b>print</b></a>(args: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Print the arguments to the standard output with a new line appended.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#printf'><b>printf</b></a>(fmt: <a href='String.html'>String</a>, args: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Print the arguments to the standard output using the supplied format template.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#prints'><b>prints</b></a>(args: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>null</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#prints'><b>prints</b></a>(args: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Print the arguments to the standard output without a new line appended.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#serialize'><b>serialize</b></a>(obj: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Encode an object as a string.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#setInterval'><b>setInterval</b></a>(callback: <a href='Function.html'>Function</a>, delay: <a href='Number.html'>Number</a>, args: <a href='Array.html'>Array</a>): <a href='Timer.html'>Timer</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create an interval timer.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#setTimeout'><b>setTimeout</b></a>(callback: <a href='Function.html'>Function</a>, delay: <a href='Number.html'>Number</a>, args: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run a function after a delay.</td></tr>
@@ -2018,6 +2018,22 @@ standard output. Arguments are converted to strings by calling their toString me
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' title='parameters'>
 <tr class='param'><td class='param'>fmt: <a href='String.html'>String</a> </td><td>Format specifier.</td></tr><tr class='param'><td class='param'>args: <a href='Array.html'>Array</a> </td><td>Variables to print.</td></tr></table></dd>
+</dl><dl><dt>Specified</dt>
+<dd>ejscript-2.5</dd></dl>
+</div>
+</div>
+<hr />
+<a name='prints'></a>
+<div class='api'>
+<div class='apiSig'>    prints(args: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Print the arguments to the standard output without a new line appended. This call evaluates the arguments, 
+converts the result to strings and prints the result to the standard output. Arguments are converted to 
+strings by calling their toString method.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>args: <a href='Array.html'>Array</a> </td><td>Variables to print.</td></tr></table></dd>
 </dl><dl><dt>Specified</dt>
 <dd>ejscript-2.5</dd></dl>
 </div>
