@@ -6,10 +6,6 @@ Me.load({
 
     targets: {
         api: {
-            depends: ['scriptApi', 'nativeApi'],
-        },
-
-        nativeApi: {
             action: `
                 apidoc('api/ejs.dox', [
                     '${SRC}/src/ejs.h',
@@ -22,7 +18,8 @@ Me.load({
             `
         }, 
 
-        scriptApi: {
+        /* Invoked by me-doc api target */
+        'gen-doc': {
             action: `
                 trace('Generate', 'Script library documentation')
                 let src = me.dir.src.join('src')
