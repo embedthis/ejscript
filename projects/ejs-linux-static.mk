@@ -2070,12 +2070,17 @@ $(BUILD)/bin/www: $(DEPS_151)
 	mkdir -p "$(BUILD)/bin/www/themes"
 	cp src/ejs.web/www/themes/default.css $(BUILD)/bin/www/themes/default.css
 
+#
+#   stop
+#
+
+stop: $(DEPS_152)
 
 #
 #   installBinary
 #
 
-installBinary: $(DEPS_152)
+installBinary: $(DEPS_153)
 	mkdir -p "$(ME_APP_PREFIX)" ; \
 	rm -f "$(ME_APP_PREFIX)/latest" ; \
 	ln -s "2.5.0" "$(ME_APP_PREFIX)/latest" ; \
@@ -2274,27 +2279,32 @@ installBinary: $(DEPS_152)
 	rm -f "$(ME_MAN_PREFIX)/man1/mvc.1" ; \
 	ln -s "$(ME_VAPP_PREFIX)/doc/man1/mvc.1" "$(ME_MAN_PREFIX)/man1/mvc.1"
 
+#
+#   start
+#
+
+start: $(DEPS_154)
 
 #
 #   install
 #
-DEPS_153 += stop
-DEPS_153 += installBinary
-DEPS_153 += start
+DEPS_155 += stop
+DEPS_155 += installBinary
+DEPS_155 += start
 
-install: $(DEPS_153)
+install: $(DEPS_155)
 
 #
 #   uninstall
 #
-DEPS_154 += stop
+DEPS_156 += stop
 
-uninstall: $(DEPS_154)
+uninstall: $(DEPS_156)
 
 #
 #   version
 #
 
-version: $(DEPS_155)
+version: $(DEPS_157)
 	echo 2.5.0
 
