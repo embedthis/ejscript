@@ -237,6 +237,7 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *l
                 for (next = -1; (nsp = (EjsNamespace*) mprGetPrevItem(&b->namespaces, &next)) != 0; ) {
                     qname.space = nsp->value;
                     if ((slotNum = ejsLookupProperty(ejs, obj, qname)) >= 0) {
+                        lookup->name = qname;
                         goto done;
                     }
                 }
@@ -244,6 +245,7 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *l
             for (next = -1; (nsp = mprGetPrevItem(globalSpaces, &next)) != 0; ) {
                 qname.space = nsp->value;
                 if ((slotNum = ejsLookupProperty(ejs, obj, qname)) >= 0) {
+                    lookup->name = qname;
                     goto done;
                 }
             }

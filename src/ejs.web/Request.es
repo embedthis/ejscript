@@ -791,7 +791,7 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}
          */
         function setHeaders(headers: Object, overwrite: Boolean = true): Void {
             for (let [key,value] in headers) {
-                setHeader(key, value, overwrite)
+                setHeader(key, value || '', overwrite)
             }
         }
 
@@ -973,7 +973,7 @@ TODO - DEBUG
                     } catch {}
                 }
                 finalize()
-                log.debug(4, "Request error (" + status + ") for: \"" + uri + "\". " + msg)
+                log.debug(5, "Request error (" + status + ") for: \"" + uri + "\". " + msg)
             }
         }
 

@@ -29,7 +29,7 @@ ifeq ($(ARCH),)
 endif
 
 ifeq ($(OS),windows)
-    MAKE	:= MAKEFLAGS= projects/windows.bat $(ARCH)
+    MAKE	:= MAKEFLAGS= projects/windows.bat $(ARCH) nmake
     EXT 	:= nmake
 else
 	MAKE    := $(shell if which gmake >/dev/null 2>&1; then echo gmake ; else echo make ; fi) --no-print-directory
@@ -45,13 +45,14 @@ all compile:
 	@if [ ! -f projects/$(NAME)-$(OS)-$(PROFILE).$(EXT) ] ; then \
 		echo "The build configuration projects/$(NAME)-$(OS)-$(PROFILE).$(EXT) is not supported" ; exit 255 ; \
 	fi
-	$(MAKE) -f projects/$(NAME)-$(OS)-$(PROFILE).$(EXT) $@
+	@$(MAKE) -f projects/$(NAME)-$(OS)-$(PROFILE).$(EXT) $@
 	@echo ; echo 'You can now install via "sudo make $(MAKEFLAGS) install", then run via: "ejs"'
 	@echo "      [Info] To run locally, put $(OS)-$(ARCH)-$(PROFILE)/bin in your path."
 	@echo ""
 
 clean clobber install installBinary uninstall run:
-	$(MAKE) -f projects/$(NAME)-$(OS)-$(PROFILE).$(EXT) $@
+	@$(MAKE) -f projects/$(NAME)-$(OS)-$(PROFILE).$(EXT) $@
+	@echo '      [Info] $@ complete'
 
 deploy:
 	@echo '       [Deploy] $(MAKE) ME_ROOT_PREFIX=$(OS)-$(ARCH)-$(PROFILE)/deploy -f projects/$(NAME)-$(OS)-$(PROFILE).  $(EXT) installBinary'

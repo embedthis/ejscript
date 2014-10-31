@@ -1,0 +1,14 @@
+/*
+    local.me - MakeMe file for the evalScript sample
+ */
+
+Me.load({
+    targets: {
+        evalScript : {
+            type: 'exe',
+            path: 'main${EXE}',
+            sources: ['*.c'],
+            '+libraries': [ 'ejs', 'mpr', 'mprssl' ],
+        },
+    },
+})

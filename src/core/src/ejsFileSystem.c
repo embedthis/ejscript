@@ -47,13 +47,8 @@ static EjsFileSystem *fileSystemConstructor(Ejs *ejs, EjsFileSystem *fp, int arg
 {
     cchar   *path;
 
-#if UNUSED
-    assert(argc == 1 && ejsIs(ejs, argv[0], String));
-    path = ejsToMulti(ejs, argv[0]);
-#else
     assert(argc == 1 && ejsIs(ejs, argv[0], Path));
     path = ((EjsPath*) argv[0])->value;
-#endif
     fp->path = mprNormalizePath(path);
     fp->fs = mprLookupFileSystem(path);
     return fp;

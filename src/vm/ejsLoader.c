@@ -103,8 +103,8 @@ static int initializeModule(Ejs *ejs, EjsModule *mp)
                 return MPR_ERR_CANT_INITIALIZE;
             }
             if (!(ejs->flags & EJS_FLAG_NO_INIT)) {
-                if (nativeModule->checksum != mp->checksum) {
-                    ejsThrowIOError(ejs, "Module \"%s\" XXX does not match native code (%d, %d)", mp->path, 
+                if (mp->checksum != 0 && nativeModule->checksum != mp->checksum) {
+                    ejsThrowIOError(ejs, "Module \"%s\" does not match native code (%d, %d)", mp->path,
                         nativeModule->checksum, mp->checksum);
                     return MPR_ERR_BAD_STATE;
                 }

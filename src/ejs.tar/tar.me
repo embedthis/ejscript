@@ -9,11 +9,10 @@ Me.load({
             path: '${BIN}/ejs.tar.mod',
             files: [ '*.es' ],
             precious: true,
-            build: "
-                trace('Compile', 'ejs.tar.mod')
-                run('${LBIN}/ejsc --out ${BIN}/ejs.tar.mod ${settings.esflags} --optimize 9 ' + Path('.').files('*.es').sort().join(' '))
-            ",
-            'generate': '${BIN}/ejsc --out ${BIN}/ejs.tar.mod ${settings.esflags} --optimize 9 *.es',
+            build: `
+                run('${LBIN}/ejsc --out ${BIN}/ejs.tar.mod ${settings.esflags} --optimize 9 ${FILES}')
+            `,
+            message: 'Compile: ejs.tar.mod',
             depends: [ 'ejsc', 'ejs.mod' ],
         },
 	},

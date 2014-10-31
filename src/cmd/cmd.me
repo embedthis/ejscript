@@ -28,7 +28,7 @@ Me.load({
         ejsmod: {
             type: 'exe',
             sources: [ 'ejsmod.c', 'doc.c', 'docFiles.c', 'listing.c', 'slotGen.c' ],
-            '+includes': [ '.' ],
+            headers: [ '*.h' ],
             depends: [ 'libejs' ],
             platforms: [ 'local' ],
         },

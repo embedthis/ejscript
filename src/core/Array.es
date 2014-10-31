@@ -352,9 +352,10 @@ module ejs {
             Remove specified elements from the array. The elements are removed and not just set 
             to undefined as the delete operator will do. Indicies are renumbered. 
             @param elts List of elements to remove.
+            @return The original array
             @spec ejs
          */
-        native function removeElements(...elts): Void
+        native function removeElements(...elts): Array
 
         /**
             Reverse the order of the objects in the array. The elements are reversed in the original array.

@@ -132,6 +132,8 @@ module ejs.web {
          */ 
         public static const Top: String = "top"
 
+        public static const WebSite: String = "webSite"
+
         /**
             Max calls to route() per request
          */
@@ -327,6 +329,11 @@ module ejs.web {
                 addRestful()
                 addCatchall()
                 break
+            case WebSite:
+                add(/\.es$/i,  {name: "es",  response: ScriptApp, method: "*"})
+                add(/\.ejs$/i, {name: "ejs", module: "ejs.template", response: TemplateApp, method: "*"})
+                add(isDir,    {name: "dir", response: DirApp})
+                addCatchall()
             case null:
                 break
             default:
@@ -496,7 +503,7 @@ module ejs.web {
                 r.initialized = true
             }
             if (log.level >= 3) {
-                log.debug(4, "Matched route \"" + r.routeSetName + "/" + r.name + "\"")
+                log.debug(5, "Matched route \"" + r.routeSetName + "/" + r.name + "\"")
                 if (log.level >= 5) {
                     log.debug(5, "  Route params " + serialize(params, {pretty: true}))
                 }

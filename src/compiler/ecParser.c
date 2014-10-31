@@ -4448,21 +4448,22 @@ static EcNode *parseNullableTypeExpression(EcCompiler *cp)
         break;
 
     default:
-        np = parseTypeExpression(cp);
-        if (peekToken(cp) == T_QUERY) {
-            /* Allow Nulls */
-            getToken(cp);
-        } else if (cp->peekToken->tokenId == T_LOGICAL_NOT) {
-            /* Don't allow nulls */
-            getToken(cp);
-            np->attributes |= EJS_TRAIT_THROW_NULLS;
-        } else if (cp->peekToken->tokenId == T_TILDE) {
-            /* Cast nulls to type */
-            getToken(cp);
-            np->attributes |= EJS_TRAIT_CAST_NULLS;
-        } else {
-            /* Default is same as Type! */
-            np->attributes |= EJS_TRAIT_THROW_NULLS;
+        if ((np = parseTypeExpression(cp)) != 0) {
+            if (peekToken(cp) == T_QUERY) {
+                /* Allow Nulls */
+                getToken(cp);
+            } else if (cp->peekToken->tokenId == T_LOGICAL_NOT) {
+                /* Don't allow nulls */
+                getToken(cp);
+                np->attributes |= EJS_TRAIT_THROW_NULLS;
+            } else if (cp->peekToken->tokenId == T_TILDE) {
+                /* Cast nulls to type */
+                getToken(cp);
+                np->attributes |= EJS_TRAIT_CAST_NULLS;
+            } else {
+                /* Default is same as Type! */
+                np->attributes |= EJS_TRAIT_THROW_NULLS;
+            }
         }
         break;
     }

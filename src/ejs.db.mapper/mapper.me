@@ -10,10 +10,9 @@ Me.load({
             path: '${BIN}/ejs.db.mapper.mod',
             files: [ '*.es' ],
             build: `
-                trace('Compile', 'ejs.db.mapper.mod')
-                run('${LBIN}/ejsc --out ${OUTPUT} ${settings.esflags} --optimize 9 ' + Path('.').files('*.es').sort().join(' '))
+                run('${LBIN}/ejsc --out ${BIN}/ejs.db.mapper.mod ${settings.esflags} --optimize 9 ${FILES}')
             `,
-            generate: "${BIN}/ejsc --out ${BIN}/ejs.db.mapper.mod ${settings.esflags} --optimize 9 *.es",
+            message: 'Compile: ejs.db.mapper.mod',
             depends: [ 'ejsc', 'ejs.mod', 'ejs.db.mod' ],
         },
 	},

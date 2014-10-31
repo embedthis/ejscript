@@ -31,11 +31,9 @@ module ejs {
             @options detach Boolean If true, run the command and return immediately. If detached, finalize() must be
                 called to signify the end of data being written to the command's stdin.
             @options dir Path or String. Directory to set as the current working directory for the command.
-            @options exception Boolean If true, throw exceptions if the command returns a non-zero status code. 
+            @options exceptions Boolean If true, throw exceptions if the command returns a non-zero status code. 
                 Defaults to false.
             @options timeout Number This is the default number of milliseconds for the command to complete.
-            @options noio Don't capture stdout from the command. If true, the command's standard output will go to the 
-                application's current standard output. Defaults to false.
          */
         native function Cmd(command: Object = null, options: Object = null)
 
@@ -357,34 +355,42 @@ module ejs {
             @param command Command or program to execute
             @param options Command options hash. Supported options are:
             @options detach Boolean If true, run the command and return immediately. If detached, finalize() must be
-                called to signify the end of data being written to the command's stdin.
+                called to signify the end of data being written to the command's stdin. In this case, run returns null.
             @options dir Path or String. Directory to set as the current working directory for the command.
-            @options exception Boolean If true, throw exceptions if the command returns a non-zero status code. 
+            @options exceptions Boolean If true, throw exceptions if the command returns a non-zero status code. 
                 Defaults to true.
             @options timeout Number This is the default number of milliseconds for the command to complete.
-            @options noio Don't capture stdout from the command. If true, the command's standard output will go to the 
-                application's current standard output. Defaults to false.
+            @options stream Stream the stdout from the command to the current standard output. Defaults to false.
             @param data Optional data to write to the command on it's standard input.
             @returns The command output from the standard output.
             @throws IOError if the command exits with non-zero status. The exception object will contain the command's
                 standard error output. 
          */
-        static function run(command: Object, options: Object = {}, data: Object = null): String {
+        static function run(command: Object, options: Object = {}, data: Object = null): String? {
             options ||= {}
-            if (options.exception == null) {
-                options.exception = true
-            }
             let cmd = new Cmd
+            let results = new ByteArray
+            cmd.on('readable', function(event, cmd) {
+                let buf = new ByteArray
+                cmd.read(buf, -1)
+                if (options.stream) {
+                    prints(buf)
+                }
+                results.write(buf)
+            })
             cmd.start(command, blend({detach: true}, options))
+            if (options.detach) {
+                return null
+            }
             if (data) {
                 cmd.write(data)
             }
             cmd.finalize()
             cmd.wait()
-            if (cmd.status != 0 && options.exception) {
-                throw new IOError(cmd.error)
+            if (cmd.status != 0 && options.exceptions !== false) {
+                throw new IOError('Command failed, status ' + cmd.status + '\n' + cmd.error)
             }
-            return cmd.readString()
+            return results.toString()
         }
 
         /**
@@ -394,13 +400,12 @@ module ejs {
                 an array of arguments. 
             @param options Command options hash. Supported options are:
             @options detach Boolean If true, run the command and return immediately. If detached, finalize() must be
-                called to signify the end of data being written to the command's stdin.
+                called to signify the end of data being written to the command's stdin. In this case, sh returns null.
             @options dir Path or String. Directory to set as the current working directory for the command.
-            @options exception Boolean If true, throw exceptions if the command returns a non-zero status code. 
+            @options exceptions Boolean If true, throw exceptions if the command returns a non-zero status code. 
                 Defaults to true.
             @options timeout Number This is the default number of milliseconds for the command to complete.
-            @options noio Don't capture stdout from the command. If true, the command's standard output will go to the 
-                application's current standard output. Defaults to false.
+            @options stream Stream the stdout from the command to the current standard output. Defaults to false.
             @param data Optional data to write to the command on it's standard input.
             @return The command output from the standard output.
             @throws IOError if the command exits with non-zero status. The exception object will contain the command's

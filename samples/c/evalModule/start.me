@@ -1,0 +1,21 @@
+/*
+    local.me - MakeMe file for the evalModule sample
+ */
+
+Me.load({
+    targets: {
+        evalModule : {
+            type: 'exe',
+            path: 'main${EXE}',
+            sources: ['*.c'],
+            depends: ['evalModule.mod'],
+            '+libraries': [ 'ejs', 'mpr', 'mprssl' ],
+        },
+
+        'evalModule.mod' : {
+            path: 'evalModule.mod',
+            files: ['Test.es'],
+            build: "run('ejsc --out test.mod Test.es')",
+        },
+    },
+})

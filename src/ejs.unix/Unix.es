@@ -34,61 +34,40 @@ module ejs.unix {
 
     /**
         Copy files
-        The src argument can ba an array of Strings/Paths representing files/directories to copy. The may include
-        embedded wildcards. If a src element is a directory, then it all all files and subdirectories will be copied
-        preserving its directory structure under dest. 
+        Copy files from source patterns to a destination. This is a wrapper over Path.operate() and it supports all
+        of its options.
 
-        @param src Source files/directories to copy. This can be a String, Path or array of String/Paths. 
-            The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches
-            every directory and file. The Posix "[]" and "{a,b}" style expressions are not supported.
-            If src is an existing directory, then the pattern is converted to 'dir/ * *' (without spaces) 
-            and the tree option is enabled. This will copy the directories contents and not the directory itself.
+        The 'src' argument can be a Path or String or an array of Strings/Paths representing files/directories to copy and
+        may include wildcards. If a src element is a directory, then it all files and subdirectories underneath will be copied. 
+
+        By default, this method operates in 'flatten' mode where the source directory structure is not copied. To
+        copy an entire directory tree, set 'flatten' to false in the options. In this case, the entire source path is 
+        created under the destination.
+        
+        If the 'relative' or 'trim' options are defined, it is assumed that flatten mode is disabled.
+
+        @param src Path | String | Array This may be a String or Path containing the source paths to 
+        copy. It may also be an array of Paths or Strings. The 'src' patterns may contain:
+            *
+            **
+            ?
+            {}  Comma separated patterns
+            !   Negates pattern. This removes matching patterns from the set. These are applied after all source
+                patterns have been processed. Use !! to escape.
+        If item is a directory, then '**' is automatically appended.
+
+
         @param dest Destination file or directory. If multiple files are copied, dest is assumed to be a directory and 
-            will be created if required.  If dest has a trailing "/", it is assumed to be a directory.
-        @param options Processing and file attributes
-        @options owner String representing the file owner                                                     
-        @options group String representing the file group                                                     
-        @options permissions Number File Posix permissions mask
-        @options tree Copy the src subtree and preserve the directory structure under the destination.
+            will be created if required.  If dest has a trailing '/', it is assumed to be a directory.
+
+        @param options Additional processing instructions. All the options provided by #Path.operate are 
+            supported.
+
         @return Number of files copied
     */
-    function cp(src, dest: Path, options = {}): Number {
-        if (!(src is Array)) src = [src]
-        let count = 0
-        for each (let pattern: Path in src) {
-            let base: Path = Path('.')
-            if (pattern.isDir) {
-                base = pattern
-                pattern = Path('**')
-                options = blend({tree: true, relative: true}, options)
-            }
-            list = base.files(pattern, options)
+    function cp(src, dest: Path, options = {}): Number
+        Path().operate(src, dest, options)
 
-            if (!list || list.length == 0) {
-                throw 'cp: Cannot find files to copy "' + pattern + '" to ' + dest
-            }
-            destIsDir = (dest.isDir || list.length > 1 || dest.name.endsWith('/'))
-
-            for each (let file: Path in list) {
-                let to, from = base.join(file)
-                if (options.tree) {
-                    to = dest.join(file).normalize
-                } else if (destIsDir) {
-                    to = dest.join(file.basename)
-                } else {
-                    to = dest
-                }
-                to.dirname.makeDir()
-                if (from.isDir) {
-                    to.makeDir()
-                } else {
-                    from.copy(to, options)
-                }
-                count++
-            }
-        }
-        return count
-    }
     /**
         Get the directory name portion of a file. The dirname name portion is the leading portion including all 
         directory elements and excluding the base name. On some systems, it will include a drive specifier.
@@ -145,12 +124,17 @@ module ejs.unix {
             The wildcards "*", "**" and "?" are the only wild card patterns supported. The "**" pattern matches
             every directory. The Posix "[]" and "{a,b}" style expressions are not supported.
         @param options If set to true, then files will include sub-directories in the returned list of files.
-        @option dirs Include directories in the file list
-        @option depthFirst Do a depth first traversal. If "dirs" is specified, the directories will be shown after
-        the files in the directory. Otherwise, directories will be listed first.
-        @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path.
+        @option depthFirst Do a depth first traversal of directories. If true, then the directories will be shown after
+            the files in the directory. Otherwise, directories will be listed first.
+        @option exclude String|Regular RegExp pattern of files to exclude from the results. Matches the entire path.
+            Only for the purpose of this match, directories will have "/" appended. May be set to the string
+            "directories" to exclude directories from the results which are by default included.
         @option hidden Show hidden files starting with "."
         @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
+        @option missing Set to undefined to report patterns that don't resolve into any files or directories 
+            by throwing an exception. Set to any non-null value to be used in the results when there are no matching
+            files or directories. Set to the empty string to use the patterns in the results and set
+            to null to do nothing.
         @return An Array of Path objects for each matching file.
      */
     function ls(patterns = "*", options: Object? = null): Array {
@@ -179,11 +163,11 @@ module ejs.unix {
             The pattern '**' is equivalent to '** / *' (ignore spaces). 
             The Posix "[]" and "{a,b}" style expressions are not supported.
         @param options Optional properties to control the matching.
-        @option depthFirst Do a depth first traversal. If "dirs" is specified, the directories will be shown after
+        @option depthFirst Do a depth first traversal of directories. If true, then the directories will be shown after
             the files in the directory. Otherwise, directories will be listed first.
-        @option exclude Regular expression pattern of files to exclude from the results. Matches the entire path.
-            Only for the purpose of this match, directories will have "/" appended. To exclude directories in the
-            results, use {exclude: /\/$/}. The trailing "/" will not be returned in the results.
+        @option exclude String|Regular RegExp pattern of files to exclude from the results. Matches the entire path.
+            Only for the purpose of this match, directories will have "/" appended. May be set to the string
+            "directories" to exclude directories from the results which are by default included.
         @option hidden Include hidden files starting with "."
         @option include Regular expression pattern of files to include in the results. Matches the entire returned path.
             Only for the purpose of this match, directories will have "/" appended. To include only directories in the

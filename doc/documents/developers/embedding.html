@@ -1,0 +1,123 @@
+{
+    title:  'Embedding',
+    crumbs: [
+        { "Developer's Guide": "index.html" },
+    ],
+}
+            <h1>Embedding Ejscript</h1>
+            <p>It is easy to embed Ejscript into an application. Ejscript provides two levels of embedding APIs:</p>
+            <ul>
+                <li>One line embedding APIs</li>
+                <li>Full control APIs</li>
+            </ul><a id="oneLine"></a>
+            <h2 >One Line Embedding</h2>
+            <p>Ejscript provides three variety of one-line embedding APIs. These permit you to evaluate a script file,
+            a script literal or a pre-compiled script module.</p><a id="file"></a>
+            <h3>Evaluate a Script File</h3>
+            <p>To create an application that can evaluate script files, use the <b>ejsEvalFile</b> API.</p>
+            <pre class="ui code segment">
+#include    "ejs/ejs.h"
+int main(int argc, char **argv) 
+{
+    <b>if (ejsEvalFile("test.es") &lt; 0) {</b>
+        fprintf(stderr, "Error executing test.es\n");
+        exit(1);
+    }
+    return 0;
+}
+</pre>
+            <p>To build this program, you just need to compile and link with Ejscript compiler library <b>libejs</b>.
+            Here is the command for building such a test program called <b>main.c</b> on a MAC system.</p>
+            <pre class="ui code segment">
+cc -o main main.c -lejs
+</pre>
+            <a id="literal"></a>
+            <h3>Evaluate a Script Literal</h3>
+            <p>To create an application that can evaluate script literals, use the <b>ejsEvalScript</b> API.</p>
+            <pre class="ui code segment">
+#include    "ejs/ejs.h"
+int main(int argc, char **argv) 
+{
+    if (argc != 2) {
+        fprintf(stderr, "usage: main script\n");
+        exit(1);
+    }
+    <b>if (ejsEvalScript(argv[1]) &lt; 0) {</b>
+        fprintf(stderr, "Error executing %s\n", argv[1]);
+        exit(1);
+    }
+    return 0;
+}
+</pre>
+            <p>Then run this program and put a literal script on the command line.</p>
+            <pre class="ui code segment">
+./main "print('Hello World')"
+</pre><a id="module"></a>
+            <h3>Evaluate a Script Module</h3>
+            <p>To create an application that can load and evaluate compiled script module files, use the
+            <b>ejsEvalModule</b> API.</p>
+            <pre class="ui code segment">
+#include    "ejs/ejs.h"
+int main(int argc, char **argv) 
+{
+    <b>if (ejsEvalModule("test.mod") &lt; 0) {</b>
+        fprintf(stderr, "Error executing test.mod\n");
+        exit(1);
+    }
+    return 0;
+}
+</pre>
+            <p>To build this program, you just need link with Ejscript VM library <b>libejs</b>. Here is the command
+            for building such a test program called <b>main.c</b> on a MAC system.</p>
+            <pre class="ui code segment">
+cc -o main main.c -lejs
+</pre>
+            <a id="control"></a>
+            <h2 >Full Control Embedding</h2>
+            <p>In some situations, your application may need full control over the Ejscript service. Some reasons for
+            this include:</p>
+            <ul>
+                <li>You need to create multiple interpreter instances</li>
+                <li>You want custom control over where Ejscript searches for modules</li>
+                <li>You want to customize the interpreter with native types, methods or variables</li>
+            </ul>
+            <p>Ejscript provides a comprehensive <a href="../ref/api/ejs.html">Ejscript Native API</a> so you can
+            fully control the configuration and operation of Ejscript. The APIs allow you to create and manage
+            interpreters, create types, run methods, set and get properties and interact with all the objects held by
+            the interpreter.</p>
+            <p>Ejscript leverages the Embedthis Portable Runtime (MPR) which is a cross-platform set of services that
+            abstract the operating system. The MPR enhances the security of Ejscript by providing secure,
+            high-performance, and well proven routines for managing memory, strings, lists, files, network sockets,
+            http and threads. MPR APIs all begin with an <b>mpr</b> prefix whereas all Ejscript APIs begin with
+            <b>ejs</b> for the VM or <b>ejsc</b> for the compiler.</p>
+            <p>The sample below demonstrates the full control steps to compile and evaluate a file.</p>
+            <pre class="ui code segment">
+int ejsEvalFile(int fileCount, char **fileList)
+{
+    Ejs     *ejs;         //  Handle to an Ejscript interpreter
+    int     status;
+    mprCreate(0, 0, 0);
+    if ((ejs = ejsCreateVM(0, 0, 0)) == 0) {
+        exit(1);
+    }
+    mprAddRoot(ejs);
+    if (ejsLoadModules(ejs, 0, 0) &lt; 0) {
+        exit(2);
+    } 
+    if (ejsLoadScriptFile(ejs, path, NULL, 
+            EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) &lt; 0) {
+        ejsReportError(ejs, "Error in program");
+        exit(3);
+    }
+    mprDestroy(MPR_EXIT_DEFAULT);
+    return 0;
+}
+</pre>
+            <p>Consult the <a href="../ref/api/ejs.html">Ejscript Native API</a> and <a href=
+            "../ref/api/mpr.html">MPR Native API</a> for details on each API. The MPR provides a hierarchical memory
+            allocation service, so calls to <b>mprFree</b> will free the MPR instance and everything allocated off the
+            MPR. This includes the Ejscript service, VM, interpreter and compiler. Be sure to read the <a href=
+            "../ref/api/mpr.html#group___mpr_mem">MPR Memory Allocation Service</a> for details.</p>
+            <p>See the <a href="extending.html">Extending Ejscript</a> for how to interact with the interpreter,
+            objects, types, run methods, create types and properties, delete properties, throw exceptions, cast types
+            and more.</p>

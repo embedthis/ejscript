@@ -3,8 +3,12 @@
  */
 
 Me.load({
+    plugins: [ 'configuration', 'package' ],
+
     blend: [
-        'src/paks/*/*.me',
+        'http',
+        'zlib',
+        'sqlite',
 
         'src/libejs.me',
         'src/cmd/cmd.me',
@@ -38,7 +42,7 @@ Me.load({
     },
 
     settings: {
-        me: '>=0.8.2',
+        me: '=0.8.4',
 
         /*
             Installation prefix set
@@ -118,9 +122,7 @@ Me.load({
     },
 
     scripts: {
-        loaded: `
-            me.targets.httpcmd.enable = false
-        `,
+        loaded: `me.targets.httpcmd.enable = false`,
     },
 
     targets: {
@@ -133,11 +135,15 @@ Me.load({
             action: "genProjects('-with est')",
         },
 
+        mine: {
+            action: `genProjects('', 'mine', Config.OS + '-' + Config.CPU)`,
+        },
+
         test: {
             type: 'test',
             home: '${TOP}',
             action: `
-                run(['${LBIN}/utest', '-v', '-d', me.settings.depth], {noio: true})
+                run(['${LBIN}/utest', '-v', '-d', me.settings.depth])
             `,
             platforms: [ 'local' ],
         }

@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Core Language Types</title>
+    <!-- Copyright Embedthis Software, LLC, 2003-2014. All Rights Reserved. -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="keywords" content="Ejscript, Javascript, Ecmascript, devices, http server, internet of things" />
+    <meta name="description" content="Javacript Language Environment" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
+        rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
+    <link href="../lib/semantic/themes/packages/beach.css" rel="stylesheet" type="text/css" />
+    <link href="../css/all.css" rel="stylesheet" type="text/css" />
+    <link href="../images/favicon.ico" rel="shortcut icon" />
+
+</head>
+<body>
+        <div class="sidebar">
+        <div class="ui large left vertical inverted labeled menu">
+            <div class="item">
+                <a href="../index.html" class="logo">Ejscript Docs</a>
+            </div>
+            <div class="item">
+                <a href="../index.html">
+                    <b>General</b>
+                </a>
+                <div class="menu">
+                    <a class="item" href="../index.html">Ejscript Overview</a>
+                    <a class="item" href="../users/features.html">Ejscript Features</a>
+                    <a class="item" href="https://embedthis.com/ejs/download.html">Download</a> 
+                    <a class="item" href="../licensing/index.html">Licensing</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../start/index.html">
+                    <b>Getting Started</b>
+                </a>
+                <div class="menu">
+                    <a class="item" href="../start/quick.html">Quick Start</a>
+                    <a class="item" href="../start/installing.html">Installing Ejscript</a>
+                    <a class="item" href="../start/tour.html">Language Tour</a>
+                    <a class="item" href="../start/faq.html">FAQ</a>
+                    <a class="item" href="../start/releaseNotes.html">Release Notes</a>
+                    <a class="item" href="../start/source.html">Building from Source</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../users/index.html"><b>User's Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../users/shell.html">Using the Command Shell</a>
+                    <a class="item" href="../users/compiler.html">Using the Compiler</a>
+                    <a class="item" href="../users/ejsmod.html">Using the Module Generator</a>
+                    <a class="item" href="../users/doc.html">Generating Documentation</a>
+                    <a class="item" href="../users/listing.html">Generating Listing</a>
+                    <a class="item" href="../users/man.html">Man Pages</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../language/index.html"><b>Language Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../language/syntax.html">Language Syntax</a>
+                    <a class="item" href="../language/statements.html">Statements</a>
+                    <a class="item" href="../language/expressions.html">Expressions and Operators</a>
+                    <a class="item" href="../language/objects.html">Object and Arrays</a>
+                    <a class="item" href="../language/functions.html">Functions and Methods</a>
+                    <a class="item" href="../language/core.html">Core Language Types</a>
+                    <a class="item" href="../language/types.html">Types and Declarations</a>
+                    <a class="item" href="../language/classes.html">Classes and Instances</a>
+                    <a class="item" href="../language/modules.html">Modules and Namespaces</a>
+                    <a class="item" href="../language/library.html">System Library</a>
+                    <a class="item" href="../language/events.html">Events and Timers</a>
+                    <a class="item" href="../language/modes.html">Language Modes</a>
+                    <a class="item" href="../language/globals.html">Globals</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../web/index.html"><b>Web Framework Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../web/webTour.html">Web Framework Tour</a>
+                    <a class="item" href="../web/generator.html">Application Generator</a>
+                    <a class="item" href="../web/routing.html">Routing</a>
+                    <a class="item" href="../web/controllers.html">Controllers</a>
+                    <a class="item" href="../web/views.html">Views and Layout Templates</a>
+                    <a class="item" href="../web/controls.html">Ajax View Controls</a>
+                    <a class="item" href="../web/models.html">Database Models</a>
+                    <a class="item" href="../web/hosting.html">Hosting in Web Servers</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../developers/index.html">Developer's Guide</a>
+                <div class="menu">
+                    <a class="item" href="../developers/embedding.html">Embedding Ejscript</a>
+                    <a class="item" href="../developers/extending.html">Extending Ejscript</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../ref/index.html">Reference Guide</a>
+                <div class="menu">
+                    <a class="item" href="../ref/compatibility.html">Compatibility</a>
+                    <a class="item" href="../ref/native.html">Native APIs</a>
+                    <a class="item" href="../ref/api/ejscript/index.html" target="new">Script Library</a>
+                    <a class="item" href="../ref/architecture.html">Ejscript Architecture</a>
+                    <a class="item" href="../ref/webArchitecture.html">Web Framework Architecture</a>
+                    <a class="item" href="../ref/memory.html">Ejscript Memory Allocation</a>
+                    <a class="item" href="../ref/multithread.html">Multithreaded Programming</a>
+                    <a class="item" href="../standards/references.html">Standards</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../developers/project.html">Project Resources</a>
+                <div class="menu">
+                    <a class="item" href="http://goo.gl/g4oS2C">Official Ejscript News</a>
+                    <a class="item" href="https://embedthis.com/ejs/">Ejscript Web Site</a>
+                    <a class="item" href="https://github.com/embedthis/ejs">Source Code Repository</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/issues">Project Issue Database</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/releases">Change Log</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/milestones">Roadmap</a>
+                    <a class="item" href="https://embedthis.com/developers/contributors.html">Contributors Agreement</a>
+                </div>
+            </div>
+            <div class="item">
+                <b>Links</b>
+                <div class="menu">
+                    <a class="item" href="https://embedthis.com/">Embedthis Web Site</a>
+                    <a class="item" href="https://embedthis.com/blog/">Embedthis Blog</a>
+                    <a class="item" href="http://twitter.com/mobstream">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui sidebar-launch button">
+        <i class="icon list layout"></i>
+    </div>
+
+
+
+    <div class="ui inverted masthead">
+         
+        <div class="ui inverted menu">
+            <div class="right menu">
+                  
+                    <a class="item" href="https://embedthis.com/">Embedthis</a>
+                    <a class="item" href="https://embedthis.com/ejscript/">Ejscript Site</a>
+                    <a class="item" href="http://goo.gl/dGRDl4">Ejscript News</a>
+                    <a class="item" href="https://github.com/embedthis/ejs">Repository</a>
+                    <a class="item" href="https://embedthis.com/blog/">Blog</a>
+                    <a class="item" href="https://twitter.com/mobstream">Twitter</a>
+
+            </div>
+        </div>
+        
+        <div class="ui breadcrumb">
+            <a class="section" href="../">Home</a>
+            
+            <div class="divider">/</div>
+            <a class="section" href="index.html">
+                Language Guide
+            </a>
+            
+            
+            <div class="divider">/</div>
+            <a class="active section" href="core.html">Core Language Types</a>
+            
+        </div>
+        
+        <div class="ui right floated basic segment version">
+            v2.5.0
+        </div>
+
+    </div>
+    <div class="content">
+
+            <h1>Core Language Types</h1>
+            <p>This document describes the <a href="#number">Number</a>, <a href="#boolean">Boolean</a>, <a href=
+            "#function">Function</a> and <a href="#string">String</a> types. Also see the <a href=
+            "objects.html">Objects and Arrays</a> document and the <a href="../ref/api/ejscript/index.html">Class
+            Library Reference</a>.</p>
+            <h2>References</h2>
+            <p>These references contain extensive material about the JavaScript core language types.</p>
+            <ul>
+                <li><a href="https://developer.mozilla.org/en/Core_JavaScript_1.5_Guide">Mozilla JavaScript 1.5
+                Guide</a></li>
+                <li><a href="https://developer.mozilla.org/en/Core_JavaScript_1.5_Guide/Core_Language_Features">Mozilla
+                JavaScript 1.5 Core Language Features</a></li>
+                <li><a href="https://developer.mozilla.org/en/Core_JavaScript_1.5_Guide/Processing_XML_with_E4X">Using
+                E4X for XML Processing</a></li>
+            </ul>
+            <h2>Standard JavaScriptData Types</h2>
+            <p>JavaScript (<a href="http://www.ecma-international.org/publications/standards/Ecma-262.htm">ECMA-262
+            3.X)</a> supports the following data types.</p>
+            <ul>
+                <li>Array</li>
+                <li>Boolean</li>
+                <li>Date</li>
+                <li>Error, RangeError, ReferenceError, SyntaxError, TypeError and URIError</li>
+                <li>Function</li>
+                <li>Math</li>
+                <li>Number (can be configured to be: int, int64, float or double)</li>
+                <li>Object</li>
+                <li>RegExp</li>
+                <li>String</li>
+            </ul>
+            <p>Ejscript also supports the E4X (<a href=
+            "http://www.ecma-international.org/publications/standards/Ecma-357.htm">ECMA-357</a>) XML extensions which
+            add the following data types.</p>
+            <ul>
+                <li>XML</li>
+                <li>XMLList</li>
+            </ul>
+            <h3><a href="library.html">Ejscript System Library</a></h3>
+            <p>Ejscript enhances the standard types with some extension methods and an extensive <a href=
+            "library.html">system library</a> of classes and types. The Ejscript <a href="../web/index.html">Web
+            Framework</a> provides additional classes to implement a Model / View / Controller framework for web
+            applications.</p><a id="number"></a>
+            <h2 >Numbers</h2>
+            <p>Standard JavaScript numbers are stored and manipulated as double floating point quantities, but for
+            embedded applications, this is often less than ideal. Consequently, Ejscript allows the default numeric
+            type to be selected at build time to be either: float, double, int or int64.</p>
+            <h3>Numeric Literals</h3>
+            <p>Numeric literals may be specified as octal values by prefixing with a <b>0</b>, or hexadecimal by
+            prefixing with <b>0x</b> or <b>0X</b>. If Number is configured to be based on a double floating point type,
+            then numeric literals can use an exponential notation of the form: floating number followed by 'e' or 'E',
+            followed by an optional sign '+' or '-', followed by an integer exponent. I.e.</p>
+            <pre class="ui code segment">
+[digits] [.digits] [E|e] [(+|-)digits]
+</pre>
+            <p>For example:</p>
+            <pre class="ui code segment">
+var pi = 3.14e1
+pi = 314.0e-2
+</pre>
+            <h3>Useful Constants</h3>
+            <p>JavaScript defines some useful floating point constants. The global variable <b>NaN</b> is set to the
+            "not a number" value. This value is the result when a math operation gives an undefined value or error. For
+            example, divide by zero will result in the NaN value. The <b>Infinity</b> constant is set to the largest
+            possible floating number, the result is equal to the Infinity value.</p>
+            <ul>
+                <li>Number.MAX_VALUE</li>
+                <li>Number.MIN_VALUE</li>
+                <li>Number.Nan or Nan</li>
+                <li>Number.POSITIVE_INFINITY or Infinity</li>
+                <li>Number.NEGATIVE_INFINITY</li>
+            </ul><a id="boolean"></a>
+            <h2 >Booleans</h2>
+            <p>A boolean value can be either true or false. Assigning either true or false to a variable or the result
+            of a conditional expression will set the type of a variable to boolean. The following example will set x to
+            true.</p>
+            <pre class="ui code segment">
+var y = 1
+var x = (y == 1)
+</pre>
+            <p>Ejscript defines two immutable global variables <b>true</b> and <b>false</b> with the appropriate
+            boolean values.</p><a id="string"></a>
+            <h2 >Strings</h2>
+            <p>Strings are immutable sequences of Unicode letters or escaped literals. String literals may be enclosed
+            in either single or double quotes.</p>
+            <p>Ejscript strings are easy to work with due to the inbuilt ability to append strings via the <b>+</b>
+            operator. For example:</p>
+            <pre class="ui code segment">
+var str = "Happy Birthday " + name
+var greek = "&amp;lambda expression"
+</pre>
+            <p>JavaScripts supports the following escaped characters inside string literals:</p>
+            <table title="escape" class="ui table segment">
+                <thead>
+                    <tr>
+                        <th>Escape Sequence</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>\b</td>
+                        <td>Backspace (0x8)</td>
+                    </tr>
+                    <tr>
+                        <td>\f</td>
+                        <td>Form feed (0xc)</td>
+                    </tr>
+                    <tr>
+                        <td>\n</td>
+                        <td>New line (0xa)</td>
+                    </tr>
+                    <tr>
+                        <td>\r</td>
+                        <td>Carriage return (0xd)</td>
+                    </tr>
+                    <tr>
+                        <td>\t</td>
+                        <td>Horizontal tab (0x9)</td>
+                    </tr>
+                    <tr>
+                        <td>\v</td>
+                        <td>Vertical tab (0xb)</td>
+                    </tr>
+                    <tr>
+                        <td>\uNNNN</td>
+                        <td>Unicode character (0xNNNN)</td>
+                    </tr>
+                    <tr>
+                        <td>\xNN</td>
+                        <td>Hexadecimal character (0xNN)</td>
+                    </tr>
+                    <tr>
+                        <td>\NNN</td>
+                        <td>Octal character (ONNN)</td>
+                    </tr>
+                    <tr>
+                        <td>\'</td>
+                        <td>Literal single quote</td>
+                    </tr>
+                    <tr>
+                        <td>\"</td>
+                        <td>Literal double quote</td>
+                    </tr>
+                    <tr>
+                        <td>\\</td>
+                        <td>Literal backslash</td>
+                    </tr>
+                </tbody>
+            </table><a id="function"></a>
+            <h2 >Functions</h2>
+            <p>A function is a script that can be executed by name with supplied arguments. Functions are declared via
+            the <b>function</b> keyword followed by optional arguments and a function body contained within braces. For
+            example:</p>
+            <pre class="ui code segment">
+function myPoint(x, y: Number): Number {
+    return x + y
+}
+</pre>
+            <p>Functions can use a <b>return</b> statement to return an arbitrary value or object.</p>
+            <p>To invoke a function, the function name is used with the () operator following. The actual arguments are
+            supplied within the "()" . The arguments to the function are evaluated left to right. For example:</p>
+            <pre class="ui code segment">
+var x = myPoint(1, y + 7)
+</pre>
+            <p>Functions are values in JavaScript and may also be assigned to other variables or properties. They can
+            also be passed as parameters into other functions. When a function is assigned to a property of an object
+            it becomes a method for that object. When invoked via an object, the function's <b>this</b> property is set
+            to the object.</p>
+            <h4>Bound This</h4>
+            <p>It is often useful to be able to pass functions as parameters without having to also pass an object on
+            which to later invoke the method. Ejscript provides an enhancement such that if a function is read from an
+            object without invoking it, Ejscript will capture the object reference and bind it to the function
+            reference. When the function is later run, the <b>this</b> property of the function will be set to the
+            object automatically.</p>
+            <pre class="ui code segment">
+    var run = obj.run
+    after(10, run)
+</pre>
+            <h3>Objects and Arrays</h3>
+            <p>See the <a href="objects.html">Objects and Arrays</a> document for further details.</p>
+            <h2 >Null and Undefined</h2>
+            <p>JavaScript defines two special values: <b>null</b> and <b>undefined</b>. The null value means the
+            property exists but either has not any assigned value or the null value has been assigned explicitly. The
+            undefined value means the requested property does not exist.</p><a id="typeConversions"></a>
+            <h2 >Type Conversions</h2>
+            <p>JavaScript supports a set of idioms that greatly eases the conversion of types from one type to
+            another.</p>
+            <p>Adding a string to a number will cause the number to be converted to a string. Subtracting zero from a
+            string will convert it to a number.</p>
+            <table title="types" class="ui table segment">
+                <thead>
+                    <tr>
+                        <th>Initial Type</th>
+                        <th>Target Type</th>
+                        <th>Initial Value</th>
+                        <th>Final Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Boolean</td>
+                        <td>Number</td>
+                        <td>true</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>Boolean</td>
+                        <td>Number</td>
+                        <td>false</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>Boolean</td>
+                        <td>String</td>
+                        <td>true</td>
+                        <td>"true"</td>
+                    </tr>
+                    <tr>
+                        <td>Boolean</td>
+                        <td>String</td>
+                        <td>false</td>
+                        <td>"false"</td>
+                    </tr>
+                    <tr>
+                        <td>Number</td>
+                        <td>Boolean</td>
+                        <td>0, NaN</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
+                        <td>Number</td>
+                        <td>Boolean</td>
+                        <td>all other values</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>Number</td>
+                        <td>String</td>
+                        <td>NaN</td>
+                        <td>"NaN"</td>
+                    </tr>
+                    <tr>
+                        <td>Number</td>
+                        <td>String</td>
+                        <td>any number</td>
+                        <td>"string equivalent"</td>
+                    </tr>
+                    <tr>
+                        <td>Object</td>
+                        <td>Boolean</td>
+                        <td>object</td>
+                        <td>true</td>
+                    </tr>
+                    <tr>
+                        <td>Object</td>
+                        <td>Number</td>
+                        <td>object</td>
+                        <td>NaN</td>
+                    </tr>
+                    <tr>
+                        <td>Object</td>
+                        <td>String</td>
+                        <td>object</td>
+                        <td>"[object Object]"</td>
+                    </tr>
+                    <tr>
+                        <td>String</td>
+                        <td>Boolean</td>
+                        <td>""</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
+                        <td>String</td>
+                        <td>Boolean</td>
+                        <td>all other values</td>
+                        <td>true</td>
+                    </tr>
+                    <tr>
+                        <td>String</td>
+                        <td>Number</td>
+                        <td>Number string</td>
+                        <td>numeric equivalent</td>
+                    </tr>
+                    <tr>
+                        <td>String</td>
+                        <td>Number</td>
+                        <td>Non-numeric string</td>
+                        <td>NaN</td>
+                    </tr>
+                    <tr>
+                        <td>undefined</td>
+                        <td>Boolean</td>
+                        <td>undefined</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
+                        <td>undefined</td>
+                        <td>Number</td>
+                        <td>undefined</td>
+                        <td>NaN</td>
+                    </tr>
+                    <tr>
+                        <td>undefined</td>
+                        <td>String</td>
+                        <td>undefined0</td>
+                        <td>"undefined"</td>
+                    </tr>
+                    <tr>
+                        <td>null</td>
+                        <td>Boolean</td>
+                        <td>null</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
+                        <td>null</td>
+                        <td>Number</td>
+                        <td>null</td>
+                        <td>NaN</td>
+                    </tr>
+                    <tr>
+                        <td>null</td>
+                        <td>String</td>
+                        <td>null</td>
+                        <td>"null"</td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3>Implicit Conversion Idioms</h3>
+            <p>To explicitly force a type conversion, use the following idioms.</p>
+            <table title="idioms" class="ui table segment">
+                <thead>
+                    <tr>
+                        <th>Initial Type</th>
+                        <th>Target Type</th>
+                        <th>Action</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Number</td>
+                        <td>Boolean</td>
+                        <td>Negate twice</td>
+                        <td>!!num</td>
+                    </tr>
+                    <tr>
+                        <td>Number</td>
+                        <td>String</td>
+                        <td>Add a string on the right</td>
+                        <td>num + ""</td>
+                    </tr>
+                    <tr>
+                        <td>String</td>
+                        <td>Boolean</td>
+                        <td>Negate twice</td>
+                        <td>!!string</td>
+                    </tr>
+                    <tr>
+                        <td>String</td>
+                        <td>Number</td>
+                        <td>Add a numeric on the right</td>
+                        <td>string - 0</td>
+                    </tr>
+                    <tr>
+                        <td>Object</td>
+                        <td>String</td>
+                        <td>Invoke the toString method</td>
+                        <td>o.toString()</td>
+                    </tr>
+                    <tr>
+                        <td>Object</td>
+                        <td>Boolean</td>
+                        <td>Negate twice</td>
+                        <td>!!obj</td>
+                    </tr>
+                </tbody>
+            </table>
+            <h4>Implicit Conversions via Type Annotations</h4>
+            <p>Ejscript adds support for optional type annotations on variable declarations and function parameters. If
+            used, these type annotations can greatly simplify your code by automatically converting types.</p>
+            <p>If a variable is defined and contains a number and is then assigned a string value, JavaScript will
+            normally assign the string, and the type of the variable will change from number to string. This can be the
+            cause of subtle errors. However, if the number has an optional type annotation of "Number", then the
+            compiler and VM will automatically convert the string to a number and ensure the variable only ever
+            contains numbers.</p>
+            <pre class="ui code segment">
+var num: Number = 77
+num = "1234"
+print(typeof num)
+/* Emits */
+<b>number</b>
+</pre>
+            <p>Similarly if a function can only take numeric arguments, the function often has to do costly type
+            checking to ensure the args are of the required type.</p>
+            <pre class="ui code segment">
+function square(n) {
+    if (typeof n != "number) {
+        throw new Error("Bad Arg")
+    }
+    return n * n
+}
+</pre>
+            <p>But if optional type annotation is used on the args, then things are much simpler. The VM will cast the
+            argument to a number before invoking the function. The function guarantees that the arguments will always
+            be of the correct type.</p>
+            <pre class="ui code segment">
+function square(n: Number) {
+    return n * n
+}
+</pre>
+            <p>For the exact semantics, please consult the <a href=
+            "http://www.ecma-international.org/publications/standards/Ecma-262.htm">ECMAScript-262</a>
+            specification.</p>
+            <h3>Explicit Conversion</h3>
+            <p>While implicit conversion is very convenient, you sometimes need to explicitly control the type
+            conversion.</p>
+            <p>You can use the explicit constructor functions: Boolean(), String() and Number() to force a
+            conversion.</p>
+            <pre class="ui code segment">
+var num = Number("1234")
+</pre>
+            <p>Ejscript also adds a <b>cast</b> operator for convenient control over casting.</p>
+            <h4>Cast Operator</h4>
+            <p>The cast operator is similar in syntax to instanceof, but allows you to cast an object explicitly to any
+            other type.</p>
+            <pre class="ui code segment">
+var str = 1234 cast String
+</pre>
+            <p>The cast operator is faster than using the conversion constructor functions as the compiler often knows
+            if the type is compatible and can generate more optimal code.</p>
+            <h3>Type Conversion Rules</h3>
+            <ol>
+                <li>If the left operand is a string, the right hand operand will be converted to a string. If both
+                operands are numeric, a numeric operation is done.</li>
+                <li>If either operand is an object, it is converted to a string.</li>
+                <li>If both operands are boolean and the operation is ==, !=, then proceed without a type
+                conversion.</li>
+                <li>If one operand is a string and the other is a numeric, try to convert the string to a number.
+                Otherwise, try to convert the numeric to a string.</li>
+            </ol><!-- FUTURE
+            Functions: parseInt, parseFloat, toFixed, toExponential, toFixed
+                n.toFixed(0)            (arg is num decimal places)
+                n.toExponential(1)      (arg is num decimal places) 1.23e+5)
+                parseInt(str, [radix])
+            -->
+
+    </div>
+    <div class="terms ui basic center aligned segment">
+        <p>&copy; Embedthis Software, 2003-2014. All rights reserved.</p>
+    </div>
+
+    <script src="../lib/jquery/jquery.js"></script>
+    <script src="../lib/semantic/js/semantic.js"></script>
+    <script>
+        var sl = $('.sidebar-launch');
+        $('.sidebar-launch').click(function() {
+            var body = $('body');
+            if (!body.hasClass('show-sidebar')) {
+                body.addClass('show-sidebar');
+                $('.sidebar').css('visibility', 'visible');
+            } else {
+                body.removeClass('show-sidebar');
+                $('.sidebar').css('visibility', 'hidden');
+            }
+        });
+        $('.sidebar-launch').trigger('click');
+        $('.sidebar a.item').click(function(e) {
+            sessionStorage.setItem('scroll-top', $('.sidebar').scrollTop());
+        });
+        $(function() {
+            var url = '../language/core.html';
+            var active = $('.sidebar a[href="' + url +'"]');
+            active.addClass('active');
+            $('.sidebar').scrollTop(sessionStorage.getItem('scroll-top'));
+        });
+    </script> 
+
+</body>
+</html>

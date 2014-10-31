@@ -104,8 +104,13 @@ Ejs *ejsCreateVM(int argc, cchar **argv, int flags)
     ejs->dontExit = sp->dontExit;
     ejs->flags |= (flags & (EJS_FLAG_NO_INIT | EJS_FLAG_DOC | EJS_FLAG_HOSTED));
     ejs->hosted = (flags & EJS_FLAG_HOSTED) ? 1 : 0;
-
     ejs->global = ejsCreateBlock(ejs, 0);
+
+    /*
+        Use conservative GC shutdown
+     */
+    MPR->flags |= MPR_NOT_ALL;
+
     mprSetName(ejs->global, "global");
     ejsDefineGlobalNamespaces(ejs);
 
@@ -719,7 +724,7 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
      */
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, "."));
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAppDir()));
-#if !VXWORKS
+#if !VXWORKS && defined(ME_VAPP_PREFIX)
     if (!smatch(mprGetAppDir(), ME_VAPP_PREFIX "/bin")) {
         ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, ME_VAPP_PREFIX "/bin"));
     }

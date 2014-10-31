@@ -6,24 +6,16 @@ Me.load({
 
     targets: {
         'utest.es': {
+            type: 'file',
             path: '${BIN}/utest.es',
             files: [ 'utest.es' ],
-            build: "
-                trace('Export', me.target.files)
-                cp('utest.es', me.dir.bin)
-            ",
-            generate: 'cp utest.es ${BIN}',
             platforms: [ 'local' ],
         },
 
         'utest.worker': {
+            type: 'file',
             path: '${BIN}/utest.worker',
             files: [ 'utest.worker' ],
-            build: "
-                trace('Export', me.target.files)
-                cp('utest.worker', me.dir.bin)
-            ",
-            generate: 'cp utest.worker ${BIN}',
             platforms: [ 'local' ],
         },
 

@@ -442,18 +442,22 @@ static EjsBoolean *endsWith(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 /*
     Lookup a token value. This will be called recursively for each name portion of a token. i.e. ${part.part.part}
  */
-static int getTokenValue(Ejs *ejs, EjsObj *obj, cchar *fullToken, cchar *token, MprBuf *buf, cchar *fill, EjsString *join)
+static int getTokenValue(Ejs *ejs, EjsObj *obj, cchar *fullToken, cchar *token, MprBuf *buf, EjsAny *missing, 
+    EjsString *join)
 {
     EjsAny      *vp;
     EjsString   *svalue;
-    char        *rest, *first;
+    EjsName     qname;
+    char        *rest, *first, *str;
 
     rest = (char*) (schr(token, '.') ? sclone(token) : token);
     first = stok(rest, ".", &rest);
     
-    if ((vp = ejsGetPropertyByName(ejs, obj, EN(first))) != 0) {
+    qname.name = ejsCreateStringFromAsc(ejs, first);
+    qname.space = 0;
+    if ((vp = ejsGetPropertyByName(ejs, obj, qname)) != 0) {
         if (rest && ejsIsPot(ejs, vp)) {
-            return getTokenValue(ejs, vp, fullToken, rest, buf, fill, join);
+            return getTokenValue(ejs, vp, fullToken, rest, buf, missing, join);
         } else {
             if (ejsIs(ejs, vp, Array)) {
                 svalue = ejsJoinArray(ejs, vp, join); 
@@ -462,18 +466,24 @@ static int getTokenValue(Ejs *ejs, EjsObj *obj, cchar *fullToken, cchar *token, 
             }
             mprPutStringToBuf(buf, svalue->value);
         }
+    } else if (!missing || (vp == ESV(null) || vp == ESV(undefined))) {
+        ejsThrowReferenceError(ejs, "Missing property %s", fullToken);
+        return 0;
+    } else if (missing == ESV(true)) {
+        mprPutStringToBuf(buf, "${");
+        mprPutStringToBuf(buf, fullToken);
+        mprPutCharToBuf(buf, '}');
+    } else if (missing == ESV(false)) {
+        /* Omit */;
     } else {
-        if (fill) {
-            if (smatch(fill, "${}")) {
-                mprPutStringToBuf(buf, "${");
-                mprPutStringToBuf(buf, fullToken);
-                mprPutCharToBuf(buf, '}');
-            } else if (*fill) {
-                mprPutStringToBuf(buf, fill);
-            }
+        str = ejsToMulti(ejs, missing);
+        //  DEPRECATE LEGACY
+        if (smatch(str, "${}")) {
+            mprPutStringToBuf(buf, "${");
+            mprPutStringToBuf(buf, fullToken);
+            mprPutCharToBuf(buf, '}');
         } else {
-            ejsThrowReferenceError(ejs, "Missing property %s", fullToken);
-            return 0;
+            mprPutStringToBuf(buf, str);
         }
     }
     return 1;
@@ -484,18 +494,26 @@ static int getTokenValue(Ejs *ejs, EjsObj *obj, cchar *fullToken, cchar *token, 
     function expand(obj: Object, options: Object): String
 
     Options:
-        fill: String to use for missing properties. Set to null to throw.
+        missing: String to use for missing properties. 
+            undefined - throw exception 
+            true        Keep original token pattern ${token}
+            false       Delete original token pattern
+            string      Replace with string value
 
     Expand ${token} references. Tokens are be simple properties that may include "." references.
+
  */
 static EjsString *expandString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     MprBuf      *buf;
-    EjsAny      *obj, *options, *vp;
+    EjsAny      *missing, *obj, *options;
     EjsString   *join;
-    char        *src, *cp, *tok, *fill;
+    char        *src, *cp, *tok;
 
-    fill = 0;
+    if (!ejsIs(ejs, sp, String)) {
+        sp = ejsToString(ejs, sp);
+    }
+    missing = 0;
     join = ejsCreateStringFromAsc(ejs, " ");
     if (argc < 1) {
         ejsThrowArgError(ejs, "Missing object argument");
@@ -504,15 +522,10 @@ static EjsString *expandString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     obj = argv[0];
     options = (argc >= 2) ? argv[1] : 0;
     if (options) {
-        if ((vp = ejsGetPropertyByName(ejs, options, EN("fill"))) != 0) {
-            if (vp != ESV(null) && vp != ESV(undefined)) {
-                fill = ejsToMulti(ejs, vp);
-            }
-        }
-        if ((vp = ejsGetPropertyByName(ejs, options, EN("join"))) != 0) {
-            if (vp != ESV(null) && vp != ESV(undefined)) {
-                join = ejsToString(ejs, vp);
-            }
+        missing = ejsGetPropertyByName(ejs, options, EN("missing"));
+        if (!missing) {
+            //  LEGACY DEPRECATED
+            missing = ejsGetPropertyByName(ejs, options, EN("fill"));
         }
     }
     if (sp->length == 0) {
@@ -533,7 +546,7 @@ static EjsString *expandString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                 src += 2;
                 for (cp = src; *cp != '}' && cp < &sp->value[sp->length]; cp++) ;
                 tok = snclone(src, cp - src);
-                if (!getTokenValue(ejs, obj, tok, tok, buf, fill, join)) {
+                if (!getTokenValue(ejs, obj, tok, tok, buf, missing, join)) {
                     return 0;
                 }
                 src = cp + 1;
@@ -544,6 +557,12 @@ static EjsString *expandString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     }
     mprAddNullToBuf(buf);
     return ejsCreateString(ejs, mprGetBufStart(buf), mprGetBufLength(buf));
+}
+
+
+PUBLIC EjsString *ejsExpandString(Ejs *ejs, EjsString *sp, EjsObj *tokens)
+{
+    return expandString(ejs, sp, 1, &tokens);
 }
 
 
@@ -2801,6 +2820,7 @@ PUBLIC void ejsDestroyIntern(EjsIntern *ip)
     for (i = ip->size - 1; i >= 0; i--) {
         head = &ip->buckets[i];
         for (sp = head->next; sp != head; sp = next) {
+            if (sp == sp->next) break;
             next = sp->next;
             ip->count--;
             unlinkString(sp);

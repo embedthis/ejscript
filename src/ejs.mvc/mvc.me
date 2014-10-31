@@ -6,19 +6,14 @@ Me.load({
 
     targets: {
         'mvc.es': {
-            enable: 'me.settings.ejs.db',
+            type: 'file',
             path: '${BIN}/mvc.es',
             files: [ 'mvc.es' ],
-            build: "
-                trace('Export', me.target.files)
-                cp('mvc.es', me.dir.bin.join('mvc.es'))
-            "
-            generate: 'cp mvc.es ${BIN}',
             platforms: [ 'local' ],
+            enable: 'me.settings.ejs.db',
         },
 
         mvc: {
-            enable: 'me.settings.ejs.db',
             type: 'exe',
             path: '${BIN}/mvc${EXE}',
             sources: [
@@ -28,17 +23,17 @@ Me.load({
             precious: true,
             depends: ['libejs', 'mvc.es'],
             platforms: [ 'local' ],
+            enable: 'me.settings.ejs.db',
         },
 
         'ejs.mvc.mod': {
             enable: 'me.settings.ejs.db',
             path: '${BIN}/ejs.mvc.mod',
             files: [ '*.es' ],
-            build: "
-                trace('Compile', 'ejs.mvc.mod')
-                run('${LBIN}/ejsc --out ${BIN}/ejs.mvc.mod ${settings.esflags} --optimize 9 ' + Path('.').files('*.es').sort().join(' '))
-            ",
-            generate: '${BIN}/ejsc --out ${BIN}/ejs.mvc.mod ${settings.esflags} --optimize 9 *.es',
+            build: `
+                run('${LBIN}/ejsc --out ${BIN}/ejs.mvc.mod ${settings.esflags} --optimize 9 ${FILES}')
+            `,
+            message: 'Compile: ejs.mvc.mod',
             depends: [ 'ejsc', 'ejs.mod', 'ejs.web.mod', 'ejs.template.mod', 'ejs.unix.mod' ],
         },
 	},

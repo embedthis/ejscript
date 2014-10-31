@@ -28,6 +28,7 @@ typedef struct Json {
     int         depth;
     int         hidden;
     int         namespaces;
+    int         nulls;
     int         regexp;             /* Emit native regular expression types */
     int         quotes;
     int         pretty;
@@ -189,7 +190,6 @@ Token getNextJsonToken(MprBuf *buf, wchar **token, JsonState *js)
     } else if (*cp == '}' || *cp == ']') {
         tid = *cp == '}' ? TOK_RBRACE: TOK_RBRACKET;
         while (*++cp && isspace((uchar) *cp)) ;
-#if NEW || 1
         /*
             Detect missing comma after closing brace/bracket
          */
@@ -197,14 +197,13 @@ Token getNextJsonToken(MprBuf *buf, wchar **token, JsonState *js)
             js->error = cp;
             return TOK_ERR;
         }
-#endif
         if (*cp == ',' || *cp == ':') {
             cp++;
         }
         next = cp;
 
     } else {
-        if (*cp == '"' || *cp == '\'') {
+        if (*cp == '"' || *cp == '\'' || *cp == '`') {
             tid = TOK_QID;
             quote = *cp++;
             for (start = cp; cp < end; cp++) {
@@ -452,6 +451,7 @@ PUBLIC EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *vp, EjsObj *options)
     memset(&json, 0, sizeof(Json));
     json.depth = 99;
     json.quotes = 1;
+    json.nulls = 1;
     json.indent = sclone("    ");
 
     if (options) {
@@ -485,6 +485,9 @@ PUBLIC EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *vp, EjsObj *options)
         if ((arg = ejsGetPropertyByName(ejs, options, EN("namespaces"))) != 0) {
             json.namespaces = (arg == ESV(true));
         }
+        if ((arg = ejsGetPropertyByName(ejs, options, EN("nulls"))) != 0) {
+            json.nulls = (arg == ESV(true));
+        }
         if ((arg = ejsGetPropertyByName(ejs, options, EN("regexp"))) != 0) {
             json.regexp = (arg == ESV(true));
         }
@@ -517,6 +520,7 @@ PUBLIC EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, int flags)
     json.commas = (flags & EJS_JSON_SHOW_COMMAS) ? 1 : 0;
     json.hidden = (flags & EJS_JSON_SHOW_HIDDEN) ? 1 : 0;
     json.namespaces = (flags & EJS_JSON_SHOW_NAMESPACES) ? 1 : 0;
+    json.nulls = (flags & EJS_JSON_SHOW_NULLS) ? 1 : 0;
     json.regexp = (flags & EJS_JSON_SHOW_REGEXP) ? 1 : 0;
     json.pretty = (flags & EJS_JSON_SHOW_PRETTY) ? 1 : 0;
     json.quotes = (flags & EJS_JSON_SHOW_NOQUOTES) ? 0 : 1;
@@ -533,7 +537,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
     EjsObj      *pp, *obj, *replacerArgs[2];
     wchar       *cp;
     cchar       *key;
-    int         c, isArray, i, count, slotNum, quotes;
+    int         c, isArray, i, count, slotNum, quotes, sameline;
 
     /*
         The main code below can handle Arrays, Objects, objects derrived from Object and also native classes with properties.
@@ -557,8 +561,10 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
         mprAddRoot(json->buf);
     }
     isArray = ejsIs(ejs, vp, Array);
+    sameline = isArray && ((EjsArray*) vp)->length == 0;
+
     mprPutCharToWideBuf(json->buf, isArray ? '[' : '{');
-    if (json->pretty) {
+    if (json->pretty && !sameline) {
         mprPutCharToWideBuf(json->buf, '\n');
     }
     if (++ejs->serializeDepth <= json->depth && !VISITED(obj)) {
@@ -575,7 +581,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                 json->nest--;
                 return 0;
             }
-            if (pp == 0) {
+            if (pp == 0 || (!json->nulls && !ejsIsDefined(ejs, pp))) {
                 continue;
             }
             if (isArray) {
@@ -653,14 +659,14 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
             if ((slotNum + 1) < count || json->commas) {
                 mprPutCharToWideBuf(json->buf, ',');
             }
-            if (json->pretty) {
+            if (json->pretty && !sameline) {
                 mprPutCharToWideBuf(json->buf, '\n');
             }
         }
         SET_VISITED(obj, 0);
     }
     --ejs->serializeDepth; 
-    if (json->pretty) {
+    if (json->pretty && !sameline) {
         for (i = ejs->serializeDepth; i > 0; i--) {
             mprPutStringToWideBuf(json->buf, json->indent);
         }

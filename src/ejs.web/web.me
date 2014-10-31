@@ -6,64 +6,32 @@ Me.load({
 
     targets: {
         'ejs.web.mod': {
-            enable: 'me.settings.ejs.web',
             path: '${BIN}/ejs.web.mod',
             files: [ '*.es' ],
-            build: "
-                trace('Compile', 'ejs.web.mod')
-                run('${LBIN}/ejsc --out ${BIN}/ejs.web.mod ${settings.esflags} --optimize 9 ' + 
-                    Path('.').files('*.es').sort().join(' '))
-                run('${LBIN}/ejsmod --cslots ${BIN}/ejs.web.mod')
-                let header = Path('ejs.web.slots.h')
-                let dest = me.dir.inc.join(header)
-                if (!dest.exists || header.readString() != dest.readString()) {
-                    trace('Install', header)
-                    cp(header, dest)
-                }
-            ",
-            'generate-nmake': '\
-                "${BIN}\\ejsc" --out "${BIN}/ejs.web.mod" ${settings.esflags} --optimize 9 *.es
-                "${BIN}\\ejsmod" --cslots "${BIN}/ejs.web.mod"
-                copy ejs.web.slots.h ${INC}\\ejs.web.slots.h
-                del ejs.web.slots.h
-            ',
-            'generate-sh': '\
-                ${BIN}/ejsc --out ${BIN}/ejs.web.mod ${settings.esflags} --optimize 9 *.es
-                ${BIN}/ejsmod --cslots ${BIN}/ejs.web.mod
-                if ! diff ejs.web.slots.h ${INC}/ejs.web.slots.h >/dev/null; then cp ejs.web.slots.h ${INC}; fi
-                rm -f ejs.web.slots.h
-            ',
+            build: `
+                run('${LBIN}/ejsc --out ${BIN}/ejs.web.mod ${settings.esflags} --optimize 9 ${FILES}')
+                run('${LBIN}/ejsmod --cslots --dir ${BIN} ${BIN}/ejs.web.mod')
+            `,
+            message: 'Compile: ejs.web.mod',
             depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
+            enable: 'me.settings.ejs.web',
         },
 
         'libejs.web': {
-            enable: 'me.settings.ejs.web',
             type: 'lib',
             sources: [ '*.c' ],
             headers: [ 'ejsWeb.h' ],
             depends: [ 'libejs', 'ejs.mod' ],
+            enable: 'me.settings.ejs.web',
         },
 
         www: {
-            enable: 'me.settings.ejs.web',
+            type: 'file',
             path: '${BIN}/www',
-            files: [ 'www' ],
-            build: "
-                trace('Copy', 'ejs.web www')
-                rmdir(me.dir.lib.join('www'))
-                mkdir(me.dir.lib.join('www'))
-                cp('www', me.dir.lib)
-            "
-            'generate-nmake': '\
-                if exist "${BIN}\\www" rd /Q /S "${BIN}\\www"
-                if not exist "${BIN}\\www" md "${BIN}\\www"
-                xcopy /S /Y "www" "${BIN}\\www"
-            ',
-            'generate-sh': '\
-                rm -fr ${BIN}/www
-                cp -r www ${BIN}                                                                  
-            ',
+            files: [ 'www/**' ],
+            relative: 'www',
             platforms: [ 'local' ],
-        },
-	},
+            enable: 'me.settings.ejs.web',
+        }
+	}
 })

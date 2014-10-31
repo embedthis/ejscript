@@ -54,12 +54,13 @@ static EjsObj *g_blend(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     options = (argc >= 3) ? argv[2] : 0;
     if (options) {
         flags = 0;
-        /* Default to true */
+        /* Default to false */
         flags |= ejsGetPropertyByName(ejs, options, EN("combine")) == ESV(true) ? EJS_BLEND_COMBINE : 0;
         flags |= ejsGetPropertyByName(ejs, options, EN("functions")) == ESV(true) ? EJS_BLEND_FUNCTIONS : 0;
         flags |= ejsGetPropertyByName(ejs, options, EN("trace")) == ESV(true) ? EJS_BLEND_TRACE : 0;
+        flags |= ejsGetPropertyByName(ejs, options, EN("public")) == ESV(true) ? EJS_BLEND_PUBLIC : 0;
 
-        /* Default to false */
+        /* Default to true */
         flags |= ejsGetPropertyByName(ejs, options, EN("overwrite")) == ESV(false) ? 0 : EJS_BLEND_OVERWRITE;
         flags |= ejsGetPropertyByName(ejs, options, EN("subclass")) == ESV(false) ? 0 : EJS_BLEND_SUBCLASSES;
         flags |= ejsGetPropertyByName(ejs, options, EN("deep")) == ESV(false) ? 0 : EJS_BLEND_DEEP;
@@ -174,6 +175,13 @@ static EjsString *g_md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
+static void setBlendProperty(Ejs *ejs, EjsObj *obj, EjsName name, EjsAny *value)
+{
+    if (ejsSetPropertyByName(ejs, obj, name, value) < 0) {
+        ejsThrowArgError(ejs, "Cannot set property \"%@\"", name.name);
+    }
+}
+
 /*  
     Merge one object into another. This is useful for inheriting and optionally overwriting option hashes (among other
     things). The blending is done at the primitive property level. If overwrite is true, the property is replaced. If
@@ -212,6 +220,7 @@ PUBLIC int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
     trace = (flags & EJS_BLEND_TRACE) ? 1 : 0;
 
     for (i = start; i < count; i++) {
+        if (ejs->exception) break;
         if ((trait = ejsGetPropertyTraits(ejs, src, i)) != 0) {
             if (trait->attributes & (EJS_TRAIT_DELETED | EJS_FUN_INITIALIZER | EJS_FUN_MODULE_INITIALIZER)) {
                 continue;
@@ -226,6 +235,9 @@ PUBLIC int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
         qname = ejsGetPropertyName(ejs, src, i);
         if (!qname.name || !qname.space) {
             continue;
+        }
+        if (flags & EJS_BLEND_PUBLIC) {
+            qname.space = ejsCreateStringFromAsc(ejs, "public");
         }
         if (!privateProps && ejsContainsAsc(ejs, qname.space, ",private") >= 0) {
             continue;
@@ -253,17 +265,18 @@ PUBLIC int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
                 /* cflags |= EJS_BLEND_ASSIGN; */
                 trimmedName = qname;
             }
-            if ((dp = ejsGetPropertyByName(ejs, dest, trimmedName)) == 0) {
+            dp = ejsGetPropertyByName(ejs, dest, trimmedName);
+            if (!dp) {
                 /* Destination property missing */
                 if (cflags & EJS_BLEND_SUB) {
                     continue;
                 }
                 if (!ejsIsPot(ejs, vp) || ejsIsFunction(ejs, vp)) {
-                    ejsSetPropertyByName(ejs, dest, trimmedName, ejsClone(ejs, vp, 1));
+                    setBlendProperty(ejs, dest, trimmedName, ejsClone(ejs, vp, 1));
                     continue;
                 }
                 dp = ejsCreateObj(ejs, TYPE(vp), 0);
-                ejsSetPropertyByName(ejs, dest, trimmedName, dp);
+                setBlendProperty(ejs, dest, trimmedName, dp);
                 cflags &= ~EJS_BLEND_COND_ASSIGN;
                 cflags |= EJS_BLEND_ADD;
             }
@@ -292,20 +305,20 @@ PUBLIC int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
                     }
                 } else if (cflags & EJS_BLEND_COND_ASSIGN) {
                     if (ejsLookupProperty(ejs, dest, trimmedName) < 0) {
-                        ejsSetPropertyByName(ejs, dest, trimmedName, ejsClone(ejs, vp, deep));
+                        setBlendProperty(ejs, dest, trimmedName, ejsClone(ejs, vp, deep));
                     }
                 } else {
                     /* Default is a assign */
-                    ejsSetPropertyByName(ejs, dest, trimmedName, ejsClone(ejs, vp, deep));
+                    setBlendProperty(ejs, dest, trimmedName, ejsClone(ejs, vp, deep));
                 }
 
             } else if (ejsIsPot(ejs, dp)) {
                 if (cflags & EJS_BLEND_ASSIGN) {
-                    ejsSetPropertyByName(ejs, dest, trimmedName, ejsClone(ejs, vp, deep));
+                    setBlendProperty(ejs, dest, trimmedName, ejsClone(ejs, vp, deep));
 
                 } else if (cflags & EJS_BLEND_COND_ASSIGN) {
                     if (ejsLookupProperty(ejs, dest, trimmedName) < 0) {
-                        ejsSetPropertyByName(ejs, dest, trimmedName, ejsClone(ejs, vp, deep));
+                        setBlendProperty(ejs, dest, trimmedName, ejsClone(ejs, vp, deep));
                     }
                 } else {
                     /* Recurse and blend the elements */
@@ -315,14 +328,14 @@ PUBLIC int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
             } else if (ejsIs(ejs, dp, String)) {
                 if (cflags & EJS_BLEND_ADD) {
                     str = sjoin(((EjsString*) dp)->value, " ", ejsToMulti(ejs, vp), NULL);
-                    ejsSetPropertyByName(ejs, dest, trimmedName, ejsCreateString(ejs, str, -1));
+                    setBlendProperty(ejs, dest, trimmedName, ejsCreateString(ejs, str, -1));
                     
                 } else if (cflags & EJS_BLEND_SUB) {
                     str = sreplace(sclone(((EjsString*) dp)->value), ejsToMulti(ejs, vp), "");
                     if (sspace(str)) {
                         ejsDeletePropertyByName(ejs, dest, trimmedName);
                     } else {
-                        ejsSetPropertyByName(ejs, dest, trimmedName, ejsCreateString(ejs, str, -1));
+                        setBlendProperty(ejs, dest, trimmedName, ejsCreateString(ejs, str, -1));
                     }
                     
                 } else if (cflags & EJS_BLEND_COND_ASSIGN) {
@@ -330,12 +343,12 @@ PUBLIC int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
 
                 } else {
                     /* Default is assign */
-                    ejsSetPropertyByName(ejs, dest, trimmedName, ejsClone(ejs, vp, deep));
+                    setBlendProperty(ejs, dest, trimmedName, ejsClone(ejs, vp, deep));
                 }
             } else {
                 /* Assign */
                 if (!(cflags & EJS_BLEND_SUB)) {
-                    ejsSetPropertyByName(ejs, dest, trimmedName, vp);
+                    setBlendProperty(ejs, dest, trimmedName, vp);
                 }
             }
 
@@ -345,16 +358,16 @@ PUBLIC int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int flags)
              */
             if (deep && !ejsIs(ejs, vp, Array) && !ejsIsXML(ejs, vp) && ejsGetLength(ejs, vp) > 0) {
                 if ((dp = ejsGetPropertyByName(ejs, dest, qname)) == 0 || ejsGetLength(ejs, dp) == 0) {
-                    ejsSetPropertyByName(ejs, dest, qname, ejsClonePot(ejs, vp, deep));
+                    setBlendProperty(ejs, dest, qname, ejsClonePot(ejs, vp, deep));
                 } else {
                     ejsBlendObject(ejs, dp, vp, flags);
                 }
             } else {
                 /*  Primitive type (including arrays) */
                 if (overwrite) {
-                    ejsSetPropertyByName(ejs, dest, qname, vp);
+                    setBlendProperty(ejs, dest, qname, vp);
                 } else if (ejsLookupProperty(ejs, dest, qname) < 0) {
-                    ejsSetPropertyByName(ejs, dest, qname, vp);
+                    setBlendProperty(ejs, dest, qname, vp);
                 }
             }
         }

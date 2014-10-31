@@ -85,9 +85,10 @@ module ejs {
             To preserve an ${token} unmodified, preceed the token with an extra '$'. For example: $${token}.
             @param obj containing tokens to expand
             @param options Options hash
-            @option fill Set to a string to use for missing properties. Set to undefined or omit options to 
-                throw an exception for missing properties. Set fill to '${}' to preserve undefined tokens as-is. 
-                This permits multi-pass expansions.
+            @option fill Set to a string to use for missing properties. Set to undefined, null or omit the fill option to 
+                throw an exception for missing properties. Set fill to true to preserve undefined tokens as-is. 
+                This permits multi-pass expansions. Set to false to remove the token. Otherwise set to any string
+                to replace the token with the string value. Default is to throw an exception (undefined).
             @option join Character to use to join array elements. Defaults to space.
             @return Expanded string
          */ 
@@ -261,6 +262,7 @@ module ejs {
          */
         native function remove(start: Number, end: Number = -1): String
 
+        //  TODO - need options to do a global replace when pattern is a string
         /**
             Search and replace. Search for the given pattern which can be either a string or a regular expression 
             and replace it with the replace text. If the pattern is a string, only the first occurrence is replaced.

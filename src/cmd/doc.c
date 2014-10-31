@@ -226,7 +226,7 @@ static void generateHomeTitle(EjsMod *mp)
         "       </map>\n"
         "   <div class=\"version\">%s %s</div>\n"
         "   <div class=\"menu\">\n"
-        "       <a href=\"http://www.ejscript.org/\" target=\"_top\">Ejscript Home</a>\n"
+        "       <a href=\"https://embedthis.com/ejs/\" target=\"_top\">Ejscript Home</a>\n"
         "       &gt; <a href=\"index.html\" class=\"menu\" target=\"_top\">Documentation Home</a>\n"
         "   </div>\n"
         "   <div class=\"search\">\n"
@@ -288,7 +288,7 @@ static void generateNamespaceList(EjsMod *mp)
     out(mp, "<body>\n");
     out(mp, "<div class='navigation'>\n");
     out(mp, "<h3>Namespaces</h3>\n");
-    out(mp, "<table class='navigation' summary='namespaces'>\n");
+    out(mp, "<table class='navigation' title='namespaces'>\n");
 
     /*
         Build a sorted list of namespaces used by classes
@@ -374,7 +374,7 @@ static void generateNamespaceClassTable(EjsMod *mp, cchar *namespace)
     } else {
         out(mp, "<h2 class='classSection'>%s Classes</h2>\n", namespace);
     }
-    out(mp, "<table class='itemTable' summary='classes'>\n");
+    out(mp, "<table class='itemTable' title='classes'>\n");
     out(mp, "   <tr><th>Class</th><th width='95%%'>Description</th></tr>\n");
 
     count = generateNamespaceClassTableEntries(mp, namespace);
@@ -529,7 +529,7 @@ static void generateClassList(EjsMod *mp, cchar *namespace)
     } else {
         out(mp, "<h3>%s Classes</h3>\n", namespace);
     }
-    out(mp, "<table class='navigation' summary='classList'>\n");
+    out(mp, "<table class='navigation' title='classList'>\n");
 
     classes = buildClassList(mp, namespace);
 
@@ -571,7 +571,7 @@ static void generateOverview(EjsMod *mp)
 
     out(mp, "<h1>%s %s</h1>", ME_TITLE, ME_VERSION);
     out(mp, "<p>Embedthis Ejscript is an implementation of the Javascript (ECMA 262) language.</p>");
-    out(mp, "<p>See <a href='http://www.ejscript.org' target='new'>http://www.ejscript.org</a> for "
+    out(mp, "<p>See <a href='https://embedthis.com/ejs/' target='new'>https://embedthis.com/ejs/</a> for "
         "product details and downloads.</p>");
     out(mp, "<h2>Documentation Conventions</h2>");
     out(mp, "<p>APIs are grouped into Namespaces for logical ordering. Within each namespace, classes, methods "
@@ -634,7 +634,7 @@ static void generateTerms(EjsMod *mp)
     out(mp,
         "<div class=\"terms\">\n"
         "   <p class=\"terms\">\n"
-        "       <a href=\"http://embedthis.com/\">"
+        "       <a href=\"https://embedthis.com/\">"
         "       Embedthis Software LLC, 2003-2014. All rights reserved. "
         "Embedthis is a trademark of Embedthis Software LLC.</a>\n"
         "   </p>\n"
@@ -859,7 +859,7 @@ static void generateClassPageHeader(EjsMod *mp, EjsObj *obj, EjsName qname, EjsT
 
     if (ejsIsType(ejs, obj)) {
         type = (EjsType*) obj;
-        out(mp, "<table class='classHead' summary='%@'>\n", qname.name);
+        out(mp, "<table class='classHead' title='%@'>\n", qname.name);
 
         if (type && type->module) {
             modName = fmtModule(ejs, type->module->name);
@@ -975,7 +975,7 @@ static void generatePropertyTable(EjsMod *mp, EjsObj *obj)
     out(mp, "<h2 class='classSection'>Properties</h2>\n");
 
     if (mprGetListLength(list) > 0) {
-        out(mp, "<table class='itemTable' summary='properties'>\n");
+        out(mp, "<table class='itemTable' title='properties'>\n");
         out(mp, "   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%%'>Description</th></tr>\n");
         count = generateClassPropertyTableEntries(mp, obj, list);
         out(mp, "</table>\n\n");
@@ -1239,7 +1239,7 @@ static int generateMethodTable(EjsMod *mp, MprList *methods, EjsObj *obj, int in
         fun = fp->fun;
 
         if (!emitTable) {
-            out(mp, "<table class='apiIndex' summary='methods'>\n");
+            out(mp, "<table class='apiIndex' title='methods'>\n");
             out(mp, "   <tr><th>Qualifiers</th><th width='95%%'>Method</th></tr>\n");
             emitTable = 1;
         }
@@ -1472,7 +1472,7 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
         count = mprGetListLength(doc->params);
         if (count > 0) {
             out(mp, "<dl><dt>Parameters</dt>\n");
-            out(mp, "<dd><table class='parameters' summary ='parameters'>\n");
+            out(mp, "<dd><table class='parameters' title='parameters'>\n");
 
             checkArgs(mp, ejs, fp->ownerName, fun, qname, doc);
             for (next = 0; (param = mprGetNextItem(doc->params, &next)) != 0; ) {
@@ -1513,7 +1513,7 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
         count = mprGetListLength(doc->options);
         if (count > 0) {
             out(mp, "<dl><dt>Options</dt>\n");
-            out(mp, "<dd><table class='parameters' summary ='options'>\n");
+            out(mp, "<dd><table class='parameters' title='options'>\n");
             for (next = 0; (option = mprGetNextItem(doc->options, &next)) != 0; ) {
                 out(mp, "<td class='param'>%s</td><td>%s</td>", option->key, option->value);
                 out(mp, "</tr>\n");
@@ -1525,7 +1525,7 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
         count = mprGetListLength(doc->events);
         if (count > 0) {
             out(mp, "<dl><dt>Events</dt>\n");
-            out(mp, "<dd><table class='parameters' summary ='events'>\n");
+            out(mp, "<dd><table class='parameters' title='events'>\n");
             for (next = 0; (event = mprGetNextItem(doc->events, &next)) != 0; ) {
                 out(mp, "<td class='param'>%s</td><td>%s</td>", event->key, event->value);
                 out(mp, "</tr>\n");

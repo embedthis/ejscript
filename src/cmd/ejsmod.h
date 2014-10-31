@@ -55,7 +55,6 @@ typedef struct EjsMod {
     int         exitOnError;                /* Exit if module file errors are detected */
     int         fatalError;                 /* Any a fatal error - Can't continue */
     int         firstGlobal;                /* First global to examine */
-    int         genSlots;                   /* Set if either cslots || jsslots */
     int         listing;                    /* Generate listing file */
     int         memError;                   /* Memory error */
     int         showAsm;                    /* Show assembly bytes */

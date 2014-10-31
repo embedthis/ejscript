@@ -1,12 +1,12 @@
 /*
-    Dir.es - Directory content handler
+    Dir.es - Directory redirection handler
  */
 
 # Config.WEB
 module ejs.web {
 
     /** 
-        Directory content handler. This redirects requests for directories and serves directory index files.
+        Directory redirection handler. This redirects requests for directories and serves directory index files.
         If the request pathInfo ends with "/", the request is transparently redirected to an index file if one is present.
         The set of index files is defined by HttpServer.indicies. If the request is a directory but does not end in "/",
         the client is redirected to a URL equal to the pathInfo with a "/" appended.

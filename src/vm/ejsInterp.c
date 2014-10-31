@@ -2654,9 +2654,11 @@ EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, vo
     assert(ejs);
     assert(fun);
     assert(ejsIsFunction(ejs, fun));
+#if KEEP
     if (ejs->exception) {
         mprDebug("ejs vm", 0, "STOP");
     }
+#endif
     assert(ejs->exception == 0);
 
     if (ejs->exception) {
@@ -2751,7 +2753,7 @@ static void badArgType(Ejs *ejs, EjsFunction *fun, EjsPot *activation, EjsTrait 
     EjsName     qname;
 
     qname = ejsGetPropertyName(ejs, activation, index);
-    ejsThrowTypeError(ejs, "Unacceptable null or undefined value for argument \"%@\" in function \"%@\"", qname.name, fun->name);
+    ejsThrowTypeError(ejs, "Bad type for argument \"%@\" in function \"%@\"", qname.name, fun->name);
 }
 
 

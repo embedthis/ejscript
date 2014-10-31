@@ -187,9 +187,14 @@ module ejs {
 
     /** 
         Blend the contents of one object into another. This routine copies the properites of one object into another.
-        If a property is an object reference and the "deep" option is set, the object is cloned using a deep clone. 
-        Otherwise the object reference is copied.
-        If the overwrite option is false, the property will only be copied if it does not already exist in the destination.
+
+        If the "deep" option is set, object properties have their contents are cloned. Otherwise, the object reference 
+        is copied. Arrays are never deep copied.
+
+        If the "combine" property is set, then property prefixes: +, =, - and ? are used as modifiers describing
+        how to combine source and destination property values.
+
+        If the "overwrite" option is false, properties will only be copied if they do not already exist in the destination.
         @param dest Destination object
         @param src Source object
         @param options Control options
@@ -197,13 +202,14 @@ module ejs {
             and conditionally assign key values. When adding string properties, values will be appended using a 
             space separator. Extra spaces will not be removed on subtraction.
             Arrays with string values may also be combined using these key prefixes. 
-        @option overwrite Boolean. If true, then overwrite existing properties in the destination object. Defaults to true.
         @option deep Boolean. If true, then recursively copy the properties of any objects referenced in the source object.
             Otherwise, the copy is only one level deep. Defaults to true.
         @option functions Boolean. If true, then copy functions. Defaults to false.
+        @option overwrite Boolean. If true, then overwrite existing properties in the destination object. Defaults to true.
+        @option public Boolean. If true, then permit blending into public instance properties.
         @option subclasses Boolean. If true, then copy subclass properties. Defaults to true.
         @option trace Boolean. If true, then trace to the App.log the copied property names.
-        @returns An the destination object
+        @returns The destination object
         @spec ejs
         @example blend(dest, src, { overwrite: true, deep: true, functions: false, subclasses: true })
      */
@@ -213,6 +219,7 @@ module ejs {
     /** 
         Evaluate a script. Not present in ejsvm.
         @param script Script string to evaluate
+        @param cache Path to cache file to save compiled script
         @returns the the script expression value.
      */
     native function eval(script: String, cache: String? = null): Object
@@ -259,6 +266,16 @@ module ejs {
         @spec ejs
      */
     native function print(...args): void
+
+    /**
+        Print the arguments to the standard output without a new line appended. This call evaluates the arguments, 
+        converts the result to strings and prints the result to the standard output. Arguments are converted to 
+        strings by calling their toString method. 
+        @param args Variables to print
+        @spec ejs
+     */
+    function prints(...args): Void
+        App.outputStream.write(...args)
 
     /** 
         Print the arguments to the standard output using the supplied format template. This call evaluates the arguments, 

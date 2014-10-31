@@ -13,7 +13,7 @@
     #define ME_COMPANY "embedthis"
 #endif
 #ifndef ME_COMPATIBLE
-    #define ME_COMPATIBLE "2.4"
+    #define ME_COMPATIBLE "2.5"
 #endif
 #ifndef ME_COMPILER_HAS_ATOMIC
     #define ME_COMPILER_HAS_ATOMIC 1
@@ -130,7 +130,7 @@
     #define ME_MANIFEST "package/manifest.me"
 #endif
 #ifndef ME_ME
-    #define ME_ME ">=0.8.2"
+    #define ME_ME "=0.8.4"
 #endif
 #ifndef ME_MPR_ALLOC_PARALLEL
     #define ME_MPR_ALLOC_PARALLEL 1
@@ -160,7 +160,7 @@
     #define ME_TUNE "speed"
 #endif
 #ifndef ME_VERSION
-    #define ME_VERSION "2.4.1"
+    #define ME_VERSION "2.5.0"
 #endif
 
 /* Prefixes */
@@ -180,7 +180,7 @@
     #define ME_APP_PREFIX "/usr/local/lib/ejs"
 #endif
 #ifndef ME_VAPP_PREFIX
-    #define ME_VAPP_PREFIX "/usr/local/lib/ejs/2.4.1"
+    #define ME_VAPP_PREFIX "/usr/local/lib/ejs/2.5.0"
 #endif
 #ifndef ME_BIN_PREFIX
     #define ME_BIN_PREFIX "/usr/local/bin"
@@ -201,7 +201,7 @@
     #define ME_ETC_PREFIX "/etc/ejs"
 #endif
 #ifndef ME_WEB_PREFIX
-    #define ME_WEB_PREFIX "/var/www/ejs-default"
+    #define ME_WEB_PREFIX "/var/www/ejs"
 #endif
 #ifndef ME_LOG_PREFIX
     #define ME_LOG_PREFIX "/var/log/ejs"
@@ -213,7 +213,7 @@
     #define ME_CACHE_PREFIX "/var/spool/ejs/cache"
 #endif
 #ifndef ME_SRC_PREFIX
-    #define ME_SRC_PREFIX "ejs-2.4.1"
+    #define ME_SRC_PREFIX "ejs-2.5.0"
 #endif
 
 /* Suffixes */
@@ -252,13 +252,13 @@
     #define ME_MAJOR_VERSION 2
 #endif
 #ifndef ME_MINOR_VERSION
-    #define ME_MINOR_VERSION 4
+    #define ME_MINOR_VERSION 5
 #endif
 #ifndef ME_PATCH_VERSION
-    #define ME_PATCH_VERSION 1
+    #define ME_PATCH_VERSION 0
 #endif
 #ifndef ME_VNUM
-    #define ME_VNUM 200040001
+    #define ME_VNUM 200050000
 #endif
 
 /* Components */
@@ -274,14 +274,8 @@
 #ifndef ME_COM_LIB
     #define ME_COM_LIB 1
 #endif
-#ifndef ME_COM_MATRIXSSL
-    #define ME_COM_MATRIXSSL 0
-#endif
 #ifndef ME_COM_MPR
     #define ME_COM_MPR 1
-#endif
-#ifndef ME_COM_NANOSSL
-    #define ME_COM_NANOSSL 0
 #endif
 #ifndef ME_COM_OPENSSL
     #define ME_COM_OPENSSL 0

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>API Stability</title>
+    <!-- Copyright Embedthis Software, LLC, 2003-2014. All Rights Reserved. -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="keywords" content="Ejscript, Javascript, Ecmascript, devices, http server, internet of things" />
+    <meta name="description" content="Javacript Language Environment" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
+        rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
+    <link href="../lib/semantic/themes/packages/beach.css" rel="stylesheet" type="text/css" />
+    <link href="../css/all.css" rel="stylesheet" type="text/css" />
+    <link href="../images/favicon.ico" rel="shortcut icon" />
+
+</head>
+<body>
+        <div class="sidebar">
+        <div class="ui large left vertical inverted labeled menu">
+            <div class="item">
+                <a href="../index.html" class="logo">Ejscript Docs</a>
+            </div>
+            <div class="item">
+                <a href="../index.html">
+                    <b>General</b>
+                </a>
+                <div class="menu">
+                    <a class="item" href="../index.html">Ejscript Overview</a>
+                    <a class="item" href="../users/features.html">Ejscript Features</a>
+                    <a class="item" href="https://embedthis.com/ejs/download.html">Download</a> 
+                    <a class="item" href="../licensing/index.html">Licensing</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../start/index.html">
+                    <b>Getting Started</b>
+                </a>
+                <div class="menu">
+                    <a class="item" href="../start/quick.html">Quick Start</a>
+                    <a class="item" href="../start/installing.html">Installing Ejscript</a>
+                    <a class="item" href="../start/tour.html">Language Tour</a>
+                    <a class="item" href="../start/faq.html">FAQ</a>
+                    <a class="item" href="../start/releaseNotes.html">Release Notes</a>
+                    <a class="item" href="../start/source.html">Building from Source</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../users/index.html"><b>User's Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../users/shell.html">Using the Command Shell</a>
+                    <a class="item" href="../users/compiler.html">Using the Compiler</a>
+                    <a class="item" href="../users/ejsmod.html">Using the Module Generator</a>
+                    <a class="item" href="../users/doc.html">Generating Documentation</a>
+                    <a class="item" href="../users/listing.html">Generating Listing</a>
+                    <a class="item" href="../users/man.html">Man Pages</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../language/index.html"><b>Language Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../language/syntax.html">Language Syntax</a>
+                    <a class="item" href="../language/statements.html">Statements</a>
+                    <a class="item" href="../language/expressions.html">Expressions and Operators</a>
+                    <a class="item" href="../language/objects.html">Object and Arrays</a>
+                    <a class="item" href="../language/functions.html">Functions and Methods</a>
+                    <a class="item" href="../language/core.html">Core Language Types</a>
+                    <a class="item" href="../language/types.html">Types and Declarations</a>
+                    <a class="item" href="../language/classes.html">Classes and Instances</a>
+                    <a class="item" href="../language/modules.html">Modules and Namespaces</a>
+                    <a class="item" href="../language/library.html">System Library</a>
+                    <a class="item" href="../language/events.html">Events and Timers</a>
+                    <a class="item" href="../language/modes.html">Language Modes</a>
+                    <a class="item" href="../language/globals.html">Globals</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../web/index.html"><b>Web Framework Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../web/webTour.html">Web Framework Tour</a>
+                    <a class="item" href="../web/generator.html">Application Generator</a>
+                    <a class="item" href="../web/routing.html">Routing</a>
+                    <a class="item" href="../web/controllers.html">Controllers</a>
+                    <a class="item" href="../web/views.html">Views and Layout Templates</a>
+                    <a class="item" href="../web/controls.html">Ajax View Controls</a>
+                    <a class="item" href="../web/models.html">Database Models</a>
+                    <a class="item" href="../web/hosting.html">Hosting in Web Servers</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../developers/index.html">Developer's Guide</a>
+                <div class="menu">
+                    <a class="item" href="../developers/embedding.html">Embedding Ejscript</a>
+                    <a class="item" href="../developers/extending.html">Extending Ejscript</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../ref/index.html">Reference Guide</a>
+                <div class="menu">
+                    <a class="item" href="../ref/compatibility.html">Compatibility</a>
+                    <a class="item" href="../ref/native.html">Native APIs</a>
+                    <a class="item" href="../ref/api/ejscript/index.html" target="new">Script Library</a>
+                    <a class="item" href="../ref/architecture.html">Ejscript Architecture</a>
+                    <a class="item" href="../ref/webArchitecture.html">Web Framework Architecture</a>
+                    <a class="item" href="../ref/memory.html">Ejscript Memory Allocation</a>
+                    <a class="item" href="../ref/multithread.html">Multithreaded Programming</a>
+                    <a class="item" href="../standards/references.html">Standards</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../developers/project.html">Project Resources</a>
+                <div class="menu">
+                    <a class="item" href="http://goo.gl/g4oS2C">Official Ejscript News</a>
+                    <a class="item" href="https://embedthis.com/ejs/">Ejscript Web Site</a>
+                    <a class="item" href="https://github.com/embedthis/ejs">Source Code Repository</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/issues">Project Issue Database</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/releases">Change Log</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/milestones">Roadmap</a>
+                    <a class="item" href="https://embedthis.com/developers/contributors.html">Contributors Agreement</a>
+                </div>
+            </div>
+            <div class="item">
+                <b>Links</b>
+                <div class="menu">
+                    <a class="item" href="https://embedthis.com/">Embedthis Web Site</a>
+                    <a class="item" href="https://embedthis.com/blog/">Embedthis Blog</a>
+                    <a class="item" href="http://twitter.com/mobstream">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui sidebar-launch button">
+        <i class="icon list layout"></i>
+    </div>
+
+
+
+    <div class="ui inverted masthead">
+         
+        <div class="ui inverted menu">
+            <div class="right menu">
+                  
+                    <a class="item" href="https://embedthis.com/">Embedthis</a>
+                    <a class="item" href="https://embedthis.com/ejscript/">Ejscript Site</a>
+                    <a class="item" href="http://goo.gl/dGRDl4">Ejscript News</a>
+                    <a class="item" href="https://github.com/embedthis/ejs">Repository</a>
+                    <a class="item" href="https://embedthis.com/blog/">Blog</a>
+                    <a class="item" href="https://twitter.com/mobstream">Twitter</a>
+
+            </div>
+        </div>
+        
+        <div class="ui breadcrumb">
+            <a class="section" href="../">Home</a>
+            
+            <div class="divider">/</div>
+            <a class="section" href="index.html">
+                Reference Guide
+            </a>
+            
+            
+            <div class="divider">/</div>
+            <a class="active section" href="stability.html">API Stability</a>
+            
+        </div>
+        
+        <div class="ui right floated basic segment version">
+            v2.5.0
+        </div>
+
+    </div>
+    <div class="content">
+
+            <h1>Interface Stability Classification</h1>
+            <p>The programming interfaces and data structures are classified with a stability class. These
+            classifications help developers understand which interfaces may change in future releases and may
+            need to be wrapped within their applications.</p>
+            <p>When the classification is applied to an API, it applies to the complete function signature. When 
+            applied to a data structure or typedef, it applies to the structure name and not the internal structure fields.
+            All structure fields are regarded as internal unless explicitly stated otherwise.</p>
+            <p>The version numbering for Embedthis products follows the scheme MAJOR.MINOR.PATCH. For example 2.1.3 is
+            major version 2, minor version 1 and patch version 3.</p>
+
+            <table title="classification" class="ui definition table segment">
+                <thead>
+                    <tr>
+                        <th>Classification</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <p>Mature</p>
+                    </td>
+                    <td>
+                        <p>Must be interoperable across at least two consecutive major releases so that applications
+                        are not required to change. These APIs must be Deprecated before change or removal.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Stable</p>
+                    </td>
+                    <td>
+                        <p>Will not change between minor releases (e.g. 2.0 to 2.1). May change between major
+                        releases.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Evolving</p>
+                    </td>
+                    <td>
+                        <p>May change between major or minor releases. May not change between patch releases (e.g.
+                        2.0.0 to 2.0.1) release.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Prototype</td>
+                    <td>May change between any major, minor or patch releases.</td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Deprecated</p>
+                    </td>
+                    <td>
+                        <p>For use by legacy applications only. Customers are advised that these interfaces may be
+                        removed in the next major or minor release.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Internal</p>
+                    </td>
+                    <td>
+                        <p>Internal API or data structure and may change at any time. Customers are strongly advised not to
+                        use these APIs.</p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+    </div>
+    <div class="terms ui basic center aligned segment">
+        <p>&copy; Embedthis Software, 2003-2014. All rights reserved.</p>
+    </div>
+
+    <script src="../lib/jquery/jquery.js"></script>
+    <script src="../lib/semantic/js/semantic.js"></script>
+    <script>
+        var sl = $('.sidebar-launch');
+        $('.sidebar-launch').click(function() {
+            var body = $('body');
+            if (!body.hasClass('show-sidebar')) {
+                body.addClass('show-sidebar');
+                $('.sidebar').css('visibility', 'visible');
+            } else {
+                body.removeClass('show-sidebar');
+                $('.sidebar').css('visibility', 'hidden');
+            }
+        });
+        $('.sidebar-launch').trigger('click');
+        $('.sidebar a.item').click(function(e) {
+            sessionStorage.setItem('scroll-top', $('.sidebar').scrollTop());
+        });
+        $(function() {
+            var url = '../ref/stability.html';
+            var active = $('.sidebar a[href="' + url +'"]');
+            active.addClass('active');
+            $('.sidebar').scrollTop(sessionStorage.getItem('scroll-top'));
+        });
+    </script> 
+
+</body>
+</html>
