@@ -81,7 +81,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
         "  \n"
         "   Slot definitions. Version %s.\n"
         " */\n"
-        "\n", path, mp->name, ME_VERSION);
+        "\n", mprGetPathBase(path), mp->name, ME_VERSION);
 
     mprPutToBuf(fbuf,
         "#ifndef _h_SLOTS_%s\n"
