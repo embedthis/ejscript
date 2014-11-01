@@ -3,7 +3,7 @@
 #
 
 NAME                  = ejs
-VERSION               = 2.5.0
+VERSION               = 2.5.1
 
 OS                    = windows
 PA                    = $(PROCESSOR_ARCHITECTURE)
