@@ -390,6 +390,10 @@ module ejs {
             if (cmd.status != 0 && options.exceptions !== false) {
                 throw new IOError('Command failed, status ' + cmd.status + '\n' + cmd.error)
             }
+            /* Currently undocumented */
+            if (options.error && cmd.error) {
+                options.error = cmd.error
+            }
             return results.toString()
         }
 
