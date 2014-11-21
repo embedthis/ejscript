@@ -3,202 +3,202 @@
 <head>
 <title>Mvc Man Page</title>
 </head>
-<body><pre>
-mvc(1)                           user commands                          mvc(1)
+<BODY><PRE>
+MVC(1)                           User Commands                          MVC(1)
 
-<b>name</b>
-       mvc  -  ejscript  application  generator for server-side javascript web
-       applications.
+<B>NAME</B>
+       mvc  -  Ejscript  Application  Generator for Server-Side JavaScript Web
+       Applications.
 
-<b>synopsis</b>
-       <b>mvc </b>[<i>--database db]</i>] [<i>--full</i>] [<i>--keep</i>] [<i>--layout layoutpage</i>]  [<i>--listen</i>
-       <i>port[--min[--overwrite[--quiet[--verbose</i>] [commands ...]
+<B>SYNOPSIS</B>
+       <B>mvc </B>[<I>--database DB]</I>] [<I>--full</I>] [<I>--keep</I>] [<I>--layout layoutPage</I>]  [<I>--listen</I>
+       <I>port[--min[--overwrite[--quiet[--verbose</I>] [commands ...]
 
-<b>description</b>
-       the  <b>mvc </b>command generates, manages and runs ejscript web applications.
-       it can generate ejscript web applications, controllers, database migra-
+<B>DESCRIPTION</B>
+       The  <B>mvc </B>command generates, manages and runs Ejscript web applications.
+       It can generate Ejscript web applications, controllers, database migra-
        tions, models, scaffolds and views.
 
-       mvc  will create directories and generate configuration and source code
-       files which can then be manually edited as required.  mvc  is  intelli-
+       Mvc  will create directories and generate configuration and source code
+       files which can then be manually edited as required.  Mvc  is  intelli-
        gent  and will not overwrite existing files, so you can safely edit and
-       regenerate without losing your changes. you can overwrite your  changes
-       if you wish to by using the <b>--overwrite </b>switch.
+       regenerate without losing your changes. You can overwrite your  changes
+       if you wish to by using the <B>--overwrite </B>switch.
 
-       mvc can run your application by invoking a configured web server.
+       Mvc can run your application by invoking a configured web server.
 
-<b>generating applications</b>
-       to  start  a  new  web  application,  run <b>mvc </b>to create the application
+<B>GENERATING APPLICATIONS</B>
+       To  start  a  new  web  application,  run <B>mvc </B>to create the application
        directory and generate  the  application  configuration  and  essential
-       script files. for example:
+       script files. For example:
 
-             <b>mvc generate app myapp</b>
+             <B>mvc generate app myApp</B>
 
-       this  will  will  create  a set of directories which have the following
+       This  will  will  create  a set of directories which have the following
        meaning:
 
-             bin            - programs and scripts
-             cache          - cached views and web pages
-             controllers    - controller source
-             db             - databases and scripts
-             db/migrations  - databases migration scripts
-             layouts        - template layout files
-             models         - database model code
-             src            - extra application source code
-             views          - view source files
-             static         - public web directory
-             static/images  - public images
-             static/js      - client side javascripts
-             static/themes  - application html themes
+             bin            - Programs and scripts
+             cache          - Cached views and web pages
+             controllers    - Controller source
+             db             - Databases and scripts
+             db/migrations  - Databases migration scripts
+             layouts        - Template layout files
+             models         - Database model code
+             src            - Extra application source code
+             views          - View source files
+             static         - Public web directory
+             static/images  - Public images
+             static/js      - Client side JavaScripts
+             static/themes  - Application HTML themes
 
-       ejscript follows conventions where  specific  files  are  stored.  this
+       Ejscript follows conventions where  specific  files  are  stored.  This
        greatly simplifies configuring a web application.
 
-       mvc will also create some files which have the following meaning:
+       Mvc will also create some files which have the following meaning:
 
-             ejsrc                       - application configuration file
-             controllers/base.es         - application base controller class
-             layouts/default.ejs         - default layout web page
-             static/layout.css           - default layout css file
-             static/themes/default.css   - default theme css file
-             static/js/jquery.js         - jquery client side script
-             readme                       - documentation explaining files and
+             ejsrc                       - Application configuration file
+             controllers/Base.es         - Application base controller class
+             layouts/default.ejs         - Default layout web page
+             static/layout.css           - Default layout CSS file
+             static/themes/default.css   - Default theme CSS file
+             static/js/jquery.js         - Jquery client side script
+             README                       - Documentation explaining files and
             directories
 
-<b>generating controllers</b>
-       controllers  are  the  primary  mechanism  for  responding  to   client
-       requests. to generate a controller, run:
+<B>GENERATING CONTROLLERS</B>
+       Controllers  are  the  primary  mechanism  for  responding  to   client
+       requests. To generate a controller, run:
 
-             <b>mvc generate controller name [actions...]</b>
+             <B>mvc generate controller NAME [actions...]</B>
 
-       this  will  create a controller of the requested name. it will create a
-       controller class file in the <b>controllers </b>directory. if action names are
+       This  will  create a controller of the requested name. It will create a
+       controller class file in the <B>controllers </B>directory. If action names are
        requested,  the  controller class will define an action method for each
-       name. if not action names are requested,  mvc  will  define  a  default
-       action  named <b>index</b>.  actions are controller functions that are invoked
-       in response to client requests. you can edit the controller  source  to
+       name. If not action names are requested,  mvc  will  define  a  default
+       action  named <B>index</B>.  Actions are controller functions that are invoked
+       in response to client requests. You can edit the controller  source  to
        meet your needs.
 
-<b>generating models</b>
-       database models are ejscript classes that encapsulate database data and
-       provide access methods. they provide a conduit  to  interact  with  the
-       database. to generate a model:
+<B>GENERATING MODELS</B>
+       Database models are Ejscript classes that encapsulate database data and
+       provide access methods. They provide a conduit  to  interact  with  the
+       database. To generate a model:
 
-             <b>mvc generate model model [field:type ...]</b>
+             <B>mvc generate model MODEL [field:type ...]</B>
 
-       this will create a database model and will generate a model class under
-       the <b>models </b>directory.  it will also create a database migration to cre-
-       ate a database table of the same name as the model.  if field:type val-
+       This will create a database model and will generate a model class under
+       the <B>models </B>directory.  It will also create a database migration to cre-
+       ate a database table of the same name as the model.  If field:type val-
        ues are supplied, the database migration will include code to create  a
-       column  for each specified field of the requested type. the valid data-
+       column  for each specified field of the requested type. The valid data-
        base types are: binary, boolean, date, datetime, decimal, float,  inte-
        ger, number, string, text, time, timestamp.
 
-<b>generating scaffolds</b>
-       a  scaffold  is  a  generated  database migration, database model, con-
+<B>GENERATING SCAFFOLDS</B>
+       A  scaffold  is  a  generated  database migration, database model, con-
        troller and set of views that provides add, edit and list functionality
-       for  a database model.  scaffolds are useful to quickly generate chunks
+       for  a database model.  Scaffolds are useful to quickly generate chunks
        of the application and prototype web pages and actions for  managing  a
-       datbase table.  to generate a scaffold:
+       datbase table.  To generate a scaffold:
 
-             <b>mvc generate scaffold model [field:type ...]</b>
+             <B>mvc generate scaffold MODEL [field:type ...]</B>
 
-       this  will  create a scaffold for the specified database model and will
-       generate a controller of the same name.  if field:type values are  sup-
+       This  will  create a scaffold for the specified database model and will
+       generate a controller of the same name.  If field:type values are  sup-
        plied,  the database migration will include code to create a column for
-       each specified field of the requested type. the  valid  database  types
+       each specified field of the requested type. The  valid  database  types
        are:  binary, boolean, date, datetime, decimal, float, integer, number,
-       string, text, time, timestamp.   the  scaffold  will  include  an  edit
-       action  and view that provides add and edit capability. the list action
+       string, text, time, timestamp.   The  scaffold  will  include  an  edit
+       action  and view that provides add and edit capability. The list action
        and view, provides the ability to list  the  database  table  rows  and
        select an entry to edit.
 
-<b>generating migrations</b>
-       database  migrations  are  scripts  which modify the database schema or
-       content. you can create database migrations by the <b>mvc generate  migra-</b>
-       <b>tion  </b>command.  this command generates a migration for a specific model
-       by creating or removing tables and columns. to generate a migration:
+<B>GENERATING MIGRATIONS</B>
+       Database  migrations  are  scripts  which modify the database schema or
+       content. You can create database migrations by the <B>mvc generate  migra-</B>
+       <B>tion  </B>command.  This command generates a migration for a specific model
+       by creating or removing tables and columns. To generate a migration:
 
-             <b>mvc generate migration description model [field:type ...]</b>
+             <B>mvc generate migration description MODEL [field:type ...]</B>
 
-       this will create a migration script under the <b>db/migrations  </b>directory.
-       migration  scripts filenames are timestamped and use the description is
+       This will create a migration script under the <B>db/migrations  </B>directory.
+       Migration  scripts filenames are timestamped and use the description is
        used as part of the filename for the migration script (so keep it short
        and sweet).
 
-       for  each  specified field:type pair, mvc will generate add column code
-       in the migration script. if the --reverse  switch  is  specified,  then
-       remove  column  code will be generated. to change the type or name of a
+       For  each  specified field:type pair, mvc will generate add column code
+       in the migration script. If the --reverse  switch  is  specified,  then
+       remove  column  code will be generated. To change the type or name of a
        column, remove then re-add the column.
 
-<b>applying migrations</b>
-       migration scripts can be run via the <b>mvc migrate </b>command. with no other
+<B>APPLYING MIGRATIONS</B>
+       Migration scripts can be run via the <B>mvc migrate </B>command. With no other
        parameters,  the command will run all migrations that have not yet been
-       applied to the database. you can also use <b>mvc migrate forward </b>to  apply
-       apply the next unapplied migration. similarly <b>mvc migrate backward </b>will
-       reverse the last applied migration.  you can also use <b>mvc  migrate  nnn</b>
-       to  migrate  forward  or  backward  to a specific migration. nnn is the
+       applied to the database. You can also use <B>mvc migrate forward </B>to  apply
+       apply the next unapplied migration. Similarly <B>mvc migrate backward </B>will
+       reverse the last applied migration.  You can also use <B>mvc  migrate  NNN</B>
+       to  migrate  forward  or  backward  to a specific migration. NNN is the
        migration sequence number which is the  number  at  the  start  of  the
        migration script file name.
 
-<b>compiling</b>
-       ejscript compiles models, views and controllers into ejscript byte-code
-       modules. these are then loaded and  run  by  ejscript  in  response  to
-       incoming  client  requests.  code  is compiled only once but can be run
+<B>COMPILING</B>
+       Ejscript compiles models, views and controllers into Ejscript byte-code
+       modules. These are then loaded and  run  by  Ejscript  in  response  to
+       incoming  client  requests.  Code  is compiled only once but can be run
        many times to service incoming requests.
 
-       in development mode, ejscript will automatically compile  the  relevant
-       portions  of  the  application  if  the source code is modified. it can
+       In development mode, Ejscript will automatically compile  the  relevant
+       portions  of  the  application  if  the source code is modified. It can
        intelligently recompile views, actions, controllers and database models
-       as required. however, you can also explicilty recompile portions or the
+       as required. However, you can also explicilty recompile portions or the
        complete appliction.
 
-       mvc can recompile everything via:
+       Mvc can recompile everything via:
 
-             <b>mvc compile</b>
+             <B>mvc compile</B>
 
-       this will compile each controller  and  view  and  also  recompile  the
-       application  and  module  source  code. module files for each component
+       This will compile each controller  and  view  and  also  recompile  the
+       application  and  module  source  code. Module files for each component
        will be generated.
 
-       mvc also provides options for you to individually  compile  controllers
-       and views. to recompile named views or controllers:
+       Mvc also provides options for you to individually  compile  controllers
+       and views. To recompile named views or controllers:
 
-             <b>mvc compile view names ...</b>
+             <B>mvc compile view NAMES ...</B>
 
-             <b>mvc compile controller names ...</b>
+             <B>mvc compile controller NAMES ...</B>
 
-       models are compiled with application code into a single module file. to
+       Models are compiled with application code into a single module file. To
        recompile the models and application source code:
 
-             <b>mvc compile app</b>
+             <B>mvc compile app</B>
 
-       to compile the entire application and produce a single module file:
+       To compile the entire application and produce a single module file:
 
-             <b>mvc compile all</b>
+             <B>mvc compile all</B>
 
-       to compile stand-alone ejscript web pages:
+       To compile stand-alone Ejscript web pages:
 
-             <b>mvc compile path/name.ejs...</b>.
+             <B>mvc compile path/name.ejs...</B>.
 
-       when compiling views, you can use the <b>--keep  </b>switch  to  preserve  the
-       intermediate generated ejscript source file.
+       When compiling views, you can use the <B>--keep  </B>switch  to  preserve  the
+       intermediate generated Ejscript source file.
 
-<b>running</b>
-       to run your application:
+<B>RUNNING</B>
+       To run your application:
 
-             <b>mvc run</b>
+             <B>mvc run</B>
 
-       this  requires  that  your config/config.ecf file be modified to define
+       This  requires  that  your config/config.ecf file be modified to define
        command to run your web server.
 
-<b>cleaning</b>
-       to clean all generated module files:
+<B>CLEANING</B>
+       To clean all generated module files:
 
-             <b>mvc clean</b>
+             <B>mvc clean</B>
 
-<b>options</b>
-       mvc has the following command usage patterns:
+<B>OPTIONS</B>
+       Mvc has the following command usage patterns:
 
              mvc clean
              mvc compile [all | app | controller names | model  names  |  view
@@ -209,61 +209,61 @@ mvc(1)                           user commands                          mvc(1)
              mvc generate scaffold model [controller] [action [, action]...]
              mvc run
 
-       <b>--database connector</b>
-             select a database connector to use. currently this switch is  not
+       <B>--database connector</B>
+             Select a database connector to use. Currently this switch is  not
              implemented and sqlite is the only connector supported.
 
-       <b>--keep</b>
-             preserve  generated  intermediate  ejscript  source  files. these
+       <B>--keep</B>
+             Preserve  generated  intermediate  Ejscript  source  files. These
              files are generated when blending views with layout pages.
 
-       <b>--layout layoutpage</b>
-             change the name of the default layout page if  a  view  does  not
+       <B>--layout layoutPage</B>
+             Change the name of the default layout page if  a  view  does  not
              explicitly specify a layout page.
 
-       <b>--overwrite</b>
-             overwrite  existing files. mvc normally will not overwrite exist-
-             ing files. this is to preserve user changes to previously  gener-
+       <B>--overwrite</B>
+             Overwrite  existing files. Mvc normally will not overwrite exist-
+             ing files. This is to preserve user changes to previously  gener-
              ated files.
 
-       <b>--search ejspath</b>
-             set  the  module  search path. the module search path is a set of
-             directories that the <b>mvc </b>command will use when locating and load-
-             ing ejscript modules.  the search path will always have some sys-
-             tem directories appended to the end. these include  paths  speci-
-             fied  via the  <b>ejspath </b>environment variable and key system direc-
-             tories such as the  ejscript  system  module  directory  and  the
-             directory containing the <b>mvc </b>command.
+       <B>--search ejsPath</B>
+             Set  the  module  search path. The module search path is a set of
+             directories that the <B>mvc </B>command will use when locating and load-
+             ing Ejscript modules.  The search path will always have some sys-
+             tem directories appended to the end. These include  paths  speci-
+             fied  via the  <B>EJSPATH </B>environment variable and key system direc-
+             tories such as the  Ejscript  system  module  directory  and  the
+             directory containing the <B>mvc </B>command.
 
-             the  search  path  value  is similar in format to the system path
-             variable format.  on windows, path segments are separated by  ";"
-             and  on linux, unix, freebsd and mac, the path segments are sepa-
+             The  search  path  value  is similar in format to the system PATH
+             variable format.  On windows, path segments are separated by  ";"
+             and  on Linux, Unix, FreeBSD and MAC, the path segments are sepa-
              rated by ":" delimiters.
 
-             given a module named "a.b.c" in a script, <b>mvc </b>will use  the  fol-
+             Given a module named "a.b.c" in a script, <B>mvc </B>will use  the  fol-
              lowing search strategy to locate the module:
 
-             1. search for a module file named "a.b.c.mod"
+             1. Search for a module file named "a.b.c.mod"
 
-             2. search for a module file named "a/b/c.mod"
+             2. Search for a module file named "a/b/c.mod"
 
-             3. search for a module file named "a.b.c.mod" in the search path
+             3. Search for a module file named "a.b.c.mod" in the search path
 
-             4. search for a module file named c.mod in the search path
+             4. Search for a module file named c.mod in the search path
 
-       <b>--verbose </b>or <b>-v</b>
-             run in verbose mode and trace actions to the console.
+       <B>--verbose </B>or <B>-v</B>
+             Run in verbose mode and trace actions to the console.
 
-<b>reporting bugs</b>
-       report bugs to dev@embedthis.com.
+<B>REPORTING BUGS</B>
+       Report bugs to dev@embedthis.com.
 
-<b>copyright</b>
-       copyright (c) 2004-2014 embedthis software.  ejscript is a trademark of
-       embedthis software.
+<B>COPYRIGHT</B>
+       Copyright (C) 2004-2014 Embedthis Software.  Ejscript is a trademark of
+       Embedthis Software.
 
-<b>see also</b>
+<B>SEE ALSO</B>
        ejsc, ejs, ejsmod
 
-mvc                              december 2011                          mvc(1)
-</pre></body>
+mvc                              December 2011                          MVC(1)
+</PRE></BODY>
 </html>
