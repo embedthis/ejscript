@@ -129,6 +129,7 @@ ME_CACHE_PREFIX       = $(ME_VAPP_PREFIX)\cache
 ME_SRC_PREFIX         = $(ME_VAPP_PREFIX)\src
 
 
+TARGETS               = $(TARGETS) init
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ejs.exe
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ejs.db.mapper.mod
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ejs.db.sqlite.mod
