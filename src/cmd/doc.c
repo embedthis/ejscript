@@ -1488,11 +1488,11 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
                     description = param->value;
                     setType = 0;
                     if (description && description[0] == ':') {
-                        setType = stok(sclone(&description[1]), " ", &description);
+                        setType = ssplit(sclone(&description[1]), " ", &description);
                     }
                     if (argTrait->type) {
                         out(mp, "%s: %s ", fmtDeclaration(ejs, argName), fmtTypeReference(ejs, argTrait->type->qname));
-                    } else if (setType) {
+                    } else if (setType && *setType) {
                         out(mp, "%s: %s", fmtDeclaration(ejs, argName), setType);
                     } else {
                         out(mp, "%s ", fmtDeclaration(ejs, argName));
@@ -2083,7 +2083,7 @@ static wchar *wikiFormat(Ejs *ejs, wchar *start)
             assert(strcmp(klass, "ejs.web::Request") != 0);
 
             if (scontains(klass, "::")) {
-                space = stok(klass, "::", &klass);
+                space = ssplit(klass, "::", &klass);
             } else {
                 space = "";
             }
