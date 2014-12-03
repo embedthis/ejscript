@@ -395,7 +395,7 @@ static EjsObj *http_info(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (hp->conn && hp->conn->sock) {
         obj = ejsCreateEmptyPot(ejs);
         for (key = stok(mprGetSocketState(hp->conn->sock), ",", &next); key; key = stok(NULL, ",", &next)) {
-            stok(key, "=", &value);
+            ssplit(key, "=", &value);
             ejsSetPropertyByName(ejs, obj, EN(key), ejsCreateStringFromAsc(ejs, value));
         }
         return obj;

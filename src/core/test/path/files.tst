@@ -115,16 +115,16 @@ let files = base.files('m**', {depthFirst: true})
 assert(files.pop().portable == 'data/mid')
 
 //  Expand by object
-let files = base.files('${what}/**.dat', {
-    expand: { what: '.' }
+let files = base.files('**.${what}', {
+    expand: { what: 'dat' }
 })
 assert(files.length == numdat)
 
 //  Expand by function
-let files = base.files('${what}/**.dat', {
+let files = base.files('**.${what}', {
     expand: function(file) {
-        if (file.startsWith('${what}')) {
-            return file.replace('${what}', '.')
+        if (file.contains('${what}')) {
+            return file.replace('${what}', 'dat')
         }
         return file
     }
@@ -142,6 +142,7 @@ assert(base.files('mid/').length > 1)
 //  Regressions - test trailing '/' on directory
 assert(App.dir.files('data/mid') == App.dir.join('data/mid'))
 assert(App.dir.files('data/mid/').length > 1)
-assert(App.dir.files(App.dir.join('data/mid')) == App.dir.join('data/mid'))
-assert(App.dir.files(App.dir.join('data/mid/').length > 1))
+
+assert(App.dir.files('data/mid') == App.dir.join('data/mid'))
+assert(App.dir.files('data/mid/').length > 1)
 

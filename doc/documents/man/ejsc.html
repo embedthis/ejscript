@@ -3,171 +3,171 @@
 <head>
 <title>Ejsc Man Page</title>
 </head>
-<body><pre>
-ec(1)                            user commands                           ec(1)
+<BODY><PRE>
+EC(1)                            User Commands                           EC(1)
 
-<b>name</b>
-       ejsc - ejscript compiler.
+<B>NAME</B>
+       ejsc - Ejscript compiler.
 
-<b>synopsis</b>
-       <b>ejsc</b>
-           <b>--bind</b>
-           <b>--debug</b>
-           <b>--doc</b>
-           <b>--noout</b>
-           <b>--optimize level</b>
-           <b>--out filename</b>
-           <b>--parse</b>
-           <b>--require 'module ...'</b>
-           <b>--search ejspath</b>
-           <b>--standard</b>
-           <b>--strict</b>
-           <b>--version</b>
-           <b>--warn level</b>
-           <b>files...</b>
+<B>SYNOPSIS</B>
+       <B>ejsc</B>
+           <B>--bind</B>
+           <B>--debug</B>
+           <B>--doc</B>
+           <B>--noout</B>
+           <B>--optimize level</B>
+           <B>--out filename</B>
+           <B>--parse</B>
+           <B>--require 'module ...'</B>
+           <B>--search ejsPath</B>
+           <B>--standard</B>
+           <B>--strict</B>
+           <B>--version</B>
+           <B>--warn level</B>
+           <B>files...</B>
 
-<b>description</b>
-       the  <b>ejsc </b>command compiles ejscript programs to produce ejscript module
-       files containing byte code.  the module files may then be run  via  the
-       <b>ejs </b>shell command.
+<B>DESCRIPTION</B>
+       The  <B>ejsc </B>command compiles Ejscript programs to produce Ejscript module
+       files containing byte code.  The module files may then be run  via  the
+       <B>ejs </B>shell command.
 
-       the  <b>ejsc  </b>command  is  both  a compiler and link editor. inputs can be
-       either ejscript source files or ejscript modules that  have  come  from
-       previous  invocations  of the <b>ejsc </b>command. outputs will be one or more
-       ejscript module files that contain declarations and byte code.
+       The  <B>ejsc  </B>command  is  both  a compiler and link editor. Inputs can be
+       either Ejscript source files or Ejscript modules that  have  come  from
+       previous  invocations  of the <B>ejsc </B>command. Outputs will be one or more
+       Ejscript module files that contain declarations and byte code.
 
-       an output module file will be created for each ejscript  module  direc-
-       tive encountered during compilation. a module file will also be created
+       An output module file will be created for each Ejscript  module  direc-
+       tive encountered during compilation. A module file will also be created
        for any global variables or functions declared outside a module  direc-
-       tive. these global declarations will go into the <b>default </b>module that is
-       specially reserved for global declarations.  each module file  will  be
-       named according to the module directive name, but with a <b>.mod </b>extension
+       tive. These global declarations will go into the <B>default </B>module that is
+       specially reserved for global declarations.  Each module file  will  be
+       named according to the module directive name, but with a <B>.mod </B>extension
        appended.
 
-<b>linking</b>
-       if <b>ejsc </b>is invoked with the --out switch, all  input  scripts,  modules
+<B>LINKING</B>
+       If <B>ejsc </B>is invoked with the --out switch, all  input  scripts,  modules
        and  any other dependent modules are merged together into a single out-
-       put module. the modules retain their logical naming, but are emitted in
-       a  single  output module file. when that module file is loaded, all the
-       contained modules will be available to the program.  this  creates  not
+       put module. The modules retain their logical naming, but are emitted in
+       a  single  output module file. When that module file is loaded, all the
+       contained modules will be available to the program.  This  creates  not
        only  a  convenient  way  to  package an entire application as a single
        file, it also permits many optimizations by merging the entire applica-
        tion and its dependent modules into a single module.
 
-<b>binding</b>
-       the  <b>ejsc </b>compiler will attempt to early-bind all possible variable and
-       function references. binding means resolving references to the underly-
-       ing  storage  for  properties and functions. doing this at compile time
+<B>BINDING</B>
+       The  <B>ejsc </B>compiler will attempt to early-bind all possible variable and
+       function references. Binding means resolving references to the underly-
+       ing  storage  for  properties and functions. Doing this at compile time
        usually results in much faster execution at run-time.
 
-       when using the --out switch, the compiler  can  early-bind  all  global
+       When using the --out switch, the compiler  can  early-bind  all  global
        variables,  functions  and type references, resulting in a much smaller
-       and faster application. however, you must not subsequently  load  other
-       modules  that  also  have  global  declarations. otherwise the ejscript
-       loader will throw an exception. consequently,  the  --out  switch  must
+       and faster application. However, you must not subsequently  load  other
+       modules  that  also  have  global  declarations. Otherwise the Ejscript
+       loader will throw an exception. Consequently,  the  --out  switch  must
        only  be used to create a complete application including all the appli-
        cation's required modules.
 
-<b>compliance</b>
-       ejscript is fully compliant with the javascript  (ecma-262  3.x)  stan-
+<B>COMPLIANCE</B>
+       Ejscript is fully compliant with the JavaScript  (ECMA-262  3.X)  stan-
        dards,  but  it also offers a set of enhancements and fixes designed to
-       improve the language and correct some  longstanding  javascript  design
+       improve the language and correct some  longstanding  JavaScript  design
        issues.
 
-<b>options</b>
-       <b>--bind </b>bind  global  variable  declarations  into slot references. this
-              results in faster more compact code. however,  only  one  module
+<B>OPTIONS</B>
+       <B>--bind </B>Bind  global  variable  declarations  into slot references. This
+              results in faster more compact code. However,  only  one  module
               can have its global variables bound.
 
-       <b>--debug</b>
-              generate  symbolic  debug  instructions.  this  permits symbolic
-              debugging of ejscript programs and enables exception stack back-
+       <B>--debug</B>
+              Generate  symbolic  debug  instructions.  This  permits symbolic
+              debugging of Ejscript programs and enables exception stack back-
               traces to include line number information.
 
-       <b>--doc  </b>include  documentation  strings from input scripts in the output
-              modules. the <b>ejsmod </b>command can then generate html documentation
-              using these doc strings. the format of the doc strings resembles
-              that of javadoc.
+       <B>--doc  </B>Include  documentation  strings from input scripts in the output
+              modules. The <B>ejsmod </B>command can then generate HTML documentation
+              using these doc strings. The format of the doc strings resembles
+              that of Javadoc.
 
-       <b>--merge</b>
-              merge all input files and modules together into a single  output
-              module. this option acts like a link-editor combining all inputs
-              together. useful if you want to distribute your application as a
+       <B>--merge</B>
+              Merge all input files and modules together into a single  output
+              module. This option acts like a link-editor combining all inputs
+              together. Useful if you want to distribute your application as a
               single module file.
 
-       <b>--optimize level</b>
-              set  the code optimization level. level values must be between 0
-              (least) and 9 (most). default is 9.
+       <B>--optimize level</B>
+              Set  the code optimization level. Level values must be between 0
+              (least) and 9 (most). Default is 9.
 
-       <b>--parse</b>
-              just parse the source scripts. don't verify, execute or generate
-              output. useful to check the script syntax only.
+       <B>--parse</B>
+              Just parse the source scripts. Don't verify, execute or generate
+              output. Useful to check the script syntax only.
 
-       <b>--require 'module ...'</b>
-              list of modules to preload before compiling input files.
+       <B>--require 'module ...'</B>
+              List of modules to preload before compiling input files.
 
-       <b>--search ejspath</b>
-              set  the  module search path. the module search path is a set of
-              directories that the <b>ejsc </b>command will  use  when  locating  and
-              loading ejscript modules.  the search path will always have some
-              system directories appended to  the  end.  these  include  paths
-              specified  via  the  <b>ejspath </b>environment variable and key system
-              directories such as the ejscript system module directory and the
-              directory containing the <b>ejsc </b>command.
+       <B>--search ejsPath</B>
+              Set  the  module search path. The module search path is a set of
+              directories that the <B>ejsc </B>command will  use  when  locating  and
+              loading Ejscript modules.  The search path will always have some
+              system directories appended to  the  end.  These  include  paths
+              specified  via  the  <B>EJSPATH </B>environment variable and key system
+              directories such as the Ejscript system module directory and the
+              directory containing the <B>ejsc </B>command.
 
-              the  search  path  value is similar in format to the system path
-              variable format.  on windows, path segments are separated by ";"
-              and on linux, unix, freebsd and mac, the path segments are sepa-
+              The  search  path  value is similar in format to the system PATH
+              variable format.  On windows, path segments are separated by ";"
+              and on Linux, Unix, FreeBSD and MAC, the path segments are sepa-
               rated by ":" delimiters.
 
-              given a module named "a.b.c" in a script, <b>ejsc </b>will use the fol-
+              Given a module named "a.b.c" in a script, <B>ejsc </B>will use the fol-
               lowing search strategy to locate the module:
 
-              1. search for a module file named "a.b.c.mod"
+              1. Search for a module file named "a.b.c.mod"
 
-              2. search for a module file named "a/b/c.mod"
+              2. Search for a module file named "a/b/c.mod"
 
-              3. search for a module file named "a.b.c.mod" in the search path
+              3. Search for a module file named "a.b.c.mod" in the search path
 
-              4. search for a module file named c.mod in the search path
+              4. Search for a module file named c.mod in the search path
 
-       <b>--standard</b>
-              run scripts in standard  mode.  ejscript  supports  two  parsing
-              modes: strict and standard. standard mode does not require vari-
+       <B>--standard</B>
+              Run scripts in standard  mode.  Ejscript  supports  two  parsing
+              modes: strict and standard. Standard mode does not require vari-
               ables be declared and typed before use.
 
-       <b>--strict</b>
-              run scripts in standard  mode.  ejscript  supports  two  parsing
-              modes:  strict and standard. strict mode requires that all vari-
+       <B>--strict</B>
+              Run scripts in standard  mode.  Ejscript  supports  two  parsing
+              modes:  strict and standard. Strict mode requires that all vari-
               ables be declared and typed.
 
-       <b>--version</b>
-              print the <b>ejsc </b>command version and exit.
+       <B>--version</B>
+              Print the <B>ejsc </B>command version and exit.
 
-       <b>--warn level</b>
-              set the compiler warning verbosity level. level values  must  be
-              between 0 (least verbose) and 9 (most). default is 0.
+       <B>--warn level</B>
+              Set the compiler warning verbosity level. Level values  must  be
+              between 0 (least verbose) and 9 (most). Default is 0.
 
-<b>background</b>
-       ejscript  is  an enhanced implementation of the javascript language for
+<B>BACKGROUND</B>
+       Ejscript  is  an enhanced implementation of the JavaScript language for
        use in embedded applications such as web servers, embedded  and  mobile
-       devices.  it is especially suited for server-side javascript web appli-
+       devices.  It is especially suited for Server-Side JavaScript web appli-
        cations.
 
-       ejscript is a dynamic, interpreted, object-oriented scripting  language
+       Ejscript is a dynamic, interpreted, object-oriented scripting  language
        that supports classes, objects, exceptions, statements, expressions and
        a powerful suite of data types.
 
-<b>reporting bugs</b>
-       report bugs to dev@embedthis.com.
+<B>REPORTING BUGS</B>
+       Report bugs to dev@embedthis.com.
 
-<b>copyright</b>
-       copyright (c) 2004-2014 embedthis software.  ejscript is a trademark of
-       embedthis software.
+<B>COPYRIGHT</B>
+       Copyright (C) 2004-2014 Embedthis Software.  Ejscript is a trademark of
+       Embedthis Software.
 
-<b>see also</b>
+<B>SEE ALSO</B>
        ejs, ejsmod
 
-ejsc                              march 2014                             ec(1)
-</pre></body>
+ejsc                              March 2014                             EC(1)
+</PRE></BODY>
 </html>

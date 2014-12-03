@@ -1,4 +1,4 @@
-/*
+/**
     Global.es -- Global variables, namespaces and functions.
 
     Copyright (c) All Rights Reserved. See details at the end of the file.

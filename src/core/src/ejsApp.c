@@ -153,7 +153,7 @@ static EjsAny *app_env(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
     result = ejsCreatePot(ejs, ESV(Object), 0);
     for (ep = environ; ep && *ep; ep++) {
         pair = sclone(*ep);
-        key = stok(pair, "=", &value);
+        key = ssplit(pair, "=", &value);
         ejsSetPropertyByName(ejs, result, EN(key), ejsCreateStringFromAsc(ejs, value));
     }
     return result;

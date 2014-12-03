@@ -3,7 +3,7 @@
 #
 
 NAME                  := ejs
-VERSION               := 2.5.0
+VERSION               := 2.5.1
 PROFILE               ?= default
 ARCH                  ?= $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/')
 CC_ARCH               ?= $(shell echo $(ARCH) | sed 's/x86/i686/;s/x64/x86_64/')
@@ -14,9 +14,12 @@ BUILD                 ?= build/$(CONFIG)
 LBIN                  ?= $(BUILD)/bin
 PATH                  := $(LBIN):$(PATH)
 
-ME_COM_EST            ?= 1
+ME_COM_COMPILER       ?= 1
+ME_COM_EST            ?= 0
 ME_COM_HTTP           ?= 1
-ME_COM_OPENSSL        ?= 0
+ME_COM_LIB            ?= 1
+ME_COM_MPR            ?= 1
+ME_COM_OPENSSL        ?= 1
 ME_COM_OSDEP          ?= 1
 ME_COM_PCRE           ?= 1
 ME_COM_SQLITE         ?= 1
@@ -25,15 +28,20 @@ ME_COM_VXWORKS        ?= 0
 ME_COM_WINSDK         ?= 1
 ME_COM_ZLIB           ?= 1
 
+ME_COM_OPENSSL_PATH   ?= "/usr"
+
 ifeq ($(ME_COM_EST),1)
     ME_COM_SSL := 1
+endif
+ifeq ($(ME_COM_LIB),1)
+    ME_COM_COMPILER := 1
 endif
 ifeq ($(ME_COM_OPENSSL),1)
     ME_COM_SSL := 1
 endif
 
 CFLAGS                += -fPIC -w
-DFLAGS                += -D_REENTRANT -DPIC $(patsubst %,-D%,$(filter ME_%,$(MAKEFLAGS))) -DME_COM_EST=$(ME_COM_EST) -DME_COM_HTTP=$(ME_COM_HTTP) -DME_COM_OPENSSL=$(ME_COM_OPENSSL) -DME_COM_OSDEP=$(ME_COM_OSDEP) -DME_COM_PCRE=$(ME_COM_PCRE) -DME_COM_SQLITE=$(ME_COM_SQLITE) -DME_COM_SSL=$(ME_COM_SSL) -DME_COM_VXWORKS=$(ME_COM_VXWORKS) -DME_COM_WINSDK=$(ME_COM_WINSDK) -DME_COM_ZLIB=$(ME_COM_ZLIB) 
+DFLAGS                += -D_REENTRANT -DPIC $(patsubst %,-D%,$(filter ME_%,$(MAKEFLAGS))) -DME_COM_COMPILER=$(ME_COM_COMPILER) -DME_COM_EST=$(ME_COM_EST) -DME_COM_HTTP=$(ME_COM_HTTP) -DME_COM_LIB=$(ME_COM_LIB) -DME_COM_MPR=$(ME_COM_MPR) -DME_COM_OPENSSL=$(ME_COM_OPENSSL) -DME_COM_OSDEP=$(ME_COM_OSDEP) -DME_COM_PCRE=$(ME_COM_PCRE) -DME_COM_SQLITE=$(ME_COM_SQLITE) -DME_COM_SSL=$(ME_COM_SSL) -DME_COM_VXWORKS=$(ME_COM_VXWORKS) -DME_COM_WINSDK=$(ME_COM_WINSDK) -DME_COM_ZLIB=$(ME_COM_ZLIB) 
 IFLAGS                += "-I$(BUILD)/inc"
 LDFLAGS               += '-rdynamic' '-Wl,--enable-new-dtags' '-Wl,-rpath,$$ORIGIN/'
 LIBPATHS              += -L$(BUILD)/bin
@@ -69,6 +77,7 @@ ME_CACHE_PREFIX       ?= $(ME_ROOT_PREFIX)/var/spool/$(NAME)/cache
 ME_SRC_PREFIX         ?= $(ME_ROOT_PREFIX)$(NAME)-$(VERSION)
 
 
+TARGETS               += init
 TARGETS               += $(BUILD)/bin/ejs
 TARGETS               += $(BUILD)/bin/ejs.db.mapper.mod
 TARGETS               += $(BUILD)/bin/ejs.db.sqlite.mod
@@ -81,9 +90,6 @@ TARGETS               += $(BUILD)/bin/ca.crt
 TARGETS               += $(BUILD)/bin/libejs.db.sqlite.so
 TARGETS               += $(BUILD)/bin/libejs.web.so
 TARGETS               += $(BUILD)/bin/libejs.zlib.so
-ifeq ($(ME_COM_EST),1)
-    TARGETS           += $(BUILD)/bin/libest.so
-endif
 TARGETS               += $(BUILD)/bin/libmprssl.so
 TARGETS               += $(BUILD)/bin/ejsman
 TARGETS               += $(BUILD)/bin/mvc
@@ -190,7 +196,6 @@ clean:
 	rm -f "$(BUILD)/obj/ejsc.o"
 	rm -f "$(BUILD)/obj/ejsmod.o"
 	rm -f "$(BUILD)/obj/ejsrun.o"
-	rm -f "$(BUILD)/obj/estLib.o"
 	rm -f "$(BUILD)/obj/httpLib.o"
 	rm -f "$(BUILD)/obj/listing.o"
 	rm -f "$(BUILD)/obj/makerom.o"
@@ -211,7 +216,6 @@ clean:
 	rm -f "$(BUILD)/bin/libejs.db.sqlite.so"
 	rm -f "$(BUILD)/bin/libejs.web.so"
 	rm -f "$(BUILD)/bin/libejs.zlib.so"
-	rm -f "$(BUILD)/bin/libest.so"
 	rm -f "$(BUILD)/bin/libhttp.so"
 	rm -f "$(BUILD)/bin/libmpr.so"
 	rm -f "$(BUILD)/bin/libmprssl.so"
@@ -229,11 +233,21 @@ clobber: clean
 	rm -fr ./$(BUILD)
 
 #
+#   init
+#
+
+init: $(DEPS_1)
+	if [ ! -d /usr/include/openssl ] ; then echo ; \
+	echo Install libssl-dev to get /usr/include/openssl ; \
+	exit 255 ; \
+	fi
+
+#
 #   ejs.cache.local.slots.h
 #
-DEPS_1 += src/slots/ejs.cache.local.slots.h
+DEPS_2 += src/slots/ejs.cache.local.slots.h
 
-$(BUILD)/inc/ejs.cache.local.slots.h: $(DEPS_1)
+$(BUILD)/inc/ejs.cache.local.slots.h: $(DEPS_2)
 	@echo '      [Copy] $(BUILD)/inc/ejs.cache.local.slots.h'
 	mkdir -p "$(BUILD)/inc"
 	cp src/slots/ejs.cache.local.slots.h $(BUILD)/inc/ejs.cache.local.slots.h
@@ -241,9 +255,9 @@ $(BUILD)/inc/ejs.cache.local.slots.h: $(DEPS_1)
 #
 #   ejs.db.sqlite.slots.h
 #
-DEPS_2 += src/slots/ejs.db.sqlite.slots.h
+DEPS_3 += src/slots/ejs.db.sqlite.slots.h
 
-$(BUILD)/inc/ejs.db.sqlite.slots.h: $(DEPS_2)
+$(BUILD)/inc/ejs.db.sqlite.slots.h: $(DEPS_3)
 	@echo '      [Copy] $(BUILD)/inc/ejs.db.sqlite.slots.h'
 	mkdir -p "$(BUILD)/inc"
 	cp src/slots/ejs.db.sqlite.slots.h $(BUILD)/inc/ejs.db.sqlite.slots.h
@@ -252,15 +266,15 @@ $(BUILD)/inc/ejs.db.sqlite.slots.h: $(DEPS_2)
 #   me.h
 #
 
-$(BUILD)/inc/me.h: $(DEPS_3)
+$(BUILD)/inc/me.h: $(DEPS_4)
 
 #
 #   osdep.h
 #
-DEPS_4 += src/paks/osdep/osdep.h
-DEPS_4 += $(BUILD)/inc/me.h
+DEPS_5 += src/paks/osdep/osdep.h
+DEPS_5 += $(BUILD)/inc/me.h
 
-$(BUILD)/inc/osdep.h: $(DEPS_4)
+$(BUILD)/inc/osdep.h: $(DEPS_5)
 	@echo '      [Copy] $(BUILD)/inc/osdep.h'
 	mkdir -p "$(BUILD)/inc"
 	cp src/paks/osdep/osdep.h $(BUILD)/inc/osdep.h
@@ -268,11 +282,11 @@ $(BUILD)/inc/osdep.h: $(DEPS_4)
 #
 #   mpr.h
 #
-DEPS_5 += src/paks/mpr/mpr.h
-DEPS_5 += $(BUILD)/inc/me.h
-DEPS_5 += $(BUILD)/inc/osdep.h
+DEPS_6 += src/paks/mpr/mpr.h
+DEPS_6 += $(BUILD)/inc/me.h
+DEPS_6 += $(BUILD)/inc/osdep.h
 
-$(BUILD)/inc/mpr.h: $(DEPS_5)
+$(BUILD)/inc/mpr.h: $(DEPS_6)
 	@echo '      [Copy] $(BUILD)/inc/mpr.h'
 	mkdir -p "$(BUILD)/inc"
 	cp src/paks/mpr/mpr.h $(BUILD)/inc/mpr.h
@@ -280,10 +294,10 @@ $(BUILD)/inc/mpr.h: $(DEPS_5)
 #
 #   http.h
 #
-DEPS_6 += src/paks/http/http.h
-DEPS_6 += $(BUILD)/inc/mpr.h
+DEPS_7 += src/paks/http/http.h
+DEPS_7 += $(BUILD)/inc/mpr.h
 
-$(BUILD)/inc/http.h: $(DEPS_6)
+$(BUILD)/inc/http.h: $(DEPS_7)
 	@echo '      [Copy] $(BUILD)/inc/http.h'
 	mkdir -p "$(BUILD)/inc"
 	cp src/paks/http/http.h $(BUILD)/inc/http.h
@@ -292,20 +306,20 @@ $(BUILD)/inc/http.h: $(DEPS_6)
 #   ejsByteCode.h
 #
 
-src/ejsByteCode.h: $(DEPS_7)
+src/ejsByteCode.h: $(DEPS_8)
 
 #
 #   ejsByteCodeTable.h
 #
 
-src/ejsByteCodeTable.h: $(DEPS_8)
+src/ejsByteCodeTable.h: $(DEPS_9)
 
 #
 #   ejs.slots.h
 #
-DEPS_9 += src/slots/ejs.slots.h
+DEPS_10 += src/slots/ejs.slots.h
 
-$(BUILD)/inc/ejs.slots.h: $(DEPS_9)
+$(BUILD)/inc/ejs.slots.h: $(DEPS_10)
 	@echo '      [Copy] $(BUILD)/inc/ejs.slots.h'
 	mkdir -p "$(BUILD)/inc"
 	cp src/slots/ejs.slots.h $(BUILD)/inc/ejs.slots.h
@@ -314,20 +328,20 @@ $(BUILD)/inc/ejs.slots.h: $(DEPS_9)
 #   ejsCustomize.h
 #
 
-src/ejsCustomize.h: $(DEPS_10)
+src/ejsCustomize.h: $(DEPS_11)
 
 #
 #   ejs.h
 #
-DEPS_11 += src/ejs.h
-DEPS_11 += $(BUILD)/inc/mpr.h
-DEPS_11 += $(BUILD)/inc/http.h
-DEPS_11 += src/ejsByteCode.h
-DEPS_11 += src/ejsByteCodeTable.h
-DEPS_11 += $(BUILD)/inc/ejs.slots.h
-DEPS_11 += src/ejsCustomize.h
+DEPS_12 += src/ejs.h
+DEPS_12 += $(BUILD)/inc/mpr.h
+DEPS_12 += $(BUILD)/inc/http.h
+DEPS_12 += src/ejsByteCode.h
+DEPS_12 += src/ejsByteCodeTable.h
+DEPS_12 += $(BUILD)/inc/ejs.slots.h
+DEPS_12 += src/ejsCustomize.h
 
-$(BUILD)/inc/ejs.h: $(DEPS_11)
+$(BUILD)/inc/ejs.h: $(DEPS_12)
 	@echo '      [Copy] $(BUILD)/inc/ejs.h'
 	mkdir -p "$(BUILD)/inc"
 	cp src/ejs.h $(BUILD)/inc/ejs.h
@@ -335,9 +349,9 @@ $(BUILD)/inc/ejs.h: $(DEPS_11)
 #
 #   ejs.web.slots.h
 #
-DEPS_12 += src/slots/ejs.web.slots.h
+DEPS_13 += src/slots/ejs.web.slots.h
 
-$(BUILD)/inc/ejs.web.slots.h: $(DEPS_12)
+$(BUILD)/inc/ejs.web.slots.h: $(DEPS_13)
 	@echo '      [Copy] $(BUILD)/inc/ejs.web.slots.h'
 	mkdir -p "$(BUILD)/inc"
 	cp src/slots/ejs.web.slots.h $(BUILD)/inc/ejs.web.slots.h
@@ -345,9 +359,9 @@ $(BUILD)/inc/ejs.web.slots.h: $(DEPS_12)
 #
 #   ejs.zlib.slots.h
 #
-DEPS_13 += src/slots/ejs.zlib.slots.h
+DEPS_14 += src/slots/ejs.zlib.slots.h
 
-$(BUILD)/inc/ejs.zlib.slots.h: $(DEPS_13)
+$(BUILD)/inc/ejs.zlib.slots.h: $(DEPS_14)
 	@echo '      [Copy] $(BUILD)/inc/ejs.zlib.slots.h'
 	mkdir -p "$(BUILD)/inc"
 	cp src/slots/ejs.zlib.slots.h $(BUILD)/inc/ejs.zlib.slots.h
@@ -355,9 +369,9 @@ $(BUILD)/inc/ejs.zlib.slots.h: $(DEPS_13)
 #
 #   ejsByteCode.h
 #
-DEPS_14 += src/ejsByteCode.h
+DEPS_15 += src/ejsByteCode.h
 
-$(BUILD)/inc/ejsByteCode.h: $(DEPS_14)
+$(BUILD)/inc/ejsByteCode.h: $(DEPS_15)
 	@echo '      [Copy] $(BUILD)/inc/ejsByteCode.h'
 	mkdir -p "$(BUILD)/inc"
 	cp src/ejsByteCode.h $(BUILD)/inc/ejsByteCode.h
@@ -365,9 +379,9 @@ $(BUILD)/inc/ejsByteCode.h: $(DEPS_14)
 #
 #   ejsByteCodeTable.h
 #
-DEPS_15 += src/ejsByteCodeTable.h
+DEPS_16 += src/ejsByteCodeTable.h
 
-$(BUILD)/inc/ejsByteCodeTable.h: $(DEPS_15)
+$(BUILD)/inc/ejsByteCodeTable.h: $(DEPS_16)
 	@echo '      [Copy] $(BUILD)/inc/ejsByteCodeTable.h'
 	mkdir -p "$(BUILD)/inc"
 	cp src/ejsByteCodeTable.h $(BUILD)/inc/ejsByteCodeTable.h
@@ -376,15 +390,15 @@ $(BUILD)/inc/ejsByteCodeTable.h: $(DEPS_15)
 #   ejs.h
 #
 
-src/ejs.h: $(DEPS_16)
+src/ejs.h: $(DEPS_17)
 
 #
 #   ejsCompiler.h
 #
-DEPS_17 += src/ejsCompiler.h
-DEPS_17 += src/ejs.h
+DEPS_18 += src/ejsCompiler.h
+DEPS_18 += src/ejs.h
 
-$(BUILD)/inc/ejsCompiler.h: $(DEPS_17)
+$(BUILD)/inc/ejsCompiler.h: $(DEPS_18)
 	@echo '      [Copy] $(BUILD)/inc/ejsCompiler.h'
 	mkdir -p "$(BUILD)/inc"
 	cp src/ejsCompiler.h $(BUILD)/inc/ejsCompiler.h
@@ -392,9 +406,9 @@ $(BUILD)/inc/ejsCompiler.h: $(DEPS_17)
 #
 #   ejsCustomize.h
 #
-DEPS_18 += src/ejsCustomize.h
+DEPS_19 += src/ejsCustomize.h
 
-$(BUILD)/inc/ejsCustomize.h: $(DEPS_18)
+$(BUILD)/inc/ejsCustomize.h: $(DEPS_19)
 	@echo '      [Copy] $(BUILD)/inc/ejsCustomize.h'
 	mkdir -p "$(BUILD)/inc"
 	cp src/ejsCustomize.h $(BUILD)/inc/ejsCustomize.h
@@ -402,9 +416,9 @@ $(BUILD)/inc/ejsCustomize.h: $(DEPS_18)
 #
 #   ejsWeb.h
 #
-DEPS_19 += src/ejs.web/ejsWeb.h
+DEPS_20 += src/ejs.web/ejsWeb.h
 
-$(BUILD)/inc/ejsWeb.h: $(DEPS_19)
+$(BUILD)/inc/ejsWeb.h: $(DEPS_20)
 	@echo '      [Copy] $(BUILD)/inc/ejsWeb.h'
 	mkdir -p "$(BUILD)/inc"
 	cp src/ejs.web/ejsWeb.h $(BUILD)/inc/ejsWeb.h
@@ -412,22 +426,12 @@ $(BUILD)/inc/ejsWeb.h: $(DEPS_19)
 #
 #   ejsmod.h
 #
-DEPS_20 += src/cmd/ejsmod.h
+DEPS_21 += src/cmd/ejsmod.h
 
-$(BUILD)/inc/ejsmod.h: $(DEPS_20)
+$(BUILD)/inc/ejsmod.h: $(DEPS_21)
 	@echo '      [Copy] $(BUILD)/inc/ejsmod.h'
 	mkdir -p "$(BUILD)/inc"
 	cp src/cmd/ejsmod.h $(BUILD)/inc/ejsmod.h
-
-#
-#   est.h
-#
-DEPS_21 += src/paks/est/est.h
-
-$(BUILD)/inc/est.h: $(DEPS_21)
-	@echo '      [Copy] $(BUILD)/inc/est.h'
-	mkdir -p "$(BUILD)/inc"
-	cp src/paks/est/est.h $(BUILD)/inc/est.h
 
 #
 #   pcre.h
@@ -1210,45 +1214,29 @@ $(BUILD)/obj/ejsrun.o: \
 	$(CC) -c -o $(BUILD)/obj/ejsrun.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/cmd/ejsrun.c
 
 #
-#   est.h
-#
-
-src/paks/est/est.h: $(DEPS_99)
-
-#
-#   estLib.o
-#
-DEPS_100 += src/paks/est/est.h
-
-$(BUILD)/obj/estLib.o: \
-    src/paks/est/estLib.c $(DEPS_100)
-	@echo '   [Compile] $(BUILD)/obj/estLib.o'
-	$(CC) -c -o $(BUILD)/obj/estLib.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/paks/est/estLib.c
-
-#
 #   http.h
 #
 
-src/paks/http/http.h: $(DEPS_101)
+src/paks/http/http.h: $(DEPS_99)
 
 #
 #   httpLib.o
 #
-DEPS_102 += src/paks/http/http.h
+DEPS_100 += src/paks/http/http.h
 
 $(BUILD)/obj/httpLib.o: \
-    src/paks/http/httpLib.c $(DEPS_102)
+    src/paks/http/httpLib.c $(DEPS_100)
 	@echo '   [Compile] $(BUILD)/obj/httpLib.o'
 	$(CC) -c -o $(BUILD)/obj/httpLib.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/paks/http/httpLib.c
 
 #
 #   listing.o
 #
-DEPS_103 += src/cmd/ejsmod.h
-DEPS_103 += $(BUILD)/inc/ejsByteCodeTable.h
+DEPS_101 += src/cmd/ejsmod.h
+DEPS_101 += $(BUILD)/inc/ejsByteCodeTable.h
 
 $(BUILD)/obj/listing.o: \
-    src/cmd/listing.c $(DEPS_103)
+    src/cmd/listing.c $(DEPS_101)
 	@echo '   [Compile] $(BUILD)/obj/listing.o'
 	$(CC) -c -o $(BUILD)/obj/listing.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/cmd/listing.c
 
@@ -1256,72 +1244,72 @@ $(BUILD)/obj/listing.o: \
 #   mpr.h
 #
 
-src/paks/mpr/mpr.h: $(DEPS_104)
+src/paks/mpr/mpr.h: $(DEPS_102)
 
 #
 #   makerom.o
 #
-DEPS_105 += src/paks/mpr/mpr.h
+DEPS_103 += src/paks/mpr/mpr.h
 
 $(BUILD)/obj/makerom.o: \
-    src/paks/mpr/makerom.c $(DEPS_105)
+    src/paks/mpr/makerom.c $(DEPS_103)
 	@echo '   [Compile] $(BUILD)/obj/makerom.o'
 	$(CC) -c -o $(BUILD)/obj/makerom.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/paks/mpr/makerom.c
 
 #
 #   manager.o
 #
-DEPS_106 += src/paks/mpr/mpr.h
+DEPS_104 += src/paks/mpr/mpr.h
 
 $(BUILD)/obj/manager.o: \
-    src/paks/mpr/manager.c $(DEPS_106)
+    src/paks/mpr/manager.c $(DEPS_104)
 	@echo '   [Compile] $(BUILD)/obj/manager.o'
 	$(CC) -c -o $(BUILD)/obj/manager.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/paks/mpr/manager.c
 
 #
 #   mprLib.o
 #
-DEPS_107 += src/paks/mpr/mpr.h
+DEPS_105 += src/paks/mpr/mpr.h
 
 $(BUILD)/obj/mprLib.o: \
-    src/paks/mpr/mprLib.c $(DEPS_107)
+    src/paks/mpr/mprLib.c $(DEPS_105)
 	@echo '   [Compile] $(BUILD)/obj/mprLib.o'
 	$(CC) -c -o $(BUILD)/obj/mprLib.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/paks/mpr/mprLib.c
 
 #
 #   mprSsl.o
 #
-DEPS_108 += src/paks/mpr/mpr.h
+DEPS_106 += src/paks/mpr/mpr.h
 
 $(BUILD)/obj/mprSsl.o: \
-    src/paks/mpr/mprSsl.c $(DEPS_108)
+    src/paks/mpr/mprSsl.c $(DEPS_106)
 	@echo '   [Compile] $(BUILD)/obj/mprSsl.o'
-	$(CC) -c -o $(BUILD)/obj/mprSsl.o $(CFLAGS) $(DFLAGS) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)/include" src/paks/mpr/mprSsl.c
+	$(CC) -c -o $(BUILD)/obj/mprSsl.o $(CFLAGS) $(DFLAGS) -DME_COM_OPENSSL_PATH="$(ME_COM_OPENSSL_PATH)" $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)/include" src/paks/mpr/mprSsl.c
 
 #
 #   pcre.h
 #
 
-src/paks/pcre/pcre.h: $(DEPS_109)
+src/paks/pcre/pcre.h: $(DEPS_107)
 
 #
 #   pcre.o
 #
-DEPS_110 += $(BUILD)/inc/me.h
-DEPS_110 += src/paks/pcre/pcre.h
+DEPS_108 += $(BUILD)/inc/me.h
+DEPS_108 += src/paks/pcre/pcre.h
 
 $(BUILD)/obj/pcre.o: \
-    src/paks/pcre/pcre.c $(DEPS_110)
+    src/paks/pcre/pcre.c $(DEPS_108)
 	@echo '   [Compile] $(BUILD)/obj/pcre.o'
 	$(CC) -c -o $(BUILD)/obj/pcre.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/paks/pcre/pcre.c
 
 #
 #   slotGen.o
 #
-DEPS_111 += src/cmd/ejsmod.h
+DEPS_109 += src/cmd/ejsmod.h
 
 $(BUILD)/obj/slotGen.o: \
-    src/cmd/slotGen.c $(DEPS_111)
+    src/cmd/slotGen.c $(DEPS_109)
 	@echo '   [Compile] $(BUILD)/obj/slotGen.o'
 	$(CC) -c -o $(BUILD)/obj/slotGen.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/cmd/slotGen.c
 
@@ -1329,27 +1317,27 @@ $(BUILD)/obj/slotGen.o: \
 #   sqlite3.h
 #
 
-src/paks/sqlite/sqlite3.h: $(DEPS_112)
+src/paks/sqlite/sqlite3.h: $(DEPS_110)
 
 #
 #   sqlite.o
 #
-DEPS_113 += $(BUILD)/inc/me.h
-DEPS_113 += src/paks/sqlite/sqlite3.h
+DEPS_111 += $(BUILD)/inc/me.h
+DEPS_111 += src/paks/sqlite/sqlite3.h
 
 $(BUILD)/obj/sqlite.o: \
-    src/paks/sqlite/sqlite.c $(DEPS_113)
+    src/paks/sqlite/sqlite.c $(DEPS_111)
 	@echo '   [Compile] $(BUILD)/obj/sqlite.o'
 	$(CC) -c -o $(BUILD)/obj/sqlite.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/paks/sqlite/sqlite.c
 
 #
 #   sqlite3.o
 #
-DEPS_114 += $(BUILD)/inc/me.h
-DEPS_114 += src/paks/sqlite/sqlite3.h
+DEPS_112 += $(BUILD)/inc/me.h
+DEPS_112 += src/paks/sqlite/sqlite3.h
 
 $(BUILD)/obj/sqlite3.o: \
-    src/paks/sqlite/sqlite3.c $(DEPS_114)
+    src/paks/sqlite/sqlite3.c $(DEPS_112)
 	@echo '   [Compile] $(BUILD)/obj/sqlite3.o'
 	$(CC) -c -o $(BUILD)/obj/sqlite3.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/paks/sqlite/sqlite3.c
 
@@ -1357,16 +1345,16 @@ $(BUILD)/obj/sqlite3.o: \
 #   zlib.h
 #
 
-src/paks/zlib/zlib.h: $(DEPS_115)
+src/paks/zlib/zlib.h: $(DEPS_113)
 
 #
 #   zlib.o
 #
-DEPS_116 += $(BUILD)/inc/me.h
-DEPS_116 += src/paks/zlib/zlib.h
+DEPS_114 += $(BUILD)/inc/me.h
+DEPS_114 += src/paks/zlib/zlib.h
 
 $(BUILD)/obj/zlib.o: \
-    src/paks/zlib/zlib.c $(DEPS_116)
+    src/paks/zlib/zlib.c $(DEPS_114)
 	@echo '   [Compile] $(BUILD)/obj/zlib.o'
 	$(CC) -c -o $(BUILD)/obj/zlib.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/paks/zlib/zlib.c
 
@@ -1374,16 +1362,16 @@ $(BUILD)/obj/zlib.o: \
 #   slots
 #
 
-slots: $(DEPS_117)
+slots: $(DEPS_115)
 
 #
 #   libmpr
 #
-DEPS_118 += $(BUILD)/inc/osdep.h
-DEPS_118 += $(BUILD)/inc/mpr.h
-DEPS_118 += $(BUILD)/obj/mprLib.o
+DEPS_116 += $(BUILD)/inc/osdep.h
+DEPS_116 += $(BUILD)/inc/mpr.h
+DEPS_116 += $(BUILD)/obj/mprLib.o
 
-$(BUILD)/bin/libmpr.so: $(DEPS_118)
+$(BUILD)/bin/libmpr.so: $(DEPS_116)
 	@echo '      [Link] $(BUILD)/bin/libmpr.so'
 	$(CC) -shared -o $(BUILD)/bin/libmpr.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/mprLib.o" $(LIBS) 
 
@@ -1391,10 +1379,10 @@ ifeq ($(ME_COM_PCRE),1)
 #
 #   libpcre
 #
-DEPS_119 += $(BUILD)/inc/pcre.h
-DEPS_119 += $(BUILD)/obj/pcre.o
+DEPS_117 += $(BUILD)/inc/pcre.h
+DEPS_117 += $(BUILD)/obj/pcre.o
 
-$(BUILD)/bin/libpcre.so: $(DEPS_119)
+$(BUILD)/bin/libpcre.so: $(DEPS_117)
 	@echo '      [Link] $(BUILD)/bin/libpcre.so'
 	$(CC) -shared -o $(BUILD)/bin/libpcre.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/pcre.o" $(LIBS) 
 endif
@@ -1403,100 +1391,138 @@ ifeq ($(ME_COM_HTTP),1)
 #
 #   libhttp
 #
-DEPS_120 += $(BUILD)/bin/libmpr.so
+DEPS_118 += $(BUILD)/bin/libmpr.so
 ifeq ($(ME_COM_PCRE),1)
-    DEPS_120 += $(BUILD)/bin/libpcre.so
+    DEPS_118 += $(BUILD)/bin/libpcre.so
 endif
-DEPS_120 += $(BUILD)/inc/http.h
-DEPS_120 += $(BUILD)/obj/httpLib.o
+DEPS_118 += $(BUILD)/inc/http.h
+DEPS_118 += $(BUILD)/obj/httpLib.o
 
-LIBS_120 += -lmpr
+LIBS_118 += -lmpr
 ifeq ($(ME_COM_PCRE),1)
-    LIBS_120 += -lpcre
+    LIBS_118 += -lpcre
 endif
 
-$(BUILD)/bin/libhttp.so: $(DEPS_120)
+$(BUILD)/bin/libhttp.so: $(DEPS_118)
 	@echo '      [Link] $(BUILD)/bin/libhttp.so'
-	$(CC) -shared -o $(BUILD)/bin/libhttp.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/httpLib.o" $(LIBPATHS_120) $(LIBS_120) $(LIBS_120) $(LIBS) 
+	$(CC) -shared -o $(BUILD)/bin/libhttp.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/httpLib.o" $(LIBPATHS_118) $(LIBS_118) $(LIBS_118) $(LIBS) 
 endif
 
 #
 #   libejs
 #
-DEPS_121 += slots
+DEPS_119 += slots
 ifeq ($(ME_COM_HTTP),1)
-    DEPS_121 += $(BUILD)/bin/libhttp.so
+    DEPS_119 += $(BUILD)/bin/libhttp.so
 endif
-DEPS_121 += $(BUILD)/inc/ejs.cache.local.slots.h
-DEPS_121 += $(BUILD)/inc/ejs.db.sqlite.slots.h
-DEPS_121 += $(BUILD)/inc/ejs.slots.h
-DEPS_121 += $(BUILD)/inc/ejs.web.slots.h
-DEPS_121 += $(BUILD)/inc/ejs.zlib.slots.h
-DEPS_121 += $(BUILD)/inc/ejs.h
-DEPS_121 += $(BUILD)/inc/ejsByteCode.h
-DEPS_121 += $(BUILD)/inc/ejsByteCodeTable.h
-DEPS_121 += $(BUILD)/inc/ejsCompiler.h
-DEPS_121 += $(BUILD)/inc/ejsCustomize.h
-DEPS_121 += $(BUILD)/obj/ecAst.o
-DEPS_121 += $(BUILD)/obj/ecCodeGen.o
-DEPS_121 += $(BUILD)/obj/ecCompiler.o
-DEPS_121 += $(BUILD)/obj/ecLex.o
-DEPS_121 += $(BUILD)/obj/ecModuleWrite.o
-DEPS_121 += $(BUILD)/obj/ecParser.o
-DEPS_121 += $(BUILD)/obj/ecState.o
-DEPS_121 += $(BUILD)/obj/dtoa.o
-DEPS_121 += $(BUILD)/obj/ejsApp.o
-DEPS_121 += $(BUILD)/obj/ejsArray.o
-DEPS_121 += $(BUILD)/obj/ejsBlock.o
-DEPS_121 += $(BUILD)/obj/ejsBoolean.o
-DEPS_121 += $(BUILD)/obj/ejsByteArray.o
-DEPS_121 += $(BUILD)/obj/ejsCache.o
-DEPS_121 += $(BUILD)/obj/ejsCmd.o
-DEPS_121 += $(BUILD)/obj/ejsConfig.o
-DEPS_121 += $(BUILD)/obj/ejsDate.o
-DEPS_121 += $(BUILD)/obj/ejsDebug.o
-DEPS_121 += $(BUILD)/obj/ejsError.o
-DEPS_121 += $(BUILD)/obj/ejsFile.o
-DEPS_121 += $(BUILD)/obj/ejsFileSystem.o
-DEPS_121 += $(BUILD)/obj/ejsFrame.o
-DEPS_121 += $(BUILD)/obj/ejsFunction.o
-DEPS_121 += $(BUILD)/obj/ejsGC.o
-DEPS_121 += $(BUILD)/obj/ejsGlobal.o
-DEPS_121 += $(BUILD)/obj/ejsHttp.o
-DEPS_121 += $(BUILD)/obj/ejsIterator.o
-DEPS_121 += $(BUILD)/obj/ejsJSON.o
-DEPS_121 += $(BUILD)/obj/ejsLocalCache.o
-DEPS_121 += $(BUILD)/obj/ejsMath.o
-DEPS_121 += $(BUILD)/obj/ejsMemory.o
-DEPS_121 += $(BUILD)/obj/ejsMprLog.o
-DEPS_121 += $(BUILD)/obj/ejsNamespace.o
-DEPS_121 += $(BUILD)/obj/ejsNull.o
-DEPS_121 += $(BUILD)/obj/ejsNumber.o
-DEPS_121 += $(BUILD)/obj/ejsObject.o
-DEPS_121 += $(BUILD)/obj/ejsPath.o
-DEPS_121 += $(BUILD)/obj/ejsPot.o
-DEPS_121 += $(BUILD)/obj/ejsRegExp.o
-DEPS_121 += $(BUILD)/obj/ejsSocket.o
-DEPS_121 += $(BUILD)/obj/ejsString.o
-DEPS_121 += $(BUILD)/obj/ejsSystem.o
-DEPS_121 += $(BUILD)/obj/ejsTimer.o
-DEPS_121 += $(BUILD)/obj/ejsType.o
-DEPS_121 += $(BUILD)/obj/ejsUri.o
-DEPS_121 += $(BUILD)/obj/ejsVoid.o
-DEPS_121 += $(BUILD)/obj/ejsWebSocket.o
-DEPS_121 += $(BUILD)/obj/ejsWorker.o
-DEPS_121 += $(BUILD)/obj/ejsXML.o
-DEPS_121 += $(BUILD)/obj/ejsXMLList.o
-DEPS_121 += $(BUILD)/obj/ejsXMLLoader.o
-DEPS_121 += $(BUILD)/obj/ejsByteCode.o
-DEPS_121 += $(BUILD)/obj/ejsException.o
-DEPS_121 += $(BUILD)/obj/ejsHelper.o
-DEPS_121 += $(BUILD)/obj/ejsInterp.o
-DEPS_121 += $(BUILD)/obj/ejsLoader.o
-DEPS_121 += $(BUILD)/obj/ejsModule.o
-DEPS_121 += $(BUILD)/obj/ejsScope.o
-DEPS_121 += $(BUILD)/obj/ejsService.o
+DEPS_119 += $(BUILD)/inc/ejs.cache.local.slots.h
+DEPS_119 += $(BUILD)/inc/ejs.db.sqlite.slots.h
+DEPS_119 += $(BUILD)/inc/ejs.slots.h
+DEPS_119 += $(BUILD)/inc/ejs.web.slots.h
+DEPS_119 += $(BUILD)/inc/ejs.zlib.slots.h
+DEPS_119 += $(BUILD)/inc/ejs.h
+DEPS_119 += $(BUILD)/inc/ejsByteCode.h
+DEPS_119 += $(BUILD)/inc/ejsByteCodeTable.h
+DEPS_119 += $(BUILD)/inc/ejsCompiler.h
+DEPS_119 += $(BUILD)/inc/ejsCustomize.h
+DEPS_119 += $(BUILD)/obj/ecAst.o
+DEPS_119 += $(BUILD)/obj/ecCodeGen.o
+DEPS_119 += $(BUILD)/obj/ecCompiler.o
+DEPS_119 += $(BUILD)/obj/ecLex.o
+DEPS_119 += $(BUILD)/obj/ecModuleWrite.o
+DEPS_119 += $(BUILD)/obj/ecParser.o
+DEPS_119 += $(BUILD)/obj/ecState.o
+DEPS_119 += $(BUILD)/obj/dtoa.o
+DEPS_119 += $(BUILD)/obj/ejsApp.o
+DEPS_119 += $(BUILD)/obj/ejsArray.o
+DEPS_119 += $(BUILD)/obj/ejsBlock.o
+DEPS_119 += $(BUILD)/obj/ejsBoolean.o
+DEPS_119 += $(BUILD)/obj/ejsByteArray.o
+DEPS_119 += $(BUILD)/obj/ejsCache.o
+DEPS_119 += $(BUILD)/obj/ejsCmd.o
+DEPS_119 += $(BUILD)/obj/ejsConfig.o
+DEPS_119 += $(BUILD)/obj/ejsDate.o
+DEPS_119 += $(BUILD)/obj/ejsDebug.o
+DEPS_119 += $(BUILD)/obj/ejsError.o
+DEPS_119 += $(BUILD)/obj/ejsFile.o
+DEPS_119 += $(BUILD)/obj/ejsFileSystem.o
+DEPS_119 += $(BUILD)/obj/ejsFrame.o
+DEPS_119 += $(BUILD)/obj/ejsFunction.o
+DEPS_119 += $(BUILD)/obj/ejsGC.o
+DEPS_119 += $(BUILD)/obj/ejsGlobal.o
+DEPS_119 += $(BUILD)/obj/ejsHttp.o
+DEPS_119 += $(BUILD)/obj/ejsIterator.o
+DEPS_119 += $(BUILD)/obj/ejsJSON.o
+DEPS_119 += $(BUILD)/obj/ejsLocalCache.o
+DEPS_119 += $(BUILD)/obj/ejsMath.o
+DEPS_119 += $(BUILD)/obj/ejsMemory.o
+DEPS_119 += $(BUILD)/obj/ejsMprLog.o
+DEPS_119 += $(BUILD)/obj/ejsNamespace.o
+DEPS_119 += $(BUILD)/obj/ejsNull.o
+DEPS_119 += $(BUILD)/obj/ejsNumber.o
+DEPS_119 += $(BUILD)/obj/ejsObject.o
+DEPS_119 += $(BUILD)/obj/ejsPath.o
+DEPS_119 += $(BUILD)/obj/ejsPot.o
+DEPS_119 += $(BUILD)/obj/ejsRegExp.o
+DEPS_119 += $(BUILD)/obj/ejsSocket.o
+DEPS_119 += $(BUILD)/obj/ejsString.o
+DEPS_119 += $(BUILD)/obj/ejsSystem.o
+DEPS_119 += $(BUILD)/obj/ejsTimer.o
+DEPS_119 += $(BUILD)/obj/ejsType.o
+DEPS_119 += $(BUILD)/obj/ejsUri.o
+DEPS_119 += $(BUILD)/obj/ejsVoid.o
+DEPS_119 += $(BUILD)/obj/ejsWebSocket.o
+DEPS_119 += $(BUILD)/obj/ejsWorker.o
+DEPS_119 += $(BUILD)/obj/ejsXML.o
+DEPS_119 += $(BUILD)/obj/ejsXMLList.o
+DEPS_119 += $(BUILD)/obj/ejsXMLLoader.o
+DEPS_119 += $(BUILD)/obj/ejsByteCode.o
+DEPS_119 += $(BUILD)/obj/ejsException.o
+DEPS_119 += $(BUILD)/obj/ejsHelper.o
+DEPS_119 += $(BUILD)/obj/ejsInterp.o
+DEPS_119 += $(BUILD)/obj/ejsLoader.o
+DEPS_119 += $(BUILD)/obj/ejsModule.o
+DEPS_119 += $(BUILD)/obj/ejsScope.o
+DEPS_119 += $(BUILD)/obj/ejsService.o
 
+ifeq ($(ME_COM_HTTP),1)
+    LIBS_119 += -lhttp
+endif
+LIBS_119 += -lmpr
+ifeq ($(ME_COM_PCRE),1)
+    LIBS_119 += -lpcre
+endif
+
+$(BUILD)/bin/libejs.so: $(DEPS_119)
+	@echo '      [Link] $(BUILD)/bin/libejs.so'
+	$(CC) -shared -o $(BUILD)/bin/libejs.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ecAst.o" "$(BUILD)/obj/ecCodeGen.o" "$(BUILD)/obj/ecCompiler.o" "$(BUILD)/obj/ecLex.o" "$(BUILD)/obj/ecModuleWrite.o" "$(BUILD)/obj/ecParser.o" "$(BUILD)/obj/ecState.o" "$(BUILD)/obj/dtoa.o" "$(BUILD)/obj/ejsApp.o" "$(BUILD)/obj/ejsArray.o" "$(BUILD)/obj/ejsBlock.o" "$(BUILD)/obj/ejsBoolean.o" "$(BUILD)/obj/ejsByteArray.o" "$(BUILD)/obj/ejsCache.o" "$(BUILD)/obj/ejsCmd.o" "$(BUILD)/obj/ejsConfig.o" "$(BUILD)/obj/ejsDate.o" "$(BUILD)/obj/ejsDebug.o" "$(BUILD)/obj/ejsError.o" "$(BUILD)/obj/ejsFile.o" "$(BUILD)/obj/ejsFileSystem.o" "$(BUILD)/obj/ejsFrame.o" "$(BUILD)/obj/ejsFunction.o" "$(BUILD)/obj/ejsGC.o" "$(BUILD)/obj/ejsGlobal.o" "$(BUILD)/obj/ejsHttp.o" "$(BUILD)/obj/ejsIterator.o" "$(BUILD)/obj/ejsJSON.o" "$(BUILD)/obj/ejsLocalCache.o" "$(BUILD)/obj/ejsMath.o" "$(BUILD)/obj/ejsMemory.o" "$(BUILD)/obj/ejsMprLog.o" "$(BUILD)/obj/ejsNamespace.o" "$(BUILD)/obj/ejsNull.o" "$(BUILD)/obj/ejsNumber.o" "$(BUILD)/obj/ejsObject.o" "$(BUILD)/obj/ejsPath.o" "$(BUILD)/obj/ejsPot.o" "$(BUILD)/obj/ejsRegExp.o" "$(BUILD)/obj/ejsSocket.o" "$(BUILD)/obj/ejsString.o" "$(BUILD)/obj/ejsSystem.o" "$(BUILD)/obj/ejsTimer.o" "$(BUILD)/obj/ejsType.o" "$(BUILD)/obj/ejsUri.o" "$(BUILD)/obj/ejsVoid.o" "$(BUILD)/obj/ejsWebSocket.o" "$(BUILD)/obj/ejsWorker.o" "$(BUILD)/obj/ejsXML.o" "$(BUILD)/obj/ejsXMLList.o" "$(BUILD)/obj/ejsXMLLoader.o" "$(BUILD)/obj/ejsByteCode.o" "$(BUILD)/obj/ejsException.o" "$(BUILD)/obj/ejsHelper.o" "$(BUILD)/obj/ejsInterp.o" "$(BUILD)/obj/ejsLoader.o" "$(BUILD)/obj/ejsModule.o" "$(BUILD)/obj/ejsScope.o" "$(BUILD)/obj/ejsService.o" $(LIBPATHS_119) $(LIBS_119) $(LIBS_119) $(LIBS) 
+
+#
+#   ejs
+#
+DEPS_120 += $(BUILD)/bin/libejs.so
+DEPS_120 += $(BUILD)/obj/ejs.o
+
+LIBS_120 += -lejs
+ifeq ($(ME_COM_HTTP),1)
+    LIBS_120 += -lhttp
+endif
+LIBS_120 += -lmpr
+ifeq ($(ME_COM_PCRE),1)
+    LIBS_120 += -lpcre
+endif
+
+$(BUILD)/bin/ejs: $(DEPS_120)
+	@echo '      [Link] $(BUILD)/bin/ejs'
+	$(CC) -o $(BUILD)/bin/ejs $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejs.o" $(LIBPATHS_120) $(LIBS_120) $(LIBS_120) $(LIBS) $(LIBS) 
+
+#
+#   ejsc
+#
+DEPS_121 += $(BUILD)/bin/libejs.so
+DEPS_121 += $(BUILD)/obj/ejsc.o
+
+LIBS_121 += -lejs
 ifeq ($(ME_COM_HTTP),1)
     LIBS_121 += -lhttp
 endif
@@ -1505,15 +1531,20 @@ ifeq ($(ME_COM_PCRE),1)
     LIBS_121 += -lpcre
 endif
 
-$(BUILD)/bin/libejs.so: $(DEPS_121)
-	@echo '      [Link] $(BUILD)/bin/libejs.so'
-	$(CC) -shared -o $(BUILD)/bin/libejs.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ecAst.o" "$(BUILD)/obj/ecCodeGen.o" "$(BUILD)/obj/ecCompiler.o" "$(BUILD)/obj/ecLex.o" "$(BUILD)/obj/ecModuleWrite.o" "$(BUILD)/obj/ecParser.o" "$(BUILD)/obj/ecState.o" "$(BUILD)/obj/dtoa.o" "$(BUILD)/obj/ejsApp.o" "$(BUILD)/obj/ejsArray.o" "$(BUILD)/obj/ejsBlock.o" "$(BUILD)/obj/ejsBoolean.o" "$(BUILD)/obj/ejsByteArray.o" "$(BUILD)/obj/ejsCache.o" "$(BUILD)/obj/ejsCmd.o" "$(BUILD)/obj/ejsConfig.o" "$(BUILD)/obj/ejsDate.o" "$(BUILD)/obj/ejsDebug.o" "$(BUILD)/obj/ejsError.o" "$(BUILD)/obj/ejsFile.o" "$(BUILD)/obj/ejsFileSystem.o" "$(BUILD)/obj/ejsFrame.o" "$(BUILD)/obj/ejsFunction.o" "$(BUILD)/obj/ejsGC.o" "$(BUILD)/obj/ejsGlobal.o" "$(BUILD)/obj/ejsHttp.o" "$(BUILD)/obj/ejsIterator.o" "$(BUILD)/obj/ejsJSON.o" "$(BUILD)/obj/ejsLocalCache.o" "$(BUILD)/obj/ejsMath.o" "$(BUILD)/obj/ejsMemory.o" "$(BUILD)/obj/ejsMprLog.o" "$(BUILD)/obj/ejsNamespace.o" "$(BUILD)/obj/ejsNull.o" "$(BUILD)/obj/ejsNumber.o" "$(BUILD)/obj/ejsObject.o" "$(BUILD)/obj/ejsPath.o" "$(BUILD)/obj/ejsPot.o" "$(BUILD)/obj/ejsRegExp.o" "$(BUILD)/obj/ejsSocket.o" "$(BUILD)/obj/ejsString.o" "$(BUILD)/obj/ejsSystem.o" "$(BUILD)/obj/ejsTimer.o" "$(BUILD)/obj/ejsType.o" "$(BUILD)/obj/ejsUri.o" "$(BUILD)/obj/ejsVoid.o" "$(BUILD)/obj/ejsWebSocket.o" "$(BUILD)/obj/ejsWorker.o" "$(BUILD)/obj/ejsXML.o" "$(BUILD)/obj/ejsXMLList.o" "$(BUILD)/obj/ejsXMLLoader.o" "$(BUILD)/obj/ejsByteCode.o" "$(BUILD)/obj/ejsException.o" "$(BUILD)/obj/ejsHelper.o" "$(BUILD)/obj/ejsInterp.o" "$(BUILD)/obj/ejsLoader.o" "$(BUILD)/obj/ejsModule.o" "$(BUILD)/obj/ejsScope.o" "$(BUILD)/obj/ejsService.o" $(LIBPATHS_121) $(LIBS_121) $(LIBS_121) $(LIBS) 
+$(BUILD)/bin/ejsc: $(DEPS_121)
+	@echo '      [Link] $(BUILD)/bin/ejsc'
+	$(CC) -o $(BUILD)/bin/ejsc $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsc.o" $(LIBPATHS_121) $(LIBS_121) $(LIBS_121) $(LIBS) $(LIBS) 
 
 #
-#   ejs
+#   ejsmod
 #
 DEPS_122 += $(BUILD)/bin/libejs.so
-DEPS_122 += $(BUILD)/obj/ejs.o
+DEPS_122 += $(BUILD)/inc/ejsmod.h
+DEPS_122 += $(BUILD)/obj/ejsmod.o
+DEPS_122 += $(BUILD)/obj/doc.o
+DEPS_122 += $(BUILD)/obj/docFiles.o
+DEPS_122 += $(BUILD)/obj/listing.o
+DEPS_122 += $(BUILD)/obj/slotGen.o
 
 LIBS_122 += -lejs
 ifeq ($(ME_COM_HTTP),1)
@@ -1524,114 +1555,71 @@ ifeq ($(ME_COM_PCRE),1)
     LIBS_122 += -lpcre
 endif
 
-$(BUILD)/bin/ejs: $(DEPS_122)
-	@echo '      [Link] $(BUILD)/bin/ejs'
-	$(CC) -o $(BUILD)/bin/ejs $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejs.o" $(LIBPATHS_122) $(LIBS_122) $(LIBS_122) $(LIBS) $(LIBS) 
-
-#
-#   ejsc
-#
-DEPS_123 += $(BUILD)/bin/libejs.so
-DEPS_123 += $(BUILD)/obj/ejsc.o
-
-LIBS_123 += -lejs
-ifeq ($(ME_COM_HTTP),1)
-    LIBS_123 += -lhttp
-endif
-LIBS_123 += -lmpr
-ifeq ($(ME_COM_PCRE),1)
-    LIBS_123 += -lpcre
-endif
-
-$(BUILD)/bin/ejsc: $(DEPS_123)
-	@echo '      [Link] $(BUILD)/bin/ejsc'
-	$(CC) -o $(BUILD)/bin/ejsc $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsc.o" $(LIBPATHS_123) $(LIBS_123) $(LIBS_123) $(LIBS) $(LIBS) 
-
-#
-#   ejsmod
-#
-DEPS_124 += $(BUILD)/bin/libejs.so
-DEPS_124 += $(BUILD)/inc/ejsmod.h
-DEPS_124 += $(BUILD)/obj/ejsmod.o
-DEPS_124 += $(BUILD)/obj/doc.o
-DEPS_124 += $(BUILD)/obj/docFiles.o
-DEPS_124 += $(BUILD)/obj/listing.o
-DEPS_124 += $(BUILD)/obj/slotGen.o
-
-LIBS_124 += -lejs
-ifeq ($(ME_COM_HTTP),1)
-    LIBS_124 += -lhttp
-endif
-LIBS_124 += -lmpr
-ifeq ($(ME_COM_PCRE),1)
-    LIBS_124 += -lpcre
-endif
-
-$(BUILD)/bin/ejsmod: $(DEPS_124)
+$(BUILD)/bin/ejsmod: $(DEPS_122)
 	@echo '      [Link] $(BUILD)/bin/ejsmod'
-	$(CC) -o $(BUILD)/bin/ejsmod $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsmod.o" "$(BUILD)/obj/doc.o" "$(BUILD)/obj/docFiles.o" "$(BUILD)/obj/listing.o" "$(BUILD)/obj/slotGen.o" $(LIBPATHS_124) $(LIBS_124) $(LIBS_124) $(LIBS) $(LIBS) 
+	$(CC) -o $(BUILD)/bin/ejsmod $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsmod.o" "$(BUILD)/obj/doc.o" "$(BUILD)/obj/docFiles.o" "$(BUILD)/obj/listing.o" "$(BUILD)/obj/slotGen.o" $(LIBPATHS_122) $(LIBS_122) $(LIBS_122) $(LIBS) $(LIBS) 
 
 #
 #   ejs.mod
 #
-DEPS_125 += src/core/App.es
-DEPS_125 += src/core/Args.es
-DEPS_125 += src/core/Array.es
-DEPS_125 += src/core/BinaryStream.es
-DEPS_125 += src/core/Block.es
-DEPS_125 += src/core/Boolean.es
-DEPS_125 += src/core/ByteArray.es
-DEPS_125 += src/core/Cache.es
-DEPS_125 += src/core/Cmd.es
-DEPS_125 += src/core/Compat.es
-DEPS_125 += src/core/Config.es
-DEPS_125 += src/core/Date.es
-DEPS_125 += src/core/Debug.es
-DEPS_125 += src/core/Emitter.es
-DEPS_125 += src/core/Error.es
-DEPS_125 += src/core/File.es
-DEPS_125 += src/core/FileSystem.es
-DEPS_125 += src/core/Frame.es
-DEPS_125 += src/core/Function.es
-DEPS_125 += src/core/GC.es
-DEPS_125 += src/core/Global.es
-DEPS_125 += src/core/Http.es
-DEPS_125 += src/core/Inflector.es
-DEPS_125 += src/core/Iterator.es
-DEPS_125 += src/core/JSON.es
-DEPS_125 += src/core/Loader.es
-DEPS_125 += src/core/LocalCache.es
-DEPS_125 += src/core/Locale.es
-DEPS_125 += src/core/Logger.es
-DEPS_125 += src/core/Math.es
-DEPS_125 += src/core/Memory.es
-DEPS_125 += src/core/MprLog.es
-DEPS_125 += src/core/Name.es
-DEPS_125 += src/core/Namespace.es
-DEPS_125 += src/core/Null.es
-DEPS_125 += src/core/Number.es
-DEPS_125 += src/core/Object.es
-DEPS_125 += src/core/Path.es
-DEPS_125 += src/core/Promise.es
-DEPS_125 += src/core/RegExp.es
-DEPS_125 += src/core/Socket.es
-DEPS_125 += src/core/Stream.es
-DEPS_125 += src/core/String.es
-DEPS_125 += src/core/System.es
-DEPS_125 += src/core/TextStream.es
-DEPS_125 += src/core/Timer.es
-DEPS_125 += src/core/Type.es
-DEPS_125 += src/core/Uri.es
-DEPS_125 += src/core/Void.es
-DEPS_125 += src/core/WebSocket.es
-DEPS_125 += src/core/Worker.es
-DEPS_125 += src/core/XML.es
-DEPS_125 += src/core/XMLHttp.es
-DEPS_125 += src/core/XMLList.es
-DEPS_125 += $(BUILD)/bin/ejsc
-DEPS_125 += $(BUILD)/bin/ejsmod
+DEPS_123 += src/core/App.es
+DEPS_123 += src/core/Args.es
+DEPS_123 += src/core/Array.es
+DEPS_123 += src/core/BinaryStream.es
+DEPS_123 += src/core/Block.es
+DEPS_123 += src/core/Boolean.es
+DEPS_123 += src/core/ByteArray.es
+DEPS_123 += src/core/Cache.es
+DEPS_123 += src/core/Cmd.es
+DEPS_123 += src/core/Compat.es
+DEPS_123 += src/core/Config.es
+DEPS_123 += src/core/Date.es
+DEPS_123 += src/core/Debug.es
+DEPS_123 += src/core/Emitter.es
+DEPS_123 += src/core/Error.es
+DEPS_123 += src/core/File.es
+DEPS_123 += src/core/FileSystem.es
+DEPS_123 += src/core/Frame.es
+DEPS_123 += src/core/Function.es
+DEPS_123 += src/core/GC.es
+DEPS_123 += src/core/Global.es
+DEPS_123 += src/core/Http.es
+DEPS_123 += src/core/Inflector.es
+DEPS_123 += src/core/Iterator.es
+DEPS_123 += src/core/JSON.es
+DEPS_123 += src/core/Loader.es
+DEPS_123 += src/core/LocalCache.es
+DEPS_123 += src/core/Locale.es
+DEPS_123 += src/core/Logger.es
+DEPS_123 += src/core/Math.es
+DEPS_123 += src/core/Memory.es
+DEPS_123 += src/core/MprLog.es
+DEPS_123 += src/core/Name.es
+DEPS_123 += src/core/Namespace.es
+DEPS_123 += src/core/Null.es
+DEPS_123 += src/core/Number.es
+DEPS_123 += src/core/Object.es
+DEPS_123 += src/core/Path.es
+DEPS_123 += src/core/Promise.es
+DEPS_123 += src/core/RegExp.es
+DEPS_123 += src/core/Socket.es
+DEPS_123 += src/core/Stream.es
+DEPS_123 += src/core/String.es
+DEPS_123 += src/core/System.es
+DEPS_123 += src/core/TextStream.es
+DEPS_123 += src/core/Timer.es
+DEPS_123 += src/core/Type.es
+DEPS_123 += src/core/Uri.es
+DEPS_123 += src/core/Void.es
+DEPS_123 += src/core/WebSocket.es
+DEPS_123 += src/core/Worker.es
+DEPS_123 += src/core/XML.es
+DEPS_123 += src/core/XMLHttp.es
+DEPS_123 += src/core/XMLList.es
+DEPS_123 += $(BUILD)/bin/ejsc
+DEPS_123 += $(BUILD)/bin/ejsmod
 
-$(BUILD)/bin/ejs.mod: $(DEPS_125)
+$(BUILD)/bin/ejs.mod: $(DEPS_123)
 	( \
 	cd src/core; \
 	echo '   [Compile] Core EJS classes' ; \
@@ -1642,12 +1630,12 @@ $(BUILD)/bin/ejs.mod: $(DEPS_125)
 #
 #   ejs.db.mod
 #
-DEPS_126 += src/ejs.db/Database.es
-DEPS_126 += src/ejs.db/DatabaseConnector.es
-DEPS_126 += $(BUILD)/bin/ejsc
-DEPS_126 += $(BUILD)/bin/ejs.mod
+DEPS_124 += src/ejs.db/Database.es
+DEPS_124 += src/ejs.db/DatabaseConnector.es
+DEPS_124 += $(BUILD)/bin/ejsc
+DEPS_124 += $(BUILD)/bin/ejs.mod
 
-$(BUILD)/bin/ejs.db.mod: $(DEPS_126)
+$(BUILD)/bin/ejs.db.mod: $(DEPS_124)
 	( \
 	cd src/ejs.db; \
 	echo '   [Compile] ejs.db.mod' ; \
@@ -1657,12 +1645,12 @@ $(BUILD)/bin/ejs.db.mod: $(DEPS_126)
 #
 #   ejs.db.mapper.mod
 #
-DEPS_127 += src/ejs.db.mapper/Record.es
-DEPS_127 += $(BUILD)/bin/ejsc
-DEPS_127 += $(BUILD)/bin/ejs.mod
-DEPS_127 += $(BUILD)/bin/ejs.db.mod
+DEPS_125 += src/ejs.db.mapper/Record.es
+DEPS_125 += $(BUILD)/bin/ejsc
+DEPS_125 += $(BUILD)/bin/ejs.mod
+DEPS_125 += $(BUILD)/bin/ejs.db.mod
 
-$(BUILD)/bin/ejs.db.mapper.mod: $(DEPS_127)
+$(BUILD)/bin/ejs.db.mapper.mod: $(DEPS_125)
 	( \
 	cd src/ejs.db.mapper; \
 	echo '   [Compile] ejs.db.mapper.mod' ; \
@@ -1672,12 +1660,12 @@ $(BUILD)/bin/ejs.db.mapper.mod: $(DEPS_127)
 #
 #   ejs.db.sqlite.mod
 #
-DEPS_128 += src/ejs.db.sqlite/Sqlite.es
-DEPS_128 += $(BUILD)/bin/ejsc
-DEPS_128 += $(BUILD)/bin/ejsmod
-DEPS_128 += $(BUILD)/bin/ejs.mod
+DEPS_126 += src/ejs.db.sqlite/Sqlite.es
+DEPS_126 += $(BUILD)/bin/ejsc
+DEPS_126 += $(BUILD)/bin/ejsmod
+DEPS_126 += $(BUILD)/bin/ejs.mod
 
-$(BUILD)/bin/ejs.db.sqlite.mod: $(DEPS_128)
+$(BUILD)/bin/ejs.db.sqlite.mod: $(DEPS_126)
 	( \
 	cd src/ejs.db.sqlite; \
 	echo '   [Compile] ejs.db.sqlite.mod' ; \
@@ -1688,11 +1676,11 @@ $(BUILD)/bin/ejs.db.sqlite.mod: $(DEPS_128)
 #
 #   ejs.mail.mod
 #
-DEPS_129 += src/ejs.mail/Mail.es
-DEPS_129 += $(BUILD)/bin/ejsc
-DEPS_129 += $(BUILD)/bin/ejs.mod
+DEPS_127 += src/ejs.mail/Mail.es
+DEPS_127 += $(BUILD)/bin/ejsc
+DEPS_127 += $(BUILD)/bin/ejs.mod
 
-$(BUILD)/bin/ejs.mail.mod: $(DEPS_129)
+$(BUILD)/bin/ejs.mail.mod: $(DEPS_127)
 	( \
 	cd src/ejs.mail; \
 	../../$(BUILD)/bin/ejsc --out ../../$(BUILD)/bin/ejs.mail.mod  --optimize 9 Mail.es ; \
@@ -1701,34 +1689,34 @@ $(BUILD)/bin/ejs.mail.mod: $(DEPS_129)
 #
 #   ejs.web.mod
 #
-DEPS_130 += src/ejs.web/Cascade.es
-DEPS_130 += src/ejs.web/CommonLog.es
-DEPS_130 += src/ejs.web/ContentType.es
-DEPS_130 += src/ejs.web/Controller.es
-DEPS_130 += src/ejs.web/Dir.es
-DEPS_130 += src/ejs.web/Google.es
-DEPS_130 += src/ejs.web/Head.es
-DEPS_130 += src/ejs.web/Html.es
-DEPS_130 += src/ejs.web/HttpServer.es
-DEPS_130 += src/ejs.web/MethodOverride.es
-DEPS_130 += src/ejs.web/Middleware.es
-DEPS_130 += src/ejs.web/Mvc.es
-DEPS_130 += src/ejs.web/Request.es
-DEPS_130 += src/ejs.web/Router.es
-DEPS_130 += src/ejs.web/Script.es
-DEPS_130 += src/ejs.web/Session.es
-DEPS_130 += src/ejs.web/ShowExceptions.es
-DEPS_130 += src/ejs.web/Static.es
-DEPS_130 += src/ejs.web/Template.es
-DEPS_130 += src/ejs.web/UploadFile.es
-DEPS_130 += src/ejs.web/UrlMap.es
-DEPS_130 += src/ejs.web/Utils.es
-DEPS_130 += src/ejs.web/View.es
-DEPS_130 += $(BUILD)/bin/ejsc
-DEPS_130 += $(BUILD)/bin/ejsmod
-DEPS_130 += $(BUILD)/bin/ejs.mod
+DEPS_128 += src/ejs.web/Cascade.es
+DEPS_128 += src/ejs.web/CommonLog.es
+DEPS_128 += src/ejs.web/ContentType.es
+DEPS_128 += src/ejs.web/Controller.es
+DEPS_128 += src/ejs.web/Dir.es
+DEPS_128 += src/ejs.web/Google.es
+DEPS_128 += src/ejs.web/Head.es
+DEPS_128 += src/ejs.web/Html.es
+DEPS_128 += src/ejs.web/HttpServer.es
+DEPS_128 += src/ejs.web/MethodOverride.es
+DEPS_128 += src/ejs.web/Middleware.es
+DEPS_128 += src/ejs.web/Mvc.es
+DEPS_128 += src/ejs.web/Request.es
+DEPS_128 += src/ejs.web/Router.es
+DEPS_128 += src/ejs.web/Script.es
+DEPS_128 += src/ejs.web/Session.es
+DEPS_128 += src/ejs.web/ShowExceptions.es
+DEPS_128 += src/ejs.web/Static.es
+DEPS_128 += src/ejs.web/Template.es
+DEPS_128 += src/ejs.web/UploadFile.es
+DEPS_128 += src/ejs.web/UrlMap.es
+DEPS_128 += src/ejs.web/Utils.es
+DEPS_128 += src/ejs.web/View.es
+DEPS_128 += $(BUILD)/bin/ejsc
+DEPS_128 += $(BUILD)/bin/ejsmod
+DEPS_128 += $(BUILD)/bin/ejs.mod
 
-$(BUILD)/bin/ejs.web.mod: $(DEPS_130)
+$(BUILD)/bin/ejs.web.mod: $(DEPS_128)
 	( \
 	cd src/ejs.web; \
 	echo '   [Compile] ejs.web.mod' ; \
@@ -1739,11 +1727,11 @@ $(BUILD)/bin/ejs.web.mod: $(DEPS_130)
 #
 #   ejs.template.mod
 #
-DEPS_131 += src/ejs.template/TemplateParser.es
-DEPS_131 += $(BUILD)/bin/ejsc
-DEPS_131 += $(BUILD)/bin/ejs.mod
+DEPS_129 += src/ejs.template/TemplateParser.es
+DEPS_129 += $(BUILD)/bin/ejsc
+DEPS_129 += $(BUILD)/bin/ejs.mod
 
-$(BUILD)/bin/ejs.template.mod: $(DEPS_131)
+$(BUILD)/bin/ejs.template.mod: $(DEPS_129)
 	( \
 	cd src/ejs.template; \
 	echo '   [Compile] ejs.template.mod' ; \
@@ -1753,11 +1741,11 @@ $(BUILD)/bin/ejs.template.mod: $(DEPS_131)
 #
 #   ejs.unix.mod
 #
-DEPS_132 += src/ejs.unix/Unix.es
-DEPS_132 += $(BUILD)/bin/ejsc
-DEPS_132 += $(BUILD)/bin/ejs.mod
+DEPS_130 += src/ejs.unix/Unix.es
+DEPS_130 += $(BUILD)/bin/ejsc
+DEPS_130 += $(BUILD)/bin/ejs.mod
 
-$(BUILD)/bin/ejs.unix.mod: $(DEPS_132)
+$(BUILD)/bin/ejs.unix.mod: $(DEPS_130)
 	( \
 	cd src/ejs.unix; \
 	echo '   [Compile] ejs.unix.mod' ; \
@@ -1767,14 +1755,14 @@ $(BUILD)/bin/ejs.unix.mod: $(DEPS_132)
 #
 #   ejs.mvc.mod
 #
-DEPS_133 += src/ejs.mvc/mvc.es
-DEPS_133 += $(BUILD)/bin/ejsc
-DEPS_133 += $(BUILD)/bin/ejs.mod
-DEPS_133 += $(BUILD)/bin/ejs.web.mod
-DEPS_133 += $(BUILD)/bin/ejs.template.mod
-DEPS_133 += $(BUILD)/bin/ejs.unix.mod
+DEPS_131 += src/ejs.mvc/mvc.es
+DEPS_131 += $(BUILD)/bin/ejsc
+DEPS_131 += $(BUILD)/bin/ejs.mod
+DEPS_131 += $(BUILD)/bin/ejs.web.mod
+DEPS_131 += $(BUILD)/bin/ejs.template.mod
+DEPS_131 += $(BUILD)/bin/ejs.unix.mod
 
-$(BUILD)/bin/ejs.mvc.mod: $(DEPS_133)
+$(BUILD)/bin/ejs.mvc.mod: $(DEPS_131)
 	( \
 	cd src/ejs.mvc; \
 	echo '   [Compile] ejs.mvc.mod' ; \
@@ -1784,11 +1772,11 @@ $(BUILD)/bin/ejs.mvc.mod: $(DEPS_133)
 #
 #   ejs.tar.mod
 #
-DEPS_134 += src/ejs.tar/Tar.es
-DEPS_134 += $(BUILD)/bin/ejsc
-DEPS_134 += $(BUILD)/bin/ejs.mod
+DEPS_132 += src/ejs.tar/Tar.es
+DEPS_132 += $(BUILD)/bin/ejsc
+DEPS_132 += $(BUILD)/bin/ejs.mod
 
-$(BUILD)/bin/ejs.tar.mod: $(DEPS_134)
+$(BUILD)/bin/ejs.tar.mod: $(DEPS_132)
 	( \
 	cd src/ejs.tar; \
 	echo '   [Compile] ejs.tar.mod' ; \
@@ -1798,11 +1786,11 @@ $(BUILD)/bin/ejs.tar.mod: $(DEPS_134)
 #
 #   ejs.zlib.mod
 #
-DEPS_135 += src/ejs.zlib/Zlib.es
-DEPS_135 += $(BUILD)/bin/ejsc
-DEPS_135 += $(BUILD)/bin/ejs.mod
+DEPS_133 += src/ejs.zlib/Zlib.es
+DEPS_133 += $(BUILD)/bin/ejsc
+DEPS_133 += $(BUILD)/bin/ejs.mod
 
-$(BUILD)/bin/ejs.zlib.mod: $(DEPS_135)
+$(BUILD)/bin/ejs.zlib.mod: $(DEPS_133)
 	( \
 	cd src/ejs.zlib; \
 	echo '   [Compile] ejs.zlib.mod' ; \
@@ -1812,28 +1800,28 @@ $(BUILD)/bin/ejs.zlib.mod: $(DEPS_135)
 #
 #   ejsrun
 #
-DEPS_136 += $(BUILD)/bin/libejs.so
-DEPS_136 += $(BUILD)/obj/ejsrun.o
+DEPS_134 += $(BUILD)/bin/libejs.so
+DEPS_134 += $(BUILD)/obj/ejsrun.o
 
-LIBS_136 += -lejs
+LIBS_134 += -lejs
 ifeq ($(ME_COM_HTTP),1)
-    LIBS_136 += -lhttp
+    LIBS_134 += -lhttp
 endif
-LIBS_136 += -lmpr
+LIBS_134 += -lmpr
 ifeq ($(ME_COM_PCRE),1)
-    LIBS_136 += -lpcre
+    LIBS_134 += -lpcre
 endif
 
-$(BUILD)/bin/ejsrun: $(DEPS_136)
+$(BUILD)/bin/ejsrun: $(DEPS_134)
 	@echo '      [Link] $(BUILD)/bin/ejsrun'
-	$(CC) -o $(BUILD)/bin/ejsrun $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_136) $(LIBS_136) $(LIBS_136) $(LIBS) $(LIBS) 
+	$(CC) -o $(BUILD)/bin/ejsrun $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_134) $(LIBS_134) $(LIBS_134) $(LIBS) $(LIBS) 
 
 #
 #   http-ca-crt
 #
-DEPS_137 += src/paks/http/ca.crt
+DEPS_135 += src/paks/http/ca.crt
 
-$(BUILD)/bin/ca.crt: $(DEPS_137)
+$(BUILD)/bin/ca.crt: $(DEPS_135)
 	@echo '      [Copy] $(BUILD)/bin/ca.crt'
 	mkdir -p "$(BUILD)/bin"
 	cp src/paks/http/ca.crt $(BUILD)/bin/ca.crt
@@ -1842,10 +1830,10 @@ ifeq ($(ME_COM_SQLITE),1)
 #
 #   libsql
 #
-DEPS_138 += $(BUILD)/inc/sqlite3.h
-DEPS_138 += $(BUILD)/obj/sqlite3.o
+DEPS_136 += $(BUILD)/inc/sqlite3.h
+DEPS_136 += $(BUILD)/obj/sqlite3.o
 
-$(BUILD)/bin/libsql.so: $(DEPS_138)
+$(BUILD)/bin/libsql.so: $(DEPS_136)
 	@echo '      [Link] $(BUILD)/bin/libsql.so'
 	$(CC) -shared -o $(BUILD)/bin/libsql.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/sqlite3.o" $(LIBS) 
 endif
@@ -1853,41 +1841,77 @@ endif
 #
 #   libejs.db.sqlite
 #
-DEPS_139 += $(BUILD)/bin/libmpr.so
-DEPS_139 += $(BUILD)/bin/libejs.so
-DEPS_139 += $(BUILD)/bin/ejs.mod
-DEPS_139 += $(BUILD)/bin/ejs.db.sqlite.mod
+DEPS_137 += $(BUILD)/bin/libmpr.so
+DEPS_137 += $(BUILD)/bin/libejs.so
+DEPS_137 += $(BUILD)/bin/ejs.mod
+DEPS_137 += $(BUILD)/bin/ejs.db.sqlite.mod
 ifeq ($(ME_COM_SQLITE),1)
-    DEPS_139 += $(BUILD)/bin/libsql.so
+    DEPS_137 += $(BUILD)/bin/libsql.so
 endif
-DEPS_139 += $(BUILD)/obj/ejsSqlite.o
+DEPS_137 += $(BUILD)/obj/ejsSqlite.o
 
-LIBS_139 += -lmpr
-LIBS_139 += -lejs
+LIBS_137 += -lmpr
+LIBS_137 += -lejs
 ifeq ($(ME_COM_HTTP),1)
-    LIBS_139 += -lhttp
+    LIBS_137 += -lhttp
 endif
 ifeq ($(ME_COM_PCRE),1)
-    LIBS_139 += -lpcre
+    LIBS_137 += -lpcre
 endif
 ifeq ($(ME_COM_SQLITE),1)
-    LIBS_139 += -lsql
+    LIBS_137 += -lsql
 endif
 
-$(BUILD)/bin/libejs.db.sqlite.so: $(DEPS_139)
+$(BUILD)/bin/libejs.db.sqlite.so: $(DEPS_137)
 	@echo '      [Link] $(BUILD)/bin/libejs.db.sqlite.so'
-	$(CC) -shared -o $(BUILD)/bin/libejs.db.sqlite.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsSqlite.o" $(LIBPATHS_139) $(LIBS_139) $(LIBS_139) $(LIBS) 
+	$(CC) -shared -o $(BUILD)/bin/libejs.db.sqlite.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsSqlite.o" $(LIBPATHS_137) $(LIBS_137) $(LIBS_137) $(LIBS) 
 
 #
 #   libejs.web
 #
+DEPS_138 += $(BUILD)/bin/libejs.so
+DEPS_138 += $(BUILD)/bin/ejs.mod
+DEPS_138 += $(BUILD)/inc/ejsWeb.h
+DEPS_138 += $(BUILD)/obj/ejsHttpServer.o
+DEPS_138 += $(BUILD)/obj/ejsRequest.o
+DEPS_138 += $(BUILD)/obj/ejsSession.o
+DEPS_138 += $(BUILD)/obj/ejsWeb.o
+
+LIBS_138 += -lejs
+ifeq ($(ME_COM_HTTP),1)
+    LIBS_138 += -lhttp
+endif
+LIBS_138 += -lmpr
+ifeq ($(ME_COM_PCRE),1)
+    LIBS_138 += -lpcre
+endif
+
+$(BUILD)/bin/libejs.web.so: $(DEPS_138)
+	@echo '      [Link] $(BUILD)/bin/libejs.web.so'
+	$(CC) -shared -o $(BUILD)/bin/libejs.web.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsHttpServer.o" "$(BUILD)/obj/ejsRequest.o" "$(BUILD)/obj/ejsSession.o" "$(BUILD)/obj/ejsWeb.o" $(LIBPATHS_138) $(LIBS_138) $(LIBS_138) $(LIBS) 
+
+ifeq ($(ME_COM_ZLIB),1)
+#
+#   libzlib
+#
+DEPS_139 += $(BUILD)/inc/zlib.h
+DEPS_139 += $(BUILD)/obj/zlib.o
+
+$(BUILD)/bin/libzlib.so: $(DEPS_139)
+	@echo '      [Link] $(BUILD)/bin/libzlib.so'
+	$(CC) -shared -o $(BUILD)/bin/libzlib.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/zlib.o" $(LIBS) 
+endif
+
+#
+#   libejs.zlib
+#
 DEPS_140 += $(BUILD)/bin/libejs.so
 DEPS_140 += $(BUILD)/bin/ejs.mod
-DEPS_140 += $(BUILD)/inc/ejsWeb.h
-DEPS_140 += $(BUILD)/obj/ejsHttpServer.o
-DEPS_140 += $(BUILD)/obj/ejsRequest.o
-DEPS_140 += $(BUILD)/obj/ejsSession.o
-DEPS_140 += $(BUILD)/obj/ejsWeb.o
+DEPS_140 += $(BUILD)/bin/ejs.zlib.mod
+ifeq ($(ME_COM_ZLIB),1)
+    DEPS_140 += $(BUILD)/bin/libzlib.so
+endif
+DEPS_140 += $(BUILD)/obj/ejsZlib.o
 
 LIBS_140 += -lejs
 ifeq ($(ME_COM_HTTP),1)
@@ -1897,107 +1921,57 @@ LIBS_140 += -lmpr
 ifeq ($(ME_COM_PCRE),1)
     LIBS_140 += -lpcre
 endif
-
-$(BUILD)/bin/libejs.web.so: $(DEPS_140)
-	@echo '      [Link] $(BUILD)/bin/libejs.web.so'
-	$(CC) -shared -o $(BUILD)/bin/libejs.web.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsHttpServer.o" "$(BUILD)/obj/ejsRequest.o" "$(BUILD)/obj/ejsSession.o" "$(BUILD)/obj/ejsWeb.o" $(LIBPATHS_140) $(LIBS_140) $(LIBS_140) $(LIBS) 
-
 ifeq ($(ME_COM_ZLIB),1)
-#
-#   libzlib
-#
-DEPS_141 += $(BUILD)/inc/zlib.h
-DEPS_141 += $(BUILD)/obj/zlib.o
-
-$(BUILD)/bin/libzlib.so: $(DEPS_141)
-	@echo '      [Link] $(BUILD)/bin/libzlib.so'
-	$(CC) -shared -o $(BUILD)/bin/libzlib.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/zlib.o" $(LIBS) 
+    LIBS_140 += -lzlib
 endif
 
-#
-#   libejs.zlib
-#
-DEPS_142 += $(BUILD)/bin/libejs.so
-DEPS_142 += $(BUILD)/bin/ejs.mod
-DEPS_142 += $(BUILD)/bin/ejs.zlib.mod
-ifeq ($(ME_COM_ZLIB),1)
-    DEPS_142 += $(BUILD)/bin/libzlib.so
-endif
-DEPS_142 += $(BUILD)/obj/ejsZlib.o
-
-LIBS_142 += -lejs
-ifeq ($(ME_COM_HTTP),1)
-    LIBS_142 += -lhttp
-endif
-LIBS_142 += -lmpr
-ifeq ($(ME_COM_PCRE),1)
-    LIBS_142 += -lpcre
-endif
-ifeq ($(ME_COM_ZLIB),1)
-    LIBS_142 += -lzlib
-endif
-
-$(BUILD)/bin/libejs.zlib.so: $(DEPS_142)
+$(BUILD)/bin/libejs.zlib.so: $(DEPS_140)
 	@echo '      [Link] $(BUILD)/bin/libejs.zlib.so'
-	$(CC) -shared -o $(BUILD)/bin/libejs.zlib.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsZlib.o" $(LIBPATHS_142) $(LIBS_142) $(LIBS_142) $(LIBS) 
-
-ifeq ($(ME_COM_EST),1)
-#
-#   libest
-#
-DEPS_143 += $(BUILD)/inc/osdep.h
-DEPS_143 += $(BUILD)/inc/est.h
-DEPS_143 += $(BUILD)/obj/estLib.o
-
-$(BUILD)/bin/libest.so: $(DEPS_143)
-	@echo '      [Link] $(BUILD)/bin/libest.so'
-	$(CC) -shared -o $(BUILD)/bin/libest.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/estLib.o" $(LIBS) 
-endif
+	$(CC) -shared -o $(BUILD)/bin/libejs.zlib.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsZlib.o" $(LIBPATHS_140) $(LIBS_140) $(LIBS_140) $(LIBS) 
 
 #
 #   libmprssl
 #
-DEPS_144 += $(BUILD)/bin/libmpr.so
-ifeq ($(ME_COM_EST),1)
-    DEPS_144 += $(BUILD)/bin/libest.so
-endif
-DEPS_144 += $(BUILD)/obj/mprSsl.o
+DEPS_141 += $(BUILD)/bin/libmpr.so
+DEPS_141 += $(BUILD)/obj/mprSsl.o
 
-LIBS_144 += -lmpr
+LIBS_141 += -lmpr
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_144 += -lssl
-    LIBPATHS_144 += -L$(ME_COM_OPENSSL_PATH)
+    LIBS_141 += -lssl
+    LIBPATHS_141 += -L"$(ME_COM_OPENSSL_PATH)/lib"
+    LIBPATHS_141 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_144 += -lcrypto
-    LIBPATHS_144 += -L$(ME_COM_OPENSSL_PATH)
+    LIBS_141 += -lcrypto
+    LIBPATHS_141 += -L"$(ME_COM_OPENSSL_PATH)/lib"
+    LIBPATHS_141 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
 ifeq ($(ME_COM_EST),1)
-    LIBS_144 += -lest
+    LIBS_141 += -lest
 endif
 
-$(BUILD)/bin/libmprssl.so: $(DEPS_144)
+$(BUILD)/bin/libmprssl.so: $(DEPS_141)
 	@echo '      [Link] $(BUILD)/bin/libmprssl.so'
-	$(CC) -shared -o $(BUILD)/bin/libmprssl.so $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/mprSsl.o" $(LIBPATHS_144) $(LIBS_144) $(LIBS_144) $(LIBS) 
+	$(CC) -shared -o $(BUILD)/bin/libmprssl.so $(LDFLAGS) $(LIBPATHS)   "$(BUILD)/obj/mprSsl.o" $(LIBPATHS_141) $(LIBS_141) $(LIBS_141) $(LIBS) 
 
 #
 #   manager
 #
-DEPS_145 += $(BUILD)/bin/libmpr.so
-DEPS_145 += $(BUILD)/obj/manager.o
+DEPS_142 += $(BUILD)/bin/libmpr.so
+DEPS_142 += $(BUILD)/obj/manager.o
 
-LIBS_145 += -lmpr
+LIBS_142 += -lmpr
 
-$(BUILD)/bin/ejsman: $(DEPS_145)
+$(BUILD)/bin/ejsman: $(DEPS_142)
 	@echo '      [Link] $(BUILD)/bin/ejsman'
-	$(CC) -o $(BUILD)/bin/ejsman $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/manager.o" $(LIBPATHS_145) $(LIBS_145) $(LIBS_145) $(LIBS) $(LIBS) 
+	$(CC) -o $(BUILD)/bin/ejsman $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/manager.o" $(LIBPATHS_142) $(LIBS_142) $(LIBS_142) $(LIBS) $(LIBS) 
 
 #
 #   mvc.es
 #
-DEPS_146 += src/ejs.mvc/mvc.es
+DEPS_143 += src/ejs.mvc/mvc.es
 
-$(BUILD)/bin/mvc.es: $(DEPS_146)
+$(BUILD)/bin/mvc.es: $(DEPS_143)
 	@echo '      [Copy] $(BUILD)/bin/mvc.es'
 	mkdir -p "$(BUILD)/bin"
 	cp src/ejs.mvc/mvc.es $(BUILD)/bin/mvc.es
@@ -2005,8 +1979,49 @@ $(BUILD)/bin/mvc.es: $(DEPS_146)
 #
 #   mvc
 #
+DEPS_144 += $(BUILD)/bin/libejs.so
+DEPS_144 += $(BUILD)/bin/mvc.es
+DEPS_144 += $(BUILD)/obj/ejsrun.o
+
+LIBS_144 += -lejs
+ifeq ($(ME_COM_HTTP),1)
+    LIBS_144 += -lhttp
+endif
+LIBS_144 += -lmpr
+ifeq ($(ME_COM_PCRE),1)
+    LIBS_144 += -lpcre
+endif
+
+$(BUILD)/bin/mvc: $(DEPS_144)
+	@echo '      [Link] $(BUILD)/bin/mvc'
+	$(CC) -o $(BUILD)/bin/mvc $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_144) $(LIBS_144) $(LIBS_144) $(LIBS) $(LIBS) 
+
+#
+#   utest.es
+#
+DEPS_145 += src/ejs.utest/utest.es
+
+$(BUILD)/bin/utest.es: $(DEPS_145)
+	@echo '      [Copy] $(BUILD)/bin/utest.es'
+	mkdir -p "$(BUILD)/bin"
+	cp src/ejs.utest/utest.es $(BUILD)/bin/utest.es
+
+#
+#   utest.worker
+#
+DEPS_146 += src/ejs.utest/utest.worker
+
+$(BUILD)/bin/utest.worker: $(DEPS_146)
+	@echo '      [Copy] $(BUILD)/bin/utest.worker'
+	mkdir -p "$(BUILD)/bin"
+	cp src/ejs.utest/utest.worker $(BUILD)/bin/utest.worker
+
+#
+#   utest
+#
 DEPS_147 += $(BUILD)/bin/libejs.so
-DEPS_147 += $(BUILD)/bin/mvc.es
+DEPS_147 += $(BUILD)/bin/utest.es
+DEPS_147 += $(BUILD)/bin/utest.worker
 DEPS_147 += $(BUILD)/obj/ejsrun.o
 
 LIBS_147 += -lejs
@@ -2018,83 +2033,42 @@ ifeq ($(ME_COM_PCRE),1)
     LIBS_147 += -lpcre
 endif
 
-$(BUILD)/bin/mvc: $(DEPS_147)
-	@echo '      [Link] $(BUILD)/bin/mvc'
-	$(CC) -o $(BUILD)/bin/mvc $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_147) $(LIBS_147) $(LIBS_147) $(LIBS) $(LIBS) 
-
-#
-#   utest.es
-#
-DEPS_148 += src/ejs.utest/utest.es
-
-$(BUILD)/bin/utest.es: $(DEPS_148)
-	@echo '      [Copy] $(BUILD)/bin/utest.es'
-	mkdir -p "$(BUILD)/bin"
-	cp src/ejs.utest/utest.es $(BUILD)/bin/utest.es
-
-#
-#   utest.worker
-#
-DEPS_149 += src/ejs.utest/utest.worker
-
-$(BUILD)/bin/utest.worker: $(DEPS_149)
-	@echo '      [Copy] $(BUILD)/bin/utest.worker'
-	mkdir -p "$(BUILD)/bin"
-	cp src/ejs.utest/utest.worker $(BUILD)/bin/utest.worker
-
-#
-#   utest
-#
-DEPS_150 += $(BUILD)/bin/libejs.so
-DEPS_150 += $(BUILD)/bin/utest.es
-DEPS_150 += $(BUILD)/bin/utest.worker
-DEPS_150 += $(BUILD)/obj/ejsrun.o
-
-LIBS_150 += -lejs
-ifeq ($(ME_COM_HTTP),1)
-    LIBS_150 += -lhttp
-endif
-LIBS_150 += -lmpr
-ifeq ($(ME_COM_PCRE),1)
-    LIBS_150 += -lpcre
-endif
-
-$(BUILD)/bin/utest: $(DEPS_150)
+$(BUILD)/bin/utest: $(DEPS_147)
 	@echo '      [Link] $(BUILD)/bin/utest'
-	$(CC) -o $(BUILD)/bin/utest $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_150) $(LIBS_150) $(LIBS_150) $(LIBS) $(LIBS) 
+	$(CC) -o $(BUILD)/bin/utest $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_147) $(LIBS_147) $(LIBS_147) $(LIBS) $(LIBS) 
 
 #
 #   www
 #
-DEPS_151 += src/ejs.web/www/images/banner.jpg
-DEPS_151 += src/ejs.web/www/images/favicon.ico
-DEPS_151 += src/ejs.web/www/images/splash.jpg
-DEPS_151 += src/ejs.web/www/js/jquery.ejs.min.js
-DEPS_151 += src/ejs.web/www/js/jquery.min.js
-DEPS_151 += src/ejs.web/www/js/jquery.simplemodal.min.js
-DEPS_151 += src/ejs.web/www/js/jquery.tablesorter.js
-DEPS_151 += src/ejs.web/www/js/jquery.tablesorter.min.js
-DEPS_151 += src/ejs.web/www/js/jquery.treeview.min.js
-DEPS_151 += src/ejs.web/www/js/tree-images/file.gif
-DEPS_151 += src/ejs.web/www/js/tree-images/folder-closed.gif
-DEPS_151 += src/ejs.web/www/js/tree-images/folder.gif
-DEPS_151 += src/ejs.web/www/js/tree-images/minus.gif
-DEPS_151 += src/ejs.web/www/js/tree-images/plus.gif
-DEPS_151 += src/ejs.web/www/js/tree-images/treeview-black-line.gif
-DEPS_151 += src/ejs.web/www/js/tree-images/treeview-black.gif
-DEPS_151 += src/ejs.web/www/js/tree-images/treeview-default-line.gif
-DEPS_151 += src/ejs.web/www/js/tree-images/treeview-default.gif
-DEPS_151 += src/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif
-DEPS_151 += src/ejs.web/www/js/tree-images/treeview-famfamfam.gif
-DEPS_151 += src/ejs.web/www/js/tree-images/treeview-gray-line.gif
-DEPS_151 += src/ejs.web/www/js/tree-images/treeview-gray.gif
-DEPS_151 += src/ejs.web/www/js/tree-images/treeview-red-line.gif
-DEPS_151 += src/ejs.web/www/js/tree-images/treeview-red.gif
-DEPS_151 += src/ejs.web/www/js/treeview.css
-DEPS_151 += src/ejs.web/www/layout.css
-DEPS_151 += src/ejs.web/www/themes/default.css
+DEPS_148 += src/ejs.web/www/images/banner.jpg
+DEPS_148 += src/ejs.web/www/images/favicon.ico
+DEPS_148 += src/ejs.web/www/images/splash.jpg
+DEPS_148 += src/ejs.web/www/js/jquery.ejs.min.js
+DEPS_148 += src/ejs.web/www/js/jquery.min.js
+DEPS_148 += src/ejs.web/www/js/jquery.simplemodal.min.js
+DEPS_148 += src/ejs.web/www/js/jquery.tablesorter.js
+DEPS_148 += src/ejs.web/www/js/jquery.tablesorter.min.js
+DEPS_148 += src/ejs.web/www/js/jquery.treeview.min.js
+DEPS_148 += src/ejs.web/www/js/tree-images/file.gif
+DEPS_148 += src/ejs.web/www/js/tree-images/folder-closed.gif
+DEPS_148 += src/ejs.web/www/js/tree-images/folder.gif
+DEPS_148 += src/ejs.web/www/js/tree-images/minus.gif
+DEPS_148 += src/ejs.web/www/js/tree-images/plus.gif
+DEPS_148 += src/ejs.web/www/js/tree-images/treeview-black-line.gif
+DEPS_148 += src/ejs.web/www/js/tree-images/treeview-black.gif
+DEPS_148 += src/ejs.web/www/js/tree-images/treeview-default-line.gif
+DEPS_148 += src/ejs.web/www/js/tree-images/treeview-default.gif
+DEPS_148 += src/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif
+DEPS_148 += src/ejs.web/www/js/tree-images/treeview-famfamfam.gif
+DEPS_148 += src/ejs.web/www/js/tree-images/treeview-gray-line.gif
+DEPS_148 += src/ejs.web/www/js/tree-images/treeview-gray.gif
+DEPS_148 += src/ejs.web/www/js/tree-images/treeview-red-line.gif
+DEPS_148 += src/ejs.web/www/js/tree-images/treeview-red.gif
+DEPS_148 += src/ejs.web/www/js/treeview.css
+DEPS_148 += src/ejs.web/www/layout.css
+DEPS_148 += src/ejs.web/www/themes/default.css
 
-$(BUILD)/bin/www: $(DEPS_151)
+$(BUILD)/bin/www: $(DEPS_148)
 	@echo '      [Copy] $(BUILD)/bin/www'
 	mkdir -p "$(BUILD)/bin/www/images"
 	cp src/ejs.web/www/images/banner.jpg $(BUILD)/bin/www/images/banner.jpg
@@ -2130,19 +2104,29 @@ $(BUILD)/bin/www: $(DEPS_151)
 	cp src/ejs.web/www/themes/default.css $(BUILD)/bin/www/themes/default.css
 
 #
+#   installPrep
+#
+
+installPrep: $(DEPS_149)
+	if [ "`id -u`" != 0 ] ; \
+	then echo "Must run as root. Rerun with "sudo"" ; \
+	exit 255 ; \
+	fi
+
+#
 #   stop
 #
 
-stop: $(DEPS_152)
+stop: $(DEPS_150)
 
 #
 #   installBinary
 #
 
-installBinary: $(DEPS_153)
+installBinary: $(DEPS_151)
 	mkdir -p "$(ME_APP_PREFIX)" ; \
 	rm -f "$(ME_APP_PREFIX)/latest" ; \
-	ln -s "2.5.0" "$(ME_APP_PREFIX)/latest" ; \
+	ln -s "2.5.1" "$(ME_APP_PREFIX)/latest" ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
 	cp $(BUILD)/bin/ejs $(ME_VAPP_PREFIX)/bin/ejs ; \
 	mkdir -p "$(ME_BIN_PREFIX)" ; \
@@ -2203,11 +2187,6 @@ installBinary: $(DEPS_153)
 	if [ "$(ME_COM_SSL)" = 1 ]; then true ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
 	cp src/paks/est/ca.crt $(ME_VAPP_PREFIX)/bin/ca.crt ; \
-	fi ; \
-	if [ "$(ME_COM_OPENSSL)" = 1 ]; then true ; \
-	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
-	cp $(BUILD)/bin/libssl*.so* $(ME_VAPP_PREFIX)/bin/libssl*.so* ; \
-	cp $(BUILD)/bin/libcrypto*.so* $(ME_VAPP_PREFIX)/bin/libcrypto*.so* ; \
 	fi ; \
 	if [ "$(ME_COM_EST)" = 1 ]; then true ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
@@ -2360,28 +2339,29 @@ installBinary: $(DEPS_153)
 #   start
 #
 
-start: $(DEPS_154)
+start: $(DEPS_152)
 
 #
 #   install
 #
-DEPS_155 += stop
-DEPS_155 += installBinary
-DEPS_155 += start
+DEPS_153 += installPrep
+DEPS_153 += stop
+DEPS_153 += installBinary
+DEPS_153 += start
 
-install: $(DEPS_155)
+install: $(DEPS_153)
 
 #
 #   uninstall
 #
-DEPS_156 += stop
+DEPS_154 += stop
 
-uninstall: $(DEPS_156)
+uninstall: $(DEPS_154)
 
 #
 #   version
 #
 
-version: $(DEPS_157)
-	echo 2.5.0
+version: $(DEPS_155)
+	echo 2.5.1
 

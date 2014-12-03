@@ -359,6 +359,7 @@ module ejs {
             @options dir Path or String. Directory to set as the current working directory for the command.
             @options exceptions Boolean If true, throw exceptions if the command returns a non-zero status code. 
                 Defaults to true.
+            @options noio Boolean If true, do not capture or redirect the commands stdin, stdout or stderr.
             @options timeout Number This is the default number of milliseconds for the command to complete.
             @options stream Stream the stdout from the command to the current standard output. Defaults to false.
             @param data Optional data to write to the command on it's standard input.
@@ -389,6 +390,10 @@ module ejs {
             cmd.wait()
             if (cmd.status != 0 && options.exceptions !== false) {
                 throw new IOError('Command failed, status ' + cmd.status + '\n' + cmd.error)
+            }
+            /* Currently undocumented */
+            if (options.error && cmd.error) {
+                options.error = cmd.error
             }
             return results.toString()
         }

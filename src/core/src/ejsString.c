@@ -451,12 +451,12 @@ static int getTokenValue(Ejs *ejs, EjsObj *obj, cchar *fullToken, cchar *token, 
     char        *rest, *first, *str;
 
     rest = (char*) (schr(token, '.') ? sclone(token) : token);
-    first = stok(rest, ".", &rest);
+    first = ssplit(rest, ".", &rest);
     
     qname.name = ejsCreateStringFromAsc(ejs, first);
     qname.space = 0;
     if ((vp = ejsGetPropertyByName(ejs, obj, qname)) != 0) {
-        if (rest && ejsIsPot(ejs, vp)) {
+        if (rest && *rest && ejsIsPot(ejs, vp)) {
             return getTokenValue(ejs, vp, fullToken, rest, buf, missing, join);
         } else {
             if (ejsIs(ejs, vp, Array)) {

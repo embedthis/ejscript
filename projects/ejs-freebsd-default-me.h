@@ -126,11 +126,14 @@
 #ifndef ME_HTTP_WEB_SOCKETS
     #define ME_HTTP_WEB_SOCKETS 1
 #endif
+#ifndef ME_INTEGRATE
+    #define ME_INTEGRATE 1
+#endif
 #ifndef ME_MANIFEST
     #define ME_MANIFEST "package/manifest.me"
 #endif
 #ifndef ME_ME
-    #define ME_ME "=0.8.4"
+    #define ME_ME "=>0.8.4"
 #endif
 #ifndef ME_MPR_ALLOC_PARALLEL
     #define ME_MPR_ALLOC_PARALLEL 1
@@ -160,7 +163,7 @@
     #define ME_TUNE "speed"
 #endif
 #ifndef ME_VERSION
-    #define ME_VERSION "2.5.0"
+    #define ME_VERSION "2.5.1"
 #endif
 
 /* Prefixes */
@@ -180,7 +183,7 @@
     #define ME_APP_PREFIX "/usr/local/lib/ejs"
 #endif
 #ifndef ME_VAPP_PREFIX
-    #define ME_VAPP_PREFIX "/usr/local/lib/ejs/2.5.0"
+    #define ME_VAPP_PREFIX "/usr/local/lib/ejs/2.5.1"
 #endif
 #ifndef ME_BIN_PREFIX
     #define ME_BIN_PREFIX "/usr/local/bin"
@@ -213,7 +216,7 @@
     #define ME_CACHE_PREFIX "/var/spool/ejs/cache"
 #endif
 #ifndef ME_SRC_PREFIX
-    #define ME_SRC_PREFIX "ejs-2.5.0"
+    #define ME_SRC_PREFIX "ejs-2.5.1"
 #endif
 
 /* Suffixes */
@@ -235,7 +238,7 @@
 
 /* Profile */
 #ifndef ME_CONFIG_CMD
-    #define ME_CONFIG_CMD "me -d -q -platform freebsd-x86-default -configure . -with est -gen make"
+    #define ME_CONFIG_CMD "me -d -q -platform freebsd-x86-default -configure . -with openssl -gen make"
 #endif
 #ifndef ME_EJS_PRODUCT
     #define ME_EJS_PRODUCT 1
@@ -255,10 +258,10 @@
     #define ME_MINOR_VERSION 5
 #endif
 #ifndef ME_PATCH_VERSION
-    #define ME_PATCH_VERSION 0
+    #define ME_PATCH_VERSION 1
 #endif
 #ifndef ME_VNUM
-    #define ME_VNUM 200050000
+    #define ME_VNUM 200050001
 #endif
 
 /* Components */
@@ -266,7 +269,7 @@
     #define ME_COM_CC 1
 #endif
 #ifndef ME_COM_EST
-    #define ME_COM_EST 1
+    #define ME_COM_EST 0
 #endif
 #ifndef ME_COM_HTTP
     #define ME_COM_HTTP 1
@@ -278,7 +281,7 @@
     #define ME_COM_MPR 1
 #endif
 #ifndef ME_COM_OPENSSL
-    #define ME_COM_OPENSSL 0
+    #define ME_COM_OPENSSL 1
 #endif
 #ifndef ME_COM_OSDEP
     #define ME_COM_OSDEP 1
