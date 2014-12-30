@@ -287,8 +287,6 @@ module ejs {
                 <li>The wildcard '?' matches any single character</li>
                 <li>* matches zero or more characters in a filename or directory</li>
                 <li>** matches zero or more files or directories and matches recursively in a directory tree</li>
-                <li>! Negates pattern. This removes matching patterns from the set. These are applied after all source
-                      patterns have been processed.
             </ul>
             If a pattern ends with '/', the path must exist and be a directory.
             @return True if the path matches the pattern.
