@@ -23,7 +23,6 @@ static EjsString *arrayToString(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
 static EjsArray *makeIntersection(Ejs *ejs, EjsArray *lhs, EjsArray *rhs);
 static EjsArray *makeUnion(Ejs *ejs, EjsArray *lhs, EjsArray *rhs);
-static EjsArray *removeArrayElements(Ejs *ejs, EjsArray *lhs, EjsArray *rhs);
 static EjsObj *setArrayLength(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv);
 
 /******************************************************************************/
@@ -311,7 +310,7 @@ static EjsAny *invokeArrayOperator(Ejs *ejs, EjsAny *lhs, int opcode, EjsAny *rh
         return pushArray(ejs, lhs, 1, &rhs);
 
     case EJS_OP_SUB:
-        return removeArrayElements(ejs, lhs, rhs);
+        return ejsRemoveItems(ejs, lhs, rhs);
 
     default:
         ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
@@ -435,7 +434,7 @@ static EjsArray *makeUnion(Ejs *ejs, EjsArray *lhs, EjsArray *rhs)
 }
 
 
-static EjsArray *removeArrayElements(Ejs *ejs, EjsArray *lhs, EjsArray *rhs)
+PUBLIC EjsArray *ejsRemoveItems(Ejs *ejs, EjsArray *lhs, EjsArray *rhs)
 {
     EjsObj  **l, **r;
     int     i, j, k;
@@ -1102,7 +1101,7 @@ static EjsNumber *pushArray(Ejs *ejs, EjsArray *ap, int argc, EjsAny **argv)
  */
 static EjsArray *removeElements(Ejs *ejs, EjsArray *ap, int argc, EjsArray **argv)
 {
-    return removeArrayElements(ejs, ap, argv[0]);
+    return ejsRemoveItems(ejs, ap, argv[0]);
 }
 
 
