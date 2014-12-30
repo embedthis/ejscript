@@ -537,7 +537,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
     EjsObj      *pp, *obj, *replacerArgs[2];
     wchar       *cp;
     cchar       *key;
-    int         c, isArray, i, count, slotNum, quotes, sameline;
+    int         c, isArray, i, count, slotNum, quotes, sameline, items;
 
     /*
         The main code below can handle Arrays, Objects, objects derrived from Object and also native classes with properties.
@@ -567,6 +567,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
     if (json->pretty && !sameline) {
         mprPutCharToWideBuf(json->buf, '\n');
     }
+    items = 0;
     if (++ejs->serializeDepth <= json->depth && !VISITED(obj)) {
         SET_VISITED(obj, 1);
         for (slotNum = 0; slotNum < count && !ejs->exception; slotNum++) {
@@ -656,14 +657,21 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                 }
                 mprPutBlockToBuf(json->buf, sv->value, sv->length * sizeof(wchar));
             }
-            if ((slotNum + 1) < count || json->commas) {
-                mprPutCharToWideBuf(json->buf, ',');
-            }
+            mprPutCharToWideBuf(json->buf, ',');
             if (json->pretty && !sameline) {
                 mprPutCharToWideBuf(json->buf, '\n');
             }
+            items++;
         }
         SET_VISITED(obj, 0);
+        if (items > 0 && !json->commas) {
+            if (json->pretty && !sameline) {
+                mprAdjustBufEnd(json->buf, - (2 * sizeof(wchar)));
+                mprPutCharToWideBuf(json->buf, '\n');
+            } else {
+                mprAdjustBufEnd(json->buf, - sizeof(wchar));
+            }
+        }
     }
     --ejs->serializeDepth; 
     if (json->pretty && !sameline) {
