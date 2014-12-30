@@ -3,7 +3,7 @@
 #
 
 NAME                  := ejs
-VERSION               := 2.5.1
+VERSION               := 2.5.2
 PROFILE               ?= static
 ARCH                  ?= $(shell echo $(WIND_HOST_TYPE) | sed 's/-.*$(ME_ROOT_PREFIX)/')
 CPU                   ?= $(subst X86,PENTIUM,$(shell echo $(ARCH) | tr a-z A-Z))
@@ -2092,5 +2092,5 @@ uninstall: $(DEPS_153)
 #
 
 version: $(DEPS_154)
-	echo 2.5.1
+	echo 2.5.2
 

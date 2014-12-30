@@ -163,7 +163,7 @@
     #define ME_TUNE "speed"
 #endif
 #ifndef ME_VERSION
-    #define ME_VERSION "2.5.1"
+    #define ME_VERSION "2.5.2"
 #endif
 
 /* Prefixes */
@@ -183,7 +183,7 @@
     #define ME_APP_PREFIX "/usr/local/lib/ejs"
 #endif
 #ifndef ME_VAPP_PREFIX
-    #define ME_VAPP_PREFIX "/usr/local/lib/ejs/2.5.1"
+    #define ME_VAPP_PREFIX "/usr/local/lib/ejs/2.5.2"
 #endif
 #ifndef ME_BIN_PREFIX
     #define ME_BIN_PREFIX "/usr/local/bin"
@@ -216,7 +216,7 @@
     #define ME_CACHE_PREFIX "/var/spool/ejs/cache"
 #endif
 #ifndef ME_SRC_PREFIX
-    #define ME_SRC_PREFIX "ejs-2.5.1"
+    #define ME_SRC_PREFIX "ejs-2.5.2"
 #endif
 
 /* Suffixes */
@@ -258,10 +258,10 @@
     #define ME_MINOR_VERSION 5
 #endif
 #ifndef ME_PATCH_VERSION
-    #define ME_PATCH_VERSION 1
+    #define ME_PATCH_VERSION 2
 #endif
 #ifndef ME_VNUM
-    #define ME_VNUM 200050001
+    #define ME_VNUM 200050002
 #endif
 
 /* Components */

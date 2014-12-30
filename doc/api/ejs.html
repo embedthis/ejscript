@@ -328,6 +328,7 @@
 <tr class="apiDef"><td class="apiType">void</td><td><a href="#group___ejs_function_1gaef490e640f5b309ffb75596134f40ac0" class="nameRef">ejsRemoveConstructor</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, struct EjsType *type)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Remove a constructor function from a type.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_array_1ga623fd2c2fcf6a5a66b55d670d0dffb57" class="nameRef">ejsRemoveItem</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_array" class="ref">EjsArray</a> *ap, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *item, int compact)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Remove an item from the array.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_array_1ga365f933b4d0802d28ab03d094864f2f8" class="nameRef">ejsRemoveItemAtPos</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_array" class="ref">EjsArray</a> *ap, int index, int compact)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Remove an item at a given index from the array.</td></tr>
+<tr class="apiDef"><td class="apiType"><a href="#group___ejs_array" class="ref">EjsArray*</a></td><td><a href="#group___ejs_array_1gab31dedace83a801464ad335f68860da6" class="nameRef">ejsRemoveItems</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_array" class="ref">EjsArray</a> *ap, <a href="#group___ejs_array" class="ref">EjsArray</a> *items)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Remove items from the array.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_array_1ga06a6b2e015b4932f4071c446be76dfd1" class="nameRef">ejsRemoveLastItem</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_array" class="ref">EjsArray</a> *ap)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Remove the last item from the array.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_obj_1ga25ab5e7566650730da4f836f43987789" class="nameRef">ejsRemoveObserver</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_obj" class="ref">EjsObj</a> *emitter, <a href="#group___ejs_obj" class="ref">EjsObj</a> *name, struct EjsFunction *observer)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Remove an observer.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___ejs_pot_1gaf399403da5caa1b3205351d45b47b190" class="nameRef">ejsRemovePotProperty</a>(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#ejs_8h_1a6b33ea7ff8884b09e08ff69d698eb4e9" class="ref">EjsAny</a> *obj, int slotNum)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Remove a property.</td></tr>
@@ -1878,6 +1879,27 @@ Property storage.
     <dl><dt>Returns:</dt><dd>The index where the item was found. Otherwise return MPR_ERR_CANT_FIND.</dd></dl>
     <dl><dt>See Also:</dt><dd>
     <a href="#group___ejs_array" class="ref">EjsArray</a>, <a href="#group___ejs_array_1ga009398582dcd95d0e1e4bbdba42ccc70" class="ref">ejsAddItem</a>, <a href="#group___ejs_array_1ga86bd0f050355eee1a5ec88047f0e6cd1" class="ref">ejsAppendArray</a>, <a href="#group___ejs_array_1ga34a9d4131fab73ae76a09f66039a71ad" class="ref">ejsClearArray</a>, <a href="#group___ejs_array_1ga5d858aa540449fe0aea905833c2a9b48" class="ref">ejsCloneArray</a>, <a href="#group___ejs_array_1ga43cacbf358fdf4d364706dd01a5ebdc0" class="ref">ejsCreateArray</a>, <a href="#group___ejs_array_1gac6508d102cf522ce7a9c1d5c6df5ff09" class="ref">ejsGetFirstItem</a>, <a href="#group___ejs_array_1ga5746695bda59a012c676df397543d705" class="ref">ejsGetItem</a>, <a href="#group___ejs_array_1gaaa818bc25cfa75a0da2872985cc764db" class="ref">ejsGetLastItem</a>, <a href="#group___ejs_array_1ga3a823345abdbbe6043de660356d163cc" class="ref">ejsGetNextItem</a>, <a href="#group___ejs_array_1ga29dd01855d3fc312ccadee7003544144" class="ref">ejsGetPrevItem</a>, <a href="#group___ejs_array_1ga1231ed0a94e14f535dc7f773ce598913" class="ref">ejsInsertItem</a>, <a href="#group___ejs_array_1gaa5a3dc4d75d615587aa1e9f8e27a77f3" class="ref">ejsLookupItem</a>, <a href="#group___ejs_array_1ga623fd2c2fcf6a5a66b55d670d0dffb57" class="ref">ejsRemoveItem</a>, <a href="#group___ejs_array_1ga06a6b2e015b4932f4071c446be76dfd1" class="ref">ejsRemoveLastItem</a></dd></dl>
+  </div>
+</div>
+<a name="group___ejs_array_1gab31dedace83a801464ad335f68860da6"></a>
+<div class="api">
+  <div class="prototype">
+    <a href="#group___ejs_array" class="ref">EjsArray</a> *
+    ejsRemoveItems
+(<a href="#group___ejs" class="ref">Ejs</a> *ejs, <a href="#group___ejs_array" class="ref">EjsArray</a> *ap, <a href="#group___ejs_array" class="ref">EjsArray</a> *items)
+  </div>
+  <div class="apiDetail">
+<p>Remove items from the array.</p>
+    <dl><dt><b>Description</b>:</dt><dd>This will remove items from the array. The array will be compacted.</dd></dl>
+    <dl><dt>Parameters:</dt><dd>
+    <table class="parameters" title="Parameters">
+    <tr><td class="param">ejs</td><td>Ejs reference returned from <a class="ref" href="#group___ejs_1ga98a567fe16481c6bf5368749d831ae77">ejsCreateVM</a></td>
+    <tr><td class="param">ap</td><td>Source array to modify.</td>
+    <tr><td class="param">items</td><td>Array items to remove.</td>
+    </table></dd></dl>
+    <dl><dt>Returns:</dt><dd>The original array.</dd></dl>
+    <dl><dt>See Also:</dt><dd>
+    <a href="#group___ejs_array" class="ref">EjsArray</a>, <a href="#group___ejs_array_1ga009398582dcd95d0e1e4bbdba42ccc70" class="ref">ejsAddItem</a>, <a href="#group___ejs_array_1ga86bd0f050355eee1a5ec88047f0e6cd1" class="ref">ejsAppendArray</a>, <a href="#group___ejs_array_1ga34a9d4131fab73ae76a09f66039a71ad" class="ref">ejsClearArray</a>, <a href="#group___ejs_array_1ga5d858aa540449fe0aea905833c2a9b48" class="ref">ejsCloneArray</a>, <a href="#group___ejs_array_1ga43cacbf358fdf4d364706dd01a5ebdc0" class="ref">ejsCreateArray</a>, <a href="#group___ejs_array_1gac6508d102cf522ce7a9c1d5c6df5ff09" class="ref">ejsGetFirstItem</a>, <a href="#group___ejs_array_1ga5746695bda59a012c676df397543d705" class="ref">ejsGetItem</a>, <a href="#group___ejs_array_1gaaa818bc25cfa75a0da2872985cc764db" class="ref">ejsGetLastItem</a>, <a href="#group___ejs_array_1ga3a823345abdbbe6043de660356d163cc" class="ref">ejsGetNextItem</a>, <a href="#group___ejs_array_1ga29dd01855d3fc312ccadee7003544144" class="ref">ejsGetPrevItem</a>, <a href="#group___ejs_array_1ga1231ed0a94e14f535dc7f773ce598913" class="ref">ejsInsertItem</a>, <a href="#group___ejs_array_1gaa5a3dc4d75d615587aa1e9f8e27a77f3" class="ref">ejsLookupItem</a>, <a href="#group___ejs_array_1ga623fd2c2fcf6a5a66b55d670d0dffb57" class="ref">ejsRemoveItem</a>, <a href="#group___ejs_array_1ga365f933b4d0802d28ab03d094864f2f8" class="ref">ejsRemoveItemAtPos</a>, <a href="#group___ejs_array_1ga06a6b2e015b4932f4071c446be76dfd1" class="ref">ejsRemoveLastItem</a></dd></dl>
   </div>
 </div>
 <a name="group___ejs_array_1ga06a6b2e015b4932f4071c446be76dfd1"></a>

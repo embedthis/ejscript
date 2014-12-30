@@ -3,12 +3,11 @@ Expansive.load({
         title:       'Embedthis Ejscript Documentation',
         url:         'https://embedthis.com/ejs/doc/',
         description: 'Javacript Language Environment',
-        keywords:    'Ejscript, Javascript, Ecmascript, devices, http server, internet of things',
     },
-    expansive: {
+    control: {
         copy: [ 'images' ],
-        dependencies: { 'css/all.css.less': 'css/*.inc.less' },
-        documents: [ '**', '!css/*.inc.less' ],
+        dependencies: { 'css/all.css.less': '**.less' },
+        documents: [ '**', '!**.less', '**.css.less' ],
         plugins: [ 'less' ],
     }
 })

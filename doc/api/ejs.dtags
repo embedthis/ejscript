@@ -917,6 +917,13 @@
       <arglist>(Ejs *ejs, EjsArray *ap, int index, int compact)</arglist>
     </member>
     <member kind="function">
+      <type>EjsArray *</type>
+      <name>ejsRemoveItems</name>
+      <anchorfile>group___ejs_array.html</anchorfile>
+      <anchor>gab31dedace83a801464ad335f68860da6</anchor>
+      <arglist>(Ejs *ejs, EjsArray *ap, EjsArray *items)</arglist>
+    </member>
+    <member kind="function">
       <type>int</type>
       <name>ejsRemoveLastItem</name>
       <anchorfile>group___ejs_array.html</anchorfile>
