@@ -168,9 +168,9 @@ assert("abcdef".replace("cd", "CD") == "abCDef")
 assert("abcdef".replace("cd", "CDXXYYZZ") == "abCDXXYYZZef")
 assert("abcdef".replace("cd", "") == "abef")
 
-if (Config.RegularExpressions) {
-    assert("abcdef".replace(/c/, "$$") == "ab$def")
-}
+assert("abcdef".replace(/c/, "$$") == "ab$def")
+assert("aaa".replace(/a/g, "z") == "zzz")
+assert("ab ab ab".replace(/a/g, "z") == "zb zb zb")
 
 
 // reverse

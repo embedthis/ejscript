@@ -1244,18 +1244,13 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                 result = buildString(ejs, result, lastReplace, (int) (cp - lastReplace));
             }
             endLastMatch = matches[1];
-            if (startNextMatch == endLastMatch) {
-                if (rp->multiline) {
-                    if ((cp = strchr(&sp->value[endLastMatch], '\n')) != 0) {
-                        startNextMatch = (int) (cp - sp->value + 1);
-                    } else {
-                        break;
-                    }
-                } else {
-                    startNextMatch++;
-                }
-            } else {
-                startNextMatch = endLastMatch;
+            startNextMatch = endLastMatch;
+            if (matches[0] == matches[1]) {
+                /* 
+                    A pattern may match but have no length. Step over the position always.
+                    E.g. multline matching ^ or $, or an optional pattern
+                 */
+                startNextMatch++;
             }
         } while (rp->global);
 
