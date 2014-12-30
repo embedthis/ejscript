@@ -15,7 +15,7 @@ static EjsArray *getFilesWithInstructions(Ejs *ejs, EjsPath *fp, EjsObj *instruc
 static cchar *getPathString(Ejs *ejs, EjsObj *vp);
 static void getUserGroup(Ejs *ejs, EjsObj *attributes, int *uid, int *gid);
 static EjsArray *getFiles(Ejs *ejs, EjsArray *results, EjsPath *path, cchar *pattern, EjsAny *missing,
-    EjsString *relative, MprList *negate, EjsRegExp *exclude, EjsRegExp *include, EjsObj *options, int flags);
+    EjsString *relative, EjsRegExp *exclude, EjsRegExp *include, EjsObj *options, int flags);
 
 /************************************ Helpers *********************************/
 
@@ -587,10 +587,9 @@ static EjsArray *getFilesWithInstructions(Ejs *ejs, EjsPath *fp, EjsObj *instruc
     MprFileSystem   *fs;
     EjsAny          *vp, *missing;
     EjsObj          *options, *expand;
-    EjsArray        *patterns, *list;
+    EjsArray        *patterns, *list, *negate;
     EjsRegExp       *exclude, *include;
     EjsString       *pattern, *relative;
-    MprList         *negate;
     cchar           *s;
     char            *pat;
     int             flags, i, lastc;
@@ -677,24 +676,6 @@ static EjsArray *getFilesWithInstructions(Ejs *ejs, EjsPath *fp, EjsObj *instruc
             flags |= FILES_CONTENTS;
         } 
     }
-    negate = 0;
-    for (i = 0; i < patterns->length; i++) {
-        pattern = ejsToString(ejs, ejsGetItem(ejs, patterns, i));
-        if (pattern->value[0] == '!' && !(flags & FILES_NONEG)) {
-            if (expand) {
-                pattern = expandPath(ejs, fp, pattern, expand, options);
-            }
-            if (!negate) {
-                negate = mprCreateList(0, 0);
-            }
-            pat = ejsToMulti(ejs, pattern);
-            if (flags & FILES_RELATIVE) {
-                mprAddItem(negate, &pat[1]);
-            } else {
-                mprAddItem(negate, mprJoinPath(fp->value, &pat[1]));
-            }
-        }
-    }
     for (i = 0; i < patterns->length; i++) {
         pattern = ejsToString(ejs, ejsGetItem(ejs, patterns, i));
         if (expand) {
@@ -709,8 +690,16 @@ static EjsArray *getFilesWithInstructions(Ejs *ejs, EjsPath *fp, EjsObj *instruc
                 pat = mprJoinPath(pat, "**");
             }
         }
-        if (!getFiles(ejs, results, fp, pat, missing, relative, negate, exclude, include, options, flags)) {
-            return 0;
+        if (pat[0] == '!' && !(flags & FILES_NONEG)) {
+            negate = ejsCreateArray(ejs, 0);
+            if (!getFiles(ejs, negate, fp, &pat[1], 0, relative, exclude, include, options, flags & ~FILES_NOMATCH_EXC)) {
+                return 0;
+            }
+            ejsRemoveItems(ejs, results, negate);
+        } else {
+            if (!getFiles(ejs, results, fp, pat, missing, relative, exclude, include, options, flags)) {
+                return 0;
+            }
         }
     }
     if (ejsGetLength(ejs, results) == 0) {
@@ -762,12 +751,12 @@ static bool matchPath(Ejs *ejs, EjsPath *thisPath, EjsAny *matcher, cchar *path,
     pattern     Glob pattern.
  */
 static EjsArray *getFiles(Ejs *ejs, EjsArray *results, EjsPath *thisPath, cchar *pattern, EjsAny *missing,
-    EjsString *relative, MprList *negate, EjsRegExp *exclude, EjsRegExp *include, EjsObj *options, int flags)
+    EjsString *relative, EjsRegExp *exclude, EjsRegExp *include, EjsObj *options, int flags)
 {
     MprList     *list;
     MprPath     info;
-    cchar       *path, *matchFile, *npat;
-    int         add, i, index, count;
+    cchar       *path, *matchFile;
+    int         add, index, count;
 
     count = 0;
     list = mprGlobPathFiles(thisPath->value, pattern, flags);
@@ -790,14 +779,6 @@ static EjsArray *getFiles(Ejs *ejs, EjsArray *results, EjsPath *thisPath, cchar 
             }
             matchFile = (info.isDir && !info.isLink) ? sjoin(path, "/", NULL) : path;
             add = !matchPath(ejs, thisPath, exclude, matchFile, options);
-        }
-        if (add) {
-            for (ITERATE_ITEMS(negate, npat, i)) {
-                if (mprMatchPath(path, npat)) {
-                    add = 0;
-                    break;
-                }
-            }
         }
         if (add) {
             if (relative) {
