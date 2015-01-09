@@ -1,0 +1,120 @@
+{
+    title:  'Generating Documentation',
+    crumbs: [ 
+        { "User's Guide": "index.html" },
+    ],
+}
+            <h1>Generating Documentation</h1>
+            <p>To make usable class libraries to share with others, effective class library documentation is essential.
+            For Ejscript programs, the <strong><a href="ejsmod.html">ejsmod</a></strong> program can generate HTML
+            documentation for class libraries similar to the Java, Javadoc tools. The ejsmod tool extracts the
+            documentation from comments in the script code and from the script variable, function and type
+            declarations. It automatically documents all non-private elements and creates a complete HTML web site for
+            the documentation.</p>
+            <p>The <a href="../ref/api/ejscript/index.html">Ejscript Language Library</a> documentation has been
+            prepared using the ejsmod tool.</p>
+            <h2>Preparing Your Source</h2>
+            <p>The first step in generating documentation is to add comments to your source code. These comments are
+            called <strong>ejsdoc</strong> comments and are valid Ejscript comments that begin with the characters
+            <strong>/**</strong>. For example:</p>
+            <pre class="ui code segment">
+/**
+ *  Users full name including first and last name.
+ */
+var userName
+</pre>
+            <p>By default, <b>ejsmod</b> will generate documentation for all elements regardless of whether they have
+            an ejsdoc comment, but the description for elements without an ejsdoc comment will be empty.</p>
+            <h2>Ejsdoc Comments</h2>
+            <p>Ejsdoc comments will be parsed by ejsmod to extract information for the commented element, starting with
+            the first sentence.</p>
+            <h3>First Sentence</h3>
+            <p>The first sentence is special. It is the brief, one line description used in indices and overviews. You
+            don't need any special "@brief" or other tag like other documentation tools. Ejsmod uses a set of
+            conventions to make documenting your code easier and the first of these conventions is to extract the first
+            sentence as a brief description.</p>
+            <h3>Remaining Sentences</h3>
+            <p>The remaining sentences in the ejsdoc comment are captured as the full description for the element. The
+            first sentence is removed and stored as the brief description, but will be restored in some locations where
+            relevant to the documentation.</p>
+            <h3>AT Directives</h3>
+            <p>Embedded in the ejsdoc comment may be a set of directives that begin with the <strong>@</strong>
+            character. These typically are either one liners or continue until the next @directive or the end of the
+            ejsdoc comment.</p>
+            <table title="directives">
+                <thead>
+                    <tr>
+                        <th>Directive</th>
+                        <th>Format</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>@param</td>
+                    <td class="nowrap">@param name Description</td>
+                    <td>Describe a parameter. The description continues up to the next @directive or the end of the
+                    ejsdoc comment. Multiple @param directives are permitted.</td>
+                </tr>
+                <tr>
+                    <td>@return</td>
+                    <td>@return Description</td>
+                    <td>Describe the return value. If the sentence starts with a lower case word, then ejsmod will
+                    append the word "Returns" to the start of the description. You can also use (or misuse) the
+                    directive as @returns. Only a single @return directive is permitted.</td>
+                </tr>
+                <tr>
+                    <td>@throw</td>
+                    <td class="nowrap">@throw TypeError Description</td>
+                    <td>Describe an exception that may be thrown by the function. The TypeError should be the name of
+                    an Error class. The description continues up to the next @directive or the end of the ejsdoc
+                    comment. Multiple @param directives are permitted.</td>
+                </tr>
+                <tr>
+                    <td>@example</td>
+                    <td>@example Multi-line example</td>
+                    <td>Describe an example that illustrates use of the API. The description continues up to the next
+                    @directive or the end of the ejsdoc comment. Multiple @example directives are permitted.</td>
+                </tr>
+                <tr>
+                    <td>@spec</td>
+                    <td>@spec name, [, name ...]</td>
+                    <td>Describe the standards conformance of the element. Typical values include ejs-NN for Ejscript
+                    conformant or ecma-3 for ECMAScript 3 compliance.</td>
+                </tr>
+                <tr>
+                    <td>@see</td>
+                    <td>@see name [, name ...]</td>
+                    <td>Create a "See Also" link to another element in the documentation. Names should be comma
+                    separated. Multiple @see directives are permitted.</td>
+                </tr>
+                </tbody>
+            </table>
+            <p>Here is an example comment specification from the Ejscript Language Library</p>
+            <pre class="ui code segment">
+/**
+ *  Search for an item using strict equality "===". This call 
+ *  searches from the start of the array for the specified element.
+ *  @param element The object to search for.
+ *  @param startIndex Where in the array (zero based) to start 
+ *         searching for the object.
+ *  @return The items index into the array if found, otherwise -1.
+ *  @throws OutOfBoundsError If the starting index is greater 
+ *          than or equal to the size of the array or less then 0.
+ *  @spec ecma-3
+ */
+function indexOf(element: Object, 
+    startIndex: Number = 0): Number
+{
+}
+</pre>
+            <h3>Embedded HTML</h3>
+            <p>The ejsdoc comment may contain embedded HTML which will be passed through to the documentation without
+            modification. In this manner, you can add your own styling. For example:</p>
+            <pre class="ui code segment">
+/** Some &lt;b&gt;bold&lt;/b&gt; text */
+</pre>
+            <h3>Styling</h3>
+            <p>Ejsmod generates a style sheet for use with the documentation. You are welcome to modify the contents of
+            this style sheet, but it will be generated each time. Ejsmod is not yet capable of being "skinned" or
+            "styled" to suite individual needs. This is planned for a future release.</p>
