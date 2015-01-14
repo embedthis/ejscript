@@ -3727,6 +3727,19 @@ PUBLIC int parseFile(HttpRoute *route, cchar *path)
         mprLog("error http config", 0, "Cannot parse %s: error %s", path, errorMsg);
         return MPR_ERR_CANT_READ;
     }
+#if DEPRECATE || 1
+{
+    MprJson *obj;
+    if ((obj = mprGetJsonObj(config, "app.http")) != 0) {
+        mprRemoveJson(config, "app.http");
+        mprSetJsonObj(config, "http", obj);
+    }
+    if ((obj = mprGetJsonObj(config, "app.esp")) != 0) {
+        mprRemoveJson(config, "app.esp");
+        mprSetJsonObj(config, "esp", obj);
+    }
+}
+#endif
     blendMode(route, config);
     if (route->config) {
         mprBlendJson(route->config, config, MPR_JSON_COMBINE);
@@ -8503,6 +8516,10 @@ PUBLIC int httpHandleDirectory(HttpConn *conn)
         pathInfo = sjoin(req->path, "/", NULL);
         uri = httpFormatUri(req->scheme, req->host, req->port, pathInfo, req->reference, req->query, 0);
         httpRedirect(conn, HTTP_CODE_MOVED_PERMANENTLY, uri);
+        if (tx->finalized) {
+            /* This allows handlers to call httpHandleDirectory after routing (esp does this) */
+            tx->handler = conn->http->passHandler;
+        }
         return HTTP_ROUTE_OK;
     }
     if (route->indexes) {
@@ -10346,7 +10363,7 @@ PUBLIC void httpJoinPackets(HttpQueue *q, ssize size)
         /*
             Copy the data and free all other packets
          */
-        for (p = packet->next; p && size > 0; p = p->next) {
+        for (p = packet->next; p && (p->flags & HTTP_PACKET_DATA); p = p->next) {
             if ((len = httpGetPacketLength(p)) > 0) {
                 httpJoinPacket(packet, p);
             }
@@ -11108,6 +11125,9 @@ PUBLIC void httpSetSendConnector(HttpConn *conn, cchar *path)
 }
 
 
+/*
+    Set the fileHandler as the selected handler for the request
+ */
 PUBLIC void httpSetFileHandler(HttpConn *conn, cchar *path)
 {
     HttpStage   *fp;
@@ -11118,14 +11138,13 @@ PUBLIC void httpSetFileHandler(HttpConn *conn, cchar *path)
     if (path && path != tx->filename) {
         httpSetFilename(conn, path, 0);
     }
-    fp = tx->handler = HTTP->fileHandler;
-
-    //  MOB this should be refactored with espRenderDocuments
     if ((conn->rx->flags & HTTP_GET) && !(tx->flags & HTTP_TX_HAS_FILTERS) && !conn->secure && !httpTracing(conn)) {
         tx->flags |= HTTP_TX_SENDFILE;
         tx->connector = HTTP->sendConnector;
     }
     tx->entityLength = tx->fileInfo.size;
+
+    fp = tx->handler = HTTP->fileHandler;
     fp->open(conn->writeq);
     fp->start(conn->writeq);
     conn->writeq->service = fp->outgoingService;
@@ -11892,7 +11911,7 @@ static void startRange(HttpQueue *q)
     /*
         The httpContentNotModified routine can set outputRanges to zero if returning not-modified.
      */
-    if (tx->outputRanges == 0 || tx->status != HTTP_CODE_OK || !fixRangeLength(conn)) {
+    if (tx->outputRanges == 0 || tx->status != HTTP_CODE_OK) {
         httpRemoveQueue(q);
         tx->outputRanges = 0;
     } else {
@@ -11913,6 +11932,15 @@ static void outgoingRangeService(HttpQueue *q)
     conn = q->conn;
     tx = conn->tx;
 
+    if (!(q->flags & HTTP_QUEUE_SERVICED)) {
+        /*
+            The httpContentNotModified routine can set outputRanges to zero if returning not-modified.
+         */
+        if (!fixRangeLength(conn)) {
+            httpRemoveQueue(q);
+            tx->outputRanges = 0;
+        }
+    }
     for (packet = httpGetPacket(q); packet; packet = httpGetPacket(q)) {
         if (packet->flags & HTTP_PACKET_DATA) {
             if (!applyRange(q, packet)) {
@@ -19865,7 +19893,7 @@ static void setHeaders(HttpConn *conn, HttpPacket *packet)
             httpAddHeader(conn, "Content-Length", "%lld", length);
         }
 
-    } else if (/* UNUSED tx->length < 0 && */ tx->chunkSize > 0) {
+    } else if (tx->chunkSize > 0) {
         httpSetHeaderString(conn, "Transfer-Encoding", "chunked");
 
     } else if (httpServerConn(conn)) {
@@ -19938,8 +19966,6 @@ PUBLIC void httpSetEntityLength(HttpConn *conn, int64 len)
 
     tx = conn->tx;
     tx->entityLength = len;
-
-    //  MOB - should this be done here?
     if (tx->outputRanges == 0) {
         tx->length = len;
     }
@@ -20098,7 +20124,7 @@ PUBLIC void httpWriteHeaders(HttpQueue *q, HttpPacket *packet)
     /*
         By omitting the "\r\n" delimiter after the headers, chunks can emit "\r\nSize\r\n" as a single chunk delimiter
      */
-    if (/* UNUSED tx->length >= 0 || */ tx->chunkSize <= 0) {
+    if (tx->chunkSize <= 0) {
         mprPutStringToBuf(buf, "\r\n");
     }
     tx->headerSize = mprGetBufLength(buf);
