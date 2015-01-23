@@ -1,0 +1,8 @@
+{
+    meta: {
+        url: 'https://embedthis.com/ejs/doc/',
+    },
+    control: {
+        copy: [ 'images' ],
+    }
+}
