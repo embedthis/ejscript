@@ -289,6 +289,9 @@ static void cmdIOCallback(MprCmd *mc, int channel, void *data)
         break;
     default:
         /* Child death */
+        if (cmd->async) {
+            ejsSendEvent(cmd->ejs, cmd->emitter, "readable", NULL, cmd);
+        }
         return;
     }
     /*
