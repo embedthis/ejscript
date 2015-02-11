@@ -259,7 +259,6 @@ clean:
 	if exist "build\$(CONFIG)\obj\mprLib.obj" del /Q "build\$(CONFIG)\obj\mprLib.obj"
 	if exist "build\$(CONFIG)\obj\mprSsl.obj" del /Q "build\$(CONFIG)\obj\mprSsl.obj"
 	if exist "build\$(CONFIG)\obj\pcre.obj" del /Q "build\$(CONFIG)\obj\pcre.obj"
-	if exist "build\$(CONFIG)\obj\removeFiles.obj" del /Q "build\$(CONFIG)\obj\removeFiles.obj"
 	if exist "build\$(CONFIG)\obj\slotGen.obj" del /Q "build\$(CONFIG)\obj\slotGen.obj"
 	if exist "build\$(CONFIG)\obj\sqlite.obj" del /Q "build\$(CONFIG)\obj\sqlite.obj"
 	if exist "build\$(CONFIG)\obj\sqlite3.obj" del /Q "build\$(CONFIG)\obj\sqlite3.obj"
@@ -354,41 +353,41 @@ build\$(CONFIG)\inc\me.h: $(DEPS_2)
 #
 #   osdep.h
 #
-DEPS_3 = $(DEPS_3) src\paks\osdep\osdep.h
+DEPS_3 = $(DEPS_3) paks\osdep\dist\osdep.h
 DEPS_3 = $(DEPS_3) build\$(CONFIG)\inc\me.h
 
 build\$(CONFIG)\inc\osdep.h: $(DEPS_3)
 	@echo ..... [Copy] build\$(CONFIG)\inc\osdep.h
 	if not exist "build\$(CONFIG)\inc" md "build\$(CONFIG)\inc"
-	copy /Y /B src\paks\osdep\osdep.h+modified build\$(CONFIG)\inc\osdep.h $(LOG)
+	copy /Y /B paks\osdep\dist\osdep.h+modified build\$(CONFIG)\inc\osdep.h $(LOG)
 
 #
 #   mpr.h
 #
-DEPS_4 = $(DEPS_4) src\paks\mpr\mpr.h
+DEPS_4 = $(DEPS_4) paks\mpr\dist\mpr.h
 DEPS_4 = $(DEPS_4) build\$(CONFIG)\inc\me.h
 DEPS_4 = $(DEPS_4) build\$(CONFIG)\inc\osdep.h
 
 build\$(CONFIG)\inc\mpr.h: $(DEPS_4)
 	@echo ..... [Copy] build\$(CONFIG)\inc\mpr.h
 	if not exist "build\$(CONFIG)\inc" md "build\$(CONFIG)\inc"
-	copy /Y /B src\paks\mpr\mpr.h+modified build\$(CONFIG)\inc\mpr.h $(LOG)
+	copy /Y /B paks\mpr\dist\mpr.h+modified build\$(CONFIG)\inc\mpr.h $(LOG)
 
 #
 #   mpr.h
 #
 
-src\paks\mpr\mpr.h: $(DEPS_5)
+paks\mpr\dist\mpr.h: $(DEPS_5)
 
 #
 #   mprLib.obj
 #
-DEPS_6 = $(DEPS_6) src\paks\mpr\mpr.h
+DEPS_6 = $(DEPS_6) paks\mpr\dist\mpr.h
 
 build\$(CONFIG)\obj\mprLib.obj: \
-    src\paks\mpr\mprLib.c $(DEPS_6)
+    paks\mpr\dist\mprLib.c $(DEPS_6)
 	@echo .. [Compile] build\$(CONFIG)\obj\mprLib.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\mprLib.obj -Fd$(BUILD)\obj\mprLib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\mpr\mprLib.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\mprLib.obj -Fd$(BUILD)\obj\mprLib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) paks\mpr\dist\mprLib.c $(LOG)
 
 #
 #   libmpr
@@ -404,29 +403,29 @@ build\$(CONFIG)\bin\libmpr.dll: $(DEPS_7)
 #
 #   pcre.h
 #
-DEPS_8 = $(DEPS_8) src\paks\pcre\pcre.h
+DEPS_8 = $(DEPS_8) paks\pcre\dist\pcre.h
 
 build\$(CONFIG)\inc\pcre.h: $(DEPS_8)
 	@echo ..... [Copy] build\$(CONFIG)\inc\pcre.h
 	if not exist "build\$(CONFIG)\inc" md "build\$(CONFIG)\inc"
-	copy /Y /B src\paks\pcre\pcre.h+modified build\$(CONFIG)\inc\pcre.h $(LOG)
+	copy /Y /B paks\pcre\dist\pcre.h+modified build\$(CONFIG)\inc\pcre.h $(LOG)
 
 #
 #   pcre.h
 #
 
-src\paks\pcre\pcre.h: $(DEPS_9)
+paks\pcre\dist\pcre.h: $(DEPS_9)
 
 #
 #   pcre.obj
 #
 DEPS_10 = $(DEPS_10) build\$(CONFIG)\inc\me.h
-DEPS_10 = $(DEPS_10) src\paks\pcre\pcre.h
+DEPS_10 = $(DEPS_10) paks\pcre\dist\pcre.h
 
 build\$(CONFIG)\obj\pcre.obj: \
-    src\paks\pcre\pcre.c $(DEPS_10)
+    paks\pcre\dist\pcre.c $(DEPS_10)
 	@echo .. [Compile] build\$(CONFIG)\obj\pcre.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\pcre.obj -Fd$(BUILD)\obj\pcre.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\pcre\pcre.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\pcre.obj -Fd$(BUILD)\obj\pcre.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) paks\pcre\dist\pcre.c $(LOG)
 
 !IF "$(ME_COM_PCRE)" == "1"
 #
@@ -443,29 +442,29 @@ build\$(CONFIG)\bin\libpcre.dll: $(DEPS_11)
 #
 #   http.h
 #
-DEPS_12 = $(DEPS_12) src\paks\http\http.h
+DEPS_12 = $(DEPS_12) paks\http\dist\http.h
 DEPS_12 = $(DEPS_12) build\$(CONFIG)\inc\mpr.h
 
 build\$(CONFIG)\inc\http.h: $(DEPS_12)
 	@echo ..... [Copy] build\$(CONFIG)\inc\http.h
 	if not exist "build\$(CONFIG)\inc" md "build\$(CONFIG)\inc"
-	copy /Y /B src\paks\http\http.h+modified build\$(CONFIG)\inc\http.h $(LOG)
+	copy /Y /B paks\http\dist\http.h+modified build\$(CONFIG)\inc\http.h $(LOG)
 
 #
 #   http.h
 #
 
-src\paks\http\http.h: $(DEPS_13)
+paks\http\dist\http.h: $(DEPS_13)
 
 #
 #   httpLib.obj
 #
-DEPS_14 = $(DEPS_14) src\paks\http\http.h
+DEPS_14 = $(DEPS_14) paks\http\dist\http.h
 
 build\$(CONFIG)\obj\httpLib.obj: \
-    src\paks\http\httpLib.c $(DEPS_14)
+    paks\http\dist\httpLib.c $(DEPS_14)
 	@echo .. [Compile] build\$(CONFIG)\obj\httpLib.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\httpLib.obj -Fd$(BUILD)\obj\httpLib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\http\httpLib.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\httpLib.obj -Fd$(BUILD)\obj\httpLib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) paks\http\dist\httpLib.c $(LOG)
 
 !IF "$(ME_COM_HTTP)" == "1"
 #
@@ -1703,39 +1702,39 @@ build\$(CONFIG)\bin\ejsrun.exe: $(DEPS_115)
 #
 #   http-ca-crt
 #
-DEPS_116 = $(DEPS_116) src\paks\http\ca.crt
+DEPS_116 = $(DEPS_116) paks\http\dist\ca.crt
 
 build\$(CONFIG)\bin\ca.crt: $(DEPS_116)
 	@echo ..... [Copy] build\$(CONFIG)\bin\ca.crt
 	if not exist "build\$(CONFIG)\bin" md "build\$(CONFIG)\bin"
-	copy /Y /B src\paks\http\ca.crt+modified build\$(CONFIG)\bin\ca.crt $(LOG)
+	copy /Y /B paks\http\dist\ca.crt+modified build\$(CONFIG)\bin\ca.crt $(LOG)
 
 #
 #   sqlite3.h
 #
-DEPS_117 = $(DEPS_117) src\paks\sqlite\sqlite3.h
+DEPS_117 = $(DEPS_117) paks\sqlite\dist\sqlite3.h
 
 build\$(CONFIG)\inc\sqlite3.h: $(DEPS_117)
 	@echo ..... [Copy] build\$(CONFIG)\inc\sqlite3.h
 	if not exist "build\$(CONFIG)\inc" md "build\$(CONFIG)\inc"
-	copy /Y /B src\paks\sqlite\sqlite3.h+modified build\$(CONFIG)\inc\sqlite3.h $(LOG)
+	copy /Y /B paks\sqlite\dist\sqlite3.h+modified build\$(CONFIG)\inc\sqlite3.h $(LOG)
 
 #
 #   sqlite3.h
 #
 
-src\paks\sqlite\sqlite3.h: $(DEPS_118)
+paks\sqlite\dist\sqlite3.h: $(DEPS_118)
 
 #
 #   sqlite3.obj
 #
 DEPS_119 = $(DEPS_119) build\$(CONFIG)\inc\me.h
-DEPS_119 = $(DEPS_119) src\paks\sqlite\sqlite3.h
+DEPS_119 = $(DEPS_119) paks\sqlite\dist\sqlite3.h
 
 build\$(CONFIG)\obj\sqlite3.obj: \
-    src\paks\sqlite\sqlite3.c $(DEPS_119)
+    paks\sqlite\dist\sqlite3.c $(DEPS_119)
 	@echo .. [Compile] build\$(CONFIG)\obj\sqlite3.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\sqlite3.obj -Fd$(BUILD)\obj\sqlite3.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\sqlite\sqlite3.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\sqlite3.obj -Fd$(BUILD)\obj\sqlite3.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) paks\sqlite\dist\sqlite3.c $(LOG)
 
 !IF "$(ME_COM_SQLITE)" == "1"
 #
@@ -1864,30 +1863,30 @@ build\$(CONFIG)\bin\libejs.web.dll: $(DEPS_129)
 #
 #   zlib.h
 #
-DEPS_130 = $(DEPS_130) src\paks\zlib\zlib.h
+DEPS_130 = $(DEPS_130) paks\zlib\dist\zlib.h
 DEPS_130 = $(DEPS_130) build\$(CONFIG)\inc\me.h
 
 build\$(CONFIG)\inc\zlib.h: $(DEPS_130)
 	@echo ..... [Copy] build\$(CONFIG)\inc\zlib.h
 	if not exist "build\$(CONFIG)\inc" md "build\$(CONFIG)\inc"
-	copy /Y /B src\paks\zlib\zlib.h+modified build\$(CONFIG)\inc\zlib.h $(LOG)
+	copy /Y /B paks\zlib\dist\zlib.h+modified build\$(CONFIG)\inc\zlib.h $(LOG)
 
 #
 #   zlib.h
 #
 
-src\paks\zlib\zlib.h: $(DEPS_131)
+paks\zlib\dist\zlib.h: $(DEPS_131)
 
 #
 #   zlib.obj
 #
 DEPS_132 = $(DEPS_132) build\$(CONFIG)\inc\me.h
-DEPS_132 = $(DEPS_132) src\paks\zlib\zlib.h
+DEPS_132 = $(DEPS_132) paks\zlib\dist\zlib.h
 
 build\$(CONFIG)\obj\zlib.obj: \
-    src\paks\zlib\zlib.c $(DEPS_132)
+    paks\zlib\dist\zlib.c $(DEPS_132)
 	@echo .. [Compile] build\$(CONFIG)\obj\zlib.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\zlib.obj -Fd$(BUILD)\obj\zlib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\zlib\zlib.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\zlib.obj -Fd$(BUILD)\obj\zlib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) paks\zlib\dist\zlib.c $(LOG)
 
 !IF "$(ME_COM_ZLIB)" == "1"
 #
@@ -1931,28 +1930,28 @@ build\$(CONFIG)\bin\libejs.zlib.dll: $(DEPS_135)
 #
 #   est.h
 #
-DEPS_136 = $(DEPS_136) src\paks\est\est.h
+DEPS_136 = $(DEPS_136) paks\est\dist\est.h
 
 build\$(CONFIG)\inc\est.h: $(DEPS_136)
 	@echo ..... [Copy] build\$(CONFIG)\inc\est.h
 	if not exist "build\$(CONFIG)\inc" md "build\$(CONFIG)\inc"
-	copy /Y /B src\paks\est\est.h+modified build\$(CONFIG)\inc\est.h $(LOG)
+	copy /Y /B paks\est\dist\est.h+modified build\$(CONFIG)\inc\est.h $(LOG)
 
 #
 #   est.h
 #
 
-src\paks\est\est.h: $(DEPS_137)
+paks\est\dist\est.h: $(DEPS_137)
 
 #
 #   estLib.obj
 #
-DEPS_138 = $(DEPS_138) src\paks\est\est.h
+DEPS_138 = $(DEPS_138) paks\est\dist\est.h
 
 build\$(CONFIG)\obj\estLib.obj: \
-    src\paks\est\estLib.c $(DEPS_138)
+    paks\est\dist\estLib.c $(DEPS_138)
 	@echo .. [Compile] build\$(CONFIG)\obj\estLib.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\estLib.obj -Fd$(BUILD)\obj\estLib.pdb -nologo -GR- -Zi -Od -MDd $(DFLAGS) $(IFLAGS) src\paks\est\estLib.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\estLib.obj -Fd$(BUILD)\obj\estLib.pdb -nologo -GR- -Zi -Od -MDd $(DFLAGS) $(IFLAGS) paks\est\dist\estLib.c $(LOG)
 
 !IF "$(ME_COM_EST)" == "1"
 #
@@ -1970,12 +1969,12 @@ build\$(CONFIG)\bin\libest.dll: $(DEPS_139)
 #
 #   mprSsl.obj
 #
-DEPS_140 = $(DEPS_140) src\paks\mpr\mpr.h
+DEPS_140 = $(DEPS_140) paks\mpr\dist\mpr.h
 
 build\$(CONFIG)\obj\mprSsl.obj: \
-    src\paks\mpr\mprSsl.c $(DEPS_140)
+    paks\mpr\dist\mprSsl.c $(DEPS_140)
 	@echo .. [Compile] build\$(CONFIG)\obj\mprSsl.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\mprSsl.obj -Fd$(BUILD)\obj\mprSsl.pdb $(CFLAGS) $(DFLAGS) -DME_COM_OPENSSL_PATH="$(ME_COM_OPENSSL_PATH)" $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\include" src\paks\mpr\mprSsl.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\mprSsl.obj -Fd$(BUILD)\obj\mprSsl.pdb $(CFLAGS) $(DFLAGS) -DME_COM_OPENSSL_PATH="$(ME_COM_OPENSSL_PATH)" $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\include" paks\mpr\dist\mprSsl.c $(LOG)
 
 #
 #   libmprssl
@@ -1993,22 +1992,22 @@ build\$(CONFIG)\bin\libmprssl.dll: $(DEPS_141)
 #
 #   makerom.obj
 #
-DEPS_142 = $(DEPS_142) src\paks\mpr\mpr.h
+DEPS_142 = $(DEPS_142) paks\mpr\dist\mpr.h
 
 build\$(CONFIG)\obj\makerom.obj: \
-    src\paks\mpr\makerom.c $(DEPS_142)
+    paks\mpr\dist\makerom.c $(DEPS_142)
 	@echo .. [Compile] build\$(CONFIG)\obj\makerom.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\makerom.obj -Fd$(BUILD)\obj\makerom.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\mpr\makerom.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\makerom.obj -Fd$(BUILD)\obj\makerom.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) paks\mpr\dist\makerom.c $(LOG)
 
 #
 #   manager.obj
 #
-DEPS_143 = $(DEPS_143) src\paks\mpr\mpr.h
+DEPS_143 = $(DEPS_143) paks\mpr\dist\mpr.h
 
 build\$(CONFIG)\obj\manager.obj: \
-    src\paks\mpr\manager.c $(DEPS_143)
+    paks\mpr\dist\manager.c $(DEPS_143)
 	@echo .. [Compile] build\$(CONFIG)\obj\manager.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\manager.obj -Fd$(BUILD)\obj\manager.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\mpr\manager.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\manager.obj -Fd$(BUILD)\obj\manager.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) paks\mpr\dist\manager.c $(LOG)
 
 #
 #   manager
@@ -2053,32 +2052,22 @@ build\$(CONFIG)\bin\mvc.exe: $(DEPS_146)
 	"$(LD)" -nologo -out:$(BUILD)\bin\mvc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) "$(BUILD)\obj\ejsrun.obj" $(LIBPATHS_146) $(LIBS_146) $(LIBS_146) $(LIBS)  $(LOG)
 
 #
-#   removeFiles.obj
-#
-DEPS_147 = $(DEPS_147) build\$(CONFIG)\inc\me.h
-
-build\$(CONFIG)\obj\removeFiles.obj: \
-    package\windows\removeFiles.c $(DEPS_147)
-	@echo .. [Compile] build\$(CONFIG)\obj\removeFiles.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\removeFiles.obj -Fd$(BUILD)\obj\removeFiles.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) package\windows\removeFiles.c $(LOG)
-
-#
 #   sqlite.obj
 #
-DEPS_148 = $(DEPS_148) build\$(CONFIG)\inc\me.h
-DEPS_148 = $(DEPS_148) src\paks\sqlite\sqlite3.h
+DEPS_147 = $(DEPS_147) build\$(CONFIG)\inc\me.h
+DEPS_147 = $(DEPS_147) paks\sqlite\dist\sqlite3.h
 
 build\$(CONFIG)\obj\sqlite.obj: \
-    src\paks\sqlite\sqlite.c $(DEPS_148)
+    paks\sqlite\dist\sqlite.c $(DEPS_147)
 	@echo .. [Compile] build\$(CONFIG)\obj\sqlite.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\sqlite.obj -Fd$(BUILD)\obj\sqlite.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\paks\sqlite\sqlite.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\sqlite.obj -Fd$(BUILD)\obj\sqlite.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) paks\sqlite\dist\sqlite.c $(LOG)
 
 #
 #   utest.es
 #
-DEPS_149 = $(DEPS_149) src\ejs.utest\utest.es
+DEPS_148 = $(DEPS_148) src\ejs.utest\utest.es
 
-build\$(CONFIG)\bin\utest.es: $(DEPS_149)
+build\$(CONFIG)\bin\utest.es: $(DEPS_148)
 	@echo ..... [Copy] build\$(CONFIG)\bin\utest.es
 	if not exist "build\$(CONFIG)\bin" md "build\$(CONFIG)\bin"
 	copy /Y /B src\ejs.utest\utest.es+modified build\$(CONFIG)\bin\utest.es $(LOG)
@@ -2086,9 +2075,9 @@ build\$(CONFIG)\bin\utest.es: $(DEPS_149)
 #
 #   utest.worker
 #
-DEPS_150 = $(DEPS_150) src\ejs.utest\utest.worker
+DEPS_149 = $(DEPS_149) src\ejs.utest\utest.worker
 
-build\$(CONFIG)\bin\utest.worker: $(DEPS_150)
+build\$(CONFIG)\bin\utest.worker: $(DEPS_149)
 	@echo ..... [Copy] build\$(CONFIG)\bin\utest.worker
 	if not exist "build\$(CONFIG)\bin" md "build\$(CONFIG)\bin"
 	copy /Y /B src\ejs.utest\utest.worker+modified build\$(CONFIG)\bin\utest.worker $(LOG)
@@ -2096,56 +2085,56 @@ build\$(CONFIG)\bin\utest.worker: $(DEPS_150)
 #
 #   utest
 #
-DEPS_151 = $(DEPS_151) build\$(CONFIG)\bin\libejs.dll
-DEPS_151 = $(DEPS_151) build\$(CONFIG)\bin\utest.es
-DEPS_151 = $(DEPS_151) build\$(CONFIG)\bin\utest.worker
-DEPS_151 = $(DEPS_151) build\$(CONFIG)\obj\ejsrun.obj
+DEPS_150 = $(DEPS_150) build\$(CONFIG)\bin\libejs.dll
+DEPS_150 = $(DEPS_150) build\$(CONFIG)\bin\utest.es
+DEPS_150 = $(DEPS_150) build\$(CONFIG)\bin\utest.worker
+DEPS_150 = $(DEPS_150) build\$(CONFIG)\obj\ejsrun.obj
 
-LIBS_151 = $(LIBS_151) libejs.lib
+LIBS_150 = $(LIBS_150) libejs.lib
 !IF "$(ME_COM_HTTP)" == "1"
-LIBS_151 = $(LIBS_151) libhttp.lib
+LIBS_150 = $(LIBS_150) libhttp.lib
 !ENDIF
-LIBS_151 = $(LIBS_151) libmpr.lib
+LIBS_150 = $(LIBS_150) libmpr.lib
 !IF "$(ME_COM_PCRE)" == "1"
-LIBS_151 = $(LIBS_151) libpcre.lib
+LIBS_150 = $(LIBS_150) libpcre.lib
 !ENDIF
 
-build\$(CONFIG)\bin\utest.exe: $(DEPS_151)
+build\$(CONFIG)\bin\utest.exe: $(DEPS_150)
 	@echo ..... [Link] build\$(CONFIG)\bin\utest.exe
-	"$(LD)" -nologo -out:$(BUILD)\bin\utest.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) "$(BUILD)\obj\ejsrun.obj" $(LIBPATHS_151) $(LIBS_151) $(LIBS_151) $(LIBS)  $(LOG)
+	"$(LD)" -nologo -out:$(BUILD)\bin\utest.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) "$(BUILD)\obj\ejsrun.obj" $(LIBPATHS_150) $(LIBS_150) $(LIBS_150) $(LIBS)  $(LOG)
 
 #
 #   www
 #
-DEPS_152 = $(DEPS_152) src\ejs.web\www\images\banner.jpg
-DEPS_152 = $(DEPS_152) src\ejs.web\www\images\favicon.ico
-DEPS_152 = $(DEPS_152) src\ejs.web\www\images\splash.jpg
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\jquery.ejs.min.js
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\jquery.min.js
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\jquery.simplemodal.min.js
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\jquery.tablesorter.js
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\jquery.tablesorter.min.js
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\jquery.treeview.min.js
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\tree-images\file.gif
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\tree-images\folder-closed.gif
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\tree-images\folder.gif
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\tree-images\minus.gif
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\tree-images\plus.gif
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\tree-images\treeview-black-line.gif
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\tree-images\treeview-black.gif
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\tree-images\treeview-default-line.gif
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\tree-images\treeview-default.gif
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\tree-images\treeview-famfamfam-line.gif
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\tree-images\treeview-famfamfam.gif
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\tree-images\treeview-gray-line.gif
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\tree-images\treeview-gray.gif
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\tree-images\treeview-red-line.gif
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\tree-images\treeview-red.gif
-DEPS_152 = $(DEPS_152) src\ejs.web\www\js\treeview.css
-DEPS_152 = $(DEPS_152) src\ejs.web\www\layout.css
-DEPS_152 = $(DEPS_152) src\ejs.web\www\themes\default.css
+DEPS_151 = $(DEPS_151) src\ejs.web\www\images\banner.jpg
+DEPS_151 = $(DEPS_151) src\ejs.web\www\images\favicon.ico
+DEPS_151 = $(DEPS_151) src\ejs.web\www\images\splash.jpg
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\jquery.ejs.min.js
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\jquery.min.js
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\jquery.simplemodal.min.js
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\jquery.tablesorter.js
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\jquery.tablesorter.min.js
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\jquery.treeview.min.js
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\tree-images\file.gif
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\tree-images\folder-closed.gif
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\tree-images\folder.gif
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\tree-images\minus.gif
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\tree-images\plus.gif
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\tree-images\treeview-black-line.gif
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\tree-images\treeview-black.gif
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\tree-images\treeview-default-line.gif
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\tree-images\treeview-default.gif
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\tree-images\treeview-famfamfam-line.gif
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\tree-images\treeview-famfamfam.gif
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\tree-images\treeview-gray-line.gif
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\tree-images\treeview-gray.gif
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\tree-images\treeview-red-line.gif
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\tree-images\treeview-red.gif
+DEPS_151 = $(DEPS_151) src\ejs.web\www\js\treeview.css
+DEPS_151 = $(DEPS_151) src\ejs.web\www\layout.css
+DEPS_151 = $(DEPS_151) src\ejs.web\www\themes\default.css
 
-build\$(CONFIG)\bin\www: $(DEPS_152)
+build\$(CONFIG)\bin\www: $(DEPS_151)
 	@echo ..... [Copy] build\$(CONFIG)\bin\www
 	if not exist "build\$(CONFIG)\bin\www\images" md "build\$(CONFIG)\bin\www\images"
 	copy /Y /B src\ejs.web\www\images\banner.jpg+modified build\$(CONFIG)\bin\www\images\banner.jpg $(LOG)

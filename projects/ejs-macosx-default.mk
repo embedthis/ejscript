@@ -260,36 +260,36 @@ $(BUILD)/inc/me.h: $(DEPS_3)
 #
 #   osdep.h
 #
-DEPS_4 += src/paks/osdep/osdep.h
+DEPS_4 += paks/osdep/dist/osdep.h
 DEPS_4 += $(BUILD)/inc/me.h
 
 $(BUILD)/inc/osdep.h: $(DEPS_4)
 	@echo '      [Copy] $(BUILD)/inc/osdep.h'
 	mkdir -p "$(BUILD)/inc"
-	cp src/paks/osdep/osdep.h $(BUILD)/inc/osdep.h
+	cp paks/osdep/dist/osdep.h $(BUILD)/inc/osdep.h
 
 #
 #   mpr.h
 #
-DEPS_5 += src/paks/mpr/mpr.h
+DEPS_5 += paks/mpr/dist/mpr.h
 DEPS_5 += $(BUILD)/inc/me.h
 DEPS_5 += $(BUILD)/inc/osdep.h
 
 $(BUILD)/inc/mpr.h: $(DEPS_5)
 	@echo '      [Copy] $(BUILD)/inc/mpr.h'
 	mkdir -p "$(BUILD)/inc"
-	cp src/paks/mpr/mpr.h $(BUILD)/inc/mpr.h
+	cp paks/mpr/dist/mpr.h $(BUILD)/inc/mpr.h
 
 #
 #   http.h
 #
-DEPS_6 += src/paks/http/http.h
+DEPS_6 += paks/http/dist/http.h
 DEPS_6 += $(BUILD)/inc/mpr.h
 
 $(BUILD)/inc/http.h: $(DEPS_6)
 	@echo '      [Copy] $(BUILD)/inc/http.h'
 	mkdir -p "$(BUILD)/inc"
-	cp src/paks/http/http.h $(BUILD)/inc/http.h
+	cp paks/http/dist/http.h $(BUILD)/inc/http.h
 
 #
 #   ejsByteCode.h
@@ -425,33 +425,33 @@ $(BUILD)/inc/ejsmod.h: $(DEPS_20)
 #
 #   pcre.h
 #
-DEPS_21 += src/paks/pcre/pcre.h
+DEPS_21 += paks/pcre/dist/pcre.h
 
 $(BUILD)/inc/pcre.h: $(DEPS_21)
 	@echo '      [Copy] $(BUILD)/inc/pcre.h'
 	mkdir -p "$(BUILD)/inc"
-	cp src/paks/pcre/pcre.h $(BUILD)/inc/pcre.h
+	cp paks/pcre/dist/pcre.h $(BUILD)/inc/pcre.h
 
 #
 #   sqlite3.h
 #
-DEPS_22 += src/paks/sqlite/sqlite3.h
+DEPS_22 += paks/sqlite/dist/sqlite3.h
 
 $(BUILD)/inc/sqlite3.h: $(DEPS_22)
 	@echo '      [Copy] $(BUILD)/inc/sqlite3.h'
 	mkdir -p "$(BUILD)/inc"
-	cp src/paks/sqlite/sqlite3.h $(BUILD)/inc/sqlite3.h
+	cp paks/sqlite/dist/sqlite3.h $(BUILD)/inc/sqlite3.h
 
 #
 #   zlib.h
 #
-DEPS_23 += src/paks/zlib/zlib.h
+DEPS_23 += paks/zlib/dist/zlib.h
 DEPS_23 += $(BUILD)/inc/me.h
 
 $(BUILD)/inc/zlib.h: $(DEPS_23)
 	@echo '      [Copy] $(BUILD)/inc/zlib.h'
 	mkdir -p "$(BUILD)/inc"
-	cp src/paks/zlib/zlib.h $(BUILD)/inc/zlib.h
+	cp paks/zlib/dist/zlib.h $(BUILD)/inc/zlib.h
 
 #
 #   ejsmod.h
@@ -1206,17 +1206,17 @@ $(BUILD)/obj/ejsrun.o: \
 #   http.h
 #
 
-src/paks/http/http.h: $(DEPS_98)
+paks/http/dist/http.h: $(DEPS_98)
 
 #
 #   httpLib.o
 #
-DEPS_99 += src/paks/http/http.h
+DEPS_99 += paks/http/dist/http.h
 
 $(BUILD)/obj/httpLib.o: \
-    src/paks/http/httpLib.c $(DEPS_99)
+    paks/http/dist/httpLib.c $(DEPS_99)
 	@echo '   [Compile] $(BUILD)/obj/httpLib.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/httpLib.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) src/paks/http/httpLib.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/httpLib.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) paks/http/dist/httpLib.c
 
 #
 #   listing.o
@@ -1233,64 +1233,64 @@ $(BUILD)/obj/listing.o: \
 #   mpr.h
 #
 
-src/paks/mpr/mpr.h: $(DEPS_101)
+paks/mpr/dist/mpr.h: $(DEPS_101)
 
 #
 #   makerom.o
 #
-DEPS_102 += src/paks/mpr/mpr.h
+DEPS_102 += paks/mpr/dist/mpr.h
 
 $(BUILD)/obj/makerom.o: \
-    src/paks/mpr/makerom.c $(DEPS_102)
+    paks/mpr/dist/makerom.c $(DEPS_102)
 	@echo '   [Compile] $(BUILD)/obj/makerom.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/makerom.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) src/paks/mpr/makerom.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/makerom.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) paks/mpr/dist/makerom.c
 
 #
 #   manager.o
 #
-DEPS_103 += src/paks/mpr/mpr.h
+DEPS_103 += paks/mpr/dist/mpr.h
 
 $(BUILD)/obj/manager.o: \
-    src/paks/mpr/manager.c $(DEPS_103)
+    paks/mpr/dist/manager.c $(DEPS_103)
 	@echo '   [Compile] $(BUILD)/obj/manager.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/manager.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) src/paks/mpr/manager.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/manager.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) paks/mpr/dist/manager.c
 
 #
 #   mprLib.o
 #
-DEPS_104 += src/paks/mpr/mpr.h
+DEPS_104 += paks/mpr/dist/mpr.h
 
 $(BUILD)/obj/mprLib.o: \
-    src/paks/mpr/mprLib.c $(DEPS_104)
+    paks/mpr/dist/mprLib.c $(DEPS_104)
 	@echo '   [Compile] $(BUILD)/obj/mprLib.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/mprLib.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) src/paks/mpr/mprLib.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/mprLib.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) paks/mpr/dist/mprLib.c
 
 #
 #   mprSsl.o
 #
-DEPS_105 += src/paks/mpr/mpr.h
+DEPS_105 += paks/mpr/dist/mpr.h
 
 $(BUILD)/obj/mprSsl.o: \
-    src/paks/mpr/mprSsl.c $(DEPS_105)
+    paks/mpr/dist/mprSsl.c $(DEPS_105)
 	@echo '   [Compile] $(BUILD)/obj/mprSsl.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/mprSsl.o -arch $(CC_ARCH) $(CFLAGS) -DME_COM_OPENSSL_PATH="$(ME_COM_OPENSSL_PATH)" $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)/include" src/paks/mpr/mprSsl.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/mprSsl.o -arch $(CC_ARCH) $(CFLAGS) -DME_COM_OPENSSL_PATH="$(ME_COM_OPENSSL_PATH)" $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)/include" paks/mpr/dist/mprSsl.c
 
 #
 #   pcre.h
 #
 
-src/paks/pcre/pcre.h: $(DEPS_106)
+paks/pcre/dist/pcre.h: $(DEPS_106)
 
 #
 #   pcre.o
 #
 DEPS_107 += $(BUILD)/inc/me.h
-DEPS_107 += src/paks/pcre/pcre.h
+DEPS_107 += paks/pcre/dist/pcre.h
 
 $(BUILD)/obj/pcre.o: \
-    src/paks/pcre/pcre.c $(DEPS_107)
+    paks/pcre/dist/pcre.c $(DEPS_107)
 	@echo '   [Compile] $(BUILD)/obj/pcre.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/pcre.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) src/paks/pcre/pcre.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/pcre.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) paks/pcre/dist/pcre.c
 
 #
 #   slotGen.o
@@ -1306,46 +1306,46 @@ $(BUILD)/obj/slotGen.o: \
 #   sqlite3.h
 #
 
-src/paks/sqlite/sqlite3.h: $(DEPS_109)
+paks/sqlite/dist/sqlite3.h: $(DEPS_109)
 
 #
 #   sqlite.o
 #
 DEPS_110 += $(BUILD)/inc/me.h
-DEPS_110 += src/paks/sqlite/sqlite3.h
+DEPS_110 += paks/sqlite/dist/sqlite3.h
 
 $(BUILD)/obj/sqlite.o: \
-    src/paks/sqlite/sqlite.c $(DEPS_110)
+    paks/sqlite/dist/sqlite.c $(DEPS_110)
 	@echo '   [Compile] $(BUILD)/obj/sqlite.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/sqlite.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) src/paks/sqlite/sqlite.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/sqlite.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) paks/sqlite/dist/sqlite.c
 
 #
 #   sqlite3.o
 #
 DEPS_111 += $(BUILD)/inc/me.h
-DEPS_111 += src/paks/sqlite/sqlite3.h
+DEPS_111 += paks/sqlite/dist/sqlite3.h
 
 $(BUILD)/obj/sqlite3.o: \
-    src/paks/sqlite/sqlite3.c $(DEPS_111)
+    paks/sqlite/dist/sqlite3.c $(DEPS_111)
 	@echo '   [Compile] $(BUILD)/obj/sqlite3.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/sqlite3.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) src/paks/sqlite/sqlite3.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/sqlite3.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) paks/sqlite/dist/sqlite3.c
 
 #
 #   zlib.h
 #
 
-src/paks/zlib/zlib.h: $(DEPS_112)
+paks/zlib/dist/zlib.h: $(DEPS_112)
 
 #
 #   zlib.o
 #
 DEPS_113 += $(BUILD)/inc/me.h
-DEPS_113 += src/paks/zlib/zlib.h
+DEPS_113 += paks/zlib/dist/zlib.h
 
 $(BUILD)/obj/zlib.o: \
-    src/paks/zlib/zlib.c $(DEPS_113)
+    paks/zlib/dist/zlib.c $(DEPS_113)
 	@echo '   [Compile] $(BUILD)/obj/zlib.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/zlib.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) src/paks/zlib/zlib.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/zlib.o -arch $(CC_ARCH) $(CFLAGS) $(IFLAGS) paks/zlib/dist/zlib.c
 
 #
 #   slots
@@ -1808,12 +1808,12 @@ $(BUILD)/bin/ejsrun: $(DEPS_133)
 #
 #   http-ca-crt
 #
-DEPS_134 += src/paks/http/ca.crt
+DEPS_134 += paks/http/dist/ca.crt
 
 $(BUILD)/bin/ca.crt: $(DEPS_134)
 	@echo '      [Copy] $(BUILD)/bin/ca.crt'
 	mkdir -p "$(BUILD)/bin"
-	cp src/paks/http/ca.crt $(BUILD)/bin/ca.crt
+	cp paks/http/dist/ca.crt $(BUILD)/bin/ca.crt
 
 ifeq ($(ME_COM_SQLITE),1)
 #
@@ -2175,7 +2175,7 @@ installBinary: $(DEPS_150)
 	fi ; \
 	if [ "$(ME_COM_SSL)" = 1 ]; then true ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
-	cp src/paks/est/ca.crt $(ME_VAPP_PREFIX)/bin/ca.crt ; \
+	cp src/est/ca.crt $(ME_VAPP_PREFIX)/bin/ca.crt ; \
 	fi ; \
 	if [ "$(ME_COM_EST)" = 1 ]; then true ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
@@ -2258,34 +2258,6 @@ installBinary: $(DEPS_150)
 	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
 	rm -f "$(ME_INC_PREFIX)/ejs/ejs.zlib.slots.h" ; \
 	ln -s "$(ME_VAPP_PREFIX)/inc/ejs.zlib.slots.h" "$(ME_INC_PREFIX)/ejs/ejs.zlib.slots.h" ; \
-	cp src/paks/est/est.h $(ME_VAPP_PREFIX)/inc/est.h ; \
-	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
-	rm -f "$(ME_INC_PREFIX)/ejs/est.h" ; \
-	ln -s "$(ME_VAPP_PREFIX)/inc/est.h" "$(ME_INC_PREFIX)/ejs/est.h" ; \
-	cp src/paks/http/http.h $(ME_VAPP_PREFIX)/inc/http.h ; \
-	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
-	rm -f "$(ME_INC_PREFIX)/ejs/http.h" ; \
-	ln -s "$(ME_VAPP_PREFIX)/inc/http.h" "$(ME_INC_PREFIX)/ejs/http.h" ; \
-	cp src/paks/mpr/mpr.h $(ME_VAPP_PREFIX)/inc/mpr.h ; \
-	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
-	rm -f "$(ME_INC_PREFIX)/ejs/mpr.h" ; \
-	ln -s "$(ME_VAPP_PREFIX)/inc/mpr.h" "$(ME_INC_PREFIX)/ejs/mpr.h" ; \
-	cp src/paks/osdep/osdep.h $(ME_VAPP_PREFIX)/inc/osdep.h ; \
-	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
-	rm -f "$(ME_INC_PREFIX)/ejs/osdep.h" ; \
-	ln -s "$(ME_VAPP_PREFIX)/inc/osdep.h" "$(ME_INC_PREFIX)/ejs/osdep.h" ; \
-	cp src/paks/pcre/pcre.h $(ME_VAPP_PREFIX)/inc/pcre.h ; \
-	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
-	rm -f "$(ME_INC_PREFIX)/ejs/pcre.h" ; \
-	ln -s "$(ME_VAPP_PREFIX)/inc/pcre.h" "$(ME_INC_PREFIX)/ejs/pcre.h" ; \
-	cp src/paks/sqlite/sqlite3.h $(ME_VAPP_PREFIX)/inc/sqlite3.h ; \
-	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
-	rm -f "$(ME_INC_PREFIX)/ejs/sqlite3.h" ; \
-	ln -s "$(ME_VAPP_PREFIX)/inc/sqlite3.h" "$(ME_INC_PREFIX)/ejs/sqlite3.h" ; \
-	cp src/paks/zlib/zlib.h $(ME_VAPP_PREFIX)/inc/zlib.h ; \
-	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
-	rm -f "$(ME_INC_PREFIX)/ejs/zlib.h" ; \
-	ln -s "$(ME_VAPP_PREFIX)/inc/zlib.h" "$(ME_INC_PREFIX)/ejs/zlib.h" ; \
 	cp src/cmd/ejsmod.h $(ME_VAPP_PREFIX)/inc/ejsmod.h ; \
 	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
 	rm -f "$(ME_INC_PREFIX)/ejs/ejsmod.h" ; \
@@ -2294,32 +2266,60 @@ installBinary: $(DEPS_150)
 	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
 	rm -f "$(ME_INC_PREFIX)/ejs/ejsWeb.h" ; \
 	ln -s "$(ME_VAPP_PREFIX)/inc/ejsWeb.h" "$(ME_INC_PREFIX)/ejs/ejsWeb.h" ; \
+	cp src/est/est.h $(ME_VAPP_PREFIX)/inc/est.h ; \
+	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
+	rm -f "$(ME_INC_PREFIX)/ejs/est.h" ; \
+	ln -s "$(ME_VAPP_PREFIX)/inc/est.h" "$(ME_INC_PREFIX)/ejs/est.h" ; \
+	cp src/http/http.h $(ME_VAPP_PREFIX)/inc/http.h ; \
+	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
+	rm -f "$(ME_INC_PREFIX)/ejs/http.h" ; \
+	ln -s "$(ME_VAPP_PREFIX)/inc/http.h" "$(ME_INC_PREFIX)/ejs/http.h" ; \
+	cp src/mpr/mpr.h $(ME_VAPP_PREFIX)/inc/mpr.h ; \
+	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
+	rm -f "$(ME_INC_PREFIX)/ejs/mpr.h" ; \
+	ln -s "$(ME_VAPP_PREFIX)/inc/mpr.h" "$(ME_INC_PREFIX)/ejs/mpr.h" ; \
+	cp src/osdep/osdep.h $(ME_VAPP_PREFIX)/inc/osdep.h ; \
+	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
+	rm -f "$(ME_INC_PREFIX)/ejs/osdep.h" ; \
+	ln -s "$(ME_VAPP_PREFIX)/inc/osdep.h" "$(ME_INC_PREFIX)/ejs/osdep.h" ; \
+	cp src/pcre/pcre.h $(ME_VAPP_PREFIX)/inc/pcre.h ; \
+	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
+	rm -f "$(ME_INC_PREFIX)/ejs/pcre.h" ; \
+	ln -s "$(ME_VAPP_PREFIX)/inc/pcre.h" "$(ME_INC_PREFIX)/ejs/pcre.h" ; \
+	cp src/sqlite/sqlite3.h $(ME_VAPP_PREFIX)/inc/sqlite3.h ; \
+	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
+	rm -f "$(ME_INC_PREFIX)/ejs/sqlite3.h" ; \
+	ln -s "$(ME_VAPP_PREFIX)/inc/sqlite3.h" "$(ME_INC_PREFIX)/ejs/sqlite3.h" ; \
+	cp src/zlib/zlib.h $(ME_VAPP_PREFIX)/inc/zlib.h ; \
+	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
+	rm -f "$(ME_INC_PREFIX)/ejs/zlib.h" ; \
+	ln -s "$(ME_VAPP_PREFIX)/inc/zlib.h" "$(ME_INC_PREFIX)/ejs/zlib.h" ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/doc/man1" ; \
-	cp doc/documents/man/ejs.1 $(ME_VAPP_PREFIX)/doc/man1/ejs.1 ; \
+	cp doc/dist/man/ejs.1 $(ME_VAPP_PREFIX)/doc/man1/ejs.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/ejs.1" ; \
 	ln -s "$(ME_VAPP_PREFIX)/doc/man1/ejs.1" "$(ME_MAN_PREFIX)/man1/ejs.1" ; \
-	cp doc/documents/man/ejsc.1 $(ME_VAPP_PREFIX)/doc/man1/ejsc.1 ; \
+	cp doc/dist/man/ejsc.1 $(ME_VAPP_PREFIX)/doc/man1/ejsc.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/ejsc.1" ; \
 	ln -s "$(ME_VAPP_PREFIX)/doc/man1/ejsc.1" "$(ME_MAN_PREFIX)/man1/ejsc.1" ; \
-	cp doc/documents/man/ejsmod.1 $(ME_VAPP_PREFIX)/doc/man1/ejsmod.1 ; \
+	cp doc/dist/man/ejsmod.1 $(ME_VAPP_PREFIX)/doc/man1/ejsmod.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/ejsmod.1" ; \
 	ln -s "$(ME_VAPP_PREFIX)/doc/man1/ejsmod.1" "$(ME_MAN_PREFIX)/man1/ejsmod.1" ; \
-	cp doc/documents/man/http.1 $(ME_VAPP_PREFIX)/doc/man1/http.1 ; \
+	cp doc/dist/man/http.1 $(ME_VAPP_PREFIX)/doc/man1/http.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/http.1" ; \
 	ln -s "$(ME_VAPP_PREFIX)/doc/man1/http.1" "$(ME_MAN_PREFIX)/man1/http.1" ; \
-	cp doc/documents/man/makerom.1 $(ME_VAPP_PREFIX)/doc/man1/makerom.1 ; \
+	cp doc/dist/man/makerom.1 $(ME_VAPP_PREFIX)/doc/man1/makerom.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/makerom.1" ; \
 	ln -s "$(ME_VAPP_PREFIX)/doc/man1/makerom.1" "$(ME_MAN_PREFIX)/man1/makerom.1" ; \
-	cp doc/documents/man/manager.1 $(ME_VAPP_PREFIX)/doc/man1/manager.1 ; \
+	cp doc/dist/man/manager.1 $(ME_VAPP_PREFIX)/doc/man1/manager.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/manager.1" ; \
 	ln -s "$(ME_VAPP_PREFIX)/doc/man1/manager.1" "$(ME_MAN_PREFIX)/man1/manager.1" ; \
-	cp doc/documents/man/mvc.1 $(ME_VAPP_PREFIX)/doc/man1/mvc.1 ; \
+	cp doc/dist/man/mvc.1 $(ME_VAPP_PREFIX)/doc/man1/mvc.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/mvc.1" ; \
 	ln -s "$(ME_VAPP_PREFIX)/doc/man1/mvc.1" "$(ME_MAN_PREFIX)/man1/mvc.1"
