@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Class App</title>
+
+   <link rel="stylesheet" type="text/css" href="doc.css" />
+</head>
+
+<body>
+<div class='body'>
+
+<div class="content">
+
+<a name='top'></a>
+<h1 class='className'>App</h1>
+<div class='classBlock'>
+<table class='classHead' title='App'>
+   <tr><td><strong>Module</strong></td><td>ejs</td></tr>
+   <tr><td><strong>Definition</strong></td><td> class App</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>App <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.5</td></tr>
+<tr><td><strong>Stability</strong></td><td>Evolving.</td></tr>
+       </td></tr>
+</table>
+
+<p class='classBrief'>Application configuration state.</p>
+
+<p class='classDescription'>The App class is a singleton class object and that accesses and controls 
+the applications execution environment including the current working directory, application command line 
+arguments, environment strings, path to the application's executable and input and output streams.</p>
+
+</div>
+
+
+<hr />
+<a name='Properties'></a>
+<h2 class='classSection'>Properties</h2>
+<table class='itemTable' title='properties'>
+   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='SearchSeparator'></a>
+   <tr><td nowrap align='center'> static </td><td>SearchSeparator</td><td><a href='String.html'>String</a></td><td>Separator string to use when constructing PATH style search strings. </td></tr>
+<a name='args'></a>
+   <tr><td nowrap align='center'> static get </td><td>args</td><td><a href='Array.html'>Array</a></td><td>Application command line arguments. Set to an array containing each of the arguments. If the ejs command 
+is invoked as "ejs script arg1 arg2", then args[0] will be "script", args[1] will be "arg1" etc.</td></tr>
+<a name='cache'></a>
+   <tr><td nowrap align='center'> static </td><td>cache</td><td><a href='Cache.html'>Cache</a></td><td>Application in-memory cache reference. </td></tr>
+<a name='config'></a>
+   <tr><td nowrap align='center'> static </td><td>config</td><td><a href='Object.html'>Object</a></td><td>Configuration environment specified in the ~/.ejsrc or ejsrc configuration files. </td></tr>
+<a name='dir'></a>
+   <tr><td nowrap align='center'> static get </td><td>dir</td><td><a href='Path.html'>Path</a></td><td>The application's current directory. </td></tr>
+<a name='emitter'></a>
+   <tr><td nowrap align='center'> static </td><td>emitter</td><td><a href='Emitter.html'>Emitter</a></td><td>Default event Emitter for the application. </td></tr>
+<a name='env'></a>
+   <tr><td nowrap align='center'> static get </td><td>env</td><td><a href='Object.html'>Object</a></td><td>Application environment. Object hash of all environment variables.</td></tr>
+<a name='errorStream'></a>
+   <tr><td nowrap align='center'> static get set </td><td>errorStream</td><td><a href='Stream.html'>Stream</a></td><td>The application's standard error file stream
+Set the standard error stream. Changing the error stream will close and reopen stderr.</td></tr>
+<a name='exeDir'></a>
+   <tr><td nowrap align='center'> static get </td><td>exeDir</td><td><a href='Path.html'>Path</a></td><td>The directory containing the application executable. </td></tr>
+<a name='log'></a>
+   <tr><td nowrap align='center'> static </td><td>log</td><td><a href='Logger.html'>Logger</a></td><td>Application logger. This singleton object respresents the Application default logger.
+If the ejsrc startup configuration file defines a log.location field, the log logger will send messages to
+the defined location. Otherwise, messages will be sent to the MprLog stream. 
+(.</td></tr>
+<a name='exePath'></a>
+   <tr><td nowrap align='center'> static get </td><td>exePath</td><td><a href='Path.html'>Path</a></td><td>The application executable path. </td></tr>
+<a name='gid'></a>
+   <tr><td nowrap align='center'> static get </td><td>gid</td><td><a href='Number.html'>Number</a></td><td>The group ID of the user account running the application. Only supported on Unix.</td></tr>
+<a name='mprLog'></a>
+   <tr><td nowrap align='center'> static </td><td>mprLog</td><td><a href='MprLog.html'>MprLog</a></td><td>Application MPR log object. This singleton object represents the Application log file specified via the
+--log command line switch.
+0.</td></tr>
+<a name='name'></a>
+   <tr><td nowrap align='center'> static </td><td>name</td><td><a href='String.html'>String</a></td><td>Application name. Single word, lower-case name for the application. This is initialized to the name of
+the script or "ejs" if running interactively.</td></tr>
+<a name='started'></a>
+   <tr><td nowrap align='center'> static </td><td>started</td><td><a href='Date.html'>Date</a></td><td>Application start time. </td></tr>
+<a name='test'></a>
+   <tr><td nowrap align='center'> static </td><td>test</td><td>&nbsp;</td><td>Test object for unit tests when run via utest. </td></tr>
+<a name='title'></a>
+   <tr><td nowrap align='center'> static </td><td>title</td><td><a href='String.html'>String</a></td><td>Application title name. Multi-word, Camel Case name for the application suitable for display. This is 
+initialized to the name of the script or "Embedthis Ejscript" if running interactively.</td></tr>
+<a name='home'></a>
+   <tr><td nowrap align='center'> static get </td><td>home</td><td><a href='Path.html'>Path</a></td><td>The user's home directory. </td></tr>
+<a name='inputStream'></a>
+   <tr><td nowrap align='center'> static get set </td><td>inputStream</td><td><a href='Stream.html'>Stream</a></td><td>Set the standard input stream. Changing the input stream will close and reopen stdin.</td></tr>
+<a name='outputStream'></a>
+   <tr><td nowrap align='center'> static get set </td><td>outputStream</td><td><a href='Stream.html'>Stream</a></td><td>The standard output stream. Changing the output stream will close and reopen stdout.</td></tr>
+<a name='pid'></a>
+   <tr><td nowrap align='center'> static get </td><td>pid</td><td><a href='Number.html'>Number</a></td><td>The process ID of the application. </td></tr>
+<a name='search'></a>
+   <tr><td nowrap align='center'> static get set </td><td>search</td><td><a href='Array.html'>Array</a></td><td>The current module search path. Set to an array of Paths.</td></tr>
+<a name='uid'></a>
+   <tr><td nowrap align='center'> static get </td><td>uid</td><td><a href='Number.html'>Number</a></td><td>The user ID of the user account running the application. Only supported on Unix.</td></tr>
+<a name='version'></a>
+   <tr><td nowrap align='center'> static </td><td>version</td><td><a href='String.html'>String</a></td><td>Application version string. Set to a version string [format Major.Minor.Patch-Build]. For example: 1.1.2-3.
+Initialized to the ejs version.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
+
+<hr />
+<a name='ClassMethods'></a>
+<h2 class='classSection'>App Class Methods</h2>
+<table class='apiIndex' title='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#chdir'><b>chdir</b></a>(value: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Change the application's working directory.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#createSearch'><b>createSearch</b></a>(searchPath: <a href='String.html'>String</a> = null): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a search path array for locating ejs modules.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#exit'><b>exit</b></a>(status: <a href='Number.html'>Number</a> = 0, how: <a href='String.html'>String</a> = normal, timeout: <a href='Number.html'>Number</a> = 0): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Stop the program and exit.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#getenv'><b>getenv</b></a>(name: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get an environment variable.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#getpass'><b>getpass</b></a>(prompt: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a password from the user's /dev/tty.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#loadrc'><b>loadrc</b></a>(path: <a href='Path.html'>Path</a>, overwrite: <a href='Boolean.html'>Boolean</a> = true)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Load an "ejsrc" configuration file
+This loads an Ejscript configuration file and blends the contents with App.config.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#putenv'><b>putenv</b></a>(name: <a href='String.html'>String</a>, value: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Update an environment variable.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#run'><b>run</b></a>(timeout: <a href='Number.html'>Number</a> = -1, oneEvent: <a href='Boolean.html'>Boolean</a> = false): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run the application event loop.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#sleep'><b>sleep</b></a>(delay: <a href='Number.html'>Number</a> = -1): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Sleep the application for the given number of milliseconds.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#updateLog'><b>updateLog</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Redirect the Application's logger based on the App.config.log setting
+Ignored if app is invoked with --log on the command line.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<a name='InstanceMethods'></a>
+<h2 class='classSection'>App Instance Methods</h2>
+<table class='apiIndex' title='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <p>(No own instance methods defined)</p></table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<h2>Method Detail</h2>
+<a name='chdir'></a>
+<div class='api'>
+<div class='apiSig'>static     chdir(value: <a href='Object.html'>Object</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Change the application's working directory. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>value: <a href='Object.html'>Object</a> </td><td>The path to the new working directory.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='createSearch'></a>
+<div class='api'>
+<div class='apiSig'>static     createSearch(searchPath: <a href='String.html'>String</a> = null): <a href='Array.html'>Array</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Create a search path array for locating ejs modules. This converts a delimited PATH to an array of 
+paths suitable for use by the <a href='#search'>search</a> property. NOTE: this does not modify the application's search path.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>searchPath: <a href='String.html'>String</a> </td><td>String containing a colon separated (or semi-colon on Windows) set of paths. If search path is null, the default system search paths are returned. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>An array of search paths.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='exit'></a>
+<div class='api'>
+<div class='apiSig'>static     exit(status: <a href='Number.html'>Number</a> = 0, how: <a href='String.html'>String</a> = normal, timeout: <a href='Number.html'>Number</a> = 0): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Stop the program and exit. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>status: <a href='Number.html'>Number</a> </td><td>The optional exit code to provide the environment. If running inside the ejs command program, the status is used as process exit status. [default: 0]</td></tr><tr class='param'><td class='param'>how: <a href='String.html'>String</a> </td><td>How the exit should proceed. Options are: "abort", "safe" or "normal".  An option of "abort" will immediately abort the application without flushing buffered data.  An option of "normal" which is the default, will wait for the application to become idle before exiting.  A application is idle when it has no running commands, sockets, Http requests or worker threads. An option of "safe" will try to exit, but if after the timeout expires the application is still not idle,  the exit will be cancelled and this routine will return false. [default: normal]</td></tr><tr class='param'><td class='param'>timeout: <a href='Number.html'>Number</a> </td><td>Time period in milliseconds to wait for the application to become idle before exiting. Defaults to zero. [default: 0]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='getenv'></a>
+<div class='api'>
+<div class='apiSig'>static     getenv(name: <a href='String.html'>String</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Get an environment variable. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>name: <a href='String.html'>String</a> </td><td>The name of the environment variable to retrieve.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The value of the environment variable or null if not found.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='getpass'></a>
+<div class='api'>
+<div class='apiSig'>static     getpass(prompt: <a href='String.html'>String</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Get a password from the user's /dev/tty. </dd></dl>
+<dl><dt>Returns</dt>
+<dd>A clear-text password string.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='loadrc'></a>
+<div class='api'>
+<div class='apiSig'>static     loadrc(path: <a href='Path.html'>Path</a>, overwrite: <a href='Boolean.html'>Boolean</a> = true)
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Load an "ejsrc" configuration file
+This loads an Ejscript configuration file and blends the contents with App.config. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>path: <a href='Path.html'>Path</a> </td><td>Path name of the file to load.</td></tr><tr class='param'><td class='param'>overwrite: <a href='Boolean.html'>Boolean</a> </td><td>If true, then new configuration values overwrite existing values in App.config. [default: true]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='putenv'></a>
+<div class='api'>
+<div class='apiSig'>static     putenv(name: <a href='String.html'>String</a>, value: <a href='String.html'>String</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Update an environment variable. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>name: <a href='String.html'>String</a> </td><td>The name of the environment variable to retrieve.</td></tr><tr class='param'><td class='param'>value: <a href='String.html'>String</a> </td><td>The new value to define for the variable.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='run'></a>
+<div class='api'>
+<div class='apiSig'>static     run(timeout: <a href='Number.html'>Number</a> = -1, oneEvent: <a href='Boolean.html'>Boolean</a> = false): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Run the application event loop. A script may call run() to service events. Calling run() will cause the ejs shell to wait and service 
+events until instructed to exit via App.exit. If the application is hosted in a web server, this routine will
+return true immediately without blocking.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>timeout: <a href='Number.html'>Number</a> </td><td>Timeout to block waiting for an event in milliseconds before returning. If an event occurs, the call returns immediately. Set to -1 for no timeout. [default: -1]</td></tr><tr class='param'><td class='param'>oneEvent: <a href='Boolean.html'>Boolean</a> </td><td>If true, return immediately after servicing at least one ejs event. [default: false]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if an event happened. Otherwise return false if the timeout expired before any event.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='sleep'></a>
+<div class='api'>
+<div class='apiSig'>static     sleep(delay: <a href='Number.html'>Number</a> = -1): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Sleep the application for the given number of milliseconds. Events will be serviced while asleep.
+An alternative to sleep is <a href='App.html#run'>App.run</a> which can be configured to sleep and return early if an event is received.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>delay: <a href='Number.html'>Number</a> </td><td>Time in milliseconds to sleep. Set to -1 to sleep forever. [default: -1]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='updateLog'></a>
+<div class='api'>
+<div class='apiSig'>static     updateLog(): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Redirect the Application's logger based on the App.config.log setting
+Ignored if app is invoked with --log on the command line. </dd></dl>
+</div>
+</div>
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="https://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>

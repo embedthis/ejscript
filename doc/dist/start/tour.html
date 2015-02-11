@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Language Tour</title>
+    <!-- Copyright Embedthis Software. All Rights Reserved. -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="keywords" content="undefined" />
+    <meta name="description" content="Javacript Language Environment" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
+        rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
+    <link href="../lib/semantic/css/semantic.css" rel="stylesheet" type="text/css" />
+    <link href="../css/all.css" rel="stylesheet" type="text/css" />
+    <link href="../images/favicon.ico" rel="shortcut icon" />
+
+</head>
+<body>
+        <div class="sidebar">
+        <div class="ui large left vertical inverted labeled menu">
+            <div class="item">
+                <a href="../index.html" class="logo">Ejscript Docs</a>
+            </div>
+            <div class="item">
+                <a href="../index.html">
+                    <b>General</b>
+                </a>
+                <div class="menu">
+                    <a class="item" href="../index.html">Ejscript Overview</a>
+                    <a class="item" href="../users/features.html">Ejscript Features</a>
+                    <a class="item" href="https://embedthis.com/ejs/download.html">Download</a> 
+                    <a class="item" href="../licensing/index.html">Licensing</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../start/index.html">
+                    <b>Getting Started</b>
+                </a>
+                <div class="menu">
+                    <a class="item" href="../start/quick.html">Quick Start</a>
+                    <a class="item" href="../start/installing.html">Installing Ejscript</a>
+                    <a class="item" href="../start/tour.html">Language Tour</a>
+                    <a class="item" href="../start/faq.html">FAQ</a>
+                    <a class="item" href="../start/releaseNotes.html">Release Notes</a>
+                    <a class="item" href="../start/source.html">Building from Source</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../users/index.html"><b>User's Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../users/shell.html">Using the Command Shell</a>
+                    <a class="item" href="../users/compiler.html">Using the Compiler</a>
+                    <a class="item" href="../users/ejsmod.html">Using the Module Generator</a>
+                    <a class="item" href="../users/doc.html">Generating Documentation</a>
+                    <a class="item" href="../users/listing.html">Generating Listing</a>
+                    <a class="item" href="../users/man.html">Man Pages</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../language/index.html"><b>Language Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../language/syntax.html">Language Syntax</a>
+                    <a class="item" href="../language/statements.html">Statements</a>
+                    <a class="item" href="../language/expressions.html">Expressions and Operators</a>
+                    <a class="item" href="../language/objects.html">Object and Arrays</a>
+                    <a class="item" href="../language/functions.html">Functions and Methods</a>
+                    <a class="item" href="../language/core.html">Core Language Types</a>
+                    <a class="item" href="../language/types.html">Types and Declarations</a>
+                    <a class="item" href="../language/classes.html">Classes and Instances</a>
+                    <a class="item" href="../language/modules.html">Modules and Namespaces</a>
+                    <a class="item" href="../language/library.html">System Library</a>
+                    <a class="item" href="../language/events.html">Events and Timers</a>
+                    <a class="item" href="../language/modes.html">Language Modes</a>
+                    <a class="item" href="../language/globals.html">Globals</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../web/index.html"><b>Web Framework Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../web/webTour.html">Web Framework Tour</a>
+                    <a class="item" href="../web/generator.html">Application Generator</a>
+                    <a class="item" href="../web/routing.html">Routing</a>
+                    <a class="item" href="../web/controllers.html">Controllers</a>
+                    <a class="item" href="../web/views.html">Views and Layout Templates</a>
+                    <a class="item" href="../web/controls.html">Ajax View Controls</a>
+                    <a class="item" href="../web/models.html">Database Models</a>
+                    <a class="item" href="../web/hosting.html">Hosting in Web Servers</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../developers/index.html">Developer's Guide</a>
+                <div class="menu">
+                    <a class="item" href="../developers/embedding.html">Embedding Ejscript</a>
+                    <a class="item" href="../developers/extending.html">Extending Ejscript</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../ref/index.html">Reference Guide</a>
+                <div class="menu">
+                    <a class="item" href="../ref/compatibility.html">Compatibility</a>
+                    <a class="item" href="../ref/native.html">Native APIs</a>
+                    <a class="item" href="../ref/api/ejscript/index.html" target="new">Script Library</a>
+                    <a class="item" href="../ref/architecture.html">Ejscript Architecture</a>
+                    <a class="item" href="../ref/webArchitecture.html">Web Framework Architecture</a>
+                    <a class="item" href="../ref/memory.html">Ejscript Memory Allocation</a>
+                    <a class="item" href="../ref/multithread.html">Multithreaded Programming</a>
+                    <a class="item" href="../standards/references.html">Standards</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../developers/project.html">Project Resources</a>
+                <div class="menu">
+                    <a class="item" href="http://goo.gl/g4oS2C">Official Ejscript News</a>
+                    <a class="item" href="https://embedthis.com/ejs/">Ejscript Web Site</a>
+                    <a class="item" href="https://github.com/embedthis/ejs">Source Code Repository</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/issues">Project Issue Database</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/releases">Change Log</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/milestones">Roadmap</a>
+                    <a class="item" href="https://embedthis.com/developers/contributors.html">Contributors Agreement</a>
+                </div>
+            </div>
+            <div class="item">
+                <b>Links</b>
+                <div class="menu">
+                    <a class="item" href="https://embedthis.com/">Embedthis Web Site</a>
+                    <a class="item" href="https://embedthis.com/blog/">Embedthis Blog</a>
+                    <a class="item" href="http://twitter.com/mobstream">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui sidebar-launch button">
+        <i class="icon list layout"></i>
+    </div>
+
+
+
+    <div class="ui inverted masthead">
+         
+        <div class="ui inverted menu">
+            <div class="right menu">
+                  
+                    <a class="item" href="https://embedthis.com/">Embedthis</a>
+                    <a class="item" href="https://embedthis.com/ejscript/">Ejscript Site</a>
+                    <a class="item" href="http://goo.gl/dGRDl4">Ejscript News</a>
+                    <a class="item" href="https://github.com/embedthis/ejs">Repository</a>
+                    <a class="item" href="https://embedthis.com/blog/">Blog</a>
+                    <a class="item" href="https://twitter.com/mobstream">Twitter</a>
+
+            </div>
+        </div>
+        
+        <div class="ui breadcrumb">
+            <a class="section" href="../">Home</a>
+            
+            <div class="divider">/</div>
+            <a class="section" href="index.html">
+                Getting Started
+            </a>
+            
+            
+            <div class="divider">/</div>
+            <a class="active section" href="tour.html">Language Tour</a>
+            
+        </div>
+        
+        <div class="ui right floated basic segment version">
+            v2.5.2
+        </div>
+
+    </div>
+    <div class="content">
+
+            <h1>Ejscript Language Tour</h1>
+            <p>This will be a quick tour of Ejscript to give you a feel for the language, its constructs and
+            capabilities.</p>
+            <p>First make sure you have completed the <a href="quick.html">Quick Start</a> and that you have Ejscript
+            installed on your system so you can type along as we go. This tour will work with the Ejscript <a href=
+
+            "../users/shell.html">command shell</a> to run small scripts.</p>
+            <p>In this documentation, command sessions are presented in blue boxes. Output from the system is
+            highlighted in yellow. Bold yellow is used to highlight some output of specific interest. You can type
+            these examples interactively into the shell or you can edit a file and run the file using "ejs
+            filename".</p>
+
+            <h2><a id="shell"></a>Running the Shell</h2>
+            <p>Type <strong>ejs</strong> to run the Ejscript command shell. Once inside the shell, you can type
+            Ejscript programs for immediate execution.</p>
+            <pre class="ui code segment">
+<b>home&gt;</b> ejs
+<b>ejs-0&gt;</b>
+</pre>
+            <h2><a id="hello"></a>Hello World</h2>
+            <p>Every tour beings with the obligatory "Hello World" program. To print output, we use the
+            <strong>print</strong> function.</p>
+            <pre class="ui code segment">
+<b>ejs-0&gt;</b> print("Hello World")
+<strong><b>Hello World
+</b></strong>
+</pre>
+            <p>The ejs shell will also echo the last result to the console, so when inside the shell, the minimal hello
+            world program is just the string "Hello World" itself.</p>
+            <pre class="ui code segment">
+ejs-0&gt; "Hello World"<strong><b>
+Hello World</b></strong>
+</pre>
+            <h2><a id="names"></a>Names</h2>
+            <p>In Ejscript, variable and function names must begin with an alphabetic underscore "_" or dollar "$"
+            character. The rest of the name may contain any number of alphabetic, underscore, dollar or numeric
+            characters. These are all valid names with declarations and assignments.</p>
+            <pre class="ui code segment">
+<b>ejs-0&gt;</b> var x
+<b>ejs-0&gt;</b> var $y
+<b>ejs-0&gt;</b> var __myColor
+<b>ejs-0&gt;</b> function print43() {}
+</pre>
+            <h2><a id="numbers"></a>Numbers and Expressions</h2>
+            <p>You can use the ejs shell to calculate simple arithmetic:</p>
+            <pre class="ui code segment">
+<b>ejs-0&gt;</b> 1 + 2
+<b><strong>3</strong></b>
+<b>ejs-0&gt;</b> 1.5 * 2.5
+<b><strong>3.75</strong></b>
+</pre>
+            <p>or print as hex:</p>
+            <pre class="ui code segment">
+<b>ejs-0&gt;</b> "%x" % 50000
+<b><strong>c350</strong></b> 
+</pre>
+            <h2><a id="functions"></a>Functions</h2>
+            <p>Typing code into an interpreter is fun, but frequently you want to reuse some code again and again. For
+            that we create functions which are reusable procedures.</p>
+            <pre class="ui code segment">
+<b>ejs-0&gt;</b> function add(x, y) {
+<b>ejs-2&gt;</b>   return x + y
+<b>ejs-2&gt;</b> }
+                    
+</pre>
+            <p>To call a function:</p>
+            <pre class="ui code segment">
+<b>ejs-0&gt;</b> add(1,2)
+<b><strong>3</strong></b>
+<b>ejs-0&gt;</b> add(5,5)
+<b><strong>10</strong></b>
+</pre>
+            <p>Especially useful, is that functions are objects and you can assign them to variables and pass them as
+            arguments to other functions. More on this later.</p>
+            <pre class="ui code segment">
+<b>ejs-0&gt;</b> var math = function (x, y) { return x + y; }
+<b>ejs-0&gt;</b> math(100, 200)
+<b><strong>300</strong></b>
+</pre>
+            <h2><a id="classes"></a>Classes</h2>
+            <p>Classes are a new addition to JavaScript that follows a very familiar paradigm. Classes enable us to
+            group variables and a set of functions to operate on those variables. More importantly, we can create many
+            object instances of a class.</p>
+            <pre class="ui code segment">
+<b>ejs-0&gt;</b> class Shape {
+<b>ejs-2&gt;</b>   var height
+<b>ejs-2&gt;</b>   var width
+<b>ejs-2&gt;</b>   function Shape(length, depth) {
+<b>ejs-2&gt;</b>     height = length
+<b>ejs-2&gt;</b>     width = depth
+<b>ejs-2&gt;</b>   }
+<b>ejs-2&gt;</b> }
+</pre>
+            <p>This code defines a new class called Shape. It has two property variables called height and width. These
+            are created per object instance. We also have a special function called Shape(). This is a constructor and
+            is called when we create a new shape object. We can now create as many shapes as we like via the
+            <strong>new</strong> keyword. Each time, the constructor is called to initialize the shape.</p>
+            <pre class="ui code segment">
+<b>ejs-2&gt;</b> s = new Shape(5, 10)
+<b><strong>[object Shape]</strong></b>
+<b>ejs-2&gt;</b> s2 = new Shape(5, 5)
+<b><strong>[object Shape]</strong></b>
+</pre>We can also create new derived shape classes using the Shape class as a base.
+            <pre class="ui code segment">
+<b>ejs-0&gt;</b> class Circle extends Shape {
+<b>ejs-2&gt;</b>   var radius
+<b>ejs-2&gt;</b>   function Circle(radius) {
+<b>ejs-2&gt;</b>     super(radius, radius)
+<b>ejs-2&gt;</b>   }
+<b>ejs-2&gt;</b> }
+<b>ejs-0&gt;</b> circle = new Circle(25)
+<b><strong>[object Circle]</strong></b>
+</pre>
+            <p>Once we've created an instance of an object we can access the properties of that object using dot
+            notation.</p>
+            <pre class="ui code segment">
+<b>ejs-0&gt;</b> s = new Shape(100, 200)
+<b>ejs-0&gt;</b> print(s.height)
+<b><strong>100</strong></b>
+</pre>
+            <h2><a id="objects"></a>Objects</h2>
+            <p>You can also create objects without having to create a class. Object literals provide a convenient way
+            to create and initialize an object in one step.</p>
+            <pre class="ui code segment">
+<b>ejs-0&gt;</b> s = { height: 500, width: 400 }
+<b>ejs-0&gt;</b> print(s.height)
+<b><strong>500</strong></b>
+<b>ejs-0&gt;</b> serialize(s)<b><strong>
+{
+  height: 500,
+  width: 400,
+}</strong></b>
+</pre>
+            <p>In this example, we also use the <strong>serialize</strong> function to convert the object "s" into a
+            string exposing all the properties and their values. Object literals can also be nested.</p>
+            <h2><a id="hashes"></a>Hashes</h2>
+            <p>In Ejscript, objects are frequently used as hashes to store key / value pairs.</p>
+            <pre class="ui code segment">
+<b>ejs-0&gt;</b> hash = new Object
+<b>ejs-0&gt;</b> hash["red"] = "Favorite color"
+<b>ejs-0&gt;</b> hash["blue"] = "Next favorite"
+<b>ejs-0&gt;</b> hash["green"] = "Least likely"
+<b>ejs-0&gt;</b> print(hash["red"])
+<strong><b>Favorite Color</b></strong>
+</pre>
+            <p>To access hash elements, use "[]" to lookup by a key string.</p>
+            <p>Classes and Interfaces are also objects in their own right. You can store them and assign them. This is
+            very useful in creating type factories. Continuing the previous example, we can store the Shape and Circle
+            class types into a factory hash.</p>
+            <pre class="ui code segment">
+<b>
+ejs-2&gt;</b> factory = {}
+<b>ejs-0&gt;</b> factory["shape"] = Shape
+<b>ejs-0&gt;</b> factory["circle"] = Circle
+<b>ejs-0&gt;</b> kind = "shape"
+<b>ejs-0&gt;</b> thing = new factory[kind]
+</pre>
+            <p>In this example we used "factory = {}". This is a frequently used shorthand for saying factory = new
+            Object.</p>
+            <h2><a id="arrays"></a>Arrays</h2>
+            <p>Arrays are created using the new keyword. There are several forms of constructor usage for Arrays, the
+            most common is to specify the size of the array.</p>
+            <pre class="ui code segment">
+<b>ejs-0&gt;</b> a = new Array(10)
+<b>ejs-0&gt;</b> print(a.length)
+<b><strong>10</strong></b>
+</pre>You can also create an Array using an Array literal syntax by enclosing the desired array elements inside square
+brackets.
+            <pre class="ui code segment">
+<b>ejs-0&gt;</b> b = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+<b>ejs-0&gt;</b> print(b.length)
+<b><strong>10</strong></b>
+<b>ejs-0&gt;</b> print(b)
+0,1,2,3,4,5,6,7,8,9
+</pre>
+            <p>You can print the length of the array using the <b>length</b> getter function. You can also convert the
+            array to a string and print it out.</p>
+            <h2><a id="types"></a>Type Annotations</h2>
+            <p>So far we've just declared variables and not specified their type. At run time, the Ejscript virtual
+            machine manages the type of the variables. Sometimes known as Duck-typing, this is certainly easier than
+            having to pre-declare the types of all variables. But there are cases where it is highly desirable to
+            specify the type a variable can hold. Instead of typing "String name;" as you would in Java, in Ejscript
+            you use a postfix type annotation. For example:</p>
+            <pre class="ui code segment">
+var name: String
+</pre>
+            <p>This defines a new variable called <b>name</b> that will always hold strings. In Ejscript type
+            annotations come after the variable and are optional. You can choose which variables, functions and
+            parameters you wish to type.</p>
+            <p>Function arguments and function return values can also be typed:</p>
+            <pre class="ui code segment">
+function add(x: Number, y: Number): Number {
+  return x + y
+}
+</pre>
+            <p>So when is it desirable to annotate your variable or function declarations with types?</p>
+            <ul>
+                <li>When you are creating a class library and you want to specify exactly what types are acceptable as
+                arguments to functions.</li>
+                <li>When you want your code to run as fast as possible. By adding type annotations, the compiler can
+                perform optimizations to bind property accesses into actual storage references.</li>
+                <li>When you want your code to be robust and you want the compiler and Virtual Machine to convert types
+                or catch type mismatches for you as early as possible.</li>
+            </ul>
+            <p>Another general rule is that when you are creating code that will be used by others and they need to
+            have it clearly documented, use type annotations.</p>
+            <h2><a id="statements"></a>Statements</h2>
+            <p>Ejscript statements are C-like and include: break, case, cast, class, continue, catch, class, default,
+            delete, do, finally, for, for/in, for each, function, if/else, include, interface, let, new, return, super,
+            switch, try, use and var.</p>
+            <p>Let's use a few (we'll omit the shell prompts in this example):</p>
+            <pre class="ui code segment">
+/*<br /> *  Can use either C or C++ style comments<br /> */
+class MyDemo {
+  function test(low, high) {
+    let i, j;                   // Declare locals with let
+    let objects = new Array(10) // Create an array of ten elements
+    
+    for (i in 10) {             // Classic for loop
+      objects[i] = new Object   // Store a new object
+    }
+    for each (o in objects) {   // Iterate over all the objects
+      try {
+        // Can do something here to each object
+      }
+      catch (error) {
+        print("Got an error: " + error)
+      }
+    }
+    return low &lt; high ? low : high
+  }
+}
+var demo = new MyDemo
+demo.test(0, 10)
+                    
+</pre>
+            <p>There were a couple of unusual constructs in that snippet to discuss.</p>
+            <h3>Let Declarations and Block Scope</h3>
+            <p>Variables may be declared with either <strong>var</strong> or <strong>let</strong>. Let will always
+            define variables at the block level in which they are declared. i.e. always block scoped. In ECMAScript, var
+            declarations always hoist to the nearest enclosing function, class or global space.</p>
+            <h3>For ... in</h3>
+            <p>The "for (i in 10)" statement seems a little unusual. Isn't 10 a primitive type? The answer is yes, but
+            Ejscript treats all numbers as objects. You can invoke methods on numbers and you can iterate through their
+            values. This for/in statement will iterate through all the numbers from 0 up to but not including 10. i.e.
+            0-9. Much easier than typing "<em>for (i = 0; i &lt; 10; i++)</em>" eh?</p>
+            <h2><a id="iteration"></a>Iteration</h2>
+            <p>Ejscript has powerful iteration capabilities and most types have built-in iterators for common tasks.
+            Here are a few examples:</p>
+            <p>To loop through the characters in a string:</p>
+            <pre class="ui code segment">
+<b>ejs-0&gt;</b> for each (s in "Hello")
+<b>ejs-0&gt;</b>   print(s)
+<strong><b>
+H
+e
+l
+l
+o</b></strong>
+</pre>
+            <p>To count to 100</p>
+            <pre class="ui code segment">
+<b>ejs-0&gt;</b> for each (i in 100)
+<b><strong>0
+1
+...
+99</strong></b>
+</pre>
+            <h2><a id="scope"></a>Scope</h2>
+            <p>Ejscript is a lexically scoped language. This means that variables are visible by default in the block
+            in which they are declared and in inner blocks.</p>
+            <p>In this example, the variable factor is visible inside the function increment but the variable temp is
+            local to the function and not visible outside.</p>
+            <pre class="ui code segment">
+<b>ejs-0&gt; </b>var factor = 10
+<b>ejs-0&gt;</b> function increment(x) {
+<b>ejs-0&gt; </b>  var temp = x * x
+<b>ejs-0&gt; </b>  return temp + factor       // Variable factor is visible
+<b>ejs-0&gt; </b>}
+<b>ejs-0&gt; </b>// Variable temp is not visible here
+</pre>
+            <p>But what if we declare another variable called "factor" inside the function. Consider this:</p>
+            <pre class="ui code segment">
+<b>ejs-0&gt; </b>var factor = 10
+<b>ejs-0&gt;</b> function increment(x) {
+<b>ejs-0&gt;</b>   let factor = 1
+<b>ejs-0&gt; </b>  var temp = x * x
+<b>ejs-0&gt; </b>  return temp + factor       // factor == 1
+<b>ejs-0&gt; </b>}
+<b>ejs-0&gt; </b>// Variable temp is not visible here
+</pre>
+            <p>This second declaration of factor inside the function <em>shadows</em> the first declaration only while
+            inside the function. Once outside, the first declaration is visible again.</p>
+            <p>These scoping rules apply to functions, classes, and indeed any blocks of code.</p>
+            <h2><a id="namespaces"></a>Namespaces</h2>
+            <p>To help control the visibility of names, they can be given namespace qualifiers. Think of this as a
+            two-dimensional variable name space. Instead of just the variable name, the fully qualified variable name
+            consists of the name plus the namespace name.</p>
+            <p>Namespaces are useful to prevent names from different contexts clashing. In other languages such as
+            Java, packages and imports are used to group and segregate declarations. In Ejscript, namespaces are also
+            used for this purpose.</p>
+            <p>With namespaces you can now have two variables named x in the same block.</p>
+            <pre class="ui code segment">
+<b>ejs-0&gt;</b> var x = "first"
+<b>ejs-0&gt;</b> var "com.embedthis"::x = "second"
+<b>ejs-0&gt;</b> print(x)
+<b><strong>first</strong></b>
+<b>ejs-0&gt;</b> print("com.embedthis"::x)
+<b><strong>second</strong></b>
+</pre>
+            <p>The second variable declaration is qualified by "com.embedthis" and is a separate declaration to the
+            first. The namespace qualifier can either be a literal string or can be a variable of the type Namespace.
+            The qualifier is separated from the name by the "::" delimiter.</p>
+            <p>While that looks okay, I hear you ask "surely there is a more convenient way to use namespaces?". Yes,
+            there is. Namespaces are used most frequently in modules.</p>
+            <h2>Modules</h2>
+            <p>The most common need for Namespaces is to package related code so that it will not have name clashes
+            with other code declarations. Java uses packages and import directives for this purpose, Ejscript uses
+            modules &mdash; based on Namespaces. A module directive groups variables, functions and classes into a
+            single namespace. A module can be imported via the "require" directive.</p>
+            <pre class="ui code segment">
+<b>ejs-0&gt;</b> module Test {
+<b>ejs-0&gt;</b>     var x = "hello"
+<b>ejs-0&gt;</b> }
+<b>ejs-0&gt;</b> require Test
+<b>ejs-0&gt;</b> print(x)
+<strong><b>hello</b></strong>
+</pre>
+            <p>This code will create a module Test with a variable X that is actually named: "Test::x". i.e it is
+            prefixed with the namespace "Test". A typical paradigm is to create modules patterned after a domain name
+            such as "com.embedthis.Test".</p>
+            <p>If using the <strong>ec</strong> stand-alone compiler, the Test module will be compiled into a separate
+            byte code file called "test.mod".</p>
+            <h2><a id="closures"></a>Closures</h2>
+            <p>To complete the discussion about Scope, Ejscript has an important and very powerful construct called a
+            closure. This is where a function can be captured in the context in which it is defined. The capture
+            includes its full lexical scope and if the function is a method in a class, then the <strong>this</strong>
+            instance object will also be captured.</p>
+            <p>Closures and method capture are most useful when you wish to pass a function with its execution context
+            as a parameter to another function.</p>
+            <pre class="ui code segment">
+<b>ejs-0&gt;</b> class Rectangle {
+<b>ejs-0&gt;</b>   var color = "red"
+<b>ejs-0&gt;</b>   function render() {
+<b>ejs-0&gt;</b>     print("In render: color " + color)
+<b>ejs-0&gt;</b>   }
+<b>ejs-0&gt;</b> }
+<b>ejs-0&gt;</b> box = new Rectangle
+<b>ejs-0&gt;</b> new Timer(5000, box.render)
+</pre>
+            <p>This example creates a class called Rectangle and creates an instance called box. It then creates a
+            timer which will invoke the render method of the rectangle in 5 seconds. When <strong>box.render</strong>
+            is passed as a parameter, Ejscript captures the value of the box (this) reference and remembers it. When
+            the timer later invokes the render method, it invokes it with the right instance of Rectangle.</p>
+            <h2><a id="exceptions"></a>Exceptions</h2>
+            <p>Frequently things go wrong in a program. Exceptions allow you to structure your error handling code
+            without obscuring the main logic flow.</p>
+            <pre class="ui code segment">
+<b>ejs-0&gt;</b> try {
+<b>ejs-0&gt;</b>   missing()
+<b>ejs-0&gt;</b> }
+<b>ejs-0&gt;</b> catch (error) {
+<b>ejs-0&gt;</b>   print("Caught the error")
+<b>ejs-0&gt;</b> }
+<b><strong>Caught the error</strong></b>
+</pre>
+            <p>Ejscript exceptions allow us to "try" something and if an error occurred, then we catch the error in a
+            dedicated block of code.</p>
+            <h2><a id="library"></a>Script Library</h2>
+            <p>Ejscript comes with an extensive class <a href="../ref/api/ejscript/index.html">library</a>. It
+            includes class for Events, Timers, File I/O, HTTP, Sockets, XML and much more. To give you a feel for the
+            library, here is how to read lines from a file.</p>
+            <pre class="ui code segment">
+<b>ejs-0&gt;</b> for each (line in Path("filename").readLines()) {
+<b>ejs-0&gt;</b>   print(line)
+<b>ejs-0&gt;</b> }
+</pre>
+
+    </div>
+    <div class="terms ui basic center aligned segment">
+        <p>&copy; Embedthis Software, 2003-2014. All rights reserved.</p>
+    </div>
+
+    <script src="../lib/jquery/jquery.js"></script>
+    <script src="../lib/semantic/js/semantic.js"></script>
+    <script>
+        var sl = $('.sidebar-launch');
+        $('.sidebar-launch').click(function() {
+            var body = $('body');
+            if (!body.hasClass('show-sidebar')) {
+                body.addClass('show-sidebar');
+                $('.sidebar').css('visibility', 'visible');
+            } else {
+                body.removeClass('show-sidebar');
+                $('.sidebar').css('visibility', 'hidden');
+            }
+        });
+        $('.sidebar-launch').trigger('click');
+        $('.sidebar a.item').click(function(e) {
+            sessionStorage.setItem('scroll-top', $('.sidebar').scrollTop());
+        });
+        $(function() {
+            var url = '../start/tour.html';
+            var active = $('.sidebar a[href="' + url +'"]');
+            active.addClass('active');
+            $('.sidebar').scrollTop(sessionStorage.getItem('scroll-top'));
+        });
+    </script> 
+
+</body>
+</html>

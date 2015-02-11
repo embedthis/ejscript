@@ -3,14 +3,13 @@
     "description": "Embedthis Ejscript Javascript Language",
     "title": "Embedthis Ejscript",
     "version": "2.5.2",
-    "pak": ">=0.10",
     "keywords": [
         "ejs",
         "ejscript",
         "javascript",
         "ecmascript"
     ],
-    "homepage": "https://embedthis.com/products/ejs/",
+    "homepage": "https://embedthis.com/ejs/",
     "author": {
         "name": "Embedthis Software",
         "email": "dev@embedthis.com",
@@ -40,6 +39,7 @@
         "mpr": "~6.0",
         "osdep": "~0.8",
         "pcre": "~1.0",
+        "sqlite": "~1.0",
         "ssl": "~0.8",
         "zlib": "~1.0"
     },
@@ -48,12 +48,12 @@
         "sqlite": "~1.0",
         "ssl": "~0.8"
     },
-    "directories": {
-        "paks": "src/paks"
-    },
-    "app": {
-        "*": {
-            "noblend": true
-        }
+    "files": [
+        "dist/",
+        "doc/api/"
+    ],
+    "pak": {
+        "import": true,
+        "version": ">=0.10.0"
     }
 }

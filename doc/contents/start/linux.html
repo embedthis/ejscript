@@ -1,0 +1,58 @@
+{
+    title:  'Installing on Linux',
+    crumbs: [ 
+        { 'Getting Started': 'index.html' },
+        { 'Installing': 'installing.html' },
+    ],
+}
+            <h1>Installing on Linux</h1>
+            <p>Running Ejscript on Linux is supported by building from source code. </p>
+            <p>Please see instructions at <a href="source.html">Building from Source</a>.</p>
+
+            
+            <a id="running"></a>
+            <h2>Running Ejscript</h2>
+            <p>You can run ejs via:</p>
+            <pre class="ui code segment">
+ejs
+</pre>
+            <p>To get all the options for Ejscript, read the man page via:</p>
+            <pre class="ui code segment">
+man ejs
+</pre>or get the command help via:
+            <pre class="ui code segment">
+ejs --help
+</pre>
+            <h3>Other Commands</h3>
+            <p>The installation will install four commands:</p>
+            <table title="commands" class="ui table segment">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Description</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>ejs</td>
+                <td>The Ejscript command shell. This command can parse and execute ejs scripts from files or typed
+                interactively on the console. This command contains both the Ejscript compiler and virtual
+                machine.</td>
+            </tr>
+            <tr>
+                <td>ejsc</td>
+                <td>The Ejscript compiler. This command can compile scripts into byte code form for later running
+                    via the <em>ejs</em> command.</td>
+            </tr>
+            <tr>
+                <td>ejsmod</td>
+                <td>The Ejscript module manager. This command generates assembler source code listings, HTML
+                documentation and symbolic slot offset header files.</td>
+            </tr>
+            <tr>
+                <td>mvc</td>
+                <td>The Ejscript Model-View-Controller web framework generator and manager. This command assists to
+                    create Ejscript Web applications that use the Ejscript Web Framework.</td>
+            </tr>
+            </tbody>
+        </table>

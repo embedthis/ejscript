@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Class Uri</title>
+
+   <link rel="stylesheet" type="text/css" href="doc.css" />
+</head>
+
+<body>
+<div class='body'>
+
+<div class="content">
+
+<a name='top'></a>
+<h1 class='className'>Uri</h1>
+<div class='classBlock'>
+<table class='classHead' title='Uri'>
+   <tr><td><strong>Module</strong></td><td>ejs</td></tr>
+   <tr><td><strong>Definition</strong></td><td> class Uri</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Uri <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.5</td></tr>
+<tr><td><strong>Stability</strong></td><td>Evolving.</td></tr>
+       </td></tr>
+</table>
+
+<p class='classBrief'>The URI class to provides the ability to create, and manipulate URIs and their constituent components.</p>
+
+<p class='classDescription'>Uri objects are mutable.</p>
+
+</div>
+
+
+<hr />
+<a name='Properties'></a>
+<h2 class='classSection'>Properties</h2>
+<table class='itemTable' title='properties'>
+   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='address'></a>
+   <tr><td nowrap align='center'> get </td><td>address</td><td><a href='String.html'>String</a></td><td>Return the TCP/IP address of the URI. This is the IP:PORT portion.</td></tr>
+<a name='basename'></a>
+   <tr><td nowrap align='center'> get </td><td>basename</td><td><a href='Uri.html'>Uri</a></td><td>The base of portion of the URI. The base portion is the trailing portion of the path without any directory 
+elements. Set to null if the Uri has no path.</td></tr>
+<a name='components'></a>
+   <tr><td nowrap align='center'> get </td><td>components</td><td><a href='Object.html'>Object</a></td><td>Break a URI into its components by converting the URI to an absolute URI and breaking into components. The components are: scheme, host, port, path, reference and query.</td></tr>
+<a name='dirname'></a>
+   <tr><td nowrap align='center'> get </td><td>dirname</td><td><a href='Uri.html'>Uri</a></td><td>The directory portion of a URI path. The directory portion is the leading portion including all directory 
+elements of the URI path excluding the base name. Set to null if the Uri has no path.</td></tr>
+<a name='extension'></a>
+   <tr><td nowrap align='center'> get set </td><td>extension</td><td><a href='String.html'>String</a></td><td>The URI extension portion of the path. Set to a String containing the URI extension without the ".".
+Set to null if no extension. If this is modified, the path property will be updated accordingly.</td></tr>
+<a name='filename'></a>
+   <tr><td nowrap align='center'> get </td><td>filename</td><td><a href='Path.html'>Path</a></td><td>Set to a Path type corresponding to the Uri path property. The Path is relative to the current directory.
+i.e. this removes the leading "/" from the path property.
+(.</td></tr>
+<a name='hasExtension'></a>
+   <tr><td nowrap align='center'> get </td><td>hasExtension</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI has an explicit extension
+8. </td></tr>
+<a name='hasHost'></a>
+   <tr><td nowrap align='center'> get </td><td>hasHost</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI have an explicit host component. For example: "www.example.com".</td></tr>
+<a name='hasPort'></a>
+   <tr><td nowrap align='center'> get </td><td>hasPort</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI have an explicit port number. </td></tr>
+<a name='hasQuery'></a>
+   <tr><td nowrap align='center'> get </td><td>hasQuery</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI have an explicit query component. </td></tr>
+<a name='hasReference'></a>
+   <tr><td nowrap align='center'> get </td><td>hasReference</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI have an explicit reference component. </td></tr>
+<a name='hasScheme'></a>
+   <tr><td nowrap align='center'> get </td><td>hasScheme</td><td><a href='Boolean.html'>Boolean</a></td><td>Does the URI have an explicit scheme (protocol) specifier. For example: "http://".</td></tr>
+<a name='host'></a>
+   <tr><td nowrap align='center'> get set </td><td>host</td><td><a href='String.html'>String</a></td><td>The host portion of the URI. Set to null if there is no host component.</td></tr>
+<a name='isAbsolute'></a>
+   <tr><td nowrap align='center'> get </td><td>isAbsolute</td><td><a href='Boolean.html'>Boolean</a></td><td>Is the URI is an absolute path. Set to true if the URI path component beginning with a "/".</td></tr>
+<a name='isDir'></a>
+   <tr><td nowrap align='center'> get </td><td>isDir</td><td><a href='Boolean.html'>Boolean</a></td><td>Is the URI is a directory URI. Set to true if the URI ends with "/". NOTE: this only tests the URI and 
+not any physical resource associated with the URI.
+0.</td></tr>
+<a name='isRegular'></a>
+   <tr><td nowrap align='center'> get </td><td>isRegular</td><td><a href='Boolean.html'>Boolean</a></td><td>Is the URI is a regular resource and not a directory. Set to true if the URI does not end with "/". 
+NOTE: this only tests the URI and not any physical resource associated with the URI.</td></tr>
+<a name='isRelative'></a>
+   <tr><td nowrap align='center'> get </td><td>isRelative</td><td><a href='Boolean.html'>Boolean</a></td><td>Is if the URI path is relative. Set to true if the URI's path component does not begin with a "/".</td></tr>
+<a name='local'></a>
+   <tr><td nowrap align='center'> get </td><td>local</td><td><a href='Uri.html'>Uri</a></td><td>Create a local URI. A local URI has no scheme, host or port components.</td></tr>
+<a name='mimeType'></a>
+   <tr><td nowrap align='center'> get </td><td>mimeType</td><td><a href='String.html'>String</a></td><td>The mime type of the URI. This is set to a mime type string by examining the URI extension. 
+Set to "text/html" if the mime type cannot be determined from the extension. 
+Set to null if the URI has no extension.</td></tr>
+<a name='normalize'></a>
+   <tr><td nowrap align='center'> get </td><td>normalize</td><td><a href='Uri.html'>Uri</a></td><td>Normalized URI by removing all redundant and invalid URI components. Set to a URI with "segment/.." 
+and "./" components removed. The value will not be converted to an absolute URI nor will it map character case.</td></tr>
+<a name='path'></a>
+   <tr><td nowrap align='center'> get set </td><td>path</td><td><a href='String.html'>String</a></td><td>The URI path portion after the hostname
+Set to null if there is no path. </td></tr>
+<a name='port'></a>
+   <tr><td nowrap align='center'> get set </td><td>port</td><td><a href='Number.html'>Number</a></td><td>The port number of the URI. Set to null if the URI does not have an explicit port.</td></tr>
+<a name='query'></a>
+   <tr><td nowrap align='center'> get set </td><td>query</td><td><a href='String.html'>String</a></td><td>The URI query string. The query string is the fragment after a "?" character in the URI.
+Set to null if there is no query.
+0.</td></tr>
+<a name='reference'></a>
+   <tr><td nowrap align='center'> get set </td><td>reference</td><td><a href='String.html'>String</a></td><td>The URI reference portion. The reference portion is sometimes called the "anchor" and is the the fragment 
+after a "#" character in the URI.  Set to null if there is no reference.</td></tr>
+<a name='scheme'></a>
+   <tr><td nowrap align='center'> get set </td><td>scheme</td><td><a href='String.html'>String</a></td><td>The URI protocol scheme. Set to null if no scheme defined.</td></tr>
+<a name='uri'></a>
+   <tr><td nowrap align='center'> get set </td><td>uri</td><td><a href='String.html'>String</a></td><td>The full URI as a string. </td></tr>
+</table>
+
+<p class='inheritedLink'><a href='Object.html#Properties'><i>Inherited Properties</i></a></p>
+
+<hr />
+<a name='ClassMethods'></a>
+<h2 class='classSection'>Uri Class Methods</h2>
+<table class='apiIndex' title='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#decode'><b>decode</b></a>(str: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Decode a URI encoded string using www-url encoding.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#decodeComponent'><b>decodeComponent</b></a>(str: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Decode a URI encoded component using www-url encoding.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#encode'><b>encode</b></a>(str: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Encode a URI using www-url encoding.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#encodeComponent'><b>encodeComponent</b></a>(str: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Encode a URI component suitable for the "application/x-www-form-urlencoded" mime type.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#template'><b>template</b></a>(pattern: <a href='String.html'>String</a>, options: <a href='Array.html'>Array</a>): <a href='Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a URI based on a template.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<a name='InstanceMethods'></a>
+<h2 class='classSection'>Uri Instance Methods</h2>
+<table class='apiIndex' title='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#Uri'><b>Uri</b></a>(uri: <a href='Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create and parse a Uri object.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#absolute'><b>absolute</b></a>(base = null): <a href='Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a complete absolute URI from "this" URI with all mandatory components present including 
+scheme and host.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#complete'><b>complete</b></a>(missing = null): <a href='Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a complete absolute URI from "this" URI with all mandatory components present including scheme and host.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#endsWith'><b>endsWith</b></a>(suffix: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return true if the URI path ends with the given suffix.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#join'><b>join</b></a>(others: <a href='Array.html'>Array</a>): <a href='Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Join URIs.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#joinExt'><b>joinExt</b></a>(ext: <a href='String.html'>String</a>): <a href='Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Join an extension to a URI.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#relative'><b>relative</b></a>(base): <a href='Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a URI with a relative path from the <a href='#base'>base</a> URI to "this" URI.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#replaceExt'><b>replaceExt</b></a>(ext: <a href='String.html'>String</a>): <a href='Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Replace the extension and return a new URI.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#resolve'><b>resolve</b></a>(target): <a href='Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Resolve a URI in the neighborhood of this URI.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#same'><b>same</b></a>(other: <a href='Object.html'>Object</a>, exact: <a href='Boolean.html'>Boolean</a> = false): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Compare two URIs test if they represent the same resource.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#startsWith'><b>startsWith</b></a>(prefix: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return true if the URI path starts with the given prefix.</td></tr>
+   <tr class='apiDef'><td class='apiType'> override </td><td><a href='#toJSON'><b>toJSON</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the URI to a JSON string.</td></tr>
+   <tr class='apiDef'><td class='apiType'> override </td><td><a href='#toLocalString'><b>toLocalString</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the local portion of the URI to a string.</td></tr>
+   <tr class='apiDef'><td class='apiType'> override </td><td><a href='#toString'><b>toString</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the URI to a string.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#trimEnd'><b>trimEnd</b></a>(pat: <a href='String.html'>String</a>): <a href='Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Trim a pattern from the end of the URI path
+NOTE: this does a case-sensitive match.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#trimExt'><b>trimExt</b></a>(): <a href='Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Trim the extension portion off the URI path.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#trimStart'><b>trimStart</b></a>(pat: <a href='String.html'>String</a>): <a href='Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Trim a pattern from the start of the path
+NOTE: this does a case-sensitive match.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<h2>Method Detail</h2>
+<a name='Uri'></a>
+<div class='api'>
+<div class='apiSig'>    Uri(uri: <a href='Object.html'>Object</a>)
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Create and parse a Uri object. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>uri: <a href='Object.html'>Object</a> </td><td>A string or object hash that describes the URI. The <a href='#uri'>uri</a> specify a complete absolute URI string or it may specify a partial URI where missing elements take the normal defaults. The <a href='#uri'>uri</a> argument may also be  an object hash with the following properties.</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' title='options'>
+<td class='param'>scheme</td><td>String URI protocol scheme (http or https).</td></tr>
+<td class='param'>host</td><td>String URI host name or IP address.</td></tr>
+<td class='param'>port</td><td>Number TCP/IP port number for communications.</td></tr>
+<td class='param'>path</td><td>String URI path.</td></tr>
+<td class='param'>query</td><td>String URI query parameters. Does not include "?".</td></tr>
+<td class='param'>reference</td><td>String URI path reference. Does not include "#".</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='absolute'></a>
+<div class='api'>
+<div class='apiSig'>    absolute(base = null): <a href='Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Create a complete absolute URI from "this" URI with all mandatory components present including 
+scheme and host. The resulting URI path will be normalized and any missing components will be 
+completed with values from the given <a href='#base'>base</a> URI. If "this" URI path is relative, it will be joined to base 
+URI's path.
+Any query component of "this" URI is discarded in the result. This is because the query component of "this" URI
+is regarded as POST data and not integral to the base URI.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>base </td><td>Optional URI to provide missing components and a base URI path if the current URI path is relative.  The base argument can be a string, URI or an object hash of URI component. If the base argument is not supplied, the current URI will be completed as much as possible. See <a href='#complete'>complete</a>.  [default: null]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A complete, absolute URI.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='decode'></a>
+<div class='api'>
+<div class='apiSig'>static     decode(str: <a href='String.html'>String</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Decode a URI encoded string using www-url encoding. See encode for details about the character mappings.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String to decode.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A decoded string.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='decodeComponent'></a>
+<div class='api'>
+<div class='apiSig'>static     decodeComponent(str: <a href='String.html'>String</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Decode a URI encoded component using www-url encoding. See encodeComponent for details about the character mappings.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String to decode.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A decoded string.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='complete'></a>
+<div class='api'>
+<div class='apiSig'>    complete(missing = null): <a href='Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Create a complete absolute URI from "this" URI with all mandatory components present including scheme and host. The resulting URI path will be normalized and missing (mandatory) components will be completed with values 
+from the given "missing" argument.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>missing </td><td>Optional URI to provide the missing components. The missing argument can be a string, URI or an object hash of URI component. If this missing argument is not provided, the following defaults are used: "http://localhost:80/". [default: null]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A complete, absolute URI.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='encode'></a>
+<div class='api'>
+<div class='apiSig'>static     encode(str: <a href='String.html'>String</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Encode a URI using www-url encoding. This replaces special characters with encoded alternative sequence.
+The encode call replaces all characters except: alphabetic, decimal digits, "-", "_", ".", "!", "~", 
+"*"", "'", "(", ")", "#", ";", ",", "/", "?", ":", ".</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String to encode.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>An encoded string.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='encodeComponent'></a>
+<div class='api'>
+<div class='apiSig'>static     encodeComponent(str: <a href='String.html'>String</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Encode a URI component suitable for the "application/x-www-form-urlencoded" mime type. This replaces 
+special characters with encoded alternative sequence. The encode call replaces all characters 
+except: alphabetic, decimal digits, "-", "_", ".", "!", "~", "*"", "'", "(", ")". It also maps space to "+".
+Compared with the <a href='#encode'>encode</a> call, encodeComponent additionally encodes: "#", ";", ",", "/", "?", ":", ".</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String to encode.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>An encoded string.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='endsWith'></a>
+<div class='api'>
+<div class='apiSig'>    endsWith(suffix: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Return true if the URI path ends with the given suffix. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>suffix: <a href='Object.html'>Object</a> </td><td>URI or String suffix to compare with the path.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the path does begin with the suffix.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='join'></a>
+<div class='api'>
+<div class='apiSig'>    join(others: <a href='Array.html'>Array</a>): <a href='Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Join URIs. URI argument are joined in turn starting with "this" URI" as the base. If a URI argument is absolute,
+the progressive result is replaced with the absolute URI and joining continues. If a URI argument is relative, 
+a "/" is appended followed by the argument, and joining continues. For example:  
+Uri("/admin").join("/display") will result in "/display"
+Uri("/admin").join("logout") will result in "/admin/logout"
+Uri("/admin").join("private", "profile") will result in "/admin/private/profile".</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>others: <a href='Array.html'>Array</a> </td><td>Other URIs to join. These can be URIs, strings or object hashes of URI components.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A new URI with the arguments joined to the current URI.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='joinExt'></a>
+<div class='api'>
+<div class='apiSig'>    joinExt(ext: <a href='String.html'>String</a>): <a href='Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Join an extension to a URI. If the basename of the URI already has an extension, this call does nothing.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>A URI with an extension.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='relative'></a>
+<div class='api'>
+<div class='apiSig'>    relative(base): <a href='Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Create a URI with a relative path from the <a href='#base'>base</a> URI to "this" URI. If the base URI has a different scheme, host or port to that of "this" URI, then a relative URI cannot be 
+formed and the current URI is returned.
+Any query component of the <a href='#base'>base</a> URI is ignored in the result. This is because the query component 
+is regarded as POST data and not integral to the base URI.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>base </td><td>Base URI to use in calculating the relative path to "this" URI. The base argument can be a string,  URI or an object hash of URI component.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A new URI object with a relative path from the <a href='#base'>base</a> URI to "this" URI.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='replaceExt'></a>
+<div class='api'>
+<div class='apiSig'>    replaceExt(ext: <a href='String.html'>String</a>): <a href='Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Replace the extension and return a new URI. </dd></dl>
+<dl><dt>Returns</dt>
+<dd>A path with extension. 8.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='resolve'></a>
+<div class='api'>
+<div class='apiSig'>    resolve(target): <a href='Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Resolve a URI in the neighborhood of this URI. Resolve operates like join, except that it joins the 
+given URI to the directory portion of the current ("this") URI. For example: <br/><br/>Uri("/a/b.html").resolve("c.html") will return "/a/c.html".<br/><br/>Resolve operates by determining a virtual current directory for this URI (dirname). It then joins the 
+given URI path to the directory portion of the current result. If the resolving URI is an absolute URI, it is 
+used unmodified. <br/><br/>Resolve is useful for creating URIs in the region of the current URI and gracefully handles both absolute 
+and relative URI segments.
+Any query component of "this" URI is discarded in the result. This is because the query component of "this" URI
+is regarded as POST data and not integral to the base URI.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>target </td><td>Other URI to resolve in the region of this path. Target can be a URI, string or object hash of URI components.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A new URI object that resolves given URI args using the "this" URI as a base.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='same'></a>
+<div class='api'>
+<div class='apiSig'>    same(other: <a href='Object.html'>Object</a>, exact: <a href='Boolean.html'>Boolean</a> = false): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Compare two URIs test if they represent the same resource. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>other: <a href='Object.html'>Object</a> </td><td>Other URI to compare with.</td></tr><tr class='param'><td class='param'>exact: <a href='Boolean.html'>Boolean</a> </td><td>If exact is true, then the query and reference portions must match. [default: false]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the URIs represent the same underlying resource.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='startsWith'></a>
+<div class='api'>
+<div class='apiSig'>    startsWith(prefix: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Return true if the URI path starts with the given prefix. This skips the scheme, host and port portions
+and examines the URI path only.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>prefix: <a href='Object.html'>Object</a> </td><td>URI or String prefix to compare with the URI.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the path does begin with the prefix.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='template'></a>
+<div class='api'>
+<div class='apiSig'>static     template(pattern: <a href='String.html'>String</a>, options: <a href='Array.html'>Array</a>): <a href='Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Create a URI based on a template. The template is a subset of the URI-templates specification and supports
+simple {tokens} only. Each token is looked for in the set of provided option objects. The search stops with
+the first object providing a value.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>pattern: <a href='String.html'>String</a> </td><td>URI-Template with {word} tokens.</td></tr><tr class='param'><td class='param'>options: <a href='Array.html'>Array</a> </td><td>Set of option objects with token properties to complete the URI.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A URI.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='toJSON'></a>
+<div class='api'>
+<div class='apiSig'>override     toJSON(): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Convert the URI to a JSON string. </dd></dl>
+<dl><dt>Returns</dt>
+<dd>A JSON string representing the URI.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='toLocalString'></a>
+<div class='api'>
+<div class='apiSig'>override     toLocalString(): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Convert the local portion of the URI to a string. This will include only the path, query and reference
+components of the URI. The scheme, host and port portions of the URI will be ignored.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>A string representing the URI's path, query and reference portions.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='toString'></a>
+<div class='api'>
+<div class='apiSig'>override     toString(): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Convert the URI to a string. </dd></dl>
+<dl><dt>Returns</dt>
+<dd>A string representing the URI.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='trimEnd'></a>
+<div class='api'>
+<div class='apiSig'>    trimEnd(pat: <a href='String.html'>String</a>): <a href='Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Trim a pattern from the end of the URI path
+NOTE: this does a case-sensitive match. TODO - is this right?.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>A new URI containing the trimmed URI TODO - should support reg expressions.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='trimExt'></a>
+<div class='api'>
+<div class='apiSig'>    trimExt(): <a href='Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Trim the extension portion off the URI path. </dd></dl>
+<dl><dt>Returns</dt>
+<dd>A URI with no extension.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='trimStart'></a>
+<div class='api'>
+<div class='apiSig'>    trimStart(pat: <a href='String.html'>String</a>): <a href='Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Trim a pattern from the start of the path
+NOTE: this does a case-sensitive match. TODO - is this right?.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>A URI containing the trimmed path name TODO - should support reg expressions.</dd></dl>
+</div>
+</div>
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="https://embedthis.com/">       Embedthis Software LLC, 2003-2014. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,29 @@
+#!/bin/sh
+# 	prerm -- Pre removal script for Ejscript
+#
+#	Copyright (c) Embedthis Software. All Rights Reserved.
+#
+
+ME_PRODUCT=${settings.product}
+ME_NAME="${settings.title}"
+ME_BIN_PREFIX="${prefixes.bin}"
+
+###############################################################################
+#
+#	Main
+#
+cd /
+action=$1
+case $action in
+	remove)					# when new
+		;;
+	upgrade)				# when old
+		;;
+	failed-upgrade)			# when new
+		oldVersion=$2
+		;;
+	deconfigure)			# when old
+		# 	deconfigure in-favor package-being-installed version removing 
+		#	conflicting-package version
+esac
+exit 0
