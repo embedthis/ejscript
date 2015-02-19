@@ -935,10 +935,13 @@ static EjsString *joinArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         if (!ejsIsDefined(ejs, sp)) {
             continue;
         }
+        sp = ejsToString(ejs, sp);
+        if (!ejsIsDefined(ejs, sp)) {
+            continue;
+        }
         if (i > 0 && sep) {
             mprPutBlockToBuf(buf, sep->value, sep->length);
         }
-        sp = ejsToString(ejs, sp);
         mprPutBlockToBuf(buf, sp->value, sp->length);
     }
     mprAddNullToBuf(buf);
