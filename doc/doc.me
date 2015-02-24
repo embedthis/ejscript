@@ -9,9 +9,9 @@ Me.load({
             depends: ['gen-doc', 'render-doc'],
             action: `
                 apidoc('api/ejs.dox', [
-                    '${SRC}/src/ejs.h',
-                    '${SRC}/src/ejs.web/ejsWeb.h',
-                    '${SRC}/src/ejsCompiler.h',
+                    '${SRC}/ejs.h',
+                    '${SRC}/ejs.web/ejsWeb.h',
+                    '${SRC}/ejsCompiler.h',
                 ], 'Ejscript API')
                 let files = Path().files(['api/ejs.html', me.dir.paks.join('*/doc/api/*.html')])
                 for each (let src: Path in files) {
@@ -24,7 +24,7 @@ Me.load({
         'gen-doc': {
             action: `
                 trace('Generate', 'Script library documentation')
-                let src = me.dir.src.join('src')
+                let src = me.dir.src
                 let files = src.files('core/*.es')
                 for each (p in ['unix', 'db', 'db.mapper', 'db.sqlite', 'web', 'template']) {
                     files += src.files('ejs.' + p + '/*.es')
