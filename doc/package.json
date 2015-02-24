@@ -1,14 +1,12 @@
 {
-    "name": "ejsdoc",
+    "name": "ejs-doc",
     "title": "Embedthis Ejscript Documentation",
     "description": "Javacript Language Environment",
     "dependencies": {
         "exp-css": "~0.2",
         "exp-js": "~0.2",
         "exp-less": "~0.2",
-        "jquery": "~1.11",
-        "me-docstyle": "~0.8",
-        "semantic": "~0.50"
+        "me-docstyle": "~0.8"
     },
     "pak": {
         "mode": "debug",
