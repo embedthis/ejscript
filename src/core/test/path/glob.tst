@@ -82,8 +82,17 @@ assert(Path("a/b").glob("a/b/"))
 assert(Path("a/b/c").glob("****c"))
 assert(Path("a/b/c").glob("**/**c"))
 
+//  Pattern as directory
+assert(Path('a.c').glob('**/a.c') == true)
+assert(Path('a.c/a.c').glob('**/a.c') == true)
+assert(Path('a.c/a.c/a.c').glob('**/a.c') == true)
+assert(Path('a.c/a.c/a.c').glob('**/a.c/a.c') == true)
+assert(Path('a.c').glob('**/a.c/a.c') == false)
+assert(Path('a.c/a.c').glob('**/a.c/a.c') == true)
+
 //  Stress
 assert(Path("/a/b/c/d/e/f/g").glob("/a**"))
 assert(Path("/a/b/c/d/e/f/g").glob("/a**/c/**/g"))
 assert(!Path("/a/b/c/d/e/f/g").glob("/a**/c/**/h"))
 assert(!Path("/a/b/c/d/e/f/g").glob("/a**/k/**/g"))
+
