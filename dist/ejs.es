@@ -16347,7 +16347,7 @@ module ejs.tar {
                             archive.position += header.size
 
                         } else if (operation == List) {
-                            result.push(path)
+                            result.push(header.path)
                             archive.position += header.size
 
                         } else if (operation == Read) {
