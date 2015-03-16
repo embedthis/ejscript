@@ -2,8 +2,11 @@
     Tar.es -- Tar archive management
  */
 
+
 # Config.TAR
 module ejs.tar {
+
+    require ejs.zlib
 
     const BlockSize = 512
 
@@ -39,11 +42,13 @@ module ejs.tar {
             @option chdir Directory to change to before executing the desired operation. In create mode,
                 the archive is created, then the directory is changed before adding files. In extract mode,
                 the archive is opened, then the directory is changed before extracting files.
-            @option relativeTo Path
+            @option dest Destination directory to use for extracting.
+            @option relativeTo Path Base filenames relative to this directory when creating archives 
+            @option group Group name to use instead of the file group name
             @option uid User id to use instead of the file user id
             @option gid Group id to use instead of the file group id
             @option user User name to use instead of the file user name
-            @option group Group name to use instead of the file group name
+            @option trim Number of filename segments to trim from the start of the filename when extracting.
          */
         function Tar(path: Path, options: Object = {}) {
             this.path = path
@@ -104,9 +109,21 @@ module ejs.tar {
         }
 
         function operate(files: Array, operation) {
-            let archive = File(path, 'r')
+            let uncompressed = path
+            if (path.extension == 'tgz') {
+                uncompressed = path.replaceExt('tar')
+                Zlib.uncompress(path, uncompressed)
+            } else if (path.extension == 'gz') {
+                uncompressed = path.trimExt('gz')
+                Zlib.uncompress(path, uncompressed)
+            } else if (options.uncompress) {
+                uncompressed = Path().temp()
+                Zlib.uncompress(path, uncompressed)
+            }
             let home = App.dir
             let result = []
+            let archive = File(uncompressed, 'r')
+
             try {
                 if (options.chdir) {
                     App.chdir(options.chdir)
@@ -116,10 +133,16 @@ module ejs.tar {
                 while ((data = archive.readBytes(BlockSize)) != null && data[0]) {
                     let header = new TarHeader(options)
                     header.parse(data)
-                    let path = header.path
-                    if (files.contains(path) || files.length == 0) {
+                    let filename = header.path
+                    if (options.trim) {
+                        filename = filename.components.slice(options.trim).join(filename.separator)
+                    }
+                    if (options.dest) {
+                        filename = Path(options.dest).join(filename)
+                    }
+                    if (files.contains(filename) || files.length == 0) {
                         if (operation == Extract) {
-                            Path(header.name).dirname.makeDir()
+                            filename.dirname.makeDir()
                             if (header.type == HardLink) {
                                 if (Config.OS == 'windows') {
                                     links[header.linkName] = header.name
@@ -133,13 +156,13 @@ module ejs.tar {
                                     Path(header.linkName).link(header.name)
                                 }
                             } else if (header.type == Directory) {
-                                Path(header.name).makeDir()
+                                filename.makeDir()
                                 archive.position += header.size
                             } else if (isNaN(header.type)) {
                                 /* Skip Pax global header */
                                 archive.position += header.size
                             } else {
-                                let fp = new File(header.name, 'w')
+                                let fp = new File(filename, 'w')
                                 let len = header.size
                                 let buf = new ByteArray(32 * 1024)
                                 while (len > 0) {
@@ -153,7 +176,7 @@ module ejs.tar {
                             }
                             try {
                                 if (App.uid == 0) {
-                                    path.setAttributes(header.attributes)
+                                    filename.setAttributes(header.attributes)
                                 }
                             } catch {}
 
@@ -172,7 +195,7 @@ module ejs.tar {
                             archive.position += header.size
 
                         } else if (operation == List) {
-                            result.push(path)
+                            result.push(header.path)
                             archive.position += header.size
 
                         } else if (operation == Read) {
@@ -189,14 +212,17 @@ module ejs.tar {
                     }
                 }
                 if (operation == Extract) {
-                    for (let [target, path] in links) {
-                        Path(path).dirname.join(target).copy(path)
+                    for (let [target, filename] in links) {
+                        Path(filename).dirname.join(target).copy(filename)
                     }
                 }
             } finally {
+                archive.close()
                 App.chdir(home)
+                if (uncompressed != path) {
+                    uncompressed.remove()
+                }
             }
-            archive.close()
             return result
         }
 
@@ -216,7 +242,7 @@ module ejs.tar {
             operate(flatten(args), Read)
     }
 
-    internal class TarHeader {
+    internal enumerable class TarHeader {
         var name: String            /* File name. Up to 100 characters. Null terminated if room */
         var mode: Number            /* File permission (octal) */
         var uid: Number             /* User ID (octal) */
