@@ -215,7 +215,7 @@ clean:
 	if exist "build\$(CONFIG)\obj\ejsHttpServer.obj" del /Q "build\$(CONFIG)\obj\ejsHttpServer.obj"
 	if exist "build\$(CONFIG)\obj\ejsInterp.obj" del /Q "build\$(CONFIG)\obj\ejsInterp.obj"
 	if exist "build\$(CONFIG)\obj\ejsIterator.obj" del /Q "build\$(CONFIG)\obj\ejsIterator.obj"
-	if exist "build\$(CONFIG)\obj\ejsJSON.obj" del /Q "build\$(CONFIG)\obj\ejsJSON.obj"
+	if exist "build\$(CONFIG)\obj\ejsJson.obj" del /Q "build\$(CONFIG)\obj\ejsJson.obj"
 	if exist "build\$(CONFIG)\obj\ejsLoader.obj" del /Q "build\$(CONFIG)\obj\ejsLoader.obj"
 	if exist "build\$(CONFIG)\obj\ejsLocalCache.obj" del /Q "build\$(CONFIG)\obj\ejsLocalCache.obj"
 	if exist "build\$(CONFIG)\obj\ejsMath.obj" del /Q "build\$(CONFIG)\obj\ejsMath.obj"
@@ -895,14 +895,14 @@ build\$(CONFIG)\obj\ejsIterator.obj: \
 	"$(CC)" -c -Fo$(BUILD)\obj\ejsIterator.obj -Fd$(BUILD)\obj\ejsIterator.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\core\src\ejsIterator.c $(LOG)
 
 #
-#   ejsJSON.obj
+#   ejsJson.obj
 #
 DEPS_58 = $(DEPS_58) src\ejs.h
 
-build\$(CONFIG)\obj\ejsJSON.obj: \
-    src\core\src\ejsJSON.c $(DEPS_58)
-	@echo .. [Compile] build\$(CONFIG)\obj\ejsJSON.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsJSON.obj -Fd$(BUILD)\obj\ejsJSON.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\core\src\ejsJSON.c $(LOG)
+build\$(CONFIG)\obj\ejsJson.obj: \
+    src\core\src\ejsJson.c $(DEPS_58)
+	@echo .. [Compile] build\$(CONFIG)\obj\ejsJson.obj
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsJson.obj -Fd$(BUILD)\obj\ejsJson.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\core\src\ejsJson.c $(LOG)
 
 #
 #   ejsLocalCache.obj
@@ -1261,7 +1261,7 @@ DEPS_90 = $(DEPS_90) build\$(CONFIG)\obj\ejsGC.obj
 DEPS_90 = $(DEPS_90) build\$(CONFIG)\obj\ejsGlobal.obj
 DEPS_90 = $(DEPS_90) build\$(CONFIG)\obj\ejsHttp.obj
 DEPS_90 = $(DEPS_90) build\$(CONFIG)\obj\ejsIterator.obj
-DEPS_90 = $(DEPS_90) build\$(CONFIG)\obj\ejsJSON.obj
+DEPS_90 = $(DEPS_90) build\$(CONFIG)\obj\ejsJson.obj
 DEPS_90 = $(DEPS_90) build\$(CONFIG)\obj\ejsLocalCache.obj
 DEPS_90 = $(DEPS_90) build\$(CONFIG)\obj\ejsMath.obj
 DEPS_90 = $(DEPS_90) build\$(CONFIG)\obj\ejsMemory.obj
@@ -1304,7 +1304,7 @@ LIBS_90 = $(LIBS_90) libpcre.lib
 
 build\$(CONFIG)\bin\libejs.dll: $(DEPS_90)
 	@echo ..... [Link] build\$(CONFIG)\bin\libejs.dll
-	"$(LD)" -dll -out:$(BUILD)\bin\libejs.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) "$(BUILD)\obj\ecAst.obj" "$(BUILD)\obj\ecCodeGen.obj" "$(BUILD)\obj\ecCompiler.obj" "$(BUILD)\obj\ecLex.obj" "$(BUILD)\obj\ecModuleWrite.obj" "$(BUILD)\obj\ecParser.obj" "$(BUILD)\obj\ecState.obj" "$(BUILD)\obj\dtoa.obj" "$(BUILD)\obj\ejsApp.obj" "$(BUILD)\obj\ejsArray.obj" "$(BUILD)\obj\ejsBlock.obj" "$(BUILD)\obj\ejsBoolean.obj" "$(BUILD)\obj\ejsByteArray.obj" "$(BUILD)\obj\ejsCache.obj" "$(BUILD)\obj\ejsCmd.obj" "$(BUILD)\obj\ejsConfig.obj" "$(BUILD)\obj\ejsDate.obj" "$(BUILD)\obj\ejsDebug.obj" "$(BUILD)\obj\ejsError.obj" "$(BUILD)\obj\ejsFile.obj" "$(BUILD)\obj\ejsFileSystem.obj" "$(BUILD)\obj\ejsFrame.obj" "$(BUILD)\obj\ejsFunction.obj" "$(BUILD)\obj\ejsGC.obj" "$(BUILD)\obj\ejsGlobal.obj" "$(BUILD)\obj\ejsHttp.obj" "$(BUILD)\obj\ejsIterator.obj" "$(BUILD)\obj\ejsJSON.obj" "$(BUILD)\obj\ejsLocalCache.obj" "$(BUILD)\obj\ejsMath.obj" "$(BUILD)\obj\ejsMemory.obj" "$(BUILD)\obj\ejsMprLog.obj" "$(BUILD)\obj\ejsNamespace.obj" "$(BUILD)\obj\ejsNull.obj" "$(BUILD)\obj\ejsNumber.obj" "$(BUILD)\obj\ejsObject.obj" "$(BUILD)\obj\ejsPath.obj" "$(BUILD)\obj\ejsPot.obj" "$(BUILD)\obj\ejsRegExp.obj" "$(BUILD)\obj\ejsSocket.obj" "$(BUILD)\obj\ejsString.obj" "$(BUILD)\obj\ejsSystem.obj" "$(BUILD)\obj\ejsTimer.obj" "$(BUILD)\obj\ejsType.obj" "$(BUILD)\obj\ejsUri.obj" "$(BUILD)\obj\ejsVoid.obj" "$(BUILD)\obj\ejsWebSocket.obj" "$(BUILD)\obj\ejsWorker.obj" "$(BUILD)\obj\ejsXML.obj" "$(BUILD)\obj\ejsXMLList.obj" "$(BUILD)\obj\ejsXMLLoader.obj" "$(BUILD)\obj\ejsByteCode.obj" "$(BUILD)\obj\ejsException.obj" "$(BUILD)\obj\ejsHelper.obj" "$(BUILD)\obj\ejsInterp.obj" "$(BUILD)\obj\ejsLoader.obj" "$(BUILD)\obj\ejsModule.obj" "$(BUILD)\obj\ejsScope.obj" "$(BUILD)\obj\ejsService.obj" $(LIBPATHS_90) $(LIBS_90) $(LIBS_90) $(LIBS)  $(LOG)
+	"$(LD)" -dll -out:$(BUILD)\bin\libejs.dll -entry:$(ENTRY) $(LDFLAGS) $(LIBPATHS) "$(BUILD)\obj\ecAst.obj" "$(BUILD)\obj\ecCodeGen.obj" "$(BUILD)\obj\ecCompiler.obj" "$(BUILD)\obj\ecLex.obj" "$(BUILD)\obj\ecModuleWrite.obj" "$(BUILD)\obj\ecParser.obj" "$(BUILD)\obj\ecState.obj" "$(BUILD)\obj\dtoa.obj" "$(BUILD)\obj\ejsApp.obj" "$(BUILD)\obj\ejsArray.obj" "$(BUILD)\obj\ejsBlock.obj" "$(BUILD)\obj\ejsBoolean.obj" "$(BUILD)\obj\ejsByteArray.obj" "$(BUILD)\obj\ejsCache.obj" "$(BUILD)\obj\ejsCmd.obj" "$(BUILD)\obj\ejsConfig.obj" "$(BUILD)\obj\ejsDate.obj" "$(BUILD)\obj\ejsDebug.obj" "$(BUILD)\obj\ejsError.obj" "$(BUILD)\obj\ejsFile.obj" "$(BUILD)\obj\ejsFileSystem.obj" "$(BUILD)\obj\ejsFrame.obj" "$(BUILD)\obj\ejsFunction.obj" "$(BUILD)\obj\ejsGC.obj" "$(BUILD)\obj\ejsGlobal.obj" "$(BUILD)\obj\ejsHttp.obj" "$(BUILD)\obj\ejsIterator.obj" "$(BUILD)\obj\ejsJson.obj" "$(BUILD)\obj\ejsLocalCache.obj" "$(BUILD)\obj\ejsMath.obj" "$(BUILD)\obj\ejsMemory.obj" "$(BUILD)\obj\ejsMprLog.obj" "$(BUILD)\obj\ejsNamespace.obj" "$(BUILD)\obj\ejsNull.obj" "$(BUILD)\obj\ejsNumber.obj" "$(BUILD)\obj\ejsObject.obj" "$(BUILD)\obj\ejsPath.obj" "$(BUILD)\obj\ejsPot.obj" "$(BUILD)\obj\ejsRegExp.obj" "$(BUILD)\obj\ejsSocket.obj" "$(BUILD)\obj\ejsString.obj" "$(BUILD)\obj\ejsSystem.obj" "$(BUILD)\obj\ejsTimer.obj" "$(BUILD)\obj\ejsType.obj" "$(BUILD)\obj\ejsUri.obj" "$(BUILD)\obj\ejsVoid.obj" "$(BUILD)\obj\ejsWebSocket.obj" "$(BUILD)\obj\ejsWorker.obj" "$(BUILD)\obj\ejsXML.obj" "$(BUILD)\obj\ejsXMLList.obj" "$(BUILD)\obj\ejsXMLLoader.obj" "$(BUILD)\obj\ejsByteCode.obj" "$(BUILD)\obj\ejsException.obj" "$(BUILD)\obj\ejsHelper.obj" "$(BUILD)\obj\ejsInterp.obj" "$(BUILD)\obj\ejsLoader.obj" "$(BUILD)\obj\ejsModule.obj" "$(BUILD)\obj\ejsScope.obj" "$(BUILD)\obj\ejsService.obj" $(LIBPATHS_90) $(LIBS_90) $(LIBS_90) $(LIBS)  $(LOG)
 
 #
 #   ejs.obj
