@@ -84,12 +84,10 @@ TARGETS               += $(BUILD)/bin/ejs.db.sqlite.mod
 TARGETS               += $(BUILD)/bin/ejs.mail.mod
 TARGETS               += $(BUILD)/bin/ejs.mvc.mod
 TARGETS               += $(BUILD)/bin/ejs.tar.mod
-TARGETS               += $(BUILD)/bin/ejs.zlib.mod
 TARGETS               += $(BUILD)/bin/ejsrun
 TARGETS               += $(BUILD)/bin/ca.crt
 TARGETS               += $(BUILD)/bin/libejs.db.sqlite.so
 TARGETS               += $(BUILD)/bin/libejs.web.so
-TARGETS               += $(BUILD)/bin/libejs.zlib.so
 TARGETS               += $(BUILD)/bin/libmprssl.so
 TARGETS               += $(BUILD)/bin/ejsman
 TARGETS               += $(BUILD)/bin/mvc
@@ -1757,13 +1755,55 @@ $(BUILD)/bin/ejs.mvc.mod: $(DEPS_131)
 	)
 
 #
-#   ejs.tar.mod
+#   ejs.zlib.mod
 #
-DEPS_132 += src/ejs.tar/Tar.es
+DEPS_132 += src/ejs.zlib/Zlib.es
 DEPS_132 += $(BUILD)/bin/ejsc
 DEPS_132 += $(BUILD)/bin/ejs.mod
 
-$(BUILD)/bin/ejs.tar.mod: $(DEPS_132)
+$(BUILD)/bin/ejs.zlib.mod: $(DEPS_132)
+	( \
+	cd src/ejs.zlib; \
+	echo '   [Compile] ejs.zlib.mod' ; \
+	../../$(BUILD)/bin/ejsc --out ../../$(BUILD)/bin/ejs.zlib.mod  --optimize 9 Zlib.es ; \
+	)
+
+ifeq ($(ME_COM_ZLIB),1)
+#
+#   libzlib
+#
+DEPS_133 += $(BUILD)/inc/zlib.h
+DEPS_133 += $(BUILD)/obj/zlib.o
+
+$(BUILD)/bin/libzlib.so: $(DEPS_133)
+	@echo '      [Link] $(BUILD)/bin/libzlib.so'
+	ar -cr $(BUILD)/bin/libzlib.so "$(BUILD)/obj/zlib.o"
+endif
+
+#
+#   libejs.zlib
+#
+DEPS_134 += $(BUILD)/bin/libejs.so
+DEPS_134 += $(BUILD)/bin/ejs.mod
+DEPS_134 += $(BUILD)/bin/ejs.zlib.mod
+ifeq ($(ME_COM_ZLIB),1)
+    DEPS_134 += $(BUILD)/bin/libzlib.so
+endif
+DEPS_134 += $(BUILD)/obj/ejsZlib.o
+
+$(BUILD)/bin/libejs.zlib.so: $(DEPS_134)
+	@echo '      [Link] $(BUILD)/bin/libejs.zlib.so'
+	ar -cr $(BUILD)/bin/libejs.zlib.so "$(BUILD)/obj/ejsZlib.o"
+
+#
+#   ejs.tar.mod
+#
+DEPS_135 += src/ejs.tar/Tar.es
+DEPS_135 += $(BUILD)/bin/ejsc
+DEPS_135 += $(BUILD)/bin/ejs.mod
+DEPS_135 += $(BUILD)/bin/libejs.zlib.so
+
+$(BUILD)/bin/ejs.tar.mod: $(DEPS_135)
 	( \
 	cd src/ejs.tar; \
 	echo '   [Compile] ejs.tar.mod' ; \
@@ -1771,44 +1811,30 @@ $(BUILD)/bin/ejs.tar.mod: $(DEPS_132)
 	)
 
 #
-#   ejs.zlib.mod
-#
-DEPS_133 += src/ejs.zlib/Zlib.es
-DEPS_133 += $(BUILD)/bin/ejsc
-DEPS_133 += $(BUILD)/bin/ejs.mod
-
-$(BUILD)/bin/ejs.zlib.mod: $(DEPS_133)
-	( \
-	cd src/ejs.zlib; \
-	echo '   [Compile] ejs.zlib.mod' ; \
-	../../$(BUILD)/bin/ejsc --out ../../$(BUILD)/bin/ejs.zlib.mod  --optimize 9 Zlib.es ; \
-	)
-
-#
 #   ejsrun
 #
-DEPS_134 += $(BUILD)/bin/libejs.so
-DEPS_134 += $(BUILD)/obj/ejsrun.o
+DEPS_136 += $(BUILD)/bin/libejs.so
+DEPS_136 += $(BUILD)/obj/ejsrun.o
 
-LIBS_134 += -lejs
+LIBS_136 += -lejs
 ifeq ($(ME_COM_HTTP),1)
-    LIBS_134 += -lhttp
+    LIBS_136 += -lhttp
 endif
-LIBS_134 += -lmpr
+LIBS_136 += -lmpr
 ifeq ($(ME_COM_PCRE),1)
-    LIBS_134 += -lpcre
+    LIBS_136 += -lpcre
 endif
 
-$(BUILD)/bin/ejsrun: $(DEPS_134)
+$(BUILD)/bin/ejsrun: $(DEPS_136)
 	@echo '      [Link] $(BUILD)/bin/ejsrun'
-	$(CC) -o $(BUILD)/bin/ejsrun $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_134) $(LIBS_134) $(LIBS_134) $(LIBS) $(LIBS) 
+	$(CC) -o $(BUILD)/bin/ejsrun $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_136) $(LIBS_136) $(LIBS_136) $(LIBS) $(LIBS) 
 
 #
 #   http-ca-crt
 #
-DEPS_135 += src/http/ca.crt
+DEPS_137 += src/http/ca.crt
 
-$(BUILD)/bin/ca.crt: $(DEPS_135)
+$(BUILD)/bin/ca.crt: $(DEPS_137)
 	@echo '      [Copy] $(BUILD)/bin/ca.crt'
 	mkdir -p "$(BUILD)/bin"
 	cp src/http/ca.crt $(BUILD)/bin/ca.crt
@@ -1817,10 +1843,10 @@ ifeq ($(ME_COM_SQLITE),1)
 #
 #   libsql
 #
-DEPS_136 += $(BUILD)/inc/sqlite3.h
-DEPS_136 += $(BUILD)/obj/sqlite3.o
+DEPS_138 += $(BUILD)/inc/sqlite3.h
+DEPS_138 += $(BUILD)/obj/sqlite3.o
 
-$(BUILD)/bin/libsql.so: $(DEPS_136)
+$(BUILD)/bin/libsql.so: $(DEPS_138)
 	@echo '      [Link] $(BUILD)/bin/libsql.so'
 	ar -cr $(BUILD)/bin/libsql.so "$(BUILD)/obj/sqlite3.o"
 endif
@@ -1828,60 +1854,33 @@ endif
 #
 #   libejs.db.sqlite
 #
-DEPS_137 += $(BUILD)/bin/libmpr.so
-DEPS_137 += $(BUILD)/bin/libejs.so
-DEPS_137 += $(BUILD)/bin/ejs.mod
-DEPS_137 += $(BUILD)/bin/ejs.db.sqlite.mod
+DEPS_139 += $(BUILD)/bin/libmpr.so
+DEPS_139 += $(BUILD)/bin/libejs.so
+DEPS_139 += $(BUILD)/bin/ejs.mod
+DEPS_139 += $(BUILD)/bin/ejs.db.sqlite.mod
 ifeq ($(ME_COM_SQLITE),1)
-    DEPS_137 += $(BUILD)/bin/libsql.so
+    DEPS_139 += $(BUILD)/bin/libsql.so
 endif
-DEPS_137 += $(BUILD)/obj/ejsSqlite.o
+DEPS_139 += $(BUILD)/obj/ejsSqlite.o
 
-$(BUILD)/bin/libejs.db.sqlite.so: $(DEPS_137)
+$(BUILD)/bin/libejs.db.sqlite.so: $(DEPS_139)
 	@echo '      [Link] $(BUILD)/bin/libejs.db.sqlite.so'
 	ar -cr $(BUILD)/bin/libejs.db.sqlite.so "$(BUILD)/obj/ejsSqlite.o"
 
 #
 #   libejs.web
 #
-DEPS_138 += $(BUILD)/bin/libejs.so
-DEPS_138 += $(BUILD)/bin/ejs.mod
-DEPS_138 += $(BUILD)/inc/ejsWeb.h
-DEPS_138 += $(BUILD)/obj/ejsHttpServer.o
-DEPS_138 += $(BUILD)/obj/ejsRequest.o
-DEPS_138 += $(BUILD)/obj/ejsSession.o
-DEPS_138 += $(BUILD)/obj/ejsWeb.o
-
-$(BUILD)/bin/libejs.web.so: $(DEPS_138)
-	@echo '      [Link] $(BUILD)/bin/libejs.web.so'
-	ar -cr $(BUILD)/bin/libejs.web.so "$(BUILD)/obj/ejsHttpServer.o" "$(BUILD)/obj/ejsRequest.o" "$(BUILD)/obj/ejsSession.o" "$(BUILD)/obj/ejsWeb.o"
-
-ifeq ($(ME_COM_ZLIB),1)
-#
-#   libzlib
-#
-DEPS_139 += $(BUILD)/inc/zlib.h
-DEPS_139 += $(BUILD)/obj/zlib.o
-
-$(BUILD)/bin/libzlib.so: $(DEPS_139)
-	@echo '      [Link] $(BUILD)/bin/libzlib.so'
-	ar -cr $(BUILD)/bin/libzlib.so "$(BUILD)/obj/zlib.o"
-endif
-
-#
-#   libejs.zlib
-#
 DEPS_140 += $(BUILD)/bin/libejs.so
 DEPS_140 += $(BUILD)/bin/ejs.mod
-DEPS_140 += $(BUILD)/bin/ejs.zlib.mod
-ifeq ($(ME_COM_ZLIB),1)
-    DEPS_140 += $(BUILD)/bin/libzlib.so
-endif
-DEPS_140 += $(BUILD)/obj/ejsZlib.o
+DEPS_140 += $(BUILD)/inc/ejsWeb.h
+DEPS_140 += $(BUILD)/obj/ejsHttpServer.o
+DEPS_140 += $(BUILD)/obj/ejsRequest.o
+DEPS_140 += $(BUILD)/obj/ejsSession.o
+DEPS_140 += $(BUILD)/obj/ejsWeb.o
 
-$(BUILD)/bin/libejs.zlib.so: $(DEPS_140)
-	@echo '      [Link] $(BUILD)/bin/libejs.zlib.so'
-	ar -cr $(BUILD)/bin/libejs.zlib.so "$(BUILD)/obj/ejsZlib.o"
+$(BUILD)/bin/libejs.web.so: $(DEPS_140)
+	@echo '      [Link] $(BUILD)/bin/libejs.web.so'
+	ar -cr $(BUILD)/bin/libejs.web.so "$(BUILD)/obj/ejsHttpServer.o" "$(BUILD)/obj/ejsRequest.o" "$(BUILD)/obj/ejsSession.o" "$(BUILD)/obj/ejsWeb.o"
 
 #
 #   libmprssl
