@@ -2,7 +2,7 @@
     helpers.tst
  */
 
-let ejs = Cmd.locate('ejs').portable
+let ejs = App.test.bin.join('ejs').portable
 
 if (!Path("/bin").exists) {
     test.skip("Only run on unix systems")
@@ -35,7 +35,7 @@ if (!Path("/bin").exists) {
             response = Cmd.sh(ejs + ' ./args "a b" c')
         FIX: use single quotes or don't put a drive spec in the start of the arg.
      */
-    response = Cmd.sh('ejs ./args "a b" c')
+    response = Cmd.sh(ejs + ' ./args "a b" c')
     assert(deserialize(response) == "./args,a b,c")
 
     response = Cmd.sh(ejs + " ./args 'a b' c")
