@@ -6,7 +6,6 @@ var count = 0
 var complete = false
 
 setInterval(function (a, b, c) {
-    // print(a,b,c)
     assert(a == 1)
     assert(b == 2)
     assert(c == 3)
@@ -16,7 +15,7 @@ setInterval(function (a, b, c) {
     }
 }, 50, 1, 2, 3)
 
-for (i in 10) {
+for (i in 100) {
     App.run(200, 1);
 	if (complete) {
 		break
