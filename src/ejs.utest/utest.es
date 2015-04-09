@@ -194,18 +194,24 @@ enumerable class Test {
             throw "Cannot find configure"
         }
         _top = path.dirname.absolute
-        //  TODO - this is not reliable. If multiple platforms, it may pick the wrong one.
-        _cfg = _top.join('build').files(Config.OS + '-' + Config.CPU + '-*').sort()[0]
+        try {
+            if (_top.join('start.me')) {
+                _cfg = _top.join('build', Cmd.run('me --showPlatform', {dir: _top}).trim())
+            }
+        } catch {}
         if (!_cfg) {
-            let hdr = _top.files('build/*/inc/me.h').sort()[0]
-            if (!hdr) {
-                let hdr = _top.files('*/inc/bit.h').sort()[0]
+            _cfg = _top.join('build').files(Config.OS + '-' + Config.CPU + '-*').sort()[0]
+            if (!_cfg) {
+                let hdr = _top.files('build/*/inc/me.h').sort()[0]
                 if (!hdr) {
-                    throw 'Cannot locate configure files, run configure'
+                    let hdr = _top.files('*/inc/bit.h').sort()[0]
+                    if (!hdr) {
+                        throw 'Cannot locate configure files, run configure'
+                    }
+                    _cfg = hdr.trimEnd('/inc/bit.h')
+                } else {
+                    _cfg = hdr.trimEnd('/inc/me.h')
                 }
-                _cfg = hdr.trimEnd('/inc/bit.h')
-            } else {
-                _cfg = hdr.trimEnd('/inc/me.h')
             }
         }
         if (_cfg.join('inc/me.h').exists) {
@@ -216,6 +222,7 @@ enumerable class Test {
             throw 'Cannot locate configure files, run configure'
         }
         _bin = _lib = _cfg.join('bin')
+        App.putenv('PATH', _bin + App.SearchSeparator + App.getenv('PATH'))
     }
 
     /*
