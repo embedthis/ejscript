@@ -21,8 +21,8 @@ server.on("readable", function (event, request: Request) {
         assert(l.receive == 512 * 1024)
         assert(l.requestTimeout == 300)
         assert(l.sessionTimeout >= 300)
-        assert(l.transmission == 2147483647)
-        assert(l.upload == 2147483647)
+        assert(l.transmission == Infinity)
+        assert(l.upload == Infinity)
         assert(l.chunk > 0)
         finalize()
         break
