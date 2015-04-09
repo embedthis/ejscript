@@ -2424,7 +2424,7 @@ PUBLIC EjsString *ejsInternString(EjsString *str)
     linkString(head, str);
     if (step > EJS_MAX_COLLISIONS && ip->count > (ip->size/2)) {
         /*  Remake the entire hash - should not happen often */
-        //  OPT - BAD holding lock while rebuildingIntern
+        //  OPT - stop holding lock while rebuildingIntern
         rebuildIntern(ip);
     }
     unlock(ip);
@@ -2479,7 +2479,7 @@ PUBLIC EjsString *ejsInternWide(Ejs *ejs, wchar *value, ssize len)
     linkString(head, sp);
     if (step > EJS_MAX_COLLISIONS && ip->count > (ip->size/2)) {
         /*  Remake the entire hash - should not happen often */
-        //  OPT - BAD holding lock while rebuildingIntern
+        //  OPT - lock while rebuildingIntern
         rebuildIntern(ip);
     }
     unlock(ip);
@@ -2773,20 +2773,25 @@ PUBLIC void ejsManageString(EjsString *sp, int flags)
         mprMark(TYPE(sp));
 
     } else if (flags & MPR_MANAGE_FREE) {
-        mp = MPR_GET_MEM(sp);
-        /*
-            Other threads race with this if doing parallel GC (the default). The revive() routine may have 
-            marked the string, so test here if it has been revived and only free if not.
-            OPT - better to be lock free and try lock. If failed, GC will get next time
-         */
-        if (MPR->ejsService) {
-            ip = ((EjsService*) MPR->ejsService)->intern;
-            lock(ip);
+        if (sp->next && MPR->ejsService) {
+            /*
+                Other threads race with this if doing parallel GC (the default). 
+                The revive() routine may have marked the string, so test here if 
+                it has been revived and only free if not.
+                OPT - better to be lock free and try lock. If failed, GC will get next time
+             */
+            mp = MPR_GET_MEM(sp);
             if (mp->mark != MPR->heap->mark) {
-                ip->count--;
-                unlinkString(sp);
+                ip = ((EjsService*) MPR->ejsService)->intern;
+                lock(ip);
+                /* Must retest here because revive may modify the mark to revive */
+                if (mp->mark != MPR->heap->mark) {
+                    ip->count--;
+                    assert(ip->count >= 0);
+                    unlinkString(sp);
+                }
+                unlock(ip);
             }
-            unlock(ip);
         }
     }
 }
@@ -2805,29 +2810,15 @@ PUBLIC EjsIntern *ejsCreateIntern(EjsService *sp)
 
 PUBLIC void ejsDestroyIntern(EjsIntern *ip)
 {
-    EjsString   *sp, *head, *next;
-    int         i;
-
-    /*
-        Unlink strings now as when they are freed later, the intern structure may not exist in memory.
-     */
-    lock(ip);
-    for (i = ip->size - 1; i >= 0; i--) {
-        head = &ip->buckets[i];
-        for (sp = head->next; sp != head; sp = next) {
-            if (sp == sp->next) break;
-            next = sp->next;
-            ip->count--;
-            unlinkString(sp);
-        }
-    }
-    unlock(ip);
+    ip->size = 0;
+    ip->buckets = 0;
 }
 
 
 static void manageIntern(EjsIntern *intern, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
+        /* Do not mark strings - prevents GC */
         mprMark(intern->buckets);
         mprMark(intern->mutex);
 
