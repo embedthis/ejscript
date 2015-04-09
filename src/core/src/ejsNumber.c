@@ -648,6 +648,10 @@ PUBLIC void ejsCreateNumberType(Ejs *ejs)
     np = ejsCreateObj(ejs, type, 0);
     np->value = 5e-324;
     ejsAddImmutable(ejs, S_min, EN("min"), np);
+
+    /*
+        Note: maximum integer is: EJS_MAX_INT == 9007199254740992
+     */
 }
 
 

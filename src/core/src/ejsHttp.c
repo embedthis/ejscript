@@ -1489,45 +1489,71 @@ static bool waitForResponseHeaders(EjsHttp *hp)
 }
 
 
-/*
-    Get limits:  obj[*] = limits
- */
-PUBLIC void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, bool server) 
+static EjsNumber *limitToNumber(Ejs *ejs, uint64 n)
 {
-    ejsSetPropertyByName(ejs, obj, EN("chunk"), ejsCreateNumber(ejs, (MprNumber) limits->chunkSize));
-    ejsSetPropertyByName(ejs, obj, EN("connReuse"), ejsCreateNumber(ejs, limits->keepAliveMax));
-    ejsSetPropertyByName(ejs, obj, EN("receive"), ejsCreateNumber(ejs, (MprNumber) limits->receiveBodySize));
-    ejsSetPropertyByName(ejs, obj, EN("transmission"), ejsCreateNumber(ejs, (MprNumber) limits->transmissionBodySize));
-    ejsSetPropertyByName(ejs, obj, EN("upload"), ejsCreateNumber(ejs, (MprNumber) limits->uploadSize));
-    ejsSetPropertyByName(ejs, obj, EN("inactivityTimeout"), 
-        ejsCreateNumber(ejs, (MprNumber) (limits->inactivityTimeout / MPR_TICKS_PER_SEC)));
-    ejsSetPropertyByName(ejs, obj, EN("requestTimeout"), 
-        ejsCreateNumber(ejs, (MprNumber) (limits->requestTimeout / MPR_TICKS_PER_SEC)));
-    ejsSetPropertyByName(ejs, obj, EN("sessionTimeout"), 
-        ejsCreateNumber(ejs, (MprNumber) (limits->sessionTimeout / MPR_TICKS_PER_SEC)));
-
-    if (server) {
-        ejsSetPropertyByName(ejs, obj, EN("clients"), ejsCreateNumber(ejs, (MprNumber) limits->clientMax));
-        ejsSetPropertyByName(ejs, obj, EN("connections"), ejsCreateNumber(ejs, (MprNumber) limits->connectionsMax));
-        ejsSetPropertyByName(ejs, obj, EN("header"), ejsCreateNumber(ejs, (MprNumber) limits->headerSize));
-        ejsSetPropertyByName(ejs, obj, EN("headers"), ejsCreateNumber(ejs, (MprNumber) limits->headerMax));
-        ejsSetPropertyByName(ejs, obj, EN("requests"), ejsCreateNumber(ejs, (MprNumber) limits->requestsPerClientMax));
-        ejsSetPropertyByName(ejs, obj, EN("stageBuffer"), ejsCreateNumber(ejs, (MprNumber) limits->bufferSize));
-        ejsSetPropertyByName(ejs, obj, EN("uri"), ejsCreateNumber(ejs, (MprNumber) limits->uriSize));
+    if (n == HTTP_UNLIMITED || n > EJS_MAX_INT) {
+        return ESV(infinity);
+    } else {
+        return ejsCreateNumber(ejs, n);
     }
 }
 
 
 /*
-    Set the limit field: 
-        *limit = obj[field]
+    Get limits:  obj[*] = limits
  */
-static int64 setLimit(Ejs *ejs, EjsObj *obj, cchar *field, int factor)
+PUBLIC void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, bool server) 
+{
+    EjsNumber   *n;
+
+    ejsSetPropertyByName(ejs, obj, EN("chunk"), limitToNumber(ejs, limits->chunkSize));
+    ejsSetPropertyByName(ejs, obj, EN("connReuse"), limitToNumber(ejs, limits->keepAliveMax));
+    ejsSetPropertyByName(ejs, obj, EN("receive"), limitToNumber(ejs, limits->rxBodySize));
+    ejsSetPropertyByName(ejs, obj, EN("transmission"), limitToNumber(ejs, limits->txBodySize));
+    ejsSetPropertyByName(ejs, obj, EN("upload"), limitToNumber(ejs, limits->uploadSize));
+
+    n = limitToNumber(ejs, limits->inactivityTimeout);
+    if (n->value != ((EjsNumber*) ESV(infinity))->value) {
+        n->value /= 1000;
+    }
+    ejsSetPropertyByName(ejs, obj, EN("inactivityTimeout"), n);
+
+    n = limitToNumber(ejs, limits->requestTimeout);
+    if (n->value != ((EjsNumber*) ESV(infinity))->value) {
+        n->value /= 1000;
+    }
+    ejsSetPropertyByName(ejs, obj, EN("requestTimeout"), n);
+
+    n = limitToNumber(ejs, limits->sessionTimeout);
+    if (n->value != ((EjsNumber*) ESV(infinity))->value) {
+        n->value /= 1000;
+    }
+    ejsSetPropertyByName(ejs, obj, EN("sessionTimeout"), n);
+
+    if (server) {
+        ejsSetPropertyByName(ejs, obj, EN("clients"), limitToNumber(ejs, limits->clientMax));
+        ejsSetPropertyByName(ejs, obj, EN("connections"), limitToNumber(ejs, limits->connectionsMax));
+        ejsSetPropertyByName(ejs, obj, EN("header"), limitToNumber(ejs, limits->headerSize));
+        ejsSetPropertyByName(ejs, obj, EN("headers"), limitToNumber(ejs, limits->headerMax));
+        ejsSetPropertyByName(ejs, obj, EN("requests"), limitToNumber(ejs, limits->requestsPerClientMax));
+        ejsSetPropertyByName(ejs, obj, EN("stageBuffer"), limitToNumber(ejs, limits->bufferSize));
+        ejsSetPropertyByName(ejs, obj, EN("uri"), limitToNumber(ejs, limits->uriSize));
+    }
+}
+
+
+static uint64 numberToLimit(Ejs *ejs, EjsObj *obj, cchar *field)
 {
     EjsObj      *vp;
+    EjsNumber   *n;
 
     if ((vp = ejsGetPropertyByName(ejs, obj, EN(field))) != 0) {
-        return ejsGetInt64(ejs, ejsToNumber(ejs, vp)) * factor;
+        n = ejsToNumber(ejs, vp);
+        if (n->value == ((EjsNumber*) ESV(infinity))->value || n->value >= EJS_MAX_INT) {
+            return HTTP_UNLIMITED;
+        } else {
+            return ejsGetInt64(ejs, n);
+        }
     }
     return 0;
 }
@@ -1535,33 +1561,45 @@ static int64 setLimit(Ejs *ejs, EjsObj *obj, cchar *field, int factor)
 
 PUBLIC void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, bool server) 
 {
-    limits->chunkSize = (ssize) setLimit(ejs, obj, "chunk", 1);
-    limits->inactivityTimeout = (int) setLimit(ejs, obj, "inactivityTimeout", MPR_TICKS_PER_SEC);
-    limits->receiveBodySize = (MprOff) setLimit(ejs, obj, "receive", 1);
-    //  TODO - need dedicated "form" limit
-    limits->receiveFormSize = (MprOff) setLimit(ejs, obj, "receive", 1);
-    limits->keepAliveMax = (int) setLimit(ejs, obj, "connReuse", 1);
-    limits->requestTimeout = (int) setLimit(ejs, obj, "requestTimeout", MPR_TICKS_PER_SEC);
-    limits->sessionTimeout = (int) setLimit(ejs, obj, "sessionTimeout", MPR_TICKS_PER_SEC);
-    limits->transmissionBodySize = (MprOff) setLimit(ejs, obj, "transmission", 1);
-    limits->uploadSize = (MprOff) setLimit(ejs, obj, "upload", 1);
+    /*
+        TODO - the Limit object should map the Http limits more closely
+     */
+    limits->chunkSize =  (ssize) numberToLimit(ejs, obj, "chunk");
+    limits->rxBodySize = (MprOff) numberToLimit(ejs, obj, "receive");
+    limits->rxFormSize = (MprOff) numberToLimit(ejs, obj, "receive");
+    limits->txBodySize = (MprOff) numberToLimit(ejs, obj, "transmission");
+    limits->uploadSize = (MprOff) numberToLimit(ejs, obj, "upload");
+    limits->keepAliveMax = (int) numberToLimit(ejs, obj, "connReuse");
+
+    limits->inactivityTimeout = (MprTicks) numberToLimit(ejs, obj, "inactivityTimeout");
+    if (limits->inactivityTimeout != HTTP_UNLIMITED) {
+        limits->inactivityTimeout *= 1000;
+    }
+    limits->requestTimeout = (MprTicks) numberToLimit(ejs, obj, "requestTimeout");
+    if (limits->requestTimeout != HTTP_UNLIMITED) {
+        limits->requestTimeout *= 1000;
+    }
+    limits->sessionTimeout = (MprTicks) numberToLimit(ejs, obj, "sessionTimeout");
+    if (limits->sessionTimeout != HTTP_UNLIMITED) {
+        limits->sessionTimeout *= 1000;
+    }
     if (limits->requestTimeout <= 0) {
-        limits->requestTimeout = MPR_MAX_TIMEOUT;
+        limits->requestTimeout = HTTP_UNLIMITED;
     }
     if (limits->inactivityTimeout <= 0) {
-        limits->inactivityTimeout = MPR_MAX_TIMEOUT;
+        limits->inactivityTimeout = HTTP_UNLIMITED;
     }
     if (limits->sessionTimeout <= 0) {
-        limits->sessionTimeout = MPR_MAX_TIMEOUT;
+        limits->sessionTimeout = HTTP_UNLIMITED;
     }
     if (server) {
-        limits->bufferSize = (ssize) setLimit(ejs, obj, "stageBuffer", 1);
-        limits->clientMax = (int) setLimit(ejs, obj, "clients", 1);
-        limits->connectionsMax = (int) setLimit(ejs, obj, "connections", 1);
-        limits->requestsPerClientMax = (int) setLimit(ejs, obj, "requests", 1);
-        limits->uriSize = (ssize) setLimit(ejs, obj, "uri", 1);
-        limits->headerMax = (int) setLimit(ejs, obj, "headers", 1);
-        limits->headerSize = (ssize) setLimit(ejs, obj, "header", 1);
+        limits->bufferSize = (ssize) numberToLimit(ejs, obj, "stageBuffer");
+        limits->clientMax = (int) numberToLimit(ejs, obj, "clients");
+        limits->connectionsMax = (int) numberToLimit(ejs, obj, "connections");
+        limits->requestsPerClientMax = (int) numberToLimit(ejs, obj, "requests");
+        limits->uriSize = (ssize) numberToLimit(ejs, obj, "uri");
+        limits->headerMax = (int) numberToLimit(ejs, obj, "headers");
+        limits->headerSize = (ssize) numberToLimit(ejs, obj, "header");
     }
 }
 
