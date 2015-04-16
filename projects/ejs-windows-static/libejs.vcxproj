@@ -127,7 +127,7 @@
     <ClCompile Include="..\..\src\core\src\ejsGlobal.c" />
     <ClCompile Include="..\..\src\core\src\ejsHttp.c" />
     <ClCompile Include="..\..\src\core\src\ejsIterator.c" />
-    <ClCompile Include="..\..\src\core\src\ejsJson.c" />
+    <ClCompile Include="..\..\src\core\src\ejsJSON.c" />
     <ClCompile Include="..\..\src\core\src\ejsLocalCache.c" />
     <ClCompile Include="..\..\src\core\src\ejsMath.c" />
     <ClCompile Include="..\..\src\core\src\ejsMemory.c" />

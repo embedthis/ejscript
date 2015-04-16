@@ -37456,7 +37456,7 @@ PUBLIC void ejsConfigureIteratorType(Ejs *ejs)
 
 
 
-/********* Start of file ../../../src/core/src/ejsJson.c ************/
+/********* Start of file ../../../src/core/src/ejsJSON.c ************/
 
 
 /**

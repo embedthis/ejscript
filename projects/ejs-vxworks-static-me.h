@@ -160,7 +160,7 @@
     #define ME_TUNE "speed"
 #endif
 #ifndef ME_VERSION
-    #define ME_VERSION "2.5.2"
+    #define ME_VERSION "2.5.3"
 #endif
 
 /* Prefixes */
@@ -213,7 +213,7 @@
     #define ME_VAPP_PREFIX "deploy"
 #endif
 #ifndef ME_SRC_PREFIX
-    #define ME_SRC_PREFIX "/usr/src/ejs-2.5.2"
+    #define ME_SRC_PREFIX "/usr/src/ejs-2.5.3"
 #endif
 
 /* Suffixes */
@@ -255,10 +255,10 @@
     #define ME_MINOR_VERSION 5
 #endif
 #ifndef ME_PATCH_VERSION
-    #define ME_PATCH_VERSION 2
+    #define ME_PATCH_VERSION 3
 #endif
 #ifndef ME_VNUM
-    #define ME_VNUM 200050002
+    #define ME_VNUM 200050003
 #endif
 
 /* Components */

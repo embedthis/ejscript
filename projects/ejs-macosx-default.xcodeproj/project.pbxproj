@@ -338,7 +338,7 @@
 		F3F8966EF3F8A43E000000D1 /* ejsGlobal.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8966EF3F8A43E000000D2 /* ejsGlobal.c */; };
 		F3F8966EF3F8A43E000000D3 /* ejsHttp.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8966EF3F8A43E000000D4 /* ejsHttp.c */; };
 		F3F8966EF3F8A43E000000D5 /* ejsIterator.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8966EF3F8A43E000000D6 /* ejsIterator.c */; };
-		F3F8966EF3F8A43E000000D7 /* ejsJson.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8966EF3F8A43E000000D8 /* ejsJson.c */; };
+		F3F8966EF3F8A43E000000D7 /* ejsJSON.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8966EF3F8A43E000000D8 /* ejsJSON.c */; };
 		F3F8966EF3F8A43E000000D9 /* ejsLocalCache.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8966EF3F8A43E000000DA /* ejsLocalCache.c */; };
 		F3F8966EF3F8A43E000000DB /* ejsMath.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8966EF3F8A43E000000DC /* ejsMath.c */; };
 		F3F8966EF3F8A43E000000DD /* ejsMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = F3F8966EF3F8A43E000000DE /* ejsMemory.c */; };
@@ -2152,7 +2152,7 @@
 		F3F8966EF3F8A43E000000D2 /* ejsGlobal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsGlobal.c; path = src/core/src/ejsGlobal.c; sourceTree = "<group>"; };
 		F3F8966EF3F8A43E000000D4 /* ejsHttp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsHttp.c; path = src/core/src/ejsHttp.c; sourceTree = "<group>"; };
 		F3F8966EF3F8A43E000000D6 /* ejsIterator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsIterator.c; path = src/core/src/ejsIterator.c; sourceTree = "<group>"; };
-		F3F8966EF3F8A43E000000D8 /* ejsJson.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsJson.c; path = src/core/src/ejsJson.c; sourceTree = "<group>"; };
+		F3F8966EF3F8A43E000000D8 /* ejsJSON.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsJSON.c; path = src/core/src/ejsJSON.c; sourceTree = "<group>"; };
 		F3F8966EF3F8A43E000000DA /* ejsLocalCache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsLocalCache.c; path = src/core/src/ejsLocalCache.c; sourceTree = "<group>"; };
 		F3F8966EF3F8A43E000000DC /* ejsMath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsMath.c; path = src/core/src/ejsMath.c; sourceTree = "<group>"; };
 		F3F8966EF3F8A43E000000DE /* ejsMemory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsMemory.c; path = src/core/src/ejsMemory.c; sourceTree = "<group>"; };
@@ -2524,7 +2524,7 @@
 				F3F8966EF3F8A43E000000D2 /* ejsGlobal.c */,
 				F3F8966EF3F8A43E000000D4 /* ejsHttp.c */,
 				F3F8966EF3F8A43E000000D6 /* ejsIterator.c */,
-				F3F8966EF3F8A43E000000D8 /* ejsJson.c */,
+				F3F8966EF3F8A43E000000D8 /* ejsJSON.c */,
 				F3F8966EF3F8A43E000000DA /* ejsLocalCache.c */,
 				F3F8966EF3F8A43E000000DC /* ejsMath.c */,
 				F3F8966EF3F8A43E000000DE /* ejsMemory.c */,
@@ -3845,7 +3845,7 @@ fi";
 				F3F8966EF3F8A43E000000D1 /* ejsGlobal.c in Sources */,
 				F3F8966EF3F8A43E000000D3 /* ejsHttp.c in Sources */,
 				F3F8966EF3F8A43E000000D5 /* ejsIterator.c in Sources */,
-				F3F8966EF3F8A43E000000D7 /* ejsJson.c in Sources */,
+				F3F8966EF3F8A43E000000D7 /* ejsJSON.c in Sources */,
 				F3F8966EF3F8A43E000000D9 /* ejsLocalCache.c in Sources */,
 				F3F8966EF3F8A43E000000DB /* ejsMath.c in Sources */,
 				F3F8966EF3F8A43E000000DD /* ejsMemory.c in Sources */,
