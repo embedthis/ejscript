@@ -2046,5 +2046,5 @@ uninstall: $(DEPS_153)
 #
 
 version: $(DEPS_154)
-	echo 2.5.3
+	echo $(VERSION)
 
