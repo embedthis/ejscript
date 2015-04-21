@@ -923,7 +923,12 @@ static EjsString *date_toISOString(Ejs *ejs, EjsDate *dp, int argc, EjsObj **arg
     char    *base, *str;
 
     base = mprFormatUniversalTime("%Y-%m-%dT%H:%M:%S", dp->value);
+#if UNUSED
     str = sfmt("%s.%03dZ", base, dp->value % MPR_TICKS_PER_SEC);
+#else
+    int offset = mprGetTimeZoneOffset(dp->value) / (MPR_TICKS_PER_SEC * 60);
+    str = sfmt("%s%+03d:%02d", base, offset / 60, offset % 60);
+#endif
     return ejsCreateStringFromAsc(ejs, str);
 }
 
