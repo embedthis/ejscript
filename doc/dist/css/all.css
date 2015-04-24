@@ -126,6 +126,9 @@ body.show-sidebar {
 .sidebar .ui.vertical.menu a.item.active {
   border-right: 18px solid #40cfcb;
 }
+.sidebar::-webkit-scrollbar {
+  width: 0px !important;
+}
 .ui.sidebar-launch.button {
   position: absolute;
   top: 0;
@@ -158,9 +161,11 @@ body.show-sidebar {
   overflow: auto;
 }
 .ui.segment.terms {
-  margin: 6px 0 16px 0;
+  margin: 0;
+  padding: 10px 0 20px 0;
   height: 20px;
   color: #eeeeee;
+  background: rgba(255, 255, 255, 0.75);
   font-size: 0.75rem;
 }
 .ui.segment.terms a:link,
@@ -204,6 +209,9 @@ h4 {
 h3 + ul {
   margin-top: -0.85rem;
 }
+li {
+  padding-bottom: 0.75em;
+}
 em {
   padding: 3px;
   font-family: monospace;
@@ -215,7 +223,7 @@ em {
 }
 code {
   display: block;
-  white-space: pre;
+  white-space: pre-wrap;
   margin: 1rem 0;
   padding: 1rem 1rem;
   font-family: monospace;
@@ -231,6 +239,25 @@ code.inverted {
   color: #c0c0c0;
 }
 code.inverted b {
+  color: #4ab1b0;
+  font-weight: normal;
+}
+pre.code {
+  display: block;
+  white-space: pre-wrap;
+  margin: 1rem 0;
+  padding: 1rem 1rem;
+  font-family: monospace;
+  font-style: normal;
+  border: 1px solid #C2C2C2;
+  border-radius: 0.3rem;
+  line-height: 1.25em;
+  background-color: #EEE;
+  color: #333;
+  background: #002b36;
+  color: #c0c0c0;
+}
+pre.code b {
   color: #4ab1b0;
   font-weight: normal;
 }
