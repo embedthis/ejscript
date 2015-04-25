@@ -3,7 +3,7 @@
 #
 
 NAME                  := ejs
-VERSION               := 2.5.2
+VERSION               := 2.5.3
 PROFILE               ?= default
 ARCH                  ?= $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/')
 CC_ARCH               ?= $(shell echo $(ARCH) | sed 's/x86/i686/;s/x64/x86_64/')
@@ -84,12 +84,10 @@ TARGETS               += $(BUILD)/bin/ejs.db.sqlite.mod
 TARGETS               += $(BUILD)/bin/ejs.mail.mod
 TARGETS               += $(BUILD)/bin/ejs.mvc.mod
 TARGETS               += $(BUILD)/bin/ejs.tar.mod
-TARGETS               += $(BUILD)/bin/ejs.zlib.mod
 TARGETS               += $(BUILD)/bin/ejsrun
 TARGETS               += $(BUILD)/bin/ca.crt
 TARGETS               += $(BUILD)/bin/libejs.db.sqlite.so
 TARGETS               += $(BUILD)/bin/libejs.web.so
-TARGETS               += $(BUILD)/bin/libejs.zlib.so
 TARGETS               += $(BUILD)/bin/libmprssl.so
 TARGETS               += $(BUILD)/bin/ejsman
 TARGETS               += $(BUILD)/bin/mvc
@@ -271,36 +269,36 @@ $(BUILD)/inc/me.h: $(DEPS_4)
 #
 #   osdep.h
 #
-DEPS_5 += src/paks/osdep/osdep.h
+DEPS_5 += src/osdep/osdep.h
 DEPS_5 += $(BUILD)/inc/me.h
 
 $(BUILD)/inc/osdep.h: $(DEPS_5)
 	@echo '      [Copy] $(BUILD)/inc/osdep.h'
 	mkdir -p "$(BUILD)/inc"
-	cp src/paks/osdep/osdep.h $(BUILD)/inc/osdep.h
+	cp src/osdep/osdep.h $(BUILD)/inc/osdep.h
 
 #
 #   mpr.h
 #
-DEPS_6 += src/paks/mpr/mpr.h
+DEPS_6 += src/mpr/mpr.h
 DEPS_6 += $(BUILD)/inc/me.h
 DEPS_6 += $(BUILD)/inc/osdep.h
 
 $(BUILD)/inc/mpr.h: $(DEPS_6)
 	@echo '      [Copy] $(BUILD)/inc/mpr.h'
 	mkdir -p "$(BUILD)/inc"
-	cp src/paks/mpr/mpr.h $(BUILD)/inc/mpr.h
+	cp src/mpr/mpr.h $(BUILD)/inc/mpr.h
 
 #
 #   http.h
 #
-DEPS_7 += src/paks/http/http.h
+DEPS_7 += src/http/http.h
 DEPS_7 += $(BUILD)/inc/mpr.h
 
 $(BUILD)/inc/http.h: $(DEPS_7)
 	@echo '      [Copy] $(BUILD)/inc/http.h'
 	mkdir -p "$(BUILD)/inc"
-	cp src/paks/http/http.h $(BUILD)/inc/http.h
+	cp src/http/http.h $(BUILD)/inc/http.h
 
 #
 #   ejsByteCode.h
@@ -436,33 +434,33 @@ $(BUILD)/inc/ejsmod.h: $(DEPS_21)
 #
 #   pcre.h
 #
-DEPS_22 += src/paks/pcre/pcre.h
+DEPS_22 += src/pcre/pcre.h
 
 $(BUILD)/inc/pcre.h: $(DEPS_22)
 	@echo '      [Copy] $(BUILD)/inc/pcre.h'
 	mkdir -p "$(BUILD)/inc"
-	cp src/paks/pcre/pcre.h $(BUILD)/inc/pcre.h
+	cp src/pcre/pcre.h $(BUILD)/inc/pcre.h
 
 #
 #   sqlite3.h
 #
-DEPS_23 += src/paks/sqlite/sqlite3.h
+DEPS_23 += src/sqlite/sqlite3.h
 
 $(BUILD)/inc/sqlite3.h: $(DEPS_23)
 	@echo '      [Copy] $(BUILD)/inc/sqlite3.h'
 	mkdir -p "$(BUILD)/inc"
-	cp src/paks/sqlite/sqlite3.h $(BUILD)/inc/sqlite3.h
+	cp src/sqlite/sqlite3.h $(BUILD)/inc/sqlite3.h
 
 #
 #   zlib.h
 #
-DEPS_24 += src/paks/zlib/zlib.h
+DEPS_24 += src/zlib/zlib.h
 DEPS_24 += $(BUILD)/inc/me.h
 
 $(BUILD)/inc/zlib.h: $(DEPS_24)
 	@echo '      [Copy] $(BUILD)/inc/zlib.h'
 	mkdir -p "$(BUILD)/inc"
-	cp src/paks/zlib/zlib.h $(BUILD)/inc/zlib.h
+	cp src/zlib/zlib.h $(BUILD)/inc/zlib.h
 
 #
 #   ejsmod.h
@@ -1217,17 +1215,17 @@ $(BUILD)/obj/ejsrun.o: \
 #   http.h
 #
 
-src/paks/http/http.h: $(DEPS_99)
+src/http/http.h: $(DEPS_99)
 
 #
 #   httpLib.o
 #
-DEPS_100 += src/paks/http/http.h
+DEPS_100 += src/http/http.h
 
 $(BUILD)/obj/httpLib.o: \
-    src/paks/http/httpLib.c $(DEPS_100)
+    src/http/httpLib.c $(DEPS_100)
 	@echo '   [Compile] $(BUILD)/obj/httpLib.o'
-	$(CC) -c -o $(BUILD)/obj/httpLib.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/paks/http/httpLib.c
+	$(CC) -c -o $(BUILD)/obj/httpLib.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/http/httpLib.c
 
 #
 #   listing.o
@@ -1244,64 +1242,64 @@ $(BUILD)/obj/listing.o: \
 #   mpr.h
 #
 
-src/paks/mpr/mpr.h: $(DEPS_102)
+src/mpr/mpr.h: $(DEPS_102)
 
 #
 #   makerom.o
 #
-DEPS_103 += src/paks/mpr/mpr.h
+DEPS_103 += src/mpr/mpr.h
 
 $(BUILD)/obj/makerom.o: \
-    src/paks/mpr/makerom.c $(DEPS_103)
+    src/mpr/makerom.c $(DEPS_103)
 	@echo '   [Compile] $(BUILD)/obj/makerom.o'
-	$(CC) -c -o $(BUILD)/obj/makerom.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/paks/mpr/makerom.c
+	$(CC) -c -o $(BUILD)/obj/makerom.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/mpr/makerom.c
 
 #
 #   manager.o
 #
-DEPS_104 += src/paks/mpr/mpr.h
+DEPS_104 += src/mpr/mpr.h
 
 $(BUILD)/obj/manager.o: \
-    src/paks/mpr/manager.c $(DEPS_104)
+    src/mpr/manager.c $(DEPS_104)
 	@echo '   [Compile] $(BUILD)/obj/manager.o'
-	$(CC) -c -o $(BUILD)/obj/manager.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/paks/mpr/manager.c
+	$(CC) -c -o $(BUILD)/obj/manager.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/mpr/manager.c
 
 #
 #   mprLib.o
 #
-DEPS_105 += src/paks/mpr/mpr.h
+DEPS_105 += src/mpr/mpr.h
 
 $(BUILD)/obj/mprLib.o: \
-    src/paks/mpr/mprLib.c $(DEPS_105)
+    src/mpr/mprLib.c $(DEPS_105)
 	@echo '   [Compile] $(BUILD)/obj/mprLib.o'
-	$(CC) -c -o $(BUILD)/obj/mprLib.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/paks/mpr/mprLib.c
+	$(CC) -c -o $(BUILD)/obj/mprLib.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/mpr/mprLib.c
 
 #
 #   mprSsl.o
 #
-DEPS_106 += src/paks/mpr/mpr.h
+DEPS_106 += src/mpr/mpr.h
 
 $(BUILD)/obj/mprSsl.o: \
-    src/paks/mpr/mprSsl.c $(DEPS_106)
+    src/mpr/mprSsl.c $(DEPS_106)
 	@echo '   [Compile] $(BUILD)/obj/mprSsl.o'
-	$(CC) -c -o $(BUILD)/obj/mprSsl.o $(CFLAGS) $(DFLAGS) -DME_COM_OPENSSL_PATH="$(ME_COM_OPENSSL_PATH)" $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)/include" src/paks/mpr/mprSsl.c
+	$(CC) -c -o $(BUILD)/obj/mprSsl.o $(CFLAGS) $(DFLAGS) -DME_COM_OPENSSL_PATH="$(ME_COM_OPENSSL_PATH)" $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)/include" src/mpr/mprSsl.c
 
 #
 #   pcre.h
 #
 
-src/paks/pcre/pcre.h: $(DEPS_107)
+src/pcre/pcre.h: $(DEPS_107)
 
 #
 #   pcre.o
 #
 DEPS_108 += $(BUILD)/inc/me.h
-DEPS_108 += src/paks/pcre/pcre.h
+DEPS_108 += src/pcre/pcre.h
 
 $(BUILD)/obj/pcre.o: \
-    src/paks/pcre/pcre.c $(DEPS_108)
+    src/pcre/pcre.c $(DEPS_108)
 	@echo '   [Compile] $(BUILD)/obj/pcre.o'
-	$(CC) -c -o $(BUILD)/obj/pcre.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/paks/pcre/pcre.c
+	$(CC) -c -o $(BUILD)/obj/pcre.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/pcre/pcre.c
 
 #
 #   slotGen.o
@@ -1317,46 +1315,46 @@ $(BUILD)/obj/slotGen.o: \
 #   sqlite3.h
 #
 
-src/paks/sqlite/sqlite3.h: $(DEPS_110)
+src/sqlite/sqlite3.h: $(DEPS_110)
 
 #
 #   sqlite.o
 #
 DEPS_111 += $(BUILD)/inc/me.h
-DEPS_111 += src/paks/sqlite/sqlite3.h
+DEPS_111 += src/sqlite/sqlite3.h
 
 $(BUILD)/obj/sqlite.o: \
-    src/paks/sqlite/sqlite.c $(DEPS_111)
+    src/sqlite/sqlite.c $(DEPS_111)
 	@echo '   [Compile] $(BUILD)/obj/sqlite.o'
-	$(CC) -c -o $(BUILD)/obj/sqlite.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/paks/sqlite/sqlite.c
+	$(CC) -c -o $(BUILD)/obj/sqlite.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/sqlite/sqlite.c
 
 #
 #   sqlite3.o
 #
 DEPS_112 += $(BUILD)/inc/me.h
-DEPS_112 += src/paks/sqlite/sqlite3.h
+DEPS_112 += src/sqlite/sqlite3.h
 
 $(BUILD)/obj/sqlite3.o: \
-    src/paks/sqlite/sqlite3.c $(DEPS_112)
+    src/sqlite/sqlite3.c $(DEPS_112)
 	@echo '   [Compile] $(BUILD)/obj/sqlite3.o'
-	$(CC) -c -o $(BUILD)/obj/sqlite3.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/paks/sqlite/sqlite3.c
+	$(CC) -c -o $(BUILD)/obj/sqlite3.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/sqlite/sqlite3.c
 
 #
 #   zlib.h
 #
 
-src/paks/zlib/zlib.h: $(DEPS_113)
+src/zlib/zlib.h: $(DEPS_113)
 
 #
 #   zlib.o
 #
 DEPS_114 += $(BUILD)/inc/me.h
-DEPS_114 += src/paks/zlib/zlib.h
+DEPS_114 += src/zlib/zlib.h
 
 $(BUILD)/obj/zlib.o: \
-    src/paks/zlib/zlib.c $(DEPS_114)
+    src/zlib/zlib.c $(DEPS_114)
 	@echo '   [Compile] $(BUILD)/obj/zlib.o'
-	$(CC) -c -o $(BUILD)/obj/zlib.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/paks/zlib/zlib.c
+	$(CC) -c -o $(BUILD)/obj/zlib.o $(CFLAGS) $(DFLAGS) $(IFLAGS) src/zlib/zlib.c
 
 #
 #   slots
@@ -1770,38 +1768,41 @@ $(BUILD)/bin/ejs.mvc.mod: $(DEPS_131)
 	)
 
 #
-#   ejs.tar.mod
+#   ejs.zlib.mod
 #
-DEPS_132 += src/ejs.tar/Tar.es
+DEPS_132 += src/ejs.zlib/Zlib.es
 DEPS_132 += $(BUILD)/bin/ejsc
 DEPS_132 += $(BUILD)/bin/ejs.mod
 
-$(BUILD)/bin/ejs.tar.mod: $(DEPS_132)
-	( \
-	cd src/ejs.tar; \
-	echo '   [Compile] ejs.tar.mod' ; \
-	../../$(BUILD)/bin/ejsc --out ../../$(BUILD)/bin/ejs.tar.mod  --optimize 9 Tar.es ; \
-	)
-
-#
-#   ejs.zlib.mod
-#
-DEPS_133 += src/ejs.zlib/Zlib.es
-DEPS_133 += $(BUILD)/bin/ejsc
-DEPS_133 += $(BUILD)/bin/ejs.mod
-
-$(BUILD)/bin/ejs.zlib.mod: $(DEPS_133)
+$(BUILD)/bin/ejs.zlib.mod: $(DEPS_132)
 	( \
 	cd src/ejs.zlib; \
 	echo '   [Compile] ejs.zlib.mod' ; \
 	../../$(BUILD)/bin/ejsc --out ../../$(BUILD)/bin/ejs.zlib.mod  --optimize 9 Zlib.es ; \
 	)
 
+ifeq ($(ME_COM_ZLIB),1)
 #
-#   ejsrun
+#   libzlib
+#
+DEPS_133 += $(BUILD)/inc/zlib.h
+DEPS_133 += $(BUILD)/obj/zlib.o
+
+$(BUILD)/bin/libzlib.so: $(DEPS_133)
+	@echo '      [Link] $(BUILD)/bin/libzlib.so'
+	$(CC) -shared -o $(BUILD)/bin/libzlib.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/zlib.o" $(LIBS) 
+endif
+
+#
+#   libejs.zlib
 #
 DEPS_134 += $(BUILD)/bin/libejs.so
-DEPS_134 += $(BUILD)/obj/ejsrun.o
+DEPS_134 += $(BUILD)/bin/ejs.mod
+DEPS_134 += $(BUILD)/bin/ejs.zlib.mod
+ifeq ($(ME_COM_ZLIB),1)
+    DEPS_134 += $(BUILD)/bin/libzlib.so
+endif
+DEPS_134 += $(BUILD)/obj/ejsZlib.o
 
 LIBS_134 += -lejs
 ifeq ($(ME_COM_HTTP),1)
@@ -1811,29 +1812,66 @@ LIBS_134 += -lmpr
 ifeq ($(ME_COM_PCRE),1)
     LIBS_134 += -lpcre
 endif
+ifeq ($(ME_COM_ZLIB),1)
+    LIBS_134 += -lzlib
+endif
 
-$(BUILD)/bin/ejsrun: $(DEPS_134)
+$(BUILD)/bin/libejs.zlib.so: $(DEPS_134)
+	@echo '      [Link] $(BUILD)/bin/libejs.zlib.so'
+	$(CC) -shared -o $(BUILD)/bin/libejs.zlib.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsZlib.o" $(LIBPATHS_134) $(LIBS_134) $(LIBS_134) $(LIBS) 
+
+#
+#   ejs.tar.mod
+#
+DEPS_135 += src/ejs.tar/Tar.es
+DEPS_135 += $(BUILD)/bin/ejsc
+DEPS_135 += $(BUILD)/bin/ejs.mod
+DEPS_135 += $(BUILD)/bin/libejs.zlib.so
+
+$(BUILD)/bin/ejs.tar.mod: $(DEPS_135)
+	( \
+	cd src/ejs.tar; \
+	echo '   [Compile] ejs.tar.mod' ; \
+	../../$(BUILD)/bin/ejsc --out ../../$(BUILD)/bin/ejs.tar.mod  --optimize 9 Tar.es ; \
+	)
+
+#
+#   ejsrun
+#
+DEPS_136 += $(BUILD)/bin/libejs.so
+DEPS_136 += $(BUILD)/obj/ejsrun.o
+
+LIBS_136 += -lejs
+ifeq ($(ME_COM_HTTP),1)
+    LIBS_136 += -lhttp
+endif
+LIBS_136 += -lmpr
+ifeq ($(ME_COM_PCRE),1)
+    LIBS_136 += -lpcre
+endif
+
+$(BUILD)/bin/ejsrun: $(DEPS_136)
 	@echo '      [Link] $(BUILD)/bin/ejsrun'
-	$(CC) -o $(BUILD)/bin/ejsrun $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_134) $(LIBS_134) $(LIBS_134) $(LIBS) $(LIBS) 
+	$(CC) -o $(BUILD)/bin/ejsrun $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_136) $(LIBS_136) $(LIBS_136) $(LIBS) $(LIBS) 
 
 #
 #   http-ca-crt
 #
-DEPS_135 += src/paks/http/ca.crt
+DEPS_137 += src/http/ca.crt
 
-$(BUILD)/bin/ca.crt: $(DEPS_135)
+$(BUILD)/bin/ca.crt: $(DEPS_137)
 	@echo '      [Copy] $(BUILD)/bin/ca.crt'
 	mkdir -p "$(BUILD)/bin"
-	cp src/paks/http/ca.crt $(BUILD)/bin/ca.crt
+	cp src/http/ca.crt $(BUILD)/bin/ca.crt
 
 ifeq ($(ME_COM_SQLITE),1)
 #
 #   libsql
 #
-DEPS_136 += $(BUILD)/inc/sqlite3.h
-DEPS_136 += $(BUILD)/obj/sqlite3.o
+DEPS_138 += $(BUILD)/inc/sqlite3.h
+DEPS_138 += $(BUILD)/obj/sqlite3.o
 
-$(BUILD)/bin/libsql.so: $(DEPS_136)
+$(BUILD)/bin/libsql.so: $(DEPS_138)
 	@echo '      [Link] $(BUILD)/bin/libsql.so'
 	$(CC) -shared -o $(BUILD)/bin/libsql.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/sqlite3.o" $(LIBS) 
 endif
@@ -1841,77 +1879,41 @@ endif
 #
 #   libejs.db.sqlite
 #
-DEPS_137 += $(BUILD)/bin/libmpr.so
-DEPS_137 += $(BUILD)/bin/libejs.so
-DEPS_137 += $(BUILD)/bin/ejs.mod
-DEPS_137 += $(BUILD)/bin/ejs.db.sqlite.mod
+DEPS_139 += $(BUILD)/bin/libmpr.so
+DEPS_139 += $(BUILD)/bin/libejs.so
+DEPS_139 += $(BUILD)/bin/ejs.mod
+DEPS_139 += $(BUILD)/bin/ejs.db.sqlite.mod
 ifeq ($(ME_COM_SQLITE),1)
-    DEPS_137 += $(BUILD)/bin/libsql.so
+    DEPS_139 += $(BUILD)/bin/libsql.so
 endif
-DEPS_137 += $(BUILD)/obj/ejsSqlite.o
+DEPS_139 += $(BUILD)/obj/ejsSqlite.o
 
-LIBS_137 += -lmpr
-LIBS_137 += -lejs
+LIBS_139 += -lmpr
+LIBS_139 += -lejs
 ifeq ($(ME_COM_HTTP),1)
-    LIBS_137 += -lhttp
+    LIBS_139 += -lhttp
 endif
 ifeq ($(ME_COM_PCRE),1)
-    LIBS_137 += -lpcre
+    LIBS_139 += -lpcre
 endif
 ifeq ($(ME_COM_SQLITE),1)
-    LIBS_137 += -lsql
+    LIBS_139 += -lsql
 endif
 
-$(BUILD)/bin/libejs.db.sqlite.so: $(DEPS_137)
+$(BUILD)/bin/libejs.db.sqlite.so: $(DEPS_139)
 	@echo '      [Link] $(BUILD)/bin/libejs.db.sqlite.so'
-	$(CC) -shared -o $(BUILD)/bin/libejs.db.sqlite.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsSqlite.o" $(LIBPATHS_137) $(LIBS_137) $(LIBS_137) $(LIBS) 
+	$(CC) -shared -o $(BUILD)/bin/libejs.db.sqlite.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsSqlite.o" $(LIBPATHS_139) $(LIBS_139) $(LIBS_139) $(LIBS) 
 
 #
 #   libejs.web
 #
-DEPS_138 += $(BUILD)/bin/libejs.so
-DEPS_138 += $(BUILD)/bin/ejs.mod
-DEPS_138 += $(BUILD)/inc/ejsWeb.h
-DEPS_138 += $(BUILD)/obj/ejsHttpServer.o
-DEPS_138 += $(BUILD)/obj/ejsRequest.o
-DEPS_138 += $(BUILD)/obj/ejsSession.o
-DEPS_138 += $(BUILD)/obj/ejsWeb.o
-
-LIBS_138 += -lejs
-ifeq ($(ME_COM_HTTP),1)
-    LIBS_138 += -lhttp
-endif
-LIBS_138 += -lmpr
-ifeq ($(ME_COM_PCRE),1)
-    LIBS_138 += -lpcre
-endif
-
-$(BUILD)/bin/libejs.web.so: $(DEPS_138)
-	@echo '      [Link] $(BUILD)/bin/libejs.web.so'
-	$(CC) -shared -o $(BUILD)/bin/libejs.web.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsHttpServer.o" "$(BUILD)/obj/ejsRequest.o" "$(BUILD)/obj/ejsSession.o" "$(BUILD)/obj/ejsWeb.o" $(LIBPATHS_138) $(LIBS_138) $(LIBS_138) $(LIBS) 
-
-ifeq ($(ME_COM_ZLIB),1)
-#
-#   libzlib
-#
-DEPS_139 += $(BUILD)/inc/zlib.h
-DEPS_139 += $(BUILD)/obj/zlib.o
-
-$(BUILD)/bin/libzlib.so: $(DEPS_139)
-	@echo '      [Link] $(BUILD)/bin/libzlib.so'
-	$(CC) -shared -o $(BUILD)/bin/libzlib.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/zlib.o" $(LIBS) 
-endif
-
-#
-#   libejs.zlib
-#
 DEPS_140 += $(BUILD)/bin/libejs.so
 DEPS_140 += $(BUILD)/bin/ejs.mod
-DEPS_140 += $(BUILD)/bin/ejs.zlib.mod
-ifeq ($(ME_COM_ZLIB),1)
-    DEPS_140 += $(BUILD)/bin/libzlib.so
-endif
-DEPS_140 += $(BUILD)/obj/ejsZlib.o
+DEPS_140 += $(BUILD)/inc/ejsWeb.h
+DEPS_140 += $(BUILD)/obj/ejsHttpServer.o
+DEPS_140 += $(BUILD)/obj/ejsRequest.o
+DEPS_140 += $(BUILD)/obj/ejsSession.o
+DEPS_140 += $(BUILD)/obj/ejsWeb.o
 
 LIBS_140 += -lejs
 ifeq ($(ME_COM_HTTP),1)
@@ -1921,13 +1923,10 @@ LIBS_140 += -lmpr
 ifeq ($(ME_COM_PCRE),1)
     LIBS_140 += -lpcre
 endif
-ifeq ($(ME_COM_ZLIB),1)
-    LIBS_140 += -lzlib
-endif
 
-$(BUILD)/bin/libejs.zlib.so: $(DEPS_140)
-	@echo '      [Link] $(BUILD)/bin/libejs.zlib.so'
-	$(CC) -shared -o $(BUILD)/bin/libejs.zlib.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsZlib.o" $(LIBPATHS_140) $(LIBS_140) $(LIBS_140) $(LIBS) 
+$(BUILD)/bin/libejs.web.so: $(DEPS_140)
+	@echo '      [Link] $(BUILD)/bin/libejs.web.so'
+	$(CC) -shared -o $(BUILD)/bin/libejs.web.so $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsHttpServer.o" "$(BUILD)/obj/ejsRequest.o" "$(BUILD)/obj/ejsSession.o" "$(BUILD)/obj/ejsWeb.o" $(LIBPATHS_140) $(LIBS_140) $(LIBS_140) $(LIBS) 
 
 #
 #   libmprssl
@@ -2126,7 +2125,7 @@ stop: $(DEPS_150)
 installBinary: $(DEPS_151)
 	mkdir -p "$(ME_APP_PREFIX)" ; \
 	rm -f "$(ME_APP_PREFIX)/latest" ; \
-	ln -s "2.5.2" "$(ME_APP_PREFIX)/latest" ; \
+	ln -s "$(VERSION)" "$(ME_APP_PREFIX)/latest" ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
 	cp $(BUILD)/bin/ejs $(ME_VAPP_PREFIX)/bin/ejs ; \
 	mkdir -p "$(ME_BIN_PREFIX)" ; \
@@ -2186,44 +2185,44 @@ installBinary: $(DEPS_151)
 	fi ; \
 	if [ "$(ME_COM_SSL)" = 1 ]; then true ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
-	cp src/paks/est/ca.crt $(ME_VAPP_PREFIX)/bin/ca.crt ; \
+	cp src/est/ca.crt $(ME_VAPP_PREFIX)/bin/ca.crt ; \
 	fi ; \
 	if [ "$(ME_COM_EST)" = 1 ]; then true ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
 	cp $(BUILD)/bin/libest.so $(ME_VAPP_PREFIX)/bin/libest.so ; \
 	fi ; \
-	mkdir -p "/usr/src/ejs.web/www" ; \
-	mkdir -p "/usr/src/ejs.web/www/images" ; \
-	cp src/ejs.web/www/images/banner.jpg /usr/src/ejs.web/www/images/banner.jpg ; \
-	cp src/ejs.web/www/images/favicon.ico /usr/src/ejs.web/www/images/favicon.ico ; \
-	cp src/ejs.web/www/images/splash.jpg /usr/src/ejs.web/www/images/splash.jpg ; \
-	mkdir -p "/usr/src/ejs.web/www/js" ; \
-	cp src/ejs.web/www/js/jquery.ejs.min.js /usr/src/ejs.web/www/js/jquery.ejs.min.js ; \
-	cp src/ejs.web/www/js/jquery.min.js /usr/src/ejs.web/www/js/jquery.min.js ; \
-	cp src/ejs.web/www/js/jquery.simplemodal.min.js /usr/src/ejs.web/www/js/jquery.simplemodal.min.js ; \
-	cp src/ejs.web/www/js/jquery.tablesorter.js /usr/src/ejs.web/www/js/jquery.tablesorter.js ; \
-	cp src/ejs.web/www/js/jquery.tablesorter.min.js /usr/src/ejs.web/www/js/jquery.tablesorter.min.js ; \
-	cp src/ejs.web/www/js/jquery.treeview.min.js /usr/src/ejs.web/www/js/jquery.treeview.min.js ; \
-	mkdir -p "/usr/src/ejs.web/www/js/tree-images" ; \
-	cp src/ejs.web/www/js/tree-images/file.gif /usr/src/ejs.web/www/js/tree-images/file.gif ; \
-	cp src/ejs.web/www/js/tree-images/folder-closed.gif /usr/src/ejs.web/www/js/tree-images/folder-closed.gif ; \
-	cp src/ejs.web/www/js/tree-images/folder.gif /usr/src/ejs.web/www/js/tree-images/folder.gif ; \
-	cp src/ejs.web/www/js/tree-images/minus.gif /usr/src/ejs.web/www/js/tree-images/minus.gif ; \
-	cp src/ejs.web/www/js/tree-images/plus.gif /usr/src/ejs.web/www/js/tree-images/plus.gif ; \
-	cp src/ejs.web/www/js/tree-images/treeview-black-line.gif /usr/src/ejs.web/www/js/tree-images/treeview-black-line.gif ; \
-	cp src/ejs.web/www/js/tree-images/treeview-black.gif /usr/src/ejs.web/www/js/tree-images/treeview-black.gif ; \
-	cp src/ejs.web/www/js/tree-images/treeview-default-line.gif /usr/src/ejs.web/www/js/tree-images/treeview-default-line.gif ; \
-	cp src/ejs.web/www/js/tree-images/treeview-default.gif /usr/src/ejs.web/www/js/tree-images/treeview-default.gif ; \
-	cp src/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif /usr/src/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif ; \
-	cp src/ejs.web/www/js/tree-images/treeview-famfamfam.gif /usr/src/ejs.web/www/js/tree-images/treeview-famfamfam.gif ; \
-	cp src/ejs.web/www/js/tree-images/treeview-gray-line.gif /usr/src/ejs.web/www/js/tree-images/treeview-gray-line.gif ; \
-	cp src/ejs.web/www/js/tree-images/treeview-gray.gif /usr/src/ejs.web/www/js/tree-images/treeview-gray.gif ; \
-	cp src/ejs.web/www/js/tree-images/treeview-red-line.gif /usr/src/ejs.web/www/js/tree-images/treeview-red-line.gif ; \
-	cp src/ejs.web/www/js/tree-images/treeview-red.gif /usr/src/ejs.web/www/js/tree-images/treeview-red.gif ; \
-	cp src/ejs.web/www/js/treeview.css /usr/src/ejs.web/www/js/treeview.css ; \
-	cp src/ejs.web/www/layout.css /usr/src/ejs.web/www/layout.css ; \
-	mkdir -p "/usr/src/ejs.web/www/themes" ; \
-	cp src/ejs.web/www/themes/default.css /usr/src/ejs.web/www/themes/default.css ; \
+	mkdir -p "$(ME_VAPP_PREFIX)/bin/www" ; \
+	mkdir -p "$(ME_VAPP_PREFIX)/bin/www/images" ; \
+	cp src/ejs.web/www/images/banner.jpg $(ME_VAPP_PREFIX)/bin/www/images/banner.jpg ; \
+	cp src/ejs.web/www/images/favicon.ico $(ME_VAPP_PREFIX)/bin/www/images/favicon.ico ; \
+	cp src/ejs.web/www/images/splash.jpg $(ME_VAPP_PREFIX)/bin/www/images/splash.jpg ; \
+	mkdir -p "$(ME_VAPP_PREFIX)/bin/www/js" ; \
+	cp src/ejs.web/www/js/jquery.ejs.min.js $(ME_VAPP_PREFIX)/bin/www/js/jquery.ejs.min.js ; \
+	cp src/ejs.web/www/js/jquery.min.js $(ME_VAPP_PREFIX)/bin/www/js/jquery.min.js ; \
+	cp src/ejs.web/www/js/jquery.simplemodal.min.js $(ME_VAPP_PREFIX)/bin/www/js/jquery.simplemodal.min.js ; \
+	cp src/ejs.web/www/js/jquery.tablesorter.js $(ME_VAPP_PREFIX)/bin/www/js/jquery.tablesorter.js ; \
+	cp src/ejs.web/www/js/jquery.tablesorter.min.js $(ME_VAPP_PREFIX)/bin/www/js/jquery.tablesorter.min.js ; \
+	cp src/ejs.web/www/js/jquery.treeview.min.js $(ME_VAPP_PREFIX)/bin/www/js/jquery.treeview.min.js ; \
+	mkdir -p "$(ME_VAPP_PREFIX)/bin/www/js/tree-images" ; \
+	cp src/ejs.web/www/js/tree-images/file.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/file.gif ; \
+	cp src/ejs.web/www/js/tree-images/folder-closed.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/folder-closed.gif ; \
+	cp src/ejs.web/www/js/tree-images/folder.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/folder.gif ; \
+	cp src/ejs.web/www/js/tree-images/minus.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/minus.gif ; \
+	cp src/ejs.web/www/js/tree-images/plus.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/plus.gif ; \
+	cp src/ejs.web/www/js/tree-images/treeview-black-line.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/treeview-black-line.gif ; \
+	cp src/ejs.web/www/js/tree-images/treeview-black.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/treeview-black.gif ; \
+	cp src/ejs.web/www/js/tree-images/treeview-default-line.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/treeview-default-line.gif ; \
+	cp src/ejs.web/www/js/tree-images/treeview-default.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/treeview-default.gif ; \
+	cp src/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/treeview-famfamfam-line.gif ; \
+	cp src/ejs.web/www/js/tree-images/treeview-famfamfam.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/treeview-famfamfam.gif ; \
+	cp src/ejs.web/www/js/tree-images/treeview-gray-line.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/treeview-gray-line.gif ; \
+	cp src/ejs.web/www/js/tree-images/treeview-gray.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/treeview-gray.gif ; \
+	cp src/ejs.web/www/js/tree-images/treeview-red-line.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/treeview-red-line.gif ; \
+	cp src/ejs.web/www/js/tree-images/treeview-red.gif $(ME_VAPP_PREFIX)/bin/www/js/tree-images/treeview-red.gif ; \
+	cp src/ejs.web/www/js/treeview.css $(ME_VAPP_PREFIX)/bin/www/js/treeview.css ; \
+	cp src/ejs.web/www/layout.css $(ME_VAPP_PREFIX)/bin/www/layout.css ; \
+	mkdir -p "$(ME_VAPP_PREFIX)/bin/www/themes" ; \
+	cp src/ejs.web/www/themes/default.css $(ME_VAPP_PREFIX)/bin/www/themes/default.css ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/inc" ; \
 	cp src/ejs.h $(ME_VAPP_PREFIX)/inc/ejs.h ; \
 	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
@@ -2269,34 +2268,6 @@ installBinary: $(DEPS_151)
 	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
 	rm -f "$(ME_INC_PREFIX)/ejs/ejs.zlib.slots.h" ; \
 	ln -s "$(ME_VAPP_PREFIX)/inc/ejs.zlib.slots.h" "$(ME_INC_PREFIX)/ejs/ejs.zlib.slots.h" ; \
-	cp src/paks/est/est.h $(ME_VAPP_PREFIX)/inc/est.h ; \
-	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
-	rm -f "$(ME_INC_PREFIX)/ejs/est.h" ; \
-	ln -s "$(ME_VAPP_PREFIX)/inc/est.h" "$(ME_INC_PREFIX)/ejs/est.h" ; \
-	cp src/paks/http/http.h $(ME_VAPP_PREFIX)/inc/http.h ; \
-	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
-	rm -f "$(ME_INC_PREFIX)/ejs/http.h" ; \
-	ln -s "$(ME_VAPP_PREFIX)/inc/http.h" "$(ME_INC_PREFIX)/ejs/http.h" ; \
-	cp src/paks/mpr/mpr.h $(ME_VAPP_PREFIX)/inc/mpr.h ; \
-	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
-	rm -f "$(ME_INC_PREFIX)/ejs/mpr.h" ; \
-	ln -s "$(ME_VAPP_PREFIX)/inc/mpr.h" "$(ME_INC_PREFIX)/ejs/mpr.h" ; \
-	cp src/paks/osdep/osdep.h $(ME_VAPP_PREFIX)/inc/osdep.h ; \
-	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
-	rm -f "$(ME_INC_PREFIX)/ejs/osdep.h" ; \
-	ln -s "$(ME_VAPP_PREFIX)/inc/osdep.h" "$(ME_INC_PREFIX)/ejs/osdep.h" ; \
-	cp src/paks/pcre/pcre.h $(ME_VAPP_PREFIX)/inc/pcre.h ; \
-	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
-	rm -f "$(ME_INC_PREFIX)/ejs/pcre.h" ; \
-	ln -s "$(ME_VAPP_PREFIX)/inc/pcre.h" "$(ME_INC_PREFIX)/ejs/pcre.h" ; \
-	cp src/paks/sqlite/sqlite3.h $(ME_VAPP_PREFIX)/inc/sqlite3.h ; \
-	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
-	rm -f "$(ME_INC_PREFIX)/ejs/sqlite3.h" ; \
-	ln -s "$(ME_VAPP_PREFIX)/inc/sqlite3.h" "$(ME_INC_PREFIX)/ejs/sqlite3.h" ; \
-	cp src/paks/zlib/zlib.h $(ME_VAPP_PREFIX)/inc/zlib.h ; \
-	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
-	rm -f "$(ME_INC_PREFIX)/ejs/zlib.h" ; \
-	ln -s "$(ME_VAPP_PREFIX)/inc/zlib.h" "$(ME_INC_PREFIX)/ejs/zlib.h" ; \
 	cp src/cmd/ejsmod.h $(ME_VAPP_PREFIX)/inc/ejsmod.h ; \
 	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
 	rm -f "$(ME_INC_PREFIX)/ejs/ejsmod.h" ; \
@@ -2305,32 +2276,56 @@ installBinary: $(DEPS_151)
 	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
 	rm -f "$(ME_INC_PREFIX)/ejs/ejsWeb.h" ; \
 	ln -s "$(ME_VAPP_PREFIX)/inc/ejsWeb.h" "$(ME_INC_PREFIX)/ejs/ejsWeb.h" ; \
+	cp src/est/est.h $(ME_VAPP_PREFIX)/inc/est.h ; \
+	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
+	rm -f "$(ME_INC_PREFIX)/ejs/est.h" ; \
+	ln -s "$(ME_VAPP_PREFIX)/inc/est.h" "$(ME_INC_PREFIX)/ejs/est.h" ; \
+	cp src/http/http.h $(ME_VAPP_PREFIX)/inc/http.h ; \
+	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
+	rm -f "$(ME_INC_PREFIX)/ejs/http.h" ; \
+	ln -s "$(ME_VAPP_PREFIX)/inc/http.h" "$(ME_INC_PREFIX)/ejs/http.h" ; \
+	cp src/mpr/mpr.h $(ME_VAPP_PREFIX)/inc/mpr.h ; \
+	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
+	rm -f "$(ME_INC_PREFIX)/ejs/mpr.h" ; \
+	ln -s "$(ME_VAPP_PREFIX)/inc/mpr.h" "$(ME_INC_PREFIX)/ejs/mpr.h" ; \
+	cp src/osdep/osdep.h $(ME_VAPP_PREFIX)/inc/osdep.h ; \
+	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
+	rm -f "$(ME_INC_PREFIX)/ejs/osdep.h" ; \
+	ln -s "$(ME_VAPP_PREFIX)/inc/osdep.h" "$(ME_INC_PREFIX)/ejs/osdep.h" ; \
+	cp src/pcre/pcre.h $(ME_VAPP_PREFIX)/inc/pcre.h ; \
+	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
+	rm -f "$(ME_INC_PREFIX)/ejs/pcre.h" ; \
+	ln -s "$(ME_VAPP_PREFIX)/inc/pcre.h" "$(ME_INC_PREFIX)/ejs/pcre.h" ; \
+	cp src/sqlite/sqlite3.h $(ME_VAPP_PREFIX)/inc/sqlite3.h ; \
+	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
+	rm -f "$(ME_INC_PREFIX)/ejs/sqlite3.h" ; \
+	ln -s "$(ME_VAPP_PREFIX)/inc/sqlite3.h" "$(ME_INC_PREFIX)/ejs/sqlite3.h" ; \
+	cp src/zlib/zlib.h $(ME_VAPP_PREFIX)/inc/zlib.h ; \
+	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
+	rm -f "$(ME_INC_PREFIX)/ejs/zlib.h" ; \
+	ln -s "$(ME_VAPP_PREFIX)/inc/zlib.h" "$(ME_INC_PREFIX)/ejs/zlib.h" ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/doc/man1" ; \
-	cp doc/documents/man/ejs.1 $(ME_VAPP_PREFIX)/doc/man1/ejs.1 ; \
+	cp doc/dist/man/ejs.1 $(ME_VAPP_PREFIX)/doc/man1/ejs.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/ejs.1" ; \
 	ln -s "$(ME_VAPP_PREFIX)/doc/man1/ejs.1" "$(ME_MAN_PREFIX)/man1/ejs.1" ; \
-	cp doc/documents/man/ejsc.1 $(ME_VAPP_PREFIX)/doc/man1/ejsc.1 ; \
+	cp doc/dist/man/ejsc.1 $(ME_VAPP_PREFIX)/doc/man1/ejsc.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/ejsc.1" ; \
 	ln -s "$(ME_VAPP_PREFIX)/doc/man1/ejsc.1" "$(ME_MAN_PREFIX)/man1/ejsc.1" ; \
-	cp doc/documents/man/ejsmod.1 $(ME_VAPP_PREFIX)/doc/man1/ejsmod.1 ; \
+	cp doc/dist/man/ejsmod.1 $(ME_VAPP_PREFIX)/doc/man1/ejsmod.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/ejsmod.1" ; \
 	ln -s "$(ME_VAPP_PREFIX)/doc/man1/ejsmod.1" "$(ME_MAN_PREFIX)/man1/ejsmod.1" ; \
-	cp doc/documents/man/http.1 $(ME_VAPP_PREFIX)/doc/man1/http.1 ; \
+	cp doc/dist/man/http.1 $(ME_VAPP_PREFIX)/doc/man1/http.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/http.1" ; \
 	ln -s "$(ME_VAPP_PREFIX)/doc/man1/http.1" "$(ME_MAN_PREFIX)/man1/http.1" ; \
-	cp doc/documents/man/makerom.1 $(ME_VAPP_PREFIX)/doc/man1/makerom.1 ; \
-	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
-	rm -f "$(ME_MAN_PREFIX)/man1/makerom.1" ; \
-	ln -s "$(ME_VAPP_PREFIX)/doc/man1/makerom.1" "$(ME_MAN_PREFIX)/man1/makerom.1" ; \
-	cp doc/documents/man/manager.1 $(ME_VAPP_PREFIX)/doc/man1/manager.1 ; \
+	cp doc/dist/man/manager.1 $(ME_VAPP_PREFIX)/doc/man1/manager.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/manager.1" ; \
 	ln -s "$(ME_VAPP_PREFIX)/doc/man1/manager.1" "$(ME_MAN_PREFIX)/man1/manager.1" ; \
-	cp doc/documents/man/mvc.1 $(ME_VAPP_PREFIX)/doc/man1/mvc.1 ; \
+	cp doc/dist/man/mvc.1 $(ME_VAPP_PREFIX)/doc/man1/mvc.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
 	rm -f "$(ME_MAN_PREFIX)/man1/mvc.1" ; \
 	ln -s "$(ME_VAPP_PREFIX)/doc/man1/mvc.1" "$(ME_MAN_PREFIX)/man1/mvc.1"
@@ -2363,5 +2358,5 @@ uninstall: $(DEPS_154)
 #
 
 version: $(DEPS_155)
-	echo 2.5.2
+	echo $(VERSION)
 

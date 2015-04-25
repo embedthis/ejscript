@@ -16,9 +16,7 @@ Me.load({
         mvc: {
             type: 'exe',
             path: '${BIN}/mvc${EXE}',
-            sources: [
-                '${SRC}/src/cmd/ejsrun.c',
-            ],
+            sources: [ '${SRC}/cmd/ejsrun.c' ],
             active: true,
             precious: true,
             depends: ['libejs', 'mvc.es'],

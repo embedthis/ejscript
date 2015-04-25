@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Expressions</title>
+    <!-- Copyright Embedthis Software. All Rights Reserved. -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="Javacript Language Environment" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
+        rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
+    <link href="../images/favicon.ico" rel="shortcut icon" />
+    <link href="../semantic-ui/semantic.css" rel="stylesheet" type="text/css" />
+    <link href="../css/all.css" rel="stylesheet" type="text/css" />
+    
+
+</head>
+<body>
+        <div class="sidebar">
+        <div class="ui large left vertical inverted labeled menu">
+            <div class="item">
+                <a href="../index.html" class="logo">Ejscript Docs</a>
+            </div>
+            <div class="item">
+                <a href="../index.html">
+                    <b>General</b>
+                </a>
+                <div class="menu">
+                    <a class="item" href="../index.html">Ejscript Overview</a>
+                    <a class="item" href="../users/features.html">Ejscript Features</a>
+                    <a class="item" href="https://embedthis.com/ejscript/download.html">Download</a> 
+                    <a class="item" href="../licensing/index.html">Licensing</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../start/index.html">
+                    <b>Getting Started</b>
+                </a>
+                <div class="menu">
+                    <a class="item" href="../start/quick.html">Quick Start</a>
+                    <a class="item" href="../start/installing.html">Installing Ejscript</a>
+                    <a class="item" href="../start/tour.html">Language Tour</a>
+                    <a class="item" href="../start/faq.html">FAQ</a>
+                    <a class="item" href="../start/releaseNotes.html">Release Notes</a>
+                    <a class="item" href="../start/source.html">Building from Source</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../users/index.html"><b>User's Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../users/shell.html">Using the Command Shell</a>
+                    <a class="item" href="../users/compiler.html">Using the Compiler</a>
+                    <a class="item" href="../users/ejsmod.html">Using the Module Generator</a>
+                    <a class="item" href="../users/doc.html">Generating Documentation</a>
+                    <a class="item" href="../users/listing.html">Generating Listing</a>
+                    <a class="item" href="../users/man.html">Man Pages</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../language/index.html"><b>Language Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../language/syntax.html">Language Syntax</a>
+                    <a class="item" href="../language/statements.html">Statements</a>
+                    <a class="item" href="../language/expressions.html">Expressions and Operators</a>
+                    <a class="item" href="../language/objects.html">Object and Arrays</a>
+                    <a class="item" href="../language/functions.html">Functions and Methods</a>
+                    <a class="item" href="../language/core.html">Core Language Types</a>
+                    <a class="item" href="../language/types.html">Types and Declarations</a>
+                    <a class="item" href="../language/classes.html">Classes and Instances</a>
+                    <a class="item" href="../language/modules.html">Modules and Namespaces</a>
+                    <a class="item" href="../language/library.html">System Library</a>
+                    <a class="item" href="../language/events.html">Events and Timers</a>
+                    <a class="item" href="../language/modes.html">Language Modes</a>
+                    <a class="item" href="../language/globals.html">Globals</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../web/index.html"><b>Web Framework Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../web/webTour.html">Web Framework Tour</a>
+                    <a class="item" href="../web/generator.html">Application Generator</a>
+                    <a class="item" href="../web/routing.html">Routing</a>
+                    <a class="item" href="../web/controllers.html">Controllers</a>
+                    <a class="item" href="../web/views.html">Views and Layout Templates</a>
+                    <a class="item" href="../web/controls.html">Ajax View Controls</a>
+                    <a class="item" href="../web/models.html">Database Models</a>
+                    <a class="item" href="../web/hosting.html">Hosting in Web Servers</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../developers/index.html">Developer's Guide</a>
+                <div class="menu">
+                    <a class="item" href="../developers/embedding.html">Embedding Ejscript</a>
+                    <a class="item" href="../developers/extending.html">Extending Ejscript</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../ref/index.html">Reference Guide</a>
+                <div class="menu">
+                    <a class="item" href="../ref/compatibility.html">Compatibility</a>
+                    <a class="item" href="../ref/native.html">Native APIs</a>
+                    <a class="item" href="../ref/api/ejscript/index.html" target="new">Script Library</a>
+                    <a class="item" href="../ref/architecture.html">Ejscript Architecture</a>
+                    <a class="item" href="../ref/webArchitecture.html">Web Framework Architecture</a>
+                    <a class="item" href="../ref/memory.html">Ejscript Memory Allocation</a>
+                    <a class="item" href="../ref/multithread.html">Multithreaded Programming</a>
+                    <a class="item" href="../standards/references.html">Standards</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../developers/project.html">Project Resources</a>
+                <div class="menu">
+                    <a class="item" href="http://goo.gl/g4oS2C">Official Ejscript News</a>
+                    <a class="item" href="https://embedthis.com/ejscript/">Ejscript Web Site</a>
+                    <a class="item" href="https://github.com/embedthis/ejs">Source Code Repository</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/issues">Project Issue Database</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/releases">Change Log</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/milestones">Roadmap</a>
+                    <a class="item" href="https://embedthis.com/developers/contributors.html">Contributors Agreement</a>
+                </div>
+            </div>
+            <div class="item">
+                <b>Links</b>
+                <div class="menu">
+                    <a class="item" href="https://embedthis.com/">Embedthis Web Site</a>
+                    <a class="item" href="https://embedthis.com/blog/">Embedthis Blog</a>
+                    <a class="item" href="http://twitter.com/mobstream">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="ui inverted masthead">
+         
+        <div class="ui fixed inverted menu">
+            <div class="ui sidebar-launch button">
+                <i class="icon list layout"></i>
+            </div>
+            <div class="right menu">
+                  
+                    <a class="item" href="https://embedthis.com/">Embedthis</a>
+                    <a class="item" href="https://embedthis.com/ejscript/">Ejscript Site</a>
+                    <span class="desktop-only">
+                        <a class="item" href="http://goo.gl/dGRDl4">Ejscript News</a>
+                        <a class="item" href="https://github.com/embedthis/ejs">Repository</a>
+                        <a class="item" href="https://embedthis.com/blog/">Blog</a>
+                        <a class="item" href="https://twitter.com/mobstream">Twitter</a>
+                    </span>
+
+            </div>
+        </div>
+        
+        <div class="ui breadcrumb">
+            <a class="section" href="../">Home</a>
+            
+            <div class="divider">/</div>
+            <a class="section" href="index.html">
+                Language Guide
+            </a>
+            
+            
+            <div class="divider">/</div>
+            <a class="active section" href="expressions.html">Expressions</a>
+            
+        </div>
+        
+        <div class="version desktop-only">
+            v2.5.3
+        </div>
+
+    </div>
+    <div class="content">
+
+            <h1>Expressions and Operators</h1>
+            <p>Expressions and operators in Ejscript and ECMAScript follow closely their cousins in C and Java. Users
+            familiar with these languages should feel right at home.</p>
+            <p>Expressions are combinations of variables and operators that evaluate to a single value. Expressions can
+            be used as the right hand side of an assignment, as function arguments, and in return
+            statements.</p>
+            
+            <a id="summary"></a>
+            <h2 >Operator Summary</h2>
+            <p>The following table summarizes the operators available in Ejscript. For a complete specification, please
+            consult the <a href="http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-262.pdf">ECMA-262
+            specification</a>.</p>
+            <table title="Operators" class="ui table segment">
+                <thead>
+                    <tr>
+                        <th>Operator</th>
+                        <th>Operands</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>*&nbsp; /&nbsp; %</td>
+                        <td>Numbers</td>
+                        <td>Multiply, divide, modulo</td>
+                    </tr>
+                    <tr>
+                        <td>+</td>
+                        <td>Numbers, Strings</td>
+                        <td>Add numbers, catenate strings</td>
+                    </tr>
+                    <tr>
+                        <td>-</td>
+                        <td>Numbers</td>
+                        <td>Subtract numbers</td>
+                    </tr>
+                    <tr>
+                        <td>!</td>
+                        <td>Boolean</td>
+                        <td>Unary not</td>
+                    </tr>
+                    <tr>
+                        <td>++</td>
+                        <td>Numbers</td>
+                        <td>Pre/Post-increment number</td>
+                    </tr>
+                    <tr>
+                        <td>--</td>
+                        <td>Numbers</td>
+                        <td>Pre/Post-decrement number</td>
+                    </tr>
+                    <tr>
+                        <td>&lt;&lt;</td>
+                        <td>Integers</td>
+                        <td>Left shift</td>
+                    </tr>
+                    <tr>
+                        <td>&gt;&gt;</td>
+                        <td>Integers</td>
+                        <td>Right shift</td>
+                    </tr>
+                    <tr>
+                        <td>==&nbsp; !=</td>
+                        <td>All</td>
+                        <td>Compare if equal, not equal</td>
+                    </tr>
+                    <tr>
+                        <td>===&nbsp; !==</td>
+                        <td>All</td>
+                        <td>Strict equality, inequality. Object references must equal.</td>
+                    </tr>
+                    <tr>
+                        <td>&lt;&nbsp; &lt;=</td>
+                        <td>Numbers, Strings</td>
+                        <td>Compare if less than, less than or equal</td>
+                    </tr>
+                    <tr>
+                        <td>&gt;&nbsp; &gt;=</td>
+                        <td>Numbers, Strings</td>
+                        <td>Compare if greater than, greater than or equal</td>
+                    </tr>
+                    <tr>
+                        <td>&amp;</td>
+                        <td>Numbers</td>
+                        <td>Bitwise AND</td>
+                    </tr>
+                    <tr>
+                        <td>|</td>
+                        <td>Numbers</td>
+                        <td>Bitwise OR</td>
+                    </tr>
+                    <tr>
+                        <td>&amp;&amp;</td>
+                        <td>Booleans</td>
+                        <td>Logical AND</td>
+                    </tr>
+                    <tr>
+                        <td>||</td>
+                        <td>Booleans</td>
+                        <td>Logical OR</td>
+                    </tr>
+                    <tr>
+                        <td>.</td>
+                        <td>object.property</td>
+                        <td>Property access</td>
+                    </tr>
+                    <tr>
+                        <td>[]</td>
+                        <td>array[integer]
+                        <br />
+                        array[string]</td>
+                        <td>Array, Object, ByteArray element access</td>
+                    </tr>
+                    <tr>
+                        <td>()</td>
+                        <td>function(any, ...)</td>
+                        <td>Function call</td>
+                    </tr>
+                    <tr>
+                        <td>cast</td>
+                        <td>Any</td>
+                        <td>Cast the operand to the required type</td>
+                    </tr>
+                    <tr>
+                        <td>is</td>
+                        <td>Any</td>
+                        <td>Test if the operand is the required type</td>
+                    </tr>
+                    <tr>
+                        <td>in</td>
+                        <td>Any</td>
+                        <td>Test if name is a property of the target object</td>
+                    </tr>
+                    <tr>
+                        <td>is instanceof like</td>
+                        <td>Any</td>
+                        <td>Test if the operand is of the required type</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>The following operators can also be combined with assignment to provide a compound operator: * / % + - !
+            &lt;&lt; &gt;&gt; &amp; | &amp;&amp; and ||. For example:</p>
+            <pre>
+x += 2
+</pre>
+            <p>Ejscript uses a type-less VM where the types themselves implement the operators. Users can define new
+            native types which implement any of the operators on their native type.</p><a id="precedence"></a>
+            <h2>Operator Precedence</h2>
+            <p>When expressions are evaluated, the operands bind to the operators depending on the precedence of the
+            operators.</p>
+            <p>The following table lists the operators in order of highest to lowest precedence. Operators of the same
+            precedence share the same row in the table:</p>
+            <table title="operators" class="ui table segment">
+                <thead>
+                    <tr>
+                        <th>Operator</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>.&nbsp; []&nbsp; ()&nbsp; new</td>
+                    </tr>
+                    <tr>
+                        <td>++&nbsp; --&nbsp; -&nbsp; +&nbsp; delete</td>
+                    </tr>
+                    <tr>
+                        <td>*&nbsp; /&nbsp; %</td>
+                    </tr>
+                    <tr>
+                        <td>+&nbsp; -</td>
+                    </tr>
+                    <tr>
+                        <td>&lt;&lt;&nbsp; &gt;&gt;</td>
+                    </tr>
+                    <tr>
+                        <td>&lt;&nbsp; &lt;=&nbsp; &gt;&nbsp; &gt;= cast in instanceof in is like</td>
+                    </tr>
+                    <tr>
+                        <td>==&nbsp; !=</td>
+                    </tr>
+                    <tr>
+                        <td>&amp;&amp;</td>
+                    </tr>
+                    <tr>
+                        <td>||</td>
+                    </tr>
+                    <tr>
+                        <td>=</td>
+                    </tr>
+                    <tr>
+                        <td>,</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <a id="operators"></a>
+            <p>For example, the expression: a = x + y * z is equivalent to a = x + (y * z).</p>
+
+    </div>
+    <div class="terms ui basic center aligned segment">
+        <p>&copy; Embedthis Software, 2003-2014. All rights reserved.</p>
+    </div>
+
+    <script src="../jquery/jquery.min.js"></script>
+    <script src="../semantic-ui/semantic.js"></script>
+    <script>
+        var sl = $('.sidebar-launch');
+        $('.sidebar-launch').click(function() {
+            var body = $('body');
+            if (!body.hasClass('show-sidebar')) {
+                body.addClass('show-sidebar');
+                $('.sidebar').css('visibility', 'visible');
+            } else {
+                body.removeClass('show-sidebar');
+                $('.sidebar').css('visibility', 'hidden');
+            }
+        });
+        $('.sidebar-launch').trigger('click');
+        $('.sidebar a.item').click(function(e) {
+            sessionStorage.setItem('scroll-top', $('.sidebar').scrollTop());
+        });
+        $(function() {
+            var url = '../language/expressions.html';
+            var active = $('.sidebar a[href="' + url +'"]');
+            active.addClass('active');
+            $('.sidebar').scrollTop(sessionStorage.getItem('scroll-top'));
+        });
+    </script> 
+
+        
+    <script>
+        (function() {
+            var r = new XMLHttpRequest();
+            r.onreadystatechange = function() {
+                if (r.readyState >= 3 && r.status == 200) {
+                    window.location.reload();
+                }
+            }
+            r.open("GET", "/reload-service", true);
+            r.send();
+        })();
+    </script>
+    
+
+</body>
+</html>

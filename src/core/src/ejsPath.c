@@ -510,6 +510,7 @@ PUBLIC EjsArray *ejsGetPathFiles(Ejs *ejs, EjsPath *fp, int argc, EjsAny **argv)
         instructions = ejsCreateEmptyPot(ejs);
         ejsSetPropertyByName(ejs, instructions, EN("files"), ejsCreateStringFromAsc(ejs, "*"));
         getFilesWithInstructions(ejs, fp, instructions, results);
+
     } else if (ejsIs(ejs, argv[0], Array)) {
         list = argv[0];
         allPots = 1;
@@ -533,8 +534,10 @@ PUBLIC EjsArray *ejsGetPathFiles(Ejs *ejs, EjsPath *fp, int argc, EjsAny **argv)
             }
             getFilesWithInstructions(ejs, fp, instructions, results);
         }
+
     } else if (ejsIsPot(ejs, argv[0])) {
         getFilesWithInstructions(ejs, fp, argv[0], results);
+
     } else {
         instructions = ejsCreateEmptyPot(ejs);
         ejsSetPropertyByName(ejs, instructions, EN("files"), argv[0]);
@@ -692,10 +695,18 @@ static EjsArray *getFilesWithInstructions(Ejs *ejs, EjsPath *fp, EjsObj *instruc
         }
         if (pat[0] == '!' && !(flags & FILES_NONEG)) {
             negate = ejsCreateArray(ejs, 0);
-            if (!getFiles(ejs, negate, fp, &pat[1], 0, relative, exclude, include, options, flags & ~FILES_NOMATCH_EXC)) {
+            pat = &pat[1];
+            if (!getFiles(ejs, negate, fp, pat, 0, relative, exclude, include, options, flags & ~FILES_NOMATCH_EXC)) {
                 return 0;
             }
             ejsRemoveItems(ejs, results, negate);
+            if (flags & FILES_CONTENTS && mprIsPathDir(mprJoinPath(fp->value, pat))) {
+                pat = mprJoinPath(pat, "**");
+                if (!getFiles(ejs, negate, fp, pat, 0, relative, exclude, include, options, flags & ~FILES_NOMATCH_EXC)) {
+                    return 0;
+                }
+                ejsRemoveItems(ejs, results, negate);
+            }
         } else {
             if (!getFiles(ejs, results, fp, pat, missing, relative, exclude, include, options, flags)) {
                 return 0;
@@ -813,11 +824,48 @@ static EjsArray *getFiles(Ejs *ejs, EjsArray *results, EjsPath *thisPath, cchar 
 
 
 /*
-    function glob(pattern: String): Boolean
+    function glob(patterns: Object, options: Object = null): Boolean
  */
 static EjsBoolean *pathGlob(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return mprMatchPath(fp->value, ejsToMulti(ejs, argv[0])) ? ESV(true) : ESV(false);
+    EjsArray    *patterns;
+    EjsString   *pattern;
+    EjsAny      *expand, *options;
+    cchar       *pat;
+    int         i, match;
+
+    if (ejsIs(ejs, argv[0], Array)) {
+        patterns = (EjsArray*) argv[0];
+    } else {
+        patterns = ejsCreateArray(ejs, 0);
+        ejsAddItem(ejs, patterns, argv[0]);
+    }
+    options = (argc >= 2) ? argv[1] : 0;
+    if (!ejsIsDefined(ejs, options)) {
+        options = 0;
+    }
+    expand = 0;
+    if (options) {
+        expand = ejsGetPropertyByName(ejs, options, EN("expand"));
+    }
+    match = 0;
+    for (i = 0; i < patterns->length; i++) {
+        pattern = ejsToString(ejs, ejsGetItem(ejs, patterns, i));
+        if (expand) {
+            pattern = expandPath(ejs, fp, pattern, expand, options);
+        }
+        pat = ejsToMulti(ejs, pattern);
+        if (pat[0] == '!') {
+            if (mprMatchPath(fp->value, &pat[1])) {
+                match = 0;
+            }
+        } else {
+            if (mprMatchPath(fp->value, pat)) {
+                match = 1;
+            }
+        }
+    }
+    return match ? ESV(true) : ESV(false);
 }
 
 

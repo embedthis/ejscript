@@ -74,7 +74,6 @@ static EjsWebSocket *wsConstructor(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj 
         mprVerifySslPeer(ws->ssl, verify);
 #if FUTURE
         if (!hp->caFile) {
-            //TODO - Some define for this.
             hp->caFile = mprJoinPath(mprGetAppDir(), "http-ca.crt");
         }
         mprSetSslCaFile(hp->ssl, hp->caFile);
@@ -169,10 +168,8 @@ static EjsWebSocket *ws_on(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 
     conn = ws->conn;
     if (conn->readq && conn->readq->count > 0) {
-        //  TODO - can't have NULL as data
         onWebSocketEvent(ws, HTTP_EVENT_READABLE, 0, 0);
     }
-    //  TODO - don't need to test finalizedConnector
     if (!conn->tx->finalizedConnector && 
             !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_FINALIZED &&
             conn->writeq->ioCount == 0) {
@@ -196,7 +193,6 @@ static EjsString *ws_protocol(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **arg
  */
 static EjsNumber *ws_readyState(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 {
-    //  TODO - should have API for this
     return ejsCreateNumber(ejs, (MprNumber) ws->conn->rx->webSocket->state);
 }
 
@@ -613,6 +609,10 @@ static bool waitForReadyState(EjsWebSocket *ws, int state, MprTicks timeout, int
         remaining = mprGetRemainingTicks(mark, timeout);
         dispatcherMark = mprGetEventMark(conn->dispatcher);
     }
+    /*
+        Very important. Sockets are referenced by wait handlers. So handlers prevent GC on the web socket.
+     */
+    mprRemoveSocketHandler(conn->sock);
     return rx->webSocket->state >= state;
 }
 
@@ -635,7 +635,7 @@ static void manageWebSocket(EjsWebSocket *ws, int flags)
         ejsManagePot((EjsPot*) ws, flags);
 
     } else if (flags & MPR_MANAGE_FREE) {
-        if (ws->conn && ws->ejs->service) {
+        if (ws->conn) {
             httpDestroyConn(ws->conn);
             ws->conn = 0;
         }

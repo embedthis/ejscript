@@ -1,0 +1,273 @@
+/*
+    manifest.me - MakeMe package manifest for Ejscript
+ */
+
+Me.load({
+    /*
+        Package manifest instructions
+     */
+    manifest: {
+        home: me.dir.bin,
+        root: false,
+        packages:   {
+            install: {
+                inherit:    'package-manifest',
+                prefixes:   [ 'root', 'app', 'vapp', 'bin', 'inc', 'man' ],
+                sets:       [ 'core', 'libs', 'dev', 'doc' ],
+                platforms:  [ 'windows', 'unix' ],
+            },
+            binary: {
+                inherit:    'package-manifest',
+                prefixes:   [ 'root', 'app', 'vapp', 'bin', 'inc', 'man' ],
+                formats:    [ 'native', 'tar' ],
+                sets:       [ 'core', 'libs', 'test', 'doc', 'dev', 'package' ],
+                platforms:  [ 'windows', 'macosx' ]
+            },
+            source: {
+                inherit:    'package-manifest',
+                prefixes:   [ 'root', 'src' ],
+                formats:    [ 'tar' ],
+                sets:       [ 'source' ],
+            },
+            pak: {
+                inherit:    'package-manifest',
+                prefixes:   [ 'src'],
+                formats:    [ 'tar' ],
+                sets:       [ 'pak' ],
+            },
+        },
+
+        sets: {
+            core: [
+                { 
+                    from: [
+                                'ejs${EXE}',
+                                'ejsc${EXE}',
+                                'ejsman${EXE}',
+                                'ejsmod${EXE}',
+                                'ejsrun${EXE}',
+                                'mvc${EXE}',
+                                'utest${EXE}',
+                    ],
+                    to:         '${abin}/',
+                    symlink:    '${bin}/',
+
+                }, { 
+                    from: [
+                                /* Don't use wild-cards for cross-generation  */
+                                'libejs.db.sqlite${SHOBJ}',
+                                'libejs${SHOBJ}',
+                                'libejs.web${SHOBJ}',
+                                'libejs.zlib${SHOBJ}',
+                                'libhttp${SHOBJ}',
+                                'libmpr${SHOBJ}',
+                                'libpcre${SHOBJ}',
+                                'libsql${SHOBJ}',
+                                'libzlib${SHOBJ}',
+                    ],
+                    to:         '${abin}/',
+                    enable:     '!me.settings.static', 
+
+                }, { 
+                    from: [
+                                'ejs.db.mapper.mod',
+                                'ejs.db.mod',
+                                'ejs.db.sqlite.mod',
+                                'ejs.mod',
+                                'ejs.mvc.mod',
+                                'ejs.tar.mod',
+                                'ejs.template.mod',
+                                'ejs.unix.mod',
+                                'ejs.web.mod',
+                                'ejs.zlib.mod',
+                                'mvc.es',
+                                'utest.es',
+                                'utest.worker',
+                    ],
+                    to:         '${abin}/',
+
+                }, { 
+                    from:       'libmprssl${SHOBJ}',
+                    to:         '${abin}/',
+                    ifdef:      'ssl',
+                    enable:     '!me.settings.static', 
+
+                }, { 
+                    from:       '${TOP}/src/est/ca.crt',
+                    to:         '${abin}/',
+                    ifdef:      'ssl',
+
+                }, { 
+                    from: [
+                                'libssl*${SHOBJ}*',
+                                'libcrypto*${SHOBJ}*',
+                    ],
+                    to:         '${abin}/',
+                    enable:     "me.platform.os != 'windows' && !makeme.options.gen",
+                    ifdef:      'openssl',
+
+                }, { 
+                    from: [
+                                'libeay32${SHOBJ}',
+                                'ssleay32${SHOBJ}',
+                    ],
+                    to:         '${abin}/',
+                    enable:     "me.platform.os == 'windows'",
+                    ifdef:      'openssl',
+
+                }, { 
+                    from:       'libest${SHOBJ}',
+                    to:         '${abin}/',
+                    ifdef:      'est',
+                    enable:     '!me.settings.static', 
+
+                }, { 
+                    from:       'libejs${SHLIB}',
+                    to:         '${abin}/',
+                    enable:     "me.platform.os == 'windows' && !me.settings.static",
+
+                }, {
+                    home:       '${TOP}',
+                    from:       '${TOP}/src/ejs.web/www',
+                    to:         '${abin}/',
+                    relative:   'src/ejs.web',
+                    flatten:    false,
+                }
+            ],
+            dev: [
+                {
+                    home:       '${TOP}',
+                    from: [ 
+                                'src/*.h', 
+                                'src/vm/*.h', 
+                                'src/slots/*.h', 
+                                'src/**.h'
+                    ],
+                    to:         '${vapp}/inc/',
+                    symlink:    '${inc}/ejs/',
+                }
+            ],
+            doc: [
+                {
+                    from:       '${TOP}/doc/dist/man/*.1',
+                    to:         '${adoc}/man1/',
+                    enable:     "me.platform.like == 'unix'",
+                    symlink:    '${man}/man1/',
+                }
+            ],
+            source: [
+                {
+                    home:       '${TOP}',
+                    from: [ 
+                                'paks',
+                                'src', 
+                                'doc', 
+                                'projects', 
+                                'installs'
+                    ],
+                    to:         '${src}/',
+                    exclude:    /\/old\/|\.old$|\.tmp$/,
+                    flatten:    false,
+
+                }, {
+                    home:       '${TOP}',
+                    from: [ 
+                                'Makefile', 
+                                'main.me', 
+                                'make.bat', 
+                                'package.json'
+                    ],
+                    to:         '${src}/',
+
+                }, {
+                    from:       '${TOP}/*.md',
+                    to:         '${src}/',
+                    fold:       true,
+                    patch:      true,
+
+                }, {
+                    from:       '${TOP}/configure',
+                    to:         '${src}/',
+                    permissions:0755,     
+                }
+            ],
+            pak: [
+                {
+                    from:       '${TOP}/installs/ejs.me',
+                    to:         '${src}/dist/ejs.me',
+
+                }, {
+                    home:       '${TOP}',
+                    from: [
+                                'src/ejsByteCode.h',
+                                'src/ejsByteCodeTable.h',
+                                'src/ejs.h',
+                                'src/ejs.web/ejsWeb.h',
+                                'src/ejsCompiler.h',
+                    ],
+                    to:         '${src}/dist/ejs.h',
+                    append:     true, 
+                    filter:     /^#inc.*ejs.*$|^#inc.*ec.*$|^#inc.*customize.*$|#include.*zlib.h.*$|#inc.*ejs.zlib.slots.h.*/mg,
+                    header:     '/*\n * ${settings.title} Library Source\n */\n#include \"me.h\"\n#if ME_COM_EJS\n\n#undef PRINTF_ATTRIBUTE\n#define PRINTF_ATTRIBUTE(x,y)\n\n#include \"osdep.h\"\n#include \"mpr.h\"\n#include \"http.h\"\n#include \"ejs.slots.h\"\n#include \"pcre.h\"\n#include \"zlib.h\"\n',
+                    divider:    true,
+                    footer:     '#endif /* ME_COM_EJS */',
+
+                }, {
+                    from:       '${TOP}/src/vm/ejsByteGoto.h',
+                    to:         '${src}/dist/ejsByteGoto.h',
+
+                }, {
+                    from:       [
+                                '${INC}/ejs.cache.local.slots.h',
+                                '${INC}/ejs.db.sqlite.slots.h',
+                                '${INC}/ejs.slots.h',
+                                '${INC}/ejs.web.slots.h',
+                                '${INC}/ejs.zlib.slots.h',
+                    ],
+                    to:         '${src}/dist/ejs.slots.h',
+                    append:     true, 
+                    header:     '/*\n * ${settings.title} Object Slot Definitions\n */\n',
+                    divider:    true,
+
+                }, {
+                    from:       '${TOP}/src/**.c', 
+                    to:         '${src}/dist/ejsLib.c',
+                    append:     true,                                                                                         
+                    filter:     /^#inc.*ejs.*$|^#inc.*ec.*$|^#inc.*customize.*$|#include.*zlib.h.*$|#inc.*ejs.zlib.slots.h.*/mg,
+                    exclude:    /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|\/mpr|\/http|\/est|\/pcre|\/sqlite|\/zlib\/|ejs.debugger|samples|utils|ejsrun\.c/,
+                    header:     '/*\n * ${settings.title} Library Source\n */\n#define EJS_DEFINE_OPTABLE 1\n#include \"ejs.h\"\n\n#if ME_COM_EJS',
+                    divider:    true,
+                    footer:     '#endif /* ME_COM_EJS */',
+
+                }, {
+                    home:       '${TOP}',
+                    from: [
+                                'src/core/**.es', 
+                                'src/**.es'
+                    ],
+                    to:         '${src}/dist/ejs.es',
+                    append:     true,                                                                                         
+                    exclude:    /\/paks\/|ejs.me|ejs.debugger|test|sample|ejspage.es|ejs.mvc/,                            
+                    header:     '/*\n * ${settings.title} Script Library\n */\n',
+                    divider:    true,
+
+                }, {
+                    from:       '${TOP}/src/cmd/ejs.c', 
+                    to:         '${src}/dist/ejs.c',
+                    append:     true,
+                    filter:     /^#inc.*$/mg,
+                    header:     '/*\n * ${settings.title} Shell Command\n */\n#include \"ejs.h\"',
+                    divider:    true,
+
+                }, {
+                    from:       '${TOP}/src/cmd/ejsc.c', 
+                    to:         '${src}/dist/ejsc.c',
+                    append:     true,
+                    filter:     /^#inc.*$/mg,
+                    header:     '/*\n * ${settings.title} Compiler\n */\n#include \"ejs.h\"',
+                    divider:    true,
+                },
+            ]
+        },
+    },
+})

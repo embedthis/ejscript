@@ -282,17 +282,17 @@ module ejs {
 
         /**
             Test if the path matches a 'glob' style pattern
-            @pattern Path pattern to match with. The following special sequences are supported:
+            @patterns Pattern or array of patterns to match with. A pattern may be prefixed with '!' to negate the
+            pattern. The following special sequences are supported within patterns:
             <ul>
                 <li>The wildcard '?' matches any single character</li>
                 <li>* matches zero or more characters in a filename or directory</li>
                 <li>** matches zero or more files or directories and matches recursively in a directory tree</li>
             </ul>
-            If a pattern ends with '/', the path must exist and be a directory.
-            @return True if the path matches the pattern.
+            @return True if the path matches the patterns.
             @hide
          */
-        native function glob(pattern: String): Boolean
+        native function glob(patterns: Object): Boolean
 
         /**
             Does the file path have a drive spec (C:) in it's name. Only relevant on Windows like systems.
@@ -361,7 +361,8 @@ module ejs {
         native function link(target: Path, hard: Boolean = false): Void
 
         /**
-            The target pointed to if this path is a symbolic link. Not available on some platforms such as Windows and 
+            Symbolic link target. This is the actual symbolic link. If relative, use this.dirname.join(linkTarget) to 
+            get the actual target of the symbolic link. Not available on some platforms such as Windows and 
             VxWorks. If the path is not a symbolic link, it is set to null.
          */
         native function get linkTarget(): Path?

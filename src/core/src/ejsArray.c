@@ -565,7 +565,7 @@ static EjsObj *clearArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 /*
     Clone an array.
 
-    function clone(deep: Boolean = false) : Array
+    function clone(deep: Boolean = true) : Array
  */
 static EjsArray *cloneArrayMethod(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
@@ -573,7 +573,7 @@ static EjsArray *cloneArrayMethod(Ejs *ejs, EjsArray *ap, int argc, EjsObj **arg
 
     assert(argc == 0 || ejsIs(ejs, argv[0], Boolean));
 
-    deep = (argc == 1) ? ((EjsBoolean*) argv[0])->value : 0;
+    deep = (argc == 1 && argv[0] == ESV(true));
     return ejsCloneArray(ejs, ap, deep);
 }
 
@@ -935,10 +935,13 @@ static EjsString *joinArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         if (!ejsIsDefined(ejs, sp)) {
             continue;
         }
+        sp = ejsToString(ejs, sp);
+        if (!ejsIsDefined(ejs, sp)) {
+            continue;
+        }
         if (i > 0 && sep) {
             mprPutBlockToBuf(buf, sep->value, sep->length);
         }
-        sp = ejsToString(ejs, sp);
         mprPutBlockToBuf(buf, sp->value, sp->length);
     }
     mprAddNullToBuf(buf);

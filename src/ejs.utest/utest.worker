@@ -128,7 +128,8 @@ public function startService(cmdline: String, options): Void {
 
 public function httpService(cmd: String, options = {}): Void {
     if (test.phase == "init") {
-        startService("ejs " + cmd, options)
+        let ejs = App.test.bin.join('ejs').portable
+        startService(ejs + ' ' + cmd, options)
     } else {
         stopService()
     }

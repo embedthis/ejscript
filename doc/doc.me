@@ -9,12 +9,13 @@ Me.load({
             depends: ['gen-doc', 'render-doc'],
             action: `
                 apidoc('api/ejs.dox', [
-                    '${SRC}/src/ejs.h',
-                    '${SRC}/src/ejs.web/ejsWeb.h',
-                    '${SRC}/src/ejsCompiler.h',
-                ], 'Ejscript API', 'api/*.tags')
-                for each (let src: Path in ['api/ejs.html', 'api/http.html', 'api/mpr.html', 'api/osdep.html']) {
-                    apiLayout(src, Path('documents/ref').join(src))
+                    '${SRC}/ejs.h',
+                    '${SRC}/ejs.web/ejsWeb.h',
+                    '${SRC}/ejsCompiler.h',
+                ], 'Ejscript API')
+                let files = Path().files(['api/ejs.html', me.dir.paks.join('*/doc/api/*.html')])
+                for each (let src: Path in files) {
+                    apiLayout(src, Path('dist/ref').join(src))
                 }
             `
         }, 
@@ -23,14 +24,14 @@ Me.load({
         'gen-doc': {
             action: `
                 trace('Generate', 'Script library documentation')
-                let src = me.dir.src.join('src')
+                let src = me.dir.src
                 let files = src.files('core/*.es')
                 for each (p in ['unix', 'db', 'db.mapper', 'db.sqlite', 'web', 'template']) {
                     files += src.files('ejs.' + p + '/*.es')
                 }
                 let docmod = Path('').temp().replaceExt('mod')
                 run('ejsc --doc --bind --out ' + docmod + ' --require null ' + files.join(' '))
-                let edir = Path('documents/ref/api/ejscript')
+                let edir = Path('dist/ref/api/ejscript')
                 rmdir([edir.join('*.html'), edir.join('*.css'), edir.join('images/*')])
                 run('ejsmod --warn --html ' + edir + ' --require null ' + docmod)
                 docmod.remove()
@@ -60,11 +61,11 @@ Me.load({
                 for each (f in Path('public/man').files('*.html')) {
                     f.write(f.readString().toLowerCase())
                 }
-                let path = Path('documents/ref/api/ejscript/index.html')
+                let path = Path('dist/ref/api/ejscript/index.html')
                 path.write('<!DOCTYPE html>\n<html lang="eng">\n<head>\n<title>Dummy</title>\n</head></html>')
 
-                trace('Listen', 'exp --nowatch')
-                Cmd.run('exp --nowatch')
+                trace('Listen', 'expansive --nowatch')
+                Cmd.run('expansive --nowatch')
             `
         }
     }

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Module Generator</title>
+    <!-- Copyright Embedthis Software. All Rights Reserved. -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="Javacript Language Environment" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
+        rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
+    <link href="../images/favicon.ico" rel="shortcut icon" />
+    <link href="../semantic-ui/semantic.css" rel="stylesheet" type="text/css" />
+    <link href="../css/all.css" rel="stylesheet" type="text/css" />
+    
+
+</head>
+<body>
+        <div class="sidebar">
+        <div class="ui large left vertical inverted labeled menu">
+            <div class="item">
+                <a href="../index.html" class="logo">Ejscript Docs</a>
+            </div>
+            <div class="item">
+                <a href="../index.html">
+                    <b>General</b>
+                </a>
+                <div class="menu">
+                    <a class="item" href="../index.html">Ejscript Overview</a>
+                    <a class="item" href="../users/features.html">Ejscript Features</a>
+                    <a class="item" href="https://embedthis.com/ejscript/download.html">Download</a> 
+                    <a class="item" href="../licensing/index.html">Licensing</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../start/index.html">
+                    <b>Getting Started</b>
+                </a>
+                <div class="menu">
+                    <a class="item" href="../start/quick.html">Quick Start</a>
+                    <a class="item" href="../start/installing.html">Installing Ejscript</a>
+                    <a class="item" href="../start/tour.html">Language Tour</a>
+                    <a class="item" href="../start/faq.html">FAQ</a>
+                    <a class="item" href="../start/releaseNotes.html">Release Notes</a>
+                    <a class="item" href="../start/source.html">Building from Source</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../users/index.html"><b>User's Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../users/shell.html">Using the Command Shell</a>
+                    <a class="item" href="../users/compiler.html">Using the Compiler</a>
+                    <a class="item" href="../users/ejsmod.html">Using the Module Generator</a>
+                    <a class="item" href="../users/doc.html">Generating Documentation</a>
+                    <a class="item" href="../users/listing.html">Generating Listing</a>
+                    <a class="item" href="../users/man.html">Man Pages</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../language/index.html"><b>Language Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../language/syntax.html">Language Syntax</a>
+                    <a class="item" href="../language/statements.html">Statements</a>
+                    <a class="item" href="../language/expressions.html">Expressions and Operators</a>
+                    <a class="item" href="../language/objects.html">Object and Arrays</a>
+                    <a class="item" href="../language/functions.html">Functions and Methods</a>
+                    <a class="item" href="../language/core.html">Core Language Types</a>
+                    <a class="item" href="../language/types.html">Types and Declarations</a>
+                    <a class="item" href="../language/classes.html">Classes and Instances</a>
+                    <a class="item" href="../language/modules.html">Modules and Namespaces</a>
+                    <a class="item" href="../language/library.html">System Library</a>
+                    <a class="item" href="../language/events.html">Events and Timers</a>
+                    <a class="item" href="../language/modes.html">Language Modes</a>
+                    <a class="item" href="../language/globals.html">Globals</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../web/index.html"><b>Web Framework Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../web/webTour.html">Web Framework Tour</a>
+                    <a class="item" href="../web/generator.html">Application Generator</a>
+                    <a class="item" href="../web/routing.html">Routing</a>
+                    <a class="item" href="../web/controllers.html">Controllers</a>
+                    <a class="item" href="../web/views.html">Views and Layout Templates</a>
+                    <a class="item" href="../web/controls.html">Ajax View Controls</a>
+                    <a class="item" href="../web/models.html">Database Models</a>
+                    <a class="item" href="../web/hosting.html">Hosting in Web Servers</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../developers/index.html">Developer's Guide</a>
+                <div class="menu">
+                    <a class="item" href="../developers/embedding.html">Embedding Ejscript</a>
+                    <a class="item" href="../developers/extending.html">Extending Ejscript</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../ref/index.html">Reference Guide</a>
+                <div class="menu">
+                    <a class="item" href="../ref/compatibility.html">Compatibility</a>
+                    <a class="item" href="../ref/native.html">Native APIs</a>
+                    <a class="item" href="../ref/api/ejscript/index.html" target="new">Script Library</a>
+                    <a class="item" href="../ref/architecture.html">Ejscript Architecture</a>
+                    <a class="item" href="../ref/webArchitecture.html">Web Framework Architecture</a>
+                    <a class="item" href="../ref/memory.html">Ejscript Memory Allocation</a>
+                    <a class="item" href="../ref/multithread.html">Multithreaded Programming</a>
+                    <a class="item" href="../standards/references.html">Standards</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../developers/project.html">Project Resources</a>
+                <div class="menu">
+                    <a class="item" href="http://goo.gl/g4oS2C">Official Ejscript News</a>
+                    <a class="item" href="https://embedthis.com/ejscript/">Ejscript Web Site</a>
+                    <a class="item" href="https://github.com/embedthis/ejs">Source Code Repository</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/issues">Project Issue Database</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/releases">Change Log</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/milestones">Roadmap</a>
+                    <a class="item" href="https://embedthis.com/developers/contributors.html">Contributors Agreement</a>
+                </div>
+            </div>
+            <div class="item">
+                <b>Links</b>
+                <div class="menu">
+                    <a class="item" href="https://embedthis.com/">Embedthis Web Site</a>
+                    <a class="item" href="https://embedthis.com/blog/">Embedthis Blog</a>
+                    <a class="item" href="http://twitter.com/mobstream">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="ui inverted masthead">
+         
+        <div class="ui fixed inverted menu">
+            <div class="ui sidebar-launch button">
+                <i class="icon list layout"></i>
+            </div>
+            <div class="right menu">
+                  
+                    <a class="item" href="https://embedthis.com/">Embedthis</a>
+                    <a class="item" href="https://embedthis.com/ejscript/">Ejscript Site</a>
+                    <span class="desktop-only">
+                        <a class="item" href="http://goo.gl/dGRDl4">Ejscript News</a>
+                        <a class="item" href="https://github.com/embedthis/ejs">Repository</a>
+                        <a class="item" href="https://embedthis.com/blog/">Blog</a>
+                        <a class="item" href="https://twitter.com/mobstream">Twitter</a>
+                    </span>
+
+            </div>
+        </div>
+        
+        <div class="ui breadcrumb">
+            <a class="section" href="../">Home</a>
+            
+            <div class="divider">/</div>
+            <a class="section" href="index.html">
+                User's Guide
+            </a>
+            
+            
+            <div class="divider">/</div>
+            <a class="active section" href="ejsmod.html">Module Generator</a>
+            
+        </div>
+        
+        <div class="version desktop-only">
+            v2.5.3
+        </div>
+
+    </div>
+    <div class="content">
+
+            <h1>Using the Module Generator</h1>
+            <p>The ejsmod command is a utility program for Ejscript module files to generate symbolic assembler
+            listings, slot binding definition files and HTML documentation for Ejscript modules.</p>
+            <h2>Generating Assembler Listings</h2>
+            <p>The ejsmod program can create assembler listing files for input modules. To generate symbolic assembler
+            listings, compile your source using the <b>ejsc</b> command with the --debug switch. Then invoke ejsmod
+            with the --listing switch. An assembler listing file with a ".lst" extension will be generated for each
+            corresponding module. For example:</p>
+            <pre class="ui code segment">
+ejsc --debug myfile.es
+ejsmod --listing default.mod
+</pre>
+            <p>If your script has module declarations, then run ejsmod with the list of modules you wish to
+            disassemble. Note: this creates assembler listings on a per module basis and not per input source file.</p>
+            <p>The listing will interleave disassembled byte code with the relevant source code statements. The listing
+            also describes each module and its constituent functions and initializers. The bindings for all types and
+            the constant pool are also listed.</p>
+            <h2>Generating Documentation</h2>
+            <p>To generate HTML documentation for your code, first compile using the ejsc command with the --doc
+            switch. Then invoke "ejsmod --html dir modules..." where dir is the directory where you want the
+            documentation located and modules is a list of the relevant modules. For example:</p>
+            <pre class="ui code segment">
+ejsc --debug --doc myfile.es
+ejsmod --html ./htmlDir *.mod
+</pre>
+            <p>The HTML documentation will include all modules, namespaces, types, functions, properties and variable
+            declarations.</p>
+            <h2>Generating Slot Definition Files</h2>Ejscript supports the creation of Native types which are coded in
+            the C language. Native types are useful for core system types and for classes that must run at near binary
+            speed. To facilitate creating native types, ejsmod generates slot binding files which define symbolic
+            offsets for type properties and functions. See the Native class samples for further information.
+            <h2>Command Options</h2>
+            <p>The ejsmod command may be invoked with the following command options:</p>
+            <pre class="ui code segment">
+<strong>ejsmod</strong> [--cslots] [--html path] [--listing] [--out slot-file] 
+       [--require modules] [--searchPath ejsPath] [--version] [--warn]
+       <b>modules ...</b>
+</pre>The meaning of each switch is listed below:
+            <table title="switches" class="ui table segment">
+                <thead>
+                    <tr>
+                        <th class="four wide">Switch</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>--cslots</td>
+                    <td>Generate slot binding headers for the input modules.</td>
+                </tr>
+                <tr>
+                    <td>--html dir</td>
+                    <td>Generate HTML documentation to the specified directory. The source files must have been
+                    compiled by <b>ejsc</b> with the --doc switch to include the documentation strings in the module
+                    files.</td>
+                </tr>
+                <tr>
+                    <td class="nowrap">--listing</td>
+                    <td>Generate symbolic assembler files for each input module.</td>
+                </tr>
+                <tr>
+                    <td>--out file</td>
+                    <td>Output file for generate slot definitions.</td>
+                </tr>
+                <tr>
+                    <td>--require modules</td>
+                    <td>Required modules to pre-load before generating.</td>
+                </tr>
+                <tr>
+                    <td class="nowrap">--searchPath ejsPath</td>
+                    <td>
+                        <p>Override the module search path. The module search path is a set of directories that the ejs
+                        command will use when locating and loading Ejscript modules. Given a module named "a.b.c" in a
+                        script, ejs will use the following search strategy to locate the module:</p>
+                        <p>1. Search for a module file named "a.b.c.mod"</p>
+                        <p>2. Search for a module file named "a/b/c.mod"</p>
+                        <p>3. Search for a module file named "a.b.c.mod" in EJSPATH</p>
+                        <p>4. Search for a module file named c.mod in EJSPATH</p>
+                        <p>The search path is initially specified via the environment variable EJSPATH and may be
+                        overridden via the --searchPath ejsPath switch. EJSPATH and the ejsPath command line value are
+                        similar to the system PATH formats. On windows, path segments are separated by ";" and on
+                        Linux, Unix, FreeBSD and MAC, the path segments are separated by ":" delimiters.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>--version</td>
+                    <td>Print the ejsmod command version and exit.</td>
+                </tr>
+                <tr>
+                    <td>--warn</td>
+                    <td>Warn about undocumented methods or parameters in documentation.</td>
+                </tr>
+                </tbody>
+            </table>
+
+    </div>
+    <div class="terms ui basic center aligned segment">
+        <p>&copy; Embedthis Software, 2003-2014. All rights reserved.</p>
+    </div>
+
+    <script src="../jquery/jquery.min.js"></script>
+    <script src="../semantic-ui/semantic.js"></script>
+    <script>
+        var sl = $('.sidebar-launch');
+        $('.sidebar-launch').click(function() {
+            var body = $('body');
+            if (!body.hasClass('show-sidebar')) {
+                body.addClass('show-sidebar');
+                $('.sidebar').css('visibility', 'visible');
+            } else {
+                body.removeClass('show-sidebar');
+                $('.sidebar').css('visibility', 'hidden');
+            }
+        });
+        $('.sidebar-launch').trigger('click');
+        $('.sidebar a.item').click(function(e) {
+            sessionStorage.setItem('scroll-top', $('.sidebar').scrollTop());
+        });
+        $(function() {
+            var url = '../users/ejsmod.html';
+            var active = $('.sidebar a[href="' + url +'"]');
+            active.addClass('active');
+            $('.sidebar').scrollTop(sessionStorage.getItem('scroll-top'));
+        });
+    </script> 
+
+        
+    <script>
+        (function() {
+            var r = new XMLHttpRequest();
+            r.onreadystatechange = function() {
+                if (r.readyState >= 3 && r.status == 200) {
+                    window.location.reload();
+                }
+            }
+            r.open("GET", "/reload-service", true);
+            r.send();
+        })();
+    </script>
+    
+
+</body>
+</html>

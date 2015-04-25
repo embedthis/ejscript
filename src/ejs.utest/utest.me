@@ -22,7 +22,7 @@ Me.load({
         utest: {
             type: 'exe',
             path: '${BIN}/utest${EXE}',
-            sources: [ '${SRC}/src/cmd/ejsrun.c' ],
+            sources: [ '${SRC}/cmd/ejsrun.c' ],
             depends: ['libejs', 'utest.es', 'utest.worker'],
             platforms: [ 'local' ],
         },

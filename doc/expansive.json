@@ -1,8 +1,8 @@
 {
     meta: {
-        url: 'https://embedthis.com/ejs/doc/',
+        url: 'https://embedthis.com/ejs/doc/'
     },
     control: {
-        copy: [ 'images' ],
+        listen: '127.0.0.1:5000'
     }
 }

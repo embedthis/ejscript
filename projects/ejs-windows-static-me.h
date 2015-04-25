@@ -115,7 +115,7 @@
     #define ME_INTEGRATE 1
 #endif
 #ifndef ME_MANIFEST
-    #define ME_MANIFEST "package/manifest.me"
+    #define ME_MANIFEST "installs/manifest.me"
 #endif
 #ifndef ME_ME
     #define ME_ME "=>0.8.4"
@@ -136,10 +136,7 @@
     #define ME_PLATFORMS "local"
 #endif
 #ifndef ME_PREFIXES
-    #define ME_PREFIXES "package-prefixes"
-#endif
-#ifndef ME_STATIC
-    #define ME_STATIC 1
+    #define ME_PREFIXES "install-prefixes"
 #endif
 #ifndef ME_TITLE
     #define ME_TITLE "Embedthis Ejscript"
@@ -148,7 +145,7 @@
     #define ME_TUNE "speed"
 #endif
 #ifndef ME_VERSION
-    #define ME_VERSION "2.5.2"
+    #define ME_VERSION "2.5.3"
 #endif
 
 /* Prefixes */
@@ -246,10 +243,10 @@
     #define ME_MINOR_VERSION 5
 #endif
 #ifndef ME_PATCH_VERSION
-    #define ME_PATCH_VERSION 2
+    #define ME_PATCH_VERSION 3
 #endif
 #ifndef ME_VNUM
-    #define ME_VNUM 200050002
+    #define ME_VNUM 200050003
 #endif
 
 /* Components */

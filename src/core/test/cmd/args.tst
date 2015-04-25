@@ -2,7 +2,7 @@
     args.tst
  */
 
-let ejs = Cmd.locate('ejs')
+let ejs = App.test.bin.join('ejs')
 
 //  TODO -- should run on windows too!
 if (!Path("/bin").exists) {

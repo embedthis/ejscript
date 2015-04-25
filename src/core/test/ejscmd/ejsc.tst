@@ -14,12 +14,13 @@ let compileFlags = [
 /*
     Compile a test stub so we can use the same tests in commands
  */
-Cmd.run(Cmd.locate("ejsc") + " --out ejs.test.mod test.stub.es")
+let ejsc = App.test.bin.join('ejsc')
+Cmd.run(ejsc + " --out ejs.test.mod test.stub.es")
 
 if (test.depth >= 2) {
     for (i = 0; i < test.depth && i < compileFlags.length; i++) {
         let flags = compileFlags[i]
-        let command = Cmd.locate("ejsc") + " " + flags
+        let command = ejsc + " " + flags
 
         for each (f in find(["lang", "db", "lib", "regress"], "*.tst")) {
             Cmd.sh(command + " " + f)

@@ -4,7 +4,7 @@
 
 require ejs.tar
 
-let name = Path('').temp().joinExt('tar')
+let name = Path('').temp()
 tar = new Tar(name)
 
 tar.create('empty.dat')

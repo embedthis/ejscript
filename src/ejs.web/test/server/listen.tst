@@ -9,6 +9,8 @@ const PORT = Uri(HTTP).port
 server = new HttpServer
 assert(server.address == null)
 
+/*
+    This causes a firewall warning on macosx
 // Listen on all ports
 server.listen(":" + PORT)
 assert(server.address == "")
@@ -16,6 +18,7 @@ assert(server.port == 6700)
 assert(server.name == null)
 assert(!server.isSecure)
 server.close()
+*/
 
 
 // With an IP to set server.address

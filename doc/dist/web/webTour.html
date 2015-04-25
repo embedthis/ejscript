@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Web Framework Tour</title>
+    <!-- Copyright Embedthis Software. All Rights Reserved. -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="Javacript Language Environment" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
+        rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
+    <link href="../images/favicon.ico" rel="shortcut icon" />
+    <link href="../semantic-ui/semantic.css" rel="stylesheet" type="text/css" />
+    <link href="../css/all.css" rel="stylesheet" type="text/css" />
+    
+
+</head>
+<body>
+        <div class="sidebar">
+        <div class="ui large left vertical inverted labeled menu">
+            <div class="item">
+                <a href="../index.html" class="logo">Ejscript Docs</a>
+            </div>
+            <div class="item">
+                <a href="../index.html">
+                    <b>General</b>
+                </a>
+                <div class="menu">
+                    <a class="item" href="../index.html">Ejscript Overview</a>
+                    <a class="item" href="../users/features.html">Ejscript Features</a>
+                    <a class="item" href="https://embedthis.com/ejscript/download.html">Download</a> 
+                    <a class="item" href="../licensing/index.html">Licensing</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../start/index.html">
+                    <b>Getting Started</b>
+                </a>
+                <div class="menu">
+                    <a class="item" href="../start/quick.html">Quick Start</a>
+                    <a class="item" href="../start/installing.html">Installing Ejscript</a>
+                    <a class="item" href="../start/tour.html">Language Tour</a>
+                    <a class="item" href="../start/faq.html">FAQ</a>
+                    <a class="item" href="../start/releaseNotes.html">Release Notes</a>
+                    <a class="item" href="../start/source.html">Building from Source</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../users/index.html"><b>User's Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../users/shell.html">Using the Command Shell</a>
+                    <a class="item" href="../users/compiler.html">Using the Compiler</a>
+                    <a class="item" href="../users/ejsmod.html">Using the Module Generator</a>
+                    <a class="item" href="../users/doc.html">Generating Documentation</a>
+                    <a class="item" href="../users/listing.html">Generating Listing</a>
+                    <a class="item" href="../users/man.html">Man Pages</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../language/index.html"><b>Language Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../language/syntax.html">Language Syntax</a>
+                    <a class="item" href="../language/statements.html">Statements</a>
+                    <a class="item" href="../language/expressions.html">Expressions and Operators</a>
+                    <a class="item" href="../language/objects.html">Object and Arrays</a>
+                    <a class="item" href="../language/functions.html">Functions and Methods</a>
+                    <a class="item" href="../language/core.html">Core Language Types</a>
+                    <a class="item" href="../language/types.html">Types and Declarations</a>
+                    <a class="item" href="../language/classes.html">Classes and Instances</a>
+                    <a class="item" href="../language/modules.html">Modules and Namespaces</a>
+                    <a class="item" href="../language/library.html">System Library</a>
+                    <a class="item" href="../language/events.html">Events and Timers</a>
+                    <a class="item" href="../language/modes.html">Language Modes</a>
+                    <a class="item" href="../language/globals.html">Globals</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../web/index.html"><b>Web Framework Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../web/webTour.html">Web Framework Tour</a>
+                    <a class="item" href="../web/generator.html">Application Generator</a>
+                    <a class="item" href="../web/routing.html">Routing</a>
+                    <a class="item" href="../web/controllers.html">Controllers</a>
+                    <a class="item" href="../web/views.html">Views and Layout Templates</a>
+                    <a class="item" href="../web/controls.html">Ajax View Controls</a>
+                    <a class="item" href="../web/models.html">Database Models</a>
+                    <a class="item" href="../web/hosting.html">Hosting in Web Servers</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../developers/index.html">Developer's Guide</a>
+                <div class="menu">
+                    <a class="item" href="../developers/embedding.html">Embedding Ejscript</a>
+                    <a class="item" href="../developers/extending.html">Extending Ejscript</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../ref/index.html">Reference Guide</a>
+                <div class="menu">
+                    <a class="item" href="../ref/compatibility.html">Compatibility</a>
+                    <a class="item" href="../ref/native.html">Native APIs</a>
+                    <a class="item" href="../ref/api/ejscript/index.html" target="new">Script Library</a>
+                    <a class="item" href="../ref/architecture.html">Ejscript Architecture</a>
+                    <a class="item" href="../ref/webArchitecture.html">Web Framework Architecture</a>
+                    <a class="item" href="../ref/memory.html">Ejscript Memory Allocation</a>
+                    <a class="item" href="../ref/multithread.html">Multithreaded Programming</a>
+                    <a class="item" href="../standards/references.html">Standards</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../developers/project.html">Project Resources</a>
+                <div class="menu">
+                    <a class="item" href="http://goo.gl/g4oS2C">Official Ejscript News</a>
+                    <a class="item" href="https://embedthis.com/ejscript/">Ejscript Web Site</a>
+                    <a class="item" href="https://github.com/embedthis/ejs">Source Code Repository</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/issues">Project Issue Database</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/releases">Change Log</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/milestones">Roadmap</a>
+                    <a class="item" href="https://embedthis.com/developers/contributors.html">Contributors Agreement</a>
+                </div>
+            </div>
+            <div class="item">
+                <b>Links</b>
+                <div class="menu">
+                    <a class="item" href="https://embedthis.com/">Embedthis Web Site</a>
+                    <a class="item" href="https://embedthis.com/blog/">Embedthis Blog</a>
+                    <a class="item" href="http://twitter.com/mobstream">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="ui inverted masthead">
+         
+        <div class="ui fixed inverted menu">
+            <div class="ui sidebar-launch button">
+                <i class="icon list layout"></i>
+            </div>
+            <div class="right menu">
+                  
+                    <a class="item" href="https://embedthis.com/">Embedthis</a>
+                    <a class="item" href="https://embedthis.com/ejscript/">Ejscript Site</a>
+                    <span class="desktop-only">
+                        <a class="item" href="http://goo.gl/dGRDl4">Ejscript News</a>
+                        <a class="item" href="https://github.com/embedthis/ejs">Repository</a>
+                        <a class="item" href="https://embedthis.com/blog/">Blog</a>
+                        <a class="item" href="https://twitter.com/mobstream">Twitter</a>
+                    </span>
+
+            </div>
+        </div>
+        
+        <div class="ui breadcrumb">
+            <a class="section" href="../">Home</a>
+            
+            <div class="divider">/</div>
+            <a class="section" href="index.html">
+                Web Framework Guide
+            </a>
+            
+            
+            <div class="divider">/</div>
+            <a class="active section" href="webTour.html">Web Framework Tour</a>
+            
+        </div>
+        
+        <div class="version desktop-only">
+            v2.5.3
+        </div>
+
+    </div>
+    <div class="content">
+
+            <h1>Ejscript Web Framework Tour</h1>
+            <p>This quick tour of the Ejscript Web Framework provides an overview of the web framework and how to use
+            it for your web applications.</p>
+            <p>First make sure you have read the <a href="../start/quick.html">Quick Start</a> and the Ejscript
+            <a href="../start/tour.html">Language Tour</a>, and that you have Ejscript installed on your system so you
+            can type along as you go. This web framework tour will work with the Ejscript <a href=
+            "../users/shell.html">Command Shell</a> and the web framework <a href="generator.html">mvc</a> application
+            generator to run scripts.</p><a id="blog"></a>
+            <h2 >A Demonstration Blog Application</h2>
+            <p>Command sessions are presented in blue boxes. Output from the system is highlighted in yellow. Bold
+            yellow is used to highlight some output of specific interest.</p>
+            <h2 ><a id="create"></a>Creating a New Application</h2>
+            <p>To create a new Ejscript application, you will use <em>mvc</em>, the Ejscript application generator
+            program. Type the following mvc command in a command terminal window:</p>
+            <pre class="ui code segment">
+<b>home&gt;</b> mvc -v generate app blog<b>
+  [CREATED] Directory: blog
+  [CREATED] Directory: cache
+  [CREATED] Directory: controllers
+  [CREATED] Directory: db
+  [CREATED] Directory: db/migrations
+  [CREATED] Directory: models
+  [CREATED] Directory: src
+  [CREATED] Directory: views
+  [CREATED] Directory: views/Base
+  [CREATED] Directory: layouts
+  [CREATED] Directory: static
+  [CREATED] Directory: static/images
+  [CREATED] Directory: static/themes
+  [CREATED] start.es: "start.es"
+  [CREATED] App: "src/App.es"
+  [CREATED] Config File: "ejsrc"
+  [CREATED] Layout: "layouts/default.ejs"
+  [CREATED] HomePage: "views/Base/index.ejs"
+  [CREATED] Static web page: "static/images/banner.jpg"
+  [CREATED] Static web page: "static/images/favicon.ico"
+  [CREATED] Static web page: "static/images/splash.jpg"
+  [CREATED] Static web page: "static/js"
+  [CREATED] Static web page: "static/js/jquery.ejs.min.js"
+  [CREATED] Static web page: "static/js/jquery.min.js"
+  [CREATED] Static web page: "static/js/jquery.simplemodal.min.js"
+  [CREATED] Static web page: "static/layout.css"
+  [CREATED] Static web page: "static/themes/default.css"
+  [CREATED] BaseController: "controllers/Base.es"
+  [CREATED] README: "README"
+  [BUILD]: src/App.es controllers/Base.es
+Change directory into your application directory: blog
+Then run the web server via: "mvc run"
+and point your browser at: http://localhost::4000/ to view your app.</b>
+</pre>
+            <p>This simple command accomplished quite a bit. It first created a new directory called <em>blog</em> for
+            the application, and then created subdirectories for various parts of the application. Initially, most of
+            these directories are empty. They are used as your application grows.</p>
+            <p>The command also created an <em>ejsrc</em> configuration file. This allows you to define a
+            database name, and set other configuration settings. The Ejscript web framework follows the 
+            <i>"convention over configuration"</i> philosophy popularized by 
+            <a href="http://www.rubyonrails.org">Ruby on Rails</a>. This means that Ejscript adopts certain conventions
+            about where files and directories should be placed and about how names are used. If you work with these
+            conventions, then you need to do little or no configuration.  Things will just work.</p>
+            <p>Here are the most important directories:</p>
+            <table title="directories" class="ui table segment">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>cache</td>
+                        <td>Compiled views and web pages</td>
+                    </tr>
+                    <tr>
+                        <td>controllers</td>
+                        <td>Application controller classes</td>
+                    </tr>
+                    <tr>
+                        <td>db</td>
+                        <td>Database file and database initialization scripts</td>
+                    </tr>
+                    <tr>
+                        <td>layouts</td>
+                        <td>View layout template pages</td>
+                    </tr>
+                    <tr>
+                        <td>models</td>
+                        <td>Database model classes</td>
+                    </tr>
+                    <tr>
+                        <td>src</td>
+                        <td>Application source code classes</td>
+                    </tr>
+                    <tr>
+                        <td>static</td>
+                        <td>Static web pages</td>
+                    </tr>
+                    <tr>
+                        <td>views</td>
+                        <td>View web pages</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>See the <a href="generator.html">mvc</a> command documentation for an explanation of the other generated
+            directories.</p>
+            
+            <a id="run"></a>
+            <h2 >Running your Application</h2>
+            <p>You can immediately run your application after generation. Ejscript includes a built-in web server so
+            you can run your application without needing to deploy to an external web server. The Ejscript built-in web
+            server is based on the <a href="http://www.appwebserver.org">Appweb</a> embedded web server which is a fast
+            and compact server ideal for development and for production hosting. For more information about hosting
+            Ejscript in web servers, read the <a href="hosting.html">Hosting</a> document.</p>
+            <p>To run the web server:</p>
+            <pre class="ui code segment">
+mvc run
+<b>[RUN]: /usr/lib/ejs/appweb --home /usr/lib/ejs \
+    --ejs /:/var/www/blog/ --log /dev/tty:1
+appweb: 1: Starting host named: "127.0.0.1:4000"
+appweb: 1: HTTP services are ready (single-threaded)</b>
+</pre>
+            <p>Then enter <em>localhost:4000</em> in your browser. You should see your first application home
+            page.</p><img class="bare-screen" src="../images/webtour-home.png" alt="" />
+            <a id="hello"></a>
+            <h2 >Hello World</h2>
+            <p>The next step is to create a simple "Hello World" web page. Ejscript web pages have an <em>.ejs</em>
+            extension. Create a file called <em>hello.ejs</em> in the top-level directory with the following
+            content:</p>
+            <pre class="ui code segment">
+&lt;html&gt;
+&lt;body&gt;
+&lt;h1&gt;Hello World&lt;/h1&gt;
+&lt;/body&gt;
+</pre>
+            <p>To view the "Hello" web page in your browser, type in the following url:
+            http://localhost:4000/hello.ejs.</p><img src="../images/webtour-hello.png" alt="hello" class=
+            "bare-screen" /> <a id="dynamic"></a>
+            <h2 >Dynamic Content</h2>
+            <p>While that was fun, the output is static and boring, so let's add some dynamic content. You can embed
+            Ejscript expressions by including them inside a special Ejscript web page directive that will be executed
+            and converted to HTML before being sent to the client. There are a variety of server-side Ejscript web page
+            directives, the one you'll use first is: <em>&lt;%= expression %&gt;</em>.</p>
+            <p>To add the current date and time, modify the hello.ejs web page and add the highlighted line:</p>
+            <pre class="ui code segment">
+&lt;html&gt;
+&lt;body&gt;
+&lt;h1&gt;Hello World&lt;/h1&gt;
+<b>Generated on &lt;%= Date() %&gt;</b>
+&lt;/body&gt;
+</pre>
+            <p>Now when you re-run the page, it will display the current date and time:</p><img src=
+            "../images/webtour-helloDate.png" alt="hello" class="bare-screen" />
+            <h3>No Restart Require</h3>
+            <p>Notice that you did not have to restart the web server, nor did you have to manually recompile the
+            application. Rather, transparently in the background, the Ejscript web framework noticed that the hello.ejs
+            web page has been modified and it re-parsed and compiled it into an Ejscript module, ready for
+            execution.</p>
+            <p>You can also embed more complex Ejscript into our page, like:</p>
+            <pre class="ui code segment">
+&lt;html&gt;
+&lt;body&gt;
+&lt;h3&gt;<b>&lt;% write("SERVER_SOFTWARE is " + host.software); %&gt;</b>
+<b>&lt;% 
+    for each (i in 200) {
+        write(" Line: " + i + "\r\n")
+    } 
+%&gt;
+</b>&lt;/body&gt;
+</pre>
+            <p>By using the Ejscript statement directive <em>&lt;% code %&gt;</em>, you can embed arbitrary Ejscript
+            statements in your web page. The <em>write</em> function allows you to write arbitrary data which is patched
+            back where the directive was defined in the page. See the <a href="views.html">Views and Layouts</a>
+            document for full details about all the Ejscript web page directives.</p><a id="views"></a>
+            <a id="scaffolds"></a>
+            <h2 class="scaffolds">Scaffolds</h2>
+            <p>Scaffolding is a quick way to generate major pieces of your application. The mvc command can generate
+            database migrations, models, views and controllers for you. The command below will create a "Post" model
+            with a blog post title and post comment body. The "title" is a string datatype and the "body" is a
+            multi-line text field.</p>
+            <pre class="ui code segment">
+mvc generate scaffold Post title:string body:text
+<b>[CREATED] Directory: views/Post
+  [CREATED] Migration: "db/migrations/20141216231137_Create_Scaffold_Post.es"
+  [CREATED] Model: "models/Post.es"
+  [CREATED] Controller: "controllers/Post.es"
+  [CREATED] View: "views/Post/index.ejs"
+  [CREATED] View: "views/Post/edit.ejs"
+  [BUILD]: src/App.es models/Post.es controllers/Base.es
+  [MIGRATE]: Apply 20141216231137_Create_Scaffold_Post.es</b>
+</pre>
+            <p>This command created a model for the Post under the models directory, and Post controller and
+            <em>list</em> and <em>edit</em> views. It also created a database migration script to update the database
+            and create a Post table with <em>title</em> and <em>body</em> columns.</p>
+            <p>Now if you set your browser to the URL for the post controller, you will see your post listing screen.
+            <img src="../images/webtour-postList.png" alt="postList" class="bare-screen" /> <a id="newPosts"></a></p>
+            <h2 >Create New Posts</h2>
+            <p>The <em>new</em> post button directs your browser to the <em>/Post/init</em> URL. Behind the scenes, Ejscript
+            parses this URL and identifies <em>Post</em> as the name of the controller and <em>init</em> as the name of an action to
+            invoke. The controller file <em>controllers/Post.es</em> defines the controller class to respond to this request.</p>
+            <p>The controller class defines methods called actions, that are bound to URLs of the same name. Actions
+            are defined using the <em>action</em> namespace qualifier to distinguish them from ordinary functions. When a
+            request comes for a given action, the corresponding action method is invoked.</p>
+            <h3>Actions</h3>
+            <p>The job of the action is to respond to the request and generate the response via views for the
+            client. Here is a snippet from the controller:</p>
+            <pre class="ui code segment">
+public class PostController extends BaseController {
+    public var post: Post
+    action function init() {
+<b>         post = new Post
+        writeView("edit")
+</b>    }
+}
+</pre>
+            <p>The <em>init</em> action creates a new Post instance and then uses the <em>views/Post/edit.ejs</em>
+            view to generate the response. Ejscript <em>edit</em> scaffolds handle the work of both <em>edit</em> and
+            <em>create</em> views because they are so similar.</p>
+            <p>If an action does not call any of the <em>write</em> methods or if the controller action is not defined
+            (as the <em>index</em> action is not),
+            Ejscript will automatically invoke a view of the same name. 
+            
+            <img src=
+            "../images/webtour-createPost.png" alt="createPost" class="bare-screen" />
+            <p>Click OK to add the new blog post.</p><a id="homePage"></a>
+            <h2>Edit the Home Page</h2>
+            <p>You can edit the application's home page to add an anchor link to your post listing page. Change
+            <em>views/Base/index.ejs</em> to contain just the following:</p>
+            <pre class="ui code segment">
+&lt;%@ layout "default" %&gt;
+&lt;h2&gt;&lt;% anchor("Go to My Blog", "/post") %&gt;&lt;/h2&gt;
+</pre>
+            <p>Then reload the page and you will see:</p>
+            
+            <img src="../images/webtour-homeLink.png" alt="homeLink"
+            class="bare-screen" /> <a id="layout"></a>
+            <h2>Changing the Layout</h2>
+            <p>Alternatively, you may wish to add some tabs to navigate your blog app. Ejscript provides a layout
+            template engine that is used by all views to provide a common look and feel to your application. View pages
+            leverage templates so they don't need to repeat page elements that are common across the application. Edit
+            the master layout template file <em>layouts/default.ejs</em> and change it to use the <em>tabs</em>
+            view control.</p>
+            <pre class="ui code segment">
+&lt;body&gt;
+    &lt;div class="top"&gt;
+        &lt;h1&gt;&lt;a href="&#64;&#64;request.home"&gt;Blog Application&lt;/a&gt;&lt;/h1&gt;
+<b>        &lt;% tabs([
+           {"Blog Posts":  "@Post"},
+            {"New Post": "@post/init"},
+        ]) %&gt;
+</b>    &lt;/div&gt;
+</pre>
+            <p>This will create two tab buttons to navigate your application.</p>
+            <p>After modifying the layout, you will need to re-compile the cached web pages. Normally, Ejscript
+            transparently compiles the web pages into pure Ejscript byte-code for fast execution. It will automatically
+            do this whenever you modify a view or controller. However, if you change a layout or model, you may need to
+            recompile the app. This is easy to do via the mvc command.</p>
+            <pre class="ui code segment">
+mvc compile
+</pre>
+            <img src="../images/webtour-tabs.png" alt="tabs" class="bare-screen" /> 
+            <a id="validations"></a>
+            <h2 >Validations</h2>
+            <p>Ejscript provides flexible validation methods to help ensure the data you save is correct.</p>
+            <p>You can add calls to validate model data before it is saved to the database. Edit the
+            <em>models/Post.es</em> file and add calls to <em>validatePresence</em> and <em>validateUnique</em>.</p>
+            <pre class="ui code segment">
+public dynamic class Post implements Record {
+<b>    validatePresence(["title", "body"])
+    validateUnique("title")</b>
+</pre>
+            <p>This will cause the model to automatically validate that the <em>title</em> and <em>body</em> fields are
+            not blank and that the <em>title</em> is unique in the database. If you click OK without entering any data
+            you will see the following:</p><img src="../images/webtour-validate.png" alt="tabs" class="bare-screen" />
+            <p>This automatically identified the input fields in error and generated a summary of the errors above the
+            form. Of course, this default error highlighting behavior can be overridden if desired. Other validation
+            methods include <em>validateNumber</em> and <em>validateFormat</em>. You can also supply a model method
+            named <em>validate</em> that will be called for custom validation. In the <em>validate</em> method you can
+            fully validate your model data and call <em>error</em> for any fields that are invalid. For example:</p>
+            <pre class="ui code segment">
+public function validate() {
+    if (body.length &gt; 140) {
+        error("body", "too long")
+    }
+}
+</pre><a id="learn"></a>
+            <h2 >Learn More ...</h2>
+            <p>That concludes the a quick tour through some of the capabilities of the Ejscript web framework.</p>
+            <p>To learn more, please read the rest of the <a href="../index.html">Ejscript Documentation</a> and
+            the <a href="../ref/webArchitecture.html">Ejscript Web Framework Architecture</a>. </p>
+
+    </div>
+    <div class="terms ui basic center aligned segment">
+        <p>&copy; Embedthis Software, 2003-2014. All rights reserved.</p>
+    </div>
+
+    <script src="../jquery/jquery.min.js"></script>
+    <script src="../semantic-ui/semantic.js"></script>
+    <script>
+        var sl = $('.sidebar-launch');
+        $('.sidebar-launch').click(function() {
+            var body = $('body');
+            if (!body.hasClass('show-sidebar')) {
+                body.addClass('show-sidebar');
+                $('.sidebar').css('visibility', 'visible');
+            } else {
+                body.removeClass('show-sidebar');
+                $('.sidebar').css('visibility', 'hidden');
+            }
+        });
+        $('.sidebar-launch').trigger('click');
+        $('.sidebar a.item').click(function(e) {
+            sessionStorage.setItem('scroll-top', $('.sidebar').scrollTop());
+        });
+        $(function() {
+            var url = '../web/webTour.html';
+            var active = $('.sidebar a[href="' + url +'"]');
+            active.addClass('active');
+            $('.sidebar').scrollTop(sessionStorage.getItem('scroll-top'));
+        });
+    </script> 
+
+        
+    <script>
+        (function() {
+            var r = new XMLHttpRequest();
+            r.onreadystatechange = function() {
+                if (r.readyState >= 3 && r.status == 200) {
+                    window.location.reload();
+                }
+            }
+            r.open("GET", "/reload-service", true);
+            r.send();
+        })();
+    </script>
+    
+
+</body>
+</html>

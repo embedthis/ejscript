@@ -3,7 +3,7 @@
  */
 
 Me.load({
-    plugins: [ 'configuration', 'package' ],
+    plugins: [ 'configuration', 'installs' ],
 
     blend: [
         'http',
@@ -49,16 +49,11 @@ Me.load({
         /*
             Installation prefix set
          */
-        prefixes: 'package-prefixes',
-        manifest: 'package/manifest.me',
+        prefixes: 'install-prefixes',
+        manifest: 'installs/manifest.me',
 
         /* Must build locally to build tools */
         platforms: [ 'local' ],
-
-        /*
-            Set to true for a static (non-shared library) build                                            
-         */
-        static: false,
 
         /*
             EJS configuration
@@ -143,7 +138,7 @@ Me.load({
         /*
             See src/core/core.me for building the core library
             See src/cmd/cmd.me for building the language commands
-            See package/package.me for the install/package targets
+            See installs/installs.me for the install targets
          */
         projects: {
             action: "genProjects('-with openssl')",

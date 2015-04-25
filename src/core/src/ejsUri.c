@@ -57,8 +57,12 @@ static EjsUri *cloneUri(Ejs *ejs, EjsUri *src, bool deep)
     if ((dest = ejsCreateObj(ejs, TYPE(src), 0)) == 0) {
         return 0;
     }
+#if UNUSED
     /*  NOTE: a deep copy will complete the uri */
     dest->uri = httpCloneUri(src->uri, deep ? HTTP_COMPLETE_URI : 0);
+#else
+    dest->uri = httpCloneUri(src->uri, 0);
+#endif
     return dest;
 }
 

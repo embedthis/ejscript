@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Models</title>
+    <!-- Copyright Embedthis Software. All Rights Reserved. -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="Javacript Language Environment" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
+        rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
+    <link href="../images/favicon.ico" rel="shortcut icon" />
+    <link href="../semantic-ui/semantic.css" rel="stylesheet" type="text/css" />
+    <link href="../css/all.css" rel="stylesheet" type="text/css" />
+    
+
+</head>
+<body>
+        <div class="sidebar">
+        <div class="ui large left vertical inverted labeled menu">
+            <div class="item">
+                <a href="../index.html" class="logo">Ejscript Docs</a>
+            </div>
+            <div class="item">
+                <a href="../index.html">
+                    <b>General</b>
+                </a>
+                <div class="menu">
+                    <a class="item" href="../index.html">Ejscript Overview</a>
+                    <a class="item" href="../users/features.html">Ejscript Features</a>
+                    <a class="item" href="https://embedthis.com/ejscript/download.html">Download</a> 
+                    <a class="item" href="../licensing/index.html">Licensing</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../start/index.html">
+                    <b>Getting Started</b>
+                </a>
+                <div class="menu">
+                    <a class="item" href="../start/quick.html">Quick Start</a>
+                    <a class="item" href="../start/installing.html">Installing Ejscript</a>
+                    <a class="item" href="../start/tour.html">Language Tour</a>
+                    <a class="item" href="../start/faq.html">FAQ</a>
+                    <a class="item" href="../start/releaseNotes.html">Release Notes</a>
+                    <a class="item" href="../start/source.html">Building from Source</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../users/index.html"><b>User's Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../users/shell.html">Using the Command Shell</a>
+                    <a class="item" href="../users/compiler.html">Using the Compiler</a>
+                    <a class="item" href="../users/ejsmod.html">Using the Module Generator</a>
+                    <a class="item" href="../users/doc.html">Generating Documentation</a>
+                    <a class="item" href="../users/listing.html">Generating Listing</a>
+                    <a class="item" href="../users/man.html">Man Pages</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../language/index.html"><b>Language Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../language/syntax.html">Language Syntax</a>
+                    <a class="item" href="../language/statements.html">Statements</a>
+                    <a class="item" href="../language/expressions.html">Expressions and Operators</a>
+                    <a class="item" href="../language/objects.html">Object and Arrays</a>
+                    <a class="item" href="../language/functions.html">Functions and Methods</a>
+                    <a class="item" href="../language/core.html">Core Language Types</a>
+                    <a class="item" href="../language/types.html">Types and Declarations</a>
+                    <a class="item" href="../language/classes.html">Classes and Instances</a>
+                    <a class="item" href="../language/modules.html">Modules and Namespaces</a>
+                    <a class="item" href="../language/library.html">System Library</a>
+                    <a class="item" href="../language/events.html">Events and Timers</a>
+                    <a class="item" href="../language/modes.html">Language Modes</a>
+                    <a class="item" href="../language/globals.html">Globals</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../web/index.html"><b>Web Framework Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../web/webTour.html">Web Framework Tour</a>
+                    <a class="item" href="../web/generator.html">Application Generator</a>
+                    <a class="item" href="../web/routing.html">Routing</a>
+                    <a class="item" href="../web/controllers.html">Controllers</a>
+                    <a class="item" href="../web/views.html">Views and Layout Templates</a>
+                    <a class="item" href="../web/controls.html">Ajax View Controls</a>
+                    <a class="item" href="../web/models.html">Database Models</a>
+                    <a class="item" href="../web/hosting.html">Hosting in Web Servers</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../developers/index.html">Developer's Guide</a>
+                <div class="menu">
+                    <a class="item" href="../developers/embedding.html">Embedding Ejscript</a>
+                    <a class="item" href="../developers/extending.html">Extending Ejscript</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../ref/index.html">Reference Guide</a>
+                <div class="menu">
+                    <a class="item" href="../ref/compatibility.html">Compatibility</a>
+                    <a class="item" href="../ref/native.html">Native APIs</a>
+                    <a class="item" href="../ref/api/ejscript/index.html" target="new">Script Library</a>
+                    <a class="item" href="../ref/architecture.html">Ejscript Architecture</a>
+                    <a class="item" href="../ref/webArchitecture.html">Web Framework Architecture</a>
+                    <a class="item" href="../ref/memory.html">Ejscript Memory Allocation</a>
+                    <a class="item" href="../ref/multithread.html">Multithreaded Programming</a>
+                    <a class="item" href="../standards/references.html">Standards</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../developers/project.html">Project Resources</a>
+                <div class="menu">
+                    <a class="item" href="http://goo.gl/g4oS2C">Official Ejscript News</a>
+                    <a class="item" href="https://embedthis.com/ejscript/">Ejscript Web Site</a>
+                    <a class="item" href="https://github.com/embedthis/ejs">Source Code Repository</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/issues">Project Issue Database</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/releases">Change Log</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/milestones">Roadmap</a>
+                    <a class="item" href="https://embedthis.com/developers/contributors.html">Contributors Agreement</a>
+                </div>
+            </div>
+            <div class="item">
+                <b>Links</b>
+                <div class="menu">
+                    <a class="item" href="https://embedthis.com/">Embedthis Web Site</a>
+                    <a class="item" href="https://embedthis.com/blog/">Embedthis Blog</a>
+                    <a class="item" href="http://twitter.com/mobstream">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="ui inverted masthead">
+         
+        <div class="ui fixed inverted menu">
+            <div class="ui sidebar-launch button">
+                <i class="icon list layout"></i>
+            </div>
+            <div class="right menu">
+                  
+                    <a class="item" href="https://embedthis.com/">Embedthis</a>
+                    <a class="item" href="https://embedthis.com/ejscript/">Ejscript Site</a>
+                    <span class="desktop-only">
+                        <a class="item" href="http://goo.gl/dGRDl4">Ejscript News</a>
+                        <a class="item" href="https://github.com/embedthis/ejs">Repository</a>
+                        <a class="item" href="https://embedthis.com/blog/">Blog</a>
+                        <a class="item" href="https://twitter.com/mobstream">Twitter</a>
+                    </span>
+
+            </div>
+        </div>
+        
+        <div class="ui breadcrumb">
+            <a class="section" href="../">Home</a>
+            
+            <div class="divider">/</div>
+            <a class="section" href="index.html">
+                Web Framework Guide
+            </a>
+            
+            
+            <div class="divider">/</div>
+            <a class="active section" href="models.html">Models</a>
+            
+        </div>
+        
+        <div class="version desktop-only">
+            v2.5.3
+        </div>
+
+    </div>
+    <div class="content">
+
+            <h1>Database Models</h1>
+            <p>Ejscript Models are responsible for managing access to application data and for ensuring the data
+            remains valid and consistent.</p>
+            <p>Ejscript Models are the Object Relational Mapper (ORM) layer provided with Ejscript. This layer wraps
+            database records in JavaScript objects and allows you to use object-oriented programming (<a href=
+            "http://en.wikipedia.org/wiki/Object-oriented_programming">OOP</a>) when dealing with tabular database
+            data.</p><a id="record"></a>
+            <h2 >Record Class</h2>
+            <p>Ejscript Models map database tables to classes, rows to objects, and columns to object properties. The
+            foundation for Models is the <em>Record</em> class. Record instances represent database records. New models
+            are created by implementing the Record class.</p>
+            <pre class="ui code segment">
+public dynamic class Product implements Record {
+    setup()
+    function Product() {
+    }
+}
+</pre>
+            <p>This creates a new Product model for accessing the Products table. Note: we did not have to specify the
+            table, column or primary key names names. Ejscript follows the <a href=
+            "http://en.wikipedia.org/wiki/Convention_over_Configuration">Convention over Configuration</a> design
+            paradigm where developers need only specify the unusual parts of their application. In this example,
+            Ejscript will look for a database table named <em>Products</em> and will map that to the <em>Product</em>
+            class. By convention, Ejscript assumes that database table names are plural and Record classes are
+            singular. You can override this if you need to by calling the <em>setTableName</em> Record method. However,
+            it is best to work with the Ejscript conventions and defaults &mdash; life is much easier this
+            way.</p><a id="columnMap"></a>
+            <h3>Columns to Properties</h3>
+            <p>Ejscript dynamically determines the column names in the database table and creates object properties at
+            run-time corresponding to each column. You do not need to create or specify the columns in your Record
+            class. Ejscript will determine the appropriate column type for you.</p><a id="tour"></a>
+            <h2>Quick Tour of Record</h2>
+            <p>Assume we have a database with a Products table that has columns for id, name, description and
+            price.</p>
+            <table title="example" class="ui table segment">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>name</th>
+                        <th>description</th>
+                        <th>price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Ball</td>
+                        <td>Bouncing ball</td>
+                        <td>7.50</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Hat</td>
+                        <td>Sun Hat</td>
+                        <td>27.50</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>By convention (again), columns are lower case. Table names should be plural with the first letter
+            capitalized. The following code demonstrates some typical uses:</p>
+            <pre class="ui code segment">
+/* Read the first product */
+<b>
+product = Product.find(1)
+print(product.name + " price is " + product.price)</b>
+/* Increase the price by $1.00 and save back to the database */
+<b>product.price += 1
+product.save()</b>
+/* Find products costing over $10.00 */
+<b>products = Product.findWhere("price &gt; 10.00")
+print(products)</b>
+/*  Read all products */
+<b>products = Product.findAll()</b>
+/* Print the number of rows in the database */
+<b>print(Product.getNumRows())</b>
+/* Remove the product with id == 1 */ 
+<b>Product.remove(1)</b>
+</pre><a id="types"></a>
+            <h2 >Data Types</h2>
+            <p>JavaScript is a loosely typed language which is ideal for a dynamic ORM framework like Ejscript. When
+            reading database data, Ejscript will select the best JavaScript type to hold the database data. The
+            following type conversions will occur when reading and writing data to and from the database. Note: Mysql
+            is not yet fully supported.</p>
+            <table title="types" class="ui table segment">
+                <thead>
+                    <tr>
+                        <th>Ejscript Type</th>
+                        <th>SQLite Type</th>
+                        <th>Mysql</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Boolean</td>
+                        <td>ByteArray</td>
+                        <td>Tinyint</td>
+                    </tr>
+                    <tr>
+                        <td>ByteArray</td>
+                        <td>Blob</td>
+                        <td>Blob</td>
+                    </tr>
+                    <tr>
+                        <td>Date</td>
+                        <td>Date</td>
+                        <td>Date</td>
+                    </tr>
+                    <tr>
+                        <td>Number</td>
+                        <td>Real</td>
+                        <td>Decimal, Real</td>
+                    </tr>
+                    <tr>
+                        <td>String</td>
+                        <td>Text</td>
+                        <td>Text</td>
+                    </tr>
+                </tbody>
+            </table><a id="keys"></a>
+            <h2 >Table Keys</h2>
+            <p>Ejscript assumes that database tables will have a primary key column named <em>id</em>. If you need the
+            primary key column to be some other name, use the <em>setKeyName</em> method.</p><a id="connections"></a>
+            <h2 >Database Connections</h2>
+            <p>Database connections are one of the few items that are setup by configuration files. The application
+            configuration file: "config/database.ecf" defines the database name, username, password and other
+            configuration parameters.</p>
+            <pre class="ui code segment">
+debug: {
+    adapter: "sqlite3",
+    database: "db/carmen.sdb",
+    username: "",
+    password: "",
+    timeout: 5000,
+    trace: true,
+},
+</pre>
+            <p>This is an excerpt from the debug database configuration. Currently, Ejscript only supports the SQLite
+            database. The <em>database</em> option is set to the filename of the database. Setting <em>trace</em> to
+            true will trace all SQL statements that are executed against the database to the application
+            log.</p><a id="modelClasses"></a>
+            <h2 >Creating Model Classes</h2>
+            <p>The Ejscript <em>mvc</em> command can be used to generate models and database migrations.</p>
+            <pre class="ui code segment">
+mvc generate model [field:type ...]
+</pre>
+            <p>When generating a model, <em>mvc</em> will create a database model class and a database migration
+            script.</p>
+            <p>If field:type pairs are supplied, the database migration will include code to create a column for each
+            specified field of the requested type. The valid database types are: <em>binary, boolean, date, datetime,
+            decimal, float, integer, number, string, text, time, timestamp</em>.</p>
+            <p>Once the model is generated, you can add methods to implement logic to manage updates and validate model
+            data. Models typically provide a suite of methods for controllers and views to access.</p><a id="crud"></a>
+            <h2 >Create, Read, Update and Delete</h2>
+            <p>It should be easy to do simple things like implementing the basic database operations: create, read,
+            update and delete. Ejscripts Models make this easy. <a id="create"></a></p>
+            <h3>Create a new Record</h3>
+            <p>To create a new table record:</p>
+            <pre class="ui code segment">
+<b>product = new Product</b>
+product.name = "Race Car"
+product.description = "Bright red race car"
+product.price = 19.99
+<b>product.save()</b>
+</pre>
+            <p>That will create a new product, initialize its properties, and save it to the database.</p><a id="read"></a>
+            <h3>Reading a Record</h3>
+            <p>Reading a record from the database is done with the <em>find</em> family of Record static methods. The
+            basic <em>find</em> method will return a record with a given <em>id</em> field. Other find methods include:
+            findAll, findWhere and findOneWhere. These provide powerful query capabilities and are able to do
+            conditional queries and table joins.</p>
+            <pre class="ui code segment">
+product = Product.find(2)
+product = Product.find(null, {conditions: ["price &gt; 5.0"]})
+</pre><!--
+            <p>See the <a href="#samples">Samples</a> below for more examples.</p>
+            -->
+            <a id="update"></a>
+            <h3>Updating a Record</h3>
+            <p>To update a record, first read it using one of the <em>find</em> methods. Then update any of the object
+            properties. Finally, call the <em>save</em> method to save the changes to the database.</p>
+            <pre class="ui code segment">
+product = Product.find(3)
+product.name = "Stock Car"
+<b>product.save()</b>
+</pre><a id="delete"></a>
+            <h3>Deleting a Record</h3>
+            <p>Records have a static method <em>remove</em> which will remove the record with the given primary key
+            id.</p>
+            <pre class="ui code segment">
+<b>Product.remove(1)</b>
+/* Search, then remove */
+id = Product.findWhere('name == "Stock Car"')
+Product.remove(id)
+</pre><a id="manual"></a>
+            <h2 >Manual SQL Statements</h2>
+            <p>Ejscript supports the execution of manual SQL statements and provides routines to assist the creation of
+            SQL statements. The <em>getDb</em> method will return a Database object on which, manual SQL queries can be
+            performed</p>
+            <pre class="ui code segment">
+db = Product.getDb()
+db.query("SELECT * FROM Products WHERE id &gt;= 1;")
+</pre>
+            <h3>Assisted SQL</h3>
+            <p>The <em>find</em> methods can assist to create SQL statements via an options parameter that takes a set
+            of SQL-like modifiers. Ejscript Records use these when building the SQL statements to implement a query.
+            For example:</p>
+            <pre class="ui code segment">
+Product.findAll({order: "price DESC", limit: 2})
+</pre>
+            <p>This will find up to two products, and will sort the result grid by descending price. Other options
+            include: group, limit, offset and joins.</p><!--
+            <a id="relationships"></a>
+            <h2 >Table Relationships</h2>
+                <h3>Foreign Keys</h3>
+                <h3>One to One</h3>
+                <h3>One to Many</h3>
+                <h3>Many to Many</h3>
+                - belongsTo, hasOne, hasMany, hasAndBelongsToMany
+            -->
+            <a id="accessing"></a>
+            <h2 >Accessing Models</h2>
+            <p>Ejscript Controllers and Views are the primary users of model data. Controllers will typically interact
+            to create, read, update, and delete model data. Views will typically (or should) use read-only access.</p>
+            <p>There are several means by which model data can be provided:</p>
+            <ul>
+                <li>Direct model access</li>
+                <li>Binding a model to a View Control</li>
+                <li>Controller facilitated model access</li>
+            </ul>
+            <h4>Direct Model Access</h4>
+            <p>In <em>direct model</em> access, controllers or views query the model using a <em>find</em> method to
+            return a record object instance. They then directly access the model via object properties. Views can
+            directly insert these values into web pages and controllers can use them just like any JavaScript
+            property.</p>
+            <pre class="ui code segment">
+&lt;p&gt;Price: &#64;&#64;Product.find(1).price &lt;/p&gt;
+</pre>
+            <p>This is a fragment from a View that directly accesses the model to extract the price for the first
+            product. The <em>&#64;&#64;</em> is the way Views can substitute dynamic data from JavaScript variables at
+            run-time.</p>
+            <h4>Bound Access</h4>
+            <p>Ejscript models can also be <em>bound</em> to View Controls for easy display. Many of the View Controls
+            can take a model instance as a parameter with options to select the properties to display. The
+            <em>table</em> View Control method is a good example. It can bind to a model and, via a one-line statement,
+            display the table. It has options to sort, filter, and select columns and dynamically refresh the table
+            contents as the underlying database data changes.</p>
+            <pre class="ui code segment">
+&lt;% table(Products.findAll(), {
+    click: "edit",
+    columns: {
+        name:         { },
+        description:  { },
+        price:        { render: currency("$$%,d") },
+    },
+    width: "80%",
+}) %&gt;
+</pre>
+            <p>This will display a View containing a table of the products.</p>
+            <h4>Controller Facilitated Access</h4>
+            <p>Controller facilitated access is perhaps the most powerful access methodology whereby the controller
+            creates a suite of methods to manage and control access to the model. These methods can then validate and
+            enforce consistency checks on the data.</p>
+            <h2 >Validation</h2>
+            <p>Ejscript provides a validation mechanism that is invoked prior to saving a model to the database. It
+            also provides a set of pre-defined validation methods that you can use in your model. These cover the most
+            common validation needs such as ensuring a field is unique or numeric, or conforms to a specific
+            format.</p>
+            <p>When a validation check fails, an error message is added to the model for the field that failed
+            validation. Validation checks continue and (potentially) a set of error messages for the model are
+            accumulated. Views can access these messages for display and highlighting to the user. The standard
+            Ejscript view controls intelligently use these error messages to highlight errors in input
+            forms.</p><img src="../images/webtour-validate.png" class="screen" alt="" />
+            <p>Ejscript will also automatically verify and convert model data to ensure it is of the appropriate data
+            type and will escape data to prevent SQL insertion exploits.</p>
+            <h3>Validation Methods</h3>
+            <p>The following validation methods are available for use inside a model. Define these in the class
+            initialization section of your class so they run when the class is first created.</p>
+            <pre class="ui code segment">
+public dynamic class Task implements Record {
+    setup()
+<b>    validatePresence(["name", "description"])
+    validateUnique("name")
+    validateNumber("priority", { message: "Priority must be a number"})
+    validateFormat("fax", { message: "Bad format", format: /\d{3}-\d{7}/})
+</b>
+</pre>
+            <p>The validation methods take either a field name or array of field names as the first parameter. The
+            second parameter is an options hash which can contain a <em>message</em> option to override the standard
+            validation failure message.</p>
+            <h4>validatePresence</h4>
+            <p>This validates that the field is defined with a non-empty value.</p>
+            <h4>validateNumber</h4>
+            <p>This validates that the field is a number and only contains numeric digits.</p>
+            <h4>validateUnique</h4>
+            <p>This validates that the field's value is unique in the database.</p>
+            <h4>validateFormat</h4>
+            <p>This validates that the field's value conforms to the regular expression format supplied via the
+            <em>format</em> option.</p>
+            <h3>Custom Validation</h3>
+            <p>In addition to the standard validation methods, a model can do custom validation by defining a
+            <em>validation</em> method. This will be called along with the standard validation methods before saving
+            database data or when the <em>validateModel</em> method is called. A validation method should call the
+            <em>error</em> method for each invalid field and supply a suitable message.</p>
+            <pre class="ui code segment">
+public function validate() {
+    if (user.phone.length &gt; 10) {
+        error("phone", "Phone number too long")
+    }
+    if (someGeneralError) {
+        error("", "General validation failure")
+    }
+}
+</pre>
+            <p>To set an error that is not associated with any specific field, supply the empty string as the field
+            argument.</p><!-- Not documented
+                hasMany etc.
+                Transactions
+                Locking
+                magic column names
+            -->
+
+    </div>
+    <div class="terms ui basic center aligned segment">
+        <p>&copy; Embedthis Software, 2003-2014. All rights reserved.</p>
+    </div>
+
+    <script src="../jquery/jquery.min.js"></script>
+    <script src="../semantic-ui/semantic.js"></script>
+    <script>
+        var sl = $('.sidebar-launch');
+        $('.sidebar-launch').click(function() {
+            var body = $('body');
+            if (!body.hasClass('show-sidebar')) {
+                body.addClass('show-sidebar');
+                $('.sidebar').css('visibility', 'visible');
+            } else {
+                body.removeClass('show-sidebar');
+                $('.sidebar').css('visibility', 'hidden');
+            }
+        });
+        $('.sidebar-launch').trigger('click');
+        $('.sidebar a.item').click(function(e) {
+            sessionStorage.setItem('scroll-top', $('.sidebar').scrollTop());
+        });
+        $(function() {
+            var url = '../web/models.html';
+            var active = $('.sidebar a[href="' + url +'"]');
+            active.addClass('active');
+            $('.sidebar').scrollTop(sessionStorage.getItem('scroll-top'));
+        });
+    </script> 
+
+        
+    <script>
+        (function() {
+            var r = new XMLHttpRequest();
+            r.onreadystatechange = function() {
+                if (r.readyState >= 3 && r.status == 200) {
+                    window.location.reload();
+                }
+            }
+            r.open("GET", "/reload-service", true);
+            r.send();
+        })();
+    </script>
+    
+
+</body>
+</html>

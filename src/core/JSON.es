@@ -83,6 +83,7 @@ module ejs {
         @option pretty Boolean determining if a human readable output is used with new lines after each property. 
             Default is false.
         @option quotes Boolean If false, emit property names without quotes if they do not contain spaces. Defaults to true.
+        @option multiline Boolean If false, do not emit multiline strings. Defaults to false.
         @option replacer an optional parameter that determines how object values are stringified for objects without a 
             toJSON method.  The replace has the following signature:
 
