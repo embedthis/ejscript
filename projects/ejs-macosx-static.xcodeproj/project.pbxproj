@@ -2653,6 +2653,7 @@
                 isa = PBXGroup;
                 children = (
 				900D453C900D53D60000027D /* http.h */,
+				900D453C900D53D600000273 /* pcre.h */,
 				900D453C900D53D600000121 /* httpLib.c */,
 			);
                 name = "libhttp";
@@ -3128,7 +3129,7 @@
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.db.mapper
-	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.db.mapper.mod  --optimize 9 Record.es
+	\"../${OUT_DIR}/bin/ejsc\" --out \"../${OUT_DIR}/bin/ejs.db.mapper.mod\"  --optimize 9 Record.es
 ";
     		};
 		900D453C900D53D60000000E /* ShellScript for ejs.db.mod */ = {
@@ -3147,7 +3148,7 @@ cd ../src/ejs.db.mapper
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.db
-	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.db.mod  --optimize 9 Database.es DatabaseConnector.es
+	\"../${OUT_DIR}/bin/ejsc\" --out \"../${OUT_DIR}/bin/ejs.db.mod\"  --optimize 9 Database.es DatabaseConnector.es
 ";
     		};
 		900D453C900D53D600000014 /* ShellScript for ejs.db.sqlite.mod */ = {
@@ -3165,8 +3166,8 @@ cd ../src/ejs.db
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.db.sqlite
-	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.db.sqlite.mod  --optimize 9 Sqlite.es
-	../${OUT_DIR}/bin/ejsmod --cslots --dir ../${OUT_DIR}/bin ../${OUT_DIR}/bin/ejs.db.sqlite.mod
+	\"../${OUT_DIR}/bin/ejsc\" --out \"../${OUT_DIR}/bin/ejs.db.sqlite.mod\"  --optimize 9 Sqlite.es
+	\"../${OUT_DIR}/bin/ejsmod\" --cslots --dir \"../${OUT_DIR}/bin\" \"../${OUT_DIR}/bin/ejs.db.sqlite.mod\"
 ";
     		};
 		900D453C900D53D60000001B /* ShellScript for ejs.mail.mod */ = {
@@ -3184,7 +3185,7 @@ cd ../src/ejs.db.sqlite
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.mail
-	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.mail.mod  --optimize 9 Mail.es
+	\"../${OUT_DIR}/bin/ejsc\" --out \"../${OUT_DIR}/bin/ejs.mail.mod\"  --optimize 9 Mail.es
 ";
     		};
 		900D453C900D53D600000021 /* ShellScript for ejs.mod */ = {
@@ -3255,8 +3256,8 @@ cd ../src/ejs.mail
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/core
-	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.mod  --optimize 9 --bind --require null App.es Args.es Array.es BinaryStream.es Block.es Boolean.es ByteArray.es Cache.es Cmd.es Compat.es Config.es Date.es Debug.es Emitter.es Error.es File.es FileSystem.es Frame.es Function.es GC.es Global.es Http.es Inflector.es Iterator.es JSON.es Loader.es LocalCache.es Locale.es Logger.es Math.es Memory.es MprLog.es Name.es Namespace.es Null.es Number.es Object.es Path.es Promise.es RegExp.es Socket.es Stream.es String.es System.es TextStream.es Timer.es Type.es Uri.es Void.es WebSocket.es Worker.es XML.es XMLHttp.es XMLList.es
-	../${OUT_DIR}/bin/ejsmod --cslots --dir ../${OUT_DIR}/inc --require null ../${OUT_DIR}/bin/ejs.mod
+	\"../${OUT_DIR}/bin/ejsc\" --out \"../${OUT_DIR}/bin/ejs.mod\"  --optimize 9 --bind --require null App.es Args.es Array.es BinaryStream.es Block.es Boolean.es ByteArray.es Cache.es Cmd.es Compat.es Config.es Date.es Debug.es Emitter.es Error.es File.es FileSystem.es Frame.es Function.es GC.es Global.es Http.es Inflector.es Iterator.es JSON.es Loader.es LocalCache.es Locale.es Logger.es Math.es Memory.es MprLog.es Name.es Namespace.es Null.es Number.es Object.es Path.es Promise.es RegExp.es Socket.es Stream.es String.es System.es TextStream.es Timer.es Type.es Uri.es Void.es WebSocket.es Worker.es XML.es XMLHttp.es XMLList.es
+	\"../${OUT_DIR}/bin/ejsmod\" --cslots --dir \"../${OUT_DIR}/inc\" --require null \"../${OUT_DIR}/bin/ejs.mod\"
 ";
     		};
 		900D453C900D53D600000027 /* ShellScript for ejs.mvc.mod */ = {
@@ -3274,7 +3275,7 @@ cd ../src/core
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.mvc
-	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.mvc.mod  --optimize 9 mvc.es
+	\"../${OUT_DIR}/bin/ejsc\" --out \"../${OUT_DIR}/bin/ejs.mvc.mod\"  --optimize 9 mvc.es
 ";
     		};
 		900D453C900D53D600000030 /* ShellScript for ejs.tar.mod */ = {
@@ -3292,7 +3293,7 @@ cd ../src/ejs.mvc
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.tar
-	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.tar.mod  --optimize 9 Tar.es
+	\"../${OUT_DIR}/bin/ejsc\" --out \"../${OUT_DIR}/bin/ejs.tar.mod\"  --optimize 9 Tar.es
 ";
     		};
 		900D453C900D53D600000037 /* ShellScript for ejs.template.mod */ = {
@@ -3310,7 +3311,7 @@ cd ../src/ejs.tar
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.template
-	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.template.mod  --optimize 9 TemplateParser.es
+	\"../${OUT_DIR}/bin/ejsc\" --out \"../${OUT_DIR}/bin/ejs.template.mod\"  --optimize 9 TemplateParser.es
 ";
     		};
 		900D453C900D53D60000003D /* ShellScript for ejs.unix.mod */ = {
@@ -3328,7 +3329,7 @@ cd ../src/ejs.template
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.unix
-	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.unix.mod  --optimize 9 Unix.es
+	\"../${OUT_DIR}/bin/ejsc\" --out \"../${OUT_DIR}/bin/ejs.unix.mod\"  --optimize 9 Unix.es
 ";
     		};
 		900D453C900D53D600000043 /* ShellScript for ejs.web.mod */ = {
@@ -3368,8 +3369,8 @@ cd ../src/ejs.unix
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.web
-	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.web.mod  --optimize 9 Cascade.es CommonLog.es ContentType.es Controller.es Dir.es Google.es Head.es Html.es HttpServer.es MethodOverride.es Middleware.es Mvc.es Request.es Router.es Script.es Session.es ShowExceptions.es Static.es Template.es UploadFile.es UrlMap.es Utils.es View.es
-	../${OUT_DIR}/bin/ejsmod --cslots --dir ../${OUT_DIR}/bin ../${OUT_DIR}/bin/ejs.web.mod
+	\"../${OUT_DIR}/bin/ejsc\" --out \"../${OUT_DIR}/bin/ejs.web.mod\"  --optimize 9 Cascade.es CommonLog.es ContentType.es Controller.es Dir.es Google.es Head.es Html.es HttpServer.es MethodOverride.es Middleware.es Mvc.es Request.es Router.es Script.es Session.es ShowExceptions.es Static.es Template.es UploadFile.es UrlMap.es Utils.es View.es
+	\"../${OUT_DIR}/bin/ejsmod\" --cslots --dir \"../${OUT_DIR}/bin\" \"../${OUT_DIR}/bin/ejs.web.mod\"
 ";
     		};
 		900D453C900D53D60000004A /* ShellScript for ejs.zlib.mod */ = {
@@ -3387,7 +3388,7 @@ cd ../src/ejs.web
     			shellPath = /bin/bash;
     			shellScript = "PATH=$PATH:/usr/local/bin
 cd ../src/ejs.zlib
-	../${OUT_DIR}/bin/ejsc --out ../${OUT_DIR}/bin/ejs.zlib.mod  --optimize 9 Zlib.es
+	\"../${OUT_DIR}/bin/ejsc\" --out \"../${OUT_DIR}/bin/ejs.zlib.mod\"  --optimize 9 Zlib.es
 ";
     		};
 		900D453C900D53D600000050 /* ShellScript for http-ca-crt */ = {

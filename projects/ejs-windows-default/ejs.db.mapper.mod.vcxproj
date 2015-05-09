@@ -96,7 +96,7 @@
 
       <CustomBuildStep>
         <Command>cd ..\..\src\ejs.db.mapper
-..\..\build\windows-x86-default\bin\ejsc --out ../../build/windows-x86-default/bin/ejs.db.mapper.mod  --optimize 9 Record.es
+"../../build/windows-x86-default/bin/ejsc" --out "../../build/windows-x86-default/bin/ejs.db.mapper.mod"  --optimize 9 Record.es
 cd ..\..\projects\ejs-windows-default</Command>
         <Outputs>$(BinDir)\ejs.db.mapper.mod</Outputs>
       </CustomBuildStep>

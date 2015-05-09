@@ -96,7 +96,7 @@
 
       <CustomBuildStep>
         <Command>cd ..\..\src\ejs.db
-..\..\build\windows-x86-static\bin\ejsc --out ../../build/windows-x86-static/bin/ejs.db.mod  --optimize 9 Database.es DatabaseConnector.es
+"../../build/windows-x86-static/bin/ejsc" --out "../../build/windows-x86-static/bin/ejs.db.mod"  --optimize 9 Database.es DatabaseConnector.es
 cd ..\..\projects\ejs-windows-static</Command>
         <Outputs>$(BinDir)\ejs.db.mod</Outputs>
       </CustomBuildStep>
