@@ -39,6 +39,7 @@
         "osdep": "^0.8",
         "pcre": "^1.0",
         "ssl": "^0.9",
+        "watchdog": "^0.1",
         "zlib": "^1.0"
     },
     "optionalDependencies": {

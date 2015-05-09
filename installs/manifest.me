@@ -87,12 +87,6 @@ Me.load({
                     to:         '${abin}/',
 
                 }, { 
-                    from:       'libmprssl${SHOBJ}',
-                    to:         '${abin}/',
-                    ifdef:      'ssl',
-                    enable:     '!me.settings.static', 
-
-                }, { 
                     from:       '${TOP}/src/est/ca.crt',
                     to:         '${abin}/',
                     ifdef:      'ssl',
