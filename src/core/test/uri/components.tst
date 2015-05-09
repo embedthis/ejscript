@@ -260,23 +260,23 @@ assert(uri.extension == null)
 assert(uri.reference == null)
 assert(uri.query == 'host/')
 
-uri = Uri('http://local host/');
-assert(uri.scheme == 'http')
-assert(uri.port == null)
-assert(uri.host == 'local host')
-assert(uri.path == '/')
-assert(uri.extension == null)
-assert(uri.reference == null)
-assert(uri.query == null)
+let caught
+try {
+    uri = Uri('http://local host/');
+    assert(true)
+} catch {
+    caught = true
+}
+assert(caught)
 
-uri = Uri('http://localhost/long path');
-assert(uri.scheme == 'http')
-assert(uri.port == null)
-assert(uri.host == 'localhost')
-assert(uri.path == '/long path')
-assert(uri.extension == null)
-assert(uri.reference == null)
-assert(uri.query == null)
+caught = false
+try {
+    uri = Uri('http://localhost/long path');
+    assert(true)
+} catch {
+    caught = true
+}
+assert(caught == true)
 
 //  Fuzz
 uri = Uri('://localhost');

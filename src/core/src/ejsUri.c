@@ -45,6 +45,9 @@ static EjsUri *castToUri(Ejs *ejs, EjsObj *arg)
         arg = (EjsObj) ejsToString(ejs, arg);
         up->uri = httpCreateUri(up, ejsToMulti(ejs, arg), 0);
     }
+    if (!up->uri) {
+        ejsThrowTypeError(ejs, "Invalid URI");
+    }
     return up;
 }
 #endif
@@ -817,9 +820,9 @@ static EjsObj *uri_same(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 /*  
     Expand a template with {word} tokens from the given options objects
 
-    function template(pattern: String, ...options): Uri
+    function templateString(pattern: String, ...options): String
  */
-static EjsUri *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+static EjsString *uri_templateString(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     EjsArray    *options;
     EjsObj      *obj, *value;
@@ -877,7 +880,18 @@ static EjsUri *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
         }
     }
     mprAddNullToBuf(buf);
-    return ejsCreateUriFromAsc(ejs, mprGetBufStart(buf));
+    return ejsCreateStringFromAsc(ejs, mprGetBufStart(buf));
+}
+
+
+static EjsUri *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+{
+    EjsString   *sp;
+
+    if ((sp = uri_templateString(ejs, up, argc, argv)) != 0) {
+        return ejsCreateUriFromAsc(ejs, ejsToMulti(ejs, sp));
+    }
+    return 0;
 }
 
 
@@ -927,6 +941,9 @@ static EjsUri *uri_trimExt(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 static EjsObj *uri_set_uri(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     up->uri = httpCreateUri(ejsToMulti(ejs, argv[0]), 0);
+    if (!up->uri) {
+        ejsThrowTypeError(ejs, "Invalid URI");
+    }
     return 0;
 }
 
@@ -993,6 +1010,9 @@ static HttpUri *toHttpUri(Ejs *ejs, EjsObj *arg, int dup)
     } else {
         arg = (EjsObj*) ejsToString(ejs, arg);
         uri = httpCreateUri(ejsToMulti(ejs, arg), 0);
+    }
+    if (!uri) {
+        ejsThrowTypeError(ejs, "Invalid URI");
     }
     return uri;
 }
@@ -1191,6 +1211,7 @@ PUBLIC void ejsConfigureUriType(Ejs *ejs)
         ejsBindMethod(ejs, type, ES_Uri_encode, uri_encode);
         ejsBindMethod(ejs, type, ES_Uri_encodeComponent, uri_encodeComponent);
         ejsBindMethod(ejs, type, ES_Uri_template, uri_template);
+        ejsBindMethod(ejs, type, ES_Uri_templateString, uri_templateString);
 
         prototype = type->prototype;
         ejsBindConstructor(ejs, type, uri_constructor);

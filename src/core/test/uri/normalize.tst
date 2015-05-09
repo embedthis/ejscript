@@ -12,7 +12,6 @@ function check(s, expected) {
 }
 
 check("", "")
-check(" ", " ")
 check(".", "")
 check("..", "")
 check("/", "/")
