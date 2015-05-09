@@ -9,7 +9,7 @@ Me.load({
             files: [ '*.es' ],
             precious: true,
             build: `
-                run('${LBIN}/ejsc --out ${BIN}/ejs.zlib.mod ${settings.esflags} --optimize 9 ${FILES}')
+                run('"${LBIN}/ejsc" --out "${BIN}/ejs.zlib.mod" ${settings.esflags} --optimize 9 ${FILES}')
             `,
             message: 'Compile: ejs.zlib.mod',
             depends: [ 'ejsc', 'ejs.mod' ],

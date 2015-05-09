@@ -10,7 +10,7 @@ Me.load({
             files: [ '*.es' ],
             precious: true,
             build: `
-                run('${LBIN}/ejsc --out ${BIN}/ejs.tar.mod ${settings.esflags} --optimize 9 ${FILES}')
+                run('"${LBIN}/ejsc" --out "${BIN}/ejs.tar.mod" ${settings.esflags} --optimize 9 ${FILES}')
             `,
             message: 'Compile: ejs.tar.mod',
             depends: [ 'ejsc', 'ejs.mod', 'libejs.zlib' ],

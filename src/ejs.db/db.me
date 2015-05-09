@@ -10,7 +10,7 @@ Me.load({
             path: '${BIN}/ejs.db.mod',
             files: [ '*.es' ],
             build: `
-                run('${LBIN}/ejsc --out ${BIN}/ejs.db.mod ${settings.esflags} --optimize 9 ${FILES}')
+                run('"${LBIN}/ejsc" --out "${BIN}/ejs.db.mod" ${settings.esflags} --optimize 9 ${FILES}')
             `,
             message: 'Compile: ejs.db.mod',
             depends: [ 'ejsc', 'ejs.mod' ],

@@ -10,8 +10,8 @@ Me.load({
             path: '${BIN}/ejs.db.sqlite.mod',
             files: [ '*.es' ],
             build: `
-                run('${LBIN}/ejsc --out ${BIN}/ejs.db.sqlite.mod ${settings.esflags} --optimize 9 ${FILES}')
-                run('${LBIN}/ejsmod --cslots --dir ${BIN} ${BIN}/ejs.db.sqlite.mod')
+                run('"${LBIN}/ejsc" --out "${BIN}/ejs.db.sqlite.mod" ${settings.esflags} --optimize 9 ${FILES}')
+                run('"${LBIN}/ejsmod" --cslots --dir "${BIN}" "${BIN}/ejs.db.sqlite.mod"')
             `,
             message: 'Compile: ejs.db.sqlite.mod',
             depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
