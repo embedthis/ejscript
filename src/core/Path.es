@@ -1097,7 +1097,7 @@ module ejs {
                         if (options.footer) {
                             contents.push(expand(options.footer, options))
                         }
-                        to.write(contents.join('\n'))
+                        to.write(contents.join('\n') + '\n')
                         to.setAttributes(options)
                     }
                     /*
