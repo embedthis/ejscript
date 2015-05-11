@@ -113,13 +113,6 @@ cd ..\..\projects\ejs-windows-default</Command>
       </ProjectReference>
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="libejs.zlib.vcxproj">
-      <Project>8799182e-99f8-49fc-936b-35b5c115b6dd</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      </ProjectReference>
-    </ItemGroup>
-
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

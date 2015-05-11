@@ -1959,6 +1959,7 @@ DEPS_135 += src/ejs.tar/Tar.es
 DEPS_135 += $(BUILD)/bin/ejsc
 DEPS_135 += $(BUILD)/bin/ejs.mod
 DEPS_135 += $(BUILD)/bin/ejs.zlib.mod
+DEPS_135 += $(BUILD)/bin/libejs.zlib.so
 
 $(BUILD)/bin/ejs.tar.mod: $(DEPS_135)
 	( \

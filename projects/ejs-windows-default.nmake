@@ -1944,6 +1944,7 @@ DEPS_125 = $(DEPS_125) src\ejs.tar\Tar.es
 DEPS_125 = $(DEPS_125) build\$(CONFIG)\bin\ejsc.exe
 DEPS_125 = $(DEPS_125) build\$(CONFIG)\bin\ejs.mod
 DEPS_125 = $(DEPS_125) build\$(CONFIG)\bin\ejs.zlib.mod
+DEPS_125 = $(DEPS_125) build\$(CONFIG)\bin\libejs.zlib.dll
 
 build\$(CONFIG)\bin\ejs.tar.mod: $(DEPS_125)
 	cd src\ejs.tar
