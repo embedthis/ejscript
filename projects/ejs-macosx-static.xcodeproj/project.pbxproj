@@ -2537,8 +2537,6 @@
 		900D453C900D53D6000002AB /* ejs */ = {
                 isa = PBXGroup;
                 children = (
-				900D453C900D53D600000271 /* me.h */,
-				900D453C900D53D600000272 /* ejsCompiler.h */,
 				900D453C900D53D600000090 /* ejs.c */,
 			);
                 name = "ejs";
@@ -2548,7 +2546,6 @@
 		900D453C900D53D6000002AC /* ejsc */ = {
                 isa = PBXGroup;
                 children = (
-				900D453C900D53D600000272 /* ejsCompiler.h */,
 				900D453C900D53D600000092 /* ejsc.c */,
 			);
                 name = "ejsc";
@@ -2559,7 +2556,6 @@
                 isa = PBXGroup;
                 children = (
 				900D453C900D53D600000275 /* ejsmod.h */,
-				900D453C900D53D600000276 /* ejsByteCodeTable.h */,
 				900D453C900D53D600000094 /* ejsmod.c */,
 				900D453C900D53D600000096 /* doc.c */,
 				900D453C900D53D600000098 /* docFiles.c */,
@@ -2573,7 +2569,6 @@
 		900D453C900D53D6000002AE /* ejsrun */ = {
                 isa = PBXGroup;
                 children = (
-				900D453C900D53D600000272 /* ejsCompiler.h */,
 				900D453C900D53D60000009E /* ejsrun.c */,
 			);
                 name = "ejsrun";
@@ -2584,9 +2579,7 @@
                 isa = PBXGroup;
                 children = (
 				900D453C900D53D600000279 /* ejsCompiler.h */,
-				900D453C900D53D60000027A /* mpr.h */,
 				900D453C900D53D60000027B /* ejs.h */,
-				900D453C900D53D60000027C /* pcre.h */,
 				900D453C900D53D6000000A0 /* ecAst.c */,
 				900D453C900D53D6000000A2 /* ecCodeGen.c */,
 				900D453C900D53D6000000A4 /* ecCompiler.c */,
@@ -2654,8 +2647,6 @@
 		900D453C900D53D6000002A2 /* libejs.db.sqlite */ = {
                 isa = PBXGroup;
                 children = (
-				900D453C900D53D60000027D /* ejs.h */,
-				900D453C900D53D60000027E /* ejs.db.sqlite.slots.h */,
 				900D453C900D53D600000116 /* ejsSqlite.c */,
 			);
                 name = "libejs.db.sqlite";
@@ -2665,11 +2656,7 @@
 		900D453C900D53D6000002A3 /* libejs.web */ = {
                 isa = PBXGroup;
                 children = (
-				900D453C900D53D600000271 /* me.h */,
-				900D453C900D53D60000027D /* ejs.h */,
-				900D453C900D53D600000272 /* ejsCompiler.h */,
 				900D453C900D53D600000280 /* ejsWeb.h */,
-				900D453C900D53D600000281 /* ejs.web.slots.h */,
 				900D453C900D53D600000118 /* ejsHttpServer.c */,
 				900D453C900D53D60000011A /* ejsRequest.c */,
 				900D453C900D53D60000011C /* ejsSession.c */,
@@ -2682,9 +2669,6 @@
 		900D453C900D53D6000002A4 /* libejs.zlib */ = {
                 isa = PBXGroup;
                 children = (
-				900D453C900D53D60000027D /* ejs.h */,
-				900D453C900D53D600000283 /* zlib.h */,
-				900D453C900D53D600000284 /* ejs.zlib.slots.h */,
 				900D453C900D53D600000120 /* ejsZlib.c */,
 			);
                 name = "libejs.zlib";
@@ -2695,7 +2679,6 @@
                 isa = PBXGroup;
                 children = (
 				900D453C900D53D600000286 /* http.h */,
-				900D453C900D53D60000027C /* pcre.h */,
 				900D453C900D53D600000122 /* httpLib.c */,
 			);
                 name = "libhttp";
@@ -2715,7 +2698,6 @@
 		900D453C900D53D6000002A7 /* libpcre */ = {
                 isa = PBXGroup;
                 children = (
-				900D453C900D53D600000271 /* me.h */,
 				900D453C900D53D600000288 /* pcre.h */,
 				900D453C900D53D600000126 /* pcre.c */,
 			);
@@ -2726,7 +2708,6 @@
 		900D453C900D53D6000002A8 /* libsql */ = {
                 isa = PBXGroup;
                 children = (
-				900D453C900D53D600000271 /* me.h */,
 				900D453C900D53D600000289 /* sqlite3.h */,
 				900D453C900D53D600000128 /* sqlite3.c */,
 			);
@@ -2737,7 +2718,6 @@
 		900D453C900D53D6000002A9 /* libzlib */ = {
                 isa = PBXGroup;
                 children = (
-				900D453C900D53D600000271 /* me.h */,
 				900D453C900D53D60000028A /* zlib.h */,
 				900D453C900D53D60000012A /* zlib.c */,
 			);
@@ -2748,7 +2728,6 @@
 		900D453C900D53D6000002AF /* mvc */ = {
                 isa = PBXGroup;
                 children = (
-				900D453C900D53D600000272 /* ejsCompiler.h */,
 				900D453C900D53D60000009E /* ejsrun.c */,
 			);
                 name = "mvc";
@@ -2758,7 +2737,6 @@
 		900D453C900D53D6000002AA /* openssl */ = {
                 isa = PBXGroup;
                 children = (
-				900D453C900D53D60000027A /* mpr.h */,
 				900D453C900D53D60000012C /* openssl.c */,
 			);
                 name = "openssl";
@@ -2768,7 +2746,6 @@
 		900D453C900D53D6000002B0 /* utest */ = {
                 isa = PBXGroup;
                 children = (
-				900D453C900D53D600000272 /* ejsCompiler.h */,
 				900D453C900D53D60000009E /* ejsrun.c */,
 			);
                 name = "utest";
@@ -2778,7 +2755,6 @@
 		900D453C900D53D6000002B1 /* watchdog */ = {
                 isa = PBXGroup;
                 children = (
-				900D453C900D53D60000027A /* mpr.h */,
 				900D453C900D53D60000012E /* watchdog.c */,
 			);
                 name = "watchdog";
