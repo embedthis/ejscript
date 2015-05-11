@@ -36975,7 +36975,10 @@ static bool waitForState(EjsHttp *hp, int state, MprTicks timeout, int throw)
             if (httpNeedRetry(conn, &url)) {
                 if (url) {
                     httpRemoveHeader(conn, "Host");
-                    location = httpCreateUri(url, 0);
+                    if ((location = httpCreateUri(url, 0)) == 0) {
+                        ejsThrowIOError(ejs, "Bad location Uri");
+                        return 0;
+                    }
                     uri = httpJoinUri(conn->tx->parsedUri, 1, &location);
                     hp->uri = httpUriToString(uri, HTTP_COMPLETE_URI);
                 }
