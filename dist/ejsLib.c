@@ -51153,7 +51153,9 @@ PUBLIC void ejsConfigureUriType(Ejs *ejs)
         ejsBindMethod(ejs, type, ES_Uri_encode, uri_encode);
         ejsBindMethod(ejs, type, ES_Uri_encodeComponent, uri_encodeComponent);
         ejsBindMethod(ejs, type, ES_Uri_template, uri_template);
+#if ES_Uri_templateString
         ejsBindMethod(ejs, type, ES_Uri_templateString, uri_templateString);
+#endif
 
         prototype = type->prototype;
         ejsBindConstructor(ejs, type, uri_constructor);
