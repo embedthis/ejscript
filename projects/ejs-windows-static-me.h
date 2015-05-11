@@ -123,9 +123,6 @@
 #ifndef ME_MPR_LOGGING
     #define ME_MPR_LOGGING 1
 #endif
-#ifndef ME_MPR_MANAGER
-    #define ME_MPR_MANAGER "ejsman"
-#endif
 #ifndef ME_NAME
     #define ME_NAME "ejs"
 #endif
@@ -143,6 +140,9 @@
 #endif
 #ifndef ME_VERSION
     #define ME_VERSION "2.5.3"
+#endif
+#ifndef ME_WATCHDOG_NAME
+    #define ME_WATCHDOG_NAME "ejsman"
 #endif
 
 /* Prefixes */
