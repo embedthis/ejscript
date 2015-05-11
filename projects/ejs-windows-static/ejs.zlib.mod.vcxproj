@@ -94,7 +94,7 @@
 
       <ItemDefinitionGroup>
       <Link>
-        <AdditionalDependencies>libejs.lib;libhttp.lib;libpcre.lib;libmpr.lib;libestssl.lib;libest.lib;%(AdditionalDependencies)</AdditionalDependencies>
+        <AdditionalDependencies>libejs.zlib;libejs.lib;libhttp.lib;libpcre.lib;libmpr.lib;libestssl.lib;libest.lib;libzlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
         <AdditionalLibraryDirectories>$(OutDir);build\$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       </Link>
 
@@ -109,6 +109,13 @@ cd ..\..\projects\ejs-windows-static</Command>
     <ItemGroup>
       <ProjectReference Include="ejsc.vcxproj">
       <Project>d5245843-770a-44aa-9aa8-2a834be6411e</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      </ProjectReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="libejs.zlib.vcxproj">
+      <Project>8799182e-99f8-49fc-936b-35b5c115b6dd</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       </ProjectReference>
     </ItemGroup>
