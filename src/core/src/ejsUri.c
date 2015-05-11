@@ -45,7 +45,7 @@ static EjsUri *castToUri(Ejs *ejs, EjsObj *arg)
         arg = (EjsObj) ejsToString(ejs, arg);
         up->uri = httpCreateUri(up, ejsToMulti(ejs, arg), 0);
     }
-    if (!up->uri) {
+    if (!up->uri || !up->uri->valid) {
         ejsThrowArgError(ejs, "Invalid URI");
     }
     return up;
@@ -66,6 +66,9 @@ static EjsUri *cloneUri(Ejs *ejs, EjsUri *src, bool deep)
 #else
     dest->uri = httpCloneUri(src->uri, 0);
 #endif
+    if (!dest->uri || !dest->uri->valid) {
+        ejsThrowArgError(ejs, "Invalid URI");
+    }
     return dest;
 }
 
@@ -941,7 +944,7 @@ static EjsUri *uri_trimExt(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 static EjsObj *uri_set_uri(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     up->uri = httpCreateUri(ejsToMulti(ejs, argv[0]), 0);
-    if (!up->uri) {
+    if (!up->uri || !up->uri->valid) {
         ejsThrowArgError(ejs, "Invalid URI");
     }
     return 0;
@@ -1011,7 +1014,7 @@ static HttpUri *toHttpUri(Ejs *ejs, EjsObj *arg, int dup)
         arg = (EjsObj*) ejsToString(ejs, arg);
         uri = httpCreateUri(ejsToMulti(ejs, arg), 0);
     }
-    if (!uri) {
+    if (!uri || !uri->valid) {
         ejsThrowArgError(ejs, "Invalid URI");
     }
     return uri;
