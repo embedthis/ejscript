@@ -87,8 +87,8 @@ TARGETS               += $(BUILD)/bin/ejs.mvc.mod
 TARGETS               += $(BUILD)/bin/ejs.tar.mod
 TARGETS               += $(BUILD)/bin/ejsrun
 TARGETS               += $(BUILD)/bin/ca.crt
-TARGETS               += $(BUILD)/bin/libejs.db.sqlite.dylib
-TARGETS               += $(BUILD)/bin/libejs.web.dylib
+TARGETS               += $(BUILD)/bin/libejs.db.sqlite.a
+TARGETS               += $(BUILD)/bin/libejs.web.a
 TARGETS               += $(BUILD)/bin/mvc
 TARGETS               += $(BUILD)/bin/utest
 TARGETS               += $(BUILD)/bin/ejsman
@@ -209,15 +209,15 @@ clean:
 	rm -f "$(BUILD)/bin/ejsmod"
 	rm -f "$(BUILD)/bin/ejsrun"
 	rm -f "$(BUILD)/bin/ca.crt"
-	rm -f "$(BUILD)/bin/libejs.dylib"
-	rm -f "$(BUILD)/bin/libejs.db.sqlite.dylib"
-	rm -f "$(BUILD)/bin/libejs.web.dylib"
-	rm -f "$(BUILD)/bin/libejs.zlib.dylib"
-	rm -f "$(BUILD)/bin/libhttp.dylib"
-	rm -f "$(BUILD)/bin/libmpr.dylib"
-	rm -f "$(BUILD)/bin/libpcre.dylib"
-	rm -f "$(BUILD)/bin/libsql.dylib"
-	rm -f "$(BUILD)/bin/libzlib.dylib"
+	rm -f "$(BUILD)/bin/libejs.a"
+	rm -f "$(BUILD)/bin/libejs.db.sqlite.a"
+	rm -f "$(BUILD)/bin/libejs.web.a"
+	rm -f "$(BUILD)/bin/libejs.zlib.a"
+	rm -f "$(BUILD)/bin/libhttp.a"
+	rm -f "$(BUILD)/bin/libmpr.a"
+	rm -f "$(BUILD)/bin/libpcre.a"
+	rm -f "$(BUILD)/bin/libsql.a"
+	rm -f "$(BUILD)/bin/libzlib.a"
 	rm -f "$(BUILD)/bin/mvc.es"
 	rm -f "$(BUILD)/bin/libopenssl.a"
 	rm -f "$(BUILD)/bin/utest"
@@ -1363,28 +1363,9 @@ endif
 DEPS_115 += $(BUILD)/inc/mpr.h
 DEPS_115 += $(BUILD)/obj/mprLib.o
 
-ifeq ($(ME_COM_EST),1)
-    LIBS_115 += -lestssl
-endif
-ifeq ($(ME_COM_EST),1)
-    LIBS_115 += -lest
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_115 += -lopenssl
-    LIBPATHS_115 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_115 += -lssl
-    LIBPATHS_115 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_115 += -lcrypto
-    LIBPATHS_115 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-
-$(BUILD)/bin/libmpr.dylib: $(DEPS_115)
-	@echo '      [Link] $(BUILD)/bin/libmpr.dylib'
-	$(CC) -dynamiclib -o $(BUILD)/bin/libmpr.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS)  -install_name @rpath/libmpr.dylib -compatibility_version 2.5 -current_version 2.5 "$(BUILD)/obj/mprLib.o" $(LIBPATHS_115) $(LIBS_115) $(LIBS_115) $(LIBS) 
+$(BUILD)/bin/libmpr.a: $(DEPS_115)
+	@echo '      [Link] $(BUILD)/bin/libmpr.a'
+	ar -cr $(BUILD)/bin/libmpr.a "$(BUILD)/obj/mprLib.o"
 
 ifeq ($(ME_COM_PCRE),1)
 #
@@ -1393,48 +1374,25 @@ ifeq ($(ME_COM_PCRE),1)
 DEPS_116 += $(BUILD)/inc/pcre.h
 DEPS_116 += $(BUILD)/obj/pcre.o
 
-$(BUILD)/bin/libpcre.dylib: $(DEPS_116)
-	@echo '      [Link] $(BUILD)/bin/libpcre.dylib'
-	$(CC) -dynamiclib -o $(BUILD)/bin/libpcre.dylib -arch $(CC_ARCH) $(LDFLAGS) -compatibility_version 2.5 -current_version 2.5 $(LIBPATHS) -install_name @rpath/libpcre.dylib -compatibility_version 2.5 -current_version 2.5 "$(BUILD)/obj/pcre.o" $(LIBS) 
+$(BUILD)/bin/libpcre.a: $(DEPS_116)
+	@echo '      [Link] $(BUILD)/bin/libpcre.a'
+	ar -cr $(BUILD)/bin/libpcre.a "$(BUILD)/obj/pcre.o"
 endif
 
 ifeq ($(ME_COM_HTTP),1)
 #
 #   libhttp
 #
-DEPS_117 += $(BUILD)/bin/libmpr.dylib
+DEPS_117 += $(BUILD)/bin/libmpr.a
 ifeq ($(ME_COM_PCRE),1)
-    DEPS_117 += $(BUILD)/bin/libpcre.dylib
+    DEPS_117 += $(BUILD)/bin/libpcre.a
 endif
 DEPS_117 += $(BUILD)/inc/http.h
 DEPS_117 += $(BUILD)/obj/httpLib.o
 
-ifeq ($(ME_COM_PCRE),1)
-    LIBS_117 += -lpcre
-endif
-LIBS_117 += -lmpr
-ifeq ($(ME_COM_EST),1)
-    LIBS_117 += -lestssl
-endif
-ifeq ($(ME_COM_EST),1)
-    LIBS_117 += -lest
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_117 += -lopenssl
-    LIBPATHS_117 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_117 += -lssl
-    LIBPATHS_117 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_117 += -lcrypto
-    LIBPATHS_117 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-
-$(BUILD)/bin/libhttp.dylib: $(DEPS_117)
-	@echo '      [Link] $(BUILD)/bin/libhttp.dylib'
-	$(CC) -dynamiclib -o $(BUILD)/bin/libhttp.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS)  -install_name @rpath/libhttp.dylib -compatibility_version 2.5 -current_version 2.5 "$(BUILD)/obj/httpLib.o" $(LIBPATHS_117) $(LIBS_117) $(LIBS_117) $(LIBS) -lpam 
+$(BUILD)/bin/libhttp.a: $(DEPS_117)
+	@echo '      [Link] $(BUILD)/bin/libhttp.a'
+	ar -cr $(BUILD)/bin/libhttp.a "$(BUILD)/obj/httpLib.o"
 endif
 
 #
@@ -1442,7 +1400,7 @@ endif
 #
 DEPS_118 += slots
 ifeq ($(ME_COM_HTTP),1)
-    DEPS_118 += $(BUILD)/bin/libhttp.dylib
+    DEPS_118 += $(BUILD)/bin/libhttp.a
 endif
 DEPS_118 += $(BUILD)/inc/ejs.cache.local.slots.h
 DEPS_118 += $(BUILD)/inc/ejs.db.sqlite.slots.h
@@ -1514,40 +1472,14 @@ DEPS_118 += $(BUILD)/obj/ejsModule.o
 DEPS_118 += $(BUILD)/obj/ejsScope.o
 DEPS_118 += $(BUILD)/obj/ejsService.o
 
-ifeq ($(ME_COM_HTTP),1)
-    LIBS_118 += -lhttp
-endif
-ifeq ($(ME_COM_PCRE),1)
-    LIBS_118 += -lpcre
-endif
-LIBS_118 += -lmpr
-ifeq ($(ME_COM_EST),1)
-    LIBS_118 += -lestssl
-endif
-ifeq ($(ME_COM_EST),1)
-    LIBS_118 += -lest
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_118 += -lopenssl
-    LIBPATHS_118 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_118 += -lssl
-    LIBPATHS_118 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_118 += -lcrypto
-    LIBPATHS_118 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-
-$(BUILD)/bin/libejs.dylib: $(DEPS_118)
-	@echo '      [Link] $(BUILD)/bin/libejs.dylib'
-	$(CC) -dynamiclib -o $(BUILD)/bin/libejs.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS)  -install_name @rpath/libejs.dylib -compatibility_version 2.5 -current_version 2.5 "$(BUILD)/obj/ecAst.o" "$(BUILD)/obj/ecCodeGen.o" "$(BUILD)/obj/ecCompiler.o" "$(BUILD)/obj/ecLex.o" "$(BUILD)/obj/ecModuleWrite.o" "$(BUILD)/obj/ecParser.o" "$(BUILD)/obj/ecState.o" "$(BUILD)/obj/dtoa.o" "$(BUILD)/obj/ejsApp.o" "$(BUILD)/obj/ejsArray.o" "$(BUILD)/obj/ejsBlock.o" "$(BUILD)/obj/ejsBoolean.o" "$(BUILD)/obj/ejsByteArray.o" "$(BUILD)/obj/ejsCache.o" "$(BUILD)/obj/ejsCmd.o" "$(BUILD)/obj/ejsConfig.o" "$(BUILD)/obj/ejsDate.o" "$(BUILD)/obj/ejsDebug.o" "$(BUILD)/obj/ejsError.o" "$(BUILD)/obj/ejsFile.o" "$(BUILD)/obj/ejsFileSystem.o" "$(BUILD)/obj/ejsFrame.o" "$(BUILD)/obj/ejsFunction.o" "$(BUILD)/obj/ejsGC.o" "$(BUILD)/obj/ejsGlobal.o" "$(BUILD)/obj/ejsHttp.o" "$(BUILD)/obj/ejsIterator.o" "$(BUILD)/obj/ejsJSON.o" "$(BUILD)/obj/ejsLocalCache.o" "$(BUILD)/obj/ejsMath.o" "$(BUILD)/obj/ejsMemory.o" "$(BUILD)/obj/ejsMprLog.o" "$(BUILD)/obj/ejsNamespace.o" "$(BUILD)/obj/ejsNull.o" "$(BUILD)/obj/ejsNumber.o" "$(BUILD)/obj/ejsObject.o" "$(BUILD)/obj/ejsPath.o" "$(BUILD)/obj/ejsPot.o" "$(BUILD)/obj/ejsRegExp.o" "$(BUILD)/obj/ejsSocket.o" "$(BUILD)/obj/ejsString.o" "$(BUILD)/obj/ejsSystem.o" "$(BUILD)/obj/ejsTimer.o" "$(BUILD)/obj/ejsType.o" "$(BUILD)/obj/ejsUri.o" "$(BUILD)/obj/ejsVoid.o" "$(BUILD)/obj/ejsWebSocket.o" "$(BUILD)/obj/ejsWorker.o" "$(BUILD)/obj/ejsXML.o" "$(BUILD)/obj/ejsXMLList.o" "$(BUILD)/obj/ejsXMLLoader.o" "$(BUILD)/obj/ejsByteCode.o" "$(BUILD)/obj/ejsException.o" "$(BUILD)/obj/ejsHelper.o" "$(BUILD)/obj/ejsInterp.o" "$(BUILD)/obj/ejsLoader.o" "$(BUILD)/obj/ejsModule.o" "$(BUILD)/obj/ejsScope.o" "$(BUILD)/obj/ejsService.o" $(LIBPATHS_118) $(LIBS_118) $(LIBS_118) $(LIBS) -lpam 
+$(BUILD)/bin/libejs.a: $(DEPS_118)
+	@echo '      [Link] $(BUILD)/bin/libejs.a'
+	ar -cr $(BUILD)/bin/libejs.a "$(BUILD)/obj/ecAst.o" "$(BUILD)/obj/ecCodeGen.o" "$(BUILD)/obj/ecCompiler.o" "$(BUILD)/obj/ecLex.o" "$(BUILD)/obj/ecModuleWrite.o" "$(BUILD)/obj/ecParser.o" "$(BUILD)/obj/ecState.o" "$(BUILD)/obj/dtoa.o" "$(BUILD)/obj/ejsApp.o" "$(BUILD)/obj/ejsArray.o" "$(BUILD)/obj/ejsBlock.o" "$(BUILD)/obj/ejsBoolean.o" "$(BUILD)/obj/ejsByteArray.o" "$(BUILD)/obj/ejsCache.o" "$(BUILD)/obj/ejsCmd.o" "$(BUILD)/obj/ejsConfig.o" "$(BUILD)/obj/ejsDate.o" "$(BUILD)/obj/ejsDebug.o" "$(BUILD)/obj/ejsError.o" "$(BUILD)/obj/ejsFile.o" "$(BUILD)/obj/ejsFileSystem.o" "$(BUILD)/obj/ejsFrame.o" "$(BUILD)/obj/ejsFunction.o" "$(BUILD)/obj/ejsGC.o" "$(BUILD)/obj/ejsGlobal.o" "$(BUILD)/obj/ejsHttp.o" "$(BUILD)/obj/ejsIterator.o" "$(BUILD)/obj/ejsJSON.o" "$(BUILD)/obj/ejsLocalCache.o" "$(BUILD)/obj/ejsMath.o" "$(BUILD)/obj/ejsMemory.o" "$(BUILD)/obj/ejsMprLog.o" "$(BUILD)/obj/ejsNamespace.o" "$(BUILD)/obj/ejsNull.o" "$(BUILD)/obj/ejsNumber.o" "$(BUILD)/obj/ejsObject.o" "$(BUILD)/obj/ejsPath.o" "$(BUILD)/obj/ejsPot.o" "$(BUILD)/obj/ejsRegExp.o" "$(BUILD)/obj/ejsSocket.o" "$(BUILD)/obj/ejsString.o" "$(BUILD)/obj/ejsSystem.o" "$(BUILD)/obj/ejsTimer.o" "$(BUILD)/obj/ejsType.o" "$(BUILD)/obj/ejsUri.o" "$(BUILD)/obj/ejsVoid.o" "$(BUILD)/obj/ejsWebSocket.o" "$(BUILD)/obj/ejsWorker.o" "$(BUILD)/obj/ejsXML.o" "$(BUILD)/obj/ejsXMLList.o" "$(BUILD)/obj/ejsXMLLoader.o" "$(BUILD)/obj/ejsByteCode.o" "$(BUILD)/obj/ejsException.o" "$(BUILD)/obj/ejsHelper.o" "$(BUILD)/obj/ejsInterp.o" "$(BUILD)/obj/ejsLoader.o" "$(BUILD)/obj/ejsModule.o" "$(BUILD)/obj/ejsScope.o" "$(BUILD)/obj/ejsService.o"
 
 #
 #   ejs
 #
-DEPS_119 += $(BUILD)/bin/libejs.dylib
+DEPS_119 += $(BUILD)/bin/libejs.a
 DEPS_119 += $(BUILD)/obj/ejs.o
 
 LIBS_119 += -lejs
@@ -1584,7 +1516,7 @@ $(BUILD)/bin/ejs: $(DEPS_119)
 #
 #   ejsc
 #
-DEPS_120 += $(BUILD)/bin/libejs.dylib
+DEPS_120 += $(BUILD)/bin/libejs.a
 DEPS_120 += $(BUILD)/obj/ejsc.o
 
 LIBS_120 += -lejs
@@ -1621,7 +1553,7 @@ $(BUILD)/bin/ejsc: $(DEPS_120)
 #
 #   ejsmod
 #
-DEPS_121 += $(BUILD)/bin/libejs.dylib
+DEPS_121 += $(BUILD)/bin/libejs.a
 DEPS_121 += $(BUILD)/inc/ejsmod.h
 DEPS_121 += $(BUILD)/obj/ejsmod.o
 DEPS_121 += $(BUILD)/obj/doc.o
@@ -1877,54 +1809,24 @@ ifeq ($(ME_COM_ZLIB),1)
 DEPS_131 += $(BUILD)/inc/zlib.h
 DEPS_131 += $(BUILD)/obj/zlib.o
 
-$(BUILD)/bin/libzlib.dylib: $(DEPS_131)
-	@echo '      [Link] $(BUILD)/bin/libzlib.dylib'
-	$(CC) -dynamiclib -o $(BUILD)/bin/libzlib.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libzlib.dylib -compatibility_version 2.5 -current_version 2.5 "$(BUILD)/obj/zlib.o" $(LIBS) 
+$(BUILD)/bin/libzlib.a: $(DEPS_131)
+	@echo '      [Link] $(BUILD)/bin/libzlib.a'
+	ar -cr $(BUILD)/bin/libzlib.a "$(BUILD)/obj/zlib.o"
 endif
 
 #
 #   libejs.zlib
 #
-DEPS_132 += $(BUILD)/bin/libejs.dylib
+DEPS_132 += $(BUILD)/bin/libejs.a
 DEPS_132 += $(BUILD)/bin/ejs.mod
 ifeq ($(ME_COM_ZLIB),1)
-    DEPS_132 += $(BUILD)/bin/libzlib.dylib
+    DEPS_132 += $(BUILD)/bin/libzlib.a
 endif
 DEPS_132 += $(BUILD)/obj/ejsZlib.o
 
-ifeq ($(ME_COM_ZLIB),1)
-    LIBS_132 += -lzlib
-endif
-LIBS_132 += -lejs
-ifeq ($(ME_COM_HTTP),1)
-    LIBS_132 += -lhttp
-endif
-ifeq ($(ME_COM_PCRE),1)
-    LIBS_132 += -lpcre
-endif
-LIBS_132 += -lmpr
-ifeq ($(ME_COM_EST),1)
-    LIBS_132 += -lestssl
-endif
-ifeq ($(ME_COM_EST),1)
-    LIBS_132 += -lest
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_132 += -lopenssl
-    LIBPATHS_132 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_132 += -lssl
-    LIBPATHS_132 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_132 += -lcrypto
-    LIBPATHS_132 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-
-$(BUILD)/bin/libejs.zlib.dylib: $(DEPS_132)
-	@echo '      [Link] $(BUILD)/bin/libejs.zlib.dylib'
-	$(CC) -dynamiclib -o $(BUILD)/bin/libejs.zlib.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS)  -install_name @rpath/libejs.zlib.dylib -compatibility_version 2.5 -current_version 2.5 "$(BUILD)/obj/ejsZlib.o" $(LIBPATHS_132) $(LIBS_132) $(LIBS_132) $(LIBS) -lpam 
+$(BUILD)/bin/libejs.zlib.a: $(DEPS_132)
+	@echo '      [Link] $(BUILD)/bin/libejs.zlib.a'
+	ar -cr $(BUILD)/bin/libejs.zlib.a "$(BUILD)/obj/ejsZlib.o"
 
 #
 #   ejs.zlib.mod
@@ -1932,7 +1834,7 @@ $(BUILD)/bin/libejs.zlib.dylib: $(DEPS_132)
 DEPS_133 += src/ejs.zlib/Zlib.es
 DEPS_133 += $(BUILD)/bin/ejsc
 DEPS_133 += $(BUILD)/bin/ejs.mod
-DEPS_133 += $(BUILD)/bin/libejs.zlib.dylib
+DEPS_133 += $(BUILD)/bin/libejs.zlib.a
 
 $(BUILD)/bin/ejs.zlib.mod: $(DEPS_133)
 	( \
@@ -1948,7 +1850,7 @@ DEPS_134 += src/ejs.tar/Tar.es
 DEPS_134 += $(BUILD)/bin/ejsc
 DEPS_134 += $(BUILD)/bin/ejs.mod
 DEPS_134 += $(BUILD)/bin/ejs.zlib.mod
-DEPS_134 += $(BUILD)/bin/libejs.zlib.dylib
+DEPS_134 += $(BUILD)/bin/libejs.zlib.a
 
 $(BUILD)/bin/ejs.tar.mod: $(DEPS_134)
 	( \
@@ -1960,7 +1862,7 @@ $(BUILD)/bin/ejs.tar.mod: $(DEPS_134)
 #
 #   ejsrun
 #
-DEPS_135 += $(BUILD)/bin/libejs.dylib
+DEPS_135 += $(BUILD)/bin/libejs.a
 DEPS_135 += $(BUILD)/obj/ejsrun.o
 
 LIBS_135 += -lejs
@@ -2011,61 +1913,31 @@ ifeq ($(ME_COM_SQLITE),1)
 DEPS_137 += $(BUILD)/inc/sqlite3.h
 DEPS_137 += $(BUILD)/obj/sqlite3.o
 
-$(BUILD)/bin/libsql.dylib: $(DEPS_137)
-	@echo '      [Link] $(BUILD)/bin/libsql.dylib'
-	$(CC) -dynamiclib -o $(BUILD)/bin/libsql.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS) -install_name @rpath/libsql.dylib -compatibility_version 2.5 -current_version 2.5 "$(BUILD)/obj/sqlite3.o" $(LIBS) 
+$(BUILD)/bin/libsql.a: $(DEPS_137)
+	@echo '      [Link] $(BUILD)/bin/libsql.a'
+	ar -cr $(BUILD)/bin/libsql.a "$(BUILD)/obj/sqlite3.o"
 endif
 
 #
 #   libejs.db.sqlite
 #
-DEPS_138 += $(BUILD)/bin/libmpr.dylib
-DEPS_138 += $(BUILD)/bin/libejs.dylib
+DEPS_138 += $(BUILD)/bin/libmpr.a
+DEPS_138 += $(BUILD)/bin/libejs.a
 DEPS_138 += $(BUILD)/bin/ejs.mod
 DEPS_138 += $(BUILD)/bin/ejs.db.sqlite.mod
 ifeq ($(ME_COM_SQLITE),1)
-    DEPS_138 += $(BUILD)/bin/libsql.dylib
+    DEPS_138 += $(BUILD)/bin/libsql.a
 endif
 DEPS_138 += $(BUILD)/obj/ejsSqlite.o
 
-ifeq ($(ME_COM_SQLITE),1)
-    LIBS_138 += -lsql
-endif
-LIBS_138 += -lejs
-LIBS_138 += -lmpr
-ifeq ($(ME_COM_EST),1)
-    LIBS_138 += -lestssl
-endif
-ifeq ($(ME_COM_EST),1)
-    LIBS_138 += -lest
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_138 += -lopenssl
-    LIBPATHS_138 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_138 += -lssl
-    LIBPATHS_138 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_138 += -lcrypto
-    LIBPATHS_138 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-ifeq ($(ME_COM_HTTP),1)
-    LIBS_138 += -lhttp
-endif
-ifeq ($(ME_COM_PCRE),1)
-    LIBS_138 += -lpcre
-endif
-
-$(BUILD)/bin/libejs.db.sqlite.dylib: $(DEPS_138)
-	@echo '      [Link] $(BUILD)/bin/libejs.db.sqlite.dylib'
-	$(CC) -dynamiclib -o $(BUILD)/bin/libejs.db.sqlite.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS)  -install_name @rpath/libejs.db.sqlite.dylib -compatibility_version 2.5 -current_version 2.5 "$(BUILD)/obj/ejsSqlite.o" $(LIBPATHS_138) $(LIBS_138) $(LIBS_138) $(LIBS) -lpam 
+$(BUILD)/bin/libejs.db.sqlite.a: $(DEPS_138)
+	@echo '      [Link] $(BUILD)/bin/libejs.db.sqlite.a'
+	ar -cr $(BUILD)/bin/libejs.db.sqlite.a "$(BUILD)/obj/ejsSqlite.o"
 
 #
 #   libejs.web
 #
-DEPS_139 += $(BUILD)/bin/libejs.dylib
+DEPS_139 += $(BUILD)/bin/libejs.a
 DEPS_139 += $(BUILD)/bin/ejs.mod
 DEPS_139 += $(BUILD)/inc/ejsWeb.h
 DEPS_139 += $(BUILD)/obj/ejsHttpServer.o
@@ -2073,36 +1945,9 @@ DEPS_139 += $(BUILD)/obj/ejsRequest.o
 DEPS_139 += $(BUILD)/obj/ejsSession.o
 DEPS_139 += $(BUILD)/obj/ejsWeb.o
 
-LIBS_139 += -lejs
-ifeq ($(ME_COM_HTTP),1)
-    LIBS_139 += -lhttp
-endif
-ifeq ($(ME_COM_PCRE),1)
-    LIBS_139 += -lpcre
-endif
-LIBS_139 += -lmpr
-ifeq ($(ME_COM_EST),1)
-    LIBS_139 += -lestssl
-endif
-ifeq ($(ME_COM_EST),1)
-    LIBS_139 += -lest
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_139 += -lopenssl
-    LIBPATHS_139 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_139 += -lssl
-    LIBPATHS_139 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_139 += -lcrypto
-    LIBPATHS_139 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-
-$(BUILD)/bin/libejs.web.dylib: $(DEPS_139)
-	@echo '      [Link] $(BUILD)/bin/libejs.web.dylib'
-	$(CC) -dynamiclib -o $(BUILD)/bin/libejs.web.dylib -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS)  -install_name @rpath/libejs.web.dylib -compatibility_version 2.5 -current_version 2.5 "$(BUILD)/obj/ejsHttpServer.o" "$(BUILD)/obj/ejsRequest.o" "$(BUILD)/obj/ejsSession.o" "$(BUILD)/obj/ejsWeb.o" $(LIBPATHS_139) $(LIBS_139) $(LIBS_139) $(LIBS) -lpam 
+$(BUILD)/bin/libejs.web.a: $(DEPS_139)
+	@echo '      [Link] $(BUILD)/bin/libejs.web.a'
+	ar -cr $(BUILD)/bin/libejs.web.a "$(BUILD)/obj/ejsHttpServer.o" "$(BUILD)/obj/ejsRequest.o" "$(BUILD)/obj/ejsSession.o" "$(BUILD)/obj/ejsWeb.o"
 
 #
 #   mvc.es
@@ -2117,7 +1962,7 @@ $(BUILD)/bin/mvc.es: $(DEPS_140)
 #
 #   mvc
 #
-DEPS_141 += $(BUILD)/bin/libejs.dylib
+DEPS_141 += $(BUILD)/bin/libejs.a
 DEPS_141 += $(BUILD)/bin/mvc.es
 DEPS_141 += $(BUILD)/obj/ejsrun.o
 
@@ -2175,7 +2020,7 @@ $(BUILD)/bin/utest.worker: $(DEPS_143)
 #
 #   utest
 #
-DEPS_144 += $(BUILD)/bin/libejs.dylib
+DEPS_144 += $(BUILD)/bin/libejs.a
 DEPS_144 += $(BUILD)/bin/utest.es
 DEPS_144 += $(BUILD)/bin/utest.worker
 DEPS_144 += $(BUILD)/obj/ejsrun.o
@@ -2214,7 +2059,7 @@ $(BUILD)/bin/utest: $(DEPS_144)
 #
 #   watchdog
 #
-DEPS_145 += $(BUILD)/bin/libmpr.dylib
+DEPS_145 += $(BUILD)/bin/libmpr.a
 DEPS_145 += $(BUILD)/obj/watchdog.o
 
 LIBS_145 += -lmpr
@@ -2361,16 +2206,6 @@ installBinary: $(DEPS_149)
 	rm -f "$(ME_BIN_PREFIX)/utest" ; \
 	ln -s "$(ME_VAPP_PREFIX)/bin/utest" "$(ME_BIN_PREFIX)/utest" ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
-	cp $(BUILD)/bin/libejs.db.sqlite.dylib $(ME_VAPP_PREFIX)/bin/libejs.db.sqlite.dylib ; \
-	cp $(BUILD)/bin/libejs.dylib $(ME_VAPP_PREFIX)/bin/libejs.dylib ; \
-	cp $(BUILD)/bin/libejs.web.dylib $(ME_VAPP_PREFIX)/bin/libejs.web.dylib ; \
-	cp $(BUILD)/bin/libejs.zlib.dylib $(ME_VAPP_PREFIX)/bin/libejs.zlib.dylib ; \
-	cp $(BUILD)/bin/libhttp.dylib $(ME_VAPP_PREFIX)/bin/libhttp.dylib ; \
-	cp $(BUILD)/bin/libmpr.dylib $(ME_VAPP_PREFIX)/bin/libmpr.dylib ; \
-	cp $(BUILD)/bin/libpcre.dylib $(ME_VAPP_PREFIX)/bin/libpcre.dylib ; \
-	cp $(BUILD)/bin/libsql.dylib $(ME_VAPP_PREFIX)/bin/libsql.dylib ; \
-	cp $(BUILD)/bin/libzlib.dylib $(ME_VAPP_PREFIX)/bin/libzlib.dylib ; \
-	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
 	cp $(BUILD)/bin/ejs.db.mapper.mod $(ME_VAPP_PREFIX)/bin/ejs.db.mapper.mod ; \
 	cp $(BUILD)/bin/ejs.db.mod $(ME_VAPP_PREFIX)/bin/ejs.db.mod ; \
 	cp $(BUILD)/bin/ejs.db.sqlite.mod $(ME_VAPP_PREFIX)/bin/ejs.db.sqlite.mod ; \
@@ -2387,10 +2222,6 @@ installBinary: $(DEPS_149)
 	if [ "$(ME_COM_SSL)" = 1 ]; then true ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
 	cp src/est/ca.crt $(ME_VAPP_PREFIX)/bin/ca.crt ; \
-	fi ; \
-	if [ "$(ME_COM_EST)" = 1 ]; then true ; \
-	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
-	cp $(BUILD)/bin/libest.dylib $(ME_VAPP_PREFIX)/bin/libest.dylib ; \
 	fi ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/bin/www" ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/bin/www/images" ; \

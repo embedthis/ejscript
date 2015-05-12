@@ -38,22 +38,22 @@
   </ItemGroup>
     
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-        <ConfigurationType>DynamicLibrary</ConfigurationType>
+        <ConfigurationType>StaticLibrary</ConfigurationType>
         <CharacterSet>NotSet</CharacterSet>
         <PlatformToolset>v120</PlatformToolset>
       </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-        <ConfigurationType>DynamicLibrary</ConfigurationType>
+        <ConfigurationType>StaticLibrary</ConfigurationType>
         <CharacterSet>NotSet</CharacterSet>
         <PlatformToolset>v120</PlatformToolset>
       </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-        <ConfigurationType>DynamicLibrary</ConfigurationType>
+        <ConfigurationType>StaticLibrary</ConfigurationType>
         <CharacterSet>NotSet</CharacterSet>
         <PlatformToolset>v120</PlatformToolset>
       </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-        <ConfigurationType>DynamicLibrary</ConfigurationType>
+        <ConfigurationType>StaticLibrary</ConfigurationType>
         <CharacterSet>NotSet</CharacterSet>
         <PlatformToolset>v120</PlatformToolset>
       </PropertyGroup>
@@ -124,7 +124,7 @@
         <Command>cd ..\..\src\ejs.web
 copy /Y /B ejsWeb.h $(IncDir)
 cd ..\..\projects\ejs-windows-static</Command>
-        <Outputs>$(BinDir)\libejs.web.dll</Outputs>
+        <Outputs>$(BinDir)\libejs.web.lib</Outputs>
       </CustomBuildStep>
   </ItemDefinitionGroup>
 

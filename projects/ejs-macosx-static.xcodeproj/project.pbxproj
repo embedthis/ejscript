@@ -383,50 +383,50 @@
 		900D453C900D53D60000012B /* openssl.c in Sources */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D60000012C /* openssl.c */; };
 		900D453C900D53D60000009D /* ejsrun.c in Sources */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D60000009E /* ejsrun.c */; };
 		900D453C900D53D60000012D /* watchdog.c in Sources */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D60000012E /* watchdog.c */; };
-		900D453C900D53D60000012F /* libejs.dylib for ejs */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000130; };
-		900D453C900D53D600000131 /* libhttp.dylib for ejs */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000132; };
-		900D453C900D53D600000133 /* libpcre.dylib for ejs */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
-		900D453C900D53D600000135 /* libmpr.dylib for ejs */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
-		900D453C900D53D600000137 /* libejs.dylib for ejsc */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000130; };
-		900D453C900D53D600000138 /* libhttp.dylib for ejsc */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000132; };
-		900D453C900D53D600000139 /* libpcre.dylib for ejsc */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
-		900D453C900D53D60000013A /* libmpr.dylib for ejsc */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
-		900D453C900D53D60000013B /* libejs.dylib for ejsmod */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000130; };
-		900D453C900D53D60000013C /* libhttp.dylib for ejsmod */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000132; };
-		900D453C900D53D60000013D /* libpcre.dylib for ejsmod */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
-		900D453C900D53D60000013E /* libmpr.dylib for ejsmod */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
-		900D453C900D53D60000013F /* libejs.dylib for ejsrun */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000130; };
-		900D453C900D53D600000140 /* libhttp.dylib for ejsrun */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000132; };
-		900D453C900D53D600000141 /* libpcre.dylib for ejsrun */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
-		900D453C900D53D600000142 /* libmpr.dylib for ejsrun */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
-		900D453C900D53D600000143 /* libhttp.dylib for libejs */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000132; };
-		900D453C900D53D600000144 /* libpcre.dylib for libejs */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
-		900D453C900D53D600000145 /* libmpr.dylib for libejs */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
-		900D453C900D53D600000146 /* libsql.dylib for libejs.db.sqlite */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000147; };
-		900D453C900D53D600000148 /* libejs.dylib for libejs.db.sqlite */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000130; };
-		900D453C900D53D600000149 /* libmpr.dylib for libejs.db.sqlite */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
-		900D453C900D53D60000014A /* libhttp.dylib for libejs.db.sqlite */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000132; };
-		900D453C900D53D60000014B /* libpcre.dylib for libejs.db.sqlite */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
-		900D453C900D53D60000014C /* libejs.dylib for libejs.web */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000130; };
-		900D453C900D53D60000014D /* libhttp.dylib for libejs.web */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000132; };
-		900D453C900D53D60000014E /* libpcre.dylib for libejs.web */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
-		900D453C900D53D60000014F /* libmpr.dylib for libejs.web */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
-		900D453C900D53D600000150 /* libzlib.dylib for libejs.zlib */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000151; };
-		900D453C900D53D600000152 /* libejs.dylib for libejs.zlib */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000130; };
-		900D453C900D53D600000153 /* libhttp.dylib for libejs.zlib */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000132; };
-		900D453C900D53D600000154 /* libpcre.dylib for libejs.zlib */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
-		900D453C900D53D600000155 /* libmpr.dylib for libejs.zlib */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
-		900D453C900D53D600000156 /* libpcre.dylib for libhttp */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
-		900D453C900D53D600000157 /* libmpr.dylib for libhttp */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
-		900D453C900D53D600000158 /* libejs.dylib for mvc */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000130; };
-		900D453C900D53D600000159 /* libhttp.dylib for mvc */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000132; };
-		900D453C900D53D60000015A /* libpcre.dylib for mvc */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
-		900D453C900D53D60000015B /* libmpr.dylib for mvc */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
-		900D453C900D53D60000015C /* libejs.dylib for utest */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000130; };
-		900D453C900D53D60000015D /* libhttp.dylib for utest */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000132; };
-		900D453C900D53D60000015E /* libpcre.dylib for utest */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
-		900D453C900D53D60000015F /* libmpr.dylib for utest */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
-		900D453C900D53D600000160 /* libmpr.dylib for watchdog */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
+		900D453C900D53D60000012F /* libejs.a for ejs */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000130; };
+		900D453C900D53D600000131 /* libhttp.a for ejs */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000132; };
+		900D453C900D53D600000133 /* libpcre.a for ejs */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
+		900D453C900D53D600000135 /* libmpr.a for ejs */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
+		900D453C900D53D600000137 /* libejs.a for ejsc */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000130; };
+		900D453C900D53D600000138 /* libhttp.a for ejsc */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000132; };
+		900D453C900D53D600000139 /* libpcre.a for ejsc */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
+		900D453C900D53D60000013A /* libmpr.a for ejsc */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
+		900D453C900D53D60000013B /* libejs.a for ejsmod */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000130; };
+		900D453C900D53D60000013C /* libhttp.a for ejsmod */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000132; };
+		900D453C900D53D60000013D /* libpcre.a for ejsmod */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
+		900D453C900D53D60000013E /* libmpr.a for ejsmod */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
+		900D453C900D53D60000013F /* libejs.a for ejsrun */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000130; };
+		900D453C900D53D600000140 /* libhttp.a for ejsrun */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000132; };
+		900D453C900D53D600000141 /* libpcre.a for ejsrun */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
+		900D453C900D53D600000142 /* libmpr.a for ejsrun */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
+		900D453C900D53D600000143 /* libhttp.a for libejs */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000132; };
+		900D453C900D53D600000144 /* libpcre.a for libejs */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
+		900D453C900D53D600000145 /* libmpr.a for libejs */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
+		900D453C900D53D600000146 /* libsql.a for libejs.db.sqlite */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000147; };
+		900D453C900D53D600000148 /* libejs.a for libejs.db.sqlite */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000130; };
+		900D453C900D53D600000149 /* libmpr.a for libejs.db.sqlite */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
+		900D453C900D53D60000014A /* libhttp.a for libejs.db.sqlite */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000132; };
+		900D453C900D53D60000014B /* libpcre.a for libejs.db.sqlite */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
+		900D453C900D53D60000014C /* libejs.a for libejs.web */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000130; };
+		900D453C900D53D60000014D /* libhttp.a for libejs.web */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000132; };
+		900D453C900D53D60000014E /* libpcre.a for libejs.web */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
+		900D453C900D53D60000014F /* libmpr.a for libejs.web */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
+		900D453C900D53D600000150 /* libzlib.a for libejs.zlib */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000151; };
+		900D453C900D53D600000152 /* libejs.a for libejs.zlib */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000130; };
+		900D453C900D53D600000153 /* libhttp.a for libejs.zlib */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000132; };
+		900D453C900D53D600000154 /* libpcre.a for libejs.zlib */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
+		900D453C900D53D600000155 /* libmpr.a for libejs.zlib */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
+		900D453C900D53D600000156 /* libpcre.a for libhttp */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
+		900D453C900D53D600000157 /* libmpr.a for libhttp */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
+		900D453C900D53D600000158 /* libejs.a for mvc */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000130; };
+		900D453C900D53D600000159 /* libhttp.a for mvc */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000132; };
+		900D453C900D53D60000015A /* libpcre.a for mvc */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
+		900D453C900D53D60000015B /* libmpr.a for mvc */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
+		900D453C900D53D60000015C /* libejs.a for utest */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000130; };
+		900D453C900D53D60000015D /* libhttp.a for utest */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000132; };
+		900D453C900D53D60000015E /* libpcre.a for utest */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000134; };
+		900D453C900D53D60000015F /* libmpr.a for utest */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
+		900D453C900D53D600000160 /* libmpr.a for watchdog */ = {isa = PBXBuildFile; fileRef = 900D453C900D53D600000136; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2304,37 +2304,37 @@
 		900D453C900D53D600000110 /* ejsModule.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsModule.c; path = src/vm/ejsModule.c; sourceTree = "<group>"; };
 		900D453C900D53D600000112 /* ejsScope.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsScope.c; path = src/vm/ejsScope.c; sourceTree = "<group>"; };
 		900D453C900D53D600000114 /* ejsService.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsService.c; path = src/vm/ejsService.c; sourceTree = "<group>"; };
-		900D453C900D53D600000130 /* libejs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		900D453C900D53D600000130 /* libejs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		900D453C900D53D600000116 /* ejsSqlite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsSqlite.c; path = src/ejs.db.sqlite/ejsSqlite.c; sourceTree = "<group>"; };
 		900D453C900D53D60000027E /* ejs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.h; path = build/macosx-x64-static/inc/ejs.h; sourceTree = "<group>"; };
 		900D453C900D53D60000027F /* ejs.db.sqlite.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.db.sqlite.slots.h; path = build/macosx-x64-static/inc/ejs.db.sqlite.slots.h; sourceTree = "<group>"; };
-		900D453C900D53D600000280 /* libejs.db.sqlite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.db.sqlite.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		900D453C900D53D600000280 /* libejs.db.sqlite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.db.sqlite.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		900D453C900D53D600000118 /* ejsHttpServer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsHttpServer.c; path = src/ejs.web/ejsHttpServer.c; sourceTree = "<group>"; };
 		900D453C900D53D600000281 /* ejsWeb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsWeb.h; path = src/ejs.web/ejsWeb.h; sourceTree = "<group>"; };
 		900D453C900D53D600000282 /* ejs.web.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.web.slots.h; path = build/macosx-x64-static/inc/ejs.web.slots.h; sourceTree = "<group>"; };
 		900D453C900D53D60000011A /* ejsRequest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsRequest.c; path = src/ejs.web/ejsRequest.c; sourceTree = "<group>"; };
 		900D453C900D53D60000011C /* ejsSession.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsSession.c; path = src/ejs.web/ejsSession.c; sourceTree = "<group>"; };
 		900D453C900D53D60000011E /* ejsWeb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsWeb.c; path = src/ejs.web/ejsWeb.c; sourceTree = "<group>"; };
-		900D453C900D53D600000283 /* libejs.web */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.web.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		900D453C900D53D600000283 /* libejs.web */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.web.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		900D453C900D53D600000120 /* ejsZlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsZlib.c; path = src/ejs.zlib/ejsZlib.c; sourceTree = "<group>"; };
 		900D453C900D53D600000284 /* zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zlib.h; path = build/macosx-x64-static/inc/zlib.h; sourceTree = "<group>"; };
 		900D453C900D53D600000285 /* ejs.zlib.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.zlib.slots.h; path = build/macosx-x64-static/inc/ejs.zlib.slots.h; sourceTree = "<group>"; };
-		900D453C900D53D600000286 /* libejs.zlib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.zlib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		900D453C900D53D600000286 /* libejs.zlib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.zlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		900D453C900D53D600000122 /* httpLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = httpLib.c; path = src/http/httpLib.c; sourceTree = "<group>"; };
 		900D453C900D53D600000287 /* http.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = http.h; path = src/http/http.h; sourceTree = "<group>"; };
-		900D453C900D53D600000132 /* libhttp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libhttp.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		900D453C900D53D600000132 /* libhttp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libhttp.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		900D453C900D53D600000124 /* mprLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mprLib.c; path = src/mpr/mprLib.c; sourceTree = "<group>"; };
 		900D453C900D53D600000288 /* mpr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpr.h; path = src/mpr/mpr.h; sourceTree = "<group>"; };
-		900D453C900D53D600000136 /* libmpr */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmpr.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		900D453C900D53D600000136 /* libmpr */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmpr.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		900D453C900D53D600000126 /* pcre.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pcre.c; path = src/pcre/pcre.c; sourceTree = "<group>"; };
 		900D453C900D53D600000289 /* pcre.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pcre.h; path = src/pcre/pcre.h; sourceTree = "<group>"; };
-		900D453C900D53D600000134 /* libpcre */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libpcre.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		900D453C900D53D600000134 /* libpcre */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libpcre.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		900D453C900D53D600000128 /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sqlite3.c; path = src/sqlite/sqlite3.c; sourceTree = "<group>"; };
 		900D453C900D53D60000028A /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = src/sqlite/sqlite3.h; sourceTree = "<group>"; };
-		900D453C900D53D600000147 /* libsql */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libsql.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		900D453C900D53D600000147 /* libsql */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libsql.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		900D453C900D53D60000012A /* zlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = zlib.c; path = src/zlib/zlib.c; sourceTree = "<group>"; };
 		900D453C900D53D60000028B /* zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zlib.h; path = src/zlib/zlib.h; sourceTree = "<group>"; };
-		900D453C900D53D600000151 /* libzlib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libzlib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		900D453C900D53D600000151 /* libzlib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libzlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		900D453C900D53D60000009E /* ejsrun.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsrun.c; path = src/cmd/ejsrun.c; sourceTree = "<group>"; };
 		900D453C900D53D60000028C /* mvc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mvc; sourceTree = BUILT_PRODUCTS_DIR; };
 		900D453C900D53D60000012C /* openssl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = openssl.c; path = src/mpr-openssl/openssl.c; sourceTree = "<group>"; };
@@ -5440,8 +5440,9 @@ fi";
 					"-lssl",
 					"-lcrypto",
 					"-ledit",
-					"$(inherited)"
-				);
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Debug;
@@ -5457,8 +5458,9 @@ fi";
 					"-lssl",
 					"-lcrypto",
 					"-ledit",
-					"$(inherited)"
-				);
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Release;
@@ -5473,12 +5475,13 @@ fi";
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Debug;
@@ -5489,12 +5492,13 @@ fi";
     				PRODUCT_NAME = ejs.db.mapper;
     
     				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Release;
@@ -5509,12 +5513,13 @@ fi";
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Debug;
@@ -5525,12 +5530,13 @@ fi";
     				PRODUCT_NAME = ejs.db;
     
     				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Release;
@@ -5545,12 +5551,13 @@ fi";
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Debug;
@@ -5561,12 +5568,13 @@ fi";
     				PRODUCT_NAME = ejs.db.sqlite;
     
     				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Release;
@@ -5581,12 +5589,13 @@ fi";
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Debug;
@@ -5597,12 +5606,13 @@ fi";
     				PRODUCT_NAME = ejs.mail;
     
     				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Release;
@@ -5617,12 +5627,13 @@ fi";
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Debug;
@@ -5633,12 +5644,13 @@ fi";
     				PRODUCT_NAME = ejs;
     
     				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Release;
@@ -5653,12 +5665,13 @@ fi";
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Debug;
@@ -5669,12 +5682,13 @@ fi";
     				PRODUCT_NAME = ejs.mvc;
     
     				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Release;
@@ -5689,12 +5703,13 @@ fi";
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Debug;
@@ -5705,12 +5720,13 @@ fi";
     				PRODUCT_NAME = ejs.tar;
     
     				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Release;
@@ -5725,12 +5741,13 @@ fi";
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Debug;
@@ -5741,12 +5758,13 @@ fi";
     				PRODUCT_NAME = ejs.template;
     
     				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Release;
@@ -5761,12 +5779,13 @@ fi";
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Debug;
@@ -5777,12 +5796,13 @@ fi";
     				PRODUCT_NAME = ejs.unix;
     
     				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Release;
@@ -5797,12 +5817,13 @@ fi";
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Debug;
@@ -5813,12 +5834,13 @@ fi";
     				PRODUCT_NAME = ejs.web;
     
     				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Release;
@@ -5833,12 +5855,13 @@ fi";
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Debug;
@@ -5849,12 +5872,13 @@ fi";
     				PRODUCT_NAME = ejs.zlib;
     
     				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Release;
@@ -5873,8 +5897,9 @@ fi";
 					"-lopenssl",
 					"-lssl",
 					"-lcrypto",
-					"$(inherited)"
-				);
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Debug;
@@ -5889,8 +5914,9 @@ fi";
 					"-lopenssl",
 					"-lssl",
 					"-lcrypto",
-					"$(inherited)"
-				);
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Release;
@@ -5909,8 +5935,9 @@ fi";
 					"-lopenssl",
 					"-lssl",
 					"-lcrypto",
-					"$(inherited)"
-				);
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Debug;
@@ -5925,8 +5952,9 @@ fi";
 					"-lopenssl",
 					"-lssl",
 					"-lcrypto",
-					"$(inherited)"
-				);
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Release;
@@ -5945,8 +5973,9 @@ fi";
 					"-lopenssl",
 					"-lssl",
 					"-lcrypto",
-					"$(inherited)"
-				);
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Debug;
@@ -5961,8 +5990,9 @@ fi";
 					"-lopenssl",
 					"-lssl",
 					"-lcrypto",
-					"$(inherited)"
-				);
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Release;
@@ -5976,6 +6006,10 @@ fi";
 					"ME_DEBUG",
 					"$(inherited)"
 				);
+				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = mh_execute;
+
     			};
     			name = Debug;
     		};
@@ -5984,7 +6018,10 @@ fi";
     			buildSettings = {
     				PRODUCT_NAME = ca;
     
-    
+    				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = mh_execute;
+
     			};
     			name = Release;
     		};
@@ -5992,18 +6029,20 @@ fi";
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libejs;
-    
+    				EXECUTABLE_EXTENSION = a;
+
     				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = staticlib;
 
     			};
     			name = Debug;
@@ -6012,14 +6051,16 @@ fi";
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libejs;
-    
+    				EXECUTABLE_EXTENSION = a;
+
     				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = staticlib;
 
     			};
     			name = Release;
@@ -6028,18 +6069,20 @@ fi";
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libejs.db.sqlite;
-    
+    				EXECUTABLE_EXTENSION = a;
+
     				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"-lpam",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = staticlib;
 
     			};
     			name = Debug;
@@ -6048,14 +6091,16 @@ fi";
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libejs.db.sqlite;
-    
+    				EXECUTABLE_EXTENSION = a;
+
     				OTHER_LDFLAGS = (
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"-lpam",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = staticlib;
 
     			};
     			name = Release;
@@ -6064,18 +6109,20 @@ fi";
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libejs.web;
-    
+    				EXECUTABLE_EXTENSION = a;
+
     				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = staticlib;
 
     			};
     			name = Debug;
@@ -6084,14 +6131,16 @@ fi";
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libejs.web;
-    
+    				EXECUTABLE_EXTENSION = a;
+
     				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = staticlib;
 
     			};
     			name = Release;
@@ -6100,18 +6149,20 @@ fi";
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libejs.zlib;
-    
+    				EXECUTABLE_EXTENSION = a;
+
     				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = staticlib;
 
     			};
     			name = Debug;
@@ -6120,14 +6171,16 @@ fi";
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libejs.zlib;
-    
+    				EXECUTABLE_EXTENSION = a;
+
     				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = staticlib;
 
     			};
     			name = Release;
@@ -6136,18 +6189,20 @@ fi";
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libhttp;
-    
+    				EXECUTABLE_EXTENSION = a;
+
     				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = staticlib;
 
     			};
     			name = Debug;
@@ -6156,14 +6211,16 @@ fi";
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libhttp;
-    
+    				EXECUTABLE_EXTENSION = a;
+
     				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = staticlib;
 
     			};
     			name = Release;
@@ -6172,17 +6229,19 @@ fi";
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libmpr;
-    
+    				EXECUTABLE_EXTENSION = a;
+
     				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = staticlib;
 
     			};
     			name = Debug;
@@ -6191,13 +6250,15 @@ fi";
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libmpr;
-    
+    				EXECUTABLE_EXTENSION = a;
+
     				OTHER_LDFLAGS = (
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
+					"",
+					"",
+					"",
+					);
+
+				MACH_O_TYPE = staticlib;
 
     			};
     			name = Release;
@@ -6206,12 +6267,17 @@ fi";
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libpcre;
-    
+    				EXECUTABLE_EXTENSION = a;
+
     				GCC_PREPROCESSOR_DEFINITIONS = (
 					"PCRE_CHAR=char",
 					"ME_DEBUG",
 					"$(inherited)"
 				);
+				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = staticlib;
+
     			};
     			name = Debug;
     		};
@@ -6219,11 +6285,16 @@ fi";
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libpcre;
-    
+    				EXECUTABLE_EXTENSION = a;
+
     				GCC_PREPROCESSOR_DEFINITIONS = (
 					"PCRE_CHAR=char",
 					"$(inherited)"
 				);
+				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = staticlib;
+
     			};
     			name = Release;
     		};
@@ -6231,11 +6302,16 @@ fi";
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libsql;
-    
+    				EXECUTABLE_EXTENSION = a;
+
     				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
 					"$(inherited)"
 				);
+				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = staticlib;
+
     			};
     			name = Debug;
     		};
@@ -6243,8 +6319,12 @@ fi";
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libsql;
-    
-    
+    				EXECUTABLE_EXTENSION = a;
+
+    				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = staticlib;
+
     			};
     			name = Release;
     		};
@@ -6252,11 +6332,16 @@ fi";
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libzlib;
-    
+    				EXECUTABLE_EXTENSION = a;
+
     				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
 					"$(inherited)"
 				);
+				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = staticlib;
+
     			};
     			name = Debug;
     		};
@@ -6264,8 +6349,12 @@ fi";
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libzlib;
-    
-    
+    				EXECUTABLE_EXTENSION = a;
+
+    				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = staticlib;
+
     			};
     			name = Release;
     		};
@@ -6283,8 +6372,9 @@ fi";
 					"-lopenssl",
 					"-lssl",
 					"-lcrypto",
-					"$(inherited)"
-				);
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Debug;
@@ -6299,8 +6389,9 @@ fi";
 					"-lopenssl",
 					"-lssl",
 					"-lcrypto",
-					"$(inherited)"
-				);
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Release;
@@ -6314,6 +6405,10 @@ fi";
 					"ME_DEBUG",
 					"$(inherited)"
 				);
+				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = mh_execute;
+
     			};
     			name = Debug;
     		};
@@ -6322,7 +6417,10 @@ fi";
     			buildSettings = {
     				PRODUCT_NAME = mvc;
     
-    
+    				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = mh_execute;
+
     			};
     			name = Release;
     		};
@@ -6371,6 +6469,10 @@ fi";
 					"ME_DEBUG",
 					"$(inherited)"
 				);
+				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = mh_execute;
+
     			};
     			name = Debug;
     		};
@@ -6379,7 +6481,10 @@ fi";
     			buildSettings = {
     				PRODUCT_NAME = slots;
     
-    
+    				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = mh_execute;
+
     			};
     			name = Release;
     		};
@@ -6397,8 +6502,9 @@ fi";
 					"-lopenssl",
 					"-lssl",
 					"-lcrypto",
-					"$(inherited)"
-				);
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Debug;
@@ -6413,8 +6519,9 @@ fi";
 					"-lopenssl",
 					"-lssl",
 					"-lcrypto",
-					"$(inherited)"
-				);
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Release;
@@ -6428,6 +6535,10 @@ fi";
 					"ME_DEBUG",
 					"$(inherited)"
 				);
+				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = mh_execute;
+
     			};
     			name = Debug;
     		};
@@ -6436,7 +6547,10 @@ fi";
     			buildSettings = {
     				PRODUCT_NAME = utest;
     
-    
+    				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = mh_execute;
+
     			};
     			name = Release;
     		};
@@ -6449,6 +6563,10 @@ fi";
 					"ME_DEBUG",
 					"$(inherited)"
 				);
+				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = mh_execute;
+
     			};
     			name = Debug;
     		};
@@ -6457,7 +6575,10 @@ fi";
     			buildSettings = {
     				PRODUCT_NAME = utest;
     
-    
+    				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = mh_execute;
+
     			};
     			name = Release;
     		};
@@ -6474,8 +6595,9 @@ fi";
 					"-lopenssl",
 					"-lssl",
 					"-lcrypto",
-					"$(inherited)"
-				);
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Debug;
@@ -6489,8 +6611,9 @@ fi";
 					"-lopenssl",
 					"-lssl",
 					"-lcrypto",
-					"$(inherited)"
-				);
+					);
+
+				MACH_O_TYPE = mh_execute;
 
     			};
     			name = Release;
@@ -6504,6 +6627,10 @@ fi";
 					"ME_DEBUG",
 					"$(inherited)"
 				);
+				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = mh_execute;
+
     			};
     			name = Debug;
     		};
@@ -6512,7 +6639,10 @@ fi";
     			buildSettings = {
     				PRODUCT_NAME = www;
     
-    
+    				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = mh_execute;
+
     			};
     			name = Release;
     		};
@@ -6525,6 +6655,10 @@ fi";
 					"ME_DEBUG",
 					"$(inherited)"
 				);
+				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = mh_execute;
+
     			};
     			name = Debug;
     		};
@@ -6533,7 +6667,10 @@ fi";
     			buildSettings = {
     				PRODUCT_NAME = All;
     
-    
+    				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = mh_execute;
+
     			};
     			name = Release;
     		};
@@ -6546,6 +6683,10 @@ fi";
 					"ME_DEBUG",
 					"$(inherited)"
 				);
+				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = mh_execute;
+
     			};
     			name = Debug;
     		};
@@ -6554,7 +6695,10 @@ fi";
     			buildSettings = {
     				PRODUCT_NAME = Prep;
     
-    
+    				OTHER_LDFLAGS = ();
+
+				MACH_O_TYPE = mh_execute;
+
     			};
     			name = Release;
     		};
