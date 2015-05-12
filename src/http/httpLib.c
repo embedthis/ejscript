@@ -22255,8 +22255,7 @@ PUBLIC bool httpValidUriChars(cchar *uri)
     ssize   pos;
 
     if (uri == 0) {
-        /* Empty URI paths and other Uri components are okay */
-        return 1;
+        return 0;
     }
     pos = strspn(uri, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%");
     if (pos < slen(uri)) {
