@@ -25,7 +25,7 @@ if (Config.SSL) {
     secureServer.on("readable", function (event, request) {
         secureServer.serve(request, router)
     })
-    secureServer.secure("ssl/server.key.pem", "ssl/server.crt")
+    secureServer.secure("../../../certs/self", "../../../certs/self.crt")
     secureServer.listen(HTTPS)
 }
 App.run()

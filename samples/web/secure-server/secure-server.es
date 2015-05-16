@@ -17,7 +17,7 @@ let server: HttpServer = new HttpServer(".", "web")
 /*
     Configure the server private key and certificate
  */
-server.secure("ssl/server.key.pem", "ssl/server.crt")
+server.secure("../../../src/certs/self.key", "../../../src/certs/self.crt")
 
 server.observe("readable", function (event, request) {
     App.log.info(request.method, request.uri)
