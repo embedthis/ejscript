@@ -105,7 +105,11 @@ Me.load({
     },
 
     scripts: {
-        loaded: `me.targets.httpcmd.enable = false`,
+        loaded: `
+            if (me.targets.httpcmd) {
+                me.targets.httpcmd.enable = false
+            }
+        `,
     },
 
     targets: {
