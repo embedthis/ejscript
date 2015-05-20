@@ -86,10 +86,10 @@ TARGETS               += $(BUILD)/bin/ejs.mail.mod
 TARGETS               += $(BUILD)/bin/ejs.mvc.mod
 TARGETS               += $(BUILD)/bin/ejs.tar.mod
 TARGETS               += $(BUILD)/bin/ejsrun
-TARGETS               += $(BUILD)/bin/ca.crt
 TARGETS               += $(BUILD)/bin/libejs.db.sqlite.a
 TARGETS               += $(BUILD)/bin/libejs.web.a
 TARGETS               += $(BUILD)/bin/mvc
+TARGETS               += $(BUILD)/bin/roots.crt
 TARGETS               += $(BUILD)/bin/utest
 TARGETS               += $(BUILD)/bin/ejsman
 TARGETS               += $(BUILD)/bin/www
@@ -208,7 +208,6 @@ clean:
 	rm -f "$(BUILD)/bin/ejsc"
 	rm -f "$(BUILD)/bin/ejsmod"
 	rm -f "$(BUILD)/bin/ejsrun"
-	rm -f "$(BUILD)/bin/ca.crt"
 	rm -f "$(BUILD)/bin/libejs.a"
 	rm -f "$(BUILD)/bin/libejs.db.sqlite.a"
 	rm -f "$(BUILD)/bin/libejs.web.a"
@@ -220,6 +219,7 @@ clean:
 	rm -f "$(BUILD)/bin/libzlib.a"
 	rm -f "$(BUILD)/bin/mvc.es"
 	rm -f "$(BUILD)/bin/libopenssl.a"
+	rm -f "$(BUILD)/bin/roots.crt"
 	rm -f "$(BUILD)/bin/utest"
 	rm -f "$(BUILD)/bin/utest.es"
 	rm -f "$(BUILD)/bin/utest.worker"
@@ -1896,24 +1896,14 @@ $(BUILD)/bin/ejsrun: $(DEPS_135)
 	@echo '      [Link] $(BUILD)/bin/ejsrun'
 	$(CC) -o $(BUILD)/bin/ejsrun -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_135) $(LIBS_135) $(LIBS_135) $(LIBS) -lpam 
 
-#
-#   http-ca-crt
-#
-DEPS_136 += src/http/ca.crt
-
-$(BUILD)/bin/ca.crt: $(DEPS_136)
-	@echo '      [Copy] $(BUILD)/bin/ca.crt'
-	mkdir -p "$(BUILD)/bin"
-	cp src/http/src/http/ca.crt $(BUILD)/bin/ca.crt
-
 ifeq ($(ME_COM_SQLITE),1)
 #
 #   libsql
 #
-DEPS_137 += $(BUILD)/inc/sqlite3.h
-DEPS_137 += $(BUILD)/obj/sqlite3.o
+DEPS_136 += $(BUILD)/inc/sqlite3.h
+DEPS_136 += $(BUILD)/obj/sqlite3.o
 
-$(BUILD)/bin/libsql.a: $(DEPS_137)
+$(BUILD)/bin/libsql.a: $(DEPS_136)
 	@echo '      [Link] $(BUILD)/bin/libsql.a'
 	ar -cr $(BUILD)/bin/libsql.a "$(BUILD)/obj/sqlite3.o"
 endif
@@ -1921,40 +1911,40 @@ endif
 #
 #   libejs.db.sqlite
 #
-DEPS_138 += $(BUILD)/bin/libmpr.a
-DEPS_138 += $(BUILD)/bin/libejs.a
-DEPS_138 += $(BUILD)/bin/ejs.mod
-DEPS_138 += $(BUILD)/bin/ejs.db.sqlite.mod
+DEPS_137 += $(BUILD)/bin/libmpr.a
+DEPS_137 += $(BUILD)/bin/libejs.a
+DEPS_137 += $(BUILD)/bin/ejs.mod
+DEPS_137 += $(BUILD)/bin/ejs.db.sqlite.mod
 ifeq ($(ME_COM_SQLITE),1)
-    DEPS_138 += $(BUILD)/bin/libsql.a
+    DEPS_137 += $(BUILD)/bin/libsql.a
 endif
-DEPS_138 += $(BUILD)/obj/ejsSqlite.o
+DEPS_137 += $(BUILD)/obj/ejsSqlite.o
 
-$(BUILD)/bin/libejs.db.sqlite.a: $(DEPS_138)
+$(BUILD)/bin/libejs.db.sqlite.a: $(DEPS_137)
 	@echo '      [Link] $(BUILD)/bin/libejs.db.sqlite.a'
 	ar -cr $(BUILD)/bin/libejs.db.sqlite.a "$(BUILD)/obj/ejsSqlite.o"
 
 #
 #   libejs.web
 #
-DEPS_139 += $(BUILD)/bin/libejs.a
-DEPS_139 += $(BUILD)/bin/ejs.mod
-DEPS_139 += $(BUILD)/inc/ejsWeb.h
-DEPS_139 += $(BUILD)/obj/ejsHttpServer.o
-DEPS_139 += $(BUILD)/obj/ejsRequest.o
-DEPS_139 += $(BUILD)/obj/ejsSession.o
-DEPS_139 += $(BUILD)/obj/ejsWeb.o
+DEPS_138 += $(BUILD)/bin/libejs.a
+DEPS_138 += $(BUILD)/bin/ejs.mod
+DEPS_138 += $(BUILD)/inc/ejsWeb.h
+DEPS_138 += $(BUILD)/obj/ejsHttpServer.o
+DEPS_138 += $(BUILD)/obj/ejsRequest.o
+DEPS_138 += $(BUILD)/obj/ejsSession.o
+DEPS_138 += $(BUILD)/obj/ejsWeb.o
 
-$(BUILD)/bin/libejs.web.a: $(DEPS_139)
+$(BUILD)/bin/libejs.web.a: $(DEPS_138)
 	@echo '      [Link] $(BUILD)/bin/libejs.web.a'
 	ar -cr $(BUILD)/bin/libejs.web.a "$(BUILD)/obj/ejsHttpServer.o" "$(BUILD)/obj/ejsRequest.o" "$(BUILD)/obj/ejsSession.o" "$(BUILD)/obj/ejsWeb.o"
 
 #
 #   mvc.es
 #
-DEPS_140 += src/ejs.mvc/mvc.es
+DEPS_139 += src/ejs.mvc/mvc.es
 
-$(BUILD)/bin/mvc.es: $(DEPS_140)
+$(BUILD)/bin/mvc.es: $(DEPS_139)
 	@echo '      [Copy] $(BUILD)/bin/mvc.es'
 	mkdir -p "$(BUILD)/bin"
 	cp src/ejs.mvc/mvc.es $(BUILD)/bin/mvc.es
@@ -1962,40 +1952,50 @@ $(BUILD)/bin/mvc.es: $(DEPS_140)
 #
 #   mvc
 #
-DEPS_141 += $(BUILD)/bin/libejs.a
-DEPS_141 += $(BUILD)/bin/mvc.es
-DEPS_141 += $(BUILD)/obj/ejsrun.o
+DEPS_140 += $(BUILD)/bin/libejs.a
+DEPS_140 += $(BUILD)/bin/mvc.es
+DEPS_140 += $(BUILD)/obj/ejsrun.o
 
-LIBS_141 += -lejs
+LIBS_140 += -lejs
 ifeq ($(ME_COM_HTTP),1)
-    LIBS_141 += -lhttp
+    LIBS_140 += -lhttp
 endif
 ifeq ($(ME_COM_PCRE),1)
-    LIBS_141 += -lpcre
+    LIBS_140 += -lpcre
 endif
-LIBS_141 += -lmpr
+LIBS_140 += -lmpr
 ifeq ($(ME_COM_EST),1)
-    LIBS_141 += -lestssl
+    LIBS_140 += -lestssl
 endif
 ifeq ($(ME_COM_EST),1)
-    LIBS_141 += -lest
+    LIBS_140 += -lest
 endif
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_141 += -lopenssl
-    LIBPATHS_141 += -L"$(ME_COM_OPENSSL_PATH)"
+    LIBS_140 += -lopenssl
+    LIBPATHS_140 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_141 += -lssl
-    LIBPATHS_141 += -L"$(ME_COM_OPENSSL_PATH)"
+    LIBS_140 += -lssl
+    LIBPATHS_140 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_141 += -lcrypto
-    LIBPATHS_141 += -L"$(ME_COM_OPENSSL_PATH)"
+    LIBS_140 += -lcrypto
+    LIBPATHS_140 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
 
-$(BUILD)/bin/mvc: $(DEPS_141)
+$(BUILD)/bin/mvc: $(DEPS_140)
 	@echo '      [Link] $(BUILD)/bin/mvc'
-	$(CC) -o $(BUILD)/bin/mvc -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_141) $(LIBS_141) $(LIBS_141) $(LIBS) -lpam 
+	$(CC) -o $(BUILD)/bin/mvc -arch $(CC_ARCH) $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_140) $(LIBS_140) $(LIBS_140) $(LIBS) -lpam 
+
+#
+#   roots.crt
+#
+DEPS_141 += src/certs/roots.crt
+
+$(BUILD)/bin/roots.crt: $(DEPS_141)
+	@echo '      [Copy] $(BUILD)/bin/roots.crt'
+	mkdir -p "$(BUILD)/bin"
+	cp src/certs/roots.crt $(BUILD)/bin/roots.crt
 
 #
 #   utest.es

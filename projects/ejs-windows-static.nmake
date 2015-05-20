@@ -142,10 +142,10 @@ TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ejs.mail.mod
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ejs.mvc.mod
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ejs.tar.mod
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ejsrun.exe
-TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ca.crt
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\libejs.db.sqlite.lib
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\libejs.web.lib
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\mvc.exe
+TARGETS               = $(TARGETS) build\$(CONFIG)\bin\roots.crt
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\utest.exe
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ejsman.exe
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\www
@@ -278,7 +278,6 @@ clean:
 	if exist "build\$(CONFIG)\bin\ejsrun.lib" del /Q "build\$(CONFIG)\bin\ejsrun.lib"
 	if exist "build\$(CONFIG)\bin\ejsrun.pdb" del /Q "build\$(CONFIG)\bin\ejsrun.pdb"
 	if exist "build\$(CONFIG)\bin\ejsrun.exp" del /Q "build\$(CONFIG)\bin\ejsrun.exp"
-	if exist "build\$(CONFIG)\bin\ca.crt" del /Q "build\$(CONFIG)\bin\ca.crt"
 	if exist "build\$(CONFIG)\bin\libejs.lib" del /Q "build\$(CONFIG)\bin\libejs.lib"
 	if exist "build\$(CONFIG)\bin\libejs.db.sqlite.lib" del /Q "build\$(CONFIG)\bin\libejs.db.sqlite.lib"
 	if exist "build\$(CONFIG)\bin\libejs.web.lib" del /Q "build\$(CONFIG)\bin\libejs.web.lib"
@@ -291,6 +290,7 @@ clean:
 	if exist "build\$(CONFIG)\bin\libsql.lib" del /Q "build\$(CONFIG)\bin\libsql.lib"
 	if exist "build\$(CONFIG)\bin\libzlib.lib" del /Q "build\$(CONFIG)\bin\libzlib.lib"
 	if exist "build\$(CONFIG)\bin\mvc.es" del /Q "build\$(CONFIG)\bin\mvc.es"
+	if exist "build\$(CONFIG)\bin\roots.crt" del /Q "build\$(CONFIG)\bin\roots.crt"
 	if exist "build\$(CONFIG)\bin\utest.exe" del /Q "build\$(CONFIG)\bin\utest.exe"
 	if exist "build\$(CONFIG)\bin\utest.lib" del /Q "build\$(CONFIG)\bin\utest.lib"
 	if exist "build\$(CONFIG)\bin\utest.pdb" del /Q "build\$(CONFIG)\bin\utest.pdb"
@@ -1872,21 +1872,11 @@ build\$(CONFIG)\bin\ejsrun.exe: $(DEPS_127)
 	"$(LD)" -nologo -out:$(BUILD)\bin\ejsrun.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsrun.obj" $(LIBPATHS_127) $(LIBS_127) $(LIBS_127) $(LIBS)  $(LOG)
 
 #
-#   http-ca-crt
-#
-DEPS_128 = $(DEPS_128) src\http\ca.crt
-
-build\$(CONFIG)\bin\ca.crt: $(DEPS_128)
-	@echo ..... [Copy] build\$(CONFIG)\bin\ca.crt
-	if not exist "build\$(CONFIG)\bin" md "build\$(CONFIG)\bin"
-	copy /Y /B src\http\src\http\ca.crt+modified build\$(CONFIG)\bin\ca.crt $(LOG)
-
-#
 #   sqlite3.h
 #
-DEPS_129 = $(DEPS_129) src\sqlite\sqlite3.h
+DEPS_128 = $(DEPS_128) src\sqlite\sqlite3.h
 
-build\$(CONFIG)\inc\sqlite3.h: $(DEPS_129)
+build\$(CONFIG)\inc\sqlite3.h: $(DEPS_128)
 	@echo ..... [Copy] build\$(CONFIG)\inc\sqlite3.h
 	if not exist "build\$(CONFIG)\inc" md "build\$(CONFIG)\inc"
 	copy /Y /B src\sqlite\sqlite3.h+modified build\$(CONFIG)\inc\sqlite3.h $(LOG)
@@ -1895,16 +1885,16 @@ build\$(CONFIG)\inc\sqlite3.h: $(DEPS_129)
 #   sqlite3.h
 #
 
-src\sqlite\sqlite3.h: $(DEPS_130)
+src\sqlite\sqlite3.h: $(DEPS_129)
 
 #
 #   sqlite3.obj
 #
-DEPS_131 = $(DEPS_131) build\$(CONFIG)\inc\me.h
-DEPS_131 = $(DEPS_131) src\sqlite\sqlite3.h
+DEPS_130 = $(DEPS_130) build\$(CONFIG)\inc\me.h
+DEPS_130 = $(DEPS_130) src\sqlite\sqlite3.h
 
 build\$(CONFIG)\obj\sqlite3.obj: \
-    src\sqlite\sqlite3.c $(DEPS_131)
+    src\sqlite\sqlite3.c $(DEPS_130)
 	@echo .. [Compile] build\$(CONFIG)\obj\sqlite3.obj
 	"$(CC)" -c -Fo$(BUILD)\obj\sqlite3.obj -Fd$(BUILD)\obj\sqlite3.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\sqlite\sqlite3.c $(LOG)
 
@@ -1912,10 +1902,10 @@ build\$(CONFIG)\obj\sqlite3.obj: \
 #
 #   libsql
 #
-DEPS_132 = $(DEPS_132) build\$(CONFIG)\inc\sqlite3.h
-DEPS_132 = $(DEPS_132) build\$(CONFIG)\obj\sqlite3.obj
+DEPS_131 = $(DEPS_131) build\$(CONFIG)\inc\sqlite3.h
+DEPS_131 = $(DEPS_131) build\$(CONFIG)\obj\sqlite3.obj
 
-build\$(CONFIG)\bin\libsql.lib: $(DEPS_132)
+build\$(CONFIG)\bin\libsql.lib: $(DEPS_131)
 	@echo ..... [Link] build\$(CONFIG)\bin\libsql.lib
 	"lib.exe" -nologo -out:$(BUILD)\bin\libsql.lib "$(BUILD)\obj\sqlite3.obj" $(LOG)
 !ENDIF
@@ -1923,36 +1913,36 @@ build\$(CONFIG)\bin\libsql.lib: $(DEPS_132)
 #
 #   ejsSqlite.obj
 #
-DEPS_133 = $(DEPS_133) build\$(CONFIG)\inc\ejs.h
-DEPS_133 = $(DEPS_133) build\$(CONFIG)\inc\ejs.db.sqlite.slots.h
+DEPS_132 = $(DEPS_132) build\$(CONFIG)\inc\ejs.h
+DEPS_132 = $(DEPS_132) build\$(CONFIG)\inc\ejs.db.sqlite.slots.h
 
 build\$(CONFIG)\obj\ejsSqlite.obj: \
-    src\ejs.db.sqlite\ejsSqlite.c $(DEPS_133)
+    src\ejs.db.sqlite\ejsSqlite.c $(DEPS_132)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsSqlite.obj
 	"$(CC)" -c -Fo$(BUILD)\obj\ejsSqlite.obj -Fd$(BUILD)\obj\ejsSqlite.pdb $(CFLAGS) $(DFLAGS) -DME_COM_OPENSSL_PATH="$(ME_COM_OPENSSL_PATH)" $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\include" src\ejs.db.sqlite\ejsSqlite.c $(LOG)
 
 #
 #   libejs.db.sqlite
 #
-DEPS_134 = $(DEPS_134) build\$(CONFIG)\bin\libmpr.lib
-DEPS_134 = $(DEPS_134) build\$(CONFIG)\bin\libejs.lib
-DEPS_134 = $(DEPS_134) build\$(CONFIG)\bin\ejs.mod
-DEPS_134 = $(DEPS_134) build\$(CONFIG)\bin\ejs.db.sqlite.mod
+DEPS_133 = $(DEPS_133) build\$(CONFIG)\bin\libmpr.lib
+DEPS_133 = $(DEPS_133) build\$(CONFIG)\bin\libejs.lib
+DEPS_133 = $(DEPS_133) build\$(CONFIG)\bin\ejs.mod
+DEPS_133 = $(DEPS_133) build\$(CONFIG)\bin\ejs.db.sqlite.mod
 !IF "$(ME_COM_SQLITE)" == "1"
-DEPS_134 = $(DEPS_134) build\$(CONFIG)\bin\libsql.lib
+DEPS_133 = $(DEPS_133) build\$(CONFIG)\bin\libsql.lib
 !ENDIF
-DEPS_134 = $(DEPS_134) build\$(CONFIG)\obj\ejsSqlite.obj
+DEPS_133 = $(DEPS_133) build\$(CONFIG)\obj\ejsSqlite.obj
 
-build\$(CONFIG)\bin\libejs.db.sqlite.lib: $(DEPS_134)
+build\$(CONFIG)\bin\libejs.db.sqlite.lib: $(DEPS_133)
 	@echo ..... [Link] build\$(CONFIG)\bin\libejs.db.sqlite.lib
 	"lib.exe" -nologo -out:$(BUILD)\bin\libejs.db.sqlite.lib "$(BUILD)\obj\ejsSqlite.obj" $(LOG)
 
 #
 #   ejsWeb.h
 #
-DEPS_135 = $(DEPS_135) src\ejs.web\ejsWeb.h
+DEPS_134 = $(DEPS_134) src\ejs.web\ejsWeb.h
 
-build\$(CONFIG)\inc\ejsWeb.h: $(DEPS_135)
+build\$(CONFIG)\inc\ejsWeb.h: $(DEPS_134)
 	@echo ..... [Copy] build\$(CONFIG)\inc\ejsWeb.h
 	if not exist "build\$(CONFIG)\inc" md "build\$(CONFIG)\inc"
 	copy /Y /B src\ejs.web\ejsWeb.h+modified build\$(CONFIG)\inc\ejsWeb.h $(LOG)
@@ -1961,10 +1951,24 @@ build\$(CONFIG)\inc\ejsWeb.h: $(DEPS_135)
 #   ejsWeb.h
 #
 
-src\ejs.web\ejsWeb.h: $(DEPS_136)
+src\ejs.web\ejsWeb.h: $(DEPS_135)
 
 #
 #   ejsHttpServer.obj
+#
+DEPS_136 = $(DEPS_136) build\$(CONFIG)\inc\me.h
+DEPS_136 = $(DEPS_136) build\$(CONFIG)\inc\ejs.h
+DEPS_136 = $(DEPS_136) build\$(CONFIG)\inc\ejsCompiler.h
+DEPS_136 = $(DEPS_136) src\ejs.web\ejsWeb.h
+DEPS_136 = $(DEPS_136) build\$(CONFIG)\inc\ejs.web.slots.h
+
+build\$(CONFIG)\obj\ejsHttpServer.obj: \
+    src\ejs.web\ejsHttpServer.c $(DEPS_136)
+	@echo .. [Compile] build\$(CONFIG)\obj\ejsHttpServer.obj
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsHttpServer.obj -Fd$(BUILD)\obj\ejsHttpServer.pdb $(CFLAGS) $(DFLAGS) -DME_COM_OPENSSL_PATH="$(ME_COM_OPENSSL_PATH)" $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\include" src\ejs.web\ejsHttpServer.c $(LOG)
+
+#
+#   ejsRequest.obj
 #
 DEPS_137 = $(DEPS_137) build\$(CONFIG)\inc\me.h
 DEPS_137 = $(DEPS_137) build\$(CONFIG)\inc\ejs.h
@@ -1972,72 +1976,58 @@ DEPS_137 = $(DEPS_137) build\$(CONFIG)\inc\ejsCompiler.h
 DEPS_137 = $(DEPS_137) src\ejs.web\ejsWeb.h
 DEPS_137 = $(DEPS_137) build\$(CONFIG)\inc\ejs.web.slots.h
 
-build\$(CONFIG)\obj\ejsHttpServer.obj: \
-    src\ejs.web\ejsHttpServer.c $(DEPS_137)
-	@echo .. [Compile] build\$(CONFIG)\obj\ejsHttpServer.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsHttpServer.obj -Fd$(BUILD)\obj\ejsHttpServer.pdb $(CFLAGS) $(DFLAGS) -DME_COM_OPENSSL_PATH="$(ME_COM_OPENSSL_PATH)" $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\include" src\ejs.web\ejsHttpServer.c $(LOG)
-
-#
-#   ejsRequest.obj
-#
-DEPS_138 = $(DEPS_138) build\$(CONFIG)\inc\me.h
-DEPS_138 = $(DEPS_138) build\$(CONFIG)\inc\ejs.h
-DEPS_138 = $(DEPS_138) build\$(CONFIG)\inc\ejsCompiler.h
-DEPS_138 = $(DEPS_138) src\ejs.web\ejsWeb.h
-DEPS_138 = $(DEPS_138) build\$(CONFIG)\inc\ejs.web.slots.h
-
 build\$(CONFIG)\obj\ejsRequest.obj: \
-    src\ejs.web\ejsRequest.c $(DEPS_138)
+    src\ejs.web\ejsRequest.c $(DEPS_137)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsRequest.obj
 	"$(CC)" -c -Fo$(BUILD)\obj\ejsRequest.obj -Fd$(BUILD)\obj\ejsRequest.pdb $(CFLAGS) $(DFLAGS) -DME_COM_OPENSSL_PATH="$(ME_COM_OPENSSL_PATH)" $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\include" src\ejs.web\ejsRequest.c $(LOG)
 
 #
 #   ejsSession.obj
 #
-DEPS_139 = $(DEPS_139) build\$(CONFIG)\inc\me.h
-DEPS_139 = $(DEPS_139) build\$(CONFIG)\inc\ejs.h
-DEPS_139 = $(DEPS_139) src\ejs.web\ejsWeb.h
+DEPS_138 = $(DEPS_138) build\$(CONFIG)\inc\me.h
+DEPS_138 = $(DEPS_138) build\$(CONFIG)\inc\ejs.h
+DEPS_138 = $(DEPS_138) src\ejs.web\ejsWeb.h
 
 build\$(CONFIG)\obj\ejsSession.obj: \
-    src\ejs.web\ejsSession.c $(DEPS_139)
+    src\ejs.web\ejsSession.c $(DEPS_138)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsSession.obj
 	"$(CC)" -c -Fo$(BUILD)\obj\ejsSession.obj -Fd$(BUILD)\obj\ejsSession.pdb $(CFLAGS) $(DFLAGS) -DME_COM_OPENSSL_PATH="$(ME_COM_OPENSSL_PATH)" $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\include" src\ejs.web\ejsSession.c $(LOG)
 
 #
 #   ejsWeb.obj
 #
-DEPS_140 = $(DEPS_140) build\$(CONFIG)\inc\me.h
-DEPS_140 = $(DEPS_140) build\$(CONFIG)\inc\ejs.h
-DEPS_140 = $(DEPS_140) build\$(CONFIG)\inc\ejsCompiler.h
-DEPS_140 = $(DEPS_140) src\ejs.web\ejsWeb.h
-DEPS_140 = $(DEPS_140) build\$(CONFIG)\inc\ejs.web.slots.h
+DEPS_139 = $(DEPS_139) build\$(CONFIG)\inc\me.h
+DEPS_139 = $(DEPS_139) build\$(CONFIG)\inc\ejs.h
+DEPS_139 = $(DEPS_139) build\$(CONFIG)\inc\ejsCompiler.h
+DEPS_139 = $(DEPS_139) src\ejs.web\ejsWeb.h
+DEPS_139 = $(DEPS_139) build\$(CONFIG)\inc\ejs.web.slots.h
 
 build\$(CONFIG)\obj\ejsWeb.obj: \
-    src\ejs.web\ejsWeb.c $(DEPS_140)
+    src\ejs.web\ejsWeb.c $(DEPS_139)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsWeb.obj
 	"$(CC)" -c -Fo$(BUILD)\obj\ejsWeb.obj -Fd$(BUILD)\obj\ejsWeb.pdb $(CFLAGS) $(DFLAGS) -DME_COM_OPENSSL_PATH="$(ME_COM_OPENSSL_PATH)" $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\include" src\ejs.web\ejsWeb.c $(LOG)
 
 #
 #   libejs.web
 #
-DEPS_141 = $(DEPS_141) build\$(CONFIG)\bin\libejs.lib
-DEPS_141 = $(DEPS_141) build\$(CONFIG)\bin\ejs.mod
-DEPS_141 = $(DEPS_141) build\$(CONFIG)\inc\ejsWeb.h
-DEPS_141 = $(DEPS_141) build\$(CONFIG)\obj\ejsHttpServer.obj
-DEPS_141 = $(DEPS_141) build\$(CONFIG)\obj\ejsRequest.obj
-DEPS_141 = $(DEPS_141) build\$(CONFIG)\obj\ejsSession.obj
-DEPS_141 = $(DEPS_141) build\$(CONFIG)\obj\ejsWeb.obj
+DEPS_140 = $(DEPS_140) build\$(CONFIG)\bin\libejs.lib
+DEPS_140 = $(DEPS_140) build\$(CONFIG)\bin\ejs.mod
+DEPS_140 = $(DEPS_140) build\$(CONFIG)\inc\ejsWeb.h
+DEPS_140 = $(DEPS_140) build\$(CONFIG)\obj\ejsHttpServer.obj
+DEPS_140 = $(DEPS_140) build\$(CONFIG)\obj\ejsRequest.obj
+DEPS_140 = $(DEPS_140) build\$(CONFIG)\obj\ejsSession.obj
+DEPS_140 = $(DEPS_140) build\$(CONFIG)\obj\ejsWeb.obj
 
-build\$(CONFIG)\bin\libejs.web.lib: $(DEPS_141)
+build\$(CONFIG)\bin\libejs.web.lib: $(DEPS_140)
 	@echo ..... [Link] build\$(CONFIG)\bin\libejs.web.lib
 	"lib.exe" -nologo -out:$(BUILD)\bin\libejs.web.lib "$(BUILD)\obj\ejsHttpServer.obj" "$(BUILD)\obj\ejsRequest.obj" "$(BUILD)\obj\ejsSession.obj" "$(BUILD)\obj\ejsWeb.obj" $(LOG)
 
 #
 #   mvc.es
 #
-DEPS_142 = $(DEPS_142) src\ejs.mvc\mvc.es
+DEPS_141 = $(DEPS_141) src\ejs.mvc\mvc.es
 
-build\$(CONFIG)\bin\mvc.es: $(DEPS_142)
+build\$(CONFIG)\bin\mvc.es: $(DEPS_141)
 	@echo ..... [Copy] build\$(CONFIG)\bin\mvc.es
 	if not exist "build\$(CONFIG)\bin" md "build\$(CONFIG)\bin"
 	copy /Y /B src\ejs.mvc\mvc.es+modified build\$(CONFIG)\bin\mvc.es $(LOG)
@@ -2045,40 +2035,50 @@ build\$(CONFIG)\bin\mvc.es: $(DEPS_142)
 #
 #   mvc
 #
-DEPS_143 = $(DEPS_143) build\$(CONFIG)\bin\libejs.lib
-DEPS_143 = $(DEPS_143) build\$(CONFIG)\bin\mvc.es
-DEPS_143 = $(DEPS_143) build\$(CONFIG)\obj\ejsrun.obj
+DEPS_142 = $(DEPS_142) build\$(CONFIG)\bin\libejs.lib
+DEPS_142 = $(DEPS_142) build\$(CONFIG)\bin\mvc.es
+DEPS_142 = $(DEPS_142) build\$(CONFIG)\obj\ejsrun.obj
 
-LIBS_143 = $(LIBS_143) libejs.lib
+LIBS_142 = $(LIBS_142) libejs.lib
 !IF "$(ME_COM_HTTP)" == "1"
-LIBS_143 = $(LIBS_143) libhttp.lib
+LIBS_142 = $(LIBS_142) libhttp.lib
 !ENDIF
 !IF "$(ME_COM_PCRE)" == "1"
-LIBS_143 = $(LIBS_143) libpcre.lib
+LIBS_142 = $(LIBS_142) libpcre.lib
 !ENDIF
-LIBS_143 = $(LIBS_143) libmpr.lib
+LIBS_142 = $(LIBS_142) libmpr.lib
 !IF "$(ME_COM_EST)" == "1"
-LIBS_143 = $(LIBS_143) libestssl.lib
+LIBS_142 = $(LIBS_142) libestssl.lib
 !ENDIF
 !IF "$(ME_COM_EST)" == "1"
-LIBS_143 = $(LIBS_143) libest.lib
+LIBS_142 = $(LIBS_142) libest.lib
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_143 = $(LIBS_143) libopenssl.lib
-LIBPATHS_143 = $(LIBPATHS_143) -libpath:$(ME_COM_OPENSSL_PATH)
+LIBS_142 = $(LIBS_142) libopenssl.lib
+LIBPATHS_142 = $(LIBPATHS_142) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_143 = $(LIBS_143) libeay32.lib
-LIBPATHS_143 = $(LIBPATHS_143) -libpath:$(ME_COM_OPENSSL_PATH)
+LIBS_142 = $(LIBS_142) libeay32.lib
+LIBPATHS_142 = $(LIBPATHS_142) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_143 = $(LIBS_143) libssleay32.lib
-LIBPATHS_143 = $(LIBPATHS_143) -libpath:$(ME_COM_OPENSSL_PATH)
+LIBS_142 = $(LIBS_142) libssleay32.lib
+LIBPATHS_142 = $(LIBPATHS_142) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
 
-build\$(CONFIG)\bin\mvc.exe: $(DEPS_143)
+build\$(CONFIG)\bin\mvc.exe: $(DEPS_142)
 	@echo ..... [Link] build\$(CONFIG)\bin\mvc.exe
-	"$(LD)" -nologo -out:$(BUILD)\bin\mvc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsrun.obj" $(LIBPATHS_143) $(LIBS_143) $(LIBS_143) $(LIBS)  $(LOG)
+	"$(LD)" -nologo -out:$(BUILD)\bin\mvc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsrun.obj" $(LIBPATHS_142) $(LIBS_142) $(LIBS_142) $(LIBS)  $(LOG)
+
+#
+#   roots.crt
+#
+DEPS_143 = $(DEPS_143) src\certs\roots.crt
+
+build\$(CONFIG)\bin\roots.crt: $(DEPS_143)
+	@echo ..... [Copy] build\$(CONFIG)\bin\roots.crt
+	if not exist "build\$(CONFIG)\bin" md "build\$(CONFIG)\bin"
+	copy /Y /B src\certs\roots.crt+modified build\$(CONFIG)\bin\roots.crt $(LOG)
 
 #
 #   sqlite.obj

@@ -168,29 +168,29 @@
     			name = ejs.zlib.mod;
     			productName = ejs.zlib.mod;
     		};
-		F3F8966EF3F8A43E0000004F /* http-ca-crt */ = {
+		F3F8966EF3F8A43E0000004F /* mvc.es */ = {
     			isa = PBXAggregateTarget;
-    			buildConfigurationList = F3F8966EF3F8A43E0000004E /* Build configuration list for PBXAggregateTarget "http-ca-crt" */;
+    			buildConfigurationList = F3F8966EF3F8A43E0000004E /* Build configuration list for PBXAggregateTarget "mvc.es" */;
     			buildPhases = (
     				F3F8966EF3F8A43E00000050,
     			);
     			dependencies = (
 				F3F8966EF3F8A43E00000051 /* PBXTargetDependency Prep */,
 			);
-    			name = http-ca-crt;
-    			productName = http-ca-crt;
+    			name = mvc.es;
+    			productName = mvc.es;
     		};
-		F3F8966EF3F8A43E00000053 /* mvc.es */ = {
+		F3F8966EF3F8A43E00000053 /* roots.crt */ = {
     			isa = PBXAggregateTarget;
-    			buildConfigurationList = F3F8966EF3F8A43E00000052 /* Build configuration list for PBXAggregateTarget "mvc.es" */;
+    			buildConfigurationList = F3F8966EF3F8A43E00000052 /* Build configuration list for PBXAggregateTarget "roots.crt" */;
     			buildPhases = (
     				F3F8966EF3F8A43E00000054,
     			);
     			dependencies = (
 				F3F8966EF3F8A43E00000055 /* PBXTargetDependency Prep */,
 			);
-    			name = mvc.es;
-    			productName = mvc.es;
+    			name = roots.crt;
+    			productName = roots.crt;
     		};
 		F3F8966EF3F8A43E00000057 /* slots */ = {
     			isa = PBXAggregateTarget;
@@ -262,19 +262,19 @@
 				F3F8966EF3F8A43E00000074 /* PBXTargetDependency ejsc */,
 				F3F8966EF3F8A43E00000075 /* PBXTargetDependency ejsmod */,
 				F3F8966EF3F8A43E00000076 /* PBXTargetDependency ejsrun */,
-				F3F8966EF3F8A43E00000077 /* PBXTargetDependency http-ca-crt */,
-				F3F8966EF3F8A43E00000078 /* PBXTargetDependency libejs */,
-				F3F8966EF3F8A43E00000079 /* PBXTargetDependency libejs.db.sqlite */,
-				F3F8966EF3F8A43E0000007A /* PBXTargetDependency libejs.web */,
-				F3F8966EF3F8A43E0000007B /* PBXTargetDependency libejs.zlib */,
-				F3F8966EF3F8A43E0000007C /* PBXTargetDependency libhttp */,
-				F3F8966EF3F8A43E0000007D /* PBXTargetDependency libmpr */,
-				F3F8966EF3F8A43E0000007E /* PBXTargetDependency libpcre */,
-				F3F8966EF3F8A43E0000007F /* PBXTargetDependency libsql */,
-				F3F8966EF3F8A43E00000080 /* PBXTargetDependency libzlib */,
-				F3F8966EF3F8A43E00000081 /* PBXTargetDependency mvc */,
-				F3F8966EF3F8A43E00000082 /* PBXTargetDependency mvc.es */,
-				F3F8966EF3F8A43E00000083 /* PBXTargetDependency openssl */,
+				F3F8966EF3F8A43E00000077 /* PBXTargetDependency libejs */,
+				F3F8966EF3F8A43E00000078 /* PBXTargetDependency libejs.db.sqlite */,
+				F3F8966EF3F8A43E00000079 /* PBXTargetDependency libejs.web */,
+				F3F8966EF3F8A43E0000007A /* PBXTargetDependency libejs.zlib */,
+				F3F8966EF3F8A43E0000007B /* PBXTargetDependency libhttp */,
+				F3F8966EF3F8A43E0000007C /* PBXTargetDependency libmpr */,
+				F3F8966EF3F8A43E0000007D /* PBXTargetDependency libpcre */,
+				F3F8966EF3F8A43E0000007E /* PBXTargetDependency libsql */,
+				F3F8966EF3F8A43E0000007F /* PBXTargetDependency libzlib */,
+				F3F8966EF3F8A43E00000080 /* PBXTargetDependency mvc */,
+				F3F8966EF3F8A43E00000081 /* PBXTargetDependency mvc.es */,
+				F3F8966EF3F8A43E00000082 /* PBXTargetDependency openssl */,
+				F3F8966EF3F8A43E00000083 /* PBXTargetDependency roots.crt */,
 				F3F8966EF3F8A43E00000084 /* PBXTargetDependency slots */,
 				F3F8966EF3F8A43E00000085 /* PBXTargetDependency utest */,
 				F3F8966EF3F8A43E00000086 /* PBXTargetDependency utest.es */,
@@ -1452,413 +1452,413 @@
     			remoteGlobalIDString = F3F8966EF3F8A43E0000016C;
     			remoteInfo = libejs;
     		};
-		F3F8966EF3F8A43E000001FC /* PBXContainerItemProxy Prep from http-ca-crt */ = {
+		F3F8966EF3F8A43E000001FC /* PBXContainerItemProxy Prep from libejs */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E0000008D;
     			remoteInfo = Prep;
     		};
-		F3F8966EF3F8A43E000001FD /* PBXContainerItemProxy Prep from libejs */ = {
-    			isa = PBXContainerItemProxy;
-    			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
-    			proxyType = 1;
-    			remoteGlobalIDString = F3F8966EF3F8A43E0000008D;
-    			remoteInfo = Prep;
-    		};
-		F3F8966EF3F8A43E000001FE /* PBXContainerItemProxy slots from libejs */ = {
+		F3F8966EF3F8A43E000001FD /* PBXContainerItemProxy slots from libejs */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000057;
     			remoteInfo = slots;
     		};
-		F3F8966EF3F8A43E000001FF /* PBXContainerItemProxy openssl from libejs */ = {
+		F3F8966EF3F8A43E000001FE /* PBXContainerItemProxy openssl from libejs */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000164;
     			remoteInfo = openssl;
     		};
-		F3F8966EF3F8A43E00000200 /* PBXContainerItemProxy libmpr from libejs */ = {
+		F3F8966EF3F8A43E000001FF /* PBXContainerItemProxy libmpr from libejs */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000166;
     			remoteInfo = libmpr;
     		};
-		F3F8966EF3F8A43E00000201 /* PBXContainerItemProxy libpcre from libejs */ = {
+		F3F8966EF3F8A43E00000200 /* PBXContainerItemProxy libpcre from libejs */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000168;
     			remoteInfo = libpcre;
     		};
-		F3F8966EF3F8A43E00000202 /* PBXContainerItemProxy libhttp from libejs */ = {
+		F3F8966EF3F8A43E00000201 /* PBXContainerItemProxy libhttp from libejs */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E0000016A;
     			remoteInfo = libhttp;
     		};
-		F3F8966EF3F8A43E00000203 /* PBXContainerItemProxy Prep from libejs.db.sqlite */ = {
+		F3F8966EF3F8A43E00000202 /* PBXContainerItemProxy Prep from libejs.db.sqlite */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E0000008D;
     			remoteInfo = Prep;
     		};
-		F3F8966EF3F8A43E00000204 /* PBXContainerItemProxy openssl from libejs.db.sqlite */ = {
+		F3F8966EF3F8A43E00000203 /* PBXContainerItemProxy openssl from libejs.db.sqlite */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000164;
     			remoteInfo = openssl;
     		};
-		F3F8966EF3F8A43E00000205 /* PBXContainerItemProxy libmpr from libejs.db.sqlite */ = {
+		F3F8966EF3F8A43E00000204 /* PBXContainerItemProxy libmpr from libejs.db.sqlite */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000166;
     			remoteInfo = libmpr;
     		};
-		F3F8966EF3F8A43E00000206 /* PBXContainerItemProxy slots from libejs.db.sqlite */ = {
+		F3F8966EF3F8A43E00000205 /* PBXContainerItemProxy slots from libejs.db.sqlite */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000057;
     			remoteInfo = slots;
     		};
-		F3F8966EF3F8A43E00000207 /* PBXContainerItemProxy libpcre from libejs.db.sqlite */ = {
+		F3F8966EF3F8A43E00000206 /* PBXContainerItemProxy libpcre from libejs.db.sqlite */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000168;
     			remoteInfo = libpcre;
     		};
-		F3F8966EF3F8A43E00000208 /* PBXContainerItemProxy libhttp from libejs.db.sqlite */ = {
+		F3F8966EF3F8A43E00000207 /* PBXContainerItemProxy libhttp from libejs.db.sqlite */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E0000016A;
     			remoteInfo = libhttp;
     		};
-		F3F8966EF3F8A43E00000209 /* PBXContainerItemProxy libejs from libejs.db.sqlite */ = {
+		F3F8966EF3F8A43E00000208 /* PBXContainerItemProxy libejs from libejs.db.sqlite */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E0000016C;
     			remoteInfo = libejs;
     		};
-		F3F8966EF3F8A43E0000020A /* PBXContainerItemProxy ejsc from libejs.db.sqlite */ = {
+		F3F8966EF3F8A43E00000209 /* PBXContainerItemProxy ejsc from libejs.db.sqlite */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000175;
     			remoteInfo = ejsc;
     		};
-		F3F8966EF3F8A43E0000020B /* PBXContainerItemProxy ejsmod from libejs.db.sqlite */ = {
+		F3F8966EF3F8A43E0000020A /* PBXContainerItemProxy ejsmod from libejs.db.sqlite */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000177;
     			remoteInfo = ejsmod;
     		};
-		F3F8966EF3F8A43E0000020C /* PBXContainerItemProxy ejs.mod from libejs.db.sqlite */ = {
+		F3F8966EF3F8A43E0000020B /* PBXContainerItemProxy ejs.mod from libejs.db.sqlite */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000020;
     			remoteInfo = ejs.mod;
     		};
-		F3F8966EF3F8A43E0000020D /* PBXContainerItemProxy ejs.db.sqlite.mod from libejs.db.sqlite */ = {
+		F3F8966EF3F8A43E0000020C /* PBXContainerItemProxy ejs.db.sqlite.mod from libejs.db.sqlite */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000013;
     			remoteInfo = ejs.db.sqlite.mod;
     		};
-		F3F8966EF3F8A43E0000020E /* PBXContainerItemProxy libsql from libejs.db.sqlite */ = {
+		F3F8966EF3F8A43E0000020D /* PBXContainerItemProxy libsql from libejs.db.sqlite */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
-    			remoteGlobalIDString = F3F8966EF3F8A43E0000020F;
+    			remoteGlobalIDString = F3F8966EF3F8A43E0000020E;
     			remoteInfo = libsql;
     		};
-		F3F8966EF3F8A43E00000210 /* PBXContainerItemProxy Prep from libejs.web */ = {
+		F3F8966EF3F8A43E0000020F /* PBXContainerItemProxy Prep from libejs.web */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E0000008D;
     			remoteInfo = Prep;
     		};
-		F3F8966EF3F8A43E00000211 /* PBXContainerItemProxy slots from libejs.web */ = {
+		F3F8966EF3F8A43E00000210 /* PBXContainerItemProxy slots from libejs.web */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000057;
     			remoteInfo = slots;
     		};
-		F3F8966EF3F8A43E00000212 /* PBXContainerItemProxy openssl from libejs.web */ = {
+		F3F8966EF3F8A43E00000211 /* PBXContainerItemProxy openssl from libejs.web */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000164;
     			remoteInfo = openssl;
     		};
-		F3F8966EF3F8A43E00000213 /* PBXContainerItemProxy libmpr from libejs.web */ = {
+		F3F8966EF3F8A43E00000212 /* PBXContainerItemProxy libmpr from libejs.web */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000166;
     			remoteInfo = libmpr;
     		};
-		F3F8966EF3F8A43E00000214 /* PBXContainerItemProxy libpcre from libejs.web */ = {
+		F3F8966EF3F8A43E00000213 /* PBXContainerItemProxy libpcre from libejs.web */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000168;
     			remoteInfo = libpcre;
     		};
-		F3F8966EF3F8A43E00000215 /* PBXContainerItemProxy libhttp from libejs.web */ = {
+		F3F8966EF3F8A43E00000214 /* PBXContainerItemProxy libhttp from libejs.web */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E0000016A;
     			remoteInfo = libhttp;
     		};
-		F3F8966EF3F8A43E00000216 /* PBXContainerItemProxy libejs from libejs.web */ = {
+		F3F8966EF3F8A43E00000215 /* PBXContainerItemProxy libejs from libejs.web */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E0000016C;
     			remoteInfo = libejs;
     		};
-		F3F8966EF3F8A43E00000217 /* PBXContainerItemProxy ejsc from libejs.web */ = {
+		F3F8966EF3F8A43E00000216 /* PBXContainerItemProxy ejsc from libejs.web */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000175;
     			remoteInfo = ejsc;
     		};
-		F3F8966EF3F8A43E00000218 /* PBXContainerItemProxy ejsmod from libejs.web */ = {
+		F3F8966EF3F8A43E00000217 /* PBXContainerItemProxy ejsmod from libejs.web */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000177;
     			remoteInfo = ejsmod;
     		};
-		F3F8966EF3F8A43E00000219 /* PBXContainerItemProxy ejs.mod from libejs.web */ = {
+		F3F8966EF3F8A43E00000218 /* PBXContainerItemProxy ejs.mod from libejs.web */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000020;
     			remoteInfo = ejs.mod;
     		};
-		F3F8966EF3F8A43E0000021A /* PBXContainerItemProxy Prep from libejs.zlib */ = {
+		F3F8966EF3F8A43E00000219 /* PBXContainerItemProxy Prep from libejs.zlib */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E0000008D;
     			remoteInfo = Prep;
     		};
-		F3F8966EF3F8A43E0000021B /* PBXContainerItemProxy slots from libejs.zlib */ = {
+		F3F8966EF3F8A43E0000021A /* PBXContainerItemProxy slots from libejs.zlib */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000057;
     			remoteInfo = slots;
     		};
-		F3F8966EF3F8A43E0000021C /* PBXContainerItemProxy openssl from libejs.zlib */ = {
+		F3F8966EF3F8A43E0000021B /* PBXContainerItemProxy openssl from libejs.zlib */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000164;
     			remoteInfo = openssl;
     		};
-		F3F8966EF3F8A43E0000021D /* PBXContainerItemProxy libmpr from libejs.zlib */ = {
+		F3F8966EF3F8A43E0000021C /* PBXContainerItemProxy libmpr from libejs.zlib */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000166;
     			remoteInfo = libmpr;
     		};
-		F3F8966EF3F8A43E0000021E /* PBXContainerItemProxy libpcre from libejs.zlib */ = {
+		F3F8966EF3F8A43E0000021D /* PBXContainerItemProxy libpcre from libejs.zlib */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000168;
     			remoteInfo = libpcre;
     		};
-		F3F8966EF3F8A43E0000021F /* PBXContainerItemProxy libhttp from libejs.zlib */ = {
+		F3F8966EF3F8A43E0000021E /* PBXContainerItemProxy libhttp from libejs.zlib */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E0000016A;
     			remoteInfo = libhttp;
     		};
-		F3F8966EF3F8A43E00000220 /* PBXContainerItemProxy libejs from libejs.zlib */ = {
+		F3F8966EF3F8A43E0000021F /* PBXContainerItemProxy libejs from libejs.zlib */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E0000016C;
     			remoteInfo = libejs;
     		};
-		F3F8966EF3F8A43E00000221 /* PBXContainerItemProxy ejsc from libejs.zlib */ = {
+		F3F8966EF3F8A43E00000220 /* PBXContainerItemProxy ejsc from libejs.zlib */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000175;
     			remoteInfo = ejsc;
     		};
-		F3F8966EF3F8A43E00000222 /* PBXContainerItemProxy ejsmod from libejs.zlib */ = {
+		F3F8966EF3F8A43E00000221 /* PBXContainerItemProxy ejsmod from libejs.zlib */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000177;
     			remoteInfo = ejsmod;
     		};
-		F3F8966EF3F8A43E00000223 /* PBXContainerItemProxy ejs.mod from libejs.zlib */ = {
+		F3F8966EF3F8A43E00000222 /* PBXContainerItemProxy ejs.mod from libejs.zlib */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000020;
     			remoteInfo = ejs.mod;
     		};
-		F3F8966EF3F8A43E00000224 /* PBXContainerItemProxy libzlib from libejs.zlib */ = {
+		F3F8966EF3F8A43E00000223 /* PBXContainerItemProxy libzlib from libejs.zlib */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E000001B9;
     			remoteInfo = libzlib;
     		};
-		F3F8966EF3F8A43E00000225 /* PBXContainerItemProxy Prep from libhttp */ = {
+		F3F8966EF3F8A43E00000224 /* PBXContainerItemProxy Prep from libhttp */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E0000008D;
     			remoteInfo = Prep;
     		};
-		F3F8966EF3F8A43E00000226 /* PBXContainerItemProxy openssl from libhttp */ = {
+		F3F8966EF3F8A43E00000225 /* PBXContainerItemProxy openssl from libhttp */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000164;
     			remoteInfo = openssl;
     		};
-		F3F8966EF3F8A43E00000227 /* PBXContainerItemProxy libmpr from libhttp */ = {
+		F3F8966EF3F8A43E00000226 /* PBXContainerItemProxy libmpr from libhttp */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000166;
     			remoteInfo = libmpr;
     		};
-		F3F8966EF3F8A43E00000228 /* PBXContainerItemProxy libpcre from libhttp */ = {
+		F3F8966EF3F8A43E00000227 /* PBXContainerItemProxy libpcre from libhttp */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000168;
     			remoteInfo = libpcre;
     		};
-		F3F8966EF3F8A43E00000229 /* PBXContainerItemProxy Prep from libmpr */ = {
+		F3F8966EF3F8A43E00000228 /* PBXContainerItemProxy Prep from libmpr */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E0000008D;
     			remoteInfo = Prep;
     		};
-		F3F8966EF3F8A43E0000022A /* PBXContainerItemProxy openssl from libmpr */ = {
+		F3F8966EF3F8A43E00000229 /* PBXContainerItemProxy openssl from libmpr */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000164;
     			remoteInfo = openssl;
     		};
-		F3F8966EF3F8A43E0000022B /* PBXContainerItemProxy Prep from libpcre */ = {
+		F3F8966EF3F8A43E0000022A /* PBXContainerItemProxy Prep from libpcre */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E0000008D;
     			remoteInfo = Prep;
     		};
-		F3F8966EF3F8A43E0000022C /* PBXContainerItemProxy Prep from libsql */ = {
+		F3F8966EF3F8A43E0000022B /* PBXContainerItemProxy Prep from libsql */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E0000008D;
     			remoteInfo = Prep;
     		};
-		F3F8966EF3F8A43E0000022D /* PBXContainerItemProxy Prep from libzlib */ = {
+		F3F8966EF3F8A43E0000022C /* PBXContainerItemProxy Prep from libzlib */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E0000008D;
     			remoteInfo = Prep;
     		};
-		F3F8966EF3F8A43E0000022E /* PBXContainerItemProxy Prep from mvc */ = {
+		F3F8966EF3F8A43E0000022D /* PBXContainerItemProxy Prep from mvc */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E0000008D;
     			remoteInfo = Prep;
     		};
-		F3F8966EF3F8A43E0000022F /* PBXContainerItemProxy slots from mvc */ = {
+		F3F8966EF3F8A43E0000022E /* PBXContainerItemProxy slots from mvc */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000057;
     			remoteInfo = slots;
     		};
-		F3F8966EF3F8A43E00000230 /* PBXContainerItemProxy openssl from mvc */ = {
+		F3F8966EF3F8A43E0000022F /* PBXContainerItemProxy openssl from mvc */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000164;
     			remoteInfo = openssl;
     		};
-		F3F8966EF3F8A43E00000231 /* PBXContainerItemProxy libmpr from mvc */ = {
+		F3F8966EF3F8A43E00000230 /* PBXContainerItemProxy libmpr from mvc */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000166;
     			remoteInfo = libmpr;
     		};
-		F3F8966EF3F8A43E00000232 /* PBXContainerItemProxy libpcre from mvc */ = {
+		F3F8966EF3F8A43E00000231 /* PBXContainerItemProxy libpcre from mvc */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000168;
     			remoteInfo = libpcre;
     		};
-		F3F8966EF3F8A43E00000233 /* PBXContainerItemProxy libhttp from mvc */ = {
+		F3F8966EF3F8A43E00000232 /* PBXContainerItemProxy libhttp from mvc */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E0000016A;
     			remoteInfo = libhttp;
     		};
-		F3F8966EF3F8A43E00000234 /* PBXContainerItemProxy libejs from mvc */ = {
+		F3F8966EF3F8A43E00000233 /* PBXContainerItemProxy libejs from mvc */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E0000016C;
     			remoteInfo = libejs;
     		};
-		F3F8966EF3F8A43E00000235 /* PBXContainerItemProxy mvc.es from mvc */ = {
+		F3F8966EF3F8A43E00000234 /* PBXContainerItemProxy mvc.es from mvc */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
-    			remoteGlobalIDString = F3F8966EF3F8A43E00000053;
+    			remoteGlobalIDString = F3F8966EF3F8A43E0000004F;
     			remoteInfo = mvc.es;
     		};
-		F3F8966EF3F8A43E00000236 /* PBXContainerItemProxy Prep from mvc.es */ = {
+		F3F8966EF3F8A43E00000235 /* PBXContainerItemProxy Prep from mvc.es */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E0000008D;
     			remoteInfo = Prep;
     		};
-		F3F8966EF3F8A43E00000237 /* PBXContainerItemProxy Prep from openssl */ = {
+		F3F8966EF3F8A43E00000236 /* PBXContainerItemProxy Prep from openssl */ = {
+    			isa = PBXContainerItemProxy;
+    			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
+    			proxyType = 1;
+    			remoteGlobalIDString = F3F8966EF3F8A43E0000008D;
+    			remoteInfo = Prep;
+    		};
+		F3F8966EF3F8A43E00000237 /* PBXContainerItemProxy Prep from roots.crt */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
@@ -2145,47 +2145,47 @@
     			remoteGlobalIDString = F3F8966EF3F8A43E00000261;
     			remoteInfo = ejsrun;
     		};
-		F3F8966EF3F8A43E00000262 /* PBXContainerItemProxy http-ca-crt from All */ = {
+		F3F8966EF3F8A43E00000262 /* PBXContainerItemProxy libsql from All */ = {
+    			isa = PBXContainerItemProxy;
+    			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
+    			proxyType = 1;
+    			remoteGlobalIDString = F3F8966EF3F8A43E0000020E;
+    			remoteInfo = libsql;
+    		};
+		F3F8966EF3F8A43E00000263 /* PBXContainerItemProxy libejs.db.sqlite from All */ = {
+    			isa = PBXContainerItemProxy;
+    			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
+    			proxyType = 1;
+    			remoteGlobalIDString = F3F8966EF3F8A43E00000264;
+    			remoteInfo = libejs.db.sqlite;
+    		};
+		F3F8966EF3F8A43E00000265 /* PBXContainerItemProxy libejs.web from All */ = {
+    			isa = PBXContainerItemProxy;
+    			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
+    			proxyType = 1;
+    			remoteGlobalIDString = F3F8966EF3F8A43E00000266;
+    			remoteInfo = libejs.web;
+    		};
+		F3F8966EF3F8A43E00000267 /* PBXContainerItemProxy mvc.es from All */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E0000004F;
-    			remoteInfo = http-ca-crt;
+    			remoteInfo = mvc.es;
     		};
-		F3F8966EF3F8A43E00000263 /* PBXContainerItemProxy libsql from All */ = {
+		F3F8966EF3F8A43E00000268 /* PBXContainerItemProxy mvc from All */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
-    			remoteGlobalIDString = F3F8966EF3F8A43E0000020F;
-    			remoteInfo = libsql;
+    			remoteGlobalIDString = F3F8966EF3F8A43E00000269;
+    			remoteInfo = mvc;
     		};
-		F3F8966EF3F8A43E00000264 /* PBXContainerItemProxy libejs.db.sqlite from All */ = {
-    			isa = PBXContainerItemProxy;
-    			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
-    			proxyType = 1;
-    			remoteGlobalIDString = F3F8966EF3F8A43E00000265;
-    			remoteInfo = libejs.db.sqlite;
-    		};
-		F3F8966EF3F8A43E00000266 /* PBXContainerItemProxy libejs.web from All */ = {
-    			isa = PBXContainerItemProxy;
-    			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
-    			proxyType = 1;
-    			remoteGlobalIDString = F3F8966EF3F8A43E00000267;
-    			remoteInfo = libejs.web;
-    		};
-		F3F8966EF3F8A43E00000268 /* PBXContainerItemProxy mvc.es from All */ = {
+		F3F8966EF3F8A43E0000026A /* PBXContainerItemProxy roots.crt from All */ = {
     			isa = PBXContainerItemProxy;
     			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
     			proxyType = 1;
     			remoteGlobalIDString = F3F8966EF3F8A43E00000053;
-    			remoteInfo = mvc.es;
-    		};
-		F3F8966EF3F8A43E00000269 /* PBXContainerItemProxy mvc from All */ = {
-    			isa = PBXContainerItemProxy;
-    			containerPortal = F3F8966EF3F8A43E00000001 /* Project object */;
-    			proxyType = 1;
-    			remoteGlobalIDString = F3F8966EF3F8A43E0000026A;
-    			remoteInfo = mvc;
+    			remoteInfo = roots.crt;
     		};
 		F3F8966EF3F8A43E0000026B /* PBXContainerItemProxy utest.es from All */ = {
     			isa = PBXContainerItemProxy;
@@ -2910,7 +2910,7 @@
     			productReference = F3F8966EF3F8A43E00000130 /* libejs */;
     			productType = "com.apple.product-type.library.dynamic";
     		};
-		F3F8966EF3F8A43E00000265 /* libejs.db.sqlite */ = {
+		F3F8966EF3F8A43E00000264 /* libejs.db.sqlite */ = {
     			isa = PBXNativeTarget;
     			buildConfigurationList = F3F8966EF3F8A43E000002E1 /* Build configuration list for PBXNativeTarget "libejs.db.sqlite" */;
     			buildPhases = (
@@ -2938,7 +2938,7 @@
     			productReference = F3F8966EF3F8A43E00000280 /* libejs.db.sqlite */;
     			productType = "com.apple.product-type.library.dynamic";
     		};
-		F3F8966EF3F8A43E00000267 /* libejs.web */ = {
+		F3F8966EF3F8A43E00000266 /* libejs.web */ = {
     			isa = PBXNativeTarget;
     			buildConfigurationList = F3F8966EF3F8A43E000002EF /* Build configuration list for PBXNativeTarget "libejs.web" */;
     			buildPhases = (
@@ -3046,7 +3046,7 @@
     			productReference = F3F8966EF3F8A43E00000134 /* libpcre */;
     			productType = "com.apple.product-type.library.dynamic";
     		};
-		F3F8966EF3F8A43E0000020F /* libsql */ = {
+		F3F8966EF3F8A43E0000020E /* libsql */ = {
     			isa = PBXNativeTarget;
     			buildConfigurationList = F3F8966EF3F8A43E00000315 /* Build configuration list for PBXNativeTarget "libsql" */;
     			buildPhases = (
@@ -3080,7 +3080,7 @@
     			productReference = F3F8966EF3F8A43E00000151 /* libzlib */;
     			productType = "com.apple.product-type.library.dynamic";
     		};
-		F3F8966EF3F8A43E0000026A /* mvc */ = {
+		F3F8966EF3F8A43E00000269 /* mvc */ = {
     			isa = PBXNativeTarget;
     			buildConfigurationList = F3F8966EF3F8A43E0000031B /* Build configuration list for PBXNativeTarget "mvc" */;
     			buildPhases = (
@@ -3445,26 +3445,7 @@ cd ../src/ejs.zlib
 	\"../${OUT_DIR}/bin/ejsc\" --out \"../${OUT_DIR}/bin/ejs.zlib.mod\"  --optimize 9 Zlib.es
 ";
     		};
-		F3F8966EF3F8A43E00000050 /* ShellScript for http-ca-crt */ = {
-    			isa = PBXShellScriptBuildPhase;
-    			buildActionMask = 2147483647;
-    			files = (
-    			);
-    			inputPaths = (
-    ../src/http/ca.crt
-    			);
-    			outputPaths = (
-    ../build/macosx-x64-default/bin/ca.crt
-    			);
-    			runOnlyForDeploymentPostprocessing = 0;
-    			shellPath = /bin/bash;
-    			shellScript = "PATH=$PATH:/usr/local/bin
-cd ..
-	mkdir -p \"build/macosx-x64-default/bin\"
-	cp src/http/ca.crt build/macosx-x64-default/bin/ca.crt
-";
-    		};
-		F3F8966EF3F8A43E00000054 /* ShellScript for mvc.es */ = {
+		F3F8966EF3F8A43E00000050 /* ShellScript for mvc.es */ = {
     			isa = PBXShellScriptBuildPhase;
     			buildActionMask = 2147483647;
     			files = (
@@ -3481,6 +3462,25 @@ cd ..
 cd ..
 	mkdir -p \"build/macosx-x64-default/bin\"
 	cp src/ejs.mvc/mvc.es build/macosx-x64-default/bin/mvc.es
+";
+    		};
+		F3F8966EF3F8A43E00000054 /* ShellScript for roots.crt */ = {
+    			isa = PBXShellScriptBuildPhase;
+    			buildActionMask = 2147483647;
+    			files = (
+    			);
+    			inputPaths = (
+    ../src/certs/roots.crt
+    			);
+    			outputPaths = (
+    ../build/macosx-x64-default/bin/roots.crt
+    			);
+    			runOnlyForDeploymentPostprocessing = 0;
+    			shellPath = /bin/bash;
+    			shellScript = "PATH=$PATH:/usr/local/bin
+cd ..
+	mkdir -p \"build/macosx-x64-default/bin\"
+	cp src/certs/roots.crt build/macosx-x64-default/bin/roots.crt
 ";
     		};
 		F3F8966EF3F8A43E00000058 /* ShellScript for slots */ = {
@@ -3764,20 +3764,20 @@ fi";
 				F3F8966EF3F8A43E00000067 /* All */,
 				F3F8966EF3F8A43E0000008D /* Prep */,
 				F3F8966EF3F8A43E0000016C /* libejs */,
-				F3F8966EF3F8A43E00000265 /* libejs.db.sqlite */,
-				F3F8966EF3F8A43E00000267 /* libejs.web */,
+				F3F8966EF3F8A43E00000264 /* libejs.db.sqlite */,
+				F3F8966EF3F8A43E00000266 /* libejs.web */,
 				F3F8966EF3F8A43E000001BB /* libejs.zlib */,
 				F3F8966EF3F8A43E0000016A /* libhttp */,
 				F3F8966EF3F8A43E00000166 /* libmpr */,
 				F3F8966EF3F8A43E00000168 /* libpcre */,
-				F3F8966EF3F8A43E0000020F /* libsql */,
+				F3F8966EF3F8A43E0000020E /* libsql */,
 				F3F8966EF3F8A43E000001B9 /* libzlib */,
 				F3F8966EF3F8A43E00000164 /* openssl */,
 				F3F8966EF3F8A43E00000250 /* ejs */,
 				F3F8966EF3F8A43E00000175 /* ejsc */,
 				F3F8966EF3F8A43E00000177 /* ejsmod */,
 				F3F8966EF3F8A43E00000261 /* ejsrun */,
-				F3F8966EF3F8A43E0000026A /* mvc */,
+				F3F8966EF3F8A43E00000269 /* mvc */,
 				F3F8966EF3F8A43E0000026E /* utest */,
 				F3F8966EF3F8A43E00000270 /* watchdog */,
 				F3F8966EF3F8A43E00000006 /* ejs.db.mapper.mod */,
@@ -3791,8 +3791,8 @@ fi";
 				F3F8966EF3F8A43E0000003C /* ejs.unix.mod */,
 				F3F8966EF3F8A43E00000042 /* ejs.web.mod */,
 				F3F8966EF3F8A43E00000049 /* ejs.zlib.mod */,
-				F3F8966EF3F8A43E0000004F /* http-ca-crt */,
-				F3F8966EF3F8A43E00000053 /* mvc.es */,
+				F3F8966EF3F8A43E0000004F /* mvc.es */,
+				F3F8966EF3F8A43E00000053 /* roots.crt */,
 				F3F8966EF3F8A43E00000057 /* slots */,
 				F3F8966EF3F8A43E0000005B /* utest.es */,
 				F3F8966EF3F8A43E0000005F /* utest.worker */,
@@ -4736,297 +4736,297 @@ fi";
     			target = F3F8966EF3F8A43E0000016C /* libejs */;
     			targetProxy = F3F8966EF3F8A43E000001FB /* PBXContainerItemProxy */;
     		};
-		F3F8966EF3F8A43E00000051 /* PBXTargetDependency http-ca-crt depends on Prep */ = {
+		F3F8966EF3F8A43E000002DA /* PBXTargetDependency libejs depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000008D /* Prep */;
     			targetProxy = F3F8966EF3F8A43E000001FC /* PBXContainerItemProxy */;
     		};
-		F3F8966EF3F8A43E000002DA /* PBXTargetDependency libejs depends on Prep */ = {
-    			isa = PBXTargetDependency;
-    			target = F3F8966EF3F8A43E0000008D /* Prep */;
-    			targetProxy = F3F8966EF3F8A43E000001FD /* PBXContainerItemProxy */;
-    		};
 		F3F8966EF3F8A43E000002DB /* PBXTargetDependency libejs depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000057 /* slots */;
-    			targetProxy = F3F8966EF3F8A43E000001FE /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E000001FD /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002DC /* PBXTargetDependency libejs depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000164 /* openssl */;
-    			targetProxy = F3F8966EF3F8A43E000001FF /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E000001FE /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002DD /* PBXTargetDependency libejs depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000166 /* libmpr */;
-    			targetProxy = F3F8966EF3F8A43E00000200 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E000001FF /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002DE /* PBXTargetDependency libejs depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000168 /* libpcre */;
-    			targetProxy = F3F8966EF3F8A43E00000201 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000200 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002DF /* PBXTargetDependency libejs depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000016A /* libhttp */;
-    			targetProxy = F3F8966EF3F8A43E00000202 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000201 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002E2 /* PBXTargetDependency libejs.db.sqlite depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000008D /* Prep */;
-    			targetProxy = F3F8966EF3F8A43E00000203 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000202 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002E3 /* PBXTargetDependency libejs.db.sqlite depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000164 /* openssl */;
-    			targetProxy = F3F8966EF3F8A43E00000204 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000203 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002E4 /* PBXTargetDependency libejs.db.sqlite depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000166 /* libmpr */;
-    			targetProxy = F3F8966EF3F8A43E00000205 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000204 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002E5 /* PBXTargetDependency libejs.db.sqlite depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000057 /* slots */;
-    			targetProxy = F3F8966EF3F8A43E00000206 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000205 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002E6 /* PBXTargetDependency libejs.db.sqlite depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000168 /* libpcre */;
-    			targetProxy = F3F8966EF3F8A43E00000207 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000206 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002E7 /* PBXTargetDependency libejs.db.sqlite depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000016A /* libhttp */;
-    			targetProxy = F3F8966EF3F8A43E00000208 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000207 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002E8 /* PBXTargetDependency libejs.db.sqlite depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000016C /* libejs */;
-    			targetProxy = F3F8966EF3F8A43E00000209 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000208 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002E9 /* PBXTargetDependency libejs.db.sqlite depends on ejsc */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000175 /* ejsc */;
-    			targetProxy = F3F8966EF3F8A43E0000020A /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000209 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002EA /* PBXTargetDependency libejs.db.sqlite depends on ejsmod */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000177 /* ejsmod */;
-    			targetProxy = F3F8966EF3F8A43E0000020B /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E0000020A /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002EB /* PBXTargetDependency libejs.db.sqlite depends on ejs.mod */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000020 /* ejs.mod */;
-    			targetProxy = F3F8966EF3F8A43E0000020C /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E0000020B /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002EC /* PBXTargetDependency libejs.db.sqlite depends on ejs.db.sqlite.mod */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000013 /* ejs.db.sqlite.mod */;
-    			targetProxy = F3F8966EF3F8A43E0000020D /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E0000020C /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002ED /* PBXTargetDependency libejs.db.sqlite depends on libsql */ = {
     			isa = PBXTargetDependency;
-    			target = F3F8966EF3F8A43E0000020F /* libsql */;
-    			targetProxy = F3F8966EF3F8A43E0000020E /* PBXContainerItemProxy */;
+    			target = F3F8966EF3F8A43E0000020E /* libsql */;
+    			targetProxy = F3F8966EF3F8A43E0000020D /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002F0 /* PBXTargetDependency libejs.web depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000008D /* Prep */;
-    			targetProxy = F3F8966EF3F8A43E00000210 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E0000020F /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002F1 /* PBXTargetDependency libejs.web depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000057 /* slots */;
-    			targetProxy = F3F8966EF3F8A43E00000211 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000210 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002F2 /* PBXTargetDependency libejs.web depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000164 /* openssl */;
-    			targetProxy = F3F8966EF3F8A43E00000212 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000211 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002F3 /* PBXTargetDependency libejs.web depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000166 /* libmpr */;
-    			targetProxy = F3F8966EF3F8A43E00000213 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000212 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002F4 /* PBXTargetDependency libejs.web depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000168 /* libpcre */;
-    			targetProxy = F3F8966EF3F8A43E00000214 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000213 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002F5 /* PBXTargetDependency libejs.web depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000016A /* libhttp */;
-    			targetProxy = F3F8966EF3F8A43E00000215 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000214 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002F6 /* PBXTargetDependency libejs.web depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000016C /* libejs */;
-    			targetProxy = F3F8966EF3F8A43E00000216 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000215 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002F7 /* PBXTargetDependency libejs.web depends on ejsc */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000175 /* ejsc */;
-    			targetProxy = F3F8966EF3F8A43E00000217 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000216 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002F8 /* PBXTargetDependency libejs.web depends on ejsmod */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000177 /* ejsmod */;
-    			targetProxy = F3F8966EF3F8A43E00000218 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000217 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002F9 /* PBXTargetDependency libejs.web depends on ejs.mod */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000020 /* ejs.mod */;
-    			targetProxy = F3F8966EF3F8A43E00000219 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000218 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002FC /* PBXTargetDependency libejs.zlib depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000008D /* Prep */;
-    			targetProxy = F3F8966EF3F8A43E0000021A /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000219 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002FD /* PBXTargetDependency libejs.zlib depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000057 /* slots */;
-    			targetProxy = F3F8966EF3F8A43E0000021B /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E0000021A /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002FE /* PBXTargetDependency libejs.zlib depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000164 /* openssl */;
-    			targetProxy = F3F8966EF3F8A43E0000021C /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E0000021B /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E000002FF /* PBXTargetDependency libejs.zlib depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000166 /* libmpr */;
-    			targetProxy = F3F8966EF3F8A43E0000021D /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E0000021C /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E00000300 /* PBXTargetDependency libejs.zlib depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000168 /* libpcre */;
-    			targetProxy = F3F8966EF3F8A43E0000021E /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E0000021D /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E00000301 /* PBXTargetDependency libejs.zlib depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000016A /* libhttp */;
-    			targetProxy = F3F8966EF3F8A43E0000021F /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E0000021E /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E00000302 /* PBXTargetDependency libejs.zlib depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000016C /* libejs */;
-    			targetProxy = F3F8966EF3F8A43E00000220 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E0000021F /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E00000303 /* PBXTargetDependency libejs.zlib depends on ejsc */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000175 /* ejsc */;
-    			targetProxy = F3F8966EF3F8A43E00000221 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000220 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E00000304 /* PBXTargetDependency libejs.zlib depends on ejsmod */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000177 /* ejsmod */;
-    			targetProxy = F3F8966EF3F8A43E00000222 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000221 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E00000305 /* PBXTargetDependency libejs.zlib depends on ejs.mod */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000020 /* ejs.mod */;
-    			targetProxy = F3F8966EF3F8A43E00000223 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000222 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E00000306 /* PBXTargetDependency libejs.zlib depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E000001B9 /* libzlib */;
-    			targetProxy = F3F8966EF3F8A43E00000224 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000223 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E00000309 /* PBXTargetDependency libhttp depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000008D /* Prep */;
-    			targetProxy = F3F8966EF3F8A43E00000225 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000224 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E0000030A /* PBXTargetDependency libhttp depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000164 /* openssl */;
-    			targetProxy = F3F8966EF3F8A43E00000226 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000225 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E0000030B /* PBXTargetDependency libhttp depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000166 /* libmpr */;
-    			targetProxy = F3F8966EF3F8A43E00000227 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000226 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E0000030C /* PBXTargetDependency libhttp depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000168 /* libpcre */;
-    			targetProxy = F3F8966EF3F8A43E00000228 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000227 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E0000030F /* PBXTargetDependency libmpr depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000008D /* Prep */;
-    			targetProxy = F3F8966EF3F8A43E00000229 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000228 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E00000310 /* PBXTargetDependency libmpr depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000164 /* openssl */;
-    			targetProxy = F3F8966EF3F8A43E0000022A /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000229 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E00000313 /* PBXTargetDependency libpcre depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000008D /* Prep */;
-    			targetProxy = F3F8966EF3F8A43E0000022B /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E0000022A /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E00000316 /* PBXTargetDependency libsql depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000008D /* Prep */;
-    			targetProxy = F3F8966EF3F8A43E0000022C /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E0000022B /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E00000319 /* PBXTargetDependency libzlib depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000008D /* Prep */;
-    			targetProxy = F3F8966EF3F8A43E0000022D /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E0000022C /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E0000031C /* PBXTargetDependency mvc depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000008D /* Prep */;
-    			targetProxy = F3F8966EF3F8A43E0000022E /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E0000022D /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E0000031D /* PBXTargetDependency mvc depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000057 /* slots */;
-    			targetProxy = F3F8966EF3F8A43E0000022F /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E0000022E /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E0000031E /* PBXTargetDependency mvc depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000164 /* openssl */;
-    			targetProxy = F3F8966EF3F8A43E00000230 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E0000022F /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E0000031F /* PBXTargetDependency mvc depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000166 /* libmpr */;
-    			targetProxy = F3F8966EF3F8A43E00000231 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000230 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E00000320 /* PBXTargetDependency mvc depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000168 /* libpcre */;
-    			targetProxy = F3F8966EF3F8A43E00000232 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000231 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E00000321 /* PBXTargetDependency mvc depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000016A /* libhttp */;
-    			targetProxy = F3F8966EF3F8A43E00000233 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000232 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E00000322 /* PBXTargetDependency mvc depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000016C /* libejs */;
-    			targetProxy = F3F8966EF3F8A43E00000234 /* PBXContainerItemProxy */;
+    			targetProxy = F3F8966EF3F8A43E00000233 /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E00000323 /* PBXTargetDependency mvc depends on mvc.es */ = {
     			isa = PBXTargetDependency;
-    			target = F3F8966EF3F8A43E00000053 /* mvc.es */;
+    			target = F3F8966EF3F8A43E0000004F /* mvc.es */;
+    			targetProxy = F3F8966EF3F8A43E00000234 /* PBXContainerItemProxy */;
+    		};
+		F3F8966EF3F8A43E00000051 /* PBXTargetDependency mvc.es depends on Prep */ = {
+    			isa = PBXTargetDependency;
+    			target = F3F8966EF3F8A43E0000008D /* Prep */;
     			targetProxy = F3F8966EF3F8A43E00000235 /* PBXContainerItemProxy */;
     		};
-		F3F8966EF3F8A43E00000055 /* PBXTargetDependency mvc.es depends on Prep */ = {
+		F3F8966EF3F8A43E00000326 /* PBXTargetDependency openssl depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000008D /* Prep */;
     			targetProxy = F3F8966EF3F8A43E00000236 /* PBXContainerItemProxy */;
     		};
-		F3F8966EF3F8A43E00000326 /* PBXTargetDependency openssl depends on Prep */ = {
+		F3F8966EF3F8A43E00000055 /* PBXTargetDependency roots.crt depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000008D /* Prep */;
     			targetProxy = F3F8966EF3F8A43E00000237 /* PBXContainerItemProxy */;
@@ -5121,27 +5121,27 @@ fi";
     			target = F3F8966EF3F8A43E00000057 /* slots */;
     			targetProxy = F3F8966EF3F8A43E00000249 /* PBXContainerItemProxy */;
     		};
-		F3F8966EF3F8A43E00000083 /* PBXTargetDependency All depends on openssl */ = {
+		F3F8966EF3F8A43E00000082 /* PBXTargetDependency All depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000164 /* openssl */;
     			targetProxy = F3F8966EF3F8A43E0000024A /* PBXContainerItemProxy */;
     		};
-		F3F8966EF3F8A43E0000007D /* PBXTargetDependency All depends on libmpr */ = {
+		F3F8966EF3F8A43E0000007C /* PBXTargetDependency All depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000166 /* libmpr */;
     			targetProxy = F3F8966EF3F8A43E0000024B /* PBXContainerItemProxy */;
     		};
-		F3F8966EF3F8A43E0000007E /* PBXTargetDependency All depends on libpcre */ = {
+		F3F8966EF3F8A43E0000007D /* PBXTargetDependency All depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E00000168 /* libpcre */;
     			targetProxy = F3F8966EF3F8A43E0000024C /* PBXContainerItemProxy */;
     		};
-		F3F8966EF3F8A43E0000007C /* PBXTargetDependency All depends on libhttp */ = {
+		F3F8966EF3F8A43E0000007B /* PBXTargetDependency All depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000016A /* libhttp */;
     			targetProxy = F3F8966EF3F8A43E0000024D /* PBXContainerItemProxy */;
     		};
-		F3F8966EF3F8A43E00000078 /* PBXTargetDependency All depends on libejs */ = {
+		F3F8966EF3F8A43E00000077 /* PBXTargetDependency All depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E0000016C /* libejs */;
     			targetProxy = F3F8966EF3F8A43E0000024E /* PBXContainerItemProxy */;
@@ -5206,12 +5206,12 @@ fi";
     			target = F3F8966EF3F8A43E00000026 /* ejs.mvc.mod */;
     			targetProxy = F3F8966EF3F8A43E0000025B /* PBXContainerItemProxy */;
     		};
-		F3F8966EF3F8A43E00000080 /* PBXTargetDependency All depends on libzlib */ = {
+		F3F8966EF3F8A43E0000007F /* PBXTargetDependency All depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E000001B9 /* libzlib */;
     			targetProxy = F3F8966EF3F8A43E0000025C /* PBXContainerItemProxy */;
     		};
-		F3F8966EF3F8A43E0000007B /* PBXTargetDependency All depends on libejs.zlib */ = {
+		F3F8966EF3F8A43E0000007A /* PBXTargetDependency All depends on libejs.zlib */ = {
     			isa = PBXTargetDependency;
     			target = F3F8966EF3F8A43E000001BB /* libejs.zlib */;
     			targetProxy = F3F8966EF3F8A43E0000025D /* PBXContainerItemProxy */;
@@ -5231,35 +5231,35 @@ fi";
     			target = F3F8966EF3F8A43E00000261 /* ejsrun */;
     			targetProxy = F3F8966EF3F8A43E00000260 /* PBXContainerItemProxy */;
     		};
-		F3F8966EF3F8A43E00000077 /* PBXTargetDependency All depends on http-ca-crt */ = {
+		F3F8966EF3F8A43E0000007E /* PBXTargetDependency All depends on libsql */ = {
     			isa = PBXTargetDependency;
-    			target = F3F8966EF3F8A43E0000004F /* http-ca-crt */;
+    			target = F3F8966EF3F8A43E0000020E /* libsql */;
     			targetProxy = F3F8966EF3F8A43E00000262 /* PBXContainerItemProxy */;
     		};
-		F3F8966EF3F8A43E0000007F /* PBXTargetDependency All depends on libsql */ = {
+		F3F8966EF3F8A43E00000078 /* PBXTargetDependency All depends on libejs.db.sqlite */ = {
     			isa = PBXTargetDependency;
-    			target = F3F8966EF3F8A43E0000020F /* libsql */;
+    			target = F3F8966EF3F8A43E00000264 /* libejs.db.sqlite */;
     			targetProxy = F3F8966EF3F8A43E00000263 /* PBXContainerItemProxy */;
     		};
-		F3F8966EF3F8A43E00000079 /* PBXTargetDependency All depends on libejs.db.sqlite */ = {
+		F3F8966EF3F8A43E00000079 /* PBXTargetDependency All depends on libejs.web */ = {
     			isa = PBXTargetDependency;
-    			target = F3F8966EF3F8A43E00000265 /* libejs.db.sqlite */;
-    			targetProxy = F3F8966EF3F8A43E00000264 /* PBXContainerItemProxy */;
+    			target = F3F8966EF3F8A43E00000266 /* libejs.web */;
+    			targetProxy = F3F8966EF3F8A43E00000265 /* PBXContainerItemProxy */;
     		};
-		F3F8966EF3F8A43E0000007A /* PBXTargetDependency All depends on libejs.web */ = {
+		F3F8966EF3F8A43E00000081 /* PBXTargetDependency All depends on mvc.es */ = {
     			isa = PBXTargetDependency;
-    			target = F3F8966EF3F8A43E00000267 /* libejs.web */;
-    			targetProxy = F3F8966EF3F8A43E00000266 /* PBXContainerItemProxy */;
+    			target = F3F8966EF3F8A43E0000004F /* mvc.es */;
+    			targetProxy = F3F8966EF3F8A43E00000267 /* PBXContainerItemProxy */;
     		};
-		F3F8966EF3F8A43E00000082 /* PBXTargetDependency All depends on mvc.es */ = {
+		F3F8966EF3F8A43E00000080 /* PBXTargetDependency All depends on mvc */ = {
     			isa = PBXTargetDependency;
-    			target = F3F8966EF3F8A43E00000053 /* mvc.es */;
+    			target = F3F8966EF3F8A43E00000269 /* mvc */;
     			targetProxy = F3F8966EF3F8A43E00000268 /* PBXContainerItemProxy */;
     		};
-		F3F8966EF3F8A43E00000081 /* PBXTargetDependency All depends on mvc */ = {
+		F3F8966EF3F8A43E00000083 /* PBXTargetDependency All depends on roots.crt */ = {
     			isa = PBXTargetDependency;
-    			target = F3F8966EF3F8A43E0000026A /* mvc */;
-    			targetProxy = F3F8966EF3F8A43E00000269 /* PBXContainerItemProxy */;
+    			target = F3F8966EF3F8A43E00000053 /* roots.crt */;
+    			targetProxy = F3F8966EF3F8A43E0000026A /* PBXContainerItemProxy */;
     		};
 		F3F8966EF3F8A43E00000086 /* PBXTargetDependency All depends on utest.es */ = {
     			isa = PBXTargetDependency;
@@ -5970,27 +5970,6 @@ fi";
 		F3F8966EF3F8A43E000003A3 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
-    				PRODUCT_NAME = ca;
-    
-    				GCC_PREPROCESSOR_DEFINITIONS = (
-					"ME_DEBUG",
-					"$(inherited)"
-				);
-    			};
-    			name = Debug;
-    		};
-    		F3F8966EF3F8A43E000003A4 /* Release */ = {
-    			isa = XCBuildConfiguration;
-    			buildSettings = {
-    				PRODUCT_NAME = ca;
-    
-    
-    			};
-    			name = Release;
-    		};
-		F3F8966EF3F8A43E000003A5 /* Debug */ = {
-    			isa = XCBuildConfiguration;
-    			buildSettings = {
     				PRODUCT_NAME = libejs;
     
     				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -6002,6 +5981,42 @@ fi";
 					"-lopenssl",
 					"-lssl",
 					"-lcrypto",
+					"$(inherited)"
+				);
+
+    			};
+    			name = Debug;
+    		};
+    		F3F8966EF3F8A43E000003A4 /* Release */ = {
+    			isa = XCBuildConfiguration;
+    			buildSettings = {
+    				PRODUCT_NAME = libejs;
+    
+    				OTHER_LDFLAGS = (
+					"-lpam",
+					"-lopenssl",
+					"-lssl",
+					"-lcrypto",
+					"$(inherited)"
+				);
+
+    			};
+    			name = Release;
+    		};
+		F3F8966EF3F8A43E000003A5 /* Debug */ = {
+    			isa = XCBuildConfiguration;
+    			buildSettings = {
+    				PRODUCT_NAME = libejs.db.sqlite;
+    
+    				GCC_PREPROCESSOR_DEFINITIONS = (
+					"ME_DEBUG",
+					"$(inherited)"
+				);
+				OTHER_LDFLAGS = (
+					"-lopenssl",
+					"-lssl",
+					"-lcrypto",
+					"-lpam",
 					"$(inherited)"
 				);
 
@@ -6011,13 +6026,13 @@ fi";
     		F3F8966EF3F8A43E000003A6 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
-    				PRODUCT_NAME = libejs;
+    				PRODUCT_NAME = libejs.db.sqlite;
     
     				OTHER_LDFLAGS = (
-					"-lpam",
 					"-lopenssl",
 					"-lssl",
 					"-lcrypto",
+					"-lpam",
 					"$(inherited)"
 				);
 
@@ -6027,17 +6042,17 @@ fi";
 		F3F8966EF3F8A43E000003A7 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
-    				PRODUCT_NAME = libejs.db.sqlite;
+    				PRODUCT_NAME = libejs.web;
     
     				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
+					"-lpam",
 					"-lopenssl",
 					"-lssl",
 					"-lcrypto",
-					"-lpam",
 					"$(inherited)"
 				);
 
@@ -6047,13 +6062,13 @@ fi";
     		F3F8966EF3F8A43E000003A8 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
-    				PRODUCT_NAME = libejs.db.sqlite;
+    				PRODUCT_NAME = libejs.web;
     
     				OTHER_LDFLAGS = (
+					"-lpam",
 					"-lopenssl",
 					"-lssl",
 					"-lcrypto",
-					"-lpam",
 					"$(inherited)"
 				);
 
@@ -6063,7 +6078,7 @@ fi";
 		F3F8966EF3F8A43E000003A9 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
-    				PRODUCT_NAME = libejs.web;
+    				PRODUCT_NAME = libejs.zlib;
     
     				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
@@ -6083,7 +6098,7 @@ fi";
     		F3F8966EF3F8A43E000003AA /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
-    				PRODUCT_NAME = libejs.web;
+    				PRODUCT_NAME = libejs.zlib;
     
     				OTHER_LDFLAGS = (
 					"-lpam",
@@ -6099,7 +6114,7 @@ fi";
 		F3F8966EF3F8A43E000003AB /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
-    				PRODUCT_NAME = libejs.zlib;
+    				PRODUCT_NAME = libhttp;
     
     				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
@@ -6119,7 +6134,7 @@ fi";
     		F3F8966EF3F8A43E000003AC /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
-    				PRODUCT_NAME = libejs.zlib;
+    				PRODUCT_NAME = libhttp;
     
     				OTHER_LDFLAGS = (
 					"-lpam",
@@ -6135,14 +6150,13 @@ fi";
 		F3F8966EF3F8A43E000003AD /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
-    				PRODUCT_NAME = libhttp;
+    				PRODUCT_NAME = libmpr;
     
     				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
 					"$(inherited)"
 				);
 				OTHER_LDFLAGS = (
-					"-lpam",
 					"-lopenssl",
 					"-lssl",
 					"-lcrypto",
@@ -6155,10 +6169,9 @@ fi";
     		F3F8966EF3F8A43E000003AE /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
-    				PRODUCT_NAME = libhttp;
+    				PRODUCT_NAME = libmpr;
     
     				OTHER_LDFLAGS = (
-					"-lpam",
 					"-lopenssl",
 					"-lssl",
 					"-lcrypto",
@@ -6171,44 +6184,34 @@ fi";
 		F3F8966EF3F8A43E000003AF /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
-    				PRODUCT_NAME = libmpr;
+    				PRODUCT_NAME = libpcre;
     
     				GCC_PREPROCESSOR_DEFINITIONS = (
+					"PCRE_CHAR=char",
 					"ME_DEBUG",
 					"$(inherited)"
 				);
-				OTHER_LDFLAGS = (
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
-
     			};
     			name = Debug;
     		};
     		F3F8966EF3F8A43E000003B0 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
-    				PRODUCT_NAME = libmpr;
+    				PRODUCT_NAME = libpcre;
     
-    				OTHER_LDFLAGS = (
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
+    				GCC_PREPROCESSOR_DEFINITIONS = (
+					"PCRE_CHAR=char",
 					"$(inherited)"
 				);
-
     			};
     			name = Release;
     		};
 		F3F8966EF3F8A43E000003B1 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
-    				PRODUCT_NAME = libpcre;
+    				PRODUCT_NAME = libsql;
     
     				GCC_PREPROCESSOR_DEFINITIONS = (
-					"PCRE_CHAR=char",
 					"ME_DEBUG",
 					"$(inherited)"
 				);
@@ -6218,19 +6221,16 @@ fi";
     		F3F8966EF3F8A43E000003B2 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
-    				PRODUCT_NAME = libpcre;
+    				PRODUCT_NAME = libsql;
     
-    				GCC_PREPROCESSOR_DEFINITIONS = (
-					"PCRE_CHAR=char",
-					"$(inherited)"
-				);
+    
     			};
     			name = Release;
     		};
 		F3F8966EF3F8A43E000003B3 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
-    				PRODUCT_NAME = libsql;
+    				PRODUCT_NAME = libzlib;
     
     				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
@@ -6242,7 +6242,7 @@ fi";
     		F3F8966EF3F8A43E000003B4 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
-    				PRODUCT_NAME = libsql;
+    				PRODUCT_NAME = libzlib;
     
     
     			};
@@ -6251,21 +6251,36 @@ fi";
 		F3F8966EF3F8A43E000003B5 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
-    				PRODUCT_NAME = libzlib;
+    				PRODUCT_NAME = mvc;
     
     				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
 					"$(inherited)"
 				);
+				OTHER_LDFLAGS = (
+					"-lpam",
+					"-lopenssl",
+					"-lssl",
+					"-lcrypto",
+					"$(inherited)"
+				);
+
     			};
     			name = Debug;
     		};
     		F3F8966EF3F8A43E000003B6 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
-    				PRODUCT_NAME = libzlib;
+    				PRODUCT_NAME = mvc;
     
-    
+    				OTHER_LDFLAGS = (
+					"-lpam",
+					"-lopenssl",
+					"-lssl",
+					"-lcrypto",
+					"$(inherited)"
+				);
+
     			};
     			name = Release;
     		};
@@ -6278,14 +6293,6 @@ fi";
 					"ME_DEBUG",
 					"$(inherited)"
 				);
-				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
-
     			};
     			name = Debug;
     		};
@@ -6294,39 +6301,11 @@ fi";
     			buildSettings = {
     				PRODUCT_NAME = mvc;
     
-    				OTHER_LDFLAGS = (
-					"-lpam",
-					"-lopenssl",
-					"-lssl",
-					"-lcrypto",
-					"$(inherited)"
-				);
-
+    
     			};
     			name = Release;
     		};
 		F3F8966EF3F8A43E000003B9 /* Debug */ = {
-    			isa = XCBuildConfiguration;
-    			buildSettings = {
-    				PRODUCT_NAME = mvc;
-    
-    				GCC_PREPROCESSOR_DEFINITIONS = (
-					"ME_DEBUG",
-					"$(inherited)"
-				);
-    			};
-    			name = Debug;
-    		};
-    		F3F8966EF3F8A43E000003BA /* Release */ = {
-    			isa = XCBuildConfiguration;
-    			buildSettings = {
-    				PRODUCT_NAME = mvc;
-    
-    
-    			};
-    			name = Release;
-    		};
-		F3F8966EF3F8A43E000003BB /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libopenssl;
@@ -6346,7 +6325,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		F3F8966EF3F8A43E000003BC /* Release */ = {
+    		F3F8966EF3F8A43E000003BA /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libopenssl;
@@ -6359,6 +6338,27 @@ fi";
 
 				MACH_O_TYPE = staticlib;
 
+    			};
+    			name = Release;
+    		};
+		F3F8966EF3F8A43E000003BB /* Debug */ = {
+    			isa = XCBuildConfiguration;
+    			buildSettings = {
+    				PRODUCT_NAME = roots;
+    
+    				GCC_PREPROCESSOR_DEFINITIONS = (
+					"ME_DEBUG",
+					"$(inherited)"
+				);
+    			};
+    			name = Debug;
+    		};
+    		F3F8966EF3F8A43E000003BC /* Release */ = {
+    			isa = XCBuildConfiguration;
+    			buildSettings = {
+    				PRODUCT_NAME = roots;
+    
+    
     			};
     			name = Release;
     		};
@@ -6705,7 +6705,7 @@ fi";
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		F3F8966EF3F8A43E0000004E /* Build configuration list for PBXNativeTarget "http-ca-crt" */ = {
+		F3F8966EF3F8A43E000002D9 /* Build configuration list for PBXNativeTarget "libejs" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
     				F3F8966EF3F8A43E000003A3 /* Debug */,
@@ -6714,7 +6714,7 @@ fi";
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		F3F8966EF3F8A43E000002D9 /* Build configuration list for PBXNativeTarget "libejs" */ = {
+		F3F8966EF3F8A43E000002E1 /* Build configuration list for PBXNativeTarget "libejs.db.sqlite" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
     				F3F8966EF3F8A43E000003A5 /* Debug */,
@@ -6723,7 +6723,7 @@ fi";
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		F3F8966EF3F8A43E000002E1 /* Build configuration list for PBXNativeTarget "libejs.db.sqlite" */ = {
+		F3F8966EF3F8A43E000002EF /* Build configuration list for PBXNativeTarget "libejs.web" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
     				F3F8966EF3F8A43E000003A7 /* Debug */,
@@ -6732,7 +6732,7 @@ fi";
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		F3F8966EF3F8A43E000002EF /* Build configuration list for PBXNativeTarget "libejs.web" */ = {
+		F3F8966EF3F8A43E000002FB /* Build configuration list for PBXNativeTarget "libejs.zlib" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
     				F3F8966EF3F8A43E000003A9 /* Debug */,
@@ -6741,7 +6741,7 @@ fi";
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		F3F8966EF3F8A43E000002FB /* Build configuration list for PBXNativeTarget "libejs.zlib" */ = {
+		F3F8966EF3F8A43E00000308 /* Build configuration list for PBXNativeTarget "libhttp" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
     				F3F8966EF3F8A43E000003AB /* Debug */,
@@ -6750,7 +6750,7 @@ fi";
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		F3F8966EF3F8A43E00000308 /* Build configuration list for PBXNativeTarget "libhttp" */ = {
+		F3F8966EF3F8A43E0000030E /* Build configuration list for PBXNativeTarget "libmpr" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
     				F3F8966EF3F8A43E000003AD /* Debug */,
@@ -6759,7 +6759,7 @@ fi";
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		F3F8966EF3F8A43E0000030E /* Build configuration list for PBXNativeTarget "libmpr" */ = {
+		F3F8966EF3F8A43E00000312 /* Build configuration list for PBXNativeTarget "libpcre" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
     				F3F8966EF3F8A43E000003AF /* Debug */,
@@ -6768,7 +6768,7 @@ fi";
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		F3F8966EF3F8A43E00000312 /* Build configuration list for PBXNativeTarget "libpcre" */ = {
+		F3F8966EF3F8A43E00000315 /* Build configuration list for PBXNativeTarget "libsql" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
     				F3F8966EF3F8A43E000003B1 /* Debug */,
@@ -6777,7 +6777,7 @@ fi";
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		F3F8966EF3F8A43E00000315 /* Build configuration list for PBXNativeTarget "libsql" */ = {
+		F3F8966EF3F8A43E00000318 /* Build configuration list for PBXNativeTarget "libzlib" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
     				F3F8966EF3F8A43E000003B3 /* Debug */,
@@ -6786,7 +6786,7 @@ fi";
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		F3F8966EF3F8A43E00000318 /* Build configuration list for PBXNativeTarget "libzlib" */ = {
+		F3F8966EF3F8A43E0000031B /* Build configuration list for PBXNativeTarget "mvc" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
     				F3F8966EF3F8A43E000003B5 /* Debug */,
@@ -6795,7 +6795,7 @@ fi";
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		F3F8966EF3F8A43E0000031B /* Build configuration list for PBXNativeTarget "mvc" */ = {
+		F3F8966EF3F8A43E0000004E /* Build configuration list for PBXNativeTarget "mvc.es" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
     				F3F8966EF3F8A43E000003B7 /* Debug */,
@@ -6804,7 +6804,7 @@ fi";
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		F3F8966EF3F8A43E00000052 /* Build configuration list for PBXNativeTarget "mvc.es" */ = {
+		F3F8966EF3F8A43E00000325 /* Build configuration list for PBXNativeTarget "openssl" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
     				F3F8966EF3F8A43E000003B9 /* Debug */,
@@ -6813,7 +6813,7 @@ fi";
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		F3F8966EF3F8A43E00000325 /* Build configuration list for PBXNativeTarget "openssl" */ = {
+		F3F8966EF3F8A43E00000052 /* Build configuration list for PBXNativeTarget "roots.crt" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
     				F3F8966EF3F8A43E000003BB /* Debug */,
