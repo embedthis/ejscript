@@ -70,7 +70,7 @@ module ejs {
 
         /** 
             Signal the end of writing data to the command. The finalize() call must be invoked to properly 
-            signify the end of write data.
+            signify the end of write data for detached commands.
          */
         native function finalize(): Void 
 
@@ -220,7 +220,7 @@ module ejs {
         /**
             @duplicate Stream.write
             Call finalize() to signify the end of write data. Failure to call finalize() may prevent some commands 
-            from exiting.
+            from exiting. The command must be started in detached mode to be able to write data.
          */
         native function write(...data): Number
 
