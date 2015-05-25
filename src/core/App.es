@@ -4,6 +4,10 @@
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
+/** Product singleton object */
+
+public var ejs = {}
+
 module ejs {
     /** 
         Standard error text stream. Use write(), writeLine() and other TextStream methods.
@@ -70,6 +74,7 @@ module ejs {
             cache: {
                 app: { enable: false },
             },
+            /* DEPRECATE dirs and rename to directories */
             dirs: {
                 cache: Path("cache"),
             },
@@ -261,6 +266,7 @@ module ejs {
          */
         # FUTURE
         native static function get locale(): String
+
         # FUTURE
         native static function set locale(locale: String): Void
 
@@ -462,6 +468,9 @@ module ejs {
             //  TODO - should there be a config.cache.enable instead
             App.cache = new Cache(null, blend({shared: true}, config.cache))
         }
+        /* DEPRECATE app.config.dirs */
+        App.config.directories = App.config.dirs
+        ejs.directories = App.config.directories
     }
 
     appInit()
