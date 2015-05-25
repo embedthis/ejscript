@@ -25,7 +25,8 @@ if (Config.SSL) {
     secureServer.on("readable", function (event, request) {
         secureServer.serve(request, router)
     })
-    secureServer.secure("../../../certs/self", "../../../certs/self.crt")
+    let bin = App.exeDir
+    secureServer.secure(bin.join('self.key'), bin.join('self.crt'))
     secureServer.listen(HTTPS)
 }
 App.run()
