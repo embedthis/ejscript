@@ -145,7 +145,6 @@ TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ejsrun.exe
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\libejs.db.sqlite.dll
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\libejs.web.dll
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\mvc.exe
-TARGETS               = $(TARGETS) build\$(CONFIG)\bin\roots.crt
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\utest.exe
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ejsman.exe
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\www
@@ -320,7 +319,6 @@ clean:
 	if exist "build\$(CONFIG)\bin\libzlib.pdb" del /Q "build\$(CONFIG)\bin\libzlib.pdb"
 	if exist "build\$(CONFIG)\bin\libzlib.exp" del /Q "build\$(CONFIG)\bin\libzlib.exp"
 	if exist "build\$(CONFIG)\bin\mvc.es" del /Q "build\$(CONFIG)\bin\mvc.es"
-	if exist "build\$(CONFIG)\bin\roots.crt" del /Q "build\$(CONFIG)\bin\roots.crt"
 	if exist "build\$(CONFIG)\bin\utest.exe" del /Q "build\$(CONFIG)\bin\utest.exe"
 	if exist "build\$(CONFIG)\bin\utest.lib" del /Q "build\$(CONFIG)\bin\utest.lib"
 	if exist "build\$(CONFIG)\bin\utest.pdb" del /Q "build\$(CONFIG)\bin\utest.pdb"
@@ -2256,32 +2254,22 @@ build\$(CONFIG)\bin\mvc.exe: $(DEPS_142)
 	"$(LD)" -nologo -out:$(BUILD)\bin\mvc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsrun.obj" $(LIBPATHS_142) $(LIBS_142) $(LIBS_142) $(LIBS)  $(LOG)
 
 #
-#   roots.crt
-#
-DEPS_143 = $(DEPS_143) src\certs\roots.crt
-
-build\$(CONFIG)\bin\roots.crt: $(DEPS_143)
-	@echo ..... [Copy] build\$(CONFIG)\bin\roots.crt
-	if not exist "build\$(CONFIG)\bin" md "build\$(CONFIG)\bin"
-	copy /Y /B src\certs\roots.crt+modified build\$(CONFIG)\bin\roots.crt $(LOG)
-
-#
 #   sqlite.obj
 #
-DEPS_144 = $(DEPS_144) build\$(CONFIG)\inc\me.h
-DEPS_144 = $(DEPS_144) src\sqlite\sqlite3.h
+DEPS_143 = $(DEPS_143) build\$(CONFIG)\inc\me.h
+DEPS_143 = $(DEPS_143) src\sqlite\sqlite3.h
 
 build\$(CONFIG)\obj\sqlite.obj: \
-    src\sqlite\sqlite.c $(DEPS_144)
+    src\sqlite\sqlite.c $(DEPS_143)
 	@echo .. [Compile] build\$(CONFIG)\obj\sqlite.obj
 	"$(CC)" -c -Fo$(BUILD)\obj\sqlite.obj -Fd$(BUILD)\obj\sqlite.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\sqlite\sqlite.c $(LOG)
 
 #
 #   utest.es
 #
-DEPS_145 = $(DEPS_145) src\ejs.utest\utest.es
+DEPS_144 = $(DEPS_144) src\ejs.utest\utest.es
 
-build\$(CONFIG)\bin\utest.es: $(DEPS_145)
+build\$(CONFIG)\bin\utest.es: $(DEPS_144)
 	@echo ..... [Copy] build\$(CONFIG)\bin\utest.es
 	if not exist "build\$(CONFIG)\bin" md "build\$(CONFIG)\bin"
 	copy /Y /B src\ejs.utest\utest.es+modified build\$(CONFIG)\bin\utest.es $(LOG)
@@ -2289,9 +2277,9 @@ build\$(CONFIG)\bin\utest.es: $(DEPS_145)
 #
 #   utest.worker
 #
-DEPS_146 = $(DEPS_146) src\ejs.utest\utest.worker
+DEPS_145 = $(DEPS_145) src\ejs.utest\utest.worker
 
-build\$(CONFIG)\bin\utest.worker: $(DEPS_146)
+build\$(CONFIG)\bin\utest.worker: $(DEPS_145)
 	@echo ..... [Copy] build\$(CONFIG)\bin\utest.worker
 	if not exist "build\$(CONFIG)\bin" md "build\$(CONFIG)\bin"
 	copy /Y /B src\ejs.utest\utest.worker+modified build\$(CONFIG)\bin\utest.worker $(LOG)
@@ -2299,114 +2287,114 @@ build\$(CONFIG)\bin\utest.worker: $(DEPS_146)
 #
 #   utest
 #
-DEPS_147 = $(DEPS_147) build\$(CONFIG)\bin\libejs.dll
-DEPS_147 = $(DEPS_147) build\$(CONFIG)\bin\utest.es
-DEPS_147 = $(DEPS_147) build\$(CONFIG)\bin\utest.worker
-DEPS_147 = $(DEPS_147) build\$(CONFIG)\obj\ejsrun.obj
+DEPS_146 = $(DEPS_146) build\$(CONFIG)\bin\libejs.dll
+DEPS_146 = $(DEPS_146) build\$(CONFIG)\bin\utest.es
+DEPS_146 = $(DEPS_146) build\$(CONFIG)\bin\utest.worker
+DEPS_146 = $(DEPS_146) build\$(CONFIG)\obj\ejsrun.obj
 
-LIBS_147 = $(LIBS_147) libejs.lib
+LIBS_146 = $(LIBS_146) libejs.lib
 !IF "$(ME_COM_HTTP)" == "1"
-LIBS_147 = $(LIBS_147) libhttp.lib
+LIBS_146 = $(LIBS_146) libhttp.lib
 !ENDIF
 !IF "$(ME_COM_PCRE)" == "1"
-LIBS_147 = $(LIBS_147) libpcre.lib
+LIBS_146 = $(LIBS_146) libpcre.lib
 !ENDIF
-LIBS_147 = $(LIBS_147) libmpr.lib
+LIBS_146 = $(LIBS_146) libmpr.lib
 !IF "$(ME_COM_EST)" == "1"
-LIBS_147 = $(LIBS_147) libestssl.lib
+LIBS_146 = $(LIBS_146) libestssl.lib
 !ENDIF
 !IF "$(ME_COM_EST)" == "1"
-LIBS_147 = $(LIBS_147) libest.lib
+LIBS_146 = $(LIBS_146) libest.lib
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_147 = $(LIBS_147) libopenssl.lib
-LIBPATHS_147 = $(LIBPATHS_147) -libpath:$(ME_COM_OPENSSL_PATH)
+LIBS_146 = $(LIBS_146) libopenssl.lib
+LIBPATHS_146 = $(LIBPATHS_146) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_147 = $(LIBS_147) libeay32.lib
-LIBPATHS_147 = $(LIBPATHS_147) -libpath:$(ME_COM_OPENSSL_PATH)
+LIBS_146 = $(LIBS_146) libeay32.lib
+LIBPATHS_146 = $(LIBPATHS_146) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_147 = $(LIBS_147) libssleay32.lib
-LIBPATHS_147 = $(LIBPATHS_147) -libpath:$(ME_COM_OPENSSL_PATH)
+LIBS_146 = $(LIBS_146) libssleay32.lib
+LIBPATHS_146 = $(LIBPATHS_146) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
 
-build\$(CONFIG)\bin\utest.exe: $(DEPS_147)
+build\$(CONFIG)\bin\utest.exe: $(DEPS_146)
 	@echo ..... [Link] build\$(CONFIG)\bin\utest.exe
-	"$(LD)" -nologo -out:$(BUILD)\bin\utest.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsrun.obj" $(LIBPATHS_147) $(LIBS_147) $(LIBS_147) $(LIBS)  $(LOG)
+	"$(LD)" -nologo -out:$(BUILD)\bin\utest.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsrun.obj" $(LIBPATHS_146) $(LIBS_146) $(LIBS_146) $(LIBS)  $(LOG)
 
 #
 #   watchdog.obj
 #
-DEPS_148 = $(DEPS_148) build\$(CONFIG)\inc\mpr.h
+DEPS_147 = $(DEPS_147) build\$(CONFIG)\inc\mpr.h
 
 build\$(CONFIG)\obj\watchdog.obj: \
-    src\watchdog\watchdog.c $(DEPS_148)
+    src\watchdog\watchdog.c $(DEPS_147)
 	@echo .. [Compile] build\$(CONFIG)\obj\watchdog.obj
 	"$(CC)" -c -Fo$(BUILD)\obj\watchdog.obj -Fd$(BUILD)\obj\watchdog.pdb $(CFLAGS) $(DFLAGS) -DME_COM_OPENSSL_PATH="$(ME_COM_OPENSSL_PATH)" $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\include" src\watchdog\watchdog.c $(LOG)
 
 #
 #   watchdog
 #
-DEPS_149 = $(DEPS_149) build\$(CONFIG)\bin\libmpr.dll
-DEPS_149 = $(DEPS_149) build\$(CONFIG)\obj\watchdog.obj
+DEPS_148 = $(DEPS_148) build\$(CONFIG)\bin\libmpr.dll
+DEPS_148 = $(DEPS_148) build\$(CONFIG)\obj\watchdog.obj
 
-LIBS_149 = $(LIBS_149) libmpr.lib
+LIBS_148 = $(LIBS_148) libmpr.lib
 !IF "$(ME_COM_EST)" == "1"
-LIBS_149 = $(LIBS_149) libestssl.lib
+LIBS_148 = $(LIBS_148) libestssl.lib
 !ENDIF
 !IF "$(ME_COM_EST)" == "1"
-LIBS_149 = $(LIBS_149) libest.lib
+LIBS_148 = $(LIBS_148) libest.lib
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_149 = $(LIBS_149) libopenssl.lib
-LIBPATHS_149 = $(LIBPATHS_149) -libpath:$(ME_COM_OPENSSL_PATH)
+LIBS_148 = $(LIBS_148) libopenssl.lib
+LIBPATHS_148 = $(LIBPATHS_148) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_149 = $(LIBS_149) libeay32.lib
-LIBPATHS_149 = $(LIBPATHS_149) -libpath:$(ME_COM_OPENSSL_PATH)
+LIBS_148 = $(LIBS_148) libeay32.lib
+LIBPATHS_148 = $(LIBPATHS_148) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_149 = $(LIBS_149) libssleay32.lib
-LIBPATHS_149 = $(LIBPATHS_149) -libpath:$(ME_COM_OPENSSL_PATH)
+LIBS_148 = $(LIBS_148) libssleay32.lib
+LIBPATHS_148 = $(LIBPATHS_148) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
 
-build\$(CONFIG)\bin\ejsman.exe: $(DEPS_149)
+build\$(CONFIG)\bin\ejsman.exe: $(DEPS_148)
 	@echo ..... [Link] build\$(CONFIG)\bin\ejsman.exe
-	"$(LD)" -nologo -out:$(BUILD)\bin\ejsman.exe -entry:WinMainCRTStartup -subsystem:windows $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\watchdog.obj" $(LIBPATHS_149) $(LIBS_149) $(LIBS_149) $(LIBS)  $(LOG)
+	"$(LD)" -nologo -out:$(BUILD)\bin\ejsman.exe -entry:WinMainCRTStartup -subsystem:windows $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\watchdog.obj" $(LIBPATHS_148) $(LIBS_148) $(LIBS_148) $(LIBS)  $(LOG)
 
 #
 #   www
 #
-DEPS_150 = $(DEPS_150) src\ejs.web\www\images\banner.jpg
-DEPS_150 = $(DEPS_150) src\ejs.web\www\images\favicon.ico
-DEPS_150 = $(DEPS_150) src\ejs.web\www\images\splash.jpg
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\jquery.ejs.min.js
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\jquery.min.js
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\jquery.simplemodal.min.js
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\jquery.tablesorter.js
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\jquery.tablesorter.min.js
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\jquery.treeview.min.js
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\tree-images\file.gif
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\tree-images\folder-closed.gif
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\tree-images\folder.gif
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\tree-images\minus.gif
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\tree-images\plus.gif
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\tree-images\treeview-black-line.gif
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\tree-images\treeview-black.gif
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\tree-images\treeview-default-line.gif
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\tree-images\treeview-default.gif
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\tree-images\treeview-famfamfam-line.gif
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\tree-images\treeview-famfamfam.gif
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\tree-images\treeview-gray-line.gif
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\tree-images\treeview-gray.gif
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\tree-images\treeview-red-line.gif
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\tree-images\treeview-red.gif
-DEPS_150 = $(DEPS_150) src\ejs.web\www\js\treeview.css
-DEPS_150 = $(DEPS_150) src\ejs.web\www\layout.css
-DEPS_150 = $(DEPS_150) src\ejs.web\www\themes\default.css
+DEPS_149 = $(DEPS_149) src\ejs.web\www\images\banner.jpg
+DEPS_149 = $(DEPS_149) src\ejs.web\www\images\favicon.ico
+DEPS_149 = $(DEPS_149) src\ejs.web\www\images\splash.jpg
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\jquery.ejs.min.js
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\jquery.min.js
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\jquery.simplemodal.min.js
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\jquery.tablesorter.js
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\jquery.tablesorter.min.js
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\jquery.treeview.min.js
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\tree-images\file.gif
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\tree-images\folder-closed.gif
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\tree-images\folder.gif
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\tree-images\minus.gif
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\tree-images\plus.gif
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\tree-images\treeview-black-line.gif
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\tree-images\treeview-black.gif
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\tree-images\treeview-default-line.gif
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\tree-images\treeview-default.gif
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\tree-images\treeview-famfamfam-line.gif
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\tree-images\treeview-famfamfam.gif
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\tree-images\treeview-gray-line.gif
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\tree-images\treeview-gray.gif
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\tree-images\treeview-red-line.gif
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\tree-images\treeview-red.gif
+DEPS_149 = $(DEPS_149) src\ejs.web\www\js\treeview.css
+DEPS_149 = $(DEPS_149) src\ejs.web\www\layout.css
+DEPS_149 = $(DEPS_149) src\ejs.web\www\themes\default.css
 
-build\$(CONFIG)\bin\www: $(DEPS_150)
+build\$(CONFIG)\bin\www: $(DEPS_149)
 	@echo ..... [Copy] build\$(CONFIG)\bin\www
 	if not exist "build\$(CONFIG)\bin\www\images" md "build\$(CONFIG)\bin\www\images"
 	copy /Y /B src\ejs.web\www\images\banner.jpg+modified build\$(CONFIG)\bin\www\images\banner.jpg $(LOG)

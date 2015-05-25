@@ -97,7 +97,6 @@ TARGETS               += $(BUILD)/bin/ejsrun.out
 TARGETS               += $(BUILD)/bin/libejs.db.sqlite.out
 TARGETS               += $(BUILD)/bin/libejs.web.out
 TARGETS               += $(BUILD)/bin/mvc.out
-TARGETS               += $(BUILD)/bin/roots.crt
 TARGETS               += $(BUILD)/bin/utest.out
 TARGETS               += $(BUILD)/bin/ejsman.out
 TARGETS               += $(BUILD)/bin/www
@@ -230,7 +229,6 @@ clean:
 	rm -f "$(BUILD)/bin/libzlib.out"
 	rm -f "$(BUILD)/bin/mvc.es"
 	rm -f "$(BUILD)/bin/libopenssl.a"
-	rm -f "$(BUILD)/bin/roots.crt"
 	rm -f "$(BUILD)/bin/utest.out"
 	rm -f "$(BUILD)/bin/utest.es"
 	rm -f "$(BUILD)/bin/utest.worker"
@@ -2007,21 +2005,11 @@ $(BUILD)/bin/mvc.out: $(DEPS_140)
 	$(CC) -o $(BUILD)/bin/mvc.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_140) $(LIBS_140) $(LIBS_140) $(LIBS) -lestssl -Wl,-r 
 
 #
-#   roots.crt
-#
-DEPS_141 += src/certs/roots.crt
-
-$(BUILD)/bin/roots.crt: $(DEPS_141)
-	@echo '      [Copy] $(BUILD)/bin/roots.crt'
-	mkdir -p "$(BUILD)/bin"
-	cp src/certs/roots.crt $(BUILD)/bin/roots.crt
-
-#
 #   utest.es
 #
-DEPS_142 += src/ejs.utest/utest.es
+DEPS_141 += src/ejs.utest/utest.es
 
-$(BUILD)/bin/utest.es: $(DEPS_142)
+$(BUILD)/bin/utest.es: $(DEPS_141)
 	@echo '      [Copy] $(BUILD)/bin/utest.es'
 	mkdir -p "$(BUILD)/bin"
 	cp src/ejs.utest/utest.es $(BUILD)/bin/utest.es
@@ -2029,9 +2017,9 @@ $(BUILD)/bin/utest.es: $(DEPS_142)
 #
 #   utest.worker
 #
-DEPS_143 += src/ejs.utest/utest.worker
+DEPS_142 += src/ejs.utest/utest.worker
 
-$(BUILD)/bin/utest.worker: $(DEPS_143)
+$(BUILD)/bin/utest.worker: $(DEPS_142)
 	@echo '      [Copy] $(BUILD)/bin/utest.worker'
 	mkdir -p "$(BUILD)/bin"
 	cp src/ejs.utest/utest.worker $(BUILD)/bin/utest.worker
@@ -2039,10 +2027,33 @@ $(BUILD)/bin/utest.worker: $(DEPS_143)
 #
 #   utest
 #
-DEPS_144 += $(BUILD)/bin/libejs.out
-DEPS_144 += $(BUILD)/bin/utest.es
-DEPS_144 += $(BUILD)/bin/utest.worker
-DEPS_144 += $(BUILD)/obj/ejsrun.o
+DEPS_143 += $(BUILD)/bin/libejs.out
+DEPS_143 += $(BUILD)/bin/utest.es
+DEPS_143 += $(BUILD)/bin/utest.worker
+DEPS_143 += $(BUILD)/obj/ejsrun.o
+
+ifeq ($(ME_COM_OPENSSL),1)
+    LIBS_143 += -lopenssl
+    LIBPATHS_143 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
+ifeq ($(ME_COM_OPENSSL),1)
+    LIBS_143 += -lssl
+    LIBPATHS_143 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
+ifeq ($(ME_COM_OPENSSL),1)
+    LIBS_143 += -lcrypto
+    LIBPATHS_143 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
+
+$(BUILD)/bin/utest.out: $(DEPS_143)
+	@echo '      [Link] $(BUILD)/bin/utest.out'
+	$(CC) -o $(BUILD)/bin/utest.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_143) $(LIBS_143) $(LIBS_143) $(LIBS) -lestssl -Wl,-r 
+
+#
+#   watchdog
+#
+DEPS_144 += $(BUILD)/bin/libmpr.out
+DEPS_144 += $(BUILD)/obj/watchdog.o
 
 ifeq ($(ME_COM_OPENSSL),1)
     LIBS_144 += -lopenssl
@@ -2057,65 +2068,42 @@ ifeq ($(ME_COM_OPENSSL),1)
     LIBPATHS_144 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
 
-$(BUILD)/bin/utest.out: $(DEPS_144)
-	@echo '      [Link] $(BUILD)/bin/utest.out'
-	$(CC) -o $(BUILD)/bin/utest.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_144) $(LIBS_144) $(LIBS_144) $(LIBS) -lestssl -Wl,-r 
-
-#
-#   watchdog
-#
-DEPS_145 += $(BUILD)/bin/libmpr.out
-DEPS_145 += $(BUILD)/obj/watchdog.o
-
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_145 += -lopenssl
-    LIBPATHS_145 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_145 += -lssl
-    LIBPATHS_145 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_145 += -lcrypto
-    LIBPATHS_145 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-
-$(BUILD)/bin/ejsman.out: $(DEPS_145)
+$(BUILD)/bin/ejsman.out: $(DEPS_144)
 	@echo '      [Link] $(BUILD)/bin/ejsman.out'
-	$(CC) -o $(BUILD)/bin/ejsman.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/watchdog.o" $(LIBPATHS_145) $(LIBS_145) $(LIBS_145) $(LIBS) -lestssl -Wl,-r 
+	$(CC) -o $(BUILD)/bin/ejsman.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/watchdog.o" $(LIBPATHS_144) $(LIBS_144) $(LIBS_144) $(LIBS) -lestssl -Wl,-r 
 
 #
 #   www
 #
-DEPS_146 += src/ejs.web/www/images/banner.jpg
-DEPS_146 += src/ejs.web/www/images/favicon.ico
-DEPS_146 += src/ejs.web/www/images/splash.jpg
-DEPS_146 += src/ejs.web/www/js/jquery.ejs.min.js
-DEPS_146 += src/ejs.web/www/js/jquery.min.js
-DEPS_146 += src/ejs.web/www/js/jquery.simplemodal.min.js
-DEPS_146 += src/ejs.web/www/js/jquery.tablesorter.js
-DEPS_146 += src/ejs.web/www/js/jquery.tablesorter.min.js
-DEPS_146 += src/ejs.web/www/js/jquery.treeview.min.js
-DEPS_146 += src/ejs.web/www/js/tree-images/file.gif
-DEPS_146 += src/ejs.web/www/js/tree-images/folder-closed.gif
-DEPS_146 += src/ejs.web/www/js/tree-images/folder.gif
-DEPS_146 += src/ejs.web/www/js/tree-images/minus.gif
-DEPS_146 += src/ejs.web/www/js/tree-images/plus.gif
-DEPS_146 += src/ejs.web/www/js/tree-images/treeview-black-line.gif
-DEPS_146 += src/ejs.web/www/js/tree-images/treeview-black.gif
-DEPS_146 += src/ejs.web/www/js/tree-images/treeview-default-line.gif
-DEPS_146 += src/ejs.web/www/js/tree-images/treeview-default.gif
-DEPS_146 += src/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif
-DEPS_146 += src/ejs.web/www/js/tree-images/treeview-famfamfam.gif
-DEPS_146 += src/ejs.web/www/js/tree-images/treeview-gray-line.gif
-DEPS_146 += src/ejs.web/www/js/tree-images/treeview-gray.gif
-DEPS_146 += src/ejs.web/www/js/tree-images/treeview-red-line.gif
-DEPS_146 += src/ejs.web/www/js/tree-images/treeview-red.gif
-DEPS_146 += src/ejs.web/www/js/treeview.css
-DEPS_146 += src/ejs.web/www/layout.css
-DEPS_146 += src/ejs.web/www/themes/default.css
+DEPS_145 += src/ejs.web/www/images/banner.jpg
+DEPS_145 += src/ejs.web/www/images/favicon.ico
+DEPS_145 += src/ejs.web/www/images/splash.jpg
+DEPS_145 += src/ejs.web/www/js/jquery.ejs.min.js
+DEPS_145 += src/ejs.web/www/js/jquery.min.js
+DEPS_145 += src/ejs.web/www/js/jquery.simplemodal.min.js
+DEPS_145 += src/ejs.web/www/js/jquery.tablesorter.js
+DEPS_145 += src/ejs.web/www/js/jquery.tablesorter.min.js
+DEPS_145 += src/ejs.web/www/js/jquery.treeview.min.js
+DEPS_145 += src/ejs.web/www/js/tree-images/file.gif
+DEPS_145 += src/ejs.web/www/js/tree-images/folder-closed.gif
+DEPS_145 += src/ejs.web/www/js/tree-images/folder.gif
+DEPS_145 += src/ejs.web/www/js/tree-images/minus.gif
+DEPS_145 += src/ejs.web/www/js/tree-images/plus.gif
+DEPS_145 += src/ejs.web/www/js/tree-images/treeview-black-line.gif
+DEPS_145 += src/ejs.web/www/js/tree-images/treeview-black.gif
+DEPS_145 += src/ejs.web/www/js/tree-images/treeview-default-line.gif
+DEPS_145 += src/ejs.web/www/js/tree-images/treeview-default.gif
+DEPS_145 += src/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif
+DEPS_145 += src/ejs.web/www/js/tree-images/treeview-famfamfam.gif
+DEPS_145 += src/ejs.web/www/js/tree-images/treeview-gray-line.gif
+DEPS_145 += src/ejs.web/www/js/tree-images/treeview-gray.gif
+DEPS_145 += src/ejs.web/www/js/tree-images/treeview-red-line.gif
+DEPS_145 += src/ejs.web/www/js/tree-images/treeview-red.gif
+DEPS_145 += src/ejs.web/www/js/treeview.css
+DEPS_145 += src/ejs.web/www/layout.css
+DEPS_145 += src/ejs.web/www/themes/default.css
 
-$(BUILD)/bin/www: $(DEPS_146)
+$(BUILD)/bin/www: $(DEPS_145)
 	@echo '      [Copy] $(BUILD)/bin/www'
 	mkdir -p "$(BUILD)/bin/www/images"
 	cp src/ejs.web/www/images/banner.jpg $(BUILD)/bin/www/images/banner.jpg
@@ -2154,7 +2142,7 @@ $(BUILD)/bin/www: $(DEPS_146)
 #   installPrep
 #
 
-installPrep: $(DEPS_147)
+installPrep: $(DEPS_146)
 	if [ "`id -u`" != 0 ] ; \
 	then echo "Must run as root. Rerun with "sudo"" ; \
 	exit 255 ; \
@@ -2164,41 +2152,41 @@ installPrep: $(DEPS_147)
 #   stop
 #
 
-stop: $(DEPS_148)
+stop: $(DEPS_147)
 
 #
 #   installBinary
 #
 
-installBinary: $(DEPS_149)
+installBinary: $(DEPS_148)
 
 #
 #   start
 #
 
-start: $(DEPS_150)
+start: $(DEPS_149)
 
 #
 #   install
 #
-DEPS_151 += installPrep
-DEPS_151 += stop
-DEPS_151 += installBinary
-DEPS_151 += start
+DEPS_150 += installPrep
+DEPS_150 += stop
+DEPS_150 += installBinary
+DEPS_150 += start
 
-install: $(DEPS_151)
+install: $(DEPS_150)
 
 #
 #   uninstall
 #
-DEPS_152 += stop
+DEPS_151 += stop
 
-uninstall: $(DEPS_152)
+uninstall: $(DEPS_151)
 
 #
 #   version
 #
 
-version: $(DEPS_153)
+version: $(DEPS_152)
 	echo $(VERSION)
 
