@@ -48,6 +48,9 @@ ME_COM_LINK           = 1
 !IF "$(ME_COM_MATRIXSSL)" == ""
 ME_COM_MATRIXSSL      = 0
 !ENDIF
+!IF "$(ME_COM_MBEDTLS)" == ""
+ME_COM_MBEDTLS        = 0
+!ENDIF
 !IF "$(ME_COM_MPR)" == ""
 ME_COM_MPR            = 1
 !ENDIF
@@ -111,7 +114,7 @@ CC                    = cl
 LD                    = link
 RC                    = rc
 CFLAGS                = -nologo -GR- -W3 -Zi -Od -MDd
-DFLAGS                = -D_REENTRANT -D_MT -DME_COM_COMPILER=$(ME_COM_COMPILER) -DME_COM_EST=$(ME_COM_EST) -DME_COM_HTTP=$(ME_COM_HTTP) -DME_COM_LIB=$(ME_COM_LIB) -DME_COM_LINK=$(ME_COM_LINK) -DME_COM_MATRIXSSL=$(ME_COM_MATRIXSSL) -DME_COM_MPR=$(ME_COM_MPR) -DME_COM_NANOSSL=$(ME_COM_NANOSSL) -DME_COM_OPENSSL=$(ME_COM_OPENSSL) -DME_COM_OSDEP=$(ME_COM_OSDEP) -DME_COM_PCRE=$(ME_COM_PCRE) -DME_COM_RC=$(ME_COM_RC) -DME_COM_SQLITE=$(ME_COM_SQLITE) -DME_COM_SSL=$(ME_COM_SSL) -DME_COM_VXWORKS=$(ME_COM_VXWORKS) -DME_COM_WINSDK=$(ME_COM_WINSDK) -DME_COM_ZLIB=$(ME_COM_ZLIB) 
+DFLAGS                = -D_REENTRANT -D_MT -DME_COM_COMPILER=$(ME_COM_COMPILER) -DME_COM_EST=$(ME_COM_EST) -DME_COM_HTTP=$(ME_COM_HTTP) -DME_COM_LIB=$(ME_COM_LIB) -DME_COM_LINK=$(ME_COM_LINK) -DME_COM_MATRIXSSL=$(ME_COM_MATRIXSSL) -DME_COM_MBEDTLS=$(ME_COM_MBEDTLS) -DME_COM_MPR=$(ME_COM_MPR) -DME_COM_NANOSSL=$(ME_COM_NANOSSL) -DME_COM_OPENSSL=$(ME_COM_OPENSSL) -DME_COM_OSDEP=$(ME_COM_OSDEP) -DME_COM_PCRE=$(ME_COM_PCRE) -DME_COM_RC=$(ME_COM_RC) -DME_COM_SQLITE=$(ME_COM_SQLITE) -DME_COM_SSL=$(ME_COM_SSL) -DME_COM_VXWORKS=$(ME_COM_VXWORKS) -DME_COM_WINSDK=$(ME_COM_WINSDK) -DME_COM_ZLIB=$(ME_COM_ZLIB) 
 IFLAGS                = -Ibuild\$(CONFIG)\inc
 LDFLAGS               = -nologo -nodefaultlib -incremental:no -debug -machine:$(ARCH)
 LIBPATHS              = "-libpath:$(BUILD)\bin"
@@ -280,13 +283,13 @@ clean:
 	if exist "build\$(CONFIG)\bin\ejsrun.lib" del /Q "build\$(CONFIG)\bin\ejsrun.lib"
 	if exist "build\$(CONFIG)\bin\ejsrun.pdb" del /Q "build\$(CONFIG)\bin\ejsrun.pdb"
 	if exist "build\$(CONFIG)\bin\ejsrun.exp" del /Q "build\$(CONFIG)\bin\ejsrun.exp"
+	if exist "build\$(CONFIG)\bin\est.lib" del /Q "build\$(CONFIG)\bin\est.lib"
 	if exist "build\$(CONFIG)\bin" del /Q "build\$(CONFIG)\bin"
 	if exist "build\$(CONFIG)\bin\libejs.lib" del /Q "build\$(CONFIG)\bin\libejs.lib"
 	if exist "build\$(CONFIG)\bin\libejs.db.sqlite.lib" del /Q "build\$(CONFIG)\bin\libejs.db.sqlite.lib"
 	if exist "build\$(CONFIG)\bin\libejs.web.lib" del /Q "build\$(CONFIG)\bin\libejs.web.lib"
 	if exist "build\$(CONFIG)\bin\libejs.zlib.lib" del /Q "build\$(CONFIG)\bin\libejs.zlib.lib"
 	if exist "build\$(CONFIG)\bin\libest.lib" del /Q "build\$(CONFIG)\bin\libest.lib"
-	if exist "build\$(CONFIG)\bin\libestssl.lib" del /Q "build\$(CONFIG)\bin\libestssl.lib"
 	if exist "build\$(CONFIG)\bin\libhttp.lib" del /Q "build\$(CONFIG)\bin\libhttp.lib"
 	if exist "build\$(CONFIG)\bin\libmpr.lib" del /Q "build\$(CONFIG)\bin\libmpr.lib"
 	if exist "build\$(CONFIG)\bin\libpcre.lib" del /Q "build\$(CONFIG)\bin\libpcre.lib"
@@ -390,16 +393,18 @@ build\$(CONFIG)\obj\est.obj: \
 	@echo .. [Compile] build\$(CONFIG)\obj\est.obj
 	"$(CC)" -c -Fo$(BUILD)\obj\est.obj -Fd$(BUILD)\obj\est.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\mpr-est\est.c $(LOG)
 
+!IF "$(ME_COM_SSL)" == "1"
+#
+#   est
+#
 !IF "$(ME_COM_EST)" == "1"
-#
-#   libestssl
-#
 DEPS_10 = $(DEPS_10) build\$(CONFIG)\bin\libest.lib
+!ENDIF
 DEPS_10 = $(DEPS_10) build\$(CONFIG)\obj\est.obj
 
-build\$(CONFIG)\bin\libestssl.lib: $(DEPS_10)
-	@echo ..... [Link] build\$(CONFIG)\bin\libestssl.lib
-	"lib.exe" -nologo -out:$(BUILD)\bin\libestssl.lib "$(BUILD)\obj\est.obj" $(LOG)
+build\$(CONFIG)\bin\est.lib: $(DEPS_10)
+	@echo ..... [Link] build\$(CONFIG)\bin\est.lib
+	"lib.exe" -nologo -out:$(BUILD)\bin\est.lib "$(BUILD)\obj\est.obj" $(LOG)
 !ENDIF
 
 #
@@ -422,8 +427,15 @@ build\$(CONFIG)\obj\mprLib.obj: \
 #   libmpr
 #
 DEPS_13 = $(DEPS_13) build\$(CONFIG)\inc\osdep.h
+!IF "$(ME_COM_SSL)" == "1"
+!IF "$(ME_COM_OPENSSL)" == "1"
+DEPS_13 = $(DEPS_13) build\$(CONFIG)\bin\libmpr-openssl.lib
+!ENDIF
+!ENDIF
+!IF "$(ME_COM_SSL)" == "1"
 !IF "$(ME_COM_EST)" == "1"
-DEPS_13 = $(DEPS_13) build\$(CONFIG)\bin\libestssl.lib
+DEPS_13 = $(DEPS_13) build\$(CONFIG)\bin\est.lib
+!ENDIF
 !ENDIF
 DEPS_13 = $(DEPS_13) build\$(CONFIG)\inc\mpr.h
 DEPS_13 = $(DEPS_13) build\$(CONFIG)\obj\mprLib.obj
@@ -1343,22 +1355,8 @@ build\$(CONFIG)\obj\ejs.obj: \
 DEPS_98 = $(DEPS_98) build\$(CONFIG)\bin\libejs.lib
 DEPS_98 = $(DEPS_98) build\$(CONFIG)\obj\ejs.obj
 
-LIBS_98 = $(LIBS_98) libejs.lib
-!IF "$(ME_COM_HTTP)" == "1"
-LIBS_98 = $(LIBS_98) libhttp.lib
-!ENDIF
-!IF "$(ME_COM_PCRE)" == "1"
-LIBS_98 = $(LIBS_98) libpcre.lib
-!ENDIF
-LIBS_98 = $(LIBS_98) libmpr.lib
-!IF "$(ME_COM_EST)" == "1"
-LIBS_98 = $(LIBS_98) libestssl.lib
-!ENDIF
-!IF "$(ME_COM_EST)" == "1"
-LIBS_98 = $(LIBS_98) libest.lib
-!ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_98 = $(LIBS_98) libopenssl.lib
+LIBS_98 = $(LIBS_98) libmpr-openssl.lib
 LIBPATHS_98 = $(LIBPATHS_98) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
@@ -1369,10 +1367,41 @@ LIBPATHS_98 = $(LIBPATHS_98) -libpath:$(ME_COM_OPENSSL_PATH)
 LIBS_98 = $(LIBS_98) libssleay32.lib
 LIBPATHS_98 = $(LIBPATHS_98) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
+!IF "$(ME_COM_EST)" == "1"
+LIBS_98 = $(LIBS_98) libest.lib
+!ENDIF
+!IF "$(ME_COM_EST)" == "1"
+LIBS_98 = $(LIBS_98) libmpr-estssl.lib
+!ENDIF
+!IF "$(ME_COM_EST)" == "1"
+LIBS_98 = $(LIBS_98) libest.lib
+!ENDIF
+LIBS_98 = $(LIBS_98) libmpr.lib
+!IF "$(ME_COM_EST)" == "1"
+LIBS_98 = $(LIBS_98) libmpr-estssl.lib
+!ENDIF
+!IF "$(ME_COM_OPENSSL)" == "1"
+LIBS_98 = $(LIBS_98) libmpr-openssl.lib
+LIBPATHS_98 = $(LIBPATHS_98) -libpath:$(ME_COM_OPENSSL_PATH)
+!ENDIF
+!IF "$(ME_COM_PCRE)" == "1"
+LIBS_98 = $(LIBS_98) libpcre.lib
+!ENDIF
+!IF "$(ME_COM_HTTP)" == "1"
+LIBS_98 = $(LIBS_98) libhttp.lib
+!ENDIF
+!IF "$(ME_COM_PCRE)" == "1"
+LIBS_98 = $(LIBS_98) libpcre.lib
+!ENDIF
+LIBS_98 = $(LIBS_98) libmpr.lib
+LIBS_98 = $(LIBS_98) libejs.lib
+!IF "$(ME_COM_HTTP)" == "1"
+LIBS_98 = $(LIBS_98) libhttp.lib
+!ENDIF
 
 build\$(CONFIG)\bin\ejs.exe: $(DEPS_98)
 	@echo ..... [Link] build\$(CONFIG)\bin\ejs.exe
-	"$(LD)" -nologo -out:$(BUILD)\bin\ejs.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejs.obj" $(LIBPATHS_98) $(LIBS_98) $(LIBS_98) $(LIBS)  $(LOG)
+	"$(LD)" -nologo -out:$(BUILD)\bin\ejs.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejs.obj" $(LIBPATHS_98) $(LIBS_98) $(LIBS_98) $(LIBS) libeay32  $(LOG)
 
 #
 #   ejsc.obj
@@ -1390,22 +1419,8 @@ build\$(CONFIG)\obj\ejsc.obj: \
 DEPS_100 = $(DEPS_100) build\$(CONFIG)\bin\libejs.lib
 DEPS_100 = $(DEPS_100) build\$(CONFIG)\obj\ejsc.obj
 
-LIBS_100 = $(LIBS_100) libejs.lib
-!IF "$(ME_COM_HTTP)" == "1"
-LIBS_100 = $(LIBS_100) libhttp.lib
-!ENDIF
-!IF "$(ME_COM_PCRE)" == "1"
-LIBS_100 = $(LIBS_100) libpcre.lib
-!ENDIF
-LIBS_100 = $(LIBS_100) libmpr.lib
-!IF "$(ME_COM_EST)" == "1"
-LIBS_100 = $(LIBS_100) libestssl.lib
-!ENDIF
-!IF "$(ME_COM_EST)" == "1"
-LIBS_100 = $(LIBS_100) libest.lib
-!ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_100 = $(LIBS_100) libopenssl.lib
+LIBS_100 = $(LIBS_100) libmpr-openssl.lib
 LIBPATHS_100 = $(LIBPATHS_100) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
@@ -1416,10 +1431,41 @@ LIBPATHS_100 = $(LIBPATHS_100) -libpath:$(ME_COM_OPENSSL_PATH)
 LIBS_100 = $(LIBS_100) libssleay32.lib
 LIBPATHS_100 = $(LIBPATHS_100) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
+!IF "$(ME_COM_EST)" == "1"
+LIBS_100 = $(LIBS_100) libest.lib
+!ENDIF
+!IF "$(ME_COM_EST)" == "1"
+LIBS_100 = $(LIBS_100) libmpr-estssl.lib
+!ENDIF
+!IF "$(ME_COM_EST)" == "1"
+LIBS_100 = $(LIBS_100) libest.lib
+!ENDIF
+LIBS_100 = $(LIBS_100) libmpr.lib
+!IF "$(ME_COM_EST)" == "1"
+LIBS_100 = $(LIBS_100) libmpr-estssl.lib
+!ENDIF
+!IF "$(ME_COM_OPENSSL)" == "1"
+LIBS_100 = $(LIBS_100) libmpr-openssl.lib
+LIBPATHS_100 = $(LIBPATHS_100) -libpath:$(ME_COM_OPENSSL_PATH)
+!ENDIF
+!IF "$(ME_COM_PCRE)" == "1"
+LIBS_100 = $(LIBS_100) libpcre.lib
+!ENDIF
+!IF "$(ME_COM_HTTP)" == "1"
+LIBS_100 = $(LIBS_100) libhttp.lib
+!ENDIF
+!IF "$(ME_COM_PCRE)" == "1"
+LIBS_100 = $(LIBS_100) libpcre.lib
+!ENDIF
+LIBS_100 = $(LIBS_100) libmpr.lib
+LIBS_100 = $(LIBS_100) libejs.lib
+!IF "$(ME_COM_HTTP)" == "1"
+LIBS_100 = $(LIBS_100) libhttp.lib
+!ENDIF
 
 build\$(CONFIG)\bin\ejsc.exe: $(DEPS_100)
 	@echo ..... [Link] build\$(CONFIG)\bin\ejsc.exe
-	"$(LD)" -nologo -out:$(BUILD)\bin\ejsc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsc.obj" $(LIBPATHS_100) $(LIBS_100) $(LIBS_100) $(LIBS)  $(LOG)
+	"$(LD)" -nologo -out:$(BUILD)\bin\ejsc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsc.obj" $(LIBPATHS_100) $(LIBS_100) $(LIBS_100) $(LIBS) libeay32  $(LOG)
 
 #
 #   ejsmod.h
@@ -1499,22 +1545,8 @@ DEPS_108 = $(DEPS_108) build\$(CONFIG)\obj\docFiles.obj
 DEPS_108 = $(DEPS_108) build\$(CONFIG)\obj\listing.obj
 DEPS_108 = $(DEPS_108) build\$(CONFIG)\obj\slotGen.obj
 
-LIBS_108 = $(LIBS_108) libejs.lib
-!IF "$(ME_COM_HTTP)" == "1"
-LIBS_108 = $(LIBS_108) libhttp.lib
-!ENDIF
-!IF "$(ME_COM_PCRE)" == "1"
-LIBS_108 = $(LIBS_108) libpcre.lib
-!ENDIF
-LIBS_108 = $(LIBS_108) libmpr.lib
-!IF "$(ME_COM_EST)" == "1"
-LIBS_108 = $(LIBS_108) libestssl.lib
-!ENDIF
-!IF "$(ME_COM_EST)" == "1"
-LIBS_108 = $(LIBS_108) libest.lib
-!ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_108 = $(LIBS_108) libopenssl.lib
+LIBS_108 = $(LIBS_108) libmpr-openssl.lib
 LIBPATHS_108 = $(LIBPATHS_108) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
@@ -1525,10 +1557,41 @@ LIBPATHS_108 = $(LIBPATHS_108) -libpath:$(ME_COM_OPENSSL_PATH)
 LIBS_108 = $(LIBS_108) libssleay32.lib
 LIBPATHS_108 = $(LIBPATHS_108) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
+!IF "$(ME_COM_EST)" == "1"
+LIBS_108 = $(LIBS_108) libest.lib
+!ENDIF
+!IF "$(ME_COM_EST)" == "1"
+LIBS_108 = $(LIBS_108) libmpr-estssl.lib
+!ENDIF
+!IF "$(ME_COM_EST)" == "1"
+LIBS_108 = $(LIBS_108) libest.lib
+!ENDIF
+LIBS_108 = $(LIBS_108) libmpr.lib
+!IF "$(ME_COM_EST)" == "1"
+LIBS_108 = $(LIBS_108) libmpr-estssl.lib
+!ENDIF
+!IF "$(ME_COM_OPENSSL)" == "1"
+LIBS_108 = $(LIBS_108) libmpr-openssl.lib
+LIBPATHS_108 = $(LIBPATHS_108) -libpath:$(ME_COM_OPENSSL_PATH)
+!ENDIF
+!IF "$(ME_COM_PCRE)" == "1"
+LIBS_108 = $(LIBS_108) libpcre.lib
+!ENDIF
+!IF "$(ME_COM_HTTP)" == "1"
+LIBS_108 = $(LIBS_108) libhttp.lib
+!ENDIF
+!IF "$(ME_COM_PCRE)" == "1"
+LIBS_108 = $(LIBS_108) libpcre.lib
+!ENDIF
+LIBS_108 = $(LIBS_108) libmpr.lib
+LIBS_108 = $(LIBS_108) libejs.lib
+!IF "$(ME_COM_HTTP)" == "1"
+LIBS_108 = $(LIBS_108) libhttp.lib
+!ENDIF
 
 build\$(CONFIG)\bin\ejsmod.exe: $(DEPS_108)
 	@echo ..... [Link] build\$(CONFIG)\bin\ejsmod.exe
-	"$(LD)" -nologo -out:$(BUILD)\bin\ejsmod.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsmod.obj" "$(BUILD)\obj\doc.obj" "$(BUILD)\obj\docFiles.obj" "$(BUILD)\obj\listing.obj" "$(BUILD)\obj\slotGen.obj" $(LIBPATHS_108) $(LIBS_108) $(LIBS_108) $(LIBS)  $(LOG)
+	"$(LD)" -nologo -out:$(BUILD)\bin\ejsmod.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsmod.obj" "$(BUILD)\obj\doc.obj" "$(BUILD)\obj\docFiles.obj" "$(BUILD)\obj\listing.obj" "$(BUILD)\obj\slotGen.obj" $(LIBPATHS_108) $(LIBS_108) $(LIBS_108) $(LIBS) libeay32  $(LOG)
 
 #
 #   ejs.mod
@@ -1842,22 +1905,8 @@ build\$(CONFIG)\obj\ejsrun.obj: \
 DEPS_127 = $(DEPS_127) build\$(CONFIG)\bin\libejs.lib
 DEPS_127 = $(DEPS_127) build\$(CONFIG)\obj\ejsrun.obj
 
-LIBS_127 = $(LIBS_127) libejs.lib
-!IF "$(ME_COM_HTTP)" == "1"
-LIBS_127 = $(LIBS_127) libhttp.lib
-!ENDIF
-!IF "$(ME_COM_PCRE)" == "1"
-LIBS_127 = $(LIBS_127) libpcre.lib
-!ENDIF
-LIBS_127 = $(LIBS_127) libmpr.lib
-!IF "$(ME_COM_EST)" == "1"
-LIBS_127 = $(LIBS_127) libestssl.lib
-!ENDIF
-!IF "$(ME_COM_EST)" == "1"
-LIBS_127 = $(LIBS_127) libest.lib
-!ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_127 = $(LIBS_127) libopenssl.lib
+LIBS_127 = $(LIBS_127) libmpr-openssl.lib
 LIBPATHS_127 = $(LIBPATHS_127) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
@@ -1868,10 +1917,41 @@ LIBPATHS_127 = $(LIBPATHS_127) -libpath:$(ME_COM_OPENSSL_PATH)
 LIBS_127 = $(LIBS_127) libssleay32.lib
 LIBPATHS_127 = $(LIBPATHS_127) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
+!IF "$(ME_COM_EST)" == "1"
+LIBS_127 = $(LIBS_127) libest.lib
+!ENDIF
+!IF "$(ME_COM_EST)" == "1"
+LIBS_127 = $(LIBS_127) libmpr-estssl.lib
+!ENDIF
+!IF "$(ME_COM_EST)" == "1"
+LIBS_127 = $(LIBS_127) libest.lib
+!ENDIF
+LIBS_127 = $(LIBS_127) libmpr.lib
+!IF "$(ME_COM_EST)" == "1"
+LIBS_127 = $(LIBS_127) libmpr-estssl.lib
+!ENDIF
+!IF "$(ME_COM_OPENSSL)" == "1"
+LIBS_127 = $(LIBS_127) libmpr-openssl.lib
+LIBPATHS_127 = $(LIBPATHS_127) -libpath:$(ME_COM_OPENSSL_PATH)
+!ENDIF
+!IF "$(ME_COM_PCRE)" == "1"
+LIBS_127 = $(LIBS_127) libpcre.lib
+!ENDIF
+!IF "$(ME_COM_HTTP)" == "1"
+LIBS_127 = $(LIBS_127) libhttp.lib
+!ENDIF
+!IF "$(ME_COM_PCRE)" == "1"
+LIBS_127 = $(LIBS_127) libpcre.lib
+!ENDIF
+LIBS_127 = $(LIBS_127) libmpr.lib
+LIBS_127 = $(LIBS_127) libejs.lib
+!IF "$(ME_COM_HTTP)" == "1"
+LIBS_127 = $(LIBS_127) libhttp.lib
+!ENDIF
 
 build\$(CONFIG)\bin\ejsrun.exe: $(DEPS_127)
 	@echo ..... [Link] build\$(CONFIG)\bin\ejsrun.exe
-	"$(LD)" -nologo -out:$(BUILD)\bin\ejsrun.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsrun.obj" $(LIBPATHS_127) $(LIBS_127) $(LIBS_127) $(LIBS)  $(LOG)
+	"$(LD)" -nologo -out:$(BUILD)\bin\ejsrun.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsrun.obj" $(LIBPATHS_127) $(LIBS_127) $(LIBS_127) $(LIBS) libeay32  $(LOG)
 
 !IF "$(ME_COM_SSL)" == "1"
 #
@@ -2071,22 +2151,8 @@ DEPS_143 = $(DEPS_143) build\$(CONFIG)\bin\libejs.lib
 DEPS_143 = $(DEPS_143) build\$(CONFIG)\bin\mvc.es
 DEPS_143 = $(DEPS_143) build\$(CONFIG)\obj\ejsrun.obj
 
-LIBS_143 = $(LIBS_143) libejs.lib
-!IF "$(ME_COM_HTTP)" == "1"
-LIBS_143 = $(LIBS_143) libhttp.lib
-!ENDIF
-!IF "$(ME_COM_PCRE)" == "1"
-LIBS_143 = $(LIBS_143) libpcre.lib
-!ENDIF
-LIBS_143 = $(LIBS_143) libmpr.lib
-!IF "$(ME_COM_EST)" == "1"
-LIBS_143 = $(LIBS_143) libestssl.lib
-!ENDIF
-!IF "$(ME_COM_EST)" == "1"
-LIBS_143 = $(LIBS_143) libest.lib
-!ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_143 = $(LIBS_143) libopenssl.lib
+LIBS_143 = $(LIBS_143) libmpr-openssl.lib
 LIBPATHS_143 = $(LIBPATHS_143) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
@@ -2097,10 +2163,41 @@ LIBPATHS_143 = $(LIBPATHS_143) -libpath:$(ME_COM_OPENSSL_PATH)
 LIBS_143 = $(LIBS_143) libssleay32.lib
 LIBPATHS_143 = $(LIBPATHS_143) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
+!IF "$(ME_COM_EST)" == "1"
+LIBS_143 = $(LIBS_143) libest.lib
+!ENDIF
+!IF "$(ME_COM_EST)" == "1"
+LIBS_143 = $(LIBS_143) libmpr-estssl.lib
+!ENDIF
+!IF "$(ME_COM_EST)" == "1"
+LIBS_143 = $(LIBS_143) libest.lib
+!ENDIF
+LIBS_143 = $(LIBS_143) libmpr.lib
+!IF "$(ME_COM_EST)" == "1"
+LIBS_143 = $(LIBS_143) libmpr-estssl.lib
+!ENDIF
+!IF "$(ME_COM_OPENSSL)" == "1"
+LIBS_143 = $(LIBS_143) libmpr-openssl.lib
+LIBPATHS_143 = $(LIBPATHS_143) -libpath:$(ME_COM_OPENSSL_PATH)
+!ENDIF
+!IF "$(ME_COM_PCRE)" == "1"
+LIBS_143 = $(LIBS_143) libpcre.lib
+!ENDIF
+!IF "$(ME_COM_HTTP)" == "1"
+LIBS_143 = $(LIBS_143) libhttp.lib
+!ENDIF
+!IF "$(ME_COM_PCRE)" == "1"
+LIBS_143 = $(LIBS_143) libpcre.lib
+!ENDIF
+LIBS_143 = $(LIBS_143) libmpr.lib
+LIBS_143 = $(LIBS_143) libejs.lib
+!IF "$(ME_COM_HTTP)" == "1"
+LIBS_143 = $(LIBS_143) libhttp.lib
+!ENDIF
 
 build\$(CONFIG)\bin\mvc.exe: $(DEPS_143)
 	@echo ..... [Link] build\$(CONFIG)\bin\mvc.exe
-	"$(LD)" -nologo -out:$(BUILD)\bin\mvc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsrun.obj" $(LIBPATHS_143) $(LIBS_143) $(LIBS_143) $(LIBS)  $(LOG)
+	"$(LD)" -nologo -out:$(BUILD)\bin\mvc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsrun.obj" $(LIBPATHS_143) $(LIBS_143) $(LIBS_143) $(LIBS) libeay32  $(LOG)
 
 #
 #   sqlite.obj
@@ -2141,22 +2238,8 @@ DEPS_147 = $(DEPS_147) build\$(CONFIG)\bin\utest.es
 DEPS_147 = $(DEPS_147) build\$(CONFIG)\bin\utest.worker
 DEPS_147 = $(DEPS_147) build\$(CONFIG)\obj\ejsrun.obj
 
-LIBS_147 = $(LIBS_147) libejs.lib
-!IF "$(ME_COM_HTTP)" == "1"
-LIBS_147 = $(LIBS_147) libhttp.lib
-!ENDIF
-!IF "$(ME_COM_PCRE)" == "1"
-LIBS_147 = $(LIBS_147) libpcre.lib
-!ENDIF
-LIBS_147 = $(LIBS_147) libmpr.lib
-!IF "$(ME_COM_EST)" == "1"
-LIBS_147 = $(LIBS_147) libestssl.lib
-!ENDIF
-!IF "$(ME_COM_EST)" == "1"
-LIBS_147 = $(LIBS_147) libest.lib
-!ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_147 = $(LIBS_147) libopenssl.lib
+LIBS_147 = $(LIBS_147) libmpr-openssl.lib
 LIBPATHS_147 = $(LIBPATHS_147) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
@@ -2167,10 +2250,41 @@ LIBPATHS_147 = $(LIBPATHS_147) -libpath:$(ME_COM_OPENSSL_PATH)
 LIBS_147 = $(LIBS_147) libssleay32.lib
 LIBPATHS_147 = $(LIBPATHS_147) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
+!IF "$(ME_COM_EST)" == "1"
+LIBS_147 = $(LIBS_147) libest.lib
+!ENDIF
+!IF "$(ME_COM_EST)" == "1"
+LIBS_147 = $(LIBS_147) libmpr-estssl.lib
+!ENDIF
+!IF "$(ME_COM_EST)" == "1"
+LIBS_147 = $(LIBS_147) libest.lib
+!ENDIF
+LIBS_147 = $(LIBS_147) libmpr.lib
+!IF "$(ME_COM_EST)" == "1"
+LIBS_147 = $(LIBS_147) libmpr-estssl.lib
+!ENDIF
+!IF "$(ME_COM_OPENSSL)" == "1"
+LIBS_147 = $(LIBS_147) libmpr-openssl.lib
+LIBPATHS_147 = $(LIBPATHS_147) -libpath:$(ME_COM_OPENSSL_PATH)
+!ENDIF
+!IF "$(ME_COM_PCRE)" == "1"
+LIBS_147 = $(LIBS_147) libpcre.lib
+!ENDIF
+!IF "$(ME_COM_HTTP)" == "1"
+LIBS_147 = $(LIBS_147) libhttp.lib
+!ENDIF
+!IF "$(ME_COM_PCRE)" == "1"
+LIBS_147 = $(LIBS_147) libpcre.lib
+!ENDIF
+LIBS_147 = $(LIBS_147) libmpr.lib
+LIBS_147 = $(LIBS_147) libejs.lib
+!IF "$(ME_COM_HTTP)" == "1"
+LIBS_147 = $(LIBS_147) libhttp.lib
+!ENDIF
 
 build\$(CONFIG)\bin\utest.exe: $(DEPS_147)
 	@echo ..... [Link] build\$(CONFIG)\bin\utest.exe
-	"$(LD)" -nologo -out:$(BUILD)\bin\utest.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsrun.obj" $(LIBPATHS_147) $(LIBS_147) $(LIBS_147) $(LIBS)  $(LOG)
+	"$(LD)" -nologo -out:$(BUILD)\bin\utest.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsrun.obj" $(LIBPATHS_147) $(LIBS_147) $(LIBS_147) $(LIBS) libeay32  $(LOG)
 
 #
 #   watchdog.obj
@@ -2188,15 +2302,8 @@ build\$(CONFIG)\obj\watchdog.obj: \
 DEPS_149 = $(DEPS_149) build\$(CONFIG)\bin\libmpr.lib
 DEPS_149 = $(DEPS_149) build\$(CONFIG)\obj\watchdog.obj
 
-LIBS_149 = $(LIBS_149) libmpr.lib
-!IF "$(ME_COM_EST)" == "1"
-LIBS_149 = $(LIBS_149) libestssl.lib
-!ENDIF
-!IF "$(ME_COM_EST)" == "1"
-LIBS_149 = $(LIBS_149) libest.lib
-!ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_149 = $(LIBS_149) libopenssl.lib
+LIBS_149 = $(LIBS_149) libmpr-openssl.lib
 LIBPATHS_149 = $(LIBPATHS_149) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
@@ -2207,10 +2314,27 @@ LIBPATHS_149 = $(LIBPATHS_149) -libpath:$(ME_COM_OPENSSL_PATH)
 LIBS_149 = $(LIBS_149) libssleay32.lib
 LIBPATHS_149 = $(LIBPATHS_149) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
+!IF "$(ME_COM_EST)" == "1"
+LIBS_149 = $(LIBS_149) libest.lib
+!ENDIF
+!IF "$(ME_COM_EST)" == "1"
+LIBS_149 = $(LIBS_149) libmpr-estssl.lib
+!ENDIF
+!IF "$(ME_COM_EST)" == "1"
+LIBS_149 = $(LIBS_149) libest.lib
+!ENDIF
+LIBS_149 = $(LIBS_149) libmpr.lib
+!IF "$(ME_COM_EST)" == "1"
+LIBS_149 = $(LIBS_149) libmpr-estssl.lib
+!ENDIF
+!IF "$(ME_COM_OPENSSL)" == "1"
+LIBS_149 = $(LIBS_149) libmpr-openssl.lib
+LIBPATHS_149 = $(LIBPATHS_149) -libpath:$(ME_COM_OPENSSL_PATH)
+!ENDIF
 
 build\$(CONFIG)\bin\ejsman.exe: $(DEPS_149)
 	@echo ..... [Link] build\$(CONFIG)\bin\ejsman.exe
-	"$(LD)" -nologo -out:$(BUILD)\bin\ejsman.exe -entry:WinMainCRTStartup -subsystem:windows $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\watchdog.obj" $(LIBPATHS_149) $(LIBS_149) $(LIBS_149) $(LIBS)  $(LOG)
+	"$(LD)" -nologo -out:$(BUILD)\bin\ejsman.exe -entry:WinMainCRTStartup -subsystem:windows $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\watchdog.obj" $(LIBPATHS_149) $(LIBS_149) $(LIBS_149) $(LIBS) libeay32  $(LOG)
 
 #
 #   www

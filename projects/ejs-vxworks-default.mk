@@ -21,6 +21,7 @@ ME_COM_HTTP           ?= 1
 ME_COM_LIB            ?= 1
 ME_COM_LINK           ?= 1
 ME_COM_MATRIXSSL      ?= 0
+ME_COM_MBEDTLS        ?= 0
 ME_COM_MPR            ?= 1
 ME_COM_NANOSSL        ?= 0
 ME_COM_OPENSSL        ?= 1
@@ -51,7 +52,7 @@ export WIND_HOME      ?= $(WIND_BASE)/..
 export PATH           := $(WIND_GNU_PATH)/$(WIND_HOST_TYPE)/bin:$(PATH)
 
 CFLAGS                += -fno-builtin -fno-defer-pop -fvolatile -w
-DFLAGS                += -DVXWORKS -DRW_MULTI_THREAD -D_GNU_TOOL -DCPU=PENTIUM $(patsubst %,-D%,$(filter ME_%,$(MAKEFLAGS))) -DME_COM_COMPILER=$(ME_COM_COMPILER) -DME_COM_EST=$(ME_COM_EST) -DME_COM_HTTP=$(ME_COM_HTTP) -DME_COM_LIB=$(ME_COM_LIB) -DME_COM_LINK=$(ME_COM_LINK) -DME_COM_MATRIXSSL=$(ME_COM_MATRIXSSL) -DME_COM_MPR=$(ME_COM_MPR) -DME_COM_NANOSSL=$(ME_COM_NANOSSL) -DME_COM_OPENSSL=$(ME_COM_OPENSSL) -DME_COM_OSDEP=$(ME_COM_OSDEP) -DME_COM_PCRE=$(ME_COM_PCRE) -DME_COM_SQLITE=$(ME_COM_SQLITE) -DME_COM_SSL=$(ME_COM_SSL) -DME_COM_VXWORKS=$(ME_COM_VXWORKS) -DME_COM_WINSDK=$(ME_COM_WINSDK) -DME_COM_ZLIB=$(ME_COM_ZLIB) 
+DFLAGS                += -DVXWORKS -DRW_MULTI_THREAD -D_GNU_TOOL -DCPU=PENTIUM $(patsubst %,-D%,$(filter ME_%,$(MAKEFLAGS))) -DME_COM_COMPILER=$(ME_COM_COMPILER) -DME_COM_EST=$(ME_COM_EST) -DME_COM_HTTP=$(ME_COM_HTTP) -DME_COM_LIB=$(ME_COM_LIB) -DME_COM_LINK=$(ME_COM_LINK) -DME_COM_MATRIXSSL=$(ME_COM_MATRIXSSL) -DME_COM_MBEDTLS=$(ME_COM_MBEDTLS) -DME_COM_MPR=$(ME_COM_MPR) -DME_COM_NANOSSL=$(ME_COM_NANOSSL) -DME_COM_OPENSSL=$(ME_COM_OPENSSL) -DME_COM_OSDEP=$(ME_COM_OSDEP) -DME_COM_PCRE=$(ME_COM_PCRE) -DME_COM_SQLITE=$(ME_COM_SQLITE) -DME_COM_SSL=$(ME_COM_SSL) -DME_COM_VXWORKS=$(ME_COM_VXWORKS) -DME_COM_WINSDK=$(ME_COM_WINSDK) -DME_COM_ZLIB=$(ME_COM_ZLIB) 
 IFLAGS                += "-I$(BUILD)/inc -I$(WIND_BASE)/target/h -I$(WIND_BASE)/target/h/wrn/coreip"
 LDFLAGS               += '-Wl,-r'
 LIBPATHS              += -L$(BUILD)/bin
@@ -130,7 +131,8 @@ prep:
 	fi; true
 	@if [ -f "$(BUILD)/.makeflags" ] ; then \
 		if [ "$(MAKEFLAGS)" != "`cat $(BUILD)/.makeflags`" ] ; then \
-			echo "   [Warning] Make flags have changed since the last build: "`cat $(BUILD)/.makeflags`"" ; \
+			echo "   [Warning] Make flags have changed since the last build" ; \
+			echo "   [Warning] Previous build command: "`cat $(BUILD)/.makeflags`"" ; \
 		fi ; \
 	fi
 	@echo "$(MAKEFLAGS)" >$(BUILD)/.makeflags
@@ -232,7 +234,7 @@ clean:
 	rm -f "$(BUILD)/bin/libsql.out"
 	rm -f "$(BUILD)/bin/libzlib.out"
 	rm -f "$(BUILD)/bin/mvc.es"
-	rm -f "$(BUILD)/bin/libopenssl.a"
+	rm -f "$(BUILD)/bin/libmpr-openssl.a"
 	rm -f "$(BUILD)/bin/utest.out"
 	rm -f "$(BUILD)/bin/utest.es"
 	rm -f "$(BUILD)/bin/utest.worker"
@@ -1361,9 +1363,9 @@ ifeq ($(ME_COM_SSL),1)
 #
 DEPS_114 += $(BUILD)/obj/openssl.o
 
-$(BUILD)/bin/libopenssl.a: $(DEPS_114)
-	@echo '      [Link] $(BUILD)/bin/libopenssl.a'
-	ar -cr $(BUILD)/bin/libopenssl.a "$(BUILD)/obj/openssl.o"
+$(BUILD)/bin/libmpr-openssl.a: $(DEPS_114)
+	@echo '      [Link] $(BUILD)/bin/libmpr-openssl.a'
+	ar -cr $(BUILD)/bin/libmpr-openssl.a "$(BUILD)/obj/openssl.o"
 endif
 
 #
@@ -1371,27 +1373,46 @@ endif
 #
 DEPS_115 += $(BUILD)/inc/osdep.h
 ifeq ($(ME_COM_SSL),1)
-    DEPS_115 += $(BUILD)/bin/libopenssl.a
+ifeq ($(ME_COM_OPENSSL),1)
+    DEPS_115 += $(BUILD)/bin/libmpr-openssl.a
+endif
+endif
+ifeq ($(ME_COM_SSL),1)
+ifeq ($(ME_COM_EST),1)
+    DEPS_115 += $(BUILD)/bin/est.a
+endif
 endif
 DEPS_115 += $(BUILD)/inc/mpr.h
 DEPS_115 += $(BUILD)/obj/mprLib.o
 
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_115 += -lopenssl
+    LIBS_115 += -lmpr-openssl
     LIBPATHS_115 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
 ifeq ($(ME_COM_OPENSSL),1)
+ifeq ($(ME_COM_SSL),1)
     LIBS_115 += -lssl
     LIBPATHS_115 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 endif
 ifeq ($(ME_COM_OPENSSL),1)
     LIBS_115 += -lcrypto
     LIBPATHS_115 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_115 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_115 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_OPENSSL),1)
+    LIBS_115 += -lmpr-openssl
+    LIBPATHS_115 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 
 $(BUILD)/bin/libmpr.out: $(DEPS_115)
 	@echo '      [Link] $(BUILD)/bin/libmpr.out'
-	$(CC) -r -o $(BUILD)/bin/libmpr.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/mprLib.o" -lestssl $(LIBPATHS_115) $(LIBS_115) $(LIBS_115) $(LIBS) 
+	$(CC) -r -o $(BUILD)/bin/libmpr.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/mprLib.o" -lest $(LIBPATHS_115) $(LIBS_115) $(LIBS_115) $(LIBS) 
 
 ifeq ($(ME_COM_PCRE),1)
 #
@@ -1417,21 +1438,33 @@ DEPS_117 += $(BUILD)/inc/http.h
 DEPS_117 += $(BUILD)/obj/httpLib.o
 
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_117 += -lopenssl
+    LIBS_117 += -lmpr-openssl
     LIBPATHS_117 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
 ifeq ($(ME_COM_OPENSSL),1)
+ifeq ($(ME_COM_SSL),1)
     LIBS_117 += -lssl
     LIBPATHS_117 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 endif
 ifeq ($(ME_COM_OPENSSL),1)
     LIBS_117 += -lcrypto
     LIBPATHS_117 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_117 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_117 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_OPENSSL),1)
+    LIBS_117 += -lmpr-openssl
+    LIBPATHS_117 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 
 $(BUILD)/bin/libhttp.out: $(DEPS_117)
 	@echo '      [Link] $(BUILD)/bin/libhttp.out'
-	$(CC) -r -o $(BUILD)/bin/libhttp.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/httpLib.o" $(LIBPATHS_117) $(LIBS_117) $(LIBS_117) $(LIBS) -lestssl 
+	$(CC) -r -o $(BUILD)/bin/libhttp.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/httpLib.o" $(LIBPATHS_117) $(LIBS_117) $(LIBS_117) $(LIBS) -lest 
 endif
 
 #
@@ -1512,21 +1545,33 @@ DEPS_118 += $(BUILD)/obj/ejsScope.o
 DEPS_118 += $(BUILD)/obj/ejsService.o
 
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_118 += -lopenssl
+    LIBS_118 += -lmpr-openssl
     LIBPATHS_118 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
 ifeq ($(ME_COM_OPENSSL),1)
+ifeq ($(ME_COM_SSL),1)
     LIBS_118 += -lssl
     LIBPATHS_118 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 endif
 ifeq ($(ME_COM_OPENSSL),1)
     LIBS_118 += -lcrypto
     LIBPATHS_118 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_118 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_118 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_OPENSSL),1)
+    LIBS_118 += -lmpr-openssl
+    LIBPATHS_118 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 
 $(BUILD)/bin/libejs.out: $(DEPS_118)
 	@echo '      [Link] $(BUILD)/bin/libejs.out'
-	$(CC) -r -o $(BUILD)/bin/libejs.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ecAst.o" "$(BUILD)/obj/ecCodeGen.o" "$(BUILD)/obj/ecCompiler.o" "$(BUILD)/obj/ecLex.o" "$(BUILD)/obj/ecModuleWrite.o" "$(BUILD)/obj/ecParser.o" "$(BUILD)/obj/ecState.o" "$(BUILD)/obj/dtoa.o" "$(BUILD)/obj/ejsApp.o" "$(BUILD)/obj/ejsArray.o" "$(BUILD)/obj/ejsBlock.o" "$(BUILD)/obj/ejsBoolean.o" "$(BUILD)/obj/ejsByteArray.o" "$(BUILD)/obj/ejsCache.o" "$(BUILD)/obj/ejsCmd.o" "$(BUILD)/obj/ejsConfig.o" "$(BUILD)/obj/ejsDate.o" "$(BUILD)/obj/ejsDebug.o" "$(BUILD)/obj/ejsError.o" "$(BUILD)/obj/ejsFile.o" "$(BUILD)/obj/ejsFileSystem.o" "$(BUILD)/obj/ejsFrame.o" "$(BUILD)/obj/ejsFunction.o" "$(BUILD)/obj/ejsGC.o" "$(BUILD)/obj/ejsGlobal.o" "$(BUILD)/obj/ejsHttp.o" "$(BUILD)/obj/ejsIterator.o" "$(BUILD)/obj/ejsJSON.o" "$(BUILD)/obj/ejsLocalCache.o" "$(BUILD)/obj/ejsMath.o" "$(BUILD)/obj/ejsMemory.o" "$(BUILD)/obj/ejsMprLog.o" "$(BUILD)/obj/ejsNamespace.o" "$(BUILD)/obj/ejsNull.o" "$(BUILD)/obj/ejsNumber.o" "$(BUILD)/obj/ejsObject.o" "$(BUILD)/obj/ejsPath.o" "$(BUILD)/obj/ejsPot.o" "$(BUILD)/obj/ejsRegExp.o" "$(BUILD)/obj/ejsSocket.o" "$(BUILD)/obj/ejsString.o" "$(BUILD)/obj/ejsSystem.o" "$(BUILD)/obj/ejsTimer.o" "$(BUILD)/obj/ejsType.o" "$(BUILD)/obj/ejsUri.o" "$(BUILD)/obj/ejsVoid.o" "$(BUILD)/obj/ejsWebSocket.o" "$(BUILD)/obj/ejsWorker.o" "$(BUILD)/obj/ejsXML.o" "$(BUILD)/obj/ejsXMLList.o" "$(BUILD)/obj/ejsXMLLoader.o" "$(BUILD)/obj/ejsByteCode.o" "$(BUILD)/obj/ejsException.o" "$(BUILD)/obj/ejsHelper.o" "$(BUILD)/obj/ejsInterp.o" "$(BUILD)/obj/ejsLoader.o" "$(BUILD)/obj/ejsModule.o" "$(BUILD)/obj/ejsScope.o" "$(BUILD)/obj/ejsService.o" $(LIBPATHS_118) $(LIBS_118) $(LIBS_118) $(LIBS) -lestssl 
+	$(CC) -r -o $(BUILD)/bin/libejs.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ecAst.o" "$(BUILD)/obj/ecCodeGen.o" "$(BUILD)/obj/ecCompiler.o" "$(BUILD)/obj/ecLex.o" "$(BUILD)/obj/ecModuleWrite.o" "$(BUILD)/obj/ecParser.o" "$(BUILD)/obj/ecState.o" "$(BUILD)/obj/dtoa.o" "$(BUILD)/obj/ejsApp.o" "$(BUILD)/obj/ejsArray.o" "$(BUILD)/obj/ejsBlock.o" "$(BUILD)/obj/ejsBoolean.o" "$(BUILD)/obj/ejsByteArray.o" "$(BUILD)/obj/ejsCache.o" "$(BUILD)/obj/ejsCmd.o" "$(BUILD)/obj/ejsConfig.o" "$(BUILD)/obj/ejsDate.o" "$(BUILD)/obj/ejsDebug.o" "$(BUILD)/obj/ejsError.o" "$(BUILD)/obj/ejsFile.o" "$(BUILD)/obj/ejsFileSystem.o" "$(BUILD)/obj/ejsFrame.o" "$(BUILD)/obj/ejsFunction.o" "$(BUILD)/obj/ejsGC.o" "$(BUILD)/obj/ejsGlobal.o" "$(BUILD)/obj/ejsHttp.o" "$(BUILD)/obj/ejsIterator.o" "$(BUILD)/obj/ejsJSON.o" "$(BUILD)/obj/ejsLocalCache.o" "$(BUILD)/obj/ejsMath.o" "$(BUILD)/obj/ejsMemory.o" "$(BUILD)/obj/ejsMprLog.o" "$(BUILD)/obj/ejsNamespace.o" "$(BUILD)/obj/ejsNull.o" "$(BUILD)/obj/ejsNumber.o" "$(BUILD)/obj/ejsObject.o" "$(BUILD)/obj/ejsPath.o" "$(BUILD)/obj/ejsPot.o" "$(BUILD)/obj/ejsRegExp.o" "$(BUILD)/obj/ejsSocket.o" "$(BUILD)/obj/ejsString.o" "$(BUILD)/obj/ejsSystem.o" "$(BUILD)/obj/ejsTimer.o" "$(BUILD)/obj/ejsType.o" "$(BUILD)/obj/ejsUri.o" "$(BUILD)/obj/ejsVoid.o" "$(BUILD)/obj/ejsWebSocket.o" "$(BUILD)/obj/ejsWorker.o" "$(BUILD)/obj/ejsXML.o" "$(BUILD)/obj/ejsXMLList.o" "$(BUILD)/obj/ejsXMLLoader.o" "$(BUILD)/obj/ejsByteCode.o" "$(BUILD)/obj/ejsException.o" "$(BUILD)/obj/ejsHelper.o" "$(BUILD)/obj/ejsInterp.o" "$(BUILD)/obj/ejsLoader.o" "$(BUILD)/obj/ejsModule.o" "$(BUILD)/obj/ejsScope.o" "$(BUILD)/obj/ejsService.o" $(LIBPATHS_118) $(LIBS_118) $(LIBS_118) $(LIBS) -lest 
 
 #
 #   ejs
@@ -1535,21 +1580,33 @@ DEPS_119 += $(BUILD)/bin/libejs.out
 DEPS_119 += $(BUILD)/obj/ejs.o
 
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_119 += -lopenssl
+    LIBS_119 += -lmpr-openssl
     LIBPATHS_119 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
 ifeq ($(ME_COM_OPENSSL),1)
+ifeq ($(ME_COM_SSL),1)
     LIBS_119 += -lssl
     LIBPATHS_119 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 endif
 ifeq ($(ME_COM_OPENSSL),1)
     LIBS_119 += -lcrypto
     LIBPATHS_119 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_119 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_119 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_OPENSSL),1)
+    LIBS_119 += -lmpr-openssl
+    LIBPATHS_119 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 
 $(BUILD)/bin/ejs.out: $(DEPS_119)
 	@echo '      [Link] $(BUILD)/bin/ejs.out'
-	$(CC) -o $(BUILD)/bin/ejs.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejs.o" $(LIBPATHS_119) $(LIBS_119) $(LIBS_119) $(LIBS) -lestssl -Wl,-r 
+	$(CC) -o $(BUILD)/bin/ejs.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejs.o" $(LIBPATHS_119) $(LIBS_119) $(LIBS_119) $(LIBS) -lest -Wl,-r 
 
 #
 #   ejsc
@@ -1558,21 +1615,33 @@ DEPS_120 += $(BUILD)/bin/libejs.out
 DEPS_120 += $(BUILD)/obj/ejsc.o
 
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_120 += -lopenssl
+    LIBS_120 += -lmpr-openssl
     LIBPATHS_120 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
 ifeq ($(ME_COM_OPENSSL),1)
+ifeq ($(ME_COM_SSL),1)
     LIBS_120 += -lssl
     LIBPATHS_120 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 endif
 ifeq ($(ME_COM_OPENSSL),1)
     LIBS_120 += -lcrypto
     LIBPATHS_120 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_120 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_120 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_OPENSSL),1)
+    LIBS_120 += -lmpr-openssl
+    LIBPATHS_120 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 
 $(BUILD)/bin/ejsc.out: $(DEPS_120)
 	@echo '      [Link] $(BUILD)/bin/ejsc.out'
-	$(CC) -o $(BUILD)/bin/ejsc.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsc.o" $(LIBPATHS_120) $(LIBS_120) $(LIBS_120) $(LIBS) -lestssl -Wl,-r 
+	$(CC) -o $(BUILD)/bin/ejsc.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsc.o" $(LIBPATHS_120) $(LIBS_120) $(LIBS_120) $(LIBS) -lest -Wl,-r 
 
 #
 #   ejsmod
@@ -1586,21 +1655,33 @@ DEPS_121 += $(BUILD)/obj/listing.o
 DEPS_121 += $(BUILD)/obj/slotGen.o
 
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_121 += -lopenssl
+    LIBS_121 += -lmpr-openssl
     LIBPATHS_121 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
 ifeq ($(ME_COM_OPENSSL),1)
+ifeq ($(ME_COM_SSL),1)
     LIBS_121 += -lssl
     LIBPATHS_121 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 endif
 ifeq ($(ME_COM_OPENSSL),1)
     LIBS_121 += -lcrypto
     LIBPATHS_121 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_121 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_121 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_OPENSSL),1)
+    LIBS_121 += -lmpr-openssl
+    LIBPATHS_121 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 
 $(BUILD)/bin/ejsmod.out: $(DEPS_121)
 	@echo '      [Link] $(BUILD)/bin/ejsmod.out'
-	$(CC) -o $(BUILD)/bin/ejsmod.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsmod.o" "$(BUILD)/obj/doc.o" "$(BUILD)/obj/docFiles.o" "$(BUILD)/obj/listing.o" "$(BUILD)/obj/slotGen.o" $(LIBPATHS_121) $(LIBS_121) $(LIBS_121) $(LIBS) -lestssl -Wl,-r 
+	$(CC) -o $(BUILD)/bin/ejsmod.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsmod.o" "$(BUILD)/obj/doc.o" "$(BUILD)/obj/docFiles.o" "$(BUILD)/obj/listing.o" "$(BUILD)/obj/slotGen.o" $(LIBPATHS_121) $(LIBS_121) $(LIBS_121) $(LIBS) -lest -Wl,-r 
 
 #
 #   ejs.mod
@@ -1835,21 +1916,33 @@ endif
 DEPS_132 += $(BUILD)/obj/ejsZlib.o
 
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_132 += -lopenssl
+    LIBS_132 += -lmpr-openssl
     LIBPATHS_132 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
 ifeq ($(ME_COM_OPENSSL),1)
+ifeq ($(ME_COM_SSL),1)
     LIBS_132 += -lssl
     LIBPATHS_132 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 endif
 ifeq ($(ME_COM_OPENSSL),1)
     LIBS_132 += -lcrypto
     LIBPATHS_132 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_132 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_132 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_OPENSSL),1)
+    LIBS_132 += -lmpr-openssl
+    LIBPATHS_132 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 
 $(BUILD)/bin/libejs.zlib.out: $(DEPS_132)
 	@echo '      [Link] $(BUILD)/bin/libejs.zlib.out'
-	$(CC) -r -o $(BUILD)/bin/libejs.zlib.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsZlib.o" $(LIBPATHS_132) $(LIBS_132) $(LIBS_132) $(LIBS) -lestssl 
+	$(CC) -r -o $(BUILD)/bin/libejs.zlib.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsZlib.o" $(LIBPATHS_132) $(LIBS_132) $(LIBS_132) $(LIBS) -lest 
 
 #
 #   ejs.zlib.mod
@@ -1889,21 +1982,33 @@ DEPS_135 += $(BUILD)/bin/libejs.out
 DEPS_135 += $(BUILD)/obj/ejsrun.o
 
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_135 += -lopenssl
+    LIBS_135 += -lmpr-openssl
     LIBPATHS_135 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
 ifeq ($(ME_COM_OPENSSL),1)
+ifeq ($(ME_COM_SSL),1)
     LIBS_135 += -lssl
     LIBPATHS_135 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 endif
 ifeq ($(ME_COM_OPENSSL),1)
     LIBS_135 += -lcrypto
     LIBPATHS_135 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_135 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_135 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_OPENSSL),1)
+    LIBS_135 += -lmpr-openssl
+    LIBPATHS_135 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 
 $(BUILD)/bin/ejsrun.out: $(DEPS_135)
 	@echo '      [Link] $(BUILD)/bin/ejsrun.out'
-	$(CC) -o $(BUILD)/bin/ejsrun.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_135) $(LIBS_135) $(LIBS_135) $(LIBS) -lestssl -Wl,-r 
+	$(CC) -o $(BUILD)/bin/ejsrun.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_135) $(LIBS_135) $(LIBS_135) $(LIBS) -lest -Wl,-r 
 
 ifeq ($(ME_COM_SSL),1)
 #
@@ -1960,21 +2065,33 @@ endif
 DEPS_138 += $(BUILD)/obj/ejsSqlite.o
 
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_138 += -lopenssl
+    LIBS_138 += -lmpr-openssl
     LIBPATHS_138 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
 ifeq ($(ME_COM_OPENSSL),1)
+ifeq ($(ME_COM_SSL),1)
     LIBS_138 += -lssl
     LIBPATHS_138 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 endif
 ifeq ($(ME_COM_OPENSSL),1)
     LIBS_138 += -lcrypto
     LIBPATHS_138 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_138 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_138 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_OPENSSL),1)
+    LIBS_138 += -lmpr-openssl
+    LIBPATHS_138 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 
 $(BUILD)/bin/libejs.db.sqlite.out: $(DEPS_138)
 	@echo '      [Link] $(BUILD)/bin/libejs.db.sqlite.out'
-	$(CC) -r -o $(BUILD)/bin/libejs.db.sqlite.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsSqlite.o" $(LIBPATHS_138) $(LIBS_138) $(LIBS_138) $(LIBS) -lestssl 
+	$(CC) -r -o $(BUILD)/bin/libejs.db.sqlite.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsSqlite.o" $(LIBPATHS_138) $(LIBS_138) $(LIBS_138) $(LIBS) -lest 
 
 #
 #   libejs.web
@@ -1988,21 +2105,33 @@ DEPS_139 += $(BUILD)/obj/ejsSession.o
 DEPS_139 += $(BUILD)/obj/ejsWeb.o
 
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_139 += -lopenssl
+    LIBS_139 += -lmpr-openssl
     LIBPATHS_139 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
 ifeq ($(ME_COM_OPENSSL),1)
+ifeq ($(ME_COM_SSL),1)
     LIBS_139 += -lssl
     LIBPATHS_139 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 endif
 ifeq ($(ME_COM_OPENSSL),1)
     LIBS_139 += -lcrypto
     LIBPATHS_139 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_139 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_139 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_OPENSSL),1)
+    LIBS_139 += -lmpr-openssl
+    LIBPATHS_139 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 
 $(BUILD)/bin/libejs.web.out: $(DEPS_139)
 	@echo '      [Link] $(BUILD)/bin/libejs.web.out'
-	$(CC) -r -o $(BUILD)/bin/libejs.web.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsHttpServer.o" "$(BUILD)/obj/ejsRequest.o" "$(BUILD)/obj/ejsSession.o" "$(BUILD)/obj/ejsWeb.o" $(LIBPATHS_139) $(LIBS_139) $(LIBS_139) $(LIBS) -lestssl 
+	$(CC) -r -o $(BUILD)/bin/libejs.web.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsHttpServer.o" "$(BUILD)/obj/ejsRequest.o" "$(BUILD)/obj/ejsSession.o" "$(BUILD)/obj/ejsWeb.o" $(LIBPATHS_139) $(LIBS_139) $(LIBS_139) $(LIBS) -lest 
 
 #
 #   mvc.es
@@ -2022,21 +2151,33 @@ DEPS_141 += $(BUILD)/bin/mvc.es
 DEPS_141 += $(BUILD)/obj/ejsrun.o
 
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_141 += -lopenssl
+    LIBS_141 += -lmpr-openssl
     LIBPATHS_141 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
 ifeq ($(ME_COM_OPENSSL),1)
+ifeq ($(ME_COM_SSL),1)
     LIBS_141 += -lssl
     LIBPATHS_141 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 endif
 ifeq ($(ME_COM_OPENSSL),1)
     LIBS_141 += -lcrypto
     LIBPATHS_141 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_141 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_141 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_OPENSSL),1)
+    LIBS_141 += -lmpr-openssl
+    LIBPATHS_141 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 
 $(BUILD)/bin/mvc.out: $(DEPS_141)
 	@echo '      [Link] $(BUILD)/bin/mvc.out'
-	$(CC) -o $(BUILD)/bin/mvc.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_141) $(LIBS_141) $(LIBS_141) $(LIBS) -lestssl -Wl,-r 
+	$(CC) -o $(BUILD)/bin/mvc.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_141) $(LIBS_141) $(LIBS_141) $(LIBS) -lest -Wl,-r 
 
 #
 #   utest.es
@@ -2067,21 +2208,33 @@ DEPS_144 += $(BUILD)/bin/utest.worker
 DEPS_144 += $(BUILD)/obj/ejsrun.o
 
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_144 += -lopenssl
+    LIBS_144 += -lmpr-openssl
     LIBPATHS_144 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
 ifeq ($(ME_COM_OPENSSL),1)
+ifeq ($(ME_COM_SSL),1)
     LIBS_144 += -lssl
     LIBPATHS_144 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 endif
 ifeq ($(ME_COM_OPENSSL),1)
     LIBS_144 += -lcrypto
     LIBPATHS_144 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_144 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_144 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_OPENSSL),1)
+    LIBS_144 += -lmpr-openssl
+    LIBPATHS_144 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 
 $(BUILD)/bin/utest.out: $(DEPS_144)
 	@echo '      [Link] $(BUILD)/bin/utest.out'
-	$(CC) -o $(BUILD)/bin/utest.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_144) $(LIBS_144) $(LIBS_144) $(LIBS) -lestssl -Wl,-r 
+	$(CC) -o $(BUILD)/bin/utest.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_144) $(LIBS_144) $(LIBS_144) $(LIBS) -lest -Wl,-r 
 
 #
 #   watchdog
@@ -2090,21 +2243,33 @@ DEPS_145 += $(BUILD)/bin/libmpr.out
 DEPS_145 += $(BUILD)/obj/watchdog.o
 
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_145 += -lopenssl
+    LIBS_145 += -lmpr-openssl
     LIBPATHS_145 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
 ifeq ($(ME_COM_OPENSSL),1)
+ifeq ($(ME_COM_SSL),1)
     LIBS_145 += -lssl
     LIBPATHS_145 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 endif
 ifeq ($(ME_COM_OPENSSL),1)
     LIBS_145 += -lcrypto
     LIBPATHS_145 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_145 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_EST),1)
+    LIBS_145 += -lmpr-estssl
+endif
+ifeq ($(ME_COM_OPENSSL),1)
+    LIBS_145 += -lmpr-openssl
+    LIBPATHS_145 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
 
 $(BUILD)/bin/ejsman.out: $(DEPS_145)
 	@echo '      [Link] $(BUILD)/bin/ejsman.out'
-	$(CC) -o $(BUILD)/bin/ejsman.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/watchdog.o" $(LIBPATHS_145) $(LIBS_145) $(LIBS_145) $(LIBS) -lestssl -Wl,-r 
+	$(CC) -o $(BUILD)/bin/ejsman.out $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/watchdog.o" $(LIBPATHS_145) $(LIBS_145) $(LIBS_145) $(LIBS) -lest -Wl,-r 
 
 #
 #   www
