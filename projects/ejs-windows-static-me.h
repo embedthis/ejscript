@@ -232,7 +232,7 @@
 
 /* Profile */
 #ifndef ME_CONFIG_CMD
-    #define ME_CONFIG_CMD "me -d -q -platform windows-x86-static -static -configure . -with est -gen vs"
+    #define ME_CONFIG_CMD "me -d -q -platform windows-x86-static -static -configure . -with openssl -gen vs"
 #endif
 #ifndef ME_EJS_PRODUCT
     #define ME_EJS_PRODUCT 1
@@ -263,7 +263,7 @@
     #define ME_COM_CC 1
 #endif
 #ifndef ME_COM_EST
-    #define ME_COM_EST 1
+    #define ME_COM_EST 0
 #endif
 #ifndef ME_COM_HTTP
     #define ME_COM_HTTP 1
@@ -287,7 +287,7 @@
     #define ME_COM_NANOSSL 0
 #endif
 #ifndef ME_COM_OPENSSL
-    #define ME_COM_OPENSSL 0
+    #define ME_COM_OPENSSL 1
 #endif
 #ifndef ME_COM_OSDEP
     #define ME_COM_OSDEP 1
