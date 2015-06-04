@@ -6275,7 +6275,7 @@ fi";
 		DDF9AC58DDF9C666000003A3 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
-    				PRODUCT_NAME = bin;
+    				PRODUCT_NAME = install-certs;
     
     				GCC_PREPROCESSOR_DEFINITIONS = (
 					"ME_DEBUG",
@@ -6291,7 +6291,7 @@ fi";
     		DDF9AC58DDF9C666000003A4 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
-    				PRODUCT_NAME = bin;
+    				PRODUCT_NAME = install-certs;
     
     				OTHER_LDFLAGS = ();
 

@@ -142,7 +142,7 @@ TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ejs.mvc.mod
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ejs.tar.mod
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ejsrun.exe
 !IF "$(ME_COM_SSL)" == "1"
-TARGETS               = $(TARGETS) build\$(CONFIG)\bin
+TARGETS               = $(TARGETS) build\$(CONFIG)\.install-certs-modified
 !ENDIF
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\libejs.db.sqlite.lib
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\libejs.web.lib
@@ -279,7 +279,7 @@ clean:
 	if exist "build\$(CONFIG)\bin\ejsrun.lib" del /Q "build\$(CONFIG)\bin\ejsrun.lib"
 	if exist "build\$(CONFIG)\bin\ejsrun.pdb" del /Q "build\$(CONFIG)\bin\ejsrun.pdb"
 	if exist "build\$(CONFIG)\bin\ejsrun.exp" del /Q "build\$(CONFIG)\bin\ejsrun.exp"
-	if exist "build\$(CONFIG)\bin" del /Q "build\$(CONFIG)\bin"
+	if exist "build\$(CONFIG)\.install-certs-modified" del /Q "build\$(CONFIG)\.install-certs-modified"
 	if exist "build\$(CONFIG)\bin\libejs.lib" del /Q "build\$(CONFIG)\bin\libejs.lib"
 	if exist "build\$(CONFIG)\bin\libejs.db.sqlite.lib" del /Q "build\$(CONFIG)\bin\libejs.db.sqlite.lib"
 	if exist "build\$(CONFIG)\bin\libejs.web.lib" del /Q "build\$(CONFIG)\bin\libejs.web.lib"
@@ -1938,7 +1938,7 @@ DEPS_126 = $(DEPS_126) src\certs\samples\self.key
 DEPS_126 = $(DEPS_126) src\certs\samples\test.crt
 DEPS_126 = $(DEPS_126) src\certs\samples\test.key
 
-build\$(CONFIG)\bin: $(DEPS_126)
+build\$(CONFIG)\.install-certs-modified: $(DEPS_126)
 	@echo ..... [Copy] build\$(CONFIG)\bin
 	if not exist "build\$(CONFIG)\bin" md "build\$(CONFIG)\bin"
 	copy /Y /B src\certs\samples\ca.crt+modified build\$(CONFIG)\bin\ca.crt $(LOG)
@@ -1951,6 +1951,7 @@ build\$(CONFIG)\bin: $(DEPS_126)
 	copy /Y /B src\certs\samples\self.key+modified build\$(CONFIG)\bin\self.key $(LOG)
 	copy /Y /B src\certs\samples\test.crt+modified build\$(CONFIG)\bin\test.crt $(LOG)
 	copy /Y /B src\certs\samples\test.key+modified build\$(CONFIG)\bin\test.key $(LOG)
+	copy /Y /B nul+modified build\$(CONFIG)\.install-certs-modified $(LOG)
 !ENDIF
 
 #

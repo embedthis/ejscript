@@ -86,7 +86,7 @@ TARGETS               += $(BUILD)/bin/ejs.mvc.mod
 TARGETS               += $(BUILD)/bin/ejs.tar.mod
 TARGETS               += $(BUILD)/bin/ejsrun
 ifeq ($(ME_COM_SSL),1)
-    TARGETS           += $(BUILD)/bin
+    TARGETS           += $(BUILD)/.install-certs-modified
 endif
 TARGETS               += $(BUILD)/bin/libejs.db.sqlite.a
 TARGETS               += $(BUILD)/bin/libejs.web.a
@@ -211,7 +211,7 @@ clean:
 	rm -f "$(BUILD)/bin/ejsc"
 	rm -f "$(BUILD)/bin/ejsmod"
 	rm -f "$(BUILD)/bin/ejsrun"
-	rm -f "$(BUILD)/bin"
+	rm -f "$(BUILD)/.install-certs-modified"
 	rm -f "$(BUILD)/bin/libejs.a"
 	rm -f "$(BUILD)/bin/libejs.db.sqlite.a"
 	rm -f "$(BUILD)/bin/libejs.web.a"
@@ -2006,7 +2006,7 @@ DEPS_139 += src/certs/samples/self.key
 DEPS_139 += src/certs/samples/test.crt
 DEPS_139 += src/certs/samples/test.key
 
-$(BUILD)/bin: $(DEPS_139)
+$(BUILD)/.install-certs-modified: $(DEPS_139)
 	@echo '      [Copy] $(BUILD)/bin'
 	mkdir -p "$(BUILD)/bin"
 	cp src/certs/samples/ca.crt $(BUILD)/bin/ca.crt
@@ -2019,6 +2019,7 @@ $(BUILD)/bin: $(DEPS_139)
 	cp src/certs/samples/self.key $(BUILD)/bin/self.key
 	cp src/certs/samples/test.crt $(BUILD)/bin/test.crt
 	cp src/certs/samples/test.key $(BUILD)/bin/test.key
+	touch "$(BUILD)/.install-certs-modified"
 endif
 
 ifeq ($(ME_COM_SQLITE),1)
