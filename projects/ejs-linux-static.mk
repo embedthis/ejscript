@@ -1366,6 +1366,7 @@ $(BUILD)/obj/zlib.o: \
 slots: $(DEPS_115)
 
 ifeq ($(ME_COM_SSL),1)
+ifeq ($(ME_COM_OPENSSL),1)
 #
 #   openssl
 #
@@ -1374,6 +1375,7 @@ DEPS_116 += $(BUILD)/obj/openssl.o
 $(BUILD)/bin/libmpr-openssl.a: $(DEPS_116)
 	@echo '      [Link] $(BUILD)/bin/libmpr-openssl.a'
 	ar -cr $(BUILD)/bin/libmpr-openssl.a "$(BUILD)/obj/openssl.o"
+endif
 endif
 
 #
