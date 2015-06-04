@@ -92,12 +92,6 @@ Me.load({
                     ifdef:      'ssl',
 
                 }, { 
-                    from:       'libest${SHOBJ}',
-                    to:         '${abin}/',
-                    ifdef:      'est',
-                    enable:     '!me.settings.static', 
-
-                }, { 
                     from:       'libejs${SHLIB}',
                     to:         '${abin}/',
                     enable:     "me.platform.os == 'windows' && !me.settings.static",
