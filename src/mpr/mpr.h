@@ -157,7 +157,8 @@ struct  MprXml;
 #define MPR_TIMEOUT_NAP         20          /**< Short pause */
 
 #define MPR_MAX_TIMEOUT         MAXINT64
-#if DEPRECATED || 1
+
+#if DEPRECATED
 #define MPR_TICKS_PER_SEC       TPS        /**< Time ticks per second */
 #endif
 
@@ -7529,7 +7530,6 @@ PUBLIC void mprAddSocketProvider(cchar *name, MprSocketProvider *provider);
 #define MPR_SOCKET_SERVER           0x400   /**< Socket is on the server-side */
 #define MPR_SOCKET_BUFFERED_READ    0x800   /**< Socket has buffered read data (in SSL stack) */
 #define MPR_SOCKET_BUFFERED_WRITE   0x1000  /**< Socket has buffered write data (in SSL stack) */
-#define MPR_SOCKET_CHECKED          0x2000  /**< Peer certificate has been checked */
 #define MPR_SOCKET_DISCONNECTED     0x4000  /**< The mprDisconnectSocket has been called */
 #define MPR_SOCKET_HANDSHAKING      0x8000  /**< Doing an SSL handshake */
 
@@ -7548,9 +7548,9 @@ PUBLIC void mprAddSocketProvider(cchar *name, MprSocketProvider *provider);
         mprGetSocketHandle mprGetSocketInfo mprGetSocketPort mprGetSocketState mprHasSecureSockets mprIsSocketEof
         mprIsSocketSecure mprListenOnSocket mprLoadSsl mprParseIp mprReadSocket mprSendFileToSocket mprSetSecureProvider
         mprSetSocketBlockingMode mprSetSocketCallback mprSetSocketEof mprSetSocketNoDelay mprSetSslCaFile mprSetSslCaPath
-        mprSetSslCertFile mprSetSslCiphers mprSetSslKeyFile mprSetSslSslProtocols mprSetSslVerifySslClients mprWriteSocket
-        mprWriteSocketString mprWriteSocketVector mprSocketHandshaking mprSocketHasBufferedRead mprSocketHasBufferedWrite
-        mprUpgradeSocket
+        mprSetSslCertFile mprSetSslCiphers mprSetSslKeyFile mprSetSslDhFile mprSetSslSslProtocols mprSetSslVerifySslClients
+        mprWriteSocket mprWriteSocketString mprWriteSocketVector mprSocketHandshaking mprSocketHasBufferedRead 
+        mprSocketHasBufferedWrite mprUpgradeSocket
     @defgroup MprSocket MprSocket
     @stability Internal
  */
@@ -7568,10 +7568,11 @@ typedef struct MprSocket {
     struct MprSocket *listenSock;       /**< Listening socket */
     void            *sslSocket;         /**< Extended SSL socket state */
     struct MprSsl   *ssl;               /**< SSL configuration */
-    char            *cipher;            /**< Selected SSL cipher */
-    char            *peerName;          /**< Peer common SSL name */
-    char            *peerCert;          /**< Peer SSL certificate */
-    char            *peerCertIssuer;    /**< Issuer of peer certificate */
+    cchar           *cipher;            /**< Selected SSL cipher */
+    cchar           *session;           /**< SSL session ID (dependent on SSL provider) */
+    cchar           *peerName;          /**< Peer common SSL name */
+    cchar           *peerCert;          /**< Peer SSL certificate */
+    cchar           *peerCertIssuer;    /**< Issuer of peer certificate */
     bool            secured;            /**< SSL Peer verified */
     MprMutex        *mutex;             /**< Multi-thread sync */
 } MprSocket;
@@ -8049,8 +8050,12 @@ PUBLIC ssize mprWriteSocketString(MprSocket *sp, cchar *str);
 PUBLIC ssize mprWriteSocketVector(MprSocket *sp, MprIOVec *iovec, int count);
 
 /************************************ SSL *************************************/
-
-#define MPR_CA_CERT "ca.crt"
+/*
+    Root certificates for verifying peer certs.
+ */
+#ifndef ME_SSL_ROOTS_CERT
+    #define ME_SSL_ROOTS_CERT "roots.crt"
+#endif
 
 /**
     SSL control structure
@@ -8060,14 +8065,14 @@ PUBLIC ssize mprWriteSocketVector(MprSocket *sp, MprIOVec *iovec, int count);
 typedef struct MprSsl {
     cchar           *providerName;      /**< SSL provider to use - null if default */
     struct MprSocketProvider *provider; /**< Cached SSL provider to use */
-    cchar           *key;               /**< Key string */
     cchar           *keyFile;           /**< Alternatively, locate the key in a file */
-    cchar           *certFile;          /**< Alternatively, locate the cert in a file */
+    cchar           *certFile;          /**< Certificate filename */
+    cchar           *revokeList;        /**< Certificate revocation list */
     cchar           *caFile;            /**< Certificate verification cert file or bundle */
     cchar           *caPath;            /**< Certificate verification cert directory (OpenSSL only) */
     cchar           *ciphers;           /**< Candidate ciphers to use */
-    bool            verified;           /**< Peer has been verified */
     void            *config;            /**< Extended provider SSL configuration */
+    bool            verified;           /**< Peer has been verified */
     bool            configured;         /**< Set if this SSL configuration has been processed */
     bool            verifyPeer;         /**< Verify the peer verificate */
     bool            verifyIssuer;       /**< Set if the certificate issuer should be also verified */
@@ -8082,10 +8087,11 @@ typedef struct MprSsl {
  */
 #define MPR_PROTO_SSLV2    0x1              /**< SSL V2 protocol */
 #define MPR_PROTO_SSLV3    0x2              /**< SSL V3 protocol */
-#define MPR_PROTO_TLSV1_1  0x4              /**< TLS V1.1 protocol */
-#define MPR_PROTO_TLSV1_2  0x8              /**< TLS V1.2 protocol */
+#define MPR_PROTO_TLSV1_0  0x8              /**< TLS V1.0 protocol */
+#define MPR_PROTO_TLSV1_1  0x10             /**< TLS V1.1 protocol */
+#define MPR_PROTO_TLSV1_2  0x20             /**< TLS V1.2 protocol */
 #define MPR_PROTO_TLSV1    (MPR_PROTO_TLSV1_1 | MPR_PROTO_TLSV1_2)
-#define MPR_PROTO_ALL      0xF              /**< All protocols */
+#define MPR_PROTO_ALL      0x2F             /**< All protocols */
 
 /**
     Add the ciphers to use for SSL
@@ -8112,30 +8118,19 @@ PUBLIC struct MprSsl *mprCreateSsl(int server);
  */
 PUBLIC struct MprSsl *mprCloneSsl(MprSsl *src);
 
-/**
-    Lookup an SSL cipher by its IANA code and return the string name
-    @param cipher Cipher IANA code
-    @return String cipher name. For example: given 0x35, return "TLS_RSA_WITH_AES_256_CBC_SHA".
-    @stability Evolving
-    @ingroup MprSsl
- */
-PUBLIC cchar *mprGetSslCipherName(int cipher);
-
-/**
-    Lookup an SSL cipher by its IANA name and return the cipher IANA code
-    @param cipher Cipher IANA name
-    @return String cipher code. For example: given "TLS_RSA_WITH_AES_256_CBC_SHA" return 0x35.
-    @stability Evolving
-    @ingroup MprSsl
- */
-PUBLIC int mprGetSslCipherCode(cchar *cipher);
-
  /**
     Load the SSL module.
     @ingroup MprSsl
     @stability Stable
  */
 PUBLIC int mprLoadSsl();
+
+/**
+    Initialize the SSL provider
+    @ingroup MprSsl
+    @stability Evolving
+ */
+PUBLIC int mprSslInit(void *unused, MprModule *module);
 
 /**
     Set the key file to use for SSL
@@ -8203,6 +8198,15 @@ PUBLIC void mprSetSslProtocols(struct MprSsl *ssl, int protocols);
 PUBLIC void mprSetSslProvider(MprSsl *ssl, cchar *provider);
 
 /**
+    Define a list of certificates to revoke
+    @param ssl SSL instance returned from #mprCreateSsl
+    @param revokeList Path to the SSL certificate revocation list
+    @ingroup MprSsl
+    @stability Prototype
+ */
+PUBLIC void mprSetSslRevokeList(struct MprSsl *ssl, cchar *revokeList);
+
+/**
     Require verification of peer certificates
     @param ssl SSL instance returned from #mprCreateSsl
     @param on Set to true to enable peer SSL certificate verification.
@@ -8242,6 +8246,7 @@ PUBLIC void mprVerifySslDepth(struct MprSsl *ssl, int depth);
     PUBLIC int mprCreateOpenSslModule();
 #endif
 
+#if UNUSED
 /**
     @internal
  */
@@ -8250,7 +8255,8 @@ typedef struct MprCipher {
     cchar   *name;
 } MprCipher;
 
-PUBLIC_DATA MprCipher mprCiphers[];
+PUBLIC_DATA MprCipher *mprCiphers;
+#endif
 
 /******************************* Worker Threads *******************************/
 /**

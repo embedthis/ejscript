@@ -29,7 +29,7 @@ Me.load({
             path: '${BIN}/ejs.mvc.mod',
             files: [ '*.es' ],
             build: `
-                run('${LBIN}/ejsc --out ${BIN}/ejs.mvc.mod ${settings.esflags} --optimize 9 ${FILES}')
+                run('"${LBIN}/ejsc" --out "${BIN}/ejs.mvc.mod" ${settings.esflags} --optimize 9 ${FILES}')
             `,
             message: 'Compile: ejs.mvc.mod',
             depends: [ 'ejsc', 'ejs.mod', 'ejs.web.mod', 'ejs.template.mod', 'ejs.unix.mod' ],

@@ -29,7 +29,7 @@ module ejs {
 
         /** 
             Create a complete absolute URI from "this" URI with all mandatory components present including 
-            scheme and host.  The resulting URI path will be normalized and any missing components will be 
+            scheme and host. The resulting URI path will be normalized and any missing components will be
             completed with values from the given $base URI. If "this" URI path is relative, it will be joined to base 
             URI's path.
             Any query component of "this" URI is discarded in the result. This is because the query component of "this" URI
@@ -356,6 +356,16 @@ module ejs {
             @return A URI
          */
         native static function template(pattern: String, ...options): Uri
+
+        /**
+            Create a string URI based on a template. The template is a subset of the URI-templates specification and supports
+            simple {tokens} only. Each token is looked for in the set of provided option objects. The search stops with
+            the first object providing a value.
+            @param pattern URI-Template with {word} tokens.
+            @param options Set of option objects with token properties to complete the URI.
+            @return A URI String
+         */
+        native static function templateString(pattern: String, ...options): String
 
         /** 
             Convert the URI to a JSON string. 

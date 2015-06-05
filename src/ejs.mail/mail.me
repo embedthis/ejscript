@@ -11,7 +11,7 @@ Me.load({
             files: [ '*.es' ],
             build: `
                 trace('Compile', 'ejs.mail.mod')
-                run('${LBIN}/ejsc --out ${BIN}/ejs.mail.mod ${settings.esflags} --optimize 9 ${FILES}')
+                run('"${LBIN}/ejsc" --out "${BIN}/ejs.mail.mod" ${settings.esflags} --optimize 9 ${FILES}')
             `,
             depends: [ 'ejsc', 'ejs.mod' ],
         },

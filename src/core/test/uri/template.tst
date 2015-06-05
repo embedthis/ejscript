@@ -5,7 +5,6 @@
 assert(Uri.template("") == "")
 assert(Uri.template("/") == "/")
 assert(Uri.template("/anything") == "/anything")
-
 assert(Uri.template("{keyword}", {keyword: "abc"}) == "abc")
 assert(Uri.template("/{keyword}", {keyword: "abc"}) == "/abc")
 assert(Uri.template("{keyword}/", {keyword: "abc"}) == "abc/")

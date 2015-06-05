@@ -16,8 +16,8 @@ Me.load({
             files: [ '*.es' ],
             precious: true,
             build: `
-                run('${LBIN}/ejsc --out ${BIN}/ejs.mod ${settings.esflags} --optimize 9 --bind --require null ${FILES}')
-                run('${LBIN}/ejsmod --cslots --dir ${INC} --require null ${BIN}/ejs.mod')
+                run('"${LBIN}/ejsc" --out "${BIN}/ejs.mod" ${settings.esflags} --optimize 9 --bind --require null ${FILES}')
+                run('"${LBIN}/ejsmod" --cslots --dir "${INC}" --require null "${BIN}/ejs.mod"')
             `,
             message: 'Compile: Core EJS classes',
             depends: [ 'ejsc', 'ejsmod' ],

@@ -9,6 +9,15 @@
 #ifndef ME_AUTHOR
     #define ME_AUTHOR "Embedthis Software"
 #endif
+#ifndef ME_CERTS_BITS
+    #define ME_CERTS_BITS 2048
+#endif
+#ifndef ME_CERTS_DAYS
+    #define ME_CERTS_DAYS 3650
+#endif
+#ifndef ME_CERTS_GENDH
+    #define ME_CERTS_GENDH 0
+#endif
 #ifndef ME_COMPANY
     #define ME_COMPANY "embedthis"
 #endif
@@ -132,17 +141,11 @@
 #ifndef ME_MANIFEST
     #define ME_MANIFEST "installs/manifest.me"
 #endif
-#ifndef ME_ME
-    #define ME_ME "=>0.8.4"
-#endif
 #ifndef ME_MPR_ALLOC_PARALLEL
     #define ME_MPR_ALLOC_PARALLEL 1
 #endif
 #ifndef ME_MPR_LOGGING
     #define ME_MPR_LOGGING 1
-#endif
-#ifndef ME_MPR_MANAGER
-    #define ME_MPR_MANAGER "ejsman"
 #endif
 #ifndef ME_NAME
     #define ME_NAME "ejs"
@@ -153,6 +156,9 @@
 #ifndef ME_PREFIXES
     #define ME_PREFIXES "install-prefixes"
 #endif
+#ifndef ME_STATIC
+    #define ME_STATIC 1
+#endif
 #ifndef ME_TITLE
     #define ME_TITLE "Embedthis Ejscript"
 #endif
@@ -161,6 +167,9 @@
 #endif
 #ifndef ME_VERSION
     #define ME_VERSION "2.5.3"
+#endif
+#ifndef ME_WATCHDOG_NAME
+    #define ME_WATCHDOG_NAME "ejsman"
 #endif
 
 /* Prefixes */
@@ -274,8 +283,17 @@
 #ifndef ME_COM_LIB
     #define ME_COM_LIB 1
 #endif
+#ifndef ME_COM_MATRIXSSL
+    #define ME_COM_MATRIXSSL 0
+#endif
+#ifndef ME_COM_MBEDTLS
+    #define ME_COM_MBEDTLS 0
+#endif
 #ifndef ME_COM_MPR
     #define ME_COM_MPR 1
+#endif
+#ifndef ME_COM_NANOSSL
+    #define ME_COM_NANOSSL 0
 #endif
 #ifndef ME_COM_OPENSSL
     #define ME_COM_OPENSSL 1

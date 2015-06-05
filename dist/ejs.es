@@ -14,6 +14,10 @@
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
+/** Product singleton object */
+
+public var ejs = {}
+
 module ejs {
     /** 
         Standard error text stream. Use write(), writeLine() and other TextStream methods.
@@ -80,6 +84,7 @@ module ejs {
             cache: {
                 app: { enable: false },
             },
+            /* DEPRECATE dirs and rename to directories */
             dirs: {
                 cache: Path("cache"),
             },
@@ -271,6 +276,7 @@ module ejs {
          */
         # FUTURE
         native static function get locale(): String
+
         # FUTURE
         native static function set locale(locale: String): Void
 
@@ -472,6 +478,9 @@ module ejs {
             //  TODO - should there be a config.cache.enable instead
             App.cache = new Cache(null, blend({shared: true}, config.cache))
         }
+        /* DEPRECATE app.config.dirs */
+        App.config.directories = App.config.dirs
+        ejs.directories = App.config.directories
     }
 
     appInit()
@@ -2439,13 +2448,14 @@ module ejs {
 
         /**
             Create an Cmd object. If a command line is provided, the command is immediately started.
-            @param command The (optional) command line to initialize with. If a command line is provided, the start()
+            @param command The (optional) command line to initialize with. If a command line is provided, the $start
                 method is automatically invoked after the command is constructed. The command may be either a string or
                 an array of arguments. Using an array of args can simplify quoting if the args have embedded spaces or
                 quotes.
             @param options. Command options hash. Supported options are:
-            @options detach Boolean If true, run the command and return immediately. If detached, finalize() must be
-                called to signify the end of data being written to the command's stdin.
+            @options detach Boolean If true, run the command and return immediately. If detached, $finalize must be
+                called to signify the end of data being written to the command's stdin. Detach must be used if using
+                $write.
             @options dir Path or String. Directory to set as the current working directory for the command.
             @options exceptions Boolean If true, throw exceptions if the command returns a non-zero status code. 
                 Defaults to false.
@@ -2485,7 +2495,7 @@ module ejs {
 
         /** 
             Signal the end of writing data to the command. The finalize() call must be invoked to properly 
-            signify the end of write data.
+            signify the end of write data for detached commands.
          */
         native function finalize(): Void 
 
@@ -2635,7 +2645,7 @@ module ejs {
         /**
             @duplicate Stream.write
             Call finalize() to signify the end of write data. Failure to call finalize() may prevent some commands 
-            from exiting.
+            from exiting. The command must be started in detached mode to be able to write data.
          */
         native function write(...data): Number
 
@@ -4866,16 +4876,15 @@ module ejs {
          */
         native function call(thisObject: Object, ...args): Object 
 
-        //  TODO this should return a bound function
         /** 
-            Bind the value of "this" for the function. This can set the value of "this" for the function. If
-            $overwrite is false, it will only define the value of "this" if it is not already defined.
+            Bind the value of "this" for the function. This can set the value of "this" for the function. 
             Use $bound to examine the bound "this" value.
             @param thisObj Value of "this" to define
             @param args Function arguments to supply to the function. These arguments preceed any caller supplied
                 arguments when the function is actually invoked.
+            @return The function for chaining.
          */
-        native function bind(thisObj: Object, ...args): Void
+        native function bind(thisObj: Object, ...args): Function
 
         /** 
             The bound object representing the "this" object for the function. Will be set to null if no object is bound.
@@ -5019,7 +5028,7 @@ module ejs {
         The "ejs" namespace used for the core library
         @spec ejs
      */
-    public namespace ejs
+    // public namespace ejs
 
     /** 
         The public namespace used to make entities visible accross modules.
@@ -6054,7 +6063,7 @@ FUTURE & KEEP
             for (let [key,file] in files) {
                 write('--' + boundary + "\r\n")
                 write('Content-Disposition: form-data; name=' + key + '; filename=' + Path(file).basename + "\r\n")
-                write('Content-Type: ' + Uri(file).mimeType + "\r\n\r\n")
+                write('Content-Type: ' + Uri(Path(file).portable.basename).mimeType + "\r\n\r\n")
 
                 let f = File(file, "r")
                 let data = new ByteArray(System.Bufsize, false)
@@ -9783,7 +9792,7 @@ module ejs {
                         if (options.footer) {
                             contents.push(expand(options.footer, options))
                         }
-                        to.write(contents.join('\n'))
+                        to.write(contents.join('\n') + '\n')
                         to.setAttributes(options)
                     }
                     /*
@@ -11883,7 +11892,7 @@ module ejs {
 
         /** 
             Create a complete absolute URI from "this" URI with all mandatory components present including 
-            scheme and host.  The resulting URI path will be normalized and any missing components will be 
+            scheme and host. The resulting URI path will be normalized and any missing components will be
             completed with values from the given $base URI. If "this" URI path is relative, it will be joined to base 
             URI's path.
             Any query component of "this" URI is discarded in the result. This is because the query component of "this" URI
@@ -12210,6 +12219,16 @@ module ejs {
             @return A URI
          */
         native static function template(pattern: String, ...options): Uri
+
+        /**
+            Create a string URI based on a template. The template is a subset of the URI-templates specification and supports
+            simple {tokens} only. Each token is looked for in the set of provided option objects. The search stops with
+            the first object providing a value.
+            @param pattern URI-Template with {word} tokens.
+            @param options Set of option objects with token properties to complete the URI.
+            @return A URI String
+         */
+        native static function templateString(pattern: String, ...options): String
 
         /** 
             Convert the URI to a JSON string. 
@@ -22367,7 +22386,7 @@ module ejs.web {
                     value = pathInfo.replace(r.pattern, value)
                 }
                 if (value.toString().contains("{")) {
-                    value = Uri.template(value, params, request)
+                    value = Uri.templateString(value, params, request)
                 }
                 params[field] = value
             }
@@ -24913,3 +24932,4 @@ module ejs.zlib {
 
     @end
  */
+

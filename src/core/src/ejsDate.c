@@ -352,7 +352,7 @@ static EjsObj *date_set_day(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     day = ejsGetNumber(ejs, argv[0]);
     mprDecodeLocalTime(&tm, dp->value);
     dayDiff = day - tm.tm_wday;
-    dp->value += dayDiff * 86400 * MPR_TICKS_PER_SEC;
+    dp->value += dayDiff * 86400 * TPS;
     return 0;
 }
 
@@ -382,7 +382,7 @@ static EjsObj *date_set_dayOfYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv
     day = ejsGetNumber(ejs, argv[0]);
     mprDecodeLocalTime(&tm, dp->value);
     dayDiff = day - tm.tm_yday;
-    dp->value += dayDiff * 86400 * MPR_TICKS_PER_SEC;
+    dp->value += dayDiff * 86400 * TPS;
     return 0;
 }
 
@@ -412,7 +412,7 @@ static EjsObj *date_set_date(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     day = ejsGetNumber(ejs, argv[0]);
     mprDecodeLocalTime(&tm, dp->value);
     dayDiff = day - tm.tm_mday;
-    dp->value += dayDiff * 86400 * MPR_TICKS_PER_SEC;
+    dp->value += dayDiff * 86400 * TPS;
     return 0;
 }
 
@@ -467,7 +467,7 @@ static EjsDate *date_future(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 */
 static EjsNumber *date_getTimezoneOffset(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    return ejsCreateNumber(ejs, -mprGetTimeZoneOffset(dp->value) / (MPR_TICKS_PER_SEC * 60));
+    return ejsCreateNumber(ejs, -mprGetTimeZoneOffset(dp->value) / (TPS * 60));
 }
 
 
@@ -529,7 +529,7 @@ static EjsNumber *date_getUTCHours(Ejs *ejs, EjsDate *dp, int argc, EjsObj **arg
  */
 static EjsNumber *date_getUTCMilliseconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    return ejsCreateNumber(ejs, ((int64) dp->value) % MPR_TICKS_PER_SEC);
+    return ejsCreateNumber(ejs, ((int64) dp->value) % TPS);
 }
 
 
@@ -605,7 +605,7 @@ static EjsObj *date_set_hours(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
  */
 static EjsNumber *date_milliseconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    return ejsCreateNumber(ejs, ((int64) dp->value) % MPR_TICKS_PER_SEC);
+    return ejsCreateNumber(ejs, ((int64) dp->value) % TPS);
 }
 
 
@@ -614,7 +614,7 @@ static EjsNumber *date_milliseconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **ar
  */
 static EjsObj *date_set_milliseconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    dp->value = (dp->value / MPR_TICKS_PER_SEC  * MPR_TICKS_PER_SEC) + ejsGetNumber(ejs, argv[0]);
+    dp->value = (dp->value / TPS  * TPS) + ejsGetNumber(ejs, argv[0]);
     return 0;
 }
 
@@ -795,7 +795,7 @@ static EjsObj *date_setUTCDate(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     day = ejsGetNumber(ejs, argv[0]);
     mprDecodeUniversalTime(&tm, dp->value);
     dayDiff = day - tm.tm_mday;
-    dp->value += dayDiff * 86400 * MPR_TICKS_PER_SEC;
+    dp->value += dayDiff * 86400 * TPS;
     return 0;
 }
 
@@ -834,7 +834,7 @@ static EjsObj *date_setUTCHours(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 static EjsObj *date_setUTCMilliseconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     /* Same as set_milliseconds */
-    dp->value = (dp->value / MPR_TICKS_PER_SEC  * MPR_TICKS_PER_SEC) + ejsGetNumber(ejs, argv[0]);
+    dp->value = (dp->value / TPS  * TPS) + ejsGetNumber(ejs, argv[0]);
     return 0;
 }
 
@@ -878,7 +878,7 @@ static EjsObj *date_setUTCSeconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv
     tm.tm_sec = (int) ejsGetNumber(ejs, argv[0]);
     dp->value = mprMakeUniversalTime(&tm);
     if (argc >= 2) {
-        dp->value = (dp->value / MPR_TICKS_PER_SEC  * MPR_TICKS_PER_SEC) + ejsGetNumber(ejs, argv[1]);
+        dp->value = (dp->value / TPS  * TPS) + ejsGetNumber(ejs, argv[1]);
     }
     return 0;
 }
@@ -924,9 +924,9 @@ static EjsString *date_toISOString(Ejs *ejs, EjsDate *dp, int argc, EjsObj **arg
 
     base = mprFormatUniversalTime("%Y-%m-%dT%H:%M:%S", dp->value);
 #if UNUSED
-    str = sfmt("%s.%03dZ", base, dp->value % MPR_TICKS_PER_SEC);
+    str = sfmt("%s.%03dZ", base, dp->value % TPS);
 #else
-    int offset = mprGetTimeZoneOffset(dp->value) / (MPR_TICKS_PER_SEC * 60);
+    int offset = mprGetTimeZoneOffset(dp->value) / (TPS * 60);
     str = sfmt("%s%+03d:%02d", base, offset / 60, offset % 60);
 #endif
     return ejsCreateStringFromAsc(ejs, str);

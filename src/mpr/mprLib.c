@@ -1194,9 +1194,9 @@ static void markAndSweep()
     if (!pauseThreads()) {
         if (!pauseGC && warnOnce == 0 && !mprGetDebugMode()) {
             warnOnce++;
-            mprLog("error mpr memory", 5, "GC synchronization timed out, some threads did not yield.");
-            mprLog("error mpr memory", 5, "This can be caused by a thread doing a long running operation and not first calling mprYield.");
-            mprLog("error mpr memory", 5, "If debugging, run the process with -D to enable debug mode.");
+            mprLog("error mpr memory", 6, "GC synchronization timed out, some threads did not yield.");
+            mprLog("error mpr memory", 6, "This can be caused by a thread doing a long running operation and not first calling mprYield.");
+            mprLog("error mpr memory", 6, "If debugging, run the process with -D to enable debug mode.");
         }
         resumeThreads(YIELDED_THREADS | WAITING_THREADS);
         return;
@@ -2320,7 +2320,7 @@ PUBLIC uint64 mprGetCPU()
             ulong utime, stime;
             buf[nbytes] = '\0';
             sscanf(buf, "%*d %*s %*c %*d %*d %*d %*d %*d %*u %*u %*u %*u %*u %lu %lu", &utime, &stime);
-            ticks = (utime + stime) * MPR_TICKS_PER_SEC / sysconf(_SC_CLK_TCK);
+            ticks = (utime + stime) * TPS / sysconf(_SC_CLK_TCK);
         }
     }
 #elif MACOSX
@@ -2328,8 +2328,8 @@ PUBLIC uint64 mprGetCPU()
     mach_msg_type_number_t count = TASK_BASIC_INFO_COUNT;
     if (task_info(mach_task_self(), TASK_BASIC_INFO, (task_info_t) &info, &count) == KERN_SUCCESS) {
         uint64 utime, stime;
-        utime = info.user_time.seconds * MPR_TICKS_PER_SEC + info.user_time.microseconds / 1000;
-        stime = info.system_time.seconds * MPR_TICKS_PER_SEC + info.system_time.microseconds / 1000;
+        utime = info.user_time.seconds * TPS + info.user_time.microseconds / 1000;
+        stime = info.system_time.seconds * TPS + info.system_time.microseconds / 1000;
         ticks = utime + stime;
     }
 #endif
@@ -2808,7 +2808,7 @@ static void shutdownMonitor(void *data, MprEvent *event)
             }
         }
     } else {
-        mprLog("info mpr", 2, "Waiting for requests to complete, %lld secs remaining ...", remaining / MPR_TICKS_PER_SEC);
+        mprLog("info mpr", 2, "Waiting for requests to complete, %lld secs remaining ...", remaining / TPS);
         mprRescheduleEvent(event, 1000);
     }
 }
@@ -4886,8 +4886,8 @@ typedef struct CacheItem
     int64           version;
 } CacheItem;
 
-#define CACHE_TIMER_PERIOD      (60 * MPR_TICKS_PER_SEC)
-#define CACHE_LIFESPAN          (86400 * MPR_TICKS_PER_SEC)
+#define CACHE_TIMER_PERIOD      (60 * TPS)
+#define CACHE_LIFESPAN          (86400 * TPS)
 #define CACHE_HASH_SIZE         257
 
 /*********************************** Forwards *********************************/
@@ -5344,7 +5344,7 @@ static void pruneCache(MprCache *cache, MprEvent *event)
             if (excessKeys < 0) {
                 excessKeys = 0;
             }
-            factor = 5 * 60 * MPR_TICKS_PER_SEC; 
+            factor = 5 * 60 * TPS; 
             when += factor;
             while (excessKeys > 0 || cache->usedMem > cache->maxMem) {
                 for (kp = 0; (kp = mprGetNextKey(cache->store, kp)) != 0; ) {
@@ -7303,8 +7303,14 @@ PUBLIC int mprWaitForCond(MprCond *cp, MprTicks timeout)
      */
     rc = 0;
     if (timeout >= 0) {
+        if (timeout > MAXINT) {
+            timeout = MAXINT;
+        }
         now = mprGetTicks();
         expire = now + timeout;
+        if (expire < 0) {
+            expire = MPR_MAX_TIMEOUT;
+        }
 #if ME_UNIX_LIKE
         gettimeofday(&current, NULL);
         usec = current.tv_usec + ((int) (timeout % 1000)) * 1000;
@@ -9794,6 +9800,9 @@ PUBLIC int mprWaitForEvent(MprDispatcher *dispatcher, MprTicks timeout, int64 ma
     es = MPR->eventService;
     es->now = mprGetTicks();
     expires = timeout < 0 ? MPR_MAX_TIMEOUT : (es->now + timeout);
+    if (expires < 0) {
+        expires = MPR_MAX_TIMEOUT;
+    }
     delay = expires - es->now;
 
     lock(es);
@@ -11764,24 +11773,23 @@ PUBLIC ssize mprWriteFile(MprFile *file, cvoid *buf, ssize count)
 
     fs = file->fileSystem;
     bp = file->buf;
-    if (bp == 0) {
-        if ((written = fs->writeFile(file, buf, count)) < 0) {
-            return written;
-        }
-    } else {
-        written = 0;
-        while (count > 0) {
-            bytes = mprPutBlockToBuf(bp, buf, count);
-            if (bytes < 0) {
+    written = 0;
+    while (count > 0) {
+        if (bp == 0) {
+            if ((bytes = fs->writeFile(file, buf, count)) < 0) {
+                return bytes;
+            }
+        } else {
+            if ((bytes = mprPutBlockToBuf(bp, buf, count)) < 0) {
                 return bytes;
             } 
             if (bytes != count) {
                 mprFlushFile(file);
             }
-            count -= bytes;
-            written += bytes;
-            buf = (char*) buf + bytes;
         }
+        count -= bytes;
+        written += bytes;
+        buf = (char*) buf + bytes;
     }
     file->pos += (MprOff) written;
     if (file->pos > file->size) {
@@ -14429,7 +14437,7 @@ PUBLIC int mprWaitForSingleIO(int fd, int mask, MprTicks timeout)
     struct kevent   interest[2], events[1];
     int             kq, interestCount, rc, result;
 
-    if (timeout < 0) {
+    if (timeout < 0 || timeout > MAXINT) {
         timeout = MAXINT;
     }
     interestCount = 0; 
@@ -14954,8 +14962,7 @@ PUBLIC int mprRemoveItem(MprList *lp, cvoid *item)
         return -1;
     }
     lock(lp);
-    index = mprLookupItem(lp, item);
-    if (index < 0) {
+    if ((index = mprLookupItem(lp, item)) < 0) {
         unlock(lp);
         return index;
     }
@@ -16046,7 +16053,7 @@ PUBLIC void mprDefaultLogHandler(cchar *tags, int level, cchar *msg)
     char        tbuf[128];
     static int  check = 0;
 
-    if ((file = MPR->logFile) == 0) {
+    if ((file = MPR->logFile) == 0 || msg == 0 || *msg == '\0') {
         return;
     }
     if (MPR->logBackup && MPR->logSize && (check++ % 1000) == 0) {
@@ -16067,7 +16074,9 @@ PUBLIC void mprDefaultLogHandler(cchar *tags, int level, cchar *msg)
         }
     }
     mprWriteFileString(file, msg);
-    mprWriteFileString(file, "\n");
+    if (*msg && msg[slen(msg) - 1] != '\n') {
+        mprWriteFileString(file, "\n");
+    }
 #if ME_MPR_OSLOG
     if (level == 0) {
         mprWriteToOsLog(sfmt("%s: %d %s: %s", MPR->name, level, tags, msg), level);
@@ -19772,6 +19781,9 @@ PUBLIC void mprNap(MprTicks timeout)
     assert(timeout >= 0);
 
     mark = mprGetTicks();
+    if (timeout < 0 || timeout > MAXINT) {
+        timeout = MAXINT;
+    }
     remaining = timeout;
     do {
         /* MAC OS X corrupts the timeout if using the 2nd paramater, so recalc each time */
@@ -21193,7 +21205,8 @@ PUBLIC int mprCreateNotifierService(MprWaitService *ws)
     for (rc = retries = 0; retries < maxTries; retries++) {
         breakSock = socket(AF_INET, SOCK_DGRAM, 0);
         if (breakSock < 0) {
-            mprLog("critical mpr select", 0, "Cannot open port %d to use for select. Retrying.");
+            mprLog("critical mpr select", 0, "Cannot create socket to use for select");
+            return MPR_ERR_CANT_OPEN;
         }
 #if ME_UNIX_LIKE
         fcntl(breakSock, F_SETFD, FD_CLOEXEC);
@@ -21248,7 +21261,7 @@ PUBLIC void mprManageSelect(MprWaitService *ws, int flags)
 PUBLIC int mprNotifyOn(MprWaitHandler *wp, int mask)
 {
     MprWaitService  *ws;
-    int     fd;
+    int     fd, hd;
 
     ws = wp->service;
     fd = wp->fd;
@@ -21272,17 +21285,18 @@ PUBLIC int mprNotifyOn(MprWaitHandler *wp, int mask)
         if (mask & MPR_WRITABLE) {
             FD_SET(fd, &ws->writeMask);
         }
+        mprSetItem(ws->handlerMap, fd, mask ? wp : 0);
+
         wp->desiredMask = mask;
         ws->highestFd = max(fd, ws->highestFd);
         if (mask == 0 && fd == ws->highestFd) {
-            while (--fd > 0) {
-                if (FD_ISSET(fd, &ws->readMask) || FD_ISSET(fd, &ws->writeMask)) {
+            for (hd = fd - 1; hd >= 0; hd--) {
+                if (FD_ISSET(hd, &ws->readMask) || FD_ISSET(hd, &ws->writeMask)) {
                     break;
                 }
             }
-            ws->highestFd = fd;
+            ws->highestFd = hd;
         }
-        mprSetItem(ws->handlerMap, fd, mask ? wp : 0);
     }
     mprWakeEventService();
     unlock(ws);
@@ -21892,16 +21906,7 @@ static void standardSignalHandler(void *ignored, MprSignal *sp)
 
 
 #if !VXWORKS
-/*
-    On MAC OS X, getaddrinfo is not thread-safe and crashes when called by a 2nd thread at any time. ie. locking wont help.
- */
 #define ME_COMPILER_HAS_GETADDRINFO 1
-#endif
-
-/********************************** Defines ***********************************/
-
-#ifndef ME_MAX_IP
-    #define ME_MAX_IP 1024
 #endif
 
 /********************************** Forwards **********************************/
@@ -22021,7 +22026,7 @@ PUBLIC void mprAddSocketProvider(cchar *name, MprSocketProvider *provider)
     if (ss->providers == 0 && (ss->providers = mprCreateHash(0, 0)) == 0) {
         return;
     }
-    provider->name = sclone(name);
+    ss->sslProvider = provider->name = sclone(name);
     mprAddKey(ss->providers, name, provider);
 }
 
@@ -22087,20 +22092,21 @@ PUBLIC MprSocket *mprCloneSocket(MprSocket *sp)
 static void manageSocket(MprSocket *sp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
-        mprMark(sp->handler);
         mprMark(sp->acceptIp);
-        mprMark(sp->ip);
-        mprMark(sp->errorMsg);
-        mprMark(sp->provider);
-        mprMark(sp->listenSock);
-        mprMark(sp->sslSocket);
-        mprMark(sp->ssl);
         mprMark(sp->cipher);
+        mprMark(sp->errorMsg);
+        mprMark(sp->handler);
+        mprMark(sp->ip);
+        mprMark(sp->listenSock);
+        mprMark(sp->mutex);
         mprMark(sp->peerName);
         mprMark(sp->peerCert);
         mprMark(sp->peerCertIssuer);
+        mprMark(sp->provider);
+        mprMark(sp->ssl);
+        mprMark(sp->sslSocket);
         mprMark(sp->service);
-        mprMark(sp->mutex);
+        mprMark(sp->session);
 
     } else if (flags & MPR_MANAGE_FREE) {
         if (sp->fd != INVALID_SOCKET) {
@@ -23378,10 +23384,10 @@ PUBLIC int mprGetSocketInfo(cchar *ip, int port, int *family, int *protocol, str
  */
 static int getSocketIpAddr(struct sockaddr *addr, int addrlen, char *ip, int ipLen, int *port)
 {
-#if (ME_UNIX_LIKE || WIN)
+#if (ME_UNIX_LIKE || ME_WIN_LIKE)
     char    service[NI_MAXSERV];
 
-#ifdef IN6_IS_ADDR_V4MAPPED
+#if ME_WIN_LIKE || defined(IN6_IS_ADDR_V4MAPPED)
     if (addr->sa_family == AF_INET6) {
         struct sockaddr_in6* addr6 = (struct sockaddr_in6*) addr;
         if (IN6_IS_ADDR_V4MAPPED(&addr6->sin6_addr)) {
@@ -23458,8 +23464,16 @@ static int ipv6(cchar *ip)
 PUBLIC int mprParseSocketAddress(cchar *address, char **pip, int *pport, int *psecure, int defaultPort)
 {
     char    *ip, *cp;
+    ssize   pos;
     int     port;
 
+    if (!address || *address == 0) {
+        return MPR_ERR_BAD_ARGS;
+    }
+    pos = strspn(address, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%");
+    if (pos < slen(address)) {
+        return MPR_ERR_BAD_ARGS;
+    }
     ip = 0;
     if (defaultPort < 0) {
         defaultPort = 80;
@@ -23576,7 +23590,6 @@ static void manageSsl(MprSsl *ssl, int flags)
     if (flags & MPR_MANAGE_MARK) {
         mprMark(ssl->providerName);
         mprMark(ssl->provider);
-        mprMark(ssl->key);
         mprMark(ssl->keyFile);
         mprMark(ssl->certFile);
         mprMark(ssl->caFile);
@@ -23584,6 +23597,7 @@ static void manageSsl(MprSsl *ssl, int flags)
         mprMark(ssl->ciphers);
         mprMark(ssl->config);
         mprMark(ssl->mutex);
+        mprMark(ssl->revokeList);
     }
 }
 
@@ -23614,9 +23628,11 @@ PUBLIC MprSsl *mprCreateSsl(int server)
         if (MPR->verifySsl) {
             ssl->verifyPeer = MPR->verifySsl;
             ssl->verifyIssuer = MPR->verifySsl;
-            path = mprJoinPath(mprGetAppDir(), MPR_CA_CERT);
+            path = mprJoinPath(mprGetAppDir(), ME_SSL_ROOTS_CERT);
             if (mprPathExists(path, R_OK)) {
                 ssl->caFile = path;
+            } else {
+                mprLog("error mpr", 0, "Cannot locate root certificates file: %s", path);
             }
         }
     }
@@ -23647,26 +23663,16 @@ PUBLIC int mprLoadSsl()
 #if ME_COM_SSL
     MprSocketService    *ss;
     MprModule           *mp;
-    cchar               *path;
 
     ss = MPR->socketService;
     if (ss->providers) {
         return 0;
     }
-    path = mprJoinPath(mprGetAppDir(), "libmprssl");
-    if (!mprPathExists(path, R_OK)) {
-        path = mprSearchForModule("libmprssl");
-    }
-    if (!path) {
-        return MPR_ERR_CANT_FIND;
-    }
-    if ((mp = mprCreateModule("sslModule", path, "mprSslInit", NULL)) == 0) {
+    if ((mp = mprCreateModule("ssl", "builtin", "mprSslInit", NULL)) == 0) {
         return MPR_ERR_CANT_CREATE;
     }
-    if (mprLoadModule(mp) < 0) {
-        mprLog("error mpr", 0, "Cannot load %s", path);
-        return MPR_ERR_CANT_READ;
-    }
+    mprSslInit(MPR, mp);
+    mprLog("info ssl", 5, "Loaded %s SSL provider", ss->sslProvider);
     return 0;
 #else
     mprLog("error mpr", 0, "SSL communications support not included in build");
@@ -23796,6 +23802,14 @@ PUBLIC void mprSetSslProvider(MprSsl *ssl, cchar *provider)
 {
     assert(ssl);
     ssl->providerName = (provider && *provider) ? sclone(provider) : 0;
+    ssl->changed = 1;
+}
+
+
+PUBLIC void mprSetSslRevokeList(MprSsl *ssl, cchar *revokeList)
+{
+    assert(ssl);
+    ssl->revokeList = (revokeList && *revokeList) ? sclone(revokeList) : 0;
     ssl->changed = 1;
 }
 
@@ -26064,10 +26078,10 @@ PUBLIC ssize mprGetBusyWorkerCount()
 
 /********************************** Defines ***********************************/
 
-#define MS_PER_SEC  (MPR_TICKS_PER_SEC)
-#define MS_PER_HOUR (60 * 60 * MPR_TICKS_PER_SEC)
-#define MS_PER_MIN  (60 * MPR_TICKS_PER_SEC)
-#define MS_PER_DAY  (86400 * MPR_TICKS_PER_SEC)
+#define MS_PER_SEC  (TPS)
+#define MS_PER_HOUR (60 * 60 * TPS)
+#define MS_PER_MIN  (60 * TPS)
+#define MS_PER_DAY  (86400 * TPS)
 #define MS_PER_YEAR (INT64(31556952000))
 
 /*
@@ -28040,7 +28054,9 @@ PUBLIC void mprNap(MprTicks milliseconds)
     struct timespec timeout;
     int             rc;
 
-    assert(milliseconds >= 0);
+    if (milliseconds < 0 || milliseconds > MAXINT) {
+        milliseconds = MAXINT;
+    }
     timeout.tv_sec = milliseconds / 1000;
     timeout.tv_nsec = (milliseconds % 1000) * 1000000;
     do {
@@ -28091,6 +28107,9 @@ PUBLIC int usleep(uint msec)
     struct timespec     timeout;
     int                 rc;
 
+    if (msec < 0 || msec > MAXINT) {
+        msec = MAXINT;
+    }
     timeout.tv_sec = msec / (1000 * 1000);
     timeout.tv_nsec = msec % (1000 * 1000) * 1000;
     do {
@@ -28299,19 +28318,17 @@ static void manageWaitHandler(MprWaitHandler *wp, int flags)
 }
 
 
-/*
-    This is a special case API, it is called by finalizers such as closeSocket.
-    It needs special handling for the shutdown case.
- */
 PUBLIC void mprRemoveWaitHandler(MprWaitHandler *wp)
 {
     if (wp) {
         if (!mprIsStopped()) {
-            /* Avoid locking APIs during shutdown - the locks may have been freed */
-            mprRemoveItem(wp->service->handlers, wp);
+            /*
+                It needs special handling for the shutdown case when the locks have been removed
+             */
             if (wp->fd >= 0 && wp->desiredMask) {
                 mprNotifyOn(wp, 0);
             }
+            mprRemoveItem(wp->service->handlers, wp);
         }
         wp->fd = INVALID_SOCKET;
     }
@@ -30692,3 +30709,4 @@ PUBLIC int mprXmlGetLineNumber(MprXml *xp)
 
     @end
  */
+

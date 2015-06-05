@@ -161,7 +161,7 @@ static int setSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum, EjsAny *val
     if (sp->options == 0) {
         sp->options = ejsCreateEmptyPot(ejs);
         ejsSetPropertyByName(ejs, sp->options, EN("lifespan"), 
-            ejsCreateNumber(ejs, (MprNumber) (sp->timeout / MPR_TICKS_PER_SEC)));
+            ejsCreateNumber(ejs, (MprNumber) (sp->timeout / TPS)));
     }
     if (ejsCacheWriteObj(ejs, sp->cache, sp->key, sp, sp->options) == 0) {
         return EJS_ERR;
@@ -194,7 +194,7 @@ static EjsSession *sess_constructor(Ejs *ejs, EjsSession *sp, int argc, EjsAny *
     if (argc > 0) {
         options = argv[0];
         vp = ejsGetPropertyByName(ejs, options, EN("lifespan"));
-        timeout = ejsGetInt(ejs, vp) * MPR_TICKS_PER_SEC;
+        timeout = ejsGetInt(ejs, vp) * TPS;
     }
     return initSession(ejs, sp, sp->key, timeout);
 }

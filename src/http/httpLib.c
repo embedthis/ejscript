@@ -424,7 +424,9 @@ PUBLIC HttpEndpoint *httpGetFirstEndpoint()
  */
 PUBLIC void httpAddHost(HttpHost *host)
 {
-    mprAddItem(HTTP->hosts, host);
+    if (mprLookupItem(HTTP->hosts, host) < 0) {
+        mprAddItem(HTTP->hosts, host);
+    }
 }
 
 
@@ -694,8 +696,8 @@ PUBLIC void httpSetTimestamp(MprTicks period)
     Http    *http;
 
     http = HTTP;
-    if (period < (10 * MPR_TICKS_PER_SEC)) {
-        period = (10 * MPR_TICKS_PER_SEC);
+    if (period < (10 * TPS)) {
+        period = (10 * TPS);
     }
     if (http->timestamp) {
         mprRemoveEvent(http->timestamp);
@@ -746,7 +748,7 @@ PUBLIC char *httpGetDateString(MprPath *sbuf)
     if (sbuf == 0) {
         when = mprGetTime();
     } else {
-        when = (MprTicks) sbuf->mtime * MPR_TICKS_PER_SEC;
+        when = (MprTicks) sbuf->mtime * TPS;
     }
     return mprFormatUniversalTime(HTTP_DATE_FORMAT, when);
 }
@@ -809,7 +811,7 @@ static void updateCurrentDate()
     http = HTTP;
     http->now = mprGetTicks();
     diff = http->now - http->currentTime;
-    if (diff <= MPR_TICKS_PER_SEC || diff >= MPR_TICKS_PER_SEC) {
+    if (diff <= TPS || diff >= TPS) {
         /*
             Optimize and only update the string date representation once per second
          */
@@ -2463,10 +2465,10 @@ static void cacheAtClient(HttpConn *conn)
     if (!mprLookupKey(tx->headers, "Cache-Control")) {
         if ((value = mprLookupKey(conn->tx->headers, "Cache-Control")) != 0) {
             if (strstr(value, "max-age") == 0) {
-                httpAppendHeader(conn, "Cache-Control", "public, max-age=%lld", cache->clientLifespan / MPR_TICKS_PER_SEC);
+                httpAppendHeader(conn, "Cache-Control", "public, max-age=%lld", cache->clientLifespan / TPS);
             }
         } else {
-            httpAddHeader(conn, "Cache-Control", "public, max-age=%lld", cache->clientLifespan / MPR_TICKS_PER_SEC);
+            httpAddHeader(conn, "Cache-Control", "public, max-age=%lld", cache->clientLifespan / TPS);
             /*
                 Old HTTP/1.0 clients don't understand Cache-Control
              */
@@ -2548,7 +2550,7 @@ static void saveCachedResponse(HttpConn *conn)
     /*
         Truncate modified time to get a 1 sec resolution. This is the resolution for If-Modified headers.
      */
-    modified = mprGetTime() / MPR_TICKS_PER_SEC * MPR_TICKS_PER_SEC;
+    modified = mprGetTime() / TPS * TPS;
     mprWriteCache(conn->host->responseCache, makeCacheKey(conn), mprGetBufStart(buf), modified,
         tx->cache->serverLifespan, 0, 0);
 }
@@ -3163,7 +3165,11 @@ static void setDefaultHeaders(HttpConn *conn)
         }
     }
     if (conn->port != 80 && conn->port != 443) {
-        httpAddHeader(conn, "Host", "%s:%d", conn->ip, conn->port);
+        if (schr(conn->ip, ':')) {
+            httpAddHeader(conn, "Host", "[%s]:%d", conn->ip, conn->port);
+        } else {
+            httpAddHeader(conn, "Host", "%s:%d", conn->ip, conn->port);
+        }
     } else {
         httpAddHeaderString(conn, "Host", conn->ip);
     }
@@ -3191,6 +3197,10 @@ PUBLIC int httpConnect(HttpConn *conn, cchar *method, cchar *uri, struct MprSsl 
         httpPrepClientConn(conn, 0);
     }
     assert(conn->state == HTTP_STATE_BEGIN);
+
+    /*
+        Do not test if the URI is valid. Some test clients need the ability to create invalid URIs
+     */
     conn->tx->parsedUri = httpCreateUri(uri, HTTP_COMPLETE_URI_PATH);
 
     if (openConnection(conn, ssl) == 0) {
@@ -3630,7 +3640,6 @@ PUBLIC int httpWait(HttpConn *conn, int state, MprTicks timeout)
 
 static void parseAuthRoles(HttpRoute *route, cchar *key, MprJson *prop);
 static void parseAuthStore(HttpRoute *route, cchar *key, MprJson *prop);
-static void parseRoutes(HttpRoute *route, cchar *key, MprJson *prop);
 
 /************************************** Code **********************************/
 /*
@@ -3693,7 +3702,19 @@ static cchar *getList(MprJson *prop)
         cp = strim(cp, "[]", 0);
     }
     for (p = cp; *p; p++) {
-        if (*p == '"' || *p == ',') {
+        if (*p == '"') {
+            if (p[1] == '"') {
+                p++;
+            } else {
+                *p = ' ';
+            }
+        } else if (*p == '\'') {
+            if (p[1] == '\'') {
+                p++;
+            } else {
+                *p = ' ';
+            }
+        } else if (*p == ',') {
             *p = ' ';
         }
     }
@@ -3796,7 +3817,7 @@ PUBLIC int httpLoadConfig(HttpRoute *route, cchar *path)
     if ((obj = mprGetJsonObj(config, "include")) != 0) {
         parseInclude(route, config, obj);
     }
-#if DEPRECATE || 1
+#if DEPRECATED || 1
 {
     MprJson *obj;
     if ((obj = mprGetJsonObj(config, "app.http")) != 0) {
@@ -3907,6 +3928,39 @@ static void parseAliases(HttpRoute *route, cchar *key, MprJson *prop)
     }
 }
 
+
+static void parseAttach(HttpRoute *route, cchar *key, MprJson *prop)
+{
+    HttpEndpoint    *endpoint;
+    MprJson         *child;
+    char            *ip;
+    int             ji, port;
+
+    if (prop->type & MPR_JSON_VALUE) {
+        if (mprParseSocketAddress(prop->value, &ip, &port, NULL, -1) < 0) {
+            httpParseError(route, "Bad attach address: %s", prop->value);
+            return;
+        }
+        if ((endpoint = httpLookupEndpoint(ip, port)) == 0) {
+            httpParseError(route, "Cannot find endpoint %s to attach for host %s", prop->value, route->host->name);
+            return;
+        }
+        httpAddHostToEndpoint(endpoint, route->host);
+
+    } else if (prop->type == MPR_JSON_ARRAY) {
+        for (ITERATE_CONFIG(route, prop, child, ji)) {
+            if (mprParseSocketAddress(child->value, &ip, &port, NULL, -1) < 0) {
+                httpParseError(route, "Bad attach address: %s", child->value);
+                return;
+            }
+            if ((endpoint = httpLookupEndpoint(ip, port)) == 0) {
+                httpParseError(route, "Cannot find endpoint %s to attach for host %s", child->value, route->host->name);
+                return;
+            }
+            httpAddHostToEndpoint(endpoint, route->host);
+        }
+    }
+}
 
 static void parseAuth(HttpRoute *route, cchar *key, MprJson *prop)
 {
@@ -4112,7 +4166,7 @@ static void parseCache(HttpRoute *route, cchar *key, MprJson *prop)
             }
             methods = getList(mprReadJsonObj(child, "methods"));
             urls = getList(mprReadJsonObj(child, "urls"));
-#if DEPRECATE || 1
+#if DEPRECATED || 1
             if (urls == 0) {
                 if ((urls = getList(mprReadJsonObj(child, "urls"))) != 0) {
                     mprLog("error http config", 0, "Using deprecated property \"uris\", use \"urls\" instead");
@@ -4134,6 +4188,37 @@ static void parseCache(HttpRoute *route, cchar *key, MprJson *prop)
     }
 }
 
+
+static void parseCanonicalName(HttpRoute *route, cchar *key, MprJson *prop)
+{
+    if (httpSetHostCanonicalName(route->host, prop->value) < 0) {
+        httpParseError(route, "Bad host canonical name: %s", prop->value);
+    }
+}
+
+/*
+    condition: '[!] auth'
+    condition: '[!] condition'
+    condition: '[!] exists string'
+    condition: '[!] directory string'
+    condition: '[!] match string valuePattern'
+    condition: '[!] secure'
+    condition: '[!] unauthorized'
+ */
+static void parseConditions(HttpRoute *route, cchar *key, MprJson *prop)
+{
+    char    *name, *details;
+    int     not;
+
+    if (!httpTokenize(route, prop->value, "%! ?S ?*", &not, &name, &details)) {
+        httpParseError(route, "Bad condition: %s", prop->value);
+        return;
+    }
+    if (httpAddRouteCondition(route, name, details, not ? HTTP_ROUTE_NOT : 0) < 0) {
+        httpParseError(route, "Bad condition: %s", prop->value);
+        return;
+    }
+}
 
 static void parseCgiEscape(HttpRoute *route, cchar *key, MprJson *prop)
 {
@@ -4169,18 +4254,15 @@ static void parseDeleteUploads(HttpRoute *route, cchar *key, MprJson *prop)
 }
 
 
-static void parseDomain(HttpRoute *route, cchar *key, MprJson *prop)
-{
-    httpSetHostName(route->host, strim(prop->value, "http://", MPR_TRIM_START));
-}
-
-
 static void parseDocuments(HttpRoute *route, cchar *key, MprJson *prop)
 {
-    if (!mprPathExists(prop->value, X_OK)) {
-        httpParseError(route, "Cannot locate documents directory %s", prop->value);
+    cchar   *path;
+
+    path = httpExpandRouteVars(route, prop->value);
+    if (!mprPathExists(path, X_OK)) {
+        httpParseError(route, "Cannot locate documents directory %s", path);
     } else {
-        httpSetRouteDocuments(route, prop->value);
+        httpSetRouteDocuments(route, path);
     }
 }
 
@@ -4248,10 +4330,47 @@ static void parseHeadersSet(HttpRoute *route, cchar *key, MprJson *prop)
 
 static void parseHome(HttpRoute *route, cchar *key, MprJson *prop)
 {
-    if (!mprPathExists(prop->value, X_OK)) {
-        httpParseError(route, "Cannot locate home directory %s", prop->value);
+    cchar   *path;
+
+    path = httpExpandRouteVars(route, prop->value);
+    if (!mprPathExists(path, X_OK)) {
+        httpParseError(route, "Cannot locate home directory %s", path);
     } else {
-        httpSetRouteHome(route, prop->value);
+        httpSetRouteHome(route, path);
+    }
+}
+
+
+static void parseHost(HttpRoute *route, cchar *key, MprJson *prop)
+{
+    HttpHost    *host;
+    HttpRoute   *newRoute;
+
+    host = httpCloneHost(route->host);
+    newRoute = httpCreateInheritedRoute(route);
+    httpSetRouteHost(newRoute, host);
+    httpSetHostDefaultRoute(host, newRoute);
+    httpParseAll(newRoute, key, prop);
+    httpFinalizeRoute(newRoute);
+    if (!(host->flags & HTTP_HOST_ATTACHED)) {
+        httpAddHostToEndpoints(host);
+    }
+}
+
+
+static void parseHosts(HttpRoute *route, cchar *key, MprJson *prop)
+{
+    MprJson     *child;
+    int         ji;
+
+    if (prop->type & MPR_JSON_OBJ) {
+        parseHost(route, sreplace(key, ".hosts", ""), prop);
+
+    } else if (prop->type & MPR_JSON_ARRAY) {
+        key = sreplace(key, ".hosts", "");
+        for (ITERATE_CONFIG(route, prop, child, ji)) {
+            parseHost(route, key, child);
+        }
     }
 }
 
@@ -4493,6 +4612,14 @@ static void parseMode(HttpRoute *route, cchar *key, MprJson *prop)
 }
 
 
+static void parseName(HttpRoute *route, cchar *key, MprJson *prop)
+{
+    if (httpSetHostName(route->host, prop->value) < 0) {
+        httpParseError(route, "Bad host name: %s", prop->value);
+    }
+}
+
+
 /*
     Match route only if param matches
  */
@@ -4608,6 +4735,17 @@ static void createRedirectAlias(HttpRoute *route, int status, cchar *from, cchar
 }
 
 
+/*
+    redirect: 'secure'
+    redirect: [
+        '/to/url',
+        {
+            from: '/somewhere.html',
+            to:   '/elsewhere.html',
+            status: 302,
+        }
+    }
+ */
 static void parseRedirect(HttpRoute *route, cchar *key, MprJson *prop)
 {
     MprJson     *child;
@@ -4631,6 +4769,11 @@ static void parseRedirect(HttpRoute *route, cchar *key, MprJson *prop)
                 from = mprReadJson(child, "from");
                 to = mprReadJson(child, "to");
                 status = mprReadJson(child, "status");
+                if (smatch(status, "permanent")) {
+                    status = "301";
+                } else if (smatch(status, "temporary")) {
+                    status = "302";
+                }
             }
             if (smatch(child->value, "secure")) {
                 httpAddRouteCondition(route, "secure", "https://", HTTP_ROUTE_REDIRECT);
@@ -4711,7 +4854,13 @@ static void parseRoute(HttpRoute *route, cchar *key, MprJson *prop)
     cchar       *pattern;
 
     if (prop->type & MPR_JSON_STRING) {
-        httpAddRouteSet(route, prop->value);
+        if (smatch(prop->value, "reset")) {
+            httpResetRoutes(route->host);
+        } else if (smatch(prop->value, "print")) {
+            httpLogRoutes(route->host, 0);
+        } else {
+            httpAddRouteSet(route, prop->value);
+        }
 
     } else if (prop->type & MPR_JSON_OBJ) {
         newRoute = 0;
@@ -4739,7 +4888,7 @@ static void parseRoutes(HttpRoute *route, cchar *key, MprJson *prop)
     int         ji;
 
     if (prop->type & MPR_JSON_STRING) {
-        httpAddRouteSet(route, prop->value);
+        parseRoute(route, key, prop);
 
     } else if (prop->type & MPR_JSON_OBJ) {
         key = sreplace(key, ".routes", "");
@@ -4751,6 +4900,18 @@ static void parseRoutes(HttpRoute *route, cchar *key, MprJson *prop)
             parseRoute(route, key, child);
         }
     }
+}
+
+
+static void parseRoutesPrint(HttpRoute *route, cchar *key, MprJson *prop)
+{
+    httpLogRoutes(route->host, 0);
+}
+
+
+static void parseRoutesReset(HttpRoute *route, cchar *key, MprJson *prop)
+{
+    httpResetRoutes(route->host);
 }
 
 
@@ -4806,7 +4967,10 @@ static void parseServerListen(HttpRoute *route, cchar *key, MprJson *prop)
     }
     host = route->host;
     for (ITERATE_CONFIG(route, prop, child, ji)) {
-        mprParseSocketAddress(child->value, &ip, &port, &secure, 80);
+        if (mprParseSocketAddress(child->value, &ip, &port, &secure, 80) < 0) {
+            httpParseError(route, "Bad listen address: %s", child->value);
+            return;
+        }
         if (port == 0) {
             httpParseError(route, "Bad or missing port %d in Listen directive", port);
             return;
@@ -5001,30 +5165,41 @@ static void parseSsl(HttpRoute *route, cchar *key, MprJson *prop)
 
 static void parseSslAuthorityFile(HttpRoute *route, cchar *key, MprJson *prop)
 {
-    if (!mprPathExists(prop->value, R_OK)) {
-        httpParseError(route, "Cannot find file %s", prop->value);
+    cchar   *path;
+
+    path = httpExpandRouteVars(route, prop->value);
+    if (!mprPathExists(path, R_OK)) {
+        httpParseError(route, "Cannot find file %s", path);
     } else {
-        mprSetSslCaFile(route->ssl, prop->value);
+        mprSetSslCaFile(route->ssl, path);
     }
 }
 
 
 static void parseSslAuthorityDirectory(HttpRoute *route, cchar *key, MprJson *prop)
 {
-    if (!mprPathExists(prop->value, R_OK)) {
-        httpParseError(route, "Cannot find file %s", prop->value);
+    cchar   *path;
+
+    path = httpExpandRouteVars(route, prop->value);
+    if (!mprPathExists(path, R_OK)) {
+        httpParseError(route, "Cannot find file %s", path);
     } else {
-        mprSetSslCaPath(route->ssl, prop->value);
+        mprSetSslCaPath(route->ssl, path);
     }
 }
 
 
 static void parseSslCertificate(HttpRoute *route, cchar *key, MprJson *prop)
 {
-    if (!mprPathExists(prop->value, R_OK)) {
-        httpParseError(route, "Cannot find file %s", prop->value);
-    } else {
-        mprSetSslCertFile(route->ssl, prop->value);
+    cchar   *path;
+
+    path = httpExpandRouteVars(route, prop->value);
+    if (path && *path) {
+        if (!mprPathExists(path, R_OK)) {
+            httpParseError(route, "Cannot find file %s", path);
+        } else {
+            mprSetSslCertFile(route->ssl, path);
+        }
     }
 }
 
@@ -5037,10 +5212,15 @@ static void parseSslCiphers(HttpRoute *route, cchar *key, MprJson *prop)
 
 static void parseSslKey(HttpRoute *route, cchar *key, MprJson *prop)
 {
-    if (!mprPathExists(prop->value, R_OK)) {
-        httpParseError(route, "Cannot find file %s", prop->value);
-    } else {
-        mprSetSslKeyFile(route->ssl, prop->value);
+    cchar   *path;
+
+    path = httpExpandRouteVars(route, prop->value);
+    if (path && *path) {
+        if (!mprPathExists(path, R_OK)) {
+            httpParseError(route, "Cannot find file %s", path);
+        } else {
+            mprSetSslKeyFile(route->ssl, path);
+        }
     }
 }
 
@@ -5113,8 +5293,8 @@ static void parseStealth(HttpRoute *route, cchar *key, MprJson *prop)
 
 
 /*
-    Names: "close", "redirect", "run", "write"
-    Rules:
+    Operations: "close", "redirect", "run", "write"
+    Args:
         close:      [immediate]
         redirect:   status URI
         run:        ${DOCUMENT_ROOT}/${request:uri}
@@ -5286,10 +5466,10 @@ PUBLIC MprTicks httpGetTicks(cchar *value)
     uint64  num;
 
     num = httpGetNumber(value);
-    if (num >= (MAXINT64 / MPR_TICKS_PER_SEC)) {
-        num = MAXINT64 / MPR_TICKS_PER_SEC;
+    if (num >= (MAXINT64 / TPS)) {
+        num = MAXINT64 / TPS;
     }
-    return num * MPR_TICKS_PER_SEC;
+    return num * TPS;
 }
 
 
@@ -5315,6 +5495,7 @@ PUBLIC int httpInitParser()
     httpAddConfig("directories", parseDirectories);
     httpAddConfig("http", parseHttp);
     httpAddConfig("http.aliases", parseAliases);
+    httpAddConfig("http.attach", parseAttach);
     httpAddConfig("http.auth", parseAuth);
     httpAddConfig("http.auth.auto", httpParseAll);
     httpAddConfig("http.auth.auto.name", parseAuthAutoName);
@@ -5333,6 +5514,8 @@ PUBLIC int httpInitParser()
     httpAddConfig("http.auth.type", parseAuthType);
     httpAddConfig("http.auth.users", parseAuthUsers);
     httpAddConfig("http.cache", parseCache);
+    httpAddConfig("http.canonical", parseCanonicalName);
+    httpAddConfig("http.conditions", parseConditions);
     httpAddConfig("http.cgi", httpParseAll);
     httpAddConfig("http.cgi.escape", parseCgiEscape);
     httpAddConfig("http.cgi.prefix", parseCgiPrefix);
@@ -5341,7 +5524,6 @@ PUBLIC int httpInitParser()
     httpAddConfig("http.deleteUploads", parseDeleteUploads);
     httpAddConfig("http.directories", parseDirectories);
     httpAddConfig("http.documents", parseDocuments);
-    httpAddConfig("http.domain", parseDomain);
     httpAddConfig("http.errors", parseErrors);
     httpAddConfig("http.formats", httpParseAll);
     httpAddConfig("http.formats.response", parseFormatsResponse);
@@ -5351,6 +5533,7 @@ PUBLIC int httpInitParser()
     httpAddConfig("http.headers.remove", parseHeadersRemove);
     httpAddConfig("http.headers.set", parseHeadersSet);
     httpAddConfig("http.home", parseHome);
+    httpAddConfig("http.hosts", parseHosts);
     httpAddConfig("http.indexes", parseIndexes);
     httpAddConfig("http.keep", parseKeep);
     httpAddConfig("http.languages", parseLanguages);
@@ -5381,6 +5564,7 @@ PUBLIC int httpInitParser()
     httpAddConfig("http.limits.workers", parseLimitsWorkers);
     httpAddConfig("http.methods", parseMethods);
     httpAddConfig("http.mode", parseMode);
+    httpAddConfig("http.name", parseName);
     httpAddConfig("http.params", parseParams);
     httpAddConfig("http.pattern", parsePattern);
     httpAddConfig("http.pipeline", httpParseAll);
@@ -5390,6 +5574,8 @@ PUBLIC int httpInitParser()
     httpAddConfig("http.redirect", parseRedirect);
     httpAddConfig("http.renameUploads", parseRenameUploads);
     httpAddConfig("http.routes", parseRoutes);
+    httpAddConfig("http.routes.print", parseRoutesPrint);
+    httpAddConfig("http.routes.reset", parseRoutesReset);
     httpAddConfig("http.resources", parseResources);
     httpAddConfig("http.scheme", parseScheme);
     httpAddConfig("http.server", httpParseAll);
@@ -5427,6 +5613,7 @@ PUBLIC int httpInitParser()
 
 #if DEPRECATED || 1
     httpAddConfig("app", parseApp);
+    httpAddConfig("http.domain", parseName);
     httpAddConfig("http.limits.requestBody", parseLimitsRxBody);
     httpAddConfig("http.limits.responseBody", parseLimitsTxBody);
     httpAddConfig("http.limits.requestForm", parseLimitsRxForm);
@@ -5936,7 +6123,7 @@ PUBLIC void httpIO(HttpConn *conn, int eventMask)
     assert(conn->tx);
     assert(conn->rx);
 
-#if DEPRECATE || 1
+#if DEPRECATED || 1
     /* Just IO state asserting */
     if (conn->io) {
         assert(!conn->io);
@@ -5955,11 +6142,15 @@ PUBLIC void httpIO(HttpConn *conn, int eventMask)
         conn->secure = 1;
         if (sp->peerCert) {
             httpTrace(conn, "connection.ssl", "context", "msg:'Connection secured with peer certificate'," \
-                "secure:true,cipher:'%s',peerName:'%s',subject:'%s',issuer:'%s'", 
-                sp->cipher, sp->peerName, sp->peerCert, sp->peerCertIssuer);
+                "secure:true,cipher:'%s',peerName:'%s',subject:'%s',issuer:'%s',session:'%s'",
+                sp->cipher, sp->peerName, sp->peerCert, sp->peerCertIssuer, sp->session);
         } else {
             httpTrace(conn, "connection.ssl", "context",
-                "msg:'Connection secured without peer certificate',secure:true,cipher:'%s'", sp->cipher);
+                "msg:'Connection secured without peer certificate',secure:true,cipher:'%s',session:'%s'",
+                sp->cipher, sp->session);
+        }
+        if (mprGetLogLevel() >= 5) {
+            mprLog("info http ssl", 5, "SSL State: %s", mprGetSocketState(sp));
         }
     }
     /*
@@ -6674,7 +6865,7 @@ PUBLIC int httpDigestParse(HttpConn *conn, cchar **username, cchar **password)
         realm = secret = 0;
         when = 0;
         parseDigestNonce(dp->nonce, &secret, &realm, &when);
-        if (!smatch(secret, secret)) {
+        if (!smatch(conn->http->secret, secret)) {
             httpTrace(conn, "auth.digest.error", "error", "msg:'Access denied, Nonce mismatch'");
             return MPR_ERR_BAD_STATE;
 
@@ -7258,7 +7449,7 @@ static void outputLine(HttpQueue *q, MprDirEntry *ep, cchar *path, int nameSize)
         isDir = 0;
     } else {
         isDir = info.isDir ? 1 : 0;
-        when = (MprTime) info.mtime * MPR_TICKS_PER_SEC;
+        when = (MprTime) info.mtime * TPS;
     }
     if (isDir) {
         icon = "folder";
@@ -7543,6 +7734,7 @@ PUBLIC int httpOpenDirHandler()
 /********************************* Includes ***********************************/
 
 
+#include    "pcre.h"
 
 /********************************** Forwards **********************************/
 
@@ -7645,9 +7837,6 @@ PUBLIC HttpEndpoint *httpCreateConfiguredEndpoint(HttpHost *host, cchar *home, c
 }
 
 
-/*
-    Add the default host to the unassigned endpoints
- */
 PUBLIC void httpAddHostToEndpoints(HttpHost *host)
 {
     HttpEndpoint    *endpoint;
@@ -7792,6 +7981,9 @@ PUBLIC void httpMatchHost(HttpConn *conn)
 
     listenSock = conn->sock->listenSock;
 
+    /*
+        The connection must match an endpoint and then the hostHeader must match a specific Host
+     */
     if ((endpoint = httpLookupEndpoint(listenSock->ip, listenSock->port)) == 0) {
         conn->host = mprGetFirstItem(endpoint->hosts);
         httpError(conn, HTTP_CODE_NOT_FOUND, "No listening endpoint for request from %s:%d", 
@@ -7894,7 +8086,10 @@ PUBLIC int httpSecureEndpointByName(cchar *name, struct MprSsl *ssl)
     char            *ip;
     int             port, next, count;
 
-    mprParseSocketAddress(name, &ip, &port, NULL, -1);
+    if (mprParseSocketAddress(name, &ip, &port, NULL, -1) < 0) {
+        mprLog("error http", 0, "Bad endpoint address: %s", name);
+        return MPR_ERR_BAD_ARGS;
+    }
     if (ip == 0) {
         ip = "";
     }
@@ -7915,6 +8110,7 @@ PUBLIC void httpAddHostToEndpoint(HttpEndpoint *endpoint, HttpHost *host)
 {
     if (mprLookupItem(endpoint->hosts, host) < 0) {
         mprAddItem(endpoint->hosts, host);
+        host->flags |= HTTP_HOST_ATTACHED;
     }
     if (endpoint->limits == 0) {
         endpoint->limits = host->defaultRoute->limits;
@@ -7922,28 +8118,33 @@ PUBLIC void httpAddHostToEndpoint(HttpEndpoint *endpoint, HttpHost *host)
 }
 
 
-PUBLIC HttpHost *httpLookupHostOnEndpoint(HttpEndpoint *endpoint, cchar *hostHeader)
+PUBLIC HttpHost *httpLookupHostOnEndpoint(HttpEndpoint *endpoint, cchar *name)
 {
     HttpHost    *host;
+    int         matches[ME_MAX_ROUTE_MATCHES * 2];
     int         next;
 
-    if (hostHeader == 0 || *hostHeader == '\0' || mprGetListLength(endpoint->hosts) <= 1) {
+    if (mprGetListLength(endpoint->hosts) <= 1) {
         return mprGetFirstItem(endpoint->hosts);
     }
+    if (name == 0 || *name == '\0') {
+        return 0;
+    }
     for (next = 0; (host = mprGetNextItem(endpoint->hosts, &next)) != 0; ) {
-        if (smatch(host->name, hostHeader)) {
-            return host;
-        }
-        if (*host->name == '\0') {
-            /* Match all hosts */
+        if (smatch(host->name, name)) {
             return host;
         }
         if (host->flags & HTTP_HOST_WILD_STARTS) {
-            if (sstarts(hostHeader, host->name)) {
+            if (sstarts(name, host->name)) {
                 return host;
             }
         } else if (host->flags & HTTP_HOST_WILD_CONTAINS) {
-            if (scontains(hostHeader, host->name)) {
+            if (scontains(name, host->name)) {
+                return host;
+            }
+        } else if (host->flags & HTTP_HOST_WILD_REGEXP) {
+            if (pcre_exec(host->nameCompiled, NULL, name, (int) slen(name), 0, 0, matches, 
+                    sizeof(matches) / sizeof(int)) >= 1) {
                 return host;
             }
         }
@@ -8642,7 +8843,7 @@ PUBLIC int httpHandleDirectory(HttpConn *conn)
     HttpTx      *tx;
     HttpRoute   *route;
     HttpUri     *req;
-    cchar       *index, *pathInfo;
+    cchar       *index, *pathInfo; 
     char        *path;
     int         next;
 
@@ -8650,7 +8851,7 @@ PUBLIC int httpHandleDirectory(HttpConn *conn)
     tx = conn->tx;
     req = rx->parsedUri;
     route = rx->route;
-
+    
     /*
         Manage requests for directories
      */
@@ -8659,7 +8860,7 @@ PUBLIC int httpHandleDirectory(HttpConn *conn)
            Append "/" and do an external redirect. Use the original request URI. Use httpFormatUri to preserve query.
          */
         httpRedirect(conn, HTTP_CODE_MOVED_PERMANENTLY, 
-            httpFormatUri(req->scheme, req->host, req->port, sjoin(req->path, "/", NULL), req->reference, req->query, 0));
+            httpFormatUri(0, 0, 0, sjoin(req->path, "/", NULL), req->reference, req->query, 0));
         return HTTP_ROUTE_OK;
     }
     if (route->indexes) {
@@ -8763,6 +8964,7 @@ PUBLIC int httpOpenFileHandler()
 /********************************* Includes ***********************************/
 
 
+#include    "pcre.h"
 
 /*********************************** Locals ***********************************/
 
@@ -8800,21 +9002,19 @@ PUBLIC HttpHost *httpCloneHost(HttpHost *parent)
 {
     HttpHost    *host;
 
-    if ((host = mprAllocObj(HttpHost, manageHost)) == 0) {
+    if ((host = httpCreateHost()) == 0) {
         return 0;
     }
     /*
         The dirs and routes are all copy-on-write.
-        Don't clone ip, port and name
+        Do not clone routes, ip, port and name
      */
     host->parent = parent;
-    host->responseCache = parent->responseCache;
-    host->routes = parent->routes;
-    host->flags = parent->flags | HTTP_HOST_VHOST;
+    host->flags = parent->flags & HTTP_HOST_NO_TRACE;
     host->streams = parent->streams;
     host->secureEndpoint = parent->secureEndpoint;
     host->defaultEndpoint = parent->defaultEndpoint;
-    httpAddHost(host);
+    host->routes = mprCreateList(-1, MPR_LIST_STABLE);
     return host;
 }
 
@@ -8823,6 +9023,7 @@ static void manageHost(HttpHost *host, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         mprMark(host->name);
+        mprMark(host->canonical);
         mprMark(host->parent);
         mprMark(host->responseCache);
         mprMark(host->routes);
@@ -8830,6 +9031,10 @@ static void manageHost(HttpHost *host, int flags)
         mprMark(host->defaultEndpoint);
         mprMark(host->secureEndpoint);
         mprMark(host->streams);
+    } else if (flags & MPR_MANAGE_FREE) {
+        if (host->nameCompiled) {
+            free(host->nameCompiled);
+        }
     }
 }
 
@@ -8898,7 +9103,9 @@ static void printRouteHeader(HttpHost *host, int *methodsLen, int *patternLen, i
         *patternLen = (int) max(*patternLen, slen(route->pattern));
         *methodsLen = (int) max(*methodsLen, slen(httpGetRouteMethods(route)));
     }
-    printf("\n%-*s %-*s %-*s\n", *patternLen, "Route", *methodsLen, "Methods", *targetLen, "Target");
+    printf("\nRoutes for host: %s\n\n", host->name ? host->name : "default");
+    printf("%-*s %-*s %-*s\n", *patternLen, "Route", *methodsLen, "Methods", *targetLen, "Target");
+    printf("%-*s %-*s %-*s\n", *patternLen, "-----", *methodsLen, "-------", *targetLen, "------");
 }
 
 
@@ -8911,9 +9118,11 @@ static void printRoute(HttpRoute *route, int idx, bool full, int methodsLen, int
     cchar       *methods, *pattern, *target, *index;
     int         nextIndex;
 
+#if UNUSED
     if (route->flags & HTTP_ROUTE_HIDDEN && !full) {
         return;
     }
+#endif
     auth = route->auth;
     methods = httpGetRouteMethods(route);
     methods = methods ? methods : "*";
@@ -8921,7 +9130,8 @@ static void printRoute(HttpRoute *route, int idx, bool full, int methodsLen, int
     target = (route->target && *route->target) ? route->target : "$&";
 
     if (full) {
-        printf("\n Route [%d]. %s\n", idx, pattern);
+        printf("\nRoutes for host: %s\n", route->host->name ? route->host->name : "default");
+        printf("\n  Route [%d]. %s\n", idx, pattern);
         if (route->prefix && *route->prefix) {
             printf("    Prefix:       %s\n", route->prefix);
         }
@@ -8975,28 +9185,72 @@ PUBLIC void httpLogRoutes(HttpHost *host, bool full)
     if (!host) {
         host = httpGetDefaultHost();
     }
-    if (!full) {
-        printRouteHeader(host, &methodsLen, &patternLen, &targetLen);
-    }
-    for (index = 0; (route = mprGetNextItem(host->routes, &index)) != 0; ) {
-        printRoute(route, index - 1, full, methodsLen, patternLen, targetLen);
+    if (mprGetListLength(host->routes) == 0 && !host->defaultRoute) {
+        printf("\nRoutes for host: %s: none\n", host->name ? host->name : "default");
+    } else {
+        methodsLen = patternLen = targetLen = 0;
+        if (!full) {
+            printRouteHeader(host, &methodsLen, &patternLen, &targetLen);
+        }
+        for (index = 0; (route = mprGetNextItem(host->routes, &index)) != 0; ) {
+            printRoute(route, index - 1, full, methodsLen, patternLen, targetLen);
+        }
+        if (mprLookupItem(host->routes, host->defaultRoute) < 0) {
+            printRoute(host->defaultRoute, index, full, methodsLen, patternLen, targetLen);
+        }
     }
     printf("\n");
 }
 
 
-PUBLIC void httpSetHostName(HttpHost *host, cchar *name)
+PUBLIC int httpSetHostCanonicalName(HttpHost *host, cchar *name)
 {
     if (!name || *name == '\0') {
-        mprLog("error http", 0, "Host name is empty");
+        mprLog("error http", 0, "Empty host name");
+        return MPR_ERR_BAD_ARGS;
     }
+    if (schr(name, ':')) {
+        host->canonical = httpCreateUri(name, 0);
+    } else {
+        host->canonical = httpCreateUri(sjoin(name, ":", 0), 0);
+    }
+    return 0;
+}
+
+
+PUBLIC int httpSetHostName(HttpHost *host, cchar *name)
+{
+    cchar   *errMsg;
+    int     column;
+
+    if (!name || *name == '\0') {
+        mprLog("error http", 0, "Empty host name");
+        return MPR_ERR_BAD_ARGS;
+    }
+    host->flags &= ~(HTTP_HOST_WILD_STARTS | HTTP_HOST_WILD_CONTAINS | HTTP_HOST_WILD_REGEXP);
     if (sends(name, "*")) {
         host->flags |= HTTP_HOST_WILD_STARTS;
+        host->name = strim(name, "*", MPR_TRIM_END);
 
-    } else if (name && *name == '*') {
+    } else if (*name == '*') {
         host->flags |= HTTP_HOST_WILD_CONTAINS;
+        host->name = strim(name, "*", MPR_TRIM_START);
+
+    } else if (*name == '/') {
+        host->flags |= HTTP_HOST_WILD_REGEXP;
+        host->name = strim(name, "/", MPR_TRIM_BOTH);
+        if (host->nameCompiled) {
+            free(host->nameCompiled);
+        }
+        if ((host->nameCompiled = pcre_compile2(host->name, 0, 0, &errMsg, &column, NULL)) == 0) {
+            mprLog("error http route", 0, "Cannot compile condition match pattern. Error %s at column %d", errMsg, column);
+            return MPR_ERR_BAD_SYNTAX;
+        }
+
+    } else {
+        host->name = sclone(name);
     }
-    host->name = strim(name, "*", 0);
+    return 0;
 }
 
 
@@ -10524,7 +10778,9 @@ PUBLIC void httpPutPacket(HttpQueue *q, HttpPacket *packet)
     assert(packet);
     assert(q->put);
 
-    q->put(q, packet);
+    if (q->put) {
+        q->put(q, packet);
+    }
 }
 
 
@@ -10536,7 +10792,9 @@ PUBLIC void httpPutPacketToNext(HttpQueue *q, HttpPacket *packet)
     assert(packet);
     assert(q->nextQ->put);
 
-    q->nextQ->put(q->nextQ, packet);
+    if (q->nextQ && q->nextQ->put) {
+        q->nextQ->put(q->nextQ, packet);
+    }
 }
 
 
@@ -12323,10 +12581,7 @@ static bool fixRangeLength(HttpConn *conn)
 /********************************* Includes ***********************************/
 
 
-
-#if ME_COM_PCRE
- #include    "pcre.h"
-#endif
+#include    "pcre.h"
 
 /********************************** Forwards **********************************/
 
@@ -12406,7 +12661,7 @@ PUBLIC HttpRoute *httpCreateRoute(HttpHost *host)
     route->workers = -1;
     route->prefix = MPR->emptyString;
     route->trace = http->trace;
-#if DEPRECATE || 1
+#if DEPRECATED || 1
     route->serverPrefix = MPR->emptyString;
 #endif
 
@@ -12519,7 +12774,7 @@ PUBLIC HttpRoute *httpCreateInheritedRoute(HttpRoute *parent)
     route->updates = parent->updates;
     route->vars = parent->vars;
     route->workers = parent->workers;
-#if DEPRECATE || 1
+#if DEPRECATED || 1
     route->serverPrefix = parent->serverPrefix;
 #endif
     return route;
@@ -12584,7 +12839,7 @@ static void manageRoute(HttpRoute *route, int flags)
         mprMark(route->updates);
         mprMark(route->vars);
         mprMark(route->webSocketsProtocol);
-#if DEPRECATE || 1
+#if DEPRECATED || 1
         mprMark(route->serverPrefix);
 #endif
 
@@ -13778,7 +14033,7 @@ PUBLIC void httpSetRoutePreserveFrames(HttpRoute *route, bool on)
 }
 
 
-#if DEPRECATE || 1
+#if DEPRECATED || 1
 PUBLIC void httpSetRouteServerPrefix(HttpRoute *route, cchar *prefix)
 {
     assert(route);
@@ -14276,10 +14531,10 @@ PUBLIC char *httpTemplate(HttpConn *conn, cchar *template, MprHash *options)
         if (cp == template && *cp == '~') {
             mprPutStringToBuf(buf, route->prefix);
 
-#if DEPRECATE || 1
+#if DEPRECATED || 1
         } else if (cp == template && *cp == '|') {
             mprPutStringToBuf(buf, route->prefix);
-            //  DEPRECATE in version 6
+            //  DEPRECATED in version 6
             mprPutStringToBuf(buf, route->serverPrefix);
 #endif
 
@@ -14641,9 +14896,9 @@ static int secureCondition(HttpConn *conn, HttpRoute *route, HttpRouteOp *op)
         /* Negative age means subDomains == true */
         age = stoi(op->details);
         if (age < 0) {
-            httpAddHeader(conn, "Strict-Transport-Security", "max-age=%lld; includeSubDomains", -age / MPR_TICKS_PER_SEC);
+            httpAddHeader(conn, "Strict-Transport-Security", "max-age=%lld; includeSubDomains", -age / TPS);
         } else if (age > 0) {
-            httpAddHeader(conn, "Strict-Transport-Security", "max-age=%lld", age / MPR_TICKS_PER_SEC);
+            httpAddHeader(conn, "Strict-Transport-Security", "max-age=%lld", age / TPS);
         }
     }
     if (op->flags & HTTP_ROUTE_REDIRECT) {
@@ -14813,7 +15068,7 @@ PUBLIC HttpRoute *httpDefineRoute(HttpRoute *parent, cchar *methods, cchar *patt
     if ((route = httpCreateInheritedRoute(parent)) == 0) {
         return 0;
     }
-#if DEPRECATE || 1
+#if DEPRECATED || 1
     /* Keep till version 6 */
         /*
             Keep till version 6
@@ -14841,7 +15096,7 @@ PUBLIC HttpRoute *httpAddRestfulRoute(HttpRoute *parent, cchar *methods, cchar *
 {
     cchar   *source;
 
-#if DEPRECATE || 1
+#if DEPRECATED || 1
     if (*resource == '{') {
         pattern = sfmt("^%s%s/%s%s", parent->prefix, parent->serverPrefix, resource, pattern);
     } else {
@@ -14924,7 +15179,7 @@ PUBLIC HttpRoute *httpAddWebSocketsRoute(HttpRoute *parent, cchar *action)
     HttpLimits  *limits;
     cchar       *path, *pattern;
 
-#if DEPRECATE || 1
+#if DEPRECATED || 1
     pattern = sfmt("^%s%s/{controller}/%s", parent->prefix, parent->serverPrefix, action);
 #else
     pattern = sfmt("^%s/{controller}/%s", parent->prefix, action);
@@ -15757,6 +16012,7 @@ static bool parseIncoming(HttpConn *conn);
 static bool parseRange(HttpConn *conn, char *value);
 static bool parseRequestLine(HttpConn *conn, HttpPacket *packet);
 static bool parseResponseLine(HttpConn *conn, HttpPacket *packet);
+static void parseUri(HttpConn *conn);
 static bool processCompletion(HttpConn *conn);
 static bool processFinalized(HttpConn *conn);
 static bool processContent(HttpConn *conn);
@@ -15764,7 +16020,6 @@ static void parseMethod(HttpConn *conn);
 static bool processParsed(HttpConn *conn);
 static bool processReady(HttpConn *conn);
 static bool processRunning(HttpConn *conn);
-static int setParsedUri(HttpConn *conn);
 static int sendContinue(HttpConn *conn);
 
 /*********************************** Code *************************************/
@@ -15992,9 +16247,8 @@ static bool parseIncoming(HttpConn *conn)
     }
     if (httpServerConn(conn)) {
         httpMatchHost(conn);
-        if (setParsedUri(conn) < 0) {
-            return 0;
-        }
+        parseUri(conn);
+
     } else if (rx->status != HTTP_CODE_CONTINUE) {
         /*
             Ignore Expect status responses. NOTE: Clients have already created their Tx pipeline.
@@ -16149,7 +16403,7 @@ static bool parseRequestLine(HttpConn *conn, HttpPacket *packet)
     }
     protocol = getToken(conn, "\r\n");
     conn->protocol = supper(protocol);
-    if (strcmp(conn->protocol, "HTTP/1.0") == 0) {
+    if (smatch(conn->protocol, "HTTP/1.0") || *conn->protocol == 0) {
         if (rx->flags & (HTTP_POST|HTTP_PUT)) {
             rx->remainingContent = HTTP_UNLIMITED;
             rx->needInputPipeline = 1;
@@ -16157,7 +16411,7 @@ static bool parseRequestLine(HttpConn *conn, HttpPacket *packet)
         conn->http10 = 1;
         conn->mustClose = 1;
     } else if (strcmp(protocol, "HTTP/1.1") != 0) {
-        conn->protocol = sclone("HTTP/1.1");
+        conn->protocol = sclone("HTTP/1.0");
         httpBadRequestError(conn, HTTP_ABORT | HTTP_CODE_NOT_ACCEPTABLE, "Unsupported HTTP protocol");
         return 0;
     }
@@ -16223,6 +16477,11 @@ static bool parseResponseLine(HttpConn *conn, HttpPacket *packet)
         endp = strstr((char*) content->start, "\r\n\r\n");
         len = (endp) ? (int) (endp - content->start + 4) : 0;
         httpTraceContent(conn, "rx.headers.client", "context", content->start, len, NULL);
+    }
+    if (rx->status == HTTP_CODE_CONTINUE) {
+        /* Eat the blank line and wait for the real response */
+        mprAdjustBufStart(packet->content, 2);
+        return 0;
     }
     return 1;
 }
@@ -16391,7 +16650,12 @@ static bool parseHeaders(HttpConn *conn, HttpPacket *packet)
 
         case 'h':
             if (strcasecmp(key, "host") == 0) {
-                rx->hostHeader = sclone(value);
+                if ((int) strspn(value, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-.[]:") 
+                        < (int) slen(value)) {
+                    httpBadRequestError(conn, HTTP_CODE_BAD_REQUEST, "Bad host header");
+                } else {
+                    rx->hostHeader = sclone(value);
+                }
             }
             break;
 
@@ -17050,7 +17314,7 @@ PUBLIC bool httpContentNotModified(HttpConn *conn)
             performed, skip the transfer.
          */
         assert(tx->fileInfo.valid);
-        modified = (MprTime) tx->fileInfo.mtime * MPR_TICKS_PER_SEC;
+        modified = (MprTime) tx->fileInfo.mtime * TPS;
         same = httpMatchModified(conn, modified) && httpMatchEtag(conn, tx->etag);
         if (tx->outputRanges && !same) {
             tx->outputRanges = 0;
@@ -17230,53 +17494,64 @@ PUBLIC void httpSetMethod(HttpConn *conn, cchar *method)
 }
 
 
-static int setParsedUri(HttpConn *conn)
+static void parseUri(HttpConn *conn)
 {
     HttpRx      *rx;
     HttpUri     *up;
     cchar       *hostname;
 
     rx = conn->rx;
-    if (httpSetUri(conn, rx->uri) < 0 || rx->pathInfo[0] != '/') {
+    if (httpSetUri(conn, rx->uri) < 0) {
         httpBadRequestError(conn, HTTP_CODE_BAD_REQUEST, "Bad URL");
         rx->parsedUri = httpCreateUri("", 0);
-        /* Continue to render a response */
+
+    } else {
+        /*
+            Complete the URI based on the connection state.
+            Must have a complete scheme, host, port and path.
+         */
+        up = rx->parsedUri;
+        up->scheme = sclone(conn->secure ? "https" : "http");
+        hostname = rx->hostHeader ? rx->hostHeader : conn->host->name;
+        if (!hostname) {
+            hostname = conn->sock->acceptIp;
+        }
+        if (mprParseSocketAddress(hostname, &up->host, NULL, NULL, 0) < 0) {
+            if (!conn->error) {
+                httpBadRequestError(conn, HTTP_CODE_BAD_REQUEST, "Bad host");
+            }
+        } else {
+            up->port = conn->sock->listenSock->port;
+        }
     }
-    /*
-        Complete the URI based on the connection state.
-        Must have a complete scheme, host, port and path.
-     */
-    up = rx->parsedUri;
-    up->scheme = sclone(conn->secure ? "https" : "http");
-    hostname = rx->hostHeader ? rx->hostHeader : conn->host->name;
-    if (!hostname) {
-        hostname = conn->sock->acceptIp;
-    }
-    mprParseSocketAddress(hostname, &up->host, NULL, NULL, 0);
-    up->port = conn->sock->listenSock->port;
-    return 0;
 }
 
 
 PUBLIC int httpSetUri(HttpConn *conn, cchar *uri)
 {
     HttpRx      *rx;
+    HttpUri     *parsedUri;
     char        *pathInfo;
 
     rx = conn->rx;
-    if ((rx->parsedUri = httpCreateUri(uri, 0)) == 0) {
+    if ((parsedUri = httpCreateUri(uri, 0)) == 0 || !parsedUri->valid) {
         return MPR_ERR_BAD_ARGS;
     }
-    if ((pathInfo = httpValidateUriPath(rx->parsedUri->path)) == 0) {
+    if (parsedUri->host && !rx->hostHeader) {
+        rx->hostHeader = parsedUri->host;
+    }
+    if ((pathInfo = httpValidateUriPath(parsedUri->path)) == 0) {
         return MPR_ERR_BAD_ARGS;
     }
     rx->pathInfo = pathInfo;
-    rx->uri = rx->parsedUri->path;
+    rx->uri = parsedUri->path;
     conn->tx->ext = httpGetExt(conn);
+
     /*
         Start out with no scriptName and the entire URI in the pathInfo. Stages may rewrite.
      */
     rx->scriptName = mprEmptyString();
+    rx->parsedUri = parsedUri;
     return 0;
 }
 
@@ -17338,7 +17613,7 @@ static void addMatchEtag(HttpConn *conn, char *etag)
 
 /*
     Get the next input token. The content buffer is advanced to the next token. This routine always returns a
-    non-zero token. The empty string means the delimiter was not found. The delimiter is a string to match and not
+    non-null token. The empty string means the delimiter was not found. The delimiter is a string to match and not
     a set of characters. If null, it means use white space (space or tab) as a delimiter.
  */
 static char *getToken(HttpConn *conn, cchar *delim)
@@ -17347,10 +17622,12 @@ static char *getToken(HttpConn *conn, cchar *delim)
     char    *token, *endToken, *nextToken;
 
     buf = conn->input->content;
-    token = mprGetBufStart(buf);
     nextToken = mprGetBufEnd(buf);
-    for (token = mprGetBufStart(buf); (*token == ' ' || *token == '\t') && token < mprGetBufEnd(buf); token++) {}
 
+    for (token = mprGetBufStart(buf); (*token == ' ' || *token == '\t') && token < nextToken; token++) {}
+    if (token >= nextToken) {
+        return "";
+    }
     if (delim == 0) {
         delim = " \t";
         if ((endToken = strpbrk(token, delim)) != 0) {
@@ -17658,12 +17935,15 @@ PUBLIC void httpTrimExtraPath(HttpConn *conn)
 static int sendContinue(HttpConn *conn)
 {
     cchar      *response;
+    int         mode;
 
     assert(conn);
 
     if (!conn->tx->finalized && !conn->tx->bytesWritten) {
         response = sfmt("%s 100 Continue\r\n\r\n", conn->protocol);
+        mode = mprGetSocketBlockingMode(conn->sock);
         mprWriteSocket(conn->sock, response, slen(response));
+        mprSetSocketBlockingMode(conn->sock, mode);
         mprFlushSocket(conn->sock);
     }
     return 0;
@@ -19396,8 +19676,10 @@ PUBLIC HttpTx *httpCreateTx(HttpConn *conn, MprHash *headers)
     tx->chunkSize = -1;
     tx->cookies = mprCreateHash(HTTP_SMALL_HASH_SIZE, 0);
     tx->headers = mprCreateHash(HTTP_SMALL_HASH_SIZE, 0);
+
     tx->queue[HTTP_QUEUE_TX] = httpCreateQueueHead(conn, "TxHead");
     conn->writeq = tx->queue[HTTP_QUEUE_TX]->nextQ;
+
     tx->queue[HTTP_QUEUE_RX] = httpCreateQueueHead(conn, "RxHead");
     conn->readq = tx->queue[HTTP_QUEUE_RX]->prevQ;
 
@@ -19906,7 +20188,10 @@ PUBLIC void httpSetCookie(HttpConn *conn, cchar *name, cchar *value, cchar *path
             /* Omit domain if set to empty string */
         }
     } else if (rx->hostHeader) {
-        mprParseSocketAddress(rx->hostHeader, &domain, &port, NULL, 0);
+        if (mprParseSocketAddress(rx->hostHeader, &domain, &port, NULL, 0) < 0) {
+            mprLog("error http", 4, "Bad host header for cookie: %s", rx->hostHeader);
+            return;
+        }
         if (domain && port) {
             domain = 0;
         }
@@ -21144,8 +21429,8 @@ static char *actionRoute(HttpRoute *route, cchar *controller, cchar *action);
         /URI
         URI
 
-        NOTE: the following is not supported and requires a scheme prefix. This is because it is ambiguous with Uri path.
-        HOST/URI
+        NOTE: HOST/URI is not supported and requires a scheme prefix. This is because it is ambiguous with a 
+        relative uri path.
 
     Missing fields are null or zero.
  */
@@ -21253,6 +21538,9 @@ PUBLIC HttpUri *httpCreateUri(cchar *uri, int flags)
             up->path = sclone("/");
         }
     }
+    up->secure = smatch(up->scheme, "https") || smatch(up->scheme, "wss");
+    up->webSockets = (smatch(up->scheme, "ws") || smatch(up->scheme, "wss"));
+
     if (flags & HTTP_COMPLETE_URI) {
         if (!up->scheme) {
             up->scheme = sclone("http");
@@ -21261,9 +21549,10 @@ PUBLIC HttpUri *httpCreateUri(cchar *uri, int flags)
             up->host = sclone("localhost");
         }
         if (!up->port) {
-            up->port = 80;
+            up->port = up->secure ? 443 : 80;
         }
     }
+    up->valid = httpValidUriChars(uri);
     return up;
 }
 
@@ -21291,12 +21580,19 @@ PUBLIC HttpUri *httpCreateUriFromParts(cchar *scheme, cchar *host, int port, cch
     char        *cp, *tok;
 
     if ((up = mprAllocObj(HttpUri, manageUri)) == 0) {
+        up->valid = 0;
         return 0;
+    }
+    if (!httpValidUriChars(scheme) || !httpValidUriChars(host) || !httpValidUriChars(path) ||
+        !httpValidUriChars(reference) || !httpValidUriChars(query)) {
+        up->valid = 0;
+        return up;
     }
     if (scheme) {
         up->scheme = sclone(scheme);
         up->secure = (smatch(up->scheme, "https") || smatch(up->scheme, "wss"));
         up->webSockets = (smatch(up->scheme, "ws") || smatch(up->scheme, "wss"));
+
     } else if (flags & HTTP_COMPLETE_URI) {
         up->scheme = "http";
     }
@@ -21344,6 +21640,7 @@ PUBLIC HttpUri *httpCreateUriFromParts(cchar *scheme, cchar *host, int port, cch
             up->ext = sclone(&tok[1]);
         }
     }
+    up->valid = 1;
     return up;
 }
 
@@ -21354,7 +21651,12 @@ PUBLIC HttpUri *httpCloneUri(HttpUri *base, int flags)
     char        *path, *cp, *tok;
 
     if ((up = mprAllocObj(HttpUri, manageUri)) == 0) {
+        up->valid = 0;
         return 0;
+    }
+    if (!base || !base->valid) {
+        up->valid = 0;
+        return up;
     }
     if (base->scheme) {
         up->scheme = sclone(base->scheme);
@@ -21371,7 +21673,7 @@ PUBLIC HttpUri *httpCloneUri(HttpUri *base, int flags)
     if (base->port) {
         up->port = base->port;
     } else if (flags & HTTP_COMPLETE_URI) {
-        up->port = (smatch(up->scheme, "https") || smatch(up->scheme, "wss"))? 443 : 80;
+        up->port = up->secure ? 443 : 80;
     }
     path = base->path;
     if (path) {
@@ -21400,6 +21702,7 @@ PUBLIC HttpUri *httpCloneUri(HttpUri *base, int flags)
             up->ext = sclone(&tok[1]);
         }
     }
+    up->valid = 1;
     return up;
 }
 
@@ -21409,17 +21712,10 @@ PUBLIC HttpUri *httpCloneUri(HttpUri *base, int flags)
  */
 PUBLIC HttpUri *httpCompleteUri(HttpUri *uri, HttpUri *base)
 {
-    if (!base) {
-        if (!uri->scheme) {
-            uri->scheme = sclone("http");
-        }
-        if (!uri->host) {
-            uri->host = sclone("localhost");
-        }
-        if (!uri->path) {
-            uri->path = sclone("/");
-        }
-    } else {
+    if (!uri) {
+        return 0;
+    }
+    if (base) {
         if (!uri->host) {
             uri->host = base->host;
             if (!uri->port) {
@@ -21439,6 +21735,15 @@ PUBLIC HttpUri *httpCompleteUri(HttpUri *uri, HttpUri *base)
             }
         }
     }
+    if (!uri->scheme) {
+        uri->scheme = sclone("http");
+    }
+    if (!uri->host) {
+        uri->host = sclone("localhost");
+    }
+    if (!uri->path) {
+        uri->path = sclone("/");
+    }
     uri->secure = (smatch(uri->scheme, "https") || smatch(uri->scheme, "wss"));
     uri->webSockets = (smatch(uri->scheme, "ws") || smatch(uri->scheme, "wss"));
     return uri;
@@ -21455,8 +21760,9 @@ PUBLIC char *httpFormatUri(cchar *scheme, cchar *host, int port, cchar *path, cc
 
     portDelim = "";
     portStr = "";
+    hostDelim = "";
 
-    if ((flags & HTTP_COMPLETE_URI) || host || scheme) {
+    if (flags & HTTP_COMPLETE_URI) {
         if (scheme == 0 || *scheme == '\0') {
             scheme = "http";
         }
@@ -21465,20 +21771,21 @@ PUBLIC char *httpFormatUri(cchar *scheme, cchar *host, int port, cchar *path, cc
                 host = "localhost";
             }
         }
+    } 
+    if (scheme) {
         hostDelim = "://";
-    } else {
-        host = hostDelim = "";
     }
-    if (host) {
-        if (mprIsIPv6(host)) {
-            if (*host != '[') {
-                host = sfmt("[%s]", host);
-            } else if ((cp = scontains(host, "]:")) != 0) {
-                port = 0;
-            }
-        } else if (schr(host, ':')) {
+    if (!host) {
+        host = "";
+    }
+    if (mprIsIPv6(host)) {
+        if (*host != '[') {
+            host = sfmt("[%s]", host);
+        } else if ((cp = scontains(host, "]:")) != 0) {
             port = 0;
         }
+    } else if (schr(host, ':')) {
+        port = 0;
     }
     if (port != 0 && port != getDefaultPort(scheme)) {
         portStr = itos(port);
@@ -21488,7 +21795,7 @@ PUBLIC char *httpFormatUri(cchar *scheme, cchar *host, int port, cchar *path, cc
         scheme = "";
     }
     if (path && *path) {
-        if (*hostDelim) {
+        if (*host) {
             pathDelim = (*path == '/') ? "" :  "/";
         } else {
             pathDelim = "";
@@ -21507,7 +21814,8 @@ PUBLIC char *httpFormatUri(cchar *scheme, cchar *host, int port, cchar *path, cc
         queryDelim = query = "";
     }
     if (portDelim) {
-        uri = sjoin(scheme, hostDelim, host, portDelim, portStr, pathDelim, path, referenceDelim, reference, queryDelim, query, NULL);
+        uri = sjoin(scheme, hostDelim, host, portDelim, portStr, pathDelim, path, referenceDelim, reference, 
+            queryDelim, query, NULL);
     } else {
         uri = sjoin(scheme, hostDelim, host, pathDelim, path, referenceDelim, reference, queryDelim, query, NULL);
     }
@@ -21526,8 +21834,11 @@ PUBLIC HttpUri *httpGetRelativeUri(HttpUri *base, HttpUri *target, int clone)
     char        *basePath, *bp, *cp, *tp, *startDiff;
     int         i, baseSegments, commonSegments;
 
+    if (base == 0) {
+        return clone ? httpCloneUri(target, 0) : target;
+    }
     if (target == 0) {
-        return (clone) ? httpCloneUri(base, 0) : base;
+        return clone ? httpCloneUri(base, 0) : base;
     }
     if (!(target->path && target->path[0] == '/') || !((base->path && base->path[0] == '/'))) {
         /* If target is relative, just use it. If base is relative, cannot use it because we don't know where it is */
@@ -21621,8 +21932,12 @@ PUBLIC HttpUri *httpJoinUri(HttpUri *uri, int argc, HttpUri **others)
     HttpUri     *other;
     int         i;
 
-    uri = httpCloneUri(uri, 0);
-
+    if ((uri = httpCloneUri(uri, 0)) == 0) {
+        return 0;
+    }
+    if (!uri->valid) {
+        return 0;
+    }
     for (i = 0; i < argc; i++) {
         other = others[i];
         if (other->scheme) {
@@ -21664,6 +21979,9 @@ PUBLIC HttpUri *httpMakeUriLocal(HttpUri *uri)
 
 PUBLIC HttpUri *httpNormalizeUri(HttpUri *uri)
 {
+    if (!uri) {
+        return 0;
+    }
     uri->path = httpNormalizeUriPath(uri->path);
     return uri;
 }
@@ -21754,6 +22072,9 @@ PUBLIC HttpUri *httpResolveUri(HttpUri *base, int argc, HttpUri **others, bool l
     if ((current = httpCloneUri(base, 0)) == 0) {
         return 0;
     }
+    if (!current->valid) {
+        return current;
+    }
     if (local) {
         current->host = 0;
         current->scheme = 0;
@@ -21765,7 +22086,7 @@ PUBLIC HttpUri *httpResolveUri(HttpUri *base, int argc, HttpUri **others, bool l
     current->query = 0;
     current->reference = 0;
 
-    for (i = 0; i < argc; i++) {
+    for (i = 0; i < argc && others; i++) {
         other = others[i];
         if (other->scheme && !smatch(current->scheme, other->scheme)) {
             current->scheme = sclone(other->scheme);
@@ -21805,7 +22126,7 @@ PUBLIC HttpUri *httpLinkUri(HttpConn *conn, cchar *target, MprHash *options)
 {
     HttpRoute       *route, *lroute;
     HttpRx          *rx;
-    HttpUri         *uri;
+    HttpUri         *base, *uri, *canonical;
     cchar           *routeName, *action, *controller, *originalAction, *tplate;
     char            *rest;
 
@@ -21895,14 +22216,30 @@ PUBLIC HttpUri *httpLinkUri(HttpConn *conn, cchar *target, MprHash *options)
         }
     }
     target = httpTemplate(conn, tplate, options);
-    uri = httpCreateUri(target, 0);
-
+    if ((uri = httpCreateUri(target, 0)) == 0) {
+        return 0;
+    }
+    if (!uri->valid) {
+        return uri;
+    }
     /*
-        This was changed from: httpCreateUri(rx->uri) to rx->parsedUri.
-        The use case was appweb: /auth/form/login which redirects using: https:///auth/form/login on localhost:4443
-        This must extract the existing host and port from the prior request
+        This was changed from: httpCreateUri(rx->uri) to rx->parsedUri because we must extract the existing host and 
+        port from the prior request. The use case was appweb: 
+            /auth/form/login which redirects using: https:///auth/form/login on localhost:4443
      */
-    uri = httpResolveUri(rx->parsedUri, 1, &uri, 0);
+    canonical = conn->host->canonical;
+    if (canonical) {
+        base = httpCloneUri(rx->parsedUri, 0);
+        if (canonical->host) {
+            base->host = canonical->host;
+        }
+        if (canonical->port) {
+            base->port = canonical->port;
+        }
+    } else {
+        base = rx->parsedUri;
+    }
+    uri = httpResolveUri(base, 1, &uri, 0);
     return httpNormalizeUri(uri);
 }
 
@@ -21921,6 +22258,9 @@ PUBLIC char *httpLinkEx(HttpConn *conn, cchar *target, MprHash *options)
 
 PUBLIC char *httpUriToString(HttpUri *uri, int flags)
 {
+    if (!uri) {
+        return "";
+    }
     return httpFormatUri(uri->scheme, uri->host, uri->port, uri->path, uri->reference, uri->query, flags);
 }
 
@@ -21958,7 +22298,7 @@ PUBLIC bool httpValidUriChars(cchar *uri)
 {
     ssize   pos;
 
-    if (uri == 0 || *uri == 0) {
+    if (uri == 0) {
         return 1;
     }
     pos = strspn(uri, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%");
@@ -21971,6 +22311,9 @@ PUBLIC bool httpValidUriChars(cchar *uri)
 
 static int getPort(HttpUri *uri)
 {
+    if (!uri) {
+        return 0;
+    }
     if (uri->port) {
         return uri->port;
     }
@@ -22023,8 +22366,8 @@ static cchar *expandRouteName(HttpConn *conn, cchar *routeName)
     if (sstarts(routeName, "${app}")) {
         return sjoin(route->prefix, &routeName[6], NULL);
     }
-#if DEPRECATE || 1
-    //  DEPRECATE in version 6
+#if DEPRECATED || 1
+    //  DEPRECATED in version 6
     if (routeName[0] == '|') {
         assert(routeName[0] != '|');
         return sjoin(route->prefix, &routeName[1], NULL);
@@ -22898,8 +23241,8 @@ static int matchWebSock(HttpConn *conn, HttpRoute *route, int dir)
             httpSetHeaderString(conn, "Sec-WebSocket-Protocol", ws->subProtocol);
         }
 #if !ME_HTTP_WEB_SOCKETS_STEALTH
-        httpSetHeader(conn, "X-Request-Timeout", "%lld", conn->limits->requestTimeout / MPR_TICKS_PER_SEC);
-        httpSetHeader(conn, "X-Inactivity-Timeout", "%lld", conn->limits->inactivityTimeout / MPR_TICKS_PER_SEC);
+        httpSetHeader(conn, "X-Request-Timeout", "%lld", conn->limits->requestTimeout / TPS);
+        httpSetHeader(conn, "X-Inactivity-Timeout", "%lld", conn->limits->inactivityTimeout / TPS);
 #endif
         if (route->webSocketsPingPeriod) {
             ws->pingEvent = mprCreateEvent(conn->dispatcher, "webSocket", route->webSocketsPingPeriod,
@@ -23818,8 +24161,8 @@ PUBLIC int httpUpgradeWebSocket(HttpConn *conn)
     httpSetHeaderString(conn, "Sec-WebSocket-Key", tx->webSockKey);
     httpSetHeaderString(conn, "Sec-WebSocket-Protocol", conn->protocols ? conn->protocols : "chat");
     httpSetHeaderString(conn, "Sec-WebSocket-Version", "13");
-    httpSetHeader(conn, "X-Request-Timeout", "%lld", conn->limits->requestTimeout / MPR_TICKS_PER_SEC);
-    httpSetHeader(conn, "X-Inactivity-Timeout", "%lld", conn->limits->inactivityTimeout / MPR_TICKS_PER_SEC);
+    httpSetHeader(conn, "X-Request-Timeout", "%lld", conn->limits->requestTimeout / TPS);
+    httpSetHeader(conn, "X-Inactivity-Timeout", "%lld", conn->limits->inactivityTimeout / TPS);
 
     conn->upgraded = 1;
     conn->keepAliveCount = 0;
@@ -23902,3 +24245,4 @@ static void traceErrorProc(HttpConn *conn, cchar *fmt, ...)
 
     @end
  */
+

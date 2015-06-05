@@ -12,9 +12,9 @@
 
 //  TODO - should this be refactored to use MprCache?
 
-#define CACHE_TIMER_PERIOD  (60 * MPR_TICKS_PER_SEC)
+#define CACHE_TIMER_PERIOD  (60 * TPS)
 #define CACHE_HASH_SIZE     257
-#define CACHE_LIFESPAN      (86400 * MPR_TICKS_PER_SEC)
+#define CACHE_LIFESPAN      (86400 * TPS)
 
 typedef struct EjsLocalCache
 {
@@ -179,7 +179,7 @@ static EjsPot *sl_limits(Ejs *ejs, EjsLocalCache *cache, int argc, EjsObj **argv
     ejsSetPropertyByName(ejs, result, EN("keys"), 
         ejsCreateNumber(ejs, (MprNumber) (cache->maxKeys == MAXSSIZE ? 0 : cache->maxKeys)));
     ejsSetPropertyByName(ejs, result, EN("lifespan"), 
-        ejsCreateNumber(ejs, (MprNumber) (cache->lifespan / MPR_TICKS_PER_SEC)));
+        ejsCreateNumber(ejs, (MprNumber) (cache->lifespan / TPS)));
     ejsSetPropertyByName(ejs, result, EN("memory"), 
         ejsCreateNumber(ejs, (MprNumber) (cache->maxMem == MAXSSIZE ? 0 : cache->maxMem)));
     return result;
@@ -291,7 +291,7 @@ static void setLocalLimits(Ejs *ejs, EjsLocalCache *cache, EjsPot *options)
         }
     }
     if ((vp = ejsGetPropertyByName(ejs, options, EN("lifespan"))) != 0) {
-        cache->lifespan = (ssize) ejsGetInt64(ejs, vp) * MPR_TICKS_PER_SEC;
+        cache->lifespan = (ssize) ejsGetInt64(ejs, vp) * TPS;
     }
     if ((vp = ejsGetPropertyByName(ejs, options, EN("memory"))) != 0) {
         cache->maxMem = (ssize) ejsGetInt64(ejs, vp);
@@ -352,7 +352,7 @@ static EjsNumber *sl_write(Ejs *ejs, EjsLocalCache *cache, int argc, EjsAny **ar
     if (argc >= 3 && argv[2] != ESV(null)) {
         options = argv[2];
         if ((vp = ejsGetPropertyByName(ejs, options, EN("lifespan"))) != 0) {
-            lifespan = ejsGetInt64(ejs, vp) * MPR_TICKS_PER_SEC;
+            lifespan = ejsGetInt64(ejs, vp) * TPS;
         }
         if ((vp = ejsGetPropertyByName(ejs, options, EN("expires"))) != 0 && ejsIs(ejs, vp, Date)) {
             expires = ejsGetDate(ejs, vp);

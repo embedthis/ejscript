@@ -36,17 +36,6 @@ Me.load({
             sources:   [ 'http.c' ],
             depends:   [ 'libhttp' ],
             ifdef:     [ 'http' ],
-            postblend: function (target) {
-                if (target.static) {
-                    target.depends += ['libmprssl']
-                }
-            },
-        },
-
-        'http-ca-crt': {
-            type: 'file',
-            files: [ 'ca.crt' ],
-            path: '${BIN}/ca.crt',
-        },
-	},
+        }
+	}
 })

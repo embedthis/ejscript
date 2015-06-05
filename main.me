@@ -3,28 +3,13 @@
  */
 
 Me.load({
+    makeme: '>=0.8.6',
+
     plugins: [ 'configuration', 'installs' ],
 
     blend: [
-        'http',
-        'zlib',
-        'sqlite',
-
-        'src/libejs.me',
-        'src/cmd/cmd.me',
-        'src/core/core.me',
-
-        'src/ejs.unix/unix.me',
-        'src/ejs.db/db.me',
-        'src/ejs.db.mapper/mapper.me',
-        'src/ejs.db.sqlite/sqlite.me',
-        'src/ejs.mail/mail.me',
-        'src/ejs.web/web.me',
-        'src/ejs.template/template.me',
-        'src/ejs.zlib/zlib.me',
-        'src/ejs.tar/tar.me',
-        'src/ejs.mvc/mvc.me',
-        'src/ejs.utest/utest.me',
+        'src/*.me',
+        'src/*/*.me',
         'doc/doc.me',
     ],
 
@@ -42,8 +27,6 @@ Me.load({
     },
 
     settings: {
-        me: '=>0.8.4',
-
         integrate: true,
 
         /*
@@ -98,11 +81,13 @@ Me.load({
              */
             logging: true,
 
-            manager: 'ejsman',
-
             alloc: {
                 parallel: true
             },
+        },
+
+        watchdog: {
+            name: 'ejsman',
         },
 
         /*
@@ -119,7 +104,11 @@ Me.load({
     },
 
     scripts: {
-        loaded: `me.targets.httpcmd.enable = false`,
+        loaded: `
+            if (me.targets.httpcmd) {
+                me.targets.httpcmd.enable = false
+            }
+        `,
     },
 
     targets: {

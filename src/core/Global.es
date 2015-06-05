@@ -18,7 +18,7 @@ module ejs {
         The "ejs" namespace used for the core library
         @spec ejs
      */
-    public namespace ejs
+    // public namespace ejs
 
     /** 
         The public namespace used to make entities visible accross modules.

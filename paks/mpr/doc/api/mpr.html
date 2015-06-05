@@ -342,8 +342,6 @@
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___mpr_socket_1ga0cb09a106e793b09eebbedceaab7f85c" class="nameRef">mprGetSocketInfo</a>(<a href="osdep.html#osdep_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *ip, int port, int *family, int *protocol, struct sockaddr **addr, <a href="#mpr_8h_1a7e81f05ea37d05efc10e7c45c1111d0d" class="ref">Socklen</a> *addrlen)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get the socket for an IP:Port address.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___mpr_socket_1gaa4d2f67f80f168a4be7e5f3b96541bab" class="nameRef">mprGetSocketPort</a>(<a href="#group___mpr_socket" class="ref">MprSocket</a> *sp)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get the port used by a socket.</td></tr>
 <tr class="apiDef"><td class="apiType">char*</td><td><a href="#group___mpr_socket_1ga84afd209ead21ddbd5690402caf982aa" class="nameRef">mprGetSocketState</a>(<a href="#group___mpr_socket" class="ref">MprSocket</a> *sp)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get the socket state.</td></tr>
-<tr class="apiDef"><td class="apiType">int</td><td><a href="#group___mpr_ssl_1ga0751a98b49aa54ef0b416d892e072270" class="nameRef">mprGetSslCipherCode</a>(<a href="osdep.html#osdep_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *cipher)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Lookup an SSL cipher by its IANA name and return the cipher IANA code.</td></tr>
-<tr class="apiDef"><td class="apiType"><a href="osdep.html#osdep_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar*</a></td><td><a href="#group___mpr_ssl_1ga2726c76da3ced81e8ebb5a573573d1c9" class="nameRef">mprGetSslCipherName</a>(int cipher)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Lookup an SSL cipher by its IANA code and return the string name.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___mpr_1ga187fdc48e7a489440fb6de67c643bf3b" class="nameRef">mprGetState</a>()</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Get the MPR execution state.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___mpr_file" class="ref">MprFile*</a></td><td><a href="#group___mpr_file_1ga0fabdee56522d116443f8c794550ee64" class="nameRef">mprGetStderr</a>()</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Return a file object for the Stderr I/O channel.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="#group___mpr_file" class="ref">MprFile*</a></td><td><a href="#group___mpr_file_1ga7ed8a2aa87f271d5b12e3a42d5e5cf57" class="nameRef">mprGetStdin</a>()</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Return a file object for the Stdin I/O channel.</td></tr>
@@ -579,6 +577,7 @@
 <tr class="apiDef"><td class="apiType">void</td><td><a href="#group___mpr_ssl_1gaa8293be1a1b769f03db306834ef5291f" class="nameRef">mprSetSslKeyFile</a>(struct MprSsl *ssl, <a href="osdep.html#osdep_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *keyFile)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Set the key file to use for SSL.</td></tr>
 <tr class="apiDef"><td class="apiType">void</td><td><a href="#group___mpr_ssl_1ga00cd731b20d96a0b0080637d59becd4a" class="nameRef">mprSetSslProtocols</a>(struct MprSsl *ssl, int protocols)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Set the SSL protocol to use.</td></tr>
 <tr class="apiDef"><td class="apiType">void</td><td><a href="#group___mpr_ssl_1ga98e6c82c9ff89135aea961c2ff3d4de4" class="nameRef">mprSetSslProvider</a>(<a href="#group___mpr_ssl" class="ref">MprSsl</a> *ssl, <a href="osdep.html#osdep_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *provider)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Set the SSL provider to use.</td></tr>
+<tr class="apiDef"><td class="apiType">void</td><td><a href="#group___mpr_ssl_1ga7e5f242a317395b047618fc7dde6b4f1" class="nameRef">mprSetSslRevokeList</a>(struct MprSsl *ssl, <a href="osdep.html#osdep_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *revokeList)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Define a list of certificates to revoke.</td></tr>
 <tr class="apiDef"><td class="apiType">void</td><td><a href="#group___mpr_thread_1ga60bd7071428f6043d834c48ee8914560" class="nameRef">mprSetThreadPriority</a>(<a href="#group___mpr_thread" class="ref">MprThread</a> *thread, int priority)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Set the thread priroity.</td></tr>
 <tr class="apiDef"><td class="apiType">void</td><td><a href="#group___mpr_worker_1gad7721cca919f57f9b85434e6435ef092" class="nameRef">mprSetWorkerStackSize</a>(int size)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Set the default worker stack size.</td></tr>
 <tr class="apiDef"><td class="apiType"><a href="osdep.html#osdep_8h_1ad5c9d4ba3dc37783a528b0925dc981a0" class="ref">bool</a></td><td><a href="#group___mpr_1ga0206927d986cd9ca7c42f8c530de6000" class="nameRef">mprShouldAbortRequests</a>()</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Test if requests should be aborted.</td></tr>
@@ -596,6 +595,7 @@
 <tr class="apiDef"><td class="apiType"><a href="#group___mpr_list" class="ref">MprList*</a></td><td><a href="#group___mpr_list_1ga0326ee9015a4949d2664fd386ca975f9" class="nameRef">mprSortList</a>(<a href="#group___mpr_list" class="ref">MprList</a> *list, <a href="#group___mpr_list_1ga128df90ccf99b25bd404afc01ace1415" class="ref">MprSortProc</a> compare, void *ctx)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Sort a list.</td></tr>
 <tr class="apiDef"><td class="apiType">void</td><td><a href="#group___mpr_sync_1gaf2a84bc9cee343c8ebfc3bfa49751795" class="nameRef">mprSpinLock</a>(<a href="#struct_mpr_spin" class="ref">MprSpin</a> *lock)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Lock a spinlock.</td></tr>
 <tr class="apiDef"><td class="apiType">void</td><td><a href="#group___mpr_sync_1gaeb11c8a1f0c2c3f905967a932626121e" class="nameRef">mprSpinUnlock</a>(<a href="#struct_mpr_spin" class="ref">MprSpin</a> *lock)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Unlock a spinlock.</td></tr>
+<tr class="apiDef"><td class="apiType">int</td><td><a href="#group___mpr_ssl_1gad2a85131eb557b8beeedb22d851f6dc7" class="nameRef">mprSslInit</a>(void *unused, <a href="#group___mpr_module" class="ref">MprModule</a> *module)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Initialize the SSL provider.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___mpr_1ga3d488881e616f7cff999dc214d1ff7d8" class="nameRef">mprStart</a>()</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Start the Mpr services.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___mpr_cmd_1ga120e7a3a3a571b9520853e31d9ce6021" class="nameRef">mprStartCmd</a>(<a href="#group___mpr_cmd" class="ref">MprCmd</a> *cmd, int argc, <a href="osdep.html#osdep_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> **argv, <a href="osdep.html#osdep_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> **envp, int flags)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Start the command.</td></tr>
 <tr class="apiDef"><td class="apiType">int</td><td><a href="#group___mpr_event_1ga05910285cefa99428bada1572eed1bbd" class="nameRef">mprStartDispatcher</a>(<a href="#group___mpr_dispatcher" class="ref">MprDispatcher</a> *dispatcher)</td></tr><tr class="apiBrief"><td>&nbsp;</td><td>Start a dispatcher by setting it on the run queue.</td></tr>
@@ -1419,7 +1419,7 @@
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>Flag for mprGetPathFiles to return paths relative to the directory.</td></tr>
 <tr class="apiDef">
-<td>#define</td><td><a href="#mpr_8h_1a3865b9d22e4cf35a4bbb06fe282ed0b4" class="nameRef">MPR_PROTO_ALL</a>&nbsp;&nbsp;&nbsp;0xF</td>
+<td>#define</td><td><a href="#mpr_8h_1a3865b9d22e4cf35a4bbb06fe282ed0b4" class="nameRef">MPR_PROTO_ALL</a>&nbsp;&nbsp;&nbsp;0x2F</td>
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>All protocols.</td></tr>
 <tr class="apiDef">
@@ -1431,11 +1431,15 @@
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>SSL V3 protocol.</td></tr>
 <tr class="apiDef">
-<td>#define</td><td><a href="#mpr_8h_1aa66454bfc118af48a0d0df362211d9ad" class="nameRef">MPR_PROTO_TLSV1_1</a>&nbsp;&nbsp;&nbsp;0x4</td>
+<td>#define</td><td><a href="#mpr_8h_1a20571df5bf7608fa64cffa1d357c68f1" class="nameRef">MPR_PROTO_TLSV1_0</a>&nbsp;&nbsp;&nbsp;0x8</td>
+</tr>
+<tr class="apiBrief"><td>&nbsp;</td><td>TLS V1.0 protocol.</td></tr>
+<tr class="apiDef">
+<td>#define</td><td><a href="#mpr_8h_1aa66454bfc118af48a0d0df362211d9ad" class="nameRef">MPR_PROTO_TLSV1_1</a>&nbsp;&nbsp;&nbsp;0x10</td>
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>TLS V1.1 protocol.</td></tr>
 <tr class="apiDef">
-<td>#define</td><td><a href="#mpr_8h_1a7216cd86a972299f47f8f450371874c8" class="nameRef">MPR_PROTO_TLSV1_2</a>&nbsp;&nbsp;&nbsp;0x8</td>
+<td>#define</td><td><a href="#mpr_8h_1a7216cd86a972299f47f8f450371874c8" class="nameRef">MPR_PROTO_TLSV1_2</a>&nbsp;&nbsp;&nbsp;0x20</td>
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>TLS V1.2 protocol.</td></tr>
 <tr class="apiDef">
@@ -1486,10 +1490,6 @@
 <td>#define</td><td><a href="#mpr_8h_1aea6f51f6ff2d8f1186f129c42a928fed" class="nameRef">MPR_SOCKET_BUFFERED_WRITE</a>&nbsp;&nbsp;&nbsp;0x1000</td>
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>Socket has buffered write data (in SSL stack).</td></tr>
-<tr class="apiDef">
-<td>#define</td><td><a href="#mpr_8h_1af0056860ee1675366998780a68b967a8" class="nameRef">MPR_SOCKET_CHECKED</a>&nbsp;&nbsp;&nbsp;0x2000</td>
-</tr>
-<tr class="apiBrief"><td>&nbsp;</td><td>Peer certificate has been checked.</td></tr>
 <tr class="apiDef">
 <td>#define</td><td><a href="#mpr_8h_1a9899fbaf22958ef4d2fbb5bce6cbb898" class="nameRef">MPR_SOCKET_CLOSED</a>&nbsp;&nbsp;&nbsp;0x4</td>
 </tr>
@@ -1550,10 +1550,6 @@
 <td>#define</td><td><a href="#mpr_8h_1add77d7932ad074fe60c0782cafc78b72" class="nameRef">MPR_STOPPING</a>&nbsp;&nbsp;&nbsp;3</td>
 </tr>
 <tr class="apiBrief"><td>&nbsp;</td><td>App has been instructed to shutdown.</td></tr>
-<tr class="apiDef">
-<td>#define</td><td><a href="#mpr_8h_1a3d29febaeaca5d39a1ad539c1a3b6225" class="nameRef">MPR_TICKS_PER_SEC</a>&nbsp;&nbsp;&nbsp;TPS</td>
-</tr>
-<tr class="apiBrief"><td>&nbsp;</td><td>Time ticks per second.</td></tr>
 <tr class="apiDef">
 <td>#define</td><td><a href="#mpr_8h_1a1e93ff508c17a532675a9bb090d2bc7a" class="nameRef">MPR_TIMEOUT_GC_SYNC</a>&nbsp;&nbsp;&nbsp;100</td>
 </tr>
@@ -10869,7 +10865,7 @@ Server addresss that accepted a new connection (actual interface).
     <tr><td class="param">int</td><td><td>acceptPort</td><td>
 Server port doing the listening.
 </td>
-    <tr><td class="param">char *</td><td><td>cipher</td><td>
+    <tr><td class="param">cchar *</td><td><td>cipher</td><td>
 Selected SSL cipher.
 </td>
     <tr><td class="param">char *</td><td><td>errorMsg</td><td>
@@ -10893,13 +10889,13 @@ Listening socket.
     <tr><td class="param"><a class="ref" href="#struct_mpr_mutex">MprMutex</a> *</td><td><td>mutex</td><td>
 Multi-thread sync.
 </td>
-    <tr><td class="param">char *</td><td><td>peerCert</td><td>
+    <tr><td class="param">cchar *</td><td><td>peerCert</td><td>
 Peer SSL certificate.
 </td>
-    <tr><td class="param">char *</td><td><td>peerCertIssuer</td><td>
+    <tr><td class="param">cchar *</td><td><td>peerCertIssuer</td><td>
 Issuer of peer certificate.
 </td>
-    <tr><td class="param">char *</td><td><td>peerName</td><td>
+    <tr><td class="param">cchar *</td><td><td>peerName</td><td>
 Peer common SSL name.
 </td>
     <tr><td class="param">int</td><td><td>port</td><td>
@@ -10913,6 +10909,9 @@ SSL Peer verified.
 </td>
     <tr><td class="param"><a class="ref" href="#struct_mpr_socket_service">MprSocketService</a> *</td><td><td>service</td><td>
 Socket service.
+</td>
+    <tr><td class="param">cchar *</td><td><td>session</td><td>
+SSL session ID (dependent on SSL provider).
 </td>
     <tr><td class="param">struct MprSsl *</td><td><td>ssl</td><td>
 SSL configuration.
@@ -11732,7 +11731,7 @@ Certificate verification cert file or bundle.
 Certificate verification cert directory (OpenSSL only).
 </td>
     <tr><td class="param">cchar *</td><td><td>certFile</td><td>
-Alternatively, locate the cert in a file.
+Certificate filename.
 </td>
     <tr><td class="param">bool</td><td><td>changed</td><td>
 Set if there is a change in the SSL config. 
@@ -11746,9 +11745,6 @@ Extended provider SSL configuration.
 </td>
     <tr><td class="param">bool</td><td><td>configured</td><td>
 Set if this SSL configuration has been processed.
-</td>
-    <tr><td class="param">cchar *</td><td><td>key</td><td>
-Key string.
 </td>
     <tr><td class="param">cchar *</td><td><td>keyFile</td><td>
 Alternatively, locate the key in a file.
@@ -11764,6 +11760,9 @@ Cached SSL provider to use.
 </td>
     <tr><td class="param">cchar *</td><td><td>providerName</td><td>
 SSL provider to use - null if default.
+</td>
+    <tr><td class="param">cchar *</td><td><td>revokeList</td><td>
+Certificate revocation list.
 </td>
     <tr><td class="param">bool</td><td><td>verified</td><td>
 Peer has been verified.
@@ -11831,44 +11830,6 @@ Verify the peer verificate.
     <tr><td class="param">server</td><td>True if the SSL configuration will be used on the server side.</td>
     </table></dd></dl>
     <dl><dt><b>API</b> Stability:</dt><dd>Stable.</dd></dl>
-    <dl><dt>See Also:</dt><dd>
-    </dd></dl>
-  </div>
-</div>
-<a name="group___mpr_ssl_1ga0751a98b49aa54ef0b416d892e072270"></a>
-<div class="api">
-  <div class="prototype">
-    int
-    mprGetSslCipherCode
-(<a href="osdep.html#osdep_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *cipher)
-  </div>
-  <div class="apiDetail">
-<p>Lookup an SSL cipher by its IANA name and return the cipher IANA code.</p>
-    <dl><dt>Parameters:</dt><dd>
-    <table class="parameters" title="Parameters">
-    <tr><td class="param">cipher</td><td>Cipher IANA name.</td>
-    </table></dd></dl>
-    <dl><dt>Returns:</dt><dd>String cipher code. For example: given &quot;TLS_RSA_WITH_AES_256_CBC_SHA&quot; return 0x35.</dd></dl>
-    <dl><dt><b>API</b> Stability:</dt><dd>Evolving.</dd></dl>
-    <dl><dt>See Also:</dt><dd>
-    </dd></dl>
-  </div>
-</div>
-<a name="group___mpr_ssl_1ga2726c76da3ced81e8ebb5a573573d1c9"></a>
-<div class="api">
-  <div class="prototype">
-    <a href="osdep.html#osdep_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *
-    mprGetSslCipherName
-(int cipher)
-  </div>
-  <div class="apiDetail">
-<p>Lookup an SSL cipher by its IANA code and return the string name.</p>
-    <dl><dt>Parameters:</dt><dd>
-    <table class="parameters" title="Parameters">
-    <tr><td class="param">cipher</td><td>Cipher IANA code.</td>
-    </table></dd></dl>
-    <dl><dt>Returns:</dt><dd>String cipher name. For example: given 0x35, return &quot;TLS_RSA_WITH_AES_256_CBC_SHA&quot;.</dd></dl>
-    <dl><dt><b>API</b> Stability:</dt><dd>Evolving.</dd></dl>
     <dl><dt>See Also:</dt><dd>
     </dd></dl>
   </div>
@@ -12017,6 +11978,39 @@ Verify the peer verificate.
     <tr><td class="param">provider</td><td>SSL provider name (openssl | matrixssl | est | nanossl).</td>
     </table></dd></dl>
     <dl><dt><b>API</b> Stability:</dt><dd>Stable.</dd></dl>
+    <dl><dt>See Also:</dt><dd>
+    </dd></dl>
+  </div>
+</div>
+<a name="group___mpr_ssl_1ga7e5f242a317395b047618fc7dde6b4f1"></a>
+<div class="api">
+  <div class="prototype">
+    void
+    mprSetSslRevokeList
+(struct MprSsl *ssl, <a href="osdep.html#osdep_8h_1a0f128c3e0c83721af0220c00554e9c4e" class="ref">cchar</a> *revokeList)
+  </div>
+  <div class="apiDetail">
+<p>Define a list of certificates to revoke.</p>
+    <dl><dt>Parameters:</dt><dd>
+    <table class="parameters" title="Parameters">
+    <tr><td class="param">ssl</td><td>SSL instance returned from <a class="ref" href="#group___mpr_ssl_1gac6a41e387c7475251098f237f5f0a802">mprCreateSsl</a></td>
+    <tr><td class="param">revokeList</td><td>Path to the SSL certificate revocation list.</td>
+    </table></dd></dl>
+    <dl><dt><b>API</b> Stability:</dt><dd>Prototype.</dd></dl>
+    <dl><dt>See Also:</dt><dd>
+    </dd></dl>
+  </div>
+</div>
+<a name="group___mpr_ssl_1gad2a85131eb557b8beeedb22d851f6dc7"></a>
+<div class="api">
+  <div class="prototype">
+    int
+    mprSslInit
+(void *unused, <a href="#group___mpr_module" class="ref">MprModule</a> *module)
+  </div>
+  <div class="apiDetail">
+<p>Initialize the SSL provider.</p>
+    <dl><dt><b>API</b> Stability:</dt><dd>Evolving.</dd></dl>
     <dl><dt>See Also:</dt><dd>
     </dd></dl>
   </div>

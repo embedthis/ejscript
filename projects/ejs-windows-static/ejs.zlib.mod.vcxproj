@@ -29,18 +29,22 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
         <ConfigurationType></ConfigurationType>
         <CharacterSet>NotSet</CharacterSet>
+        <PlatformToolset>v120</PlatformToolset>
       </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
         <ConfigurationType></ConfigurationType>
         <CharacterSet>NotSet</CharacterSet>
+        <PlatformToolset>v120</PlatformToolset>
       </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
         <ConfigurationType></ConfigurationType>
         <CharacterSet>NotSet</CharacterSet>
+        <PlatformToolset>v120</PlatformToolset>
       </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
         <ConfigurationType></ConfigurationType>
         <CharacterSet>NotSet</CharacterSet>
+        <PlatformToolset>v120</PlatformToolset>
       </PropertyGroup>
 
       <Import Project="$(VCTargetsPath)Microsoft.Cpp.Default.props" />
@@ -90,13 +94,13 @@
 
       <ItemDefinitionGroup>
       <Link>
-        <AdditionalDependencies>libejs.lib;libhttp.lib;libmpr.lib;libpcre.lib;%(AdditionalDependencies)</AdditionalDependencies>
+        <AdditionalDependencies>libejs.zlib.lib;libejs.lib;libhttp.lib;libpcre.lib;libmpr.lib;libzlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
         <AdditionalLibraryDirectories>$(OutDir);build\$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       </Link>
 
       <CustomBuildStep>
         <Command>cd ..\..\src\ejs.zlib
-..\..\build\windows-x86-static\bin\ejsc --out ../../build/windows-x86-static/bin/ejs.zlib.mod  --optimize 9 Zlib.es
+"../../build/windows-x86-static/bin/ejsc" --out "../../build/windows-x86-static/bin/ejs.zlib.mod"  --optimize 9 Zlib.es
 cd ..\..\projects\ejs-windows-static</Command>
         <Outputs>$(BinDir)\ejs.zlib.mod</Outputs>
       </CustomBuildStep>

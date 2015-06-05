@@ -128,11 +128,6 @@ MAIN(httpMain, int argc, char **argv, char **envp)
     }
     start = mprGetTime();
 
-#if ME_STATIC && ME_COM_SSL
-    extern MprModuleEntry mprSslInit;
-    mprNop(mprSslInit);
-#endif
-
     processing();
     mprServiceEvents(-1, 0);
 
@@ -480,7 +475,7 @@ static int parseArgs(int argc, char **argv)
             if (nextArg >= argc) {
                 return showUsage();
             } else {
-                app->timeout = atoi(argv[++nextArg]) * MPR_TICKS_PER_SEC;
+                app->timeout = atoi(argv[++nextArg]) * TPS;
             }
 
         } else if (smatch(argp, "--trace")) {
@@ -874,6 +869,10 @@ static int issueRequest(HttpConn *conn, cchar *url, MprList *files)
                 if (redirect) {
                     httpRemoveHeader(conn, "Host");
                     location = httpCreateUri(redirect, 0);
+                    if (!location || !location->valid) {
+                        httpError(conn, HTTP_ABORT, "Invalid location URI");
+                        break;
+                    }
                     target = httpJoinUri(conn->tx->parsedUri, 1, &location);
                     url = httpUriToString(target, HTTP_COMPLETE_URI);
                     count = 0;

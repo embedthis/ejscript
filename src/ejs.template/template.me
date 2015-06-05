@@ -10,7 +10,7 @@ Me.load({
             path: '${BIN}/ejs.template.mod',
             files: [ 'TemplateParser.es' ],
             build: `
-                run('${LBIN}/ejsc --out ${BIN}/ejs.template.mod ${settings.esflags} --optimize 9 ${FILES}')
+                run('"${LBIN}/ejsc" --out "${BIN}/ejs.template.mod" ${settings.esflags} --optimize 9 ${FILES}')
             `,
             message: 'Compile: ejs.template.mod',
             depends: [ 'ejsc', 'ejs.mod' ],

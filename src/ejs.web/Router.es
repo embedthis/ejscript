@@ -477,7 +477,7 @@ module ejs.web {
                     value = pathInfo.replace(r.pattern, value)
                 }
                 if (value.toString().contains("{")) {
-                    value = Uri.template(value, params, request)
+                    value = Uri.templateString(value, params, request)
                 }
                 params[field] = value
             }

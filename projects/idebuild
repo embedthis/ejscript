@@ -7,8 +7,8 @@ PRODUCT=ejs
 ARCH=x86
 XCODE=/usr/bin/xcodebuild
 PROFILE=default
-BINARIES="ejs ejsc manager ejsmod ejsrun mvc utest"
-LIBRARIES="libejs libejs.web libejs.zlib libhttp libmpr libmprssl libsql libzlib"
+BINARIES="ejs ejsc ejsman ejsmod ejsrun mvc utest"
+LIBRARIES="libejs libejs.web libejs.zlib libhttp libmpr libsql libzlib"
 MODULES="ejs.db.mapper ejs.db ejs.db.sqlite ejs.mail ejs ejs.mvc ejs.tar ejs.template ejs.unix ejs.web ejs.zlib"
 
 # Just for VS

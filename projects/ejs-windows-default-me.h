@@ -9,6 +9,15 @@
 #ifndef ME_AUTHOR
     #define ME_AUTHOR "Embedthis Software"
 #endif
+#ifndef ME_CERTS_BITS
+    #define ME_CERTS_BITS 2048
+#endif
+#ifndef ME_CERTS_DAYS
+    #define ME_CERTS_DAYS 3650
+#endif
+#ifndef ME_CERTS_GENDH
+    #define ME_CERTS_GENDH 0
+#endif
 #ifndef ME_COMPANY
     #define ME_COMPANY "embedthis"
 #endif
@@ -117,17 +126,11 @@
 #ifndef ME_MANIFEST
     #define ME_MANIFEST "installs/manifest.me"
 #endif
-#ifndef ME_ME
-    #define ME_ME "=>0.8.4"
-#endif
 #ifndef ME_MPR_ALLOC_PARALLEL
     #define ME_MPR_ALLOC_PARALLEL 1
 #endif
 #ifndef ME_MPR_LOGGING
     #define ME_MPR_LOGGING 1
-#endif
-#ifndef ME_MPR_MANAGER
-    #define ME_MPR_MANAGER "ejsman"
 #endif
 #ifndef ME_NAME
     #define ME_NAME "ejs"
@@ -146,6 +149,9 @@
 #endif
 #ifndef ME_VERSION
     #define ME_VERSION "2.5.3"
+#endif
+#ifndef ME_WATCHDOG_NAME
+    #define ME_WATCHDOG_NAME "ejsman"
 #endif
 
 /* Prefixes */
@@ -223,7 +229,7 @@
 
 /* Profile */
 #ifndef ME_CONFIG_CMD
-    #define ME_CONFIG_CMD "me -d -q -platform windows-x86-default -configure . -with est -gen vs"
+    #define ME_CONFIG_CMD "me -d -q -platform windows-x86-default -configure . -without ssl -gen vs"
 #endif
 #ifndef ME_EJS_PRODUCT
     #define ME_EJS_PRODUCT 1
@@ -253,9 +259,6 @@
 #ifndef ME_COM_CC
     #define ME_COM_CC 1
 #endif
-#ifndef ME_COM_EST
-    #define ME_COM_EST 1
-#endif
 #ifndef ME_COM_HTTP
     #define ME_COM_HTTP 1
 #endif
@@ -267,9 +270,6 @@
 #endif
 #ifndef ME_COM_MPR
     #define ME_COM_MPR 1
-#endif
-#ifndef ME_COM_OPENSSL
-    #define ME_COM_OPENSSL 0
 #endif
 #ifndef ME_COM_OSDEP
     #define ME_COM_OSDEP 1
@@ -284,7 +284,7 @@
     #define ME_COM_SQLITE 1
 #endif
 #ifndef ME_COM_SSL
-    #define ME_COM_SSL 1
+    #define ME_COM_SSL 0
 #endif
 #ifndef ME_COM_VXWORKS
     #define ME_COM_VXWORKS 0
