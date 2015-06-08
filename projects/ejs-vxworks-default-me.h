@@ -163,7 +163,7 @@
     #define ME_TUNE "speed"
 #endif
 #ifndef ME_VERSION
-    #define ME_VERSION "2.5.3"
+    #define ME_VERSION "2.5.4"
 #endif
 #ifndef ME_WATCHDOG_NAME
     #define ME_WATCHDOG_NAME "ejsman"
@@ -219,7 +219,7 @@
     #define ME_VAPP_PREFIX "deploy"
 #endif
 #ifndef ME_SRC_PREFIX
-    #define ME_SRC_PREFIX "/usr/src/ejs-2.5.3"
+    #define ME_SRC_PREFIX "/usr/src/ejs-2.5.4"
 #endif
 
 /* Suffixes */
@@ -261,18 +261,15 @@
     #define ME_MINOR_VERSION 5
 #endif
 #ifndef ME_PATCH_VERSION
-    #define ME_PATCH_VERSION 3
+    #define ME_PATCH_VERSION 4
 #endif
 #ifndef ME_VNUM
-    #define ME_VNUM 200050003
+    #define ME_VNUM 200050004
 #endif
 
 /* Components */
 #ifndef ME_COM_CC
     #define ME_COM_CC 1
-#endif
-#ifndef ME_COM_EST
-    #define ME_COM_EST 0
 #endif
 #ifndef ME_COM_HTTP
     #define ME_COM_HTTP 1
@@ -285,9 +282,6 @@
 #endif
 #ifndef ME_COM_MATRIXSSL
     #define ME_COM_MATRIXSSL 0
-#endif
-#ifndef ME_COM_MBEDTLS
-    #define ME_COM_MBEDTLS 0
 #endif
 #ifndef ME_COM_MPR
     #define ME_COM_MPR 1
