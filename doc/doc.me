@@ -13,9 +13,13 @@ Me.load({
                     '${SRC}/ejs.web/ejsWeb.h',
                     '${SRC}/ejsCompiler.h',
                 ], 'Ejscript API')
-                let files = Path().files(['api/ejs.html', me.dir.paks.join('*/doc/api/*.html')])
-                for each (let src: Path in files) {
-                    apiLayout(src, Path('dist/ref').join(src))
+                apiLayout('api/ejs.html', 'dist/ref/api/ejs.html')
+
+                let base = me.dir.paks.join('*/doc')
+                let files = Path().files(base.join('api/*.html'))
+                for each (src in files) {
+                    let dest = src.trimComponents(base.components.length)
+                    apiLayout(src, Path('dist/ref').join(dest))
                 }
             `
         }, 
