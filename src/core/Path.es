@@ -239,8 +239,8 @@ module ejs {
                 Set to undefined to report patterns that don't resolve by throwing an exception. 
                 Set to null to do nothing and omit the pattern from the results.
                 Set to the empty string to use the pattern itself in the results.
-                Set to other value to be used in the results in place of the pattern when there are no matching 
-                    files or directories. 
+                Set to other value to be used in the results in place of the pattern when there are no matching
+                    files or directories.
                 Default is null.
 
             @option noneg Boolean Do not process negated file patterns.
