@@ -734,7 +734,7 @@ and replace it with the replace text. If the pattern is a string, only the first
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Resolve paths in the neighborhood of this path. Resolve operates like join, except that it joins the 
 given paths to the directory portion of the current ('this') path. For example: 
-Path('/usr/bin/ejs/bin').resolve('lib') will return '/usr/lib/ejs/lib'. i.e. it will return the
+Path('/usr/bin/ejscript/bin').resolve('lib') will return '/usr/lib/ejscript/lib'. i.e. it will return the
 sibling directory 'lib'.<br/><br/>Resolve operates by determining a virtual current directory for this Path object. It then successively 
 joins the given paths to the directory portion of the current result. If the next path is an absolute path, 
 it is used unmodified.  The effect is to find the given paths with a virtual current directory set to the 

@@ -98,7 +98,7 @@ Removing Ejscript on MAC OS X
 
 This is the procedure to remove Ejscript on all systems except Windows.
 
-   1. Change directory to the installation directory for Ejscript. This is usually /usr/lib/ejs.
+   1. Change directory to the installation directory for Ejscript. This is usually /usr/lib/ejscript.
 
    2. Run the uninstall script in the install directory for Ejscript by typing 
 

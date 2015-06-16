@@ -4,26 +4,26 @@
 }
             <h1>Historical Ejscript Change Log</h1>
             <p>The change log is now provided on GitHub at:
-                <a href="https://github.com/embedthis/ejs/releases">GitHub Ejscript Releases</a>.</p>
+                <a href="https://github.com/embedthis/ejscript/releases">GitHub Ejscript Releases</a>.</p>
 
             <p>Brief Ejscript change log of the the major features and changes for each release.</p>
             <h4>Note to security researchers:</h4>
             <p>Please do not mine this list and create security advisories.
-            Please see the <a href="http://github.com/embedthis/ejs/issues">Ejscript Issue Database</a> 
+            Please see the <a href="http://github.com/embedthis/ejscript/issues">Ejscript Issue Database</a> 
             for the official product issue list and for comprehensive CVE dispositions.</p>
             <a id="2.4.1"></a>
             <h2 >Changes in 2.4.1</h2>
             <h3>Fixes</h3>
             <ul>
                 <li>Fix Path.files with dot-dot in the argument.
-                    <a href="https://github.com/embedthis/ejs/issues/66">[issue 66].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/66">[issue 66].</a></li>
             </ul>
             <a id="2.4.0"></a>
             <h2 >Changes in 2.4.0</h2>
             <h3>Fixes</h3>
             <ul>
                 <li>Fix parsing bad package.json files with missing commas
-                    <a href="https://github.com/embedthis/ejs/issues/63">[issue 63].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/63">[issue 63].</a></li>
             </ul>
             <a id="2.3.5"></a>
             <h2 >Changes in 2.3.5</h2>
@@ -36,57 +36,57 @@
             <h3>Minor Features</h3>
             <ul>
                 <li>Update MPR and HTTP packs to latest versions
-                    <a href="https://github.com/embedthis/ejs/issues/61">[issue 61].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/61">[issue 61].</a></li>
                 <li>Sign installation packages
-                    <a href="https://github.com/embedthis/ejs/issues/59">[issue 59].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/59">[issue 59].</a></li>
             </ul>
             <h3>Fixes</h3>
             <ul>
                 <li>Improved shutdown support.
-                    <a href="https://github.com/embedthis/ejs/issues/56">[issue 56].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/56">[issue 56].</a></li>
                 <li>Fix package.json title
-                    <a href="https://github.com/embedthis/ejs/issues/57">[issue 57].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/57">[issue 57].</a></li>
                 <li>Better support for SemVer, remove build numbers
-                    <a href="https://github.com/embedthis/ejs/issues/58">[issue 58].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/58">[issue 58].</a></li>
                 <li>Fix MPR handling of time zone warping
-                    <a href="https://github.com/embedthis/ejs/issues/53">[issue 53].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/53">[issue 53].</a></li>
             </ul>
             <a id="r233"></a>
             <h2 >Changes in 2.3.3</h2>
             <h3>Minor Features</h3>
             <ul>
                 <li>Add support for multi-line strings using back-tick. E.g. `string`
-                    <a href="https://github.com/embedthis/ejs/issues/41">[issue 41].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/41">[issue 41].</a></li>
                 <li>Add support for <a href="https://embedthis.com/products/pak/">Pak</a> packages.
                     Remove ejs.jem in favor of Pak. Use <a href="http://semver.org/">SemVer</a> for versioning.
-                    <a href="https://github.com/embedthis/ejs/issues/50">[issue 50].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/50">[issue 50].</a></li>
                 <li>Add App.getpass to read a password from the console
-                    <a href="https://github.com/embedthis/ejs/issues/51">[issue 51].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/51">[issue 51].</a></li>
                 <li>Add Path.trimComponents
-                    <a href="https://github.com/embedthis/ejs/issues/52">[issue 52].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/52">[issue 52].</a></li>
                 <li>Add App.home and add ~/.ejs to the module search path.
-                    <a href="https://github.com/embedthis/ejs/issues/54">[issue 54].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/54">[issue 54].</a></li>
             </ul>
             <h3>Fixes</h3>
             <ul>
                 <li>ejs.unix cp() command. Was incorrectly handling destination paths when options.tree == true.
-                    <a href="https://github.com/embedthis/ejs/issues/42">[issue 42].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/42">[issue 42].</a></li>
                 <li>Added Add Path.trimDirs to trim directory components.
-                    <a href="https://github.com/embedthis/ejs/issues/43">[issue 43].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/43">[issue 43].</a></li>
                 <li>Parse bad literal causes compiler crash.
-                    <a href="https://github.com/embedthis/ejs/issues/44">[issue 44].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/44">[issue 44].</a></li>
                 <li>Fix Http and WebSocket retries to different hosts. Was setting Host header incorrectl
-                    <a href="https://github.com/embedthis/ejs/issues/45">[issue 45].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/45">[issue 45].</a></li>
                 <li>Fix RegExp.exec with bad start argument.
-                    <a href="https://github.com/embedthis/ejs/issues/46">[issue 46].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/46">[issue 46].</a></li>
                 <li>ejs.tar for handling directories and hidden headers.
-                    <a href="https://github.com/embedthis/ejs/issues/47">[issue 47].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/47">[issue 47].</a></li>
                 <li>Fix name of Zlib uncompress destination filename.
-                    <a href="https://github.com/embedthis/ejs/issues/48">[issue 48].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/48">[issue 48].</a></li>
                 <li>GC when loading modules fails to retain module file.
-                    <a href="https://github.com/embedthis/ejs/issues/49">[issue 49].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/49">[issue 49].</a></li>
                 <li>Iterating over arrays and object where elements are deleted in the loop body.
-                    <a href="https://github.com/embedthis/ejs/issues/53">[issue 53].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/53">[issue 53].</a></li>
             </ul>
             <a id="2.3.2"></a>
             <h2 >Changes in 2.3.2</h2>
@@ -94,108 +94,108 @@
             <ul>
                 <li>Add support for Ecmascript6 functions in object literals. <br/> 
                     E.g. o = { fun() { print("Hello"); }}
-                    <a href="https://github.com/embedthis/ejs/issues/40">[issue 40].</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/40">[issue 40].</a></li>
             </ul>
             <a id="r231"></a>
             <h2 >Changes in 2.3.1</h2>
             <h3>Minor Features</h3>
             <ul>
                 <li>Add MPR palloc/pfree APIs to allocate and free permanent memory
-                    <a href="https://github.com/embedthis/ejs/issues/28">[issue 28]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/28">[issue 28]</a></li>
                 <li>Update API stability classifications
-                    <a href="https://github.com/embedthis/ejs/issues/29">[issue 29]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/29">[issue 29]</a></li>
                 <li>Update SQLite to 3.7.15.1
-                    <a href="https://github.com/embedthis/ejs/issues/30">[issue 30]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/30">[issue 30]</a></li>
                 <li>Improve conditional makefiles to support SSL and SQLite
-                    <a href="https://github.com/embedthis/ejs/issues/31">[issue 31]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/31">[issue 31]</a></li>
                 <li>Add make deploy 
-                    <a href="https://github.com/embedthis/ejs/issues/32">[issue 32]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/32">[issue 32]</a></li>
                 <li>Add static makefiles and projects
-                    <a href="https://github.com/embedthis/ejs/issues/33">[issue 33]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/33">[issue 33]</a></li>
             </ul>
             <h3>Fixes</h3>
             <ul>
                 <li>Base directory includes inside ejs.template.
-                    <a href="https://github.com/embedthis/ejs/issues/27">[issue 27]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/27">[issue 27]</a></li>
                 <li>Define default stack size for VxWorks
-                    <a href="https://github.com/embedthis/ejs/issues/34">[issue 34]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/34">[issue 34]</a></li>
                 <li>Fix make/bit install for non-root installations
-                    <a href="https://github.com/embedthis/ejs/issues/35">[issue 35]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/35">[issue 35]</a></li>
                 <li>Add "public" to cookies over SSL for firefox
-                    <a href="https://github.com/embedthis/ejs/issues/36">[issue 36]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/36">[issue 36]</a></li>
                 <li>Fix Path.relative for paths with a common basename
-                    <a href="https://github.com/embedthis/ejs/issues/37">[issue 37]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/37">[issue 37]</a></li>
                 <li>Fix RegExp back quoting. Add JSON option regexp to emit native RegExp literals.
-                    <a href="https://github.com/embedthis/ejs/issues/38">[issue 38]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/38">[issue 38]</a></li>
             </ul>
             <a id="r230"></a>
             <h2 >Changes in 2.3.0</h2>
             <h3>Minor Features</h3>
             <ul>
                 <li>Fixed listening on Windows 64 with IPv6 and IPv4 on a single socket.
-                    <a href="https://github.com/embedthis/ejs/issues/12">[issue 12]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/12">[issue 12]</a></li>
                 <li>Speed up Tar.extract
-                    <a href="https://github.com/embedthis/ejs/issues/13">[issue 13]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/13">[issue 13]</a></li>
                 <!--
                 <li>Add support for the Mocana SSL stack:
-                    <a href="https://github.com/embedthis/ejs/issues/17">[issue 17]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/17">[issue 17]</a></li>
                 -->
                 <li>Add prototype support for the EST SSL stack. Enabled by default.
-                    <a href="https://github.com/embedthis/ejs/issues/18">[issue 18]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/18">[issue 18]</a></li>
                 <li>Removed Bit as it is now a stand-alone product
-                    <a href="https://github.com/embedthis/ejs/issues/21">[issue 21]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/21">[issue 21]</a></li>
                 <li>Added base64()
-                    <a href="https://github.com/embedthis/ejs/issues/23">[issue 23]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/23">[issue 23]</a></li>
             </ul>
             <h3>Fixes</h3>
             <ul>
                 <li>Fix JSON encoding and parsing of regular expressions
-                    <a href="https://github.com/embedthis/ejs/issues/14">[issue 14]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/14">[issue 14]</a></li>
                 <li>The mpr.h header has been split into a cross platform operating system layer called bitos.h.
                     The mpr.h header includes this, so there should be no API impact.
-                    <a href="https://github.com/embedthis/ejs/issues/19">[issue 19]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/19">[issue 19]</a></li>
                 <li>Fix generated makefiles determining the system CPU architecture
-                    <a href="https://github.com/embedthis/ejs/issues/15">[issue 15]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/15">[issue 15]</a></li>
                 <li>Remove compiler switch -mtune when not required 
-                    <a href="https://github.com/embedthis/ejs/issues/16">[issue 16]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/16">[issue 16]</a></li>
                 <li>Bit support for static projects via configure --static, including generating IDE projects
-                    <a href="https://github.com/embedthis/ejs/issues/20">[issue 20]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/20">[issue 20]</a></li>
                 <li>Optimize Array.join
-                    <a href="https://github.com/embedthis/ejs/issues/25">[issue 25]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/25">[issue 25]</a></li>
                 <li>Fix Cmd.write for large data blocks.
-                    <a href="https://github.com/embedthis/ejs/issues/26">[issue 26]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/26">[issue 26]</a></li>
                 <li>Renamed ejs.mail mail() to sendmail()
-                    <a href="https://github.com/embedthis/ejs/issues/24">[issue 24]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/24">[issue 24]</a></li>
                 <li>String.replace with multi-line replacements
-                    <a href="https://github.com/embedthis/ejs/issues/22">[issue 22]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/22">[issue 22]</a></li>
             </ul>
             <a id="r220"></a>
             <h2 >Changes in 2.2.0</h2>
             <h3>Minor Features</h3>
             <ul>
                 <li>Added ejs.mail module with basic mail() API
-                    <a href="https://github.com/embedthis/ejs/issues/3">[issue 3]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/3">[issue 3]</a></li>
                 <li>Added bit --prefix, to set installation path prefixes
-                    <a href="https://github.com/embedthis/ejs/issues/10">[issue 10]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/10">[issue 10]</a></li>
                 <li>Make bit listen to CFLAGS etc on all runs. Configure will save in platform bit file.
-                    <a href="https://github.com/embedthis/ejs/issues/11">[issue 11]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/11">[issue 11]</a></li>
             </ul>
             <h3>Fixes</h3>
             <ul>
                 <li>Generated Xcode project scripts were missing /usr/local/bin
-                    <a href="https://github.com/embedthis/ejs/issues/2">[issue 2]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/2">[issue 2]</a></li>
                 <li>Bit now creates dependencies for nested header includes
-                    <a href="https://github.com/embedthis/ejs/issues/4">[issue 4]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/4">[issue 4]</a></li>
                 <li>JSON deserializing keys with spaces
-                    <a href="https://github.com/embedthis/ejs/issues/5">[issue 5]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/5">[issue 5]</a></li>
                 <li>Path.makeDir(attributes) now sets attributes even if the directory already exists.
-                    <a href="https://github.com/embedthis/ejs/issues/6">[issue 6]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/6">[issue 6]</a></li>
                 <li>Bit --keep install now preserves files under */pkg
-                    <a href="https://github.com/embedthis/ejs/issues/7">[issue 7]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/7">[issue 7]</a></li>
                 <li>Update Http to listen on both IPv6 and IPv4.
-                    <a href="https://github.com/embedthis/ejs/issues/8">[issue 8]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/8">[issue 8]</a></li>
                 <li>Fix Logger.level, was asserting
-                    <a href="https://github.com/embedthis/ejs/issues/9">[issue 9]</a></li>
+                    <a href="https://github.com/embedthis/ejscript/issues/9">[issue 9]</a></li>
             </ul>
             <a id="r210"></a>
             <h2 >Changes in 2.1.0</h2>
@@ -688,7 +688,7 @@
                 <li>Fixed textarea control.</li>
                 <li>Fixed SQLite datatype mapping.</li>
                 <li>Fixed serialize/deserialize. Fixed back quoting and embedded quotes.</li>
-                <li>Moved modules to /usr/lib/ejs/modules and binaries to /usr/local/bin.</li>
+                <li>Moved modules to /usr/lib/ejscript/modules and binaries to /usr/local/bin.</li>
                 <li>Fixed compiler bug not warning when accessing instance properties from static code.</li>
                 <li>Fixed property lookup to use all open namespaces in all blocks.</li>
             </ul><a id="r096"></a>
