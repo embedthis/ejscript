@@ -11,7 +11,7 @@
 
 #include    "ejs.h"
 
-#if ME_COM_SQLITE && ME_EJS_DB
+#if ME_COM_SQLITE && ME_EJSCRIPT_DB
     /* Indent to no create dependency */
     #include    "sqlite3.h"
 #include    "ejs.db.sqlite.slots.h"

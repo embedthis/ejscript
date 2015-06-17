@@ -8,7 +8,7 @@
 
 #include    "me.h"
 
-#if ME_EJS_WEB
+#if ME_EJSCRIPT_WEB
 #include    "ejs.h"
 #include    "ejsWeb.h"
 

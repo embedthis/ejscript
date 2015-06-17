@@ -8,7 +8,7 @@
 
 #include    "ejs.h"
 
-#if ME_EJS_ZLIB
+#if ME_EJSCRIPT_ZLIB
 #include    "zlib.h"
 #include    "ejs.zlib.slots.h"
 
@@ -344,7 +344,7 @@ PUBLIC int ejs_zlib_Init(Ejs *ejs, MprModule *mp)
 {
     return ejsAddNativeModule(ejs, "ejs.zlib", configureZlibTypes, _ES_CHECKSUM_ejs_zlib, EJS_LOADER_ETERNAL);
 }
-#endif /* ME_EJS_ZLIB */
+#endif /* ME_EJSCRIPT_ZLIB */
 
 /*
     @copy   default
