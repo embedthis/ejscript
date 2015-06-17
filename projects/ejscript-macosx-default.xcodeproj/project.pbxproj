@@ -2391,7 +2391,7 @@
 		9C7857EE9C78721800000092 /* ejsc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsc.c; path = src/cmd/ejsc.c; sourceTree = "<group>"; };
 		9C7857EE9C78721800000296 /* ejsc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ejsc; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C7857EE9C78721800000094 /* ejsmod.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsmod.c; path = src/cmd/ejsmod.c; sourceTree = "<group>"; };
-		9C7857EE9C78721800000297 /* ejsmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsmod.h; path = build/macosx-x64-default/inc/ejsmod.h; sourceTree = "<group>"; };
+		9C7857EE9C78721800000297 /* ejsmod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsmod.h; path = src/cmd/ejsmod.h; sourceTree = "<group>"; };
 		9C7857EE9C78721800000096 /* doc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = doc.c; path = src/cmd/doc.c; sourceTree = "<group>"; };
 		9C7857EE9C78721800000098 /* docFiles.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = docFiles.c; path = src/cmd/docFiles.c; sourceTree = "<group>"; };
 		9C7857EE9C7872180000009A /* listing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = listing.c; path = src/cmd/listing.c; sourceTree = "<group>"; };
@@ -2401,6 +2401,7 @@
 		9C7857EE9C7872180000009E /* ejsrun.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsrun.c; path = src/cmd/ejsrun.c; sourceTree = "<group>"; };
 		9C7857EE9C7872180000029A /* ejsrun */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ejsrun; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C7857EE9C787218000000A0 /* ecAst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ecAst.c; path = src/compiler/ecAst.c; sourceTree = "<group>"; };
+		9C7857EE9C7872180000029B /* ejsCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsCompiler.h; path = src/ejsCompiler.h; sourceTree = "<group>"; };
 		9C7857EE9C787218000000A2 /* ecCodeGen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ecCodeGen.c; path = src/compiler/ecCodeGen.c; sourceTree = "<group>"; };
 		9C7857EE9C787218000000A4 /* ecCompiler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ecCompiler.c; path = src/compiler/ecCompiler.c; sourceTree = "<group>"; };
 		9C7857EE9C787218000000A6 /* ecLex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ecLex.c; path = src/compiler/ecLex.c; sourceTree = "<group>"; };
@@ -2408,9 +2409,9 @@
 		9C7857EE9C787218000000AA /* ecParser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ecParser.c; path = src/compiler/ecParser.c; sourceTree = "<group>"; };
 		9C7857EE9C787218000000AC /* ecState.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ecState.c; path = src/compiler/ecState.c; sourceTree = "<group>"; };
 		9C7857EE9C787218000000AE /* dtoa.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dtoa.c; path = src/core/src/dtoa.c; sourceTree = "<group>"; };
-		9C7857EE9C7872180000029B /* mpr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpr.h; path = build/macosx-x64-default/inc/mpr.h; sourceTree = "<group>"; };
+		9C7857EE9C7872180000029C /* mpr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpr.h; path = build/macosx-x64-default/inc/mpr.h; sourceTree = "<group>"; };
 		9C7857EE9C787218000000B0 /* ejsApp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsApp.c; path = src/core/src/ejsApp.c; sourceTree = "<group>"; };
-		9C7857EE9C7872180000029C /* ejs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.h; path = build/macosx-x64-default/inc/ejs.h; sourceTree = "<group>"; };
+		9C7857EE9C7872180000029D /* ejs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.h; path = src/ejs.h; sourceTree = "<group>"; };
 		9C7857EE9C787218000000B2 /* ejsArray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsArray.c; path = src/core/src/ejsArray.c; sourceTree = "<group>"; };
 		9C7857EE9C787218000000B4 /* ejsBlock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsBlock.c; path = src/core/src/ejsBlock.c; sourceTree = "<group>"; };
 		9C7857EE9C787218000000B6 /* ejsBoolean.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsBoolean.c; path = src/core/src/ejsBoolean.c; sourceTree = "<group>"; };
@@ -2439,7 +2440,7 @@
 		9C7857EE9C787218000000E4 /* ejsNumber.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsNumber.c; path = src/core/src/ejsNumber.c; sourceTree = "<group>"; };
 		9C7857EE9C787218000000E6 /* ejsObject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsObject.c; path = src/core/src/ejsObject.c; sourceTree = "<group>"; };
 		9C7857EE9C787218000000E8 /* ejsPath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsPath.c; path = src/core/src/ejsPath.c; sourceTree = "<group>"; };
-		9C7857EE9C7872180000029D /* pcre.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pcre.h; path = build/macosx-x64-default/inc/pcre.h; sourceTree = "<group>"; };
+		9C7857EE9C7872180000029E /* pcre.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pcre.h; path = build/macosx-x64-default/inc/pcre.h; sourceTree = "<group>"; };
 		9C7857EE9C787218000000EA /* ejsPot.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsPot.c; path = src/core/src/ejsPot.c; sourceTree = "<group>"; };
 		9C7857EE9C787218000000EC /* ejsRegExp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsRegExp.c; path = src/core/src/ejsRegExp.c; sourceTree = "<group>"; };
 		9C7857EE9C787218000000EE /* ejsSocket.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsSocket.c; path = src/core/src/ejsSocket.c; sourceTree = "<group>"; };
@@ -2464,43 +2465,47 @@
 		9C7857EE9C78721800000114 /* ejsService.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsService.c; path = src/vm/ejsService.c; sourceTree = "<group>"; };
 		9C7857EE9C78721800000130 /* libejs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C7857EE9C78721800000116 /* ejsSqlite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsSqlite.c; path = src/ejs.db.sqlite/ejsSqlite.c; sourceTree = "<group>"; };
-		9C7857EE9C7872180000029E /* ejs.db.sqlite.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.db.sqlite.slots.h; path = build/macosx-x64-default/inc/ejs.db.sqlite.slots.h; sourceTree = "<group>"; };
-		9C7857EE9C7872180000029F /* libejs.db.sqlite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.db.sqlite.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		9C7857EE9C7872180000029F /* ejs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.h; path = build/macosx-x64-default/inc/ejs.h; sourceTree = "<group>"; };
+		9C7857EE9C787218000002A0 /* ejs.db.sqlite.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.db.sqlite.slots.h; path = build/macosx-x64-default/inc/ejs.db.sqlite.slots.h; sourceTree = "<group>"; };
+		9C7857EE9C787218000002A1 /* libejs.db.sqlite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.db.sqlite.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C7857EE9C78721800000118 /* ejsHttpServer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsHttpServer.c; path = src/ejs.web/ejsHttpServer.c; sourceTree = "<group>"; };
-		9C7857EE9C787218000002A0 /* ejsWeb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsWeb.h; path = build/macosx-x64-default/inc/ejsWeb.h; sourceTree = "<group>"; };
-		9C7857EE9C787218000002A1 /* ejs.web.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.web.slots.h; path = build/macosx-x64-default/inc/ejs.web.slots.h; sourceTree = "<group>"; };
+		9C7857EE9C787218000002A2 /* ejsWeb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsWeb.h; path = src/ejs.web/ejsWeb.h; sourceTree = "<group>"; };
+		9C7857EE9C787218000002A3 /* ejs.web.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.web.slots.h; path = build/macosx-x64-default/inc/ejs.web.slots.h; sourceTree = "<group>"; };
 		9C7857EE9C7872180000011A /* ejsRequest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsRequest.c; path = src/ejs.web/ejsRequest.c; sourceTree = "<group>"; };
 		9C7857EE9C7872180000011C /* ejsSession.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsSession.c; path = src/ejs.web/ejsSession.c; sourceTree = "<group>"; };
 		9C7857EE9C7872180000011E /* ejsWeb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsWeb.c; path = src/ejs.web/ejsWeb.c; sourceTree = "<group>"; };
-		9C7857EE9C787218000002A2 /* libejs.web */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.web.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		9C7857EE9C787218000002A4 /* libejs.web */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.web.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C7857EE9C78721800000120 /* ejsZlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsZlib.c; path = src/ejs.zlib/ejsZlib.c; sourceTree = "<group>"; };
-		9C7857EE9C787218000002A3 /* zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zlib.h; path = build/macosx-x64-default/inc/zlib.h; sourceTree = "<group>"; };
-		9C7857EE9C787218000002A4 /* ejs.zlib.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.zlib.slots.h; path = build/macosx-x64-default/inc/ejs.zlib.slots.h; sourceTree = "<group>"; };
-		9C7857EE9C787218000002A5 /* libejs.zlib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.zlib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		9C7857EE9C787218000002A5 /* zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zlib.h; path = build/macosx-x64-default/inc/zlib.h; sourceTree = "<group>"; };
+		9C7857EE9C787218000002A6 /* ejs.zlib.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.zlib.slots.h; path = build/macosx-x64-default/inc/ejs.zlib.slots.h; sourceTree = "<group>"; };
+		9C7857EE9C787218000002A7 /* libejs.zlib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.zlib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C7857EE9C78721800000122 /* httpLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = httpLib.c; path = src/http/httpLib.c; sourceTree = "<group>"; };
-		9C7857EE9C787218000002A6 /* http.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = http.h; path = build/macosx-x64-default/inc/http.h; sourceTree = "<group>"; };
+		9C7857EE9C787218000002A8 /* http.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = http.h; path = src/http/http.h; sourceTree = "<group>"; };
 		9C7857EE9C78721800000132 /* libhttp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libhttp.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C7857EE9C78721800000124 /* mprLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mprLib.c; path = src/mpr/mprLib.c; sourceTree = "<group>"; };
+		9C7857EE9C787218000002A9 /* mpr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpr.h; path = src/mpr/mpr.h; sourceTree = "<group>"; };
 		9C7857EE9C78721800000136 /* libmpr */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmpr.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C7857EE9C78721800000126 /* pcre.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pcre.c; path = src/pcre/pcre.c; sourceTree = "<group>"; };
+		9C7857EE9C787218000002AA /* pcre.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pcre.h; path = src/pcre/pcre.h; sourceTree = "<group>"; };
 		9C7857EE9C78721800000134 /* libpcre */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libpcre.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C7857EE9C78721800000128 /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sqlite3.c; path = src/sqlite/sqlite3.c; sourceTree = "<group>"; };
-		9C7857EE9C787218000002A7 /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = build/macosx-x64-default/inc/sqlite3.h; sourceTree = "<group>"; };
+		9C7857EE9C787218000002AB /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = src/sqlite/sqlite3.h; sourceTree = "<group>"; };
 		9C7857EE9C7872180000014D /* libsql */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libsql.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C7857EE9C7872180000012A /* zlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = zlib.c; path = src/zlib/zlib.c; sourceTree = "<group>"; };
+		9C7857EE9C787218000002AC /* zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = zlib.h; path = src/zlib/zlib.h; sourceTree = "<group>"; };
 		9C7857EE9C78721800000138 /* libzlib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libzlib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C7857EE9C7872180000009E /* ejsrun.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsrun.c; path = src/cmd/ejsrun.c; sourceTree = "<group>"; };
-		9C7857EE9C787218000002A8 /* mvc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mvc; sourceTree = BUILT_PRODUCTS_DIR; };
+		9C7857EE9C787218000002AD /* mvc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mvc; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C7857EE9C7872180000012C /* openssl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = openssl.c; path = src/mpr-openssl/openssl.c; sourceTree = "<group>"; };
-		9C7857EE9C787218000002A9 /* openssl */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmpr-openssl.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		9C7857EE9C787218000002AE /* openssl */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmpr-openssl.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C7857EE9C7872180000009E /* ejsrun.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsrun.c; path = src/cmd/ejsrun.c; sourceTree = "<group>"; };
-		9C7857EE9C787218000002AA /* utest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = utest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9C7857EE9C787218000002AF /* utest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = utest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C7857EE9C7872180000012E /* watchdog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = watchdog.c; path = src/watchdog/watchdog.c; sourceTree = "<group>"; };
-		9C7857EE9C787218000002AB /* watchdog */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ejsman; sourceTree = BUILT_PRODUCTS_DIR; };
+		9C7857EE9C787218000002B0 /* watchdog */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ejsman; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		9C7857EE9C787218000002AC /* Frameworks and Libraries for ejs */ = {
+		9C7857EE9C787218000002B1 /* Frameworks and Libraries for ejs */ = {
                 isa = PBXFrameworksBuildPhase;
                 buildActionMask = 2147483647;
                 files = (
@@ -2512,7 +2517,7 @@
                 );
                 runOnlyForDeploymentPostprocessing = 0;
             };
-		9C7857EE9C787218000002AD /* Frameworks and Libraries for ejsc */ = {
+		9C7857EE9C787218000002B2 /* Frameworks and Libraries for ejsc */ = {
                 isa = PBXFrameworksBuildPhase;
                 buildActionMask = 2147483647;
                 files = (
@@ -2524,7 +2529,7 @@
                 );
                 runOnlyForDeploymentPostprocessing = 0;
             };
-		9C7857EE9C787218000002AE /* Frameworks and Libraries for ejsmod */ = {
+		9C7857EE9C787218000002B3 /* Frameworks and Libraries for ejsmod */ = {
                 isa = PBXFrameworksBuildPhase;
                 buildActionMask = 2147483647;
                 files = (
@@ -2536,7 +2541,7 @@
                 );
                 runOnlyForDeploymentPostprocessing = 0;
             };
-		9C7857EE9C787218000002AF /* Frameworks and Libraries for ejsrun */ = {
+		9C7857EE9C787218000002B4 /* Frameworks and Libraries for ejsrun */ = {
                 isa = PBXFrameworksBuildPhase;
                 buildActionMask = 2147483647;
                 files = (
@@ -2548,7 +2553,7 @@
                 );
                 runOnlyForDeploymentPostprocessing = 0;
             };
-		9C7857EE9C787218000002B0 /* Frameworks and Libraries for libejs */ = {
+		9C7857EE9C787218000002B5 /* Frameworks and Libraries for libejs */ = {
                 isa = PBXFrameworksBuildPhase;
                 buildActionMask = 2147483647;
                 files = (
@@ -2559,7 +2564,7 @@
                 );
                 runOnlyForDeploymentPostprocessing = 0;
             };
-		9C7857EE9C787218000002B1 /* Frameworks and Libraries for libejs.db.sqlite */ = {
+		9C7857EE9C787218000002B6 /* Frameworks and Libraries for libejs.db.sqlite */ = {
                 isa = PBXFrameworksBuildPhase;
                 buildActionMask = 2147483647;
                 files = (
@@ -2572,7 +2577,7 @@
                 );
                 runOnlyForDeploymentPostprocessing = 0;
             };
-		9C7857EE9C787218000002B2 /* Frameworks and Libraries for libejs.web */ = {
+		9C7857EE9C787218000002B7 /* Frameworks and Libraries for libejs.web */ = {
                 isa = PBXFrameworksBuildPhase;
                 buildActionMask = 2147483647;
                 files = (
@@ -2584,7 +2589,7 @@
                 );
                 runOnlyForDeploymentPostprocessing = 0;
             };
-		9C7857EE9C787218000002B3 /* Frameworks and Libraries for libejs.zlib */ = {
+		9C7857EE9C787218000002B8 /* Frameworks and Libraries for libejs.zlib */ = {
                 isa = PBXFrameworksBuildPhase;
                 buildActionMask = 2147483647;
                 files = (
@@ -2596,7 +2601,7 @@
                 );
                 runOnlyForDeploymentPostprocessing = 0;
             };
-		9C7857EE9C787218000002B4 /* Frameworks and Libraries for libhttp */ = {
+		9C7857EE9C787218000002B9 /* Frameworks and Libraries for libhttp */ = {
                 isa = PBXFrameworksBuildPhase;
                 buildActionMask = 2147483647;
                 files = (
@@ -2606,7 +2611,7 @@
                 );
                 runOnlyForDeploymentPostprocessing = 0;
             };
-		9C7857EE9C787218000002B5 /* Frameworks and Libraries for libmpr */ = {
+		9C7857EE9C787218000002BA /* Frameworks and Libraries for libmpr */ = {
                 isa = PBXFrameworksBuildPhase;
                 buildActionMask = 2147483647;
                 files = (
@@ -2614,7 +2619,7 @@
                 );
                 runOnlyForDeploymentPostprocessing = 0;
             };
-		9C7857EE9C787218000002B6 /* Frameworks and Libraries for libpcre */ = {
+		9C7857EE9C787218000002BB /* Frameworks and Libraries for libpcre */ = {
                 isa = PBXFrameworksBuildPhase;
                 buildActionMask = 2147483647;
                 files = (
@@ -2622,7 +2627,7 @@
                 );
                 runOnlyForDeploymentPostprocessing = 0;
             };
-		9C7857EE9C787218000002B7 /* Frameworks and Libraries for libsql */ = {
+		9C7857EE9C787218000002BC /* Frameworks and Libraries for libsql */ = {
                 isa = PBXFrameworksBuildPhase;
                 buildActionMask = 2147483647;
                 files = (
@@ -2630,7 +2635,7 @@
                 );
                 runOnlyForDeploymentPostprocessing = 0;
             };
-		9C7857EE9C787218000002B8 /* Frameworks and Libraries for libzlib */ = {
+		9C7857EE9C787218000002BD /* Frameworks and Libraries for libzlib */ = {
                 isa = PBXFrameworksBuildPhase;
                 buildActionMask = 2147483647;
                 files = (
@@ -2638,7 +2643,7 @@
                 );
                 runOnlyForDeploymentPostprocessing = 0;
             };
-		9C7857EE9C787218000002B9 /* Frameworks and Libraries for mvc */ = {
+		9C7857EE9C787218000002BE /* Frameworks and Libraries for mvc */ = {
                 isa = PBXFrameworksBuildPhase;
                 buildActionMask = 2147483647;
                 files = (
@@ -2650,7 +2655,7 @@
                 );
                 runOnlyForDeploymentPostprocessing = 0;
             };
-		9C7857EE9C787218000002BA /* Frameworks and Libraries for openssl */ = {
+		9C7857EE9C787218000002BF /* Frameworks and Libraries for openssl */ = {
                 isa = PBXFrameworksBuildPhase;
                 buildActionMask = 2147483647;
                 files = (
@@ -2658,7 +2663,7 @@
                 );
                 runOnlyForDeploymentPostprocessing = 0;
             };
-		9C7857EE9C787218000002BB /* Frameworks and Libraries for utest */ = {
+		9C7857EE9C787218000002C0 /* Frameworks and Libraries for utest */ = {
                 isa = PBXFrameworksBuildPhase;
                 buildActionMask = 2147483647;
                 files = (
@@ -2670,7 +2675,7 @@
                 );
                 runOnlyForDeploymentPostprocessing = 0;
             };
-		9C7857EE9C787218000002BC /* Frameworks and Libraries for watchdog */ = {
+		9C7857EE9C787218000002C1 /* Frameworks and Libraries for watchdog */ = {
                 isa = PBXFrameworksBuildPhase;
                 buildActionMask = 2147483647;
                 files = (
@@ -2682,31 +2687,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		9C7857EE9C787218000002BD /* Top Group */ = {
+		9C7857EE9C787218000002C2 /* Top Group */ = {
                 isa = PBXGroup;
                 children = (
-				9C7857EE9C787218000002BE /* libejs */,
-				9C7857EE9C787218000002BF /* libejs.db.sqlite */,
-				9C7857EE9C787218000002C0 /* libejs.web */,
-				9C7857EE9C787218000002C1 /* libejs.zlib */,
-				9C7857EE9C787218000002C2 /* libhttp */,
-				9C7857EE9C787218000002C3 /* libmpr */,
-				9C7857EE9C787218000002C4 /* libpcre */,
-				9C7857EE9C787218000002C5 /* libsql */,
-				9C7857EE9C787218000002C6 /* libzlib */,
-				9C7857EE9C787218000002C7 /* openssl */,
-				9C7857EE9C787218000002C8 /* ejs */,
-				9C7857EE9C787218000002C9 /* ejsc */,
-				9C7857EE9C787218000002CA /* ejsmod */,
-				9C7857EE9C787218000002CB /* ejsrun */,
-				9C7857EE9C787218000002CC /* mvc */,
-				9C7857EE9C787218000002CD /* utest */,
-				9C7857EE9C787218000002CE /* watchdog */,
-				9C7857EE9C787218000002CF /* Products */,
+				9C7857EE9C787218000002C3 /* libejs */,
+				9C7857EE9C787218000002C4 /* libejs.db.sqlite */,
+				9C7857EE9C787218000002C5 /* libejs.web */,
+				9C7857EE9C787218000002C6 /* libejs.zlib */,
+				9C7857EE9C787218000002C7 /* libhttp */,
+				9C7857EE9C787218000002C8 /* libmpr */,
+				9C7857EE9C787218000002C9 /* libpcre */,
+				9C7857EE9C787218000002CA /* libsql */,
+				9C7857EE9C787218000002CB /* libzlib */,
+				9C7857EE9C787218000002CC /* openssl */,
+				9C7857EE9C787218000002CD /* ejs */,
+				9C7857EE9C787218000002CE /* ejsc */,
+				9C7857EE9C787218000002CF /* ejsmod */,
+				9C7857EE9C787218000002D0 /* ejsrun */,
+				9C7857EE9C787218000002D1 /* mvc */,
+				9C7857EE9C787218000002D2 /* utest */,
+				9C7857EE9C787218000002D3 /* watchdog */,
+				9C7857EE9C787218000002D4 /* Products */,
 			);
                 sourceTree = "<group>";
             };
-		9C7857EE9C787218000002C8 /* ejs */ = {
+		9C7857EE9C787218000002CD /* ejs */ = {
                 isa = PBXGroup;
                 children = (
 				9C7857EE9C78721800000090 /* ejs.c */,
@@ -2715,7 +2720,7 @@
                 path = ..;
                 sourceTree = SOURCE_ROOT;
             };
-		9C7857EE9C787218000002C9 /* ejsc */ = {
+		9C7857EE9C787218000002CE /* ejsc */ = {
                 isa = PBXGroup;
                 children = (
 				9C7857EE9C78721800000092 /* ejsc.c */,
@@ -2724,7 +2729,7 @@
                 path = ..;
                 sourceTree = SOURCE_ROOT;
             };
-		9C7857EE9C787218000002CA /* ejsmod */ = {
+		9C7857EE9C787218000002CF /* ejsmod */ = {
                 isa = PBXGroup;
                 children = (
 				9C7857EE9C78721800000297 /* ejsmod.h */,
@@ -2738,7 +2743,7 @@
                 path = ..;
                 sourceTree = SOURCE_ROOT;
             };
-		9C7857EE9C787218000002CB /* ejsrun */ = {
+		9C7857EE9C787218000002D0 /* ejsrun */ = {
                 isa = PBXGroup;
                 children = (
 				9C7857EE9C7872180000009E /* ejsrun.c */,
@@ -2747,11 +2752,11 @@
                 path = ..;
                 sourceTree = SOURCE_ROOT;
             };
-		9C7857EE9C787218000002BE /* libejs */ = {
+		9C7857EE9C787218000002C3 /* libejs */ = {
                 isa = PBXGroup;
                 children = (
-				9C7857EE9C78721800000294 /* ejsCompiler.h */,
-				9C7857EE9C7872180000029C /* ejs.h */,
+				9C7857EE9C7872180000029B /* ejsCompiler.h */,
+				9C7857EE9C7872180000029D /* ejs.h */,
 				9C7857EE9C787218000000A0 /* ecAst.c */,
 				9C7857EE9C787218000000A2 /* ecCodeGen.c */,
 				9C7857EE9C787218000000A4 /* ecCompiler.c */,
@@ -2816,7 +2821,7 @@
                 path = ..;
                 sourceTree = SOURCE_ROOT;
             };
-		9C7857EE9C787218000002BF /* libejs.db.sqlite */ = {
+		9C7857EE9C787218000002C4 /* libejs.db.sqlite */ = {
                 isa = PBXGroup;
                 children = (
 				9C7857EE9C78721800000116 /* ejsSqlite.c */,
@@ -2825,10 +2830,10 @@
                 path = ..;
                 sourceTree = SOURCE_ROOT;
             };
-		9C7857EE9C787218000002C0 /* libejs.web */ = {
+		9C7857EE9C787218000002C5 /* libejs.web */ = {
                 isa = PBXGroup;
                 children = (
-				9C7857EE9C787218000002A0 /* ejsWeb.h */,
+				9C7857EE9C787218000002A2 /* ejsWeb.h */,
 				9C7857EE9C78721800000118 /* ejsHttpServer.c */,
 				9C7857EE9C7872180000011A /* ejsRequest.c */,
 				9C7857EE9C7872180000011C /* ejsSession.c */,
@@ -2838,7 +2843,7 @@
                 path = ..;
                 sourceTree = SOURCE_ROOT;
             };
-		9C7857EE9C787218000002C1 /* libejs.zlib */ = {
+		9C7857EE9C787218000002C6 /* libejs.zlib */ = {
                 isa = PBXGroup;
                 children = (
 				9C7857EE9C78721800000120 /* ejsZlib.c */,
@@ -2847,57 +2852,57 @@
                 path = ..;
                 sourceTree = SOURCE_ROOT;
             };
-		9C7857EE9C787218000002C2 /* libhttp */ = {
+		9C7857EE9C787218000002C7 /* libhttp */ = {
                 isa = PBXGroup;
                 children = (
-				9C7857EE9C787218000002A6 /* http.h */,
+				9C7857EE9C787218000002A8 /* http.h */,
 				9C7857EE9C78721800000122 /* httpLib.c */,
 			);
                 name = "libhttp";
                 path = ..;
                 sourceTree = SOURCE_ROOT;
             };
-		9C7857EE9C787218000002C3 /* libmpr */ = {
+		9C7857EE9C787218000002C8 /* libmpr */ = {
                 isa = PBXGroup;
                 children = (
-				9C7857EE9C7872180000029B /* mpr.h */,
+				9C7857EE9C787218000002A9 /* mpr.h */,
 				9C7857EE9C78721800000124 /* mprLib.c */,
 			);
                 name = "libmpr";
                 path = ..;
                 sourceTree = SOURCE_ROOT;
             };
-		9C7857EE9C787218000002C4 /* libpcre */ = {
+		9C7857EE9C787218000002C9 /* libpcre */ = {
                 isa = PBXGroup;
                 children = (
-				9C7857EE9C7872180000029D /* pcre.h */,
+				9C7857EE9C787218000002AA /* pcre.h */,
 				9C7857EE9C78721800000126 /* pcre.c */,
 			);
                 name = "libpcre";
                 path = ..;
                 sourceTree = SOURCE_ROOT;
             };
-		9C7857EE9C787218000002C5 /* libsql */ = {
+		9C7857EE9C787218000002CA /* libsql */ = {
                 isa = PBXGroup;
                 children = (
-				9C7857EE9C787218000002A7 /* sqlite3.h */,
+				9C7857EE9C787218000002AB /* sqlite3.h */,
 				9C7857EE9C78721800000128 /* sqlite3.c */,
 			);
                 name = "libsql";
                 path = ..;
                 sourceTree = SOURCE_ROOT;
             };
-		9C7857EE9C787218000002C6 /* libzlib */ = {
+		9C7857EE9C787218000002CB /* libzlib */ = {
                 isa = PBXGroup;
                 children = (
-				9C7857EE9C787218000002A3 /* zlib.h */,
+				9C7857EE9C787218000002AC /* zlib.h */,
 				9C7857EE9C7872180000012A /* zlib.c */,
 			);
                 name = "libzlib";
                 path = ..;
                 sourceTree = SOURCE_ROOT;
             };
-		9C7857EE9C787218000002CC /* mvc */ = {
+		9C7857EE9C787218000002D1 /* mvc */ = {
                 isa = PBXGroup;
                 children = (
 				9C7857EE9C7872180000009E /* ejsrun.c */,
@@ -2906,7 +2911,7 @@
                 path = ..;
                 sourceTree = SOURCE_ROOT;
             };
-		9C7857EE9C787218000002C7 /* openssl */ = {
+		9C7857EE9C787218000002CC /* openssl */ = {
                 isa = PBXGroup;
                 children = (
 				9C7857EE9C7872180000012C /* openssl.c */,
@@ -2915,7 +2920,7 @@
                 path = ..;
                 sourceTree = SOURCE_ROOT;
             };
-		9C7857EE9C787218000002CD /* utest */ = {
+		9C7857EE9C787218000002D2 /* utest */ = {
                 isa = PBXGroup;
                 children = (
 				9C7857EE9C7872180000009E /* ejsrun.c */,
@@ -2924,7 +2929,7 @@
                 path = ..;
                 sourceTree = SOURCE_ROOT;
             };
-		9C7857EE9C787218000002CE /* watchdog */ = {
+		9C7857EE9C787218000002D3 /* watchdog */ = {
                 isa = PBXGroup;
                 children = (
 				9C7857EE9C7872180000012E /* watchdog.c */,
@@ -2933,7 +2938,7 @@
                 path = ..;
                 sourceTree = SOURCE_ROOT;
             };
-		9C7857EE9C787218000002CF /* Products */ = {
+		9C7857EE9C787218000002D4 /* Products */ = {
                 isa = PBXGroup;
                 children = (
 				9C7857EE9C78721800000295 /* ejs */,
@@ -2941,18 +2946,18 @@
 				9C7857EE9C78721800000299 /* ejsmod */,
 				9C7857EE9C7872180000029A /* ejsrun */,
 				9C7857EE9C78721800000130 /* libejs */,
-				9C7857EE9C7872180000029F /* libejs.db.sqlite */,
-				9C7857EE9C787218000002A2 /* libejs.web */,
-				9C7857EE9C787218000002A5 /* libejs.zlib */,
+				9C7857EE9C787218000002A1 /* libejs.db.sqlite */,
+				9C7857EE9C787218000002A4 /* libejs.web */,
+				9C7857EE9C787218000002A7 /* libejs.zlib */,
 				9C7857EE9C78721800000132 /* libhttp */,
 				9C7857EE9C78721800000136 /* libmpr */,
 				9C7857EE9C78721800000134 /* libpcre */,
 				9C7857EE9C7872180000014D /* libsql */,
 				9C7857EE9C78721800000138 /* libzlib */,
-				9C7857EE9C787218000002A8 /* mvc */,
-				9C7857EE9C787218000002A9 /* openssl */,
-				9C7857EE9C787218000002AA /* utest */,
-				9C7857EE9C787218000002AB /* watchdog */,
+				9C7857EE9C787218000002AD /* mvc */,
+				9C7857EE9C787218000002AE /* openssl */,
+				9C7857EE9C787218000002AF /* utest */,
+				9C7857EE9C787218000002B0 /* watchdog */,
 			);
                 name = "Products";
                 path = ..;
@@ -2963,22 +2968,22 @@
 /* Begin PBXNativeTarget section */
 		9C7857EE9C78721800000272 /* ejs */ = {
     			isa = PBXNativeTarget;
-    			buildConfigurationList = 9C7857EE9C787218000002D1 /* Build configuration list for PBXNativeTarget "ejs" */;
+    			buildConfigurationList = 9C7857EE9C787218000002D6 /* Build configuration list for PBXNativeTarget "ejs" */;
     			buildPhases = (
-    				9C7857EE9C787218000002D0 /* Sources */,
-    				9C7857EE9C787218000002AC /* Frameworks */,
+    				9C7857EE9C787218000002D5 /* Sources */,
+    				9C7857EE9C787218000002B1 /* Frameworks */,
     			);
     			buildRules = (
     			);
     			dependencies = (
-    				9C7857EE9C787218000002D2 /* Prep */,
-				9C7857EE9C787218000002D3 /* slots */,
-				9C7857EE9C787218000002D4 /* openssl */,
-				9C7857EE9C787218000002D5 /* libzlib */,
-				9C7857EE9C787218000002D6 /* libmpr */,
-				9C7857EE9C787218000002D7 /* libpcre */,
-				9C7857EE9C787218000002D8 /* libhttp */,
-				9C7857EE9C787218000002D9 /* libejs */,				
+    				9C7857EE9C787218000002D7 /* Prep */,
+				9C7857EE9C787218000002D8 /* slots */,
+				9C7857EE9C787218000002D9 /* openssl */,
+				9C7857EE9C787218000002DA /* libzlib */,
+				9C7857EE9C787218000002DB /* libmpr */,
+				9C7857EE9C787218000002DC /* libpcre */,
+				9C7857EE9C787218000002DD /* libhttp */,
+				9C7857EE9C787218000002DE /* libejs */,				
     			);
     			name = ejs;
     			productName = ejscript;
@@ -2987,22 +2992,22 @@
     		};
 		9C7857EE9C78721800000184 /* ejsc */ = {
     			isa = PBXNativeTarget;
-    			buildConfigurationList = 9C7857EE9C787218000002DB /* Build configuration list for PBXNativeTarget "ejsc" */;
+    			buildConfigurationList = 9C7857EE9C787218000002E0 /* Build configuration list for PBXNativeTarget "ejsc" */;
     			buildPhases = (
-    				9C7857EE9C787218000002DA /* Sources */,
-    				9C7857EE9C787218000002AD /* Frameworks */,
+    				9C7857EE9C787218000002DF /* Sources */,
+    				9C7857EE9C787218000002B2 /* Frameworks */,
     			);
     			buildRules = (
     			);
     			dependencies = (
-    				9C7857EE9C787218000002DC /* Prep */,
-				9C7857EE9C787218000002DD /* slots */,
-				9C7857EE9C787218000002DE /* openssl */,
-				9C7857EE9C787218000002DF /* libzlib */,
-				9C7857EE9C787218000002E0 /* libmpr */,
-				9C7857EE9C787218000002E1 /* libpcre */,
-				9C7857EE9C787218000002E2 /* libhttp */,
-				9C7857EE9C787218000002E3 /* libejs */,				
+    				9C7857EE9C787218000002E1 /* Prep */,
+				9C7857EE9C787218000002E2 /* slots */,
+				9C7857EE9C787218000002E3 /* openssl */,
+				9C7857EE9C787218000002E4 /* libzlib */,
+				9C7857EE9C787218000002E5 /* libmpr */,
+				9C7857EE9C787218000002E6 /* libpcre */,
+				9C7857EE9C787218000002E7 /* libhttp */,
+				9C7857EE9C787218000002E8 /* libejs */,				
     			);
     			name = ejsc;
     			productName = ejscript;
@@ -3011,22 +3016,22 @@
     		};
 		9C7857EE9C78721800000186 /* ejsmod */ = {
     			isa = PBXNativeTarget;
-    			buildConfigurationList = 9C7857EE9C787218000002E5 /* Build configuration list for PBXNativeTarget "ejsmod" */;
+    			buildConfigurationList = 9C7857EE9C787218000002EA /* Build configuration list for PBXNativeTarget "ejsmod" */;
     			buildPhases = (
-    				9C7857EE9C787218000002E4 /* Sources */,
-    				9C7857EE9C787218000002AE /* Frameworks */,
+    				9C7857EE9C787218000002E9 /* Sources */,
+    				9C7857EE9C787218000002B3 /* Frameworks */,
     			);
     			buildRules = (
     			);
     			dependencies = (
-    				9C7857EE9C787218000002E6 /* Prep */,
-				9C7857EE9C787218000002E7 /* slots */,
-				9C7857EE9C787218000002E8 /* openssl */,
-				9C7857EE9C787218000002E9 /* libzlib */,
-				9C7857EE9C787218000002EA /* libmpr */,
-				9C7857EE9C787218000002EB /* libpcre */,
-				9C7857EE9C787218000002EC /* libhttp */,
-				9C7857EE9C787218000002ED /* libejs */,				
+    				9C7857EE9C787218000002EB /* Prep */,
+				9C7857EE9C787218000002EC /* slots */,
+				9C7857EE9C787218000002ED /* openssl */,
+				9C7857EE9C787218000002EE /* libzlib */,
+				9C7857EE9C787218000002EF /* libmpr */,
+				9C7857EE9C787218000002F0 /* libpcre */,
+				9C7857EE9C787218000002F1 /* libhttp */,
+				9C7857EE9C787218000002F2 /* libejs */,				
     			);
     			name = ejsmod;
     			productName = ejscript;
@@ -3035,22 +3040,22 @@
     		};
 		9C7857EE9C78721800000282 /* ejsrun */ = {
     			isa = PBXNativeTarget;
-    			buildConfigurationList = 9C7857EE9C787218000002EF /* Build configuration list for PBXNativeTarget "ejsrun" */;
+    			buildConfigurationList = 9C7857EE9C787218000002F4 /* Build configuration list for PBXNativeTarget "ejsrun" */;
     			buildPhases = (
-    				9C7857EE9C787218000002EE /* Sources */,
-    				9C7857EE9C787218000002AF /* Frameworks */,
+    				9C7857EE9C787218000002F3 /* Sources */,
+    				9C7857EE9C787218000002B4 /* Frameworks */,
     			);
     			buildRules = (
     			);
     			dependencies = (
-    				9C7857EE9C787218000002F0 /* Prep */,
-				9C7857EE9C787218000002F1 /* slots */,
-				9C7857EE9C787218000002F2 /* openssl */,
-				9C7857EE9C787218000002F3 /* libzlib */,
-				9C7857EE9C787218000002F4 /* libmpr */,
-				9C7857EE9C787218000002F5 /* libpcre */,
-				9C7857EE9C787218000002F6 /* libhttp */,
-				9C7857EE9C787218000002F7 /* libejs */,				
+    				9C7857EE9C787218000002F5 /* Prep */,
+				9C7857EE9C787218000002F6 /* slots */,
+				9C7857EE9C787218000002F7 /* openssl */,
+				9C7857EE9C787218000002F8 /* libzlib */,
+				9C7857EE9C787218000002F9 /* libmpr */,
+				9C7857EE9C787218000002FA /* libpcre */,
+				9C7857EE9C787218000002FB /* libhttp */,
+				9C7857EE9C787218000002FC /* libejs */,				
     			);
     			name = ejsrun;
     			productName = ejscript;
@@ -3059,21 +3064,21 @@
     		};
 		9C7857EE9C7872180000017A /* libejs */ = {
     			isa = PBXNativeTarget;
-    			buildConfigurationList = 9C7857EE9C787218000002F9 /* Build configuration list for PBXNativeTarget "libejs" */;
+    			buildConfigurationList = 9C7857EE9C787218000002FE /* Build configuration list for PBXNativeTarget "libejs" */;
     			buildPhases = (
-    				9C7857EE9C787218000002F8 /* Sources */,
-    				9C7857EE9C787218000002B0 /* Frameworks */,
+    				9C7857EE9C787218000002FD /* Sources */,
+    				9C7857EE9C787218000002B5 /* Frameworks */,
     			);
     			buildRules = (
     			);
     			dependencies = (
-    				9C7857EE9C787218000002FA /* Prep */,
-				9C7857EE9C787218000002FB /* slots */,
-				9C7857EE9C787218000002FC /* openssl */,
-				9C7857EE9C787218000002FD /* libzlib */,
-				9C7857EE9C787218000002FE /* libmpr */,
-				9C7857EE9C787218000002FF /* libpcre */,
-				9C7857EE9C78721800000300 /* libhttp */,				
+    				9C7857EE9C787218000002FF /* Prep */,
+				9C7857EE9C78721800000300 /* slots */,
+				9C7857EE9C78721800000301 /* openssl */,
+				9C7857EE9C78721800000302 /* libzlib */,
+				9C7857EE9C78721800000303 /* libmpr */,
+				9C7857EE9C78721800000304 /* libpcre */,
+				9C7857EE9C78721800000305 /* libhttp */,				
     			);
     			name = libejs;
     			productName = ejscript;
@@ -3082,102 +3087,102 @@
     		};
 		9C7857EE9C78721800000286 /* libejs.db.sqlite */ = {
     			isa = PBXNativeTarget;
-    			buildConfigurationList = 9C7857EE9C78721800000302 /* Build configuration list for PBXNativeTarget "libejs.db.sqlite" */;
+    			buildConfigurationList = 9C7857EE9C78721800000307 /* Build configuration list for PBXNativeTarget "libejs.db.sqlite" */;
     			buildPhases = (
-    				9C7857EE9C78721800000301 /* Sources */,
-    				9C7857EE9C787218000002B1 /* Frameworks */,
+    				9C7857EE9C78721800000306 /* Sources */,
+    				9C7857EE9C787218000002B6 /* Frameworks */,
     			);
     			buildRules = (
     			);
     			dependencies = (
-    				9C7857EE9C78721800000303 /* Prep */,
-				9C7857EE9C78721800000304 /* openssl */,
-				9C7857EE9C78721800000305 /* libzlib */,
-				9C7857EE9C78721800000306 /* libmpr */,
-				9C7857EE9C78721800000307 /* slots */,
-				9C7857EE9C78721800000308 /* libpcre */,
-				9C7857EE9C78721800000309 /* libhttp */,
-				9C7857EE9C7872180000030A /* libejs */,
-				9C7857EE9C7872180000030B /* ejsc */,
-				9C7857EE9C7872180000030C /* ejsmod */,
-				9C7857EE9C7872180000030D /* ejs.mod */,
-				9C7857EE9C7872180000030E /* ejs.db.sqlite.mod */,
-				9C7857EE9C7872180000030F /* libsql */,				
+    				9C7857EE9C78721800000308 /* Prep */,
+				9C7857EE9C78721800000309 /* openssl */,
+				9C7857EE9C7872180000030A /* libzlib */,
+				9C7857EE9C7872180000030B /* libmpr */,
+				9C7857EE9C7872180000030C /* slots */,
+				9C7857EE9C7872180000030D /* libpcre */,
+				9C7857EE9C7872180000030E /* libhttp */,
+				9C7857EE9C7872180000030F /* libejs */,
+				9C7857EE9C78721800000310 /* ejsc */,
+				9C7857EE9C78721800000311 /* ejsmod */,
+				9C7857EE9C78721800000312 /* ejs.mod */,
+				9C7857EE9C78721800000313 /* ejs.db.sqlite.mod */,
+				9C7857EE9C78721800000314 /* libsql */,				
     			);
     			name = libejs.db.sqlite;
     			productName = ejscript;
-    			productReference = 9C7857EE9C7872180000029F /* libejs.db.sqlite */;
+    			productReference = 9C7857EE9C787218000002A1 /* libejs.db.sqlite */;
     			productType = "com.apple.product-type.library.dynamic";
     		};
 		9C7857EE9C78721800000288 /* libejs.web */ = {
     			isa = PBXNativeTarget;
-    			buildConfigurationList = 9C7857EE9C78721800000311 /* Build configuration list for PBXNativeTarget "libejs.web" */;
+    			buildConfigurationList = 9C7857EE9C78721800000316 /* Build configuration list for PBXNativeTarget "libejs.web" */;
     			buildPhases = (
-    				9C7857EE9C78721800000310 /* Sources */,
-    				9C7857EE9C787218000002B2 /* Frameworks */,
+    				9C7857EE9C78721800000315 /* Sources */,
+    				9C7857EE9C787218000002B7 /* Frameworks */,
     			);
     			buildRules = (
     			);
     			dependencies = (
-    				9C7857EE9C78721800000312 /* Prep */,
-				9C7857EE9C78721800000313 /* slots */,
-				9C7857EE9C78721800000314 /* openssl */,
-				9C7857EE9C78721800000315 /* libzlib */,
-				9C7857EE9C78721800000316 /* libmpr */,
-				9C7857EE9C78721800000317 /* libpcre */,
-				9C7857EE9C78721800000318 /* libhttp */,
-				9C7857EE9C78721800000319 /* libejs */,
-				9C7857EE9C7872180000031A /* ejsc */,
-				9C7857EE9C7872180000031B /* ejsmod */,
-				9C7857EE9C7872180000031C /* ejs.mod */,				
+    				9C7857EE9C78721800000317 /* Prep */,
+				9C7857EE9C78721800000318 /* slots */,
+				9C7857EE9C78721800000319 /* openssl */,
+				9C7857EE9C7872180000031A /* libzlib */,
+				9C7857EE9C7872180000031B /* libmpr */,
+				9C7857EE9C7872180000031C /* libpcre */,
+				9C7857EE9C7872180000031D /* libhttp */,
+				9C7857EE9C7872180000031E /* libejs */,
+				9C7857EE9C7872180000031F /* ejsc */,
+				9C7857EE9C78721800000320 /* ejsmod */,
+				9C7857EE9C78721800000321 /* ejs.mod */,				
     			);
     			name = libejs.web;
     			productName = ejscript;
-    			productReference = 9C7857EE9C787218000002A2 /* libejs.web */;
+    			productReference = 9C7857EE9C787218000002A4 /* libejs.web */;
     			productType = "com.apple.product-type.library.dynamic";
     		};
 		9C7857EE9C787218000001CE /* libejs.zlib */ = {
     			isa = PBXNativeTarget;
-    			buildConfigurationList = 9C7857EE9C7872180000031E /* Build configuration list for PBXNativeTarget "libejs.zlib" */;
+    			buildConfigurationList = 9C7857EE9C78721800000323 /* Build configuration list for PBXNativeTarget "libejs.zlib" */;
     			buildPhases = (
-    				9C7857EE9C7872180000031D /* Sources */,
-    				9C7857EE9C787218000002B3 /* Frameworks */,
+    				9C7857EE9C78721800000322 /* Sources */,
+    				9C7857EE9C787218000002B8 /* Frameworks */,
     			);
     			buildRules = (
     			);
     			dependencies = (
-    				9C7857EE9C7872180000031F /* Prep */,
-				9C7857EE9C78721800000320 /* slots */,
-				9C7857EE9C78721800000321 /* openssl */,
-				9C7857EE9C78721800000322 /* libzlib */,
-				9C7857EE9C78721800000323 /* libmpr */,
-				9C7857EE9C78721800000324 /* libpcre */,
-				9C7857EE9C78721800000325 /* libhttp */,
-				9C7857EE9C78721800000326 /* libejs */,
-				9C7857EE9C78721800000327 /* ejsc */,
-				9C7857EE9C78721800000328 /* ejsmod */,
-				9C7857EE9C78721800000329 /* ejs.mod */,				
+    				9C7857EE9C78721800000324 /* Prep */,
+				9C7857EE9C78721800000325 /* slots */,
+				9C7857EE9C78721800000326 /* openssl */,
+				9C7857EE9C78721800000327 /* libzlib */,
+				9C7857EE9C78721800000328 /* libmpr */,
+				9C7857EE9C78721800000329 /* libpcre */,
+				9C7857EE9C7872180000032A /* libhttp */,
+				9C7857EE9C7872180000032B /* libejs */,
+				9C7857EE9C7872180000032C /* ejsc */,
+				9C7857EE9C7872180000032D /* ejsmod */,
+				9C7857EE9C7872180000032E /* ejs.mod */,				
     			);
     			name = libejs.zlib;
     			productName = ejscript;
-    			productReference = 9C7857EE9C787218000002A5 /* libejs.zlib */;
+    			productReference = 9C7857EE9C787218000002A7 /* libejs.zlib */;
     			productType = "com.apple.product-type.library.dynamic";
     		};
 		9C7857EE9C78721800000178 /* libhttp */ = {
     			isa = PBXNativeTarget;
-    			buildConfigurationList = 9C7857EE9C7872180000032B /* Build configuration list for PBXNativeTarget "libhttp" */;
+    			buildConfigurationList = 9C7857EE9C78721800000330 /* Build configuration list for PBXNativeTarget "libhttp" */;
     			buildPhases = (
-    				9C7857EE9C7872180000032A /* Sources */,
-    				9C7857EE9C787218000002B4 /* Frameworks */,
+    				9C7857EE9C7872180000032F /* Sources */,
+    				9C7857EE9C787218000002B9 /* Frameworks */,
     			);
     			buildRules = (
     			);
     			dependencies = (
-    				9C7857EE9C7872180000032C /* Prep */,
-				9C7857EE9C7872180000032D /* openssl */,
-				9C7857EE9C7872180000032E /* libzlib */,
-				9C7857EE9C7872180000032F /* libmpr */,
-				9C7857EE9C78721800000330 /* libpcre */,				
+    				9C7857EE9C78721800000331 /* Prep */,
+				9C7857EE9C78721800000332 /* openssl */,
+				9C7857EE9C78721800000333 /* libzlib */,
+				9C7857EE9C78721800000334 /* libmpr */,
+				9C7857EE9C78721800000335 /* libpcre */,				
     			);
     			name = libhttp;
     			productName = ejscript;
@@ -3186,17 +3191,17 @@
     		};
 		9C7857EE9C78721800000174 /* libmpr */ = {
     			isa = PBXNativeTarget;
-    			buildConfigurationList = 9C7857EE9C78721800000332 /* Build configuration list for PBXNativeTarget "libmpr" */;
+    			buildConfigurationList = 9C7857EE9C78721800000337 /* Build configuration list for PBXNativeTarget "libmpr" */;
     			buildPhases = (
-    				9C7857EE9C78721800000331 /* Sources */,
-    				9C7857EE9C787218000002B5 /* Frameworks */,
+    				9C7857EE9C78721800000336 /* Sources */,
+    				9C7857EE9C787218000002BA /* Frameworks */,
     			);
     			buildRules = (
     			);
     			dependencies = (
-    				9C7857EE9C78721800000333 /* Prep */,
-				9C7857EE9C78721800000334 /* openssl */,
-				9C7857EE9C78721800000335 /* libzlib */,				
+    				9C7857EE9C78721800000338 /* Prep */,
+				9C7857EE9C78721800000339 /* openssl */,
+				9C7857EE9C7872180000033A /* libzlib */,				
     			);
     			name = libmpr;
     			productName = ejscript;
@@ -3205,15 +3210,15 @@
     		};
 		9C7857EE9C78721800000176 /* libpcre */ = {
     			isa = PBXNativeTarget;
-    			buildConfigurationList = 9C7857EE9C78721800000337 /* Build configuration list for PBXNativeTarget "libpcre" */;
+    			buildConfigurationList = 9C7857EE9C7872180000033C /* Build configuration list for PBXNativeTarget "libpcre" */;
     			buildPhases = (
-    				9C7857EE9C78721800000336 /* Sources */,
-    				9C7857EE9C787218000002B6 /* Frameworks */,
+    				9C7857EE9C7872180000033B /* Sources */,
+    				9C7857EE9C787218000002BB /* Frameworks */,
     			);
     			buildRules = (
     			);
     			dependencies = (
-    				9C7857EE9C78721800000338 /* Prep */,				
+    				9C7857EE9C7872180000033D /* Prep */,				
     			);
     			name = libpcre;
     			productName = ejscript;
@@ -3222,15 +3227,15 @@
     		};
 		9C7857EE9C7872180000022A /* libsql */ = {
     			isa = PBXNativeTarget;
-    			buildConfigurationList = 9C7857EE9C7872180000033A /* Build configuration list for PBXNativeTarget "libsql" */;
+    			buildConfigurationList = 9C7857EE9C7872180000033F /* Build configuration list for PBXNativeTarget "libsql" */;
     			buildPhases = (
-    				9C7857EE9C78721800000339 /* Sources */,
-    				9C7857EE9C787218000002B7 /* Frameworks */,
+    				9C7857EE9C7872180000033E /* Sources */,
+    				9C7857EE9C787218000002BC /* Frameworks */,
     			);
     			buildRules = (
     			);
     			dependencies = (
-    				9C7857EE9C7872180000033B /* Prep */,				
+    				9C7857EE9C78721800000340 /* Prep */,				
     			);
     			name = libsql;
     			productName = ejscript;
@@ -3239,15 +3244,15 @@
     		};
 		9C7857EE9C78721800000172 /* libzlib */ = {
     			isa = PBXNativeTarget;
-    			buildConfigurationList = 9C7857EE9C7872180000033D /* Build configuration list for PBXNativeTarget "libzlib" */;
+    			buildConfigurationList = 9C7857EE9C78721800000342 /* Build configuration list for PBXNativeTarget "libzlib" */;
     			buildPhases = (
-    				9C7857EE9C7872180000033C /* Sources */,
-    				9C7857EE9C787218000002B8 /* Frameworks */,
+    				9C7857EE9C78721800000341 /* Sources */,
+    				9C7857EE9C787218000002BD /* Frameworks */,
     			);
     			buildRules = (
     			);
     			dependencies = (
-    				9C7857EE9C7872180000033E /* Prep */,				
+    				9C7857EE9C78721800000343 /* Prep */,				
     			);
     			name = libzlib;
     			productName = ejscript;
@@ -3256,90 +3261,90 @@
     		};
 		9C7857EE9C7872180000028B /* mvc */ = {
     			isa = PBXNativeTarget;
-    			buildConfigurationList = 9C7857EE9C78721800000340 /* Build configuration list for PBXNativeTarget "mvc" */;
+    			buildConfigurationList = 9C7857EE9C78721800000345 /* Build configuration list for PBXNativeTarget "mvc" */;
     			buildPhases = (
-    				9C7857EE9C7872180000033F /* Sources */,
-    				9C7857EE9C787218000002B9 /* Frameworks */,
+    				9C7857EE9C78721800000344 /* Sources */,
+    				9C7857EE9C787218000002BE /* Frameworks */,
     			);
     			buildRules = (
     			);
     			dependencies = (
-    				9C7857EE9C78721800000341 /* Prep */,
-				9C7857EE9C78721800000342 /* slots */,
-				9C7857EE9C78721800000343 /* openssl */,
-				9C7857EE9C78721800000344 /* libzlib */,
-				9C7857EE9C78721800000345 /* libmpr */,
-				9C7857EE9C78721800000346 /* libpcre */,
-				9C7857EE9C78721800000347 /* libhttp */,
-				9C7857EE9C78721800000348 /* libejs */,
-				9C7857EE9C78721800000349 /* mvc.es */,				
+    				9C7857EE9C78721800000346 /* Prep */,
+				9C7857EE9C78721800000347 /* slots */,
+				9C7857EE9C78721800000348 /* openssl */,
+				9C7857EE9C78721800000349 /* libzlib */,
+				9C7857EE9C7872180000034A /* libmpr */,
+				9C7857EE9C7872180000034B /* libpcre */,
+				9C7857EE9C7872180000034C /* libhttp */,
+				9C7857EE9C7872180000034D /* libejs */,
+				9C7857EE9C7872180000034E /* mvc.es */,				
     			);
     			name = mvc;
     			productName = ejscript;
-    			productReference = 9C7857EE9C787218000002A8 /* mvc */;
+    			productReference = 9C7857EE9C787218000002AD /* mvc */;
     			productType = "com.apple.product-type.tool";
     		};
 		9C7857EE9C78721800000170 /* openssl */ = {
     			isa = PBXNativeTarget;
-    			buildConfigurationList = 9C7857EE9C7872180000034B /* Build configuration list for PBXNativeTarget "openssl" */;
+    			buildConfigurationList = 9C7857EE9C78721800000350 /* Build configuration list for PBXNativeTarget "openssl" */;
     			buildPhases = (
-    				9C7857EE9C7872180000034A /* Sources */,
-    				9C7857EE9C787218000002BA /* Frameworks */,
+    				9C7857EE9C7872180000034F /* Sources */,
+    				9C7857EE9C787218000002BF /* Frameworks */,
     			);
     			buildRules = (
     			);
     			dependencies = (
-    				9C7857EE9C7872180000034C /* Prep */,				
+    				9C7857EE9C78721800000351 /* Prep */,				
     			);
     			name = openssl;
     			productName = ejscript;
-    			productReference = 9C7857EE9C787218000002A9 /* openssl */;
+    			productReference = 9C7857EE9C787218000002AE /* openssl */;
     			productType = "com.apple.product-type.library.dynamic";
     		};
 		9C7857EE9C7872180000028F /* utest */ = {
     			isa = PBXNativeTarget;
-    			buildConfigurationList = 9C7857EE9C7872180000034E /* Build configuration list for PBXNativeTarget "utest" */;
+    			buildConfigurationList = 9C7857EE9C78721800000353 /* Build configuration list for PBXNativeTarget "utest" */;
     			buildPhases = (
-    				9C7857EE9C7872180000034D /* Sources */,
-    				9C7857EE9C787218000002BB /* Frameworks */,
+    				9C7857EE9C78721800000352 /* Sources */,
+    				9C7857EE9C787218000002C0 /* Frameworks */,
     			);
     			buildRules = (
     			);
     			dependencies = (
-    				9C7857EE9C7872180000034F /* Prep */,
-				9C7857EE9C78721800000350 /* slots */,
-				9C7857EE9C78721800000351 /* openssl */,
-				9C7857EE9C78721800000352 /* libzlib */,
-				9C7857EE9C78721800000353 /* libmpr */,
-				9C7857EE9C78721800000354 /* libpcre */,
-				9C7857EE9C78721800000355 /* libhttp */,
-				9C7857EE9C78721800000356 /* libejs */,
-				9C7857EE9C78721800000357 /* utest.es */,
-				9C7857EE9C78721800000358 /* utest.worker */,				
+    				9C7857EE9C78721800000354 /* Prep */,
+				9C7857EE9C78721800000355 /* slots */,
+				9C7857EE9C78721800000356 /* openssl */,
+				9C7857EE9C78721800000357 /* libzlib */,
+				9C7857EE9C78721800000358 /* libmpr */,
+				9C7857EE9C78721800000359 /* libpcre */,
+				9C7857EE9C7872180000035A /* libhttp */,
+				9C7857EE9C7872180000035B /* libejs */,
+				9C7857EE9C7872180000035C /* utest.es */,
+				9C7857EE9C7872180000035D /* utest.worker */,				
     			);
     			name = utest;
     			productName = ejscript;
-    			productReference = 9C7857EE9C787218000002AA /* utest */;
+    			productReference = 9C7857EE9C787218000002AF /* utest */;
     			productType = "com.apple.product-type.tool";
     		};
 		9C7857EE9C78721800000291 /* watchdog */ = {
     			isa = PBXNativeTarget;
-    			buildConfigurationList = 9C7857EE9C7872180000035A /* Build configuration list for PBXNativeTarget "watchdog" */;
+    			buildConfigurationList = 9C7857EE9C7872180000035F /* Build configuration list for PBXNativeTarget "watchdog" */;
     			buildPhases = (
-    				9C7857EE9C78721800000359 /* Sources */,
-    				9C7857EE9C787218000002BC /* Frameworks */,
+    				9C7857EE9C7872180000035E /* Sources */,
+    				9C7857EE9C787218000002C1 /* Frameworks */,
     			);
     			buildRules = (
     			);
     			dependencies = (
-    				9C7857EE9C7872180000035B /* Prep */,
-				9C7857EE9C7872180000035C /* openssl */,
-				9C7857EE9C7872180000035D /* libzlib */,
-				9C7857EE9C7872180000035E /* libmpr */,				
+    				9C7857EE9C78721800000360 /* Prep */,
+				9C7857EE9C78721800000361 /* openssl */,
+				9C7857EE9C78721800000362 /* libzlib */,
+				9C7857EE9C78721800000363 /* libmpr */,				
     			);
     			name = watchdog;
     			productName = ejscript;
-    			productReference = 9C7857EE9C787218000002AB /* watchdog */;
+    			productReference = 9C7857EE9C787218000002B0 /* watchdog */;
     			productType = "com.apple.product-type.tool";
     		};
 /* End PBXNativeTarget section */
@@ -3949,8 +3954,8 @@ fi";
     			knownRegions = (
     				en,
     			);
-    			mainGroup = 9C7857EE9C787218000002BD;
-    			productRefGroup = 9C7857EE9C787218000002CF /* Products */;
+    			mainGroup = 9C7857EE9C787218000002C2;
+    			productRefGroup = 9C7857EE9C787218000002D4 /* Products */;
     			projectDirPath = "";
     			projectRoot = "";
     			targets = (
@@ -3995,7 +4000,7 @@ fi";
     /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		9C7857EE9C787218000002D0 /* ejs Sources */ = {
+		9C7857EE9C787218000002D5 /* ejs Sources */ = {
     			isa = PBXSourcesBuildPhase;
     			buildActionMask = 2147483647;
     			files = (
@@ -4003,7 +4008,7 @@ fi";
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     		};
-		9C7857EE9C787218000002DA /* ejsc Sources */ = {
+		9C7857EE9C787218000002DF /* ejsc Sources */ = {
     			isa = PBXSourcesBuildPhase;
     			buildActionMask = 2147483647;
     			files = (
@@ -4011,7 +4016,7 @@ fi";
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     		};
-		9C7857EE9C787218000002E4 /* ejsmod Sources */ = {
+		9C7857EE9C787218000002E9 /* ejsmod Sources */ = {
     			isa = PBXSourcesBuildPhase;
     			buildActionMask = 2147483647;
     			files = (
@@ -4023,7 +4028,7 @@ fi";
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     		};
-		9C7857EE9C787218000002EE /* ejsrun Sources */ = {
+		9C7857EE9C787218000002F3 /* ejsrun Sources */ = {
     			isa = PBXSourcesBuildPhase;
     			buildActionMask = 2147483647;
     			files = (
@@ -4031,7 +4036,7 @@ fi";
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     		};
-		9C7857EE9C787218000002F8 /* libejs Sources */ = {
+		9C7857EE9C787218000002FD /* libejs Sources */ = {
     			isa = PBXSourcesBuildPhase;
     			buildActionMask = 2147483647;
     			files = (
@@ -4097,7 +4102,7 @@ fi";
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     		};
-		9C7857EE9C78721800000301 /* libejs.db.sqlite Sources */ = {
+		9C7857EE9C78721800000306 /* libejs.db.sqlite Sources */ = {
     			isa = PBXSourcesBuildPhase;
     			buildActionMask = 2147483647;
     			files = (
@@ -4105,7 +4110,7 @@ fi";
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     		};
-		9C7857EE9C78721800000310 /* libejs.web Sources */ = {
+		9C7857EE9C78721800000315 /* libejs.web Sources */ = {
     			isa = PBXSourcesBuildPhase;
     			buildActionMask = 2147483647;
     			files = (
@@ -4116,7 +4121,7 @@ fi";
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     		};
-		9C7857EE9C7872180000031D /* libejs.zlib Sources */ = {
+		9C7857EE9C78721800000322 /* libejs.zlib Sources */ = {
     			isa = PBXSourcesBuildPhase;
     			buildActionMask = 2147483647;
     			files = (
@@ -4124,7 +4129,7 @@ fi";
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     		};
-		9C7857EE9C7872180000032A /* libhttp Sources */ = {
+		9C7857EE9C7872180000032F /* libhttp Sources */ = {
     			isa = PBXSourcesBuildPhase;
     			buildActionMask = 2147483647;
     			files = (
@@ -4132,7 +4137,7 @@ fi";
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     		};
-		9C7857EE9C78721800000331 /* libmpr Sources */ = {
+		9C7857EE9C78721800000336 /* libmpr Sources */ = {
     			isa = PBXSourcesBuildPhase;
     			buildActionMask = 2147483647;
     			files = (
@@ -4140,7 +4145,7 @@ fi";
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     		};
-		9C7857EE9C78721800000336 /* libpcre Sources */ = {
+		9C7857EE9C7872180000033B /* libpcre Sources */ = {
     			isa = PBXSourcesBuildPhase;
     			buildActionMask = 2147483647;
     			files = (
@@ -4148,7 +4153,7 @@ fi";
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     		};
-		9C7857EE9C78721800000339 /* libsql Sources */ = {
+		9C7857EE9C7872180000033E /* libsql Sources */ = {
     			isa = PBXSourcesBuildPhase;
     			buildActionMask = 2147483647;
     			files = (
@@ -4156,7 +4161,7 @@ fi";
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     		};
-		9C7857EE9C7872180000033C /* libzlib Sources */ = {
+		9C7857EE9C78721800000341 /* libzlib Sources */ = {
     			isa = PBXSourcesBuildPhase;
     			buildActionMask = 2147483647;
     			files = (
@@ -4164,7 +4169,7 @@ fi";
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     		};
-		9C7857EE9C7872180000033F /* mvc Sources */ = {
+		9C7857EE9C78721800000344 /* mvc Sources */ = {
     			isa = PBXSourcesBuildPhase;
     			buildActionMask = 2147483647;
     			files = (
@@ -4172,7 +4177,7 @@ fi";
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     		};
-		9C7857EE9C7872180000034A /* openssl Sources */ = {
+		9C7857EE9C7872180000034F /* openssl Sources */ = {
     			isa = PBXSourcesBuildPhase;
     			buildActionMask = 2147483647;
     			files = (
@@ -4180,7 +4185,7 @@ fi";
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     		};
-		9C7857EE9C7872180000034D /* utest Sources */ = {
+		9C7857EE9C78721800000352 /* utest Sources */ = {
     			isa = PBXSourcesBuildPhase;
     			buildActionMask = 2147483647;
     			files = (
@@ -4188,7 +4193,7 @@ fi";
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     		};
-		9C7857EE9C78721800000359 /* watchdog Sources */ = {
+		9C7857EE9C7872180000035E /* watchdog Sources */ = {
     			isa = PBXSourcesBuildPhase;
     			buildActionMask = 2147483647;
     			files = (
@@ -4199,42 +4204,42 @@ fi";
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		9C7857EE9C787218000002D2 /* PBXTargetDependency ejs depends on Prep */ = {
+		9C7857EE9C787218000002D7 /* PBXTargetDependency ejs depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C7872180000016D /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002D3 /* PBXTargetDependency ejs depends on slots */ = {
+		9C7857EE9C787218000002D8 /* PBXTargetDependency ejs depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000057 /* slots */;
     			targetProxy = 9C7857EE9C7872180000016E /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002D4 /* PBXTargetDependency ejs depends on openssl */ = {
+		9C7857EE9C787218000002D9 /* PBXTargetDependency ejs depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C7872180000016F /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002D5 /* PBXTargetDependency ejs depends on libzlib */ = {
+		9C7857EE9C787218000002DA /* PBXTargetDependency ejs depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C78721800000171 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002D6 /* PBXTargetDependency ejs depends on libmpr */ = {
+		9C7857EE9C787218000002DB /* PBXTargetDependency ejs depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C78721800000173 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002D7 /* PBXTargetDependency ejs depends on libpcre */ = {
+		9C7857EE9C787218000002DC /* PBXTargetDependency ejs depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C78721800000175 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002D8 /* PBXTargetDependency ejs depends on libhttp */ = {
+		9C7857EE9C787218000002DD /* PBXTargetDependency ejs depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000178 /* libhttp */;
     			targetProxy = 9C7857EE9C78721800000177 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002D9 /* PBXTargetDependency ejs depends on libejs */ = {
+		9C7857EE9C787218000002DE /* PBXTargetDependency ejs depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000017A /* libejs */;
     			targetProxy = 9C7857EE9C78721800000179 /* PBXContainerItemProxy */;
@@ -4244,37 +4249,37 @@ fi";
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C7872180000017B /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000035F /* PBXTargetDependency ejs.db.mapper.mod depends on slots */ = {
+		9C7857EE9C78721800000364 /* PBXTargetDependency ejs.db.mapper.mod depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000057 /* slots */;
     			targetProxy = 9C7857EE9C7872180000017C /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000360 /* PBXTargetDependency ejs.db.mapper.mod depends on openssl */ = {
+		9C7857EE9C78721800000365 /* PBXTargetDependency ejs.db.mapper.mod depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C7872180000017D /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000361 /* PBXTargetDependency ejs.db.mapper.mod depends on libzlib */ = {
+		9C7857EE9C78721800000366 /* PBXTargetDependency ejs.db.mapper.mod depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C7872180000017E /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000362 /* PBXTargetDependency ejs.db.mapper.mod depends on libmpr */ = {
+		9C7857EE9C78721800000367 /* PBXTargetDependency ejs.db.mapper.mod depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C7872180000017F /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000363 /* PBXTargetDependency ejs.db.mapper.mod depends on libpcre */ = {
+		9C7857EE9C78721800000368 /* PBXTargetDependency ejs.db.mapper.mod depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C78721800000180 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000364 /* PBXTargetDependency ejs.db.mapper.mod depends on libhttp */ = {
+		9C7857EE9C78721800000369 /* PBXTargetDependency ejs.db.mapper.mod depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000178 /* libhttp */;
     			targetProxy = 9C7857EE9C78721800000181 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000365 /* PBXTargetDependency ejs.db.mapper.mod depends on libejs */ = {
+		9C7857EE9C7872180000036A /* PBXTargetDependency ejs.db.mapper.mod depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000017A /* libejs */;
     			targetProxy = 9C7857EE9C78721800000182 /* PBXContainerItemProxy */;
@@ -4284,7 +4289,7 @@ fi";
     			target = 9C7857EE9C78721800000184 /* ejsc */;
     			targetProxy = 9C7857EE9C78721800000183 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000366 /* PBXTargetDependency ejs.db.mapper.mod depends on ejsmod */ = {
+		9C7857EE9C7872180000036B /* PBXTargetDependency ejs.db.mapper.mod depends on ejsmod */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000186 /* ejsmod */;
     			targetProxy = 9C7857EE9C78721800000185 /* PBXContainerItemProxy */;
@@ -4304,37 +4309,37 @@ fi";
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C78721800000189 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000367 /* PBXTargetDependency ejs.db.mod depends on slots */ = {
+		9C7857EE9C7872180000036C /* PBXTargetDependency ejs.db.mod depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000057 /* slots */;
     			targetProxy = 9C7857EE9C7872180000018A /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000368 /* PBXTargetDependency ejs.db.mod depends on openssl */ = {
+		9C7857EE9C7872180000036D /* PBXTargetDependency ejs.db.mod depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C7872180000018B /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000369 /* PBXTargetDependency ejs.db.mod depends on libzlib */ = {
+		9C7857EE9C7872180000036E /* PBXTargetDependency ejs.db.mod depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C7872180000018C /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000036A /* PBXTargetDependency ejs.db.mod depends on libmpr */ = {
+		9C7857EE9C7872180000036F /* PBXTargetDependency ejs.db.mod depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C7872180000018D /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000036B /* PBXTargetDependency ejs.db.mod depends on libpcre */ = {
+		9C7857EE9C78721800000370 /* PBXTargetDependency ejs.db.mod depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C7872180000018E /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000036C /* PBXTargetDependency ejs.db.mod depends on libhttp */ = {
+		9C7857EE9C78721800000371 /* PBXTargetDependency ejs.db.mod depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000178 /* libhttp */;
     			targetProxy = 9C7857EE9C7872180000018F /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000036D /* PBXTargetDependency ejs.db.mod depends on libejs */ = {
+		9C7857EE9C78721800000372 /* PBXTargetDependency ejs.db.mod depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000017A /* libejs */;
     			targetProxy = 9C7857EE9C78721800000190 /* PBXContainerItemProxy */;
@@ -4344,7 +4349,7 @@ fi";
     			target = 9C7857EE9C78721800000184 /* ejsc */;
     			targetProxy = 9C7857EE9C78721800000191 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000036E /* PBXTargetDependency ejs.db.mod depends on ejsmod */ = {
+		9C7857EE9C78721800000373 /* PBXTargetDependency ejs.db.mod depends on ejsmod */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000186 /* ejsmod */;
     			targetProxy = 9C7857EE9C78721800000192 /* PBXContainerItemProxy */;
@@ -4359,37 +4364,37 @@ fi";
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C78721800000194 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000036F /* PBXTargetDependency ejs.db.sqlite.mod depends on slots */ = {
+		9C7857EE9C78721800000374 /* PBXTargetDependency ejs.db.sqlite.mod depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000057 /* slots */;
     			targetProxy = 9C7857EE9C78721800000195 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000370 /* PBXTargetDependency ejs.db.sqlite.mod depends on openssl */ = {
+		9C7857EE9C78721800000375 /* PBXTargetDependency ejs.db.sqlite.mod depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C78721800000196 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000371 /* PBXTargetDependency ejs.db.sqlite.mod depends on libzlib */ = {
+		9C7857EE9C78721800000376 /* PBXTargetDependency ejs.db.sqlite.mod depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C78721800000197 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000372 /* PBXTargetDependency ejs.db.sqlite.mod depends on libmpr */ = {
+		9C7857EE9C78721800000377 /* PBXTargetDependency ejs.db.sqlite.mod depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C78721800000198 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000373 /* PBXTargetDependency ejs.db.sqlite.mod depends on libpcre */ = {
+		9C7857EE9C78721800000378 /* PBXTargetDependency ejs.db.sqlite.mod depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C78721800000199 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000374 /* PBXTargetDependency ejs.db.sqlite.mod depends on libhttp */ = {
+		9C7857EE9C78721800000379 /* PBXTargetDependency ejs.db.sqlite.mod depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000178 /* libhttp */;
     			targetProxy = 9C7857EE9C7872180000019A /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000375 /* PBXTargetDependency ejs.db.sqlite.mod depends on libejs */ = {
+		9C7857EE9C7872180000037A /* PBXTargetDependency ejs.db.sqlite.mod depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000017A /* libejs */;
     			targetProxy = 9C7857EE9C7872180000019B /* PBXContainerItemProxy */;
@@ -4414,37 +4419,37 @@ fi";
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C7872180000019F /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000376 /* PBXTargetDependency ejs.mail.mod depends on slots */ = {
+		9C7857EE9C7872180000037B /* PBXTargetDependency ejs.mail.mod depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000057 /* slots */;
     			targetProxy = 9C7857EE9C787218000001A0 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000377 /* PBXTargetDependency ejs.mail.mod depends on openssl */ = {
+		9C7857EE9C7872180000037C /* PBXTargetDependency ejs.mail.mod depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C787218000001A1 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000378 /* PBXTargetDependency ejs.mail.mod depends on libzlib */ = {
+		9C7857EE9C7872180000037D /* PBXTargetDependency ejs.mail.mod depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C787218000001A2 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000379 /* PBXTargetDependency ejs.mail.mod depends on libmpr */ = {
+		9C7857EE9C7872180000037E /* PBXTargetDependency ejs.mail.mod depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C787218000001A3 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000037A /* PBXTargetDependency ejs.mail.mod depends on libpcre */ = {
+		9C7857EE9C7872180000037F /* PBXTargetDependency ejs.mail.mod depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C787218000001A4 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000037B /* PBXTargetDependency ejs.mail.mod depends on libhttp */ = {
+		9C7857EE9C78721800000380 /* PBXTargetDependency ejs.mail.mod depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000178 /* libhttp */;
     			targetProxy = 9C7857EE9C787218000001A5 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000037C /* PBXTargetDependency ejs.mail.mod depends on libejs */ = {
+		9C7857EE9C78721800000381 /* PBXTargetDependency ejs.mail.mod depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000017A /* libejs */;
     			targetProxy = 9C7857EE9C787218000001A6 /* PBXContainerItemProxy */;
@@ -4454,7 +4459,7 @@ fi";
     			target = 9C7857EE9C78721800000184 /* ejsc */;
     			targetProxy = 9C7857EE9C787218000001A7 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000037D /* PBXTargetDependency ejs.mail.mod depends on ejsmod */ = {
+		9C7857EE9C78721800000382 /* PBXTargetDependency ejs.mail.mod depends on ejsmod */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000186 /* ejsmod */;
     			targetProxy = 9C7857EE9C787218000001A8 /* PBXContainerItemProxy */;
@@ -4469,37 +4474,37 @@ fi";
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C787218000001AA /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000037E /* PBXTargetDependency ejs.mod depends on slots */ = {
+		9C7857EE9C78721800000383 /* PBXTargetDependency ejs.mod depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000057 /* slots */;
     			targetProxy = 9C7857EE9C787218000001AB /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000037F /* PBXTargetDependency ejs.mod depends on openssl */ = {
+		9C7857EE9C78721800000384 /* PBXTargetDependency ejs.mod depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C787218000001AC /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000380 /* PBXTargetDependency ejs.mod depends on libzlib */ = {
+		9C7857EE9C78721800000385 /* PBXTargetDependency ejs.mod depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C787218000001AD /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000381 /* PBXTargetDependency ejs.mod depends on libmpr */ = {
+		9C7857EE9C78721800000386 /* PBXTargetDependency ejs.mod depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C787218000001AE /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000382 /* PBXTargetDependency ejs.mod depends on libpcre */ = {
+		9C7857EE9C78721800000387 /* PBXTargetDependency ejs.mod depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C787218000001AF /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000383 /* PBXTargetDependency ejs.mod depends on libhttp */ = {
+		9C7857EE9C78721800000388 /* PBXTargetDependency ejs.mod depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000178 /* libhttp */;
     			targetProxy = 9C7857EE9C787218000001B0 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000384 /* PBXTargetDependency ejs.mod depends on libejs */ = {
+		9C7857EE9C78721800000389 /* PBXTargetDependency ejs.mod depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000017A /* libejs */;
     			targetProxy = 9C7857EE9C787218000001B1 /* PBXContainerItemProxy */;
@@ -4519,37 +4524,37 @@ fi";
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C787218000001B4 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000385 /* PBXTargetDependency ejs.mvc.mod depends on slots */ = {
+		9C7857EE9C7872180000038A /* PBXTargetDependency ejs.mvc.mod depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000057 /* slots */;
     			targetProxy = 9C7857EE9C787218000001B5 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000386 /* PBXTargetDependency ejs.mvc.mod depends on openssl */ = {
+		9C7857EE9C7872180000038B /* PBXTargetDependency ejs.mvc.mod depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C787218000001B6 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000387 /* PBXTargetDependency ejs.mvc.mod depends on libzlib */ = {
+		9C7857EE9C7872180000038C /* PBXTargetDependency ejs.mvc.mod depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C787218000001B7 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000388 /* PBXTargetDependency ejs.mvc.mod depends on libmpr */ = {
+		9C7857EE9C7872180000038D /* PBXTargetDependency ejs.mvc.mod depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C787218000001B8 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000389 /* PBXTargetDependency ejs.mvc.mod depends on libpcre */ = {
+		9C7857EE9C7872180000038E /* PBXTargetDependency ejs.mvc.mod depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C787218000001B9 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000038A /* PBXTargetDependency ejs.mvc.mod depends on libhttp */ = {
+		9C7857EE9C7872180000038F /* PBXTargetDependency ejs.mvc.mod depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000178 /* libhttp */;
     			targetProxy = 9C7857EE9C787218000001BA /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000038B /* PBXTargetDependency ejs.mvc.mod depends on libejs */ = {
+		9C7857EE9C78721800000390 /* PBXTargetDependency ejs.mvc.mod depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000017A /* libejs */;
     			targetProxy = 9C7857EE9C787218000001BB /* PBXContainerItemProxy */;
@@ -4559,7 +4564,7 @@ fi";
     			target = 9C7857EE9C78721800000184 /* ejsc */;
     			targetProxy = 9C7857EE9C787218000001BC /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000038C /* PBXTargetDependency ejs.mvc.mod depends on ejsmod */ = {
+		9C7857EE9C78721800000391 /* PBXTargetDependency ejs.mvc.mod depends on ejsmod */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000186 /* ejsmod */;
     			targetProxy = 9C7857EE9C787218000001BD /* PBXContainerItemProxy */;
@@ -4589,37 +4594,37 @@ fi";
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C787218000001C2 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000038D /* PBXTargetDependency ejs.tar.mod depends on slots */ = {
+		9C7857EE9C78721800000392 /* PBXTargetDependency ejs.tar.mod depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000057 /* slots */;
     			targetProxy = 9C7857EE9C787218000001C3 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000038E /* PBXTargetDependency ejs.tar.mod depends on openssl */ = {
+		9C7857EE9C78721800000393 /* PBXTargetDependency ejs.tar.mod depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C787218000001C4 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000038F /* PBXTargetDependency ejs.tar.mod depends on libzlib */ = {
+		9C7857EE9C78721800000394 /* PBXTargetDependency ejs.tar.mod depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C787218000001C5 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000390 /* PBXTargetDependency ejs.tar.mod depends on libmpr */ = {
+		9C7857EE9C78721800000395 /* PBXTargetDependency ejs.tar.mod depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C787218000001C6 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000391 /* PBXTargetDependency ejs.tar.mod depends on libpcre */ = {
+		9C7857EE9C78721800000396 /* PBXTargetDependency ejs.tar.mod depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C787218000001C7 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000392 /* PBXTargetDependency ejs.tar.mod depends on libhttp */ = {
+		9C7857EE9C78721800000397 /* PBXTargetDependency ejs.tar.mod depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000178 /* libhttp */;
     			targetProxy = 9C7857EE9C787218000001C8 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000393 /* PBXTargetDependency ejs.tar.mod depends on libejs */ = {
+		9C7857EE9C78721800000398 /* PBXTargetDependency ejs.tar.mod depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000017A /* libejs */;
     			targetProxy = 9C7857EE9C787218000001C9 /* PBXContainerItemProxy */;
@@ -4629,7 +4634,7 @@ fi";
     			target = 9C7857EE9C78721800000184 /* ejsc */;
     			targetProxy = 9C7857EE9C787218000001CA /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000394 /* PBXTargetDependency ejs.tar.mod depends on ejsmod */ = {
+		9C7857EE9C78721800000399 /* PBXTargetDependency ejs.tar.mod depends on ejsmod */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000186 /* ejsmod */;
     			targetProxy = 9C7857EE9C787218000001CB /* PBXContainerItemProxy */;
@@ -4639,7 +4644,7 @@ fi";
     			target = 9C7857EE9C78721800000020 /* ejs.mod */;
     			targetProxy = 9C7857EE9C787218000001CC /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000395 /* PBXTargetDependency ejs.tar.mod depends on libejs.zlib */ = {
+		9C7857EE9C7872180000039A /* PBXTargetDependency ejs.tar.mod depends on libejs.zlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C787218000001CE /* libejs.zlib */;
     			targetProxy = 9C7857EE9C787218000001CD /* PBXContainerItemProxy */;
@@ -4654,37 +4659,37 @@ fi";
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C787218000001D0 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000396 /* PBXTargetDependency ejs.template.mod depends on slots */ = {
+		9C7857EE9C7872180000039B /* PBXTargetDependency ejs.template.mod depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000057 /* slots */;
     			targetProxy = 9C7857EE9C787218000001D1 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000397 /* PBXTargetDependency ejs.template.mod depends on openssl */ = {
+		9C7857EE9C7872180000039C /* PBXTargetDependency ejs.template.mod depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C787218000001D2 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000398 /* PBXTargetDependency ejs.template.mod depends on libzlib */ = {
+		9C7857EE9C7872180000039D /* PBXTargetDependency ejs.template.mod depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C787218000001D3 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000399 /* PBXTargetDependency ejs.template.mod depends on libmpr */ = {
+		9C7857EE9C7872180000039E /* PBXTargetDependency ejs.template.mod depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C787218000001D4 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000039A /* PBXTargetDependency ejs.template.mod depends on libpcre */ = {
+		9C7857EE9C7872180000039F /* PBXTargetDependency ejs.template.mod depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C787218000001D5 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000039B /* PBXTargetDependency ejs.template.mod depends on libhttp */ = {
+		9C7857EE9C787218000003A0 /* PBXTargetDependency ejs.template.mod depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000178 /* libhttp */;
     			targetProxy = 9C7857EE9C787218000001D6 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000039C /* PBXTargetDependency ejs.template.mod depends on libejs */ = {
+		9C7857EE9C787218000003A1 /* PBXTargetDependency ejs.template.mod depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000017A /* libejs */;
     			targetProxy = 9C7857EE9C787218000001D7 /* PBXContainerItemProxy */;
@@ -4694,7 +4699,7 @@ fi";
     			target = 9C7857EE9C78721800000184 /* ejsc */;
     			targetProxy = 9C7857EE9C787218000001D8 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000039D /* PBXTargetDependency ejs.template.mod depends on ejsmod */ = {
+		9C7857EE9C787218000003A2 /* PBXTargetDependency ejs.template.mod depends on ejsmod */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000186 /* ejsmod */;
     			targetProxy = 9C7857EE9C787218000001D9 /* PBXContainerItemProxy */;
@@ -4709,37 +4714,37 @@ fi";
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C787218000001DB /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000039E /* PBXTargetDependency ejs.unix.mod depends on slots */ = {
+		9C7857EE9C787218000003A3 /* PBXTargetDependency ejs.unix.mod depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000057 /* slots */;
     			targetProxy = 9C7857EE9C787218000001DC /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000039F /* PBXTargetDependency ejs.unix.mod depends on openssl */ = {
+		9C7857EE9C787218000003A4 /* PBXTargetDependency ejs.unix.mod depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C787218000001DD /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003A0 /* PBXTargetDependency ejs.unix.mod depends on libzlib */ = {
+		9C7857EE9C787218000003A5 /* PBXTargetDependency ejs.unix.mod depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C787218000001DE /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003A1 /* PBXTargetDependency ejs.unix.mod depends on libmpr */ = {
+		9C7857EE9C787218000003A6 /* PBXTargetDependency ejs.unix.mod depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C787218000001DF /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003A2 /* PBXTargetDependency ejs.unix.mod depends on libpcre */ = {
+		9C7857EE9C787218000003A7 /* PBXTargetDependency ejs.unix.mod depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C787218000001E0 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003A3 /* PBXTargetDependency ejs.unix.mod depends on libhttp */ = {
+		9C7857EE9C787218000003A8 /* PBXTargetDependency ejs.unix.mod depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000178 /* libhttp */;
     			targetProxy = 9C7857EE9C787218000001E1 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003A4 /* PBXTargetDependency ejs.unix.mod depends on libejs */ = {
+		9C7857EE9C787218000003A9 /* PBXTargetDependency ejs.unix.mod depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000017A /* libejs */;
     			targetProxy = 9C7857EE9C787218000001E2 /* PBXContainerItemProxy */;
@@ -4749,7 +4754,7 @@ fi";
     			target = 9C7857EE9C78721800000184 /* ejsc */;
     			targetProxy = 9C7857EE9C787218000001E3 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003A5 /* PBXTargetDependency ejs.unix.mod depends on ejsmod */ = {
+		9C7857EE9C787218000003AA /* PBXTargetDependency ejs.unix.mod depends on ejsmod */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000186 /* ejsmod */;
     			targetProxy = 9C7857EE9C787218000001E4 /* PBXContainerItemProxy */;
@@ -4764,37 +4769,37 @@ fi";
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C787218000001E6 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003A6 /* PBXTargetDependency ejs.web.mod depends on slots */ = {
+		9C7857EE9C787218000003AB /* PBXTargetDependency ejs.web.mod depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000057 /* slots */;
     			targetProxy = 9C7857EE9C787218000001E7 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003A7 /* PBXTargetDependency ejs.web.mod depends on openssl */ = {
+		9C7857EE9C787218000003AC /* PBXTargetDependency ejs.web.mod depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C787218000001E8 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003A8 /* PBXTargetDependency ejs.web.mod depends on libzlib */ = {
+		9C7857EE9C787218000003AD /* PBXTargetDependency ejs.web.mod depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C787218000001E9 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003A9 /* PBXTargetDependency ejs.web.mod depends on libmpr */ = {
+		9C7857EE9C787218000003AE /* PBXTargetDependency ejs.web.mod depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C787218000001EA /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003AA /* PBXTargetDependency ejs.web.mod depends on libpcre */ = {
+		9C7857EE9C787218000003AF /* PBXTargetDependency ejs.web.mod depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C787218000001EB /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003AB /* PBXTargetDependency ejs.web.mod depends on libhttp */ = {
+		9C7857EE9C787218000003B0 /* PBXTargetDependency ejs.web.mod depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000178 /* libhttp */;
     			targetProxy = 9C7857EE9C787218000001EC /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003AC /* PBXTargetDependency ejs.web.mod depends on libejs */ = {
+		9C7857EE9C787218000003B1 /* PBXTargetDependency ejs.web.mod depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000017A /* libejs */;
     			targetProxy = 9C7857EE9C787218000001ED /* PBXContainerItemProxy */;
@@ -4819,37 +4824,37 @@ fi";
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C787218000001F1 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003AD /* PBXTargetDependency ejs.zlib.mod depends on slots */ = {
+		9C7857EE9C787218000003B2 /* PBXTargetDependency ejs.zlib.mod depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000057 /* slots */;
     			targetProxy = 9C7857EE9C787218000001F2 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003AE /* PBXTargetDependency ejs.zlib.mod depends on openssl */ = {
+		9C7857EE9C787218000003B3 /* PBXTargetDependency ejs.zlib.mod depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C787218000001F3 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003AF /* PBXTargetDependency ejs.zlib.mod depends on libzlib */ = {
+		9C7857EE9C787218000003B4 /* PBXTargetDependency ejs.zlib.mod depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C787218000001F4 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003B0 /* PBXTargetDependency ejs.zlib.mod depends on libmpr */ = {
+		9C7857EE9C787218000003B5 /* PBXTargetDependency ejs.zlib.mod depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C787218000001F5 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003B1 /* PBXTargetDependency ejs.zlib.mod depends on libpcre */ = {
+		9C7857EE9C787218000003B6 /* PBXTargetDependency ejs.zlib.mod depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C787218000001F6 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003B2 /* PBXTargetDependency ejs.zlib.mod depends on libhttp */ = {
+		9C7857EE9C787218000003B7 /* PBXTargetDependency ejs.zlib.mod depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000178 /* libhttp */;
     			targetProxy = 9C7857EE9C787218000001F7 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003B3 /* PBXTargetDependency ejs.zlib.mod depends on libejs */ = {
+		9C7857EE9C787218000003B8 /* PBXTargetDependency ejs.zlib.mod depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000017A /* libejs */;
     			targetProxy = 9C7857EE9C787218000001F8 /* PBXContainerItemProxy */;
@@ -4859,7 +4864,7 @@ fi";
     			target = 9C7857EE9C78721800000184 /* ejsc */;
     			targetProxy = 9C7857EE9C787218000001F9 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003B4 /* PBXTargetDependency ejs.zlib.mod depends on ejsmod */ = {
+		9C7857EE9C787218000003B9 /* PBXTargetDependency ejs.zlib.mod depends on ejsmod */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000186 /* ejsmod */;
     			targetProxy = 9C7857EE9C787218000001FA /* PBXContainerItemProxy */;
@@ -4869,127 +4874,127 @@ fi";
     			target = 9C7857EE9C78721800000020 /* ejs.mod */;
     			targetProxy = 9C7857EE9C787218000001FB /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000003B5 /* PBXTargetDependency ejs.zlib.mod depends on libejs.zlib */ = {
+		9C7857EE9C787218000003BA /* PBXTargetDependency ejs.zlib.mod depends on libejs.zlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C787218000001CE /* libejs.zlib */;
     			targetProxy = 9C7857EE9C787218000001FC /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002DC /* PBXTargetDependency ejsc depends on Prep */ = {
+		9C7857EE9C787218000002E1 /* PBXTargetDependency ejsc depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C787218000001FD /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002DD /* PBXTargetDependency ejsc depends on slots */ = {
+		9C7857EE9C787218000002E2 /* PBXTargetDependency ejsc depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000057 /* slots */;
     			targetProxy = 9C7857EE9C787218000001FE /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002DE /* PBXTargetDependency ejsc depends on openssl */ = {
+		9C7857EE9C787218000002E3 /* PBXTargetDependency ejsc depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C787218000001FF /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002DF /* PBXTargetDependency ejsc depends on libzlib */ = {
+		9C7857EE9C787218000002E4 /* PBXTargetDependency ejsc depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C78721800000200 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002E0 /* PBXTargetDependency ejsc depends on libmpr */ = {
+		9C7857EE9C787218000002E5 /* PBXTargetDependency ejsc depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C78721800000201 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002E1 /* PBXTargetDependency ejsc depends on libpcre */ = {
+		9C7857EE9C787218000002E6 /* PBXTargetDependency ejsc depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C78721800000202 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002E2 /* PBXTargetDependency ejsc depends on libhttp */ = {
+		9C7857EE9C787218000002E7 /* PBXTargetDependency ejsc depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000178 /* libhttp */;
     			targetProxy = 9C7857EE9C78721800000203 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002E3 /* PBXTargetDependency ejsc depends on libejs */ = {
+		9C7857EE9C787218000002E8 /* PBXTargetDependency ejsc depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000017A /* libejs */;
     			targetProxy = 9C7857EE9C78721800000204 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002E6 /* PBXTargetDependency ejsmod depends on Prep */ = {
+		9C7857EE9C787218000002EB /* PBXTargetDependency ejsmod depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C78721800000205 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002E7 /* PBXTargetDependency ejsmod depends on slots */ = {
+		9C7857EE9C787218000002EC /* PBXTargetDependency ejsmod depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000057 /* slots */;
     			targetProxy = 9C7857EE9C78721800000206 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002E8 /* PBXTargetDependency ejsmod depends on openssl */ = {
+		9C7857EE9C787218000002ED /* PBXTargetDependency ejsmod depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C78721800000207 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002E9 /* PBXTargetDependency ejsmod depends on libzlib */ = {
+		9C7857EE9C787218000002EE /* PBXTargetDependency ejsmod depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C78721800000208 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002EA /* PBXTargetDependency ejsmod depends on libmpr */ = {
+		9C7857EE9C787218000002EF /* PBXTargetDependency ejsmod depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C78721800000209 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002EB /* PBXTargetDependency ejsmod depends on libpcre */ = {
+		9C7857EE9C787218000002F0 /* PBXTargetDependency ejsmod depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C7872180000020A /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002EC /* PBXTargetDependency ejsmod depends on libhttp */ = {
+		9C7857EE9C787218000002F1 /* PBXTargetDependency ejsmod depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000178 /* libhttp */;
     			targetProxy = 9C7857EE9C7872180000020B /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002ED /* PBXTargetDependency ejsmod depends on libejs */ = {
+		9C7857EE9C787218000002F2 /* PBXTargetDependency ejsmod depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000017A /* libejs */;
     			targetProxy = 9C7857EE9C7872180000020C /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002F0 /* PBXTargetDependency ejsrun depends on Prep */ = {
+		9C7857EE9C787218000002F5 /* PBXTargetDependency ejsrun depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C7872180000020D /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002F1 /* PBXTargetDependency ejsrun depends on slots */ = {
+		9C7857EE9C787218000002F6 /* PBXTargetDependency ejsrun depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000057 /* slots */;
     			targetProxy = 9C7857EE9C7872180000020E /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002F2 /* PBXTargetDependency ejsrun depends on openssl */ = {
+		9C7857EE9C787218000002F7 /* PBXTargetDependency ejsrun depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C7872180000020F /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002F3 /* PBXTargetDependency ejsrun depends on libzlib */ = {
+		9C7857EE9C787218000002F8 /* PBXTargetDependency ejsrun depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C78721800000210 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002F4 /* PBXTargetDependency ejsrun depends on libmpr */ = {
+		9C7857EE9C787218000002F9 /* PBXTargetDependency ejsrun depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C78721800000211 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002F5 /* PBXTargetDependency ejsrun depends on libpcre */ = {
+		9C7857EE9C787218000002FA /* PBXTargetDependency ejsrun depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C78721800000212 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002F6 /* PBXTargetDependency ejsrun depends on libhttp */ = {
+		9C7857EE9C787218000002FB /* PBXTargetDependency ejsrun depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000178 /* libhttp */;
     			targetProxy = 9C7857EE9C78721800000213 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002F7 /* PBXTargetDependency ejsrun depends on libejs */ = {
+		9C7857EE9C787218000002FC /* PBXTargetDependency ejsrun depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000017A /* libejs */;
     			targetProxy = 9C7857EE9C78721800000214 /* PBXContainerItemProxy */;
@@ -4999,312 +5004,312 @@ fi";
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C78721800000215 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002FA /* PBXTargetDependency libejs depends on Prep */ = {
+		9C7857EE9C787218000002FF /* PBXTargetDependency libejs depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C78721800000216 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002FB /* PBXTargetDependency libejs depends on slots */ = {
+		9C7857EE9C78721800000300 /* PBXTargetDependency libejs depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000057 /* slots */;
     			targetProxy = 9C7857EE9C78721800000217 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002FC /* PBXTargetDependency libejs depends on openssl */ = {
+		9C7857EE9C78721800000301 /* PBXTargetDependency libejs depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C78721800000218 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002FD /* PBXTargetDependency libejs depends on libzlib */ = {
+		9C7857EE9C78721800000302 /* PBXTargetDependency libejs depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C78721800000219 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002FE /* PBXTargetDependency libejs depends on libmpr */ = {
+		9C7857EE9C78721800000303 /* PBXTargetDependency libejs depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C7872180000021A /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C787218000002FF /* PBXTargetDependency libejs depends on libpcre */ = {
+		9C7857EE9C78721800000304 /* PBXTargetDependency libejs depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C7872180000021B /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000300 /* PBXTargetDependency libejs depends on libhttp */ = {
+		9C7857EE9C78721800000305 /* PBXTargetDependency libejs depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000178 /* libhttp */;
     			targetProxy = 9C7857EE9C7872180000021C /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000303 /* PBXTargetDependency libejs.db.sqlite depends on Prep */ = {
+		9C7857EE9C78721800000308 /* PBXTargetDependency libejs.db.sqlite depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C7872180000021D /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000304 /* PBXTargetDependency libejs.db.sqlite depends on openssl */ = {
+		9C7857EE9C78721800000309 /* PBXTargetDependency libejs.db.sqlite depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C7872180000021E /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000305 /* PBXTargetDependency libejs.db.sqlite depends on libzlib */ = {
+		9C7857EE9C7872180000030A /* PBXTargetDependency libejs.db.sqlite depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C7872180000021F /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000306 /* PBXTargetDependency libejs.db.sqlite depends on libmpr */ = {
+		9C7857EE9C7872180000030B /* PBXTargetDependency libejs.db.sqlite depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C78721800000220 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000307 /* PBXTargetDependency libejs.db.sqlite depends on slots */ = {
+		9C7857EE9C7872180000030C /* PBXTargetDependency libejs.db.sqlite depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000057 /* slots */;
     			targetProxy = 9C7857EE9C78721800000221 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000308 /* PBXTargetDependency libejs.db.sqlite depends on libpcre */ = {
+		9C7857EE9C7872180000030D /* PBXTargetDependency libejs.db.sqlite depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C78721800000222 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000309 /* PBXTargetDependency libejs.db.sqlite depends on libhttp */ = {
+		9C7857EE9C7872180000030E /* PBXTargetDependency libejs.db.sqlite depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000178 /* libhttp */;
     			targetProxy = 9C7857EE9C78721800000223 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000030A /* PBXTargetDependency libejs.db.sqlite depends on libejs */ = {
+		9C7857EE9C7872180000030F /* PBXTargetDependency libejs.db.sqlite depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000017A /* libejs */;
     			targetProxy = 9C7857EE9C78721800000224 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000030B /* PBXTargetDependency libejs.db.sqlite depends on ejsc */ = {
+		9C7857EE9C78721800000310 /* PBXTargetDependency libejs.db.sqlite depends on ejsc */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000184 /* ejsc */;
     			targetProxy = 9C7857EE9C78721800000225 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000030C /* PBXTargetDependency libejs.db.sqlite depends on ejsmod */ = {
+		9C7857EE9C78721800000311 /* PBXTargetDependency libejs.db.sqlite depends on ejsmod */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000186 /* ejsmod */;
     			targetProxy = 9C7857EE9C78721800000226 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000030D /* PBXTargetDependency libejs.db.sqlite depends on ejs.mod */ = {
+		9C7857EE9C78721800000312 /* PBXTargetDependency libejs.db.sqlite depends on ejs.mod */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000020 /* ejs.mod */;
     			targetProxy = 9C7857EE9C78721800000227 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000030E /* PBXTargetDependency libejs.db.sqlite depends on ejs.db.sqlite.mod */ = {
+		9C7857EE9C78721800000313 /* PBXTargetDependency libejs.db.sqlite depends on ejs.db.sqlite.mod */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000013 /* ejs.db.sqlite.mod */;
     			targetProxy = 9C7857EE9C78721800000228 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000030F /* PBXTargetDependency libejs.db.sqlite depends on libsql */ = {
+		9C7857EE9C78721800000314 /* PBXTargetDependency libejs.db.sqlite depends on libsql */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000022A /* libsql */;
     			targetProxy = 9C7857EE9C78721800000229 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000312 /* PBXTargetDependency libejs.web depends on Prep */ = {
+		9C7857EE9C78721800000317 /* PBXTargetDependency libejs.web depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C7872180000022B /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000313 /* PBXTargetDependency libejs.web depends on slots */ = {
+		9C7857EE9C78721800000318 /* PBXTargetDependency libejs.web depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000057 /* slots */;
     			targetProxy = 9C7857EE9C7872180000022C /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000314 /* PBXTargetDependency libejs.web depends on openssl */ = {
+		9C7857EE9C78721800000319 /* PBXTargetDependency libejs.web depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C7872180000022D /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000315 /* PBXTargetDependency libejs.web depends on libzlib */ = {
+		9C7857EE9C7872180000031A /* PBXTargetDependency libejs.web depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C7872180000022E /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000316 /* PBXTargetDependency libejs.web depends on libmpr */ = {
+		9C7857EE9C7872180000031B /* PBXTargetDependency libejs.web depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C7872180000022F /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000317 /* PBXTargetDependency libejs.web depends on libpcre */ = {
+		9C7857EE9C7872180000031C /* PBXTargetDependency libejs.web depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C78721800000230 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000318 /* PBXTargetDependency libejs.web depends on libhttp */ = {
+		9C7857EE9C7872180000031D /* PBXTargetDependency libejs.web depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000178 /* libhttp */;
     			targetProxy = 9C7857EE9C78721800000231 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000319 /* PBXTargetDependency libejs.web depends on libejs */ = {
+		9C7857EE9C7872180000031E /* PBXTargetDependency libejs.web depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000017A /* libejs */;
     			targetProxy = 9C7857EE9C78721800000232 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000031A /* PBXTargetDependency libejs.web depends on ejsc */ = {
+		9C7857EE9C7872180000031F /* PBXTargetDependency libejs.web depends on ejsc */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000184 /* ejsc */;
     			targetProxy = 9C7857EE9C78721800000233 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000031B /* PBXTargetDependency libejs.web depends on ejsmod */ = {
+		9C7857EE9C78721800000320 /* PBXTargetDependency libejs.web depends on ejsmod */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000186 /* ejsmod */;
     			targetProxy = 9C7857EE9C78721800000234 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000031C /* PBXTargetDependency libejs.web depends on ejs.mod */ = {
+		9C7857EE9C78721800000321 /* PBXTargetDependency libejs.web depends on ejs.mod */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000020 /* ejs.mod */;
     			targetProxy = 9C7857EE9C78721800000235 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000031F /* PBXTargetDependency libejs.zlib depends on Prep */ = {
+		9C7857EE9C78721800000324 /* PBXTargetDependency libejs.zlib depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C78721800000236 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000320 /* PBXTargetDependency libejs.zlib depends on slots */ = {
+		9C7857EE9C78721800000325 /* PBXTargetDependency libejs.zlib depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000057 /* slots */;
     			targetProxy = 9C7857EE9C78721800000237 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000321 /* PBXTargetDependency libejs.zlib depends on openssl */ = {
+		9C7857EE9C78721800000326 /* PBXTargetDependency libejs.zlib depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C78721800000238 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000322 /* PBXTargetDependency libejs.zlib depends on libzlib */ = {
+		9C7857EE9C78721800000327 /* PBXTargetDependency libejs.zlib depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C78721800000239 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000323 /* PBXTargetDependency libejs.zlib depends on libmpr */ = {
+		9C7857EE9C78721800000328 /* PBXTargetDependency libejs.zlib depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C7872180000023A /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000324 /* PBXTargetDependency libejs.zlib depends on libpcre */ = {
+		9C7857EE9C78721800000329 /* PBXTargetDependency libejs.zlib depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C7872180000023B /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000325 /* PBXTargetDependency libejs.zlib depends on libhttp */ = {
+		9C7857EE9C7872180000032A /* PBXTargetDependency libejs.zlib depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000178 /* libhttp */;
     			targetProxy = 9C7857EE9C7872180000023C /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000326 /* PBXTargetDependency libejs.zlib depends on libejs */ = {
+		9C7857EE9C7872180000032B /* PBXTargetDependency libejs.zlib depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000017A /* libejs */;
     			targetProxy = 9C7857EE9C7872180000023D /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000327 /* PBXTargetDependency libejs.zlib depends on ejsc */ = {
+		9C7857EE9C7872180000032C /* PBXTargetDependency libejs.zlib depends on ejsc */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000184 /* ejsc */;
     			targetProxy = 9C7857EE9C7872180000023E /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000328 /* PBXTargetDependency libejs.zlib depends on ejsmod */ = {
+		9C7857EE9C7872180000032D /* PBXTargetDependency libejs.zlib depends on ejsmod */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000186 /* ejsmod */;
     			targetProxy = 9C7857EE9C7872180000023F /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000329 /* PBXTargetDependency libejs.zlib depends on ejs.mod */ = {
+		9C7857EE9C7872180000032E /* PBXTargetDependency libejs.zlib depends on ejs.mod */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000020 /* ejs.mod */;
     			targetProxy = 9C7857EE9C78721800000240 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000032C /* PBXTargetDependency libhttp depends on Prep */ = {
+		9C7857EE9C78721800000331 /* PBXTargetDependency libhttp depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C78721800000241 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000032D /* PBXTargetDependency libhttp depends on openssl */ = {
+		9C7857EE9C78721800000332 /* PBXTargetDependency libhttp depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C78721800000242 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000032E /* PBXTargetDependency libhttp depends on libzlib */ = {
+		9C7857EE9C78721800000333 /* PBXTargetDependency libhttp depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C78721800000243 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000032F /* PBXTargetDependency libhttp depends on libmpr */ = {
+		9C7857EE9C78721800000334 /* PBXTargetDependency libhttp depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C78721800000244 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000330 /* PBXTargetDependency libhttp depends on libpcre */ = {
+		9C7857EE9C78721800000335 /* PBXTargetDependency libhttp depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C78721800000245 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000333 /* PBXTargetDependency libmpr depends on Prep */ = {
+		9C7857EE9C78721800000338 /* PBXTargetDependency libmpr depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C78721800000246 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000334 /* PBXTargetDependency libmpr depends on openssl */ = {
+		9C7857EE9C78721800000339 /* PBXTargetDependency libmpr depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C78721800000247 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000335 /* PBXTargetDependency libmpr depends on libzlib */ = {
+		9C7857EE9C7872180000033A /* PBXTargetDependency libmpr depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C78721800000248 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000338 /* PBXTargetDependency libpcre depends on Prep */ = {
+		9C7857EE9C7872180000033D /* PBXTargetDependency libpcre depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C78721800000249 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000033B /* PBXTargetDependency libsql depends on Prep */ = {
+		9C7857EE9C78721800000340 /* PBXTargetDependency libsql depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C7872180000024A /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000033E /* PBXTargetDependency libzlib depends on Prep */ = {
+		9C7857EE9C78721800000343 /* PBXTargetDependency libzlib depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C7872180000024B /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000341 /* PBXTargetDependency mvc depends on Prep */ = {
+		9C7857EE9C78721800000346 /* PBXTargetDependency mvc depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C7872180000024C /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000342 /* PBXTargetDependency mvc depends on slots */ = {
+		9C7857EE9C78721800000347 /* PBXTargetDependency mvc depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000057 /* slots */;
     			targetProxy = 9C7857EE9C7872180000024D /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000343 /* PBXTargetDependency mvc depends on openssl */ = {
+		9C7857EE9C78721800000348 /* PBXTargetDependency mvc depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C7872180000024E /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000344 /* PBXTargetDependency mvc depends on libzlib */ = {
+		9C7857EE9C78721800000349 /* PBXTargetDependency mvc depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C7872180000024F /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000345 /* PBXTargetDependency mvc depends on libmpr */ = {
+		9C7857EE9C7872180000034A /* PBXTargetDependency mvc depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C78721800000250 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000346 /* PBXTargetDependency mvc depends on libpcre */ = {
+		9C7857EE9C7872180000034B /* PBXTargetDependency mvc depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C78721800000251 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000347 /* PBXTargetDependency mvc depends on libhttp */ = {
+		9C7857EE9C7872180000034C /* PBXTargetDependency mvc depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000178 /* libhttp */;
     			targetProxy = 9C7857EE9C78721800000252 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000348 /* PBXTargetDependency mvc depends on libejs */ = {
+		9C7857EE9C7872180000034D /* PBXTargetDependency mvc depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000017A /* libejs */;
     			targetProxy = 9C7857EE9C78721800000253 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000349 /* PBXTargetDependency mvc depends on mvc.es */ = {
+		9C7857EE9C7872180000034E /* PBXTargetDependency mvc depends on mvc.es */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000053 /* mvc.es */;
     			targetProxy = 9C7857EE9C78721800000254 /* PBXContainerItemProxy */;
@@ -5314,7 +5319,7 @@ fi";
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C78721800000255 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000034C /* PBXTargetDependency openssl depends on Prep */ = {
+		9C7857EE9C78721800000351 /* PBXTargetDependency openssl depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C78721800000256 /* PBXContainerItemProxy */;
@@ -5324,52 +5329,52 @@ fi";
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C78721800000257 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000034F /* PBXTargetDependency utest depends on Prep */ = {
+		9C7857EE9C78721800000354 /* PBXTargetDependency utest depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C78721800000258 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000350 /* PBXTargetDependency utest depends on slots */ = {
+		9C7857EE9C78721800000355 /* PBXTargetDependency utest depends on slots */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000057 /* slots */;
     			targetProxy = 9C7857EE9C78721800000259 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000351 /* PBXTargetDependency utest depends on openssl */ = {
+		9C7857EE9C78721800000356 /* PBXTargetDependency utest depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C7872180000025A /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000352 /* PBXTargetDependency utest depends on libzlib */ = {
+		9C7857EE9C78721800000357 /* PBXTargetDependency utest depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C7872180000025B /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000353 /* PBXTargetDependency utest depends on libmpr */ = {
+		9C7857EE9C78721800000358 /* PBXTargetDependency utest depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C7872180000025C /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000354 /* PBXTargetDependency utest depends on libpcre */ = {
+		9C7857EE9C78721800000359 /* PBXTargetDependency utest depends on libpcre */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000176 /* libpcre */;
     			targetProxy = 9C7857EE9C7872180000025D /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000355 /* PBXTargetDependency utest depends on libhttp */ = {
+		9C7857EE9C7872180000035A /* PBXTargetDependency utest depends on libhttp */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000178 /* libhttp */;
     			targetProxy = 9C7857EE9C7872180000025E /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000356 /* PBXTargetDependency utest depends on libejs */ = {
+		9C7857EE9C7872180000035B /* PBXTargetDependency utest depends on libejs */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000017A /* libejs */;
     			targetProxy = 9C7857EE9C7872180000025F /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000357 /* PBXTargetDependency utest depends on utest.es */ = {
+		9C7857EE9C7872180000035C /* PBXTargetDependency utest depends on utest.es */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000005B /* utest.es */;
     			targetProxy = 9C7857EE9C78721800000260 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C78721800000358 /* PBXTargetDependency utest depends on utest.worker */ = {
+		9C7857EE9C7872180000035D /* PBXTargetDependency utest depends on utest.worker */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000005F /* utest.worker */;
     			targetProxy = 9C7857EE9C78721800000261 /* PBXContainerItemProxy */;
@@ -5384,22 +5389,22 @@ fi";
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C78721800000263 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000035B /* PBXTargetDependency watchdog depends on Prep */ = {
+		9C7857EE9C78721800000360 /* PBXTargetDependency watchdog depends on Prep */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C7872180000008D /* Prep */;
     			targetProxy = 9C7857EE9C78721800000264 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000035C /* PBXTargetDependency watchdog depends on openssl */ = {
+		9C7857EE9C78721800000361 /* PBXTargetDependency watchdog depends on openssl */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000170 /* openssl */;
     			targetProxy = 9C7857EE9C78721800000265 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000035D /* PBXTargetDependency watchdog depends on libzlib */ = {
+		9C7857EE9C78721800000362 /* PBXTargetDependency watchdog depends on libzlib */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000172 /* libzlib */;
     			targetProxy = 9C7857EE9C78721800000266 /* PBXContainerItemProxy */;
     		};
-		9C7857EE9C7872180000035E /* PBXTargetDependency watchdog depends on libmpr */ = {
+		9C7857EE9C78721800000363 /* PBXTargetDependency watchdog depends on libmpr */ = {
     			isa = PBXTargetDependency;
     			target = 9C7857EE9C78721800000174 /* libmpr */;
     			targetProxy = 9C7857EE9C78721800000267 /* PBXContainerItemProxy */;
@@ -5725,7 +5730,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003B6 /* Debug */ = {
+		9C7857EE9C787218000003BB /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs;
@@ -5754,7 +5759,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003B7 /* Release */ = {
+    		9C7857EE9C787218000003BC /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs;
@@ -5780,7 +5785,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003B8 /* Debug */ = {
+		9C7857EE9C787218000003BD /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs.db.mapper;
@@ -5808,7 +5813,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003B9 /* Release */ = {
+    		9C7857EE9C787218000003BE /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs.db.mapper;
@@ -5833,7 +5838,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003BA /* Debug */ = {
+		9C7857EE9C787218000003BF /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs.db;
@@ -5861,7 +5866,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003BB /* Release */ = {
+    		9C7857EE9C787218000003C0 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs.db;
@@ -5886,7 +5891,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003BC /* Debug */ = {
+		9C7857EE9C787218000003C1 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs.db.sqlite;
@@ -5914,7 +5919,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003BD /* Release */ = {
+    		9C7857EE9C787218000003C2 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs.db.sqlite;
@@ -5939,7 +5944,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003BE /* Debug */ = {
+		9C7857EE9C787218000003C3 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs.mail;
@@ -5967,7 +5972,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003BF /* Release */ = {
+    		9C7857EE9C787218000003C4 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs.mail;
@@ -5992,7 +5997,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003C0 /* Debug */ = {
+		9C7857EE9C787218000003C5 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs;
@@ -6020,7 +6025,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003C1 /* Release */ = {
+    		9C7857EE9C787218000003C6 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs;
@@ -6045,7 +6050,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003C2 /* Debug */ = {
+		9C7857EE9C787218000003C7 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs.mvc;
@@ -6073,7 +6078,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003C3 /* Release */ = {
+    		9C7857EE9C787218000003C8 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs.mvc;
@@ -6098,7 +6103,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003C4 /* Debug */ = {
+		9C7857EE9C787218000003C9 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs.tar;
@@ -6126,7 +6131,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003C5 /* Release */ = {
+    		9C7857EE9C787218000003CA /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs.tar;
@@ -6151,7 +6156,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003C6 /* Debug */ = {
+		9C7857EE9C787218000003CB /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs.template;
@@ -6179,7 +6184,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003C7 /* Release */ = {
+    		9C7857EE9C787218000003CC /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs.template;
@@ -6204,7 +6209,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003C8 /* Debug */ = {
+		9C7857EE9C787218000003CD /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs.unix;
@@ -6232,7 +6237,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003C9 /* Release */ = {
+    		9C7857EE9C787218000003CE /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs.unix;
@@ -6257,7 +6262,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003CA /* Debug */ = {
+		9C7857EE9C787218000003CF /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs.web;
@@ -6285,7 +6290,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003CB /* Release */ = {
+    		9C7857EE9C787218000003D0 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs.web;
@@ -6310,7 +6315,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003CC /* Debug */ = {
+		9C7857EE9C787218000003D1 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs.zlib;
@@ -6338,7 +6343,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003CD /* Release */ = {
+    		9C7857EE9C787218000003D2 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejs.zlib;
@@ -6363,7 +6368,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003CE /* Debug */ = {
+		9C7857EE9C787218000003D3 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejsc;
@@ -6391,7 +6396,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003CF /* Release */ = {
+    		9C7857EE9C787218000003D4 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejsc;
@@ -6416,7 +6421,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003D0 /* Debug */ = {
+		9C7857EE9C787218000003D5 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejsmod;
@@ -6444,7 +6449,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003D1 /* Release */ = {
+    		9C7857EE9C787218000003D6 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejsmod;
@@ -6469,7 +6474,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003D2 /* Debug */ = {
+		9C7857EE9C787218000003D7 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejsrun;
@@ -6497,7 +6502,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003D3 /* Release */ = {
+    		9C7857EE9C787218000003D8 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejsrun;
@@ -6522,7 +6527,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003D4 /* Debug */ = {
+		9C7857EE9C787218000003D9 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = install-certs;
@@ -6534,7 +6539,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003D5 /* Release */ = {
+    		9C7857EE9C787218000003DA /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = install-certs;
@@ -6543,7 +6548,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003D6 /* Debug */ = {
+		9C7857EE9C787218000003DB /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libejs;
@@ -6571,7 +6576,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003D7 /* Release */ = {
+    		9C7857EE9C787218000003DC /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libejs;
@@ -6596,7 +6601,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003D8 /* Debug */ = {
+		9C7857EE9C787218000003DD /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libejs.db.sqlite;
@@ -6624,7 +6629,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003D9 /* Release */ = {
+    		9C7857EE9C787218000003DE /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libejs.db.sqlite;
@@ -6649,7 +6654,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003DA /* Debug */ = {
+		9C7857EE9C787218000003DF /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libejs.web;
@@ -6677,7 +6682,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003DB /* Release */ = {
+    		9C7857EE9C787218000003E0 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libejs.web;
@@ -6702,7 +6707,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003DC /* Debug */ = {
+		9C7857EE9C787218000003E1 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libejs.zlib;
@@ -6730,7 +6735,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003DD /* Release */ = {
+    		9C7857EE9C787218000003E2 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libejs.zlib;
@@ -6755,7 +6760,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003DE /* Debug */ = {
+		9C7857EE9C787218000003E3 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libhttp;
@@ -6783,7 +6788,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003DF /* Release */ = {
+    		9C7857EE9C787218000003E4 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libhttp;
@@ -6808,7 +6813,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003E0 /* Debug */ = {
+		9C7857EE9C787218000003E5 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libmpr;
@@ -6835,7 +6840,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003E1 /* Release */ = {
+    		9C7857EE9C787218000003E6 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libmpr;
@@ -6859,7 +6864,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003E2 /* Debug */ = {
+		9C7857EE9C787218000003E7 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libpcre;
@@ -6872,7 +6877,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003E3 /* Release */ = {
+    		9C7857EE9C787218000003E8 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libpcre;
@@ -6884,7 +6889,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003E4 /* Debug */ = {
+		9C7857EE9C787218000003E9 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libsql;
@@ -6896,7 +6901,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003E5 /* Release */ = {
+    		9C7857EE9C787218000003EA /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libsql;
@@ -6905,7 +6910,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003E6 /* Debug */ = {
+		9C7857EE9C787218000003EB /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libzlib;
@@ -6917,7 +6922,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003E7 /* Release */ = {
+    		9C7857EE9C787218000003EC /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libzlib;
@@ -6926,7 +6931,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003E8 /* Debug */ = {
+		9C7857EE9C787218000003ED /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = mvc;
@@ -6954,7 +6959,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003E9 /* Release */ = {
+    		9C7857EE9C787218000003EE /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = mvc;
@@ -6979,7 +6984,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003EA /* Debug */ = {
+		9C7857EE9C787218000003EF /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = mvc;
@@ -6991,7 +6996,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003EB /* Release */ = {
+    		9C7857EE9C787218000003F0 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = mvc;
@@ -7000,7 +7005,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003EC /* Debug */ = {
+		9C7857EE9C787218000003F1 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libmpr-openssl;
@@ -7028,7 +7033,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003ED /* Release */ = {
+    		9C7857EE9C787218000003F2 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = libmpr-openssl;
@@ -7053,7 +7058,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003EE /* Debug */ = {
+		9C7857EE9C787218000003F3 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = slots;
@@ -7065,7 +7070,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003EF /* Release */ = {
+    		9C7857EE9C787218000003F4 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = slots;
@@ -7074,7 +7079,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003F0 /* Debug */ = {
+		9C7857EE9C787218000003F5 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = utest;
@@ -7102,7 +7107,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003F1 /* Release */ = {
+    		9C7857EE9C787218000003F6 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = utest;
@@ -7127,7 +7132,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003F2 /* Debug */ = {
+		9C7857EE9C787218000003F7 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = utest;
@@ -7139,7 +7144,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003F3 /* Release */ = {
+    		9C7857EE9C787218000003F8 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = utest;
@@ -7148,7 +7153,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003F4 /* Debug */ = {
+		9C7857EE9C787218000003F9 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = utest;
@@ -7160,7 +7165,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003F5 /* Release */ = {
+    		9C7857EE9C787218000003FA /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = utest;
@@ -7169,7 +7174,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003F6 /* Debug */ = {
+		9C7857EE9C787218000003FB /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejsman;
@@ -7196,7 +7201,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003F7 /* Release */ = {
+    		9C7857EE9C787218000003FC /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = ejsman;
@@ -7220,7 +7225,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003F8 /* Debug */ = {
+		9C7857EE9C787218000003FD /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = www;
@@ -7232,7 +7237,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003F9 /* Release */ = {
+    		9C7857EE9C787218000003FE /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = www;
@@ -7241,7 +7246,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003FA /* Debug */ = {
+		9C7857EE9C787218000003FF /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = All;
@@ -7253,7 +7258,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003FB /* Release */ = {
+    		9C7857EE9C78721800000400 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = All;
@@ -7262,7 +7267,7 @@ fi";
     			};
     			name = Release;
     		};
-		9C7857EE9C787218000003FC /* Debug */ = {
+		9C7857EE9C78721800000401 /* Debug */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = Prep;
@@ -7274,7 +7279,7 @@ fi";
     			};
     			name = Debug;
     		};
-    		9C7857EE9C787218000003FD /* Release */ = {
+    		9C7857EE9C78721800000402 /* Release */ = {
     			isa = XCBuildConfiguration;
     			buildSettings = {
     				PRODUCT_NAME = Prep;
@@ -7295,11 +7300,11 @@ fi";
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		9C7857EE9C787218000002D1 /* Build configuration list for PBXNativeTarget "ejs" */ = {
+		9C7857EE9C787218000002D6 /* Build configuration list for PBXNativeTarget "ejs" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003B6 /* Debug */,
-    				9C7857EE9C787218000003B7 /* Release */,
+    				9C7857EE9C787218000003BB /* Debug */,
+    				9C7857EE9C787218000003BC /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
@@ -7307,8 +7312,8 @@ fi";
 		9C7857EE9C78721800000005 /* Build configuration list for PBXNativeTarget "ejs.db.mapper.mod" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003B8 /* Debug */,
-    				9C7857EE9C787218000003B9 /* Release */,
+    				9C7857EE9C787218000003BD /* Debug */,
+    				9C7857EE9C787218000003BE /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
@@ -7316,8 +7321,8 @@ fi";
 		9C7857EE9C7872180000000C /* Build configuration list for PBXNativeTarget "ejs.db.mod" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003BA /* Debug */,
-    				9C7857EE9C787218000003BB /* Release */,
+    				9C7857EE9C787218000003BF /* Debug */,
+    				9C7857EE9C787218000003C0 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
@@ -7325,8 +7330,8 @@ fi";
 		9C7857EE9C78721800000012 /* Build configuration list for PBXNativeTarget "ejs.db.sqlite.mod" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003BC /* Debug */,
-    				9C7857EE9C787218000003BD /* Release */,
+    				9C7857EE9C787218000003C1 /* Debug */,
+    				9C7857EE9C787218000003C2 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
@@ -7334,8 +7339,8 @@ fi";
 		9C7857EE9C78721800000019 /* Build configuration list for PBXNativeTarget "ejs.mail.mod" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003BE /* Debug */,
-    				9C7857EE9C787218000003BF /* Release */,
+    				9C7857EE9C787218000003C3 /* Debug */,
+    				9C7857EE9C787218000003C4 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
@@ -7343,8 +7348,8 @@ fi";
 		9C7857EE9C7872180000001F /* Build configuration list for PBXNativeTarget "ejs.mod" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003C0 /* Debug */,
-    				9C7857EE9C787218000003C1 /* Release */,
+    				9C7857EE9C787218000003C5 /* Debug */,
+    				9C7857EE9C787218000003C6 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
@@ -7352,8 +7357,8 @@ fi";
 		9C7857EE9C78721800000025 /* Build configuration list for PBXNativeTarget "ejs.mvc.mod" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003C2 /* Debug */,
-    				9C7857EE9C787218000003C3 /* Release */,
+    				9C7857EE9C787218000003C7 /* Debug */,
+    				9C7857EE9C787218000003C8 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
@@ -7361,8 +7366,8 @@ fi";
 		9C7857EE9C7872180000002E /* Build configuration list for PBXNativeTarget "ejs.tar.mod" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003C4 /* Debug */,
-    				9C7857EE9C787218000003C5 /* Release */,
+    				9C7857EE9C787218000003C9 /* Debug */,
+    				9C7857EE9C787218000003CA /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
@@ -7370,8 +7375,8 @@ fi";
 		9C7857EE9C78721800000035 /* Build configuration list for PBXNativeTarget "ejs.template.mod" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003C6 /* Debug */,
-    				9C7857EE9C787218000003C7 /* Release */,
+    				9C7857EE9C787218000003CB /* Debug */,
+    				9C7857EE9C787218000003CC /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
@@ -7379,8 +7384,8 @@ fi";
 		9C7857EE9C7872180000003B /* Build configuration list for PBXNativeTarget "ejs.unix.mod" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003C8 /* Debug */,
-    				9C7857EE9C787218000003C9 /* Release */,
+    				9C7857EE9C787218000003CD /* Debug */,
+    				9C7857EE9C787218000003CE /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
@@ -7388,8 +7393,8 @@ fi";
 		9C7857EE9C78721800000041 /* Build configuration list for PBXNativeTarget "ejs.web.mod" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003CA /* Debug */,
-    				9C7857EE9C787218000003CB /* Release */,
+    				9C7857EE9C787218000003CF /* Debug */,
+    				9C7857EE9C787218000003D0 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
@@ -7397,35 +7402,35 @@ fi";
 		9C7857EE9C78721800000048 /* Build configuration list for PBXNativeTarget "ejs.zlib.mod" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003CC /* Debug */,
-    				9C7857EE9C787218000003CD /* Release */,
+    				9C7857EE9C787218000003D1 /* Debug */,
+    				9C7857EE9C787218000003D2 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		9C7857EE9C787218000002DB /* Build configuration list for PBXNativeTarget "ejsc" */ = {
+		9C7857EE9C787218000002E0 /* Build configuration list for PBXNativeTarget "ejsc" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003CE /* Debug */,
-    				9C7857EE9C787218000003CF /* Release */,
+    				9C7857EE9C787218000003D3 /* Debug */,
+    				9C7857EE9C787218000003D4 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		9C7857EE9C787218000002E5 /* Build configuration list for PBXNativeTarget "ejsmod" */ = {
+		9C7857EE9C787218000002EA /* Build configuration list for PBXNativeTarget "ejsmod" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003D0 /* Debug */,
-    				9C7857EE9C787218000003D1 /* Release */,
+    				9C7857EE9C787218000003D5 /* Debug */,
+    				9C7857EE9C787218000003D6 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		9C7857EE9C787218000002EF /* Build configuration list for PBXNativeTarget "ejsrun" */ = {
+		9C7857EE9C787218000002F4 /* Build configuration list for PBXNativeTarget "ejsrun" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003D2 /* Debug */,
-    				9C7857EE9C787218000003D3 /* Release */,
+    				9C7857EE9C787218000003D7 /* Debug */,
+    				9C7857EE9C787218000003D8 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
@@ -7433,98 +7438,98 @@ fi";
 		9C7857EE9C7872180000004E /* Build configuration list for PBXNativeTarget "install-certs" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003D4 /* Debug */,
-    				9C7857EE9C787218000003D5 /* Release */,
+    				9C7857EE9C787218000003D9 /* Debug */,
+    				9C7857EE9C787218000003DA /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		9C7857EE9C787218000002F9 /* Build configuration list for PBXNativeTarget "libejs" */ = {
+		9C7857EE9C787218000002FE /* Build configuration list for PBXNativeTarget "libejs" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003D6 /* Debug */,
-    				9C7857EE9C787218000003D7 /* Release */,
+    				9C7857EE9C787218000003DB /* Debug */,
+    				9C7857EE9C787218000003DC /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		9C7857EE9C78721800000302 /* Build configuration list for PBXNativeTarget "libejs.db.sqlite" */ = {
+		9C7857EE9C78721800000307 /* Build configuration list for PBXNativeTarget "libejs.db.sqlite" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003D8 /* Debug */,
-    				9C7857EE9C787218000003D9 /* Release */,
+    				9C7857EE9C787218000003DD /* Debug */,
+    				9C7857EE9C787218000003DE /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		9C7857EE9C78721800000311 /* Build configuration list for PBXNativeTarget "libejs.web" */ = {
+		9C7857EE9C78721800000316 /* Build configuration list for PBXNativeTarget "libejs.web" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003DA /* Debug */,
-    				9C7857EE9C787218000003DB /* Release */,
+    				9C7857EE9C787218000003DF /* Debug */,
+    				9C7857EE9C787218000003E0 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		9C7857EE9C7872180000031E /* Build configuration list for PBXNativeTarget "libejs.zlib" */ = {
+		9C7857EE9C78721800000323 /* Build configuration list for PBXNativeTarget "libejs.zlib" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003DC /* Debug */,
-    				9C7857EE9C787218000003DD /* Release */,
+    				9C7857EE9C787218000003E1 /* Debug */,
+    				9C7857EE9C787218000003E2 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		9C7857EE9C7872180000032B /* Build configuration list for PBXNativeTarget "libhttp" */ = {
+		9C7857EE9C78721800000330 /* Build configuration list for PBXNativeTarget "libhttp" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003DE /* Debug */,
-    				9C7857EE9C787218000003DF /* Release */,
+    				9C7857EE9C787218000003E3 /* Debug */,
+    				9C7857EE9C787218000003E4 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		9C7857EE9C78721800000332 /* Build configuration list for PBXNativeTarget "libmpr" */ = {
+		9C7857EE9C78721800000337 /* Build configuration list for PBXNativeTarget "libmpr" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003E0 /* Debug */,
-    				9C7857EE9C787218000003E1 /* Release */,
+    				9C7857EE9C787218000003E5 /* Debug */,
+    				9C7857EE9C787218000003E6 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		9C7857EE9C78721800000337 /* Build configuration list for PBXNativeTarget "libpcre" */ = {
+		9C7857EE9C7872180000033C /* Build configuration list for PBXNativeTarget "libpcre" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003E2 /* Debug */,
-    				9C7857EE9C787218000003E3 /* Release */,
+    				9C7857EE9C787218000003E7 /* Debug */,
+    				9C7857EE9C787218000003E8 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		9C7857EE9C7872180000033A /* Build configuration list for PBXNativeTarget "libsql" */ = {
+		9C7857EE9C7872180000033F /* Build configuration list for PBXNativeTarget "libsql" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003E4 /* Debug */,
-    				9C7857EE9C787218000003E5 /* Release */,
+    				9C7857EE9C787218000003E9 /* Debug */,
+    				9C7857EE9C787218000003EA /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		9C7857EE9C7872180000033D /* Build configuration list for PBXNativeTarget "libzlib" */ = {
+		9C7857EE9C78721800000342 /* Build configuration list for PBXNativeTarget "libzlib" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003E6 /* Debug */,
-    				9C7857EE9C787218000003E7 /* Release */,
+    				9C7857EE9C787218000003EB /* Debug */,
+    				9C7857EE9C787218000003EC /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		9C7857EE9C78721800000340 /* Build configuration list for PBXNativeTarget "mvc" */ = {
+		9C7857EE9C78721800000345 /* Build configuration list for PBXNativeTarget "mvc" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003E8 /* Debug */,
-    				9C7857EE9C787218000003E9 /* Release */,
+    				9C7857EE9C787218000003ED /* Debug */,
+    				9C7857EE9C787218000003EE /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
@@ -7532,17 +7537,17 @@ fi";
 		9C7857EE9C78721800000052 /* Build configuration list for PBXNativeTarget "mvc.es" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003EA /* Debug */,
-    				9C7857EE9C787218000003EB /* Release */,
+    				9C7857EE9C787218000003EF /* Debug */,
+    				9C7857EE9C787218000003F0 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		9C7857EE9C7872180000034B /* Build configuration list for PBXNativeTarget "openssl" */ = {
+		9C7857EE9C78721800000350 /* Build configuration list for PBXNativeTarget "openssl" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003EC /* Debug */,
-    				9C7857EE9C787218000003ED /* Release */,
+    				9C7857EE9C787218000003F1 /* Debug */,
+    				9C7857EE9C787218000003F2 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
@@ -7550,17 +7555,17 @@ fi";
 		9C7857EE9C78721800000056 /* Build configuration list for PBXNativeTarget "slots" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003EE /* Debug */,
-    				9C7857EE9C787218000003EF /* Release */,
+    				9C7857EE9C787218000003F3 /* Debug */,
+    				9C7857EE9C787218000003F4 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		9C7857EE9C7872180000034E /* Build configuration list for PBXNativeTarget "utest" */ = {
+		9C7857EE9C78721800000353 /* Build configuration list for PBXNativeTarget "utest" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003F0 /* Debug */,
-    				9C7857EE9C787218000003F1 /* Release */,
+    				9C7857EE9C787218000003F5 /* Debug */,
+    				9C7857EE9C787218000003F6 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
@@ -7568,8 +7573,8 @@ fi";
 		9C7857EE9C7872180000005A /* Build configuration list for PBXNativeTarget "utest.es" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003F2 /* Debug */,
-    				9C7857EE9C787218000003F3 /* Release */,
+    				9C7857EE9C787218000003F7 /* Debug */,
+    				9C7857EE9C787218000003F8 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
@@ -7577,17 +7582,17 @@ fi";
 		9C7857EE9C7872180000005E /* Build configuration list for PBXNativeTarget "utest.worker" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003F4 /* Debug */,
-    				9C7857EE9C787218000003F5 /* Release */,
+    				9C7857EE9C787218000003F9 /* Debug */,
+    				9C7857EE9C787218000003FA /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
     		};
-		9C7857EE9C7872180000035A /* Build configuration list for PBXNativeTarget "watchdog" */ = {
+		9C7857EE9C7872180000035F /* Build configuration list for PBXNativeTarget "watchdog" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003F6 /* Debug */,
-    				9C7857EE9C787218000003F7 /* Release */,
+    				9C7857EE9C787218000003FB /* Debug */,
+    				9C7857EE9C787218000003FC /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
@@ -7595,8 +7600,8 @@ fi";
 		9C7857EE9C78721800000062 /* Build configuration list for PBXNativeTarget "www" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003F8 /* Debug */,
-    				9C7857EE9C787218000003F9 /* Release */,
+    				9C7857EE9C787218000003FD /* Debug */,
+    				9C7857EE9C787218000003FE /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
@@ -7604,8 +7609,8 @@ fi";
 		9C7857EE9C78721800000066 /* Build configuration list for PBXNativeTarget "All" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003FA /* Debug */,
-    				9C7857EE9C787218000003FB /* Release */,
+    				9C7857EE9C787218000003FF /* Debug */,
+    				9C7857EE9C78721800000400 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
@@ -7613,8 +7618,8 @@ fi";
 		9C7857EE9C7872180000008C /* Build configuration list for PBXNativeTarget "Prep" */ = {
     			isa = XCConfigurationList;
     			buildConfigurations = (
-    				9C7857EE9C787218000003FC /* Debug */,
-    				9C7857EE9C787218000003FD /* Release */,
+    				9C7857EE9C78721800000401 /* Debug */,
+    				9C7857EE9C78721800000402 /* Release */,
     			);
     			defaultConfigurationIsVisible = 0;
     			defaultConfigurationName = Release;
