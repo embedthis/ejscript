@@ -14,7 +14,7 @@ Me.load({
             `,
             message: 'Compile: ejs.web.mod',
             depends: [ 'ejsc', 'ejsmod', 'ejs.mod' ],
-            enable: 'me.settings.ejs.web',
+            enable: 'me.settings.ejscript.web',
         },
 
         'libejs.web': {
@@ -22,7 +22,7 @@ Me.load({
             sources: [ '*.c' ],
             headers: [ 'ejsWeb.h' ],
             depends: [ 'libejs', 'ejs.mod' ],
-            enable: 'me.settings.ejs.web',
+            enable: 'me.settings.ejscript.web',
         },
 
         www: {
@@ -31,7 +31,7 @@ Me.load({
             files: [ 'www/**' ],
             relative: 'www',
             platforms: [ 'local' ],
-            enable: 'me.settings.ejs.web',
+            enable: 'me.settings.ejscript.web',
         }
 	}
 })

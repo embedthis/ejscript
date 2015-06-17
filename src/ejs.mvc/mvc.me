@@ -10,7 +10,7 @@ Me.load({
             path: '${BIN}/mvc.es',
             files: [ 'mvc.es' ],
             platforms: [ 'local' ],
-            enable: 'me.settings.ejs.db',
+            enable: 'me.settings.ejscript.db',
         },
 
         mvc: {
@@ -21,11 +21,11 @@ Me.load({
             precious: true,
             depends: ['libejs', 'mvc.es'],
             platforms: [ 'local' ],
-            enable: 'me.settings.ejs.db',
+            enable: 'me.settings.ejscript.db',
         },
 
         'ejs.mvc.mod': {
-            enable: 'me.settings.ejs.db',
+            enable: 'me.settings.ejscript.db',
             path: '${BIN}/ejs.mvc.mod',
             files: [ '*.es' ],
             build: `
