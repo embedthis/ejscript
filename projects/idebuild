@@ -3,7 +3,7 @@
 #   idebuild -- Build a project using the native IDE
 #
 
-PRODUCT=ejs
+PRODUCT=ejscript
 ARCH=x86
 XCODE=/usr/bin/xcodebuild
 PROFILE=default
