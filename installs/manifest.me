@@ -163,8 +163,8 @@ Me.load({
             ],
             pak: [
                 {
-                    from:       '${TOP}/installs/ejs.me',
-                    to:         '${src}/dist/ejs.me',
+                    from:       '${TOP}/installs/ejscript.me',
+                    to:         '${src}/dist/ejscript.me',
 
                 }, {
                     home:       '${TOP}',
@@ -178,9 +178,9 @@ Me.load({
                     to:         '${src}/dist/ejs.h',
                     append:     true, 
                     filter:     /^#inc.*ejs.*$|^#inc.*ec.*$|^#inc.*customize.*$|#include.*zlib.h.*$|#inc.*ejs.zlib.slots.h.*/mg,
-                    header:     '/*\n * ${settings.title} Library Source\n */\n#include \"me.h\"\n#if ME_COM_EJS\n\n#undef PRINTF_ATTRIBUTE\n#define PRINTF_ATTRIBUTE(x,y)\n\n#include \"osdep.h\"\n#include \"mpr.h\"\n#include \"http.h\"\n#include \"ejs.slots.h\"\n#include \"pcre.h\"\n#include \"zlib.h\"\n',
+                    header:     '/*\n * ${settings.title} Library Source\n */\n#include \"me.h\"\n#if ME_COM_EJSCRIPT\n\n#undef PRINTF_ATTRIBUTE\n#define PRINTF_ATTRIBUTE(x,y)\n\n#include \"osdep.h\"\n#include \"mpr.h\"\n#include \"http.h\"\n#include \"ejs.slots.h\"\n#include \"pcre.h\"\n#include \"zlib.h\"\n',
                     divider:    true,
-                    footer:     '#endif /* ME_COM_EJS */',
+                    footer:     '#endif /* ME_COM_EJSCRIPT */',
 
                 }, {
                     from:       '${TOP}/src/vm/ejsByteGoto.h',
@@ -205,9 +205,9 @@ Me.load({
                     append:     true,                                                                                         
                     filter:     /^#inc.*ejs.*$|^#inc.*ec.*$|^#inc.*customize.*$|#include.*zlib.h.*$|#inc.*ejs.zlib.slots.h.*/mg,
                     exclude:    /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|\/mpr|\/http|\/est|\/pcre|\/sqlite|\/zlib\/|ejs.debugger|samples|utils|ejsrun\.c/,
-                    header:     '/*\n * ${settings.title} Library Source\n */\n#define EJS_DEFINE_OPTABLE 1\n#include \"ejs.h\"\n\n#if ME_COM_EJS',
+                    header:     '/*\n * ${settings.title} Library Source\n */\n#define EJS_DEFINE_OPTABLE 1\n#include \"ejs.h\"\n\n#if ME_COM_EJSCRIPT',
                     divider:    true,
-                    footer:     '#endif /* ME_COM_EJS */',
+                    footer:     '#endif /* ME_COM_EJSCRIPT */',
 
                 }, {
                     home:       '${TOP}',
@@ -217,7 +217,7 @@ Me.load({
                     ],
                     to:         '${src}/dist/ejs.es',
                     append:     true,                                                                                         
-                    exclude:    /\/paks\/|ejs.me|ejs.debugger|test|sample|ejspage.es|ejs.mvc/,                            
+                    exclude:    /\/paks\/|ejscript.me|ejs.debugger|test|sample|ejspage.es|ejs.mvc/,                            
                     header:     '/*\n * ${settings.title} Script Library\n */\n',
                     divider:    true,
 
