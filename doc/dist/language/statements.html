@@ -17,7 +17,7 @@
     
 
 </head>
-<body>
+<body class="show-sidebar">
         <div class="sidebar">
         <div class="ui large left vertical inverted labeled menu">
             <div class="item">
@@ -664,7 +664,7 @@ x = 2<br /><br />function myFunc() {<br />    x = 7<br />}<br /><br />println("x
                 $('.sidebar').css('visibility', 'hidden');
             }
         });
-        $('.sidebar-launch').trigger('click');
+        // $('.sidebar-launch').trigger('click');
         $('.sidebar a.item').click(function(e) {
             sessionStorage.setItem('scroll-top', $('.sidebar').scrollTop());
         });

@@ -17,7 +17,7 @@
     
 
 </head>
-<body>
+<body class="show-sidebar">
         <div class="sidebar">
         <div class="ui large left vertical inverted labeled menu">
             <div class="item">
@@ -335,7 +335,7 @@ r.add(function (request) request.params("name").match(/(Mary)|(John)))
                 $('.sidebar').css('visibility', 'hidden');
             }
         });
-        $('.sidebar-launch').trigger('click');
+        // $('.sidebar-launch').trigger('click');
         $('.sidebar a.item').click(function(e) {
             sessionStorage.setItem('scroll-top', $('.sidebar').scrollTop());
         });
