@@ -13,7 +13,7 @@
       </ItemDefinitionGroup>
 
       <PropertyGroup Label="Globals">
-        <ProjectGuid>{1ccfd2c9-50b0-4ea8-8051-f00f850360f7}</ProjectGuid>
+        <ProjectGuid>{c9b7be73-bdd2-4a0e-91c1-9951c1a270b2}</ProjectGuid>
         <RootNamespace />
         <Keyword>Win32Proj</Keyword>
       </PropertyGroup>
@@ -130,7 +130,7 @@ cd ..\..\projects\ejscript-windows-default</Command>
 
     <ItemGroup>
       <ProjectReference Include="libejs.vcxproj">
-      <Project>b097bc45-c299-4dfa-944c-cc5c047cd785</Project>
+      <Project>25b9c686-5ee0-4610-9c87-6066c111a496</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       </ProjectReference>
     </ItemGroup>

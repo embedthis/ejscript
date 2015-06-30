@@ -13,7 +13,7 @@
       </ItemDefinitionGroup>
 
       <PropertyGroup Label="Globals">
-        <ProjectGuid>{236a87b9-87d7-430d-b73f-d139f8471900}</ProjectGuid>
+        <ProjectGuid>{1fc5e88e-0db4-4173-aaf0-7d09496b5193}</ProjectGuid>
         <RootNamespace />
         <Keyword>Win32Proj</Keyword>
       </PropertyGroup>
@@ -127,14 +127,14 @@ cd ..\..\projects\ejscript-windows-static</Command>
 
     <ItemGroup>
       <ProjectReference Include="libmpr.vcxproj">
-      <Project>145e7a7a-cf56-4257-b982-a6be59f0738a</Project>
+      <Project>4534fd04-8e17-4907-9967-ea429779310b</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       </ProjectReference>
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="libpcre.vcxproj">
-      <Project>41931549-cfad-493e-961b-694074a6fa11</Project>
+      <Project>22cf1da0-2975-4c60-a685-b58a1cf05ce7</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       </ProjectReference>
     </ItemGroup>

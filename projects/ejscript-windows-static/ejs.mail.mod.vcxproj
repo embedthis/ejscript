@@ -2,7 +2,7 @@
     <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
       <PropertyGroup Label="Globals">
-        <ProjectGuid>{8b32cd70-8a81-4bd0-b652-afa88a0c4648}</ProjectGuid>
+        <ProjectGuid>{b3f911a7-c4f2-453f-b0e7-1f8025cf4878}</ProjectGuid>
         <RootNamespace />
         <Keyword>Win32Proj</Keyword>
       </PropertyGroup>
@@ -108,7 +108,7 @@ cd ..\..\projects\ejscript-windows-static</Command>
 
     <ItemGroup>
       <ProjectReference Include="ejsc.vcxproj">
-      <Project>d5245843-770a-44aa-9aa8-2a834be6411e</Project>
+      <Project>674fa6f3-4d9a-49da-b38f-238f2b739682</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       </ProjectReference>
     </ItemGroup>
