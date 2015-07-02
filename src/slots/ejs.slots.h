@@ -138,9 +138,9 @@
 #define ES_typeOf                                                      114
 #define ES_Path                                                        115
 #define ES_Promise                                                     116
-#define ES_RegExp                                                      117
-#define ES_Socket                                                      118
-#define ES_Stream                                                      119
+#define ES_Stream                                                      117
+#define ES_RegExp                                                      118
+#define ES_Socket                                                      119
 #define ES_String                                                      120
 #define ES_System                                                      121
 #define ES_TextStream                                                  122
@@ -158,15 +158,15 @@
 #define ES_encodeObjects                                               134
 #define ES_Void                                                        135
 #define ES_WebSocket                                                   136
-#define ES_Worker                                                      137
-#define ES_Event                                                       138
-#define ES_ErrorEvent                                                  139
-#define ES_ejs_worker_self                                             140
-#define ES_ejs_worker_exit                                             141
-#define ES_ejs_worker_postMessage                                      142
-#define ES_ejs_worker_onerror                                          143
-#define ES_ejs_worker_onmessage                                        144
-#define ES_XML                                                         145
+#define ES_XML                                                         137
+#define ES_Worker                                                      138
+#define ES_Event                                                       139
+#define ES_ErrorEvent                                                  140
+#define ES_ejs_worker_self                                             141
+#define ES_ejs_worker_exit                                             142
+#define ES_ejs_worker_postMessage                                      143
+#define ES_ejs_worker_onerror                                          144
+#define ES_ejs_worker_onmessage                                        145
 #define ES_XMLHttp                                                     146
 #define ES_XMLList                                                     147
 #define ES_global_NUM_CLASS_PROP                                       148
@@ -1904,6 +1904,28 @@
 
 
 /*
+    Class property slots for the "Stream" type 
+ */
+#define ES_Stream_READ                                                 0
+#define ES_Stream_WRITE                                                1
+#define ES_Stream_BOTH                                                 2
+#define ES_Stream_NUM_CLASS_PROP                                       3
+
+/*
+   Prototype (instance) slots for "Stream" type 
+ */
+#define ES_Stream_async                                                0
+#define ES_Stream_close                                                1
+#define ES_Stream_flush                                                2
+#define ES_Stream_off                                                  3
+#define ES_Stream_on                                                   4
+#define ES_Stream_read                                                 5
+#define ES_Stream_write                                                6
+#define ES_Stream_NUM_INSTANCE_PROP                                    7
+#define ES_Stream_NUM_INHERITED_PROP                                   0
+
+
+/*
     Class property slots for the "RegExp" type 
  */
 #define ES_RegExp_NUM_CLASS_PROP                                       0
@@ -1953,28 +1975,6 @@
 #define ES_Socket_write                                                14
 #define ES_Socket_NUM_INSTANCE_PROP                                    15
 #define ES_Socket_NUM_INHERITED_PROP                                   0
-
-
-/*
-    Class property slots for the "Stream" type 
- */
-#define ES_Stream_READ                                                 0
-#define ES_Stream_WRITE                                                1
-#define ES_Stream_BOTH                                                 2
-#define ES_Stream_NUM_CLASS_PROP                                       3
-
-/*
-   Prototype (instance) slots for "Stream" type 
- */
-#define ES_Stream_async                                                0
-#define ES_Stream_close                                                1
-#define ES_Stream_flush                                                2
-#define ES_Stream_off                                                  3
-#define ES_Stream_on                                                   4
-#define ES_Stream_read                                                 5
-#define ES_Stream_write                                                6
-#define ES_Stream_NUM_INSTANCE_PROP                                    7
-#define ES_Stream_NUM_INHERITED_PROP                                   0
 
 
 /*
@@ -2250,6 +2250,42 @@
 
 
 /*
+    Class property slots for the "XML" type 
+ */
+#define ES_XML__initializer___XML_                                     0
+#define ES_XML_NUM_CLASS_PROP                                          1
+
+/*
+   Prototype (instance) slots for "XML" type 
+ */
+#define ES_XML_load                                                    0
+#define ES_XML_save                                                    1
+#define ES_XML_appendChild                                             2
+#define ES_XML_attribute                                               3
+#define ES_XML_attributes                                              4
+#define ES_XML_child                                                   5
+#define ES_XML_childIndex                                              6
+#define ES_XML_children                                                7
+#define ES_XML_contains                                                8
+#define ES_XML_copy                                                    9
+#define ES_XML_descendants                                             10
+#define ES_XML_elements                                                11
+#define ES_XML_iterator_get                                            12
+#define ES_XML_iterator_getValues                                      13
+#define ES_XML_hasComplexContent                                       14
+#define ES_XML_hasOwnProperty                                          15
+#define ES_XML_hasSimpleContent                                        16
+#define ES_XML_length                                                  17
+#define ES_XML_name                                                    18
+#define ES_XML_parent                                                  19
+#define ES_XML_toJSON                                                  20
+#define ES_XML_toString                                                21
+#define ES_XML_valueOf                                                 22
+#define ES_XML_NUM_INSTANCE_PROP                                       23
+#define ES_XML_NUM_INHERITED_PROP                                      0
+
+
+/*
     Class property slots for the "Worker" type 
  */
 #define ES_Worker_fork                                                 0
@@ -2322,42 +2358,6 @@
 #define ES_ErrorEvent_formatStack                                      7
 #define ES_ErrorEvent_NUM_INSTANCE_PROP                                8
 #define ES_ErrorEvent_NUM_INHERITED_PROP                               8
-
-
-/*
-    Class property slots for the "XML" type 
- */
-#define ES_XML__initializer___XML_                                     0
-#define ES_XML_NUM_CLASS_PROP                                          1
-
-/*
-   Prototype (instance) slots for "XML" type 
- */
-#define ES_XML_load                                                    0
-#define ES_XML_save                                                    1
-#define ES_XML_appendChild                                             2
-#define ES_XML_attribute                                               3
-#define ES_XML_attributes                                              4
-#define ES_XML_child                                                   5
-#define ES_XML_childIndex                                              6
-#define ES_XML_children                                                7
-#define ES_XML_contains                                                8
-#define ES_XML_copy                                                    9
-#define ES_XML_descendants                                             10
-#define ES_XML_elements                                                11
-#define ES_XML_iterator_get                                            12
-#define ES_XML_iterator_getValues                                      13
-#define ES_XML_hasComplexContent                                       14
-#define ES_XML_hasOwnProperty                                          15
-#define ES_XML_hasSimpleContent                                        16
-#define ES_XML_length                                                  17
-#define ES_XML_name                                                    18
-#define ES_XML_parent                                                  19
-#define ES_XML_toJSON                                                  20
-#define ES_XML_toString                                                21
-#define ES_XML_valueOf                                                 22
-#define ES_XML_NUM_INSTANCE_PROP                                       23
-#define ES_XML_NUM_INHERITED_PROP                                      0
 
 
 /*
