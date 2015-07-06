@@ -204,7 +204,7 @@ Me.load({
                     to:         '${src}/dist/ejsLib.c',
                     append:     true,                                                                                         
                     filter:     /^#inc.*ejs.*$|^#inc.*ec.*$|^#inc.*customize.*$|#include.*zlib.h.*$|#inc.*ejs.zlib.slots.h.*/mg,
-                    exclude:    /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|\/mpr|\/http|\/est|\/pcre|\/sqlite|\/zlib\/|ejs.debugger|samples|utils|ejsrun\.c/,
+                    exclude:    /doc\.c|listing\.c|ejsmod\.c|slotGen\.c|docFiles\.c|ejs\.c$|ejsc\.c$|\/mpr|\/http|\/est|\/pcre|\/sqlite|\/zlib\/|ejs.debugger|samples|utils|ejsrun\.c|mbedtls/,
                     header:     '/*\n * ${settings.title} Library Source\n */\n#define EJS_DEFINE_OPTABLE 1\n#include \"ejs.h\"\n\n#if ME_COM_EJSCRIPT',
                     divider:    true,
                     footer:     '#endif /* ME_COM_EJSCRIPT */',

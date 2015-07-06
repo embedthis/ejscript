@@ -8,12 +8,12 @@ Me.load({
         api: {
             depends: ['gen-doc', 'render-doc'],
             action: `
-                apidoc('api/ejs.dox', [
+                apidoc('api/ejscript.dox', [
                     '${SRC}/ejs.h',
                     '${SRC}/ejs.web/ejsWeb.h',
                     '${SRC}/ejsCompiler.h',
                 ], 'Ejscript API')
-                apiLayout('api/ejs.html', 'dist/ref/api/ejs.html')
+                apiLayout('api/ejscript.html', 'dist/ref/api/ejscript.html')
 
                 let base = me.dir.paks.join('*/doc')
                 let files = Path().files(base.join('api/*.html'))
@@ -48,7 +48,7 @@ Me.load({
                 for each (f in Path('public').files('**/*.html')) {
                     let data = f.readString()
                     data = data.replace('700|Open', '').
-                        replace(/ejs.download.html/g, 'download/ejs.html').
+                        replace(/ejs.download.html/g, 'download/ejscript.html').
                         replace(/pak.download.html/g, 'download/pak.html').
                         replace(/developers.contributors.html/g, 'scripts/contributors.esp').
                         replace(/nowrap="nowrap"/g, '').

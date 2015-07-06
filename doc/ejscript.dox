@@ -27,7 +27,7 @@ DOXYFILE_ENCODING      = UTF-8
 # The PROJECT_NAME tag is a single word (or a sequence of words surrounded 
 # by quotes) that should identify the project.
 
-PROJECT_NAME           = ejs
+PROJECT_NAME           = ejsript
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. 
 # This could be handy for archiving the generated documentation or 
@@ -855,7 +855,7 @@ GENERATE_HTMLHELP      = NO
 # can add a path in front of the file if the result should not be 
 # written to the html output directory.
 
-CHM_FILE               = ejs.chm
+CHM_FILE               = ejscript.chm
 
 # If the GENERATE_HTMLHELP tag is set to YES, the HHC_LOCATION tag can 
 # be used to specify the location (absolute path including file name) of 
@@ -1306,18 +1306,14 @@ SKIP_FUNCTION_MACROS   = YES
 # If a tag file is not located in the directory in which doxygen 
 # is run, you must also specify the path to the tagfile here.
 
-<<<<<<< HEAD:doc/api/ejs.dox
-TAGFILES               = mpr.dtags http.dtags
-=======
 TAGFILES = ../../paks/osdep/doc/api/osdep.dtags \
            ../../paks/mpr/doc/api/mpr.dtags \
            ../../paks/http/doc/api/http.dtags
->>>>>>> dev:doc/ejs.dox
 
 # When a file name is specified after GENERATE_TAGFILE, doxygen will create 
 # a tag file that is based on the input files it reads.
 
-GENERATE_TAGFILE       = ejs.dtags
+GENERATE_TAGFILE       = ejscript.dtags
 
 # If the ALLEXTERNALS tag is set to YES all external classes will be listed 
 # in the class index. If set to NO only the inherited external classes 
