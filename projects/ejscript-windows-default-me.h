@@ -66,6 +66,9 @@
 #ifndef ME_DESCRIPTION
     #define ME_DESCRIPTION "Embedthis Ejscript Javascript Language"
 #endif
+#ifndef ME_EJSCRIPT_COMPILE
+    #define ME_EJSCRIPT_COMPILE "--optimize 9"
+#endif
 #ifndef ME_EJSCRIPT_DB
     #define ME_EJSCRIPT_DB 1
 #endif

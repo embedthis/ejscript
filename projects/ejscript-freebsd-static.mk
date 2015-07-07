@@ -2345,31 +2345,45 @@ installBinary: $(DEPS_151)
 	ln -s "$(VERSION)" "$(ME_APP_PREFIX)/latest" ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
 	cp $(BUILD)/bin/ejs $(ME_VAPP_PREFIX)/bin/ejs ; \
+	chmod 755 "$(ME_VAPP_PREFIX)/bin/ejs" ; \
 	mkdir -p "$(ME_BIN_PREFIX)" ; \
+	chmod 755 "$(ME_BIN_PREFIX)" ; \
 	rm -f "$(ME_BIN_PREFIX)/ejs" ; \
 	ln -s "$(ME_VAPP_PREFIX)/bin/ejs" "$(ME_BIN_PREFIX)/ejs" ; \
 	cp $(BUILD)/bin/ejsc $(ME_VAPP_PREFIX)/bin/ejsc ; \
+	chmod 755 "$(ME_VAPP_PREFIX)/bin/ejsc" ; \
 	mkdir -p "$(ME_BIN_PREFIX)" ; \
+	chmod 755 "$(ME_BIN_PREFIX)" ; \
 	rm -f "$(ME_BIN_PREFIX)/ejsc" ; \
 	ln -s "$(ME_VAPP_PREFIX)/bin/ejsc" "$(ME_BIN_PREFIX)/ejsc" ; \
 	cp $(BUILD)/bin/ejsman $(ME_VAPP_PREFIX)/bin/ejsman ; \
+	chmod 755 "$(ME_VAPP_PREFIX)/bin/ejsman" ; \
 	mkdir -p "$(ME_BIN_PREFIX)" ; \
+	chmod 755 "$(ME_BIN_PREFIX)" ; \
 	rm -f "$(ME_BIN_PREFIX)/ejsman" ; \
 	ln -s "$(ME_VAPP_PREFIX)/bin/ejsman" "$(ME_BIN_PREFIX)/ejsman" ; \
 	cp $(BUILD)/bin/ejsmod $(ME_VAPP_PREFIX)/bin/ejsmod ; \
+	chmod 755 "$(ME_VAPP_PREFIX)/bin/ejsmod" ; \
 	mkdir -p "$(ME_BIN_PREFIX)" ; \
+	chmod 755 "$(ME_BIN_PREFIX)" ; \
 	rm -f "$(ME_BIN_PREFIX)/ejsmod" ; \
 	ln -s "$(ME_VAPP_PREFIX)/bin/ejsmod" "$(ME_BIN_PREFIX)/ejsmod" ; \
 	cp $(BUILD)/bin/ejsrun $(ME_VAPP_PREFIX)/bin/ejsrun ; \
+	chmod 755 "$(ME_VAPP_PREFIX)/bin/ejsrun" ; \
 	mkdir -p "$(ME_BIN_PREFIX)" ; \
+	chmod 755 "$(ME_BIN_PREFIX)" ; \
 	rm -f "$(ME_BIN_PREFIX)/ejsrun" ; \
 	ln -s "$(ME_VAPP_PREFIX)/bin/ejsrun" "$(ME_BIN_PREFIX)/ejsrun" ; \
 	cp $(BUILD)/bin/mvc $(ME_VAPP_PREFIX)/bin/mvc ; \
+	chmod 755 "$(ME_VAPP_PREFIX)/bin/mvc" ; \
 	mkdir -p "$(ME_BIN_PREFIX)" ; \
+	chmod 755 "$(ME_BIN_PREFIX)" ; \
 	rm -f "$(ME_BIN_PREFIX)/mvc" ; \
 	ln -s "$(ME_VAPP_PREFIX)/bin/mvc" "$(ME_BIN_PREFIX)/mvc" ; \
 	cp $(BUILD)/bin/utest $(ME_VAPP_PREFIX)/bin/utest ; \
+	chmod 755 "$(ME_VAPP_PREFIX)/bin/utest" ; \
 	mkdir -p "$(ME_BIN_PREFIX)" ; \
+	chmod 755 "$(ME_BIN_PREFIX)" ; \
 	rm -f "$(ME_BIN_PREFIX)/utest" ; \
 	ln -s "$(ME_VAPP_PREFIX)/bin/utest" "$(ME_BIN_PREFIX)/utest" ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/bin" ; \
