@@ -622,7 +622,7 @@ var str = 1234 cast String
 
     </div>
     <div class="terms ui basic center aligned segment">
-        <p>&copy; Embedthis Software, 2003-2014. All rights reserved.</p>
+        <p>&copy; Embedthis Software, 2003-2015. All rights reserved.</p>
     </div>
 
     <script src="../jquery/jquery.min.js"></script>
@@ -639,12 +639,11 @@ var str = 1234 cast String
                 $('.sidebar').css('visibility', 'hidden');
             }
         });
-        // $('.sidebar-launch').trigger('click');
         $('.sidebar a.item').click(function(e) {
             sessionStorage.setItem('scroll-top', $('.sidebar').scrollTop());
         });
         $(function() {
-            var url = '../language/core.html';
+            var url = '..language/core.html';
             var active = $('.sidebar a[href="' + url +'"]');
             active.addClass('active');
             $('.sidebar').scrollTop(sessionStorage.getItem('scroll-top'));

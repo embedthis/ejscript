@@ -6,7 +6,7 @@
         "me-docstyle": "~0.8"
     },
     "pak": {
-        "mode": "debug",
+        "mode": "release",
         "import": true
     }
 }

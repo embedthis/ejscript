@@ -464,7 +464,7 @@ public function validate() {
 
     </div>
     <div class="terms ui basic center aligned segment">
-        <p>&copy; Embedthis Software, 2003-2014. All rights reserved.</p>
+        <p>&copy; Embedthis Software, 2003-2015. All rights reserved.</p>
     </div>
 
     <script src="../jquery/jquery.min.js"></script>
@@ -481,12 +481,11 @@ public function validate() {
                 $('.sidebar').css('visibility', 'hidden');
             }
         });
-        // $('.sidebar-launch').trigger('click');
         $('.sidebar a.item').click(function(e) {
             sessionStorage.setItem('scroll-top', $('.sidebar').scrollTop());
         });
         $(function() {
-            var url = '../web/webTour.html';
+            var url = '..web/webTour.html';
             var active = $('.sidebar a[href="' + url +'"]');
             active.addClass('active');
             $('.sidebar').scrollTop(sessionStorage.getItem('scroll-top'));

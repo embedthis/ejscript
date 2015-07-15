@@ -338,7 +338,7 @@ for each (let color in colors) {
 
     </div>
     <div class="terms ui basic center aligned segment">
-        <p>&copy; Embedthis Software, 2003-2014. All rights reserved.</p>
+        <p>&copy; Embedthis Software, 2003-2015. All rights reserved.</p>
     </div>
 
     <script src="../jquery/jquery.min.js"></script>
@@ -355,12 +355,11 @@ for each (let color in colors) {
                 $('.sidebar').css('visibility', 'hidden');
             }
         });
-        // $('.sidebar-launch').trigger('click');
         $('.sidebar a.item').click(function(e) {
             sessionStorage.setItem('scroll-top', $('.sidebar').scrollTop());
         });
         $(function() {
-            var url = '../language/objects.html';
+            var url = '..language/objects.html';
             var active = $('.sidebar a[href="' + url +'"]');
             active.addClass('active');
             $('.sidebar').scrollTop(sessionStorage.getItem('scroll-top'));
