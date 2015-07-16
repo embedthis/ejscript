@@ -339,7 +339,7 @@ r.add(function (request) request.params("name").match(/(Mary)|(John)))
             sessionStorage.setItem('scroll-top', $('.sidebar').scrollTop());
         });
         $(function() {
-            var url = '..web/routing.html';
+            var url = '../web/routing.html';
             var active = $('.sidebar a[href="' + url +'"]');
             active.addClass('active');
             $('.sidebar').scrollTop(sessionStorage.getItem('scroll-top'));
