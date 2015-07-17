@@ -138,9 +138,7 @@ TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ejs.mail.mod
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ejs.mvc.mod
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ejs.tar.mod
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ejsrun.exe
-!IF "$(ME_COM_SSL)" == "1"
 TARGETS               = $(TARGETS) build\$(CONFIG)\.install-certs-modified
-!ENDIF
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\libejs.db.sqlite.lib
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\libejs.web.lib
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\mvc.exe
@@ -1899,7 +1897,6 @@ build\$(CONFIG)\bin\http.exe: $(DEPS_125)
 	"$(LD)" -nologo -out:$(BUILD)\bin\http.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) "$(BUILD)\obj\http.obj" $(LIBPATHS_125) $(LIBS_125) $(LIBS_125) $(LIBS)  $(LOG)
 !ENDIF
 
-!IF "$(ME_COM_SSL)" == "1"
 #
 #   install-certs
 #
@@ -1926,7 +1923,6 @@ build\$(CONFIG)\.install-certs-modified: $(DEPS_126)
 	copy /Y /B src\certs\samples\test.crt+modified build\$(CONFIG)\bin\test.crt $(LOG)
 	copy /Y /B src\certs\samples\test.key+modified build\$(CONFIG)\bin\test.key $(LOG)
 	copy /Y /B nul+modified build\$(CONFIG)\.install-certs-modified $(LOG)
-!ENDIF
 
 #
 #   sqlite3.h

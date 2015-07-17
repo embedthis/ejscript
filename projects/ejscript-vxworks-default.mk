@@ -91,9 +91,7 @@ TARGETS               += $(BUILD)/bin/ejs.mail.mod
 TARGETS               += $(BUILD)/bin/ejs.mvc.mod
 TARGETS               += $(BUILD)/bin/ejs.tar.mod
 TARGETS               += $(BUILD)/bin/ejsrun.out
-ifeq ($(ME_COM_SSL),1)
-    TARGETS           += $(BUILD)/.install-certs-modified
-endif
+TARGETS               += $(BUILD)/.install-certs-modified
 TARGETS               += $(BUILD)/bin/libejs.db.sqlite.out
 TARGETS               += $(BUILD)/bin/libejs.web.out
 TARGETS               += $(BUILD)/bin/mvc.out
@@ -1960,7 +1958,6 @@ $(BUILD)/bin/http.out: $(DEPS_137)
 	$(CC) -o $(BUILD)/bin/http.out $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/http.o" $(LIBPATHS_137) $(LIBS_137) $(LIBS_137) $(LIBS) -Wl,-r 
 endif
 
-ifeq ($(ME_COM_SSL),1)
 #
 #   install-certs
 #
@@ -1987,7 +1984,6 @@ $(BUILD)/.install-certs-modified: $(DEPS_138)
 	cp src/certs/samples/test.crt $(BUILD)/bin/test.crt
 	cp src/certs/samples/test.key $(BUILD)/bin/test.key
 	touch "$(BUILD)/.install-certs-modified"
-endif
 
 ifeq ($(ME_COM_SQLITE),1)
 #
