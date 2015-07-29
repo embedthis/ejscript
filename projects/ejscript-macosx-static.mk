@@ -2509,6 +2509,10 @@ installBinary: $(DEPS_151)
 	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
 	rm -f "$(ME_INC_PREFIX)/ejs/zlib.h" ; \
 	ln -s "$(ME_VAPP_PREFIX)/inc/zlib.h" "$(ME_INC_PREFIX)/ejs/zlib.h" ; \
+	cp $(BUILD)/inc/me.h $(ME_VAPP_PREFIX)/inc/me.h ; \
+	mkdir -p "$(ME_INC_PREFIX)/ejs" ; \
+	rm -f "$(ME_INC_PREFIX)/ejs/me.h" ; \
+	ln -s "$(ME_VAPP_PREFIX)/inc/me.h" "$(ME_INC_PREFIX)/ejs/me.h" ; \
 	mkdir -p "$(ME_VAPP_PREFIX)/doc/man1" ; \
 	cp doc/dist/man/ejs.1 $(ME_VAPP_PREFIX)/doc/man1/ejs.1 ; \
 	mkdir -p "$(ME_MAN_PREFIX)/man1" ; \
