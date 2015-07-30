@@ -250,8 +250,8 @@ clean:
 	if exist "build\$(CONFIG)\obj\http.obj" del /Q "build\$(CONFIG)\obj\http.obj"
 	if exist "build\$(CONFIG)\obj\httpLib.obj" del /Q "build\$(CONFIG)\obj\httpLib.obj"
 	if exist "build\$(CONFIG)\obj\listing.obj" del /Q "build\$(CONFIG)\obj\listing.obj"
+	if exist "build\$(CONFIG)\obj\mpr-openssl.obj" del /Q "build\$(CONFIG)\obj\mpr-openssl.obj"
 	if exist "build\$(CONFIG)\obj\mprLib.obj" del /Q "build\$(CONFIG)\obj\mprLib.obj"
-	if exist "build\$(CONFIG)\obj\openssl.obj" del /Q "build\$(CONFIG)\obj\openssl.obj"
 	if exist "build\$(CONFIG)\obj\pcre.obj" del /Q "build\$(CONFIG)\obj\pcre.obj"
 	if exist "build\$(CONFIG)\obj\slotGen.obj" del /Q "build\$(CONFIG)\obj\slotGen.obj"
 	if exist "build\$(CONFIG)\obj\sqlite.obj" del /Q "build\$(CONFIG)\obj\sqlite.obj"
@@ -334,26 +334,24 @@ build\$(CONFIG)\inc\mpr.h: $(DEPS_4)
 	copy /Y /B src\mpr\mpr.h+modified build\$(CONFIG)\inc\mpr.h $(LOG)
 
 #
-#   openssl.obj
+#   mpr-openssl.obj
 #
 DEPS_5 = $(DEPS_5) build\$(CONFIG)\inc\mpr.h
 
-build\$(CONFIG)\obj\openssl.obj: \
-    src\mpr-openssl\openssl.c $(DEPS_5)
-	@echo .. [Compile] build\$(CONFIG)\obj\openssl.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\openssl.obj -Fd$(BUILD)\obj\openssl.pdb $(CFLAGS) -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\include" src\mpr-openssl\openssl.c $(LOG)
+build\$(CONFIG)\obj\mpr-openssl.obj: \
+    src\mpr-openssl\mpr-openssl.c $(DEPS_5)
+	@echo .. [Compile] build\$(CONFIG)\obj\mpr-openssl.obj
+	"$(CC)" -c -Fo$(BUILD)\obj\mpr-openssl.obj -Fd$(BUILD)\obj\mpr-openssl.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\mpr-openssl\mpr-openssl.c $(LOG)
 
-!IF "$(ME_COM_SSL)" == "1"
 !IF "$(ME_COM_OPENSSL)" == "1"
 #
-#   openssl
+#   libmpr-openssl
 #
-DEPS_6 = $(DEPS_6) build\$(CONFIG)\obj\openssl.obj
+DEPS_6 = $(DEPS_6) build\$(CONFIG)\obj\mpr-openssl.obj
 
 build\$(CONFIG)\bin\libmpr-openssl.lib: $(DEPS_6)
 	@echo ..... [Link] build\$(CONFIG)\bin\libmpr-openssl.lib
-	"lib.exe" -nologo -out:$(BUILD)\bin\libmpr-openssl.lib "$(BUILD)\obj\openssl.obj" $(LOG)
-!ENDIF
+	"lib.exe" -nologo -out:$(BUILD)\bin\libmpr-openssl.lib "$(BUILD)\obj\mpr-openssl.obj" $(LOG)
 !ENDIF
 
 #
@@ -376,10 +374,8 @@ build\$(CONFIG)\obj\mprLib.obj: \
 #   libmpr
 #
 DEPS_9 = $(DEPS_9) build\$(CONFIG)\inc\osdep.h
-!IF "$(ME_COM_SSL)" == "1"
 !IF "$(ME_COM_OPENSSL)" == "1"
 DEPS_9 = $(DEPS_9) build\$(CONFIG)\bin\libmpr-openssl.lib
-!ENDIF
 !ENDIF
 DEPS_9 = $(DEPS_9) build\$(CONFIG)\inc\mpr.h
 DEPS_9 = $(DEPS_9) build\$(CONFIG)\obj\mprLib.obj
@@ -1301,8 +1297,8 @@ DEPS_94 = $(DEPS_94) build\$(CONFIG)\obj\ejs.obj
 
 !IF "$(ME_COM_OPENSSL)" == "1"
 LIBS_94 = $(LIBS_94) libmpr-openssl.lib
-LIBPATHS_94 = $(LIBPATHS_94) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
+LIBS_94 = $(LIBS_94) libmpr.lib
 !IF "$(ME_COM_OPENSSL)" == "1"
 LIBS_94 = $(LIBS_94) libgdi32.lib
 LIBPATHS_94 = $(LIBPATHS_94) -libpath:$(ME_COM_OPENSSL_PATH)
@@ -1315,7 +1311,6 @@ LIBPATHS_94 = $(LIBPATHS_94) -libpath:$(ME_COM_OPENSSL_PATH)
 LIBS_94 = $(LIBS_94) libssleay32.lib
 LIBPATHS_94 = $(LIBPATHS_94) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
-LIBS_94 = $(LIBS_94) libmpr.lib
 !IF "$(ME_COM_PCRE)" == "1"
 LIBS_94 = $(LIBS_94) libpcre.lib
 !ENDIF
@@ -1353,8 +1348,8 @@ DEPS_96 = $(DEPS_96) build\$(CONFIG)\obj\ejsc.obj
 
 !IF "$(ME_COM_OPENSSL)" == "1"
 LIBS_96 = $(LIBS_96) libmpr-openssl.lib
-LIBPATHS_96 = $(LIBPATHS_96) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
+LIBS_96 = $(LIBS_96) libmpr.lib
 !IF "$(ME_COM_OPENSSL)" == "1"
 LIBS_96 = $(LIBS_96) libgdi32.lib
 LIBPATHS_96 = $(LIBPATHS_96) -libpath:$(ME_COM_OPENSSL_PATH)
@@ -1367,7 +1362,6 @@ LIBPATHS_96 = $(LIBPATHS_96) -libpath:$(ME_COM_OPENSSL_PATH)
 LIBS_96 = $(LIBS_96) libssleay32.lib
 LIBPATHS_96 = $(LIBPATHS_96) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
-LIBS_96 = $(LIBS_96) libmpr.lib
 !IF "$(ME_COM_PCRE)" == "1"
 LIBS_96 = $(LIBS_96) libpcre.lib
 !ENDIF
@@ -1467,8 +1461,8 @@ DEPS_104 = $(DEPS_104) build\$(CONFIG)\obj\slotGen.obj
 
 !IF "$(ME_COM_OPENSSL)" == "1"
 LIBS_104 = $(LIBS_104) libmpr-openssl.lib
-LIBPATHS_104 = $(LIBPATHS_104) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
+LIBS_104 = $(LIBS_104) libmpr.lib
 !IF "$(ME_COM_OPENSSL)" == "1"
 LIBS_104 = $(LIBS_104) libgdi32.lib
 LIBPATHS_104 = $(LIBPATHS_104) -libpath:$(ME_COM_OPENSSL_PATH)
@@ -1481,7 +1475,6 @@ LIBPATHS_104 = $(LIBPATHS_104) -libpath:$(ME_COM_OPENSSL_PATH)
 LIBS_104 = $(LIBS_104) libssleay32.lib
 LIBPATHS_104 = $(LIBPATHS_104) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
-LIBS_104 = $(LIBS_104) libmpr.lib
 !IF "$(ME_COM_PCRE)" == "1"
 LIBS_104 = $(LIBS_104) libpcre.lib
 !ENDIF
@@ -1815,8 +1808,8 @@ DEPS_123 = $(DEPS_123) build\$(CONFIG)\obj\ejsrun.obj
 
 !IF "$(ME_COM_OPENSSL)" == "1"
 LIBS_123 = $(LIBS_123) libmpr-openssl.lib
-LIBPATHS_123 = $(LIBPATHS_123) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
+LIBS_123 = $(LIBS_123) libmpr.lib
 !IF "$(ME_COM_OPENSSL)" == "1"
 LIBS_123 = $(LIBS_123) libgdi32.lib
 LIBPATHS_123 = $(LIBPATHS_123) -libpath:$(ME_COM_OPENSSL_PATH)
@@ -1829,7 +1822,6 @@ LIBPATHS_123 = $(LIBPATHS_123) -libpath:$(ME_COM_OPENSSL_PATH)
 LIBS_123 = $(LIBS_123) libssleay32.lib
 LIBPATHS_123 = $(LIBPATHS_123) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
-LIBS_123 = $(LIBS_123) libmpr.lib
 !IF "$(ME_COM_PCRE)" == "1"
 LIBS_123 = $(LIBS_123) libpcre.lib
 !ENDIF
@@ -1868,8 +1860,8 @@ DEPS_125 = $(DEPS_125) build\$(CONFIG)\obj\http.obj
 
 !IF "$(ME_COM_OPENSSL)" == "1"
 LIBS_125 = $(LIBS_125) libmpr-openssl.lib
-LIBPATHS_125 = $(LIBPATHS_125) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
+LIBS_125 = $(LIBS_125) libmpr.lib
 !IF "$(ME_COM_OPENSSL)" == "1"
 LIBS_125 = $(LIBS_125) libgdi32.lib
 LIBPATHS_125 = $(LIBPATHS_125) -libpath:$(ME_COM_OPENSSL_PATH)
@@ -1882,7 +1874,6 @@ LIBPATHS_125 = $(LIBPATHS_125) -libpath:$(ME_COM_OPENSSL_PATH)
 LIBS_125 = $(LIBS_125) libssleay32.lib
 LIBPATHS_125 = $(LIBPATHS_125) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
-LIBS_125 = $(LIBS_125) libmpr.lib
 !IF "$(ME_COM_PCRE)" == "1"
 LIBS_125 = $(LIBS_125) libpcre.lib
 !ENDIF
@@ -2094,8 +2085,8 @@ DEPS_141 = $(DEPS_141) build\$(CONFIG)\obj\ejsrun.obj
 
 !IF "$(ME_COM_OPENSSL)" == "1"
 LIBS_141 = $(LIBS_141) libmpr-openssl.lib
-LIBPATHS_141 = $(LIBPATHS_141) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
+LIBS_141 = $(LIBS_141) libmpr.lib
 !IF "$(ME_COM_OPENSSL)" == "1"
 LIBS_141 = $(LIBS_141) libgdi32.lib
 LIBPATHS_141 = $(LIBPATHS_141) -libpath:$(ME_COM_OPENSSL_PATH)
@@ -2108,7 +2099,6 @@ LIBPATHS_141 = $(LIBPATHS_141) -libpath:$(ME_COM_OPENSSL_PATH)
 LIBS_141 = $(LIBS_141) libssleay32.lib
 LIBPATHS_141 = $(LIBPATHS_141) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
-LIBS_141 = $(LIBS_141) libmpr.lib
 !IF "$(ME_COM_PCRE)" == "1"
 LIBS_141 = $(LIBS_141) libpcre.lib
 !ENDIF
@@ -2169,8 +2159,8 @@ DEPS_145 = $(DEPS_145) build\$(CONFIG)\obj\ejsrun.obj
 
 !IF "$(ME_COM_OPENSSL)" == "1"
 LIBS_145 = $(LIBS_145) libmpr-openssl.lib
-LIBPATHS_145 = $(LIBPATHS_145) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
+LIBS_145 = $(LIBS_145) libmpr.lib
 !IF "$(ME_COM_OPENSSL)" == "1"
 LIBS_145 = $(LIBS_145) libgdi32.lib
 LIBPATHS_145 = $(LIBPATHS_145) -libpath:$(ME_COM_OPENSSL_PATH)
@@ -2183,7 +2173,6 @@ LIBPATHS_145 = $(LIBPATHS_145) -libpath:$(ME_COM_OPENSSL_PATH)
 LIBS_145 = $(LIBS_145) libssleay32.lib
 LIBPATHS_145 = $(LIBPATHS_145) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
-LIBS_145 = $(LIBS_145) libmpr.lib
 !IF "$(ME_COM_PCRE)" == "1"
 LIBS_145 = $(LIBS_145) libpcre.lib
 !ENDIF
@@ -2221,8 +2210,8 @@ DEPS_147 = $(DEPS_147) build\$(CONFIG)\obj\watchdog.obj
 
 !IF "$(ME_COM_OPENSSL)" == "1"
 LIBS_147 = $(LIBS_147) libmpr-openssl.lib
-LIBPATHS_147 = $(LIBPATHS_147) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
+LIBS_147 = $(LIBS_147) libmpr.lib
 !IF "$(ME_COM_OPENSSL)" == "1"
 LIBS_147 = $(LIBS_147) libgdi32.lib
 LIBPATHS_147 = $(LIBPATHS_147) -libpath:$(ME_COM_OPENSSL_PATH)
@@ -2235,7 +2224,6 @@ LIBPATHS_147 = $(LIBPATHS_147) -libpath:$(ME_COM_OPENSSL_PATH)
 LIBS_147 = $(LIBS_147) libssleay32.lib
 LIBPATHS_147 = $(LIBPATHS_147) -libpath:$(ME_COM_OPENSSL_PATH)
 !ENDIF
-LIBS_147 = $(LIBS_147) libmpr.lib
 
 build\$(CONFIG)\bin\ejsman.exe: $(DEPS_147)
 	@echo ..... [Link] build\$(CONFIG)\bin\ejsman.exe
