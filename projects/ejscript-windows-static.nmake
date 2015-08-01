@@ -3,7 +3,7 @@
 #
 
 NAME                  = ejscript
-VERSION               = 2.6.1
+VERSION               = 2.6.2
 
 OS                    = windows
 PA                    = $(PROCESSOR_ARCHITECTURE)
