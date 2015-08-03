@@ -95,21 +95,6 @@
         <TargetName>mvc</TargetName>
     </PropertyGroup>
 
-      <ItemDefinitionGroup>
-      <Link>
-        <AdditionalDependencies>;%(AdditionalDependencies)</AdditionalDependencies>
-        <AdditionalLibraryDirectories>$(OutDir);;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      </Link>
-
-      <CustomBuildStep>
-        <Command>cd ..\..\src\ejs.mvc
-if exist $(BinDir)\mvc.es del /Q $(BinDir)\mvc.es
-copy /Y mvc.es $(BinDir)\mvc.es
-cd ..\..\projects\ejscript-windows-static</Command>
-        <Outputs>$(BinDir)\mvc.es</Outputs>
-      </CustomBuildStep>
-  </ItemDefinitionGroup>
-
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

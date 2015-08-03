@@ -95,21 +95,6 @@
         <TargetName>ejs.web</TargetName>
     </PropertyGroup>
 
-      <ItemDefinitionGroup>
-      <Link>
-        <AdditionalDependencies>libejs.lib;libhttp.lib;libpcre.lib;libmpr.lib;%(AdditionalDependencies)</AdditionalDependencies>
-        <AdditionalLibraryDirectories>$(OutDir);build\$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      </Link>
-
-      <CustomBuildStep>
-        <Command>cd ..\..\src\ejs.web
-"../../build/windows-x86-static/bin/ejsc" --out "../../build/windows-x86-static/bin/ejs.web.mod"  --optimize 9 Cascade.es CommonLog.es ContentType.es Controller.es Dir.es Google.es Head.es Html.es HttpServer.es MethodOverride.es Middleware.es Mvc.es Request.es Router.es Script.es Session.es ShowExceptions.es Static.es Template.es UploadFile.es UrlMap.es Utils.es View.es
-"../../build/windows-x86-static/bin/ejsmod" --cslots --dir "../../build/windows-x86-static/bin" "../../build/windows-x86-static/bin/ejs.web.mod"
-cd ..\..\projects\ejscript-windows-static</Command>
-        <Outputs>$(BinDir)\ejs.web.mod</Outputs>
-      </CustomBuildStep>
-  </ItemDefinitionGroup>
-
     <ItemGroup>
       <ProjectReference Include="ejsc.vcxproj">
       <Project>674fa6f3-4d9a-49da-b38f-238f2b739682</Project>

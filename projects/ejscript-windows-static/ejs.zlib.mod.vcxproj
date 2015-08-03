@@ -95,20 +95,6 @@
         <TargetName>ejs.zlib</TargetName>
     </PropertyGroup>
 
-      <ItemDefinitionGroup>
-      <Link>
-        <AdditionalDependencies>libejs.zlib.lib;libejs.lib;libhttp.lib;libpcre.lib;libmpr.lib;libzlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-        <AdditionalLibraryDirectories>$(OutDir);build\$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      </Link>
-
-      <CustomBuildStep>
-        <Command>cd ..\..\src\ejs.zlib
-"../../build/windows-x86-static/bin/ejsc" --out "../../build/windows-x86-static/bin/ejs.zlib.mod"  --optimize 9 Zlib.es
-cd ..\..\projects\ejscript-windows-static</Command>
-        <Outputs>$(BinDir)\ejs.zlib.mod</Outputs>
-      </CustomBuildStep>
-  </ItemDefinitionGroup>
-
     <ItemGroup>
       <ProjectReference Include="ejsc.vcxproj">
       <Project>674fa6f3-4d9a-49da-b38f-238f2b739682</Project>
