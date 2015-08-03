@@ -95,20 +95,6 @@
         <TargetName>ejs.db</TargetName>
     </PropertyGroup>
 
-      <ItemDefinitionGroup>
-      <Link>
-        <AdditionalDependencies>libejs.lib;libhttp.lib;libpcre.lib;libmpr.lib;%(AdditionalDependencies)</AdditionalDependencies>
-        <AdditionalLibraryDirectories>$(OutDir);build\$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      </Link>
-
-      <CustomBuildStep>
-        <Command>cd ..\..\src\ejs.db
-"../../build/windows-x86-default/bin/ejsc" --out "../../build/windows-x86-default/bin/ejs.db.mod"  --optimize 9 Database.es DatabaseConnector.es
-cd ..\..\projects\ejscript-windows-default</Command>
-        <Outputs>$(BinDir)\ejs.db.mod</Outputs>
-      </CustomBuildStep>
-  </ItemDefinitionGroup>
-
     <ItemGroup>
       <ProjectReference Include="ejsc.vcxproj">
       <Project>674fa6f3-4d9a-49da-b38f-238f2b739682</Project>
