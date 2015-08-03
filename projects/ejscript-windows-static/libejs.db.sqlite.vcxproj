@@ -108,6 +108,8 @@
   </ItemGroup>
 
       <ItemDefinitionGroup>
+        
+
       <Link>
         <AdditionalDependencies>libsql.lib;libejs.lib;libmpr.lib;libhttp.lib;libpcre.lib;%(AdditionalDependencies)</AdditionalDependencies>
         <AdditionalLibraryDirectories>$(OutDir);build\$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

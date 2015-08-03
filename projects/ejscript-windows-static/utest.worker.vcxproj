@@ -95,6 +95,18 @@
         <TargetName>utest</TargetName>
     </PropertyGroup>
 
+      <ItemDefinitionGroup>
+        
+
+      <CustomBuildStep>
+        <Command>cd ..\..\src\ejs.utest
+if exist $(BinDir)\utest.worker del /Q $(BinDir)\utest.worker
+copy /Y utest.worker $(BinDir)\utest.worker
+cd ..\..\projects\ejscript-windows-static</Command>
+        <Outputs>$(BinDir)\utest.worker</Outputs>
+      </CustomBuildStep>
+  </ItemDefinitionGroup>
+
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

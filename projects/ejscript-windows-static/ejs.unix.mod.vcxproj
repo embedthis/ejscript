@@ -95,6 +95,17 @@
         <TargetName>ejs.unix</TargetName>
     </PropertyGroup>
 
+      <ItemDefinitionGroup>
+        
+
+      <CustomBuildStep>
+        <Command>cd ..\..\src\ejs.unix
+"../../build/windows-x86-static/bin/ejsc" --out "../../build/windows-x86-static/bin/ejs.unix.mod"  --optimize 9 Unix.es
+cd ..\..\projects\ejscript-windows-static</Command>
+        <Outputs>$(BinDir)\ejs.unix.mod</Outputs>
+      </CustomBuildStep>
+  </ItemDefinitionGroup>
+
     <ItemGroup>
       <ProjectReference Include="ejsc.vcxproj">
       <Project>674fa6f3-4d9a-49da-b38f-238f2b739682</Project>

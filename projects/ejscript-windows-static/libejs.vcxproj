@@ -206,6 +206,8 @@
   </ItemGroup>
 
       <ItemDefinitionGroup>
+        
+
       <Link>
         <AdditionalDependencies>libhttp.lib;libpcre.lib;libmpr.lib;%(AdditionalDependencies)</AdditionalDependencies>
         <AdditionalLibraryDirectories>$(OutDir);build\$(Cfg)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

@@ -95,6 +95,17 @@
         <TargetName>ejs.tar</TargetName>
     </PropertyGroup>
 
+      <ItemDefinitionGroup>
+        
+
+      <CustomBuildStep>
+        <Command>cd ..\..\src\ejs.tar
+"../../build/windows-x86-default/bin/ejsc" --out "../../build/windows-x86-default/bin/ejs.tar.mod"  --optimize 9 Tar.es
+cd ..\..\projects\ejscript-windows-default</Command>
+        <Outputs>$(BinDir)\ejs.tar.mod</Outputs>
+      </CustomBuildStep>
+  </ItemDefinitionGroup>
+
     <ItemGroup>
       <ProjectReference Include="ejsc.vcxproj">
       <Project>674fa6f3-4d9a-49da-b38f-238f2b739682</Project>

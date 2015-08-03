@@ -95,6 +95,18 @@
         <TargetName>ejs</TargetName>
     </PropertyGroup>
 
+      <ItemDefinitionGroup>
+        
+
+      <CustomBuildStep>
+        <Command>cd ..\..\src\core
+"../../build/windows-x86-default/bin/ejsc" --out "../../build/windows-x86-default/bin/ejs.mod"  --optimize 9 --bind --require null App.es Args.es Array.es BinaryStream.es Block.es Boolean.es ByteArray.es Cache.es Cmd.es Compat.es Config.es Date.es Debug.es Emitter.es Error.es File.es FileSystem.es Frame.es Function.es GC.es Global.es Http.es Inflector.es Iterator.es JSON.es Loader.es LocalCache.es Locale.es Logger.es Math.es Memory.es MprLog.es Name.es Namespace.es Null.es Number.es Object.es Path.es Promise.es RegExp.es Socket.es Stream.es String.es System.es TextStream.es Timer.es Type.es Uri.es Void.es WebSocket.es Worker.es XML.es XMLHttp.es XMLList.es
+"../../build/windows-x86-default/bin/ejsmod" --cslots --dir "../../build/windows-x86-default/inc" --require null "../../build/windows-x86-default/bin/ejs.mod"
+cd ..\..\projects\ejscript-windows-default</Command>
+        <Outputs>$(BinDir)\ejs.mod</Outputs>
+      </CustomBuildStep>
+  </ItemDefinitionGroup>
+
     <ItemGroup>
       <ProjectReference Include="ejsc.vcxproj">
       <Project>674fa6f3-4d9a-49da-b38f-238f2b739682</Project>
