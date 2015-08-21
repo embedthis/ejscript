@@ -148,13 +148,9 @@ static EjsAny *invokeBooleanOperator(Ejs *ejs, EjsBoolean *lhs, int opcode, EjsB
         Unary operators
      */
     case EJS_OP_NEG:
-        return ejsCreateNumber(ejs, - lhs->value);
-
     case EJS_OP_LOGICAL_NOT:
-        return ejsCreateBoolean(ejs, !lhs->value);
-
     case EJS_OP_NOT:
-        return ejsCreateBoolean(ejs, ~lhs->value);
+        return ejsCreateBoolean(ejs, !lhs->value);
 
     /*
         Binary operations
