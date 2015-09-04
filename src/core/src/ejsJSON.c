@@ -22,7 +22,8 @@ typedef struct Json {
     EjsObj      *current;
     EjsObj      *options;           /* Options object */
     EjsFunction *replacer;
-    char        *indent;
+    char        *indentString;
+    int         indentCount;
     int         baseClasses;
     int         commas;
     int         depth;
@@ -446,15 +447,14 @@ PUBLIC EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *vp, EjsObj *options)
 {
     Json        json;
     EjsObj      *arg;
-    EjsString   *result;
-    int         i, enable;
+    int         enable;
 
     memset(&json, 0, sizeof(Json));
     json.depth = 99;
     json.quotes = 1;
     json.multiline = 1;
     json.nulls = 1;
-    json.indent = sclone("    ");
+    json.indentCount = 4;
 
     if (options) {
         json.options = options;
@@ -466,16 +466,9 @@ PUBLIC EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *vp, EjsObj *options)
         }
         if ((arg = ejsGetPropertyByName(ejs, options, EN("indent"))) != 0) {
             if (ejsIs(ejs, arg, String)) {
-               json.indent = (char*) ejsToMulti(ejs, arg);
-                //  TODO - get another solution to hold
+               json.indentString = (char*) ejsToMulti(ejs, arg);
             } else if (ejsIs(ejs, arg, Number)) {
-                i = ejsGetInt(ejs, arg);
-                if (0 <= i && i < ME_MAX_BUFFER) {
-                    json.indent = mprAlloc(i + 1);
-                    //  TODO - get another solution to hold
-                    memset(json.indent, ' ', i);
-                    json.indent[i] = '\0';
-                }
+                json.indentCount = ejsGetInt(ejs, arg);
             }
         }
         if ((arg = ejsGetPropertyByName(ejs, options, EN("commas"))) != 0) {
@@ -513,11 +506,7 @@ PUBLIC EjsString *ejsSerializeWithOptions(Ejs *ejs, EjsAny *vp, EjsObj *options)
             json.replacer = NULL;
         }
     }
-    mprRelease(json.indent);
-    mprHold(json.indent);
-    result = serialize(ejs, vp, &json);
-    //  TODO - get another solution to hold
-    return result;
+    return serialize(ejs, vp, &json);
 }
 
 
@@ -548,7 +537,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
     EjsObj      *pp, *obj, *replacerArgs[2];
     wchar       *cp;
     cchar       *key;
-    int         c, isArray, i, count, slotNum, quotes, sameline, items;
+    int         c, isArray, i, j, count, slotNum, quotes, sameline, items;
 
     /*
         The main code below can handle Arrays, Objects, objects derrived from Object and also native classes with properties.
@@ -616,7 +605,13 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
             }
             if (json->pretty) {
                 for (i = 0; i < ejs->serializeDepth; i++) {
-                    mprPutStringToWideBuf(json->buf, json->indent);
+                    if (json->indentString) {
+                        mprPutStringToWideBuf(json->buf, json->indentString);
+                    } else {
+                        for (j = 0; j < json->indentCount; j++) {
+                            mprPutCharToWideBuf(json->buf, ' ');
+                        }
+                    }
                 }
             }
             if (!isArray) {
@@ -698,7 +693,13 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
     --ejs->serializeDepth; 
     if (json->pretty && !sameline) {
         for (i = ejs->serializeDepth; i > 0; i--) {
-            mprPutStringToWideBuf(json->buf, json->indent);
+            if (json->indentString) {
+                mprPutStringToWideBuf(json->buf, json->indentString);
+            } else {
+                for (j = 0; j < json->indentCount; j++) {
+                    mprPutCharToWideBuf(json->buf, ' ');
+                }
+            }
         }
     }
     mprPutCharToWideBuf(json->buf, isArray ? ']' : '}');
