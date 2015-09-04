@@ -81,7 +81,7 @@ cc -o main main.c -lejs
                 <li>You want custom control over where Ejscript searches for modules</li>
                 <li>You want to customize the interpreter with native types, methods or variables</li>
             </ul>
-            <p>Ejscript provides a comprehensive <a href="../ref/api/ejs.html">Ejscript Native API</a> so you can
+            <p>Ejscript provides a comprehensive <a href="../ref/api/ejscript.html">Ejscript Native API</a> so you can
             fully control the configuration and operation of Ejscript. The APIs allow you to create and manage
             interpreters, create types, run methods, set and get properties and interact with all the objects held by
             the interpreter.</p>
@@ -113,7 +113,7 @@ int ejsEvalFile(int fileCount, char **fileList)
     return 0;
 }
 </pre>
-            <p>Consult the <a href="../ref/api/ejs.html">Ejscript Native API</a> and <a href=
+            <p>Consult the <a href="../ref/api/ejscript.html">Ejscript Native API</a> and <a href=
             "../ref/api/mpr.html">MPR Native API</a> for details on each API. The MPR provides a hierarchical memory
             allocation service, so calls to <b>mprFree</b> will free the MPR instance and everything allocated off the
             MPR. This includes the Ejscript service, VM, interpreter and compiler. Be sure to read the <a href=
