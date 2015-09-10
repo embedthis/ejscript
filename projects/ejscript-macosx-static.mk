@@ -499,7 +499,7 @@ DEPS_28 += src/cmd/ejsmod.h
 $(BUILD)/obj/doc.o: \
     src/cmd/doc.c $(DEPS_28)
 	@echo '   [Compile] $(BUILD)/obj/doc.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/doc.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/cmd/doc.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/doc.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/cmd/doc.c
 
 #
 #   docFiles.o
@@ -509,7 +509,7 @@ DEPS_29 += src/cmd/ejsmod.h
 $(BUILD)/obj/docFiles.o: \
     src/cmd/docFiles.c $(DEPS_29)
 	@echo '   [Compile] $(BUILD)/obj/docFiles.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/docFiles.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/cmd/docFiles.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/docFiles.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/cmd/docFiles.c
 
 #
 #   dtoa.o
@@ -519,7 +519,7 @@ DEPS_30 += $(BUILD)/inc/mpr.h
 $(BUILD)/obj/dtoa.o: \
     src/core/src/dtoa.c $(DEPS_30)
 	@echo '   [Compile] $(BUILD)/obj/dtoa.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/dtoa.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/dtoa.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/dtoa.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/dtoa.c
 
 #
 #   ejsCompiler.h
@@ -535,7 +535,7 @@ DEPS_32 += src/ejsCompiler.h
 $(BUILD)/obj/ecAst.o: \
     src/compiler/ecAst.c $(DEPS_32)
 	@echo '   [Compile] $(BUILD)/obj/ecAst.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ecAst.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/compiler/ecAst.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ecAst.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/compiler/ecAst.c
 
 #
 #   ecCodeGen.o
@@ -545,7 +545,7 @@ DEPS_33 += src/ejsCompiler.h
 $(BUILD)/obj/ecCodeGen.o: \
     src/compiler/ecCodeGen.c $(DEPS_33)
 	@echo '   [Compile] $(BUILD)/obj/ecCodeGen.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ecCodeGen.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/compiler/ecCodeGen.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ecCodeGen.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/compiler/ecCodeGen.c
 
 #
 #   ecCompiler.o
@@ -555,7 +555,7 @@ DEPS_34 += src/ejsCompiler.h
 $(BUILD)/obj/ecCompiler.o: \
     src/compiler/ecCompiler.c $(DEPS_34)
 	@echo '   [Compile] $(BUILD)/obj/ecCompiler.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ecCompiler.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/compiler/ecCompiler.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ecCompiler.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/compiler/ecCompiler.c
 
 #
 #   ecLex.o
@@ -565,7 +565,7 @@ DEPS_35 += src/ejsCompiler.h
 $(BUILD)/obj/ecLex.o: \
     src/compiler/ecLex.c $(DEPS_35)
 	@echo '   [Compile] $(BUILD)/obj/ecLex.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ecLex.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/compiler/ecLex.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ecLex.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/compiler/ecLex.c
 
 #
 #   ecModuleWrite.o
@@ -575,7 +575,7 @@ DEPS_36 += src/ejsCompiler.h
 $(BUILD)/obj/ecModuleWrite.o: \
     src/compiler/ecModuleWrite.c $(DEPS_36)
 	@echo '   [Compile] $(BUILD)/obj/ecModuleWrite.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ecModuleWrite.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/compiler/ecModuleWrite.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ecModuleWrite.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/compiler/ecModuleWrite.c
 
 #
 #   ecParser.o
@@ -585,7 +585,7 @@ DEPS_37 += src/ejsCompiler.h
 $(BUILD)/obj/ecParser.o: \
     src/compiler/ecParser.c $(DEPS_37)
 	@echo '   [Compile] $(BUILD)/obj/ecParser.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ecParser.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/compiler/ecParser.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ecParser.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/compiler/ecParser.c
 
 #
 #   ecState.o
@@ -595,7 +595,7 @@ DEPS_38 += src/ejsCompiler.h
 $(BUILD)/obj/ecState.o: \
     src/compiler/ecState.c $(DEPS_38)
 	@echo '   [Compile] $(BUILD)/obj/ecState.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ecState.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/compiler/ecState.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ecState.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/compiler/ecState.c
 
 #
 #   ejs.o
@@ -606,7 +606,7 @@ DEPS_39 += $(BUILD)/inc/ejsCompiler.h
 $(BUILD)/obj/ejs.o: \
     src/cmd/ejs.c $(DEPS_39)
 	@echo '   [Compile] $(BUILD)/obj/ejs.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejs.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/cmd/ejs.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejs.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/cmd/ejs.c
 
 #
 #   ejsApp.o
@@ -616,7 +616,7 @@ DEPS_40 += src/ejs.h
 $(BUILD)/obj/ejsApp.o: \
     src/core/src/ejsApp.c $(DEPS_40)
 	@echo '   [Compile] $(BUILD)/obj/ejsApp.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsApp.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsApp.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsApp.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsApp.c
 
 #
 #   ejsArray.o
@@ -626,7 +626,7 @@ DEPS_41 += src/ejs.h
 $(BUILD)/obj/ejsArray.o: \
     src/core/src/ejsArray.c $(DEPS_41)
 	@echo '   [Compile] $(BUILD)/obj/ejsArray.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsArray.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsArray.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsArray.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsArray.c
 
 #
 #   ejsBlock.o
@@ -636,7 +636,7 @@ DEPS_42 += src/ejs.h
 $(BUILD)/obj/ejsBlock.o: \
     src/core/src/ejsBlock.c $(DEPS_42)
 	@echo '   [Compile] $(BUILD)/obj/ejsBlock.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsBlock.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsBlock.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsBlock.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsBlock.c
 
 #
 #   ejsBoolean.o
@@ -646,7 +646,7 @@ DEPS_43 += src/ejs.h
 $(BUILD)/obj/ejsBoolean.o: \
     src/core/src/ejsBoolean.c $(DEPS_43)
 	@echo '   [Compile] $(BUILD)/obj/ejsBoolean.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsBoolean.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsBoolean.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsBoolean.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsBoolean.c
 
 #
 #   ejsByteArray.o
@@ -656,7 +656,7 @@ DEPS_44 += src/ejs.h
 $(BUILD)/obj/ejsByteArray.o: \
     src/core/src/ejsByteArray.c $(DEPS_44)
 	@echo '   [Compile] $(BUILD)/obj/ejsByteArray.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsByteArray.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsByteArray.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsByteArray.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsByteArray.c
 
 #
 #   ejsByteCode.o
@@ -666,7 +666,7 @@ DEPS_45 += src/ejs.h
 $(BUILD)/obj/ejsByteCode.o: \
     src/vm/ejsByteCode.c $(DEPS_45)
 	@echo '   [Compile] $(BUILD)/obj/ejsByteCode.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsByteCode.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/vm/ejsByteCode.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsByteCode.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/vm/ejsByteCode.c
 
 #
 #   ejsCache.o
@@ -676,7 +676,7 @@ DEPS_46 += src/ejs.h
 $(BUILD)/obj/ejsCache.o: \
     src/core/src/ejsCache.c $(DEPS_46)
 	@echo '   [Compile] $(BUILD)/obj/ejsCache.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsCache.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsCache.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsCache.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsCache.c
 
 #
 #   ejsCmd.o
@@ -686,7 +686,7 @@ DEPS_47 += src/ejs.h
 $(BUILD)/obj/ejsCmd.o: \
     src/core/src/ejsCmd.c $(DEPS_47)
 	@echo '   [Compile] $(BUILD)/obj/ejsCmd.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsCmd.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsCmd.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsCmd.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsCmd.c
 
 #
 #   ejsConfig.o
@@ -696,7 +696,7 @@ DEPS_48 += src/ejs.h
 $(BUILD)/obj/ejsConfig.o: \
     src/core/src/ejsConfig.c $(DEPS_48)
 	@echo '   [Compile] $(BUILD)/obj/ejsConfig.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsConfig.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsConfig.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsConfig.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsConfig.c
 
 #
 #   ejsDate.o
@@ -706,7 +706,7 @@ DEPS_49 += src/ejs.h
 $(BUILD)/obj/ejsDate.o: \
     src/core/src/ejsDate.c $(DEPS_49)
 	@echo '   [Compile] $(BUILD)/obj/ejsDate.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsDate.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsDate.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsDate.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsDate.c
 
 #
 #   ejsDebug.o
@@ -716,7 +716,7 @@ DEPS_50 += src/ejs.h
 $(BUILD)/obj/ejsDebug.o: \
     src/core/src/ejsDebug.c $(DEPS_50)
 	@echo '   [Compile] $(BUILD)/obj/ejsDebug.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsDebug.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsDebug.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsDebug.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsDebug.c
 
 #
 #   ejsError.o
@@ -726,7 +726,7 @@ DEPS_51 += src/ejs.h
 $(BUILD)/obj/ejsError.o: \
     src/core/src/ejsError.c $(DEPS_51)
 	@echo '   [Compile] $(BUILD)/obj/ejsError.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsError.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsError.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsError.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsError.c
 
 #
 #   ejsException.o
@@ -736,7 +736,7 @@ DEPS_52 += src/ejs.h
 $(BUILD)/obj/ejsException.o: \
     src/vm/ejsException.c $(DEPS_52)
 	@echo '   [Compile] $(BUILD)/obj/ejsException.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsException.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/vm/ejsException.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsException.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/vm/ejsException.c
 
 #
 #   ejsFile.o
@@ -746,7 +746,7 @@ DEPS_53 += src/ejs.h
 $(BUILD)/obj/ejsFile.o: \
     src/core/src/ejsFile.c $(DEPS_53)
 	@echo '   [Compile] $(BUILD)/obj/ejsFile.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsFile.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsFile.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsFile.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsFile.c
 
 #
 #   ejsFileSystem.o
@@ -756,7 +756,7 @@ DEPS_54 += src/ejs.h
 $(BUILD)/obj/ejsFileSystem.o: \
     src/core/src/ejsFileSystem.c $(DEPS_54)
 	@echo '   [Compile] $(BUILD)/obj/ejsFileSystem.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsFileSystem.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsFileSystem.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsFileSystem.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsFileSystem.c
 
 #
 #   ejsFrame.o
@@ -766,7 +766,7 @@ DEPS_55 += src/ejs.h
 $(BUILD)/obj/ejsFrame.o: \
     src/core/src/ejsFrame.c $(DEPS_55)
 	@echo '   [Compile] $(BUILD)/obj/ejsFrame.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsFrame.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsFrame.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsFrame.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsFrame.c
 
 #
 #   ejsFunction.o
@@ -776,7 +776,7 @@ DEPS_56 += src/ejs.h
 $(BUILD)/obj/ejsFunction.o: \
     src/core/src/ejsFunction.c $(DEPS_56)
 	@echo '   [Compile] $(BUILD)/obj/ejsFunction.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsFunction.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsFunction.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsFunction.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsFunction.c
 
 #
 #   ejsGC.o
@@ -786,7 +786,7 @@ DEPS_57 += src/ejs.h
 $(BUILD)/obj/ejsGC.o: \
     src/core/src/ejsGC.c $(DEPS_57)
 	@echo '   [Compile] $(BUILD)/obj/ejsGC.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsGC.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsGC.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsGC.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsGC.c
 
 #
 #   ejsGlobal.o
@@ -796,7 +796,7 @@ DEPS_58 += src/ejs.h
 $(BUILD)/obj/ejsGlobal.o: \
     src/core/src/ejsGlobal.c $(DEPS_58)
 	@echo '   [Compile] $(BUILD)/obj/ejsGlobal.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsGlobal.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsGlobal.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsGlobal.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsGlobal.c
 
 #
 #   ejsHelper.o
@@ -806,7 +806,7 @@ DEPS_59 += src/ejs.h
 $(BUILD)/obj/ejsHelper.o: \
     src/vm/ejsHelper.c $(DEPS_59)
 	@echo '   [Compile] $(BUILD)/obj/ejsHelper.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsHelper.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/vm/ejsHelper.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsHelper.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/vm/ejsHelper.c
 
 #
 #   ejsHttp.o
@@ -816,7 +816,7 @@ DEPS_60 += src/ejs.h
 $(BUILD)/obj/ejsHttp.o: \
     src/core/src/ejsHttp.c $(DEPS_60)
 	@echo '   [Compile] $(BUILD)/obj/ejsHttp.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsHttp.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsHttp.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsHttp.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsHttp.c
 
 #
 #   ejsWeb.h
@@ -836,7 +836,7 @@ DEPS_62 += $(BUILD)/inc/ejs.web.slots.h
 $(BUILD)/obj/ejsHttpServer.o: \
     src/ejs.web/ejsHttpServer.c $(DEPS_62)
 	@echo '   [Compile] $(BUILD)/obj/ejsHttpServer.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsHttpServer.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/ejs.web/ejsHttpServer.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsHttpServer.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/ejs.web/ejsHttpServer.c
 
 #
 #   ejsInterp.o
@@ -846,7 +846,7 @@ DEPS_63 += src/ejs.h
 $(BUILD)/obj/ejsInterp.o: \
     src/vm/ejsInterp.c $(DEPS_63)
 	@echo '   [Compile] $(BUILD)/obj/ejsInterp.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsInterp.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/vm/ejsInterp.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsInterp.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/vm/ejsInterp.c
 
 #
 #   ejsIterator.o
@@ -856,7 +856,7 @@ DEPS_64 += src/ejs.h
 $(BUILD)/obj/ejsIterator.o: \
     src/core/src/ejsIterator.c $(DEPS_64)
 	@echo '   [Compile] $(BUILD)/obj/ejsIterator.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsIterator.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsIterator.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsIterator.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsIterator.c
 
 #
 #   ejsJSON.o
@@ -866,7 +866,7 @@ DEPS_65 += src/ejs.h
 $(BUILD)/obj/ejsJSON.o: \
     src/core/src/ejsJSON.c $(DEPS_65)
 	@echo '   [Compile] $(BUILD)/obj/ejsJSON.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsJSON.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsJSON.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsJSON.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsJSON.c
 
 #
 #   ejsLoader.o
@@ -876,7 +876,7 @@ DEPS_66 += src/ejs.h
 $(BUILD)/obj/ejsLoader.o: \
     src/vm/ejsLoader.c $(DEPS_66)
 	@echo '   [Compile] $(BUILD)/obj/ejsLoader.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsLoader.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/vm/ejsLoader.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsLoader.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/vm/ejsLoader.c
 
 #
 #   ejsLocalCache.o
@@ -886,7 +886,7 @@ DEPS_67 += src/ejs.h
 $(BUILD)/obj/ejsLocalCache.o: \
     src/core/src/ejsLocalCache.c $(DEPS_67)
 	@echo '   [Compile] $(BUILD)/obj/ejsLocalCache.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsLocalCache.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsLocalCache.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsLocalCache.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsLocalCache.c
 
 #
 #   ejsMath.o
@@ -896,7 +896,7 @@ DEPS_68 += src/ejs.h
 $(BUILD)/obj/ejsMath.o: \
     src/core/src/ejsMath.c $(DEPS_68)
 	@echo '   [Compile] $(BUILD)/obj/ejsMath.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsMath.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsMath.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsMath.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsMath.c
 
 #
 #   ejsMemory.o
@@ -906,7 +906,7 @@ DEPS_69 += src/ejs.h
 $(BUILD)/obj/ejsMemory.o: \
     src/core/src/ejsMemory.c $(DEPS_69)
 	@echo '   [Compile] $(BUILD)/obj/ejsMemory.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsMemory.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsMemory.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsMemory.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsMemory.c
 
 #
 #   ejsModule.o
@@ -916,7 +916,7 @@ DEPS_70 += src/ejs.h
 $(BUILD)/obj/ejsModule.o: \
     src/vm/ejsModule.c $(DEPS_70)
 	@echo '   [Compile] $(BUILD)/obj/ejsModule.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsModule.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/vm/ejsModule.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsModule.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/vm/ejsModule.c
 
 #
 #   ejsMprLog.o
@@ -926,7 +926,7 @@ DEPS_71 += src/ejs.h
 $(BUILD)/obj/ejsMprLog.o: \
     src/core/src/ejsMprLog.c $(DEPS_71)
 	@echo '   [Compile] $(BUILD)/obj/ejsMprLog.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsMprLog.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsMprLog.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsMprLog.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsMprLog.c
 
 #
 #   ejsNamespace.o
@@ -936,7 +936,7 @@ DEPS_72 += src/ejs.h
 $(BUILD)/obj/ejsNamespace.o: \
     src/core/src/ejsNamespace.c $(DEPS_72)
 	@echo '   [Compile] $(BUILD)/obj/ejsNamespace.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsNamespace.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsNamespace.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsNamespace.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsNamespace.c
 
 #
 #   ejsNull.o
@@ -946,7 +946,7 @@ DEPS_73 += src/ejs.h
 $(BUILD)/obj/ejsNull.o: \
     src/core/src/ejsNull.c $(DEPS_73)
 	@echo '   [Compile] $(BUILD)/obj/ejsNull.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsNull.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsNull.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsNull.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsNull.c
 
 #
 #   ejsNumber.o
@@ -956,7 +956,7 @@ DEPS_74 += src/ejs.h
 $(BUILD)/obj/ejsNumber.o: \
     src/core/src/ejsNumber.c $(DEPS_74)
 	@echo '   [Compile] $(BUILD)/obj/ejsNumber.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsNumber.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsNumber.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsNumber.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsNumber.c
 
 #
 #   ejsObject.o
@@ -966,7 +966,7 @@ DEPS_75 += src/ejs.h
 $(BUILD)/obj/ejsObject.o: \
     src/core/src/ejsObject.c $(DEPS_75)
 	@echo '   [Compile] $(BUILD)/obj/ejsObject.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsObject.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsObject.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsObject.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsObject.c
 
 #
 #   ejsPath.o
@@ -977,7 +977,7 @@ DEPS_76 += $(BUILD)/inc/pcre.h
 $(BUILD)/obj/ejsPath.o: \
     src/core/src/ejsPath.c $(DEPS_76)
 	@echo '   [Compile] $(BUILD)/obj/ejsPath.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsPath.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsPath.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsPath.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsPath.c
 
 #
 #   ejsPot.o
@@ -987,7 +987,7 @@ DEPS_77 += src/ejs.h
 $(BUILD)/obj/ejsPot.o: \
     src/core/src/ejsPot.c $(DEPS_77)
 	@echo '   [Compile] $(BUILD)/obj/ejsPot.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsPot.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsPot.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsPot.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsPot.c
 
 #
 #   ejsRegExp.o
@@ -998,7 +998,7 @@ DEPS_78 += $(BUILD)/inc/pcre.h
 $(BUILD)/obj/ejsRegExp.o: \
     src/core/src/ejsRegExp.c $(DEPS_78)
 	@echo '   [Compile] $(BUILD)/obj/ejsRegExp.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsRegExp.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsRegExp.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsRegExp.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsRegExp.c
 
 #
 #   ejsRequest.o
@@ -1012,7 +1012,7 @@ DEPS_79 += $(BUILD)/inc/ejs.web.slots.h
 $(BUILD)/obj/ejsRequest.o: \
     src/ejs.web/ejsRequest.c $(DEPS_79)
 	@echo '   [Compile] $(BUILD)/obj/ejsRequest.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsRequest.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/ejs.web/ejsRequest.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsRequest.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/ejs.web/ejsRequest.c
 
 #
 #   ejsScope.o
@@ -1022,7 +1022,7 @@ DEPS_80 += src/ejs.h
 $(BUILD)/obj/ejsScope.o: \
     src/vm/ejsScope.c $(DEPS_80)
 	@echo '   [Compile] $(BUILD)/obj/ejsScope.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsScope.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/vm/ejsScope.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsScope.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/vm/ejsScope.c
 
 #
 #   ejsService.o
@@ -1032,7 +1032,7 @@ DEPS_81 += src/ejs.h
 $(BUILD)/obj/ejsService.o: \
     src/vm/ejsService.c $(DEPS_81)
 	@echo '   [Compile] $(BUILD)/obj/ejsService.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsService.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/vm/ejsService.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsService.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/vm/ejsService.c
 
 #
 #   ejsSession.o
@@ -1044,7 +1044,7 @@ DEPS_82 += src/ejs.web/ejsWeb.h
 $(BUILD)/obj/ejsSession.o: \
     src/ejs.web/ejsSession.c $(DEPS_82)
 	@echo '   [Compile] $(BUILD)/obj/ejsSession.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsSession.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/ejs.web/ejsSession.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsSession.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/ejs.web/ejsSession.c
 
 #
 #   ejsSocket.o
@@ -1054,7 +1054,7 @@ DEPS_83 += src/ejs.h
 $(BUILD)/obj/ejsSocket.o: \
     src/core/src/ejsSocket.c $(DEPS_83)
 	@echo '   [Compile] $(BUILD)/obj/ejsSocket.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsSocket.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsSocket.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsSocket.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsSocket.c
 
 #
 #   ejsSqlite.o
@@ -1065,7 +1065,7 @@ DEPS_84 += $(BUILD)/inc/ejs.db.sqlite.slots.h
 $(BUILD)/obj/ejsSqlite.o: \
     src/ejs.db.sqlite/ejsSqlite.c $(DEPS_84)
 	@echo '   [Compile] $(BUILD)/obj/ejsSqlite.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsSqlite.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/ejs.db.sqlite/ejsSqlite.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsSqlite.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/ejs.db.sqlite/ejsSqlite.c
 
 #
 #   ejsString.o
@@ -1076,7 +1076,7 @@ DEPS_85 += $(BUILD)/inc/pcre.h
 $(BUILD)/obj/ejsString.o: \
     src/core/src/ejsString.c $(DEPS_85)
 	@echo '   [Compile] $(BUILD)/obj/ejsString.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsString.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsString.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsString.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsString.c
 
 #
 #   ejsSystem.o
@@ -1086,7 +1086,7 @@ DEPS_86 += src/ejs.h
 $(BUILD)/obj/ejsSystem.o: \
     src/core/src/ejsSystem.c $(DEPS_86)
 	@echo '   [Compile] $(BUILD)/obj/ejsSystem.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsSystem.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsSystem.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsSystem.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsSystem.c
 
 #
 #   ejsTimer.o
@@ -1096,7 +1096,7 @@ DEPS_87 += src/ejs.h
 $(BUILD)/obj/ejsTimer.o: \
     src/core/src/ejsTimer.c $(DEPS_87)
 	@echo '   [Compile] $(BUILD)/obj/ejsTimer.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsTimer.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsTimer.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsTimer.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsTimer.c
 
 #
 #   ejsType.o
@@ -1106,7 +1106,7 @@ DEPS_88 += src/ejs.h
 $(BUILD)/obj/ejsType.o: \
     src/core/src/ejsType.c $(DEPS_88)
 	@echo '   [Compile] $(BUILD)/obj/ejsType.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsType.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsType.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsType.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsType.c
 
 #
 #   ejsUri.o
@@ -1116,7 +1116,7 @@ DEPS_89 += src/ejs.h
 $(BUILD)/obj/ejsUri.o: \
     src/core/src/ejsUri.c $(DEPS_89)
 	@echo '   [Compile] $(BUILD)/obj/ejsUri.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsUri.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsUri.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsUri.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsUri.c
 
 #
 #   ejsVoid.o
@@ -1126,7 +1126,7 @@ DEPS_90 += src/ejs.h
 $(BUILD)/obj/ejsVoid.o: \
     src/core/src/ejsVoid.c $(DEPS_90)
 	@echo '   [Compile] $(BUILD)/obj/ejsVoid.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsVoid.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsVoid.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsVoid.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsVoid.c
 
 #
 #   ejsWeb.o
@@ -1140,7 +1140,7 @@ DEPS_91 += $(BUILD)/inc/ejs.web.slots.h
 $(BUILD)/obj/ejsWeb.o: \
     src/ejs.web/ejsWeb.c $(DEPS_91)
 	@echo '   [Compile] $(BUILD)/obj/ejsWeb.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsWeb.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/ejs.web/ejsWeb.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsWeb.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/ejs.web/ejsWeb.c
 
 #
 #   ejsWebSocket.o
@@ -1150,7 +1150,7 @@ DEPS_92 += src/ejs.h
 $(BUILD)/obj/ejsWebSocket.o: \
     src/core/src/ejsWebSocket.c $(DEPS_92)
 	@echo '   [Compile] $(BUILD)/obj/ejsWebSocket.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsWebSocket.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsWebSocket.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsWebSocket.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsWebSocket.c
 
 #
 #   ejsWorker.o
@@ -1160,7 +1160,7 @@ DEPS_93 += src/ejs.h
 $(BUILD)/obj/ejsWorker.o: \
     src/core/src/ejsWorker.c $(DEPS_93)
 	@echo '   [Compile] $(BUILD)/obj/ejsWorker.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsWorker.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsWorker.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsWorker.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsWorker.c
 
 #
 #   ejsXML.o
@@ -1170,7 +1170,7 @@ DEPS_94 += src/ejs.h
 $(BUILD)/obj/ejsXML.o: \
     src/core/src/ejsXML.c $(DEPS_94)
 	@echo '   [Compile] $(BUILD)/obj/ejsXML.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsXML.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsXML.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsXML.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsXML.c
 
 #
 #   ejsXMLList.o
@@ -1180,7 +1180,7 @@ DEPS_95 += src/ejs.h
 $(BUILD)/obj/ejsXMLList.o: \
     src/core/src/ejsXMLList.c $(DEPS_95)
 	@echo '   [Compile] $(BUILD)/obj/ejsXMLList.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsXMLList.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsXMLList.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsXMLList.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsXMLList.c
 
 #
 #   ejsXMLLoader.o
@@ -1190,7 +1190,7 @@ DEPS_96 += src/ejs.h
 $(BUILD)/obj/ejsXMLLoader.o: \
     src/core/src/ejsXMLLoader.c $(DEPS_96)
 	@echo '   [Compile] $(BUILD)/obj/ejsXMLLoader.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsXMLLoader.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/core/src/ejsXMLLoader.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsXMLLoader.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/core/src/ejsXMLLoader.c
 
 #
 #   ejsZlib.o
@@ -1202,7 +1202,7 @@ DEPS_97 += $(BUILD)/inc/ejs.zlib.slots.h
 $(BUILD)/obj/ejsZlib.o: \
     src/ejs.zlib/ejsZlib.c $(DEPS_97)
 	@echo '   [Compile] $(BUILD)/obj/ejsZlib.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsZlib.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/ejs.zlib/ejsZlib.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsZlib.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/ejs.zlib/ejsZlib.c
 
 #
 #   ejsc.o
@@ -1212,7 +1212,7 @@ DEPS_98 += $(BUILD)/inc/ejsCompiler.h
 $(BUILD)/obj/ejsc.o: \
     src/cmd/ejsc.c $(DEPS_98)
 	@echo '   [Compile] $(BUILD)/obj/ejsc.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsc.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/cmd/ejsc.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsc.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/cmd/ejsc.c
 
 #
 #   ejsmod.o
@@ -1222,7 +1222,7 @@ DEPS_99 += src/cmd/ejsmod.h
 $(BUILD)/obj/ejsmod.o: \
     src/cmd/ejsmod.c $(DEPS_99)
 	@echo '   [Compile] $(BUILD)/obj/ejsmod.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsmod.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/cmd/ejsmod.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsmod.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/cmd/ejsmod.c
 
 #
 #   ejsrun.o
@@ -1232,7 +1232,7 @@ DEPS_100 += $(BUILD)/inc/ejsCompiler.h
 $(BUILD)/obj/ejsrun.o: \
     src/cmd/ejsrun.c $(DEPS_100)
 	@echo '   [Compile] $(BUILD)/obj/ejsrun.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsrun.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/cmd/ejsrun.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/ejsrun.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/cmd/ejsrun.c
 
 #
 #   http.h
@@ -1259,7 +1259,7 @@ DEPS_103 += $(BUILD)/inc/pcre.h
 $(BUILD)/obj/httpLib.o: \
     src/http/httpLib.c $(DEPS_103)
 	@echo '   [Compile] $(BUILD)/obj/httpLib.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/httpLib.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/http/httpLib.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/httpLib.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/http/httpLib.c
 
 #
 #   listing.o
@@ -1270,7 +1270,7 @@ DEPS_104 += $(BUILD)/inc/ejsByteCodeTable.h
 $(BUILD)/obj/listing.o: \
     src/cmd/listing.c $(DEPS_104)
 	@echo '   [Compile] $(BUILD)/obj/listing.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/listing.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/cmd/listing.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/listing.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/cmd/listing.c
 
 #
 #   mbedtls.h
@@ -1286,7 +1286,7 @@ DEPS_106 += src/mbedtls/mbedtls.h
 $(BUILD)/obj/mbedtls.o: \
     src/mbedtls/mbedtls.c $(DEPS_106)
 	@echo '   [Compile] $(BUILD)/obj/mbedtls.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/mbedtls.o -arch $(CC_ARCH) $(CFLAGS) -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/mbedtls/mbedtls.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/mbedtls.o -arch $(CC_ARCH) $(CFLAGS) -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/mbedtls/mbedtls.c
 
 #
 #   mpr-mbedtls.o
@@ -1296,7 +1296,7 @@ DEPS_107 += $(BUILD)/inc/mpr.h
 $(BUILD)/obj/mpr-mbedtls.o: \
     src/mpr-mbedtls/mpr-mbedtls.c $(DEPS_107)
 	@echo '   [Compile] $(BUILD)/obj/mpr-mbedtls.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/mpr-mbedtls.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/mpr-mbedtls/mpr-mbedtls.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/mpr-mbedtls.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/mpr-mbedtls/mpr-mbedtls.c
 
 #
 #   mpr-openssl.o
@@ -1322,7 +1322,7 @@ DEPS_110 += src/mpr/mpr.h
 $(BUILD)/obj/mprLib.o: \
     src/mpr/mprLib.c $(DEPS_110)
 	@echo '   [Compile] $(BUILD)/obj/mprLib.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/mprLib.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/mpr/mprLib.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/mprLib.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/mpr/mprLib.c
 
 #
 #   pcre.h
@@ -1349,7 +1349,7 @@ DEPS_113 += src/cmd/ejsmod.h
 $(BUILD)/obj/slotGen.o: \
     src/cmd/slotGen.c $(DEPS_113)
 	@echo '   [Compile] $(BUILD)/obj/slotGen.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/slotGen.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/cmd/slotGen.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/slotGen.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/cmd/slotGen.c
 
 #
 #   sqlite3.h
@@ -1387,7 +1387,7 @@ DEPS_117 += $(BUILD)/inc/mpr.h
 $(BUILD)/obj/watchdog.o: \
     src/watchdog/watchdog.c $(DEPS_117)
 	@echo '   [Compile] $(BUILD)/obj/watchdog.o'
-	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/watchdog.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE="embedtls.h" $(IFLAGS) src/watchdog/watchdog.c
+	$(CC) -c $(DFLAGS) -o $(BUILD)/obj/watchdog.o -arch $(CC_ARCH) $(CFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/watchdog/watchdog.c
 
 #
 #   zlib.h
