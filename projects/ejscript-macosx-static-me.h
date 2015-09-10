@@ -22,7 +22,7 @@
     #define ME_COMPANY "embedthis"
 #endif
 #ifndef ME_COMPATIBLE
-    #define ME_COMPATIBLE "2.6"
+    #define ME_COMPATIBLE "2.7"
 #endif
 #ifndef ME_COMPILER_HAS_ATOMIC
     #define ME_COMPILER_HAS_ATOMIC 1
@@ -142,7 +142,7 @@
     #define ME_TUNE "speed"
 #endif
 #ifndef ME_VERSION
-    #define ME_VERSION "2.6.2"
+    #define ME_VERSION "2.7.0"
 #endif
 #ifndef ME_WATCHDOG_NAME
     #define ME_WATCHDOG_NAME "ejsman"
@@ -165,7 +165,7 @@
     #define ME_APP_PREFIX "/usr/local/lib/ejscript"
 #endif
 #ifndef ME_VAPP_PREFIX
-    #define ME_VAPP_PREFIX "/usr/local/lib/ejscript/2.6.2"
+    #define ME_VAPP_PREFIX "/usr/local/lib/ejscript/2.7.0"
 #endif
 #ifndef ME_BIN_PREFIX
     #define ME_BIN_PREFIX "/usr/local/bin"
@@ -198,7 +198,7 @@
     #define ME_CACHE_PREFIX "/var/spool/ejscript/cache"
 #endif
 #ifndef ME_SRC_PREFIX
-    #define ME_SRC_PREFIX "ejscript-2.6.2"
+    #define ME_SRC_PREFIX "ejscript-2.7.0"
 #endif
 
 /* Suffixes */
@@ -220,7 +220,7 @@
 
 /* Profile */
 #ifndef ME_CONFIG_CMD
-    #define ME_CONFIG_CMD "me -d -q -platform macosx-x64-static -static -configure . -with openssl -gen xcode"
+    #define ME_CONFIG_CMD "me -d -q -platform macosx-x64-static -static -configure . -gen xcode"
 #endif
 #ifndef ME_EJSCRIPT_PRODUCT
     #define ME_EJSCRIPT_PRODUCT 1
@@ -237,13 +237,13 @@
     #define ME_MAJOR_VERSION 2
 #endif
 #ifndef ME_MINOR_VERSION
-    #define ME_MINOR_VERSION 6
+    #define ME_MINOR_VERSION 7
 #endif
 #ifndef ME_PATCH_VERSION
-    #define ME_PATCH_VERSION 2
+    #define ME_PATCH_VERSION 0
 #endif
 #ifndef ME_VNUM
-    #define ME_VNUM 200060002
+    #define ME_VNUM 200070000
 #endif
 
 /* Components */
@@ -260,7 +260,7 @@
     #define ME_COM_MATRIXSSL 0
 #endif
 #ifndef ME_COM_MBEDTLS
-    #define ME_COM_MBEDTLS 0
+    #define ME_COM_MBEDTLS 1
 #endif
 #ifndef ME_COM_MPR
     #define ME_COM_MPR 1
@@ -269,7 +269,7 @@
     #define ME_COM_NANOSSL 0
 #endif
 #ifndef ME_COM_OPENSSL
-    #define ME_COM_OPENSSL 1
+    #define ME_COM_OPENSSL 0
 #endif
 #ifndef ME_COM_OSDEP
     #define ME_COM_OSDEP 1
