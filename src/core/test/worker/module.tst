@@ -8,4 +8,4 @@ w.onmessage = function (e) {
     msg = e.data
 }
 Worker.join()
-assert(msg.contains("Module Loaded"))
+assert(msg && msg.contains("Module Loaded"))
