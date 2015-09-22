@@ -1,4 +1,4 @@
-#
+# 
 #   Makefile - Embedthis Ejscript Makefile wrapper for per-platform makefiles
 #
 #	This Makefile is for Unix/Linux and Cygwin. On windows, it can be invoked via make.bat.
