@@ -1,9 +1,16 @@
 {
     meta: {
-        url: 'https://embedthis.com/ejs/doc/'
+        site: 'https://embedthis.com/ejs/doc/'
     },
     control: {
-        listen: '127.0.0.1:5000'
+        "collections": {
+            "styles": [
+                "**.css*",
+                "!**doc.css",
+                "!*.less*"
+            ]
+        },
+        listen: '127.0.0.1:4000'
     },
     release: {
         services: {
