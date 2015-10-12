@@ -1,21 +1,46 @@
 {
-    meta: {
-        site: 'https://embedthis.com/ejs/doc/'
+    "meta": {
+        "site": "https://embedthis.com/ejscript/doc/"
     },
-    control: {
-        "collections": {
-            "styles": [
+    "control": {
+        "listen": "127.0.0.1:4000"
+    },
+    "services": {
+        "css": {
+            "files": [
                 "**.css*",
                 "!**doc.css",
-                "!*.less*"
+                "!*.less*",
+                "!**doc.css"
             ]
-        },
-        listen: '127.0.0.1:4000'
+        }
     },
-    release: {
-        services: {
-            reload: {
-                enable: false
+    "debug": {
+        "services": {
+            "compress": false,
+            "html": false,
+            "js": {
+                "minify": false,
+                "usemin": true,
+                "usemap": true
+            }
+        }
+    },
+    "release": {
+        "services": {
+            "reload": {
+                "enable": false
+            },
+            "compress": true,
+            "css": {
+                "minify": true,
+                "usemin": true,
+                "usemap": false
+            },
+            "js": {
+                "minify": true,
+                "usemin": true,
+                "usemap": false
             }
         }
     }
