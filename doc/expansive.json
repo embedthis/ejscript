@@ -23,7 +23,8 @@
                 "minify": false,
                 "usemin": true,
                 "usemap": true
-            }
+            },
+            "gzip": false
         }
     },
     "release": {
@@ -41,7 +42,8 @@
                 "minify": true,
                 "usemin": true,
                 "usemap": false
-            }
+            },
+            "gzip": true
         }
     }
 }
