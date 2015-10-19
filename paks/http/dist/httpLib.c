@@ -2469,7 +2469,7 @@ static void cacheAtClient(HttpConn *conn)
     tx = conn->tx;
     cache = conn->tx->cache;
 
-    if (!mprLookupKey(tx->headers, "Cache-Control")) {
+    if (tx->status == HTTP_CODE_OK && !mprLookupKey(tx->headers, "Cache-Control")) {
         if ((value = mprLookupKey(conn->tx->headers, "Cache-Control")) != 0) {
             if (strstr(value, "max-age") == 0) {
                 httpAppendHeader(conn, "Cache-Control", "public, max-age=%lld", cache->clientLifespan / TPS);
@@ -6400,6 +6400,9 @@ PUBLIC void httpSetupWaitHandler(HttpConn *conn, int eventMask)
             mprSetSocketDispatcher(sp, conn->dispatcher);
             mprEnableSocketEvents(sp, eventMask);
         }
+        if (sp->flags & (MPR_SOCKET_BUFFERED_READ | MPR_SOCKET_BUFFERED_WRITE)) {
+            mprRecallWaitHandler(sp->handler);
+        }
     } else if (sp->handler) {
         mprWaitOn(sp->handler, eventMask);
     }
@@ -8384,7 +8387,7 @@ static void errorv(HttpConn *conn, int flags, cchar *fmt, va_list args)
             }
             httpMonitorEvent(conn, HTTP_COUNTER_ERRORS, 1);
         }
-        httpAddHeaderString(conn, "Cache-Control", "no-cache");
+        httpSetHeaderString(conn, "Cache-Control", "no-cache");
         if (httpServerConn(conn) && tx && rx) {
             if (tx->flags & HTTP_TX_HEADERS_CREATED) {
                 /*
@@ -17286,6 +17289,7 @@ static void createErrorRequest(HttpConn *conn)
     conn->input = packet;
     conn->state = HTTP_STATE_CONNECTED;
     conn->errorDoc = 1;
+    conn->keepAliveCount = 0;
 }
 
 
