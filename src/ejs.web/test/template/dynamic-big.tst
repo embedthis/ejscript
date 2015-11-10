@@ -13,7 +13,6 @@ assert(http.status == 200)
 
 assert(http.header("date").contains("GMT"))
 assert(http.header("Content-Length") == null)
-assert(http.header("Keep-Alive"))
 assert(http.header("Transfer-Encoding"))
 assert(http.header("connection") == "Keep-Alive")
 assert(http.response)

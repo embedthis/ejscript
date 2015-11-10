@@ -11,7 +11,6 @@ http.get(HTTP + "/dynamic-small.ejs")
 assert(http.status == 200)
 assert(http.header("Date").contains("GMT"))
 assert(http.header("Content-Length") == 1976)
-assert(http.header("Keep-Alive"))
 assert(!http.header("Transfer-Encoding"))
 
 //  Should not be a transfer-encoding header
