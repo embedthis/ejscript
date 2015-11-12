@@ -24,7 +24,8 @@ while (!complete && mark.elapsed < TIMEOUT) {
     App.run(TIMEOUT - mark.elapsed, 1)
 }
 
-assert(buf.readString(6) == "<html>")
+let response = buf.readString()
+assert(response.startsWith("<html>"))
 assert(complete)
 assert(http.status == 200)
 http.close()

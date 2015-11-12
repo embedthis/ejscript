@@ -31,7 +31,7 @@ if (Config.SQLITE) {
         assert(http.response.contains("Welcome to Ejscript"))
 
     } finally {
-        Cmd.kill(pid, 9)
+        try {Cmd.kill(pid, 9)} catch {}
         rmdir("junk")
     }
 } else {
