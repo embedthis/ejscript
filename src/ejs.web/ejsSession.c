@@ -40,6 +40,7 @@ static EjsString *makeKey(Ejs *ejs, EjsSession *sp)
     static int  nextSession = 0;
 
     /* Thread race here on nextSession++ not critical */
+    memset(idBuf, 0, sizeof(idBuf));
     fmt(idBuf, sizeof(idBuf), "%08x%08x%d", PTOI(ejs) + PTOI(sp), (int) mprGetTime(), nextSession++);
     return ejsCreateStringFromAsc(ejs, mprGetMD5WithPrefix(idBuf, sizeof(idBuf), "::ejs.web.session::"));
 }
