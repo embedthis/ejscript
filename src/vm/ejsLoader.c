@@ -37,7 +37,7 @@ static int  loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxV
 static char *makeModuleName(cchar *name);
 static void popScope(EjsModule *mp, int keepScope);
 static void pushScope(EjsModule *mp, EjsAny *block, EjsAny *obj);
-static char *search(Ejs *ejs, cchar *filename, int minVersion, int maxVersion);
+static cchar *search(Ejs *ejs, cchar *filename, int minVersion, int maxVersion);
 static int  trimModule(Ejs *ejs, char *name);
 static void setDoc(Ejs *ejs, EjsModule *mp, cchar *tag, void *vp, int slotNum);
 
@@ -131,9 +131,9 @@ static int initializeModule(Ejs *ejs, EjsModule *mp)
 }
 
 
-static char *search(Ejs *ejs, cchar *filename, int minVersion, int maxVersion) 
+static cchar *search(Ejs *ejs, cchar *filename, int minVersion, int maxVersion) 
 {
-    char        *path;
+    cchar       *path;
 
     assert(filename && *filename);
 
@@ -939,7 +939,7 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
     EjsModuleHdr    hdr;
     EjsModule       *mp;
     MprFile         *file;
-    char            *path;
+    cchar           *path;
     int             next, status, firstModule;
 
     assert(filename && *filename);
@@ -1214,10 +1214,11 @@ static char *probe(Ejs *ejs, cchar *path, int minVersion, int maxVersion)
         4. File named a/b/c in EJSPATH
         5. File named c in EJSPATH
  */
-static char *searchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int maxVersion)
+static cchar *searchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int maxVersion)
 {
     EjsPath     *dir;
-    char        *withDotMod, *path, *filename, *basename, *cp, *slash, *name, *bootSearch, *tok, *searchDir;
+    cchar       *path;
+    char        *withDotMod, *filename, *basename, *cp, *slash, *name, *bootSearch, *tok, *searchDir;
     int         i;
 
     assert(moduleName && *moduleName);
@@ -1327,7 +1328,7 @@ static char *searchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int ma
 }
 
 
-char *ejsSearchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int maxVersion)
+cchar *ejsSearchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int maxVersion)
 {
     char    *withDotMod, *name;
 
