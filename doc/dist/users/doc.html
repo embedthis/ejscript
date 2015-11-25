@@ -2,22 +2,23 @@
 <html lang="en">
 <head>
     <title>Generating Documentation</title>
-    
+    <!-- Copyright Embedthis Software. All Rights Reserved. -->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-    <meta name="description" content="Javacript Language Environment">
-    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="Javacript Language Environment" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
+        rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
     
-    <link href="../images/favicon.ico" rel="shortcut icon">
-    <link href="../lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css">
-    <link href="../css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="../css/api.min.css" rel="stylesheet" type="text/css">
+    <link href="../images/favicon.ico" rel="shortcut icon" />
+    <link href="../lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css" />
+    <link href="../css/all.min.css" rel="stylesheet" type="text/css" />
+    <link href="../css/api.min.css" rel="stylesheet" type="text/css" />
     
 
-
+</head>
 <body class="show-sidebar">
         <div class="sidebar">
         <div class="ui large left vertical inverted labeled menu">
@@ -215,51 +216,51 @@ var userName
             <table title="directives">
                 <thead>
                     <tr>
-                        <th>Directive
-                        <th>Format
-                        <th>Description
-                    
-                
+                        <th>Directive</th>
+                        <th>Format</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
                 <tbody>
                 <tr>
-                    <td>@param
-                    <td class="nowrap">@param name Description
+                    <td>@param</td>
+                    <td class="nowrap">@param name Description</td>
                     <td>Describe a parameter. The description continues up to the next @directive or the end of the
-                    ejsdoc comment. Multiple @param directives are permitted.
-                
+                    ejsdoc comment. Multiple @param directives are permitted.</td>
+                </tr>
                 <tr>
-                    <td>@return
-                    <td>@return Description
+                    <td>@return</td>
+                    <td>@return Description</td>
                     <td>Describe the return value. If the sentence starts with a lower case word, then ejsmod will
                     append the word "Returns" to the start of the description. You can also use (or misuse) the
-                    directive as @returns. Only a single @return directive is permitted.
-                
+                    directive as @returns. Only a single @return directive is permitted.</td>
+                </tr>
                 <tr>
-                    <td>@throw
-                    <td class="nowrap">@throw TypeError Description
+                    <td>@throw</td>
+                    <td class="nowrap">@throw TypeError Description</td>
                     <td>Describe an exception that may be thrown by the function. The TypeError should be the name of
                     an Error class. The description continues up to the next @directive or the end of the ejsdoc
-                    comment. Multiple @param directives are permitted.
-                
+                    comment. Multiple @param directives are permitted.</td>
+                </tr>
                 <tr>
-                    <td>@example
-                    <td>@example Multi-line example
+                    <td>@example</td>
+                    <td>@example Multi-line example</td>
                     <td>Describe an example that illustrates use of the API. The description continues up to the next
-                    @directive or the end of the ejsdoc comment. Multiple @example directives are permitted.
-                
+                    @directive or the end of the ejsdoc comment. Multiple @example directives are permitted.</td>
+                </tr>
                 <tr>
-                    <td>@spec
-                    <td>@spec name, [, name ...]
+                    <td>@spec</td>
+                    <td>@spec name, [, name ...]</td>
                     <td>Describe the standards conformance of the element. Typical values include ejs-NN for Ejscript
-                    conformant or ecma-3 for ECMAScript 3 compliance.
-                
+                    conformant or ecma-3 for ECMAScript 3 compliance.</td>
+                </tr>
                 <tr>
-                    <td>@see
-                    <td>@see name [, name ...]
+                    <td>@see</td>
+                    <td>@see name [, name ...]</td>
                     <td>Create a "See Also" link to another element in the documentation. Names should be comma
-                    separated. Multiple @see directives are permitted.
-                
-                
+                    separated. Multiple @see directives are permitted.</td>
+                </tr>
+                </tbody>
             </table>
             <p>Here is an example comment specification from the Ejscript Language Library</p>
             <pre class="ui code segment">
@@ -302,5 +303,5 @@ function indexOf(element: Object,
 
         
 
-
-
+</body>
+</html>

@@ -2,22 +2,23 @@
 <html lang="en">
 <head>
     <title>Core Language Types</title>
-    
+    <!-- Copyright Embedthis Software. All Rights Reserved. -->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-    <meta name="description" content="Javacript Language Environment">
-    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="Javacript Language Environment" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
+        rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
     
-    <link href="../images/favicon.ico" rel="shortcut icon">
-    <link href="../lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css">
-    <link href="../css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="../css/api.min.css" rel="stylesheet" type="text/css">
+    <link href="../images/favicon.ico" rel="shortcut icon" />
+    <link href="../lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css" />
+    <link href="../css/all.min.css" rel="stylesheet" type="text/css" />
+    <link href="../css/api.min.css" rel="stylesheet" type="text/css" />
     
 
-
+</head>
 <body class="show-sidebar">
         <div class="sidebar">
         <div class="ui large left vertical inverted labeled menu">
@@ -176,7 +177,9 @@
     <div class="content">
 
             <h1>Core Language Types</h1>
-            <p>This document describes the <a href="#number">Number</a>, <a href="#boolean">Boolean</a>, <a href=#function>Function</a> and <a href="#string">String</a> types. Also see the <a href=objects.html>Objects and Arrays</a> document and the <a href="../ref/api/ejscript/index.html">Class
+            <p>This document describes the <a href="#number">Number</a>, <a href="#boolean">Boolean</a>, <a href=
+            "#function">Function</a> and <a href="#string">String</a> types. Also see the <a href=
+            "objects.html">Objects and Arrays</a> document and the <a href="../ref/api/ejscript/index.html">Class
             Library Reference</a>.</p>
             <h2>References</h2>
             <p>These references contain extensive material about the JavaScript core language types.</p>
@@ -203,17 +206,19 @@
                 <li>RegExp</li>
                 <li>String</li>
             </ul>
-            <p>Ejscript also supports the E4X (<a href=http://www.ecma-international.org/publications/standards/Ecma-357.htm>ECMA-357</a>) XML extensions which
+            <p>Ejscript also supports the E4X (<a href=
+            "http://www.ecma-international.org/publications/standards/Ecma-357.htm">ECMA-357</a>) XML extensions which
             add the following data types.</p>
             <ul>
                 <li>XML</li>
                 <li>XMLList</li>
             </ul>
             <h3><a href="library.html">Ejscript System Library</a></h3>
-            <p>Ejscript enhances the standard types with some extension methods and an extensive <a href=library.html>system library</a> of classes and types. The Ejscript <a href="../web/index.html">Web
+            <p>Ejscript enhances the standard types with some extension methods and an extensive <a href=
+            "library.html">system library</a> of classes and types. The Ejscript <a href="../web/index.html">Web
             Framework</a> provides additional classes to implement a Model / View / Controller framework for web
             applications.</p><a id="number"></a>
-            <h2>Numbers</h2>
+            <h2 >Numbers</h2>
             <p>Standard JavaScript numbers are stored and manipulated as double floating point quantities, but for
             embedded applications, this is often less than ideal. Consequently, Ejscript allows the default numeric
             type to be selected at build time to be either: float, double, int or int64.</p>
@@ -242,7 +247,7 @@ pi = 314.0e-2
                 <li>Number.POSITIVE_INFINITY or Infinity</li>
                 <li>Number.NEGATIVE_INFINITY</li>
             </ul><a id="boolean"></a>
-            <h2>Booleans</h2>
+            <h2 >Booleans</h2>
             <p>A boolean value can be either true or false. Assigning either true or false to a variable or the result
             of a conditional expression will set the type of a variable to boolean. The following example will set x to
             true.</p>
@@ -252,7 +257,7 @@ var x = (y == 1)
 </pre>
             <p>Ejscript defines two immutable global variables <b>true</b> and <b>false</b> with the appropriate
             boolean values.</p><a id="string"></a>
-            <h2>Strings</h2>
+            <h2 >Strings</h2>
             <p>Strings are immutable sequences of Unicode letters or escaped literals. String literals may be enclosed
             in either single or double quotes.</p>
             <p>Ejscript strings are easy to work with due to the inbuilt ability to append strings via the <b>+</b>
@@ -265,62 +270,62 @@ var greek = "&amp;lambda expression"
             <table title="escape" class="ui table segment">
                 <thead>
                     <tr>
-                        <th>Escape Sequence
-                        <th>Description
-                    
-                
+                        <th>Escape Sequence</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
                 <tbody>
                     <tr>
-                        <td>\b
-                        <td>Backspace (0x8)
-                    
+                        <td>\b</td>
+                        <td>Backspace (0x8)</td>
+                    </tr>
                     <tr>
-                        <td>\f
-                        <td>Form feed (0xc)
-                    
+                        <td>\f</td>
+                        <td>Form feed (0xc)</td>
+                    </tr>
                     <tr>
-                        <td>\n
-                        <td>New line (0xa)
-                    
+                        <td>\n</td>
+                        <td>New line (0xa)</td>
+                    </tr>
                     <tr>
-                        <td>\r
-                        <td>Carriage return (0xd)
-                    
+                        <td>\r</td>
+                        <td>Carriage return (0xd)</td>
+                    </tr>
                     <tr>
-                        <td>\t
-                        <td>Horizontal tab (0x9)
-                    
+                        <td>\t</td>
+                        <td>Horizontal tab (0x9)</td>
+                    </tr>
                     <tr>
-                        <td>\v
-                        <td>Vertical tab (0xb)
-                    
+                        <td>\v</td>
+                        <td>Vertical tab (0xb)</td>
+                    </tr>
                     <tr>
-                        <td>\uNNNN
-                        <td>Unicode character (0xNNNN)
-                    
+                        <td>\uNNNN</td>
+                        <td>Unicode character (0xNNNN)</td>
+                    </tr>
                     <tr>
-                        <td>\xNN
-                        <td>Hexadecimal character (0xNN)
-                    
+                        <td>\xNN</td>
+                        <td>Hexadecimal character (0xNN)</td>
+                    </tr>
                     <tr>
-                        <td>\NNN
-                        <td>Octal character (ONNN)
-                    
+                        <td>\NNN</td>
+                        <td>Octal character (ONNN)</td>
+                    </tr>
                     <tr>
-                        <td>\'
-                        <td>Literal single quote
-                    
+                        <td>\'</td>
+                        <td>Literal single quote</td>
+                    </tr>
                     <tr>
-                        <td>\"
-                        <td>Literal double quote
-                    
+                        <td>\"</td>
+                        <td>Literal double quote</td>
+                    </tr>
                     <tr>
-                        <td>\\
-                        <td>Literal backslash
-                    
-                
+                        <td>\\</td>
+                        <td>Literal backslash</td>
+                    </tr>
+                </tbody>
             </table><a id="function"></a>
-            <h2>Functions</h2>
+            <h2 >Functions</h2>
             <p>A function is a script that can be executed by name with supplied arguments. Functions are declared via
             the <b>function</b> keyword followed by optional arguments and a function body contained within braces. For
             example:</p>
@@ -351,11 +356,11 @@ var x = myPoint(1, y + 7)
 </pre>
             <h3>Objects and Arrays</h3>
             <p>See the <a href="objects.html">Objects and Arrays</a> document for further details.</p>
-            <h2>Null and Undefined</h2>
+            <h2 >Null and Undefined</h2>
             <p>JavaScript defines two special values: <b>null</b> and <b>undefined</b>. The null value means the
             property exists but either has not any assigned value or the null value has been assigned explicitly. The
             undefined value means the requested property does not exist.</p><a id="typeConversions"></a>
-            <h2>Type Conversions</h2>
+            <h2 >Type Conversions</h2>
             <p>JavaScript supports a set of idioms that greatly eases the conversion of types from one type to
             another.</p>
             <p>Adding a string to a number will cause the number to be converted to a string. Subtracting zero from a
@@ -363,190 +368,190 @@ var x = myPoint(1, y + 7)
             <table title="types" class="ui table segment">
                 <thead>
                     <tr>
-                        <th>Initial Type
-                        <th>Target Type
-                        <th>Initial Value
-                        <th>Final Value
-                    
-                
+                        <th>Initial Type</th>
+                        <th>Target Type</th>
+                        <th>Initial Value</th>
+                        <th>Final Value</th>
+                    </tr>
+                </thead>
                 <tbody>
                     <tr>
-                        <td>Boolean
-                        <td>Number
-                        <td>true
-                        <td>1
-                    
+                        <td>Boolean</td>
+                        <td>Number</td>
+                        <td>true</td>
+                        <td>1</td>
+                    </tr>
                     <tr>
-                        <td>Boolean
-                        <td>Number
-                        <td>false
-                        <td>0
-                    
+                        <td>Boolean</td>
+                        <td>Number</td>
+                        <td>false</td>
+                        <td>0</td>
+                    </tr>
                     <tr>
-                        <td>Boolean
-                        <td>String
-                        <td>true
-                        <td>"true"
-                    
+                        <td>Boolean</td>
+                        <td>String</td>
+                        <td>true</td>
+                        <td>"true"</td>
+                    </tr>
                     <tr>
-                        <td>Boolean
-                        <td>String
-                        <td>false
-                        <td>"false"
-                    
+                        <td>Boolean</td>
+                        <td>String</td>
+                        <td>false</td>
+                        <td>"false"</td>
+                    </tr>
                     <tr>
-                        <td>Number
-                        <td>Boolean
-                        <td>0, NaN
-                        <td>false
-                    
+                        <td>Number</td>
+                        <td>Boolean</td>
+                        <td>0, NaN</td>
+                        <td>false</td>
+                    </tr>
                     <tr>
-                        <td>Number
-                        <td>Boolean
-                        <td>all other values
-                        <td>0
-                    
+                        <td>Number</td>
+                        <td>Boolean</td>
+                        <td>all other values</td>
+                        <td>0</td>
+                    </tr>
                     <tr>
-                        <td>Number
-                        <td>String
-                        <td>NaN
-                        <td>"NaN"
-                    
+                        <td>Number</td>
+                        <td>String</td>
+                        <td>NaN</td>
+                        <td>"NaN"</td>
+                    </tr>
                     <tr>
-                        <td>Number
-                        <td>String
-                        <td>any number
-                        <td>"string equivalent"
-                    
+                        <td>Number</td>
+                        <td>String</td>
+                        <td>any number</td>
+                        <td>"string equivalent"</td>
+                    </tr>
                     <tr>
-                        <td>Object
-                        <td>Boolean
-                        <td>object
-                        <td>true
-                    
+                        <td>Object</td>
+                        <td>Boolean</td>
+                        <td>object</td>
+                        <td>true</td>
+                    </tr>
                     <tr>
-                        <td>Object
-                        <td>Number
-                        <td>object
-                        <td>NaN
-                    
+                        <td>Object</td>
+                        <td>Number</td>
+                        <td>object</td>
+                        <td>NaN</td>
+                    </tr>
                     <tr>
-                        <td>Object
-                        <td>String
-                        <td>object
-                        <td>"[object Object]"
-                    
+                        <td>Object</td>
+                        <td>String</td>
+                        <td>object</td>
+                        <td>"[object Object]"</td>
+                    </tr>
                     <tr>
-                        <td>String
-                        <td>Boolean
-                        <td>""
-                        <td>false
-                    
+                        <td>String</td>
+                        <td>Boolean</td>
+                        <td>""</td>
+                        <td>false</td>
+                    </tr>
                     <tr>
-                        <td>String
-                        <td>Boolean
-                        <td>all other values
-                        <td>true
-                    
+                        <td>String</td>
+                        <td>Boolean</td>
+                        <td>all other values</td>
+                        <td>true</td>
+                    </tr>
                     <tr>
-                        <td>String
-                        <td>Number
-                        <td>Number string
-                        <td>numeric equivalent
-                    
+                        <td>String</td>
+                        <td>Number</td>
+                        <td>Number string</td>
+                        <td>numeric equivalent</td>
+                    </tr>
                     <tr>
-                        <td>String
-                        <td>Number
-                        <td>Non-numeric string
-                        <td>NaN
-                    
+                        <td>String</td>
+                        <td>Number</td>
+                        <td>Non-numeric string</td>
+                        <td>NaN</td>
+                    </tr>
                     <tr>
-                        <td>undefined
-                        <td>Boolean
-                        <td>undefined
-                        <td>false
-                    
+                        <td>undefined</td>
+                        <td>Boolean</td>
+                        <td>undefined</td>
+                        <td>false</td>
+                    </tr>
                     <tr>
-                        <td>undefined
-                        <td>Number
-                        <td>undefined
-                        <td>NaN
-                    
+                        <td>undefined</td>
+                        <td>Number</td>
+                        <td>undefined</td>
+                        <td>NaN</td>
+                    </tr>
                     <tr>
-                        <td>undefined
-                        <td>String
-                        <td>undefined0
-                        <td>"undefined"
-                    
+                        <td>undefined</td>
+                        <td>String</td>
+                        <td>undefined0</td>
+                        <td>"undefined"</td>
+                    </tr>
                     <tr>
-                        <td>null
-                        <td>Boolean
-                        <td>null
-                        <td>false
-                    
+                        <td>null</td>
+                        <td>Boolean</td>
+                        <td>null</td>
+                        <td>false</td>
+                    </tr>
                     <tr>
-                        <td>null
-                        <td>Number
-                        <td>null
-                        <td>NaN
-                    
+                        <td>null</td>
+                        <td>Number</td>
+                        <td>null</td>
+                        <td>NaN</td>
+                    </tr>
                     <tr>
-                        <td>null
-                        <td>String
-                        <td>null
-                        <td>"null"
-                    
-                
+                        <td>null</td>
+                        <td>String</td>
+                        <td>null</td>
+                        <td>"null"</td>
+                    </tr>
+                </tbody>
             </table>
             <h3>Implicit Conversion Idioms</h3>
             <p>To explicitly force a type conversion, use the following idioms.</p>
             <table title="idioms" class="ui table segment">
                 <thead>
                     <tr>
-                        <th>Initial Type
-                        <th>Target Type
-                        <th>Action
-                        <th>Example
-                    
-                
+                        <th>Initial Type</th>
+                        <th>Target Type</th>
+                        <th>Action</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
                 <tbody>
                     <tr>
-                        <td>Number
-                        <td>Boolean
-                        <td>Negate twice
-                        <td>!!num
-                    
+                        <td>Number</td>
+                        <td>Boolean</td>
+                        <td>Negate twice</td>
+                        <td>!!num</td>
+                    </tr>
                     <tr>
-                        <td>Number
-                        <td>String
-                        <td>Add a string on the right
-                        <td>num + ""
-                    
+                        <td>Number</td>
+                        <td>String</td>
+                        <td>Add a string on the right</td>
+                        <td>num + ""</td>
+                    </tr>
                     <tr>
-                        <td>String
-                        <td>Boolean
-                        <td>Negate twice
-                        <td>!!string
-                    
+                        <td>String</td>
+                        <td>Boolean</td>
+                        <td>Negate twice</td>
+                        <td>!!string</td>
+                    </tr>
                     <tr>
-                        <td>String
-                        <td>Number
-                        <td>Add a numeric on the right
-                        <td>string - 0
-                    
+                        <td>String</td>
+                        <td>Number</td>
+                        <td>Add a numeric on the right</td>
+                        <td>string - 0</td>
+                    </tr>
                     <tr>
-                        <td>Object
-                        <td>String
-                        <td>Invoke the toString method
-                        <td>o.toString()
-                    
+                        <td>Object</td>
+                        <td>String</td>
+                        <td>Invoke the toString method</td>
+                        <td>o.toString()</td>
+                    </tr>
                     <tr>
-                        <td>Object
-                        <td>Boolean
-                        <td>Negate twice
-                        <td>!!obj
-                    
-                
+                        <td>Object</td>
+                        <td>Boolean</td>
+                        <td>Negate twice</td>
+                        <td>!!obj</td>
+                    </tr>
+                </tbody>
             </table>
             <h4>Implicit Conversions via Type Annotations</h4>
             <p>Ejscript adds support for optional type annotations on variable declarations and function parameters. If
@@ -581,7 +586,8 @@ function square(n: Number) {
     return n * n
 }
 </pre>
-            <p>For the exact semantics, please consult the <a href=http://www.ecma-international.org/publications/standards/Ecma-262.htm>ECMAScript-262</a>
+            <p>For the exact semantics, please consult the <a href=
+            "http://www.ecma-international.org/publications/standards/Ecma-262.htm">ECMAScript-262</a>
             specification.</p>
             <h3>Explicit Conversion</h3>
             <p>While implicit conversion is very convenient, you sometimes need to explicitly control the type
@@ -609,7 +615,12 @@ var str = 1234 cast String
                 conversion.</li>
                 <li>If one operand is a string and the other is a numeric, try to convert the string to a number.
                 Otherwise, try to convert the numeric to a string.</li>
-            </ol>
+            </ol><!-- FUTURE
+            Functions: parseInt, parseFloat, toFixed, toExponential, toFixed
+                n.toFixed(0)            (arg is num decimal places)
+                n.toExponential(1)      (arg is num decimal places) 1.23e+5)
+                parseInt(str, [radix])
+            -->
 
     </div>
     <div class="terms ui basic center aligned segment">
@@ -623,5 +634,5 @@ var str = 1234 cast String
 
         
 
-
-
+</body>
+</html>
