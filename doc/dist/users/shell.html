@@ -2,23 +2,22 @@
 <html lang="en">
 <head>
     <title>Command Shell</title>
-    <!-- Copyright Embedthis Software. All Rights Reserved. -->
+    
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <meta name="description" content="Javacript Language Environment" />
-    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
-        rel='stylesheet' type='text/css'>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta name="description" content="Javacript Language Environment">
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
     
-    <link href="../images/favicon.ico" rel="shortcut icon" />
-    <link href="../lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css" />
-    <link href="../css/all.min.css" rel="stylesheet" type="text/css" />
-    <link href="../css/api.min.css" rel="stylesheet" type="text/css" />
+    <link href="../images/favicon.ico" rel="shortcut icon">
+    <link href="../lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css">
+    <link href="../css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="../css/api.min.css" rel="stylesheet" type="text/css">
     
 
-</head>
+
 <body class="show-sidebar">
         <div class="sidebar">
         <div class="ui large left vertical inverted labeled menu">
@@ -245,61 +244,61 @@ the App.args property.
             <table title="switches" class="ui table segment">
                 <thead>
                     <tr>
-                        <th class="five wide">Switch</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
+                        <th class="five wide">Switch
+                        <th>Description
+                    
+                
                 <tbody>
                 <tr>
-                    <td class="nowrap">--class className</td>
+                    <td class="nowrap">--class className
                     <td>Use the given className when searching for the startup method specified via --method or "main"
-                    by default.</td>
-                </tr>
+                    by default.
+                
                 <tr>
-                    <td class="nowrap">--cmd "literal script"</td>
-                    <td>Run the given script text instead of reading a script file.</td>
-                </tr>
+                    <td class="nowrap">--cmd "literal script"
+                    <td>Run the given script text instead of reading a script file.
+                
                 <tr>
-                    <td>--debug</td>
-                    <td>Include symbolic debug information in the byte code.</td>
-                </tr>
+                    <td>--debug
+                    <td>Include symbolic debug information in the byte code.
+                
                 <tr>
-                    <td>--debugger</td>
-                    <td>Run in debug mode with symbolic stack backtraces in exceptions.</td>
-                </tr>
+                    <td>--debugger
+                    <td>Run in debug mode with symbolic stack backtraces in exceptions.
+                
                 <tr>
-                    <td>--files "files..."</td>
+                    <td>--files "files..."
                     <td>Specifies an extra set of files to be compiled. The ejs command normally takes just one script
                     file on the command line. The --files switch allows extra script to be compiled after the primary
-                    script, but before the scripts are run.</td>
-                </tr>
+                    script, but before the scripts are run.
+                
                 <tr>
-                    <td class="nowrap">--log logName[:logLevel]</td>
+                    <td class="nowrap">--log logName[:logLevel]
                     <td>Specify a file to write trace and error messages. The log level specifies the desired verbosity
                     of output. Level 0 is the least verbose and level 9 is the most. Level 2 will include trace of each
-                    source statement and assembler instruction executed (provided --nodebug is not specified).</td>
-                </tr>
+                    source statement and assembler instruction executed (provided --nodebug is not specified).
+                
                 <tr>
-                    <td>---method methodName</td>
+                    <td>---method methodName
                     <td>Set the startup method name. Defaults to "main" if a --className is specified and --method is
-                    not.</td>
-                </tr>
+                    not.
+                
                 <tr>
-                    <td>--nodebug</td>
+                    <td>--nodebug
                     <td>Run the script without debug information. This will result in exceptions not having symbolic
-                    stack backtraces.</td>
-                </tr>
+                    stack backtraces.
+                
                 <tr>
-                    <td>--optimize level</td>
+                    <td>--optimize level
                     <td>Set the code optimization level. Level values must be between 0 (least) and 9 (most). Default
-                    is 9.</td>
-                </tr>
+                    is 9.
+                
                 <tr>
-                    <td>--require modules ...</td>
-                    <td>Pre-load the required modules before running the script.</td>
-                </tr>
+                    <td>--require modules ...
+                    <td>Pre-load the required modules before running the script.
+                
                 <tr>
-                    <td>--searchPath ejsPath</td>
+                    <td>--searchPath ejsPath
                     <td>
                         <p>Override the module search path. The module search path is a set of directories that the ejs
                         command will use when locating and loading Ejscript modules. Given a module named "a.b.c" in a
@@ -312,32 +311,32 @@ the App.args property.
                         overridden via the --searchPath ejsPath switch. EJSPATH and the ejsPath command line value are
                         similar to the system PATH formats. On windows, path segments are separated by ";" and on
                         Linux, Unix, FreeBSD and MAC, the path segments are separated by ":" delimiters.</p>
-                    </td>
-                </tr>
+                    
+                
                 <tr>
-                    <td>--standard</td>
+                    <td>--standard
                     <td>Run scripts in standard mode. Ejscript supports two parsing modes: strict and standard.
-                    Standard mode does not require variables be declared and typed before use.</td>
-                </tr>
+                    Standard mode does not require variables be declared and typed before use.
+                
                 <tr>
-                    <td>--stats</td>
-                    <td>Print various statistics on exit.</td>
-                </tr>
+                    <td>--stats
+                    <td>Print various statistics on exit.
+                
                 <tr>
-                    <td>--strict</td>
+                    <td>--strict
                     <td>Run scripts in standard mode. Ejscript supports two parsing modes: strict and standard. Strict
-                    mode requires that all variables be declared and typed.</td>
-                </tr>
+                    mode requires that all variables be declared and typed.
+                
                 <tr>
-                    <td>--warn level</td>
+                    <td>--warn level
                     <td>Set the compiler warning verbosity level. Level values must be between 0 (least verbose) and 9
-                    (most). Default is 0.</td>
-                </tr>
+                    (most). Default is 0.
+                
                 <tr>
-                    <td>--version</td>
-                    <td>Print the ejs command version and exit.</td>
-                </tr>
-                </tbody>
+                    <td>--version
+                    <td>Print the ejs command version and exit.
+                
+                
             </table>
 
     </div>
@@ -352,5 +351,5 @@ the App.args property.
 
         
 
-</body>
-</html>
+
+

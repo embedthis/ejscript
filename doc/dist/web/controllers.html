@@ -2,23 +2,22 @@
 <html lang="en">
 <head>
     <title>Controllers</title>
-    <!-- Copyright Embedthis Software. All Rights Reserved. -->
+    
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <meta name="description" content="Javacript Language Environment" />
-    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
-        rel='stylesheet' type='text/css'>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta name="description" content="Javacript Language Environment">
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
     
-    <link href="../images/favicon.ico" rel="shortcut icon" />
-    <link href="../lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css" />
-    <link href="../css/all.min.css" rel="stylesheet" type="text/css" />
-    <link href="../css/api.min.css" rel="stylesheet" type="text/css" />
+    <link href="../images/favicon.ico" rel="shortcut icon">
+    <link href="../lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css">
+    <link href="../css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="../css/api.min.css" rel="stylesheet" type="text/css">
     
 
-</head>
+
 <body class="show-sidebar">
         <div class="sidebar">
         <div class="ui large left vertical inverted labeled menu">
@@ -196,7 +195,7 @@
             action method.</p>
 
             <a id="anatomy"></a>
-            <h2 >Anatomy of a Controller</h2>
+            <h2>Anatomy of a Controller</h2>
             <p>So what does a controller look like?</p>
             <pre class="ui code segment">
 public class CartController extends ApplicationController {
@@ -236,7 +235,7 @@ https://embedthis.com/myApp/cart/create
             <em>edit.ejs</em> view back to the client.</p>
 
             <a id="actions"></a>
-            <h2 >Actions</h2>
+            <h2>Actions</h2>
             <p>Actions are where the controller does its work. In Ejscript, actions are simple JavaScript functions
             prefixed with an <em>action</em> qualifier. They don't need to be registered or otherwise configured before
             use. When Ejscript receives a request from the client, it will parse the request and invoke the request
@@ -271,7 +270,7 @@ https://embedthis.com/myApp/cart/create
             requests.</p>
 
             <a id="models"></a>
-            <h2 >Model Data</h2>
+            <h2>Model Data</h2>
             <p>Ejscript provides an Object Relational Mapping (ORM) layer for accessing database data via convenient
             JavaScript objects. The ORM layer is a collection of database Model classes for the application.
             controllers use this layer to access the database via these Model classes. A typical paradigm is for action
@@ -280,7 +279,7 @@ https://embedthis.com/myApp/cart/create
             <p>For more details, please see <a href="models.html">Database Models</a>.</p>
 
             <a id="forms"></a>
-            <h2 >Form Data</h2>
+            <h2>Form Data</h2>
             <p>HTTP Form data is marshalled by Ejscript into the <em>params</em> object which is accessible to actions.
             Each HTML input element posted by the client will become a property of <em>params</em>. Ejscript can also
             organize form data into nested objects. If an input element name contains a period, then Ejscript will
@@ -295,7 +294,7 @@ https://embedthis.com/myApp/cart/create
             framework will look for, and if found, run a view <em>views/cart/edit.ejs</em>.</p>
 
             <a id="generating"></a>
-            <h2 >Generating Controllers and Actions</h2>
+            <h2>Generating Controllers and Actions</h2>
             <p>Ejscript includes an an application generator, called <em>mvc</em> to make it quick and easy to
             create controllers, actions and controller scaffolds. To generate a new controller, run:</p>
             <pre class="ui code segment">
@@ -330,150 +329,149 @@ mvc generate scaffold MODEL [field:type ...]
             to edit.</p>
 
             <a id="controller"></a>
-            <h2 >Controller Class</h2>
-            <p>The Controller class has a large set of methods and properties. See the <a href=
-            "../ref/api/ejscript/index.html">Ejscript Library</a> for full details. Some of the more important
+            <h2>Controller Class</h2>
+            <p>The Controller class has a large set of methods and properties. See the <a href=../ref/api/ejscript/index.html>Ejscript Library</a> for full details. Some of the more important
             properties:</p>
             <table title="controllerProperties" class="ui table segment">
                 <thead>
                     <tr>
-                        <th>Property</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
+                        <th>Property
+                        <th>Description
+                    
+                
                 <tbody>
                     <tr>
-                        <td>actionName</td>
-                        <td>Name of the action method being run.</td>
-                    </tr>
+                        <td>actionName
+                        <td>Name of the action method being run.
+                    
                     <tr>
-                        <td>application</td>
-                        <td>Application global data.</td>
-                    </tr>
+                        <td>application
+                        <td>Application global data.
+                    
                     <tr>
-                        <td>controllerName</td>
-                        <td>Name of the controller method being run.</td>
-                    </tr>
+                        <td>controllerName
+                        <td>Name of the controller method being run.
+                    
                     <tr>
-                        <td>flash</td>
-                        <td>Lower case name of the controller.</td>
-                    </tr>
+                        <td>flash
+                        <td>Lower case name of the controller.
+                    
                     <tr>
-                        <td>flash</td>
-                        <td>Flash message object for the next view.</td>
-                    </tr>
+                        <td>flash
+                        <td>Flash message object for the next view.
+                    
                     <tr>
-                        <td>host</td>
-                        <td>HTTP host object.</td>
-                    </tr>
+                        <td>host
+                        <td>HTTP host object.
+                    
                     <tr>
-                        <td>params</td>
-                        <td>Form parameters object.</td>
-                    </tr>
+                        <td>params
+                        <td>Form parameters object.
+                    
                     <tr>
-                        <td>request</td>
-                        <td>HTTP request object.</td>
-                    </tr>
+                        <td>request
+                        <td>HTTP request object.
+                    
                     <tr>
-                        <td>response</td>
-                        <td>HTTP response object.</td>
-                    </tr>
+                        <td>response
+                        <td>HTTP response object.
+                    
                     <tr>
-                        <td>session</td>
-                        <td>Session state information.</td>
-                    </tr>
-                </tbody>
+                        <td>session
+                        <td>Session state information.
+                    
+                
             </table>
             <p>The controller class provides the following methods:</p>
             <table title="viewClass" class="ui table segment">
                 <thead>
                     <tr>
-                        <th>Method / Property</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
+                        <th>Method / Property
+                        <th>Description
+                    
+                
                 <tbody>
                     <tr>
-                        <td>cache</td>
-                        <td>Add a cache-control HTTP header.</td>
-                    </tr>
+                        <td>cache
+                        <td>Add a cache-control HTTP header.
+                    
                     <tr>
-                        <td>createSession</td>
-                        <td>Enable session control.</td>
-                    </tr>
+                        <td>createSession
+                        <td>Enable session control.
+                    
                     <tr>
-                        <td>destroySession</td>
-                        <td>Destroy a session.</td>
-                    </tr>
+                        <td>destroySession
+                        <td>Destroy a session.
+                    
                     <tr>
-                        <td>discardOutput</td>
-                        <td>Discard all prior buffered output.</td>
-                    </tr>
+                        <td>discardOutput
+                        <td>Discard all prior buffered output.
+                    
                     <tr>
-                        <td>error</td>
-                        <td>Send an error response back to the client.</td>
-                    </tr>
+                        <td>error
+                        <td>Send an error response back to the client.
+                    
                     <tr>
-                        <td>escapeHtml</td>
-                        <td>Transform a string to be safe for output in a HTML web page.</td>
-                    </tr>
+                        <td>escapeHtml
+                        <td>Transform a string to be safe for output in a HTML web page.
+                    
                     <tr>
-                        <td>html</td>
-                        <td>HTML encode the arguments.</td>
-                    </tr>
+                        <td>html
+                        <td>HTML encode the arguments.
+                    
                     <tr>
-                        <td>inform</td>
-                        <td>Send a positive notification to the client in the flash area.</td>
-                    </tr>
+                        <td>inform
+                        <td>Send a positive notification to the client in the flash area.
+                    
                     <tr>
-                        <td>makeUrl</td>
-                        <td>Make a URL suitable for invoking actions.</td>
-                    </tr>
+                        <td>makeUrl
+                        <td>Make a URL suitable for invoking actions.
+                    
                     <tr>
-                        <td>redirect</td>
-                        <td>Redirect the client to a new URL.</td>
-                    </tr>
+                        <td>redirect
+                        <td>Redirect the client to a new URL.
+                    
                     <tr>
-                        <td>render</td>
-                        <td>Render the raw arguments back to the client.</td>
-                    </tr>
+                        <td>render
+                        <td>Render the raw arguments back to the client.
+                    
                     <tr>
-                        <td>renderFile</td>
-                        <td>Render a file's contents back to the client.</td>
-                    </tr>
+                        <td>renderFile
+                        <td>Render a file's contents back to the client.
+                    
                     <tr>
-                        <td>renderRaw</td>
-                        <td>Render raw data.</td>
-                    </tr>
+                        <td>renderRaw
+                        <td>Render raw data.
+                    
                     <tr>
-                        <td>setCookie</td>
-                        <td>Define a cookie to include in the response.</td>
-                    </tr>
+                        <td>setCookie
+                        <td>Define a cookie to include in the response.
+                    
                     <tr>
-                        <td>statusMessage</td>
-                        <td>Send a status message to any registered view controls.</td>
-                    </tr>
+                        <td>statusMessage
+                        <td>Send a status message to any registered view controls.
+                    
                     <tr>
-                        <td>unescapeHtml</td>
-                        <td>Transform an escaped string back to its original contents.</td>
-                    </tr>
+                        <td>unescapeHtml
+                        <td>Transform an escaped string back to its original contents.
+                    
                     <tr>
-                        <td>warn</td>
-                        <td>Send a warning message to the client in the flash area.</td>
-                    </tr>
+                        <td>warn
+                        <td>Send a warning message to the client in the flash area.
+                    
                     <tr>
-                        <td>write</td>
-                        <td>Write text back to the client.</td>
-                    </tr>
+                        <td>write
+                        <td>Write text back to the client.
+                    
                     <tr>
-                        <td>writeHtml</td>
-                        <td>Write HTML escaped data back to the client.</td>
-                    </tr>
-                </tbody>
+                        <td>writeHtml
+                        <td>Write HTML escaped data back to the client.
+                    
+                
             </table>
 
             <a id="filters"></a>
-            <h2 >Filters</h2>
+            <h2>Filters</h2>
             <p>Filters enable a controller to perform processing before and after actions are run. Filters are useful
             to do authentication and logging. Filters run in the same context as an action method and can access the
             controller instance and the Request, Response, Http, session and flash objects.</p>
@@ -504,21 +502,7 @@ public class TaskController extends BaseController {
             <p>When specifying the argument to <em>except</em> and <em>only</em>, you can provide either a single
             action name as a string or an array of action names.</p>
             
-        <!--
-        <a id="tips"></a>
-        <h2 >Tips and Tricks</h2>
-        <p>The following hits provide solutions for common tasks:</p>
-        <h3>Redirect the Client</h3>
-        <p>To redirect the client to a new URL, use the redirect method. This will construct a redirection URL 
-        using the requested <em>action</em> parameter. It appends this to the  application and controller names. If an
-        <em>id</em> is provided (723 in this example below), this is appended after the action name.
-        <pre class="ui code segment">redirect("edit", 723, null)</pre>
-        <p>This will create a URL like:
-        <pre class="ui code segment">https://embedthis.com/myApp/currentController/<b>edit</b>/723</pre>
-            Flash
-            cookies
-            sessions
-            -->
+        
 
     </div>
     <div class="terms ui basic center aligned segment">
@@ -532,5 +516,5 @@ public class TaskController extends BaseController {
 
         
 
-</body>
-</html>
+
+

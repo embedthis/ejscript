@@ -2,23 +2,22 @@
 <html lang="en">
 <head>
     <title>Extending</title>
-    <!-- Copyright Embedthis Software. All Rights Reserved. -->
+    
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <meta name="description" content="Javacript Language Environment" />
-    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
-        rel='stylesheet' type='text/css'>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta name="description" content="Javacript Language Environment">
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
     
-    <link href="../images/favicon.ico" rel="shortcut icon" />
-    <link href="../lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css" />
-    <link href="../css/all.min.css" rel="stylesheet" type="text/css" />
-    <link href="../css/api.min.css" rel="stylesheet" type="text/css" />
+    <link href="../images/favicon.ico" rel="shortcut icon">
+    <link href="../lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css">
+    <link href="../css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="../css/api.min.css" rel="stylesheet" type="text/css">
     
 
-</head>
+
 <body class="show-sidebar">
         <div class="sidebar">
         <div class="ui large left vertical inverted labeled menu">
@@ -185,7 +184,7 @@
             </ul>
             <p>Scripting is certainly quicker, easier and more secure than creating native C modules. However, Native C
             coding may run faster and gives you access to the full Ejscript Virtual Machine.</p><a id="script"></a>
-            <h2 >Script Library Modules</h2>
+            <h2>Script Library Modules</h2>
             <p>Script code can be compiled and the byte code saved for use by other users as a module file. When script
             code is compiled, the Ejscript <b>ejsc</b> compiler saves the output in a module file with a <b>.mod</b>
             extension. This is often referred to as a <b>mod</b> file.</p>
@@ -241,13 +240,10 @@ ejs program.es
 </pre>
             <h3>Installing Modules</h3>
             <p>Once your module is created, you can install it by simply copying it to the Ejscript module repository.
-            On Unix systems, the repository is typically at /usr/lib/ejscript/modules. You should observe the <a href=
-            "../language/modules.html#repository">Ejscript Module Repository</a> guidelines when you
+            On Unix systems, the repository is typically at /usr/lib/ejscript/modules. You should observe the <a href=../language/modules.html#repository>Ejscript Module Repository</a> guidelines when you
             install your module.</p>
             <p>By using module directives, you can simply create a modular extension components and libraries for
-            Ejscript that can be easily used by others. For more information, read the <a href=
-            "../language/modules.html">Modules and Namespaces</a> and <a href=
-            "../language/classes.html">Classes</a> documents.</p>
+            Ejscript that can be easily used by others. For more information, read the <a href=../language/modules.html>Modules and Namespaces</a> and <a href=../language/classes.html>Classes</a> documents.</p>
             <h3>Declarations</h3>
             <p>You can define global functions and variables by placing such declarations outside any module blocks.
             Then by using the ejsc compiler <b>--out</b> switch, you can explicitly name the output module file. However,
@@ -257,7 +253,7 @@ ejs program.es
             module directive purely to give the module a name. </p>
            
             <a id="native"></a>
-            <h2 >Native Modules</h2>
+            <h2>Native Modules</h2>
             <p>Native modules are Ejscript modules that have their implementation provided by native C code rather than
             by compiled byte code. Native modules have full access to the Ejscript Virtual Machine. If you need maximum
             control, then creating native modules is probably the way to go.</p>
@@ -390,7 +386,7 @@ static EjsObj *blastOff(Ejs *ejs, EjsObj *rocket, int argc, EjsObj **argv)
             function-by-function basis.</p>
 
             <a id="api"></a>
-            <h2 >Native API</h2>
+            <h2>Native API</h2>
             <p>Ejscript has an extensive native API for interacting with the Ejscript virtual machine. Because types
             are themselves objects, the API offers a consistent way to access properties from objects or classes. Some
             of the more important API functions are listed below. See the full <a href="../ref/api/ejscript.html">Ejscript
@@ -398,170 +394,170 @@ static EjsObj *blastOff(Ejs *ejs, EjsObj *rocket, int argc, EjsObj **argv)
             <table title="details" class="ui table segment">
                 <thead>
                     <tr>
-                        <th>API Name</th>
-                        <th>API Description</th>
-                    </tr>
-                </thead>
+                        <th>API Name
+                        <th>API Description
+                    
+                
                 <tbody>
                     <tr>
-                        <td>ejsAlloc</td>
-                        <td>Allocate a new object instance</td>
-                    </tr>
+                        <td>ejsAlloc
+                        <td>Allocate a new object instance
+                    
                     <tr>
-                        <td>ejsBindMethod</td>
-                        <td>Bind a native C function to a JavaScript property</td>
-                    </tr>
+                        <td>ejsBindMethod
+                        <td>Bind a native C function to a JavaScript property
+                    
                     <tr>
-                        <td>ejsCast</td>
-                        <td>Cast a variable to another type</td>
-                    </tr>
+                        <td>ejsCast
+                        <td>Cast a variable to another type
+                    
                     <tr>
-                        <td>ejsClone</td>
-                        <td>Create a clone copy of a variable</td>
-                    </tr>
+                        <td>ejsClone
+                        <td>Create a clone copy of a variable
+                    
                     <tr>
-                        <td>ejsCreateArray</td>
-                        <td>Create a new array</td>
-                    </tr>
+                        <td>ejsCreateArray
+                        <td>Create a new array
+                    
                     <tr>
-                        <td>ejsCreateBareString</td>
-                        <td>Create an empty string of the required length</td>
-                    </tr>
+                        <td>ejsCreateBareString
+                        <td>Create an empty string of the required length
+                    
                     <tr>
-                        <td>ejsCreateBoolean</td>
-                        <td>Create a Boolean value</td>
-                    </tr>
+                        <td>ejsCreateBoolean
+                        <td>Create a Boolean value
+                    
                     <tr>
-                        <td>ejsCreateByteArray</td>
-                        <td>Create a ByteArray object</td>
-                    </tr>
+                        <td>ejsCreateByteArray
+                        <td>Create a ByteArray object
+                    
                     <tr>
-                        <td>ejsCreateDate</td>
-                        <td>Create a Date object</td>
-                    </tr>
+                        <td>ejsCreateDate
+                        <td>Create a Date object
+                    
                     <tr>
-                        <td>ejsCreateFile</td>
-                        <td>Create a File object</td>
-                    </tr>
+                        <td>ejsCreateFile
+                        <td>Create a File object
+                    
                     <tr>
-                        <td>ejsCreateFunction</td>
-                        <td>Create a Function object</td>
-                    </tr>
+                        <td>ejsCreateFunction
+                        <td>Create a Function object
+                    
                     <tr>
-                        <td>ejsCreateIterator</td>
-                        <td>Create an Iterator object</td>
-                    </tr>
+                        <td>ejsCreateIterator
+                        <td>Create an Iterator object
+                    
                     <tr>
-                        <td>ejsCreateNumber</td>
-                        <td>Create a Number object</td>
-                    </tr>
+                        <td>ejsCreateNumber
+                        <td>Create a Number object
+                    
                     <tr>
-                        <td>ejsCreateObject</td>
-                        <td>Create an object and reserve space for properties</td>
-                    </tr>
+                        <td>ejsCreateObject
+                        <td>Create an object and reserve space for properties
+                    
                     <tr>
-                        <td>ejsCreateRegExp</td>
-                        <td>Create a RegExp (regular expression) object</td>
-                    </tr>
+                        <td>ejsCreateRegExp
+                        <td>Create a RegExp (regular expression) object
+                    
                     <tr>
-                        <td>ejsCreateSimpleObject</td>
-                        <td>Create a simple, empty object</td>
-                    </tr>
+                        <td>ejsCreateSimpleObject
+                        <td>Create a simple, empty object
+                    
                     <tr>
-                        <td>ejsDefineGlobalFunction</td>
-                        <td>Define a public global function and bind to a C function</td>
-                    </tr>
+                        <td>ejsDefineGlobalFunction
+                        <td>Define a public global function and bind to a C function
+                    
                     <tr>
-                        <td>ejsDeleteProperty</td>
-                        <td>Delete a property from an object</td>
-                    </tr>
+                        <td>ejsDeleteProperty
+                        <td>Delete a property from an object
+                    
                     <tr>
-                        <td>ejsDeserialize</td>
-                        <td>Deserialize a string and create an equivalent object</td>
-                    </tr>
+                        <td>ejsDeserialize
+                        <td>Deserialize a string and create an equivalent object
+                    
                     <tr>
-                        <td>ejsExit</td>
-                        <td>Exit the application</td>
-                    </tr>
+                        <td>ejsExit
+                        <td>Exit the application
+                    
                     <tr>
-                        <td>ejsGetBoolean</td>
-                        <td>Get a native boolean value from a Boolean object</td>
-                    </tr>
+                        <td>ejsGetBoolean
+                        <td>Get a native boolean value from a Boolean object
+                    
                     <tr>
-                        <td>ejsGetInt</td>
-                        <td>Get a native integer value from a Number object</td>
-                    </tr>
+                        <td>ejsGetInt
+                        <td>Get a native integer value from a Number object
+                    
                     <tr>
-                        <td>ejsGetNumber</td>
-                        <td>Get a native number from a Number object</td>
-                    </tr>
+                        <td>ejsGetNumber
+                        <td>Get a native number from a Number object
+                    
                     <tr>
-                        <td>ejsGetProperty</td>
-                        <td>Get a property from an object</td>
-                    </tr>
+                        <td>ejsGetProperty
+                        <td>Get a property from an object
+                    
                     <tr>
-                        <td>ejsGetVarType</td>
-                        <td>Get the underlying type of a variable</td>
-                    </tr>
+                        <td>ejsGetVarType
+                        <td>Get the underlying type of a variable
+                    
                     <tr>
-                        <td>ejsGetDouble</td>
-                        <td>Get a native double value from a Number object</td>
-                    </tr>
+                        <td>ejsGetDouble
+                        <td>Get a native double value from a Number object
+                    
                     <tr>
-                        <td>ejsGrowObject</td>
-                        <td>Grow the space allocated for properties in an object</td>
-                    </tr>
+                        <td>ejsGrowObject
+                        <td>Grow the space allocated for properties in an object
+                    
                     <tr>
-                        <td>ejsIsA</td>
-                        <td>Determine if an object is of a given type</td>
-                    </tr>
+                        <td>ejsIsA
+                        <td>Determine if an object is of a given type
+                    
                     <tr>
-                        <td>ejsLookupProperty</td>
-                        <td>Lookup a property by name in an object</td>
-                    </tr>
+                        <td>ejsLookupProperty
+                        <td>Lookup a property by name in an object
+                    
                     <tr>
-                        <td>ejsParseVar</td>
-                        <td>Parse a string and create an equivalent variable</td>
-                    </tr>
+                        <td>ejsParseVar
+                        <td>Parse a string and create an equivalent variable
+                    
                     <tr>
-                        <td>ejsRun</td>
-                        <td>Run a script</td>
-                    </tr>
+                        <td>ejsRun
+                        <td>Run a script
+                    
                     <tr>
-                        <td>ejsRunFunction</td>
-                        <td>Run a function</td>
-                    </tr>
+                        <td>ejsRunFunction
+                        <td>Run a function
+                    
                     <tr>
-                        <td>ejsRunFunctionBySlot</td>
-                        <td>Run a function at a given property slot</td>
-                    </tr>
+                        <td>ejsRunFunctionBySlot
+                        <td>Run a function at a given property slot
+                    
                     <tr>
-                        <td>ejsSerialize</td>
-                        <td>Serialize an object into an equivalent string representation</td>
-                    </tr>
+                        <td>ejsSerialize
+                        <td>Serialize an object into an equivalent string representation
+                    
                     <tr>
-                        <td>ejsSetProperty</td>
-                        <td>Set a property's value</td>
-                    </tr>
+                        <td>ejsSetProperty
+                        <td>Set a property's value
+                    
                     <tr>
-                        <td>ejsSetPropertyByName</td>
-                        <td>Set a property's value using the property name</td>
-                    </tr>
+                        <td>ejsSetPropertyByName
+                        <td>Set a property's value using the property name
+                    
                     <tr>
-                        <td>ejsSetPropertyName</td>
-                        <td>Update the property's name</td>
-                    </tr>
+                        <td>ejsSetPropertyName
+                        <td>Update the property's name
+                    
                     <tr>
-                        <td>ejsThrowError</td>
-                        <td>Throw an error exception</td>
-                    </tr>
+                        <td>ejsThrowError
+                        <td>Throw an error exception
+                    
                     <tr>
-                        <td>ejsToString</td>
-                        <td>Convert (cast) the argument to a string</td>
-                    </tr>
-                </tbody>
+                        <td>ejsToString
+                        <td>Convert (cast) the argument to a string
+                    
+                
             </table>
-            <h2 >Samples</h2>
+            <h2>Samples</h2>
             <p>A library of samples is provided with the Ejscript source code. See the samples directory for many
             examples of embedding and extending Ejscript.</p>
             <p>For information about embedding Ejscript into applications, see the <a href="embedding.html">Embedding
@@ -579,5 +575,5 @@ static EjsObj *blastOff(Ejs *ejs, EjsObj *rocket, int argc, EjsObj **argv)
 
         
 
-</body>
-</html>
+
+
