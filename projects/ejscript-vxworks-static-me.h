@@ -142,7 +142,7 @@
     #define ME_TUNE "speed"
 #endif
 #ifndef ME_VERSION
-    #define ME_VERSION "2.7.1"
+    #define ME_VERSION "2.7.2"
 #endif
 #ifndef ME_WATCHDOG_NAME
     #define ME_WATCHDOG_NAME "ejsman"
@@ -198,7 +198,7 @@
     #define ME_VAPP_PREFIX "deploy"
 #endif
 #ifndef ME_SRC_PREFIX
-    #define ME_SRC_PREFIX "/usr/src/ejscript-2.7.1"
+    #define ME_SRC_PREFIX "/usr/src/ejscript-2.7.2"
 #endif
 
 /* Suffixes */
@@ -240,10 +240,10 @@
     #define ME_MINOR_VERSION 7
 #endif
 #ifndef ME_PATCH_VERSION
-    #define ME_PATCH_VERSION 1
+    #define ME_PATCH_VERSION 2
 #endif
 #ifndef ME_VNUM
-    #define ME_VNUM 200070001
+    #define ME_VNUM 200070002
 #endif
 
 /* Components */
