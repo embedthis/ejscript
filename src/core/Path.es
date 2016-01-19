@@ -1125,10 +1125,13 @@ module ejs {
                         if (options.symlink && Config.OS != 'windows') {
                             let symlink = Path(options.symlink)
                             if (symlink.name.endsWith(sep) || symlink.isDir) {
-                                symlink.makeDir(options)
+                                if (!symlink.dirname.exists) {
+                                    symlink.makeDir(options)
+                                }
                                 symlink = symlink.join(dest.basename)
                             }
                             dest.relativeTo(symlink.dirname).link(symlink)
+                            // symlink.symlink(dest)
                             item.to = symlink
                         }
                         if (att && att.permissions) {
