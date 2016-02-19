@@ -5,7 +5,6 @@
  */
 
 module ejs {
-
     /**
         Regular expressions per ECMA-262. The following special characters are supported:
         <table class="itemTable">

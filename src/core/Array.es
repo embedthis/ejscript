@@ -285,7 +285,7 @@ module ejs {
         }
 
         /**
-            Reduce array elements.
+            Reduce array elements from right to left.
             Apply a callback function against two values of the array and reduce to a single value. Traversal is from
             right to left. The first time the callback is called, previous will be set to the first value and current
             will be set to the second value. If an $initial parameter is provided, then previous will be set to initial
