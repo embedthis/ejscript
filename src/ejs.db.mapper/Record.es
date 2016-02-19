@@ -166,7 +166,8 @@ module ejs.db.mapper {
                 cache(this, {query: "*"})
          */
         static function cache(model = null, options: Object = {}): Void {
-            _caching = App.config.cache.database.enable
+
+            _caching = App.config.cache.database && App.config.cache.database.enable
             if (!_caching) {
                 return
             }

@@ -213,7 +213,7 @@ module ejs {
         @spec ejs
         @example blend(dest, src, { overwrite: true, deep: true, functions: false, subclasses: true })
      */
-    native function blend(dest: Object, src: Object, options = null): Object
+    native function blend(dest: Object, src: Object?, options = null): Object
 
     // TODO - should cache be a Path
     /** 
