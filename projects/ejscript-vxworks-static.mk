@@ -2345,7 +2345,7 @@ $(BUILD)/bin/www: $(DEPS_156)
 
 installPrep: $(DEPS_157)
 	if [ "`id -u`" != 0 ] ; \
-	then echo "Must run as root. Rerun with "sudo"" ; \
+	then echo "Must run as root. Rerun with sudo." ; \
 	exit 255 ; \
 	fi
 
@@ -2385,9 +2385,15 @@ DEPS_162 += stop
 uninstall: $(DEPS_162)
 
 #
+#   uninstallBinary
+#
+
+uninstallBinary: $(DEPS_163)
+
+#
 #   version
 #
 
-version: $(DEPS_163)
+version: $(DEPS_164)
 	echo $(VERSION)
 
