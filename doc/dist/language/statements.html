@@ -2,22 +2,23 @@
 <html lang="en">
 <head>
     <title>Statements</title>
-    
+    <!-- Copyright Embedthis Software. All Rights Reserved. -->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-    <meta name="description" content="Javacript Language Environment">
-    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="Javacript Language Environment" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
+        rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
     
-    <link href="../images/favicon.ico" rel="shortcut icon">
-    <link href="../lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css">
-    <link href="../css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="../css/api.min.css" rel="stylesheet" type="text/css">
+    <link href="../images/favicon.ico" rel="shortcut icon" />
+    <link href="../lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css" />
+    <link href="../css/all.min.css" rel="stylesheet" type="text/css" />
+    <link href="../css/api.min.css" rel="stylesheet" type="text/css" />
     
 
-
+</head>
 <body class="show-sidebar">
         <div class="sidebar">
         <div class="ui large left vertical inverted labeled menu">
@@ -180,166 +181,166 @@
             statements are similar to their C/C++ counterparts but with some object oriented additions. Statements
             represent the body of an Ejscript program by combining logic with expressions.</p>
             <p><a id="overview"></a></p>
-            <h2>Statement Overview</h2>
+            <h2 >Statement Overview</h2>
             <p>The following table describes the major statements supported by Ejscript. See after the table a more
             detailed description of each statement.</p>
             <table title="statements" class="ui table segment">
                 <thead>
                     <tr>
-                        <th>Statement
-                        <th class="eight wide">Syntax
-                        <th>Brief Description
-                    
-                
+                        <th>Statement</th>
+                        <th class="eight wide">Syntax</th>
+                        <th>Brief Description</th>
+                    </tr>
+                </thead>
                 <tbody>
                     <tr>
-                        <td>;
-                        <td>;
-                        <td>Empty statement. Do nothing.
-                    
+                        <td>;</td>
+                        <td>;</td>
+                        <td>Empty statement. Do nothing.</td>
+                    </tr>
                     <tr>
-                        <td>break
-                        <td>break label
-                        <td>Jump to the designated label. (Not supported)
-                    
+                        <td>break</td>
+                        <td>break label</td>
+                        <td>Jump to the designated label. (Not supported)</td>
+                    </tr>
                     <tr>
-                        <td><a href="#switch">case</a>
-                        <td>case expression:
-                        <td>Define a case block inside a switch statement.
-                    
+                        <td><a href="#switch">case</a></td>
+                        <td>case expression:</td>
+                        <td>Define a case block inside a switch statement.</td>
+                    </tr>
                     <tr>
-                        <td><a href="#cast">cast</a>
-                        <td>variable cast Type
-                        <td>Cast the variable to the specified type.
-                    
+                        <td><a href="#cast">cast</a></td>
+                        <td>variable cast Type</td>
+                        <td>Cast the variable to the specified type.</td>
+                    </tr>
                     <tr>
-                        <td>continue
-                        <td>continue
-                        <td>Continue the loop at the top of the loop.
-                    
+                        <td>continue</td>
+                        <td>continue</td>
+                        <td>Continue the loop at the top of the loop.</td>
+                    </tr>
                     <tr>
-                        <td><a href="#try">catch</a>
-                        <td>catch (error) { body }
-                        <td>Catch an exception.
-                    
+                        <td><a href="#try">catch</a></td>
+                        <td>catch (error) { body }</td>
+                        <td>Catch an exception.</td>
+                    </tr>
                     <tr>
-                        <td><a href="#class">class</a>
-                        <td>class className { body }
-                        <td>Define a new class.
-                    
+                        <td><a href="#class">class</a></td>
+                        <td>class className { body }</td>
+                        <td>Define a new class.</td>
+                    </tr>
                     <tr>
-                        <td><a href="#switch">default</a>
-                        <td>default:
-                        <td>Begins the default case for a switch statement.
-                    
+                        <td><a href="#switch">default</a></td>
+                        <td>default:</td>
+                        <td>Begins the default case for a switch statement.</td>
+                    </tr>
                     <tr>
-                        <td>delete
-                        <td>delete property;
-                        <td>Delete the named property (or variable).
-                    
+                        <td>delete</td>
+                        <td>delete property;</td>
+                        <td>Delete the named property (or variable).</td>
+                    </tr>
                     <tr>
-                        <td>do
-                        <td>do { body } while
-                        <td>Do / while statement
-                    
+                        <td>do</td>
+                        <td>do { body } while</td>
+                        <td>Do / while statement</td>
+                    </tr>
                     <tr>
-                        <td><a href="#try">finally</a>
-                        <td>finally { body }
-                        <td>Define a try / finally code block that is always executed.
-                    
+                        <td><a href="#try">finally</a></td>
+                        <td>finally { body }</td>
+                        <td>Define a try / finally code block that is always executed.</td>
+                    </tr>
                     <tr>
-                        <td><a href="#for">for</a>
+                        <td><a href="#for">for</a></td>
                         <td>for (init; condition; increment)
-                        <br>
-                        statement
-                        <td>Standard for loop.
-                    
+                        <br />
+                        statement</td>
+                        <td>Standard for loop.</td>
+                    </tr>
                     <tr>
-                        <td><a href="#forIn">for (.. in</a>
+                        <td><a href="#forIn">for (.. in</a></td>
                         <td>for (variable in object)
-                        <br>
-                        statement
-                        <td>Iterate over all property names in an object.
-                    
+                        <br />
+                        statement</td>
+                        <td>Iterate over all property names in an object.</td>
+                    </tr>
                     <tr>
-                        <td class="nowrap"><a href="#forEach">for each</a>
+                        <td class="nowrap"><a href="#forEach">for each</a></td>
                         <td>for each (variable in object)
-                        <br>
-                        statement
-                        <td>Iterate over all properties in an object.
-                    
+                        <br />
+                        statement</td>
+                        <td>Iterate over all properties in an object.</td>
+                    </tr>
                     <tr>
-                        <td><a href="#function">function</a>
+                        <td><a href="#function">function</a></td>
                         <td>function [get | set] name([arg1 [... , arg2])
-                        <br>
-                        { statements }
-                        <td>Define a function.
-                    
+                        <br />
+                        { statements }</td>
+                        <td>Define a function.</td>
+                    </tr>
                     <tr>
-                        <td><a href="#if">if / else</a>
+                        <td><a href="#if">if / else</a></td>
                         <td>if (expression)
-                        <br>
-                        statement
-                        <td>Conditionally execute a statement.
-                    
+                        <br />
+                        statement</td>
+                        <td>Conditionally execute a statement.</td>
+                    </tr>
                     <tr>
-                        <td><a href="#interface">interface</a>
-                        <td>interface Name { body }
-                        <td>Define a type interface.
-                    
+                        <td><a href="#interface">interface</a></td>
+                        <td>interface Name { body }</td>
+                        <td>Define a type interface.</td>
+                    </tr>
                     <tr>
-                        <td><a href="#var">let</a>
-                        <td>let identifier [ = value ] [... , identifier [ = value]];
-                        <td>Declare and initialize block scope variables.
-                    
+                        <td><a href="#var">let</a></td>
+                        <td>let identifier [ = value ] [... , identifier [ = value]];</td>
+                        <td>Declare and initialize block scope variables.</td>
+                    </tr>
                     <tr>
-                        <td><a href="#module">module</a>
-                        <td>module name { block }
-                        <td>Group a block of code as a module.
-                    
+                        <td><a href="#module">module</a></td>
+                        <td>module name { block }</td>
+                        <td>Group a block of code as a module.</td>
+                    </tr>
                     <tr>
-                        <td>new
-                        <td>new ClassName(args)
-                        <td>Create a new object instance based upon a class.
-                    
+                        <td>new</td>
+                        <td>new ClassName(args)</td>
+                        <td>Create a new object instance based upon a class.</td>
+                    </tr>
                     <tr>
-                        <td><a href="#return">return</a>
-                        <td>return [expression];
-                        <td>Return a value from a function.
-                    
+                        <td><a href="#return">return</a></td>
+                        <td>return [expression];</td>
+                        <td>Return a value from a function.</td>
+                    </tr>
                     <tr>
-                        <td>super
-                        <td>super(args)
-                        <td>Invoke the super constructor. Also used to refer to the super type.
-                    
+                        <td>super</td>
+                        <td>super(args)</td>
+                        <td>Invoke the super constructor. Also used to refer to the super type.</td>
+                    </tr>
                     <tr>
-                        <td><a href="#switch">switch</a>
-                        <td>switch (expression) { body }
-                        <td>Multi-case conditional switch.
-                    
+                        <td><a href="#switch">switch</a></td>
+                        <td>switch (expression) { body }</td>
+                        <td>Multi-case conditional switch.</td>
+                    </tr>
                     <tr>
-                        <td>throw
-                        <td>throw new ExceptionClass()
-                        <td>Throw an exception.
-                    
+                        <td>throw</td>
+                        <td>throw new ExceptionClass()</td>
+                        <td>Throw an exception.</td>
+                    </tr>
                     <tr>
-                        <td><a href="#try">try</a>
-                        <td>try { body }
-                        <td>Execute code within an exception try / catch handler.
-                    
+                        <td><a href="#try">try</a></td>
+                        <td>try { body }</td>
+                        <td>Execute code within an exception try / catch handler.</td>
+                    </tr>
                     <tr>
-                        <td><a href="#use">use</a>
-                        <td>use pragmas
-                        <td>Define program pragmas.
-                    
+                        <td><a href="#use">use</a></td>
+                        <td>use pragmas</td>
+                        <td>Define program pragmas.</td>
+                    </tr>
                     <tr>
-                        <td><a href="#var">var</a>
-                        <td>var identifier [ = value ] [... , identifier [ = value]];
-                        <td>Declare and initialize variables.
-                    
-                
+                        <td><a href="#var">var</a></td>
+                        <td>var identifier [ = value ] [... , identifier [ = value]];</td>
+                        <td>Declare and initialize variables.</td>
+                    </tr>
+                </tbody>
             </table><a id="class"></a>
-            <h2>class</h2>
+            <h2 >class</h2>
             <p>Ejscript provides a familiar class paradigm as a convenient wrapper over classical prototype-based
             inheritance. Ejscript classes support single inheritance and are similar to the classes provided in
             ActionScript and other languages such as Java.</p>
@@ -376,7 +377,7 @@ class Shape {
     private inner() { }             /* Private function */
 }
 </pre><a id="cast"></a>
-            <h2>cast</h2>
+            <h2 >cast</h2>
             <p>To force a type conversion from one type to another, use the <b>cast</b> operator.</p>
             <pre class="ui code segment">
 n = "1234" cast Number
@@ -384,59 +385,59 @@ Reflect(n).typeName
 </pre>
             <p>This will cast the string "1234" to a number and assign the result to "n". It then uses the Reflection
             API to print the type of n.</p><a id="for"></a>
-            <h2>for</h2>
+            <h2 >for</h2>
             <p>The <b>for</b> statement provides the basic looping construct for Ejscript. Similar to the C for loop it
             implements an initialization, conditional and increment phases of the statement. The <b>for</b> statement
             also provides a <a href="#forIn"><b>for / in</b></a> construct for iterating or enumerating elements of an
             object.</p>
             <pre class="ui code segment">
-for (initialization; conditional; increment)<br>    statement
+for (initialization; conditional; increment)<br />    statement
 </pre>
             <p>For example:</p>
             <pre class="ui code segment">
-for (let i = 0; i &lt; 10; i++) {<br>    print("i is " + i)<br>}
+for (let i = 0; i &lt; 10; i++) {<br />    print("i is " + i)<br />}
 </pre>
             <p>You can put any expression or statement in the initialization or increment sections. In this example, we
             simply define a variable and initialize it to zero in the initialization section and increment it
             each time after the statement body is executed. The conditional expression will evaluate to a boolean value
             which if true, allows the statement body to be executed. The increment expression is evaluated after the
             statement body is executed and before the conditional is re-tested.</p><a id="forIn"></a>
-            <h2>for .. in</h2>
+            <h2 >for .. in</h2>
             <p>The <b>for in</b> statement is a powerful variant of the <b>for</b> statement that allows you to iterate
             over all the property names in an object. It uses the following syntax:</p>
             <pre class="ui code segment">
-for (variable in object)<br>    statement
+for (variable in object)<br />    statement
 </pre>
             <p>This statement will execute the statement body for each property name in the object. Each time, the
             variable will be set to the name of the next property in the object. The order of the walk through all the
             properties is determined by the order of property creation. NOTE: it will not be set to the property value,
             but will be set to the property name. For example:</p>
             <pre class="ui code segment">
-for (let v in customer) {<br>    print("customer." + v + " = " + customer[v])<br>}
+for (let v in customer) {<br />    print("customer." + v + " = " + customer[v])<br />}
 </pre>
             <p>This will print "customer.propertyName = value" for each property defined in the customer
             object.</p><a id="forEach"></a>
-            <h2>for each .. in</h2>
+            <h2 >for each .. in</h2>
             <p>The <b>for each</b> statement allows you to enumerate the property values in an object. It uses the
             following syntax:</p>
             <pre class="ui code segment">
-for each (variable in object)<br>    statement
+for each (variable in object)<br />    statement
 </pre>
             <p>This statement will execute the statement body for each property value in the object. Each time, the
             variable will be set to the next property value in the object. The order of the walk through all the
             properties is according to the order of property creation.</p>
             <pre class="ui code segment">
-for each (var v in customer) {<br>    print(v)<br>}
+for each (var v in customer) {<br />    print(v)<br />}
 </pre><a id="function"></a>
-            <h2>function</h2>
+            <h2 >function</h2>
             <p>The <b>function</b> statement defines a new global function according to the syntax:</p>
             <pre class="ui code segment">
-function name([arg1 [... , arg2]) {<br>    statements<br>}
+function name([arg1 [... , arg2]) {<br />    statements<br />}
 </pre>
             <p>The function name must be an identifier and not a reserved word and is followed by an optional list of
             arguments. Between braces, a set of statements define the function body. For example:</p>
             <pre class="ui code segment">
-function min(arg1, arg2) {<br>    if (arg1 &lt; arg2) {<br>        return arg1<br>    } else {<br>        return arg2<br>    }<br>}
+function min(arg1, arg2) {<br />    if (arg1 &lt; arg2) {<br />        return arg1<br />    } else {<br />        return arg2<br />    }<br />}
 </pre>
             <p>Function declarations can also be nested, i.e. a function may be defined in the statement body within an
             outer function. In this manner, the inner function will only be visible within the scope of the outer
@@ -448,28 +449,28 @@ function min(arg1, arg2) {<br>    if (arg1 &lt; arg2) {<br>        return arg1<b
             <p>When functions are defined within a class, they become methods of that class and are only accessible via
             instances of the class. If the function is declared to be static, it requires a class object
             instance.</p><a id="if"></a>
-            <h2>if / else</h2>
+            <h2 >if / else</h2>
             <p>The <b>if</b> statement is the primary conditional execution ability with Ejscript. It takes the
             form:</p>
             <pre class="ui code segment">
-if (expression) <br>    statement<br>[ else statement ]
+if (expression) <br />    statement<br />[ else statement ]
 </pre>
             <p>The expression is evaluated and if true, the first statement is executed. If an <b>else</b> phrase is
             added and the expression evaluates to false, then the <b>else</b> statement will be executed.</p>
             <p>Statements may be grouped using braces. For example:</p>
             <pre class="ui code segment">
-if (i &lt; j) {<br>    print("i is " + i)<br>    print("j is " + j)<br>} else {<br>    // Do something<br>}
+if (i &lt; j) {<br />    print("i is " + i)<br />    print("j is " + j)<br />} else {<br />    // Do something<br />}
 </pre>
             <p>The conditional expression may be a compound conditional expression. For example:</p>
             <pre class="ui code segment">
-i = 0<br>j = 1<br>if (i &lt; j || j != 0 || getToday() == "sunday") {<br>    // Do something<br>}
+i = 0<br />j = 1<br />if (i &lt; j || j != 0 || getToday() == "sunday") {<br />    // Do something<br />}
 </pre>
             <p>Ejscript uses lazy evaluation where if the first expression "i &lt; j" is true, then the following
             expressions will not be evaluated. In the example above, getToday() will not be called as "i" is less
             than "j".</p>
             
             <a id="interface"></a>
-            <h2>interface</h2>
+            <h2 >interface</h2>
             <p>An <b>interface</b> definition creates a type object that may be used to specify the required methods
             and properties for an implementing class. Unlike Java interface, Ejscript interfaces may contain functions
             with actual code. A class then has a choice to either implement an interface by using the <b>implements</b>
@@ -483,7 +484,7 @@ class Chape implements Shape {
     }
 }
 </pre><a id="module"></a>
-            <h2>module</h2>
+            <h2 >module</h2>
             <p>JavaScript is sometimes beset by scope and name-conflict issues. Particularly when using mash-ups or
             when "programming in-the-large", the lack of a comprehensive name resolution facility is a great
             drawback.</p>
@@ -514,7 +515,7 @@ print(x)
             
             
             <a id="require"></a>
-            <h2>require</h2>
+            <h2 >require</h2>
             <p>To load and access a module, you need to add a <b>require</b> pragma to you code.</p>
             <pre class="ui code segment">
 require moduleName
@@ -524,15 +525,15 @@ require moduleName
             
             
             <a id="return"></a>
-            <h2>return</h2>
+            <h2 >return</h2>
             <p>The <b>return</b> statement is used to supply a return value inside a function. The <b>return</b>
             statement may appear without an expression to cause the function's execution to terminate and return to the
             caller.</p>
             <p>A <b>return</b> expression may be a simple value or it may be an object reference. For example:</p>
             <pre class="ui code segment">
-function myFunc(x) {<br>    if (x == 0) {<br>        return null<br>    }<br>    return new MyObj(x)<br>}
+function myFunc(x) {<br />    if (x == 0) {<br />        return null<br />    }<br />    return new MyObj(x)<br />}
 </pre><a id="switch"></a>
-            <h2>Switch, Case, Default</h2>
+            <h2 >Switch, Case, Default</h2>
             <p>The <b>switch</b> statement provides a multi-case conditional statement. It can switch on numeric or
             string valued types. Like <b>switch</b> in all classical C languages, control flow falls through each case
             statement to the one below. Thus you must use a <b>break</b> statement if you want each case block to be
@@ -549,7 +550,7 @@ default:
     break
 }
 </pre><a id="try"></a>
-            <h2>Try, Catch, Finally</h2>
+            <h2 >Try, Catch, Finally</h2>
             <p>The <b>try</b> statement encapsulates a block of code and captures any exceptions for handling by
             relevant <b>catch</b> or <b>finally</b> blocks. If an unhandled exception occurs while executing the
             <b>try</b> block code, a non-local goto will occur and control will resume at the first qualifying
@@ -586,7 +587,7 @@ catch (error){
 }
 </pre>
             <p><b>Try</b> blocks can be nested arbitrarily.</p><a id="use"></a>
-            <h2>use</h2>
+            <h2 >use</h2>
             <p>The <b>use</b> statement applies various modifiers to the code environment. These are typically called
             <b>pragma</b> directives.</p>
             <pre class="ui code segment">
@@ -617,7 +618,7 @@ use standard
             optional if variables are pre-declared and/or type annotated.</p>
             
             <a id="var"></a>
-            <h2>var and let</h2>
+            <h2 >var and let</h2>
             <p>The <b>var</b> statement declares variables and initializes their values. Although not strictly required
             by the language to pre-declare variables, it is good practice to do so.</p>
             <p>The <b>var</b> statement defines variables at the top level of the current function, class or file. The
@@ -630,7 +631,7 @@ let identifier [ = value ] [... , identifier [ = value]];
 </pre>
             <p>For example:</p>
             <pre class="ui code segment">
-var x = 2<br>var y = 4<br>var a, b = 2, c = "sunny day";
+var x = 2<br />var y = 4<br />var a, b = 2, c = "sunny day";
 {
     /* This defines another local "x" just for this block */
     let x = 7
@@ -642,7 +643,7 @@ print(x)    /* This prints the original x == 2 */
             store. If it is used outside a function, the variable is defined on the global store. If a variable is
             assigned without a <b>var</b> statement, then the variable is created on the global store. For example:</p>
             <pre class="ui code segment">
-x = 2<br><br>function myFunc() {<br>    x = 7<br>}<br><br>println("x is " + x);
+x = 2<br /><br />function myFunc() {<br />    x = 7<br />}<br /><br />println("x is " + x);
 </pre>
             <p>This code snippet will print "x is 7".</p>
 
@@ -658,5 +659,5 @@ x = 2<br><br>function myFunc() {<br>    x = 7<br>}<br><br>println("x is " + x);
 
         
 
-
-
+</body>
+</html>
