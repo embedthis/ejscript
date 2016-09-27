@@ -14,7 +14,7 @@ if (!Path("/bin").exists) {
         cmd = Cmd("ls /asdf", {exceptions: true})
     } catch (e) {
         caught = true
-        assert(e.toString().contains("asdf: No such file or directory"))
+        assert(e.toString().contains("No such file or directory"))
     }
     assert(caught)
 
