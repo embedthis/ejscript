@@ -18,7 +18,7 @@ if (!Path("/bin").exists) {
     cmd.wait()
     assert(gotError)
     assert(cmd.error.contains("ls:"))
-    assert(cmd.error.contains("/asdf: No such file or directory"))
+    assert(cmd.error.contains("No such file or directory"))
 
     //  ErrorStream
     cmd = Cmd("ls /asdf", {detach: true})
@@ -30,5 +30,5 @@ if (!Path("/bin").exists) {
     cmd.wait()
     assert(msg.length > 0)
     assert(msg.toString().contains("ls:"))
-    assert(msg.toString().contains("/asdf: No such file or directory"))
+    assert(msg.toString().contains("No such file or directory"))
 }
