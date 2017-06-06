@@ -125,5 +125,6 @@ assert(d.toLocaleDateString().indexOf("Sun, 07 Mar 1999") == 0)
 
 d = new Date(Date.UTC(1999, 2, 7, 11, 30, 10, 700))
 assert(d.toUTCString() == "Sun, 07 Mar 1999 11:30:10 GMT")
+print('DATE', d.toISOString())
 assert(d.toISOString() == "1999-03-07T11:30:10-08:00")
 assert(serialize(d).startsWith("\"1999-03-07T11:30:10"))
