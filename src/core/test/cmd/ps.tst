@@ -12,9 +12,8 @@ if (!Path("/bin").exists || Config.OS == 'windows') {
         program = "launchd"
         re = /launchd/
     } else {
-        /* On linux, may run from init and bash may not be running */
-        program = "syslogd"
-        re = /syslogd/
+        program = "bash"
+        re = /bash/
     }
 
     //  Test with RE match
