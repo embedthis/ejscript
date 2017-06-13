@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Installing on Linux</title>
+    <title>Mac</title>
     <!-- Copyright Embedthis Software. All Rights Reserved. -->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8" />
@@ -20,7 +20,7 @@
 
 </head>
 <body class="show-sidebar">
-        <div class="sidebar">
+    <div class="sidebar">
         <div class="ui large left vertical inverted labeled menu">
             <div class="item">
                 <a href="../index.html" class="logo">Ejscript Docs</a>
@@ -128,7 +128,7 @@
                 <div class="menu">
                     <a class="item" href="https://embedthis.com/">Embedthis Web Site</a>
                     <a class="item" href="https://embedthis.com/blog/">Embedthis Blog</a>
-                    <a class="item" href="http://twitter.com/mobstream">Twitter</a>
+                    <a class="item" href="http://twitter.com/embedthat">Twitter</a>
                 </div>
             </div>
         </div>
@@ -138,20 +138,18 @@
 
 
     <div class="ui inverted masthead">
-         
         <div class="ui fixed inverted menu">
             <div class="ui sidebar-launch button">
                 <i class="icon list layout"></i>
             </div>
             <div class="right menu">
-                  
-                    <a class="item" href="https://embedthis.com/">Embedthis</a>
+                <a class="item" href="https://embedthis.com/">Embedthis</a>
                     <a class="item" href="https://embedthis.com/ejscript/">Ejscript Site</a>
                     <span class="desktop-only">
                         <a class="item" href="http://goo.gl/dGRDl4">Ejscript News</a>
                         <a class="item" href="https://github.com/embedthis/ejs">Repository</a>
                         <a class="item" href="https://embedthis.com/blog/">Blog</a>
-                        <a class="item" href="https://twitter.com/mobstream">Twitter</a>
+                        <a class="item" href="https://twitter.com/embedthat">Twitter</a>
                     </span>
 
             </div>
@@ -172,7 +170,7 @@
             
             
             <div class="divider">/</div>
-            <a class="active section" href="linux.html">Installing on Linux</a>
+            <a class="active section" href="mac.old">Mac</a>
             
         </div>
         
@@ -181,57 +179,68 @@
     </div>
     <div class="content">
 
-            <h1>Installing on Linux</h1>
-            <p>Running Ejscript on Linux is supported by building from source code. </p>
-            <p>Please see instructions at <a href="source.html">Building from Source</a>.</p>
-
+            <h1>Installing on Mac</h1>
+            <p>The Embedthis Ejscript install distribution for Mac OS X is published as a an installable 
+            pkg file.</p>
+            <a id="pkg"></a>
+            <h2 >Installing the Image</h2>
+            <ol>
+                <li>Double click on the PKG image.</li>
+            </ol>
+            
+            <a id="removing"></a>
+            <h2 >Removing Ejscript</h2>
+            <ol>
+                <li>Run a terminal and change directory to the installation directory for Ejscript. This is typically
+                "/usr/lib/ejscript/latest".</li>
+                <li>Run the uninstall script in the Ejscript install directory:</li>
+            </ol>
+            <pre class="ui code segment">sudo ./uninstall</pre>
             
             <a id="running"></a>
-            <h2>Running Ejscript</h2>
-            <p>You can run ejs via:</p>
+            <h2 >Running Ejscript</h2>
+            <p>To do a "Hello World" test, try typing the following. The "Hello World" is echoed back by ejs:</p>
             <pre class="ui code segment">
 ejs
+ejs-0&gt; print("Hello World")
+<strong>
+Hello World</strong>
+ejs-0&gt;
 </pre>
-            <p>To get all the options for Ejscript, read the man page via:</p>
-            <pre class="ui code segment">
-man ejs
-</pre>or get the command help via:
-            <pre class="ui code segment">
-ejs --help
-</pre>
+            <p>Use ^D to exit the ejs shell.</p>
             <h3>Other Commands</h3>
-            <p>The installation will install four commands:</p>
+            <p>The installation will install four commands with links in /usr/local/bin.</p>
             <table title="commands" class="ui table segment">
-            <thead>
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
                 <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Description</th>
+                    <td>ejs</td>
+                    <td>The Ejscript command shell. This command can parse and execute ejs scripts from files or typed
+                    interactively on the console. This command contains both the Ejscript compiler and virtual
+                    machine.</td>
                 </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>ejs</td>
-                <td>The Ejscript command shell. This command can parse and execute ejs scripts from files or typed
-                interactively on the console. This command contains both the Ejscript compiler and virtual
-                machine.</td>
-            </tr>
-            <tr>
-                <td>ejsc</td>
-                <td>The Ejscript compiler. This command can compile scripts into byte code form for later running
-                    via the <em>ejs</em> command.</td>
-            </tr>
-            <tr>
-                <td>ejsmod</td>
-                <td>The Ejscript module manager. This command generates assembler source code listings, HTML
-                documentation and symbolic slot offset header files.</td>
-            </tr>
-            <tr>
-                <td>mvc</td>
-                <td>The Ejscript Model-View-Controller web framework generator and manager. This command assists to
-                    create Ejscript Web applications that use the Ejscript Web Framework.</td>
-            </tr>
-            </tbody>
-        </table>
+                <tr>
+                    <td>ejsc</td>
+                    <td>The Ejscript compiler. This command can compile scripts into byte code form for later running
+						via the <em>ejs</em> command.</td>
+                </tr>
+                <tr>
+                    <td>ejsmod</td>
+                    <td>The Ejscript module manager. This command generates assembler source code listings, HTML
+                    documentation and symbolic slot offset header files.</td>
+                </tr>
+                <tr>
+                    <td>mvc</td>
+					<td>The Ejscript Model-View-Controller web framework generator and manager. This command assists to
+						create Ejscript Web applications that use the Ejscript Web Framework.</td>
+                </tr>
+                </tbody>
+            </table>
 
     </div>
     <div class="terms ui basic center aligned segment">
@@ -243,7 +252,7 @@ ejs --help
     <script src="../scripts/sidebar.min.js"></script>
      
 
-        
+    
 
 </body>
 </html>
