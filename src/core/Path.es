@@ -926,13 +926,16 @@ module ejs {
                 let from = options.from
                 if (!(from is Array)) from = [from]
                 from = from.transform(function(e) Path(expand(e, options)))
-
                 /*
-                    Do not sort this list as we want to preserve user supplied order in their files list
+                    Do not sort entire list as we want to preserve user supplied order in their files list.
+                    Sort each pattern only so that the list will be the same cross-platform.
                     The list files are relative to 'this'
                  */
-                let files = this.files(from, blend({contents: true, relative: this}, options, {overwrite: false}))
-
+                let files = []
+                let oo = blend({contents: true, relative: this}, options, {overwrite: false})
+                for each (let pat: Path in from) {
+                    files = files.concat(files, this.files(pat, oo).sort())
+                }
                 let to = Path(expand(options.to, options))
                 let sep = to.separator
                 let toDir = to.isDir || to.name.endsWith(sep) || options.isDir
