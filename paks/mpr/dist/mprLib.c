@@ -18186,6 +18186,9 @@ PUBLIC MprList *mprGlobPathFiles(cchar *path, cchar *pattern, int flags)
             exclude = &pattern[1];
         }
         globPathFiles(result, path, rewritePattern(pattern, flags), relativeTo, exclude, flags);
+        if (!(flags & (MPR_PATH_DEPTH_FIRST))) {
+            mprSortList(result, NULL, NULL);
+        }
     }
     return result;
 }
