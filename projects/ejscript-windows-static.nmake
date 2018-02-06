@@ -3,7 +3,7 @@
 #
 
 NAME                  = ejscript
-VERSION               = 2.7.3
+VERSION               = 2.7.4
 
 OS                    = windows
 PA                    = $(PROCESSOR_ARCHITECTURE)
@@ -1575,16 +1575,16 @@ DEPS_127 = $(DEPS_127) slots
 !IF "$(ME_COM_HTTP)" == "1"
 DEPS_127 = $(DEPS_127) build\$(CONFIG)\bin\libhttp.lib
 !ENDIF
-DEPS_127 = $(DEPS_127) build\$(CONFIG)\inc\ejs.cache.local.slots.h
-DEPS_127 = $(DEPS_127) build\$(CONFIG)\inc\ejs.db.sqlite.slots.h
-DEPS_127 = $(DEPS_127) build\$(CONFIG)\inc\ejs.slots.h
-DEPS_127 = $(DEPS_127) build\$(CONFIG)\inc\ejs.web.slots.h
-DEPS_127 = $(DEPS_127) build\$(CONFIG)\inc\ejs.zlib.slots.h
 DEPS_127 = $(DEPS_127) build\$(CONFIG)\inc\ejs.h
 DEPS_127 = $(DEPS_127) build\$(CONFIG)\inc\ejsByteCode.h
 DEPS_127 = $(DEPS_127) build\$(CONFIG)\inc\ejsByteCodeTable.h
 DEPS_127 = $(DEPS_127) build\$(CONFIG)\inc\ejsCompiler.h
 DEPS_127 = $(DEPS_127) build\$(CONFIG)\inc\ejsCustomize.h
+DEPS_127 = $(DEPS_127) build\$(CONFIG)\inc\ejs.cache.local.slots.h
+DEPS_127 = $(DEPS_127) build\$(CONFIG)\inc\ejs.db.sqlite.slots.h
+DEPS_127 = $(DEPS_127) build\$(CONFIG)\inc\ejs.slots.h
+DEPS_127 = $(DEPS_127) build\$(CONFIG)\inc\ejs.web.slots.h
+DEPS_127 = $(DEPS_127) build\$(CONFIG)\inc\ejs.zlib.slots.h
 DEPS_127 = $(DEPS_127) build\$(CONFIG)\obj\ecAst.obj
 DEPS_127 = $(DEPS_127) build\$(CONFIG)\obj\ecCodeGen.obj
 DEPS_127 = $(DEPS_127) build\$(CONFIG)\obj\ecCompiler.obj
@@ -1736,9 +1736,9 @@ build\$(CONFIG)\bin\ejsc.exe: $(DEPS_129)
 #
 DEPS_130 = $(DEPS_130) build\$(CONFIG)\bin\libejs.lib
 DEPS_130 = $(DEPS_130) build\$(CONFIG)\inc\ejsmod.h
-DEPS_130 = $(DEPS_130) build\$(CONFIG)\obj\ejsmod.obj
 DEPS_130 = $(DEPS_130) build\$(CONFIG)\obj\doc.obj
 DEPS_130 = $(DEPS_130) build\$(CONFIG)\obj\docFiles.obj
+DEPS_130 = $(DEPS_130) build\$(CONFIG)\obj\ejsmod.obj
 DEPS_130 = $(DEPS_130) build\$(CONFIG)\obj\listing.obj
 DEPS_130 = $(DEPS_130) build\$(CONFIG)\obj\slotGen.obj
 
@@ -1775,7 +1775,7 @@ LIBS_130 = $(LIBS_130) libhttp.lib
 
 build\$(CONFIG)\bin\ejsmod.exe: $(DEPS_130)
 	@echo ..... [Link] build\$(CONFIG)\bin\ejsmod.exe
-	"$(LD)" -nologo -out:$(BUILD)\bin\ejsmod.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) "$(BUILD)\obj\ejsmod.obj" "$(BUILD)\obj\doc.obj" "$(BUILD)\obj\docFiles.obj" "$(BUILD)\obj\listing.obj" "$(BUILD)\obj\slotGen.obj" $(LIBPATHS_130) $(LIBS_130) $(LIBS_130) $(LIBS)  $(LOG)
+	"$(LD)" -nologo -out:$(BUILD)\bin\ejsmod.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS) "$(BUILD)\obj\doc.obj" "$(BUILD)\obj\docFiles.obj" "$(BUILD)\obj\ejsmod.obj" "$(BUILD)\obj\listing.obj" "$(BUILD)\obj\slotGen.obj" $(LIBPATHS_130) $(LIBS_130) $(LIBS_130) $(LIBS)  $(LOG)
 
 #
 #   ejs.mod

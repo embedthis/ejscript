@@ -105,9 +105,9 @@
   </PropertyGroup>
   
       <ItemGroup>
-    <ClCompile Include="..\..\src\cmd\ejsmod.c" />
     <ClCompile Include="..\..\src\cmd\doc.c" />
     <ClCompile Include="..\..\src\cmd\docFiles.c" />
+    <ClCompile Include="..\..\src\cmd\ejsmod.c" />
     <ClCompile Include="..\..\src\cmd\listing.c" />
     <ClCompile Include="..\..\src\cmd\slotGen.c" />
   </ItemGroup>

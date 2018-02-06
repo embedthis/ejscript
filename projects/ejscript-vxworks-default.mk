@@ -3,7 +3,7 @@
 #
 
 NAME                  := ejscript
-VERSION               := 2.7.3
+VERSION               := 2.7.4
 PROFILE               ?= default
 ARCH                  ?= $(shell echo $(WIND_HOST_TYPE) | sed 's/-.*$(ME_ROOT_PREFIX)/')
 CPU                   ?= $(subst X86,PENTIUM,$(shell echo $(ARCH) | tr a-z A-Z))
@@ -1514,16 +1514,16 @@ DEPS_127 += slots
 ifeq ($(ME_COM_HTTP),1)
     DEPS_127 += $(BUILD)/bin/libhttp.out
 endif
-DEPS_127 += $(BUILD)/inc/ejs.cache.local.slots.h
-DEPS_127 += $(BUILD)/inc/ejs.db.sqlite.slots.h
-DEPS_127 += $(BUILD)/inc/ejs.slots.h
-DEPS_127 += $(BUILD)/inc/ejs.web.slots.h
-DEPS_127 += $(BUILD)/inc/ejs.zlib.slots.h
 DEPS_127 += $(BUILD)/inc/ejs.h
 DEPS_127 += $(BUILD)/inc/ejsByteCode.h
 DEPS_127 += $(BUILD)/inc/ejsByteCodeTable.h
 DEPS_127 += $(BUILD)/inc/ejsCompiler.h
 DEPS_127 += $(BUILD)/inc/ejsCustomize.h
+DEPS_127 += $(BUILD)/inc/ejs.cache.local.slots.h
+DEPS_127 += $(BUILD)/inc/ejs.db.sqlite.slots.h
+DEPS_127 += $(BUILD)/inc/ejs.slots.h
+DEPS_127 += $(BUILD)/inc/ejs.web.slots.h
+DEPS_127 += $(BUILD)/inc/ejs.zlib.slots.h
 DEPS_127 += $(BUILD)/obj/ecAst.o
 DEPS_127 += $(BUILD)/obj/ecCodeGen.o
 DEPS_127 += $(BUILD)/obj/ecCompiler.o
@@ -1613,15 +1613,15 @@ $(BUILD)/bin/ejsc.out: $(DEPS_129)
 #
 DEPS_130 += $(BUILD)/bin/libejs.out
 DEPS_130 += $(BUILD)/inc/ejsmod.h
-DEPS_130 += $(BUILD)/obj/ejsmod.o
 DEPS_130 += $(BUILD)/obj/doc.o
 DEPS_130 += $(BUILD)/obj/docFiles.o
+DEPS_130 += $(BUILD)/obj/ejsmod.o
 DEPS_130 += $(BUILD)/obj/listing.o
 DEPS_130 += $(BUILD)/obj/slotGen.o
 
 $(BUILD)/bin/ejsmod.out: $(DEPS_130)
 	@echo '      [Link] $(BUILD)/bin/ejsmod.out'
-	$(CC) -o $(BUILD)/bin/ejsmod.out $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/ejsmod.o" "$(BUILD)/obj/doc.o" "$(BUILD)/obj/docFiles.o" "$(BUILD)/obj/listing.o" "$(BUILD)/obj/slotGen.o" $(LIBS) -lmpr-mbedtls -lmbedtls -Wl,-r 
+	$(CC) -o $(BUILD)/bin/ejsmod.out $(LDFLAGS) $(LIBPATHS) "$(BUILD)/obj/doc.o" "$(BUILD)/obj/docFiles.o" "$(BUILD)/obj/ejsmod.o" "$(BUILD)/obj/listing.o" "$(BUILD)/obj/slotGen.o" $(LIBS) -lmpr-mbedtls -lmbedtls -Wl,-r 
 
 #
 #   ejs.mod

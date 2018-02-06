@@ -167,26 +167,6 @@
   </ItemGroup>
 
       <ItemGroup>
-    <ClInclude Include="$(IncDir)\ejs.cache.local.slots.h" />
-  </ItemGroup>
-
-      <ItemGroup>
-    <ClInclude Include="$(IncDir)\ejs.db.sqlite.slots.h" />
-  </ItemGroup>
-
-      <ItemGroup>
-    <ClInclude Include="$(IncDir)\ejs.slots.h" />
-  </ItemGroup>
-
-      <ItemGroup>
-    <ClInclude Include="$(IncDir)\ejs.web.slots.h" />
-  </ItemGroup>
-
-      <ItemGroup>
-    <ClInclude Include="$(IncDir)\ejs.zlib.slots.h" />
-  </ItemGroup>
-
-      <ItemGroup>
     <ClInclude Include="$(IncDir)\ejs.h" />
   </ItemGroup>
 
@@ -206,6 +186,26 @@
     <ClInclude Include="$(IncDir)\ejsCustomize.h" />
   </ItemGroup>
 
+      <ItemGroup>
+    <ClInclude Include="$(IncDir)\ejs.cache.local.slots.h" />
+  </ItemGroup>
+
+      <ItemGroup>
+    <ClInclude Include="$(IncDir)\ejs.db.sqlite.slots.h" />
+  </ItemGroup>
+
+      <ItemGroup>
+    <ClInclude Include="$(IncDir)\ejs.slots.h" />
+  </ItemGroup>
+
+      <ItemGroup>
+    <ClInclude Include="$(IncDir)\ejs.web.slots.h" />
+  </ItemGroup>
+
+      <ItemGroup>
+    <ClInclude Include="$(IncDir)\ejs.zlib.slots.h" />
+  </ItemGroup>
+
       <ItemDefinitionGroup>
         
 
@@ -216,16 +216,16 @@
 
       <CustomBuildStep>
         <Command>cd ..\..\src
-copy /Y /B slots\ejs.cache.local.slots.h $(IncDir)
-copy /Y /B slots\ejs.db.sqlite.slots.h $(IncDir)
-copy /Y /B slots\ejs.slots.h $(IncDir)
-copy /Y /B slots\ejs.web.slots.h $(IncDir)
-copy /Y /B slots\ejs.zlib.slots.h $(IncDir)
 copy /Y /B ejs.h $(IncDir)
 copy /Y /B ejsByteCode.h $(IncDir)
 copy /Y /B ejsByteCodeTable.h $(IncDir)
 copy /Y /B ejsCompiler.h $(IncDir)
 copy /Y /B ejsCustomize.h $(IncDir)
+copy /Y /B slots\ejs.cache.local.slots.h $(IncDir)
+copy /Y /B slots\ejs.db.sqlite.slots.h $(IncDir)
+copy /Y /B slots\ejs.slots.h $(IncDir)
+copy /Y /B slots\ejs.web.slots.h $(IncDir)
+copy /Y /B slots\ejs.zlib.slots.h $(IncDir)
 cd ..\projects\ejscript-windows-default</Command>
         <Outputs>$(BinDir)\libejs.dll</Outputs>
       </CustomBuildStep>
