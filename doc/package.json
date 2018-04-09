@@ -1,18 +1,6 @@
 {
     "name": "ejs-doc",
-    "title": "Embedthis Ejscript Documentation",
-    "description": "Javacript Language Environment",
-    "dependencies": {
-        "me-docstyle": "~0.9"
-    },
-    "devDependencies": {
-        "expansive": ">=0.6.0"
-    },
-    "directories": {
-        "export": "contents/lib"
-    },
-    "pak": {
-        "mode": "debug",
-        "import": true
-    }
+    "version": undefined,
+    "repository": undefined,
+    "pak": "debug"
 }
