@@ -803,7 +803,9 @@ module ejs {
 
             @option compress Boolean Compress destination file using Zlib. Results in a '.gz' extension.
 
-            @option divider String Divider text to use between appended files.
+            @option divider String Divider text to use before each appended file.
+
+            @option dividerFile String|Path File containing divider text to after each appended file.
 
             @option extension String | Path Extension to use for the destination filenames.
 
@@ -917,6 +919,9 @@ module ejs {
                 if (options.separator) {
                     print('Warn: using legacy "separator" property for Path.operate, use "divider" instead.')
                     options.divider = options.separator
+                }
+                if (options.dividerFile) {
+                    options.dividerFile =  Path(options.dividerFile).readString()
                 }
                 //  LEGACY
                 if (options.title) {
@@ -1056,7 +1061,7 @@ module ejs {
                     } else if (operation == 'append') {
                         if (options.divider) {
                             if (options.divider == true) {
-                                contents.push('\n\n/********* Start of file ' + src.relative + ' ************/\n\n')
+                                contents.push('\n/********* Start of file ' + src.relative + ' ************/\n')
                             } else {
                                 contents.push(expand(options.divider, item))
                             }
@@ -1067,6 +1072,9 @@ module ejs {
                             data = data.replace(options.filter, '')
                         }
                         contents.push(data)
+                        if (options.dividerFile) {
+                            contents.push(options.dividerFile + '\n')
+                        }
 
                     } else if (operation == 'copy') {
                         if (dest.endsWith(sep)) {
