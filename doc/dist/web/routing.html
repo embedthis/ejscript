@@ -2,20 +2,19 @@
 <html lang="en">
 <head>
     <title>Routing</title>
-    <!-- Copyright Embedthis Software. All Rights Reserved. -->
+    
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <meta name="description" content="Routing" />
-    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
-        rel='stylesheet' type='text/css'>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta name="description" content="Ejscript JavaScript language">
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
     
-    <link href="../images/favicon.ico" rel="shortcut icon" />
-    <link href="../lib/semantic-ui/semantic.css" rel="stylesheet" type="text/css" />
-    <link href="../css/all.css" rel="stylesheet" type="text/css" />
-    <link href="../css/api.css" rel="stylesheet" type="text/css" />
+    <link href="../images/favicon.ico" rel="shortcut icon">
+    <link href="/lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/api.min.css" rel="stylesheet" type="text/css">
     
 
 </head>
@@ -180,7 +179,7 @@
             is configured with a set of routes and when a request is received, it tests various routes and selects
             the best route to handle the request.  In the process, routes may redirect or rewrite the request 
             as required.</p>
-            <img src="../images/routing.jpg" alt="routing"/>
+            <img src="../images/routing.jpg" alt="routing">
             <p>An Ejscript application will typically have many routes. The configured routes 
             are tested in-order by matching the route pattern against the request URI. 
             A route may require that further preconditions be met before it is suitable to process the
@@ -190,7 +189,7 @@
             route may also run commands as a side-effect during processing.</p>
 
             <a id="configuration"></a>
-            <h2 >Route Configuration</h2>
+            <h2>Route Configuration</h2>
             <p>Routes are defined using the Router class and the <em>add</em> method. 
             Here is an example of a simple web server with route configuration.</p>
 <pre class="ui code segment">
@@ -209,7 +208,7 @@ router.show()
             <p>Routes are processed in the order in which they are defined. Each route is tested in turn and the first
             matching route is used to process the request.  So ordering route definitions is very important. Routes
             with longer or more qualified route criteria should be defined first before more general routes.</p>
-            <h2 >Route Processing</h2>
+            <h2>Route Processing</h2>
             <p>To process a request, The Ejscript route engine examines each of the configured routes to determine the 
             best matching route for a request.  It does this by considering each route in the order they are defined in
             the configuration file. Each route is tested over a sequence of steps. 
@@ -318,15 +317,17 @@ r.add(function (request) request.params("name").match(/(Mary)|(John)))
 
     </div>
     <div class="terms ui basic center aligned segment">
-        <p>&copy; Embedthis Software, 2003-2015. All rights reserved.</p>
+        <p>&copy; Embedthis Software. All rights reserved.</p>
     </div>
 
-    <script src="../lib/jquery/jquery.min.js"></script>
-    <script src="../lib/semantic-ui/semantic.js"></script>
-    <script src="../scripts/sidebar.js"></script>
+    <script src="/lib/jquery/jquery.min.js"></script>
+    <script src="/lib/jquery/pak.min.js"></script>
+    <script src="/lib/semantic-ui/semantic.min.js"></script>
+    <script src="/scripts/sidebar.min.js"></script>
      
 
     
 
-</body>
-</html>
+
+
+

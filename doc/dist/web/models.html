@@ -2,20 +2,19 @@
 <html lang="en">
 <head>
     <title>Models</title>
-    <!-- Copyright Embedthis Software. All Rights Reserved. -->
+    
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <meta name="description" content="Models" />
-    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
-        rel='stylesheet' type='text/css'>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta name="description" content="Ejscript JavaScript language">
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
     
-    <link href="../images/favicon.ico" rel="shortcut icon" />
-    <link href="../lib/semantic-ui/semantic.css" rel="stylesheet" type="text/css" />
-    <link href="../css/all.css" rel="stylesheet" type="text/css" />
-    <link href="../css/api.css" rel="stylesheet" type="text/css" />
+    <link href="../images/favicon.ico" rel="shortcut icon">
+    <link href="/lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/api.min.css" rel="stylesheet" type="text/css">
     
 
 </head>
@@ -178,10 +177,9 @@
             <p>Ejscript Models are responsible for managing access to application data and for ensuring the data
             remains valid and consistent.</p>
             <p>Ejscript Models are the Object Relational Mapper (ORM) layer provided with Ejscript. This layer wraps
-            database records in JavaScript objects and allows you to use object-oriented programming (<a href=
-            "http://en.wikipedia.org/wiki/Object-oriented_programming">OOP</a>) when dealing with tabular database
+            database records in JavaScript objects and allows you to use object-oriented programming (<a href="http://en.wikipedia.org/wiki/Object-oriented_programming">OOP</a>) when dealing with tabular database
             data.</p><a id="record"></a>
-            <h2 >Record Class</h2>
+            <h2>Record Class</h2>
             <p>Ejscript Models map database tables to classes, rows to objects, and columns to object properties. The
             foundation for Models is the <em>Record</em> class. Record instances represent database records. New models
             are created by implementing the Record class.</p>
@@ -193,8 +191,7 @@ public dynamic class Product implements Record {
 }
 </pre>
             <p>This creates a new Product model for accessing the Products table. Note: we did not have to specify the
-            table, column or primary key names names. Ejscript follows the <a href=
-            "http://en.wikipedia.org/wiki/Convention_over_Configuration">Convention over Configuration</a> design
+            table, column or primary key names names. Ejscript follows the <a href="http://en.wikipedia.org/wiki/Convention_over_Configuration">Convention over Configuration</a> design
             paradigm where developers need only specify the unusual parts of their application. In this example,
             Ejscript will look for a database table named <em>Products</em> and will map that to the <em>Product</em>
             class. By convention, Ejscript assumes that database table names are plural and Record classes are
@@ -252,7 +249,7 @@ print(products)</b>
 /* Remove the product with id == 1 */ 
 <b>Product.remove(1)</b>
 </pre><a id="types"></a>
-            <h2 >Data Types</h2>
+            <h2>Data Types</h2>
             <p>JavaScript is a loosely typed language which is ideal for a dynamic ORM framework like Ejscript. When
             reading database data, Ejscript will select the best JavaScript type to hold the database data. The
             following type conversions will occur when reading and writing data to and from the database. Note: Mysql
@@ -293,10 +290,10 @@ print(products)</b>
                     </tr>
                 </tbody>
             </table><a id="keys"></a>
-            <h2 >Table Keys</h2>
+            <h2>Table Keys</h2>
             <p>Ejscript assumes that database tables will have a primary key column named <em>id</em>. If you need the
             primary key column to be some other name, use the <em>setKeyName</em> method.</p><a id="connections"></a>
-            <h2 >Database Connections</h2>
+            <h2>Database Connections</h2>
             <p>Database connections are one of the few items that are setup by configuration files. The application
             configuration file: "config/database.ecf" defines the database name, username, password and other
             configuration parameters.</p>
@@ -314,7 +311,7 @@ debug: {
             database. The <em>database</em> option is set to the filename of the database. Setting <em>trace</em> to
             true will trace all SQL statements that are executed against the database to the application
             log.</p><a id="modelClasses"></a>
-            <h2 >Creating Model Classes</h2>
+            <h2>Creating Model Classes</h2>
             <p>The Ejscript <em>mvc</em> command can be used to generate models and database migrations.</p>
             <pre class="ui code segment">
 mvc generate model [field:type ...]
@@ -326,7 +323,7 @@ mvc generate model [field:type ...]
             decimal, float, integer, number, string, text, time, timestamp</em>.</p>
             <p>Once the model is generated, you can add methods to implement logic to manage updates and validate model
             data. Models typically provide a suite of methods for controllers and views to access.</p><a id="crud"></a>
-            <h2 >Create, Read, Update and Delete</h2>
+            <h2>Create, Read, Update and Delete</h2>
             <p>It should be easy to do simple things like implementing the basic database operations: create, read,
             update and delete. Ejscripts Models make this easy. <a id="create"></a></p>
             <h3>Create a new Record</h3>
@@ -347,9 +344,7 @@ product.price = 19.99
             <pre class="ui code segment">
 product = Product.find(2)
 product = Product.find(null, {conditions: ["price &gt; 5.0"]})
-</pre><!--
-            <p>See the <a href="#samples">Samples</a> below for more examples.</p>
-            -->
+</pre>
             <a id="update"></a>
             <h3>Updating a Record</h3>
             <p>To update a record, first read it using one of the <em>find</em> methods. Then update any of the object
@@ -368,7 +363,7 @@ product.name = "Stock Car"
 id = Product.findWhere('name == "Stock Car"')
 Product.remove(id)
 </pre><a id="manual"></a>
-            <h2 >Manual SQL Statements</h2>
+            <h2>Manual SQL Statements</h2>
             <p>Ejscript supports the execution of manual SQL statements and provides routines to assist the creation of
             SQL statements. The <em>getDb</em> method will return a Database object on which, manual SQL queries can be
             performed</p>
@@ -384,17 +379,9 @@ db.query("SELECT * FROM Products WHERE id &gt;= 1;")
 Product.findAll({order: "price DESC", limit: 2})
 </pre>
             <p>This will find up to two products, and will sort the result grid by descending price. Other options
-            include: group, limit, offset and joins.</p><!--
-            <a id="relationships"></a>
-            <h2 >Table Relationships</h2>
-                <h3>Foreign Keys</h3>
-                <h3>One to One</h3>
-                <h3>One to Many</h3>
-                <h3>Many to Many</h3>
-                - belongsTo, hasOne, hasMany, hasAndBelongsToMany
-            -->
+            include: group, limit, offset and joins.</p>
             <a id="accessing"></a>
-            <h2 >Accessing Models</h2>
+            <h2>Accessing Models</h2>
             <p>Ejscript Controllers and Views are the primary users of model data. Controllers will typically interact
             to create, read, update, and delete model data. Views will typically (or should) use read-only access.</p>
             <p>There are several means by which model data can be provided:</p>
@@ -436,7 +423,7 @@ Product.findAll({order: "price DESC", limit: 2})
             <p>Controller facilitated access is perhaps the most powerful access methodology whereby the controller
             creates a suite of methods to manage and control access to the model. These methods can then validate and
             enforce consistency checks on the data.</p>
-            <h2 >Validation</h2>
+            <h2>Validation</h2>
             <p>Ejscript provides a validation mechanism that is invoked prior to saving a model to the database. It
             also provides a set of pre-defined validation methods that you can use in your model. These cover the most
             common validation needs such as ensuring a field is unique or numeric, or conforms to a specific
@@ -445,7 +432,7 @@ Product.findAll({order: "price DESC", limit: 2})
             validation. Validation checks continue and (potentially) a set of error messages for the model are
             accumulated. Views can access these messages for display and highlighting to the user. The standard
             Ejscript view controls intelligently use these error messages to highlight errors in input
-            forms.</p><img src="../images/webtour-validate.png" class="screen" alt="" />
+            forms.</p><img src="../images/webtour-validate.png" class="screen" alt="">
             <p>Ejscript will also automatically verify and convert model data to ensure it is of the appropriate data
             type and will escape data to prevent SQL insertion exploits.</p>
             <h3>Validation Methods</h3>
@@ -488,24 +475,21 @@ public function validate() {
 }
 </pre>
             <p>To set an error that is not associated with any specific field, supply the empty string as the field
-            argument.</p><!-- Not documented
-                hasMany etc.
-                Transactions
-                Locking
-                magic column names
-            -->
+            argument.</p>
 
     </div>
     <div class="terms ui basic center aligned segment">
-        <p>&copy; Embedthis Software, 2003-2015. All rights reserved.</p>
+        <p>&copy; Embedthis Software. All rights reserved.</p>
     </div>
 
-    <script src="../lib/jquery/jquery.min.js"></script>
-    <script src="../lib/semantic-ui/semantic.js"></script>
-    <script src="../scripts/sidebar.js"></script>
+    <script src="/lib/jquery/jquery.min.js"></script>
+    <script src="/lib/jquery/pak.min.js"></script>
+    <script src="/lib/semantic-ui/semantic.min.js"></script>
+    <script src="/scripts/sidebar.min.js"></script>
      
 
     
 
-</body>
-</html>
+
+
+

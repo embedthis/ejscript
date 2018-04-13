@@ -2,20 +2,19 @@
 <html lang="en">
 <head>
     <title>Modules</title>
-    <!-- Copyright Embedthis Software. All Rights Reserved. -->
+    
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <meta name="description" content="Modules" />
-    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
-        rel='stylesheet' type='text/css'>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta name="description" content="Ejscript JavaScript language">
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
     
-    <link href="../images/favicon.ico" rel="shortcut icon" />
-    <link href="../lib/semantic-ui/semantic.css" rel="stylesheet" type="text/css" />
-    <link href="../css/all.css" rel="stylesheet" type="text/css" />
-    <link href="../css/api.css" rel="stylesheet" type="text/css" />
+    <link href="../images/favicon.ico" rel="shortcut icon">
+    <link href="/lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/api.min.css" rel="stylesheet" type="text/css">
     
 
 </head>
@@ -193,7 +192,7 @@
             module or from an explicit namespace declaration. Even though all names have namespace qualifiers, standard
             ECMAScript code will run unaltered because Ejscript uses sensible defaults for namespace qualifiers if they
             are not provided.</p><a id="moduleDirective"></a>
-            <h2 >Module Directive</h2>
+            <h2>Module Directive</h2>
             <p>The module directive groups and qualifies a set of declarations with a unique namespace qualifier so
             that they will not collide with other names.</p>
             <pre class="ui code segment">
@@ -225,7 +224,7 @@ module acme.rockets {
             <p>However, if you want the compiler and Ejscript loader to automatically locate modules, you need to
             observe the <a href="#search">module search strategy</a> conventions when you install your module into a
             <a href="#repository">repository</a>.</p><a id="usingModules"></a>
-            <h2 >Using Modules</h2>
+            <h2>Using Modules</h2>
             <p>To use a access a module and use it in your code, you need to add a <b>require</b> directive to your
             code.</p>
             <pre class="ui code segment">
@@ -359,15 +358,17 @@ var openToAll
 
     </div>
     <div class="terms ui basic center aligned segment">
-        <p>&copy; Embedthis Software, 2003-2015. All rights reserved.</p>
+        <p>&copy; Embedthis Software. All rights reserved.</p>
     </div>
 
-    <script src="../lib/jquery/jquery.min.js"></script>
-    <script src="../lib/semantic-ui/semantic.js"></script>
-    <script src="../scripts/sidebar.js"></script>
+    <script src="/lib/jquery/jquery.min.js"></script>
+    <script src="/lib/jquery/pak.min.js"></script>
+    <script src="/lib/semantic-ui/semantic.min.js"></script>
+    <script src="/scripts/sidebar.min.js"></script>
      
 
     
 
-</body>
-</html>
+
+
+

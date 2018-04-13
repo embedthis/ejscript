@@ -2,20 +2,19 @@
 <html lang="en">
 <head>
     <title>Views</title>
-    <!-- Copyright Embedthis Software. All Rights Reserved. -->
+    
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <meta name="description" content="Views" />
-    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
-        rel='stylesheet' type='text/css'>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta name="description" content="Ejscript JavaScript language">
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
     
-    <link href="../images/favicon.ico" rel="shortcut icon" />
-    <link href="../lib/semantic-ui/semantic.css" rel="stylesheet" type="text/css" />
-    <link href="../css/all.css" rel="stylesheet" type="text/css" />
-    <link href="../css/api.css" rel="stylesheet" type="text/css" />
+    <link href="../images/favicon.ico" rel="shortcut icon">
+    <link href="/lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/api.min.css" rel="stylesheet" type="text/css">
     
 
 </head>
@@ -179,13 +178,12 @@
             with a layout page to create composite pages that resemble what the user will actually see. The composite
             pages are rendered by <a href="controllers.html">Controllers</a> after they have finished processing the
             requested <a href="controllers.html#actions">Action</a>. The view pages are processed by Ejscript, the code
-            is run and a final HTML page sent to the client. <img src="../images/webComposite.jpg" alt="" /></p>
+            is run and a final HTML page sent to the client. <img src="../images/webComposite.jpg" alt=""></p>
             <p>JavaScript code embedded in your web pages enables dynamic data to be inserted at runtime into what
             would otherwise be static web pages. Ejscript provides a set of directives to make it easy to refer to
-            single JavaScript variables, expressions or code blocks in your web pages. A suite of <a href=
-            "controls.html">Ajax View Controls</a> provides high level components such as tables, charts, tabs, and
+            single JavaScript variables, expressions or code blocks in your web pages. A suite of <a href="controls.html">Ajax View Controls</a> provides high level components such as tables, charts, tabs, and
             forms that are Ajax-enabled for a seamless dynamically updating user experience.</p>
-            <h2 >Layouts &mdash; Creating a Consistent Look and Feel</h2>
+            <h2>Layouts &mdash; Creating a Consistent Look and Feel</h2>
             <p>A web application typically consists of many web pages that share a common look and feel. Usable
             applications have a consistent structure, menus and appearance so the user can easily navigate that
             application. However, designing and maintaining that consistent look and feel is frequently quite
@@ -251,9 +249,8 @@
             <p>The combining of layout and contents pages occurs at development time, as does the compilation of the
             composite page into byte code. At run-time, all that remains to be done is actually execute the byte code
             and substitute dynamic data into the page. This results in the fastest run-time execution because the
-            layout processing and page compilation occur only once and at development time.</p><img src=
-            "../images/webView.jpg" alt="" /> <a id="dir"></a>
-            <h2 >Directory Structure</h2>
+            layout processing and page compilation occur only once and at development time.</p><img src="../images/webView.jpg" alt=""> <a id="dir"></a>
+            <h2>Directory Structure</h2>
             <p>Ejscript follows the <a href="http://en.wikipedia.org/wiki/Convention_over_Configuration">Convention
             over Configuration</a> design paradigm where developers only need to specify the unusual parts of their
             application. This is exemplified by an expected directory structure for views and layouts.</p>
@@ -276,7 +273,7 @@ mvc generate appName
             <p>After creating the application, you should place all content views for a controller under the
             "views/ControllerName" directory. The "ControllerName" directories should by convention begin with an upper
             case letter. The "views" and "layouts" directories are lower case. <a id="static"></a></p>
-            <h2 >Static Web Content</h2>
+            <h2>Static Web Content</h2>
             <p>Static web page content such as images, CSS pages and other similar content should be placed under the
             <b>web</b> directory. While this content can be served by the Ejscript handler, it should ideally and
             optimally be processed directly by the web server. The Ejscript module for Apache and Appweb will enable
@@ -302,7 +299,7 @@ mvc generate appName
 &lt;/body&gt;
 &lt;/html&gt;
 </pre><a id="dynamic"></a>
-            <h2 >Dynamic Content</h2>
+            <h2>Dynamic Content</h2>
             <p>One of the primary reasons for views is to make it easier to create web pages with dynamic data.</p>
             <p>Ejscript provides a set of directives to easily embed JavaScript code in your web page.</p>
             <p>The following directives are provided:</p>
@@ -379,10 +376,10 @@ mvc generate appName
             properties and methods available to use in the various embedded Ejscript directives. Of particular
             relevance are the classes in the ejs.web namespace which include the Application, Controller, Host,
             Request, Response, Session and View classes.</p><a id="form"></a>
-            <h2 >Accessing Form Data</h2>
+            <h2>Accessing Form Data</h2>
             <p>HTTP Form data is marshalled by Ejscript into the <b>params</b> object which is accessible in views and
             controllers. Each HTML input element posted by the client will become a property of <b>params</b> and can
-            be accessed by embedded script code.</p><img src="../images/form.png" class="bare-screen" alt="" />
+            be accessed by embedded script code.</p><img src="../images/form.png" class="bare-screen" alt="">
             <p>This form was generated by the view code below:</p>
             <pre class="ui code segment">
 &lt;form method="POST" action="&#64;&#64;request.uri"&gt;
@@ -416,11 +413,11 @@ mvc generate appName
             action routines to read a database record and store the record in a controller property. The view can then
             simply access the database data by referencing that property.</p>
             <p>For more details, see <a href="models.html">Database Models</a>.</p><a id="sessions"></a>
-            <h2 >Session Data</h2>
+            <h2>Session Data</h2>
             <p>Data can be persistently stored between HTTP requests in the <b>sessions</b> object. Data stored to the
             sessions object is serialized, so you cannot store object references. However, the session object is ideal
             to store a request cookie or session key.</p><a id="themes"></a>
-            <h2 >Themes and CSS</h2>
+            <h2>Themes and CSS</h2>
             <p>Well structured web applications divide HTML data and presentation style into two separate documents.
             Namely: HTML pages and cascading style sheets. In this way, a style sheet can be reused and shared by all
             pages.</p>
@@ -431,7 +428,7 @@ mvc generate appName
             <p>Ejscript supports this organization by providing a providing a directory for theme style sheet. The
             <b>mvc</b> application will also generate a default theme style sheet for scaffolds and
             views.</p><a id="compilation"></a>
-            <h2 >Compilation</h2>
+            <h2>Compilation</h2>
             <p>When developing, Ejscript will automatically detect changes made to the applications code and will
             intelligently recompile the necessary portions of the application. You can manually force a recompilation
             via the <b>mvc</b> command.</p>
@@ -439,22 +436,15 @@ mvc generate appName
 mvc compile
 </pre>
             <p>See the <a href="generator.html">Application Generator</a> documentation for full details about compiling
-            views and applications.</p><!--
-            <h2 >Common Tasks</h2>
-                <h3>Managing Links</h3>
-                <h3>Writing Data</h3>
-                <h3>Redirecting</h3>
-                <h3>Setting the HTTP Resposne Code</h3>
-                <h3>Adding a HTTP Header</h3>
-        -->
+            views and applications.</p>
             <a id="debugging"></a>
-            <h2 >Debugging</h2>
+            <h2>Debugging</h2>
             <p>You can inject debugging code into your views to trace data to the browser or to the console.</p>
             <p>The <b>print</b> method will print its arguments to the console or web server log file. The <b>dump</b>
             method will serialize objects and then send to the console or log.</p>
             <p>To send trace to the browser, use the <b>write</b> method to write data back to the browser. The
             <b>d()</b> method will serialize and dump objects to the browser.</p><a id="viewClass"></a>
-            <h2 >View Class</h2>
+            <h2>View Class</h2>
             <p>The View class has a large set of utility methods to assist you in creating your web views. See the
             <a href="../ref/api/ejscript/index.html">Ejscript Library</a> for details. Some of the important methods
             are:</p>
@@ -567,15 +557,17 @@ mvc compile
 
     </div>
     <div class="terms ui basic center aligned segment">
-        <p>&copy; Embedthis Software, 2003-2015. All rights reserved.</p>
+        <p>&copy; Embedthis Software. All rights reserved.</p>
     </div>
 
-    <script src="../lib/jquery/jquery.min.js"></script>
-    <script src="../lib/semantic-ui/semantic.js"></script>
-    <script src="../scripts/sidebar.js"></script>
+    <script src="/lib/jquery/jquery.min.js"></script>
+    <script src="/lib/jquery/pak.min.js"></script>
+    <script src="/lib/semantic-ui/semantic.min.js"></script>
+    <script src="/scripts/sidebar.min.js"></script>
      
 
     
 
-</body>
-</html>
+
+
+

@@ -2,20 +2,19 @@
 <html lang="en">
 <head>
     <title>Controls</title>
-    <!-- Copyright Embedthis Software. All Rights Reserved. -->
+    
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <meta name="description" content="Controls" />
-    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700'
-        rel='stylesheet' type='text/css'>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta name="description" content="Ejscript JavaScript language">
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
     
-    <link href="../images/favicon.ico" rel="shortcut icon" />
-    <link href="../lib/semantic-ui/semantic.css" rel="stylesheet" type="text/css" />
-    <link href="../css/all.css" rel="stylesheet" type="text/css" />
-    <link href="../css/api.css" rel="stylesheet" type="text/css" />
+    <link href="../images/favicon.ico" rel="shortcut icon">
+    <link href="/lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/api.min.css" rel="stylesheet" type="text/css">
     
 
 </head>
@@ -176,10 +175,8 @@
 
             <h1>Ajax View Controls</h1>
             <p>Web applications split their processing between the server and the client. Increasingly, more processing
-            is being done at the client to give a better user experience. <a href=
-            "http://en.wikipedia.org/wiki/Ajax_(programming)">Ajax</a> programming has risen as one of the more popular
-            means of achieving responsive client user interfaces and a wide variety of <a href=
-            "http://en.wikipedia.org/wiki/Ajax_framework">Ajax Frameworks</a> have been developed.</p>
+            is being done at the client to give a better user experience. <a href="http://en.wikipedia.org/wiki/Ajax_(programming)">Ajax</a> programming has risen as one of the more popular
+            means of achieving responsive client user interfaces and a wide variety of <a href="http://en.wikipedia.org/wiki/Ajax_framework">Ajax Frameworks</a> have been developed.</p>
             <p>Ajax translates as "Asynchronous JavaScript and XML", but what it typically means is doing background
             HTTP requests to get data and update the user interface without doing a complete browser refresh. This
             gives a more immediate and natural feel to a web application. Ejscript supports Ajax and Ajax frameworks
@@ -187,10 +184,9 @@
 
             <h2>ViewConnector Interface</h2>
             <p>The ViewConnector interface defines methods for common user interface controls such as: button and
-            checkbox, but it also provides high level controls such as chart and table. Application <a href=
-            "views.html">Views</a> can use these methods to render UI components with very little code or effort.</p>
+            checkbox, but it also provides high level controls such as chart and table. Application <a href="views.html">Views</a> can use these methods to render UI components with very little code or effort.</p>
             <p>However the ViewConnector is just an interface. It contains no implementation. The actual implementation
-            is provided by the Ajax Framework libraries.</p><img src="../images/viewConnector.jpg" alt="" />
+            is provided by the Ajax Framework libraries.</p><img src="../images/viewConnector.jpg" alt="">
 
             <a id="libraries"></a>
             <h3>Ajax Libraries</h3>
@@ -221,10 +217,7 @@
         connector: "google",
         width: "80%",
 }) %&gt;
-</pre><!-- TODO more on charts and tables
-               <h2 >Table Control</h2>
-               <h2 >Chart Control</h2>
-           -->
+</pre>
             <a id="viewConnector"></a>
             <h2>ViewConnector Methods</h2>
             <p>The ViewConnector interface defines the following methods:</p>
@@ -333,15 +326,17 @@
 
     </div>
     <div class="terms ui basic center aligned segment">
-        <p>&copy; Embedthis Software, 2003-2015. All rights reserved.</p>
+        <p>&copy; Embedthis Software. All rights reserved.</p>
     </div>
 
-    <script src="../lib/jquery/jquery.min.js"></script>
-    <script src="../lib/semantic-ui/semantic.js"></script>
-    <script src="../scripts/sidebar.js"></script>
+    <script src="/lib/jquery/jquery.min.js"></script>
+    <script src="/lib/jquery/pak.min.js"></script>
+    <script src="/lib/semantic-ui/semantic.min.js"></script>
+    <script src="/scripts/sidebar.min.js"></script>
      
 
     
 
-</body>
-</html>
+
+
+
