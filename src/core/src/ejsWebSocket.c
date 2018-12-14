@@ -63,6 +63,7 @@ static EjsWebSocket *wsConstructor(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj 
         ejsThrowMemoryError(ejs);
         return 0;
     }
+    ws->conn->limits->requestTimeout = HTTP_UNLIMITED;
     httpSetAsync(ws->conn, 1);
     httpPrepClientConn(ws->conn, 0);
     httpSetConnNotifier(ws->conn, webSocketNotify);
