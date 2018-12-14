@@ -8,7 +8,7 @@
 #include    "ejs.h"
 
 /*********************************** Methods **********************************/
-/*  
+/*
     Get the application command line arguments
     static function get args(): Array
  */
@@ -25,17 +25,17 @@ static EjsArray *app_args(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     Get the current working directory
     function get dir(): Path
  */
 static EjsPath *app_dir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return ejsCreatePathFromAsc(ejs, mprGetCurrentPath(ejs));
+    return ejsCreatePathFromAsc(ejs, mprGetCurrentPath());
 }
 
 
-/*  
+/*
     Set the current working directory
     function chdir(value: String|Path): void
  */
@@ -70,7 +70,7 @@ static EjsObj *app_chdir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     return 0;
 }
 
-/*  
+/*
     Get the directory containing the application's executable file.
     static function get exeDir(): Path
  */
@@ -80,7 +80,7 @@ static EjsPath *app_exeDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     Get the application's executable filename.
     static function get exePath(): Path
  */
@@ -90,7 +90,7 @@ static EjsPath *app_exePath(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     Exit the application
     static function exit(status: Number, how: String = "immediate"): void
     TODO - status is not implemented
@@ -138,7 +138,7 @@ static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 
 #if ES_App_env
-/*  
+/*
     Get all environment vars
     function get env(): Object
  */
@@ -162,7 +162,7 @@ static EjsAny *app_env(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 #endif
 
 
-/*  
+/*
     Get an environment var
     function getenv(key: String): String
  */
@@ -191,7 +191,7 @@ static EjsNumber *app_gid(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     Put an environment var
     function putenv(key: String, value: String): void
  */
@@ -206,7 +206,7 @@ static EjsObj *app_putenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     Get the ejs module search path. Does not actually read the environment.
     function get search(): Array
  */
@@ -216,7 +216,7 @@ static EjsArray *app_search(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     Set the ejs module search path. Does not actually update the environment.
     function set search(path: Array): Void
  */
@@ -227,7 +227,7 @@ static EjsObj *app_set_search(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     Get a default search path. NOTE: this does not modify ejs->search.
     function get createSearch(searchPaths: String): Array
  */
@@ -249,7 +249,7 @@ static EjsNumber *app_pid(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     static function run(timeout: Number = -1, oneEvent: Boolean = false): Boolean
  */
 static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
@@ -271,7 +271,7 @@ static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     remaining = timeout;
     dispatcherMark = mprGetEventMark(ejs->dispatcher);
     do {
-        rc = mprWaitForEvent(ejs->dispatcher, remaining, dispatcherMark); 
+        rc = mprWaitForEvent(ejs->dispatcher, remaining, dispatcherMark);
         remaining = mprGetRemainingTicks(mark, timeout);
         dispatcherMark = mprGetEventMark(ejs->dispatcher);
     } while (!ejs->exception && !oneEvent && !ejs->exiting && remaining > 0 && !mprIsStopping());
@@ -279,7 +279,7 @@ static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     Pause the application. This services events while asleep.
     static function sleep(delay: Number = -1): void
     TODO - sleep currently throws if an exception is generated in an event callback (worker).
@@ -299,7 +299,7 @@ static EjsObj *app_sleep(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     remaining = timeout;
     dispatcherMark = mprGetEventMark(ejs->dispatcher);
     do {
-        mprWaitForEvent(ejs->dispatcher, remaining, dispatcherMark); 
+        mprWaitForEvent(ejs->dispatcher, remaining, dispatcherMark);
         remaining = mprGetRemainingTicks(mark, timeout);
         dispatcherMark = mprGetEventMark(ejs->dispatcher);
     } while (!ejs->exiting && remaining > 0 && !mprIsStopping());
@@ -307,7 +307,7 @@ static EjsObj *app_sleep(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     static function get uid(): Number
  */
 static EjsNumber *app_uid(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
@@ -320,7 +320,7 @@ static EjsNumber *app_uid(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     static function getpass(prompt: String): String
  */
 static EjsString *app_getpass(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
@@ -368,7 +368,7 @@ PUBLIC void ejsConfigureAppType(Ejs *ejs)
     Copyright (c) Embedthis Software. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the Embedthis Open Source license or you may acquire a 
+    You may use the Embedthis Open Source license or you may acquire a
     commercial license from Embedthis Software. You agree to be fully bound
     by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details and other copyrights.

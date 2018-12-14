@@ -1,6 +1,6 @@
 /*
     main.c - Simple main program to load and run a module
-  
+
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
@@ -34,12 +34,12 @@ int main(int argc, char **argv)
         return 255;
     }
     if ((ejs = ejsCreateVM(0, 0, 0)) == 0) {
-        mprDestroy(0);
+        mprDestroy();
         return MPR_ERR_MEMORY;
     }
     mprAddRoot(ejs);
     if (ejsLoadModules(ejs, 0, 0) < 0) {
-        mprDestroy(0);
+        mprDestroy();
         return MPR_ERR_CANT_READ;
     }
     ejsDefineGlobalFunction(ejs, ejsCreateString(ejs, "hello", -1), hello);
@@ -47,10 +47,10 @@ int main(int argc, char **argv)
 
     if (ejsLoadScriptFile(ejs, argv[1], NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) < 0) {
         ejsReportError(ejs, "Error in program");
-        mprDestroy(0);
+        mprDestroy();
         return MPR_ERR;
     }
-    mprDestroy(MPR_EXIT_DEFAULT);
+    mprDestroy();
     return 0;
 }
 
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
     Copyright (c) Embedthis Software. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the Embedthis Open Source license or you may acquire a 
+    You may use the Embedthis Open Source license or you may acquire a
     commercial license from Embedthis Software. You agree to be fully bound
     by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details and other copyrights.

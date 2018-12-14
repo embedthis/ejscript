@@ -22,19 +22,19 @@ static void setupConnTrace(HttpConn *conn);
 static void stateChangeNotifier(HttpConn *conn, int event, int arg);
 
 /************************************ Code ************************************/
-/*  
+/*
     function get address(): String
  */
 static EjsString *hs_address(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     if (sp->ip) {
         return ejsCreateStringFromAsc(ejs, sp->ip);
-    } 
+    }
     return ESV(null);
 }
 
 
-/*  
+/*
     function accept(): Request
  */
 static EjsRequest *hs_accept(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -59,7 +59,7 @@ static EjsRequest *hs_accept(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **arg
 }
 
 
-/*  
+/*
     function get async(): Boolean
  */
 static EjsObj *hs_async(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -68,7 +68,7 @@ static EjsObj *hs_async(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function set async(enable: Boolean): Void
  */
 static EjsObj *hs_set_async(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -99,7 +99,7 @@ static EjsPath *hs_hostedHome(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **ar
 }
 
 
-/*  
+/*
     function close(): Void
  */
 static EjsObj *hs_close(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -113,7 +113,7 @@ static EjsObj *hs_close(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function get limits(): Object
  */
 static EjsObj *hs_limits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -130,7 +130,7 @@ static EjsObj *hs_limits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function setLimits(limits: Object): Void
  */
 static EjsObj *hs_setLimits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -190,7 +190,7 @@ static EjsVoid *hs_set_hosted(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **ar
 }
 
 
-/*  
+/*
     function listen(endpoint): Void
 
     An endpoint can be either a "port" or "ip:port", or null. If hosted, this call does little -- just add to the
@@ -210,7 +210,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         if (loc != ESV(null)) {
             address = ejsToString(ejs, loc);
             //  TODO should permit https://IP:PORT
-            mprParseSocketAddress(address->value, &sp->ip, &sp->port, NULL, 0);
+            mprParseSocketAddress(address->value, (cchar**) &sp->ip, &sp->port, NULL, 0);
         } else {
             address = 0;
         }
@@ -291,7 +291,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function get name(): String
  */
 static EjsString *hs_name(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -303,7 +303,7 @@ static EjsString *hs_name(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function set name(hostname: String): Void
  */
 static EjsObj *hs_set_name(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -319,7 +319,7 @@ static EjsObj *hs_set_name(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function off(name: [String|Array], observer: Function): Void
  */
 static EjsObj *hs_off(Ejs *ejs, EjsHttpServer *sp, int argc, EjsAny **argv)
@@ -329,7 +329,7 @@ static EjsObj *hs_off(Ejs *ejs, EjsHttpServer *sp, int argc, EjsAny **argv)
 }
 
 
-/*  
+/*
     function on(name: [String|Array], observer: Function): HttpServer
  */
 static EjsHttpServer *hs_on(Ejs *ejs, EjsHttpServer *sp, int argc, EjsAny **argv)
@@ -340,7 +340,7 @@ static EjsHttpServer *hs_on(Ejs *ejs, EjsHttpServer *sp, int argc, EjsAny **argv
 }
 
 
-/*  
+/*
     function get port(): Number
  */
 static EjsNumber *hs_port(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -349,7 +349,7 @@ static EjsNumber *hs_port(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function run(): Void
  */
 static EjsVoid *hs_run(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -359,7 +359,7 @@ static EjsVoid *hs_run(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     if (!sp->hosted) {
         dispatcherMark = mprGetEventMark(ejs->dispatcher);
         while (!ejs->exiting && !mprIsStopping()) {
-            mprWaitForEvent(ejs->dispatcher, MPR_MAX_TIMEOUT, dispatcherMark); 
+            mprWaitForEvent(ejs->dispatcher, MPR_MAX_TIMEOUT, dispatcherMark);
             dispatcherMark = mprGetEventMark(ejs->dispatcher);
         }
     }
@@ -367,7 +367,7 @@ static EjsVoid *hs_run(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function secure(keyFile: Path, certFile: Path!, protocols: Array? = null, ciphers: Array? = null): Void
  */
 static EjsObj *hs_secure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -427,7 +427,7 @@ static EjsObj *hs_secure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function setPipeline(incoming: Array, outgoing: Array, connector: String): Void
  */
 static EjsObj *hs_setPipeline(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -444,7 +444,7 @@ static EjsObj *hs_setPipeline(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **ar
 }
 
 
-/*  
+/*
     function trace(options): Void
  */
 static EjsObj *hs_trace(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -454,7 +454,7 @@ static EjsObj *hs_trace(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function get software(headers: Object = null): Void
  */
 static EjsString *hs_software(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -463,7 +463,7 @@ static EjsString *hs_software(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **ar
 }
 
 
-/*  
+/*
     function verifyClients(caCertPath: Path, caCertFile: Path): Void
  */
 static EjsObj *hs_verifyClients(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -479,7 +479,7 @@ static void receiveRequest(EjsRequest *req, MprEvent *event)
     EjsAny          *argv[1];
     EjsFunction     *onrequest;
     HttpConn        *conn;
-    
+
     conn = req->conn;
     ejs = req->ejs;
     assert(ejs);
@@ -493,7 +493,7 @@ static void receiveRequest(EjsRequest *req, MprEvent *event)
     ejsRunFunction(ejs, onrequest, req->server, 1, argv);
     if (conn->state == HTTP_STATE_BEGIN) {
         conn->ejs = 0;
-        httpUsePrimary(conn);        
+        httpUsePrimary(conn);
     }
     httpEnableConnEvents(conn);
 }
@@ -537,7 +537,7 @@ static EjsVoid *hs_passRequest(Ejs *ejs, EjsHttpServer *server, int argc, EjsAny
 
 //  TODO rethink this. This should really go into the HttpHost object
 
-static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp) 
+static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
 {
     EjsString       *vs;
     HttpHost        *host;
@@ -589,7 +589,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
 
 
 /*
-    Notification callback. This routine is called from the Http pipeline on connection state changes. 
+    Notification callback. This routine is called from the Http pipeline on connection state changes.
  */
 static void stateChangeNotifier(HttpConn *conn, int event, int arg)
 {
@@ -623,7 +623,7 @@ static void stateChangeNotifier(HttpConn *conn, int event, int arg)
         /*  IO event notification for the request.  */
         if (req && req->emitter) {
             ejsSendEvent(ejs, req->emitter, "readable", NULL, req);
-        } 
+        }
         break;
 
     case HTTP_EVENT_WRITABLE:
@@ -714,23 +714,23 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
 
 #if FUTURE
     if (sp->pipe) {
-        def = ejsRunFunction(ejs, sp->createPipeline, 
-        if ((vp = ejsGetPropertyByName(ejs, def, ejsName(&name, "", "handler"))) != 0) { 
+        def = ejsRunFunction(ejs, sp->createPipeline,
+        if ((vp = ejsGetPropertyByName(ejs, def, ejsName(&name, "", "handler"))) != 0) {
             handler = ejsToMulti(ejs, vp);
         }
-        if ((incoming = ejsGetPropertyByName(ejs, def, ejsName(&name, "", "incoming"))) != 0) { 
+        if ((incoming = ejsGetPropertyByName(ejs, def, ejsName(&name, "", "incoming"))) != 0) {
             count = ejsGetProperty(ejs, incoming)
             for (i = 0; i < count; i++) {
-                mprAddItem(ilist, 
+                mprAddItem(ilist,
             }
         }
-        if ((outgoing = ejsGetPropertyByName(ejs, def, ejsName(&name, "", "outgoing"))) != 0) { 
+        if ((outgoing = ejsGetPropertyByName(ejs, def, ejsName(&name, "", "outgoing"))) != 0) {
             count = ejsGetProperty(ejs, incoming)
         }
-        if ((connector = ejsGetPropertyByName(ejs, def, ejsName(&name, "", "connector"))) != 0) { 
+        if ((connector = ejsGetPropertyByName(ejs, def, ejsName(&name, "", "connector"))) != 0) {
             connector = ejsToMulti(ejs, vp);
         }
-        httpSetPipeline(conn, ejsToMulti(ejs, Handler), ejsToMulti(ejs, connector), 
+        httpSetPipeline(conn, ejsToMulti(ejs, Handler), ejsToMulti(ejs, connector),
     }
 #endif
     return req;
@@ -757,7 +757,7 @@ static void startEjsHandler(HttpQueue *q)
     if ((sp = httpGetEndpointContext(endpoint)) == 0) {
         lp = conn->sock->listenSock;
         if ((sp = lookupServer(conn->ejs, lp->ip, lp->port)) == 0) {
-            httpError(conn, HTTP_CODE_INTERNAL_SERVER_ERROR, 
+            httpError(conn, HTTP_CODE_INTERNAL_SERVER_ERROR,
                     "No HttpServer configured to serve for request from %s:%d", lp->ip, lp->port);
             return;
         }
@@ -793,7 +793,7 @@ static void startEjsHandler(HttpQueue *q)
 static void readyEjsHandler(HttpQueue *q)
 {
     HttpConn        *conn;
-    
+
     conn = q->conn;
     if (conn->readq->count > 0) {
         HTTP_NOTIFY(conn, HTTP_EVENT_READABLE, 0);
@@ -801,7 +801,7 @@ static void readyEjsHandler(HttpQueue *q)
 }
 
 
-/* 
+/*
     Create the http pipeline handler
  */
 HttpStage *ejsAddWebHandler(Http *http, MprModule *module)
@@ -823,7 +823,7 @@ HttpStage *ejsAddWebHandler(Http *http, MprModule *module)
 }
 
 
-/*  
+/*
     Mark the object properties for the garbage collector
  */
 static void manageHttpServer(EjsHttpServer *sp, int flags)
@@ -845,7 +845,7 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
         mprMark(sp->limits);
         mprMark(sp->outgoingStages);
         mprMark(sp->incomingStages);
-        
+
     } else {
         if (sp->ejs && sp->ejs->httpServers) {
             mprRemoveItem(sp->ejs->httpServers, sp);
@@ -926,7 +926,7 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    if ((type = ejsFinalizeScriptType(ejs, N("ejs.web", "HttpServer"), sizeof(EjsHttpServer), manageHttpServer, 
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs.web", "HttpServer"), sizeof(EjsHttpServer), manageHttpServer,
             EJS_TYPE_POT | EJS_TYPE_DYNAMIC_INSTANCES)) == 0) {
         return;
     }
@@ -970,7 +970,7 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     Copyright (c) Embedthis Software. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the Embedthis Open Source license or you may acquire a 
+    You may use the Embedthis Open Source license or you may acquire a
     commercial license from Embedthis Software. You agree to be fully bound
     by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details and other copyrights.

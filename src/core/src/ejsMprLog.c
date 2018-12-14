@@ -72,7 +72,7 @@ static EjsBoolean *lf_fixed(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function set fixed(yes: Boolean)
  */
 static EjsVoid *lf_set_fixed(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
@@ -85,16 +85,16 @@ static EjsVoid *lf_set_fixed(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function get level(): Number
  */
 static EjsNumber *lf_level(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return ejsCreateNumber(ejs, mprGetLogLevel(ejs));
+    return ejsCreateNumber(ejs, mprGetLogLevel());
 }
 
 
-/*  
+/*
     function set level(value: Number): Void
  */
 static EjsObj *lf_set_level(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
@@ -104,7 +104,7 @@ static EjsObj *lf_set_level(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function redirect(location: String, level: Number = null): Void
  */
 static EjsFile *lf_redirect(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
@@ -146,7 +146,7 @@ PUBLIC void ejsConfigureMprLogType(Ejs *ejs)
     Copyright (c) Embedthis Software. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the Embedthis Open Source license or you may acquire a 
+    You may use the Embedthis Open Source license or you may acquire a
     commercial license from Embedthis Software. You agree to be fully bound
     by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details and other copyrights.

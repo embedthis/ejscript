@@ -30,7 +30,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     char    *argp, *searchPath, *path, *homeDir;
     int     nextArg, err, flags;
 
-    /*  
+    /*
         Initialize Multithreaded Portable Runtime (MPR)
      */
     mpr = mprCreate(argc, argv, 0);
@@ -38,7 +38,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     mprAddRoot(app);
     mprAddStandardSignals();
 
-    if (mprStart(mpr) < 0) {
+    if (mprStart() < 0) {
         mprLog("ejsrun", 0, "Cannot start mpr services");
         return EJS_ERR;
     }
@@ -74,7 +74,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
             }
 
         } else if (smatch(argp, "--name")) {
-            /* Just ignore. Used to tag commands with a unique command line */ 
+            /* Just ignore. Used to tag commands with a unique command line */
             nextArg++;
 
         } else if (smatch(argp, "--search") || smatch(argp, "--searchpath")) {
@@ -158,7 +158,7 @@ static void manageApp(App *app, int flags)
     Copyright (c) Embedthis Software. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the Embedthis Open Source license or you may acquire a 
+    You may use the Embedthis Open Source license or you may acquire a
     commercial license from Embedthis Software. You agree to be fully bound
     by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details and other copyrights.

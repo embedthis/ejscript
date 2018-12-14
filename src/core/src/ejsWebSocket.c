@@ -17,7 +17,7 @@ static bool waitForReadyState(EjsWebSocket *ws, int state, MprTicks timeout, int
 static void webSocketNotify(HttpConn *conn, int state, int notifyFlags);
 
 /************************************ Methods *********************************/
-/*  
+/*
     function WebSocket(uri: Uri, protocols = null, options)
 
     options = {
@@ -95,7 +95,7 @@ static EjsString *ws_binaryType(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **a
 }
 
 
-/*  
+/*
     function get bufferedAmount(): Number
 
     Returns amount of buffered send data
@@ -106,7 +106,7 @@ static EjsNumber *ws_bufferedAmount(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj
 }
 
 
-/*  
+/*
     function close(status: Number = 1000, reason: String? = ""): Void
  */
 static EjsObj *ws_close(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
@@ -122,7 +122,7 @@ static EjsObj *ws_close(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
             ejsThrowArgError(ejs, "Bad status");
             return 0;
         }
-        reason = (argc >= 1) ? ejsToMulti(ejs, argv[1]): 0; 
+        reason = (argc >= 1) ? ejsToMulti(ejs, argv[1]): 0;
         if (slen(reason) >= 124) {
             ejsThrowArgError(ejs, "Close reason is too long. Must be less than 124 bytes");
             return 0;
@@ -133,7 +133,7 @@ static EjsObj *ws_close(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function get extensions(): String
  */
 static EjsString *ws_extensions(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
@@ -152,7 +152,7 @@ static EjsObj *ws_off(Ejs *ejs, EjsWebSocket *ws, int argc, EjsAny **argv)
 }
 
 
-/*  
+/*
     function on(name, observer: function): Http
  */
 static EjsWebSocket *ws_on(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
@@ -170,7 +170,7 @@ static EjsWebSocket *ws_on(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
     if (conn->readq && conn->readq->count > 0) {
         onWebSocketEvent(ws, HTTP_EVENT_READABLE, 0, 0);
     }
-    if (!conn->tx->finalizedConnector && 
+    if (!conn->tx->finalizedConnector &&
             !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_FINALIZED &&
             conn->writeq->ioCount == 0) {
         onWebSocketEvent(ws, HTTP_EVENT_WRITABLE, 0, 0);
@@ -179,7 +179,7 @@ static EjsWebSocket *ws_on(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function get protocol(): String
  */
 static EjsString *ws_protocol(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
@@ -188,7 +188,7 @@ static EjsString *ws_protocol(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **arg
 }
 
 
-/*  
+/*
     function get readyState(): Number
  */
 static EjsNumber *ws_readyState(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
@@ -197,7 +197,7 @@ static EjsNumber *ws_readyState(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **a
 }
 
 
-/*  
+/*
     function send(...content): Number
  */
 static EjsNumber *ws_send(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
@@ -231,7 +231,7 @@ static EjsNumber *ws_send(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function sendBlock(content, options): Number
  */
 static EjsNumber *ws_sendBlock(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj **argv)
@@ -435,7 +435,7 @@ static void webSocketNotify(HttpConn *conn, int event, int arg)
             onWebSocketEvent(ws, HTTP_EVENT_APP_OPEN, 0, 0);
         }
         break;
-    
+
     case HTTP_EVENT_READABLE:
         packet = httpGetPacket(conn->readq);
         content = packet->content;
@@ -504,8 +504,8 @@ static bool waitForHttpState(EjsWebSocket *ws, int state, MprTicks timeout, int 
     success = count = 0;
     mark = mprGetTicks();
     remaining = timeout;
-    while (conn->state < state && count <= conn->retries && redirectCount < 16 && 
-           !conn->error && !ejs->exiting && !mprIsStopping(conn)) {
+    while (conn->state < state && count <= conn->retries && redirectCount < 16 &&
+           !conn->error && !ejs->exiting && !mprIsStopping()) {
         count++;
         if ((rc = httpWait(conn, HTTP_STATE_PARSED, remaining)) == 0) {
             if (httpNeedRetry(conn, &url)) {
@@ -514,7 +514,7 @@ static bool waitForHttpState(EjsWebSocket *ws, int state, MprTicks timeout, int 
                     uri = httpJoinUri(conn->tx->parsedUri, 1, &location);
                     ws->uri = httpUriToString(uri, HTTP_COMPLETE_URI);
                 }
-                count--; 
+                count--;
                 redirectCount++;
             } else if (httpWait(conn, state, remaining) == 0) {
                 success = 1;
@@ -602,7 +602,7 @@ static bool waitForReadyState(EjsWebSocket *ws, int state, MprTicks timeout, int
     remaining = timeout;
     dispatcherMark = mprGetEventMark(conn->dispatcher);
     while (conn->state < HTTP_STATE_CONTENT || rx->webSocket->state < state) {
-        if (conn->error || ejs->exiting || mprIsStopping(conn) || remaining < 0) {
+        if (conn->error || ejs->exiting || mprIsStopping() || remaining < 0) {
             break;
         }
         mprWaitForEvent(conn->dispatcher, min(inactivityTimeout, remaining), dispatcherMark);
@@ -619,7 +619,7 @@ static bool waitForReadyState(EjsWebSocket *ws, int state, MprTicks timeout, int
 
 /*********************************** Factory **********************************/
 
-/*  
+/*
     Manage the object properties for the garbage collector
  */
 static void manageWebSocket(EjsWebSocket *ws, int flags)
@@ -648,7 +648,7 @@ PUBLIC void ejsConfigureWebSocketType(Ejs *ejs)
     EjsType     *type;
     EjsPot      *prototype;
 
-    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "WebSocket"), sizeof(EjsWebSocket), 
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "WebSocket"), sizeof(EjsWebSocket),
             manageWebSocket, EJS_TYPE_POT)) == 0) {
         return;
     }
@@ -675,7 +675,7 @@ PUBLIC void ejsConfigureWebSocketType(Ejs *ejs)
     Copyright (c) Embedthis Software. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the Embedthis Open Source license or you may acquire a 
+    You may use the Embedthis Open Source license or you may acquire a
     commercial license from Embedthis Software. You agree to be fully bound
     by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details and other copyrights.

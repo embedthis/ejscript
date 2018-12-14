@@ -101,7 +101,7 @@ int ejsAddNativeModule(Ejs *ejs, cchar *name, EjsNativeCallback callback, int ch
 }
 
 
-EjsNativeModule *ejsLookupNativeModule(Ejs *ejs, cchar *name) 
+EjsNativeModule *ejsLookupNativeModule(Ejs *ejs, cchar *name)
 {
     return mprLookupKey(ejs->service->nativeModules, name);
 }
@@ -172,7 +172,7 @@ void ejsRemoveModuleFromAll(EjsModule *mp)
 static void manageConstants(EjsConstants *cp, int flags)
 {
     int     i;
-    
+
     if (flags & MPR_MANAGE_MARK) {
         mprMark(cp->pool);
         mprMark(cp->table);
@@ -349,7 +349,7 @@ int ejsAddDebugLine(Ejs *ejs, EjsDebug **debugp, int offset, wchar *source)
     int         numLines;
 
     assert(debugp);
-    
+
     if (*debugp == 0) {
         *debugp = ejsCreateDebug(ejs, 0);
     }
@@ -784,7 +784,7 @@ int ejsModuleReadInt(Ejs *ejs, EjsModule *mp)
 
 
 /*
-    Read an encoded number. Numbers are variable-length and little-endian encoded in 7 bits with the 0x80 
+    Read an encoded number. Numbers are variable-length and little-endian encoded in 7 bits with the 0x80
     bit of each byte being a continuation bit.
  */
 int64 ejsModuleReadNum(Ejs *ejs, EjsModule *mp)
@@ -804,7 +804,7 @@ int64 ejsModuleReadNum(Ejs *ejs, EjsModule *mp)
     sign = 1 - ((c & 0x1) << 1);
     t = (c >> 1) & 0x3f;
     shift = 6;
-    
+
     while (c & 0x80) {
         if ((c = mprGetFileChar(mp->file)) < 0) {
             mp->hasError = 1;
@@ -837,7 +837,7 @@ EjsName ejsModuleReadName(Ejs *ejs, EjsModule *mp)
 #if UNUSED && KEEP
 int ejsSwapInt16(Ejs *ejs, int word)
 {
-    if (mprGetEndian(ejs) == ME_LITTLE_ENDIAN) {
+    if (mprGetEndian() == ME_LITTLE_ENDIAN) {
         return word;
     }
     return ((word & 0xFF) << 8) | ((word & 0xFF00) >> 8);
@@ -847,7 +847,7 @@ int ejsSwapInt16(Ejs *ejs, int word)
 
 int ejsSwapInt32(Ejs *ejs, int word)
 {
-    if (mprGetEndian(ejs) == ME_LITTLE_ENDIAN) {
+    if (mprGetEndian() == ME_LITTLE_ENDIAN) {
         return word;
     }
     return ((word & 0xFF000000) >> 24) | ((word & 0xFF0000) >> 8) | ((word & 0xFF00) << 8) | ((word & 0xFF) << 24);
@@ -858,7 +858,7 @@ int64 ejsSwapInt64(Ejs *ejs, int64 a)
 {
     int64   low, high;
 
-    if (mprGetEndian(ejs) == ME_LITTLE_ENDIAN) {
+    if (mprGetEndian() == ME_LITTLE_ENDIAN) {
         return a;
     }
     low = a & 0xFFFFFFFF;
@@ -874,8 +874,8 @@ double ejsSwapDouble(Ejs *ejs, double a)
         int64   i;
         double  d;
     } alias;
-    
-    if (mprGetEndian(ejs) == ME_LITTLE_ENDIAN) {
+
+    if (mprGetEndian() == ME_LITTLE_ENDIAN) {
         return a;
     }
     alias.d = a;
@@ -888,7 +888,7 @@ double ejsSwapDouble(Ejs *ejs, double a)
 {
     int64   low, high;
 
-    if (mprGetEndian(ejs) == ME_LITTLE_ENDIAN) {
+    if (mprGetEndian() == ME_LITTLE_ENDIAN) {
         return a;
     }
     low = ((int64) a) & 0xFFFFFFFF;
@@ -904,7 +904,7 @@ double ejsSwapDouble(Ejs *ejs, double a)
     Copyright (c) Embedthis Software. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the Embedthis Open Source license or you may acquire a 
+    You may use the Embedthis Open Source license or you may acquire a
     commercial license from Embedthis Software. You agree to be fully bound
     by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details and other copyrights.

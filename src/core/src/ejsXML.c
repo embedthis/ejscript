@@ -69,7 +69,7 @@ PUBLIC EjsAny *cloneXml(Ejs *ejs, EjsXML *xml, bool deep)
             }
         }
     }
-    if (mprHasMemError(ejs)) {
+    if (mprHasMemError()) {
         return 0;
     }
     return root;
@@ -739,7 +739,7 @@ static EjsObj *saveXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
     }
     file = mprOpenFile(filename,  O_CREAT | O_TRUNC | O_WRONLY | O_TEXT, 0664);
     if (file == 0) {
-        ejsThrowIOError(ejs, "Cannot open: %s, %d", filename, mprGetOsError(ejs));
+        ejsThrowIOError(ejs, "Cannot open: %s, %d", filename, mprGetOsError());
         return 0;
     }
     len = mprGetBufLength(buf);
@@ -1046,7 +1046,7 @@ PUBLIC void ejsCreateXMLType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateCoreType(ejs, N("ejs", "XML"), sizeof(EjsXML), S_XML, ES_XML_NUM_CLASS_PROP, ejsManageXML, 
+    type = ejsCreateCoreType(ejs, N("ejs", "XML"), sizeof(EjsXML), S_XML, ES_XML_NUM_CLASS_PROP, ejsManageXML,
         EJS_TYPE_OBJ);
 
     /*
@@ -1101,7 +1101,7 @@ PUBLIC void ejsConfigureXMLType(Ejs *ejs)
     Copyright (c) Embedthis Software. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the Embedthis Open Source license or you may acquire a 
+    You may use the Embedthis Open Source license or you may acquire a
     commercial license from Embedthis Software. You agree to be fully bound
     by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details and other copyrights.

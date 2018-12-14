@@ -20,7 +20,7 @@ static int socketListenEvent(EjsSocket *listen, MprEvent *event);
 static EjsSocket *sock_Socket(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     sp->ejs = ejs;
-    sp->sock = mprCreateSocket(NULL);
+    sp->sock = mprCreateSocket();
     if (sp->sock == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
@@ -111,7 +111,7 @@ static EjsObj *sock_connect(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
             address = ejsToString(ejs, address);
         }
         sp->address = ejsToMulti(ejs, address);
-        mprParseSocketAddress(sp->address, &sp->address, &sp->port, NULL, 0);
+        mprParseSocketAddress(sp->address, (cchar**) &sp->address, &sp->port, NULL, 0);
         if (sp->address == 0) {
             sp->address = sclone("127.0.0.1");
         }
@@ -166,7 +166,7 @@ static EjsObj *sock_listen(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
         }
         sp->address = ejsToMulti(ejs, address);
         //  TODO - should listen to secure and permit https://IP:PORT
-        mprParseSocketAddress(sp->address, &sp->address, &sp->port, NULL, 80);
+        mprParseSocketAddress(sp->address, (cchar**) &sp->address, &sp->port, NULL, 80);
     }
     if (!sp->sock) {
         ejsThrowStateError(ejs, "Socket is closed");
@@ -311,7 +311,7 @@ static EjsNumber *sock_write(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
         ejsResetByteArray(ejs, sp->data);
     } else {
         sp->data = ejsCreateByteArray(ejs, -1);
-    } 
+    }
     if (ejsWriteToByteArray(ejs, sp->data, 1, &argv[0]) < 0) {
         return 0;
     }
@@ -333,7 +333,7 @@ static void enableSocketEvents(EjsSocket *sp, int (*proc)(EjsSocket *sp, MprEven
 
     ejs = sp->ejs;
     assert(sp->sock);
-    
+
     if (sp->sock->handler == 0) {
         mprAddSocketHandler(sp->sock, sp->mask, ejs->dispatcher, (MprEventProc) proc, sp, 0);
     } else {
@@ -368,7 +368,7 @@ static int socketIOEvent(EjsSocket *sp, MprEvent *event)
                 ejsSendEvent(ejs, sp->emitter, "readable", NULL, sp);
             }
             sp->mask |= MPR_READABLE;
-        } 
+        }
         if (event->mask & MPR_WRITABLE) {
             writeSocketData(ejs, sp);
         }
@@ -381,7 +381,7 @@ static int socketIOEvent(EjsSocket *sp, MprEvent *event)
 
 
 /*********************************** Factory **********************************/
-/*  
+/*
    Manage the object properties for the garbage collector
  */
 static void manageSocket(EjsSocket *sp, int flags)
@@ -440,7 +440,7 @@ PUBLIC void ejsConfigureSocketType(Ejs *ejs)
     Copyright (c) Embedthis Software. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the Embedthis Open Source license or you may acquire a 
+    You may use the Embedthis Open Source license or you may acquire a
     commercial license from Embedthis Software. You agree to be fully bound
     by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details and other copyrights.

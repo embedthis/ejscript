@@ -411,7 +411,7 @@ static EjsXML *createElement(Ejs *ejs, EjsXML *list, EjsXML *targetObject, EjsNa
                 j = mprLookupItem(targetObject->elements, last);
             } else {
                 j = -1;
-            } 
+            }
             if (j < 0) {
                 j = mprGetListLength(targetObject->elements) - 1;
             }
@@ -587,7 +587,7 @@ static EjsXML *shallowCopy(Ejs *ejs, EjsXML *xml)
             }
         }
     }
-    if (mprHasMemError(ejs)) {
+    if (mprHasMemError()) {
         return 0;
     }
     return root;
@@ -595,9 +595,9 @@ static EjsXML *shallowCopy(Ejs *ejs, EjsXML *xml)
 
 
 /*
-    Resolve empty XML list objects to an actual XML object. This is used by SetPropertyByName to find the actual 
-    object to update. This method resolves the value of empty XMLLists. If the XMLList is not empty, the list will 
-    be returned. If list is empty, this method attempts to create an element based on the list targetObject and 
+    Resolve empty XML list objects to an actual XML object. This is used by SetPropertyByName to find the actual
+    object to update. This method resolves the value of empty XMLLists. If the XMLList is not empty, the list will
+    be returned. If list is empty, this method attempts to create an element based on the list targetObject and
     targetProperty.
  */
 static EjsXML *resolve(Ejs *ejs, EjsXML *xml)
@@ -796,7 +796,7 @@ PUBLIC void ejsCreateXMLListType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejsCreateCoreType(ejs, N("ejs", "XMLList"), sizeof(EjsXML), S_XMLList, ES_XMLList_NUM_CLASS_PROP, 
+    type = ejsCreateCoreType(ejs, N("ejs", "XMLList"), sizeof(EjsXML), S_XMLList, ES_XMLList_NUM_CLASS_PROP,
         ejsManageXML, EJS_TYPE_OBJ);
 
     /*
@@ -845,7 +845,7 @@ PUBLIC void ejsConfigureXMLListType(Ejs *ejs)
     Copyright (c) Embedthis Software. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the Embedthis Open Source license or you may acquire a 
+    You may use the Embedthis Open Source license or you may acquire a
     commercial license from Embedthis Software. You agree to be fully bound
     by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details and other copyrights.

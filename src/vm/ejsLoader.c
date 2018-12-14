@@ -53,7 +53,7 @@ static void setDoc(Ejs *ejs, EjsModule *mp, cchar *tag, void *vp, int slotNum);
     @param minVersion Minimum acceptable version (inclusive). Set to zero for unversioned.
     @param maxVersion Maximum acceptable version (inclusive). Set to -1 for all versions.
     @param flags Reserved. Must be set to zero.
-    @param modulesArg List of modules loaded. Will only return a list if successful and doing a top level load. 
+    @param modulesArg List of modules loaded. Will only return a list if successful and doing a top level load.
         When ejsLoadModule is called to load dependant modules, not list of modules will be returned.
         The final list of modules aggregates all modules loaded including those from dependant modules.
     @return Returns the last loaded module.
@@ -97,7 +97,7 @@ static int initializeModule(Ejs *ejs, EjsModule *mp)
             nativeModule = ejsLookupNativeModule(ejs, ejsToMulti(ejs, mp->name));
             if (nativeModule == NULL) {
                 if (ejs->exception == 0) {
-                    ejsThrowIOError(ejs, "Cannot load or initialize the native module %@ in file \"%s\"", 
+                    ejsThrowIOError(ejs, "Cannot load or initialize the native module %@ in file \"%s\"",
                         mp->name, mp->path);
                 }
                 return MPR_ERR_CANT_INITIALIZE;
@@ -113,9 +113,9 @@ static int initializeModule(Ejs *ejs, EjsModule *mp)
         if (nativeModule && (nativeModule->callback)(ejs) < 0) {
             return MPR_ERR_CANT_INITIALIZE;
         }
-        if (ejs->hasError || EST(Error) == 0 || mprHasMemError(ejs)) {
+        if (ejs->hasError || EST(Error) == 0 || mprHasMemError()) {
             if (!ejs->exception) {
-                ejsThrowIOError(ejs, "Initialization error for %s (%d, %d)", mp->path, ejs->hasError, mprHasMemError(ejs));
+                ejsThrowIOError(ejs, "Initialization error for %s (%d, %d)", mp->path, ejs->hasError, mprHasMemError());
             }
             return MPR_ERR_CANT_INITIALIZE;
         }
@@ -131,7 +131,7 @@ static int initializeModule(Ejs *ejs, EjsModule *mp)
 }
 
 
-static cchar *search(Ejs *ejs, cchar *filename, int minVersion, int maxVersion) 
+static cchar *search(Ejs *ejs, cchar *filename, int minVersion, int maxVersion)
 {
     cchar       *path;
 
@@ -144,8 +144,8 @@ static cchar *search(Ejs *ejs, cchar *filename, int minVersion, int maxVersion)
         } else if (minVersion == 0 && maxVersion == EJS_MAX_VERSION) {
             ejsThrowReferenceError(ejs,  "Cannot find module file \"%s\"", filename);
         } else {
-            ejsThrowReferenceError(ejs,  "Cannot find module file \"%s\", min version %d.%d.%d, max version %d.%d.%d", 
-                filename, 
+            ejsThrowReferenceError(ejs,  "Cannot find module file \"%s\", min version %d.%d.%d, max version %d.%d.%d",
+                filename,
                 EJS_MAJOR(minVersion), EJS_MINOR(minVersion), EJS_PATCH(minVersion),
                 EJS_MAJOR(maxVersion), EJS_MINOR(maxVersion), EJS_PATCH(maxVersion));
         }
@@ -365,7 +365,7 @@ static int loadDependencySection(Ejs *ejs, EjsModule *mp)
     checksum  = ejsModuleReadInt(ejs, mp);
     minVersion = ejsModuleReadInt(ejs, mp);
     maxVersion = ejsModuleReadInt(ejs, mp);
-    
+
     if (mp->hasError) {
         return MPR_ERR_CANT_READ;
     }
@@ -460,7 +460,7 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
 
     fixup = 0;
     ifixup = 0;
-    
+
     qname = ejsModuleReadName(ejs, mp);
     attributes = ejsModuleReadInt(ejs, mp);
     slotNum = ejsModuleReadInt(ejs, mp);
@@ -503,7 +503,7 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
             Currently errors on Namespace
          */
         if (attributes & EJS_TYPE_HAS_CONSTRUCTOR && !type->hasConstructor) {
-            mprLog("ejs vm", 0, "WARNING: module indicates a constructor required but none exists for \"%@\"", 
+            mprLog("ejs vm", 0, "WARNING: module indicates a constructor required but none exists for \"%@\"",
                 type->qname.name);
         }
 #endif
@@ -513,7 +513,7 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
         }
 #endif
     }
-        
+
     /*
         Read implemented interfaces. Add to type->implements. Create fixup record if the interface type is not yet known.
      */
@@ -608,7 +608,7 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
     numDefault = ejsModuleReadInt(ejs, mp);
     numExceptions = ejsModuleReadInt(ejs, mp);
     codeLen = ejsModuleReadInt(ejs, mp);
-    
+
     if (mp->hasError) {
         return MPR_ERR_CANT_READ;
     }
@@ -651,11 +651,11 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
         }
         if (attributes & EJS_FUN_CONSTRUCTOR) {
             fun = (EjsFunction*) block;
-            ejsInitFunction(ejs, fun, qname.name, code, codeLen, numArgs, numDefault, numExceptions, returnType, 
+            ejsInitFunction(ejs, fun, qname.name, code, codeLen, numArgs, numDefault, numExceptions, returnType,
                 attributes, mp, NULL, strict);
             assert(fun->isConstructor);
         } else {
-            fun = ejsCreateFunction(ejs, qname.name, code, codeLen, numArgs, numDefault, numExceptions, returnType, 
+            fun = ejsCreateFunction(ejs, qname.name, code, codeLen, numArgs, numDefault, numExceptions, returnType,
                 attributes, mp, mp->scope, strict);
         }
         if (fun == 0) {
@@ -731,7 +731,7 @@ static int loadDebugSection(Ejs *ejs, EjsModule *mp)
     fun = mp->currentMethod;
     assert(fun);
 
-    /* 
+    /*
         Note the location in the file and skip over
      */
     assert(!fun->isNativeProc);
@@ -772,7 +772,7 @@ static int loadExceptionSection(Ejs *ejs, EjsModule *mp)
         if (mp->hasError) {
             return MPR_ERR_CANT_READ;
         }
-        ex = ejsAddException(ejs, fun, tryStart, tryEnd, catchType, handlerStart, handlerEnd, numBlocks, 
+        ex = ejsAddException(ejs, fun, tryStart, tryEnd, catchType, handlerStart, handlerEnd, numBlocks,
             numStack, flags, i);
         if (fixup) {
             assert(catchType == 0);
@@ -806,7 +806,7 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
     ejsModuleReadType(ejs, mp, &type, &fixup, &propTypeName, 0);
 
     /*
-        This is used for namespace values. It is required when compiling (only) and thus module init code is not 
+        This is used for namespace values. It is required when compiling (only) and thus module init code is not
         being run -- but we still need the value of the namespace if a script wants to declare a variable qualified
         by the namespace that is defined in the module.
      */
@@ -1018,7 +1018,7 @@ static int fixupTypes(Ejs *ejs, MprList *list)
         }
         if (type == 0) {
             if (fixup->typeName.name) {
-                ejsThrowReferenceError(ejs, "Cannot fixup forward type reference for \"%@\". Fixup kind %d", 
+                ejsThrowReferenceError(ejs, "Cannot fixup forward type reference for \"%@\". Fixup kind %d",
                     fixup->typeName.name, fixup->kind);
             }
             return MPR_ERR_CANT_LOAD;
@@ -1393,9 +1393,9 @@ static EjsLoadState *createLoadState(Ejs *ejs, int flags)
 
 
 /*
-    Read a type reference. Types are stored as either global property slot numbers or as strings (token offsets into the 
-    constant pool). The lowest bit is set if the reference is a string. The type and name arguments are optional and may 
-    be set to null. Return the 0 if successful, otherwise return < 0. If the type could not be resolved, allocate a 
+    Read a type reference. Types are stored as either global property slot numbers or as strings (token offsets into the
+    constant pool). The lowest bit is set if the reference is a string. The type and name arguments are optional and may
+    be set to null. Return the 0 if successful, otherwise return < 0. If the type could not be resolved, allocate a
     fixup record and return in *fixup. The caller should then call addFixup.
  */
 int ejsModuleReadType(Ejs *ejs, EjsModule *mp, EjsType **typeRef, EjsTypeFixup **fixup, EjsName *typeName, int *slotNum)
@@ -1610,7 +1610,7 @@ static void popScope(EjsModule *mp, int keepScope)
     Copyright (c) Embedthis Software. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the Embedthis Open Source license or you may acquire a 
+    You may use the Embedthis Open Source license or you may acquire a
     commercial license from Embedthis Software. You agree to be fully bound
     by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details and other copyrights.

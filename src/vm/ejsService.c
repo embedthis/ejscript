@@ -100,7 +100,7 @@ Ejs *ejsCreateVM(int argc, cchar **argv, int flags)
     ejs->argv = argv;
     ejs->name = sfmt("ejs-%d", sp->seqno++);
     ejs->dispatcher = mprCreateDispatcher(ejs->name, 0);
-    ejs->mutex = mprCreateLock(ejs);
+    ejs->mutex = mprCreateLock();
     ejs->dontExit = sp->dontExit;
     ejs->flags |= (flags & (EJS_FLAG_NO_INIT | EJS_FLAG_DOC | EJS_FLAG_HOSTED));
     ejs->hosted = (flags & EJS_FLAG_HOSTED) ? 1 : 0;
@@ -126,7 +126,7 @@ Ejs *ejsCreateVM(int argc, cchar **argv, int flags)
     initSearchPath(ejs, 0);
     mprAddItem(sp->vmlist, ejs);
 
-    if (ejs->hasError || mprHasMemError(ejs)) {
+    if (ejs->hasError || mprHasMemError()) {
         ejsDestroyVM(ejs);
         mprLog("ejs vm", 0, "Cannot create VM");
         return 0;
@@ -187,7 +187,7 @@ int ejsLoadModules(Ejs *ejs, cchar *search, MprList *require)
         return MPR_ERR_CANT_READ;
     }
     unlock(sp);
-    if (mprHasMemError(ejs)) {
+    if (mprHasMemError()) {
         mprLog("ejs vm", 0, "Memory allocation error during initialization");
         ejsDestroyVM(ejs);
         return MPR_ERR_MEMORY;
@@ -201,7 +201,7 @@ void ejsDestroyVM(Ejs *ejs)
 {
     EjsService  *sp;
     EjsState    *state;
-    EjsModule   *mp;   
+    EjsModule   *mp;
     MprList     *modules;
     int         next;
 
@@ -315,7 +315,7 @@ static void managePool(EjsPool *pool, int flags)
 /*
     Create a pool for virtual machines
  */
-EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScript, cchar *startScriptPath, 
+EjsPool *ejsCreatePool(int poolMax, cchar *templateScript, cchar *startScript, cchar *startScriptPath,
         cchar *home, cchar *documents)
 {
     EjsPool     *pool;
@@ -416,7 +416,7 @@ Ejs *ejsAllocPoolVM(EjsPool *pool, int flags)
         pool->count++;
     }
     pool->lastActivity = mprGetTime();
-    mprDebug("ejs", 5, "Alloc VM active %d, allocated %d, max %d", pool->count - mprGetListLength(pool->list), 
+    mprDebug("ejs", 5, "Alloc VM active %d, allocated %d, max %d", pool->count - mprGetListLength(pool->list),
         pool->count, pool->max);
 
 #if UNUSED && OPT
@@ -496,7 +496,7 @@ void ejsApplyBlockHelpers(EjsService *sp, EjsType *type)
 
 static void defineSharedTypes(Ejs *ejs)
 {
-    /*  
+    /*
         Create the essential bootstrap types. Order matters.
      */
     ejsCreateBootstrapTypes(ejs);
@@ -584,21 +584,21 @@ static void initStack(Ejs *ejs)
         This will allocate memory virtually for systems with virutal memory. Otherwise, it will just use malloc.
      */
     state = ejs->state;
-    state->stackSize = MPR_PAGE_ALIGN(ME_MAX_EJS_STACK, mprGetPageSize(ejs));
+    state->stackSize = MPR_PAGE_ALIGN(ME_MAX_EJS_STACK, mprGetPageSize());
     if ((state->stackBase = mprVirtAlloc(state->stackSize, MPR_MAP_READ | MPR_MAP_WRITE)) != 0) {
         state->stack = &state->stackBase[-1];
     }
 }
 
 
-/*  
+/*
     This will configure all the core types by defining native methods and properties
     This runs after ejs.mod is loaded. NOTE: this does not happen when compiling ejs.mod (ejs->empty).
  */
 static int configureEjs(Ejs *ejs)
 {
     if (!ejs->service->immutableInitialized) {
-        /* 
+        /*
             Configure shared immutable types
          */
         ejsConfigureIteratorType(ejs);
@@ -654,7 +654,7 @@ static int configureEjs(Ejs *ejs)
 }
 
 
-/*  
+/*
     Preload required modules. If require is NULL, then load the standard set.
     Otherwise only load those specified in require.
  */
@@ -793,7 +793,7 @@ int ejsRunProgram(Ejs *ejs, cchar *className, cchar *methodName)
 }
 
 
-/*  
+/*
     Run the specified method in the named class. If methodName is null, default to "main".
     If className is null, search for the first class containing the method name.
  */
@@ -815,7 +815,7 @@ static int runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName)
         methodName = "main";
     }
     methodName = sclone(methodName);
-    /*  
+    /*
         Search for the first class with the given name
      */
     if (className == 0 || *className == '\0') {
@@ -946,7 +946,7 @@ int ejsSendEvent(Ejs *ejs, EjsObj *emitter, cchar *name, EjsAny *thisObj, EjsAny
 }
 
 
-/*  
+/*
     Search for the named method in all types.
  */
 static int searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn)
@@ -964,7 +964,7 @@ static int searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn)
     global = ejs->global;
     globalCount = ejsGetLength(ejs, global);
 
-    /*  
+    /*
         Search for the named method in all types
      */
     for (slotNum = 0; slotNum < globalCount; slotNum++) {
@@ -1022,7 +1022,7 @@ void ejsUnblockGC(Ejs *ejs, int paused)
 
 
 #if FUTURE && KEEP
-/*  
+/*
     Notifier callback function. Invoked by mprAlloc on allocation errors. This will prevent the allocation error
     bubbling up to the global memory failure handler.
  */
@@ -1042,7 +1042,7 @@ static void allocNotifier(int flags, uint size)
         if (ejs->memoryCallback) {
             argv[0] = ejsCreateNumber(ejs, size);
             argv[1] = ejsCreateNumber(ejs, total);
-            thisObj = ejs->memoryCallback->boundThis ? ejs->memoryCallback->boundThis : ejs->global; 
+            thisObj = ejs->memoryCallback->boundThis ? ejs->memoryCallback->boundThis : ejs->global;
             ejsRunFunction(ejs, ejs->memoryCallback, thisObj, 2, argv);
         }
         if (!ejs->exception) {
@@ -1068,8 +1068,8 @@ void ejsReportError(Ejs *ejs, char *fmt, ...)
     char        *msg, *buf;
 
     va_start(arg, fmt);
-    
-    /*  
+
+    /*
         Compiler error format is:
         program:SEVERITY:line:errorCode:message
         Where program is either "ejsc" or "ejs"
@@ -1135,7 +1135,7 @@ int ejsAddImmutable(Ejs *ejs, int slotNum, EjsName qname, EjsAny *value)
 
     assert((ejsIsType(ejs, value) && !((EjsType*) value)->mutable) ||
               (!ejsIsType(ejs, value) && !TYPE(value)->mutableInstances));
-    
+
     if ((foundSlot = ejsLookupProperty(ejs, ejs->service->immutable, qname)) >= 0) {
         return foundSlot;
     }
@@ -1174,7 +1174,7 @@ void ejsDisableExit(Ejs *ejs)
     Copyright (c) Embedthis Software. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the Embedthis Open Source license or you may acquire a 
+    You may use the Embedthis Open Source license or you may acquire a
     commercial license from Embedthis Software. You agree to be fully bound
     by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details and other copyrights.

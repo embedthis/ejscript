@@ -15,7 +15,7 @@ static EjsNumber *getAllocatedMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj
 {
     MprMemStats    *mem;
 
-    mem = mprGetMemStats(ejs);
+    mem = mprGetMemStats();
     return ejsCreateNumber(ejs, (MprNumber) mem->bytesAllocated);
 }
 
@@ -45,7 +45,7 @@ static EjsNumber *getMaxMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **arg
 {
     MprMemStats    *mem;
 
-    mem = mprGetMemStats(ejs);
+    mem = mprGetMemStats();
     return ejsCreateNumber(ejs, (MprNumber) mem->maxHeap);
 }
 
@@ -72,7 +72,7 @@ static EjsNumber *getRedline(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     MprMemStats    *mem;
 
-    mem = mprGetMemStats(ejs);
+    mem = mprGetMemStats();
     return ejsCreateNumber(ejs, (MprNumber) mem->warnHeap);
 }
 
@@ -103,7 +103,7 @@ static EjsNumber *getResident(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv
 {
     MprMemStats    *mem;
 
-    mem = mprGetMemStats(ejs);
+    mem = mprGetMemStats();
     return ejsCreateNumber(ejs, (MprNumber) mem->rss);
 }
 
@@ -115,7 +115,7 @@ static EjsNumber *getSystemRam(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **arg
 {
     MprMemStats    *mem;
 
-    mem = mprGetMemStats(ejs);
+    mem = mprGetMemStats();
     return ejsCreateNumber(ejs, (double) mem->ram);
 }
 
@@ -160,7 +160,7 @@ PUBLIC void ejsConfigureMemoryType(Ejs *ejs)
     Copyright (c) Embedthis Software. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the Embedthis Open Source license or you may acquire a 
+    You may use the Embedthis Open Source license or you may acquire a
     commercial license from Embedthis Software. You agree to be fully bound
     by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details and other copyrights.

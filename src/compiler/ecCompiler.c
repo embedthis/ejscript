@@ -60,7 +60,7 @@ PUBLIC EcCompiler *ecCreateCompiler(Ejs *ejs, int flags)
     return cp;
 }
 
-        
+
 static void manageCompiler(EcCompiler *cp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
@@ -93,7 +93,7 @@ PUBLIC int ecCompile(EcCompiler *cp, int argc, char **argv)
     ejs = cp->ejs;
     saveCompiling = ejs->compiling;
     ejs->compiling = 1;
-    
+
     paused = ejsBlockGC(ejs);
     rc = compileInner(cp, argc, argv);
     ejsUnblockGC(ejs, paused);
@@ -182,7 +182,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     block = ejsCreateBlock(ejs, 0);
     mprSetName(block, "Compiler");
     ejsPushBlock(ejs, block);
-    
+
     /*
         Process the internal representation and generate code
      */
@@ -335,17 +335,17 @@ PUBLIC int ejsEvalFile(cchar *path)
 
     mprCreate(0, 0, 0);
     if ((ejs = ejsCreateVM(0, 0, 0)) == 0) {
-        mprDestroy(0);
+        mprDestroy();
         return MPR_ERR_MEMORY;
     }
     mprAddRoot(ejs);
     if (ejsLoadModules(ejs, 0, 0) < 0) {
-        mprDestroy(0);
+        mprDestroy();
         return MPR_ERR_CANT_READ;
     }
     if (ejsLoadScriptFile(ejs, path, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) < 0) {
         ejsReportError(ejs, "Error in program");
-        mprDestroy(0);
+        mprDestroy();
         return MPR_ERR;
     }
     mprDestroy();
@@ -362,17 +362,17 @@ PUBLIC int ejsEvalScript(cchar *script)
 
     mprCreate(0, 0, 0);
     if ((ejs = ejsCreateVM(0, 0, 0)) == 0) {
-        mprDestroy(0);
+        mprDestroy();
         return MPR_ERR_MEMORY;
     }
     mprAddRoot(ejs);
     if (ejsLoadModules(ejs, 0, 0) < 0) {
-        mprDestroy(0);
+        mprDestroy();
         return MPR_ERR_CANT_READ;
     }
     if (ejsLoadScriptLiteral(ejs, ejsCreateStringFromAsc(ejs, script), NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) < 0) {
         ejsReportError(ejs, "Error in program");
-        mprDestroy(0);
+        mprDestroy();
         return MPR_ERR;
     }
     mprDestroy();
@@ -456,13 +456,13 @@ PUBLIC void ecErrorv(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fm
     cchar   *appName;
     char    *pointer, *errorMsg, *msg;
 
-    appName = mprGetAppName(cp);
+    appName = mprGetAppName();
     msg = sfmtv(fmt, args);
 
     if (loc) {
         if (loc->source) {
             pointer = makeHighlight(cp, loc->source, loc->column);
-            errorMsg = sfmt("%s: %s: %s: %d: %s\n  %w  \n  %s", appName, severity, loc->filename, 
+            errorMsg = sfmt("%s: %s: %s: %d: %s\n  %w  \n  %s", appName, severity, loc->filename,
                 loc->lineNumber, msg, loc->source, pointer);
         } else if (loc->lineNumber >= 0) {
             errorMsg = sfmt("%s: %s: %s: %d: %s", appName, severity, loc->filename, loc->lineNumber, msg);
@@ -488,7 +488,7 @@ PUBLIC void ecSetRequire(EcCompiler *cp, MprList *modules)
     Copyright (c) Embedthis Software. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the Embedthis Open Source license or you may acquire a 
+    You may use the Embedthis Open Source license or you may acquire a
     commercial license from Embedthis Software. You agree to be fully bound
     by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details and other copyrights.

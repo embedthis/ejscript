@@ -274,7 +274,7 @@ static EjsByteArray *ba_ByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj *
     }
     resizable = (argc == 2) ? ejsGetBoolean(ejs, argv[1]): 1;
     ap->growInc = (resizable) ? ME_MAX_BUFFER : 0;
-    ap->endian = mprGetEndian(ejs);
+    ap->endian = mprGetEndian();
     ap->resizable = 1;
     if (ejsGrowByteArray(ejs, ap, size) < 0) {
         return 0;
@@ -296,7 +296,7 @@ static EjsBoolean *ba_async(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 
 
 /**
-    Set the async mode 
+    Set the async mode
     function set async(enable: Boolean): Void
  */
 static EjsObj *ba_setAsync(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
@@ -434,7 +434,7 @@ static EjsObj *setEndian(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
         return 0;
     }
     ap->endian = endian;
-    ap->swap = (ap->endian != mprGetEndian(ejs));
+    ap->swap = (ap->endian != mprGetEndian());
     return 0;
 }
 
@@ -497,7 +497,7 @@ static EjsNumber *nextByteArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj
 }
 
 
-/*  
+/*
     Return an iterator to return the next array element value.
     iterator native function getValues(): Iterator
  */
@@ -507,7 +507,7 @@ static EjsIterator *ba_getValues(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     Flush the data in the byte array and reset the read and write position pointers
     function flush(ignored: Number): Void
  */
@@ -567,7 +567,7 @@ static EjsBoolean *ba_resizable(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **a
 
 /*
     Read data from the array into another byte array. Data is read from the current read $position pointer.
-    Data is written to the write position if offset is -1. Othwise at the given offset. If offset is < 0, the 
+    Data is written to the write position if offset is -1. Othwise at the given offset. If offset is < 0, the
     write position is updated.
     function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
  */
@@ -788,7 +788,7 @@ static EjsNumber *ba_readShort(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **ar
 
 
 /*
-    Read a UTF-8 string from the array. Read data from the read position up to the write position but not more 
+    Read a UTF-8 string from the array. Read data from the read position up to the write position but not more
     than count characters.
 
     function readString(count: Number = -1): String
@@ -1132,8 +1132,8 @@ PUBLIC ssize ejsGrowByteArray(Ejs *ejs, EjsByteArray *ap, ssize len)
 
 
 /*
-    Get more input sufficient to satisfy the rquired number of bytes. The required parameter specifies how many bytes 
-    must be read. Short fills are not permitted. Return the count of bytes available or 0 if the required number of 
+    Get more input sufficient to satisfy the rquired number of bytes. The required parameter specifies how many bytes
+    must be read. Short fills are not permitted. Return the count of bytes available or 0 if the required number of
     bytes can't be read. Return -ve on errors.
  */
 static ssize getInput(Ejs *ejs, EjsByteArray *ap, ssize required)
@@ -1361,7 +1361,7 @@ PUBLIC EjsByteArray *ejsCreateByteArray(Ejs *ejs, ssize size)
     ap->async = -1;
     ap->resizable = 1;
     ap->growInc = ME_MAX_BUFFER;
-    ap->endian = mprGetEndian(ejs);
+    ap->endian = mprGetEndian();
     if (ejsGrowByteArray(ejs, ap, size) < 0) {
         return 0;
     }
@@ -1385,7 +1385,7 @@ PUBLIC void ejsConfigureByteArrayType(Ejs *ejs)
     EjsHelpers  *helpers;
     EjsPot      *prototype;
 
-    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "ByteArray"), sizeof(EjsByteArray), manageByteArray, 
+    if ((type = ejsFinalizeScriptType(ejs, N("ejs", "ByteArray"), sizeof(EjsByteArray), manageByteArray,
             EJS_TYPE_OBJ | EJS_TYPE_NUMERIC_INDICIES | EJS_TYPE_VIRTUAL_SLOTS | EJS_TYPE_MUTABLE_INSTANCES)) == 0) {
         return;
     }
@@ -1398,7 +1398,7 @@ PUBLIC void ejsConfigureByteArrayType(Ejs *ejs)
     helpers->invokeOperator = (EjsInvokeOperatorHelper) invokeByteArrayOperator;
     helpers->lookupProperty = (EjsLookupPropertyHelper) lookupByteArrayProperty;
     helpers->setProperty = (EjsSetPropertyHelper) setByteArrayProperty;
-    
+
     prototype = type->prototype;
     ejsBindConstructor(ejs, type, ba_ByteArray);
     ejsBindMethod(ejs, prototype, ES_ByteArray_on, ba_on);
@@ -1444,7 +1444,7 @@ PUBLIC void ejsConfigureByteArrayType(Ejs *ejs)
     Copyright (c) Embedthis Software. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the Embedthis Open Source license or you may acquire a 
+    You may use the Embedthis Open Source license or you may acquire a
     commercial license from Embedthis Software. You agree to be fully bound
     by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details and other copyrights.

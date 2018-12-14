@@ -23,7 +23,7 @@ static bool     waitForState(EjsHttp *hp, int state, MprTicks timeout, int throw
 static ssize    writeHttpData(Ejs *ejs, EjsHttp *hp);
 
 /************************************ Methods *********************************/
-/*  
+/*
     function Http(uri: Uri = null)
  */
 static EjsHttp *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -49,7 +49,7 @@ static EjsHttp *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function get async(): Boolean
  */
 static EjsBoolean *http_async(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -58,7 +58,7 @@ static EjsBoolean *http_async(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function set async(enable: Boolean): Void
  */
 static EjsObj *http_set_async(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -75,7 +75,7 @@ static EjsObj *http_set_async(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
 
 #if ES_Http_available
-/*  
+/*
     function get available(): Number
     DEPRECATED 1.0.0B3 (11/09)
  */
@@ -108,7 +108,7 @@ static EjsString *http_ca(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function set setCertificate(value: String): Void
  */
 static EjsObj *http_set_ca(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -118,7 +118,7 @@ static EjsObj *http_set_ca(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function close(): Void
  */
 static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -138,7 +138,7 @@ static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function connect(method: String, url = null, data ...): Http
  */
 static EjsHttp *http_connect(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -160,7 +160,7 @@ static EjsString *http_certificate(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **arg
 }
 
 
-/*  
+/*
     function set setCertificate(value: String): Void
  */
 static EjsObj *http_set_certificate(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -170,7 +170,7 @@ static EjsObj *http_set_certificate(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **ar
 }
 
 
-/*  
+/*
     function get contentLength(): Number
  */
 static EjsNumber *http_contentLength(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -185,7 +185,7 @@ static EjsNumber *http_contentLength(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **a
 }
 
 
-/*  
+/*
     function get contentType(): String
  */
 static EjsString *http_contentType(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -194,7 +194,7 @@ static EjsString *http_contentType(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **arg
 }
 
 
-/*  
+/*
     function get date(): Date
  */
 static EjsDate *http_date(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -203,7 +203,7 @@ static EjsDate *http_date(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function finalize(): Void
  */
 static EjsObj *http_finalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -216,7 +216,7 @@ static EjsObj *http_finalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function get finalized(): Boolean
  */
 static EjsBoolean *http_finalized(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -228,7 +228,7 @@ static EjsBoolean *http_finalized(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv
 }
 
 
-/*  
+/*
     function flush(dir: Number = Stream.WRITE): Void
  */
 static EjsObj *http_flush(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -243,7 +243,7 @@ static EjsObj *http_flush(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function form(uri: String = null, formData: Object = null): Http
     Issue a POST method with form data
  */
@@ -254,7 +254,7 @@ static EjsHttp *http_form(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (argc == 2 && !ejsIs(ejs, argv[1], Null)) {
         /*
             Prep here to reset the state. The ensures the current headers will be preserved.
-            Users may have called setHeader to define custom headers. Users must call reset if they want to clear 
+            Users may have called setHeader to define custom headers. Users must call reset if they want to clear
             prior headers.
          */
         httpPrepClientConn(hp->conn, 1);
@@ -274,7 +274,7 @@ static EjsHttp *http_form(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function get followRedirects(): Boolean
  */
 static EjsBoolean *http_followRedirects(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -283,7 +283,7 @@ static EjsBoolean *http_followRedirects(Ejs *ejs, EjsHttp *hp, int argc, EjsObj 
 }
 
 
-/*  
+/*
     function set followRedirects(flag: Boolean): Void
  */
 static EjsObj *http_set_followRedirects(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -293,7 +293,7 @@ static EjsObj *http_set_followRedirects(Ejs *ejs, EjsHttp *hp, int argc, EjsObj 
 }
 
 
-/*  
+/*
     function get(uri: String = null, ...data): Http
     The spec allows GET methods to have body data, but is rarely, if ever, used.
  */
@@ -308,7 +308,7 @@ static EjsHttp *http_get(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     Return the (proposed) request headers
     function getRequestHeaders(): Object
  */
@@ -327,7 +327,7 @@ static EjsPot *http_getRequestHeaders(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **
 }
 
 
-/*  
+/*
     function head(uri: String = null): Http
  */
 static EjsHttp *http_head(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -336,7 +336,7 @@ static EjsHttp *http_head(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function header(key: String): String
  */
 static EjsString *http_header(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -359,7 +359,7 @@ static EjsString *http_header(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function get headers(): Object
  */
 static EjsPot *http_headers(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -403,7 +403,7 @@ static EjsObj *http_info(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function get isSecure(): Boolean
  */
 static EjsBoolean *http_isSecure(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -412,7 +412,7 @@ static EjsBoolean *http_isSecure(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function get key(): String
  */
 static EjsAny *http_key(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -424,7 +424,7 @@ static EjsAny *http_key(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function set key(keyFile: String): Void
  */
 static EjsObj *http_set_key(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -434,7 +434,7 @@ static EjsObj *http_set_key(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function get lastModified(): Date
  */
 static EjsDate *http_lastModified(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -456,7 +456,7 @@ static EjsObj *http_limits(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function get method(): String
  */
 static EjsString *http_method(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -465,7 +465,7 @@ static EjsString *http_method(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function set method(value: String): Void
  */
 static EjsObj *http_set_method(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -494,7 +494,7 @@ static EjsObj *http_off(Ejs *ejs, EjsHttp *hp, int argc, EjsAny **argv)
 }
 
 
-/*  
+/*
     function on(name, observer: function): Http
  */
 static EjsHttp *http_on(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -513,7 +513,7 @@ static EjsHttp *http_on(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         ejsSendEvent(ejs, hp->emitter, "readable", NULL, hp);
     }
     //  TODO - don't need to test finalizedConnector
-    if (!conn->tx->finalizedConnector && !conn->error && HTTP_STATE_CONNECTED <= conn->state && 
+    if (!conn->tx->finalizedConnector && !conn->error && HTTP_STATE_CONNECTED <= conn->state &&
             conn->state < HTTP_STATE_FINALIZED && conn->writeq->ioCount == 0) {
         httpNotify(conn, HTTP_EVENT_WRITABLE, 0);
     }
@@ -587,7 +587,7 @@ static EjsArray *http_providers(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 #endif
 
 
-/*  
+/*
     function put(uri: String = null, form object): Http
  */
 static EjsHttp *http_put(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -596,12 +596,12 @@ static EjsHttp *http_put(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
     Returns a count of bytes read. Non-blocking if a callback is defined. Otherwise, blocks.
 
     Offset: -1 then read to the buffer write position, >= 0 then read to that offset
-    count: -1 then read as much as the buffer will hold. If buffer is growable, read all content. If not growable, 
+    count: -1 then read as much as the buffer will hold. If buffer is growable, read all content. If not growable,
         read the buffer size. If count >= 0, then read that number of bytes.
  */
 static EjsNumber *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -652,7 +652,7 @@ static EjsNumber *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function readString(count: Number = -1): String
     Read count bytes (default all) of content as a string. This always starts at the first character of content.
  */
@@ -660,7 +660,7 @@ static EjsString *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv
 {
     EjsString   *result;
     ssize       count;
-    
+
     count = (argc == 1) ? ejsGetInt(ejs, argv[0]) : -1;
     if (!waitForState(hp, HTTP_STATE_CONTENT, -1, 1)) {
         return 0;
@@ -679,7 +679,7 @@ static EjsString *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv
 }
 
 
-/*  
+/*
     function reset(): Void
  */
 static EjsObj *http_reset(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -690,7 +690,7 @@ static EjsObj *http_reset(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function get response(): String
  */
 static EjsString *http_response(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -708,7 +708,7 @@ static EjsString *http_response(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function set response(data: String): Void
  */
 static EjsObj *http_set_response(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -718,7 +718,7 @@ static EjsObj *http_set_response(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function get retries(): Number
  */
 static EjsNumber *http_retries(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -727,7 +727,7 @@ static EjsNumber *http_retries(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function set retries(count: Number): Void
  */
 static EjsObj *http_set_retries(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -737,7 +737,7 @@ static EjsObj *http_set_retries(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function setCredentials(username: String?, password: String?, authType: String?): Void
  */
 static EjsObj *http_setCredentials(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -756,7 +756,7 @@ static EjsObj *http_setCredentials(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **arg
 }
 
 
-/*  
+/*
     function setHeader(key: String, value: String, overwrite: Boolean = true): Void
  */
 static EjsObj *http_setHeader(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -784,7 +784,7 @@ static EjsObj *http_setHeader(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function set limits(limits: Object): Void
  */
 static EjsObj *http_setLimits(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -837,7 +837,7 @@ PUBLIC int ejsSetupHttpTrace(Ejs *ejs, HttpTrace *trace, EjsObj *options)
 }
 
 
-/*  
+/*
     function trace(options): Void
  */
 static EjsObj *http_trace(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -847,7 +847,7 @@ static EjsObj *http_trace(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function get status(): Number
  */
 static EjsNumber *http_status(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -865,7 +865,7 @@ static EjsNumber *http_status(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function get statusMessage(): String
  */
 static EjsString *http_statusMessage(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -883,7 +883,7 @@ static EjsString *http_statusMessage(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **a
 }
 
 
-/*  
+/*
     function get uri(): Uri
  */
 static EjsUri *http_uri(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -892,7 +892,7 @@ static EjsUri *http_uri(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function set uri(newUri: Uri): Void
  */
 static EjsObj *http_set_uri(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -914,7 +914,7 @@ static EjsBoolean *http_verify(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-/*  
+/*
     function set verify(on: Boolean): Void
  */
 static EjsObj *http_set_verify(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -943,7 +943,7 @@ static EjsBoolean *http_verifyIssuer(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **a
 }
 
 
-/*  
+/*
     function set verifyIssuer(on: Boolean): Void
  */
 static EjsObj *http_set_verifyIssuer(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -959,7 +959,7 @@ static EjsObj *http_set_verifyIssuer(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **a
 }
 
 
-/*  
+/*
     Wait for a request to complete. Timeout is in msec. Timeout < 0 means use default inactivity and request timeouts.
     Timeout of zero means no timeout.
 
@@ -1140,10 +1140,10 @@ static void httpEventChange(HttpConn *conn, int event, int arg)
 }
 
 
-/*  
+/*
     Read the required number of bytes into the response content buffer. Count < 0 means transfer the entire content.
     Returns the number of bytes read. Returns null on EOF.
- */ 
+ */
 static ssize readHttpData(Ejs *ejs, EjsHttp *hp, ssize count)
 {
     MprBuf      *buf;
@@ -1175,7 +1175,7 @@ static ssize readHttpData(Ejs *ejs, EjsHttp *hp, ssize count)
 }
 
 
-/* 
+/*
     Write another block of data
  */
 static ssize writeHttpData(Ejs *ejs, EjsHttp *hp)
@@ -1205,7 +1205,7 @@ static ssize writeHttpData(Ejs *ejs, EjsHttp *hp)
 }
 
 
-/*  
+/*
     Respond to an IO event. This wraps the standard httpIOEvent() call.
  */
 static void httpEvent(HttpConn *conn, MprEvent *event)
@@ -1261,8 +1261,8 @@ static EjsString *getStringHeader(Ejs *ejs, EjsHttp *hp, cchar *key)
 }
 
 
-/*  
-    Prepare form data as a series of key-value pairs. Data is formatted according to www-url-encoded specs by 
+/*
+    Prepare form data as a series of key-value pairs. Data is formatted according to www-url-encoded specs by
     mprSetHttpFormData. Objects are flattened into a one level key/value pairs. Keys can have embedded "." separators.
     E.g.  name=value&address=77%20Park%20Lane
  */
@@ -1299,7 +1299,7 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, cchar *prefix, EjsObj *data)
             sep = (mprGetBufLength(hp->requestContent) > 0) ? "&" : "";
             if (prefix) {
                 newKey = sjoin(prefix, ".", key, NULL);
-                encodedKey = mprUriEncode(newKey, MPR_ENCODE_URI_COMPONENT); 
+                encodedKey = mprUriEncode(newKey, MPR_ENCODE_URI_COMPONENT);
             } else {
                 encodedKey = mprUriEncode(key, MPR_ENCODE_URI_COMPONENT);
             }
@@ -1311,8 +1311,8 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, cchar *prefix, EjsObj *data)
 }
 
 #if FUTURE && KEEP
-/*  
-    Prepare form data using json encoding. The objects are json encoded then URI encoded to be safe. 
+/*
+    Prepare form data using json encoding. The objects are json encoded then URI encoded to be safe.
  */
 static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
 {
@@ -1326,7 +1326,7 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
     jdata = ejsToJSON(ejs, data, NULL);
     if (prefix) {
         newKey = sjoin(prefix, ".", key, NULL);
-        encodedKey = mprUriEncode(newKey, MPR_ENCODE_URI_COMPONENT); 
+        encodedKey = mprUriEncode(newKey, MPR_ENCODE_URI_COMPONENT);
     } else {
         encodedKey = mprUriEncode(key, MPR_ENCODE_URI_COMPONENT);
     }
@@ -1344,7 +1344,7 @@ static bool expired(EjsHttp *hp)
     requestTimeout = conn->limits->requestTimeout ? conn->limits->requestTimeout : MAXINT;
     inactivityTimeout = conn->limits->inactivityTimeout ? conn->limits->inactivityTimeout : MAXINT;
 
-    /* 
+    /*
         Workaround for a GCC bug when comparing two 64bit numerics directly. Need a temporary.
      */
     diff = (conn->lastActivity + inactivityTimeout) - http->now;
@@ -1356,7 +1356,7 @@ static bool expired(EjsHttp *hp)
     if (diff < 0) {
         if (conn->rx) {
             if (inactivity) {
-                mprDebug("ejs http", 4, "Inactive request timed out %s, exceeded inactivity timeout %d", 
+                mprDebug("ejs http", 4, "Inactive request timed out %s, exceeded inactivity timeout %d",
                     conn->rx->uri, inactivityTimeout);
             } else {
                 mprDebug("ejs http", 4, "Request timed out %s, exceeded timeout %d", conn->rx->uri, requestTimeout);
@@ -1369,9 +1369,9 @@ static bool expired(EjsHttp *hp)
 #endif
 
 
-/*  
+/*
     Wait for the connection to acheive a requested state
-    Timeout is in msec. Timeout of zero means don't wait. Timeout of < 0 means use standard inactivity and 
+    Timeout is in msec. Timeout of zero means don't wait. Timeout of < 0 means use standard inactivity and
     duration timeouts.
  */
 static bool waitForState(EjsHttp *hp, int state, MprTicks timeout, int throw)
@@ -1403,8 +1403,8 @@ static bool waitForState(EjsHttp *hp, int state, MprTicks timeout, int throw)
     success = count = 0;
     mark = mprGetTicks();
     remaining = timeout;
-    while (conn->state < state && count <= conn->retries && redirectCount < 16 && !conn->error && 
-            !ejs->exiting && !mprIsStopping(conn)) {
+    while (conn->state < state && count <= conn->retries && redirectCount < 16 && !conn->error &&
+            !ejs->exiting && !mprIsStopping()) {
         count++;
         if ((rc = httpWait(conn, HTTP_STATE_PARSED, remaining)) == 0) {
             if (httpNeedRetry(conn, &url)) {
@@ -1417,7 +1417,7 @@ static bool waitForState(EjsHttp *hp, int state, MprTicks timeout, int throw)
                     uri = httpJoinUri(conn->tx->parsedUri, 1, &location);
                     hp->uri = httpUriToString(uri, HTTP_COMPLETE_URI);
                 }
-                count--; 
+                count--;
                 redirectCount++;
             } else if (httpWait(conn, state, remaining) == 0) {
                 success = 1;
@@ -1484,7 +1484,7 @@ static bool waitForState(EjsHttp *hp, int state, MprTicks timeout, int throw)
 }
 
 
-/*  
+/*
     Wait till the response headers have been received. Safe in sync and async mode. Async mode never blocks.
     Timeout < 0 means use default inactivity timeout. Timeout of zero means wait forever.
  */
@@ -1513,7 +1513,7 @@ static EjsNumber *limitToNumber(Ejs *ejs, uint64 n)
 /*
     Get limits:  obj[*] = limits
  */
-PUBLIC void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, bool server) 
+PUBLIC void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, bool server)
 {
     EjsNumber   *n;
 
@@ -1570,7 +1570,7 @@ static uint64 numberToLimit(Ejs *ejs, EjsObj *obj, cchar *field)
 }
 
 
-PUBLIC void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, bool server) 
+PUBLIC void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, bool server)
 {
     /*
         TODO - the Limit object should map the Http limits more closely
@@ -1639,7 +1639,7 @@ static void sendHttpErrorEvent(Ejs *ejs, EjsHttp *hp)
 
 /*********************************** Factory **********************************/
 
-/*  
+/*
     Manage the object properties for the garbage collector
  */
 static void manageHttp(EjsHttp *hp, int flags)
@@ -1745,7 +1745,7 @@ PUBLIC void ejsConfigureHttpType(Ejs *ejs)
     Copyright (c) Embedthis Software. All Rights Reserved.
 
     This software is distributed under commercial and open source licenses.
-    You may use the Embedthis Open Source license or you may acquire a 
+    You may use the Embedthis Open Source license or you may acquire a
     commercial license from Embedthis Software. You agree to be fully bound
     by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details and other copyrights.
