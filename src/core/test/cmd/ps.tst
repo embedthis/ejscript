@@ -12,8 +12,8 @@ if (!Path("/bin").exists || Config.OS == 'windows') {
         program = "launchd"
         re = /launchd/
     } else {
-        program = "bash"
-        re = /bash/
+        program = "sh"
+        re = /sh/
     }
 
     //  Test with RE match
