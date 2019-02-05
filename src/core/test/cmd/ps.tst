@@ -2,8 +2,8 @@
     ps.tst - Process list
  */
 
-if (!Path("/bin").exists || Config.OS == 'windows') {
-    test.skip("Only run on unix like systems, including cygwin")
+if (!Path("/bin").exists || Config.OS == 'windows' || Cmd.locate('busybox')) {
+    test.skip("Only run on unix like systems, including cygwin and not busybox")
 } else {
     if (Config.OS == "windows" || Config.OS == "cygwin") {
         program = "bash"
