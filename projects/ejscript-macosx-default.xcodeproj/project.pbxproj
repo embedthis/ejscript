@@ -3480,7 +3480,7 @@
     ../src/ejs.db.mapper/Record.es
     			);
     			outputPaths = (
-    ../build/macosx-x64-default/bin/ejs.db.mapper.mod
+    
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
@@ -3499,7 +3499,7 @@ cd ../src/ejs.db.mapper
 ../src/ejs.db/DatabaseConnector.es
     			);
     			outputPaths = (
-    ../build/macosx-x64-default/bin/ejs.db.mod
+    
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
@@ -3517,7 +3517,7 @@ cd ../src/ejs.db
     ../src/ejs.db.sqlite/Sqlite.es
     			);
     			outputPaths = (
-    ../build/macosx-x64-default/bin/ejs.db.sqlite.mod
+    
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
@@ -3536,7 +3536,7 @@ cd ../src/ejs.db.sqlite
     ../src/ejs.mail/Mail.es
     			);
     			outputPaths = (
-    ../build/macosx-x64-default/bin/ejs.mail.mod
+    
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
@@ -3607,7 +3607,7 @@ cd ../src/ejs.mail
 ../src/core/XMLList.es
     			);
     			outputPaths = (
-    ../build/macosx-x64-default/bin/ejs.mod
+    
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
@@ -3626,7 +3626,7 @@ cd ../src/core
     ../src/ejs.mvc/mvc.es
     			);
     			outputPaths = (
-    ../build/macosx-x64-default/bin/ejs.mvc.mod
+    
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
@@ -3644,7 +3644,7 @@ cd ../src/ejs.mvc
     ../src/ejs.tar/Tar.es
     			);
     			outputPaths = (
-    ../build/macosx-x64-default/bin/ejs.tar.mod
+    
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
@@ -3662,7 +3662,7 @@ cd ../src/ejs.tar
     ../src/ejs.template/TemplateParser.es
     			);
     			outputPaths = (
-    ../build/macosx-x64-default/bin/ejs.template.mod
+    
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
@@ -3680,7 +3680,7 @@ cd ../src/ejs.template
     ../src/ejs.unix/Unix.es
     			);
     			outputPaths = (
-    ../build/macosx-x64-default/bin/ejs.unix.mod
+    
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
@@ -3720,7 +3720,7 @@ cd ../src/ejs.unix
 ../src/ejs.web/View.es
     			);
     			outputPaths = (
-    ../build/macosx-x64-default/bin/ejs.web.mod
+    
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
@@ -3739,7 +3739,7 @@ cd ../src/ejs.web
     ../src/ejs.zlib/Zlib.es
     			);
     			outputPaths = (
-    ../build/macosx-x64-default/bin/ejs.zlib.mod
+    
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
@@ -3765,7 +3765,15 @@ cd ../src/ejs.zlib
 ../src/certs/samples/test.key
     			);
     			outputPaths = (
-    ../build/macosx-x64-default/bin
+    ../build/macosx-x64-default/bin/ca.crt,
+../build/macosx-x64-default/bin/ca.key,
+../build/macosx-x64-default/bin/ec.crt,
+../build/macosx-x64-default/bin/ec.key,
+../build/macosx-x64-default/bin/roots.crt,
+../build/macosx-x64-default/bin/self.crt,
+../build/macosx-x64-default/bin/self.key,
+../build/macosx-x64-default/bin/test.crt,
+../build/macosx-x64-default/bin/test.key
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
@@ -3792,7 +3800,7 @@ cd ..
     ../src/ejs.mvc/mvc.es
     			);
     			outputPaths = (
-    ../build/macosx-x64-default/bin/mvc.es
+    ../build/macosx-x64-default/bin/mvc.es/mvc.es
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
@@ -3828,7 +3836,7 @@ cd ../src
     ../src/ejs.utest/utest.es
     			);
     			outputPaths = (
-    ../build/macosx-x64-default/bin/utest.es
+    ../build/macosx-x64-default/bin/utest.es/utest.es
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
@@ -3847,7 +3855,7 @@ cd ..
     ../src/ejs.utest/utest.worker
     			);
     			outputPaths = (
-    ../build/macosx-x64-default/bin/utest.worker
+    ../build/macosx-x64-default/bin/utest.worker/utest.worker
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
@@ -3892,7 +3900,33 @@ cd ..
 ../src/ejs.web/www/themes/default.css
     			);
     			outputPaths = (
-    ../build/macosx-x64-default/bin/www
+    ../build/macosx-x64-default/bin/www/banner.jpg,
+../build/macosx-x64-default/bin/www/favicon.ico,
+../build/macosx-x64-default/bin/www/splash.jpg,
+../build/macosx-x64-default/bin/www/jquery.ejs.min.js,
+../build/macosx-x64-default/bin/www/jquery.min.js,
+../build/macosx-x64-default/bin/www/jquery.simplemodal.min.js,
+../build/macosx-x64-default/bin/www/jquery.tablesorter.js,
+../build/macosx-x64-default/bin/www/jquery.tablesorter.min.js,
+../build/macosx-x64-default/bin/www/jquery.treeview.min.js,
+../build/macosx-x64-default/bin/www/file.gif,
+../build/macosx-x64-default/bin/www/folder-closed.gif,
+../build/macosx-x64-default/bin/www/folder.gif,
+../build/macosx-x64-default/bin/www/minus.gif,
+../build/macosx-x64-default/bin/www/plus.gif,
+../build/macosx-x64-default/bin/www/treeview-black-line.gif,
+../build/macosx-x64-default/bin/www/treeview-black.gif,
+../build/macosx-x64-default/bin/www/treeview-default-line.gif,
+../build/macosx-x64-default/bin/www/treeview-default.gif,
+../build/macosx-x64-default/bin/www/treeview-famfamfam-line.gif,
+../build/macosx-x64-default/bin/www/treeview-famfamfam.gif,
+../build/macosx-x64-default/bin/www/treeview-gray-line.gif,
+../build/macosx-x64-default/bin/www/treeview-gray.gif,
+../build/macosx-x64-default/bin/www/treeview-red-line.gif,
+../build/macosx-x64-default/bin/www/treeview-red.gif,
+../build/macosx-x64-default/bin/www/treeview.css,
+../build/macosx-x64-default/bin/www/layout.css,
+../build/macosx-x64-default/bin/www/default.css
     			);
     			runOnlyForDeploymentPostprocessing = 0;
     			shellPath = /bin/bash;
@@ -5836,6 +5870,8 @@ ENABLE_TESTABILITY = YES;
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					"_REENTRANT",
+					"PIC",
 					"ME_DEBUG=1",
 					"$(inherited)"
 				);
@@ -5922,6 +5958,8 @@ ENABLE_TESTABILITY = YES;
 					"$(inherited)"
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					"_REENTRANT",
+					"PIC",
 					"ME_DEBUG=0",
 					"$(inherited)"
 				);

@@ -18,6 +18,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmpr", "ejscript-windows-
 		{0444FA0D-3E49-41C6-A823-3480C8AABB27} = {0444FA0D-3E49-41C6-A823-3480C8AABB27}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
 	EndProjectSection
 EndProject
@@ -32,6 +38,12 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libhttp", "ejscript-windows-static\libhttp.vcxproj", "{1FC5E88E-0DB4-4173-AAF0-7D09496B5193}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0444FA0D-3E49-41C6-A823-3480C8AABB27} = {0444FA0D-3E49-41C6-A823-3480C8AABB27}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
@@ -49,6 +61,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libejs", "ejscript-windows-
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{CC7F5EBC-8348-4B64-A9D6-3147C9254BC9} = {CC7F5EBC-8348-4B64-A9D6-3147C9254BC9}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
@@ -69,6 +87,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs", "ejscript-windows-sta
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{CC7F5EBC-8348-4B64-A9D6-3147C9254BC9} = {CC7F5EBC-8348-4B64-A9D6-3147C9254BC9}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
@@ -94,6 +118,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejsc", "ejscript-windows-st
 		{CC7F5EBC-8348-4B64-A9D6-3147C9254BC9} = {CC7F5EBC-8348-4B64-A9D6-3147C9254BC9}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
@@ -117,6 +147,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejsmod", "ejscript-windows-
 		{CC7F5EBC-8348-4B64-A9D6-3147C9254BC9} = {CC7F5EBC-8348-4B64-A9D6-3147C9254BC9}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
@@ -138,6 +174,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.mod", "ejscript-windows
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{CC7F5EBC-8348-4B64-A9D6-3147C9254BC9} = {CC7F5EBC-8348-4B64-A9D6-3147C9254BC9}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
@@ -167,6 +209,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.db.mod", "ejscript-wind
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{CC7F5EBC-8348-4B64-A9D6-3147C9254BC9} = {CC7F5EBC-8348-4B64-A9D6-3147C9254BC9}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
@@ -199,6 +247,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.db.mapper.mod", "ejscri
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{CC7F5EBC-8348-4B64-A9D6-3147C9254BC9} = {CC7F5EBC-8348-4B64-A9D6-3147C9254BC9}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
@@ -236,6 +290,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.db.sqlite.mod", "ejscri
 		{CC7F5EBC-8348-4B64-A9D6-3147C9254BC9} = {CC7F5EBC-8348-4B64-A9D6-3147C9254BC9}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
@@ -266,6 +326,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.mail.mod", "ejscript-wi
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{CC7F5EBC-8348-4B64-A9D6-3147C9254BC9} = {CC7F5EBC-8348-4B64-A9D6-3147C9254BC9}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
@@ -300,6 +366,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.web.mod", "ejscript-win
 		{CC7F5EBC-8348-4B64-A9D6-3147C9254BC9} = {CC7F5EBC-8348-4B64-A9D6-3147C9254BC9}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
@@ -330,6 +402,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.template.mod", "ejscrip
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{CC7F5EBC-8348-4B64-A9D6-3147C9254BC9} = {CC7F5EBC-8348-4B64-A9D6-3147C9254BC9}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
@@ -364,6 +442,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.unix.mod", "ejscript-wi
 		{CC7F5EBC-8348-4B64-A9D6-3147C9254BC9} = {CC7F5EBC-8348-4B64-A9D6-3147C9254BC9}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
@@ -394,6 +478,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.mvc.mod", "ejscript-win
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{CC7F5EBC-8348-4B64-A9D6-3147C9254BC9} = {CC7F5EBC-8348-4B64-A9D6-3147C9254BC9}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
@@ -437,6 +527,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.zlib.mod", "ejscript-wi
 		{CC7F5EBC-8348-4B64-A9D6-3147C9254BC9} = {CC7F5EBC-8348-4B64-A9D6-3147C9254BC9}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
@@ -473,6 +569,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejs.tar.mod", "ejscript-win
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{CC7F5EBC-8348-4B64-A9D6-3147C9254BC9} = {CC7F5EBC-8348-4B64-A9D6-3147C9254BC9}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
@@ -516,6 +618,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ejsrun", "ejscript-windows-
 		{CC7F5EBC-8348-4B64-A9D6-3147C9254BC9} = {CC7F5EBC-8348-4B64-A9D6-3147C9254BC9}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
@@ -550,6 +658,12 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libejs.db.sqlite", "ejscript-windows-static\libejs.db.sqlite.vcxproj", "{9B70CE3C-8259-4705-8E04-172ADE3DDB4D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0444FA0D-3E49-41C6-A823-3480C8AABB27} = {0444FA0D-3E49-41C6-A823-3480C8AABB27}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
@@ -593,6 +707,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libejs.web", "ejscript-wind
 		{CC7F5EBC-8348-4B64-A9D6-3147C9254BC9} = {CC7F5EBC-8348-4B64-A9D6-3147C9254BC9}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
@@ -633,6 +753,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libejs.zlib", "ejscript-win
 		{CC7F5EBC-8348-4B64-A9D6-3147C9254BC9} = {CC7F5EBC-8348-4B64-A9D6-3147C9254BC9}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
@@ -660,6 +786,25 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libejs.zlib", "ejscript-win
 		{66FB2E72-F2E5-4468-AFCA-72CFE06E686C} = {66FB2E72-F2E5-4468-AFCA-72CFE06E686C}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmbedtls", "ejscript-windows-static\libmbedtls.vcxproj", "{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0444FA0D-3E49-41C6-A823-3480C8AABB27} = {0444FA0D-3E49-41C6-A823-3480C8AABB27}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmpr-mbedtls", "ejscript-windows-static\libmpr-mbedtls.vcxproj", "{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0444FA0D-3E49-41C6-A823-3480C8AABB27} = {0444FA0D-3E49-41C6-A823-3480C8AABB27}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
+	EndProjectSection
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mvc.es", "ejscript-windows-static\mvc.es.vcxproj", "{3A52B63B-6911-4263-A668-9A75129FEE2F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0444FA0D-3E49-41C6-A823-3480C8AABB27} = {0444FA0D-3E49-41C6-A823-3480C8AABB27}
@@ -674,6 +819,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mvc", "ejscript-windows-sta
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{CC7F5EBC-8348-4B64-A9D6-3147C9254BC9} = {CC7F5EBC-8348-4B64-A9D6-3147C9254BC9}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
@@ -718,6 +869,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utest", "ejscript-windows-s
 		{CC7F5EBC-8348-4B64-A9D6-3147C9254BC9} = {CC7F5EBC-8348-4B64-A9D6-3147C9254BC9}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
@@ -742,6 +899,12 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "watchdog", "ejscript-windows-static\watchdog.vcxproj", "{EA7BF7D2-5D82-4494-8C5C-E41B988E69B6}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0444FA0D-3E49-41C6-A823-3480C8AABB27} = {0444FA0D-3E49-41C6-A823-3480C8AABB27}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11} = {EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B} = {5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{4534FD04-8E17-4907-9967-EA429779310B} = {4534FD04-8E17-4907-9967-EA429779310B}
@@ -983,6 +1146,22 @@ EndProject
 {66FB2E72-F2E5-4468-AFCA-72CFE06E686C}.Release|Win32.Build.0 = Release|Win32
 {66FB2E72-F2E5-4468-AFCA-72CFE06E686C}.Release|x64.ActiveCfg = Release|x64
 {66FB2E72-F2E5-4468-AFCA-72CFE06E686C}.Release|x64.Build.0 = Release|x64
+{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}.Debug|Win32.ActiveCfg = Debug|Win32
+{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}.Debug|Win32.Build.0 = Debug|Win32
+{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}.Debug|x64.ActiveCfg = Debug|x64
+{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}.Debug|x64.Build.0 = Debug|x64
+{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}.Release|Win32.ActiveCfg = Release|Win32
+{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}.Release|Win32.Build.0 = Release|Win32
+{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}.Release|x64.ActiveCfg = Release|x64
+{EF86F26E-6215-48EA-9BC8-7A5F2DB02B11}.Release|x64.Build.0 = Release|x64
+{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}.Debug|Win32.ActiveCfg = Debug|Win32
+{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}.Debug|Win32.Build.0 = Debug|Win32
+{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}.Debug|x64.ActiveCfg = Debug|x64
+{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}.Debug|x64.Build.0 = Debug|x64
+{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}.Release|Win32.ActiveCfg = Release|Win32
+{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}.Release|Win32.Build.0 = Release|Win32
+{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}.Release|x64.ActiveCfg = Release|x64
+{5B8F736F-BB7E-4B8A-A386-A3DBEAC4F07B}.Release|x64.Build.0 = Release|x64
 {3A52B63B-6911-4263-A668-9A75129FEE2F}.Debug|Win32.ActiveCfg = Debug|Win32
 {3A52B63B-6911-4263-A668-9A75129FEE2F}.Debug|Win32.Build.0 = Debug|Win32
 {3A52B63B-6911-4263-A668-9A75129FEE2F}.Debug|x64.ActiveCfg = Debug|x64

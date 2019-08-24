@@ -29,22 +29,22 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
         <ConfigurationType></ConfigurationType>
         <CharacterSet>NotSet</CharacterSet>
-        <PlatformToolset>v120</PlatformToolset>
+        <PlatformToolset>v141</PlatformToolset>
       </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
         <ConfigurationType></ConfigurationType>
         <CharacterSet>NotSet</CharacterSet>
-        <PlatformToolset>v120</PlatformToolset>
+        <PlatformToolset>v141</PlatformToolset>
       </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
         <ConfigurationType></ConfigurationType>
         <CharacterSet>NotSet</CharacterSet>
-        <PlatformToolset>v120</PlatformToolset>
+        <PlatformToolset>v141</PlatformToolset>
       </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
         <ConfigurationType></ConfigurationType>
         <CharacterSet>NotSet</CharacterSet>
-        <PlatformToolset>v120</PlatformToolset>
+        <PlatformToolset>v141</PlatformToolset>
       </PropertyGroup>
 
       <Import Project="$(VCTargetsPath)Microsoft.Cpp.Default.props" />
@@ -97,60 +97,60 @@
 
       <CustomBuildStep>
         <Command>cd ..\..\src\ejs.web
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\images\banner.jpg $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\images\favicon.ico $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\images\splash.jpg $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\jquery.ejs.min.js $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\jquery.min.js $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\jquery.simplemodal.min.js $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\jquery.tablesorter.js $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\jquery.tablesorter.min.js $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\jquery.treeview.min.js $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\tree-images\file.gif $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\tree-images\folder-closed.gif $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\tree-images\folder.gif $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\tree-images\minus.gif $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\tree-images\plus.gif $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\tree-images\treeview-black-line.gif $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\tree-images\treeview-black.gif $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\tree-images\treeview-default-line.gif $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\tree-images\treeview-default.gif $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\tree-images\treeview-famfamfam-line.gif $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\tree-images\treeview-famfamfam.gif $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\tree-images\treeview-gray-line.gif $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\tree-images\treeview-gray.gif $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\tree-images\treeview-red-line.gif $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\tree-images\treeview-red.gif $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\js\treeview.css $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\layout.css $(BinDir)\www
-if exist $(BinDir)\www del /Q $(BinDir)\www
-copy /Y www\themes\default.css $(BinDir)\www
+if exist $(BinDir)\www\banner.jpg del /Q $(BinDir)\www\banner.jpg
+copy /Y www\images\banner.jpg $(BinDir)\www\banner.jpg
+if exist $(BinDir)\www\favicon.ico del /Q $(BinDir)\www\favicon.ico
+copy /Y www\images\favicon.ico $(BinDir)\www\favicon.ico
+if exist $(BinDir)\www\splash.jpg del /Q $(BinDir)\www\splash.jpg
+copy /Y www\images\splash.jpg $(BinDir)\www\splash.jpg
+if exist $(BinDir)\www\jquery.ejs.min.js del /Q $(BinDir)\www\jquery.ejs.min.js
+copy /Y www\js\jquery.ejs.min.js $(BinDir)\www\jquery.ejs.min.js
+if exist $(BinDir)\www\jquery.min.js del /Q $(BinDir)\www\jquery.min.js
+copy /Y www\js\jquery.min.js $(BinDir)\www\jquery.min.js
+if exist $(BinDir)\www\jquery.simplemodal.min.js del /Q $(BinDir)\www\jquery.simplemodal.min.js
+copy /Y www\js\jquery.simplemodal.min.js $(BinDir)\www\jquery.simplemodal.min.js
+if exist $(BinDir)\www\jquery.tablesorter.js del /Q $(BinDir)\www\jquery.tablesorter.js
+copy /Y www\js\jquery.tablesorter.js $(BinDir)\www\jquery.tablesorter.js
+if exist $(BinDir)\www\jquery.tablesorter.min.js del /Q $(BinDir)\www\jquery.tablesorter.min.js
+copy /Y www\js\jquery.tablesorter.min.js $(BinDir)\www\jquery.tablesorter.min.js
+if exist $(BinDir)\www\jquery.treeview.min.js del /Q $(BinDir)\www\jquery.treeview.min.js
+copy /Y www\js\jquery.treeview.min.js $(BinDir)\www\jquery.treeview.min.js
+if exist $(BinDir)\www\file.gif del /Q $(BinDir)\www\file.gif
+copy /Y www\js\tree-images\file.gif $(BinDir)\www\file.gif
+if exist $(BinDir)\www\folder-closed.gif del /Q $(BinDir)\www\folder-closed.gif
+copy /Y www\js\tree-images\folder-closed.gif $(BinDir)\www\folder-closed.gif
+if exist $(BinDir)\www\folder.gif del /Q $(BinDir)\www\folder.gif
+copy /Y www\js\tree-images\folder.gif $(BinDir)\www\folder.gif
+if exist $(BinDir)\www\minus.gif del /Q $(BinDir)\www\minus.gif
+copy /Y www\js\tree-images\minus.gif $(BinDir)\www\minus.gif
+if exist $(BinDir)\www\plus.gif del /Q $(BinDir)\www\plus.gif
+copy /Y www\js\tree-images\plus.gif $(BinDir)\www\plus.gif
+if exist $(BinDir)\www\treeview-black-line.gif del /Q $(BinDir)\www\treeview-black-line.gif
+copy /Y www\js\tree-images\treeview-black-line.gif $(BinDir)\www\treeview-black-line.gif
+if exist $(BinDir)\www\treeview-black.gif del /Q $(BinDir)\www\treeview-black.gif
+copy /Y www\js\tree-images\treeview-black.gif $(BinDir)\www\treeview-black.gif
+if exist $(BinDir)\www\treeview-default-line.gif del /Q $(BinDir)\www\treeview-default-line.gif
+copy /Y www\js\tree-images\treeview-default-line.gif $(BinDir)\www\treeview-default-line.gif
+if exist $(BinDir)\www\treeview-default.gif del /Q $(BinDir)\www\treeview-default.gif
+copy /Y www\js\tree-images\treeview-default.gif $(BinDir)\www\treeview-default.gif
+if exist $(BinDir)\www\treeview-famfamfam-line.gif del /Q $(BinDir)\www\treeview-famfamfam-line.gif
+copy /Y www\js\tree-images\treeview-famfamfam-line.gif $(BinDir)\www\treeview-famfamfam-line.gif
+if exist $(BinDir)\www\treeview-famfamfam.gif del /Q $(BinDir)\www\treeview-famfamfam.gif
+copy /Y www\js\tree-images\treeview-famfamfam.gif $(BinDir)\www\treeview-famfamfam.gif
+if exist $(BinDir)\www\treeview-gray-line.gif del /Q $(BinDir)\www\treeview-gray-line.gif
+copy /Y www\js\tree-images\treeview-gray-line.gif $(BinDir)\www\treeview-gray-line.gif
+if exist $(BinDir)\www\treeview-gray.gif del /Q $(BinDir)\www\treeview-gray.gif
+copy /Y www\js\tree-images\treeview-gray.gif $(BinDir)\www\treeview-gray.gif
+if exist $(BinDir)\www\treeview-red-line.gif del /Q $(BinDir)\www\treeview-red-line.gif
+copy /Y www\js\tree-images\treeview-red-line.gif $(BinDir)\www\treeview-red-line.gif
+if exist $(BinDir)\www\treeview-red.gif del /Q $(BinDir)\www\treeview-red.gif
+copy /Y www\js\tree-images\treeview-red.gif $(BinDir)\www\treeview-red.gif
+if exist $(BinDir)\www\treeview.css del /Q $(BinDir)\www\treeview.css
+copy /Y www\js\treeview.css $(BinDir)\www\treeview.css
+if exist $(BinDir)\www\layout.css del /Q $(BinDir)\www\layout.css
+copy /Y www\layout.css $(BinDir)\www\layout.css
+if exist $(BinDir)\www\default.css del /Q $(BinDir)\www\default.css
+copy /Y www\themes\default.css $(BinDir)\www\default.css
 cd ..\..\projects\ejscript-windows-default</Command>
         <Outputs>$(BinDir)\www</Outputs>
       </CustomBuildStep>
