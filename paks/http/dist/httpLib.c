@@ -5887,7 +5887,7 @@ static void connTimeout(HttpConn *conn, MprEvent *mprEvent)
                 httpTrace(conn, event, "error", "msg:'%s'", msg);
             }
         } else {
-            httpError(conn, HTTP_CODE_REQUEST_TIMEOUT, "%s", msg);
+            httpError(conn, HTTP_CODE_REQUEST_TIMEOUT | HTTP_CLOSE, "%s", msg);
         }
     }
     if (httpClientConn(conn)) {
@@ -6145,15 +6145,6 @@ PUBLIC void httpIO(HttpConn *conn, int eventMask)
     assert(conn->tx);
     assert(conn->rx);
 
-#if DEPRECATE
-    /* Just IO state asserting */
-    if (conn->io) {
-        assert(!conn->io);
-        return;
-    }
-    conn->io = 1;
-#endif
-
     if ((eventMask & MPR_WRITABLE) && conn->connectorq) {
         httpResumeQueue(conn->connectorq);
     }
@@ -6197,6 +6188,7 @@ PUBLIC void httpIO(HttpConn *conn, int eventMask)
         }
         httpTrace(conn, "connection.close", "context", "msg:'%s'", conn->errorMsg);
         httpDestroyConn(conn);
+
     } else if (!mprIsSocketEof(conn->sock) && conn->async && !conn->delay) {
         httpEnableConnEvents(conn);
     }
@@ -16167,6 +16159,7 @@ static bool parseIncoming(HttpConn *conn)
     /*
         Don't start processing until all the headers have been received (delimited by two blank lines)
      */
+    start = mprGetBufStart(packet->content);
     if ((end = sncontains(start, "\r\n\r\n", len)) == 0 && (end = sncontains(start, "\n\n", len)) == 0) {
         if (len >= limits->headerSize) {
             httpLimitError(conn, HTTP_ABORT | HTTP_CODE_REQUEST_TOO_LARGE,

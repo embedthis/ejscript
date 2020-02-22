@@ -3,3 +3,4 @@ samples/**/main
 src/compiler/test/bugs/
 ejsZlib.miniz
 /start.me
+*.sdb
