@@ -16406,7 +16406,7 @@ static bool parseResponseLine(HttpConn *conn, HttpPacket *packet)
     tx = conn->tx;
 
     protocol = getToken(conn, NULL, TOKEN_WORD);
-    if (protocol == NULL || protocol == '\0') {
+    if (protocol == NULL || *protocol == '\0') {
         httpBadRequestError(conn, HTTP_ABORT | HTTP_CODE_NOT_ACCEPTABLE, "Unsupported HTTP protocol");
         return 0;
     }
@@ -24140,4 +24140,3 @@ static void traceErrorProc(HttpConn *conn, cchar *fmt, ...)
     by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details and other copyrights.
  */
-
