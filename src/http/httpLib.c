@@ -6988,7 +6988,7 @@ PUBLIC int httpDigestParse(HttpConn *conn, cchar **username, cchar **password)
             httpTrace(conn, "auth.digest.error", "error", "msg:'Access denied, Bad qop'");
             return MPR_ERR_BAD_STATE;
 
-        } else if ((when + (5 * 60)) < time(0)) {
+        } else if ((when + ME_DIGEST_NONCE_DURATION) < time(0)) {
             httpTrace(conn, "auth.digest.error", "error", "msg:'Access denied, Nonce is stale'");
             return MPR_ERR_BAD_STATE;
         }
@@ -12278,23 +12278,26 @@ static void outgoingRangeService(HttpQueue *q)
         }
     }
     for (packet = httpGetPacket(q); packet; packet = httpGetPacket(q)) {
-        if (packet->flags & HTTP_PACKET_DATA) {
-            if (!applyRange(q, packet)) {
-                return;
+        if (tx->outputRanges) {
+            if (packet->flags & HTTP_PACKET_DATA) {
+                if (!applyRange(q, packet)) {
+                    return;
+                }
+                continue;
+            } else {
+                /*
+                    Send headers and end packet downstream
+                 */
+                if (packet->flags & HTTP_PACKET_END && tx->rangeBoundary) {
+                    httpPutPacketToNext(q, createFinalRangePacket(conn));
+                }
             }
-        } else {
-            /*
-                Send headers and end packet downstream
-             */
-            if (packet->flags & HTTP_PACKET_END && tx->rangeBoundary) {
-                httpPutPacketToNext(q, createFinalRangePacket(conn));
-            }
-            if (!httpWillNextQueueAcceptPacket(q, packet)) {
-                httpPutBackPacket(q, packet);
-                return;
-            }
-            httpPutPacketToNext(q, packet);
         }
+        if (!httpWillNextQueueAcceptPacket(q, packet)) {
+            httpPutBackPacket(q, packet);
+            return;
+        }
+        httpPutPacketToNext(q, packet);
     }
 }
 
@@ -15307,7 +15310,9 @@ static char *expandRequestTokens(HttpConn *conn, char *str)
         if ((key = stok(&tok[2], ".:}", &value)) == 0) {
             continue;
         }
-        if ((stok(value, "}", &cp)) == 0) {
+        if ((stok(value, "}", &p)) != 0) {
+            cp = p;
+        } else {
             continue;
         }
         if (smatch(key, "header")) {
@@ -15422,7 +15427,7 @@ static char *expandRequestTokens(HttpConn *conn, char *str)
     }
     assert(cp);
     if (tok) {
-        if (tok > cp) {
+        if (cp && tok > cp) {
             mprPutBlockToBuf(buf, tok, tok - cp);
         }
     } else {
@@ -16808,7 +16813,7 @@ static bool parseHeaders(HttpConn *conn, HttpPacket *packet)
     if (conn->http10 && !keepAliveHeader) {
         conn->keepAliveCount = 0;
     }
-    if (httpClientConn(conn) && conn->mustClose && rx->length < 0) {
+    if (httpClientConn(conn) && conn->mustClose && rx->length < 0 && rx->status != 204) {
         /*
             Google does responses with a body and without a Content-Lenght like this:
                 Connection: close
@@ -24140,3 +24145,4 @@ static void traceErrorProc(HttpConn *conn, cchar *fmt, ...)
     by the terms of either license. Consult the LICENSE.md distributed with
     this software for full details and other copyrights.
  */
+
