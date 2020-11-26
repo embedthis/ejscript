@@ -614,7 +614,7 @@ DEPS_31 = $(DEPS_31) src\cmd\ejsmod.h
 build\$(CONFIG)\obj\doc.obj: \
     src\cmd\doc.c $(DEPS_31)
 	@echo .. [Compile] build\$(CONFIG)\obj\doc.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\doc.obj -Fd$(BUILD)\obj\doc.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\cmd\doc.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\doc.obj -Fd$(BUILD)\obj\doc.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\cmd\doc.c $(LOG)
 
 #
 #   docFiles.obj
@@ -624,7 +624,7 @@ DEPS_32 = $(DEPS_32) src\cmd\ejsmod.h
 build\$(CONFIG)\obj\docFiles.obj: \
     src\cmd\docFiles.c $(DEPS_32)
 	@echo .. [Compile] build\$(CONFIG)\obj\docFiles.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\docFiles.obj -Fd$(BUILD)\obj\docFiles.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\cmd\docFiles.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\docFiles.obj -Fd$(BUILD)\obj\docFiles.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\cmd\docFiles.c $(LOG)
 
 #
 #   dtoa.obj
@@ -634,7 +634,7 @@ DEPS_33 = $(DEPS_33) build\$(CONFIG)\inc\mpr.h
 build\$(CONFIG)\obj\dtoa.obj: \
     src\core\src\dtoa.c $(DEPS_33)
 	@echo .. [Compile] build\$(CONFIG)\obj\dtoa.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\dtoa.obj -Fd$(BUILD)\obj\dtoa.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\dtoa.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\dtoa.obj -Fd$(BUILD)\obj\dtoa.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\dtoa.c $(LOG)
 
 #
 #   ejsCompiler.h
@@ -650,7 +650,7 @@ DEPS_35 = $(DEPS_35) src\ejsCompiler.h
 build\$(CONFIG)\obj\ecAst.obj: \
     src\compiler\ecAst.c $(DEPS_35)
 	@echo .. [Compile] build\$(CONFIG)\obj\ecAst.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ecAst.obj -Fd$(BUILD)\obj\ecAst.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\compiler\ecAst.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ecAst.obj -Fd$(BUILD)\obj\ecAst.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\compiler\ecAst.c $(LOG)
 
 #
 #   ecCodeGen.obj
@@ -660,7 +660,7 @@ DEPS_36 = $(DEPS_36) src\ejsCompiler.h
 build\$(CONFIG)\obj\ecCodeGen.obj: \
     src\compiler\ecCodeGen.c $(DEPS_36)
 	@echo .. [Compile] build\$(CONFIG)\obj\ecCodeGen.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ecCodeGen.obj -Fd$(BUILD)\obj\ecCodeGen.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\compiler\ecCodeGen.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ecCodeGen.obj -Fd$(BUILD)\obj\ecCodeGen.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\compiler\ecCodeGen.c $(LOG)
 
 #
 #   ecCompiler.obj
@@ -670,7 +670,7 @@ DEPS_37 = $(DEPS_37) src\ejsCompiler.h
 build\$(CONFIG)\obj\ecCompiler.obj: \
     src\compiler\ecCompiler.c $(DEPS_37)
 	@echo .. [Compile] build\$(CONFIG)\obj\ecCompiler.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ecCompiler.obj -Fd$(BUILD)\obj\ecCompiler.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\compiler\ecCompiler.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ecCompiler.obj -Fd$(BUILD)\obj\ecCompiler.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\compiler\ecCompiler.c $(LOG)
 
 #
 #   ecLex.obj
@@ -680,7 +680,7 @@ DEPS_38 = $(DEPS_38) src\ejsCompiler.h
 build\$(CONFIG)\obj\ecLex.obj: \
     src\compiler\ecLex.c $(DEPS_38)
 	@echo .. [Compile] build\$(CONFIG)\obj\ecLex.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ecLex.obj -Fd$(BUILD)\obj\ecLex.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\compiler\ecLex.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ecLex.obj -Fd$(BUILD)\obj\ecLex.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\compiler\ecLex.c $(LOG)
 
 #
 #   ecModuleWrite.obj
@@ -690,7 +690,7 @@ DEPS_39 = $(DEPS_39) src\ejsCompiler.h
 build\$(CONFIG)\obj\ecModuleWrite.obj: \
     src\compiler\ecModuleWrite.c $(DEPS_39)
 	@echo .. [Compile] build\$(CONFIG)\obj\ecModuleWrite.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ecModuleWrite.obj -Fd$(BUILD)\obj\ecModuleWrite.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\compiler\ecModuleWrite.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ecModuleWrite.obj -Fd$(BUILD)\obj\ecModuleWrite.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\compiler\ecModuleWrite.c $(LOG)
 
 #
 #   ecParser.obj
@@ -700,7 +700,7 @@ DEPS_40 = $(DEPS_40) src\ejsCompiler.h
 build\$(CONFIG)\obj\ecParser.obj: \
     src\compiler\ecParser.c $(DEPS_40)
 	@echo .. [Compile] build\$(CONFIG)\obj\ecParser.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ecParser.obj -Fd$(BUILD)\obj\ecParser.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\compiler\ecParser.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ecParser.obj -Fd$(BUILD)\obj\ecParser.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\compiler\ecParser.c $(LOG)
 
 #
 #   ecState.obj
@@ -710,7 +710,7 @@ DEPS_41 = $(DEPS_41) src\ejsCompiler.h
 build\$(CONFIG)\obj\ecState.obj: \
     src\compiler\ecState.c $(DEPS_41)
 	@echo .. [Compile] build\$(CONFIG)\obj\ecState.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ecState.obj -Fd$(BUILD)\obj\ecState.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\compiler\ecState.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ecState.obj -Fd$(BUILD)\obj\ecState.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\compiler\ecState.c $(LOG)
 
 #
 #   ejs.obj
@@ -721,7 +721,7 @@ DEPS_42 = $(DEPS_42) build\$(CONFIG)\inc\ejsCompiler.h
 build\$(CONFIG)\obj\ejs.obj: \
     src\cmd\ejs.c $(DEPS_42)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejs.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejs.obj -Fd$(BUILD)\obj\ejs.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\cmd\ejs.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejs.obj -Fd$(BUILD)\obj\ejs.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\cmd\ejs.c $(LOG)
 
 #
 #   ejsApp.obj
@@ -731,7 +731,7 @@ DEPS_43 = $(DEPS_43) src\ejs.h
 build\$(CONFIG)\obj\ejsApp.obj: \
     src\core\src\ejsApp.c $(DEPS_43)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsApp.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsApp.obj -Fd$(BUILD)\obj\ejsApp.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsApp.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsApp.obj -Fd$(BUILD)\obj\ejsApp.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsApp.c $(LOG)
 
 #
 #   ejsArray.obj
@@ -741,7 +741,7 @@ DEPS_44 = $(DEPS_44) src\ejs.h
 build\$(CONFIG)\obj\ejsArray.obj: \
     src\core\src\ejsArray.c $(DEPS_44)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsArray.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsArray.obj -Fd$(BUILD)\obj\ejsArray.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsArray.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsArray.obj -Fd$(BUILD)\obj\ejsArray.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsArray.c $(LOG)
 
 #
 #   ejsBlock.obj
@@ -751,7 +751,7 @@ DEPS_45 = $(DEPS_45) src\ejs.h
 build\$(CONFIG)\obj\ejsBlock.obj: \
     src\core\src\ejsBlock.c $(DEPS_45)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsBlock.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsBlock.obj -Fd$(BUILD)\obj\ejsBlock.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsBlock.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsBlock.obj -Fd$(BUILD)\obj\ejsBlock.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsBlock.c $(LOG)
 
 #
 #   ejsBoolean.obj
@@ -761,7 +761,7 @@ DEPS_46 = $(DEPS_46) src\ejs.h
 build\$(CONFIG)\obj\ejsBoolean.obj: \
     src\core\src\ejsBoolean.c $(DEPS_46)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsBoolean.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsBoolean.obj -Fd$(BUILD)\obj\ejsBoolean.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsBoolean.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsBoolean.obj -Fd$(BUILD)\obj\ejsBoolean.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsBoolean.c $(LOG)
 
 #
 #   ejsByteArray.obj
@@ -771,7 +771,7 @@ DEPS_47 = $(DEPS_47) src\ejs.h
 build\$(CONFIG)\obj\ejsByteArray.obj: \
     src\core\src\ejsByteArray.c $(DEPS_47)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsByteArray.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsByteArray.obj -Fd$(BUILD)\obj\ejsByteArray.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsByteArray.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsByteArray.obj -Fd$(BUILD)\obj\ejsByteArray.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsByteArray.c $(LOG)
 
 #
 #   ejsByteCode.obj
@@ -781,7 +781,7 @@ DEPS_48 = $(DEPS_48) src\ejs.h
 build\$(CONFIG)\obj\ejsByteCode.obj: \
     src\vm\ejsByteCode.c $(DEPS_48)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsByteCode.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsByteCode.obj -Fd$(BUILD)\obj\ejsByteCode.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\vm\ejsByteCode.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsByteCode.obj -Fd$(BUILD)\obj\ejsByteCode.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\vm\ejsByteCode.c $(LOG)
 
 #
 #   ejsCache.obj
@@ -791,7 +791,7 @@ DEPS_49 = $(DEPS_49) src\ejs.h
 build\$(CONFIG)\obj\ejsCache.obj: \
     src\core\src\ejsCache.c $(DEPS_49)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsCache.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsCache.obj -Fd$(BUILD)\obj\ejsCache.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsCache.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsCache.obj -Fd$(BUILD)\obj\ejsCache.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsCache.c $(LOG)
 
 #
 #   ejsCmd.obj
@@ -801,7 +801,7 @@ DEPS_50 = $(DEPS_50) src\ejs.h
 build\$(CONFIG)\obj\ejsCmd.obj: \
     src\core\src\ejsCmd.c $(DEPS_50)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsCmd.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsCmd.obj -Fd$(BUILD)\obj\ejsCmd.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsCmd.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsCmd.obj -Fd$(BUILD)\obj\ejsCmd.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsCmd.c $(LOG)
 
 #
 #   ejsConfig.obj
@@ -811,7 +811,7 @@ DEPS_51 = $(DEPS_51) src\ejs.h
 build\$(CONFIG)\obj\ejsConfig.obj: \
     src\core\src\ejsConfig.c $(DEPS_51)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsConfig.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsConfig.obj -Fd$(BUILD)\obj\ejsConfig.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsConfig.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsConfig.obj -Fd$(BUILD)\obj\ejsConfig.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsConfig.c $(LOG)
 
 #
 #   ejsDate.obj
@@ -821,7 +821,7 @@ DEPS_52 = $(DEPS_52) src\ejs.h
 build\$(CONFIG)\obj\ejsDate.obj: \
     src\core\src\ejsDate.c $(DEPS_52)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsDate.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsDate.obj -Fd$(BUILD)\obj\ejsDate.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsDate.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsDate.obj -Fd$(BUILD)\obj\ejsDate.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsDate.c $(LOG)
 
 #
 #   ejsDebug.obj
@@ -831,7 +831,7 @@ DEPS_53 = $(DEPS_53) src\ejs.h
 build\$(CONFIG)\obj\ejsDebug.obj: \
     src\core\src\ejsDebug.c $(DEPS_53)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsDebug.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsDebug.obj -Fd$(BUILD)\obj\ejsDebug.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsDebug.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsDebug.obj -Fd$(BUILD)\obj\ejsDebug.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsDebug.c $(LOG)
 
 #
 #   ejsError.obj
@@ -841,7 +841,7 @@ DEPS_54 = $(DEPS_54) src\ejs.h
 build\$(CONFIG)\obj\ejsError.obj: \
     src\core\src\ejsError.c $(DEPS_54)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsError.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsError.obj -Fd$(BUILD)\obj\ejsError.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsError.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsError.obj -Fd$(BUILD)\obj\ejsError.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsError.c $(LOG)
 
 #
 #   ejsException.obj
@@ -851,7 +851,7 @@ DEPS_55 = $(DEPS_55) src\ejs.h
 build\$(CONFIG)\obj\ejsException.obj: \
     src\vm\ejsException.c $(DEPS_55)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsException.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsException.obj -Fd$(BUILD)\obj\ejsException.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\vm\ejsException.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsException.obj -Fd$(BUILD)\obj\ejsException.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\vm\ejsException.c $(LOG)
 
 #
 #   ejsFile.obj
@@ -861,7 +861,7 @@ DEPS_56 = $(DEPS_56) src\ejs.h
 build\$(CONFIG)\obj\ejsFile.obj: \
     src\core\src\ejsFile.c $(DEPS_56)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsFile.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsFile.obj -Fd$(BUILD)\obj\ejsFile.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsFile.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsFile.obj -Fd$(BUILD)\obj\ejsFile.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsFile.c $(LOG)
 
 #
 #   ejsFileSystem.obj
@@ -871,7 +871,7 @@ DEPS_57 = $(DEPS_57) src\ejs.h
 build\$(CONFIG)\obj\ejsFileSystem.obj: \
     src\core\src\ejsFileSystem.c $(DEPS_57)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsFileSystem.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsFileSystem.obj -Fd$(BUILD)\obj\ejsFileSystem.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsFileSystem.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsFileSystem.obj -Fd$(BUILD)\obj\ejsFileSystem.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsFileSystem.c $(LOG)
 
 #
 #   ejsFrame.obj
@@ -881,7 +881,7 @@ DEPS_58 = $(DEPS_58) src\ejs.h
 build\$(CONFIG)\obj\ejsFrame.obj: \
     src\core\src\ejsFrame.c $(DEPS_58)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsFrame.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsFrame.obj -Fd$(BUILD)\obj\ejsFrame.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsFrame.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsFrame.obj -Fd$(BUILD)\obj\ejsFrame.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsFrame.c $(LOG)
 
 #
 #   ejsFunction.obj
@@ -891,7 +891,7 @@ DEPS_59 = $(DEPS_59) src\ejs.h
 build\$(CONFIG)\obj\ejsFunction.obj: \
     src\core\src\ejsFunction.c $(DEPS_59)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsFunction.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsFunction.obj -Fd$(BUILD)\obj\ejsFunction.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsFunction.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsFunction.obj -Fd$(BUILD)\obj\ejsFunction.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsFunction.c $(LOG)
 
 #
 #   ejsGC.obj
@@ -901,7 +901,7 @@ DEPS_60 = $(DEPS_60) src\ejs.h
 build\$(CONFIG)\obj\ejsGC.obj: \
     src\core\src\ejsGC.c $(DEPS_60)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsGC.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsGC.obj -Fd$(BUILD)\obj\ejsGC.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsGC.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsGC.obj -Fd$(BUILD)\obj\ejsGC.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsGC.c $(LOG)
 
 #
 #   ejsGlobal.obj
@@ -911,7 +911,7 @@ DEPS_61 = $(DEPS_61) src\ejs.h
 build\$(CONFIG)\obj\ejsGlobal.obj: \
     src\core\src\ejsGlobal.c $(DEPS_61)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsGlobal.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsGlobal.obj -Fd$(BUILD)\obj\ejsGlobal.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsGlobal.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsGlobal.obj -Fd$(BUILD)\obj\ejsGlobal.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsGlobal.c $(LOG)
 
 #
 #   ejsHelper.obj
@@ -921,7 +921,7 @@ DEPS_62 = $(DEPS_62) src\ejs.h
 build\$(CONFIG)\obj\ejsHelper.obj: \
     src\vm\ejsHelper.c $(DEPS_62)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsHelper.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsHelper.obj -Fd$(BUILD)\obj\ejsHelper.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\vm\ejsHelper.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsHelper.obj -Fd$(BUILD)\obj\ejsHelper.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\vm\ejsHelper.c $(LOG)
 
 #
 #   ejsHttp.obj
@@ -931,7 +931,7 @@ DEPS_63 = $(DEPS_63) src\ejs.h
 build\$(CONFIG)\obj\ejsHttp.obj: \
     src\core\src\ejsHttp.c $(DEPS_63)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsHttp.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsHttp.obj -Fd$(BUILD)\obj\ejsHttp.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsHttp.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsHttp.obj -Fd$(BUILD)\obj\ejsHttp.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsHttp.c $(LOG)
 
 #
 #   ejsWeb.h
@@ -951,7 +951,7 @@ DEPS_65 = $(DEPS_65) build\$(CONFIG)\inc\ejs.web.slots.h
 build\$(CONFIG)\obj\ejsHttpServer.obj: \
     src\ejs.web\ejsHttpServer.c $(DEPS_65)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsHttpServer.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsHttpServer.obj -Fd$(BUILD)\obj\ejsHttpServer.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\ejs.web\ejsHttpServer.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsHttpServer.obj -Fd$(BUILD)\obj\ejsHttpServer.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\ejs.web\ejsHttpServer.c $(LOG)
 
 #
 #   ejsInterp.obj
@@ -961,7 +961,7 @@ DEPS_66 = $(DEPS_66) src\ejs.h
 build\$(CONFIG)\obj\ejsInterp.obj: \
     src\vm\ejsInterp.c $(DEPS_66)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsInterp.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsInterp.obj -Fd$(BUILD)\obj\ejsInterp.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\vm\ejsInterp.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsInterp.obj -Fd$(BUILD)\obj\ejsInterp.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\vm\ejsInterp.c $(LOG)
 
 #
 #   ejsIterator.obj
@@ -971,7 +971,7 @@ DEPS_67 = $(DEPS_67) src\ejs.h
 build\$(CONFIG)\obj\ejsIterator.obj: \
     src\core\src\ejsIterator.c $(DEPS_67)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsIterator.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsIterator.obj -Fd$(BUILD)\obj\ejsIterator.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsIterator.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsIterator.obj -Fd$(BUILD)\obj\ejsIterator.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsIterator.c $(LOG)
 
 #
 #   ejsJSON.obj
@@ -981,7 +981,7 @@ DEPS_68 = $(DEPS_68) src\ejs.h
 build\$(CONFIG)\obj\ejsJSON.obj: \
     src\core\src\ejsJSON.c $(DEPS_68)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsJSON.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsJSON.obj -Fd$(BUILD)\obj\ejsJSON.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsJSON.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsJSON.obj -Fd$(BUILD)\obj\ejsJSON.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsJSON.c $(LOG)
 
 #
 #   ejsLoader.obj
@@ -991,7 +991,7 @@ DEPS_69 = $(DEPS_69) src\ejs.h
 build\$(CONFIG)\obj\ejsLoader.obj: \
     src\vm\ejsLoader.c $(DEPS_69)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsLoader.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsLoader.obj -Fd$(BUILD)\obj\ejsLoader.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\vm\ejsLoader.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsLoader.obj -Fd$(BUILD)\obj\ejsLoader.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\vm\ejsLoader.c $(LOG)
 
 #
 #   ejsLocalCache.obj
@@ -1001,7 +1001,7 @@ DEPS_70 = $(DEPS_70) src\ejs.h
 build\$(CONFIG)\obj\ejsLocalCache.obj: \
     src\core\src\ejsLocalCache.c $(DEPS_70)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsLocalCache.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsLocalCache.obj -Fd$(BUILD)\obj\ejsLocalCache.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsLocalCache.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsLocalCache.obj -Fd$(BUILD)\obj\ejsLocalCache.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsLocalCache.c $(LOG)
 
 #
 #   ejsMath.obj
@@ -1011,7 +1011,7 @@ DEPS_71 = $(DEPS_71) src\ejs.h
 build\$(CONFIG)\obj\ejsMath.obj: \
     src\core\src\ejsMath.c $(DEPS_71)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsMath.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsMath.obj -Fd$(BUILD)\obj\ejsMath.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsMath.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsMath.obj -Fd$(BUILD)\obj\ejsMath.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsMath.c $(LOG)
 
 #
 #   ejsMemory.obj
@@ -1021,7 +1021,7 @@ DEPS_72 = $(DEPS_72) src\ejs.h
 build\$(CONFIG)\obj\ejsMemory.obj: \
     src\core\src\ejsMemory.c $(DEPS_72)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsMemory.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsMemory.obj -Fd$(BUILD)\obj\ejsMemory.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsMemory.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsMemory.obj -Fd$(BUILD)\obj\ejsMemory.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsMemory.c $(LOG)
 
 #
 #   ejsModule.obj
@@ -1031,7 +1031,7 @@ DEPS_73 = $(DEPS_73) src\ejs.h
 build\$(CONFIG)\obj\ejsModule.obj: \
     src\vm\ejsModule.c $(DEPS_73)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsModule.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsModule.obj -Fd$(BUILD)\obj\ejsModule.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\vm\ejsModule.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsModule.obj -Fd$(BUILD)\obj\ejsModule.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\vm\ejsModule.c $(LOG)
 
 #
 #   ejsMprLog.obj
@@ -1041,7 +1041,7 @@ DEPS_74 = $(DEPS_74) src\ejs.h
 build\$(CONFIG)\obj\ejsMprLog.obj: \
     src\core\src\ejsMprLog.c $(DEPS_74)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsMprLog.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsMprLog.obj -Fd$(BUILD)\obj\ejsMprLog.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsMprLog.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsMprLog.obj -Fd$(BUILD)\obj\ejsMprLog.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsMprLog.c $(LOG)
 
 #
 #   ejsNamespace.obj
@@ -1051,7 +1051,7 @@ DEPS_75 = $(DEPS_75) src\ejs.h
 build\$(CONFIG)\obj\ejsNamespace.obj: \
     src\core\src\ejsNamespace.c $(DEPS_75)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsNamespace.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsNamespace.obj -Fd$(BUILD)\obj\ejsNamespace.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsNamespace.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsNamespace.obj -Fd$(BUILD)\obj\ejsNamespace.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsNamespace.c $(LOG)
 
 #
 #   ejsNull.obj
@@ -1061,7 +1061,7 @@ DEPS_76 = $(DEPS_76) src\ejs.h
 build\$(CONFIG)\obj\ejsNull.obj: \
     src\core\src\ejsNull.c $(DEPS_76)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsNull.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsNull.obj -Fd$(BUILD)\obj\ejsNull.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsNull.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsNull.obj -Fd$(BUILD)\obj\ejsNull.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsNull.c $(LOG)
 
 #
 #   ejsNumber.obj
@@ -1071,7 +1071,7 @@ DEPS_77 = $(DEPS_77) src\ejs.h
 build\$(CONFIG)\obj\ejsNumber.obj: \
     src\core\src\ejsNumber.c $(DEPS_77)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsNumber.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsNumber.obj -Fd$(BUILD)\obj\ejsNumber.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsNumber.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsNumber.obj -Fd$(BUILD)\obj\ejsNumber.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsNumber.c $(LOG)
 
 #
 #   ejsObject.obj
@@ -1081,7 +1081,7 @@ DEPS_78 = $(DEPS_78) src\ejs.h
 build\$(CONFIG)\obj\ejsObject.obj: \
     src\core\src\ejsObject.c $(DEPS_78)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsObject.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsObject.obj -Fd$(BUILD)\obj\ejsObject.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsObject.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsObject.obj -Fd$(BUILD)\obj\ejsObject.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsObject.c $(LOG)
 
 #
 #   ejsPath.obj
@@ -1092,7 +1092,7 @@ DEPS_79 = $(DEPS_79) build\$(CONFIG)\inc\pcre.h
 build\$(CONFIG)\obj\ejsPath.obj: \
     src\core\src\ejsPath.c $(DEPS_79)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsPath.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsPath.obj -Fd$(BUILD)\obj\ejsPath.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsPath.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsPath.obj -Fd$(BUILD)\obj\ejsPath.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsPath.c $(LOG)
 
 #
 #   ejsPot.obj
@@ -1102,7 +1102,7 @@ DEPS_80 = $(DEPS_80) src\ejs.h
 build\$(CONFIG)\obj\ejsPot.obj: \
     src\core\src\ejsPot.c $(DEPS_80)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsPot.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsPot.obj -Fd$(BUILD)\obj\ejsPot.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsPot.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsPot.obj -Fd$(BUILD)\obj\ejsPot.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsPot.c $(LOG)
 
 #
 #   ejsRegExp.obj
@@ -1113,7 +1113,7 @@ DEPS_81 = $(DEPS_81) build\$(CONFIG)\inc\pcre.h
 build\$(CONFIG)\obj\ejsRegExp.obj: \
     src\core\src\ejsRegExp.c $(DEPS_81)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsRegExp.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsRegExp.obj -Fd$(BUILD)\obj\ejsRegExp.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsRegExp.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsRegExp.obj -Fd$(BUILD)\obj\ejsRegExp.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsRegExp.c $(LOG)
 
 #
 #   ejsRequest.obj
@@ -1127,7 +1127,7 @@ DEPS_82 = $(DEPS_82) build\$(CONFIG)\inc\ejs.web.slots.h
 build\$(CONFIG)\obj\ejsRequest.obj: \
     src\ejs.web\ejsRequest.c $(DEPS_82)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsRequest.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsRequest.obj -Fd$(BUILD)\obj\ejsRequest.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\ejs.web\ejsRequest.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsRequest.obj -Fd$(BUILD)\obj\ejsRequest.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\ejs.web\ejsRequest.c $(LOG)
 
 #
 #   ejsScope.obj
@@ -1137,7 +1137,7 @@ DEPS_83 = $(DEPS_83) src\ejs.h
 build\$(CONFIG)\obj\ejsScope.obj: \
     src\vm\ejsScope.c $(DEPS_83)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsScope.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsScope.obj -Fd$(BUILD)\obj\ejsScope.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\vm\ejsScope.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsScope.obj -Fd$(BUILD)\obj\ejsScope.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\vm\ejsScope.c $(LOG)
 
 #
 #   ejsService.obj
@@ -1147,7 +1147,7 @@ DEPS_84 = $(DEPS_84) src\ejs.h
 build\$(CONFIG)\obj\ejsService.obj: \
     src\vm\ejsService.c $(DEPS_84)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsService.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsService.obj -Fd$(BUILD)\obj\ejsService.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\vm\ejsService.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsService.obj -Fd$(BUILD)\obj\ejsService.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\vm\ejsService.c $(LOG)
 
 #
 #   ejsSession.obj
@@ -1159,7 +1159,7 @@ DEPS_85 = $(DEPS_85) src\ejs.web\ejsWeb.h
 build\$(CONFIG)\obj\ejsSession.obj: \
     src\ejs.web\ejsSession.c $(DEPS_85)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsSession.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsSession.obj -Fd$(BUILD)\obj\ejsSession.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\ejs.web\ejsSession.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsSession.obj -Fd$(BUILD)\obj\ejsSession.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\ejs.web\ejsSession.c $(LOG)
 
 #
 #   ejsSocket.obj
@@ -1169,7 +1169,7 @@ DEPS_86 = $(DEPS_86) src\ejs.h
 build\$(CONFIG)\obj\ejsSocket.obj: \
     src\core\src\ejsSocket.c $(DEPS_86)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsSocket.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsSocket.obj -Fd$(BUILD)\obj\ejsSocket.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsSocket.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsSocket.obj -Fd$(BUILD)\obj\ejsSocket.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsSocket.c $(LOG)
 
 #
 #   ejsSqlite.obj
@@ -1180,7 +1180,7 @@ DEPS_87 = $(DEPS_87) build\$(CONFIG)\inc\ejs.db.sqlite.slots.h
 build\$(CONFIG)\obj\ejsSqlite.obj: \
     src\ejs.db.sqlite\ejsSqlite.c $(DEPS_87)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsSqlite.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsSqlite.obj -Fd$(BUILD)\obj\ejsSqlite.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\ejs.db.sqlite\ejsSqlite.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsSqlite.obj -Fd$(BUILD)\obj\ejsSqlite.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\ejs.db.sqlite\ejsSqlite.c $(LOG)
 
 #
 #   ejsString.obj
@@ -1191,7 +1191,7 @@ DEPS_88 = $(DEPS_88) build\$(CONFIG)\inc\pcre.h
 build\$(CONFIG)\obj\ejsString.obj: \
     src\core\src\ejsString.c $(DEPS_88)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsString.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsString.obj -Fd$(BUILD)\obj\ejsString.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsString.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsString.obj -Fd$(BUILD)\obj\ejsString.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsString.c $(LOG)
 
 #
 #   ejsSystem.obj
@@ -1201,7 +1201,7 @@ DEPS_89 = $(DEPS_89) src\ejs.h
 build\$(CONFIG)\obj\ejsSystem.obj: \
     src\core\src\ejsSystem.c $(DEPS_89)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsSystem.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsSystem.obj -Fd$(BUILD)\obj\ejsSystem.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsSystem.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsSystem.obj -Fd$(BUILD)\obj\ejsSystem.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsSystem.c $(LOG)
 
 #
 #   ejsTimer.obj
@@ -1211,7 +1211,7 @@ DEPS_90 = $(DEPS_90) src\ejs.h
 build\$(CONFIG)\obj\ejsTimer.obj: \
     src\core\src\ejsTimer.c $(DEPS_90)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsTimer.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsTimer.obj -Fd$(BUILD)\obj\ejsTimer.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsTimer.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsTimer.obj -Fd$(BUILD)\obj\ejsTimer.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsTimer.c $(LOG)
 
 #
 #   ejsType.obj
@@ -1221,7 +1221,7 @@ DEPS_91 = $(DEPS_91) src\ejs.h
 build\$(CONFIG)\obj\ejsType.obj: \
     src\core\src\ejsType.c $(DEPS_91)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsType.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsType.obj -Fd$(BUILD)\obj\ejsType.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsType.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsType.obj -Fd$(BUILD)\obj\ejsType.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsType.c $(LOG)
 
 #
 #   ejsUri.obj
@@ -1231,7 +1231,7 @@ DEPS_92 = $(DEPS_92) src\ejs.h
 build\$(CONFIG)\obj\ejsUri.obj: \
     src\core\src\ejsUri.c $(DEPS_92)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsUri.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsUri.obj -Fd$(BUILD)\obj\ejsUri.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsUri.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsUri.obj -Fd$(BUILD)\obj\ejsUri.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsUri.c $(LOG)
 
 #
 #   ejsVoid.obj
@@ -1241,7 +1241,7 @@ DEPS_93 = $(DEPS_93) src\ejs.h
 build\$(CONFIG)\obj\ejsVoid.obj: \
     src\core\src\ejsVoid.c $(DEPS_93)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsVoid.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsVoid.obj -Fd$(BUILD)\obj\ejsVoid.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsVoid.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsVoid.obj -Fd$(BUILD)\obj\ejsVoid.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsVoid.c $(LOG)
 
 #
 #   ejsWeb.obj
@@ -1255,7 +1255,7 @@ DEPS_94 = $(DEPS_94) build\$(CONFIG)\inc\ejs.web.slots.h
 build\$(CONFIG)\obj\ejsWeb.obj: \
     src\ejs.web\ejsWeb.c $(DEPS_94)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsWeb.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsWeb.obj -Fd$(BUILD)\obj\ejsWeb.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\ejs.web\ejsWeb.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsWeb.obj -Fd$(BUILD)\obj\ejsWeb.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\ejs.web\ejsWeb.c $(LOG)
 
 #
 #   ejsWebSocket.obj
@@ -1265,7 +1265,7 @@ DEPS_95 = $(DEPS_95) src\ejs.h
 build\$(CONFIG)\obj\ejsWebSocket.obj: \
     src\core\src\ejsWebSocket.c $(DEPS_95)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsWebSocket.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsWebSocket.obj -Fd$(BUILD)\obj\ejsWebSocket.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsWebSocket.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsWebSocket.obj -Fd$(BUILD)\obj\ejsWebSocket.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsWebSocket.c $(LOG)
 
 #
 #   ejsWorker.obj
@@ -1275,7 +1275,7 @@ DEPS_96 = $(DEPS_96) src\ejs.h
 build\$(CONFIG)\obj\ejsWorker.obj: \
     src\core\src\ejsWorker.c $(DEPS_96)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsWorker.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsWorker.obj -Fd$(BUILD)\obj\ejsWorker.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsWorker.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsWorker.obj -Fd$(BUILD)\obj\ejsWorker.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsWorker.c $(LOG)
 
 #
 #   ejsXML.obj
@@ -1285,7 +1285,7 @@ DEPS_97 = $(DEPS_97) src\ejs.h
 build\$(CONFIG)\obj\ejsXML.obj: \
     src\core\src\ejsXML.c $(DEPS_97)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsXML.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsXML.obj -Fd$(BUILD)\obj\ejsXML.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsXML.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsXML.obj -Fd$(BUILD)\obj\ejsXML.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsXML.c $(LOG)
 
 #
 #   ejsXMLList.obj
@@ -1295,7 +1295,7 @@ DEPS_98 = $(DEPS_98) src\ejs.h
 build\$(CONFIG)\obj\ejsXMLList.obj: \
     src\core\src\ejsXMLList.c $(DEPS_98)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsXMLList.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsXMLList.obj -Fd$(BUILD)\obj\ejsXMLList.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsXMLList.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsXMLList.obj -Fd$(BUILD)\obj\ejsXMLList.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsXMLList.c $(LOG)
 
 #
 #   ejsXMLLoader.obj
@@ -1305,7 +1305,7 @@ DEPS_99 = $(DEPS_99) src\ejs.h
 build\$(CONFIG)\obj\ejsXMLLoader.obj: \
     src\core\src\ejsXMLLoader.c $(DEPS_99)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsXMLLoader.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsXMLLoader.obj -Fd$(BUILD)\obj\ejsXMLLoader.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsXMLLoader.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsXMLLoader.obj -Fd$(BUILD)\obj\ejsXMLLoader.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\core\src\ejsXMLLoader.c $(LOG)
 
 #
 #   ejsZlib.obj
@@ -1317,7 +1317,7 @@ DEPS_100 = $(DEPS_100) build\$(CONFIG)\inc\ejs.zlib.slots.h
 build\$(CONFIG)\obj\ejsZlib.obj: \
     src\ejs.zlib\ejsZlib.c $(DEPS_100)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsZlib.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsZlib.obj -Fd$(BUILD)\obj\ejsZlib.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\ejs.zlib\ejsZlib.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsZlib.obj -Fd$(BUILD)\obj\ejsZlib.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\ejs.zlib\ejsZlib.c $(LOG)
 
 #
 #   ejsc.obj
@@ -1327,7 +1327,7 @@ DEPS_101 = $(DEPS_101) build\$(CONFIG)\inc\ejsCompiler.h
 build\$(CONFIG)\obj\ejsc.obj: \
     src\cmd\ejsc.c $(DEPS_101)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsc.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsc.obj -Fd$(BUILD)\obj\ejsc.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\cmd\ejsc.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsc.obj -Fd$(BUILD)\obj\ejsc.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\cmd\ejsc.c $(LOG)
 
 #
 #   ejsmod.obj
@@ -1337,7 +1337,7 @@ DEPS_102 = $(DEPS_102) src\cmd\ejsmod.h
 build\$(CONFIG)\obj\ejsmod.obj: \
     src\cmd\ejsmod.c $(DEPS_102)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsmod.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsmod.obj -Fd$(BUILD)\obj\ejsmod.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\cmd\ejsmod.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsmod.obj -Fd$(BUILD)\obj\ejsmod.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\cmd\ejsmod.c $(LOG)
 
 #
 #   ejsrun.obj
@@ -1347,7 +1347,7 @@ DEPS_103 = $(DEPS_103) build\$(CONFIG)\inc\ejsCompiler.h
 build\$(CONFIG)\obj\ejsrun.obj: \
     src\cmd\ejsrun.c $(DEPS_103)
 	@echo .. [Compile] build\$(CONFIG)\obj\ejsrun.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\ejsrun.obj -Fd$(BUILD)\obj\ejsrun.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\cmd\ejsrun.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\ejsrun.obj -Fd$(BUILD)\obj\ejsrun.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\cmd\ejsrun.c $(LOG)
 
 #
 #   http.h
@@ -1374,7 +1374,7 @@ DEPS_106 = $(DEPS_106) build\$(CONFIG)\inc\pcre.h
 build\$(CONFIG)\obj\httpLib.obj: \
     src\http\httpLib.c $(DEPS_106)
 	@echo .. [Compile] build\$(CONFIG)\obj\httpLib.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\httpLib.obj -Fd$(BUILD)\obj\httpLib.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\http\httpLib.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\httpLib.obj -Fd$(BUILD)\obj\httpLib.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\http\httpLib.c $(LOG)
 
 #
 #   listing.obj
@@ -1385,7 +1385,7 @@ DEPS_107 = $(DEPS_107) build\$(CONFIG)\inc\ejsByteCodeTable.h
 build\$(CONFIG)\obj\listing.obj: \
     src\cmd\listing.c $(DEPS_107)
 	@echo .. [Compile] build\$(CONFIG)\obj\listing.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\listing.obj -Fd$(BUILD)\obj\listing.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\cmd\listing.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\listing.obj -Fd$(BUILD)\obj\listing.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\cmd\listing.c $(LOG)
 
 #
 #   mbedtls.h
@@ -1437,7 +1437,7 @@ DEPS_113 = $(DEPS_113) src\mpr\mpr.h
 build\$(CONFIG)\obj\mprLib.obj: \
     src\mpr\mprLib.c $(DEPS_113)
 	@echo .. [Compile] build\$(CONFIG)\obj\mprLib.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\mprLib.obj -Fd$(BUILD)\obj\mprLib.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\mpr\mprLib.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\mprLib.obj -Fd$(BUILD)\obj\mprLib.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\mpr\mprLib.c $(LOG)
 
 #
 #   pcre.h
@@ -1464,7 +1464,7 @@ DEPS_116 = $(DEPS_116) src\cmd\ejsmod.h
 build\$(CONFIG)\obj\slotGen.obj: \
     src\cmd\slotGen.c $(DEPS_116)
 	@echo .. [Compile] build\$(CONFIG)\obj\slotGen.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\slotGen.obj -Fd$(BUILD)\obj\slotGen.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\cmd\slotGen.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\slotGen.obj -Fd$(BUILD)\obj\slotGen.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\cmd\slotGen.c $(LOG)
 
 #
 #   sqlite3.h
@@ -1506,7 +1506,7 @@ DEPS_120 = $(DEPS_120) build\$(CONFIG)\inc\mpr.h
 build\$(CONFIG)\obj\watchdog.obj: \
     src\watchdog\watchdog.c $(DEPS_120)
 	@echo .. [Compile] build\$(CONFIG)\obj\watchdog.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\watchdog.obj -Fd$(BUILD)\obj\watchdog.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\watchdog\watchdog.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\watchdog.obj -Fd$(BUILD)\obj\watchdog.pdb $(CFLAGS) $(DFLAGS) -D_FILE_OFFSET_BITS=64 -D_FILE_OFFSET_BITS=64 -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" -DME_COM_OPENSSL_PATH=$(ME_COM_OPENSSL_PATH) $(IFLAGS) "-I$(ME_COM_OPENSSL_PATH)\inc32" src\watchdog\watchdog.c $(LOG)
 
 #
 #   zlib.h
