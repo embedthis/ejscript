@@ -2,3 +2,5 @@ t.es
 samples/**/main
 src/compiler/test/bugs/
 ejsZlib.miniz
+*.sdb
+start.me

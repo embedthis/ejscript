@@ -64,6 +64,8 @@ static EjsWebSocket *wsConstructor(Ejs *ejs, EjsWebSocket *ws, int argc, EjsObj 
         return 0;
     }
     ws->conn->limits->requestTimeout = HTTP_UNLIMITED;
+    ws->conn->limits->rxBodySize = HTTP_UNLIMITED;
+    ws->conn->limits->txBodySize = HTTP_UNLIMITED;
     httpSetAsync(ws->conn, 1);
     httpPrepClientConn(ws->conn, 0);
     httpSetConnNotifier(ws->conn, webSocketNotify);
