@@ -11,6 +11,7 @@ else
     VERSION=$(pak --dir .. edit version)
 fi
 
+
 while [[ $# -gt 0 ]] ; do
     arg="$1"
     case ${arg} in
