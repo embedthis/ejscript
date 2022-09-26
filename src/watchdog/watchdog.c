@@ -67,13 +67,13 @@ static App *app;
 
 /***************************** Forward Declarations ***************************/
 
-static void killService();
-static bool killPid();
+static void killService(void);
+static bool killPid(void);
 static void manageApp(void *unused, int flags);
-static int  readPid();
+static int  readPid(void);
 static bool process(cchar *operation, bool quiet);
-static void runService();
-static void setAppDefaults();
+static void runService(void);
+static void setAppDefaults(void);
 static void terminating(int state, int how, int status);
 static int  writePid(int pid);
 
@@ -293,7 +293,7 @@ static void manageApp(void *ptr, int flags)
 }
 
 
-static void setAppDefaults()
+static void setAppDefaults(void)
 {
     app->company = ssplit(slower(ME_COMPANY), " ", NULL);
     app->serviceProgram = sclone(SERVICE_PROGRAM);
@@ -580,7 +580,7 @@ static bool process(cchar *operation, bool quiet)
 }
 
 
-static void runService()
+static void runService(void)
 {
     MprTicks    mark;
     cchar       **av, **argv;
@@ -610,7 +610,7 @@ static void runService()
         if (app->servicePid == 0) {
             if (app->restartCount >= app->retries) {
                 if (! app->restartWarned) {
-                    mprLog("error watchdog", 0, "Too many restarts for %s, %d in last hour", 
+                    mprLog("error watchdog", 0, "Too many restarts for %s, %d in last hour",
                         app->serviceProgram, app->restartCount);
                     mprLog("error watchdog", 0, "Suspending restarts for one minute");
                     app->restartWarned++;
@@ -622,7 +622,7 @@ static void runService()
             /*
                 Create the child
              */
-            app->servicePid = vfork();
+            app->servicePid = fork();
             if (app->servicePid < 0) {
                 mprLog("error watchdog", 0, "Cannot fork new process to run %s", app->serviceProgram);
                 continue;
@@ -690,7 +690,7 @@ static void runService()
 }
 
 
-static void killService()
+static void killService(void)
 {
     if (app->servicePid > 0) {
         mprLog("info watchdog", 1, "Killing %s at pid %d with signal %d", app->serviceProgram, app->servicePid, app->signal);
@@ -703,7 +703,7 @@ static void killService()
 /*
     Get the pid for the current running watchdog service
  */
-static int readPid()
+static int readPid(void)
 {
     char    pbuf[32];
     int     pid, fd;
@@ -720,7 +720,7 @@ static int readPid()
 }
 
 
-static bool killPid()
+static bool killPid(void)
 {
     int     pid;
 
@@ -799,15 +799,15 @@ static SERVICE_TABLE_ENTRY      svcTable[] = {
 static void     WINAPI serviceCallback(ulong code);
 static bool     enableService(int enable);
 static void     setWinDefaults(HINSTANCE inst);
-static bool     installService();
+static bool     installService(void);
 static void     logHandler(cchar *tags, int level, cchar *msg);
-static int      registerService();
+static int      registerService(void);
 static bool     removeService(int removeFromScmDb);
 static void     gracefulShutdown(MprTicks timeout);
 static bool     process(cchar *operation);
-static void     run();
+static void     run(void);
 static int      startDispatcher(LPSERVICE_MAIN_FUNCTION svcMain);
-static bool     startService();
+static bool     startService(void);
 static bool     stopService(int cmd);
 static int      tellSCM(long state, long exitCode, long wait);
 static void     terminating(int state, int how, int status);
@@ -989,7 +989,7 @@ static bool process(cchar *operation)
     rc = 1;
 
     if (smatch(operation, "install")) {
-        rc = installService(app->serviceArgs);
+        rc = installService();
 
     } else if (smatch(operation, "uninstall")) {
         rc = removeService(1);
@@ -1078,7 +1078,7 @@ static void serviceThread(void *data)
 }
 
 
-static void run()
+static void run(void)
 {
     PROCESS_INFORMATION procInfo;
     STARTUPINFO         startInfo;
@@ -1207,7 +1207,7 @@ static int startDispatcher(LPSERVICE_MAIN_FUNCTION svcMain)
     Should be called first thing after the service entry point is called by the service manager
  */
 
-static int registerService()
+static int registerService(void)
 {
     svcHandle = RegisterServiceCtrlHandler(app->serviceName, serviceCallback);
     if (svcHandle == 0) {
@@ -1270,7 +1270,7 @@ static void WINAPI serviceCallback(ulong cmd)
 }
 
 
-static bool installService()
+static bool installService(void)
 {
     SC_HANDLE   svc, mgr;
     char        cmd[ME_MAX_FNAME], key[ME_MAX_FNAME];
@@ -1418,7 +1418,7 @@ static bool enableService(int enable)
 }
 
 
-static bool startService()
+static bool startService(void)
 {
     SC_HANDLE   svc, mgr;
     int         rc;
@@ -1589,16 +1589,13 @@ static void gracefulShutdown(MprTicks timeout)
 
 
 #else
-PUBLIC void stubManager() {
+PUBLIC void stubManager(void) {
     fprintf(stdout, "Manager not supported on this architecture");
 }
 #endif /* ME_WIN_LIKE */
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under commercial and open source licenses.
-    You may use the Embedthis Open Source license or you may acquire a
-    commercial license from Embedthis Software. You agree to be fully bound
-    by the terms of either license. Consult the LICENSE.md distributed with
-    this software for full details and other copyrights.
+    This software is distributed under a commercial license. Consult the LICENSE.md
+    distributed with this software for full details and copyrights.
  */

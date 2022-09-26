@@ -2,11 +2,11 @@
     "name": "jquery",
     "title": "jQuery",
     "description": "JavaScript library for DOM operations",
-    "version": "3.3.1",
+    "version": "3.6.1",
     "homepage": "https://jquery.com",
     "author": {
-        "name": "JS Foundation and other contributors",
-        "url": "https://github.com/jquery/jquery/blob/3.3.1/AUTHORS.txt"
+        "name": "OpenJS Foundation and other contributors",
+        "url": "https://github.com/jquery/jquery/blob/3.6.1/AUTHORS.txt"
     },
     "repository": {
         "type": "git",
@@ -22,6 +22,12 @@
         "url": "https://github.com/jquery/jquery/issues"
     },
     "license": "MIT",
+    "husky": {
+        "hooks": {
+            "commit-msg": "commitplease .git/COMMIT_EDITMSG",
+            "pre-commit": "grunt lint:newer qunit_fixture"
+        }
+    },
     "files": [
         "dist/jquery.*",
         "!dist/jquery.slim*"

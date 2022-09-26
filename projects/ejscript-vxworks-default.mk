@@ -3,7 +3,7 @@
 #
 
 NAME                  := ejscript
-VERSION               := 2.7.6
+VERSION               := 2.7.7
 PROFILE               ?= default
 ARCH                  ?= $(shell echo $(WIND_HOST_TYPE) | sed 's/-.*$(ME_ROOT_PREFIX)/')
 CPU                   ?= $(subst X86,PENTIUM,$(shell echo $(ARCH) | tr a-z A-Z))
