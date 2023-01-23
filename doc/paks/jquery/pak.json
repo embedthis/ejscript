@@ -22,18 +22,5 @@
         "url": "https://github.com/jquery/jquery/issues"
     },
     "license": "MIT",
-    "husky": {
-        "hooks": {
-            "commit-msg": "commitplease .git/COMMIT_EDITMSG",
-            "pre-commit": "grunt lint:newer qunit_fixture"
-        }
-    },
-    "files": [
-        "dist/jquery.*",
-        "!dist/jquery.slim*"
-    ],
-    "export": {
-        "trim": 1
-    },
-    "origin": "@npm/jquery"
+    "origin": "jquery/jquery"
 }
