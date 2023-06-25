@@ -14,9 +14,19 @@ PROFILE               = default
 
 !IF "$(PA)" == "AMD64"
 ARCH                  = x64
+CC_ARCH               = x86_64
 ENTRY                 = _DllMainCRTStartup
+!ELSEIF "$(PA)" == "ARM64"
+ARCH                  = arm64
+CC_ARCH               = aarch64
+ENTRY                 = _DllMainCRTStartup@12
+!ELSEIF "$(PA)" == "ARM"
+ARCH                  = arm
+CC_ARCH               = arm
+ENTRY                 = _DllMainCRTStartup@12
 !ELSE
 ARCH                  = x86
+CC_ARCH               = i686
 ENTRY                 = _DllMainCRTStartup@12
 !ENDIF
 
@@ -30,6 +40,9 @@ BUILD                 = build\$(CONFIG)
 
 LBIN                  = $(BUILD)\bin
 
+#
+# Components
+#
 !IF "$(ME_COM_COMPILER)" == ""
 ME_COM_COMPILER       = 1
 !ENDIF
@@ -104,12 +117,148 @@ ME_COM_COMPILER       = 1
 !ENDIF
 
 
+#
+# Settings
+#
+!IF "$(ME_AUTHOR)" == ""
+ME_AUTHOR             = \"Embedthis Software\"
+!ENDIF
+!IF "$(ME_CERTS_BITS)" == ""
+ME_CERTS_BITS         = 2048
+!ENDIF
+!IF "$(ME_CERTS_DAYS)" == ""
+ME_CERTS_DAYS         = 3650
+!ENDIF
+!IF "$(ME_CERTS_GENDH)" == ""
+ME_CERTS_GENDH        = 0
+!ENDIF
+!IF "$(ME_COMPANY)" == ""
+ME_COMPANY            = \"embedthis\"
+!ENDIF
+!IF "$(ME_COMPATIBLE)" == ""
+ME_COMPATIBLE         = \"2.7\"
+!ENDIF
+!IF "$(ME_COMPILER_HAS_ATOMIC)" == ""
+ME_COMPILER_HAS_ATOMIC = 0
+!ENDIF
+!IF "$(ME_COMPILER_HAS_ATOMIC64)" == ""
+ME_COMPILER_HAS_ATOMIC64 = 0
+!ENDIF
+!IF "$(ME_COMPILER_HAS_DYN_LOAD)" == ""
+ME_COMPILER_HAS_DYN_LOAD = 1
+!ENDIF
+!IF "$(ME_COMPILER_HAS_LIB_EDIT)" == ""
+ME_COMPILER_HAS_LIB_EDIT = 0
+!ENDIF
+!IF "$(ME_COMPILER_HAS_LIB_RT)" == ""
+ME_COMPILER_HAS_LIB_RT = 0
+!ENDIF
+!IF "$(ME_COMPILER_HAS_MMU)" == ""
+ME_COMPILER_HAS_MMU   = 1
+!ENDIF
+!IF "$(ME_COMPILER_HAS_STACK_PROTECTOR)" == ""
+ME_COMPILER_HAS_STACK_PROTECTOR = 0
+!ENDIF
+!IF "$(ME_COMPILER_HAS_SYNC)" == ""
+ME_COMPILER_HAS_SYNC  = 0
+!ENDIF
+!IF "$(ME_COMPILER_HAS_SYNC64)" == ""
+ME_COMPILER_HAS_SYNC64 = 0
+!ENDIF
+!IF "$(ME_COMPILER_HAS_SYNC_CAS)" == ""
+ME_COMPILER_HAS_SYNC_CAS = 0
+!ENDIF
+!IF "$(ME_COMPILER_HAS_UNNAMED_UNIONS)" == ""
+ME_COMPILER_HAS_UNNAMED_UNIONS = 1
+!ENDIF
+!IF "$(ME_CONFIGURE)" == ""
+ME_CONFIGURE          = \"me -d -q -platform windows-x64-default -configure . -gen nmake\"
+!ENDIF
+!IF "$(ME_CONFIGURED)" == ""
+ME_CONFIGURED         = 1
+!ENDIF
+!IF "$(ME_DEPTH)" == ""
+ME_DEPTH              = 1
+!ENDIF
+!IF "$(ME_DESCRIPTION)" == ""
+ME_DESCRIPTION        = \"Embedthis Ejscript Javascript Language\"
+!ENDIF
+!IF "$(ME_EJSCRIPT_COMPILE)" == ""
+ME_EJSCRIPT_COMPILE   = \"--optimize 9\"
+!ENDIF
+!IF "$(ME_EJSCRIPT_DB)" == ""
+ME_EJSCRIPT_DB        = 1
+!ENDIF
+!IF "$(ME_EJSCRIPT_MAIL)" == ""
+ME_EJSCRIPT_MAIL      = 1
+!ENDIF
+!IF "$(ME_EJSCRIPT_MAPPER)" == ""
+ME_EJSCRIPT_MAPPER    = 1
+!ENDIF
+!IF "$(ME_EJSCRIPT_TAR)" == ""
+ME_EJSCRIPT_TAR       = 1
+!ENDIF
+!IF "$(ME_EJSCRIPT_TEMPLATE)" == ""
+ME_EJSCRIPT_TEMPLATE  = 1
+!ENDIF
+!IF "$(ME_EJSCRIPT_WEB)" == ""
+ME_EJSCRIPT_WEB       = 1
+!ENDIF
+!IF "$(ME_EJSCRIPT_ZLIB)" == ""
+ME_EJSCRIPT_ZLIB      = 1
+!ENDIF
+!IF "$(ME_ESFLAGS)" == ""
+ME_ESFLAGS            = \"\"
+!ENDIF
+!IF "$(ME_HTTP_PAM)" == ""
+ME_HTTP_PAM           = 1
+!ENDIF
+!IF "$(ME_HTTP_WEB_SOCKETS)" == ""
+ME_HTTP_WEB_SOCKETS   = 1
+!ENDIF
+!IF "$(ME_INTEGRATE)" == ""
+ME_INTEGRATE          = 1
+!ENDIF
+!IF "$(ME_MANIFEST)" == ""
+ME_MANIFEST           = \"installs/manifest.me\"
+!ENDIF
+!IF "$(ME_MBEDTLS_COMPACT)" == ""
+ME_MBEDTLS_COMPACT    = 1
+!ENDIF
+!IF "$(ME_MPR_LOGGING)" == ""
+ME_MPR_LOGGING        = 1
+!ENDIF
+!IF "$(ME_NAME)" == ""
+ME_NAME               = \"ejscript\"
+!ENDIF
+!IF "$(ME_PARTS)" == ""
+ME_PARTS              = \"undefined\"
+!ENDIF
+!IF "$(ME_PLATFORMS)" == ""
+ME_PLATFORMS          = \"local\"
+!ENDIF
+!IF "$(ME_PREFIXES)" == ""
+ME_PREFIXES           = \"install-prefixes\"
+!ENDIF
+!IF "$(ME_TITLE)" == ""
+ME_TITLE              = \"Embedthis Ejscript\"
+!ENDIF
+!IF "$(ME_TUNE)" == ""
+ME_TUNE               = \"speed\"
+!ENDIF
+!IF "$(ME_VERSION)" == ""
+ME_VERSION            = \"2.7.7\"
+!ENDIF
+!IF "$(ME_WATCHDOG_NAME)" == ""
+ME_WATCHDOG_NAME      = \"ejsman\"
+!ENDIF
+
 CC                    = cl
 LD                    = link
 AR                    = lib
 RC                    = rc
 CFLAGS                = -nologo -GR- -W3 -Zi -Od -MDd
-DFLAGS                = -DME_DEBUG=1 -DME_COM_COMPILER=$(ME_COM_COMPILER) -DME_COM_HTTP=$(ME_COM_HTTP) -DME_COM_LIB=$(ME_COM_LIB) -DME_COM_LINK=$(ME_COM_LINK) -DME_COM_MATRIXSSL=$(ME_COM_MATRIXSSL) -DME_COM_MBEDTLS=$(ME_COM_MBEDTLS) -DME_COM_MPR=$(ME_COM_MPR) -DME_COM_NANOSSL=$(ME_COM_NANOSSL) -DME_COM_OPENSSL=$(ME_COM_OPENSSL) -DME_COM_OSDEP=$(ME_COM_OSDEP) -DME_COM_PCRE=$(ME_COM_PCRE) -DME_COM_RC=$(ME_COM_RC) -DME_COM_SQLITE=$(ME_COM_SQLITE) -DME_COM_SSL=$(ME_COM_SSL) -DME_COM_VXWORKS=$(ME_COM_VXWORKS) -DME_COM_ZLIB=$(ME_COM_ZLIB) 
+DFLAGS                = -DME_DEBUG=1 -DME_COM_COMPILER=$(ME_COM_COMPILER) -DME_COM_HTTP=$(ME_COM_HTTP) -DME_COM_LIB=$(ME_COM_LIB) -DME_COM_LINK=$(ME_COM_LINK) -DME_COM_MATRIXSSL=$(ME_COM_MATRIXSSL) -DME_COM_MBEDTLS=$(ME_COM_MBEDTLS) -DME_COM_MPR=$(ME_COM_MPR) -DME_COM_NANOSSL=$(ME_COM_NANOSSL) -DME_COM_OPENSSL=$(ME_COM_OPENSSL) -DME_COM_OSDEP=$(ME_COM_OSDEP) -DME_COM_PCRE=$(ME_COM_PCRE) -DME_COM_RC=$(ME_COM_RC) -DME_COM_SQLITE=$(ME_COM_SQLITE) -DME_COM_SSL=$(ME_COM_SSL) -DME_COM_VXWORKS=$(ME_COM_VXWORKS) -DME_COM_ZLIB=$(ME_COM_ZLIB) -DME_CERTS_BITS=$(ME_CERTS_BITS) -DME_CERTS_DAYS=$(ME_CERTS_DAYS) -DME_CERTS_GENDH=$(ME_CERTS_GENDH) -DME_EJSCRIPT_COMPILE=$(ME_EJSCRIPT_COMPILE) -DME_EJSCRIPT_DB=$(ME_EJSCRIPT_DB) -DME_EJSCRIPT_MAIL=$(ME_EJSCRIPT_MAIL) -DME_EJSCRIPT_MAPPER=$(ME_EJSCRIPT_MAPPER) -DME_EJSCRIPT_TAR=$(ME_EJSCRIPT_TAR) -DME_EJSCRIPT_TEMPLATE=$(ME_EJSCRIPT_TEMPLATE) -DME_EJSCRIPT_WEB=$(ME_EJSCRIPT_WEB) -DME_EJSCRIPT_ZLIB=$(ME_EJSCRIPT_ZLIB) -DME_HTTP_PAM=$(ME_HTTP_PAM) -DME_HTTP_WEBSOCKETS=$(ME_HTTP_WEBSOCKETS) -DME_MBEDTLS_COMPACT=$(ME_MBEDTLS_COMPACT) -DME_MPR_LOGGING=$(ME_MPR_LOGGING) -DME_WATCHDOG_NAME=$(ME_WATCHDOG_NAME) 
 IFLAGS                = -Ibuild\$(CONFIG)\inc
 LDFLAGS               = -nologo -incremental:no -dynamicbase -nxcompat -debug -machine:x64
 LIBPATHS              = "-libpath:$(BUILD)\bin"
@@ -140,7 +289,8 @@ TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ejs.mail.mod
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ejs.mvc.mod
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ejs.tar.mod
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\ejsrun.exe
-TARGETS               = $(TARGETS) build\$(CONFIG)\.install-certs-modified
+TARGETS               = $(TARGETS) .install-certs-modified
+TARGETS               = $(TARGETS) build\$(CONFIG)\bin
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\libejs.db.sqlite.dll
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\libejs.web.dll
 TARGETS               = $(TARGETS) build\$(CONFIG)\bin\mvc.exe
@@ -278,7 +428,8 @@ clean:
 	if exist "build\$(CONFIG)\bin\ejsrun.lib" del /Q "build\$(CONFIG)\bin\ejsrun.lib"
 	if exist "build\$(CONFIG)\bin\ejsrun.pdb" del /Q "build\$(CONFIG)\bin\ejsrun.pdb"
 	if exist "build\$(CONFIG)\bin\ejsrun.exp" del /Q "build\$(CONFIG)\bin\ejsrun.exp"
-	if exist "build\$(CONFIG)\.install-certs-modified" del /Q "build\$(CONFIG)\.install-certs-modified"
+	if exist ".install-certs-modified" del /Q ".install-certs-modified"
+	if exist "build\$(CONFIG)\bin" del /Q "build\$(CONFIG)\bin"
 	if exist "build\$(CONFIG)\bin\libejs.dll" del /Q "build\$(CONFIG)\bin\libejs.dll"
 	if exist "build\$(CONFIG)\bin\libejs.lib" del /Q "build\$(CONFIG)\bin\libejs.lib"
 	if exist "build\$(CONFIG)\bin\libejs.pdb" del /Q "build\$(CONFIG)\bin\libejs.pdb"
@@ -1401,7 +1552,7 @@ DEPS_109 = $(DEPS_109) src\mbedtls\mbedtls.h
 build\$(CONFIG)\obj\mbedtls.obj: \
     src\mbedtls\mbedtls.c $(DEPS_109)
 	@echo .. [Compile] build\$(CONFIG)\obj\mbedtls.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\mbedtls.obj -Fd$(BUILD)\obj\mbedtls.pdb -nologo -GR- -Zi -Od -MDd $(DFLAGS) -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src\mbedtls\mbedtls.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\mbedtls.obj -Fd$(BUILD)\obj\mbedtls.pdb -nologo -GR- -Zi -Od -MDd -O1 $(DFLAGS) -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src\mbedtls\mbedtls.c $(LOG)
 
 #
 #   mpr-mbedtls.obj
@@ -1523,7 +1674,7 @@ DEPS_122 = $(DEPS_122) src\zlib\zlib.h
 build\$(CONFIG)\obj\zlib.obj: \
     src\zlib\zlib.c $(DEPS_122)
 	@echo .. [Compile] build\$(CONFIG)\obj\zlib.obj
-	"$(CC)" -c -Fo$(BUILD)\obj\zlib.obj -Fd$(BUILD)\obj\zlib.pdb $(CFLAGS) $(DFLAGS) $(IFLAGS) src\zlib\zlib.c $(LOG)
+	"$(CC)" -c -Fo$(BUILD)\obj\zlib.obj -Fd$(BUILD)\obj\zlib.pdb $(CFLAGS) -Wno-deprecated-non-prototype $(DFLAGS) $(IFLAGS) src\zlib\zlib.c $(LOG)
 
 #
 #   slots
@@ -2471,28 +2622,38 @@ DEPS_149 = $(DEPS_149) src\certs\samples\self.key
 DEPS_149 = $(DEPS_149) src\certs\samples\test.crt
 DEPS_149 = $(DEPS_149) src\certs\samples\test.key
 
-build\$(CONFIG)\.install-certs-modified: $(DEPS_149)
+.install-certs-modified: $(DEPS_149)
+	@echo ..... [Copy] certs
+	if not exist "certs" md "certs"
+	copy /Y /B src\certs\samples\ca.crt+modified certs\ca.crt $(LOG)
+	copy /Y /B src\certs\samples\ca.key+modified certs\ca.key $(LOG)
+	copy /Y /B src\certs\samples\ec.crt+modified certs\ec.crt $(LOG)
+	copy /Y /B src\certs\samples\ec.key+modified certs\ec.key $(LOG)
+	copy /Y /B src\certs\samples\roots.crt+modified certs\roots.crt $(LOG)
+	copy /Y /B src\certs\samples\self.crt+modified certs\self.crt $(LOG)
+	copy /Y /B src\certs\samples\self.key+modified certs\self.key $(LOG)
+	copy /Y /B src\certs\samples\test.crt+modified certs\test.crt $(LOG)
+	copy /Y /B src\certs\samples\test.key+modified certs\test.key $(LOG)
+	copy /Y /B nul+modified .install-certs-modified $(LOG)
+
+#
+#   install-roots
+#
+DEPS_150 = $(DEPS_150) src\certs\samples\roots.crt
+
+build\$(CONFIG)\bin: $(DEPS_150)
 	@echo ..... [Copy] build\$(CONFIG)\bin
 	if not exist "build\$(CONFIG)\bin" md "build\$(CONFIG)\bin"
-	copy /Y /B src\certs\samples\ca.crt+modified build\$(CONFIG)\bin\ca.crt $(LOG)
-	copy /Y /B src\certs\samples\ca.key+modified build\$(CONFIG)\bin\ca.key $(LOG)
-	copy /Y /B src\certs\samples\ec.crt+modified build\$(CONFIG)\bin\ec.crt $(LOG)
-	copy /Y /B src\certs\samples\ec.key+modified build\$(CONFIG)\bin\ec.key $(LOG)
 	copy /Y /B src\certs\samples\roots.crt+modified build\$(CONFIG)\bin\roots.crt $(LOG)
-	copy /Y /B src\certs\samples\self.crt+modified build\$(CONFIG)\bin\self.crt $(LOG)
-	copy /Y /B src\certs\samples\self.key+modified build\$(CONFIG)\bin\self.key $(LOG)
-	copy /Y /B src\certs\samples\test.crt+modified build\$(CONFIG)\bin\test.crt $(LOG)
-	copy /Y /B src\certs\samples\test.key+modified build\$(CONFIG)\bin\test.key $(LOG)
-	copy /Y /B nul+modified build\$(CONFIG)\.install-certs-modified $(LOG)
 
 !IF "$(ME_COM_SQLITE)" == "1"
 #
 #   libsql
 #
-DEPS_150 = $(DEPS_150) build\$(CONFIG)\inc\sqlite3.h
-DEPS_150 = $(DEPS_150) build\$(CONFIG)\obj\sqlite3.obj
+DEPS_151 = $(DEPS_151) build\$(CONFIG)\inc\sqlite3.h
+DEPS_151 = $(DEPS_151) build\$(CONFIG)\obj\sqlite3.obj
 
-build\$(CONFIG)\bin\libsql.dll: $(DEPS_150)
+build\$(CONFIG)\bin\libsql.dll: $(DEPS_151)
 	@echo ..... [Link] build\$(CONFIG)\bin\libsql.dll
 	"$(LD)" -dll -out:$(BUILD)\bin\libsql.dll -entry:_DllMainCRTStartup $(LDFLAGS) $(LIBPATHS) "$(BUILD)\obj\sqlite3.obj" $(LIBS)  $(LOG)
 !ENDIF
@@ -2500,88 +2661,14 @@ build\$(CONFIG)\bin\libsql.dll: $(DEPS_150)
 #
 #   libejs.db.sqlite
 #
-DEPS_151 = $(DEPS_151) build\$(CONFIG)\bin\libmpr.dll
-DEPS_151 = $(DEPS_151) build\$(CONFIG)\bin\libejs.dll
-DEPS_151 = $(DEPS_151) build\$(CONFIG)\bin\ejs.mod
-DEPS_151 = $(DEPS_151) build\$(CONFIG)\bin\ejs.db.sqlite.mod
-!IF "$(ME_COM_SQLITE)" == "1"
-DEPS_151 = $(DEPS_151) build\$(CONFIG)\bin\libsql.dll
-!ENDIF
-DEPS_151 = $(DEPS_151) build\$(CONFIG)\obj\ejsSqlite.obj
-
-!IF "$(ME_COM_MBEDTLS)" == "1"
-LIBS_151 = $(LIBS_151) libmbedtls.lib
-!ENDIF
-!IF "$(ME_COM_MBEDTLS)" == "1"
-LIBS_151 = $(LIBS_151) libmpr-mbedtls.lib
-!ENDIF
-!IF "$(ME_COM_MBEDTLS)" == "1"
-LIBS_151 = $(LIBS_151) libmbedtls.lib
-!ENDIF
-!IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_151 = $(LIBS_151) libmpr-openssl.lib
-!ENDIF
-!IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_151 = $(LIBS_151) gdi32.lib
-LIBPATHS_151 = $(LIBPATHS_151) -libpath:$(ME_COM_OPENSSL_PATH)/out32
-!ENDIF
-!IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_151 = $(LIBS_151) libeay32.lib
-LIBPATHS_151 = $(LIBPATHS_151) -libpath:$(ME_COM_OPENSSL_PATH)/out32
-!ENDIF
-!IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_151 = $(LIBS_151) ssleay32.lib
-LIBPATHS_151 = $(LIBPATHS_151) -libpath:$(ME_COM_OPENSSL_PATH)/out32
-!ENDIF
-!IF "$(ME_COM_ZLIB)" == "1"
-LIBS_151 = $(LIBS_151) libzlib.lib
-!ENDIF
-LIBS_151 = $(LIBS_151) libmpr.lib
-!IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_151 = $(LIBS_151) libmpr-openssl.lib
-!ENDIF
-!IF "$(ME_COM_MBEDTLS)" == "1"
-LIBS_151 = $(LIBS_151) libmpr-mbedtls.lib
-!ENDIF
-!IF "$(ME_COM_ZLIB)" == "1"
-LIBS_151 = $(LIBS_151) libzlib.lib
-!ENDIF
-!IF "$(ME_COM_PCRE)" == "1"
-LIBS_151 = $(LIBS_151) libpcre.lib
-!ENDIF
-!IF "$(ME_COM_HTTP)" == "1"
-LIBS_151 = $(LIBS_151) libhttp.lib
-!ENDIF
-!IF "$(ME_COM_PCRE)" == "1"
-LIBS_151 = $(LIBS_151) libpcre.lib
-!ENDIF
-LIBS_151 = $(LIBS_151) libmpr.lib
-LIBS_151 = $(LIBS_151) libejs.lib
-!IF "$(ME_COM_HTTP)" == "1"
-LIBS_151 = $(LIBS_151) libhttp.lib
-!ENDIF
-!IF "$(ME_COM_SQLITE)" == "1"
-LIBS_151 = $(LIBS_151) libsql.lib
-!ENDIF
-!IF "$(ME_COM_SQLITE)" == "1"
-LIBS_151 = $(LIBS_151) libsql.lib
-!ENDIF
-LIBS_151 = $(LIBS_151) libejs.lib
-
-build\$(CONFIG)\bin\libejs.db.sqlite.dll: $(DEPS_151)
-	@echo ..... [Link] build\$(CONFIG)\bin\libejs.db.sqlite.dll
-	"$(LD)" -dll -out:$(BUILD)\bin\libejs.db.sqlite.dll -entry:_DllMainCRTStartup $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsSqlite.obj" $(LIBPATHS_151) $(LIBS_151) $(LIBS)  $(LOG)
-
-#
-#   libejs.web
-#
+DEPS_152 = $(DEPS_152) build\$(CONFIG)\bin\libmpr.dll
 DEPS_152 = $(DEPS_152) build\$(CONFIG)\bin\libejs.dll
 DEPS_152 = $(DEPS_152) build\$(CONFIG)\bin\ejs.mod
-DEPS_152 = $(DEPS_152) build\$(CONFIG)\inc\ejsWeb.h
-DEPS_152 = $(DEPS_152) build\$(CONFIG)\obj\ejsHttpServer.obj
-DEPS_152 = $(DEPS_152) build\$(CONFIG)\obj\ejsRequest.obj
-DEPS_152 = $(DEPS_152) build\$(CONFIG)\obj\ejsSession.obj
-DEPS_152 = $(DEPS_152) build\$(CONFIG)\obj\ejsWeb.obj
+DEPS_152 = $(DEPS_152) build\$(CONFIG)\bin\ejs.db.sqlite.mod
+!IF "$(ME_COM_SQLITE)" == "1"
+DEPS_152 = $(DEPS_152) build\$(CONFIG)\bin\libsql.dll
+!ENDIF
+DEPS_152 = $(DEPS_152) build\$(CONFIG)\obj\ejsSqlite.obj
 
 !IF "$(ME_COM_MBEDTLS)" == "1"
 LIBS_152 = $(LIBS_152) libmbedtls.lib
@@ -2634,18 +2721,92 @@ LIBS_152 = $(LIBS_152) libejs.lib
 !IF "$(ME_COM_HTTP)" == "1"
 LIBS_152 = $(LIBS_152) libhttp.lib
 !ENDIF
+!IF "$(ME_COM_SQLITE)" == "1"
+LIBS_152 = $(LIBS_152) libsql.lib
+!ENDIF
+!IF "$(ME_COM_SQLITE)" == "1"
+LIBS_152 = $(LIBS_152) libsql.lib
+!ENDIF
 LIBS_152 = $(LIBS_152) libejs.lib
 
-build\$(CONFIG)\bin\libejs.web.dll: $(DEPS_152)
+build\$(CONFIG)\bin\libejs.db.sqlite.dll: $(DEPS_152)
+	@echo ..... [Link] build\$(CONFIG)\bin\libejs.db.sqlite.dll
+	"$(LD)" -dll -out:$(BUILD)\bin\libejs.db.sqlite.dll -entry:_DllMainCRTStartup $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsSqlite.obj" $(LIBPATHS_152) $(LIBS_152) $(LIBS)  $(LOG)
+
+#
+#   libejs.web
+#
+DEPS_153 = $(DEPS_153) build\$(CONFIG)\bin\libejs.dll
+DEPS_153 = $(DEPS_153) build\$(CONFIG)\bin\ejs.mod
+DEPS_153 = $(DEPS_153) build\$(CONFIG)\inc\ejsWeb.h
+DEPS_153 = $(DEPS_153) build\$(CONFIG)\obj\ejsHttpServer.obj
+DEPS_153 = $(DEPS_153) build\$(CONFIG)\obj\ejsRequest.obj
+DEPS_153 = $(DEPS_153) build\$(CONFIG)\obj\ejsSession.obj
+DEPS_153 = $(DEPS_153) build\$(CONFIG)\obj\ejsWeb.obj
+
+!IF "$(ME_COM_MBEDTLS)" == "1"
+LIBS_153 = $(LIBS_153) libmbedtls.lib
+!ENDIF
+!IF "$(ME_COM_MBEDTLS)" == "1"
+LIBS_153 = $(LIBS_153) libmpr-mbedtls.lib
+!ENDIF
+!IF "$(ME_COM_MBEDTLS)" == "1"
+LIBS_153 = $(LIBS_153) libmbedtls.lib
+!ENDIF
+!IF "$(ME_COM_OPENSSL)" == "1"
+LIBS_153 = $(LIBS_153) libmpr-openssl.lib
+!ENDIF
+!IF "$(ME_COM_OPENSSL)" == "1"
+LIBS_153 = $(LIBS_153) gdi32.lib
+LIBPATHS_153 = $(LIBPATHS_153) -libpath:$(ME_COM_OPENSSL_PATH)/out32
+!ENDIF
+!IF "$(ME_COM_OPENSSL)" == "1"
+LIBS_153 = $(LIBS_153) libeay32.lib
+LIBPATHS_153 = $(LIBPATHS_153) -libpath:$(ME_COM_OPENSSL_PATH)/out32
+!ENDIF
+!IF "$(ME_COM_OPENSSL)" == "1"
+LIBS_153 = $(LIBS_153) ssleay32.lib
+LIBPATHS_153 = $(LIBPATHS_153) -libpath:$(ME_COM_OPENSSL_PATH)/out32
+!ENDIF
+!IF "$(ME_COM_ZLIB)" == "1"
+LIBS_153 = $(LIBS_153) libzlib.lib
+!ENDIF
+LIBS_153 = $(LIBS_153) libmpr.lib
+!IF "$(ME_COM_OPENSSL)" == "1"
+LIBS_153 = $(LIBS_153) libmpr-openssl.lib
+!ENDIF
+!IF "$(ME_COM_MBEDTLS)" == "1"
+LIBS_153 = $(LIBS_153) libmpr-mbedtls.lib
+!ENDIF
+!IF "$(ME_COM_ZLIB)" == "1"
+LIBS_153 = $(LIBS_153) libzlib.lib
+!ENDIF
+!IF "$(ME_COM_PCRE)" == "1"
+LIBS_153 = $(LIBS_153) libpcre.lib
+!ENDIF
+!IF "$(ME_COM_HTTP)" == "1"
+LIBS_153 = $(LIBS_153) libhttp.lib
+!ENDIF
+!IF "$(ME_COM_PCRE)" == "1"
+LIBS_153 = $(LIBS_153) libpcre.lib
+!ENDIF
+LIBS_153 = $(LIBS_153) libmpr.lib
+LIBS_153 = $(LIBS_153) libejs.lib
+!IF "$(ME_COM_HTTP)" == "1"
+LIBS_153 = $(LIBS_153) libhttp.lib
+!ENDIF
+LIBS_153 = $(LIBS_153) libejs.lib
+
+build\$(CONFIG)\bin\libejs.web.dll: $(DEPS_153)
 	@echo ..... [Link] build\$(CONFIG)\bin\libejs.web.dll
-	"$(LD)" -dll -out:$(BUILD)\bin\libejs.web.dll -entry:_DllMainCRTStartup $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsHttpServer.obj" "$(BUILD)\obj\ejsRequest.obj" "$(BUILD)\obj\ejsSession.obj" "$(BUILD)\obj\ejsWeb.obj" $(LIBPATHS_152) $(LIBS_152) $(LIBS)  $(LOG)
+	"$(LD)" -dll -out:$(BUILD)\bin\libejs.web.dll -entry:_DllMainCRTStartup $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsHttpServer.obj" "$(BUILD)\obj\ejsRequest.obj" "$(BUILD)\obj\ejsSession.obj" "$(BUILD)\obj\ejsWeb.obj" $(LIBPATHS_153) $(LIBS_153) $(LIBS)  $(LOG)
 
 #
 #   mvc.es
 #
-DEPS_153 = $(DEPS_153) src\ejs.mvc\mvc.es
+DEPS_154 = $(DEPS_154) src\ejs.mvc\mvc.es
 
-build\$(CONFIG)\bin\mvc.es: $(DEPS_153)
+build\$(CONFIG)\bin\mvc.es: $(DEPS_154)
 	@echo ..... [Copy] build\$(CONFIG)\bin\mvc.es
 	if not exist "build\$(CONFIG)\bin" md "build\$(CONFIG)\bin"
 	copy /Y /B src\ejs.mvc\mvc.es+modified build\$(CONFIG)\bin\mvc.es $(LOG)
@@ -2653,72 +2814,72 @@ build\$(CONFIG)\bin\mvc.es: $(DEPS_153)
 #
 #   mvc
 #
-DEPS_154 = $(DEPS_154) build\$(CONFIG)\bin\libejs.dll
-DEPS_154 = $(DEPS_154) build\$(CONFIG)\bin\mvc.es
-DEPS_154 = $(DEPS_154) build\$(CONFIG)\obj\ejsrun.obj
+DEPS_155 = $(DEPS_155) build\$(CONFIG)\bin\libejs.dll
+DEPS_155 = $(DEPS_155) build\$(CONFIG)\bin\mvc.es
+DEPS_155 = $(DEPS_155) build\$(CONFIG)\obj\ejsrun.obj
 
 !IF "$(ME_COM_MBEDTLS)" == "1"
-LIBS_154 = $(LIBS_154) libmbedtls.lib
+LIBS_155 = $(LIBS_155) libmbedtls.lib
 !ENDIF
 !IF "$(ME_COM_MBEDTLS)" == "1"
-LIBS_154 = $(LIBS_154) libmpr-mbedtls.lib
+LIBS_155 = $(LIBS_155) libmpr-mbedtls.lib
 !ENDIF
 !IF "$(ME_COM_MBEDTLS)" == "1"
-LIBS_154 = $(LIBS_154) libmbedtls.lib
+LIBS_155 = $(LIBS_155) libmbedtls.lib
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_154 = $(LIBS_154) libmpr-openssl.lib
+LIBS_155 = $(LIBS_155) libmpr-openssl.lib
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_154 = $(LIBS_154) gdi32.lib
-LIBPATHS_154 = $(LIBPATHS_154) -libpath:$(ME_COM_OPENSSL_PATH)/out32
+LIBS_155 = $(LIBS_155) gdi32.lib
+LIBPATHS_155 = $(LIBPATHS_155) -libpath:$(ME_COM_OPENSSL_PATH)/out32
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_154 = $(LIBS_154) libeay32.lib
-LIBPATHS_154 = $(LIBPATHS_154) -libpath:$(ME_COM_OPENSSL_PATH)/out32
+LIBS_155 = $(LIBS_155) libeay32.lib
+LIBPATHS_155 = $(LIBPATHS_155) -libpath:$(ME_COM_OPENSSL_PATH)/out32
 !ENDIF
 !IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_154 = $(LIBS_154) ssleay32.lib
-LIBPATHS_154 = $(LIBPATHS_154) -libpath:$(ME_COM_OPENSSL_PATH)/out32
+LIBS_155 = $(LIBS_155) ssleay32.lib
+LIBPATHS_155 = $(LIBPATHS_155) -libpath:$(ME_COM_OPENSSL_PATH)/out32
 !ENDIF
 !IF "$(ME_COM_ZLIB)" == "1"
-LIBS_154 = $(LIBS_154) libzlib.lib
+LIBS_155 = $(LIBS_155) libzlib.lib
 !ENDIF
-LIBS_154 = $(LIBS_154) libmpr.lib
+LIBS_155 = $(LIBS_155) libmpr.lib
 !IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_154 = $(LIBS_154) libmpr-openssl.lib
+LIBS_155 = $(LIBS_155) libmpr-openssl.lib
 !ENDIF
 !IF "$(ME_COM_MBEDTLS)" == "1"
-LIBS_154 = $(LIBS_154) libmpr-mbedtls.lib
+LIBS_155 = $(LIBS_155) libmpr-mbedtls.lib
 !ENDIF
 !IF "$(ME_COM_ZLIB)" == "1"
-LIBS_154 = $(LIBS_154) libzlib.lib
+LIBS_155 = $(LIBS_155) libzlib.lib
 !ENDIF
 !IF "$(ME_COM_PCRE)" == "1"
-LIBS_154 = $(LIBS_154) libpcre.lib
+LIBS_155 = $(LIBS_155) libpcre.lib
 !ENDIF
 !IF "$(ME_COM_HTTP)" == "1"
-LIBS_154 = $(LIBS_154) libhttp.lib
+LIBS_155 = $(LIBS_155) libhttp.lib
 !ENDIF
 !IF "$(ME_COM_PCRE)" == "1"
-LIBS_154 = $(LIBS_154) libpcre.lib
+LIBS_155 = $(LIBS_155) libpcre.lib
 !ENDIF
-LIBS_154 = $(LIBS_154) libmpr.lib
-LIBS_154 = $(LIBS_154) libejs.lib
+LIBS_155 = $(LIBS_155) libmpr.lib
+LIBS_155 = $(LIBS_155) libejs.lib
 !IF "$(ME_COM_HTTP)" == "1"
-LIBS_154 = $(LIBS_154) libhttp.lib
+LIBS_155 = $(LIBS_155) libhttp.lib
 !ENDIF
 
-build\$(CONFIG)\bin\mvc.exe: $(DEPS_154)
+build\$(CONFIG)\bin\mvc.exe: $(DEPS_155)
 	@echo ..... [Link] build\$(CONFIG)\bin\mvc.exe
-	"$(LD)" -nologo -out:$(BUILD)\bin\mvc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsrun.obj" $(LIBPATHS_154) $(LIBS_154) $(LIBS)  $(LOG)
+	"$(LD)" -nologo -out:$(BUILD)\bin\mvc.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsrun.obj" $(LIBPATHS_155) $(LIBS_155) $(LIBS)  $(LOG)
 
 #
 #   utest.es
 #
-DEPS_155 = $(DEPS_155) src\ejs.utest\utest.es
+DEPS_156 = $(DEPS_156) src\ejs.utest\utest.es
 
-build\$(CONFIG)\bin\utest.es: $(DEPS_155)
+build\$(CONFIG)\bin\utest.es: $(DEPS_156)
 	@echo ..... [Copy] build\$(CONFIG)\bin\utest.es
 	if not exist "build\$(CONFIG)\bin" md "build\$(CONFIG)\bin"
 	copy /Y /B src\ejs.utest\utest.es+modified build\$(CONFIG)\bin\utest.es $(LOG)
@@ -2726,9 +2887,9 @@ build\$(CONFIG)\bin\utest.es: $(DEPS_155)
 #
 #   utest.worker
 #
-DEPS_156 = $(DEPS_156) src\ejs.utest\utest.worker
+DEPS_157 = $(DEPS_157) src\ejs.utest\utest.worker
 
-build\$(CONFIG)\bin\utest.worker: $(DEPS_156)
+build\$(CONFIG)\bin\utest.worker: $(DEPS_157)
 	@echo ..... [Copy] build\$(CONFIG)\bin\utest.worker
 	if not exist "build\$(CONFIG)\bin" md "build\$(CONFIG)\bin"
 	copy /Y /B src\ejs.utest\utest.worker+modified build\$(CONFIG)\bin\utest.worker $(LOG)
@@ -2736,72 +2897,10 @@ build\$(CONFIG)\bin\utest.worker: $(DEPS_156)
 #
 #   utest
 #
-DEPS_157 = $(DEPS_157) build\$(CONFIG)\bin\libejs.dll
-DEPS_157 = $(DEPS_157) build\$(CONFIG)\bin\utest.es
-DEPS_157 = $(DEPS_157) build\$(CONFIG)\bin\utest.worker
-DEPS_157 = $(DEPS_157) build\$(CONFIG)\obj\ejsrun.obj
-
-!IF "$(ME_COM_MBEDTLS)" == "1"
-LIBS_157 = $(LIBS_157) libmbedtls.lib
-!ENDIF
-!IF "$(ME_COM_MBEDTLS)" == "1"
-LIBS_157 = $(LIBS_157) libmpr-mbedtls.lib
-!ENDIF
-!IF "$(ME_COM_MBEDTLS)" == "1"
-LIBS_157 = $(LIBS_157) libmbedtls.lib
-!ENDIF
-!IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_157 = $(LIBS_157) libmpr-openssl.lib
-!ENDIF
-!IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_157 = $(LIBS_157) gdi32.lib
-LIBPATHS_157 = $(LIBPATHS_157) -libpath:$(ME_COM_OPENSSL_PATH)/out32
-!ENDIF
-!IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_157 = $(LIBS_157) libeay32.lib
-LIBPATHS_157 = $(LIBPATHS_157) -libpath:$(ME_COM_OPENSSL_PATH)/out32
-!ENDIF
-!IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_157 = $(LIBS_157) ssleay32.lib
-LIBPATHS_157 = $(LIBPATHS_157) -libpath:$(ME_COM_OPENSSL_PATH)/out32
-!ENDIF
-!IF "$(ME_COM_ZLIB)" == "1"
-LIBS_157 = $(LIBS_157) libzlib.lib
-!ENDIF
-LIBS_157 = $(LIBS_157) libmpr.lib
-!IF "$(ME_COM_OPENSSL)" == "1"
-LIBS_157 = $(LIBS_157) libmpr-openssl.lib
-!ENDIF
-!IF "$(ME_COM_MBEDTLS)" == "1"
-LIBS_157 = $(LIBS_157) libmpr-mbedtls.lib
-!ENDIF
-!IF "$(ME_COM_ZLIB)" == "1"
-LIBS_157 = $(LIBS_157) libzlib.lib
-!ENDIF
-!IF "$(ME_COM_PCRE)" == "1"
-LIBS_157 = $(LIBS_157) libpcre.lib
-!ENDIF
-!IF "$(ME_COM_HTTP)" == "1"
-LIBS_157 = $(LIBS_157) libhttp.lib
-!ENDIF
-!IF "$(ME_COM_PCRE)" == "1"
-LIBS_157 = $(LIBS_157) libpcre.lib
-!ENDIF
-LIBS_157 = $(LIBS_157) libmpr.lib
-LIBS_157 = $(LIBS_157) libejs.lib
-!IF "$(ME_COM_HTTP)" == "1"
-LIBS_157 = $(LIBS_157) libhttp.lib
-!ENDIF
-
-build\$(CONFIG)\bin\utest.exe: $(DEPS_157)
-	@echo ..... [Link] build\$(CONFIG)\bin\utest.exe
-	"$(LD)" -nologo -out:$(BUILD)\bin\utest.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsrun.obj" $(LIBPATHS_157) $(LIBS_157) $(LIBS)  $(LOG)
-
-#
-#   watchdog
-#
-DEPS_158 = $(DEPS_158) build\$(CONFIG)\bin\libmpr.dll
-DEPS_158 = $(DEPS_158) build\$(CONFIG)\obj\watchdog.obj
+DEPS_158 = $(DEPS_158) build\$(CONFIG)\bin\libejs.dll
+DEPS_158 = $(DEPS_158) build\$(CONFIG)\bin\utest.es
+DEPS_158 = $(DEPS_158) build\$(CONFIG)\bin\utest.worker
+DEPS_158 = $(DEPS_158) build\$(CONFIG)\obj\ejsrun.obj
 
 !IF "$(ME_COM_MBEDTLS)" == "1"
 LIBS_158 = $(LIBS_158) libmbedtls.lib
@@ -2840,43 +2939,105 @@ LIBS_158 = $(LIBS_158) libmpr-mbedtls.lib
 !IF "$(ME_COM_ZLIB)" == "1"
 LIBS_158 = $(LIBS_158) libzlib.lib
 !ENDIF
+!IF "$(ME_COM_PCRE)" == "1"
+LIBS_158 = $(LIBS_158) libpcre.lib
+!ENDIF
+!IF "$(ME_COM_HTTP)" == "1"
+LIBS_158 = $(LIBS_158) libhttp.lib
+!ENDIF
+!IF "$(ME_COM_PCRE)" == "1"
+LIBS_158 = $(LIBS_158) libpcre.lib
+!ENDIF
+LIBS_158 = $(LIBS_158) libmpr.lib
+LIBS_158 = $(LIBS_158) libejs.lib
+!IF "$(ME_COM_HTTP)" == "1"
+LIBS_158 = $(LIBS_158) libhttp.lib
+!ENDIF
 
-build\$(CONFIG)\bin\ejsman.exe: $(DEPS_158)
+build\$(CONFIG)\bin\utest.exe: $(DEPS_158)
+	@echo ..... [Link] build\$(CONFIG)\bin\utest.exe
+	"$(LD)" -nologo -out:$(BUILD)\bin\utest.exe -entry:mainCRTStartup -subsystem:console $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\ejsrun.obj" $(LIBPATHS_158) $(LIBS_158) $(LIBS)  $(LOG)
+
+#
+#   watchdog
+#
+DEPS_159 = $(DEPS_159) build\$(CONFIG)\bin\libmpr.dll
+DEPS_159 = $(DEPS_159) build\$(CONFIG)\obj\watchdog.obj
+
+!IF "$(ME_COM_MBEDTLS)" == "1"
+LIBS_159 = $(LIBS_159) libmbedtls.lib
+!ENDIF
+!IF "$(ME_COM_MBEDTLS)" == "1"
+LIBS_159 = $(LIBS_159) libmpr-mbedtls.lib
+!ENDIF
+!IF "$(ME_COM_MBEDTLS)" == "1"
+LIBS_159 = $(LIBS_159) libmbedtls.lib
+!ENDIF
+!IF "$(ME_COM_OPENSSL)" == "1"
+LIBS_159 = $(LIBS_159) libmpr-openssl.lib
+!ENDIF
+!IF "$(ME_COM_OPENSSL)" == "1"
+LIBS_159 = $(LIBS_159) gdi32.lib
+LIBPATHS_159 = $(LIBPATHS_159) -libpath:$(ME_COM_OPENSSL_PATH)/out32
+!ENDIF
+!IF "$(ME_COM_OPENSSL)" == "1"
+LIBS_159 = $(LIBS_159) libeay32.lib
+LIBPATHS_159 = $(LIBPATHS_159) -libpath:$(ME_COM_OPENSSL_PATH)/out32
+!ENDIF
+!IF "$(ME_COM_OPENSSL)" == "1"
+LIBS_159 = $(LIBS_159) ssleay32.lib
+LIBPATHS_159 = $(LIBPATHS_159) -libpath:$(ME_COM_OPENSSL_PATH)/out32
+!ENDIF
+!IF "$(ME_COM_ZLIB)" == "1"
+LIBS_159 = $(LIBS_159) libzlib.lib
+!ENDIF
+LIBS_159 = $(LIBS_159) libmpr.lib
+!IF "$(ME_COM_OPENSSL)" == "1"
+LIBS_159 = $(LIBS_159) libmpr-openssl.lib
+!ENDIF
+!IF "$(ME_COM_MBEDTLS)" == "1"
+LIBS_159 = $(LIBS_159) libmpr-mbedtls.lib
+!ENDIF
+!IF "$(ME_COM_ZLIB)" == "1"
+LIBS_159 = $(LIBS_159) libzlib.lib
+!ENDIF
+
+build\$(CONFIG)\bin\ejsman.exe: $(DEPS_159)
 	@echo ..... [Link] build\$(CONFIG)\bin\ejsman.exe
-	"$(LD)" -nologo -out:$(BUILD)\bin\ejsman.exe -entry:WinMainCRTStartup -subsystem:windows $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\watchdog.obj" $(LIBPATHS_158) $(LIBS_158) $(LIBS)  $(LOG)
+	"$(LD)" -nologo -out:$(BUILD)\bin\ejsman.exe -entry:WinMainCRTStartup -subsystem:windows $(LDFLAGS) $(LIBPATHS)  "$(BUILD)\obj\watchdog.obj" $(LIBPATHS_159) $(LIBS_159) $(LIBS)  $(LOG)
 
 #
 #   www
 #
-DEPS_159 = $(DEPS_159) src\ejs.web\www\images\banner.jpg
-DEPS_159 = $(DEPS_159) src\ejs.web\www\images\favicon.ico
-DEPS_159 = $(DEPS_159) src\ejs.web\www\images\splash.jpg
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\jquery.ejs.min.js
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\jquery.min.js
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\jquery.simplemodal.min.js
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\jquery.tablesorter.js
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\jquery.tablesorter.min.js
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\jquery.treeview.min.js
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\tree-images\file.gif
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\tree-images\folder-closed.gif
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\tree-images\folder.gif
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\tree-images\minus.gif
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\tree-images\plus.gif
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\tree-images\treeview-black-line.gif
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\tree-images\treeview-black.gif
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\tree-images\treeview-default-line.gif
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\tree-images\treeview-default.gif
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\tree-images\treeview-famfamfam-line.gif
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\tree-images\treeview-famfamfam.gif
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\tree-images\treeview-gray-line.gif
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\tree-images\treeview-gray.gif
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\tree-images\treeview-red-line.gif
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\tree-images\treeview-red.gif
-DEPS_159 = $(DEPS_159) src\ejs.web\www\js\treeview.css
-DEPS_159 = $(DEPS_159) src\ejs.web\www\layout.css
-DEPS_159 = $(DEPS_159) src\ejs.web\www\themes\default.css
+DEPS_160 = $(DEPS_160) src\ejs.web\www\images\banner.jpg
+DEPS_160 = $(DEPS_160) src\ejs.web\www\images\favicon.ico
+DEPS_160 = $(DEPS_160) src\ejs.web\www\images\splash.jpg
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\jquery.ejs.min.js
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\jquery.min.js
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\jquery.simplemodal.min.js
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\jquery.tablesorter.js
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\jquery.tablesorter.min.js
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\jquery.treeview.min.js
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\tree-images\file.gif
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\tree-images\folder-closed.gif
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\tree-images\folder.gif
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\tree-images\minus.gif
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\tree-images\plus.gif
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\tree-images\treeview-black-line.gif
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\tree-images\treeview-black.gif
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\tree-images\treeview-default-line.gif
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\tree-images\treeview-default.gif
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\tree-images\treeview-famfamfam-line.gif
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\tree-images\treeview-famfamfam.gif
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\tree-images\treeview-gray-line.gif
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\tree-images\treeview-gray.gif
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\tree-images\treeview-red-line.gif
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\tree-images\treeview-red.gif
+DEPS_160 = $(DEPS_160) src\ejs.web\www\js\treeview.css
+DEPS_160 = $(DEPS_160) src\ejs.web\www\layout.css
+DEPS_160 = $(DEPS_160) src\ejs.web\www\themes\default.css
 
-build\$(CONFIG)\bin\www: $(DEPS_159)
+build\$(CONFIG)\bin\www: $(DEPS_160)
 	@echo ..... [Copy] build\$(CONFIG)\bin\www
 	if not exist "build\$(CONFIG)\bin\www\images" md "build\$(CONFIG)\bin\www\images"
 	copy /Y /B src\ejs.web\www\images\banner.jpg+modified build\$(CONFIG)\bin\www\images\banner.jpg $(LOG)
@@ -2915,7 +3076,7 @@ build\$(CONFIG)\bin\www: $(DEPS_159)
 #   installPrep
 #
 
-installPrep: $(DEPS_160)
+installPrep: $(DEPS_161)
 	if [ "`id -u`" != 0 ]
 	then echo "Must run as root. Rerun with sudo."
 	exit 255
@@ -2925,14 +3086,14 @@ installPrep: $(DEPS_160)
 #   stop
 #
 
-stop: $(DEPS_161)
+stop: $(DEPS_162)
 #  Omit build script stop
 
 #
 #   installBinary
 #
 
-installBinary: $(DEPS_162)
+installBinary: $(DEPS_163)
 	if not exist "$(ME_VAPP_PREFIX)\man\man1" md "$(ME_VAPP_PREFIX)\man\man1"
 	if not exist "$(ME_VAPP_PREFIX)\bin" md "$(ME_VAPP_PREFIX)\bin"
 	copy /Y /B build\$(CONFIG)\bin\ejs.exe+modified "$(ME_VAPP_PREFIX)\bin\ejs.exe" $(LOG)
@@ -3033,33 +3194,33 @@ installBinary: $(DEPS_162)
 #   start
 #
 
-start: $(DEPS_163)
+start: $(DEPS_164)
 #  Omit build script start
 
 #
 #   install
 #
-DEPS_164 = $(DEPS_164) installPrep
-DEPS_164 = $(DEPS_164) stop
-DEPS_164 = $(DEPS_164) installBinary
-DEPS_164 = $(DEPS_164) start
+DEPS_165 = $(DEPS_165) installPrep
+DEPS_165 = $(DEPS_165) stop
+DEPS_165 = $(DEPS_165) installBinary
+DEPS_165 = $(DEPS_165) start
 
-install: $(DEPS_164)
+install: $(DEPS_165)
 #  Omit build script install
 
 #
 #   uninstall
 #
-DEPS_165 = $(DEPS_165) stop
+DEPS_166 = $(DEPS_166) stop
 
-uninstall: $(DEPS_165)
+uninstall: $(DEPS_166)
 #  Omit build script uninstall
 
 #
 #   uninstallBinary
 #
 
-uninstallBinary: $(DEPS_166)
+uninstallBinary: $(DEPS_167)
 	if exist "$(ME_VAPP_PREFIX)" rd /Q /S "$(ME_VAPP_PREFIX)"
 	if exist "$(ME_VAPP_PREFIX)\bin" rd /Q "$(ME_VAPP_PREFIX)\bin"
 	if exist "$(ME_VAPP_PREFIX)\inc" rd /Q "$(ME_VAPP_PREFIX)\inc"
@@ -3070,6 +3231,6 @@ uninstallBinary: $(DEPS_166)
 #   version
 #
 
-version: $(DEPS_167)
+version: $(DEPS_168)
 	echo $(VERSION)
 

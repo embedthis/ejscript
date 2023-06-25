@@ -5,16 +5,19 @@
 NAME                  := ejscript
 VERSION               := 2.7.7
 PROFILE               ?= static
-ARCH                  ?= $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm/;s/mips.*/mips/')
+ARCH                  ?= $(shell uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/mips.*/mips/')
 CC_ARCH               ?= $(shell echo $(ARCH) | sed 's/x86/i686/;s/x64/x86_64/')
 OS                    ?= freebsd
 CC                    ?= gcc
 AR                    ?= ar
 CONFIG                ?= $(OS)-$(ARCH)-$(PROFILE)
-BUILD                 ?= build/$(CONFIG)
+BUILD                 ?= build/$(OS)-$(ARCH)-$(PROFILE)
 LBIN                  ?= $(BUILD)/bin
 PATH                  := $(LBIN):$(PATH)
 
+#
+# Components
+#
 ME_COM_COMPILER       ?= 1
 ME_COM_HTTP           ?= 1
 ME_COM_LIB            ?= 1
@@ -42,8 +45,62 @@ ifeq ($(ME_COM_OPENSSL),1)
     ME_COM_SSL := 1
 endif
 
+#
+# Settings
+#
+ME_AUTHOR             ?= \"Embedthis Software\"
+ME_CERTS_BITS         ?= 2048
+ME_CERTS_DAYS         ?= 3650
+ME_CERTS_GENDH        ?= 0
+ME_COMPANY            ?= \"embedthis\"
+ME_COMPATIBLE         ?= \"2.7\"
+ME_COMPILER_HAS_ATOMIC ?= 1
+ME_COMPILER_HAS_ATOMIC64 ?= 1
+ME_COMPILER_HAS_DOUBLE_BRACES ?= 1
+ME_COMPILER_HAS_DYN_LOAD ?= 1
+ME_COMPILER_HAS_LIB_EDIT ?= 0
+ME_COMPILER_HAS_LIB_RT ?= 0
+ME_COMPILER_HAS_MMU   ?= 1
+ME_COMPILER_HAS_MTUNE ?= 1
+ME_COMPILER_HAS_PAM   ?= 0
+ME_COMPILER_HAS_STACK_PROTECTOR ?= 1
+ME_COMPILER_HAS_SYNC  ?= 0
+ME_COMPILER_HAS_SYNC64 ?= 0
+ME_COMPILER_HAS_SYNC_CAS ?= 0
+ME_COMPILER_HAS_UNNAMED_UNIONS ?= 1
+ME_COMPILER_WARN64TO32 ?= 0
+ME_COMPILER_WARN_UNUSED ?= 0
+ME_CONFIGURE          ?= \"me -d -q -platform freebsd-x86-static -static -configure . -gen make\"
+ME_CONFIGURED         ?= 1
+ME_DEPTH              ?= 1
+ME_DESCRIPTION        ?= \"Embedthis Ejscript Javascript Language\"
+ME_EJSCRIPT_COMPILE   ?= \"--optimize 9\"
+ME_EJSCRIPT_DB        ?= 1
+ME_EJSCRIPT_MAIL      ?= 1
+ME_EJSCRIPT_MAPPER    ?= 1
+ME_EJSCRIPT_TAR       ?= 1
+ME_EJSCRIPT_TEMPLATE  ?= 1
+ME_EJSCRIPT_WEB       ?= 1
+ME_EJSCRIPT_ZLIB      ?= 1
+ME_ESFLAGS            ?= \"\"
+ME_HTTP_PAM           ?= 1
+ME_HTTP_WEB_SOCKETS   ?= 1
+ME_INTEGRATE          ?= 1
+ME_MANIFEST           ?= \"installs/manifest.me\"
+ME_MBEDTLS_COMPACT    ?= 1
+ME_MPR_LOGGING        ?= 1
+ME_NAME               ?= \"ejscript\"
+ME_PARTS              ?= \"undefined\"
+ME_PLATFORMS          ?= \"local\"
+ME_PREFIXES           ?= \"install-prefixes\"
+ME_STATIC             ?= 1
+ME_TITLE              ?= \"Embedthis Ejscript\"
+ME_TUNE               ?= \"speed\"
+ME_VERSION            ?= \"2.7.7\"
+ME_WATCHDOG_NAME      ?= \"ejsman\"
+
 CFLAGS                += -g -w
-DFLAGS                +=  $(patsubst %,-D%,$(filter ME_%,$(MAKEFLAGS))) -DME_COM_COMPILER=$(ME_COM_COMPILER) -DME_COM_HTTP=$(ME_COM_HTTP) -DME_COM_LIB=$(ME_COM_LIB) -DME_COM_MATRIXSSL=$(ME_COM_MATRIXSSL) -DME_COM_MBEDTLS=$(ME_COM_MBEDTLS) -DME_COM_MPR=$(ME_COM_MPR) -DME_COM_NANOSSL=$(ME_COM_NANOSSL) -DME_COM_OPENSSL=$(ME_COM_OPENSSL) -DME_COM_OSDEP=$(ME_COM_OSDEP) -DME_COM_PCRE=$(ME_COM_PCRE) -DME_COM_SQLITE=$(ME_COM_SQLITE) -DME_COM_SSL=$(ME_COM_SSL) -DME_COM_VXWORKS=$(ME_COM_VXWORKS) -DME_COM_ZLIB=$(ME_COM_ZLIB) 
+DFLAGS                +=  $(patsubst %,-D%,$(filter ME_%,$(MAKEFLAGS))) -DME_COM_COMPILER=$(ME_COM_COMPILER) -DME_COM_HTTP=$(ME_COM_HTTP) -DME_COM_LIB=$(ME_COM_LIB) -DME_COM_MATRIXSSL=$(ME_COM_MATRIXSSL) -DME_COM_MBEDTLS=$(ME_COM_MBEDTLS) -DME_COM_MPR=$(ME_COM_MPR) -DME_COM_NANOSSL=$(ME_COM_NANOSSL) -DME_COM_OPENSSL=$(ME_COM_OPENSSL) -DME_COM_OSDEP=$(ME_COM_OSDEP) -DME_COM_PCRE=$(ME_COM_PCRE) -DME_COM_SQLITE=$(ME_COM_SQLITE) -DME_COM_SSL=$(ME_COM_SSL) -DME_COM_VXWORKS=$(ME_COM_VXWORKS) -DME_COM_ZLIB=$(ME_COM_ZLIB) -DME_CERTS_BITS=$(ME_CERTS_BITS) -DME_CERTS_DAYS=$(ME_CERTS_DAYS) -DME_CERTS_GENDH=$(ME_CERTS_GENDH) -DME_EJSCRIPT_COMPILE=$(ME_EJSCRIPT_COMPILE) -DME_EJSCRIPT_DB=$(ME_EJSCRIPT_DB) -DME_EJSCRIPT_MAIL=$(ME_EJSCRIPT_MAIL) -DME_EJSCRIPT_MAPPER=$(ME_EJSCRIPT_MAPPER) -DME_EJSCRIPT_TAR=$(ME_EJSCRIPT_TAR) -DME_EJSCRIPT_TEMPLATE=$(ME_EJSCRIPT_TEMPLATE) -DME_EJSCRIPT_WEB=$(ME_EJSCRIPT_WEB) -DME_EJSCRIPT_ZLIB=$(ME_EJSCRIPT_ZLIB) -DME_HTTP_PAM=$(ME_HTTP_PAM) -DME_HTTP_WEBSOCKETS=$(ME_HTTP_WEBSOCKETS) -DME_MBEDTLS_COMPACT=$(ME_MBEDTLS_COMPACT) -DME_MPR_LOGGING=$(ME_MPR_LOGGING) -DME_WATCHDOG_NAME=$(ME_WATCHDOG_NAME) 
 IFLAGS                += "-I$(BUILD)/inc"
 LDFLAGS               += 
 LIBPATHS              += -L$(BUILD)/bin
@@ -51,7 +108,7 @@ LIBS                  += -ldl -lpthread -lm
 
 DEBUG                 ?= debug
 CFLAGS-debug          ?= -g
-DFLAGS-debug          ?= -DME_DEBUG
+DFLAGS-debug          ?= -DME_DEBUG=1
 LDFLAGS-debug         ?= -g
 DFLAGS-release        ?= 
 CFLAGS-release        ?= -O2
@@ -86,13 +143,20 @@ TARGETS               += $(BUILD)/bin/ejs.mail.mod
 TARGETS               += $(BUILD)/bin/ejs.mvc.mod
 TARGETS               += $(BUILD)/bin/ejs.tar.mod
 TARGETS               += $(BUILD)/bin/ejsrun
-TARGETS               += $(BUILD)/.install-certs-modified
+TARGETS               += .install-certs-modified
+TARGETS               += $(BUILD)/bin
 TARGETS               += $(BUILD)/bin/libejs.db.sqlite.a
 TARGETS               += $(BUILD)/bin/libejs.web.a
 TARGETS               += $(BUILD)/bin/mvc
 TARGETS               += $(BUILD)/bin/utest
 TARGETS               += $(BUILD)/bin/ejsman
 TARGETS               += $(BUILD)/bin/www
+
+
+DEPEND := $(strip $(wildcard ./projects/depend.mk))
+ifneq ($(DEPEND),)
+include $(DEPEND)
+endif
 
 unexport CDPATH
 
@@ -212,7 +276,8 @@ clean:
 	rm -f "$(BUILD)/bin/ejsc"
 	rm -f "$(BUILD)/bin/ejsmod"
 	rm -f "$(BUILD)/bin/ejsrun"
-	rm -f "$(BUILD)/.install-certs-modified"
+	rm -f ".install-certs-modified"
+	rm -f "$(BUILD)/bin"
 	rm -f "$(BUILD)/bin/libejs.a"
 	rm -f "$(BUILD)/bin/libejs.db.sqlite.a"
 	rm -f "$(BUILD)/bin/libejs.web.a"
@@ -1305,7 +1370,7 @@ DEPS_109 += src/mbedtls/mbedtls.h
 $(BUILD)/obj/mbedtls.o: \
     src/mbedtls/mbedtls.c $(DEPS_109)
 	@echo '   [Compile] $(BUILD)/obj/mbedtls.o'
-	$(CC) -c -o $(BUILD)/obj/mbedtls.o $(LDFLAGS) $(DFLAGS) -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/mbedtls/mbedtls.c
+	$(CC) -c -o $(BUILD)/obj/mbedtls.o $(LDFLAGS) -O1 $(DFLAGS) -DMBEDTLS_USER_CONFIG_FILE=\"embedtls.h\" $(IFLAGS) src/mbedtls/mbedtls.c
 
 #
 #   mpr-mbedtls.o
@@ -1427,7 +1492,7 @@ DEPS_122 += src/zlib/zlib.h
 $(BUILD)/obj/zlib.o: \
     src/zlib/zlib.c $(DEPS_122)
 	@echo '   [Compile] $(BUILD)/obj/zlib.o'
-	$(CC) -c -o $(BUILD)/obj/zlib.o $(LDFLAGS) $(DFLAGS) $(IFLAGS) src/zlib/zlib.c
+	$(CC) -c -o $(BUILD)/obj/zlib.o $(LDFLAGS) -Wno-deprecated-non-prototype $(DFLAGS) $(IFLAGS) src/zlib/zlib.c
 
 #
 #   slots
@@ -2186,28 +2251,38 @@ DEPS_149 += src/certs/samples/self.key
 DEPS_149 += src/certs/samples/test.crt
 DEPS_149 += src/certs/samples/test.key
 
-$(BUILD)/.install-certs-modified: $(DEPS_149)
+.install-certs-modified: $(DEPS_149)
+	@echo '      [Copy] certs'
+	mkdir -p "certs"
+	cp src/certs/samples/ca.crt certs/ca.crt
+	cp src/certs/samples/ca.key certs/ca.key
+	cp src/certs/samples/ec.crt certs/ec.crt
+	cp src/certs/samples/ec.key certs/ec.key
+	cp src/certs/samples/roots.crt certs/roots.crt
+	cp src/certs/samples/self.crt certs/self.crt
+	cp src/certs/samples/self.key certs/self.key
+	cp src/certs/samples/test.crt certs/test.crt
+	cp src/certs/samples/test.key certs/test.key
+	touch ".install-certs-modified"
+
+#
+#   install-roots
+#
+DEPS_150 += src/certs/samples/roots.crt
+
+$(BUILD)/bin: $(DEPS_150)
 	@echo '      [Copy] $(BUILD)/bin'
 	mkdir -p "$(BUILD)/bin"
-	cp src/certs/samples/ca.crt $(BUILD)/bin/ca.crt
-	cp src/certs/samples/ca.key $(BUILD)/bin/ca.key
-	cp src/certs/samples/ec.crt $(BUILD)/bin/ec.crt
-	cp src/certs/samples/ec.key $(BUILD)/bin/ec.key
 	cp src/certs/samples/roots.crt $(BUILD)/bin/roots.crt
-	cp src/certs/samples/self.crt $(BUILD)/bin/self.crt
-	cp src/certs/samples/self.key $(BUILD)/bin/self.key
-	cp src/certs/samples/test.crt $(BUILD)/bin/test.crt
-	cp src/certs/samples/test.key $(BUILD)/bin/test.key
-	touch "$(BUILD)/.install-certs-modified"
 
 ifeq ($(ME_COM_SQLITE),1)
 #
 #   libsql
 #
-DEPS_150 += $(BUILD)/inc/sqlite3.h
-DEPS_150 += $(BUILD)/obj/sqlite3.o
+DEPS_151 += $(BUILD)/inc/sqlite3.h
+DEPS_151 += $(BUILD)/obj/sqlite3.o
 
-$(BUILD)/bin/libsql.a: $(DEPS_150)
+$(BUILD)/bin/libsql.a: $(DEPS_151)
 	@echo '      [Link] $(BUILD)/bin/libsql.a'
 	$(AR) -cr $(BUILD)/bin/libsql.a "$(BUILD)/obj/sqlite3.o"
 endif
@@ -2215,40 +2290,40 @@ endif
 #
 #   libejs.db.sqlite
 #
-DEPS_151 += $(BUILD)/bin/libmpr.a
-DEPS_151 += $(BUILD)/bin/libejs.a
-DEPS_151 += $(BUILD)/bin/ejs.mod
-DEPS_151 += $(BUILD)/bin/ejs.db.sqlite.mod
+DEPS_152 += $(BUILD)/bin/libmpr.a
+DEPS_152 += $(BUILD)/bin/libejs.a
+DEPS_152 += $(BUILD)/bin/ejs.mod
+DEPS_152 += $(BUILD)/bin/ejs.db.sqlite.mod
 ifeq ($(ME_COM_SQLITE),1)
-    DEPS_151 += $(BUILD)/bin/libsql.a
+    DEPS_152 += $(BUILD)/bin/libsql.a
 endif
-DEPS_151 += $(BUILD)/obj/ejsSqlite.o
+DEPS_152 += $(BUILD)/obj/ejsSqlite.o
 
-$(BUILD)/bin/libejs.db.sqlite.a: $(DEPS_151)
+$(BUILD)/bin/libejs.db.sqlite.a: $(DEPS_152)
 	@echo '      [Link] $(BUILD)/bin/libejs.db.sqlite.a'
 	$(AR) -cr $(BUILD)/bin/libejs.db.sqlite.a "$(BUILD)/obj/ejsSqlite.o"
 
 #
 #   libejs.web
 #
-DEPS_152 += $(BUILD)/bin/libejs.a
-DEPS_152 += $(BUILD)/bin/ejs.mod
-DEPS_152 += $(BUILD)/inc/ejsWeb.h
-DEPS_152 += $(BUILD)/obj/ejsHttpServer.o
-DEPS_152 += $(BUILD)/obj/ejsRequest.o
-DEPS_152 += $(BUILD)/obj/ejsSession.o
-DEPS_152 += $(BUILD)/obj/ejsWeb.o
+DEPS_153 += $(BUILD)/bin/libejs.a
+DEPS_153 += $(BUILD)/bin/ejs.mod
+DEPS_153 += $(BUILD)/inc/ejsWeb.h
+DEPS_153 += $(BUILD)/obj/ejsHttpServer.o
+DEPS_153 += $(BUILD)/obj/ejsRequest.o
+DEPS_153 += $(BUILD)/obj/ejsSession.o
+DEPS_153 += $(BUILD)/obj/ejsWeb.o
 
-$(BUILD)/bin/libejs.web.a: $(DEPS_152)
+$(BUILD)/bin/libejs.web.a: $(DEPS_153)
 	@echo '      [Link] $(BUILD)/bin/libejs.web.a'
 	$(AR) -cr $(BUILD)/bin/libejs.web.a "$(BUILD)/obj/ejsHttpServer.o" "$(BUILD)/obj/ejsRequest.o" "$(BUILD)/obj/ejsSession.o" "$(BUILD)/obj/ejsWeb.o"
 
 #
 #   mvc.es
 #
-DEPS_153 += src/ejs.mvc/mvc.es
+DEPS_154 += src/ejs.mvc/mvc.es
 
-$(BUILD)/bin/mvc.es: $(DEPS_153)
+$(BUILD)/bin/mvc.es: $(DEPS_154)
 	@echo '      [Copy] $(BUILD)/bin/mvc.es'
 	mkdir -p "$(BUILD)/bin"
 	cp src/ejs.mvc/mvc.es $(BUILD)/bin/mvc.es
@@ -2256,70 +2331,70 @@ $(BUILD)/bin/mvc.es: $(DEPS_153)
 #
 #   mvc
 #
-DEPS_154 += $(BUILD)/bin/libejs.a
-DEPS_154 += $(BUILD)/bin/mvc.es
-DEPS_154 += $(BUILD)/obj/ejsrun.o
+DEPS_155 += $(BUILD)/bin/libejs.a
+DEPS_155 += $(BUILD)/bin/mvc.es
+DEPS_155 += $(BUILD)/obj/ejsrun.o
 
 ifeq ($(ME_COM_MBEDTLS),1)
-    LIBS_154 += -lmbedtls
+    LIBS_155 += -lmbedtls
 endif
 ifeq ($(ME_COM_MBEDTLS),1)
-    LIBS_154 += -lmpr-mbedtls
+    LIBS_155 += -lmpr-mbedtls
 endif
 ifeq ($(ME_COM_MBEDTLS),1)
-    LIBS_154 += -lmbedtls
+    LIBS_155 += -lmbedtls
 endif
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_154 += -lmpr-openssl
+    LIBS_155 += -lmpr-openssl
 endif
 ifeq ($(ME_COM_OPENSSL),1)
 ifeq ($(ME_COM_SSL),1)
-    LIBS_154 += -lssl
-    LIBPATHS_154 += -L"$(ME_COM_OPENSSL_PATH)"
+    LIBS_155 += -lssl
+    LIBPATHS_155 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
 endif
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_154 += -lcrypto
-    LIBPATHS_154 += -L"$(ME_COM_OPENSSL_PATH)"
+    LIBS_155 += -lcrypto
+    LIBPATHS_155 += -L"$(ME_COM_OPENSSL_PATH)"
 endif
 ifeq ($(ME_COM_ZLIB),1)
-    LIBS_154 += -lzlib
+    LIBS_155 += -lzlib
 endif
-LIBS_154 += -lmpr
+LIBS_155 += -lmpr
 ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_154 += -lmpr-openssl
+    LIBS_155 += -lmpr-openssl
 endif
 ifeq ($(ME_COM_MBEDTLS),1)
-    LIBS_154 += -lmpr-mbedtls
+    LIBS_155 += -lmpr-mbedtls
 endif
 ifeq ($(ME_COM_ZLIB),1)
-    LIBS_154 += -lzlib
+    LIBS_155 += -lzlib
 endif
 ifeq ($(ME_COM_PCRE),1)
-    LIBS_154 += -lpcre
+    LIBS_155 += -lpcre
 endif
 ifeq ($(ME_COM_HTTP),1)
-    LIBS_154 += -lhttp
+    LIBS_155 += -lhttp
 endif
 ifeq ($(ME_COM_PCRE),1)
-    LIBS_154 += -lpcre
+    LIBS_155 += -lpcre
 endif
-LIBS_154 += -lmpr
-LIBS_154 += -lejs
+LIBS_155 += -lmpr
+LIBS_155 += -lejs
 ifeq ($(ME_COM_HTTP),1)
-    LIBS_154 += -lhttp
+    LIBS_155 += -lhttp
 endif
 
-$(BUILD)/bin/mvc: $(DEPS_154)
+$(BUILD)/bin/mvc: $(DEPS_155)
 	@echo '      [Link] $(BUILD)/bin/mvc'
-	$(CC) -o $(BUILD)/bin/mvc $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_154) $(LIBS_154) $(LIBS_154) $(LIBS) $(LIBS) 
+	$(CC) -o $(BUILD)/bin/mvc $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_155) $(LIBS_155) $(LIBS_155) $(LIBS) $(LIBS) 
 
 #
 #   utest.es
 #
-DEPS_155 += src/ejs.utest/utest.es
+DEPS_156 += src/ejs.utest/utest.es
 
-$(BUILD)/bin/utest.es: $(DEPS_155)
+$(BUILD)/bin/utest.es: $(DEPS_156)
 	@echo '      [Copy] $(BUILD)/bin/utest.es'
 	mkdir -p "$(BUILD)/bin"
 	cp src/ejs.utest/utest.es $(BUILD)/bin/utest.es
@@ -2327,9 +2402,9 @@ $(BUILD)/bin/utest.es: $(DEPS_155)
 #
 #   utest.worker
 #
-DEPS_156 += src/ejs.utest/utest.worker
+DEPS_157 += src/ejs.utest/utest.worker
 
-$(BUILD)/bin/utest.worker: $(DEPS_156)
+$(BUILD)/bin/utest.worker: $(DEPS_157)
 	@echo '      [Copy] $(BUILD)/bin/utest.worker'
 	mkdir -p "$(BUILD)/bin"
 	cp src/ejs.utest/utest.worker $(BUILD)/bin/utest.worker
@@ -2337,70 +2412,10 @@ $(BUILD)/bin/utest.worker: $(DEPS_156)
 #
 #   utest
 #
-DEPS_157 += $(BUILD)/bin/libejs.a
-DEPS_157 += $(BUILD)/bin/utest.es
-DEPS_157 += $(BUILD)/bin/utest.worker
-DEPS_157 += $(BUILD)/obj/ejsrun.o
-
-ifeq ($(ME_COM_MBEDTLS),1)
-    LIBS_157 += -lmbedtls
-endif
-ifeq ($(ME_COM_MBEDTLS),1)
-    LIBS_157 += -lmpr-mbedtls
-endif
-ifeq ($(ME_COM_MBEDTLS),1)
-    LIBS_157 += -lmbedtls
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_157 += -lmpr-openssl
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-ifeq ($(ME_COM_SSL),1)
-    LIBS_157 += -lssl
-    LIBPATHS_157 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-endif
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_157 += -lcrypto
-    LIBPATHS_157 += -L"$(ME_COM_OPENSSL_PATH)"
-endif
-ifeq ($(ME_COM_ZLIB),1)
-    LIBS_157 += -lzlib
-endif
-LIBS_157 += -lmpr
-ifeq ($(ME_COM_OPENSSL),1)
-    LIBS_157 += -lmpr-openssl
-endif
-ifeq ($(ME_COM_MBEDTLS),1)
-    LIBS_157 += -lmpr-mbedtls
-endif
-ifeq ($(ME_COM_ZLIB),1)
-    LIBS_157 += -lzlib
-endif
-ifeq ($(ME_COM_PCRE),1)
-    LIBS_157 += -lpcre
-endif
-ifeq ($(ME_COM_HTTP),1)
-    LIBS_157 += -lhttp
-endif
-ifeq ($(ME_COM_PCRE),1)
-    LIBS_157 += -lpcre
-endif
-LIBS_157 += -lmpr
-LIBS_157 += -lejs
-ifeq ($(ME_COM_HTTP),1)
-    LIBS_157 += -lhttp
-endif
-
-$(BUILD)/bin/utest: $(DEPS_157)
-	@echo '      [Link] $(BUILD)/bin/utest'
-	$(CC) -o $(BUILD)/bin/utest $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_157) $(LIBS_157) $(LIBS_157) $(LIBS) $(LIBS) 
-
-#
-#   watchdog
-#
-DEPS_158 += $(BUILD)/bin/libmpr.a
-DEPS_158 += $(BUILD)/obj/watchdog.o
+DEPS_158 += $(BUILD)/bin/libejs.a
+DEPS_158 += $(BUILD)/bin/utest.es
+DEPS_158 += $(BUILD)/bin/utest.worker
+DEPS_158 += $(BUILD)/obj/ejsrun.o
 
 ifeq ($(ME_COM_MBEDTLS),1)
     LIBS_158 += -lmbedtls
@@ -2437,43 +2452,103 @@ endif
 ifeq ($(ME_COM_ZLIB),1)
     LIBS_158 += -lzlib
 endif
+ifeq ($(ME_COM_PCRE),1)
+    LIBS_158 += -lpcre
+endif
+ifeq ($(ME_COM_HTTP),1)
+    LIBS_158 += -lhttp
+endif
+ifeq ($(ME_COM_PCRE),1)
+    LIBS_158 += -lpcre
+endif
+LIBS_158 += -lmpr
+LIBS_158 += -lejs
+ifeq ($(ME_COM_HTTP),1)
+    LIBS_158 += -lhttp
+endif
 
-$(BUILD)/bin/ejsman: $(DEPS_158)
+$(BUILD)/bin/utest: $(DEPS_158)
+	@echo '      [Link] $(BUILD)/bin/utest'
+	$(CC) -o $(BUILD)/bin/utest $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/ejsrun.o" $(LIBPATHS_158) $(LIBS_158) $(LIBS_158) $(LIBS) $(LIBS) 
+
+#
+#   watchdog
+#
+DEPS_159 += $(BUILD)/bin/libmpr.a
+DEPS_159 += $(BUILD)/obj/watchdog.o
+
+ifeq ($(ME_COM_MBEDTLS),1)
+    LIBS_159 += -lmbedtls
+endif
+ifeq ($(ME_COM_MBEDTLS),1)
+    LIBS_159 += -lmpr-mbedtls
+endif
+ifeq ($(ME_COM_MBEDTLS),1)
+    LIBS_159 += -lmbedtls
+endif
+ifeq ($(ME_COM_OPENSSL),1)
+    LIBS_159 += -lmpr-openssl
+endif
+ifeq ($(ME_COM_OPENSSL),1)
+ifeq ($(ME_COM_SSL),1)
+    LIBS_159 += -lssl
+    LIBPATHS_159 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
+endif
+ifeq ($(ME_COM_OPENSSL),1)
+    LIBS_159 += -lcrypto
+    LIBPATHS_159 += -L"$(ME_COM_OPENSSL_PATH)"
+endif
+ifeq ($(ME_COM_ZLIB),1)
+    LIBS_159 += -lzlib
+endif
+LIBS_159 += -lmpr
+ifeq ($(ME_COM_OPENSSL),1)
+    LIBS_159 += -lmpr-openssl
+endif
+ifeq ($(ME_COM_MBEDTLS),1)
+    LIBS_159 += -lmpr-mbedtls
+endif
+ifeq ($(ME_COM_ZLIB),1)
+    LIBS_159 += -lzlib
+endif
+
+$(BUILD)/bin/ejsman: $(DEPS_159)
 	@echo '      [Link] $(BUILD)/bin/ejsman'
-	$(CC) -o $(BUILD)/bin/ejsman $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/watchdog.o" $(LIBPATHS_158) $(LIBS_158) $(LIBS_158) $(LIBS) $(LIBS) 
+	$(CC) -o $(BUILD)/bin/ejsman $(LDFLAGS) $(LIBPATHS)  "$(BUILD)/obj/watchdog.o" $(LIBPATHS_159) $(LIBS_159) $(LIBS_159) $(LIBS) $(LIBS) 
 
 #
 #   www
 #
-DEPS_159 += src/ejs.web/www/images/banner.jpg
-DEPS_159 += src/ejs.web/www/images/favicon.ico
-DEPS_159 += src/ejs.web/www/images/splash.jpg
-DEPS_159 += src/ejs.web/www/js/jquery.ejs.min.js
-DEPS_159 += src/ejs.web/www/js/jquery.min.js
-DEPS_159 += src/ejs.web/www/js/jquery.simplemodal.min.js
-DEPS_159 += src/ejs.web/www/js/jquery.tablesorter.js
-DEPS_159 += src/ejs.web/www/js/jquery.tablesorter.min.js
-DEPS_159 += src/ejs.web/www/js/jquery.treeview.min.js
-DEPS_159 += src/ejs.web/www/js/tree-images/file.gif
-DEPS_159 += src/ejs.web/www/js/tree-images/folder-closed.gif
-DEPS_159 += src/ejs.web/www/js/tree-images/folder.gif
-DEPS_159 += src/ejs.web/www/js/tree-images/minus.gif
-DEPS_159 += src/ejs.web/www/js/tree-images/plus.gif
-DEPS_159 += src/ejs.web/www/js/tree-images/treeview-black-line.gif
-DEPS_159 += src/ejs.web/www/js/tree-images/treeview-black.gif
-DEPS_159 += src/ejs.web/www/js/tree-images/treeview-default-line.gif
-DEPS_159 += src/ejs.web/www/js/tree-images/treeview-default.gif
-DEPS_159 += src/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif
-DEPS_159 += src/ejs.web/www/js/tree-images/treeview-famfamfam.gif
-DEPS_159 += src/ejs.web/www/js/tree-images/treeview-gray-line.gif
-DEPS_159 += src/ejs.web/www/js/tree-images/treeview-gray.gif
-DEPS_159 += src/ejs.web/www/js/tree-images/treeview-red-line.gif
-DEPS_159 += src/ejs.web/www/js/tree-images/treeview-red.gif
-DEPS_159 += src/ejs.web/www/js/treeview.css
-DEPS_159 += src/ejs.web/www/layout.css
-DEPS_159 += src/ejs.web/www/themes/default.css
+DEPS_160 += src/ejs.web/www/images/banner.jpg
+DEPS_160 += src/ejs.web/www/images/favicon.ico
+DEPS_160 += src/ejs.web/www/images/splash.jpg
+DEPS_160 += src/ejs.web/www/js/jquery.ejs.min.js
+DEPS_160 += src/ejs.web/www/js/jquery.min.js
+DEPS_160 += src/ejs.web/www/js/jquery.simplemodal.min.js
+DEPS_160 += src/ejs.web/www/js/jquery.tablesorter.js
+DEPS_160 += src/ejs.web/www/js/jquery.tablesorter.min.js
+DEPS_160 += src/ejs.web/www/js/jquery.treeview.min.js
+DEPS_160 += src/ejs.web/www/js/tree-images/file.gif
+DEPS_160 += src/ejs.web/www/js/tree-images/folder-closed.gif
+DEPS_160 += src/ejs.web/www/js/tree-images/folder.gif
+DEPS_160 += src/ejs.web/www/js/tree-images/minus.gif
+DEPS_160 += src/ejs.web/www/js/tree-images/plus.gif
+DEPS_160 += src/ejs.web/www/js/tree-images/treeview-black-line.gif
+DEPS_160 += src/ejs.web/www/js/tree-images/treeview-black.gif
+DEPS_160 += src/ejs.web/www/js/tree-images/treeview-default-line.gif
+DEPS_160 += src/ejs.web/www/js/tree-images/treeview-default.gif
+DEPS_160 += src/ejs.web/www/js/tree-images/treeview-famfamfam-line.gif
+DEPS_160 += src/ejs.web/www/js/tree-images/treeview-famfamfam.gif
+DEPS_160 += src/ejs.web/www/js/tree-images/treeview-gray-line.gif
+DEPS_160 += src/ejs.web/www/js/tree-images/treeview-gray.gif
+DEPS_160 += src/ejs.web/www/js/tree-images/treeview-red-line.gif
+DEPS_160 += src/ejs.web/www/js/tree-images/treeview-red.gif
+DEPS_160 += src/ejs.web/www/js/treeview.css
+DEPS_160 += src/ejs.web/www/layout.css
+DEPS_160 += src/ejs.web/www/themes/default.css
 
-$(BUILD)/bin/www: $(DEPS_159)
+$(BUILD)/bin/www: $(DEPS_160)
 	@echo '      [Copy] $(BUILD)/bin/www'
 	mkdir -p "$(BUILD)/bin/www/images"
 	cp src/ejs.web/www/images/banner.jpg $(BUILD)/bin/www/images/banner.jpg
@@ -2512,7 +2587,7 @@ $(BUILD)/bin/www: $(DEPS_159)
 #   installPrep
 #
 
-installPrep: $(DEPS_160)
+installPrep: $(DEPS_161)
 	if [ "`id -u`" != 0 ] ; \
 	then echo "Must run as root. Rerun with sudo." ; \
 	exit 255 ; \
@@ -2522,13 +2597,13 @@ installPrep: $(DEPS_160)
 #   stop
 #
 
-stop: $(DEPS_161)
+stop: $(DEPS_162)
 
 #
 #   installBinary
 #
 
-installBinary: $(DEPS_162)
+installBinary: $(DEPS_163)
 	mkdir -p "$(ME_APP_PREFIX)" ; \
 	rm -f "$(ME_APP_PREFIX)/latest" ; \
 	ln -s "$(VERSION)" "$(ME_APP_PREFIX)/latest" ; \
@@ -2743,35 +2818,40 @@ installBinary: $(DEPS_162)
 #   start
 #
 
-start: $(DEPS_163)
+start: $(DEPS_164)
 
 #
 #   install
 #
-DEPS_164 += installPrep
-DEPS_164 += stop
-DEPS_164 += installBinary
-DEPS_164 += start
+DEPS_165 += installPrep
+DEPS_165 += stop
+DEPS_165 += installBinary
+DEPS_165 += start
 
-install: $(DEPS_164)
+install: $(DEPS_165)
 
 #
 #   uninstall
 #
-DEPS_165 += stop
+DEPS_166 += stop
 
-uninstall: $(DEPS_165)
+uninstall: $(DEPS_166)
 
 #
 #   uninstallBinary
 #
 
-uninstallBinary: $(DEPS_166)
+uninstallBinary: $(DEPS_167)
 
 #
 #   version
 #
 
-version: $(DEPS_167)
+version: $(DEPS_168)
 	echo $(VERSION)
 
+
+EXTRA_MAKEFILE := $(strip $(wildcard ./projects/extra.mk))
+ifneq ($(EXTRA_MAKEFILE),)
+include $(EXTRA_MAKEFILE)
+endif

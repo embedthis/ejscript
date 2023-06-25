@@ -1,32 +1,32 @@
-{
-    title: 'Controllers',
-    crumbs: [
-        { 'Web Framework Guide': 'index.html'} ,
-    ]
-}
-            <h1>Controllers and Actions</h1>
-            <p>Ejscript controllers manage the application and respond to client requests. They are the conductors of
-            the application and orchestrate the application's activities. </p>
+{ title: 'Controllers', crumbs: [ { 'Web Framework Guide': 'index.html'} , ] }
+<h1>Controllers and Actions</h1>
+<p>
+  Ejscript controllers manage the application and respond to client requests.
+  They are the conductors of the application and orchestrate the application's
+  activities.
+</p>
 
-            <a id="flow"></a>
-            <h2>Processing Flow</h2>
-            <p>Ejscript controllers process requests in stages:</p>
-            <ol>
-                <li>Decode the URI and web request</li>
-                <li>Route an incoming request to the appropriate controller</li>
-                <li>Invoke the requested action</li>
-                <li>Access and update the application state</li>
-                <li>Render a response view to the client</li>
-            </ol>
-            
-            <p>When a request is received, Ejscript will parse and decode the request before routing to the appropriate
-            Controller where it will create an instance of the controller class and invoke the requested
-            action method.</p>
+<a id="flow"></a>
+<h2>Processing Flow</h2>
+<p>Ejscript controllers process requests in stages:</p>
+<ol>
+  <li>Decode the URI and web request</li>
+  <li>Route an incoming request to the appropriate controller</li>
+  <li>Invoke the requested action</li>
+  <li>Access and update the application state</li>
+  <li>Render a response view to the client</li>
+</ol>
 
-            <a id="anatomy"></a>
-            <h2 >Anatomy of a Controller</h2>
-            <p>So what does a controller look like?</p>
-            <pre class="ui code segment">
+<p>
+  When a request is received, Ejscript will parse and decode the request before
+  routing to the appropriate Controller where it will create an instance of the
+  controller class and invoke the requested action method.
+</p>
+
+<a id="anatomy"></a>
+<h2>Anatomy of a Controller</h2>
+<p>So what does a controller look like?</p>
+<pre class="ui code segment">
 public class CartController extends ApplicationController {
     public var product: Product
     action function index() { 
@@ -53,261 +53,326 @@ public class CartController extends ApplicationController {
     }
 }
 </pre>
-            <p>This is a simplified controller &mdash; definitely not production code as it does not validate user
-            input. This controller provides five actions which are decorated by an <em>action</em> qualifier. This
-            qualifier makes a JavaScript function visible as a controller action method.</p>
-            <p>If the client issues a request for:</p>
-            <pre class="ui code segment">
-https://embedthis.com/myApp/cart/create
+<p>
+  This is a simplified controller &mdash; definitely not production code as it
+  does not validate user input. This controller provides five actions which are
+  decorated by an <em>action</em> qualifier. This qualifier makes a JavaScript
+  function visible as a controller action method.
+</p>
+<p>If the client issues a request for:</p>
+<pre class="ui code segment">
+https://www.embedthis.com/myApp/cart/create
 </pre>
-            <p>The <em>create</em> action will be invoked. It will create a new product and then render the
-            <em>edit.ejs</em> view back to the client.</p>
+<p>
+  The <em>create</em> action will be invoked. It will create a new product and
+  then render the <em>edit.ejs</em> view back to the client.
+</p>
 
-            <a id="actions"></a>
-            <h2 >Actions</h2>
-            <p>Actions are where the controller does its work. In Ejscript, actions are simple JavaScript functions
-            prefixed with an <em>action</em> qualifier. They don't need to be registered or otherwise configured before
-            use. When Ejscript receives a request from the client, it will parse the request and invoke the request
-            action specified in the URL.</p>
-            <p>When a request is received, the controller framework looks for an action method of the required name. If
-            one is not found, it invokes the <em>missing</em> action method which renders a default error message back
-            to the client.</p>
+<a id="actions"></a>
+<h2>Actions</h2>
+<p>
+  Actions are where the controller does its work. In Ejscript, actions are
+  simple JavaScript functions prefixed with an <em>action</em> qualifier. They
+  don't need to be registered or otherwise configured before use. When Ejscript
+  receives a request from the client, it will parse the request and invoke the
+  request action specified in the URL.
+</p>
+<p>
+  When a request is received, the controller framework looks for an action
+  method of the required name. If one is not found, it invokes the
+  <em>missing</em> action method which renders a default error message back to
+  the client.
+</p>
 
-            <a id="context"></a>
-            <h3>Controller Context</h3>
-            <p>Ejscript establishes a request context for the controller before invoking the action. This consists of
-            the following objects which are visible to actions:</p>
-            <ul>
-                <li>application object &mdash; represents your application.</li>
-                <li>host &mdash; describes the web server hosting the application.</li>
-                <li>request object &mdash; describes the client HTTP request.</li>
-                <li>response object &mdash; describes the client HTTP response.</li>
-                <li>params &mdash; request form data</li>
-                <li>flash &mdash; informational messages to pass to the next action (and view)</li>
-                <li>session object &mdash; session state information.</li>
-            </ul>
-            <p>The controller can add to this context by declaring public variables in the controller class or the
-            ApplicationController which is the base class for all controllers. Views can automatically access any such
-            public controller variables.</p>
+<a id="context"></a>
+<h3>Controller Context</h3>
+<p>
+  Ejscript establishes a request context for the controller before invoking the
+  action. This consists of the following objects which are visible to actions:
+</p>
+<ul>
+  <li>application object &mdash; represents your application.</li>
+  <li>host &mdash; describes the web server hosting the application.</li>
+  <li>request object &mdash; describes the client HTTP request.</li>
+  <li>response object &mdash; describes the client HTTP response.</li>
+  <li>params &mdash; request form data</li>
+  <li>
+    flash &mdash; informational messages to pass to the next action (and view)
+  </li>
+  <li>session object &mdash; session state information.</li>
+</ul>
+<p>
+  The controller can add to this context by declaring public variables in the
+  controller class or the ApplicationController which is the base class for all
+  controllers. Views can automatically access any such public controller
+  variables.
+</p>
 
-            <a id="processing"></a>
-            <h3>Processing the Request</h3>
-            <p>The action method can perform any processing it desires. There are no real restrictions except you don't
-            want to block for too long without giving the client some feedback.</p>
-            <p>Actions often retrieve a database record via the Model and store an object representing the model in a
-            public variable for easy access by the view. NOTE: the controller is not persistent across client
-            requests.</p>
+<a id="processing"></a>
+<h3>Processing the Request</h3>
+<p>
+  The action method can perform any processing it desires. There are no real
+  restrictions except you don't want to block for too long without giving the
+  client some feedback.
+</p>
+<p>
+  Actions often retrieve a database record via the Model and store an object
+  representing the model in a public variable for easy access by the view. NOTE:
+  the controller is not persistent across client requests.
+</p>
 
-            <a id="models"></a>
-            <h2 >Model Data</h2>
-            <p>Ejscript provides an Object Relational Mapping (ORM) layer for accessing database data via convenient
-            JavaScript objects. The ORM layer is a collection of database Model classes for the application.
-            controllers use this layer to access the database via these Model classes. A typical paradigm is for action
-            methods to read a database record and store the record in a public controller property. The view can then
-            simply access the database data via this property.</p>
-            <p>For more details, please see <a href="models.html">Database Models</a>.</p>
+<a id="models"></a>
+<h2>Model Data</h2>
+<p>
+  Ejscript provides an Object Relational Mapping (ORM) layer for accessing
+  database data via convenient JavaScript objects. The ORM layer is a collection
+  of database Model classes for the application. controllers use this layer to
+  access the database via these Model classes. A typical paradigm is for action
+  methods to read a database record and store the record in a public controller
+  property. The view can then simply access the database data via this property.
+</p>
+<p>For more details, please see <a href="models.html">Database Models</a>.</p>
 
-            <a id="forms"></a>
-            <h2 >Form Data</h2>
-            <p>HTTP Form data is marshalled by Ejscript into the <em>params</em> object which is accessible to actions.
-            Each HTML input element posted by the client will become a property of <em>params</em>. Ejscript can also
-            organize form data into nested objects. If an input element name contains a period, then Ejscript will
-            create nested objects to match the input element name.</p>
+<a id="forms"></a>
+<h2>Form Data</h2>
+<p>
+  HTTP Form data is marshalled by Ejscript into the <em>params</em> object which
+  is accessible to actions. Each HTML input element posted by the client will
+  become a property of <em>params</em>. Ejscript can also organize form data
+  into nested objects. If an input element name contains a period, then Ejscript
+  will create nested objects to match the input element name.
+</p>
 
-            <a id="views"></a>
-            <h3>Rendering Views</h3>
-            <p>After processing the request, the controller is responsible for rendering a view back to the client. If
-            the action method does not explicitly render a view, Ejscript will look for a view with the same name as
-            the action method.</p>
-            <p>In the prior example, the <em>edit</em> action did not call any <em>render</em> function, so the
-            framework will look for, and if found, run a view <em>views/cart/edit.ejs</em>.</p>
+<a id="views"></a>
+<h3>Rendering Views</h3>
+<p>
+  After processing the request, the controller is responsible for rendering a
+  view back to the client. If the action method does not explicitly render a
+  view, Ejscript will look for a view with the same name as the action method.
+</p>
+<p>
+  In the prior example, the <em>edit</em> action did not call any
+  <em>render</em> function, so the framework will look for, and if found, run a
+  view <em>views/cart/edit.ejs</em>.
+</p>
 
-            <a id="generating"></a>
-            <h2 >Generating Controllers and Actions</h2>
-            <p>Ejscript includes an an application generator, called <em>mvc</em> to make it quick and easy to
-            create controllers, actions and controller scaffolds. To generate a new controller, run:</p>
-            <pre class="ui code segment">
+<a id="generating"></a>
+<h2>Generating Controllers and Actions</h2>
+<p>
+  Ejscript includes an an application generator, called <em>mvc</em> to make it
+  quick and easy to create controllers, actions and controller scaffolds. To
+  generate a new controller, run:
+</p>
+<pre class="ui code segment">
 mvc generate controller NAMES...
 </pre>
-            <p><em>NAMES...</em> are the names of the controllers you want to generate. This command will create
-            controller source files under the <em>controllers</em> directory. Each controller will contain an empty
-            controller class with an empty index action function. You can edit the controller source to meet your
-            needs.</p>
-            <p>When you create a controller, you can also (optionally) generate a set of named action functions. To
-            generate actions when you create a controller, run:</p>
-            <pre class="ui code segment">
+<p>
+  <em>NAMES...</em> are the names of the controllers you want to generate. This
+  command will create controller source files under the
+  <em>controllers</em> directory. Each controller will contain an empty
+  controller class with an empty index action function. You can edit the
+  controller source to meet your needs.
+</p>
+<p>
+  When you create a controller, you can also (optionally) generate a set of
+  named action functions. To generate actions when you create a controller, run:
+</p>
+<pre class="ui code segment">
 mvc generate controller NAME ACTIONS...
 </pre>
-            <p>If <em>ACTIONS</em> are provided, action functions and views pages will be created for the given
-            names.</p>
-            <h3>Generating Scaffolds</h3>
-            <p>A scaffold is a generated set of actions and views that provide add, edit, and list functionality for a
-            database model. Scaffolds are useful to quickly generate prototype web pages and actions for managing a
-            database table. To generate a scaffold:</p>
-            <pre class="ui code segment">
+<p>
+  If <em>ACTIONS</em> are provided, action functions and views pages will be
+  created for the given names.
+</p>
+<h3>Generating Scaffolds</h3>
+<p>
+  A scaffold is a generated set of actions and views that provide add, edit, and
+  list functionality for a database model. Scaffolds are useful to quickly
+  generate prototype web pages and actions for managing a database table. To
+  generate a scaffold:
+</p>
+<pre class="ui code segment">
 mvc generate scaffold MODEL [field:type ...]
 </pre>
-            <p>When creating a scaffold for a database model, <em>mvc</em> will create a database model, database
-            migration, controller and edit and list view pages.</p>
-            <p>If field:type pairs are supplied, the database migration will include code to create a column for each
-            specified field of the requested type. The valid database types are: <em>binary, boolean, date, datetime,
-                decimal, float, integer, number, string, text, time, timestamp</em>.</p>
-            <p>The scaffold will include an
-            <em>edit</em> action and view that provides <em>add</em> and <em>edit</em> capability. The <em>list</em>
-            action and view, provides the ability to list the database table rows and select an entry 
-            to edit.</p>
+<p>
+  When creating a scaffold for a database model, <em>mvc</em> will create a
+  database model, database migration, controller and edit and list view pages.
+</p>
+<p>
+  If field:type pairs are supplied, the database migration will include code to
+  create a column for each specified field of the requested type. The valid
+  database types are:
+  <em
+    >binary, boolean, date, datetime, decimal, float, integer, number, string,
+    text, time, timestamp</em
+  >.
+</p>
+<p>
+  The scaffold will include an <em>edit</em> action and view that provides
+  <em>add</em> and <em>edit</em> capability. The <em>list</em> action and view,
+  provides the ability to list the database table rows and select an entry to
+  edit.
+</p>
 
-            <a id="controller"></a>
-            <h2 >Controller Class</h2>
-            <p>The Controller class has a large set of methods and properties. See the <a href=
-            "../ref/api/ejscript/index.html">Ejscript Library</a> for full details. Some of the more important
-            properties:</p>
-            <table title="controllerProperties" class="ui table segment">
-                <thead>
-                    <tr>
-                        <th>Property</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>actionName</td>
-                        <td>Name of the action method being run.</td>
-                    </tr>
-                    <tr>
-                        <td>application</td>
-                        <td>Application global data.</td>
-                    </tr>
-                    <tr>
-                        <td>controllerName</td>
-                        <td>Name of the controller method being run.</td>
-                    </tr>
-                    <tr>
-                        <td>flash</td>
-                        <td>Lower case name of the controller.</td>
-                    </tr>
-                    <tr>
-                        <td>flash</td>
-                        <td>Flash message object for the next view.</td>
-                    </tr>
-                    <tr>
-                        <td>host</td>
-                        <td>HTTP host object.</td>
-                    </tr>
-                    <tr>
-                        <td>params</td>
-                        <td>Form parameters object.</td>
-                    </tr>
-                    <tr>
-                        <td>request</td>
-                        <td>HTTP request object.</td>
-                    </tr>
-                    <tr>
-                        <td>response</td>
-                        <td>HTTP response object.</td>
-                    </tr>
-                    <tr>
-                        <td>session</td>
-                        <td>Session state information.</td>
-                    </tr>
-                </tbody>
-            </table>
-            <p>The controller class provides the following methods:</p>
-            <table title="viewClass" class="ui table segment">
-                <thead>
-                    <tr>
-                        <th>Method / Property</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>cache</td>
-                        <td>Add a cache-control HTTP header.</td>
-                    </tr>
-                    <tr>
-                        <td>createSession</td>
-                        <td>Enable session control.</td>
-                    </tr>
-                    <tr>
-                        <td>destroySession</td>
-                        <td>Destroy a session.</td>
-                    </tr>
-                    <tr>
-                        <td>discardOutput</td>
-                        <td>Discard all prior buffered output.</td>
-                    </tr>
-                    <tr>
-                        <td>error</td>
-                        <td>Send an error response back to the client.</td>
-                    </tr>
-                    <tr>
-                        <td>escapeHtml</td>
-                        <td>Transform a string to be safe for output in a HTML web page.</td>
-                    </tr>
-                    <tr>
-                        <td>html</td>
-                        <td>HTML encode the arguments.</td>
-                    </tr>
-                    <tr>
-                        <td>inform</td>
-                        <td>Send a positive notification to the client in the flash area.</td>
-                    </tr>
-                    <tr>
-                        <td>makeUrl</td>
-                        <td>Make a URL suitable for invoking actions.</td>
-                    </tr>
-                    <tr>
-                        <td>redirect</td>
-                        <td>Redirect the client to a new URL.</td>
-                    </tr>
-                    <tr>
-                        <td>render</td>
-                        <td>Render the raw arguments back to the client.</td>
-                    </tr>
-                    <tr>
-                        <td>renderFile</td>
-                        <td>Render a file's contents back to the client.</td>
-                    </tr>
-                    <tr>
-                        <td>renderRaw</td>
-                        <td>Render raw data.</td>
-                    </tr>
-                    <tr>
-                        <td>setCookie</td>
-                        <td>Define a cookie to include in the response.</td>
-                    </tr>
-                    <tr>
-                        <td>statusMessage</td>
-                        <td>Send a status message to any registered view controls.</td>
-                    </tr>
-                    <tr>
-                        <td>unescapeHtml</td>
-                        <td>Transform an escaped string back to its original contents.</td>
-                    </tr>
-                    <tr>
-                        <td>warn</td>
-                        <td>Send a warning message to the client in the flash area.</td>
-                    </tr>
-                    <tr>
-                        <td>write</td>
-                        <td>Write text back to the client.</td>
-                    </tr>
-                    <tr>
-                        <td>writeHtml</td>
-                        <td>Write HTML escaped data back to the client.</td>
-                    </tr>
-                </tbody>
-            </table>
+<a id="controller"></a>
+<h2>Controller Class</h2>
+<p>
+  The Controller class has a large set of methods and properties. See the
+  <a href="../ref/api/ejscript/index.html">Ejscript Library</a> for full
+  details. Some of the more important properties:
+</p>
+<table title="controllerProperties" class="ui table segment">
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>actionName</td>
+      <td>Name of the action method being run.</td>
+    </tr>
+    <tr>
+      <td>application</td>
+      <td>Application global data.</td>
+    </tr>
+    <tr>
+      <td>controllerName</td>
+      <td>Name of the controller method being run.</td>
+    </tr>
+    <tr>
+      <td>flash</td>
+      <td>Lower case name of the controller.</td>
+    </tr>
+    <tr>
+      <td>flash</td>
+      <td>Flash message object for the next view.</td>
+    </tr>
+    <tr>
+      <td>host</td>
+      <td>HTTP host object.</td>
+    </tr>
+    <tr>
+      <td>params</td>
+      <td>Form parameters object.</td>
+    </tr>
+    <tr>
+      <td>request</td>
+      <td>HTTP request object.</td>
+    </tr>
+    <tr>
+      <td>response</td>
+      <td>HTTP response object.</td>
+    </tr>
+    <tr>
+      <td>session</td>
+      <td>Session state information.</td>
+    </tr>
+  </tbody>
+</table>
+<p>The controller class provides the following methods:</p>
+<table title="viewClass" class="ui table segment">
+  <thead>
+    <tr>
+      <th>Method / Property</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>cache</td>
+      <td>Add a cache-control HTTP header.</td>
+    </tr>
+    <tr>
+      <td>createSession</td>
+      <td>Enable session control.</td>
+    </tr>
+    <tr>
+      <td>destroySession</td>
+      <td>Destroy a session.</td>
+    </tr>
+    <tr>
+      <td>discardOutput</td>
+      <td>Discard all prior buffered output.</td>
+    </tr>
+    <tr>
+      <td>error</td>
+      <td>Send an error response back to the client.</td>
+    </tr>
+    <tr>
+      <td>escapeHtml</td>
+      <td>Transform a string to be safe for output in a HTML web page.</td>
+    </tr>
+    <tr>
+      <td>html</td>
+      <td>HTML encode the arguments.</td>
+    </tr>
+    <tr>
+      <td>inform</td>
+      <td>Send a positive notification to the client in the flash area.</td>
+    </tr>
+    <tr>
+      <td>makeUrl</td>
+      <td>Make a URL suitable for invoking actions.</td>
+    </tr>
+    <tr>
+      <td>redirect</td>
+      <td>Redirect the client to a new URL.</td>
+    </tr>
+    <tr>
+      <td>render</td>
+      <td>Render the raw arguments back to the client.</td>
+    </tr>
+    <tr>
+      <td>renderFile</td>
+      <td>Render a file's contents back to the client.</td>
+    </tr>
+    <tr>
+      <td>renderRaw</td>
+      <td>Render raw data.</td>
+    </tr>
+    <tr>
+      <td>setCookie</td>
+      <td>Define a cookie to include in the response.</td>
+    </tr>
+    <tr>
+      <td>statusMessage</td>
+      <td>Send a status message to any registered view controls.</td>
+    </tr>
+    <tr>
+      <td>unescapeHtml</td>
+      <td>Transform an escaped string back to its original contents.</td>
+    </tr>
+    <tr>
+      <td>warn</td>
+      <td>Send a warning message to the client in the flash area.</td>
+    </tr>
+    <tr>
+      <td>write</td>
+      <td>Write text back to the client.</td>
+    </tr>
+    <tr>
+      <td>writeHtml</td>
+      <td>Write HTML escaped data back to the client.</td>
+    </tr>
+  </tbody>
+</table>
 
-            <a id="filters"></a>
-            <h2 >Filters</h2>
-            <p>Filters enable a controller to perform processing before and after actions are run. Filters are useful
-            to do authentication and logging. Filters run in the same context as an action method and can access the
-            controller instance and the Request, Response, Http, session and flash objects.</p>
-            <p>To run a filter before the action method, use the <em>beforeFilter</em> method. This should be run in
-            the constructor for the controller. For example:</p>
-            <pre class="ui code segment">
+<a id="filters"></a>
+<h2>Filters</h2>
+<p>
+  Filters enable a controller to perform processing before and after actions are
+  run. Filters are useful to do authentication and logging. Filters run in the
+  same context as an action method and can access the controller instance and
+  the Request, Response, Http, session and flash objects.
+</p>
+<p>
+  To run a filter before the action method, use the
+  <em>beforeFilter</em> method. This should be run in the constructor for the
+  controller. For example:
+</p>
+<pre class="ui code segment">
 public class TaskController extends BaseController {
     function TaskController() {
 <b>        beforeFilter(authorize, { except: "login"})</b>
@@ -319,20 +384,30 @@ public class TaskController extends BaseController {
         }
     }</b>
 </pre>
-            <p>This will cause the <em>authorize</em> to run before any action method except for the <em>login</em>
-            action. The <em>authorize</em> function can test the user name and password and if not authorized, it can
-            fail the request and redirect the user back to the login page. Filters can be run after the request by
-            using the <em>afterFilter</em> method.</p>
-            <p>The filter methods take an options object as the second parameter. Two option properties are
-            defined:</p>
-            <ul>
-                <li><b>except</b> &mdash; Run filter for all actions except the nominated action.</li>
-                <li><b>only</b> &mdash; Run filter only for the specified actions.</li>
-            </ul>
-            <p>When specifying the argument to <em>except</em> and <em>only</em>, you can provide either a single
-            action name as a string or an array of action names.</p>
-            
-        <!--
+<p>
+  This will cause the <em>authorize</em> to run before any action method except
+  for the <em>login</em> action. The <em>authorize</em> function can test the
+  user name and password and if not authorized, it can fail the request and
+  redirect the user back to the login page. Filters can be run after the request
+  by using the <em>afterFilter</em> method.
+</p>
+<p>
+  The filter methods take an options object as the second parameter. Two option
+  properties are defined:
+</p>
+<ul>
+  <li>
+    <b>except</b> &mdash; Run filter for all actions except the nominated
+    action.
+  </li>
+  <li><b>only</b> &mdash; Run filter only for the specified actions.</li>
+</ul>
+<p>
+  When specifying the argument to <em>except</em> and <em>only</em>, you can
+  provide either a single action name as a string or an array of action names.
+</p>
+
+<!--
         <a id="tips"></a>
         <h2 >Tips and Tricks</h2>
         <p>The following hits provide solutions for common tasks:</p>
@@ -342,7 +417,7 @@ public class TaskController extends BaseController {
         <em>id</em> is provided (723 in this example below), this is appended after the action name.
         <pre class="ui code segment">redirect("edit", 723, null)</pre>
         <p>This will create a URL like:
-        <pre class="ui code segment">https://embedthis.com/myApp/currentController/<b>edit</b>/723</pre>
+        <pre class="ui code segment">https://www.embedthis.com/myApp/currentController/<b>edit</b>/723</pre>
             Flash
             cookies
             sessions

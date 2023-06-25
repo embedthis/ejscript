@@ -1,178 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Web Framework</title>
-    
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-    <meta name="description" content="Ejscript JavaScript language">
-    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
-    
-    <link href="../images/favicon.ico" rel="shortcut icon">
-    <link href="../lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css">
-    <link href="../css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="../css/api.min.css" rel="stylesheet" type="text/css">
-    
-
-</head>
-<body class="show-sidebar">
-    <div class="sidebar">
-        <div class="ui large left vertical inverted labeled menu">
-            <div class="item">
-                <a href="../index.html" class="logo">Ejscript Docs</a>
-            </div>
-            <div class="item">
-                <a href="../index.html">
-                    <b>General</b>
-                </a>
-                <div class="menu">
-                    <a class="item" href="../index.html">Ejscript Overview</a>
-                    <a class="item" href="../users/features.html">Ejscript Features</a>
-                    <a class="item" href="https://embedthis.com/ejscript/download.html">Download</a>
-                    <a class="item" href="../licensing/index.html">Licensing</a>
-                </div>
-            </div>
-            <div class="item">
-                <a href="../start/index.html">
-                    <b>Getting Started</b>
-                </a>
-                <div class="menu">
-                    <a class="item" href="../start/quick.html">Quick Start</a>
-                    <a class="item" href="../start/installing.html">Installing Ejscript</a>
-                    <a class="item" href="../start/tour.html">Language Tour</a>
-                    <a class="item" href="../start/faq.html">FAQ</a>
-                    <a class="item" href="../start/releaseNotes.html">Release Notes</a>
-                    <a class="item" href="../start/source.html">Building from Source</a>
-                </div>
-            </div>
-            <div class="item">
-                <a href="../users/index.html"><b>User's Guide</b></a>
-                <div class="menu">
-                    <a class="item" href="../users/shell.html">Using the Command Shell</a>
-                    <a class="item" href="../users/compiler.html">Using the Compiler</a>
-                    <a class="item" href="../users/ejsmod.html">Using the Module Generator</a>
-                    <a class="item" href="../users/doc.html">Generating Documentation</a>
-                    <a class="item" href="../users/listing.html">Generating Listing</a>
-                    <a class="item" href="../users/man.html">Man Pages</a>
-                </div>
-            </div>
-            <div class="item">
-                <a href="../language/index.html"><b>Language Guide</b></a>
-                <div class="menu">
-                    <a class="item" href="../language/syntax.html">Language Syntax</a>
-                    <a class="item" href="../language/statements.html">Statements</a>
-                    <a class="item" href="../language/expressions.html">Expressions and Operators</a>
-                    <a class="item" href="../language/objects.html">Object and Arrays</a>
-                    <a class="item" href="../language/functions.html">Functions and Methods</a>
-                    <a class="item" href="../language/core.html">Core Language Types</a>
-                    <a class="item" href="../language/types.html">Types and Declarations</a>
-                    <a class="item" href="../language/classes.html">Classes and Instances</a>
-                    <a class="item" href="../language/modules.html">Modules and Namespaces</a>
-                    <a class="item" href="../language/library.html">System Library</a>
-                    <a class="item" href="../language/events.html">Events and Timers</a>
-                    <a class="item" href="../language/modes.html">Language Modes</a>
-                    <a class="item" href="../language/globals.html">Globals</a>
-                </div>
-            </div>
-            <div class="item">
-                <a href="../web/index.html"><b>Web Framework Guide</b></a>
-                <div class="menu">
-                    <a class="item" href="../web/webTour.html">Web Framework Tour</a>
-                    <a class="item" href="../web/generator.html">Application Generator</a>
-                    <a class="item" href="../web/routing.html">Routing</a>
-                    <a class="item" href="../web/controllers.html">Controllers</a>
-                    <a class="item" href="../web/views.html">Views and Layout Templates</a>
-                    <a class="item" href="../web/controls.html">Ajax View Controls</a>
-                    <a class="item" href="../web/models.html">Database Models</a>
-                    <a class="item" href="../web/hosting.html">Hosting in Web Servers</a>
-                </div>
-            </div>
-            <div class="item">
-                <a href="../developers/index.html">Developer's Guide</a>
-                <div class="menu">
-                    <a class="item" href="../developers/embedding.html">Embedding Ejscript</a>
-                    <a class="item" href="../developers/extending.html">Extending Ejscript</a>
-                </div>
-            </div>
-            <div class="item">
-                <a href="../ref/index.html">Reference Guide</a>
-                <div class="menu">
-                    <a class="item" href="../ref/compatibility.html">Compatibility</a>
-                    <a class="item" href="../ref/native.html">Native APIs</a>
-                    <a class="item" href="../ref/api/ejscript/index.html" target="new">Script Library</a>
-                    <a class="item" href="../ref/architecture.html">Ejscript Architecture</a>
-                    <a class="item" href="../ref/webArchitecture.html">Web Framework Architecture</a>
-                    <a class="item" href="../ref/memory.html">Ejscript Memory Allocation</a>
-                    <a class="item" href="../ref/multithread.html">Multithreaded Programming</a>
-                    <a class="item" href="../standards/references.html">Standards</a>
-                </div>
-            </div>
-            <div class="item">
-                <a href="../developers/project.html">Project Resources</a>
-                <div class="menu">
-                    <a class="item" href="https://embedthis.com/blog/categories/Ejscript/">Official Ejscript News</a>
-                    <a class="item" href="https://embedthis.com/ejscript/">Ejscript Web Site</a>
-                    <a class="item" href="https://github.com/embedthis/ejs">Source Code Repository</a>
-                    <a class="item" href="https://github.com/embedthis/ejs/issues">Project Issue Database</a>
-                    <a class="item" href="https://github.com/embedthis/ejs/releases">Change Log</a>
-                    <a class="item" href="https://github.com/embedthis/ejs/milestones">Roadmap</a>
-                    <a class="item" href="https://embedthis.com/developers/contributors.html">Contributors Agreement</a>
-                </div>
-            </div>
-            <div class="item">
-                <b>Links</b>
-                <div class="menu">
-                    <a class="item" href="https://embedthis.com/">Embedthis Web Site</a>
-                    <a class="item" href="https://embedthis.com/blog/">Embedthis Blog</a>
-                    <a class="item" href="http://twitter.com/embedthat">Twitter</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-
-    <div class="ui inverted masthead">
-        <div class="ui fixed inverted menu">
-            <div class="ui sidebar-launch button">
-                <i class="icon list layout"></i>
-            </div>
-            <div class="right menu">
-                <a class="item" href="https://embedthis.com/">Embedthis</a>
-                    <a class="item" href="https://embedthis.com/ejscript/">Ejscript Site</a>
-                    <span class="desktop-only">
-                        <a class="item" href="https://embedthis.com/blog/categories/Ejscript/">Ejscript News</a>
-                        <a class="item" href="https://github.com/embedthis/ejs">Repository</a>
-                        <a class="item" href="https://embedthis.com/blog/">Blog</a>
-                        <a class="item" href="https://twitter.com/embedthat">Twitter</a>
-                    </span>
-
-            </div>
-        </div>
-        
-        <div class="ui breadcrumb">
-            <a class="section" href="../">Home</a>
-            
-            <div class="divider">/</div>
-            <a class="section" href="index.html">
-                Reference Guide
-            </a>
-            
-            
-            <div class="divider">/</div>
-            <a class="active section" href="webArchitecture.html">Web Framework</a>
-            
-        </div>
-        
-        <iframe class="version desktop-only" src="../version.html"></iframe>
-
-    </div>
-    <div class="content">
-
+{
+    title: 'Web Framework',
+    crumbs: [
+        { 'Reference Guide': 'index.html' },
+    ],
+}
             <h1>Ejscript Web Framework Architecture</h1>
             <p>The Ejscript Web Framework was designed to make it dramatically easier to create dynamic web
             applications. The web framework provides an application generator, templating engine, a powerful
@@ -182,15 +13,18 @@
             <p>This document describes the Ejscript Web Framework and how Ejscript is embedded in web servers to run
             web applications and respond to web requests. It describes the flow of execution and the main processing
             components.</p>
-            <p>See also the <a href="architecture.html">Ejscript Language Architecture</a>, <a href="../start/tour.html">Language Tour</a> and the <a href="../web/webTour.html">Web
+            <p>See also the <a href="architecture.html">Ejscript Language Architecture</a>, <a href=
+            "../start/tour.html">Language Tour</a> and the <a href="../web/webTour.html">Web
             Tour</a>.</p>
             <h2>Ejscript Web Framework Architecture</h2>
-            <p>The Web Framework embeds the Ejscript language into leading web servers such as <a href="http://www.appwebserver.org">Appweb</a> and <a href="http://www.apache.org">Apache</a> to provide a
+            <p>The Web Framework embeds the Ejscript language into leading web servers such as <a href=
+            "http://www.appwebserver.org">Appweb</a> and <a href="http://www.apache.org">Apache</a> to provide a
             hosting environment for web applications. Ejscript learns from other web frameworks like Rails and PHP, to
             deliver a web framework that uses JavaScript for server side web programming. The same language in the
             client and server makes web programming that much easier.</p>
             <p>The Web Framework builds upon the Ejscript core language and provides a web request handler, a
-            Model/View/Controller application framework and an edit-and-continue development model.</p><img src="../images/webArchitecture.jpg" alt="Ejscript Web Framework Architecture">
+            Model/View/Controller application framework and an edit-and-continue development model.</p><img src=
+            "../images/webArchitecture.jpg" alt="Ejscript Web Framework Architecture" />
             <p>The main components of the Ejscript Web Framework are:</p>
             <ul>
                 <li><a href="#webServerInterface">Web Server Interface</a> - Framework hosting and request handler</li>
@@ -201,7 +35,7 @@
                 <li>Ejscript compiler - Creates and caches application byte code</li>
                 <li>Ejscript Virtual Machine - executes the byte code and formats the response</li>
             </ul><a id="webServerInterface"></a>
-            <h2>Web Server Interface</h2>
+            <h2 >Web Server Interface</h2>
             <p>The Ejscript Web Server Interface (or web interface) provides the interface and coupling between
             Ejscript and the web server. It accepts incoming web requests from the web server, routes the request to
             the appropriate application or ejscript web page, processes the output and passes it back to the web server
@@ -219,7 +53,8 @@
             <p><a href="http://www.fastcgi.com/">FastCGI</a> is a replacement for CGI. It provides higher performance
             than CGI by supporting multiple Http requests per FastCGI instance. It also offers improved stability by
             isolating application instances.</p>
-            <p>Custom in-memory modules offer the highest performance. Ejscript provides modules for <a href="http://www.appwebserver.org/">Appweb</a> and <a href="http://www.apache.org/">Apache</a>. The custom
+            <p>Custom in-memory modules offer the highest performance. Ejscript provides modules for <a href=
+            "http://www.appwebserver.org/">Appweb</a> and <a href="http://www.apache.org/">Apache</a>. The custom
             module, <b>mod_ejs</b>, provides excellent performance but less application isolation than FastCGI.</p>
             <p>When using a custom in-memory module, each Ejscript application will typically define a URL alias using
             the EjsAppAlias directive. For example:</p>
@@ -252,7 +87,7 @@ EjsAppAlias /myAppName/ "/Directory/to/myApp"
             <p>Clone interpreters are not completely isolated. Controlled session state sharing is accomplished by
             sharing session[] and application[] objects.</p>
             <p><a id="generator"></a></p>
-            <h2>Application Generator</h2>
+            <h2 >Application Generator</h2>
             <p>The web framework supports two kinds of Ejscript web applications.</p>
             <ul>
                 <li>Simple stand-alone web pages</li>
@@ -293,14 +128,14 @@ mvc -v compile
             <p>During development time, the web framework uses <b>mvc</b> behind the scenes to transparently
             recompile all or portions of the application if the developer modifies any model, view or
             controller.</p><a id="mvc"></a>
-            <h2>Model, View, Controller Framework</h2>
+            <h2 >Model, View, Controller Framework</h2>
             <p>A Model View Controller framework, also known as MVC, is a proven paradigm for organizing web
             applications. The model manages the state of the application including the database. The controller manages
             the application, responding to inputs and invoking the relevant views to generate the user interface.</p>
             <p>Originally developed in the '70s, it has been more recently adapted for web applications and been
             popularized by frameworks such as <a href="http://www.rubyonrails.org">Ruby on Rails</a>. Ejscript uses the
             same paradigm with a JavaScript and embedded spin.</p><a id="models"></a>
-            <h2>Models</h2>
+            <h2 >Models</h2>
             <p>For object-oriented languages such as Ejscript, there is sometimes a mismatch between relational
             database data and the JavaScript objects that are used to represent and manage that data. To solve this
             problem, Ejscript provides an Object Relational Mapping (ORM) layer to make it easy to read, modify and
@@ -319,7 +154,7 @@ mvc -v compile
             saveUpdate, setKeyName, setTableName, sql and trace.</p>
             <p>The Ejscript ORM currently only provides one database connector for SQLite. It is expected that a future
             release will add support for other major database engines.</p><a id="views"></a>
-            <h2>Views</h2>
+            <h2 >Views</h2>
             <p>The View part of the Ejscript web framework is responsible for generating the user interface. It
             typically takes an input HTML web page with embedded Ejscript and generates the HTML response to send back
             to the client. However, views can also be generated by controllers and thus require no HTML page.</p>
@@ -336,7 +171,8 @@ mvc -v compile
             start with a partial HTML view page which typically contains embedded Ejscript. This is parsed by the Web
             Page Parser and combined with layout views to create a composite web page. This is then parsed and
             converted to pure Ejscript code which is compiled and cached in a module file (.mod). The module file can
-            be run repeatedly by the VM to generate the required HTML for the user view. <img src="../images/webView.jpg" alt="View Pipeline"></p>
+            be run repeatedly by the VM to generate the required HTML for the user view. <img src=
+            "../images/webView.jpg" alt="View Pipeline" /></p>
             <p>The time-intensive part of this pipeline processing occurs once, at development time. This is comprised
             of the pipeline stages up to and including compilation. The often less costly run-time processing for each
             request consists of reading the module file and executing it in the VM.</p><a id="parser"></a>
@@ -417,7 +253,7 @@ mvc -v compile
             content using Ajax techniques without redisplaying the entire page.</p>
             <p>Views can also use a library of view methods to generate and manage HTML output and responses. These
             include: redirect, render, setCookie, setHeader, write, writeHtml and writeRaw.</p><a id="controllers"></a>
-            <h2>Controllers - Responding to Requests</h2>
+            <h2 >Controllers - Responding to Requests</h2>
             <p>The role of the controllers is to manage the application and respond to inputs so controllers form the
             heart of the web application. Controllers are typically bound to various URLs so that user input is routed
             to specific actions within the controls. When a controller receives an incoming Http message, the requested
@@ -466,28 +302,13 @@ action function update() {
             <p>Other methods used by Controller actions include: cache, createSession, destroySession, escapeHtml,
             html, inform, keepAlive, makeUrl, render, renderFile, renderXml, reportError, setCookie, setHeader,
             setHttpCode, setMimeType, warn and write.</p><a id="deployment"></a>
-            <h2>Development and Deployment</h2>
+            <h2 >Development and Deployment</h2>
             <p>There are two phases of use for Ejscript: Development and Deployment. When developing, developers need
             quick turn-around with rapid test-modify-build cycles. Interpreted languages have a distinct advantage over
-            traditional compiled languages when used for such iterative or <a href="http://en.wikipedia.org/wiki/Agile_software_development">Agile Web Development</a>. Ejscript offers the
+            traditional compiled languages when used for such iterative or <a href=
+            "http://en.wikipedia.org/wiki/Agile_software_development">Agile Web Development</a>. Ejscript offers the
             best of both. When developing, Ejscript runs as an interpreted environment. Changes made to web pages or
             scripts cause the files to be parsed and compiled without restarting the web server. Simply reloading the
             web pages in the browser will trigger the changed page to be rebuilt.</p>
             <p>When ready for deployment, the entire application can be compiled into a single module file for easy
             deployment.</p>
-
-    </div>
-    <div class="terms ui basic center aligned segment">
-        <p>&copy; Embedthis Software. All rights reserved.</p>
-    </div>
-
-    <script src="../lib/jquery/jquery.min.js"></script>
-    <script src="../lib/semantic-ui/semantic.min.js"></script>
-    <script src="../scripts/sidebar.min.js"></script>
-     
-
-    
-
-
-
-
