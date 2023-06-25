@@ -28882,7 +28882,7 @@ static EjsAny *invokeBooleanOperator(Ejs *ejs, EjsBoolean *lhs, int opcode, EjsB
         return ejsCreateBoolean(ejs, lhs->value / rhs->value);
 
     case EJS_OP_MUL:
-        return ejsCreateBoolean(ejs, lhs->value * rhs->value);
+        return ejsCreateBoolean(ejs, (lhs->value * rhs->value) == 0 ? 0 : 1);
 
     case EJS_OP_OR:
         return ejsCreateBoolean(ejs, lhs->value | rhs->value);
@@ -55998,7 +55998,7 @@ static EjsVoid *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
             return 0;
         }
         sp->endpoint = endpoint;
-        host = httpCreateHost(NULL);
+        host = httpCreateHost();
         httpSetHostName(host, sfmt("%s:%d", sp->ip, sp->port));
         route = httpCreateConfiguredRoute(host, 1);
 

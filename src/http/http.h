@@ -2918,7 +2918,7 @@ PUBLIC void httpSetIOCallback(struct HttpConn *conn, HttpIOCallback fn);
         <li>httpWriteUploadData</li>
         </ul>
         When these APIs block and yield, the garbage collector may reclaim allocated memory that does not have a
-        managed reference. Read Appweb memory allocation at https://embedthis.com/appweb/doc/ref/memory.html.
+        managed reference. Read Appweb memory allocation at https://www.embedthis.com/appweb/doc/ref/memory.html.
 
     @defgroup HttpConn HttpConn
     @see HttpConn HttpEnvCallback HttpGetPassword HttpListenCallback HttpNotifier HttpQueue HttpRedirectCallback

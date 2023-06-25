@@ -1,27 +1,22 @@
 {
-    "name": "sqlite",
-    "description": "SQLite Library",
-    "title": "SQLite Library",
-    "version": "3.23.1",
-    "keywords": [
-        "sqlite",
-        "me"
-    ],
-    "author": {
-        "name": "Embedthis Software",
-        "email": "dev@embedthis.com",
-        "url": "https://embedthis.com"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/embedthis/sqlite.git"
-    },
-    "bugs": {
-        "url": "http://github.com/embedthis/sqlite/issues"
-    },
-    "licenses": "PUBLIC",
-    "files": [
-        "dist/**"
-    ],
-    "origin": "embedthis/sqlite"
+  "name": "sqlite",
+  "description": "SQLite Library",
+  "title": "SQLite Library",
+  "version": "3.23.1",
+  "keywords": ["sqlite", "me"],
+  "author": {
+    "name": "Embedthis Software",
+    "email": "dev@embedthis.com",
+    "url": "https://www.embedthis.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/embedthis/sqlite.git"
+  },
+  "bugs": {
+    "url": "http://github.com/embedthis/sqlite/issues"
+  },
+  "licenses": "PUBLIC",
+  "files": ["dist/**"],
+  "origin": "embedthis/sqlite"
 }

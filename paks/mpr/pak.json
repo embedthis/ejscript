@@ -2,7 +2,7 @@
     "name": "mpr",
     "description": "Embedthis Multithreaded Portable Runtime",
     "title": "Embedthis MPR",
-    "version": "9.0.2",
+    "version": "8.2.0",
     "keywords": [
         "mpr",
         "runtime"
@@ -16,10 +16,19 @@
     "bugs": {
         "url": "http://github.com/embedthis/mpr/issues"
     },
-    "licenses": "Commercial",
+    "licenses": [
+        {
+            "type": "GPL",
+            "url": "http://www.gnu.org/licenses/gpl-2.0.html"
+        },
+        {
+            "type": "Commercial",
+            "url": "https://embedthis.com/licensing/"
+        }
+    ],
     "dependencies": {
         "assist": "~1",
-        "mbedtls": "~2",
+        "mbedtls": "~2.8",
         "me-win": "~1",
         "osdep": "~1"
     },
@@ -27,7 +36,7 @@
         "certs": "~1",
         "ssl": "~1",
         "mpr-openssl": "~1",
-        "mpr-mbedtls": "~3"
+        "mpr-mbedtls": "~2"
     },
     "devDependencies": {
         "makeme": ">=0.9.0",

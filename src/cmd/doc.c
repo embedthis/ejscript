@@ -226,7 +226,7 @@ static void generateHomeTitle(EjsMod *mp)
         "       </map>\n"
         "   <div class=\"version\">%s %s</div>\n"
         "   <div class=\"menu\">\n"
-        "       <a href=\"https://embedthis.com/ejs/\" target=\"_top\">Ejscript Home</a>\n"
+        "       <a href=\"https://www.embedthis.com/ejs/\" target=\"_top\">Ejscript Home</a>\n"
         "       &gt; <a href=\"index.html\" class=\"menu\" target=\"_top\">Documentation Home</a>\n"
         "   </div>\n"
         "   <div class=\"search\">\n"
@@ -571,7 +571,7 @@ static void generateOverview(EjsMod *mp)
 
     out(mp, "<h1>%s %s</h1>", ME_TITLE, ME_VERSION);
     out(mp, "<p>Embedthis Ejscript is an implementation of the Javascript (ECMA 262) language.</p>");
-    out(mp, "<p>See <a href='https://embedthis.com/ejs/' target='new'>https://embedthis.com/ejs/</a> for "
+    out(mp, "<p>See <a href='https://www.embedthis.com/ejs/' target='new'>https://www.embedthis.com/ejs/</a> for "
         "product details and downloads.</p>");
     out(mp, "<h2>Documentation Conventions</h2>");
     out(mp, "<p>APIs are grouped into Namespaces for logical ordering. Within each namespace, classes, methods "
@@ -634,7 +634,7 @@ static void generateTerms(EjsMod *mp)
     out(mp,
         "<div class=\"terms\">\n"
         "   <p class=\"terms\">\n"
-        "       <a href=\"https://embedthis.com/\">"
+        "       <a href=\"https://www.embedthis.com/\">"
         "       Embedthis Software LLC, 2003-2014. All rights reserved. "
         "Embedthis is a trademark of Embedthis Software LLC.</a>\n"
         "   </p>\n"

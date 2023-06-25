@@ -3,13 +3,13 @@
   "description": "Ejscript core system types, classes and library",
   "version": "1.0.0",
   "categories": "ejs",
-  "author": "Embedthis (https://embedthis.com) <dev@embedthis.com>",
+  "author": "Embedthis (https://www.embedthis.com) <dev@embedthis.com>",
   "contributors": [
-    "Embedthis (https://embedthis.com) <dev@embedthis.com>",
+    "Embedthis (https://www.embedthis.com) <dev@embedthis.com>",
   ],
   "bugReports": "dev@embedthis.com",
   "license": [
-    "GPLv2 (https://embedthis.com/ejs/doc/licensing/gpl.html)",
+    "GPLv2 (https://www.embedthis.com/ejs/doc/licensing/gpl.html)",
   ],
   "stability": "prototype",
   "location": "http://hg.embedthis.com/ejs",

@@ -661,7 +661,7 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
     currentFile = 0;
     lastLine = -1;
 
-    optable = ejsGetOptable(mp);
+    optable = ejsGetOptable();
 
     for (maxOp = 0, opt = optable; opt->name; opt++) {
         maxOp++;

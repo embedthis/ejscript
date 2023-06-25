@@ -1,36 +1,30 @@
 {
-    "name": "watchdog",
-    "description": "Embedthis Watchdog",
-    "title": "Embedthis Watchdog",
-    "version": "1.0.0",
-    "keywords": [
-        "watchdog",
-        "mpr"
-    ],
-    "author": {
-        "name": "Embedthis Software",
-        "email": "dev@embedthis.com",
-        "url": "https://embedthis.com"
-    },
-    "bugs": {
-        "url": "http://github.com/embedthis/watchdog/issues"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/embedthis/watchdog.git"
-    },
-    "licenses": "Commercial",
-    "dependencies": {
-        "mpr": "~9"
-    },
-    "devDependencies": {
-        "makeme": ">=1.0",
-        "pak": ">=1.0"
-    },
-    "files": [
-        "dist/**",
-        "doc/"
-    ],
-    "import": true,
-    "origin": "embedthis/watchdog"
+  "name": "watchdog",
+  "description": "Embedthis Watchdog",
+  "title": "Embedthis Watchdog",
+  "version": "1.0.0",
+  "keywords": ["watchdog", "mpr"],
+  "author": {
+    "name": "Embedthis Software",
+    "email": "dev@embedthis.com",
+    "url": "https://www.embedthis.com"
+  },
+  "bugs": {
+    "url": "http://github.com/embedthis/watchdog/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/embedthis/watchdog.git"
+  },
+  "licenses": "Commercial",
+  "dependencies": {
+    "mpr": "~9"
+  },
+  "devDependencies": {
+    "makeme": ">=1.0",
+    "pak": ">=1.0"
+  },
+  "files": ["dist/**", "doc/"],
+  "import": true,
+  "origin": "embedthis/watchdog"
 }

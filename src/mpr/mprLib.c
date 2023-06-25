@@ -1,5 +1,5 @@
 /*
- * Embedthis MPR Library Source 9.0.2
+ * Embedthis MPR Library Source 8.2.0
  */
 
 #include "mpr.h"
@@ -160,7 +160,6 @@ static int initQueues(void);
 static void invokeDestructors(void);
 static void markAndSweep(void);
 static void markRoots(void);
-static ME_INLINE bool needGC(MprHeap *heap);
 static int pauseThreads(void);
 static void printMemReport(void);
 static ME_INLINE void release(MprFreeQueue *freeq);
@@ -557,7 +556,7 @@ static MprMem *allocMem(size_t required)
                             mp->size = (MprMemSize) required;
                             ATOMIC_INC(splits);
                         }
-                        if (needGC(heap)) {
+                        if (!heap->gcRequested && heap->workDone > heap->workQuota) {
                             triggerGC(0);
                         }
                         ATOMIC_INC(reuse);
@@ -622,7 +621,7 @@ static MprMem *growHeap(size_t required)
     MprMem      *mp;
     size_t      size, rsize, spareLen;
 
-    if (required < MPR_ALLOC_MAX_BLOCK && needGC(heap)) {
+    if (required < MPR_ALLOC_MAX_BLOCK && (heap->workDone > heap->workQuota)) {
         triggerGC(1);
     }
     if (required >= MPR_ALLOC_MAX) {
@@ -921,7 +920,9 @@ static void vmfree(void *ptr, size_t size)
 {
 #if ME_MPR_ALLOC_VIRTUAL
     #if ME_UNIX_LIKE
-        munmap(ptr, size);
+        if (munmap(ptr, size) != 0) {
+            assert(0);
+        }
     #elif ME_WIN_LIKE
         VirtualFree(ptr, 0, MEM_RELEASE);
     #else
@@ -996,7 +997,7 @@ PUBLIC int mprGC(int flags)
          */
         mprYield(MPR_YIELD_STICKY);
     }
-    if ((flags & (MPR_GC_FORCE | MPR_GC_COMPLETE)) || needGC(heap)) {
+    if ((flags & (MPR_GC_FORCE | MPR_GC_COMPLETE)) || (heap->workDone > heap->workQuota)) {
         triggerGC(flags & (MPR_GC_FORCE | MPR_GC_COMPLETE));
     }
     if (!(flags & MPR_GC_NO_BLOCK)) {
@@ -1236,12 +1237,6 @@ static void sweeperThread(void *unused, MprThread *tp)
  */
 static void markAndSweep()
 {
-    MprThreadService    *ts;
-    int                 threadCount;
-
-    ts = MPR->threadService;
-    threadCount = ts->threads->length;
-
     if (!pauseThreads()) {
 #if ME_MPR_ALLOC_STATS && ME_MPR_ALLOC_DEBUG && MPR_ALLOC_TRACE
         static int warnOnce = 0;
@@ -1269,23 +1264,18 @@ static void markAndSweep()
     mprGlobalUnlock();
 
     /*
-        Sweep unused memory. If less than 4 threds, sweeping goes on in parallel with running threads.
-        Otherwise, with high thread loads, the sweeper can be starved which leads to memory growth.
+        Sweep unused memory. Sweeping goes on in parallel with running threads.
      */
     heap->sweeping = 1;
 
-    if (threadCount < 4) {
-        resumeThreads(YIELDED_THREADS);
-    }
+    resumeThreads(YIELDED_THREADS);
+
     sweep();
     heap->sweeping = 0;
 
     /*
         Resume threads waiting for the sweeper to complete
      */
-    if (threadCount >= 4) {
-        resumeThreads(YIELDED_THREADS);
-    }
     resumeThreads(WAITING_THREADS);
 }
 
@@ -1311,13 +1301,14 @@ static void invokeDestructors()
     for (region = heap->regions; region; region = region->next) {
         for (mp = region->start; mp < region->end; mp = GET_NEXT(mp)) {
             /*
-                Examine all freeable (allocated and not marked with by a reference) memory with destructors.
                 Order matters: racing with allocator. The allocator sets free last. mprRelease sets
                 eternal last and uses mprAtomicStore to ensure mp->mark is committed.
              */
             mprAtomicLoad(&mp->eternal, &eternal, MPR_ATOMIC_ACQUIRE);
             if (mp->hasManager && !mp->free && !mp->eternal) {
+                //  mark = mp->mark
                 mprAtomicLoad(&mp->mark, &mark, MPR_ATOMIC_ACQUIRE);
+                // mprAtomicBarrier(MPR_ATOMIC_SEQUENTIAL);
                 if (mark != heap->mark) {
                     mgr = GET_MANAGER(mp);
                     if (mgr) {
@@ -1598,19 +1589,11 @@ PUBLIC size_t psize(void *ptr)
 PUBLIC void mprHold(cvoid *ptr)
 {
     MprMem  *mp;
-    uchar   one;
 
     if (ptr) {
         mp = GET_MEM(ptr);
-        assert(!mp->free);
-        assert(!mp->eternal);
-        assert(mp->mark == MPR->heap->mark);
-
         if (!mp->free && VALID_BLK(mp)) {
-            // mp->eternal = 1;
-            one = 1;
-            mprAtomicStore(&mp->eternal, &one, MPR_ATOMIC_RELEASE);
-            assert(mp->eternal);
+            mp->eternal = 1;
         }
     }
 }
@@ -1623,18 +1606,17 @@ PUBLIC void mprRelease(cvoid *ptr)
 
     if (ptr) {
         mp = GET_MEM(ptr);
-        assert(mp->eternal);
-        assert(!mp->free);
-
         if (!mp->free && VALID_BLK(mp)) {
             /*
                 For memory allocated in foreign threads, there could be a race where the release missed the GC mark phase
                 and the sweeper is or is about to run. We simulate a GC mark here to prevent the sweeper from collecting
-                the block on this sweep. The block will be collected on the next sweep if there is no other reference.
+                the block on this sweep. Will be collected on the next sweep if there is no other reference.
                 Note: this races with the sweeper (invokeDestructors) so must set the mark first and clear eternal
                 after that with an ATOMIC_RELEASE barrier to ensure the mark change is committed.
              */
-            mprAtomicStore(&mp->mark, &heap->mark, MPR_ATOMIC_RELEASE);
+            mp->mark = heap->mark;
+            // mprAtomicBarrier(MPR_ATOMIC_SEQUENTIAL);
+            // mp->eternal = 0;
             mprAtomicStore(&mp->eternal, &zero, MPR_ATOMIC_RELEASE);
         }
     }
@@ -1743,10 +1725,10 @@ static int sortLocation(cvoid *l1, cvoid *l2)
 
 static void printTracking()
 {
-    MprLocationStats    *lp;
+    MprLocationStats     *lp;
     double              mb;
     size_t              total;
-    cchar               **np;
+    cchar                **np;
 
     printf("\nAllocation Stats\n     Size Location\n");
     memcpy(sortLocations, heap->stats.locations, sizeof(sortLocations));
@@ -2448,7 +2430,7 @@ PUBLIC size_t mprGetBlockSize(cvoid *ptr)
 }
 
 
-PUBLIC int mprGetHeapFlags(void)
+PUBLIC int mprGetHeapFlags()
 {
     return heap->flags;
 }
@@ -2507,7 +2489,7 @@ PUBLIC int mprIsValid(cvoid *ptr)
         return 0;
     }
     mp = GET_MEM(ptr);
-    if (!mp || mp->free) {
+    if (mp->free) {
         return 0;
     }
 #if ME_WIN
@@ -2590,16 +2572,6 @@ static void monitorStack()
 }
 #endif
 
-
-static ME_INLINE bool needGC(MprHeap *heap)
-{
-    if (!heap->gcRequested && heap->workDone > (heap->workQuota * (mprGetBusyWorkerCount() / 2 + 1))) {
-        return 1;
-    }
-    return 0;
-}
-
-
 #if !ME_MPR_ALLOC_DEBUG
 #undef mprSetName
 #undef mprCopyName
@@ -2616,8 +2588,11 @@ static ME_INLINE bool needGC(MprHeap *heap)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -3473,7 +3448,7 @@ PUBLIC MprDispatcher *mprGetNonBlockDispatcher()
 }
 
 
-PUBLIC cchar *mprCopyright(void)
+PUBLIC cchar *mprCopyright()
 {
     return  "Copyright (c) Embedthis Software. All Rights Reserved.\n"
             "Copyright (c) Michael O'Brien. All Rights Reserved.";
@@ -3617,8 +3592,11 @@ PUBLIC void *mprGetKey(cchar *key)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -3962,13 +3940,16 @@ PUBLIC HWND mprGetWindow(bool *created)
 
 
 #else
-void asyncDummy(void) {}
+void asyncDummy() {}
 #endif /* MPR_EVENT_ASYNC */
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -3983,6 +3964,10 @@ void asyncDummy(void) {}
 /*********************************** Includes *********************************/
 
 
+
+#if ME_BSD_LIKE || ME_UNIX_LIKE || ME_WIN_LIKE
+#include <stdatomic.h>
+#endif
 
 /*********************************** Local ************************************/
 
@@ -4184,8 +4169,11 @@ PUBLIC void mprAtomicListInsert(void **head, void **link, void *item)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -4912,8 +4900,11 @@ PUBLIC ssize mprPutStringToWideBuf(MprBuf *bp, cchar *str)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -5477,8 +5468,11 @@ PUBLIC void mprGetCacheStats(MprCache *cache, int *numKeys, ssize *mem)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -7246,8 +7240,11 @@ static void closeFiles(MprCmd *cmd)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -7555,8 +7552,11 @@ PUBLIC void mprSignalMultiCond(MprCond *cp)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -8873,8 +8873,11 @@ PUBLIC char *mprGetPassword(cchar *prompt)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -9536,8 +9539,11 @@ static int cygOpen(MprFileSystem *fs, cchar *path, int omode, int perms)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -9569,7 +9575,6 @@ static void dispatchEventsHelper(MprDispatcher *dispatcher);
 static MprTicks getDispatcherIdleTicks(MprDispatcher *dispatcher, MprTicks timeout);
 static MprTicks getIdleTicks(MprEventService *es, MprTicks timeout);
 static MprDispatcher *getNextReadyDispatcher(MprEventService *es);
-static bool hasPendingDispatchers(void);
 static void initDispatcher(MprDispatcher *q);
 static void manageDispatcher(MprDispatcher *dispatcher, int flags);
 static void manageEventService(MprEventService *es, int flags);
@@ -9711,8 +9716,6 @@ PUBLIC MprDispatcher *mprCreateDispatcher(cchar *name, int flags)
     dispatcher->name = name;
     dispatcher->cond = mprCreateCond();
     dispatcher->eventQ = mprCreateEventQueue();
-    dispatcher->currentQ = mprCreateEventQueue();
-
     queueDispatcher(es->idleQ, dispatcher);
     return dispatcher;
 }
@@ -9744,12 +9747,8 @@ PUBLIC void mprDestroyDispatcher(MprDispatcher *dispatcher)
         es = dispatcher->service;
         assert(es == MPR->eventService);
         lock(es);
-        //  Must not free events in currentQ incase running in dispatchEvents -- current event must not be freed
         freeEvents(dispatcher->eventQ);
-        if (!isRunning(dispatcher)) {
-            //  Must not dequeue otherwise GC may claim dispatcher while running dispatchEvents
-            dequeueDispatcher(dispatcher);
-        }
+        dequeueDispatcher(dispatcher);
         dispatcher->flags |= MPR_DISPATCHER_DESTROYED;
         unlock(es);
     }
@@ -9761,18 +9760,11 @@ static void manageDispatcher(MprDispatcher *dispatcher, int flags)
     MprEvent    *q, *event, *next;
 
     if (flags & MPR_MANAGE_MARK) {
-        mprMark(dispatcher->currentQ);
         mprMark(dispatcher->eventQ);
         mprMark(dispatcher->cond);
         mprMark(dispatcher->parent);
         mprMark(dispatcher->service);
 
-        if ((q = dispatcher->currentQ) != 0) {
-            for (event = q->next; event != q; event = next) {
-                next = event->next;
-                mprMark(event);
-            }
-        }
         if ((q = dispatcher->eventQ) != 0) {
             for (event = q->next; event != q; event = next) {
                 next = event->next;
@@ -9781,7 +9773,6 @@ static void manageDispatcher(MprDispatcher *dispatcher, int flags)
         }
     } else if (flags & MPR_MANAGE_FREE) {
         if (!(dispatcher->flags & MPR_DISPATCHER_DESTROYED)) {
-            freeEvents(dispatcher->currentQ);
             freeEvents(dispatcher->eventQ);
         }
     }
@@ -9809,6 +9800,8 @@ PUBLIC int mprServiceEvents(MprTicks timeout, int flags)
         mprLog("warn mpr event", 0, "mprServiceEvents called reentrantly");
         return 0;
     }
+    //  MOB - remove
+    mprAtomicBarrier(MPR_ATOMIC_SEQUENTIAL);
     if (mprIsDestroying()) {
         return 0;
     }
@@ -9837,11 +9830,12 @@ PUBLIC int mprServiceEvents(MprTicks timeout, int flags)
              */
             if (dp->flags & MPR_DISPATCHER_IMMEDIATE) {
                 dispatchEventsHelper(dp);
-
-            } else if (mprStartWorker((MprWorkerProc) dispatchEventsHelper, dp) < 0) {
-                releaseDispatcher(dp);
-                queueDispatcher(es->pendingQ, dp);
-                break;
+            } else {
+                if (mprStartWorker((MprWorkerProc) dispatchEventsHelper, dp) < 0) {
+                    releaseDispatcher(dp);
+                    queueDispatcher(es->pendingQ, dp);
+                    break;
+                }
             }
         }
         if (flags & MPR_SERVICE_NO_BLOCK) {
@@ -9853,12 +9847,9 @@ PUBLIC int mprServiceEvents(MprTicks timeout, int flags)
             delay = getIdleTicks(es, expires - es->now);
             es->willAwake = es->now + delay;
             es->waiting = 1;
-            if (hasPendingDispatchers() && mprAvailableWorkers()) {
-                delay = 0;
-            }
             unlock(es);
             /*
-                Service IO events. Will Yield.
+                Service IO events
              */
             mprWaitForIO(MPR->waitService, delay);
         }
@@ -10124,7 +10115,6 @@ PUBLIC void mprRescheduleDispatcher(MprDispatcher *dispatcher)
 
 /*
     Run events for a dispatcher
-    WARNING: may yield
  */
 static int dispatchEvents(MprDispatcher *dispatcher)
 {
@@ -10137,7 +10127,6 @@ static int dispatchEvents(MprDispatcher *dispatcher)
     }
     assert(isRunning(dispatcher));
     assert(ownedDispatcher(dispatcher));
-
     es = dispatcher->service;
 
     /*
@@ -10146,26 +10135,28 @@ static int dispatchEvents(MprDispatcher *dispatcher)
      */
     for (count = 0; (event = mprGetNextEvent(dispatcher)) != 0; count++) {
         mprAtomicAdd64(&dispatcher->mark, 1);
-        mprLinkEvent(dispatcher->currentQ, event);
 
-        //  WARNING: may yield
-        //  WARNING: may destroy dispatcher (memory still present)
+        assert(event->proc);
+        mprHold(event);
+
         (event->proc)(event->data, event);
 
-        mprUnlinkEvent(event);
         event->hasRun = 1;
 
         if (event->cond) {
             mprSignalCond(event->cond);
         }
         if (dispatcher->flags & MPR_DISPATCHER_DESTROYED) {
+            mprRelease(event);
             break;
         }
-        if (event->flags & MPR_EVENT_CONTINUOUS && !event->next) {
+        if (event->flags & MPR_EVENT_CONTINUOUS && event->next == NULL) {
             event->timestamp = dispatcher->service->now;
             event->due = event->timestamp + (event->period ? event->period : 1);
             mprQueueEvent(dispatcher, event);
         }
+        mprRelease(event);
+
         lock(es);
         es->eventCount++;
         unlock(es);
@@ -10188,33 +10179,27 @@ static void dispatchEventsHelper(MprDispatcher *dispatcher)
     }
     dispatchEvents(dispatcher);
 
-    releaseDispatcher(dispatcher);
-    dequeueDispatcher(dispatcher);
-
     if (!(dispatcher->flags & MPR_DISPATCHER_DESTROYED)) {
+        releaseDispatcher(dispatcher);
+        dequeueDispatcher(dispatcher);
         mprScheduleDispatcher(dispatcher);
     }
 }
 
 
-static bool hasPendingDispatchers()
-{
-    MprEventService *es;
-    bool            hasPending;
-
-    if ((es = MPR->eventService) == 0) {
-        return 0;
-    }
-    lock(es);
-    hasPending = es->pendingQ->next != es->pendingQ;
-    unlock(es);
-    return hasPending;
-}
-
-
 PUBLIC void mprWakePendingDispatchers()
 {
-    if (hasPendingDispatchers()) {
+    MprEventService *es;
+    int             mustWake;
+
+    if ((es = MPR->eventService) == 0) {
+        return;
+    }
+    lock(es);
+    mustWake = es->pendingQ->next != es->pendingQ;
+    unlock(es);
+
+    if (mustWake) {
         mprWakeEventService();
     }
 }
@@ -10388,6 +10373,7 @@ static bool claimDispatcher(MprDispatcher *dispatcher, MprOsThread thread)
     es = MPR->eventService;
     lock(es);
     if (dispatcher->owner && dispatcher->owner != mprGetCurrentOsThread()) {
+        assert(0);
         unlock(es);
         return 0;
     }
@@ -10417,12 +10403,18 @@ static bool reclaimDispatcher(MprDispatcher *dispatcher)
     dispatcher->owner = mprGetCurrentOsThread();
     unlock(es);
     return 1;
+
 }
 
 
 static void releaseDispatcher(MprDispatcher *dispatcher)
 {
+    lock(MPR->eventService);
+    if (dispatcher->owner && dispatcher->owner != RESERVED_DISPATCHER && dispatcher->owner != mprGetCurrentOsThread()) {
+        assert(0);
+    }
     dispatcher->owner = 0;
+    unlock(MPR->eventService);
 }
 
 
@@ -10465,8 +10457,11 @@ PUBLIC bool mprDispatcherHasEvents(MprDispatcher *dispatcher)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -10485,24 +10480,24 @@ PUBLIC bool mprDispatcherHasEvents(MprDispatcher *dispatcher)
 /************************************ Locals **********************************/
 /*
     Character escape/descape matching codes. Generated by charGen.
-*/
+ */
 static uchar charMatch[256] = {
-	0x00,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x7e,0x3c,0x3c,0x7c,0x3c,0x3c,
-	0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x7c,0x3c,0x3c,0x3c,0x3c,0x3c,
-	0x3c,0x00,0x7f,0x28,0x2a,0x3c,0x2b,0x43,0x02,0x02,0x02,0x28,0x28,0x00,0x00,0x28,
-	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x28,0x2a,0x3f,0x28,0x3f,0x2a,
-	0x28,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x3a,0x7e,0x3a,0x3e,0x00,
-	0x3e,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x3e,0x3e,0x3e,0x02,0x3c,
-	0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,
-	0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,
-	0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,
-	0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,
-	0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,
-	0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,
-	0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,
-	0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c
+    0x00,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x7e,0x3c,0x3c,0x7c,0x3c,0x3c,
+    0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x7c,0x3c,0x3c,0x3c,0x3c,0x3c,
+    0x3c,0x0c,0x7f,0x28,0x2a,0x3c,0x2b,0x4f,0x0e,0x0e,0x0e,0x28,0x28,0x00,0x00,0x28,
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x28,0x2a,0x3f,0x28,0x3f,0x2a,
+    0x28,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x3a,0x7e,0x3a,0x3e,0x00,
+    0x3e,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x3e,0x3e,0x3e,0x02,0x3c,
+    0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,
+    0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,
+    0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,
+    0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,
+    0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,
+    0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,
+    0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,
+    0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c,0x3c
 };
 
 /*
@@ -10522,6 +10517,7 @@ PUBLIC char *mprUriEncode(cchar *inbuf, int map)
     char            *result, *op;
     int             len;
 
+    assert(inbuf);
     assert(inbuf);
 
     if (!inbuf) {
@@ -10572,8 +10568,7 @@ PUBLIC char *mprUriDecode(cchar *inbuf)
         if (*ip == '+') {
             *op = ' ';
 
-        } else if (*ip == '%' && isxdigit((uchar) ip[1]) && isxdigit((uchar) ip[2]) &&
-                !(ip[1] == '0' && ip[2] == '0')) {
+        } else if (*ip == '%' && isxdigit((uchar) ip[1]) && isxdigit((uchar) ip[2])) {
             ip++;
             num = 0;
             for (i = 0; i < 2; i++, ip++) {
@@ -10738,6 +10733,8 @@ PUBLIC char *mprEscapeHtml(cchar *html)
             } else if (*html == '\'') {
                 strcpy(op, "&#39;");
                 op += 5;
+            } else {
+                assert(0);
             }
             html++;
         } else {
@@ -10783,19 +10780,20 @@ PUBLIC char *mprEscapeSQL(cchar *cmd)
     return result;
 }
 
-
-PUBLIC void mprEncodeGenerate(void)
+#if GENERATE_TABLES
+static void charGen()
 {
     uchar    flags;
     uint     c;
+
+    mprCreate(argc, argv, 0);
 
     mprPrintf("static uchar charMatch[256] = {\n\t0x00,");
 
     for (c = 1; c < 256; ++c) {
         flags = 0;
-        if (c % 16 == 0) {
+        if (c % 16 == 0)
             mprPrintf("\n\t");
-        }
 #if ME_WIN_LIKE
         if (strchr("&;`'\"|*?~<>^()[]{}$\\\n\r%", c)) {
             flags |= MPR_ENCODE_SHELL;
@@ -10805,23 +10803,18 @@ PUBLIC void mprEncodeGenerate(void)
             flags |= MPR_ENCODE_SHELL;
         }
 #endif
+
         if (isalnum((uchar) c) || strchr("-_.~", c)) {
-            // Acceptable
-
-        } else if (strchr("!'()*", c)) {
-            //  These are acceptable in URIs and URI components
-            // flags |= MPR_ENCODE_URI | MPR_ENCODE_URI_COMPONENT;
-
+            /* Acceptable */
         } else if (strchr("#;,/?:@&=+$", c)) {
-            //  Not acceptable in URI components
+            /* Reserved characters */
             flags |= MPR_ENCODE_URI_COMPONENT | MPR_ENCODE_JS_URI_COMPONENT;
-
+        } else if (strchr("!'()*", c)) {
+            flags |= MPR_ENCODE_URI | MPR_ENCODE_URI_COMPONENT;
         } else if (strchr("[]", c)) {
-            //  Not acceptable in URI components or Ejscript URIs
             flags |= MPR_ENCODE_JS_URI | MPR_ENCODE_URI_COMPONENT | MPR_ENCODE_JS_URI_COMPONENT;
-
         } else {
-            //  Not acceptable: space, {} | ^ \ back-tick
+            /* Matches " ", {, }, |, ^, \, ~, ` */
             flags |= MPR_ENCODE_URI | MPR_ENCODE_URI_COMPONENT | MPR_ENCODE_JS_URI | MPR_ENCODE_JS_URI_COMPONENT;
         }
         if (strchr("<>&\"'", c) != 0) {
@@ -10834,11 +10827,17 @@ PUBLIC void mprEncodeGenerate(void)
     }
     mprPrintf("\n};\n");
 }
+#endif
+
+
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -11132,13 +11131,16 @@ PUBLIC void mprWakeNotifier()
 }
 
 #else
-void epollDummy(void) {}
+void epollDummy() {}
 #endif /* MPR_EVENT_EPOLL */
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -11161,6 +11163,7 @@ void epollDummy(void) {}
 static MprEvent *createEvent(MprDispatcher *dispatcher, cchar *name, MprTicks period, void *proc, void *data, int flags);
 static void initEventQ(MprEvent *q, cchar *name);
 static void manageEvent(MprEvent *event, int flags);
+static void queueEvent(MprEvent *prior, MprEvent *event);
 
 /************************************* Code ***********************************/
 /*
@@ -11179,12 +11182,6 @@ PUBLIC MprEvent *mprCreateEventQueue()
 }
 
 
-PUBLIC MprEvent *mprCreateLocalEvent(MprDispatcher *dispatcher, cchar *name, MprTicks period, void *proc, void *data, int flags)
-{
-    return createEvent(dispatcher, name, period, proc, data, flags | MPR_EVENT_LOCAL);
-}
-
-
 /*
     Must only be called from an Appweb thread owning this dispatcher
  */
@@ -11194,12 +11191,19 @@ PUBLIC void mprCreateIOEvent(MprDispatcher *dispatcher, void *proc, void *data, 
 
     assert(proc);
     assert(wp);
-    if ((event = createEvent(dispatcher, "IOEvent", 0, proc, wp->handlerData, MPR_EVENT_LOCAL | MPR_EVENT_DONT_QUEUE)) != 0) {
-        event->mask = wp->presentMask;
-        event->handler = wp;
-        event->sock = sock;
-        mprQueueEvent(dispatcher, event);
+
+    if (dispatcher == 0) {
+        dispatcher = MPR->dispatcher;
     }
+    if (dispatcher && dispatcher->flags & MPR_DISPATCHER_DESTROYED) {
+        return;
+    }
+    event = createEvent(dispatcher, "IOEvent", 0, proc, wp->handlerData, 0);
+    event->mask = wp->presentMask;
+    event->handler = wp;
+    event->sock = sock;
+    mprQueueEvent(dispatcher, event);
+    mprRelease(event);
 }
 
 
@@ -11208,7 +11212,7 @@ PUBLIC void mprCreateIOEvent(MprDispatcher *dispatcher, void *proc, void *data, 
  */
 PUBLIC MprEvent *mprCreateTimerEvent(MprDispatcher *dispatcher, cchar *name, MprTicks period, void *proc, void *data, int flags)
 {
-    return createEvent(dispatcher, name, period, proc, data, MPR_EVENT_CONTINUOUS | MPR_EVENT_LOCAL | flags);
+    return mprCreateEvent(dispatcher, name, period, proc, data, MPR_EVENT_CONTINUOUS | flags);
 }
 
 
@@ -11216,24 +11220,11 @@ PUBLIC MprEvent *mprCreateTimerEvent(MprDispatcher *dispatcher, cchar *name, Mpr
     Create and queue an event for execution by a dispatcher.
     May be called by foreign threads if:
     - The dispatcher and data are held or null.
-    - The caller is responsible for the data memory
-    - The caller is responsibile to either set MPR_EVENT_LOCAL or calling mprRelase on the event.
+    - The caller is responsible for the data memory.
  */
 PUBLIC MprEvent *mprCreateEvent(MprDispatcher *dispatcher, cchar *name, MprTicks period, void *proc, void *data, int flags)
 {
-    return createEvent(dispatcher, name, period, proc, data, flags);
-}
-
-
-/*
-    Create a new event. The period is used as the delay before running the event and
-    as the period between events for continuous events.
-    This routine is foreign thread-safe provided the dispatcher and data are held or null.
- */
-static MprEvent *createEvent(MprDispatcher *dispatcher, cchar *name, MprTicks period, void *proc, void *data, int flags)
-{
     MprEvent    *event;
-    int         aflags;
 
     if (dispatcher == 0) {
         dispatcher = (flags & MPR_EVENT_QUICK) ? MPR->nonBlock : MPR->dispatcher;
@@ -11241,15 +11232,33 @@ static MprEvent *createEvent(MprDispatcher *dispatcher, cchar *name, MprTicks pe
     if (dispatcher && dispatcher->flags & MPR_DISPATCHER_DESTROYED) {
         return 0;
     }
-    /*
-        The hold is for allocations via foreign threads which retains the event until it is queued.
-        The hold is released after the event is queued.
-     */
-    aflags = MPR_ALLOC_MANAGER | MPR_ALLOC_ZERO;
-    if (!(flags & MPR_EVENT_LOCAL)) {
-        aflags |= MPR_ALLOC_HOLD;
+    if ((event = createEvent(dispatcher, name, period, proc, data, flags)) != NULL) {
+        if (!(flags & MPR_EVENT_DONT_QUEUE)) {
+            mprQueueEvent(dispatcher, event);
+            mprRelease(event);
+        }
     }
-    if ((event = mprAllocMem(sizeof(MprEvent), aflags)) == 0) {
+    return event;
+}
+
+
+/*
+    Create a new event but do not queue. The returned event is held via mprHold() and is itself immune from GC.
+    The hold will be released when the event is run in dispatchEvents or if the dispatcher is freed before the event is run.
+    Period is used as the delay before running the event and as the period between events for continuous events.
+    This routine is foreign thread-safe provided the dispatcher and data are held or null.
+ */
+static MprEvent *createEvent(MprDispatcher *dispatcher, cchar *name, MprTicks period, void *proc, void *data, int flags)
+{
+    MprEvent    *event;
+
+    assert(dispatcher);
+    assert(!(dispatcher->flags & MPR_DISPATCHER_DESTROYED));
+
+    /*
+        The old is for allocations via foreign threads which retains the event until it is queued.
+     */
+    if ((event = mprAllocMem(sizeof(MprEvent), MPR_ALLOC_MANAGER | MPR_ALLOC_ZERO | MPR_ALLOC_HOLD)) == 0) {
         return 0;
     }
     mprSetManager(event, (MprManager) manageEvent);
@@ -11267,13 +11276,6 @@ static MprEvent *createEvent(MprDispatcher *dispatcher, cchar *name, MprTicks pe
     }
     event->period = period;
     event->due = event->timestamp + period;
-
-    if (!(flags & MPR_EVENT_DONT_QUEUE)) {
-        mprQueueEvent(dispatcher, event);
-        if (aflags & MPR_ALLOC_HOLD) {
-            mprRelease(event);
-        }
-    }
     return event;
 }
 
@@ -11321,7 +11323,7 @@ PUBLIC void mprQueueEvent(MprDispatcher *dispatcher, MprEvent *event)
         assert(prior->next);
         assert(prior->prev);
 
-        mprLinkEvent(prior, event);
+        queueEvent(prior, event);
         event->dispatcher = dispatcher;
         es->eventCount++;
         mprScheduleDispatcher(dispatcher);
@@ -11343,7 +11345,7 @@ PUBLIC void mprRemoveEvent(MprEvent *event)
         es = dispatcher->service;
         lock(es);
         if (event->next) {
-            mprUnlinkEvent(event);
+            mprDequeueEvent(event);
         }
         event->dispatcher = 0;
         event->flags &= ~MPR_EVENT_CONTINUOUS;
@@ -11429,7 +11431,7 @@ PUBLIC MprEvent *mprGetNextEvent(MprDispatcher *dispatcher)
     if (next != dispatcher->eventQ) {
         if (next->due <= es->now) {
             event = next;
-            mprUnlinkEvent(event);
+            mprDequeueEvent(event);
         }
     }
     unlock(es);
@@ -11468,7 +11470,7 @@ static void initEventQ(MprEvent *q, cchar *name)
 /*
     Append a new event. Must be locked when called.
  */
-PUBLIC void mprLinkEvent(MprEvent *prior, MprEvent *event)
+static void queueEvent(MprEvent *prior, MprEvent *event)
 {
     assert(prior);
     if (!event) {
@@ -11481,7 +11483,7 @@ PUBLIC void mprLinkEvent(MprEvent *prior, MprEvent *event)
     assert(prior->next);
 
     if (event->next) {
-        mprUnlinkEvent(event);
+        mprDequeueEvent(event);
     }
     event->prev = prior;
     event->next = prior->next;
@@ -11493,7 +11495,7 @@ PUBLIC void mprLinkEvent(MprEvent *prior, MprEvent *event)
 /*
     Remove an event. Must be locked when called.
  */
-PUBLIC void mprUnlinkEvent(MprEvent *event)
+PUBLIC void mprDequeueEvent(MprEvent *event)
 {
     assert(event);
 
@@ -11508,8 +11510,11 @@ PUBLIC void mprUnlinkEvent(MprEvent *event)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -12132,8 +12137,11 @@ PUBLIC int mprGetFileFd(MprFile *file)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -12290,8 +12298,11 @@ PUBLIC void mprSetPathNewline(cchar *path, cchar *newline)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -12806,8 +12817,11 @@ PUBLIC char *mprHashKeysToString(MprHash *hash, cchar *join)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -14114,6 +14128,7 @@ static MprJson *queryContents(MprJson *obj, char *property, cchar *rest, MprJson
     result = mprCreateJson(MPR_JSON_ARRAY);
     if (!(obj->type & MPR_JSON_ARRAY)) {
         /* Cannot get here */
+        assert(0);
         return result;
     }
     if (splitExpression(property, &operator, &v) == 0) {
@@ -14128,6 +14143,7 @@ static MprJson *queryContents(MprJson *obj, char *property, cchar *rest, MprJson
                     appendItem(result, queryLeaf(obj, itosbuf(ibuf, sizeof(ibuf), index, 10), value, flags));
                 }
             } else {
+                assert(0);
                 /*  Should never get here as this means the array has objects instead of simple values */
                 appendItems(result, queryCore(child, rest, value, flags));
             }
@@ -14228,6 +14244,9 @@ static MprJson *queryCompound(MprJson *obj, char *property, cchar *rest, MprJson
 
     } else if (termType & JSON_PROP_EXPR) {
         return queryExpr(obj, property, rest, value, flags);
+
+    } else {
+        assert(0);
     }
     return 0;
 }
@@ -14645,8 +14664,11 @@ PUBLIC int mprWriteJsonObj(MprJson *obj, cchar *key, MprJson *value)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -14940,8 +14962,11 @@ void kqueueDummy() {}
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -15777,8 +15802,11 @@ PUBLIC char *mprListToString(MprList *list, cchar *join)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -16098,8 +16126,11 @@ PUBLIC void mprSpinUnlock(MprSpin *lock)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -16665,8 +16696,11 @@ PUBLIC int _cmp(char *s1, char *s2)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -16717,7 +16751,6 @@ static char *standardMimeTypes[] = {
     "js",    "application/javascript",
     "json",  "application/json",
     "less",  "text/css",
-    "mjs",   "application/javascript",
     "mp3",   "audio/mpeg",
     "mp4",   "video/mp4",
     "mov",   "video/quicktime",
@@ -16900,8 +16933,11 @@ PUBLIC cchar *mprLookupMime(MprHash *table, cchar *ext)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -17322,13 +17358,16 @@ PUBLIC wchar *mtrim(wchar *str, cchar *set, int where)
 }
 
 #else
-PUBLIC void dummyWide(void) {}
+PUBLIC void dummyWide() {}
 #endif /* ME_CHAR_LEN > 1 */
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -17670,8 +17709,11 @@ PUBLIC char *mprSearchForModule(cchar *filename)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -17937,7 +17979,7 @@ PUBLIC char *mprGetAbsPath(cchar *path)
          */
         wchar buf[ME_MAX_PATH];
         GetFullPathName(wide(path), (sizeof(buf) / sizeof(wchar)) - 1, buf, NULL);
-        buf[(sizeof(buf) / sizeof(wchar)) - 1] = '\0';
+        buf[((sizeof(buf) / sizeof(wchar)) - 1] = '\0';
         result = mprNormalizePath(multi(buf));
 #elif VXWORKS
         if (hasDrive(fs, path)) {
@@ -19736,8 +19778,11 @@ PUBLIC ssize mprWritePathContents(cchar *path, cchar *buf, ssize len, int mode)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -19800,6 +19845,7 @@ PUBLIC int mprGetRandomBytes(char *buf, ssize length, bool block)
     do {
         rc = read(fd, &buf[sofar], length);
         if (rc < 0) {
+            assert(0);
             close(fd);
             return MPR_ERR_CANT_READ;
         }
@@ -19960,8 +20006,11 @@ PUBLIC void mprSetFilesLimit(int limit)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -20880,8 +20929,11 @@ PUBLIC ssize print(cchar *fmt, ...)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -21206,14 +21258,17 @@ PUBLIC MprRomFileSystem *mprCreateRomFileSystem(cchar *path, MprRomInode *inodes
 }
 
 #else
-void romDummy(void) {}
+void romDummy() {}
 
 #endif /* ME_ROM */
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -21591,14 +21646,17 @@ static int sendWakeup(MprWaitService *ws)
 }
 
 #else
-void selectDummy(void) {}
+void selectDummy() {}
 
 #endif /* MPR_EVENT_SELECT || MPR_EVENT_SELECT_PIPE */
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -21748,7 +21806,6 @@ static void signalHandler(int signo, siginfo_t *info, void *arg)
 
 /*
     Called by mprServiceEvents after a signal has been received. Create an event and queue on the appropriate dispatcher.
-    Run on an MPR thread.
  */
 PUBLIC void mprServiceSignals()
 {
@@ -21769,7 +21826,7 @@ PUBLIC void mprServiceSignals()
                  */
                 signo = (int) (ip - ssp->info);
                 for (sp = ssp->signals[signo]; sp; sp = sp->next) {
-                    mprCreateLocalEvent(sp->dispatcher, "signalEvent", 0, signalEvent, sp, 0);
+                    mprCreateEvent(sp->dispatcher, "signalEvent", 0, signalEvent, sp, 0);
                 }
             }
         }
@@ -21981,8 +22038,11 @@ static void standardSignalHandler(void *ignored, MprSignal *sp)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -22766,6 +22826,7 @@ PUBLIC MprSocket *mprAcceptSocket(MprSocket *listen)
         Get the remote client address
      */
     if (getSocketIpAddr(addr, addrlen, ip, sizeof(ip), &port) != 0) {
+        assert(0);
         mprCloseSocket(nsp, 0);
         return 0;
     }
@@ -22975,7 +23036,8 @@ PUBLIC ssize mprWriteSocketString(MprSocket *sp, cchar *str)
 
 PUBLIC ssize mprWriteSocketVector(MprSocket *sp, MprIOVec *iovec, int count)
 {
-    ssize       written;
+    char        *start;
+    ssize       total, len, written;
     int         i;
 
 #if ME_UNIX_LIKE
@@ -22983,31 +23045,8 @@ PUBLIC ssize mprWriteSocketVector(MprSocket *sp, MprIOVec *iovec, int count)
         return writev(sp->fd, (const struct iovec*) iovec, (int) count);
     } else
 #endif
-#if ME_MPR_SOCKET_VECTOR_JOIN
     {
-        ssize   size, offset;
-        char    *buf;
-
-        size = 0;
-        for (i = 0; i < count; i++) {
-            size += iovec[i].len;
-        }
-        buf = mprAlloc(size);
-        offset = 0;
-        for (i = 0; i < count; i++) {
-            memcpy(&buf[offset], iovec[i].start, iovec[i].len);
-            offset += iovec[i].len;
-            assert(offset <= size);
-        }
-        written = mprWriteSocket(sp, buf, size);
-        return written;
-    }
-#else
-    {
-        ssize   total;
-        char    *start;
-        ssize   len;
-
+        //  OPT - better to buffer and have fewer raw writes
         if (count <= 0) {
             return 0;
         }
@@ -23037,7 +23076,6 @@ PUBLIC ssize mprWriteSocketVector(MprSocket *sp, MprIOVec *iovec, int count)
         }
         return total;
     }
-#endif
 }
 
 
@@ -23049,6 +23087,7 @@ static ssize localSendfile(MprSocket *sp, MprFile *file, MprOff offset, ssize le
     mprSeekFile(file, SEEK_SET, (int) offset);
     len = min(len, sizeof(buf));
     if ((len = mprReadFile(file, buf, len)) < 0) {
+        assert(0);
         return MPR_ERR_CANT_READ;
     }
     return mprWriteSocket(sp, buf, len);
@@ -23174,7 +23213,7 @@ static ssize flushSocket(MprSocket *sp)
 
 PUBLIC ssize mprFlushSocket(MprSocket *sp)
 {
-    if (sp->provider == 0 || sp->provider->flushSocket == NULL) {
+    if (sp->provider == 0) {
         return MPR_ERR_NOT_INITIALIZED;
     }
     return sp->provider->flushSocket(sp);
@@ -23509,6 +23548,7 @@ PUBLIC int mprGetSocketInfo(cchar *ip, int port, int *family, int *protocol, str
         sa->sin_addr.s_addr = (ulong) hostGetByName((char*) ip);
         if (sa->sin_addr.s_addr < 0) {
             unlock(ss);
+            assert(0);
             return 0;
         }
 #else
@@ -24061,8 +24101,11 @@ PUBLIC void mprVerifySslDepth(MprSsl *ssl, int depth)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -24500,26 +24543,6 @@ PUBLIC bool smatch(cchar *s1, cchar *s2)
 }
 
 
-/*
-    Secure constant time comparison
-*/
-PUBLIC bool smatchsec(cchar *s1, cchar *s2)
-{
-    ssize   i, len1, len2;
-    uchar   c;
-
-    len1 = slen(s1);
-    len2 = slen(s2);
-    if (len1 != len2) {
-        return 0;
-    }
-    for (i = 0, c = 0; i < len1; i++) {
-        c |= (uchar) s1[i] ^ (uchar) s2[i];
-    }
-    return !c;
-}
-
-
 PUBLIC int sncaselesscmp(cchar *s1, cchar *s2, ssize n)
 {
     int     rc;
@@ -24726,12 +24749,11 @@ PUBLIC char *stitle(cchar *str)
 PUBLIC char *spbrk(cchar *str, cchar *set)
 {
     cchar       *sp;
-    int         count;
 
     if (str == 0 || set == 0) {
         return 0;
     }
-    for (count = 0; *str; count++, str++) {
+    for (; *str; str++) {
         for (sp = set; *sp; sp++) {
             if (*str == *sp) {
                 return (char*) str;
@@ -25252,8 +25274,11 @@ PUBLIC void serase(char *str)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -25360,15 +25385,12 @@ PUBLIC MprThread *mprGetCurrentThread()
     ts = MPR->threadService;
     if (ts && ts->threads) {
         id = mprGetCurrentOsThread();
-        lock(ts->threads);
         for (i = 0; i < ts->threads->length; i++) {
             tp = mprGetItem(ts->threads, i);
             if (tp->osThread == id) {
-                unlock(ts->threads);
                 return tp;
             }
         }
-        unlock(ts->threads);
     }
     return 0;
 }
@@ -25754,6 +25776,7 @@ PUBLIC int mprMapMprPriorityToOs(int mprPriority)
     } else {
         return -19;
     }
+    assert(0);
     return 0;
 }
 
@@ -26277,11 +26300,15 @@ static void changeState(MprWorker *worker, int state)
 PUBLIC ssize mprGetBusyWorkerCount()
 {
     MprWorkerService    *ws;
+    ssize               count;
 
     if ((ws = MPR->workerService) == 0) {
         return 0;
     }
-    return mprGetListLength(MPR->workerService->busyThreads);
+    lock(ws);
+    count = mprGetListLength(MPR->workerService->busyThreads);
+    unlock(ws);
+    return count;
 }
 
 
@@ -26299,8 +26326,11 @@ PUBLIC bool mprSetThreadYield(MprThread *tp, bool on)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -28161,8 +28191,11 @@ PUBLIC int gettimeofday(struct timeval *tv, struct timezone *tz)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -28403,13 +28436,16 @@ double  __mpr_floating_point_resolution(double a, double b, int64 c, int64 d, ui
 }
 
 #else
-void vxworksDummy(void) {}
+void vxworksDummy() {}
 #endif /* VXWORKS */
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -28728,8 +28764,11 @@ PUBLIC int mprDoWaitRecall(MprWaitService *ws)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -29832,8 +29871,11 @@ PUBLIC char *awtom(wchar *src, ssize *len)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -30239,13 +30281,16 @@ PUBLIC int mprWriteRegistry(cchar *key, cchar *name, cchar *value)
 
 
 #else
-void winDummy(void) {}
+void winDummy() {}
 #endif /* ME_WIN_LIKE || CYGWIN */
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
 
@@ -30581,6 +30626,7 @@ static int parseNext(MprXml *xp, int state)
             return MPR_ERR;
         }
     }
+    assert(0);
 }
 
 
@@ -30769,6 +30815,7 @@ static MprXmlToken getXmlToken(MprXml *xp, int state)
     }
 
     /* Should never get here */
+    assert(0);
     return MPR_XMLTOK_ERR;
 }
 
@@ -30855,6 +30902,7 @@ static int getNextChar(MprXml *xp)
 static int putLastChar(MprXml *xp, int c)
 {
     if (mprInsertCharToBuf(xp->inBuf, (char) c) < 0) {
+        assert(0);
         return MPR_ERR_BAD_STATE;
     }
     if (c == '\n') {
@@ -30910,7 +30958,10 @@ PUBLIC int mprXmlGetLineNumber(MprXml *xp)
 
 /*
     Copyright (c) Embedthis Software. All Rights Reserved.
-    This software is distributed under a commercial license. Consult the LICENSE.md
-    distributed with this software for full details and copyrights.
+    This software is distributed under commercial and open source licenses.
+    You may use the Embedthis Open Source license or you may acquire a
+    commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.md distributed with
+    this software for full details and other copyrights.
  */
 
