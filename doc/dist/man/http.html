@@ -1,140 +1,300 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Embedthis Ejscript Documentation</title>
+    
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta name="description" content="Ejscript JavaScript language">
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
+    
+    <link href="../images/favicon.ico" rel="shortcut icon">
+    <link href="../lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css">
+    <link href="../css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="../css/api.min.css" rel="stylesheet" type="text/css">
+    
+
+</head>
+<body class="show-sidebar">
+    <div class="sidebar">
+        <div class="ui large left vertical inverted labeled menu">
+            <div class="item">
+                <a href="../index.html" class="logo">Ejscript Docs</a>
+            </div>
+            <div class="item">
+                <a href="../index.html">
+                    <b>General</b>
+                </a>
+                <div class="menu">
+                    <a class="item" href="../index.html">Ejscript Overview</a>
+                    <a class="item" href="../users/features.html">Ejscript Features</a>
+                    <a class="item" href="https://www.embedthis.com/ejscript/download.html">Download</a>
+                    <a class="item" href="../licensing/index.html">Licensing</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../start/index.html">
+                    <b>Getting Started</b>
+                </a>
+                <div class="menu">
+                    <a class="item" href="../start/quick.html">Quick Start</a>
+                    <a class="item" href="../start/installing.html">Installing Ejscript</a>
+                    <a class="item" href="../start/tour.html">Language Tour</a>
+                    <a class="item" href="../start/faq.html">FAQ</a>
+                    <a class="item" href="../start/releaseNotes.html">Release Notes</a>
+                    <a class="item" href="../start/source.html">Building from Source</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../users/index.html"><b>User's Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../users/shell.html">Using the Command Shell</a>
+                    <a class="item" href="../users/compiler.html">Using the Compiler</a>
+                    <a class="item" href="../users/ejsmod.html">Using the Module Generator</a>
+                    <a class="item" href="../users/doc.html">Generating Documentation</a>
+                    <a class="item" href="../users/listing.html">Generating Listing</a>
+                    <a class="item" href="../users/man.html">Man Pages</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../language/index.html"><b>Language Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../language/syntax.html">Language Syntax</a>
+                    <a class="item" href="../language/statements.html">Statements</a>
+                    <a class="item" href="../language/expressions.html">Expressions and Operators</a>
+                    <a class="item" href="../language/objects.html">Object and Arrays</a>
+                    <a class="item" href="../language/functions.html">Functions and Methods</a>
+                    <a class="item" href="../language/core.html">Core Language Types</a>
+                    <a class="item" href="../language/types.html">Types and Declarations</a>
+                    <a class="item" href="../language/classes.html">Classes and Instances</a>
+                    <a class="item" href="../language/modules.html">Modules and Namespaces</a>
+                    <a class="item" href="../language/library.html">System Library</a>
+                    <a class="item" href="../language/events.html">Events and Timers</a>
+                    <a class="item" href="../language/modes.html">Language Modes</a>
+                    <a class="item" href="../language/globals.html">Globals</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../web/index.html"><b>Web Framework Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../web/webTour.html">Web Framework Tour</a>
+                    <a class="item" href="../web/generator.html">Application Generator</a>
+                    <a class="item" href="../web/routing.html">Routing</a>
+                    <a class="item" href="../web/controllers.html">Controllers</a>
+                    <a class="item" href="../web/views.html">Views and Layout Templates</a>
+                    <a class="item" href="../web/controls.html">Ajax View Controls</a>
+                    <a class="item" href="../web/models.html">Database Models</a>
+                    <a class="item" href="../web/hosting.html">Hosting in Web Servers</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../developers/index.html">Developer's Guide</a>
+                <div class="menu">
+                    <a class="item" href="../developers/embedding.html">Embedding Ejscript</a>
+                    <a class="item" href="../developers/extending.html">Extending Ejscript</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../ref/index.html">Reference Guide</a>
+                <div class="menu">
+                    <a class="item" href="../ref/compatibility.html">Compatibility</a>
+                    <a class="item" href="../ref/native.html">Native APIs</a>
+                    <a class="item" href="../ref/api/ejscript/index.html" target="new">Script Library</a>
+                    <a class="item" href="../ref/architecture.html">Ejscript Architecture</a>
+                    <a class="item" href="../ref/webArchitecture.html">Web Framework Architecture</a>
+                    <a class="item" href="../ref/memory.html">Ejscript Memory Allocation</a>
+                    <a class="item" href="../ref/multithread.html">Multithreaded Programming</a>
+                    <a class="item" href="../standards/references.html">Standards</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../developers/project.html">Project Resources</a>
+                <div class="menu">
+                    <a class="item" href="https://www.embedthis.com/blog/categories/Ejscript/">Official Ejscript News</a>
+                    <a class="item" href="https://www.embedthis.com/ejscript/">Ejscript Web Site</a>
+                    <a class="item" href="https://github.com/embedthis/ejs">Source Code Repository</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/issues">Project Issue Database</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/releases">Change Log</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/milestones">Roadmap</a>
+                    <a class="item" href="https://www.embedthis.com/developers/contributors.html">Contributors Agreement</a>
+                </div>
+            </div>
+            <div class="item">
+                <b>Links</b>
+                <div class="menu">
+                    <a class="item" href="https://www.embedthis.com/">Embedthis Web Site</a>
+                    <a class="item" href="https://www.embedthis.com/blog/">Embedthis Blog</a>
+                    <a class="item" href="http://twitter.com/embedthat">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="ui inverted masthead">
+        <div class="ui fixed inverted menu">
+            <div class="ui sidebar-launch button">
+                <i class="icon list layout"></i>
+            </div>
+            <div class="right menu">
+                <a class="item" href="https://www.embedthis.com/">Embedthis</a>
+                    <a class="item" href="https://www.embedthis.com/ejscript/">Ejscript Site</a>
+                    <span class="desktop-only">
+                        <a class="item" href="https://www.embedthis.com/blog/categories/Ejscript/">Ejscript News</a>
+                        <a class="item" href="https://github.com/embedthis/ejs">Repository</a>
+                        <a class="item" href="https://www.embedthis.com/blog/">Blog</a>
+                        <a class="item" href="https://twitter.com/embedthat">Twitter</a>
+                    </span>
+
+            </div>
+        </div>
+        
+        <iframe class="version desktop-only" src="../version.html"></iframe>
+
+    </div>
+    <div class="content">
+<!DOCTYPE html>
 <html lang="eng">
 <head>
 <title>Http Man Page</title>
 </head>
-<HTML>
-<BODY>
-<PRE>
-<!-- Manpage converted by man2html 3.0.1 -->
 
-</PRE>
-<H2>SYNOPSIS</H2><PRE>
-       <B>http</B>
-           <B>--auth</B> <B>basic|digest</B>
-           <B>--benchmark</B>
-           <B>--cert</B> <B>file</B>
-           <B>--chunk</B> <B>size</B>
-           <B>--continue</B>
-           <B>--cookie</B> <B>cookieString</B>
-           <B>--data</B>
-           <B>--debugger</B>
-           <B>--delete</B>
-           <B>--form</B> <B>string</B>
-           <B>--header</B> <B>'key:</B> <B>value'</B>
-           <B>--host</B> <B>hostName</B>
-           <B>--iterations</B> <B>count</B>
-           <B>--key</B> <B>file</B>
-           <B>--log</B> <B>logSpec</B>
-           <B>--method</B> <B>METHOD</B>
-           <B>--nofollow</B>
-           <B>--noout</B>
-           <B>--out</B> <B>file</B>
-           <B>--password</B> <B>pass</B>
-           <B>--post</B>
-           <B>--printable</B>
-           <B>--protocol</B> <B>version</B>
-           <B>--provider</B> <B>name</B>
-           <B>--put</B>
-           <B>--range</B> <B>byteRanges</B>
-           <B>--retries</B> <B>count</B>
-           <B>--sequence</B>
-           <B>--showHeaders</B>
-           <B>--showStatus</B>
-           <B>--single</B>
-           <B>--threads</B> <B>count</B>
-           <B>--timeout</B> <B>seconds</B>
-           <B>--upload</B>
-           <B>--user</B> <B>name</B>
-           <B>--verify</B>
-           <B>--verbose</B>
-           <B>--workers</B> <B>count</B>
-           <B>--zero</B>
-           <B>[files]</B> <B>url</B>
+<body>
+<pre>
 
 
-</PRE>
-<H2>DESCRIPTION</H2><PRE>
+</pre>
+<h2>SYNOPSIS</h2><pre>
+       <b>http</b>
+           <b>--auth</b> <b>basic|digest</b>
+           <b>--benchmark</b>
+           <b>--cert</b> <b>file</b>
+           <b>--chunk</b> <b>size</b>
+           <b>--continue</b>
+           <b>--cookie</b> <b>cookieString</b>
+           <b>--data</b>
+           <b>--debugger</b>
+           <b>--delete</b>
+           <b>--form</b> <b>string</b>
+           <b>--header</b> <b>'key:</b> <b>value'</b>
+           <b>--host</b> <b>hostName</b>
+           <b>--iterations</b> <b>count</b>
+           <b>--key</b> <b>file</b>
+           <b>--log</b> <b>logSpec</b>
+           <b>--method</b> <b>METHOD</b>
+           <b>--nofollow</b>
+           <b>--noout</b>
+           <b>--out</b> <b>file</b>
+           <b>--password</b> <b>pass</b>
+           <b>--post</b>
+           <b>--printable</b>
+           <b>--protocol</b> <b>version</b>
+           <b>--provider</b> <b>name</b>
+           <b>--put</b>
+           <b>--range</b> <b>byteRanges</b>
+           <b>--retries</b> <b>count</b>
+           <b>--sequence</b>
+           <b>--showHeaders</b>
+           <b>--showStatus</b>
+           <b>--single</b>
+           <b>--threads</b> <b>count</b>
+           <b>--timeout</b> <b>seconds</b>
+           <b>--upload</b>
+           <b>--user</b> <b>name</b>
+           <b>--verify</b>
+           <b>--verbose</b>
+           <b>--workers</b> <b>count</b>
+           <b>--zero</b>
+           <b>[files]</b> <b>url</b>
+
+
+</pre>
+<h2>DESCRIPTION</h2><pre>
        The  http  command  issues  HTTP  commands to retrieve files from a web
        server. If "files" are provided on the command line these are  included
        in the request body data.
 
 
-</PRE>
-<H2>OPTIONS</H2><PRE>
-       <B>--auth</B> <B>basic|digest</B>
+</pre>
+<h2>OPTIONS</h2><pre>
+       <b>--auth</b> <b>basic|digest</b>
               Set the type of authentication to use. Defaults to basic.
 
               response  and  break  the  response  data  into  chunks  of  the
               requested size. This is an custom header and will be ignored  by
               other web servers.
 
-       <B>--continue</B>
+       <b>--continue</b>
               Continue on errors. Default is to stop on the first error.
 
-       <B>--cookie</B> <B>cookieString</B>
+       <b>--cookie</b> <b>cookieString</b>
               Define  a  cookie string to send with the request. Multiple uses
               okay.
 
-       <B>--debugger</B>
+       <b>--debugger</b>
               Run in debug mode and disable all timeouts. Useful when  running
               a  server in the debugger to prevent the client from retrying or
               killing the request.
 
-       <B>--data</B> String of raw body data to send with the request.
+       <b>--data</b> String of raw body data to send with the request.
 
-       <B>--delete</B>
+       <b>--delete</b>
               Issue a DELETE request. This is an alias for --method DELETE.
 
-       <B>--form</B> <B>formData</B>
+       <b>--form</b> <b>formData</b>
               String of body data to send with the request. Assumed to be  URL
               encoded. ie. "name=paul&amp;;address=uk".  You cannot use this switch
               with either the --datafile or --form switches.
 
-       <B>--header</B> <B>"key:</B> <B>value"</B>
+       <b>--header</b> <b>"key:</b> <b>value"</b>
               Add a custom header to send with the request. Multiple  --header
               switches can be supplied.
 
-       <B>--host</B> <B>name</B>
+       <b>--host</b> <b>name</b>
               Prepend  all  URLs  with  the specified host. For example if '-h
               www.myHost.com:8888" were used with the URL "/index.html",  then
               http will retrieve http://www.myHost.com:8888.
 
-       <B>--iterations</B> <B>count</B>
+       <b>--iterations</b> <b>count</b>
               Retrieve  the  URLs  iterations  times. Useful for load testing.
-              This switch can also be abbreviated as <B>-i</B>.
+              This switch can also be abbreviated as <b>-i</b>.
 
-       <B>--key</B> <B>file</B>
+       <b>--key</b> <b>file</b>
               Private key file to use with the certificate file specified  via
               --cert.
 
-       <B>--log</B> <B>logSpec</B>
-              Specify  a  file  to  log  messages.  The syntax is: <B>"--log</B> <B>log-</B>
-              <B>File[:logLevel]"</B>.  Level 3 will trace the request  and  response
+       <b>--log</b> <b>logSpec</b>
+              Specify  a  file  to  log  messages.  The syntax is: <b>"--log</b> <b>log-</b>
+              <b>File[:logLevel]"</b>.  Level 3 will trace the request  and  response
               headers.
 
-       <B>--method</B> <B>method</B>
+       <b>--method</b> <b>method</b>
               Set  the  HTTP  method.  Values  may be "GET", "PUT", "OPTIONS",
               "TRACE".
 
               name to be also specified via --user.
 
-       <B>--post</B> Issue a POST request. This is an alias for --method POST.
+       <b>--post</b> Issue a POST request. This is an alias for --method POST.
 
-       <B>--printable</B>
+       <b>--printable</b>
               Make binary output printable by printing  hex  digits  for  each
               character.
 
-       <B>--protocol</B> <B>HTTP_VERSION</B>
+       <b>--protocol</b> <b>HTTP_VERSION</b>
               Use  the  specified  HTTP protocol. httpVersion should be either
               '0' for HTTP/1.0 or 1 for HTTP/1.1.
 
-       <B>--provider</B> <B>est|openssl</B>
+       <b>--provider</b> <b>est|openssl</b>
               Select the SSL stack provider.
 
-       <B>--put</B>  Issue a PUT request. This is an alias for --method PUT.
+       <b>--put</b>  Issue a PUT request. This is an alias for --method PUT.
 
-       <B>--range</B> <B>byteRange</B>
+       <b>--range</b> <b>byteRange</b>
               Request that only the specified byte range of data  be  returned
               with  the  response.  This  will  add  a  "Range"  header to the
               request.  The range format   is:   Range:  bytes=n1-n2,n3-n4,...
@@ -147,65 +307,80 @@
               1-               Skip first byte then emit the rest
 
 
-       <B>--retries</B> <B>retryCount</B>
+       <b>--retries</b> <b>retryCount</b>
               Retry failed requests this number of times.
 
-       <B>--showHeaders</B>
+       <b>--showHeaders</b>
               Output HTTP headers to stdout. Useful for debugging.
 
-       <B>--showStatus</B>
+       <b>--showStatus</b>
               Output the HTTP response code to  stdout.   If  this  switch  is
               used, the command will always exit with zero status.
 
-       <B>--single</B>
+       <b>--single</b>
               Single  step  between  requests by pausing for user input before
               proceeding.
 
-       <B>--threads</B> <B>loadThreads</B>
+       <b>--threads</b> <b>loadThreads</b>
               Number of threads to use. Each URL  will  be  retrieved  by  all
               threads. Useful only for load testing.
 
-       <B>--timeout</B> <B>seconds</B>
+       <b>--timeout</b> <b>seconds</b>
               Specifies a timeout to use for each request in seconds.
 
-       <B>--upload</B>
+       <b>--upload</b>
               will  verify  the certificate has not expired, is validly issued
               and that the certificate common name  corresponds  to  the  host
               name.
 
-       <B>--verbose</B>
+       <b>--verbose</b>
               Verbose  mode. Trace activity to stdout. Can by specified multi-
               ple times for more verbose tracing.  This  switch  can  also  be
-              abbreviated as <B>-v</B>.
+              abbreviated as <b>-v</b>.
 
-       <B>--workers</B> <B>count</B>
+       <b>--workers</b> <b>count</b>
               Specify the number of worker threads to use. Worker threads tem-
               porarily assigned to process callbacks.
 
-       <B>--zero</B> Exit with a zero status for any valid  HTTP  response.  Normally
+       <b>--zero</b> Exit with a zero status for any valid  HTTP  response.  Normally
               returns a non-zero status if the HTTP response code is not a 2XX
               or 3XX series response code.
 
 
 
-</PRE>
-<H2>REPORTING BUGS</H2><PRE>
+</pre>
+<h2>REPORTING BUGS</h2><pre>
        Report bugs to dev@embedthis.com.
 
 
-</PRE>
-<H2>COPYRIGHT</H2><PRE>
+</pre>
+<h2>COPYRIGHT</h2><pre>
        Copyright (C) Embedthis Software.
 
 
 
-http                               July 2014                           <B>HTTP(1)</B>
-</PRE>
-<HR>
-<ADDRESS>
+http                               July 2014                           <b>HTTP(1)</b>
+</pre>
+<hr>
+<address>
 Man(1) output converted with
 <a href="http://www.oac.uci.edu/indiv/ehood/man2html.html">man2html</a>
-</ADDRESS>
-</BODY>
-</HTML>
-</html>
+</address>
+
+
+
+    </div>
+    <div class="terms ui basic center aligned segment">
+        <p>&copy; Embedthis Software. All rights reserved.</p>
+    </div>
+
+    <script src="../lib/jquery/jquery.min.js"></script>
+    <script src="../lib/jquery/jquery.slim.min.js"></script>
+    <script src="../lib/semantic-ui/semantic.min.js"></script>
+     
+
+    
+
+
+
+

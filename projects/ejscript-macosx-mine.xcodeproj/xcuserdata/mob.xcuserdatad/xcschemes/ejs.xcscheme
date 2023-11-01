@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E0000028C"
+               BlueprintIdentifier = "058462030584850E00000262"
                BuildableName = "ejs"
                BlueprintName = "ejs"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -28,7 +28,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E00000067"
+               BlueprintIdentifier = "058462030584850E00000064"
                BuildableName = "All"
                BlueprintName = "All"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -42,7 +42,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E0000008E"
+               BlueprintIdentifier = "058462030584850E00000089"
                BuildableName = "Prep"
                BlueprintName = "Prep"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -85,20 +85,6 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "058462030584850E00000013"
-               BuildableName = "ejs.db.sqlite.mod"
-               BlueprintName = "ejs.db.sqlite.mod"
-               ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E0000001A"
                BuildableName = "ejs.mail.mod"
                BlueprintName = "ejs.mail.mod"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -112,7 +98,21 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E00000020"
+               BlueprintIdentifier = "058462030584850E00000013"
+               BuildableName = "ejs.mail.mod"
+               BlueprintName = "ejs.mail.mod"
+               ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "058462030584850E00000019"
                BuildableName = "ejs.mod"
                BlueprintName = "ejs.mod"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -126,7 +126,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E00000026"
+               BlueprintIdentifier = "058462030584850E0000001F"
                BuildableName = "ejs.mvc.mod"
                BlueprintName = "ejs.mvc.mod"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -141,20 +141,6 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "058462030584850E0000002F"
-               BuildableName = "ejs.tar.mod"
-               BlueprintName = "ejs.tar.mod"
-               ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E00000036"
                BuildableName = "ejs.template.mod"
                BlueprintName = "ejs.template.mod"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -168,7 +154,21 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E0000003C"
+               BlueprintIdentifier = "058462030584850E0000002F"
+               BuildableName = "ejs.template.mod"
+               BlueprintName = "ejs.template.mod"
+               ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "058462030584850E00000035"
                BuildableName = "ejs.unix.mod"
                BlueprintName = "ejs.unix.mod"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -183,20 +183,6 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "058462030584850E00000042"
-               BuildableName = "ejs.web.mod"
-               BlueprintName = "ejs.web.mod"
-               ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E00000049"
                BuildableName = "ejs.zlib.mod"
                BlueprintName = "ejs.zlib.mod"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -210,7 +196,21 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E00000198"
+               BlueprintIdentifier = "058462030584850E00000042"
+               BuildableName = "ejs.zlib.mod"
+               BlueprintName = "ejs.zlib.mod"
+               ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "058462030584850E00000187"
                BuildableName = "ejsc"
                BlueprintName = "ejsc"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -224,7 +224,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E0000019A"
+               BlueprintIdentifier = "058462030584850E00000189"
                BuildableName = "ejsmod"
                BlueprintName = "ejsmod"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -238,7 +238,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E0000029D"
+               BlueprintIdentifier = "058462030584850E00000272"
                BuildableName = "ejsrun"
                BlueprintName = "ejsrun"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -252,7 +252,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E0000004F"
+               BlueprintIdentifier = "058462030584850E00000048"
                BuildableName = "install-certs"
                BlueprintName = "install-certs"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -266,7 +266,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E00000188"
+               BlueprintIdentifier = "058462030584850E00000177"
                BuildableName = "libmpr.dylib"
                BlueprintName = "libmpr"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -294,7 +294,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E000002A3"
+               BlueprintIdentifier = "058462030584850E00000276"
                BuildableName = "libejs.web.dylib"
                BlueprintName = "libejs.web"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -308,7 +308,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E000001E4"
+               BlueprintIdentifier = "058462030584850E000001C8"
                BuildableName = "libejs.zlib.dylib"
                BlueprintName = "libejs.zlib"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -322,7 +322,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E00000186"
+               BlueprintIdentifier = "058462030584850E00000175"
                BuildableName = "libmpr-mbedtls.a"
                BlueprintName = "libmpr-mbedtls"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -336,7 +336,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E00000188"
+               BlueprintIdentifier = "058462030584850E00000177"
                BuildableName = "libmpr.dylib"
                BlueprintName = "libmpr"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -364,7 +364,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E00000184"
+               BlueprintIdentifier = "058462030584850E00000173"
                BuildableName = "libmbedtls.a"
                BlueprintName = "libmbedtls"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -392,7 +392,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E000001E2"
+               BlueprintIdentifier = "058462030584850E000001C6"
                BuildableName = "libzlib.dylib"
                BlueprintName = "libzlib"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -406,7 +406,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E000002A6"
+               BlueprintIdentifier = "058462030584850E00000279"
                BuildableName = "mvc"
                BlueprintName = "mvc"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -420,7 +420,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E00000053"
+               BlueprintIdentifier = "058462030584850E00000050"
                BuildableName = "mvc.es"
                BlueprintName = "mvc.es"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -434,7 +434,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E00000057"
+               BlueprintIdentifier = "058462030584850E00000054"
                BuildableName = "slots"
                BlueprintName = "slots"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -448,7 +448,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E0000029D"
+               BlueprintIdentifier = "058462030584850E00000272"
                BuildableName = "ejsrun"
                BlueprintName = "ejsrun"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -462,7 +462,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E0000005B"
+               BlueprintIdentifier = "058462030584850E00000058"
                BuildableName = "utest.es"
                BlueprintName = "utest.es"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -476,7 +476,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E0000005F"
+               BlueprintIdentifier = "058462030584850E0000005C"
                BuildableName = "utest.worker"
                BlueprintName = "utest.worker"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -490,7 +490,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E000002AC"
+               BlueprintIdentifier = "058462030584850E0000027F"
                BuildableName = "ejsman"
                BlueprintName = "watchdog"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -504,7 +504,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "058462030584850E00000063"
+               BlueprintIdentifier = "058462030584850E00000060"
                BuildableName = "www"
                BlueprintName = "www"
                ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -520,7 +520,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "058462030584850E0000028C"
+            BlueprintIdentifier = "058462030584850E00000262"
             BuildableName = "ejs"
             BlueprintName = "ejs"
             ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -544,7 +544,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "058462030584850E0000028C"
+            BlueprintIdentifier = "058462030584850E00000262"
             BuildableName = "ejs"
             BlueprintName = "ejs"
             ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">
@@ -552,7 +552,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-5 /tmp/t.es"
+            argument = "-D t.es"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -571,7 +571,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "058462030584850E0000028C"
+            BlueprintIdentifier = "058462030584850E00000262"
             BuildableName = "ejs"
             BlueprintName = "ejs"
             ReferencedContainer = "container:ejscript-macosx-mine.xcodeproj">

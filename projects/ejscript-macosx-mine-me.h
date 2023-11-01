@@ -1,5 +1,5 @@
 /*
-    me.h -- MakeMe Configure Header for macosx-x64-mine
+    me.h -- MakeMe Configure Header for macosx-arm64-mine
 
     This header is created by Me during configuration. To change settings, re-run
     configure or define variables in your Makefile to override these default values.
@@ -138,9 +138,6 @@
 #ifndef ME_PREFIXES
     #define ME_PREFIXES "install-prefixes"
 #endif
-#ifndef ME_PROFILE
-    #define ME_PROFILE "undefined"
-#endif
 #ifndef ME_TITLE
     #define ME_TITLE "Embedthis Ejscript"
 #endif
@@ -226,7 +223,7 @@
 
 /* Profile */
 #ifndef ME_CONFIG_CMD
-    #define ME_CONFIG_CMD "me -d -q -platform macosx-x64-mine -configure . -gen xcode"
+    #define ME_CONFIG_CMD "me -d -q -platform macosx-arm64-mine -configure . -gen xcode"
 #endif
 #ifndef ME_EJSCRIPT_PRODUCT
     #define ME_EJSCRIPT_PRODUCT 1
@@ -262,17 +259,11 @@
 #ifndef ME_COM_LIB
     #define ME_COM_LIB 1
 #endif
-#ifndef ME_COM_MATRIXSSL
-    #define ME_COM_MATRIXSSL 0
-#endif
 #ifndef ME_COM_MBEDTLS
     #define ME_COM_MBEDTLS 1
 #endif
 #ifndef ME_COM_MPR
     #define ME_COM_MPR 1
-#endif
-#ifndef ME_COM_NANOSSL
-    #define ME_COM_NANOSSL 0
 #endif
 #ifndef ME_COM_OPENSSL
     #define ME_COM_OPENSSL 0
@@ -284,7 +275,7 @@
     #define ME_COM_PCRE 1
 #endif
 #ifndef ME_COM_SQLITE
-    #define ME_COM_SQLITE 1
+    #define ME_COM_SQLITE 0
 #endif
 #ifndef ME_COM_SSL
     #define ME_COM_SSL 1

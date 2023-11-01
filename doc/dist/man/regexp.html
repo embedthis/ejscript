@@ -1,19 +1,179 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Embedthis Ejscript Documentation</title>
+    
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta name="description" content="Ejscript JavaScript language">
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
+    
+    <link href="../images/favicon.ico" rel="shortcut icon">
+    <link href="../lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css">
+    <link href="../css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="../css/api.min.css" rel="stylesheet" type="text/css">
+    
+
+</head>
+<body class="show-sidebar">
+    <div class="sidebar">
+        <div class="ui large left vertical inverted labeled menu">
+            <div class="item">
+                <a href="../index.html" class="logo">Ejscript Docs</a>
+            </div>
+            <div class="item">
+                <a href="../index.html">
+                    <b>General</b>
+                </a>
+                <div class="menu">
+                    <a class="item" href="../index.html">Ejscript Overview</a>
+                    <a class="item" href="../users/features.html">Ejscript Features</a>
+                    <a class="item" href="https://www.embedthis.com/ejscript/download.html">Download</a>
+                    <a class="item" href="../licensing/index.html">Licensing</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../start/index.html">
+                    <b>Getting Started</b>
+                </a>
+                <div class="menu">
+                    <a class="item" href="../start/quick.html">Quick Start</a>
+                    <a class="item" href="../start/installing.html">Installing Ejscript</a>
+                    <a class="item" href="../start/tour.html">Language Tour</a>
+                    <a class="item" href="../start/faq.html">FAQ</a>
+                    <a class="item" href="../start/releaseNotes.html">Release Notes</a>
+                    <a class="item" href="../start/source.html">Building from Source</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../users/index.html"><b>User's Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../users/shell.html">Using the Command Shell</a>
+                    <a class="item" href="../users/compiler.html">Using the Compiler</a>
+                    <a class="item" href="../users/ejsmod.html">Using the Module Generator</a>
+                    <a class="item" href="../users/doc.html">Generating Documentation</a>
+                    <a class="item" href="../users/listing.html">Generating Listing</a>
+                    <a class="item" href="../users/man.html">Man Pages</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../language/index.html"><b>Language Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../language/syntax.html">Language Syntax</a>
+                    <a class="item" href="../language/statements.html">Statements</a>
+                    <a class="item" href="../language/expressions.html">Expressions and Operators</a>
+                    <a class="item" href="../language/objects.html">Object and Arrays</a>
+                    <a class="item" href="../language/functions.html">Functions and Methods</a>
+                    <a class="item" href="../language/core.html">Core Language Types</a>
+                    <a class="item" href="../language/types.html">Types and Declarations</a>
+                    <a class="item" href="../language/classes.html">Classes and Instances</a>
+                    <a class="item" href="../language/modules.html">Modules and Namespaces</a>
+                    <a class="item" href="../language/library.html">System Library</a>
+                    <a class="item" href="../language/events.html">Events and Timers</a>
+                    <a class="item" href="../language/modes.html">Language Modes</a>
+                    <a class="item" href="../language/globals.html">Globals</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../web/index.html"><b>Web Framework Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../web/webTour.html">Web Framework Tour</a>
+                    <a class="item" href="../web/generator.html">Application Generator</a>
+                    <a class="item" href="../web/routing.html">Routing</a>
+                    <a class="item" href="../web/controllers.html">Controllers</a>
+                    <a class="item" href="../web/views.html">Views and Layout Templates</a>
+                    <a class="item" href="../web/controls.html">Ajax View Controls</a>
+                    <a class="item" href="../web/models.html">Database Models</a>
+                    <a class="item" href="../web/hosting.html">Hosting in Web Servers</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../developers/index.html">Developer's Guide</a>
+                <div class="menu">
+                    <a class="item" href="../developers/embedding.html">Embedding Ejscript</a>
+                    <a class="item" href="../developers/extending.html">Extending Ejscript</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../ref/index.html">Reference Guide</a>
+                <div class="menu">
+                    <a class="item" href="../ref/compatibility.html">Compatibility</a>
+                    <a class="item" href="../ref/native.html">Native APIs</a>
+                    <a class="item" href="../ref/api/ejscript/index.html" target="new">Script Library</a>
+                    <a class="item" href="../ref/architecture.html">Ejscript Architecture</a>
+                    <a class="item" href="../ref/webArchitecture.html">Web Framework Architecture</a>
+                    <a class="item" href="../ref/memory.html">Ejscript Memory Allocation</a>
+                    <a class="item" href="../ref/multithread.html">Multithreaded Programming</a>
+                    <a class="item" href="../standards/references.html">Standards</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../developers/project.html">Project Resources</a>
+                <div class="menu">
+                    <a class="item" href="https://www.embedthis.com/blog/categories/Ejscript/">Official Ejscript News</a>
+                    <a class="item" href="https://www.embedthis.com/ejscript/">Ejscript Web Site</a>
+                    <a class="item" href="https://github.com/embedthis/ejs">Source Code Repository</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/issues">Project Issue Database</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/releases">Change Log</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/milestones">Roadmap</a>
+                    <a class="item" href="https://www.embedthis.com/developers/contributors.html">Contributors Agreement</a>
+                </div>
+            </div>
+            <div class="item">
+                <b>Links</b>
+                <div class="menu">
+                    <a class="item" href="https://www.embedthis.com/">Embedthis Web Site</a>
+                    <a class="item" href="https://www.embedthis.com/blog/">Embedthis Blog</a>
+                    <a class="item" href="http://twitter.com/embedthat">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="ui inverted masthead">
+        <div class="ui fixed inverted menu">
+            <div class="ui sidebar-launch button">
+                <i class="icon list layout"></i>
+            </div>
+            <div class="right menu">
+                <a class="item" href="https://www.embedthis.com/">Embedthis</a>
+                    <a class="item" href="https://www.embedthis.com/ejscript/">Ejscript Site</a>
+                    <span class="desktop-only">
+                        <a class="item" href="https://www.embedthis.com/blog/categories/Ejscript/">Ejscript News</a>
+                        <a class="item" href="https://github.com/embedthis/ejs">Repository</a>
+                        <a class="item" href="https://www.embedthis.com/blog/">Blog</a>
+                        <a class="item" href="https://twitter.com/embedthat">Twitter</a>
+                    </span>
+
+            </div>
+        </div>
+        
+        <iframe class="version desktop-only" src="../version.html"></iframe>
+
+    </div>
+    <div class="content">
+<!DOCTYPE html>
 <html lang="eng">
 <head>
 <title>Regexp Man Page</title>
 </head>
-<HTML>
-<BODY>
-<PRE>
-<!-- Manpage converted by man2html 3.0.1 -->
 
-</PRE>
-<H2>REGEXP REGULAR EXPRESSION DETAILS</H2><PRE>
+<body>
+<pre>
+
+
+</pre>
+<h2>REGEXP REGULAR EXPRESSION DETAILS</h2><pre>
 
        The  syntax and semantics of the regular expressions that are supported
        by PCRE are described in detail below. There is a quick-reference  syn-
-       tax summary in the <B>pcresyntax</B> page. PCRE tries to match Perl syntax and
+       tax summary in the <b>pcresyntax</b> page. PCRE tries to match Perl syntax and
        semantics as closely as it can. PCRE  also  supports  some  alternative
        regular  expression  syntax (which does not conflict with the Perl syn-
        tax) in order to provide some compatibility with regular expressions in
@@ -29,30 +189,30 @@
        The original operation of PCRE was on strings of  one-byte  characters.
        However,  there is now also support for UTF-8 character strings. To use
        this, you must build PCRE to  include  UTF-8  support,  and  then  call
-       <B>pcre_compile()</B>  with  the  PCRE_UTF8  option.  How this affects pattern
+       <b>pcre_compile()</b>  with  the  PCRE_UTF8  option.  How this affects pattern
        matching is mentioned in several places below. There is also a  summary
-       of  UTF-8  features  in  the  section on UTF-8 support in the main <B>pcre</B>
+       of  UTF-8  features  in  the  section on UTF-8 support in the main <b>pcre</b>
        page.
 
        The remainder of this document discusses the  patterns  that  are  sup-
-       ported  by  PCRE when its main matching function, <B>pcre_exec()</B>, is used.
+       ported  by  PCRE when its main matching function, <b>pcre_exec()</b>, is used.
        From  release  6.0,   PCRE   offers   a   second   matching   function,
-       <B>pcre_dfa_exec()</B>,  which matches using a different algorithm that is not
+       <b>pcre_dfa_exec()</b>,  which matches using a different algorithm that is not
        Perl-compatible. Some of the features discussed below are not available
-       when  <B>pcre_dfa_exec()</B>  is used. The advantages and disadvantages of the
+       when  <b>pcre_dfa_exec()</b>  is used. The advantages and disadvantages of the
        alternative function, and how it differs from the normal function,  are
-       discussed in the <B>pcrematching</B> page.
+       discussed in the <b>pcrematching</b> page.
 
 
-</PRE>
-<H2>NEWLINE CONVENTIONS</H2><PRE>
+</pre>
+<h2>NEWLINE CONVENTIONS</h2><pre>
 
        PCRE  supports five different conventions for indicating line breaks in
        strings: a single CR (carriage return) character, a  single  LF  (line-
        feed) character, the two-character sequence CRLF, any of the three pre-
-       ceding, or any Unicode newline sequence. The <B>pcreapi</B> page  has  further
+       ceding, or any Unicode newline sequence. The <b>pcreapi</b> page  has  further
        discussion  about newlines, and shows how to set the newline convention
-       in the <I>options</I> arguments for the compiling and matching functions.
+       in the <i>options</i> arguments for the compiling and matching functions.
 
        It is also possible to specify a newline convention by starting a  pat-
        tern string with one of the following five sequences:
@@ -68,8 +228,8 @@
        ting can be combined with a change of newline convention.
 
 
-</PRE>
-<H2>CHARACTERS AND METACHARACTERS</H2><PRE>
+</pre>
+<h2>CHARACTERS AND METACHARACTERS</h2><pre>
 
        A  regular  expression  is  a pattern that is matched against a subject
        string from left to right. Most characters stand for  themselves  in  a
@@ -90,7 +250,7 @@
 
        The power of regular expressions comes  from  the  ability  to  include
        alternatives  and  repetitions in the pattern. These are encoded in the
-       pattern by the use of <I>metacharacters</I>, which do not stand for themselves
+       pattern by the use of <i>metacharacters</i>, which do not stand for themselves
        but instead are interpreted in some special way.
 
        There  are  two different sets of metacharacters: those that are recog-
@@ -148,7 +308,7 @@
        The \Q...\E sequence is recognized both inside  and  outside  character
        classes.
 
-   <B>Non-printing</B> <B>characters</B>
+   <b>Non-printing</b> <b>characters</b>
 
        A second use of backslash provides a way of encoding non-printing char-
        acters in patterns in a visible manner. There is no restriction on  the
@@ -186,7 +346,7 @@
        cated.  Outside a character class, PCRE reads it and any following dig-
        its as a decimal number. If the number is less than  10,  or  if  there
        have been at least that many previous capturing left parentheses in the
-       expression, the entire  sequence  is  taken  as  a  <I>back</I>  <I>reference</I>.  A
+       expression, the entire  sequence  is  taken  as  a  <i>back</i>  <i>reference</i>.  A
        description  of how this works is given later, following the discussion
        of parenthesized subpatterns.
 
@@ -222,10 +382,10 @@
        08), and the sequences \R and \X are interpreted as the characters  "R"
        and  "X", respectively. Outside a character class, these sequences have
        Details are discussed later.   Note  that  \g{...}  (Perl  syntax)  and
-       \g&lt;;...&gt;;  (Oniguruma  syntax)  are  <I>not</I> synonymous. The former is a back
+       \g&lt;;...&gt;;  (Oniguruma  syntax)  are  <i>not</i> synonymous. The former is a back
        reference; the latter is a subroutine call.
 
-   <B>Generic</B> <B>character</B> <B>types</B>
+   <b>Generic</b> <b>character</b> <b>types</b>
 
        Another use of backslash is for specifying generic character types. The
        following are always recognized:
@@ -285,13 +445,13 @@
        A "word" character is an underscore or any character less than 256 that
        is  a  letter  or  digit.  The definition of letters and digits is con-
        trolled by PCRE's low-valued character tables, and may vary if  locale-
-       specific  matching is taking place (see "Locale support" in the <B>pcreapi</B>
+       specific  matching is taking place (see "Locale support" in the <b>pcreapi</b>
        page). For example, in a French locale such  as  "fr_FR"  in  Unix-like
        systems,  or "french" in Windows, some character codes greater than 128
        are used for accented letters, and these are matched by \w. The use  of
        locales with Unicode is discouraged.
 
-   <B>Newline</B> <B>sequences</B>
+   <b>Newline</b> <b>sequences</b>
 
        Outside  a  character class, by default, the escape sequence \R matches
        any Unicode newline sequence. This is a Perl 5.10 feature. In non-UTF-8
@@ -323,17 +483,17 @@
          (*BSR_ANYCRLF)   CR, LF, or CRLF only
          (*BSR_UNICODE)   any Unicode newline sequence
 
-       These override the default and the options given to <B>pcre_compile()</B>, but
-       they can be overridden by options given to <B>pcre_exec()</B>. Note that these
+       These override the default and the options given to <b>pcre_compile()</b>, but
+       they can be overridden by options given to <b>pcre_exec()</b>. Note that these
        are available.  When not in UTF-8 mode, these sequences are  of  course
        limited  to  testing characters whose codepoints are less than 256, but
        they do work in this mode.  The extra escape sequences are:
 
-         \p{<I>xx</I>}   a character with the <I>xx</I> property
-         \P{<I>xx</I>}   a character without the <I>xx</I> property
+         \p{<i>xx</i>}   a character with the <i>xx</i> property
+         \P{<i>xx</i>}   a character without the <i>xx</i> property
          \X       an extended Unicode sequence
 
-       The property names represented by <I>xx</I> above are limited to  the  Unicode
+       The property names represented by <i>xx</i> above are limited to  the  Unicode
        script names, the general category properties, and "Any", which matches
        any character (including newline). Other properties such as "InMusical-
        Symbols"  are  not  currently supported by PCRE. Note that \P{Any} does
@@ -412,7 +572,7 @@
        U+D800 to U+DFFF. Such characters are not valid in UTF-8  strings  (see
        RFC 3629) and so cannot be tested by PCRE, unless UTF-8 validity check-
        ing has been turned off (see the discussion  of  PCRE_NO_UTF8_CHECK  in
-       the <B>pcreapi</B> page).
+       the <b>pcreapi</b> page).
 
        The  long  synonyms  for  these  properties that Perl supports (such as
        \p{Letter}) are not supported by PCRE, nor is it  permitted  to  prefix
@@ -447,7 +607,7 @@
 
        matches "foobar", the first substring is still set to "foo".
 
-   <B>Simple</B> <B>assertions</B>
+   <b>Simple</b> <b>assertions</b>
 
        The final use of backslash is for certain simple assertions. An  asser-
        tion  specifies a condition that has to be met at a particular point in
@@ -478,7 +638,7 @@
        set. Thus, they are independent of multiline mode. These  three  asser-
        tions are not affected by the PCRE_NOTBOL or PCRE_NOTEOL options, which
        affect only the behaviour of the circumflex and dollar  metacharacters.
-       However,  if the <I>startoffset</I> argument of <B>pcre_exec()</B> is non-zero, indi-
+       However,  if the <i>startoffset</i> argument of <b>pcre_exec()</b> is non-zero, indi-
        cating that matching is to start at a point other than the beginning of
        the  subject,  \A  can never match. The difference between \Z and \z is
        at a time, it cannot reproduce this behaviour.
@@ -488,13 +648,13 @@
        in the compiled regular expression.
 
 
-</PRE>
-<H2>CIRCUMFLEX AND DOLLAR</H2><PRE>
+</pre>
+<h2>CIRCUMFLEX AND DOLLAR</h2><pre>
 
        Outside a character class, in the default matching mode, the circumflex
        character  is  an  assertion  that is true only if the current matching
-       point is at the start of the subject string. If the  <I>startoffset</I>  argu-
-       ment  of  <B>pcre_exec()</B>  is  non-zero,  circumflex can never match if the
+       point is at the start of the subject string. If the  <i>startoffset</i>  argu-
+       ment  of  <b>pcre_exec()</b>  is  non-zero,  circumflex can never match if the
        PCRE_MULTILINE option is unset. Inside a  character  class,  circumflex
        has an entirely different meaning (see below).
 
@@ -530,8 +690,8 @@
        (where \n represents a newline) in multiline mode, but  not  otherwise.
        Consequently,  patterns  that  are anchored in single line mode because
        all branches start with ^ are not anchored in  multiline  mode,  and  a
-       match  for  circumflex  is  possible  when  the <I>startoffset</I> argument of
-       <B>pcre_exec()</B> is non-zero. The PCRE_DOLLAR_ENDONLY option is  ignored  if
+       match  for  circumflex  is  possible  when  the <i>startoffset</i> argument of
+       <b>pcre_exec()</b> is non-zero. The PCRE_DOLLAR_ENDONLY option is  ignored  if
        PCRE_MULTILINE is set.
 
        Note  that  the sequences \A, \Z, and \z can be used to match the start
@@ -549,8 +709,8 @@
        newlines. Dot has no special meaning in a character class.
 
 
-</PRE>
-<H2>MATCHING A SINGLE BYTE</H2><PRE>
+</pre>
+<h2>MATCHING A SINGLE BYTE</h2><pre>
 
        Outside a character class, the escape sequence \C matches any one byte,
        both in and out of UTF-8 mode. Unlike a  dot,  it  always  matches  any
@@ -565,8 +725,8 @@
        late the length of the lookbehind.
 
 
-</PRE>
-<H2>SQUARE BRACKETS AND CHARACTER CLASSES</H2><PRE>
+</pre>
+<h2>SQUARE BRACKETS AND CHARACTER CLASSES</h2><pre>
 
        An opening square bracket introduces a character class, terminated by a
        closing square bracket. A closing square bracket on its own is not spe-
@@ -643,8 +803,8 @@
        escaping other non-alphanumeric characters does no harm.
 
 
-</PRE>
-<H2>POSIX CHARACTER CLASSES</H2><PRE>
+</pre>
+<h2>POSIX CHARACTER CLASSES</h2><pre>
          cntrl    control characters
          digit    decimal digits (same as \d)
          graph    printing characters, excluding space
@@ -675,8 +835,8 @@
        of the POSIX character classes.
 
 
-</PRE>
-<H2>VERTICAL BAR</H2><PRE>
+</pre>
+<h2>VERTICAL BAR</h2><pre>
 
        Vertical  bar characters are used to separate alternative patterns. For
        example, the pattern
@@ -691,8 +851,8 @@
        rest  of the main pattern as well as the alternative in the subpattern.
 
 
-</PRE>
-<H2>INTERNAL OPTION SETTING</H2><PRE>
+</pre>
+<h2>INTERNAL OPTION SETTING</h2><pre>
 
        The settings of the  PCRE_CASELESS,  PCRE_MULTILINE,  PCRE_DOTALL,  and
        PCRE_EXTENDED  options  (which are Perl-compatible) can be changed from
@@ -706,7 +866,7 @@
        tern  parentheses),  the change applies to the remainder of the pattern
        that follows.  If the change is placed right at the start of a pattern,
        PCRE extracts it into the global options (and it will therefore show up
-       in data extracted by the <B>pcre_fullinfo()</B> function).
+       in data extracted by the <b>pcre_fullinfo()</b> function).
 
        An option change within a subpattern (see below for  a  description  of
        subpatterns) affects only that part of the current pattern that follows
@@ -727,15 +887,15 @@
        the effects of option settings happen at compile time. There  would  be
        some very weird behaviour otherwise.
 
-       <B>Note:</B>  There  are  other  PCRE-specific  options that can be set by the
+       <b>Note:</b>  There  are  other  PCRE-specific  options that can be set by the
        application when the compile or match functions  are  called.  In  some
        cases  the  pattern  can  contain special leading sequences to override
        what the application has set or what has been  defaulted.  Details  are
        given in the section entitled "Newline sequences" above.
 
 
-</PRE>
-<H2>SUBPATTERNS</H2><PRE>
+</pre>
+<h2>SUBPATTERNS</h2><pre>
 
        Subpatterns are delimited by parentheses (round brackets), which can be
        nested.  Turning part of a pattern into a subpattern does two things:
@@ -751,7 +911,7 @@
        2. It sets up the subpattern as  a  capturing  subpattern.  This  means
        that,  when  the  whole  pattern  matches,  that portion of the subject
        string that matched the subpattern is passed back to the caller via the
-       <I>ovector</I>  argument  of <B>pcre_exec()</B>. Opening parentheses are counted from
+       <i>ovector</i>  argument  of <b>pcre_exec()</b>. Opening parentheses are counted from
        left to right (starting from 1) to obtain  numbers  for  the  capturing
        subpatterns.
 
@@ -776,8 +936,8 @@
        "Saturday".
 
 
-</PRE>
-<H2>DUPLICATE SUBPATTERN NUMBERS</H2><PRE>
+</pre>
+<h2>DUPLICATE SUBPATTERN NUMBERS</h2><pre>
 
        Perl 5.10 introduced a feature whereby each alternative in a subpattern
        uses  the same numbers for its capturing parentheses. Such a subpattern
@@ -808,8 +968,8 @@
        duplicate named subpatterns, as described in the next section.
 
 
-</PRE>
-<H2>NAMED SUBPATTERNS</H2><PRE>
+</pre>
+<h2>NAMED SUBPATTERNS</h2><pre>
 
        Identifying capturing parentheses by number is simple, but  it  can  be
        Names  consist  of  up  to  32 alphanumeric characters and underscores.
@@ -843,11 +1003,11 @@
        subpattern  it  was. If you make a reference to a non-unique named sub-
        pattern from elsewhere in the pattern, the one that corresponds to  the
        lowest  number  is used. For further details of the interfaces for han-
-       dling named subpatterns, see the <B>pcreapi</B> documentation.
+       dling named subpatterns, see the <b>pcreapi</b> documentation.
 
 
-</PRE>
-<H2>REPETITION</H2><PRE>
+</pre>
+<h2>REPETITION</h2><pre>
 
        Repetition is specified by quantifiers, which can  follow  any  of  the
        following items:
@@ -1046,8 +1206,8 @@
        sequences of non-digits cannot be broken, and failure happens  quickly.
 
 
-</PRE>
-<H2>BACK REFERENCES</H2><PRE>
+</pre>
+<h2>BACK REFERENCES</h2><pre>
 
        Outside a character class, a backslash followed by a digit greater than
        0 (and possibly further digits) is a back reference to a capturing sub-
@@ -1147,7 +1307,7 @@
        out  only  for  positive assertions, because it does not make sense for
        negative assertions.
 
-   <B>Lookahead</B> <B>assertions</B>
+   <b>Lookahead</b> <b>assertions</b>
 
        Lookahead assertions start with (?= for positive assertions and (?! for
        negative assertions. For example,
@@ -1174,7 +1334,7 @@
        always matches, so an assertion that requires there not to be an  empty
        string must always fail.
 
-   <B>Lookbehind</B> <B>assertions</B>
+   <b>Lookbehind</b> <b>assertions</b>
 
        Lookbehind  assertions start with (?&lt;;= for positive assertions and (?&lt;;!
        for negative assertions. For example,
@@ -1255,8 +1415,8 @@
        three characters that are not "999".
 
 
-</PRE>
-<H2>CONDITIONAL SUBPATTERNS</H2><PRE>
+</pre>
+<h2>CONDITIONAL SUBPATTERNS</h2><pre>
 
        It is possible to cause the matching process to obey a subpattern  con-
        ditionally  or to choose between two alternative subpatterns, depending
@@ -1274,7 +1434,7 @@
        There are four kinds of condition: references  to  subpatterns,  refer-
        ences to recursion, a pseudo-condition called DEFINE, and assertions.
 
-   <B>Checking</B> <B>for</B> <B>a</B> <B>used</B> <B>subpattern</B> <B>by</B> <B>number</B>
+   <b>Checking</b> <b>for</b> <b>a</b> <b>used</b> <b>subpattern</b> <b>by</b> <b>number</b>
 
        If  the  text between the parentheses consists of a sequence of digits,
        the condition is true if the capturing subpattern of  that  number  has
@@ -1296,7 +1456,7 @@
        This makes the fragment independent of the parentheses  in  the  larger
        pattern.
 
-   <B>Checking</B> <B>for</B> <B>a</B> <B>used</B> <B>subpattern</B> <B>by</B> <B>name</B>
+   <b>Checking</b> <b>for</b> <b>a</b> <b>used</b> <b>subpattern</b> <b>by</b> <b>name</b>
 
        Perl  uses  the  syntax  (?(&lt;;name&gt;;)...) or (?('name')...) to test for a
        used subpattern by name. For compatibility  with  earlier  versions  of
@@ -1313,7 +1473,7 @@
          (?&lt;;OPEN&gt;; \( )?    [^()]+    (?(&lt;;OPEN&gt;;) \) )
 
 
-   <B>Checking</B> <B>for</B> <B>pattern</B> <B>recursion</B>
+   <b>Checking</b> <b>for</b> <b>pattern</b> <b>recursion</b>
 
        If the condition is the string (R), and there is no subpattern with the
        name R, the condition is true if a recursive call to the whole  pattern
@@ -1329,7 +1489,7 @@
        At "top level", all these recursion test conditions are  false.  Recur-
        sive patterns are described below.
 
-   <B>Defining</B> <B>subpatterns</B> <B>for</B> <B>use</B> <B>by</B> <B>reference</B> <B>only</B>
+   <b>Defining</b> <b>subpatterns</b> <b>for</b> <b>use</b> <b>by</b> <b>reference</b> <b>only</b>
 
        If  the  condition  is  the string (DEFINE), and there is no subpattern
        with the name DEFINE, the condition is  always  false.  In  this  case,
@@ -1340,7 +1500,7 @@
        For  example,  a pattern to match an IPv4 address could be written like
        this (ignore whitespace and line breaks):
 
-   <B>Assertion</B> <B>conditions</B>
+   <b>Assertion</b> <b>conditions</b>
 
        If the condition is not in any of the above  formats,  it  must  be  an
        assertion.   This may be a positive or negative lookahead or lookbehind
@@ -1359,8 +1519,8 @@
        letters and dd are digits.
 
 
-</PRE>
-<H2>COMMENTS</H2><PRE>
+</pre>
+<h2>COMMENTS</h2><pre>
 
        The  sequence (?# marks the start of a comment that continues up to the
        next closing parenthesis. Nested parentheses  are  not  permitted.  The
@@ -1372,8 +1532,8 @@
        after the next newline in the pattern.
 
 
-</PRE>
-<H2>RECURSIVE PATTERNS</H2><PRE>
+</pre>
+<h2>RECURSIVE PATTERNS</h2><pre>
 
        Consider the problem of matching a string in parentheses, allowing  for
        unlimited  nested  parentheses.  Without the use of recursion, the best
@@ -1454,7 +1614,7 @@
        the string they capture is "ab(cd)ef", the contents of  the  top  level
        parentheses.  If there are more than 15 capturing parentheses in a pat-
        tern, PCRE has to obtain extra memory to store data during a recursion,
-       which  it  does  by  using <B>pcre_malloc</B>, freeing it via <B>pcre_free</B> after-
+       which  it  does  by  using <b>pcre_malloc</b>, freeing it via <b>pcre_free</b> after-
        wards. If  no  memory  can  be  obtained,  the  match  fails  with  the
        PCRE_ERROR_NOMEMORY error.
 
@@ -1471,8 +1631,8 @@
        The (?R) item is the actual recursive call.
 
 
-</PRE>
-<H2>SUBPATTERNS AS SUBROUTINES</H2><PRE>
+</pre>
+<h2>SUBPATTERNS AS SUBROUTINES</h2><pre>
 
        If the syntax for a recursive subpattern reference (either by number or
        by name) is used outside the parentheses to which it refers,  it  oper-
@@ -1513,13 +1673,13 @@
 
          (abc)(?i:\g&lt;;-1&gt;;)
 
-       Note  that \g{...} (Perl syntax) and \g&lt;;...&gt;; (Oniguruma syntax) are <I>not</I>
+       Note  that \g{...} (Perl syntax) and \g&lt;;...&gt;; (Oniguruma syntax) are <i>not</i>
        synonymous. The former is a back reference; the latter is a  subroutine
        call.
 
 
-</PRE>
-<H2>CALLOUTS</H2><PRE>
+</pre>
+<h2>CALLOUTS</h2><pre>
 
        Perl has a feature whereby using the sequence (?{...}) causes arbitrary
        Perl code to be obeyed in the middle of matching a regular  expression.
@@ -1530,7 +1690,7 @@
        PCRE provides a similar feature, but of course it cannot obey arbitrary
        Perl code. The feature is called "callout". The caller of PCRE provides
        an  external function by putting its entry point in the global variable
-       <I>pcre</I><B>_</B><I>callout</I>.  By default, this variable contains NULL, which  disables
+       <i>pcre</i><b>_</b><i>callout</i>.  By default, this variable contains NULL, which  disables
        all calling out.
 
        Within  a  regular  expression,  (?C) indicates the points at which the
@@ -1541,28 +1701,28 @@
 
          (?C1)abc(?C2)def
 
-       If the PCRE_AUTO_CALLOUT flag is passed to <B>pcre_compile()</B>, callouts are
+       If the PCRE_AUTO_CALLOUT flag is passed to <b>pcre_compile()</b>, callouts are
        automatically installed before each item in the pattern. They  are  all
        numbered 255.
 
-       During matching, when PCRE reaches a callout point (and <I>pcre</I><B>_</B><I>callout</I> is
+       During matching, when PCRE reaches a callout point (and <i>pcre</i><b>_</b><i>callout</i> is
        set), the external function is called. It is provided with  the  number
        of  the callout, the position in the pattern, and, optionally, one item
-       of data originally supplied by the caller of <B>pcre_exec()</B>.  The  callout
+       of data originally supplied by the caller of <b>pcre_exec()</b>.  The  callout
        function  may cause matching to proceed, to backtrack, or to fail alto-
        gether. A complete description of the interface to the callout function
-       is given in the <B>pcrecallout</B> documentation.
+       is given in the <b>pcrecallout</b> documentation.
 
 
-</PRE>
-<H2>BACKTRACKING CONTROL</H2><PRE>
+</pre>
+<h2>BACKTRACKING CONTROL</h2><pre>
 
        Perl  5.10 introduced a number of "Special Backtracking Control Verbs",
        the form (*VERB:ARG) but PCRE does not support the use of arguments, so
        its  general  form is just (*VERB). Any number of these verbs may occur
        in a pattern. There are two kinds:
 
-   <B>Verbs</B> <B>that</B> <B>act</B> <B>immediately</B>
+   <b>Verbs</b> <b>that</b> <b>act</b> <b>immediately</b>
 
        The following verbs act as soon as they are encountered:
 
@@ -1593,7 +1753,7 @@
        A match with the string "aaaa" always fails, but the callout  is  taken
        before each backtrack happens (in this example, 10 times).
 
-   <B>Verbs</B> <B>that</B> <B>act</B> <B>after</B> <B>backtracking</B>
+   <b>Verbs</b> <b>that</b> <b>act</b> <b>after</b> <b>backtracking</b>
 
        The following verbs do nothing when they are encountered. Matching con-
        tinues with what follows, but if there is no subsequent match, a  fail-
@@ -1605,7 +1765,7 @@
        This verb causes the whole match to fail outright if the  rest  of  the
        pattern  does  not match. Even if the pattern is unanchored, no further
        attempts to find a match by advancing the start point take place.  Once
-       (*COMMIT)  has been passed, <B>pcre_exec()</B> is committed to finding a match
+       (*COMMIT)  has been passed, <b>pcre_exec()</b> is committed to finding a match
        at the current starting point, or not at all. For example:
 
          a+(*COMMIT)b
@@ -1645,35 +1805,50 @@
        exactly like (*PRUNE).
 
 
-</PRE>
-<H2>SEE ALSO</H2><PRE>
+</pre>
+<h2>SEE ALSO</h2><pre>
 
-       <B>pcreapi(3)</B>, <B>pcrecallout(3)</B>, <B>pcrematching(3)</B>, <B>pcre(3)</B>.
+       <b>pcreapi(3)</b>, <b>pcrecallout(3)</b>, <b>pcrematching(3)</b>, <b>pcre(3)</b>.
 
 
-</PRE>
-<H2>AUTHOR</H2><PRE>
+</pre>
+<h2>AUTHOR</h2><pre>
 
        Philip Hazel
        University Computing Service
        Cambridge CB2 3QH, England.
 
 
-</PRE>
-<H2>REVISION</H2><PRE>
+</pre>
+<h2>REVISION</h2><pre>
 
        Last updated: 19 April 2008
        Copyright (c) 1997-2008 University of Cambridge.
 
 
 
-                                                                <B>PCREPATTERN(3)</B>
-</PRE>
-<HR>
-<ADDRESS>
+                                                                <b>PCREPATTERN(3)</b>
+</pre>
+<hr>
+<address>
 Man(1) output converted with
 <a href="http://www.oac.uci.edu/indiv/ehood/man2html.html">man2html</a>
-</ADDRESS>
-</BODY>
-</HTML>
-</html>
+</address>
+
+
+
+    </div>
+    <div class="terms ui basic center aligned segment">
+        <p>&copy; Embedthis Software. All rights reserved.</p>
+    </div>
+
+    <script src="../lib/jquery/jquery.min.js"></script>
+    <script src="../lib/jquery/jquery.slim.min.js"></script>
+    <script src="../lib/semantic-ui/semantic.min.js"></script>
+     
+
+    
+
+
+
+

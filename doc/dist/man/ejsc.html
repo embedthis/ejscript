@@ -1,55 +1,215 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Embedthis Ejscript Documentation</title>
+    
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta name="description" content="Ejscript JavaScript language">
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Julius+Sans+One' rel='stylesheet' type='text/css'>
+    
+    <link href="../images/favicon.ico" rel="shortcut icon">
+    <link href="../lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css">
+    <link href="../css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="../css/api.min.css" rel="stylesheet" type="text/css">
+    
+
+</head>
+<body class="show-sidebar">
+    <div class="sidebar">
+        <div class="ui large left vertical inverted labeled menu">
+            <div class="item">
+                <a href="../index.html" class="logo">Ejscript Docs</a>
+            </div>
+            <div class="item">
+                <a href="../index.html">
+                    <b>General</b>
+                </a>
+                <div class="menu">
+                    <a class="item" href="../index.html">Ejscript Overview</a>
+                    <a class="item" href="../users/features.html">Ejscript Features</a>
+                    <a class="item" href="https://www.embedthis.com/ejscript/download.html">Download</a>
+                    <a class="item" href="../licensing/index.html">Licensing</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../start/index.html">
+                    <b>Getting Started</b>
+                </a>
+                <div class="menu">
+                    <a class="item" href="../start/quick.html">Quick Start</a>
+                    <a class="item" href="../start/installing.html">Installing Ejscript</a>
+                    <a class="item" href="../start/tour.html">Language Tour</a>
+                    <a class="item" href="../start/faq.html">FAQ</a>
+                    <a class="item" href="../start/releaseNotes.html">Release Notes</a>
+                    <a class="item" href="../start/source.html">Building from Source</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../users/index.html"><b>User's Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../users/shell.html">Using the Command Shell</a>
+                    <a class="item" href="../users/compiler.html">Using the Compiler</a>
+                    <a class="item" href="../users/ejsmod.html">Using the Module Generator</a>
+                    <a class="item" href="../users/doc.html">Generating Documentation</a>
+                    <a class="item" href="../users/listing.html">Generating Listing</a>
+                    <a class="item" href="../users/man.html">Man Pages</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../language/index.html"><b>Language Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../language/syntax.html">Language Syntax</a>
+                    <a class="item" href="../language/statements.html">Statements</a>
+                    <a class="item" href="../language/expressions.html">Expressions and Operators</a>
+                    <a class="item" href="../language/objects.html">Object and Arrays</a>
+                    <a class="item" href="../language/functions.html">Functions and Methods</a>
+                    <a class="item" href="../language/core.html">Core Language Types</a>
+                    <a class="item" href="../language/types.html">Types and Declarations</a>
+                    <a class="item" href="../language/classes.html">Classes and Instances</a>
+                    <a class="item" href="../language/modules.html">Modules and Namespaces</a>
+                    <a class="item" href="../language/library.html">System Library</a>
+                    <a class="item" href="../language/events.html">Events and Timers</a>
+                    <a class="item" href="../language/modes.html">Language Modes</a>
+                    <a class="item" href="../language/globals.html">Globals</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../web/index.html"><b>Web Framework Guide</b></a>
+                <div class="menu">
+                    <a class="item" href="../web/webTour.html">Web Framework Tour</a>
+                    <a class="item" href="../web/generator.html">Application Generator</a>
+                    <a class="item" href="../web/routing.html">Routing</a>
+                    <a class="item" href="../web/controllers.html">Controllers</a>
+                    <a class="item" href="../web/views.html">Views and Layout Templates</a>
+                    <a class="item" href="../web/controls.html">Ajax View Controls</a>
+                    <a class="item" href="../web/models.html">Database Models</a>
+                    <a class="item" href="../web/hosting.html">Hosting in Web Servers</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../developers/index.html">Developer's Guide</a>
+                <div class="menu">
+                    <a class="item" href="../developers/embedding.html">Embedding Ejscript</a>
+                    <a class="item" href="../developers/extending.html">Extending Ejscript</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../ref/index.html">Reference Guide</a>
+                <div class="menu">
+                    <a class="item" href="../ref/compatibility.html">Compatibility</a>
+                    <a class="item" href="../ref/native.html">Native APIs</a>
+                    <a class="item" href="../ref/api/ejscript/index.html" target="new">Script Library</a>
+                    <a class="item" href="../ref/architecture.html">Ejscript Architecture</a>
+                    <a class="item" href="../ref/webArchitecture.html">Web Framework Architecture</a>
+                    <a class="item" href="../ref/memory.html">Ejscript Memory Allocation</a>
+                    <a class="item" href="../ref/multithread.html">Multithreaded Programming</a>
+                    <a class="item" href="../standards/references.html">Standards</a>
+                </div>
+            </div>
+            <div class="item">
+                <a href="../developers/project.html">Project Resources</a>
+                <div class="menu">
+                    <a class="item" href="https://www.embedthis.com/blog/categories/Ejscript/">Official Ejscript News</a>
+                    <a class="item" href="https://www.embedthis.com/ejscript/">Ejscript Web Site</a>
+                    <a class="item" href="https://github.com/embedthis/ejs">Source Code Repository</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/issues">Project Issue Database</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/releases">Change Log</a>
+                    <a class="item" href="https://github.com/embedthis/ejs/milestones">Roadmap</a>
+                    <a class="item" href="https://www.embedthis.com/developers/contributors.html">Contributors Agreement</a>
+                </div>
+            </div>
+            <div class="item">
+                <b>Links</b>
+                <div class="menu">
+                    <a class="item" href="https://www.embedthis.com/">Embedthis Web Site</a>
+                    <a class="item" href="https://www.embedthis.com/blog/">Embedthis Blog</a>
+                    <a class="item" href="http://twitter.com/embedthat">Twitter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="ui inverted masthead">
+        <div class="ui fixed inverted menu">
+            <div class="ui sidebar-launch button">
+                <i class="icon list layout"></i>
+            </div>
+            <div class="right menu">
+                <a class="item" href="https://www.embedthis.com/">Embedthis</a>
+                    <a class="item" href="https://www.embedthis.com/ejscript/">Ejscript Site</a>
+                    <span class="desktop-only">
+                        <a class="item" href="https://www.embedthis.com/blog/categories/Ejscript/">Ejscript News</a>
+                        <a class="item" href="https://github.com/embedthis/ejs">Repository</a>
+                        <a class="item" href="https://www.embedthis.com/blog/">Blog</a>
+                        <a class="item" href="https://twitter.com/embedthat">Twitter</a>
+                    </span>
+
+            </div>
+        </div>
+        
+        <iframe class="version desktop-only" src="../version.html"></iframe>
+
+    </div>
+    <div class="content">
+<!DOCTYPE html>
 <html lang="eng">
 <head>
 <title>Ejsc Man Page</title>
 </head>
-<HTML>
-<BODY>
-<PRE>
-<!-- Manpage converted by man2html 3.0.1 -->
 
-</PRE>
-<H2>SYNOPSIS</H2><PRE>
-       <B>ejsc</B>
-           <B>--bind</B>
-           <B>--debug</B>
-           <B>--doc</B>
-           <B>--noout</B>
-           <B>--optimize</B> <B>level</B>
-           <B>--out</B> <B>filename</B>
-           <B>--parse</B>
-           <B>--require</B> <B>'module</B> <B>...'</B>
-           <B>--search</B> <B>ejsPath</B>
-           <B>--standard</B>
-           <B>--strict</B>
-           <B>--version</B>
-           <B>--warn</B> <B>level</B>
-           <B>files...</B>
+<body>
+<pre>
 
 
-</PRE>
-<H2>DESCRIPTION</H2><PRE>
-       The  <B>ejsc</B> command compiles Ejscript programs to produce Ejscript module
+</pre>
+<h2>SYNOPSIS</h2><pre>
+       <b>ejsc</b>
+           <b>--bind</b>
+           <b>--debug</b>
+           <b>--doc</b>
+           <b>--noout</b>
+           <b>--optimize</b> <b>level</b>
+           <b>--out</b> <b>filename</b>
+           <b>--parse</b>
+           <b>--require</b> <b>'module</b> <b>...'</b>
+           <b>--search</b> <b>ejsPath</b>
+           <b>--standard</b>
+           <b>--strict</b>
+           <b>--version</b>
+           <b>--warn</b> <b>level</b>
+           <b>files...</b>
+
+
+</pre>
+<h2>DESCRIPTION</h2><pre>
+       The  <b>ejsc</b> command compiles Ejscript programs to produce Ejscript module
        files containing byte code.  The module files may then be run  via  the
-       <B>ejs</B> shell command.
+       <b>ejs</b> shell command.
 
-       The  <B>ejsc</B>  command  is  both  a compiler and link editor. Inputs can be
+       The  <b>ejsc</b>  command  is  both  a compiler and link editor. Inputs can be
        either Ejscript source files or Ejscript modules that  have  come  from
-       previous  invocations  of the <B>ejsc</B> command. Outputs will be one or more
+       previous  invocations  of the <b>ejsc</b> command. Outputs will be one or more
        Ejscript module files that contain declarations and byte code.
 
        An output module file will be created for each Ejscript  module  direc-
        tive encountered during compilation. A module file will also be created
        for any global variables or functions declared outside a module  direc-
-       tive. These global declarations will go into the <B>default</B> module that is
+       tive. These global declarations will go into the <b>default</b> module that is
        specially reserved for global declarations.  Each module file  will  be
-       named according to the module directive name, but with a <B>.mod</B> extension
+       named according to the module directive name, but with a <b>.mod</b> extension
        appended.
 
 
-</PRE>
-<H2>LINKING</H2><PRE>
-       If <B>ejsc</B> is invoked with the --out switch, all  input  scripts,  modules
+</pre>
+<h2>LINKING</h2><pre>
+       If <b>ejsc</b> is invoked with the --out switch, all  input  scripts,  modules
        and  any other dependent modules are merged together into a single out-
        put module. The modules retain their logical naming, but are emitted in
        a  single  output module file. When that module file is loaded, all the
@@ -59,76 +219,76 @@
        tion and its dependent modules into a single module.
 
 
-</PRE>
-<H2>BINDING</H2><PRE>
-       The  <B>ejsc</B> compiler will attempt to early-bind all possible variable and
+</pre>
+<h2>BINDING</h2><pre>
+       The  <b>ejsc</b> compiler will attempt to early-bind all possible variable and
        function references. Binding means resolving references to the underly-
        ing  storage  for  properties and functions. Doing this at compile time
        usually results in much faster execution at run-time.
 
        When using the --out switch, the compiler  can  early-bind  all  global
-       <B>--bind</B> Bind  global  variable  declarations  into slot references. This
+       <b>--bind</b> Bind  global  variable  declarations  into slot references. This
               results in faster more compact code. However,  only  one  module
               can have its global variables bound.
 
-       <B>--debug</B>
+       <b>--debug</b>
               Generate  symbolic  debug  instructions.  This  permits symbolic
               debugging of Ejscript programs and enables exception stack back-
               traces to include line number information.
 
-       <B>--doc</B>  Include  documentation  strings from input scripts in the output
-              modules. The <B>ejsmod</B> command can then generate HTML documentation
+       <b>--doc</b>  Include  documentation  strings from input scripts in the output
+              modules. The <b>ejsmod</b> command can then generate HTML documentation
               using these doc strings. The format of the doc strings resembles
               that of Javadoc.
 
-       <B>--merge</B>
+       <b>--merge</b>
               Merge all input files and modules together into a single  output
               module. This option acts like a link-editor combining all inputs
               together. Useful if you want to distribute your application as a
               single module file.
 
-       <B>--optimize</B> <B>level</B>
+       <b>--optimize</b> <b>level</b>
               Set  the code optimization level. Level values must be between 0
               (least) and 9 (most). Default is 9.
 
-       <B>--parse</B>
+       <b>--parse</b>
               Just parse the source scripts. Don't verify, execute or generate
               output. Useful to check the script syntax only.
 
-       <B>--require</B> <B>'module</B> <B>...'</B>
+       <b>--require</b> <b>'module</b> <b>...'</b>
               List of modules to preload before compiling input files.
 
-       <B>--search</B> <B>ejsPath</B>
+       <b>--search</b> <b>ejsPath</b>
               Set  the  module search path. The module search path is a set of
-              directories that the <B>ejsc</B> command will  use  when  locating  and
+              directories that the <b>ejsc</b> command will  use  when  locating  and
               loading Ejscript modules.  The search path will always have some
               system directories appended to  the  end.  These  include  paths
-              specified  via  the  <B>EJSPATH</B> environment variable and key system
+              specified  via  the  <b>EJSPATH</b> environment variable and key system
               directories such as the Ejscript system module directory and the
-              directory containing the <B>ejsc</B> command.
+              directory containing the <b>ejsc</b> command.
 
               The  search  path  value is similar in format to the system PATH
               variable format.  On windows, path segments are separated by ";"
               and on Linux, Unix, FreeBSD and MAC, the path segments are sepa-
               rated by ":" delimiters.
 
-              Given a module named "a.b.c" in a script, <B>ejsc</B> will use the fol-
+              Given a module named "a.b.c" in a script, <b>ejsc</b> will use the fol-
               lowing search strategy to locate the module:
 
               1. Search for a module file named "a.b.c.mod"
 
               2. Search for a module file named "a/b/c.mod"
 
-       <B>--version</B>
-              Print the <B>ejsc</B> command version and exit.
+       <b>--version</b>
+              Print the <b>ejsc</b> command version and exit.
 
-       <B>--warn</B> <B>level</B>
+       <b>--warn</b> <b>level</b>
               Set the compiler warning verbosity level. Level values  must  be
               between 0 (least verbose) and 9 (most). Default is 0.
 
 
-</PRE>
-<H2>BACKGROUND</H2><PRE>
+</pre>
+<h2>BACKGROUND</h2><pre>
        Ejscript  is  an enhanced implementation of the JavaScript language for
        use in embedded applications such as web servers, embedded  and  mobile
        devices.  It is especially suited for Server-Side JavaScript web appli-
@@ -139,30 +299,45 @@
        a powerful suite of data types.
 
 
-</PRE>
-<H2>REPORTING BUGS</H2><PRE>
+</pre>
+<h2>REPORTING BUGS</h2><pre>
        Report bugs to dev@embedthis.com.
 
 
-</PRE>
-<H2>COPYRIGHT</H2><PRE>
+</pre>
+<h2>COPYRIGHT</h2><pre>
        Copyright (C) Embedthis Software. Ejscript is a trademark of  Embedthis
        Software.
 
 
-</PRE>
-<H2>SEE ALSO</H2><PRE>
+</pre>
+<h2>SEE ALSO</h2><pre>
        ejs, ejsmod
 
 
 
-ejsc                              March 2014                             <B>EC(1)</B>
-</PRE>
-<HR>
-<ADDRESS>
+ejsc                              March 2014                             <b>EC(1)</b>
+</pre>
+<hr>
+<address>
 Man(1) output converted with
 <a href="http://www.oac.uci.edu/indiv/ehood/man2html.html">man2html</a>
-</ADDRESS>
-</BODY>
-</HTML>
-</html>
+</address>
+
+
+
+    </div>
+    <div class="terms ui basic center aligned segment">
+        <p>&copy; Embedthis Software. All rights reserved.</p>
+    </div>
+
+    <script src="../lib/jquery/jquery.min.js"></script>
+    <script src="../lib/jquery/jquery.slim.min.js"></script>
+    <script src="../lib/semantic-ui/semantic.min.js"></script>
+     
+
+    
+
+
+
+

@@ -815,6 +815,7 @@ static int getNumOption(Ejs *ejs, EjsObj *options, cchar *field)
 
 static void setupTrace(Ejs *ejs, HttpTrace *trace, EjsObj *options)
 {
+    httpSetTraceLevel(getNumOption(ejs, options, "level"));
     httpSetTraceEventLevel(trace, "connection", getNumOption(ejs, options, "connection"));
     httpSetTraceEventLevel(trace, "error", getNumOption(ejs, options, "error"));
     httpSetTraceEventLevel(trace, "inform", getNumOption(ejs, options, "info"));
@@ -926,7 +927,7 @@ static EjsObj *http_set_verify(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         hp->ssl = mprCreateSsl(0);
     }
     mprVerifySslIssuer(hp->ssl, verify);
-    mprVerifySslPeer(hp->ssl, verify);
+    mprVerifySslPeer(hp->ssl, verify ? "required": "none");
     return 0;
 }
 

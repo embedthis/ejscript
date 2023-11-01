@@ -78,7 +78,7 @@ MAIN(ejsMain, int argc, char **argv, char **envp)
     optimizeLevel = 9;
     strict = 0;
     logSpec = 0;
-    traceSpec = 0;
+    traceSpec = "stderr:0";
 
     app->files = mprCreateList(-1, 0);
     app->iterations = 1;
