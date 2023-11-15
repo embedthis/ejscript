@@ -2605,7 +2605,7 @@ function setMatcher( preFilter, selector, matcher, postFilter, postFinder, postS
 	} );
 }
 
-function matcherFromTokens( tokens ) {
+function matcherFrostokens( tokens ) {
 	var checkContext, matcher, j,
 		len = tokens.length,
 		leadingRelative = Expr.relative[ tokens[ 0 ].type ],
@@ -2656,8 +2656,8 @@ function matcherFromTokens( tokens ) {
 						.concat( { value: tokens[ i - 2 ].type === " " ? "*" : "" } )
 					).replace( rtrim, "$1" ),
 					matcher,
-					i < j && matcherFromTokens( tokens.slice( i, j ) ),
-					j < len && matcherFromTokens( ( tokens = tokens.slice( j ) ) ),
+					i < j && matcherFrostokens( tokens.slice( i, j ) ),
+					j < len && matcherFrostokens( ( tokens = tokens.slice( j ) ) ),
 					j < len && toSelector( tokens )
 				);
 			}
@@ -2807,7 +2807,7 @@ compile = Sizzle.compile = function( selector, match /* Internal Use Only */ ) {
 		}
 		i = match.length;
 		while ( i-- ) {
-			cached = matcherFromTokens( match[ i ] );
+			cached = matcherFrostokens( match[ i ] );
 			if ( cached[ expando ] ) {
 				setMatchers.push( cached );
 			} else {
