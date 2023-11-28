@@ -1,5 +1,5 @@
 /*
-    me.h -- MakeMe Configure Header for linux-x86-default
+    me.h -- MakeMe Configure Header for linux-x64-default
 
     This header is created by Me during configuration. To change settings, re-run
     configure or define variables in your Makefile to override these default values.
@@ -8,15 +8,6 @@
 /* Settings */
 #ifndef ME_AUTHOR
     #define ME_AUTHOR "Embedthis Software"
-#endif
-#ifndef ME_CERTS_BITS
-    #define ME_CERTS_BITS 2048
-#endif
-#ifndef ME_CERTS_DAYS
-    #define ME_CERTS_DAYS 3650
-#endif
-#ifndef ME_CERTS_GENDH
-    #define ME_CERTS_GENDH 0
 #endif
 #ifndef ME_COMPANY
     #define ME_COMPANY "embedthis"
@@ -67,7 +58,7 @@
     #define ME_COMPILER_HAS_UNNAMED_UNIONS 1
 #endif
 #ifndef ME_COMPILER_WARN64TO32
-    #define ME_COMPILER_WARN64TO32 1
+    #define ME_COMPILER_WARN64TO32 0
 #endif
 #ifndef ME_COMPILER_WARN_UNUSED
     #define ME_COMPILER_WARN_UNUSED 1
@@ -223,7 +214,7 @@
 
 /* Profile */
 #ifndef ME_CONFIG_CMD
-    #define ME_CONFIG_CMD "me -d -q -platform linux-x86-default -configure . -gen make"
+    #define ME_CONFIG_CMD "me -d -q -platform linux-x64-default -configure . -gen make"
 #endif
 #ifndef ME_EJSCRIPT_PRODUCT
     #define ME_EJSCRIPT_PRODUCT 1
@@ -259,17 +250,11 @@
 #ifndef ME_COM_LIB
     #define ME_COM_LIB 1
 #endif
-#ifndef ME_COM_MATRIXSSL
-    #define ME_COM_MATRIXSSL 0
-#endif
 #ifndef ME_COM_MBEDTLS
     #define ME_COM_MBEDTLS 1
 #endif
 #ifndef ME_COM_MPR
     #define ME_COM_MPR 1
-#endif
-#ifndef ME_COM_NANOSSL
-    #define ME_COM_NANOSSL 0
 #endif
 #ifndef ME_COM_OPENSSL
     #define ME_COM_OPENSSL 0
@@ -281,7 +266,7 @@
     #define ME_COM_PCRE 1
 #endif
 #ifndef ME_COM_SQLITE
-    #define ME_COM_SQLITE 1
+    #define ME_COM_SQLITE 0
 #endif
 #ifndef ME_COM_SSL
     #define ME_COM_SSL 1
