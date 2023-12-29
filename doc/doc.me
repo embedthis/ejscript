@@ -21,6 +21,7 @@ Me.load({
                     let dest = src.trimComponents(base.components.length)
                     apiLayout(src, Path('dist/ref').join(dest))
                 }
+                cp('dist/ref/api/ejscript/doc.min.css', 'dist/ref/api/ejscript/doc.css')
             `
         }, 
 

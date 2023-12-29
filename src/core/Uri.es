@@ -443,7 +443,6 @@ module ejs {
         The encode call replaces all characters except: alphabetic, decimal digits, "-", "_", ".", "!", "~", "*", 
         "'", "(", ")", "#",";", ",", "/", "?", ":", "@", "&", "=", "+", "$". Note that encocdeURI does not encode
         "&", "+" and "=". If you require these to be encoded, use encodeComponents. 
-        @see Uri.encode for RFC3986 compliant encoding.
         @param str String to encode
         @returns an encoded string
      */
@@ -453,7 +452,6 @@ module ejs {
         Encode a URI component using www-url encoding. This replaces special characters with encoded alternative sequence.
         The encode call replaces all characters except: alphabetic, decimal digits, "-", "_", ".", "!", "~", "*", 
         "'", "(", ")". Note that this call encodes "=" and "&" which are often used in URL query name/key pairs.
-        @see Uri.encodeComponent for RFC3986 compliant encoding.
         @param str String to encode
         @returns an encoded string
      */

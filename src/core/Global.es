@@ -14,7 +14,7 @@ module ejs {
       */
     public var EJSCRIPT: Boolean = true
 
-    /** 
+    /*
         The "ejs" namespace used for the core library
         @spec ejs
      */

@@ -262,8 +262,8 @@ module ejs {
         function get fileSystem(): FileSystem
             FileSystem(this)
 
-        /**
-            Get iterate over any files contained under this path (assuming it is a directory) 'for (v in files)'.
+        /*
+            Iterate over any files contained under this path (assuming it is a directory) 'for (v in files)'.
                 This operates the same as getValues on a Path object.
             @return An iterator object.
             @example:
@@ -1010,7 +1010,7 @@ module ejs {
                     if (srcHash[src]) {
                         continue
                     }
-                    if (src.same(dest) && operation != list) {
+                    if (src.same(dest) && operation != 'list') {
                         print("WARNING: src same as dest for", src)
                         continue
                     }

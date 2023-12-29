@@ -94,6 +94,8 @@ ejs --log logName[:logLevel]
   </p>
 </div>
 
+<!--
+
 <p class="question">
   <a id="contributeGpl"></a>Will my patches make it into the Open Source
   version?
@@ -111,6 +113,7 @@ ejs --log logName[:logLevel]
     included in the product.
   </p>
 </div>
+-->
 
 <p class="question">
   <a id="standAlone"></a>I'm using Ejscript as a stand-alone program can I use

@@ -802,7 +802,6 @@ r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}
             Update the request resource limits. The supplied limit fields are updated.
             See the $limits property for limit field details.
             @param limits Object hash of limit fields and values
-            @see limits
          */
         native function setLimits(limits: Object): Void
 

@@ -614,7 +614,6 @@ UNUSED
             Update the request resource limits. The supplied limit fields are updated.
             See $limit for limit field details.
             @param limits Object hash of limit fields and values
-            @see limits
          */
         native function setLimits(limits: Object): Void
 

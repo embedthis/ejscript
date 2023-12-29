@@ -40,6 +40,8 @@
   <i class="right long arrow icon"></i>GitHub Repository
 </a>
 
+<!--
+
 <h2>Installing Packages</h2>
 <p>
   Ejscript can be extended via third-party packages that are published in the
@@ -47,6 +49,7 @@
   <a href="https://www.embedthis.com/pak/">Pak Web Site</a> to read about Pak
   and to <a href="https://www.embedthis.com/pak/download.html">Download Pak</a>.
 </p>
+-->
 
 <h2>Building Ejscript from Source</h2>
 <p>

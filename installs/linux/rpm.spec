@@ -6,7 +6,7 @@ Name: ${settings.name}
 Version: ${settings.version}
 License: Dual GPL/commercial
 Group: Development/Other
-URL: http://embedthis.com/ejs
+URL: https://www.embedthis.com/ejscript
 Distribution: Embedthis
 Vendor: Embedthis Software
 BuildRoot: ${prefixes.rpm}/BUILDROOT/${settings.name}-${settings.version}.${platform.mappedCpu}

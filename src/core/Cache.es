@@ -148,7 +148,6 @@ module ejs {
             Update the cache cache resource limits. The supplied limit fields are updated.
             See the $limits property for limit field details.
             @param limits Object hash of limit fields and values
-            @see limits
          */
         function setLimits(limits: Object): Void
             adapter.setLimits(limits)
