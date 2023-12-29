@@ -57,10 +57,10 @@ properties shared by all objects of a given type.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#getOwnPropertyDescriptor'><b>getOwnPropertyDescriptor</b></a>(obj: <a href='Object.html'>Object</a>, prop: <a href='String.html'>String</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the prototype property descriptor.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#getOwnPropertyNames'><b>getOwnPropertyNames</b></a>(obj: <a href='Object.html'>Object</a>, options = null): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return an array of all property names including non-enumerable properties.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#getOwnPrototypeOf'><b>getOwnPrototypeOf</b></a>(obj: <a href='Object.html'>Object</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the prototype object.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#getType'><b>getType</b></a>(obj: <a href='Object.html'>Object</a>): <a href='Type.html'>Type</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the type for an object.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#getTypeName'><b>getTypeName</b></a>(obj: <a href='Object.html'>Object</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the name of the type for an object.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#isExtensible'><b>isExtensible</b></a>(obj: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Test if an object is extensible.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#isFrozen'><b>isFrozen</b></a>(obj: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Test if an object is frozen.</td></tr>
-   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#getType'><b>getType</b></a>(obj: <a href='Object.html'>Object</a>): <a href='Type.html'>Type</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the type for an object.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#isPrototype'><b>isPrototype</b></a>(obj: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Test if the object is a prototype object.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#isSealed'><b>isSealed</b></a>(obj: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Test if an object is sealed.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#isType'><b>isType</b></a>(obj: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Test if the object is a type object.</td></tr>
@@ -98,7 +98,7 @@ properties shared by all objects of a given type.</td></tr>
 <dd><table class='parameters' title='parameters'>
 <tr class='param'><td class='param'>deep: <a href='Boolean.html'>Boolean</a> </td><td>If true, do a deep copy where all object references are also copied, and so on, recursively. A shallow clone will do 1 level deep. Deep clones are N-level deep. [default: true]</td></tr></table></dd>
 </dl><dl><dt>Specified</dt>
-<dd>ejscript-2.5</dd></dl>
+<dd>ejscript-2.7</dd></dl>
 </div>
 </div>
 <hr />
@@ -162,6 +162,22 @@ the ultimate lock-down for objects.</dd></dl>
 <dd><table class='parameters' title='parameters'>
 <tr class='param'><td class='param'>obj: <a href='Object.html'>Object</a> </td><td>Object to freeze.</td></tr></table></dd>
 </dl></div>
+</div>
+<hr />
+<a name='get'></a>
+<div class='api'>
+<div class='apiSig'>  iterator  get(options: <a href='Object.html'>Object</a> = null): <a href='iterator-Iterator.html'>Iterator</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Get an iterator for this object to be used by "for (v in obj)". </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Iteration options. Reserved for future use. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>An iterator object.</dd></dl>
+<dl><dt>Specified</dt>
+<dd>ejscript-2.7</dd></dl>
+</div>
 </div>
 <hr />
 <a name='getBaseType'></a>
@@ -245,19 +261,15 @@ namespace values.</dd></dl>
 </div>
 </div>
 <hr />
-<a name='get'></a>
+<a name='getType'></a>
 <div class='api'>
-<div class='apiSig'>  iterator  get(options: <a href='Object.html'>Object</a> = null): <a href='iterator-Iterator.html'>Iterator</a>
+<div class='apiSig'>static     getType(obj: <a href='Object.html'>Object</a>): <a href='Type.html'>Type</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Get an iterator for this object to be used by "for (v in obj)". </dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Iteration options. Reserved for future use. [default: null]</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>An iterator object.</dd></dl>
-<dl><dt>Specified</dt>
-<dd>ejscript-2.5</dd></dl>
+<dl><dt>Description</dt></dd><dd>Get the type for an object. If the object is an instance, this is the class type object. If the object is a
+type, this value is Type.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>A type object.</dd></dl>
 </div>
 </div>
 <hr />
@@ -270,6 +282,34 @@ namespace values.</dd></dl>
 If the object is a type, this value is "Type".</dd></dl>
 <dl><dt>Returns</dt>
 <dd>A type object.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='getValues'></a>
+<div class='api'>
+<div class='apiSig'>  iterator  getValues(): <a href='iterator-Iterator.html'>Iterator</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Get an iterator for this object to be used by "for each (v in obj)". </dd></dl>
+<dl><dt>Returns</dt>
+<dd>An iterator object.</dd></dl>
+<dl><dt>Specified</dt>
+<dd>ejscript-2.7</dd></dl>
+</div>
+</div>
+<hr />
+<a name='hasOwnProperty'></a>
+<div class='api'>
+<div class='apiSig'>    hasOwnProperty(name: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Check if an object has a property. The property names is interpreted using the set of 
+currently open namespaces.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>name: <a href='String.html'>String</a> </td><td>Name of property to check for.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the object contains the specified property.</dd></dl>
 </div>
 </div>
 <hr />
@@ -298,18 +338,6 @@ If the object is a type, this value is "Type".</dd></dl>
 </div>
 </div>
 <hr />
-<a name='getType'></a>
-<div class='api'>
-<div class='apiSig'>static     getType(obj: <a href='Object.html'>Object</a>): <a href='Type.html'>Type</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Get the type for an object. If the object is an instance, this is the class type object. If the object is a
-type, this value is Type.</dd></dl>
-<dl><dt>Returns</dt>
-<dd>A type object.</dd></dl>
-</div>
-</div>
-<hr />
 <a name='isPrototype'></a>
 <div class='api'>
 <div class='apiSig'>static     isPrototype(obj: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a>
@@ -318,34 +346,6 @@ type, this value is Type.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Test if the object is a prototype object. </dd></dl>
 <dl><dt>Returns</dt>
 <dd>True if the object is being used as a prototype object.</dd></dl>
-</div>
-</div>
-<hr />
-<a name='getValues'></a>
-<div class='api'>
-<div class='apiSig'>  iterator  getValues(): <a href='iterator-Iterator.html'>Iterator</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Get an iterator for this object to be used by "for each (v in obj)". </dd></dl>
-<dl><dt>Returns</dt>
-<dd>An iterator object.</dd></dl>
-<dl><dt>Specified</dt>
-<dd>ejscript-2.5</dd></dl>
-</div>
-</div>
-<hr />
-<a name='hasOwnProperty'></a>
-<div class='api'>
-<div class='apiSig'>    hasOwnProperty(name: <a href='String.html'>String</a>): <a href='Boolean.html'>Boolean</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Check if an object has a property. The property names is interpreted using the set of 
-currently open namespaces.</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>name: <a href='String.html'>String</a> </td><td>Name of property to check for.</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>True if the object contains the specified property.</dd></dl>
 </div>
 </div>
 <hr />

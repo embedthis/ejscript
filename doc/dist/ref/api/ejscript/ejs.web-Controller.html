@@ -17,7 +17,7 @@
 <table class='classHead' title='Controller'>
    <tr><td><strong>Module</strong></td><td>ejs.web</td></tr>
    <tr><td><strong>Definition</strong></td><td> class Controller</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>Controller <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.5</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Controller <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.7</td></tr>
 <tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
        </td></tr>
 </table>
@@ -63,23 +63,25 @@ setting autoFinalizing to false or by calling dontAutoFinalize(). This property 
    <tr><td nowrap align='center'></td><td>config</td><td><a href='Object.html'>Object</a></td><td>Configuration settings. This is a reference to <a href='ejs.web-Request.html#config.'>Request.config</a>. </td></tr>
 <a name='controllerName'></a>
    <tr><td nowrap align='center'></td><td>controllerName</td><td><a href='String.html'>String</a></td><td>Pascal case controller name. </td></tr>
-<a name='log'></a>
-   <tr><td nowrap align='center'></td><td>log</td><td><a href='Logger.html'>Logger</a></td><td>Logger stream - reference to <a href='ejs.web-Request.html#log.'>Request.log</a>.  </td></tr>
 <a name='finalized'></a>
    <tr><td nowrap align='center'>get </td><td>finalized</td><td><a href='Boolean.html'>Boolean</a></td><td>Has the request output been finalized. </td></tr>
-<a name='home'></a>
-   <tr><td nowrap align='center'>get </td><td>home</td><td><a href='Uri.html'>Uri</a></td><td>Home URI for the application. This is a relative Uri from the current URI to the 
-the top-most directory level of the application.</td></tr>
 <a name='flash'></a>
    <tr><td nowrap align='center'>get </td><td>flash</td><td><a href='Object.html'>Object</a></td><td>Notification "flash" messages to pass to the next request (only). By convention, the following keys are used.
 error: Negative errors (Warnings and errors), inform: Informational / postitive feedback (note),
 warn: Negative feedback (Warnings and errors), *:: Other feedback (reminders, suggestions...).</td></tr>
+<a name='home'></a>
+   <tr><td nowrap align='center'>get </td><td>home</td><td><a href='Uri.html'>Uri</a></td><td>Home URI for the application. This is a relative Uri from the current URI to the 
+the top-most directory level of the application.</td></tr>
+<a name='log'></a>
+   <tr><td nowrap align='center'></td><td>log</td><td><a href='Logger.html'>Logger</a></td><td>Logger stream - reference to <a href='ejs.web-Request.html#log.'>Request.log</a>.  </td></tr>
 <a name='params'></a>
    <tr><td nowrap align='center'></td><td>params</td><td><a href='Object.html'>Object</a></td><td>Form and query parameters. This is a reference to the <a href='ejs.web-Request.html#params'>Request.params</a> object.</td></tr>
 <a name='pathInfo'></a>
    <tr><td nowrap align='center'>get </td><td>pathInfo</td><td><a href='String.html'>String</a></td><td>Location of the request within the application.0. This is the portion of the request URL after the scriptName. 
 The pathInfo is originally derrived from uri.path after splitting off the scriptName. Changes to the uri or 
 scriptName properties will not affect the pathInfo property.</td></tr>
+<a name='request'></a>
+   <tr><td nowrap align='center'></td><td>request</td><td><a href='ejs.web-Request.html'>Request</a></td><td>Reference to the current <a href='#Request'>Request</a> object. </td></tr>
 <a name='session'></a>
    <tr><td nowrap align='center'>get </td><td>session</td><td><a href='ejs.web-Session.html'>Session</a></td><td>Session state object. The session state object can be used to share state between requests.
 If a session has not already been created, accessing this property automatically creates a new session 
@@ -87,8 +89,6 @@ and sets the <a href='ejs.web-Request.html#sessionID'>Request.sessionID</a> prop
 with the response.
 To test if a session has been created, test the sessionID property which will not auto-create a session.
 Objects are stored in the session state using JSON serialization.</td></tr>
-<a name='request'></a>
-   <tr><td nowrap align='center'></td><td>request</td><td><a href='ejs.web-Request.html'>Request</a></td><td>Reference to the current <a href='#Request'>Request</a> object. </td></tr>
 <a name='uri'></a>
    <tr><td nowrap align='center'>get </td><td>uri</td><td><a href='Uri.html'>Uri</a></td><td>The current request URI. This property is read-only and is dynamically computed from the originalUri combined
 with the current scheme, host, port, scriptName, pathInfo, query and reference property values. 
@@ -123,19 +123,19 @@ The "uri" property has fields for: scheme, host, port, path, query and reference
    <tr class='apiDef'><td class='apiType'></td><td><a href='#dontAutoFinalize'><b>dontAutoFinalize</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Stop auto-finalizing the request.0.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#error'><b>error</b></a>(msg: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set an error flash notification message.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#finalize'><b>finalize</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Signals the end of any and all response data and flushes any buffered write data to the client.(.</td></tr>
-   <tr class='apiDef'><td class='apiType'></td><td><a href='#link'><b>link</b></a>(target: <a href='Object.html'>Object</a>): <a href='Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a URI link.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#flush'><b>flush</b></a>(dir: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.Flush request data.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#header'><b>header</b></a>(key: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a request header by keyword.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#inform'><b>inform</b></a>(msg: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set an informational flash notification message.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#link'><b>link</b></a>(target: <a href='Object.html'>Object</a>): <a href='Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a URI link.</td></tr>
    <tr class='apiDef'><td class='apiType'>action </td><td><a href='#missing'><b>missing</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Missing action method.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#notify'><b>notify</b></a>(key: <a href='String.html'>String</a>, msg: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a transient flash notification message.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#on'><b>on</b></a>(name, observer: <a href='Function.html'>Function</a>): <a href='ejs.web-Controller.html'>Controller</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#read'><b>read</b></a>(buffer: <a href='ByteArray.html'>ByteArray</a>, offset: <a href='Number.html'>Number</a>, count: <a href='Number.html'>Number</a> = -1): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.If the request is posting a form, i.e.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#redirect'><b>redirect</b></a>(where: <a href='Object.html'>Object</a>, status: <a href='Number.html'>Number</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Redirect the client to the given URL.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#removeCheckers'><b>removeCheckers</b></a>(): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove all defined checkers on the Controller.</td></tr>
-   <tr class='apiDef'><td class='apiType'></td><td><a href='#setStatus'><b>setStatus</b></a>(status: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenience routine to set the (proposed) Http response status code.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#setHeader'><b>setHeader</b></a>(key: <a href='String.html'>String</a>, value: <a href='String.html'>String</a>, overwrite: <a href='Boolean.html'>Boolean</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenience routine to set a Http response header in <a href='#responseHeaders'>responseHeaders</a>.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#setHeaders'><b>setHeaders</b></a>(headers: <a href='Object.html'>Object</a>, overwrite: <a href='Boolean.html'>Boolean</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenience routine to set multiple Http response headers in <a href='#responseHeaders'>responseHeaders</a>.</td></tr>
+   <tr class='apiDef'><td class='apiType'></td><td><a href='#setStatus'><b>setStatus</b></a>(status: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenience routine to set the (proposed) Http response status code.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#warn'><b>warn</b></a>(msg: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a warning flash notification.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#write'><b>write</b></a>(args: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Low-level write data to the client.</td></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#writeCached'><b>writeCached</b></a>(): <a href='Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Manually write out cached content to the client.</td></tr>
@@ -315,6 +315,53 @@ automatically.</dd></dl>
 </div>
 </div>
 <hr />
+<a name='flush'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.web  flush(dir: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Flush the stream and underlying streams.Flush request data. A supplied flush <a href='#direction'>direction</a> argument modifies the effect of this call.
+If direction is set to Stream.READ, then all read data is discarded. If direction is set to Stream.WRITE, 
+any buffered data is written. Stream.BOTH will cause both directions to be flushed. If the stream is in 
+sync mode, this call will block until all data is written. If the stream is in async mode, it will attempt 
+to write all data but will return immediately. Defaults to Stream.WRITE.Calling flush(Sream.WRITE) or finalize() is required to ensure buffered write data is sent 
+to the client. Flushing the read direction is ignored.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>dir: <a href='Number.html'>Number</a> </td><td>Direction to flush. Set to <a href='#READ'>READ</a> <a href='#WRITE'>WRITE</a> or <a href='#BOTH'>BOTH</a>.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='header'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.web  header(key: <a href='String.html'>String</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Get a request header by keyword. Headers supplied by the remote client are stored in lower-case. 
+Headers defined on the server-side preserve case. This routine supports both by doing a case-insensitive lookup.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>key: <a href='String.html'>String</a> </td><td>Header key value to retrieve. The key match is case insensitive.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The header value.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='inform'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.web  inform(msg: <a href='String.html'>String</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Set an informational flash notification message. Flash messages persist for only one request and are a convenient way to pass state information or 
+feedback messages to the next request. To use flash messages, setupFlash() and finalizeFlash() must 
+be called before and after the request is processed. HttpServer.process will call setupFlash and finalizeFlash 
+automatically.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>msg: <a href='String.html'>String</a> </td><td>Message to store.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
 <a name='link'></a>
 <div class='api'>
 <div class='apiSig'>  ejs.web  link(target: <a href='Object.html'>Object</a>): <a href='Uri.html'>Uri</a>
@@ -362,53 +409,6 @@ r.link({uri: "http://example.com/checkout"})
 r.link({route: "default", action: "\@checkout")
 r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}}")</pre></dd></dl>
 </div>
-</div>
-<hr />
-<a name='flush'></a>
-<div class='api'>
-<div class='apiSig'>  ejs.web  flush(dir: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Flush the stream and underlying streams.Flush request data. A supplied flush <a href='#direction'>direction</a> argument modifies the effect of this call.
-If direction is set to Stream.READ, then all read data is discarded. If direction is set to Stream.WRITE, 
-any buffered data is written. Stream.BOTH will cause both directions to be flushed. If the stream is in 
-sync mode, this call will block until all data is written. If the stream is in async mode, it will attempt 
-to write all data but will return immediately. Defaults to Stream.WRITE.Calling flush(Sream.WRITE) or finalize() is required to ensure buffered write data is sent 
-to the client. Flushing the read direction is ignored.</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>dir: <a href='Number.html'>Number</a> </td><td>Direction to flush. Set to <a href='#READ'>READ</a> <a href='#WRITE'>WRITE</a> or <a href='#BOTH'>BOTH</a>.</td></tr></table></dd>
-</dl></div>
-</div>
-<hr />
-<a name='header'></a>
-<div class='api'>
-<div class='apiSig'>  ejs.web  header(key: <a href='String.html'>String</a>): <a href='String.html'>String</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Get a request header by keyword. Headers supplied by the remote client are stored in lower-case. 
-Headers defined on the server-side preserve case. This routine supports both by doing a case-insensitive lookup.</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>key: <a href='String.html'>String</a> </td><td>Header key value to retrieve. The key match is case insensitive.</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>The header value.</dd></dl>
-</div>
-</div>
-<hr />
-<a name='inform'></a>
-<div class='api'>
-<div class='apiSig'>  ejs.web  inform(msg: <a href='String.html'>String</a>): <a href='Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Set an informational flash notification message. Flash messages persist for only one request and are a convenient way to pass state information or 
-feedback messages to the next request. To use flash messages, setupFlash() and finalizeFlash() must 
-be called before and after the request is processed. HttpServer.process will call setupFlash and finalizeFlash 
-automatically.</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>msg: <a href='String.html'>String</a> </td><td>Message to store.</td></tr></table></dd>
-</dl></div>
 </div>
 <hr />
 <a name='missing'></a>
@@ -516,16 +516,6 @@ connection becomes "readable".</dd></dl>
 </div>
 </div>
 <hr />
-<a name='setStatus'></a>
-<div class='api'>
-<div class='apiSig'>  ejs.web  setStatus(status: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Convenience routine to set the (proposed) Http response status code. This is equivalent to assigning 
-to the <a href='#status'>status</a> property.</dd></dl>
-</div>
-</div>
-<hr />
 <a name='setHeader'></a>
 <div class='api'>
 <div class='apiSig'>  ejs.web  setHeader(key: <a href='String.html'>String</a>, value: <a href='String.html'>String</a>, overwrite: <a href='Boolean.html'>Boolean</a>): <a href='Void.html'>Void</a>
@@ -551,6 +541,16 @@ inspect the proposed response header set.</dd></dl>
 <dd><table class='parameters' title='parameters'>
 <tr class='param'><td class='param'>headers: <a href='Object.html'>Object</a> </td><td>Set of headers to use.</td></tr><tr class='param'><td class='param'>overwrite: <a href='Boolean.html'>Boolean</a> </td><td>If the header is already defined and overwrite is true, then the new value will overwrite the old. If overwrite is false, the new value will be catenated to the old value with a ", " separator.</td></tr></table></dd>
 </dl></div>
+</div>
+<hr />
+<a name='setStatus'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.web  setStatus(status: <a href='Number.html'>Number</a>): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Convenience routine to set the (proposed) Http response status code. This is equivalent to assigning 
+to the <a href='#status'>status</a> property.</dd></dl>
+</div>
 </div>
 <hr />
 <a name='updateCache'></a>

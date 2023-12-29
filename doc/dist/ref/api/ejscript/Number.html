@@ -85,14 +85,14 @@ An object of the appropriate number with its value set to the minimum value allo
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#Number'><b>Number</b></a>(value: <a href='Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Number constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator override </td><td><a href='#get'><b>get</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return an iterator that can be used to iterate a given number of times.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#integral'><b>integral</b></a>(size: <a href='Number.html'>Number</a> = 32): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert this number to an integral value of the specified number of bits.</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator override </td><td><a href='#getValues'><b>getValues</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return an iterator that can be used to iterate a given number of times.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#integral'><b>integral</b></a>(size: <a href='Number.html'>Number</a> = 32): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert this number to an integral value of the specified number of bits.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#max'><b>max</b></a>(other: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Returns the greater of the number and the arguments.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#min'><b>min</b></a>(other: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Returns the lessor of the number and the arguments.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#power'><b>power</b></a>(nth: <a href='Number.html'>Number</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Returns a number which is equal to this number raised to the power of the argument.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#toExponential'><b>toExponential</b></a>(fractionDigits: <a href='Number.html'>Number</a> = 0): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Returns the number formatted as a string in scientific notation with one digit before the decimal point 
 and the argument number of digits after it.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#toFixed'><b>toFixed</b></a>(fractionDigits: <a href='Number.html'>Number</a> = 0): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Returns the number formatted as a string with the specified number of digits after the decimal point.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#min'><b>min</b></a>(other: <a href='Array.html'>Array</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Returns the lessor of the number and the arguments.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#power'><b>power</b></a>(nth: <a href='Number.html'>Number</a>): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Returns a number which is equal to this number raised to the power of the argument.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#toPrecision'><b>toPrecision</b></a>(numDigits: <a href='Number.html'>Number</a> = MAX_VALUE): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Returns the number formatted as a string in either fixed or exponential notation with argument number of digits.</td></tr>
    <tr class='apiDef'><td class='apiType'> override </td><td><a href='#toString'><b>toString</b></a>(radix: <a href='Number.html'>Number</a> = 10): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>This function converts the number to a string representation.</td></tr>
 </table>
@@ -122,9 +122,26 @@ and the argument number of digits after it.</td></tr>
 <dl><dt>Returns</dt>
 <dd>An iterator.</dd></dl>
 <dl><dt>Specified</dt>
-<dd>ejscript-2.5</dd></dl>
+<dd>ejscript-2.7</dd></dl>
 <dl><dt>Example</dt>
 <dd><pre>for (i in 5) 
+    print(i)
+@spec ejs</pre></dd></dl>
+</div>
+</div>
+<hr />
+<a name='getValues'></a>
+<div class='api'>
+<div class='apiSig'>override   iterator  getValues(): <a href='iterator-Iterator.html'>Iterator</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Return an iterator that can be used to iterate a given number of times. This is used in for/each statements.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>An iterator.</dd></dl>
+<dl><dt>Specified</dt>
+<dd>ejscript-2.7</dd></dl>
+<dl><dt>Example</dt>
+<dd><pre>for each (i in 5) 
     print(i)
 @spec ejs</pre></dd></dl>
 </div>
@@ -143,24 +160,7 @@ converted to integral values using truncation.</dd></dl>
 </dl><dl><dt>Returns</dt>
 <dd>An integral number.</dd></dl>
 <dl><dt>Specified</dt>
-<dd>ejscript-2.5</dd></dl>
-</div>
-</div>
-<hr />
-<a name='getValues'></a>
-<div class='api'>
-<div class='apiSig'>override   iterator  getValues(): <a href='iterator-Iterator.html'>Iterator</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Return an iterator that can be used to iterate a given number of times. This is used in for/each statements.</dd></dl>
-<dl><dt>Returns</dt>
-<dd>An iterator.</dd></dl>
-<dl><dt>Specified</dt>
-<dd>ejscript-2.5</dd></dl>
-<dl><dt>Example</dt>
-<dd><pre>for each (i in 5) 
-    print(i)
-@spec ejs</pre></dd></dl>
+<dd>ejscript-2.7</dd></dl>
 </div>
 </div>
 <hr />
@@ -176,36 +176,7 @@ converted to integral values using truncation.</dd></dl>
 </dl><dl><dt>Returns</dt>
 <dd>A number.</dd></dl>
 <dl><dt>Specified</dt>
-<dd>ejscript-2.5</dd></dl>
-</div>
-</div>
-<hr />
-<a name='toExponential'></a>
-<div class='api'>
-<div class='apiSig'>    toExponential(fractionDigits: <a href='Number.html'>Number</a> = 0): <a href='String.html'>String</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Returns the number formatted as a string in scientific notation with one digit before the decimal point 
-and the argument number of digits after it. </dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>fractionDigits: <a href='Number.html'>Number</a> </td><td>The number of digits in the fraction. [default: 0]</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>A string representing the number.</dd></dl>
-</div>
-</div>
-<hr />
-<a name='toFixed'></a>
-<div class='api'>
-<div class='apiSig'>    toFixed(fractionDigits: <a href='Number.html'>Number</a> = 0): <a href='String.html'>String</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Returns the number formatted as a string with the specified number of digits after the decimal point. </dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>fractionDigits: <a href='Number.html'>Number</a> </td><td>The number of digits in the fraction. [default: 0]</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>A string representing the number.</dd></dl>
+<dd>ejscript-2.7</dd></dl>
 </div>
 </div>
 <hr />
@@ -240,6 +211,35 @@ and the argument number of digits after it. </dd></dl>
 <dl><dt>Specified</dt>
 <dd>ejs
 0</dd></dl>
+</div>
+</div>
+<hr />
+<a name='toExponential'></a>
+<div class='api'>
+<div class='apiSig'>    toExponential(fractionDigits: <a href='Number.html'>Number</a> = 0): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Returns the number formatted as a string in scientific notation with one digit before the decimal point 
+and the argument number of digits after it. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>fractionDigits: <a href='Number.html'>Number</a> </td><td>The number of digits in the fraction. [default: 0]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A string representing the number.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='toFixed'></a>
+<div class='api'>
+<div class='apiSig'>    toFixed(fractionDigits: <a href='Number.html'>Number</a> = 0): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Returns the number formatted as a string with the specified number of digits after the decimal point. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>fractionDigits: <a href='Number.html'>Number</a> </td><td>The number of digits in the fraction. [default: 0]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A string representing the number.</dd></dl>
 </div>
 </div>
 <hr />

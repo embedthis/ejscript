@@ -15,7 +15,6 @@
     <link href="../lib/semantic-ui/semantic.min.css" rel="stylesheet" type="text/css">
     <link href="../css/all.min.css" rel="stylesheet" type="text/css">
     <link href="../css/api.min.css" rel="stylesheet" type="text/css">
-    <link href="../ref/api/ejscript/doc.min.css" rel="stylesheet" type="text/css">
     
 
 </head>

@@ -17,7 +17,7 @@
 <table class='classHead' title='Http'>
    <tr><td><strong>Module</strong></td><td>ejs</td></tr>
    <tr><td><strong>Definition</strong></td><td> class Http</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>Http <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.5</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Http <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.7</td></tr>
 <tr><td><strong>Stability</strong></td><td>Evolving
 (.</td></tr>
        </td></tr>
@@ -42,14 +42,28 @@ PUT, DELETE, OPTIONS, and TRACE. It also supports Keep-Alive and SSL connections
 <a name='BadGateway'></a>
    <tr><td nowrap align='center'> static const </td><td>BadGateway</td><td><a href='Number.html'>Number</a></td><td>HTTP Bad Gateway Status (502) 
 0. </td></tr>
+<a name='BadMethod'></a>
+   <tr><td nowrap align='center'> static const </td><td>BadMethod</td><td><a href='Number.html'>Number</a></td><td>HTTP Method Not Allowed Status (405). </td></tr>
+<a name='BadRange'></a>
+   <tr><td nowrap align='center'> static const </td><td>BadRange</td><td><a href='Number.html'>Number</a></td><td>HTTP Requested Range Not Satisfiable (416). </td></tr>
 <a name='BadRequest'></a>
    <tr><td nowrap align='center'> static const </td><td>BadRequest</td><td><a href='Number.html'>Number</a></td><td>HTTP Bad Request Status(400). </td></tr>
+<a name='Conflict'></a>
+   <tr><td nowrap align='center'> static const </td><td>Conflict</td><td><a href='Number.html'>Number</a></td><td>HTTP Conflict Status (409). </td></tr>
 <a name='Continue'></a>
    <tr><td nowrap align='center'> static const </td><td>Continue</td><td><a href='Number.html'>Number</a></td><td>HTTP Continue Status (100). </td></tr>
 <a name='Created'></a>
    <tr><td nowrap align='center'> static const </td><td>Created</td><td><a href='Number.html'>Number</a></td><td>HTTP Created Status (201). </td></tr>
+<a name='EntityTooLarge'></a>
+   <tr><td nowrap align='center'> static const </td><td>EntityTooLarge</td><td><a href='Number.html'>Number</a></td><td>HTTP Request Entity Too Large Status (413). </td></tr>
+<a name='Forbidden'></a>
+   <tr><td nowrap align='center'> static const </td><td>Forbidden</td><td><a href='Number.html'>Number</a></td><td>HTTP Forbidden Status (403). </td></tr>
 <a name='GatewayTimeout'></a>
    <tr><td nowrap align='center'> static const </td><td>GatewayTimeout</td><td><a href='Number.html'>Number</a></td><td>HTTP Gateway Timeout Status (504). </td></tr>
+<a name='Gone'></a>
+   <tr><td nowrap align='center'> static const </td><td>Gone</td><td><a href='Number.html'>Number</a></td><td>HTTP Gone Status (410). </td></tr>
+<a name='LengthRequired'></a>
+   <tr><td nowrap align='center'> static const </td><td>LengthRequired</td><td><a href='Number.html'>Number</a></td><td>HTTP Length Required Status (411). </td></tr>
 <a name='MovedPermanently'></a>
    <tr><td nowrap align='center'> static const </td><td>MovedPermanently</td><td><a href='Number.html'>Number</a></td><td>HTTP Moved Permanently Status (301). </td></tr>
 <a name='MovedTemporarily'></a>
@@ -59,34 +73,20 @@ PUT, DELETE, OPTIONS, and TRACE. It also supports Keep-Alive and SSL connections
 <a name='NoContent'></a>
    <tr><td nowrap align='center'> static const </td><td>NoContent</td><td><a href='Number.html'>Number</a></td><td>HTTP No Content Status (204)  
 0. </td></tr>
+<a name='NotAcceptable'></a>
+   <tr><td nowrap align='center'> static const </td><td>NotAcceptable</td><td><a href='Number.html'>Number</a></td><td>HTTP Not Acceptable Status (406). </td></tr>
 <a name='NotAuthoritative'></a>
    <tr><td nowrap align='center'> static const </td><td>NotAuthoritative</td><td><a href='Number.html'>Number</a></td><td>HTTP Non-Authoritative Information Status (203). </td></tr>
+<a name='NotFound'></a>
+   <tr><td nowrap align='center'> static const </td><td>NotFound</td><td><a href='Number.html'>Number</a></td><td>HTTP Not Found Status (404). </td></tr>
+<a name='NotImplemented'></a>
+   <tr><td nowrap align='center'> static const </td><td>NotImplemented</td><td><a href='Number.html'>Number</a></td><td>HTTP Not Implemented Status (501). </td></tr>
 <a name='NotModified'></a>
    <tr><td nowrap align='center'> static const </td><td>NotModified</td><td><a href='Number.html'>Number</a></td><td>HTTP Not Modified Status (304). </td></tr>
 <a name='Ok'></a>
    <tr><td nowrap align='center'> static const </td><td>Ok</td><td><a href='Number.html'>Number</a></td><td>HTTP Success Status (200). </td></tr>
 <a name='PartialContent'></a>
    <tr><td nowrap align='center'> static const </td><td>PartialContent</td><td><a href='Number.html'>Number</a></td><td>HTTP Partial Content Status (206). </td></tr>
-<a name='Reset'></a>
-   <tr><td nowrap align='center'> static const </td><td>Reset</td><td><a href='Number.html'>Number</a></td><td>HTTP Reset Content Status (205). </td></tr>
-<a name='SeeOther'></a>
-   <tr><td nowrap align='center'> static const </td><td>SeeOther</td><td><a href='Number.html'>Number</a></td><td>HTTP See Other Status (303). </td></tr>
-<a name='BadMethod'></a>
-   <tr><td nowrap align='center'> static const </td><td>BadMethod</td><td><a href='Number.html'>Number</a></td><td>HTTP Method Not Allowed Status (405). </td></tr>
-<a name='Conflict'></a>
-   <tr><td nowrap align='center'> static const </td><td>Conflict</td><td><a href='Number.html'>Number</a></td><td>HTTP Conflict Status (409). </td></tr>
-<a name='Forbidden'></a>
-   <tr><td nowrap align='center'> static const </td><td>Forbidden</td><td><a href='Number.html'>Number</a></td><td>HTTP Forbidden Status (403). </td></tr>
-<a name='NotAcceptable'></a>
-   <tr><td nowrap align='center'> static const </td><td>NotAcceptable</td><td><a href='Number.html'>Number</a></td><td>HTTP Not Acceptable Status (406). </td></tr>
-<a name='NotFound'></a>
-   <tr><td nowrap align='center'> static const </td><td>NotFound</td><td><a href='Number.html'>Number</a></td><td>HTTP Not Found Status (404). </td></tr>
-<a name='EntityTooLarge'></a>
-   <tr><td nowrap align='center'> static const </td><td>EntityTooLarge</td><td><a href='Number.html'>Number</a></td><td>HTTP Request Entity Too Large Status (413). </td></tr>
-<a name='Gone'></a>
-   <tr><td nowrap align='center'> static const </td><td>Gone</td><td><a href='Number.html'>Number</a></td><td>HTTP Gone Status (410). </td></tr>
-<a name='LengthRequired'></a>
-   <tr><td nowrap align='center'> static const </td><td>LengthRequired</td><td><a href='Number.html'>Number</a></td><td>HTTP Length Required Status (411). </td></tr>
 <a name='PaymentRequired'></a>
    <tr><td nowrap align='center'> static const </td><td>PaymentRequired</td><td><a href='Number.html'>Number</a></td><td>HTTP Payment Required Status (402). </td></tr>
 <a name='PrecondFailed'></a>
@@ -96,17 +96,17 @@ PUT, DELETE, OPTIONS, and TRACE. It also supports Keep-Alive and SSL connections
    <tr><td nowrap align='center'> static const </td><td>ProxyAuthRequired</td><td><a href='Number.html'>Number</a></td><td>HTTP ProxyAuthentication Required Status (407). </td></tr>
 <a name='RequestTimeout'></a>
    <tr><td nowrap align='center'> static const </td><td>RequestTimeout</td><td><a href='Number.html'>Number</a></td><td>HTTP Request Timeout Status (408). </td></tr>
+<a name='Reset'></a>
+   <tr><td nowrap align='center'> static const </td><td>Reset</td><td><a href='Number.html'>Number</a></td><td>HTTP Reset Content Status (205). </td></tr>
+<a name='SeeOther'></a>
+   <tr><td nowrap align='center'> static const </td><td>SeeOther</td><td><a href='Number.html'>Number</a></td><td>HTTP See Other Status (303). </td></tr>
+<a name='ServerError'></a>
+   <tr><td nowrap align='center'> static const </td><td>ServerError</td><td><a href='Number.html'>Number</a></td><td>HTTP Server Error Status (500). </td></tr>
 <a name='ServiceUnavailable'></a>
    <tr><td nowrap align='center'> static const </td><td>ServiceUnavailable</td><td><a href='Number.html'>Number</a></td><td>HTTP Service Unavailable Status (503) 
 8. </td></tr>
 <a name='Unauthorized'></a>
    <tr><td nowrap align='center'> static const </td><td>Unauthorized</td><td><a href='Number.html'>Number</a></td><td>HTTP Unauthorized Status (401). </td></tr>
-<a name='BadRange'></a>
-   <tr><td nowrap align='center'> static const </td><td>BadRange</td><td><a href='Number.html'>Number</a></td><td>HTTP Requested Range Not Satisfiable (416). </td></tr>
-<a name='NotImplemented'></a>
-   <tr><td nowrap align='center'> static const </td><td>NotImplemented</td><td><a href='Number.html'>Number</a></td><td>HTTP Not Implemented Status (501). </td></tr>
-<a name='ServerError'></a>
-   <tr><td nowrap align='center'> static const </td><td>ServerError</td><td><a href='Number.html'>Number</a></td><td>HTTP Server Error Status (500). </td></tr>
 <a name='UnsupportedMedia'></a>
    <tr><td nowrap align='center'> static const </td><td>UnsupportedMedia</td><td><a href='Number.html'>Number</a></td><td>HTTP Unsupported Media Type (415). </td></tr>
 <a name='UriTooLong'></a>
@@ -613,11 +613,7 @@ See <a href='#limit'>limit</a> for limit field details.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' title='parameters'>
 <tr class='param'><td class='param'>limits: <a href='Object.html'>Object</a> </td><td>Object hash of limit fields and values.</td></tr></table></dd>
-</dl><dl><dt>See Also</dt>
-<dd>
-<a href='limits.html'>limits</a>
-</dd></dl>
-</div>
+</dl></div>
 </div>
 <hr />
 <a name='trace'></a>

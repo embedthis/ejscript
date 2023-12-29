@@ -17,7 +17,7 @@
 <table class='classHead' title='Uri'>
    <tr><td><strong>Module</strong></td><td>ejs</td></tr>
    <tr><td><strong>Definition</strong></td><td> class Uri</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>Uri <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.5</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Uri <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.7</td></tr>
 <tr><td><strong>Stability</strong></td><td>Evolving.</td></tr>
        </td></tr>
 </table>
@@ -84,8 +84,8 @@ NOTE: this only tests the URI and not any physical resource associated with the 
 Set to "text/html" if the mime type cannot be determined from the extension. 
 Set to null if the URI has no extension.</td></tr>
 <a name='normalize'></a>
-   <tr><td nowrap align='center'> get </td><td>normalize</td><td><a href='Uri.html'>Uri</a></td><td>Normalized URI by removing all redundant and invalid URI components. Set to a URI with "segment/.." 
-and "./" components removed. The value will not be converted to an absolute URI nor will it map character case.</td></tr>
+   <tr><td nowrap align='center'> get </td><td>normalize</td><td><a href='Uri.html'>Uri</a></td><td>Normalized URI by removing all redundant and invalid URI components. Redundant segments with "./" and 
+"../" will be removed including leading "../" segments.</td></tr>
 <a name='path'></a>
    <tr><td nowrap align='center'> get set </td><td>path</td><td><a href='String.html'>String</a></td><td>The URI path portion after the hostname
 Set to null if there is no path. </td></tr>
@@ -116,6 +116,7 @@ after a "#" character in the URI.  Set to null if there is no reference.</td></t
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#encode'><b>encode</b></a>(str: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Encode a URI using www-url encoding.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#encodeComponent'><b>encodeComponent</b></a>(str: <a href='String.html'>String</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Encode a URI component suitable for the "application/x-www-form-urlencoded" mime type.</td></tr>
    <tr class='apiDef'><td class='apiType'> static </td><td><a href='#template'><b>template</b></a>(pattern: <a href='String.html'>String</a>, options: <a href='Array.html'>Array</a>): <a href='Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a URI based on a template.</td></tr>
+   <tr class='apiDef'><td class='apiType'> static </td><td><a href='#templateString'><b>templateString</b></a>(pattern: <a href='String.html'>String</a>, options: <a href='Array.html'>Array</a>): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a string URI based on a template.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='Object.html#InstanceMethods'><i>Inherited Methods</i></a></p>
@@ -159,7 +160,7 @@ NOTE: this does a case-sensitive match.</td></tr>
 <dl><dt>Description</dt></dd><dd>Create and parse a Uri object. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>uri: <a href='Object.html'>Object</a> </td><td>A string or object hash that describes the URI. The <a href='#uri'>uri</a> specify a complete absolute URI string or it may specify a partial URI where missing elements take the normal defaults. The <a href='#uri'>uri</a> argument may also be  an object hash with the following properties.</td></tr></table></dd>
+<tr class='param'><td class='param'>uri: <a href='Object.html'>Object</a> </td><td>A string or object hash that describes the URI. The <a href='#uri'>uri</a> may specify a complete absolute URI string or it may specify a partial URI where missing elements take the normal defaults. The <a href='#uri'>uri</a> argument may also be  an object hash with the following properties.</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' title='options'>
 <td class='param'>scheme</td><td>String URI protocol scheme (http or https).</td></tr>
@@ -178,7 +179,7 @@ NOTE: this does a case-sensitive match.</td></tr>
 </div>
 <div class='apiDetail'>
 <dl><dt>Description</dt></dd><dd>Create a complete absolute URI from "this" URI with all mandatory components present including 
-scheme and host. The resulting URI path will be normalized and any missing components will be 
+scheme and host. The resulting URI path will be normalized and any missing components will be
 completed with values from the given <a href='#base'>base</a> URI. If "this" URI path is relative, it will be joined to base 
 URI's path.
 Any query component of "this" URI is discarded in the result. This is because the query component of "this" URI
@@ -186,6 +187,21 @@ is regarded as POST data and not integral to the base URI.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' title='parameters'>
 <tr class='param'><td class='param'>base </td><td>Optional URI to provide missing components and a base URI path if the current URI path is relative.  The base argument can be a string, URI or an object hash of URI component. If the base argument is not supplied, the current URI will be completed as much as possible. See <a href='#complete'>complete</a>.  [default: null]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A complete, absolute URI. 8.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='complete'></a>
+<div class='api'>
+<div class='apiSig'>    complete(missing = null): <a href='Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Create a complete absolute URI from "this" URI with all mandatory components present including scheme and host. The resulting URI path will be normalized and missing (mandatory) components will be completed with values 
+from the given "missing" argument.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>missing </td><td>Optional URI to provide the missing components. The missing argument can be a string, URI or an object hash of URI component. If this missing argument is not provided, the following defaults are used: "http://localhost:80/". [default: null]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A complete, absolute URI.</dd></dl>
 </div>
@@ -216,21 +232,6 @@ is regarded as POST data and not integral to the base URI.</dd></dl>
 <tr class='param'><td class='param'>str: <a href='String.html'>String</a> </td><td>String to decode.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A decoded string.</dd></dl>
-</div>
-</div>
-<hr />
-<a name='complete'></a>
-<div class='api'>
-<div class='apiSig'>    complete(missing = null): <a href='Uri.html'>Uri</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Create a complete absolute URI from "this" URI with all mandatory components present including scheme and host. The resulting URI path will be normalized and missing (mandatory) components will be completed with values 
-from the given "missing" argument.</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>missing </td><td>Optional URI to provide the missing components. The missing argument can be a string, URI or an object hash of URI component. If this missing argument is not provided, the following defaults are used: "http://localhost:80/". [default: null]</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>A complete, absolute URI.</dd></dl>
 </div>
 </div>
 <hr />
@@ -401,6 +402,22 @@ the first object providing a value.</dd></dl>
 <tr class='param'><td class='param'>pattern: <a href='String.html'>String</a> </td><td>URI-Template with {word} tokens.</td></tr><tr class='param'><td class='param'>options: <a href='Array.html'>Array</a> </td><td>Set of option objects with token properties to complete the URI.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A URI.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='templateString'></a>
+<div class='api'>
+<div class='apiSig'>static     templateString(pattern: <a href='String.html'>String</a>, options: <a href='Array.html'>Array</a>): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Create a string URI based on a template. The template is a subset of the URI-templates specification and supports
+simple {tokens} only. Each token is looked for in the set of provided option objects. The search stops with
+the first object providing a value.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>pattern: <a href='String.html'>String</a> </td><td>URI-Template with {word} tokens.</td></tr><tr class='param'><td class='param'>options: <a href='Array.html'>Array</a> </td><td>Set of option objects with token properties to complete the URI.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A URI String.</dd></dl>
 </div>
 </div>
 <hr />

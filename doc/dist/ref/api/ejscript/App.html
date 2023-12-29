@@ -17,7 +17,7 @@
 <table class='classHead' title='App'>
    <tr><td><strong>Module</strong></td><td>ejs</td></tr>
    <tr><td><strong>Definition</strong></td><td> class App</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>App <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.5</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>App <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.7</td></tr>
 <tr><td><strong>Stability</strong></td><td>Evolving.</td></tr>
        </td></tr>
 </table>
@@ -56,15 +56,19 @@ is invoked as "ejs script arg1 arg2", then args[0] will be "script", args[1] wil
 Set the standard error stream. Changing the error stream will close and reopen stderr.</td></tr>
 <a name='exeDir'></a>
    <tr><td nowrap align='center'> static get </td><td>exeDir</td><td><a href='Path.html'>Path</a></td><td>The directory containing the application executable. </td></tr>
+<a name='exePath'></a>
+   <tr><td nowrap align='center'> static get </td><td>exePath</td><td><a href='Path.html'>Path</a></td><td>The application executable path. </td></tr>
+<a name='gid'></a>
+   <tr><td nowrap align='center'> static get </td><td>gid</td><td><a href='Number.html'>Number</a></td><td>The group ID of the user account running the application. Only supported on Unix.</td></tr>
+<a name='home'></a>
+   <tr><td nowrap align='center'> static get </td><td>home</td><td><a href='Path.html'>Path</a></td><td>The user's home directory. </td></tr>
+<a name='inputStream'></a>
+   <tr><td nowrap align='center'> static get set </td><td>inputStream</td><td><a href='Stream.html'>Stream</a></td><td>Set the standard input stream. Changing the input stream will close and reopen stdin.</td></tr>
 <a name='log'></a>
    <tr><td nowrap align='center'> static </td><td>log</td><td><a href='Logger.html'>Logger</a></td><td>Application logger. This singleton object respresents the Application default logger.
 If the ejsrc startup configuration file defines a log.location field, the log logger will send messages to
 the defined location. Otherwise, messages will be sent to the MprLog stream. 
 (.</td></tr>
-<a name='exePath'></a>
-   <tr><td nowrap align='center'> static get </td><td>exePath</td><td><a href='Path.html'>Path</a></td><td>The application executable path. </td></tr>
-<a name='gid'></a>
-   <tr><td nowrap align='center'> static get </td><td>gid</td><td><a href='Number.html'>Number</a></td><td>The group ID of the user account running the application. Only supported on Unix.</td></tr>
 <a name='mprLog'></a>
    <tr><td nowrap align='center'> static </td><td>mprLog</td><td><a href='MprLog.html'>MprLog</a></td><td>Application MPR log object. This singleton object represents the Application log file specified via the
 --log command line switch.
@@ -72,6 +76,12 @@ the defined location. Otherwise, messages will be sent to the MprLog stream.
 <a name='name'></a>
    <tr><td nowrap align='center'> static </td><td>name</td><td><a href='String.html'>String</a></td><td>Application name. Single word, lower-case name for the application. This is initialized to the name of
 the script or "ejs" if running interactively.</td></tr>
+<a name='outputStream'></a>
+   <tr><td nowrap align='center'> static get set </td><td>outputStream</td><td><a href='Stream.html'>Stream</a></td><td>The standard output stream. Changing the output stream will close and reopen stdout.</td></tr>
+<a name='pid'></a>
+   <tr><td nowrap align='center'> static get </td><td>pid</td><td><a href='Number.html'>Number</a></td><td>The process ID of the application. </td></tr>
+<a name='search'></a>
+   <tr><td nowrap align='center'> static get set </td><td>search</td><td><a href='Array.html'>Array</a></td><td>The current module search path. Set to an array of Paths.</td></tr>
 <a name='started'></a>
    <tr><td nowrap align='center'> static </td><td>started</td><td><a href='Date.html'>Date</a></td><td>Application start time. </td></tr>
 <a name='test'></a>
@@ -79,16 +89,6 @@ the script or "ejs" if running interactively.</td></tr>
 <a name='title'></a>
    <tr><td nowrap align='center'> static </td><td>title</td><td><a href='String.html'>String</a></td><td>Application title name. Multi-word, Camel Case name for the application suitable for display. This is 
 initialized to the name of the script or "Embedthis Ejscript" if running interactively.</td></tr>
-<a name='home'></a>
-   <tr><td nowrap align='center'> static get </td><td>home</td><td><a href='Path.html'>Path</a></td><td>The user's home directory. </td></tr>
-<a name='inputStream'></a>
-   <tr><td nowrap align='center'> static get set </td><td>inputStream</td><td><a href='Stream.html'>Stream</a></td><td>Set the standard input stream. Changing the input stream will close and reopen stdin.</td></tr>
-<a name='outputStream'></a>
-   <tr><td nowrap align='center'> static get set </td><td>outputStream</td><td><a href='Stream.html'>Stream</a></td><td>The standard output stream. Changing the output stream will close and reopen stdout.</td></tr>
-<a name='pid'></a>
-   <tr><td nowrap align='center'> static get </td><td>pid</td><td><a href='Number.html'>Number</a></td><td>The process ID of the application. </td></tr>
-<a name='search'></a>
-   <tr><td nowrap align='center'> static get set </td><td>search</td><td><a href='Array.html'>Array</a></td><td>The current module search path. Set to an array of Paths.</td></tr>
 <a name='uid'></a>
    <tr><td nowrap align='center'> static get </td><td>uid</td><td><a href='Number.html'>Number</a></td><td>The user ID of the user account running the application. Only supported on Unix.</td></tr>
 <a name='version'></a>
@@ -165,7 +165,7 @@ paths suitable for use by the <a href='#search'>search</a> property. NOTE: this 
 <dl><dt>Description</dt></dd><dd>Stop the program and exit. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>status: <a href='Number.html'>Number</a> </td><td>The optional exit code to provide the environment. If running inside the ejs command program, the status is used as process exit status. [default: 0]</td></tr><tr class='param'><td class='param'>how: <a href='String.html'>String</a> </td><td>How the exit should proceed. Options are: "abort", "safe" or "normal".  An option of "abort" will immediately abort the application without flushing buffered data.  An option of "normal" which is the default, will wait for the application to become idle before exiting.  A application is idle when it has no running commands, sockets, Http requests or worker threads. An option of "safe" will try to exit, but if after the timeout expires the application is still not idle,  the exit will be cancelled and this routine will return false. [default: normal]</td></tr><tr class='param'><td class='param'>timeout: <a href='Number.html'>Number</a> </td><td>Time period in milliseconds to wait for the application to become idle before exiting. Defaults to zero. [default: 0]</td></tr></table></dd>
+<tr class='param'><td class='param'>status: <a href='Number.html'>Number</a> </td><td>The optional exit code to provide the environment. If running inside the ejs command program, the status is used as process exit status. [default: 0]</td></tr><tr class='param'><td class='param'>how: <a href='String.html'>String</a> </td><td>How the exit should proceed. Options are: "abort", "safe" or "normal".  An option of "abort" will immediately abort the application without flushing buffered data.  An option of "normal" which is the default, will wait for the application to become idle before exiting.  A application is idle when it has no running commands, sockets, Http requests or worker threads. An option of "safe" will try to exit, but if after the timeout expires the application is still not idle,  the exit will be cancelled and this routine will return false. [default: normal]</td></tr><tr class='param'><td class='param'>timeout: <a href='Number.html'>Number</a> </td><td>Time period in milliseconds to wait for the application to become idle before exiting.  Defaults to zero. [default: 0]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

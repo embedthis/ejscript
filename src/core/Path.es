@@ -262,7 +262,7 @@ module ejs {
         function get fileSystem(): FileSystem
             FileSystem(this)
 
-        /*
+        /**
             Iterate over any files contained under this path (assuming it is a directory) 'for (v in files)'.
                 This operates the same as getValues on a Path object.
             @return An iterator object.

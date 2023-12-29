@@ -17,7 +17,7 @@
 <table class='classHead' title='Record'>
    <tr><td><strong>Module</strong></td><td>ejs.db.mapper</td></tr>
    <tr><td><strong>Definition</strong></td><td> class Record</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>Record <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.5</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Record <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.7</td></tr>
 <tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
 <tr><td><strong>Example</strong></td><td><pre>public dynamic class MyModel implements Record {}
 @spec ejs</pre></td></tr>
@@ -66,12 +66,12 @@ extend.</p>
    <tr class='apiDef'><td class='apiType'>static </td><td><a href='#getNumRows'><b>getNumRows</b></a>(): <a href='Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return the number of rows in the table.</td></tr>
    <tr class='apiDef'><td class='apiType'>static </td><td><a href='#getTableName'><b>getTableName</b></a>(): <a href='String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the associated name for this record.</td></tr>
    <tr class='apiDef'><td class='apiType'>static </td><td><a href='#hasAndBelongsToMany'><b>hasAndBelongsToMany</b></a>(model: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define a containment relationship to another model class.</td></tr>
+   <tr class='apiDef'><td class='apiType'>static </td><td><a href='#hasMany'><b>hasMany</b></a>(model: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define a containment relationship to another model class.</td></tr>
    <tr class='apiDef'><td class='apiType'>static </td><td><a href='#hasOne'><b>hasOne</b></a>(model: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define a containment relationship to another model class.</td></tr>
    <tr class='apiDef'><td class='apiType'>static </td><td><a href='#remove'><b>remove</b></a>(ids: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove records from the database.</td></tr>
    <tr class='apiDef'><td class='apiType'>static </td><td><a href='#setDb'><b>setDb</b></a>(database: <a href='ejs.db-Database.html'>Database</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the database connection for this record class.</td></tr>
    <tr class='apiDef'><td class='apiType'>static </td><td><a href='#setKeyName'><b>setKeyName</b></a>(name: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the key name for this record.</td></tr>
    <tr class='apiDef'><td class='apiType'>static </td><td><a href='#setTableName'><b>setTableName</b></a>(name: <a href='String.html'>String</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the associated table name for this record.</td></tr>
-   <tr class='apiDef'><td class='apiType'>static </td><td><a href='#hasMany'><b>hasMany</b></a>(model: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define a containment relationship to another model class.</td></tr>
    <tr class='apiDef'><td class='apiType'>static </td><td><a href='#sql'><b>sql</b></a>(cmd: <a href='String.html'>String</a>, count: <a href='Number.html'>Number</a> = null): <a href='Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run an SQL statement and return selected records.</td></tr>
    <tr class='apiDef'><td class='apiType'>static </td><td><a href='#trace'><b>trace</b></a>(on: <a href='Boolean.html'>Boolean</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Trace SQL statements.</td></tr>
    <tr class='apiDef'><td class='apiType'>static </td><td><a href='#wrapFilter'><b>wrapFilter</b></a>(fn, options: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run filters before and after saving data.</td></tr>
@@ -328,15 +328,6 @@ If more than one record matches, return the first matching record.</dd></dl>
 </div>
 </div>
 <hr />
-<a name='getKeyName'></a>
-<div class='api'>
-<div class='apiSig'>static  getKeyName(): <a href='String.html'>String</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Get the key name for this record. </dd></dl>
-</div>
-</div>
-<hr />
 <a name='getErrors'></a>
 <div class='api'>
 <div class='apiSig'>    getErrors(): <a href='Object.html'>Object</a>
@@ -345,6 +336,15 @@ If more than one record matches, return the first matching record.</dd></dl>
 <dl><dt>Description</dt></dd><dd>Get the errors for the record. </dd></dl>
 <dl><dt>Returns</dt>
 <dd>The error message collection for the record.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='getKeyName'></a>
+<div class='api'>
+<div class='apiSig'>static  getKeyName(): <a href='String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Get the key name for this record. </dd></dl>
 </div>
 </div>
 <hr />
@@ -388,6 +388,40 @@ of the other models.</dd></dl>
 </dl></div>
 </div>
 <hr />
+<a name='hasError'></a>
+<div class='api'>
+<div class='apiSig'>    hasError(field: <a href='String.html'>String</a> = null): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Check if the record has any errors. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>field: <a href='String.html'>String</a> </td><td>null [default: null]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the record has errors.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='hasMany'></a>
+<div class='api'>
+<div class='apiSig'>static  hasMany(model: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Define a containment relationship to another model class. When using "hasMany" on another model, it means 
+that other model has a foreign key reference to this class and this class can "contain" many instances of 
+the other.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>model: <a href='Object.html'>Object</a> </td><td>Model class that is contained by this class.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Options parameter. [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' title='options'>
+<td class='param'>things</td><td>Model object that is posessed by this. (TODO - not implemented).</td></tr>
+<td class='param'>through</td><td>String Class name which mediates the many to many relationship. (TODO - not implemented).</td></tr>
+<td class='param'>foreignKey</td><td>Key name for the foreign key. (TODO - not implemented).</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
 <a name='hasOne'></a>
 <div class='api'>
 <div class='apiSig'>static  hasOne(model: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a>
@@ -408,6 +442,22 @@ only one instance of the other.</dd></dl>
 </dl></div>
 </div>
 <hr />
+<a name='initialize'></a>
+<div class='api'>
+<div class='apiSig'>    initialize(fields: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Construct a new record instance. This is really a constructor function, because the Record class is 
+implemented by user models, no constructor will be invoked when a new user model is instantiated. 
+The record may be initialized by optionally supplying field data. However, the record will not be 
+written to the database until <a href='#save'>save</a> is called. To read data from the database into the record, use 
+one of the <a href='#find'>find</a> methods.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>fields: <a href='Object.html'>Object</a> </td><td>An optional object set of field names and values may be supplied to initialize the record. [default: null]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
 <a name='remove'></a>
 <div class='api'>
 <div class='apiSig'>static  remove(ids: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
@@ -417,6 +467,37 @@ only one instance of the other.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' title='parameters'>
 <tr class='param'><td class='param'>ids: <a href='Array.html'>Array</a> </td><td>Set of keys identifying the records to remove.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='save'></a>
+<div class='api'>
+<div class='apiSig'>    save(): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Save the record to the database. </dd></dl>
+<dl><dt>Returns</dt>
+<dd>True if the record is validated and successfully written to the database.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: Throws exception on sql errors
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='saveUpdate'></a>
+<div class='api'>
+<div class='apiSig'>    saveUpdate(fields: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Update a record based on the supplied fields and values. </dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' title='parameters'>
+<tr class='param'><td class='param'>fields: <a href='Object.html'>Object</a> </td><td>Hash of field/value pairs to use for the record update.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the database is successfully updated. Returns false if validation fails. In this case, the record is not saved.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='IOError.html'>IOError</a>: on database SQL errors
+</dd>
 </dl></div>
 </div>
 <hr />
@@ -453,70 +534,6 @@ only one instance of the other.</dd></dl>
 </dl></div>
 </div>
 <hr />
-<a name='hasError'></a>
-<div class='api'>
-<div class='apiSig'>    hasError(field: <a href='String.html'>String</a> = null): <a href='Boolean.html'>Boolean</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Check if the record has any errors. </dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>field: <a href='String.html'>String</a> </td><td>null [default: null]</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>True if the record has errors.</dd></dl>
-</div>
-</div>
-<hr />
-<a name='hasMany'></a>
-<div class='api'>
-<div class='apiSig'>static  hasMany(model: <a href='Object.html'>Object</a>, options: <a href='Object.html'>Object</a> = expression): <a href='Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Define a containment relationship to another model class. When using "hasMany" on another model, it means 
-that other model has a foreign key reference to this class and this class can "contain" many instances of 
-the other.</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>model: <a href='Object.html'>Object</a> </td><td>Model class that is contained by this class.</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Options parameter. [default: expression]</td></tr></table></dd>
-</dl><dl><dt>Options</dt>
-<dd><table class='parameters' title='options'>
-<td class='param'>things</td><td>Model object that is posessed by this. (TODO - not implemented).</td></tr>
-<td class='param'>through</td><td>String Class name which mediates the many to many relationship. (TODO - not implemented).</td></tr>
-<td class='param'>foreignKey</td><td>Key name for the foreign key. (TODO - not implemented).</td></tr>
-</table></dd>
-</dl></div>
-</div>
-<hr />
-<a name='initialize'></a>
-<div class='api'>
-<div class='apiSig'>    initialize(fields: <a href='Object.html'>Object</a> = null): <a href='Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Construct a new record instance. This is really a constructor function, because the Record class is 
-implemented by user models, no constructor will be invoked when a new user model is instantiated. 
-The record may be initialized by optionally supplying field data. However, the record will not be 
-written to the database until <a href='#save'>save</a> is called. To read data from the database into the record, use 
-one of the <a href='#find'>find</a> methods.</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>fields: <a href='Object.html'>Object</a> </td><td>An optional object set of field names and values may be supplied to initialize the record. [default: null]</td></tr></table></dd>
-</dl></div>
-</div>
-<hr />
-<a name='save'></a>
-<div class='api'>
-<div class='apiSig'>    save(): <a href='Boolean.html'>Boolean</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Save the record to the database. </dd></dl>
-<dl><dt>Returns</dt>
-<dd>True if the record is validated and successfully written to the database.</dd></dl>
-<dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: Throws exception on sql errors
-</dd>
-</dl></div>
-</div>
-<hr />
 <a name='sql'></a>
 <div class='api'>
 <div class='apiSig'>static  sql(cmd: <a href='String.html'>String</a>, count: <a href='Number.html'>Number</a> = null): <a href='Array.html'>Array</a>
@@ -529,23 +546,6 @@ one of the <a href='#find'>find</a> methods.</dd></dl>
 </dl><dl><dt>Returns</dt>
 <dd>An array of objects. Each object represents a matching row with fields for each column.</dd></dl>
 </div>
-</div>
-<hr />
-<a name='saveUpdate'></a>
-<div class='api'>
-<div class='apiSig'>    saveUpdate(fields: <a href='Object.html'>Object</a>): <a href='Boolean.html'>Boolean</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Update a record based on the supplied fields and values. </dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>fields: <a href='Object.html'>Object</a> </td><td>Hash of field/value pairs to use for the record update.</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>True if the database is successfully updated. Returns false if validation fails. In this case, the record is not saved.</dd></dl>
-<dl><dt>Throws</dt><dd>
-<a href='IOError.html'>IOError</a>: on database SQL errors
-</dd>
-</dl></div>
 </div>
 <hr />
 <a name='trace'></a>

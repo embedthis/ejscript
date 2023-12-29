@@ -6,8 +6,9 @@ Me.load({
 
     targets: {
         api: {
-            depends: ['gen-doc', 'render-doc'],
+            depends: ['render-doc', 'gen-doc'],
             action: `
+                trace('Generate', 'API documentation')
                 apidoc('api/ejscript.dox', [
                     '${SRC}/ejs.h',
                     '${SRC}/ejs.web/ejsWeb.h',

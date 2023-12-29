@@ -61,7 +61,7 @@ Use <a href='#bind'>bind()</a> to set the bound "this" object.</td></tr>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'></td><td><a href='#Function'><b>Function</b></a>(args: <a href='Array.html'>Array</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a function from the supplied formal parameter names and function body expression.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#apply'><b>apply</b></a>(thisObject: <a href='Object.html'>Object</a>, args: <a href='Array.html'>Array</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Invoke the function on another object.</td></tr>
-   <tr class='apiDef'><td class='apiType'> </td><td><a href='#bind'><b>bind</b></a>(thisObj: <a href='Object.html'>Object</a>, args: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Bind the value of "this" for the function.</td></tr>
+   <tr class='apiDef'><td class='apiType'> </td><td><a href='#bind'><b>bind</b></a>(thisObj: <a href='Object.html'>Object</a>, args: <a href='Array.html'>Array</a>): <a href='Function.html'>Function</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Bind the value of "this" for the function.</td></tr>
    <tr class='apiDef'><td class='apiType'> </td><td><a href='#call'><b>call</b></a>(thisObject: <a href='Object.html'>Object</a>, args: <a href='Array.html'>Array</a>): <a href='Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Invoke the function on another object.</td></tr>
 </table>
 
@@ -100,16 +100,17 @@ Use <a href='#bind'>bind()</a> to set the bound "this" object.</td></tr>
 <hr />
 <a name='bind'></a>
 <div class='api'>
-<div class='apiSig'>    bind(thisObj: <a href='Object.html'>Object</a>, args: <a href='Array.html'>Array</a>): <a href='Void.html'>Void</a>
+<div class='apiSig'>    bind(thisObj: <a href='Object.html'>Object</a>, args: <a href='Array.html'>Array</a>): <a href='Function.html'>Function</a>
 </div>
 <div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Bind the value of "this" for the function. This can set the value of "this" for the function. If
-<a href='#overwrite'>overwrite</a> is false, it will only define the value of "this" if it is not already defined.
+<dl><dt>Description</dt></dd><dd>Bind the value of "this" for the function. This can set the value of "this" for the function. 
 Use <a href='#bound'>bound</a> to examine the bound "this" value.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' title='parameters'>
 <tr class='param'><td class='param'>thisObj: <a href='Object.html'>Object</a> </td><td>Value of "this" to define.</td></tr><tr class='param'><td class='param'>args: <a href='Array.html'>Array</a> </td><td>Function arguments to supply to the function. These arguments preceed any caller supplied arguments when the function is actually invoked.</td></tr></table></dd>
-</dl></div>
+</dl><dl><dt>Returns</dt>
+<dd>The function for chaining.</dd></dl>
+</div>
 </div>
 <hr />
 <a name='call'></a>

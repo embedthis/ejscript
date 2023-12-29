@@ -17,7 +17,7 @@
 <table class='classHead' title='WebSocket'>
    <tr><td><strong>Module</strong></td><td>ejs</td></tr>
    <tr><td><strong>Definition</strong></td><td> class WebSocket</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>WebSocket <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.5</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>WebSocket <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.7</td></tr>
 <tr><td><strong>Stability</strong></td><td>Evolving.</td></tr>
        </td></tr>
 </table>
@@ -51,6 +51,8 @@ infrastructure including firewalls and proxies.</p>
    <tr><td nowrap align='center'> static const </td><td>CLOSED</td><td>&nbsp;</td><td>The <a href='#readyState'>readyState</a> value when the WebSockets connection is closed. </td></tr>
 <a name='CLOSING'></a>
    <tr><td nowrap align='center'> static const </td><td>CLOSING</td><td>&nbsp;</td><td>The <a href='#readyState'>readyState</a> value when a closing handshake has commenced (. </td></tr>
+<a name='CONNECTING'></a>
+   <tr><td nowrap align='center'> static const </td><td>CONNECTING</td><td>&nbsp;</td><td>The <a href='#readyState'>readyState</a> value while waiting for the WebSockets open handshake to complete with the peer. </td></tr>
 <a name='MSG_BINARY'></a>
    <tr><td nowrap align='center'> static const </td><td>MSG_BINARY</td><td>&nbsp;</td><td><< WebSocket binary message. </td></tr>
 <a name='MSG_CLOSE'></a>
@@ -65,22 +67,20 @@ infrastructure including firewalls and proxies.</p>
    <tr><td nowrap align='center'> static const </td><td>MSG_TEXT</td><td>&nbsp;</td><td><< WebSocket text message. </td></tr>
 <a name='NON_BLOCK'></a>
    <tr><td nowrap align='center'> static const </td><td>NON_BLOCK</td><td>&nbsp;</td><td><< sendBlock mode to not block and absorb only what can fit into the queue. </td></tr>
-<a name='CONNECTING'></a>
-   <tr><td nowrap align='center'> static const </td><td>CONNECTING</td><td>&nbsp;</td><td>The <a href='#readyState'>readyState</a> value while waiting for the WebSockets open handshake to complete with the peer. </td></tr>
 <a name='OPEN'></a>
    <tr><td nowrap align='center'> static const </td><td>OPEN</td><td>&nbsp;</td><td>The <a href='#readyState'>readyState</a> value once the WebSockets open handshake is complete and ready for communications. </td></tr>
 <a name='binaryType'></a>
    <tr><td nowrap align='center'> get </td><td>binaryType</td><td><a href='String.html'>String</a></td><td>Type of binary data. Set to "ByteArray".</td></tr>
+<a name='bufferedAmount'></a>
+   <tr><td nowrap align='center'> get </td><td>bufferedAmount</td><td><a href='Number.html'>Number</a></td><td>The number of bytes of buffered data to send. </td></tr>
+<a name='extensions'></a>
+   <tr><td nowrap align='center'> get </td><td>extensions</td><td><a href='String.html'>String</a></td><td>Return the list of supported extensions. </td></tr>
 <a name='onclose'></a>
    <tr><td nowrap align='center'> </td><td>onclose</td><td><a href='Function.html'>Function</a></td><td>Event callback invoked when the connection is closed. The <a href='#readyState'>readyState</a> will be CLOSED.</td></tr>
 <a name='onerror'></a>
    <tr><td nowrap align='center'> </td><td>onerror</td><td><a href='Function.html'>Function</a></td><td>Event callback invoked when an error occurs. </td></tr>
 <a name='onmessage'></a>
    <tr><td nowrap align='center'> </td><td>onmessage</td><td><a href='Function.html'>Function</a></td><td>Event callback invoked when a message has been received from the server. The <a href='#readyState'>readyState</a> will be OPEN.</td></tr>
-<a name='bufferedAmount'></a>
-   <tr><td nowrap align='center'> get </td><td>bufferedAmount</td><td><a href='Number.html'>Number</a></td><td>The number of bytes of buffered data to send. </td></tr>
-<a name='extensions'></a>
-   <tr><td nowrap align='center'> get </td><td>extensions</td><td><a href='String.html'>String</a></td><td>Return the list of supported extensions. </td></tr>
 <a name='onopen'></a>
    <tr><td nowrap align='center'> </td><td>onopen</td><td><a href='Function.html'>Function</a></td><td>Event callback invoked when the WebSocket is ready to send and receive data. The <a href='#readyState'>readyState</a> will be set to OPEN.</td></tr>
 <a name='protocol'></a>

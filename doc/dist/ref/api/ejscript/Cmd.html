@@ -17,7 +17,7 @@
 <table class='classHead' title='Cmd'>
    <tr><td><strong>Module</strong></td><td>ejs</td></tr>
    <tr><td><strong>Definition</strong></td><td> class Cmd</td></tr>
-   <tr><td><strong>Inheritance</strong></td><td>Cmd <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.5</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Cmd <img src='images/inherit.gif' alt='inherit'/> <a href='Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.7</td></tr>
        </td></tr>
 </table>
 
@@ -102,13 +102,13 @@ This is the number of milliseconds for the call to complete.</td></tr>
 <dl><dt>Description</dt></dd><dd>Create an Cmd object. If a command line is provided, the command is immediately started.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' title='parameters'>
-<tr class='param'><td class='param'>command: <a href='Object.html'>Object</a> </td><td>The (optional) command line to initialize with. If a command line is provided, the start() method is automatically invoked after the command is constructed. The command may be either a string or an array of arguments. Using an array of args can simplify quoting if the args have embedded spaces or quotes. [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Command options hash. Supported options are:. [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>null [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>command: <a href='Object.html'>Object</a> </td><td>The (optional) command line to initialize with. If a command line is provided, the <a href='#start'>start</a> method is automatically invoked after the command is constructed. The command may be either a string or an array of arguments. Using an array of args can simplify quoting if the args have embedded spaces or quotes. Use <a href='#response'>response</a> to read the response. [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>Command options hash. Supported options are:. [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='Object.html'>Object</a> </td><td>null [default: null]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' title='options'>
-<td class='param'>detach</td><td>Boolean If true, run the command and return immediately. If detached, finalize() must be called to signify the end of data being written to the command's stdin.</td></tr>
+<td class='param'>detach</td><td>Boolean If true, run the command and return immediately. If detached, <a href='#finalize'>finalize</a> must be called to signify the end of data being written to the command's stdin. Detach must be used if using <a href='#write'>write</a>. </td></tr>
 <td class='param'>dir</td><td>Path or String. Directory to set as the current working directory for the command.</td></tr>
 <td class='param'>exceptions</td><td>Boolean If true, throw exceptions if the command returns a non-zero status code.  Defaults to false.</td></tr>
-<td class='param'>timeout</td><td>Number This is the default number of milliseconds for the command to complete.</td></tr>
+<td class='param'>timeout</td><td>Number This is the default number of milliseconds for the command to complete. P.</td></tr>
 </table></dd>
 </dl></div>
 </div>
@@ -155,6 +155,16 @@ creating a new process.</dd></dl>
 </dl></div>
 </div>
 <hr />
+<a name='finalize'></a>
+<div class='api'>
+<div class='apiSig'>    finalize(): <a href='Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<dl><dt>Description</dt></dd><dd>Signal the end of writing data to the command. The finalize() call must be invoked to properly 
+signify the end of write data for detached commands.</dd></dl>
+</div>
+</div>
+<hr />
 <a name='kill'></a>
 <div class='api'>
 <div class='apiSig'>static     kill(pid: <a href='Number.html'>Number</a>, signal: <a href='Number.html'>Number</a> = 2): <a href='Boolean.html'>Boolean</a>
@@ -170,16 +180,6 @@ creating a new process.</dd></dl>
 <a href='IOError.html'>IOError</a>: if the pid is invalid or if the requesting process does not have sufficient privilege to send the signal.
 </dd>
 </dl></div>
-</div>
-<hr />
-<a name='finalize'></a>
-<div class='api'>
-<div class='apiSig'>    finalize(): <a href='Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<dl><dt>Description</dt></dd><dd>Signal the end of writing data to the command. The finalize() call must be invoked to properly 
-signify the end of write data.</dd></dl>
-</div>
 </div>
 <hr />
 <a name='locate'></a>
@@ -393,7 +393,7 @@ If writing more data than the stream can absorb in sync mode, the call will bloc
 If writing more data than the stream can absorb in async mode, the call will not block and will buffer the
 data and return immediately. Some streams will require a <a href='#flush'>flush()</a> call to actually send the data.
 A "writable" event will be issued when the stream can again absorb more data.Failure to call finalize() may prevent some commands 
-from exiting.</dd></dl>
+from exiting. The command must be started in detached mode to be able to write data.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' title='parameters'>
 <tr class='param'><td class='param'>data: <a href='Array.html'>Array</a> </td><td>Data to write.</td></tr></table></dd>

@@ -10,7 +10,6 @@ module ejs {
 
     /**
         Namespaces are used to qualify names into discrete spaces
-        @hide
         @stability prototype
      */
     final class Namespace { }
