@@ -22,7 +22,9 @@ Me.load({
                     let dest = src.trimComponents(base.components.length)
                     apiLayout(src, Path('dist/ref').join(dest))
                 }
+                //  Fixups
                 cp('dist/ref/api/ejscript/doc.min.css', 'dist/ref/api/ejscript/doc.css')
+                Path('dist/ref/api/ejscript/iterator-Iterator.html').write('')
             `
         }, 
 

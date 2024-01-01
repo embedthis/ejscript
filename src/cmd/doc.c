@@ -226,7 +226,7 @@ static void generateHomeTitle(EjsMod *mp)
         "       </map>\n"
         "   <div class=\"version\">%s %s</div>\n"
         "   <div class=\"menu\">\n"
-        "       <a href=\"https://www.embedthis.com/ejs/\" target=\"_top\">Ejscript Home</a>\n"
+        "       <a href=\"https://www.embedthis.com/ejscript/\" target=\"_top\">Ejscript Home</a>\n"
         "       &gt; <a href=\"index.html\" class=\"menu\" target=\"_top\">Documentation Home</a>\n"
         "   </div>\n"
         "   <div class=\"search\">\n"
@@ -571,7 +571,7 @@ static void generateOverview(EjsMod *mp)
 
     out(mp, "<h1>%s %s</h1>", ME_TITLE, ME_VERSION);
     out(mp, "<p>Embedthis Ejscript is an implementation of the Javascript (ECMA 262) language.</p>");
-    out(mp, "<p>See <a href='https://www.embedthis.com/ejs/' target='new'>https://www.embedthis.com/ejs/</a> for "
+    out(mp, "<p>See <a href='https://www.embedthis.com/ejscript/' target='new'>https://www.embedthis.com/ejscript/</a> for "
         "product details and downloads.</p>");
     out(mp, "<h2>Documentation Conventions</h2>");
     out(mp, "<p>APIs are grouped into Namespaces for logical ordering. Within each namespace, classes, methods "

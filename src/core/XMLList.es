@@ -9,7 +9,6 @@ module ejs {
     /**
         The XMLList class is a helper class for the XML class.
         @spec ejs
-        @hide
      */
     final class XMLList {
 

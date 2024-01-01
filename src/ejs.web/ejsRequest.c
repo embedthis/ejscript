@@ -712,6 +712,7 @@ static EjsAny *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
             scriptName = getDefaultString(ejs, req->scriptName, "");
             if (conn) {
                 path = sjoin(scriptName, getDefaultString(ejs, req->pathInfo, conn->rx->uri), NULL);
+                path = mprUriEncode(path, MPR_ENCODE_JS_URI);
                 scheme = (conn->secure) ? "https" : "http";
                 req->uri = ejsCreateUriFromParts(ejs, 
                     getDefaultString(ejs, req->scheme, scheme),
