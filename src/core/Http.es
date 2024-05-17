@@ -591,7 +591,7 @@ UNUSED
         native function setCredentials(username: String?, password: String?, type: String = null): Void
 
         /** 
-            Set a request header. Use setHeaders() to set all the headers. Use $getRequestHeaders() to retrieve and examine
+            Set a request header. Use $getRequestHeaders() to retrieve and examine
             the request header set.
             @param key The header keyword for the request, e.g. "accept".
             @param value The value to associate with the header, e.g. "yes"
