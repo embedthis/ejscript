@@ -1220,6 +1220,7 @@ static EjsString *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                         result = buildString(ejs, result, &sp->value[matches[1]], sp->length - matches[1]);
                         break;
                     default:
+                        //  BUG should handle backquoted $
                         /* Insert the nth submatch */
                         if (isdigit((uchar) *cp)) {
                             submatch = (int) wtoi(cp);
