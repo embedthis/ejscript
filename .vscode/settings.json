@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.html.exp": "html",
+        "*.md.exp": "markdown",
+        "__locale": "c"
+    }
+}

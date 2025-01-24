@@ -7,10 +7,13 @@ Me.load({
         ssl: {
             configurable: true,
             description: 'Transport Layer Security',
-            discovers: [ 'mbedtls', 'openssl' ],
-            uses:      [ 'mbedtls', 'openssl' ],
+            discovers: [ 'openssl', 'mbedtls' ],
+            uses:      [ 'openssl', 'mbedtls' ],
             config: function (target) {
                 let provider
+                if (me.settings.tls == 'mbedtls') {
+                    target.discovers = target.discovers.reverse()
+                }
                 for each (p in target.discovers) {
                     let ptarget = me.targets[p]
                     if (ptarget.explicit) {
