@@ -199,7 +199,11 @@ static void generateHomeFrameset(EjsMod *mp)
     out(mp, "       <frame src='__navigation-left.html' name='navigation' scrolling='auto' frameborder='1'>\n");
     out(mp, "       <frame src='__overview-page.html' name='content' scrolling='auto' frameborder='1'>\n");
     out(mp, "   </frameset>\n");
-    out(mp, "  <noframes><body><p>Please use a frames capable client to view this documentation.</p></body></noframes>");
+    out(mp, "  <noframes><body>\n");
+    out(mp, "    <p>Please use a frames capable client to view this documentation.</p>\n");
+    //  To satisfy ahrefs that requires outgoing links, we add an invisible link to embedthis.com
+    out(mp, "    <div style=\"opacity: 0\"><a href=\"https://www.embedthis.com/\">www.embedthis.com</a></div>\n");
+    out(mp, "  </body></noframes>\n");
     out(mp, "</frameset>\n");
     out(mp, "</html>\n");
 

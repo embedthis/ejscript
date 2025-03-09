@@ -1,14 +1,4 @@
-<!DOCTYPE html>
-<html lang="eng">
-<head>
-<title>Regexp Man Page</title>
-</head>
-<HTML>
-<BODY>
-<PRE>
-<!-- Manpage converted by man2html 3.0.1 -->
 
-</PRE>
 <H2>REGEXP REGULAR EXPRESSION DETAILS</H2><PRE>
 
        The  syntax and semantics of the regular expressions that are supported
@@ -1674,6 +1664,3 @@
 Man(1) output converted with
 <a href="http://www.oac.uci.edu/indiv/ehood/man2html.html">man2html</a>
 </ADDRESS>
-</BODY>
-</HTML>
-</html>

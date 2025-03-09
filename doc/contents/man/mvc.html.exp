@@ -1,15 +1,4 @@
-<!DOCTYPE html>
-<html lang="eng">
-<head>
-<title>Mvc Man Page</title>
-</head>
-<HTML>
-<BODY>
-<PRE>
-<!-- Manpage converted by man2html 3.0.1 -->
 
-
-</PRE>
 <H2>SYNOPSIS</H2><PRE>
        <B>mvc</B> [<I>--database</I> <I>DB]</I>] [<I>--full</I>] [<I>--keep</I>] [<I>--layout</I> <I>layoutPage</I>]  [<I>--listen</I>
        <I>port[--min[--overwrite[--quiet[--verbose</I>] [commands ...]
@@ -241,6 +230,3 @@ mvc                              December 2011                          <B>MVC(1
 Man(1) output converted with
 <a href="http://www.oac.uci.edu/indiv/ehood/man2html.html">man2html</a>
 </ADDRESS>
-</BODY>
-</HTML>
-</html>
