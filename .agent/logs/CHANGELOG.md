@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added - 2025-10-20
 
+**TestMe Migration Complete**:
+- Migrated all 25 test files from Bun test runner to TestMe framework
+- Updated all test files to use `.tst.ts` extension
+- Tests now use TestMe API: `import { describe, test, expect } from '@embedthis/testme'`
+- Total: 1207 tests with 99.2% pass rate
+- Updated test script in package.json to use `tm` command
+- Updated documentation to reflect TestMe testing procedures
+
 **Http Partial URL Completion**:
 - Added automatic URL completion for Ejscript-style partial URLs
 - Supports port-only format: `'4100/index.html'` → `'http://127.0.0.1:4100/index.html'`
@@ -16,8 +24,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Supports colon-port format: `':4100/path'` → `'http://127.0.0.1:4100/path'`
 - Supports hostname without scheme: `'localhost:8080/path'` → `'http://localhost:8080/path'`
 - Complete URLs (with http:// or https://) pass through unchanged
-- New test suite: test/core/http-partial-urls.test.ts (6 tests, 100% pass)
+- New test suite: test/core/http-partial-urls.tst.ts (6 tests, 100% pass)
 - Example: examples/http-partial-url.ts demonstrating all formats
+
+### Changed - 2025-10-20
+
+**Test Framework Migration**:
+- Test files: Renamed from `.test.ts` to `.tst.ts` (25 files)
+- Test imports: Changed from `bun:test` to `@embedthis/testme`
+- Test runner: Changed from `bun test` to `tm` command
+- Documentation: Updated PROCEDURES.md with TestMe best practices
+- Build scripts: Updated to work with TestMe framework
+
+**Project Cleanup**:
+- Removed temporary development files (verify-link.sh, convert-done scripts)
+- Cleaned up git working directory
+- Updated .gitignore for TestMe artifacts (.testme/ directories)
 
 ### Added - 2025-10-18 (Production Ready v1.0.0 - 1201 Tests, 99.2% Pass Rate!)
 

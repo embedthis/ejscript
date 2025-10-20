@@ -2,7 +2,7 @@
 
 **Project**: Ejscript (Ejscript for Bun)
 **Version**: 1.0.0
-**Last Updated**: 2025-10-18
+**Last Updated**: 2025-10-20
 **Status**: Production Ready
 
 ## Contents
@@ -33,8 +33,10 @@ Ejscript is a complete TypeScript implementation of the Ejscript core API for th
 
 - ✅ Complete API compatibility (99%+)
 - ✅ HTTP Async I/O (async methods for all HTTP operations)
-- ✅ Comprehensive test coverage (1201 tests, 99.2% pass rate)
+- ✅ HTTP Partial URL support (Ejscript-style partial URLs: '4100/path', ':8080/api')
+- ✅ Comprehensive test coverage (1207 tests, 99.2% pass rate)
 - ✅ Production ready stability
+- ✅ TestMe migration complete (all tests using TestMe framework)
 
 ## Architecture
 

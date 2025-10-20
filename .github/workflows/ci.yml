@@ -29,12 +29,12 @@ jobs:
         with:
           bun-version: ${{ matrix.bun-version }}
       - name: Install TestMe
-        if: true
+        if: false
         run: |
           bun install -g --trust @embedthis/testme
 
       - name: Local TestMe
-        if: false
+        if: true
         run: |
           bun install --verbose -g --trust "${{ github.workspace }}/local/testme.tgz"
 

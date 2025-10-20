@@ -1,7 +1,7 @@
 # Ejscript Development Procedures
 
 **Project**: Ejscript (Ejscript for Bun)
-**Last Updated**: 2025-10-17
+**Last Updated**: 2025-10-20
 
 ## Contents
 
@@ -96,52 +96,55 @@ bun run dev
 
 ### Running Tests
 
+**IMPORTANT**: This project uses TestMe for all unit tests. Tests use `.tst.ts` extension.
+
 **All tests**:
 ```bash
-bun test
+tm                    # Run all tests (from test/ directory)
+bun test             # Alternative: run via npm script
 ```
 
 **Specific test file**:
 ```bash
-bun test test/core/path.test.ts
+tm test/path.tst.ts                    # Run specific test
+tm test/core/http-partial-urls.tst.ts  # Run specific core test
 ```
 
-**Watch mode**:
-```bash
-bun test --watch
-```
+**Watch mode** (not available in TestMe - run tests manually after changes)
 
 ### Writing Tests
 
-**IMPORTANT**: Always use TestMe for unit tests. You can continue to use the Jest-style `expect` API for assertions. For legacy tests, use the TestMe legacy API.
+**IMPORTANT**: All tests must use TestMe framework with `.tst.ts` extension.
 
 **Test file structure**:
 ```typescript
-import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
+import { describe, test, expect } from '@embedthis/testme'
 import { Path } from '../../src/core/Path'
 
 describe('Path', () => {
-    beforeEach(() => {
-        // Setup before each test
-    })
-
-    afterEach(() => {
-        // Cleanup after each test
-    })
-
-    it('should create absolute paths', () => {
+    test('should create absolute paths', () => {
         const p = new Path('/tmp/test')
         expect(p.isAbsolute).toBe(true)
         expect(p.name).toBe('/tmp/test')
     })
 
-    it('should handle errors gracefully', () => {
+    test('should handle errors gracefully', () => {
         expect(() => {
             new Path('/nonexistent').readString()
         }).toThrow()
     })
 })
 ```
+
+**TestMe Best Practices**:
+- Use `describe()` for test groups
+- Use `test()` for individual tests (not `it()`)
+- Use `expect()` for assertions with Jest-style matchers
+- Test files must have `.tst.ts` extension
+- Place tests in `test/` directory
+- Use `getpid()` for unique temporary filenames
+- Tests must be portable (Windows, macOS, Linux)
+- Tests must run in parallel safely
 
 **Note**: While this project currently uses Bun's test runner, the parent project standards require TestMe for unit testing. Future test development should use TestMe with Jest-style expect API.
 
