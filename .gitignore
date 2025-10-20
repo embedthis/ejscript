@@ -17,3 +17,4 @@ coverage/
 # TestMe artifacts
 .testme/
 test.backup/
+*.tgz
