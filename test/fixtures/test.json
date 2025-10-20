@@ -1,0 +1,14 @@
+{
+  "name": "Ejscript Test",
+  "version": "1.0.0",
+  "data": {
+    "array": [1, 2, 3, 4, 5],
+    "object": {
+      "key1": "value1",
+      "key2": "value2"
+    },
+    "boolean": true,
+    "number": 42,
+    "null": null
+  }
+}

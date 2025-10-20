@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <test>
+    <name>Sample XML Test File</name>
+    <data>Test data for XML parsing</data>
+    <items>
+      <item id="1">First item</item>
+      <item id="2">Second item</item>
+      <item id="3">Third item</item>
+    </items>
+  </test>
+</root>

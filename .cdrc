@@ -1,0 +1,16 @@
+#
+#   .cdrc -- Setup the PATH and CDPATH to work in a source directory
+#
+
+_PRODUCT=`basename $PWD`
+if [ "${PATH/$_PRODUCT\/build//}" = "${PATH}" ] ; then
+    _OS=`uname | sed 's/CYGWIN.*/windows/;s/Darwin/macosx/' | tr '[A-Z]' '[a-z]'`
+    _ARCH=`uname -m | sed 's/i.86/x86/;s/x86_64/x64/;s/arm.*/arm64/;s/aarch/arm/;s/mips.*/mips/'`
+    export PATH="$PWD:$PATH:."
+    export CDPATH="$CDPATH:$PWD:$PWD/src:$PWD/apps"
+    echo
+    echo Setup \"${_PRODUCT}\" Environment
+    echo
+
+    export PROFILE=dev
+fi

@@ -1,0 +1,7 @@
+{
+    execution: {
+        timeout: 20,
+        parallel: true,
+        workers: 4
+    }
+}

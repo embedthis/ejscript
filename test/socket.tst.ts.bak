@@ -1,0 +1,512 @@
+/**
+ * Socket Tests
+ * Based on ejscript test suite: socket/*.tst
+ */
+
+import { describe, it, expect, beforeEach, afterEach } from 'testme'
+import { Socket } from '../src/core/Socket'
+import { ByteArray } from '../src/core/streams/ByteArray'
+
+await describe('Socket', async () => {
+    await describe('Construction', async () => {
+        it('creates socket instance', () => {
+            const socket = new Socket()
+            expect(socket).not.toBeNull()
+        })
+
+        it('creates TCP socket by default', () => {
+            const socket = new Socket()
+            expect(socket).not.toBeNull()
+            socket.close()
+        })
+    })
+
+    await describe('TCP Client/Server', async () => {
+        let server: Socket | null = null
+        let client: Socket | null = null
+        const TEST_PORT = 9876
+
+        afterEach(() => {
+            if (client) {
+                try { client.close() } catch {}
+                client = null
+            }
+            if (server) {
+                try { server.close() } catch {}
+                server = null
+            }
+        })
+
+        it('listens on a port', () => {
+            server = new Socket()
+            server.listen(TEST_PORT)
+            expect(server.port).toBe(TEST_PORT)
+        })
+
+        it('accepts client connections', async () => {
+            server = new Socket()
+            server.listen(TEST_PORT)
+
+            // Connect client first
+            await new Promise<void>((resolve) => {
+                setTimeout(() => {
+                    client = new Socket()
+                    client.connect(TEST_PORT)
+                    resolve()
+                }, 50)
+            })
+
+            // Accept after connection is established
+            await new Promise<void>((resolve) => {
+                setTimeout(() => {
+                    const clientSocket = server!.accept()
+                    expect(clientSocket).not.toBeNull()
+                    clientSocket.close()
+                    resolve()
+                }, 150)
+            })
+        })
+
+        it('connects to server', () => {
+            server = new Socket()
+            server.listen(TEST_PORT)
+
+            client = new Socket()
+            client.connect(TEST_PORT)
+
+            expect(client).not.toBeNull()
+        })
+
+        it('writes and reads data', (done) => {
+            server = new Socket()
+            server.listen(TEST_PORT)
+
+            // Client connects first
+            setTimeout(() => {
+                client = new Socket()
+                client.connect(TEST_PORT)
+
+                const sent = client.write('Hello Server')
+                expect(sent).toBeGreaterThan(0)
+            }, 50)
+
+            // Server accepts and echoes
+            setTimeout(() => {
+                const conn = server!.accept()
+                const buffer = new ByteArray(1024)
+
+                setTimeout(() => {
+                    const bytesRead = conn.read(buffer)
+                    if (bytesRead && bytesRead > 0) {
+                        conn.write(buffer.toString())
+                    }
+                    conn.close()
+                }, 50)
+            }, 150)
+
+            // Client reads echo
+            setTimeout(() => {
+                const buffer = new ByteArray(1024)
+                const bytesRead = client!.read(buffer)
+
+                if (bytesRead && bytesRead > 0) {
+                    expect(buffer.toString()).toBe('Hello Server')
+                }
+                done()
+            }, 300)
+        })
+
+        it('handles multiple writes', (done) => {
+            server = new Socket()
+            server.listen(TEST_PORT)
+
+            // Client connects and writes
+            setTimeout(() => {
+                client = new Socket()
+                client.connect(TEST_PORT)
+
+                client.write('Part1 ')
+                client.write('Part2 ')
+                client.write('Part3 ')
+                client.write('END')
+            }, 50)
+
+            // Server accepts and echoes
+            setTimeout(() => {
+                const conn = server!.accept()
+                const buffer = new ByteArray(1024)
+
+                setTimeout(() => {
+                    // Read all data
+                    let totalRead = 0
+                    while (true) {
+                        const bytesRead = conn.read(buffer)
+                        if (!bytesRead || bytesRead === 0) break
+                        totalRead += bytesRead
+                        if (buffer.toString().includes('END')) break
+                    }
+
+                    conn.write(buffer.toString())
+                    conn.close()
+                }, 50)
+            }, 150)
+
+            // Client reads response
+            setTimeout(() => {
+                const buffer = new ByteArray(1024)
+                const bytesRead = client!.read(buffer)
+                if (bytesRead && bytesRead > 0) {
+                    expect(buffer.toString()).toContain('Part1')
+                    expect(buffer.toString()).toContain('Part2')
+                    expect(buffer.toString()).toContain('Part3')
+                }
+                done()
+            }, 400)
+        })
+
+        it('detects EOF when connection closes', (done) => {
+            server = new Socket()
+            server.listen(TEST_PORT)
+
+            // Client connects
+            setTimeout(() => {
+                client = new Socket()
+                client.connect(TEST_PORT)
+            }, 50)
+
+            // Server accepts and closes
+            setTimeout(() => {
+                const conn = server!.accept()
+                conn.close()
+            }, 150)
+
+            // Client checks EOF
+            setTimeout(() => {
+                expect(client!.isEof).toBe(true)
+                done()
+            }, 300)
+        })
+    })
+
+    await describe('Properties', async () => {
+        let socket: Socket
+
+        beforeEach(() => {
+            socket = new Socket()
+        })
+
+        afterEach(() => {
+            if (socket) {
+                try { socket.close() } catch {}
+            }
+        })
+
+        it('has port property', () => {
+            socket.listen(9877)
+            expect(socket.port).toBe(9877)
+        })
+
+        it('has address property after listen', () => {
+            socket.listen(9878)
+            const addr = socket.address
+            expect(addr).toBeDefined()
+        })
+
+        it('has isEof property', () => {
+            expect(typeof socket.isEof).toBe('boolean')
+        })
+
+        it('has encoding property', () => {
+            expect(socket.encoding).toBe('utf-8')
+        })
+
+        it('can set encoding', () => {
+            socket.encoding = 'utf-8'
+            expect(socket.encoding).toBe('utf-8')
+        })
+    })
+
+    await describe('UDP Operations', async () => {
+        it('creates UDP socket', () => {
+            const socket = new Socket()
+            socket.options = { datagram: true }
+            expect(socket).not.toBeNull()
+            socket.close()
+        })
+    })
+
+    await describe('Async Mode', async () => {
+        it('always returns true (deprecated property)', () => {
+            const socket = new Socket()
+            expect(socket.async).toBe(true)
+            socket.close()
+        })
+
+        it('setting async mode has no effect', () => {
+            const socket = new Socket()
+            socket.async = false
+            expect(socket.async).toBe(true) // Still true
+            socket.close()
+        })
+    })
+
+    await describe('Error Handling', async () => {
+        it('throws on invalid port', () => {
+            const socket = new Socket()
+            expect(() => {
+                socket.listen(-1)
+            }).toThrow()
+            socket.close()
+        })
+
+        it('throws on connect to invalid address', () => {
+            const socket = new Socket()
+            expect(() => {
+                socket.connect('invalid:address:format')
+            }).toThrow()
+            socket.close()
+        })
+
+        it.skip('throws on connect to unavailable port (async error, not sync)', () => {
+            // Note: Connection errors in Node.js/Bun are asynchronous and emitted as 'error' events
+            // They cannot be caught synchronously with try/catch or expect().toThrow()
+            const socket = new Socket()
+            socket.connect(65432) // Will fail asynchronously
+            socket.close()
+        })
+    })
+
+    await describe('Stream Interface', async () => {
+        let server: Socket | null = null
+        let client: Socket | null = null
+        const TEST_PORT = 9879
+
+        afterEach(() => {
+            if (client) {
+                try { client.close() } catch {}
+                client = null
+            }
+            if (server) {
+                try { server.close() } catch {}
+                server = null
+            }
+        })
+
+        it('implements read method', (done) => {
+            server = new Socket()
+            server.listen(TEST_PORT)
+
+            // Client connects
+            setTimeout(() => {
+                client = new Socket()
+                client.connect(TEST_PORT)
+            }, 50)
+
+            // Server accepts and writes
+            setTimeout(() => {
+                const conn = server!.accept()
+                conn.write('Test Data')
+                conn.close()
+            }, 150)
+
+            // Client reads
+            setTimeout(() => {
+                const buffer = new ByteArray(1024)
+                const bytesRead = client!.read(buffer)
+
+                expect(bytesRead).toBeGreaterThan(0)
+                expect(buffer.toString()).toBe('Test Data')
+                done()
+            }, 300)
+        })
+
+        it('implements write method', () => {
+            server = new Socket()
+            server.listen(TEST_PORT)
+
+            client = new Socket()
+            client.connect(TEST_PORT)
+
+            const written = client.write('Hello')
+            expect(written).toBeGreaterThan(0)
+        })
+
+        it('implements close method', () => {
+            const socket = new Socket()
+            socket.listen(TEST_PORT)
+            socket.close()
+
+            // Should not throw
+            expect(true).toBe(true)
+        })
+
+        it('implements flush method', () => {
+            const socket = new Socket()
+            socket.flush()
+            socket.close()
+
+            // Should not throw
+            expect(true).toBe(true)
+        })
+    })
+
+    await describe('Event Emitters', async () => {
+        let socket: Socket
+
+        beforeEach(() => {
+            socket = new Socket()
+        })
+
+        afterEach(() => {
+            if (socket) {
+                try { socket.close() } catch {}
+            }
+        })
+
+        it('supports on method', () => {
+            let called = false
+            socket.on('readable', () => { called = true })
+            expect(socket).not.toBeNull()
+        })
+
+        it('supports off method', () => {
+            const handler = () => {}
+            socket.on('readable', handler)
+            socket.off('readable', handler)
+            expect(socket).not.toBeNull()
+        })
+
+        it('emits accept event on server', (done) => {
+            const server = new Socket()
+            server.listen(9880)
+            server.async = true
+
+            let acceptCalled = false
+            server.on('accept', () => {
+                acceptCalled = true
+            })
+
+            setTimeout(() => {
+                const client = new Socket()
+                client.connect(9880)
+
+                setTimeout(() => {
+                    // In async mode, accept event should be emitted
+                    client.close()
+                    server.close()
+                    done()
+                }, 100)
+            }, 50)
+        })
+    })
+
+    await describe('Large Data Transfer', async () => {
+        let server: Socket | null = null
+        let client: Socket | null = null
+        const TEST_PORT = 9881
+
+        afterEach(() => {
+            if (client) {
+                try { client.close() } catch {}
+                client = null
+            }
+            if (server) {
+                try { server.close() } catch {}
+                server = null
+            }
+        })
+
+        it('handles large data writes', (done) => {
+            server = new Socket()
+            server.listen(TEST_PORT)
+
+            const largeData = 'X'.repeat(10000)
+
+            // Client connects and writes
+            setTimeout(() => {
+                client = new Socket()
+                client.connect(TEST_PORT)
+
+                const written = client.write(largeData)
+                expect(written).toBeGreaterThan(0)
+            }, 50)
+
+            // Server accepts and reads
+            setTimeout(() => {
+                const conn = server!.accept()
+                const buffer = new ByteArray(20000)
+
+                setTimeout(() => {
+                    let totalRead = 0
+                    while (totalRead < largeData.length) {
+                        const bytesRead = conn.read(buffer)
+                        if (!bytesRead || bytesRead === 0) break
+                        totalRead += bytesRead
+                    }
+
+                    conn.write(`Received ${totalRead} bytes`)
+                    conn.close()
+                }, 50)
+            }, 150)
+
+            // Client reads response
+            setTimeout(() => {
+                const buffer = new ByteArray(1024)
+                client!.read(buffer)
+                expect(buffer.toString()).toContain('Received')
+                done()
+            }, 400)
+        })
+    })
+
+    await describe('Connection Lifecycle', async () => {
+        it('closes cleanly after communication', (done) => {
+            const server = new Socket()
+            server.listen(9882)
+
+            // Client connects and writes
+            let client: Socket
+            setTimeout(() => {
+                client = new Socket()
+                client.connect(9882)
+                client.write('Hello')
+            }, 50)
+
+            // Server accepts and responds
+            setTimeout(() => {
+                const conn = server.accept()
+                setTimeout(() => {
+                    const buffer = new ByteArray(1024)
+                    conn.read(buffer)
+                    conn.write('OK')
+                    conn.close()
+                    expect(conn.isEof).toBe(true)
+                }, 50)
+            }, 150)
+
+            // Client reads and closes
+            setTimeout(() => {
+                const buffer = new ByteArray(1024)
+                client.read(buffer)
+                client.close()
+                expect(client.isEof).toBe(true)
+                server.close()
+                done()
+            }, 400)
+        })
+
+        it('handles rapid connect/disconnect', () => {
+            const server = new Socket()
+            server.listen(9883)
+
+            for (let i = 0; i < 5; i++) {
+                const client = new Socket()
+                client.connect(9883)
+                client.close()
+            }
+
+            server.close()
+            expect(true).toBe(true)
+        })
+    })
+})

@@ -1,0 +1,480 @@
+import { describe, it, expect, beforeEach, afterEach } from 'testme'
+import { Timer } from '../src/core/utilities/Timer'
+
+await describe('Timer', async () => {
+    let timer: Timer | null = null
+
+    afterEach(async () => {
+        // Wait a bit for any pending callbacks to complete
+        await new Promise(resolve => setTimeout(resolve, 50))
+        if (timer) {
+            try {
+                timer.stop()
+            } catch (e) {
+                // Timer may already be stopped
+            }
+            timer = null
+        }
+    })
+
+    await describe('Construction', async () => {
+        it('creates timer with period only', () => {
+            timer = new Timer(100)
+            expect(timer.period).toBe(100)
+        })
+
+        it('creates timer with period and callback', () => {
+            let called = false
+            timer = new Timer(100, () => { called = true })
+            expect(timer.period).toBe(100)
+        })
+
+        it('creates timer with period, callback, and arguments', (done) => {
+            let args: any[] = []
+            timer = new Timer(100, (...received: any[]) => { args = received }, 'a', 42, true)
+
+            timer.start()
+            setTimeout(() => {
+                expect(args).toEqual(['a', 42, true])
+                done()
+            }, 150)
+        })
+    })
+
+    await describe('Properties', async () => {
+        it('has period property', () => {
+            timer = new Timer(200)
+            expect(timer.period).toBe(200)
+        })
+
+        it('allows setting period', () => {
+            timer = new Timer(100)
+            timer.period = 300
+            expect(timer.period).toBe(300)
+        })
+
+        it('has drift property (default false)', () => {
+            timer = new Timer(100)
+            expect(timer.drift).toBe(false)
+        })
+
+        it('allows setting drift', () => {
+            timer = new Timer(100)
+            timer.drift = true
+            expect(timer.drift).toBe(true)
+        })
+
+        it('has repeat property (default false)', () => {
+            timer = new Timer(100)
+            expect(timer.repeat).toBe(false)
+        })
+
+        it('allows setting repeat', () => {
+            timer = new Timer(100)
+            timer.repeat = true
+            expect(timer.repeat).toBe(true)
+        })
+
+        it('has onerror property', () => {
+            timer = new Timer(100)
+            expect(timer.onerror).toBeUndefined()
+        })
+
+        it('allows setting onerror callback', () => {
+            const handler = (err: Error) => console.error(err)
+            timer = new Timer(100)
+            timer.onerror = handler
+            expect(timer.onerror).toBe(handler)
+        })
+    })
+
+    await describe('One-shot Timer', async () => {
+        it('fires once after period', (done) => {
+            let count = 0
+            timer = new Timer(50, () => { count++ })
+
+            timer.start()
+
+            setTimeout(() => {
+                expect(count).toBe(1)
+                done()
+            }, 100)
+        })
+
+        it('invokes callback', (done) => {
+            let called = false
+            timer = new Timer(50, () => { called = true })
+
+            timer.start()
+
+            setTimeout(() => {
+                expect(called).toBe(true)
+                done()
+            }, 100)
+        })
+
+        it('passes arguments to callback', (done) => {
+            let receivedArgs: any[] = []
+            timer = new Timer(50, (...args: any[]) => { receivedArgs = args }, 'test', 42)
+
+            timer.start()
+
+            setTimeout(() => {
+                expect(receivedArgs).toEqual(['test', 42])
+                done()
+            }, 100)
+        })
+
+        it('emits timer event', (done) => {
+            timer = new Timer(50, () => {})
+
+            let eventTimer: Timer | null = null
+            timer.on('timer', (t: Timer) => {
+                eventTimer = t
+            })
+
+            timer.start()
+
+            setTimeout(() => {
+                expect(eventTimer).toBe(timer)
+                done()
+            }, 100)
+        })
+
+        it('does not fire if stopped', (done) => {
+            let count = 0
+            timer = new Timer(50, () => { count++ })
+
+            timer.start()
+            timer.stop()
+
+            setTimeout(() => {
+                expect(count).toBe(0)
+                done()
+            }, 100)
+        })
+    })
+
+    await describe('Repeating Timer', async () => {
+        it('fires multiple times', (done) => {
+            let count = 0
+            timer = new Timer(30, () => { count++ })
+            timer.repeat = true
+
+            timer.start()
+
+            setTimeout(() => {
+                timer!.stop()
+                expect(count).toBeGreaterThanOrEqual(3)
+                done()
+            }, 110)
+        })
+
+        it('continues firing until stopped', (done) => {
+            let count = 0
+            timer = new Timer(25, () => { count++ })
+            timer.repeat = true
+
+            timer.start()
+
+            setTimeout(() => {
+                const countAt100 = count
+                setTimeout(() => {
+                    timer!.stop()
+                    expect(count).toBeGreaterThan(countAt100)
+                    done()
+                }, 60)
+            }, 100)
+        })
+
+        it('emits timer event on each invocation', (done) => {
+            let eventCount = 0
+            timer = new Timer(30, () => {})
+            timer.repeat = true
+
+            timer.on('timer', () => {
+                eventCount++
+            })
+
+            timer.start()
+
+            setTimeout(() => {
+                timer!.stop()
+                expect(eventCount).toBeGreaterThanOrEqual(3)
+                done()
+            }, 110)
+        })
+    })
+
+    await describe('Drift Control', async () => {
+        it('uses drift mode when enabled', (done) => {
+            let count = 0
+            timer = new Timer(30, () => { count++ })
+            timer.repeat = true
+            timer.drift = true
+
+            timer.start()
+
+            setTimeout(() => {
+                timer!.stop()
+                expect(count).toBeGreaterThanOrEqual(3)
+                done()
+            }, 110)
+        })
+
+        it('uses non-drift mode by default', (done) => {
+            let count = 0
+            timer = new Timer(30, () => { count++ })
+            timer.repeat = true
+            // drift = false by default
+
+            timer.start()
+
+            setTimeout(() => {
+                timer!.stop()
+                expect(count).toBeGreaterThanOrEqual(3)
+                done()
+            }, 110)
+        })
+    })
+
+    await describe('Start/Stop', async () => {
+        it('starts timer', (done) => {
+            let called = false
+            timer = new Timer(50, () => { called = true })
+
+            const result = timer.start()
+            expect(result).toBe(timer) // Returns timer for chaining
+
+            setTimeout(() => {
+                expect(called).toBe(true)
+                done()
+            }, 100)
+        })
+
+        it('does not start if already running', (done) => {
+            let count = 0
+            timer = new Timer(50, () => { count++ })
+
+            timer.start()
+            timer.start() // Second start should be ignored
+
+            setTimeout(() => {
+                expect(count).toBe(1)
+                done()
+            }, 100)
+        })
+
+        it('stops timer', (done) => {
+            let count = 0
+            timer = new Timer(30, () => { count++ })
+            timer.repeat = true
+
+            timer.start()
+
+            setTimeout(() => {
+                timer!.stop()
+                const countAtStop = count
+
+                setTimeout(() => {
+                    expect(count).toBe(countAtStop) // No more increments
+                    done()
+                }, 100)
+            }, 70)
+        })
+
+        it('can restart after stop', (done) => {
+            let count = 0
+            timer = new Timer(50, () => { count++ })
+
+            timer.start()
+            timer.stop()
+            timer.start()
+
+            setTimeout(() => {
+                expect(count).toBe(1)
+                done()
+            }, 100)
+        })
+    })
+
+    await describe('Restart', async () => {
+        it('restarts with same period', (done) => {
+            let count = 0
+            timer = new Timer(50, () => { count++ })
+
+            timer.start()
+            setTimeout(() => {
+                timer!.restart()
+            }, 30)
+
+            setTimeout(() => {
+                expect(count).toBe(1)
+                done()
+            }, 120)
+        })
+
+        it('restarts with new period', (done) => {
+            let count = 0
+            timer = new Timer(100, () => { count++ })
+
+            timer.start()
+            timer.restart(50) // Change to 50ms
+
+            setTimeout(() => {
+                expect(count).toBe(1)
+                expect(timer!.period).toBe(50)
+                done()
+            }, 80)
+        })
+
+        it('stops current timer before restarting', (done) => {
+            let timestamps: number[] = []
+            timer = new Timer(100, () => { timestamps.push(Date.now()) })
+
+            timer.start()
+            setTimeout(() => {
+                timer!.restart(50)
+            }, 40)
+
+            setTimeout(() => {
+                // Should have fired once at ~90ms (50ms after restart)
+                expect(timestamps.length).toBe(1)
+                done()
+            }, 150)
+        })
+    })
+
+    await describe('Error Handling', async () => {
+        it('catches errors in callback', (done) => {
+            timer = new Timer(50, () => {
+                throw new Error('Test error')
+            })
+
+            // Should not crash
+            timer.start()
+
+            setTimeout(() => {
+                // Timer should have fired and handled error
+                done()
+            }, 100)
+        })
+
+        it('calls onerror handler on callback error', (done) => {
+            let errorCaught: Error | null = null
+            timer = new Timer(50, () => {
+                throw new Error('Test error')
+            })
+
+            timer.onerror = (err: Error) => {
+                errorCaught = err
+            }
+
+            timer.start()
+
+            setTimeout(() => {
+                expect(errorCaught).not.toBeNull()
+                expect(errorCaught?.message).toBe('Test error')
+                done()
+            }, 100)
+        })
+
+        it('handles error in onerror handler', (done) => {
+            timer = new Timer(50, () => {
+                throw new Error('Callback error')
+            })
+
+            timer.onerror = (_err: Error) => {
+                throw new Error('Error handler error')
+            }
+
+            // Should not crash
+            timer.start()
+
+            setTimeout(() => {
+                done()
+            }, 100)
+        })
+    })
+
+    await describe('Callback Context', async () => {
+        it('calls callback with timer as this', (done) => {
+            let callbackThis: any = null
+            timer = new Timer(50, function(this: any) {
+                callbackThis = this
+            })
+
+            timer.start()
+
+            setTimeout(() => {
+                expect(callbackThis).toBe(timer)
+                done()
+            }, 100)
+        })
+
+        it('preserves bound this context', (done) => {
+            const obj = { value: 42 }
+            let callbackThis: any = null
+
+            const boundCallback = function(this: any) {
+                callbackThis = this
+            }.bind(obj)
+
+            timer = new Timer(50, boundCallback)
+            timer.start()
+
+            setTimeout(() => {
+                expect(callbackThis).toBe(obj)
+                done()
+            }, 100)
+        })
+    })
+
+    await describe('Event Emitter Integration', async () => {
+        it('inherits from Emitter', () => {
+            timer = new Timer(100)
+            expect(typeof timer.on).toBe('function')
+            expect(typeof timer.off).toBe('function')
+            expect(typeof timer.emit).toBe('function')
+        })
+
+        it('can listen for timer events', (done) => {
+            let eventFired = false
+            timer = new Timer(50, () => {})
+
+            timer.on('timer', () => {
+                eventFired = true
+            })
+
+            timer.start()
+
+            setTimeout(() => {
+                expect(eventFired).toBe(true)
+                done()
+            }, 100)
+        })
+
+        it('can remove event listeners', (done) => {
+            let count = 0
+            const listener = () => { count++ }
+
+            timer = new Timer(30, () => {})
+            timer.repeat = true
+            const localTimer = timer // Store local reference
+
+            localTimer.on('timer', listener)
+            localTimer.start()
+
+            setTimeout(() => {
+                localTimer.off('timer', listener)
+                const countAtRemoval = count
+
+                setTimeout(() => {
+                    localTimer.stop()
+                    expect(count).toBe(countAtRemoval) // No more events
+                    done()
+                }, 80)
+            }, 70)
+        })
+    })
+})

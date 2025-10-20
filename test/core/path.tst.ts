@@ -1,0 +1,427 @@
+/**
+ * Path Tests
+ * Migrated from src/core/test/path/*.tst
+ */
+
+import { test, expect, describe, beforeAll, afterAll } from 'testme'
+import { Path } from '../../src/core/Path'
+import { assert, createTestFile, cleanupTestFile, randomTestPath, Platform } from '../helpers'
+import { TestConfig } from '../config'
+
+await describe('Path', async () => {
+  let testFile: Path
+  let testDir: Path
+
+  beforeAll(() => {
+    // Create test fixtures
+    testFile = createTestFile('/tmp/ejscript-path-test.dat', 'test data content')
+    testDir = new Path('/tmp/ejscript-path-test-dir')
+    testDir.makeDir()
+  })
+
+  afterAll(() => {
+    // Cleanup
+    cleanupTestFile(testFile)
+    cleanupTestFile(testDir)
+  })
+
+  describe('Constructor', () => {
+    test('creates path from string', () => {
+      const p = new Path('/a/b/c')
+      expect(p.name).toBe('/a/b/c')
+    })
+
+    test('creates path from empty string', () => {
+      const p = new Path('')
+      expect(p.name).toBe('')
+    })
+
+    test('creates path from another Path', () => {
+      const p1 = new Path('/a/b/c')
+      const p2 = new Path(p1.name)
+      expect(p2.name).toBe('/a/b/c')
+    })
+
+    test('defaults to current directory', () => {
+      const p = new Path()
+      expect(p.name).toBe('.')
+    })
+  })
+
+  describe('Basic Properties', () => {
+    test('exists checks file existence', () => {
+      expect(testFile.exists).toBe(true)
+      expect(new Path('/nonexistent/file').exists).toBe(false)
+    })
+
+    test('isRegular identifies regular files', () => {
+      expect(testFile.isRegular).toBe(true)
+      expect(testDir.isRegular).toBe(false)
+    })
+
+    test('isDir identifies directories', () => {
+      expect(testDir.isDir).toBe(true)
+      expect(testFile.isDir).toBe(false)
+    })
+
+    test('isAbsolute checks if path is absolute', () => {
+      expect(new Path('/a/b/c').isAbsolute).toBe(true)
+      expect(new Path('a/b/c').isAbsolute).toBe(false)
+    })
+
+    test('isRelative checks if path is relative', () => {
+      expect(new Path('a/b/c').isRelative).toBe(true)
+      expect(new Path('/a/b/c').isRelative).toBe(false)
+    })
+
+    test('size returns file size', () => {
+      expect(testFile.size).toBeGreaterThan(0)
+    })
+
+    test('length returns path length', () => {
+      const p = new Path('/a/b/c')
+      expect(p.length).toBe(6)
+    })
+
+    test('created returns creation date', () => {
+      expect(testFile.created).toBeInstanceOf(Date)
+    })
+
+    test('accessed returns access date', () => {
+      expect(testFile.accessed).toBeInstanceOf(Date)
+    })
+
+    test('modified returns modification date', () => {
+      expect(testFile.modified).toBeInstanceOf(Date)
+    })
+  })
+
+  describe('Path Components', () => {
+    test('basename returns file name', () => {
+      expect(new Path('/a/b/c.dat').basename.name).toBe('c.dat')
+      expect(new Path('/a/b/c').basename.name).toBe('c')
+    })
+
+    test('dirname returns directory', () => {
+      expect(new Path('/a/b/c.dat').dirname.name).toBe('/a/b')
+      expect(new Path('/a/b/c').dirname.name).toBe('/a/b')
+    })
+
+    test('parent returns parent directory', () => {
+      const p = new Path('/a/b/c.dat')
+      expect(p.parent.basename.name).toBe('b')
+    })
+
+    test('extension returns file extension', () => {
+      expect(new Path('/a/b/c.dat').extension).toBe('dat')
+      expect(new Path('/a/b/c.tar.gz').extension).toBe('gz')
+      expect(new Path('/a/b/c').extension).toBe('')
+    })
+
+    test('root returns root directory', () => {
+      const p = new Path('/a/b/c')
+      expect(p.root.name).toBeTruthy()
+    })
+  })
+
+  describe('Path Conversions', () => {
+    test('absolute returns absolute path', () => {
+      const p = new Path('test.txt')
+      const abs = p.absolute
+      expect(abs.isAbsolute).toBe(true)
+    })
+
+    test('relative returns relative path', () => {
+      const p = new Path('file.dat')
+      expect(p.relative.name).toBe('file.dat')
+    })
+
+    test('portable uses forward slashes', () => {
+      const p = new Path('c:\\dir\\file.txt')
+      expect(p.portable.name).toBe('c:/dir/file.txt')
+    })
+
+    test.skipIf(!Platform.isWindows)('windows uses backslashes', () => {
+      const p = new Path('/dir/file.txt')
+      const win = p.windows
+      expect(win.name).toContain('\\')
+    })
+
+    test('normalize normalizes path', () => {
+      const p = new Path('/a/./b/../c')
+      const norm = p.normalize
+      expect(norm.name).not.toContain('..')
+    })
+  })
+
+  describe('Path Operations', () => {
+    test('join combines paths', () => {
+      const p = new Path('/tmp')
+      const joined = p.join('subdir', 'file.txt')
+      expect(joined.name).toContain('tmp')
+      expect(joined.name).toContain('subdir')
+      expect(joined.name).toContain('file.txt')
+    })
+
+    test('joinExt adds extension', () => {
+      const p = new Path('file')
+      const withExt = p.joinExt('.txt')
+      expect(withExt.name).toBe('file.txt')
+    })
+
+    test('joinExt with dot', () => {
+      const p = new Path('file')
+      const withExt = p.joinExt('txt')
+      expect(withExt.name).toBe('file.txt')
+    })
+
+    test('trimExt removes extension', () => {
+      const p = new Path('file.txt')
+      const trimmed = p.trimExt()
+      expect(trimmed.name).toBe('file')
+    })
+
+    test('replaceExt changes extension', () => {
+      const p = new Path('file.txt')
+      const replaced = p.replaceExt('.md')
+      expect(replaced.name).toBe('file.md')
+    })
+
+    test('replace performs string replacement', () => {
+      const p = new Path('/home/user/file.txt')
+      const replaced = p.replace('user', 'admin')
+      expect(replaced.name).toBe('/home/admin/file.txt')
+    })
+
+    test('trimStart removes prefix', () => {
+      const p = new Path('/home/user/file.txt')
+      const trimmed = p.trimStart('/home')
+      expect(trimmed.name).toBe('/user/file.txt')
+    })
+
+    test('trimEnd removes suffix', () => {
+      const p = new Path('/path/to/file.txt')
+      const trimmed = p.trimEnd('.txt')
+      expect(trimmed.name).toBe('/path/to/file')
+    })
+  })
+
+  describe('File Operations', () => {
+    test('copy copies file', () => {
+      const src = createTestFile('/tmp/copy-source.txt', 'copy test')
+      const dest = new Path('/tmp/copy-dest.txt')
+
+      src.copy(dest)
+      expect(dest.exists).toBe(true)
+      expect(dest.readString()).toBe('copy test')
+
+      cleanupTestFile(src)
+      cleanupTestFile(dest)
+    })
+
+    test('rename moves file', () => {
+      const src = createTestFile('/tmp/rename-source.txt', 'rename test')
+      const dest = new Path('/tmp/rename-dest.txt')
+
+      src.rename(dest)
+      expect(src.exists).toBe(false)
+      expect(dest.exists).toBe(true)
+
+      cleanupTestFile(dest)
+    })
+
+    test('remove deletes file', () => {
+      const file = createTestFile('/tmp/remove-test.txt', 'remove me')
+      expect(file.exists).toBe(true)
+
+      const result = file.remove()
+      expect(result).toBe(true)
+      expect(file.exists).toBe(false)
+    })
+
+    test('removeAll deletes directory tree', () => {
+      const dir = new Path('/tmp/removeall-test')
+      dir.makeDir()
+      dir.join('subdir').makeDir()
+      dir.join('file.txt').write('test')
+
+      const result = dir.removeAll()
+      expect(result).toBe(true)
+      expect(dir.exists).toBe(false)
+    })
+
+    test('makeDir creates directory', () => {
+      const dir = new Path('/tmp/makedir-test')
+      const result = dir.makeDir()
+      expect(result).toBe(true)
+      expect(dir.exists).toBe(true)
+      expect(dir.isDir).toBe(true)
+
+      cleanupTestFile(dir)
+    })
+
+    test('makeDir creates intermediate directories', () => {
+      const dir = new Path('/tmp/makedir-test/sub1/sub2')
+      const result = dir.makeDir()
+      expect(result).toBe(true)
+      expect(dir.exists).toBe(true)
+
+      cleanupTestFile(new Path('/tmp/makedir-test'))
+    })
+  })
+
+  describe('File Content Operations', () => {
+    test('write writes string to file', () => {
+      const file = randomTestPath('write')
+      file.write('Hello World')
+
+      expect(file.exists).toBe(true)
+      expect(file.readString()).toBe('Hello World')
+
+      cleanupTestFile(file)
+    })
+
+    test('append appends to file', () => {
+      const file = randomTestPath('append')
+      file.write('Line 1\n')
+      file.append('Line 2\n')
+
+      expect(file.readString()).toBe('Line 1\nLine 2\n')
+
+      cleanupTestFile(file)
+    })
+
+    test('readString reads file content', () => {
+      const file = createTestFile('/tmp/read-test.txt', 'Read this content')
+      const content = file.readString()
+
+      expect(content).toBe('Read this content')
+
+      cleanupTestFile(file)
+    })
+
+    test('readBytes reads binary data', () => {
+      const file = createTestFile('/tmp/readbytes-test.dat', 'Binary data')
+      const bytes = file.readBytes()
+
+      expect(bytes).toBeInstanceOf(Uint8Array)
+      expect(bytes!.length).toBeGreaterThan(0)
+
+      cleanupTestFile(file)
+    })
+
+    test('readLines reads file as lines', () => {
+      const file = createTestFile('/tmp/readlines-test.txt', 'Line 1\nLine 2\nLine 3')
+      const lines = file.readLines()
+
+      expect(lines).toHaveLength(3)
+      expect(lines![0]).toBe('Line 1')
+      expect(lines![1]).toBe('Line 2')
+      expect(lines![2]).toBe('Line 3')
+
+      cleanupTestFile(file)
+    })
+
+    test('readJSON parses JSON file', () => {
+      const file = createTestFile('/tmp/readjson-test.json', '{"name":"test","value":42}')
+      const data = file.readJSON()
+
+      expect(data.name).toBe('test')
+      expect(data.value).toBe(42)
+
+      cleanupTestFile(file)
+    })
+  })
+
+  describe('Path Comparison', () => {
+    test('same compares paths', () => {
+      const p1 = new Path('/tmp/test.txt')
+      const p2 = new Path('/tmp/test.txt')
+      const p3 = new Path('/tmp/other.txt')
+
+      expect(p1.same(p2)).toBe(true)
+      expect(p1.same(p3)).toBe(false)
+    })
+
+    test('startsWith checks prefix', () => {
+      const p = new Path('/home/user/file.txt')
+      expect(p.startsWith('/home')).toBe(true)
+      expect(p.startsWith('/opt')).toBe(false)
+    })
+
+    test('endsWith checks suffix', () => {
+      const p = new Path('/path/to/file.txt')
+      expect(p.endsWith('.txt')).toBe(true)
+      expect(p.endsWith('.md')).toBe(false)
+    })
+
+    test('contains checks substring', () => {
+      const p = new Path('/home/user/documents/file.txt')
+      expect(p.contains('user')).toBe(true)
+      expect(p.contains('admin')).toBe(false)
+    })
+  })
+
+  describe('Path Attributes', () => {
+    test('mimeType returns MIME type', () => {
+      expect(new Path('file.html').mimeType).toBe('text/html')
+      expect(new Path('file.json').mimeType).toBe('application/json')
+      expect(new Path('file.png').mimeType).toBe('image/png')
+      expect(new Path('file.unknown').mimeType).toBe('application/octet-stream')
+    })
+
+    test('separator returns path separator', () => {
+      const p1 = new Path('/a/b/c')
+      expect(p1.separator).toBe('/')
+
+      const p2 = new Path('c:\\a\\b')
+      expect(p2.separator).toBe('\\')
+    })
+
+    test('perms gets/sets permissions', () => {
+      const file = createTestFile('/tmp/perms-test.txt', 'perms')
+
+      // Get permissions
+      const perms = file.perms
+      expect(perms).not.toBeNull()
+
+      // Set permissions
+      file.perms = 0o644
+      expect(file.perms).toBe(0o644)
+
+      cleanupTestFile(file)
+    })
+  })
+
+  describe('toString and Conversion', () => {
+    test('toString returns path string', () => {
+      const p = new Path('/a/b/c')
+      expect(p.toString()).toBe('/a/b/c')
+    })
+
+    test('toLowerCase converts to lowercase', () => {
+      const p = new Path('/Path/To/FILE.TXT')
+      expect(p.toLowerCase().name).toBe('/path/to/file.txt')
+    })
+
+    test('toJSON returns JSON string', () => {
+      const p = new Path('/test/path')
+      const json = p.toJSON()
+      expect(json).toContain('/test/path')
+    })
+  })
+
+  describe('Iterator', () => {
+    test('iterates directory entries', () => {
+      const dir = new Path('/tmp/iter-test')
+      dir.makeDir()
+      dir.join('file1.txt').write('test1')
+      dir.join('file2.txt').write('test2')
+
+      const entries = Array.from(dir)
+      expect(entries.length).toBe(2)
+
+      cleanupTestFile(dir)
+    })
+  })
+})
