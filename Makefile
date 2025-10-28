@@ -18,8 +18,8 @@ build:
 	bun run build
 
 test: build
-	bun test
-	# tm test
+	@bin/prep-test.sh
+	tm test
 
 install: build
 	@echo Installing via bun link
