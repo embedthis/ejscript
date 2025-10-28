@@ -59,6 +59,7 @@ jobs:
       - name: Run test suite (Unix)
         if: runner.os != 'Windows'
         run: |
+          bin/prep-test.sh
           tm -v test
 
       - name: Run test suite (Windows)
