@@ -6,13 +6,13 @@ import { describe, it, expect, beforeAll, afterAll } from 'testme'
 import { Http } from '../src/core/Http'
 import { TestServer } from './helpers/test-server'
 
-const TEST_PORT = 4401
+// Use port 0 to let OS auto-assign an available port (avoids conflicts)
 let server: TestServer
 
 await describe('Http Streaming', async () => {
     beforeAll(async () => {
-        // Start test server using TestServer class
-        server = new TestServer({ port: TEST_PORT })
+        // Start test server using TestServer class with auto-assigned port
+        server = new TestServer({ port: 0 })
         await server.start()
     })
 
@@ -34,7 +34,7 @@ await describe('Http Streaming', async () => {
             })
 
             const http = new Http()
-            http.post(`127.0.0.1:${TEST_PORT}/echo`, stream)
+            http.post(`127.0.0.1:${server.port}/echo`, stream)
             await http.wait()
 
             expect(http.status).toBe(200)
@@ -51,7 +51,7 @@ await describe('Http Streaming', async () => {
             })
 
             const http = new Http()
-            http.put(`127.0.0.1:${TEST_PORT}/echo`, stream)
+            http.put(`127.0.0.1:${server.port}/echo`, stream)
             await http.wait()
 
             expect(http.status).toBe(200)
@@ -74,7 +74,7 @@ await describe('Http Streaming', async () => {
             })
 
             const http = new Http()
-            http.post(`127.0.0.1:${TEST_PORT}/echo`, stream)
+            http.post(`127.0.0.1:${server.port}/echo`, stream)
             await http.wait()
 
             expect(http.status).toBe(200)
@@ -87,7 +87,7 @@ await describe('Http Streaming', async () => {
         it('should build request body with multiple write() calls', async () => {
             const http = new Http()
             http.method = 'POST'
-            http.uri = `127.0.0.1:${TEST_PORT}/echo`
+            http.uri = `127.0.0.1:${server.port}/echo`
 
             const bytes1 = http.write('Chunk1 ')
             const bytes2 = http.write('Chunk2 ')
@@ -108,7 +108,7 @@ await describe('Http Streaming', async () => {
         it('should write binary data with Uint8Array', async () => {
             const http = new Http()
             http.method = 'POST'
-            http.uri = `127.0.0.1:${TEST_PORT}/echo`
+            http.uri = `127.0.0.1:${server.port}/echo`
 
             const data1 = new TextEncoder().encode('Binary ')
             const data2 = new TextEncoder().encode('Data')
@@ -130,7 +130,7 @@ await describe('Http Streaming', async () => {
         it('should serialize objects as JSON in write()', async () => {
             const http = new Http()
             http.method = 'POST'
-            http.uri = `127.0.0.1:${TEST_PORT}/echo`
+            http.uri = `127.0.0.1:${server.port}/echo`
 
             const obj = { message: 'Hello', count: 42 }
             const bytes = http.write(obj)
@@ -148,7 +148,7 @@ await describe('Http Streaming', async () => {
         it('should handle mixed data types in write()', async () => {
             const http = new Http()
             http.method = 'POST'
-            http.uri = `127.0.0.1:${TEST_PORT}/echo`
+            http.uri = `127.0.0.1:${server.port}/echo`
 
             http.write('String ')
             http.write(new TextEncoder().encode('Binary '))
@@ -167,7 +167,7 @@ await describe('Http Streaming', async () => {
         it('should write large amounts of data incrementally', async () => {
             const http = new Http()
             http.method = 'POST'
-            http.uri = `127.0.0.1:${TEST_PORT}/echo`
+            http.uri = `127.0.0.1:${server.port}/echo`
 
             let totalBytes = 0
             for (let i = 0; i < 100; i++) {
@@ -191,7 +191,7 @@ await describe('Http Streaming', async () => {
         it('should reset streaming state on reset()', async () => {
             const http = new Http()
             http.method = 'POST'
-            http.uri = `127.0.0.1:${TEST_PORT}/echo`
+            http.uri = `127.0.0.1:${server.port}/echo`
 
             http.write('First request')
             http.connect('POST')
@@ -203,7 +203,7 @@ await describe('Http Streaming', async () => {
             // Reset and make new request
             http.reset()
             http.method = 'POST'
-            http.uri = `127.0.0.1:${TEST_PORT}/echo`
+            http.uri = `127.0.0.1:${server.port}/echo`
 
             http.write('Second request')
             http.connect('POST')
@@ -216,7 +216,7 @@ await describe('Http Streaming', async () => {
         it('should properly close stream on finalize()', async () => {
             const http = new Http()
             http.method = 'POST'
-            http.uri = `127.0.0.1:${TEST_PORT}/echo`
+            http.uri = `127.0.0.1:${server.port}/echo`
 
             http.write('Data')
             expect(http.finalized).toBe(false)
@@ -238,7 +238,7 @@ await describe('Http Streaming', async () => {
             const stream = file.stream()
 
             const http = new Http()
-            http.post(`127.0.0.1:${TEST_PORT}/echo`, stream)
+            http.post(`127.0.0.1:${server.port}/echo`, stream)
             await http.wait()
 
             expect(http.status).toBe(200)
@@ -260,7 +260,7 @@ await describe('Http Streaming', async () => {
             const stream = file.stream()
 
             const http = new Http()
-            http.post(`127.0.0.1:${TEST_PORT}/echo`, stream)
+            http.post(`127.0.0.1:${server.port}/echo`, stream)
             await http.wait()
 
             expect(http.status).toBe(200)
@@ -284,7 +284,7 @@ await describe('Http Streaming', async () => {
 
             const http = new Http()
             http.setCredentials('testuser', 'testpass', 'basic')
-            http.post(`127.0.0.1:${TEST_PORT}/auth/basic`, stream)
+            http.post(`127.0.0.1:${server.port}/auth/basic`, stream)
             await http.wait()
 
             expect(http.status).toBe(200)
@@ -298,7 +298,7 @@ await describe('Http Streaming', async () => {
             // ReadableStreams can only be consumed once, so we use string data instead
             const http = new Http()
             http.setCredentials('testuser', 'testpass')
-            http.post(`127.0.0.1:${TEST_PORT}/auth/digest`, 'Digest auth data')
+            http.post(`127.0.0.1:${server.port}/auth/digest`, 'Digest auth data')
             await http.wait()
 
             expect(http.status).toBe(200)
@@ -321,7 +321,7 @@ await describe('Http Streaming', async () => {
             })
 
             const http = new Http()
-            http.post(`127.0.0.1:${TEST_PORT}/echo`, stream)
+            http.post(`127.0.0.1:${server.port}/echo`, stream)
             await http.wait()
 
             expect(http.status).toBe(200)

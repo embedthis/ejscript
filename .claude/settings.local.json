@@ -24,7 +24,15 @@
       "Bash(tm fast/pausing.tst.ts:*)",
       "Bash(xargs kill:*)",
       "Bash(timeout:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(tm)",
+      "Bash(tm core/path.tst.ts)",
+      "Bash(tm websocket.tst.ts)",
+      "Bash(tm:*)",
+      "Bash(1)",
+      "Bash(for i in 1 2 3)",
+      "Bash(do echo \"=== Run $i ===\")",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []

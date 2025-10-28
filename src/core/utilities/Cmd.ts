@@ -297,16 +297,27 @@ export class Cmd extends Emitter {
 
     /**
      * Command output data as a string (cached)
-     * Note: This is now async - use await cmd.response or preferably await cmd.readString()
+     * Returns string if data is available synchronously (from constructor execution)
+     * Returns Promise if command was started with start() method
      */
-    get response(): Promise<string | null> {
-        if (!this._response) {
-            return this.readString().then(result => {
-                this._response = result
-                return result
-            })
+    get response(): string | Promise<string | null> {
+        // If already cached, return it
+        if (this._response) {
+            return this._response
         }
-        return Promise.resolve(this._response)
+
+        // If process is not running and data is available, return synchronously
+        // This handles the case where constructor was called with a command
+        if (!this._readingStreams && this._stdoutData.length > 0) {
+            this._response = this._stdoutData.toString()
+            return this._response
+        }
+
+        // Otherwise, async read (for commands started with start())
+        return this.readString().then(result => {
+            this._response = result
+            return result
+        })
     }
 
     /**

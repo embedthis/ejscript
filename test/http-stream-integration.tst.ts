@@ -5,7 +5,8 @@
 import { describe, it, expect, beforeAll, afterAll } from 'testme'
 import { Http } from '../src/core/Http'
 
-const TEST_PORT = 4450  // Use unique port to avoid conflicts
+// Use port 0 to let OS auto-assign an available port (avoids conflicts)
+let TEST_PORT: number
 let server: ReturnType<typeof Bun.serve>
 
 await describe('Http Streaming Integration', async () => {
@@ -13,7 +14,7 @@ await describe('Http Streaming Integration', async () => {
         // Create a simple test server
         try {
             server = Bun.serve({
-                port: TEST_PORT,
+                port: 0, // Auto-assign port
                 fetch: async (req: Request) => {
                     const url = new URL(req.url)
 
@@ -32,6 +33,10 @@ await describe('Http Streaming Integration', async () => {
                     return new Response('Not Found', { status: 404 })
                 }
             })
+            // Get the auto-assigned port
+            TEST_PORT = server.port
+            // Unref server so it doesn't keep process alive
+            server.unref()
             // Give server time to start
             await new Promise(resolve => setTimeout(resolve, 200))
         } catch (error) {

@@ -13,9 +13,9 @@ await describe('Path', async () => {
   let testDir: Path
 
   beforeAll(async () => {
-    // Create test fixtures
-    testFile = await createTestFile('/tmp/ejscript-path-test.dat', 'test data content')
-    testDir = new Path('/tmp/ejscript-path-test-dir')
+    // Create test fixtures with unique names to avoid parallel test conflicts
+    testFile = await createTestFile(`/tmp/ejscript-path-test-${process.pid}.dat`, 'test data content')
+    testDir = new Path(`/tmp/ejscript-path-test-dir-${process.pid}`)
     await testDir.makeDir()
   })
 
@@ -296,7 +296,8 @@ await describe('Path', async () => {
     })
 
     test('readString reads file content', async () => {
-      const file = await createTestFile('/tmp/read-test.txt', 'Read this content')
+      const unique = `${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}`
+      const file = await createTestFile(`/tmp/read-test-${unique}.txt`, 'Read this content')
       const content = await file.readString()
 
       expect(content).toBe('Read this content')
@@ -305,7 +306,8 @@ await describe('Path', async () => {
     })
 
     test('readBytes reads binary data', async () => {
-      const file = await createTestFile('/tmp/readbytes-test.dat', 'Binary data')
+      const unique = `${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}`
+      const file = await createTestFile(`/tmp/readbytes-test-${unique}.dat`, 'Binary data')
       const bytes = await file.readBytes()
 
       expect(bytes).toBeInstanceOf(Uint8Array)
@@ -315,7 +317,8 @@ await describe('Path', async () => {
     })
 
     test('readLines reads file as lines', async () => {
-      const file = await createTestFile('/tmp/readlines-test.txt', 'Line 1\nLine 2\nLine 3')
+      const unique = `${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}`
+      const file = await createTestFile(`/tmp/readlines-test-${unique}.txt`, 'Line 1\nLine 2\nLine 3')
       const lines = await file.readLines()
 
       expect(lines).toHaveLength(3)
@@ -327,7 +330,8 @@ await describe('Path', async () => {
     })
 
     test('readJSON parses JSON file', async () => {
-      const file = await createTestFile('/tmp/readjson-test.json', '{"name":"test","value":42}')
+      const unique = `${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}`
+      const file = await createTestFile(`/tmp/readjson-test-${unique}.json`, '{"name":"test","value":42}')
       const data = await file.readJSON()
 
       expect(data.name).toBe('test')

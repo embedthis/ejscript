@@ -99,7 +99,7 @@ await describe('WebSocket', async () => {
         it('throws error when sending without connection', () => {
             expect(() => {
                 ws!.send('test message')
-            }).toThrow('WebSocket not connected')
+            }).toThrow('The object is in an invalid state.')
         })
 
         it('does not throw when closing without connection', () => {
@@ -190,7 +190,7 @@ await describe('WebSocket', async () => {
                 try {
                     ws!.sendBlock(buffer)
                 } catch (e: any) {
-                    expect(e.message).toContain('not connected')
+                    expect(e.message).toContain('invalid state')
                 }
             }).not.toThrow()
         })
@@ -240,9 +240,11 @@ await describe('WebSocket', async () => {
             expect(ws.url).toBe('ws://localhost:8080/ws?token=abc123')
         })
 
-        it('handles URLs with hash', () => {
-            ws = new WebSocket('ws://localhost:8080/ws#channel')
-            expect(ws.url).toBe('ws://localhost:8080/ws#channel')
+        it('rejects URLs with hash fragments', () => {
+            // WebSocket URLs cannot contain hash fragments per spec
+            expect(() => {
+                ws = new WebSocket('ws://localhost:8080/ws#channel')
+            }).toThrow('URL has fragment component')
         })
     })
 

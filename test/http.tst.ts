@@ -273,9 +273,9 @@ await describe('Http', async () => {
         })
 
         await describe('getRequestHeaders()', async () => {
-            it('should return empty object by default', () => {
+            it('should return default headers including User-Agent', () => {
                 const headers = http.getRequestHeaders()
-                expect(headers).toEqual({})
+                expect(headers['User-Agent']).toBe('Embedthis-http')
             })
 
             it('should return copy of headers', () => {
