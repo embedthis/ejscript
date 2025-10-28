@@ -112,17 +112,17 @@ await describe('System', async () => {
             expect(path.isDir).toBe(true)
         })
 
-        it('tmpdir is writable', () => {
+        it('tmpdir is writable', async () => {
             const tmpdir = System.tmpdir
             const testFile = new Path(tmpdir).join(`test-${process.pid}.tmp`)
 
             try {
-                testFile.write('test')
+                await testFile.write('test')
                 expect(testFile.exists).toBe(true)
-                expect(testFile.readString()).toBe('test')
+                expect(await testFile.readString()).toBe('test')
             } finally {
                 if (testFile.exists) {
-                    testFile.remove()
+                    await testFile.remove()
                 }
             }
         })
@@ -163,21 +163,21 @@ await describe('System', async () => {
             expect(typeof System.tmpdir).toBe('string')
         })
 
-        it('can create files in tmpdir', () => {
+        it('can create files in tmpdir', async () => {
             const tmpPath = new Path(System.tmpdir)
             const testFile = tmpPath.join(`sys-test-${process.pid}.txt`)
 
             try {
-                testFile.write(`Testing System class\nHostname: ${System.hostname}\nIP: ${System.ipaddr}`)
+                await testFile.write(`Testing System class\nHostname: ${System.hostname}\nIP: ${System.ipaddr}`)
                 expect(testFile.exists).toBe(true)
 
-                const content = testFile.readString()
+                const content = await testFile.readString()
                 expect(content).toContain('Testing System class')
                 expect(content).toContain(System.hostname)
                 expect(content).toContain(System.ipaddr)
             } finally {
                 if (testFile.exists) {
-                    testFile.remove()
+                    await testFile.remove()
                 }
             }
         })

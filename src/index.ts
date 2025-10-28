@@ -26,6 +26,7 @@ export { ByteArray } from './core/streams/ByteArray'
 // Networking
 export { Http } from './core/Http'
 export { Socket } from './core/Socket'
+export { WebSocket } from './core/WebSocket'
 export { WebSocket as EjsWebSocket } from './core/WebSocket'
 export { Uri } from './core/utilities/Uri'
 

@@ -8,21 +8,21 @@ await describe('Logger', async () => {
     let testDir: Path
     let testFile: Path
 
-    beforeEach(() => {
+    beforeEach(async () => {
         testDir = new Path('.test/logger')
         testFile = testDir.join('test.log')
-        testDir.makeDir()
+        await testDir.makeDir()
     })
 
-    afterEach(() => {
+    afterEach(async () => {
         if (logger) {
             try {
-                logger.close()
+                await logger.close()
             } catch {}
             logger = null
         }
         if (testDir.exists) {
-            testDir.removeAll()
+            await testDir.removeAll()
         }
     })
 
@@ -391,24 +391,24 @@ await describe('Logger', async () => {
     })
 
     await describe('File Output', async () => {
-        it('writes to file', () => {
+        it('writes to file', async () => {
             logger = new Logger('test', testFile.toString(), Logger.Info)
             logger.info('File test')
-            logger.close()
+            await logger.close()
 
             expect(testFile.exists).toBe(true)
-            const content = testFile.readString()
+            const content = await testFile.readString()
             expect(content).toContain('File test')
         })
 
-        it('appends to existing file', () => {
-            testFile.write('Initial content\n')
+        it('appends to existing file', async () => {
+            await testFile.write('Initial content\n')
 
             logger = new Logger('test', testFile.toString(), Logger.Info)
             logger.info('Appended')
-            logger.close()
+            await logger.close()
 
-            const content = testFile.readString()
+            const content = await testFile.readString()
             expect(content).toContain('Initial content')
             expect(content).toContain('Appended')
         })
@@ -483,9 +483,9 @@ await describe('Logger', async () => {
     })
 
     await describe('Close', async () => {
-        it('closes output stream', () => {
+        it('closes output stream', async () => {
             logger = new Logger('test', testFile.toString())
-            logger.close()
+            await logger.close()
             expect(logger.outStream).toBeNull()
         })
 

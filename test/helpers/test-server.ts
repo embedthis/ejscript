@@ -16,7 +16,7 @@ export class TestServer {
 
     constructor(options: TestServerOptions = {}) {
         this._port = options.port || 0 // 0 = auto-assign
-        this._host = options.host || 'localhost'
+        this._host = options.host || '127.0.0.1'  // Use 127.0.0.1 to ensure IPv4 binding
     }
 
     get port(): number {
@@ -96,11 +96,13 @@ export class TestServer {
                     return Response.json(params)
                 }
 
-                // Route: POST /echo - echo request body
-                if (method === 'POST' && path === '/echo') {
+                // Route: POST|PUT /echo - echo request body as JSON
+                if ((method === 'POST' || method === 'PUT') && path === '/echo') {
                     const body = await req.text()
-                    return new Response(body, {
-                        headers: { 'Content-Type': req.headers.get('content-type') || 'text/plain' },
+                    return Response.json({
+                        method: method,
+                        body: body,
+                        contentType: req.headers.get('content-type')
                     })
                 }
 
@@ -209,6 +211,126 @@ export class TestServer {
                     const decoded = atob(auth.substring(6))
                     if (decoded === 'user:pass') {
                         return new Response('Authenticated')
+                    }
+                    return new Response('Invalid credentials', { status: 403 })
+                }
+
+                // Route: POST /auth/basic - basic auth with body echo
+                if (method === 'POST' && path === '/auth/basic') {
+                    const auth = req.headers.get('authorization')
+                    if (!auth || !auth.startsWith('Basic ')) {
+                        return new Response('Unauthorized', {
+                            status: 401,
+                            headers: { 'WWW-Authenticate': 'Basic realm="Test"' },
+                        })
+                    }
+                    const decoded = atob(auth.substring(6))
+                    if (decoded === 'testuser:testpass') {
+                        const body = await req.text()
+                        return Response.json({
+                            authenticated: true,
+                            body: body
+                        })
+                    }
+                    return new Response('Invalid credentials', { status: 403 })
+                }
+
+                // Route: POST /auth/digest - digest auth with body echo
+                if (method === 'POST' && path === '/auth/digest') {
+                    const auth = req.headers.get('authorization')
+                    if (!auth || !auth.startsWith('Digest ')) {
+                        return new Response('Unauthorized', {
+                            status: 401,
+                            headers: {
+                                'WWW-Authenticate': 'Digest realm="test", nonce="abc123", algorithm=MD5, qop="auth"'
+                            },
+                        })
+                    }
+
+                    // Simple validation
+                    if (auth.includes('username="testuser"') && auth.includes('response="')) {
+                        const body = await req.text()
+                        return Response.json({
+                            authenticated: true,
+                            body: body
+                        })
+                    }
+                    return new Response('Invalid credentials', { status: 403 })
+                }
+
+                // Route: GET /digest-auth - digest auth test with MD5
+                if (method === 'GET' && path === '/digest-auth') {
+                    const auth = req.headers.get('authorization')
+                    if (!auth || !auth.startsWith('Digest ')) {
+                        return new Response('Unauthorized', {
+                            status: 401,
+                            headers: {
+                                'WWW-Authenticate': 'Digest realm="test", nonce="abc123", algorithm=MD5, qop="auth"'
+                            },
+                        })
+                    }
+
+                    // Simple validation - just check if it has expected fields
+                    if (auth.includes('username="testuser"') && auth.includes('response="')) {
+                        return new Response('Digest Authenticated')
+                    }
+                    return new Response('Invalid credentials', { status: 403 })
+                }
+
+                // Route: GET /digest-auth-sha256 - digest auth test with SHA-256
+                if (method === 'GET' && path === '/digest-auth-sha256') {
+                    const auth = req.headers.get('authorization')
+                    if (!auth || !auth.startsWith('Digest ')) {
+                        return new Response('Unauthorized', {
+                            status: 401,
+                            headers: {
+                                'WWW-Authenticate': 'Digest realm="test", nonce="xyz789", algorithm=SHA-256, qop="auth", opaque="5ccc069c"'
+                            },
+                        })
+                    }
+
+                    // Simple validation
+                    if (auth.includes('username="testuser"') && auth.includes('response="') && auth.includes('algorithm=SHA-256')) {
+                        return new Response('Digest SHA-256 Authenticated')
+                    }
+                    return new Response('Invalid credentials', { status: 403 })
+                }
+
+                // Route: GET /digest-auth-no-qop - digest auth without qop
+                if (method === 'GET' && path === '/digest-auth-no-qop') {
+                    const auth = req.headers.get('authorization')
+                    if (!auth || !auth.startsWith('Digest ')) {
+                        return new Response('Unauthorized', {
+                            status: 401,
+                            headers: {
+                                'WWW-Authenticate': 'Digest realm="test", nonce="simple123", algorithm=MD5'
+                            },
+                        })
+                    }
+
+                    // Simple validation - should not have qop, nc, cnonce
+                    if (auth.includes('username="testuser"') && auth.includes('response="') && !auth.includes('qop=')) {
+                        return new Response('Digest No-QOP Authenticated')
+                    }
+                    return new Response('Invalid credentials', { status: 403 })
+                }
+
+                // Route: POST /digest-auth-post - digest auth with POST
+                if (method === 'POST' && path === '/digest-auth-post') {
+                    const auth = req.headers.get('authorization')
+                    if (!auth || !auth.startsWith('Digest ')) {
+                        return new Response('Unauthorized', {
+                            status: 401,
+                            headers: {
+                                'WWW-Authenticate': 'Digest realm="test", nonce="post123", algorithm=MD5, qop="auth"'
+                            },
+                        })
+                    }
+
+                    // Simple validation
+                    if (auth.includes('username="testuser"') && auth.includes('response="')) {
+                        const body = await req.text()
+                        return new Response(`Digest POST Authenticated: ${body}`)
                     }
                     return new Response('Invalid credentials', { status: 403 })
                 }

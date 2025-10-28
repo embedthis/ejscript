@@ -48,7 +48,7 @@ export abstract class Stream {
     /**
      * Close the stream and free resources
      */
-    abstract close(): void
+    abstract close(): void | Promise<void>
 
     /**
      * Flush buffered data
@@ -61,16 +61,16 @@ export abstract class Stream {
      * @param buffer Buffer to read into
      * @param offset Offset in buffer to start writing
      * @param count Number of bytes to read
-     * @returns Number of bytes read, or null on EOF
+     * @returns Number of bytes read, or null on EOF (may be async)
      */
-    abstract read(buffer: Uint8Array, offset?: number, count?: number): number | null
+    abstract read(buffer: Uint8Array, offset?: number, count?: number): number | null | Promise<number | null>
 
     /**
      * Write data to the stream
      * @param ...args Data to write
-     * @returns Number of bytes written
+     * @returns Number of bytes written (may be async)
      */
-    abstract write(...args: any[]): number
+    abstract write(...args: any[]): number | Promise<number>
 
     /**
      * Register an event observer

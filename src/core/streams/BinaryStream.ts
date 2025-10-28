@@ -60,29 +60,34 @@ export class BinaryStream extends Stream {
         this._endian = value
     }
 
-    close(): void {
-        this.stream.close()
+    async close(): Promise<void> {
+        const result = this.stream.close()
+        if (result instanceof Promise) {
+            await result
+        }
     }
 
     flush(dir: number = Stream.WRITE): void {
         this.stream.flush(dir)
     }
 
-    read(buffer: Uint8Array, offset: number = 0, count: number = -1): number | null {
-        return this.stream.read(buffer, offset, count)
+    async read(buffer: Uint8Array, offset: number = 0, count: number = -1): Promise<number | null> {
+        const result = this.stream.read(buffer, offset, count)
+        return result instanceof Promise ? await result : result
     }
 
-    write(...args: any[]): number {
-        return this.stream.write(...args)
+    async write(...args: any[]): Promise<number> {
+        const result = this.stream.write(...args)
+        return result instanceof Promise ? await result : result
     }
 
     /**
      * Read a single byte
      * @returns Byte value (0-255) or null on EOF
      */
-    readByte(): number | null {
+    async readByte(): Promise<number | null> {
         const buffer = new Uint8Array(1)
-        const bytesRead = this.stream.read(buffer, 0, 1)
+        const bytesRead = await this.read(buffer, 0, 1)
         return bytesRead ? buffer[0] : null
     }
 
@@ -90,9 +95,9 @@ export class BinaryStream extends Stream {
      * Read a 16-bit integer
      * @returns Integer value or null on EOF
      */
-    readInteger16(): number | null {
+    async readInteger16(): Promise<number | null> {
         const buffer = new Uint8Array(2)
-        const bytesRead = this.stream.read(buffer, 0, 2)
+        const bytesRead = await this.read(buffer, 0, 2)
         if (!bytesRead || bytesRead < 2) return null
 
         const view = new DataView(buffer.buffer)
@@ -102,8 +107,8 @@ export class BinaryStream extends Stream {
     /**
      * Alias for readInteger16
      */
-    readShort(): number | null {
-        return this.readInteger16()
+    async readShort(): Promise<number | null> {
+        return await this.readInteger16()
     }
 
     /**
@@ -111,9 +116,9 @@ export class BinaryStream extends Stream {
      * @param count Number of bytes to read
      * @returns String or null on EOF
      */
-    readString(count: number): string | null {
+    async readString(count: number): Promise<string | null> {
         const buffer = new Uint8Array(count)
-        const bytesRead = this.stream.read(buffer, 0, count)
+        const bytesRead = await this.read(buffer, 0, count)
         if (!bytesRead || bytesRead === 0) return null
 
         const decoder = new TextDecoder('utf-8')
@@ -124,9 +129,9 @@ export class BinaryStream extends Stream {
      * Read a 32-bit integer
      * @returns Integer value or null on EOF
      */
-    readInteger32(): number | null {
+    async readInteger32(): Promise<number | null> {
         const buffer = new Uint8Array(4)
-        const bytesRead = this.stream.read(buffer, 0, 4)
+        const bytesRead = await this.read(buffer, 0, 4)
         if (!bytesRead || bytesRead < 4) return null
 
         const view = new DataView(buffer.buffer)
@@ -137,9 +142,9 @@ export class BinaryStream extends Stream {
      * Read a 64-bit integer
      * @returns BigInt value or null on EOF
      */
-    readInteger64(): bigint | null {
+    async readInteger64(): Promise<bigint | null> {
         const buffer = new Uint8Array(8)
-        const bytesRead = this.stream.read(buffer, 0, 8)
+        const bytesRead = await this.read(buffer, 0, 8)
         if (!bytesRead || bytesRead < 8) return null
 
         const view = new DataView(buffer.buffer)
@@ -150,9 +155,9 @@ export class BinaryStream extends Stream {
      * Read a 64-bit double
      * @returns Double value or null on EOF
      */
-    readDouble(): number | null {
+    async readDouble(): Promise<number | null> {
         const buffer = new Uint8Array(8)
-        const bytesRead = this.stream.read(buffer, 0, 8)
+        const bytesRead = await this.read(buffer, 0, 8)
         if (!bytesRead || bytesRead < 8) return null
 
         const view = new DataView(buffer.buffer)
@@ -163,9 +168,9 @@ export class BinaryStream extends Stream {
      * Read a 32-bit float
      * @returns Float value or null on EOF
      */
-    readFloat(): number | null {
+    async readFloat(): Promise<number | null> {
         const buffer = new Uint8Array(4)
-        const bytesRead = this.stream.read(buffer, 0, 4)
+        const bytesRead = await this.read(buffer, 0, 4)
         if (!bytesRead || bytesRead < 4) return null
 
         const view = new DataView(buffer.buffer)
@@ -177,9 +182,9 @@ export class BinaryStream extends Stream {
      * @param value Byte value (0-255)
      * @returns Number of bytes written
      */
-    writeByte(value: number): number {
+    async writeByte(value: number): Promise<number> {
         const buffer = new Uint8Array([value & 0xFF])
-        return this.stream.write(buffer)
+        return await this.write(buffer)
     }
 
     /**
@@ -187,18 +192,18 @@ export class BinaryStream extends Stream {
      * @param value Integer value
      * @returns Number of bytes written
      */
-    writeInteger16(value: number): number {
+    async writeInteger16(value: number): Promise<number> {
         const buffer = new ArrayBuffer(2)
         const view = new DataView(buffer)
         view.setInt16(0, value, this._endian === Endian.LittleEndian)
-        return this.stream.write(new Uint8Array(buffer))
+        return await this.write(new Uint8Array(buffer))
     }
 
     /**
      * Alias for writeInteger16
      */
-    writeShort(value: number): number {
-        return this.writeInteger16(value)
+    async writeShort(value: number): Promise<number> {
+        return await this.writeInteger16(value)
     }
 
     /**
@@ -206,11 +211,11 @@ export class BinaryStream extends Stream {
      * @param value Integer value
      * @returns Number of bytes written
      */
-    writeInteger32(value: number): number {
+    async writeInteger32(value: number): Promise<number> {
         const buffer = new ArrayBuffer(4)
         const view = new DataView(buffer)
         view.setInt32(0, value, this._endian === Endian.LittleEndian)
-        return this.stream.write(new Uint8Array(buffer))
+        return await this.write(new Uint8Array(buffer))
     }
 
     /**
@@ -218,11 +223,11 @@ export class BinaryStream extends Stream {
      * @param value BigInt value
      * @returns Number of bytes written
      */
-    writeInteger64(value: bigint): number {
+    async writeInteger64(value: bigint): Promise<number> {
         const buffer = new ArrayBuffer(8)
         const view = new DataView(buffer)
         view.setBigInt64(0, value, this._endian === Endian.LittleEndian)
-        return this.stream.write(new Uint8Array(buffer))
+        return await this.write(new Uint8Array(buffer))
     }
 
     /**
@@ -230,11 +235,11 @@ export class BinaryStream extends Stream {
      * @param value Double value
      * @returns Number of bytes written
      */
-    writeDouble(value: number): number {
+    async writeDouble(value: number): Promise<number> {
         const buffer = new ArrayBuffer(8)
         const view = new DataView(buffer)
         view.setFloat64(0, value, this._endian === Endian.LittleEndian)
-        return this.stream.write(new Uint8Array(buffer))
+        return await this.write(new Uint8Array(buffer))
     }
 
     /**
@@ -242,11 +247,11 @@ export class BinaryStream extends Stream {
      * @param value Float value
      * @returns Number of bytes written
      */
-    writeFloat(value: number): number {
+    async writeFloat(value: number): Promise<number> {
         const buffer = new ArrayBuffer(4)
         const view = new DataView(buffer)
         view.setFloat32(0, value, this._endian === Endian.LittleEndian)
-        return this.stream.write(new Uint8Array(buffer))
+        return await this.write(new Uint8Array(buffer))
     }
 
     on(name: string, observer: Function): this {

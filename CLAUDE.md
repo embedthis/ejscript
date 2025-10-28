@@ -41,7 +41,7 @@ src/
 ├── core/
 │   ├── App.ts           # Application singleton - central state management
 │   ├── Path.ts          # Path operations (854 lines, 80+ methods)
-│   ├── File.ts          # Synchronous file I/O with Stream interface
+│   ├── File.ts          # Asynchronous file I/O with Stream interface
 │   ├── Http.ts          # Full HTTP/HTTPS client (678 lines, 40+ methods)
 │   ├── FileSystem.ts    # File system operations
 │   ├── Socket.ts        # TCP/UDP networking
@@ -131,17 +131,89 @@ describe('Path', () => {
 
 ## API Compatibility
 
-This implementation maintains full API compatibility with native Ejscript. The only required change for migration is adding imports:
+This implementation maintains strong API compatibility with native Ejscript, but requires some changes for migration:
 
-**Before (native Ejscript):**
-```javascript
-let path = new Path('/tmp/test.txt')
-```
+### Required Changes for Migration
 
-**After (Ejscript for Bun):**
+1. **ES6 Imports Required**
+   - All classes must be explicitly imported using ES6 import syntax
+   - Example: `import { Path, File, Http, Socket } from 'ejscript'`
+
+2. **For-In Loop with Numbers** ⚠️ SYNTAX DIFFERENCE
+   - **Ejscript**: `for (let i in N)` iterates from 0 to N-1
+   - **JavaScript/TypeScript**: `for (let i in N)` does nothing (N is not iterable)
+   - **Migration**: Replace `for (let i in count)` with `for (let i = 0; i < count; i++)`
+   - Example:
+     ```javascript
+     // Ejscript:
+     for (let i in 64) { ... }  // Iterates 0-63
+
+     // TypeScript/Bun:
+     for (let i = 0; i < 64; i++) { ... }  // Equivalent
+     ```
+
+2. **File I/O Methods are Async (v2.0.0+)** ⚠️ BREAKING CHANGE
+   - `File.open(options?)` → Returns `Promise<File>` (must await)
+   - `File.close()` → Returns `Promise<void>`
+   - `File.read(buffer, offset?, count?)` → Returns `Promise<number | null>`
+   - `File.write(...items)` → Returns `Promise<number>`
+   - `File.readBytes(count?)` → Returns `Promise<ByteArray | null>`
+   - `File.readString(count?)` → Returns `Promise<string | null>`
+   - `File.readLines()` → Returns `Promise<string[] | null>`
+   - `File.writeLine(...items)` → Returns `Promise<number>`
+   - **File constructor NO LONGER auto-opens** - must call `await file.open()` explicitly
+   - **Path.open(options?)** → Returns `Promise<File>` (handles opening automatically)
+   - **Path.openTextStream(mode?)** → Returns `Promise<TextStream>`
+   - **Path.openBinaryStream(mode?)** → Returns `Promise<BinaryStream>`
+
+3. **Stream Methods are Async (v2.0.0+)** ⚠️ BREAKING CHANGE
+   - `TextStream.read()`, `readLine()`, `readLines()`, `readString()` → All return Promises
+   - `TextStream.write()`, `writeLine()` → Return Promises
+   - `TextStream.close()` → Returns `Promise<void>`
+   - `BinaryStream.read*()` methods → All return Promises
+   - `BinaryStream.write*()` methods → All return Promises
+   - `BinaryStream.close()` → Returns `Promise<void>`
+
+4. **Socket I/O Methods are Async**
+   - `Socket.read(buffer, offset?, count?)` → Returns `Promise<number | null>`
+   - `Socket.write(...data)` → Returns `Promise<number>`
+   - Must use `await` when calling these methods
+   - Tests must be written with async functions or use `.then()` chains
+
+5. **HTTP Methods are Async**
+   - `Http.finalize()` → Returns `Promise<void>` (must await before reading response)
+   - `Http.wait(timeout?)` → Returns `Promise<boolean>`
+   - `Http.fetch(uri, method?, ...data)` → Returns `Promise<string>` (static method)
+
+6. **Event-Driven Alternative Available**
+   - For high-performance code, use event-driven pattern: `socket.on('readable', handler)`
+   - Avoids async overhead for streaming scenarios
+
+7. **Type Annotations**
+   - TypeScript is recommended but not required
+   - Type definitions are provided for better IDE support
+
+**Migration Example (v1.x to v2.0.0):**
+
 ```typescript
+// v1.x - Synchronous (NO LONGER WORKS in v2.0.0)
+import { File } from 'ejscript'
+const file = new File('/tmp/test.txt', 'r')  // Auto-opened
+const content = file.readString()
+file.close()
+
+// v2.0.0 - Asynchronous (REQUIRED)
+import { File } from 'ejscript'
+const file = new File('/tmp/test.txt')
+await file.open('r')  // Must explicitly open
+const content = await file.readString()
+await file.close()
+
+// v2.0.0 - Simplified with Path.open() (RECOMMENDED)
 import { Path } from 'ejscript'
-let path = new Path('/tmp/test.txt')
+const file = await new Path('/tmp/test.txt').open('r')
+const content = await file.readString()
+await file.close()
 ```
 
 ## Common Development Tasks
@@ -205,39 +277,56 @@ Type extensions are in `src/core/types/`. They augment native JavaScript types:
 - [QUICK_START.md](QUICK_START.md) - Getting started guide
 - JSDoc comments in source files provide API documentation
 
-### .agent/ Directory Structure
-All comprehensive project documentation is organized under `.agent/`:
-- [.agent/designs/DESIGN.md](.agent/designs/DESIGN.md) - Architecture and design decisions
-- [.agent/plans/PLAN.md](.agent/plans/PLAN.md) - Project roadmap and future plans
-- [.agent/procedures/PROCEDURES.md](.agent/procedures/PROCEDURES.md) - Development procedures
-- [.agent/logs/CHANGELOG.md](.agent/logs/CHANGELOG.md) - Complete change history
-- [.agent/context/CURRENT.md](.agent/context/CURRENT.md) - Current project state
-- [.agent/references/REFERENCES.md](.agent/references/REFERENCES.md) - External resources
-- [.agent/README.md](.agent/README.md) - Documentation structure overview
+### AI/ Directory Structure
+All comprehensive project documentation is organized under `AI/`:
+- [AI/designs/DESIGN.md](AI/designs/DESIGN.md) - Architecture and design decisions
+- [AI/plans/PLAN.md](AI/plans/PLAN.md) - Project roadmap and future plans
+- [AI/procedures/PROCEDURES.md](AI/procedures/PROCEDURES.md) - Development procedures
+- [AI/logs/CHANGELOG.md](AI/logs/CHANGELOG.md) - Complete change history
+- [AI/context/CURRENT.md](AI/context/CURRENT.md) - Current project state
+- [AI/references/REFERENCES.md](AI/references/REFERENCES.md) - External resources
+- [AI/README.md](AI/README.md) - Documentation structure overview
 
 ## Performance Considerations
 
-- File operations use Bun's native synchronous APIs (fast)
+- File operations use Bun's native async APIs via fs.promises (optimized in Bun)
 - HTTP uses fetch() (optimized in Bun)
 - Path operations are lightweight (no filesystem access unless needed)
 - ByteArray uses JavaScript Uint8Array for efficient binary data
 - Timer uses Bun's native timer implementation
+- Async I/O enables concurrent operations without blocking
 
 ## Limitations and Known Issues
 
-1. **Synchronous I/O Only**: File operations are currently synchronous
+1. **All File I/O is Async**: No synchronous variants (use fs.readFileSync if needed for simple cases)
 2. **Glob Patterns**: Basic glob support implemented, advanced patterns may need enhancement
 3. **XML/E4X**: Not implemented (optional future enhancement)
 4. **Operator Overloading**: Cannot be implemented in JavaScript
 5. **Worker Threads**: Basic implementation, may need enhancement for complex use cases
+6. **Logger File Output**: Minor timing considerations when logging to files due to async writes
+
+## Version History
+
+### v2.0.0 (Current) - Async I/O Conversion
+- **BREAKING**: File I/O operations are now asynchronous
+- **BREAKING**: File constructor no longer auto-opens files
+- **BREAKING**: Stream read/write methods are async
+- **BREAKING**: Path.open(), openTextStream(), openBinaryStream() are async
+- Improved: Better concurrency support
+- Improved: Non-blocking I/O operations
+- Fixed: All 1374 test assertions passing
+
+### v1.x - Synchronous I/O
+- Original synchronous file operations
+- Auto-opening File constructor
 
 ## Future Enhancement Areas
 
-- Async/await versions of file I/O operations
 - Full glob pattern matching (*, **, ?, [])
 - XML parsing support
 - Additional utility modules (@ejscript/template, @ejscript/mail, etc.)
 - Performance benchmarking suite
+- Synchronous convenience methods for simple use cases
 
 # Important Notes
 - Use TestMe for unit tests
@@ -247,3 +336,28 @@ All comprehensive project documentation is organized under `.agent/`:
 - In API doc, do not being multi-line comments with "*"
 - 
 
+
+## Project Documentation
+
+This module maintains structured documentation in the `AI/` directory to assist Claude Code and developers:
+
+- **AI/designs/** - Architectural and design documentation
+- **AI/context/** - Current status and progress (CONTEXT.md)
+- **AI/plans/** - Implementation plans and roadmaps
+- **AI/procedures/** - Testing and development procedures
+- **AI/logs/** - Change logs and session activity logs
+- **AI/references/** - External documentation and resources
+- **AI/releases/** - Version release notes
+- **AI/agents/** - Claude sub-agent definitions
+- **AI/skills/** - Claude skill definitions
+- **AI/prompts/** - Reusable prompts
+- **AI/workflows/** - Development workflows
+- **AI/commands/** - Custom commands
+
+See `AI/README.md` for detailed information about the documentation structure.
+
+## Additional Resources
+
+- **Parent Project**: See `../CLAUDE.md` for general build commands, testing procedures, and overall EmbedThis architecture
+- **API Documentation**: Generated via `make doc` → `doc/index.html`
+- **Project Documentation**: See `AI/` directory for designs, plans, procedures, and context

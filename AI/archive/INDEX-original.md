@@ -13,7 +13,7 @@ Quick reference index for all project documentation.
 | [PROJECT_SUMMARY.md](../PROJECT_SUMMARY.md) | Complete feature list | Full feature overview |
 | [STATUS.md](../STATUS.md) | Current status | Quick status check |
 
-## .agent/ Documentation Structure
+## AI/ Documentation Structure
 
 | Document | Lines | Purpose |
 |----------|-------|---------|
@@ -108,19 +108,19 @@ Quick reference index for all project documentation.
 
 ```bash
 # View any document
-cat .agent/designs/DESIGN.md
-cat .agent/plans/PLAN.md
-cat .agent/procedures/PROCEDURES.md
-cat .agent/logs/CHANGELOG.md
+cat AI/designs/DESIGN.md
+cat AI/plans/PLAN.md
+cat AI/procedures/PROCEDURES.md
+cat AI/logs/CHANGELOG.md
 
 # Search documentation
-grep -r "search term" .agent/
+grep -r "search term" AI/
 
 # List all documents
 find .agent -name "*.md" -type f
 
 # Count documentation lines
-wc -l .agent/**/*.md
+wc -l AI/**/*.md
 ```
 
 ## Maintenance Schedule
@@ -162,7 +162,7 @@ plans/PLAN.md
 
 When archiving outdated documents:
 ```
-.agent/archive/
+AI/archive/
     ├─ YYYY-MM-DD/
     │   ├─ designs/
     │   ├─ plans/

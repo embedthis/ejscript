@@ -128,22 +128,22 @@ export class FileSystem {
      * Create a directory
      * @param options Options including permissions
      */
-    createDirectory(options?: { permissions?: number }): boolean {
-        return this.path.makeDir(options)
+    async createDirectory(options?: { permissions?: number }): Promise<boolean> {
+        return await this.path.makeDir(options)
     }
 
     /**
      * Remove a file or directory
      */
-    remove(): boolean {
-        return this.path.remove()
+    async remove(): Promise<boolean> {
+        return await this.path.remove()
     }
 
     /**
      * Remove directory and all contents
      */
-    removeAll(): boolean {
-        return this.path.removeAll()
+    async removeAll(): Promise<boolean> {
+        return await this.path.removeAll()
     }
 
     /**

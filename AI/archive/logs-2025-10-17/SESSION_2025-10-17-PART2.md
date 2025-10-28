@@ -29,7 +29,7 @@ Created detailed audit comparing ejscript core with Ejscript implementation:
 - ByteArray: 11 missing methods
 - Worker: 10 missing methods
 
-**Audit Document:** [.agent/designs/API_AUDIT_2025-10-17.md](.agent/designs/API_AUDIT_2025-10-17.md)
+**Audit Document:** [AI/designs/API_AUDIT_2025-10-17.md](AI/designs/API_AUDIT_2025-10-17.md)
 
 ### 2. ✅ Uri Class - COMPLETE Implementation
 
@@ -187,8 +187,8 @@ Created detailed audit comparing ejscript core with Ejscript implementation:
 ## Files Modified
 
 ### Created:
-- `.agent/designs/API_AUDIT_2025-10-17.md` - Comprehensive API audit
-- `.agent/logs/SESSION_2025-10-17-PART2.md` - This file
+- `AI/designs/API_AUDIT_2025-10-17.md` - Comprehensive API audit
+- `AI/logs/SESSION_2025-10-17-PART2.md` - This file
 
 ### Modified:
 - `src/core/utilities/Uri.ts` - Major expansion (+450 lines, +35 methods)

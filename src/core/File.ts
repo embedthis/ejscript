@@ -10,6 +10,7 @@ import { Stream } from './streams/Stream'
 import { Path } from './Path'
 import { ByteArray } from './streams/ByteArray'
 import * as fs from 'fs'
+import type { FileHandle } from 'fs/promises'
 
 export interface FileOptions {
     mode?: string
@@ -20,26 +21,35 @@ export interface FileOptions {
 
 export class File extends Stream {
     private _path: Path
-    private _fd: number | null = null
+    private _handle: FileHandle | null = null
     private _mode: string = 'r'
     private _permissions: number = 0o666
     private _position: number = 0
     private _async: boolean = false
     private _canRead: boolean = false
     private _canWrite: boolean = false
+    private _encoding: string = 'utf-8'
     private observers: Map<string, Function[]> = new Map()
 
     /**
-     * Create a File object and optionally open it
+     * Create a File object
      * @param path Path to the file
-     * @param options Open options (if provided, file is opened)
+     * @param options Open options (stored but file is NOT opened until open() is called)
+     * Note: With async open(), constructor no longer auto-opens the file.
+     * Call await file.open() explicitly.
      */
     constructor(path: string | Path, options?: FileOptions | string) {
         super()
         this._path = path instanceof Path ? path : new Path(path)
 
+        // Store options for later open() call
         if (options) {
-            this.open(options)
+            if (typeof options === 'string') {
+                this._mode = options
+            } else {
+                this._mode = options.mode || 'r'
+                this._permissions = options.permissions || 0o666
+            }
         }
     }
 
@@ -48,9 +58,8 @@ export class File extends Stream {
     }
 
     set async(enable: boolean) {
-        if (enable) {
-            throw new Error('File class does not support async I/O')
-        }
+        // All File I/O is now async by default (open, read, write methods return Promises)
+        // This property is maintained for API compatibility but has no effect
         this._async = enable
     }
 
@@ -71,24 +80,41 @@ export class File extends Stream {
     /**
      * Close the file
      */
-    close(): void {
-        if (this._fd !== null) {
-            fs.closeSync(this._fd)
-            this._fd = null
+    async close(): Promise<void> {
+        if (this._handle !== null) {
+            await this._handle.close()
+            this._handle = null
             this._canRead = false
             this._canWrite = false
         }
     }
 
     /**
-     * Text encoding (currently always UTF-8)
+     * Text encoding for string operations
+     * Supported encodings: 'utf-8', 'utf8', 'ascii', 'latin1', 'base64', 'hex'
      */
     get encoding(): string {
-        return 'utf-8'
+        return this._encoding
     }
 
-    set encoding(_enc: string) {
-        throw new Error('Encoding changes not yet implemented')
+    set encoding(enc: string) {
+        // Normalize encoding name
+        const normalized = enc.toLowerCase().replace(/[_-]/g, '')
+
+        // List of supported encodings (matches Bun/Node.js)
+        const supported = ['utf8', 'ascii', 'latin1', 'base64', 'hex', 'binary']
+
+        // Normalize common variants
+        let final = normalized
+        if (normalized === 'utf8') final = 'utf-8'
+        else if (normalized === 'binary') final = 'latin1'
+        else if (!supported.includes(normalized)) {
+            throw new Error(`Unsupported encoding: ${enc}`)
+        } else {
+            final = normalized
+        }
+
+        this._encoding = final
     }
 
     /**
@@ -102,7 +128,7 @@ export class File extends Stream {
      * Is the file open
      */
     get isOpen(): boolean {
-        return this._fd !== null
+        return this._handle !== null
     }
 
     /**
@@ -110,14 +136,14 @@ export class File extends Stream {
      * @param options Open options
      * @returns This File object for chaining
      */
-    open(options?: FileOptions | string | null): File {
-        if (this._fd !== null) {
+    async open(options?: FileOptions | string | null): Promise<File> {
+        if (this._handle !== null) {
             throw new Error('File is already open')
         }
 
         // Parse options
-        let mode = 'r'
-        let permissions = 0o666
+        let mode = this._mode
+        let permissions = this._permissions
 
         if (typeof options === 'string') {
             mode = options
@@ -167,7 +193,8 @@ export class File extends Stream {
         }
 
         try {
-            this._fd = fs.openSync(this._path.name, flags, permissions)
+            const fsPromises = await import('fs/promises')
+            this._handle = await fsPromises.open(this._path.name, flags, permissions)
             this._canRead = hasRead || (hasWrite && hasAppend)
             this._canWrite = hasWrite || hasAppend
             this._position = hasAppend ? this.size : 0
@@ -203,7 +230,7 @@ export class File extends Stream {
     }
 
     set position(loc: number) {
-        if (this._fd === null) {
+        if (this._handle === null) {
             throw new Error('File is not open')
         }
 
@@ -224,8 +251,8 @@ export class File extends Stream {
      * @param count Number of bytes to read (-1 for all)
      * @returns Number of bytes read, or null on EOF
      */
-    read(buffer: Uint8Array, offset: number = 0, count: number = -1): number | null {
-        if (this._fd === null) {
+    async read(buffer: Uint8Array, offset: number = 0, count: number = -1): Promise<number | null> {
+        if (this._handle === null) {
             throw new Error('File is not open')
         }
 
@@ -245,23 +272,23 @@ export class File extends Stream {
         }
 
         try {
-            const bytesRead = fs.readSync(this._fd, buffer, offset, count, this._position)
+            const result = await this._handle.read(buffer, offset, count, this._position)
 
-            if (bytesRead === 0) {
+            if (result.bytesRead === 0) {
                 return null
             }
 
-            this._position += bytesRead
+            this._position += result.bytesRead
 
             // If buffer is a ByteArray, update its writePosition
             if (buffer instanceof require('./streams/ByteArray').ByteArray) {
                 const ba = buffer as any
-                if (offset + bytesRead > ba.writePosition) {
-                    ba.writePosition = offset + bytesRead
+                if (offset + result.bytesRead > ba.writePosition) {
+                    ba.writePosition = offset + result.bytesRead
                 }
             }
 
-            return bytesRead
+            return result.bytesRead
         } catch (error) {
             throw new Error(`Cannot read from file ${this._path}: ${error}`)
         }
@@ -272,7 +299,7 @@ export class File extends Stream {
      * @param count Number of bytes to read (-1 for entire file)
      * @returns ByteArray with data, or null on EOF
      */
-    readBytes(count: number = -1): ByteArray | null {
+    async readBytes(count: number = -1): Promise<ByteArray | null> {
         if (count === -1) {
             count = this.size - this._position
         }
@@ -284,7 +311,7 @@ export class File extends Stream {
         }
 
         const buffer = new ByteArray(count, false)
-        const bytesRead = this.read(buffer as Uint8Array, 0, count)
+        const bytesRead = await this.read(buffer as Uint8Array, 0, count)
 
         if (bytesRead === null || bytesRead === 0) {
             return null
@@ -299,8 +326,8 @@ export class File extends Stream {
      * @param count Number of bytes to read (-1 for entire file)
      * @returns String data, or null on EOF
      */
-    readString(count: number = -1): string | null {
-        const bytes = this.readBytes(count)
+    async readString(count: number = -1): Promise<string | null> {
+        const bytes = await this.readBytes(count)
         if (!bytes) return null
 
         const decoder = new TextDecoder('utf-8')
@@ -311,8 +338,8 @@ export class File extends Stream {
      * Read file as array of lines
      * @returns Array of lines, or null on error
      */
-    readLines(): string[] | null {
-        const content = this.readString()
+    async readLines(): Promise<string[] | null> {
+        const content = await this.readString()
         if (!content) return null
 
         const lines = content.split(/\r?\n/)
@@ -329,7 +356,7 @@ export class File extends Stream {
      * @param whence Reference point (0=start, 1=current, 2=end)
      */
     seek(loc: number, whence: number = 0): void {
-        if (this._fd === null) {
+        if (this._handle === null) {
             throw new Error('File is not open')
         }
 
@@ -356,19 +383,19 @@ export class File extends Stream {
      * Remove the file
      * @returns True if successful
      */
-    remove(): boolean {
+    async remove(): Promise<boolean> {
         if (this.isOpen) {
             return false
         }
-        return this._path.remove()
+        return await this._path.remove()
     }
 
     /**
      * Get file size in bytes
      */
     get size(): number {
-        if (this._fd !== null) {
-            const stats = fs.fstatSync(this._fd)
+        if (this._handle !== null) {
+            const stats = fs.fstatSync(this._handle.fd)
             return stats.size
         }
         return this._path.size
@@ -379,8 +406,8 @@ export class File extends Stream {
      * @param value New file size
      */
     truncate(value: number): void {
-        if (this._fd !== null) {
-            fs.ftruncateSync(this._fd, value)
+        if (this._handle !== null) {
+            fs.ftruncateSync(this._handle.fd, value)
         } else {
             // Truncate without opening
             fs.truncateSync(this._path.name, value)
@@ -392,8 +419,8 @@ export class File extends Stream {
      * @param ...items Data items to write
      * @returns Number of bytes written
      */
-    write(...items: any[]): number {
-        if (this._fd === null) {
+    async write(...items: any[]): Promise<number> {
+        if (this._handle === null) {
             throw new Error('File is not open')
         }
 
@@ -420,9 +447,9 @@ export class File extends Stream {
             }
 
             try {
-                const written = fs.writeSync(this._fd, data, 0, data.length, this._position)
-                this._position += written
-                totalWritten += written
+                const result = await this._handle.write(data, 0, data.length, this._position)
+                this._position += result.bytesWritten
+                totalWritten += result.bytesWritten
             } catch (error) {
                 throw new Error(`Cannot write to file ${this._path}: ${error}`)
             }
@@ -436,9 +463,9 @@ export class File extends Stream {
      * @param ...items Data items to write
      * @returns Number of bytes written
      */
-    writeLine(...items: any[]): number {
-        const written = this.write(...items)
-        const newlineWritten = this.write('\n')
+    async writeLine(...items: any[]): Promise<number> {
+        const written = await this.write(...items)
+        const newlineWritten = await this.write('\n')
         return written + newlineWritten
     }
 
@@ -468,6 +495,43 @@ export class File extends Stream {
                 observers.splice(index, 1)
             }
         }
+    }
+
+    /**
+     * Open a text stream for reading or writing
+     * @param mode Mode: 'r', 'w', 'a', 'rt', 'wt', 'at'
+     * @returns TextStream instance
+     */
+    async openTextStream(mode: string = 'r'): Promise<any> {
+        // Import here to avoid circular dependency
+        const { TextStream } = require('./streams/TextStream')
+
+        // Normalize mode
+        const normalizedMode = mode.replace('t', '')
+
+        // Open file if not already open
+        if (!this.isOpen) {
+            await this.open({ mode: normalizedMode })
+        }
+
+        return new TextStream(this)
+    }
+
+    /**
+     * Open a binary stream for reading or writing
+     * @param mode Mode: 'r', 'w', 'a'
+     * @returns BinaryStream instance
+     */
+    async openBinaryStream(mode: string = 'r'): Promise<any> {
+        // Import here to avoid circular dependency
+        const { BinaryStream } = require('./streams/BinaryStream')
+
+        // Open file if not already open
+        if (!this.isOpen) {
+            await this.open({ mode })
+        }
+
+        return new BinaryStream(this)
     }
 
     private _emit(name: string, ...args: any[]): void {

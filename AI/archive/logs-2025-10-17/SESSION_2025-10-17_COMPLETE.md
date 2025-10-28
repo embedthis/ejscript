@@ -136,9 +136,9 @@ Path.openTextStream(mode: 'rt' | 'wt' | 'at'): TextStream
 - `src/core/Path.ts` - Added openBinaryStream and openTextStream
 
 ### Documentation
-- `.agent/designs/IMPLEMENTATION_ISSUES.md` - Updated with completion status
+- `AI/designs/IMPLEMENTATION_ISSUES.md` - Updated with completion status
 - `README.md` - Updated with current test status and achievements
-- `.agent/logs/SESSION_2025-10-17_COMPLETE.md` - This file
+- `AI/logs/SESSION_2025-10-17_COMPLETE.md` - This file
 
 ## Metrics
 

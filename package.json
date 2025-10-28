@@ -1,7 +1,8 @@
 {
   "name": "ejscript",
-  "version": "1.0.0",
-  "description": "Complete Ejscript core API implementation for Bun runtime",
+  "owner": "embedthis",
+  "version": "2.0.0",
+  "description": "Ejscript core API implementation for Bun runtime",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -47,12 +48,12 @@
   "author": "Ejscript Project",
   "repository": {
     "type": "git",
-    "url": "https://github.com/embedthis/ejscript"
+    "url": "https://github.com/embedthis/ejs"
   },
   "bugs": {
-    "url": "https://github.com/embedthis/ejscript/issues"
+    "url": "https://github.com/embedthis/ejs/issues"
   },
-  "homepage": "https://www.embedthis.com/ejscript/",
+  "homepage": "https://www.embedthis.com/ejs/",
   "license": "SEE LICENSE.md",
   "devDependencies": {
     "@embedthis/testme": "^0.8.19",

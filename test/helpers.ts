@@ -22,31 +22,41 @@ export function assert(condition: any, message?: string): void {
 /**
  * Create temporary test file
  */
-export function createTestFile(path: string, content: string = 'test data'): Path {
+export async function createTestFile(path: string, content: string = 'test data'): Promise<Path> {
   const p = new Path(path)
-  p.write(content)
+  await p.write(content)
+  return p
+}
+
+/**
+ * Create test file synchronously (for non-async tests)
+ */
+export function createTestFileSync(path: string, content: string = 'test data'): Path {
+  const p = new Path(path)
+  const fs = require('fs')
+  fs.writeFileSync(path, content)
   return p
 }
 
 /**
  * Create temporary directory
  */
-export function createTestDir(path: string): Path {
+export async function createTestDir(path: string): Promise<Path> {
   const p = new Path(path)
-  p.makeDir()
+  await p.makeDir()
   return p
 }
 
 /**
  * Clean up test file
  */
-export function cleanupTestFile(path: string | Path): void {
+export async function cleanupTestFile(path: string | Path): Promise<void> {
   const p = path instanceof Path ? path : new Path(path)
   if (p.exists) {
     if (p.isDir) {
-      p.removeAll()
+      await p.removeAll()
     } else {
-      p.remove()
+      await p.remove()
     }
   }
 }

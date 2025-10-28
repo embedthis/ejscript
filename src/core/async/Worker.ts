@@ -132,7 +132,8 @@ export class Worker extends Emitter {
      */
     exit(code: number = 0): void {
         this.postMessage({ type: 'exit', code })
-        this.terminate()
+        // Don't call terminate() - let the worker handle the exit message
+        // and exit with the proper code
     }
 
     /**

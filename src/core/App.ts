@@ -329,7 +329,7 @@ export class App {
      * @param overwrite If true, overwrite existing config values
      * @returns Configuration object
      */
-    static loadrc(path?: Path | string, overwrite: boolean = true): any {
+    static async loadrc(path?: Path | string, overwrite: boolean = true): Promise<any> {
         if (!path) {
             return this.config
         }
@@ -338,7 +338,7 @@ export class App {
 
         if (configPath.exists) {
             try {
-                const content = configPath.readString()
+                const content = await configPath.readString()
                 if (content) {
                     const config = JSON.parse(content)
                     this.blendConfig(this.config, config, overwrite)

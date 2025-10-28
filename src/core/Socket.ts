@@ -6,12 +6,15 @@
  * @stability evolving
  */
 
-import { Stream } from './streams/Stream'
 import { Emitter } from './async/Emitter'
 import * as net from 'net'
 import * as dgram from 'dgram'
 
-export class Socket extends Stream {
+/**
+ * Socket class for TCP/UDP networking
+ * Note: Socket does NOT extend Stream because network I/O is async in JavaScript
+ */
+export class Socket {
     private tcpSocket?: net.Socket
     private udpSocket?: dgram.Socket
     private emitter: Emitter = new Emitter()
@@ -30,7 +33,6 @@ export class Socket extends Stream {
      * @param options Socket options
      */
     constructor(options?: any) {
-        super()
         this._options = options || {}
         if (options?.datagram) {
             this._isUdp = true
@@ -103,16 +105,19 @@ export class Socket extends Stream {
                 throw new Error('Invalid port number')
             }
         } else if (typeof address === 'string') {
-            // Check for invalid format first
-            if (address.includes(':')) {
-                const parts = address.split(':')
+            // Strip protocol if present (http:// or https://)
+            let addressStr = address.replace(/^https?:\/\//, '')
+
+            // Check for host:port format
+            if (addressStr.includes(':')) {
+                const parts = addressStr.split(':')
                 if (parts.length !== 2) {
                     throw new Error('Invalid address format')
                 }
                 host = parts[0]
                 port = parseInt(parts[1], 10)
             } else {
-                port = parseInt(address, 10)
+                port = parseInt(addressStr, 10)
             }
             if (isNaN(port) || port < 0 || port > 65535) {
                 throw new Error('Invalid port number')
@@ -283,7 +288,24 @@ export class Socket extends Stream {
         // Sockets auto-flush
     }
 
-    read(buffer: Uint8Array, offset: number = 0, count: number = -1): number | null {
+    async read(buffer: Uint8Array, offset: number = 0, count: number = -1): Promise<number | null> {
+        // Wait for data to arrive if buffer is empty
+        if (this._dataBuffer.length === 0 && !this._isEof && this.tcpSocket) {
+            const maxWaitMs = 5000 // 5 second timeout
+            const pollIntervalMs = 10 // Check every 10ms
+            const startTime = Date.now()
+
+            // Wait for data to arrive via async events
+            while (this._dataBuffer.length === 0 && !this._isEof) {
+                await Bun.sleep(pollIntervalMs)
+
+                if (Date.now() - startTime > maxWaitMs) {
+                    throw new Error('Socket read timeout')
+                }
+            }
+        }
+
+        // Return null if still no data (EOF or no data arrived)
         if (this._dataBuffer.length === 0) {
             return null
         }
@@ -296,8 +318,22 @@ export class Socket extends Stream {
             return null
         }
 
+        // For ByteArray, handle offset:
+        // - offset = -1 or 0 with ByteArray: append at current writePosition
+        // - offset > 0: write at specific offset
+        let actualOffset = offset
+        if ('writePosition' in buffer && typeof (buffer as any).writePosition === 'number') {
+            if (offset === -1 || offset === 0) {
+                // Append at current write position
+                actualOffset = (buffer as any).writePosition
+            }
+        } else if (offset === -1) {
+            // For regular Uint8Array, -1 means start at 0
+            actualOffset = 0
+        }
+
         let bytesRead = 0
-        let currentOffset = offset
+        let currentOffset = actualOffset
 
         while (bytesRead < toRead && this._dataBuffer.length > 0) {
             const chunk = this._dataBuffer[0]
@@ -314,19 +350,19 @@ export class Socket extends Stream {
                 this._dataBuffer.shift()
             } else {
                 // Partial consumption - keep remaining data
-                this._dataBuffer[0] = chunk.slice(bytesToCopy)
+                this._dataBuffer[0] = Buffer.from(chunk.subarray(bytesToCopy))
             }
         }
 
         // If buffer is a ByteArray, update its write position
         if ('writePosition' in buffer && typeof (buffer as any).writePosition === 'number') {
-            (buffer as any).writePosition = offset + bytesRead
+            (buffer as any).writePosition = actualOffset + bytesRead
         }
 
         return bytesRead
     }
 
-    write(...data: any[]): number {
+    async write(...data: any[]): Promise<number> {
         let totalWritten = 0
 
         for (const item of data) {
@@ -341,7 +377,15 @@ export class Socket extends Stream {
             }
 
             if (this.tcpSocket) {
-                this.tcpSocket.write(buffer)
+                // Wrap in promise to make write async
+                await new Promise<void>((resolve, reject) => {
+                    const success = this.tcpSocket!.write(buffer, (err) => {
+                        if (err) reject(err)
+                        else resolve()
+                    })
+                    // If write returns true (not buffered), resolve immediately
+                    if (success) resolve()
+                })
                 totalWritten += buffer.length
             } else if (this.udpSocket) {
                 // UDP send would need destination address

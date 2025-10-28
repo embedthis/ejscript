@@ -47,6 +47,63 @@ export class Uri {
                 }
             }
         } else {
+            // Check for partial URLs like "14100/index.html", ":14100/page", "host:port/path"
+            const colonIndex = uri.indexOf(':')
+            const slashIndex = uri.indexOf('/')
+
+            // Check if it starts with just a port number (e.g., "14100/index.html" or ":14100/page")
+            if (slashIndex > 0 && !uri.includes('://')) {
+                const beforeSlash = uri.substring(0, slashIndex)
+                let portStr = beforeSlash
+                let hostStr = ''
+
+                // Handle ":port/path" format
+                if (beforeSlash.startsWith(':')) {
+                    portStr = beforeSlash.substring(1)
+                    hostStr = ''
+                }
+                // Handle "port/path" format (just digits)
+                else if (/^\d+$/.test(beforeSlash)) {
+                    portStr = beforeSlash
+                    hostStr = ''
+                }
+                // Handle "host:port/path" format
+                else if (colonIndex > 0 && colonIndex < slashIndex) {
+                    hostStr = beforeSlash.substring(0, colonIndex)
+                    portStr = beforeSlash.substring(colonIndex + 1)
+                } else {
+                    portStr = ''
+                }
+
+                const portNum = parseInt(portStr, 10)
+                if (!isNaN(portNum) && portNum > 0 && portNum <= 65535) {
+                    // This is a partial URL with port
+                    this._host = hostStr || '127.0.0.1'
+                    this._port = portNum
+                    this._path = uri.substring(slashIndex)
+                    this._scheme = 'http'
+                    this._rebuildUrl()
+                    return
+                }
+            }
+
+            // Check if it's host:port format (no path)
+            if (colonIndex > 0 && colonIndex < uri.length - 1 && !uri.includes('://')) {
+                const possiblePort = uri.substring(colonIndex + 1)
+                const portNum = parseInt(possiblePort, 10)
+                // Check if it looks like a port number (valid number, only digits after colon, no slashes)
+                if (!isNaN(portNum) && possiblePort === portNum.toString() &&
+                    portNum > 0 && portNum <= 65535 && !possiblePort.includes('/')) {
+                    // This is host:port format
+                    this._host = uri.substring(0, colonIndex) || '127.0.0.1'
+                    this._port = portNum
+                    this._path = '/'
+                    this._scheme = 'http'
+                    this._rebuildUrl()
+                    return
+                }
+            }
+
             try {
                 // Try to parse as full URL
                 this._url = new URL(uri)

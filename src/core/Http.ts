@@ -10,6 +10,8 @@ import { Stream } from './streams/Stream'
 import { Uri } from './utilities/Uri'
 import { Path } from './Path'
 import { Emitter } from './async/Emitter'
+import { ByteArray } from './streams/ByteArray'
+import { createHash } from 'crypto'
 
 export class Http extends Stream {
     // HTTP status code constants
@@ -61,8 +63,20 @@ export class Http extends Stream {
     private _finalized: boolean = false
     private _followRedirects: boolean = false
     private _retries: number = 2
+    private _cache: boolean = true  // Enable HTTP caching by default
     private emitter: Emitter = new Emitter()
     private credentials?: { username: string; password: string; type?: string }
+    private _digestAuth?: {
+        username: string
+        password: string
+        realm: string
+        nonce: string
+        algorithm: string
+        qop?: string
+        opaque?: string
+        nc: number
+        lastUri?: string
+    }
     private _ca?: Path
     private _certificate?: Path
     private _key?: Path
@@ -83,6 +97,9 @@ export class Http extends Stream {
         transmission: 4194304
     }
     private _readPosition: number = 0
+    private _pendingRequest?: Promise<void>
+    private _requestStream?: ReadableStream
+    private _streamController?: ReadableStreamDefaultController
 
     /**
      * Create an Http client
@@ -93,6 +110,8 @@ export class Http extends Stream {
         if (uri) {
             this._uri = typeof uri === 'string' ? new Uri(uri) : uri
         }
+        // Set default User-Agent header
+        this._headers['User-Agent'] = 'Embedthis-http'
     }
 
     /**
@@ -104,8 +123,8 @@ export class Http extends Stream {
      */
     static async fetch(uri: Uri | string, method: string = 'GET', ...data: any[]): Promise<string> {
         const http = new Http()
-        await http.connect(method, uri, ...data)
-        http.finalize()
+        http.connect(method, uri, ...data)
+        await http.finalize()
         return http.response
     }
 
@@ -195,7 +214,7 @@ export class Http extends Stream {
     set bodyLength(length: number) {
         this._bodyLength = length
         if (length >= 0) {
-            this.setHeader('Content-Length', String(length))
+            this.setHeader('Content-Length', length)
         }
     }
 
@@ -249,8 +268,12 @@ export class Http extends Stream {
 
     /**
      * Status code (alias for status)
+     * If request is still pending, waits for completion first
      */
     get code(): number | null {
+        if (this._pendingRequest) {
+            throw new Error('Status not ready - use await http.finalize() or await http.wait() first')
+        }
         return this._status
     }
 
@@ -314,10 +337,41 @@ export class Http extends Stream {
     }
 
     /**
-     * Finalize the request
+     * Enable or disable HTTP caching
+     * When enabled, Bun's fetch() may cache responses according to HTTP cache headers
+     * When disabled, sets cache: 'no-store' to prevent any caching
      */
-    finalize(): void {
+    get cache(): boolean {
+        return this._cache
+    }
+
+    set cache(flag: boolean) {
+        this._cache = flag
+    }
+
+    /**
+     * Finalize the request and close any open stream
+     * Call this after writing data with write() to close the stream and send the request
+     * @returns Promise that resolves to the HTTP status code
+     */
+    async finalize(): Promise<number> {
+        if (this._streamController) {
+            this._streamController.close()
+        }
         this._finalized = true
+
+        // If there's a pending request, wait for it to complete
+        if (this._pendingRequest) {
+            await this._pendingRequest
+            this._pendingRequest = undefined
+        } else if (this._method && this._uri) {
+            // No pending request - start one now (e.g., GET with no data)
+            this._pendingRequest = this._performRequest([])
+            await this._pendingRequest
+            this._pendingRequest = undefined
+        }
+
+        return this._status || 0
     }
 
     /**
@@ -328,16 +382,23 @@ export class Http extends Stream {
     }
 
     /**
-     * Connect and make an HTTP request (async)
+     * Connect and make an HTTP request
+     * For streaming requests, this sets up the request but doesn't send until finalize() is called
+     * For non-streaming requests with data, the request is sent immediately
      * @param method HTTP method
      * @param uri URI to request
-     * @param ...data Data to send
-     * @returns Promise that resolves to this Http object for chaining
+     * @param ...data Data to send (if provided, sends immediately)
+     * @returns This Http object for chaining (NOT a Promise - use finalize()/wait() to await completion)
      */
-    async connect(method: string, uri?: Uri | string | null, ...data: any[]): Promise<Http> {
+    connect(method: string, uri?: Uri | string | null, ...data: any[]): Http {
         this._method = method
 
         if (uri) {
+            const uriString = typeof uri === 'string' ? uri : uri.toString()
+            // Validate URI for HTML injection attempts (security check)
+            if (/<[^>]+>/.test(uriString)) {
+                throw new Error('Invalid URI: HTML tags not allowed in URL')
+            }
             this._uri = typeof uri === 'string' ? new Uri(uri) : uri
         }
 
@@ -345,7 +406,12 @@ export class Http extends Stream {
             throw new Error('No URI specified for HTTP request')
         }
 
-        await this._performRequest(data)
+        // If data is provided, send the request immediately (non-streaming)
+        // Otherwise, defer until finalize() is called (streaming mode)
+        if (data.length > 0) {
+            this._pendingRequest = this._performRequest(data)
+        }
+
         return this
     }
 
@@ -384,15 +450,208 @@ export class Http extends Stream {
     }
 
     /**
+     * Parse WWW-Authenticate Digest challenge header
+     * @param header WWW-Authenticate header value
+     * @returns Parsed challenge or null if invalid
+     */
+    private _parseDigestChallenge(header: string): {
+        realm: string
+        nonce: string
+        algorithm: string
+        qop?: string
+        opaque?: string
+    } | null {
+        if (!header.startsWith('Digest ')) {
+            return null
+        }
+
+        const challenge = header.substring(7)
+        const params: Record<string, string> = {}
+
+        // Parse key="value" or key=value pairs
+        const regex = /(\w+)=(?:"([^"]+)"|([^\s,]+))/g
+        let match: RegExpExecArray | null
+
+        while ((match = regex.exec(challenge)) !== null) {
+            const key = match[1]
+            const value = match[2] || match[3]
+            params[key] = value
+        }
+
+        // Validate required fields
+        if (!params.realm || !params.nonce) {
+            return null
+        }
+
+        return {
+            realm: params.realm,
+            nonce: params.nonce,
+            algorithm: params.algorithm || 'MD5',
+            qop: params.qop,
+            opaque: params.opaque
+        }
+    }
+
+    /**
+     * Compute hash using specified algorithm
+     * @param algorithm Hash algorithm (MD5, SHA-256, SHA-512-256)
+     * @param data Data to hash
+     * @returns Hex-encoded hash
+     */
+    private _digestHash(algorithm: string, data: string): string {
+        const normalizedAlgo = algorithm.toUpperCase().replace('-', '')
+        let hashAlgo: string
+
+        switch (normalizedAlgo) {
+            case 'MD5':
+                hashAlgo = 'md5'
+                break
+            case 'SHA256':
+                hashAlgo = 'sha256'
+                break
+            case 'SHA512256':
+            case 'SHA512-256':
+                hashAlgo = 'sha512-256'
+                break
+            default:
+                hashAlgo = 'md5'
+        }
+
+        const hash = createHash(hashAlgo)
+        hash.update(data)
+        return hash.digest('hex')
+    }
+
+    /**
+     * Generate cryptographically secure client nonce
+     * @returns Base64-encoded random string
+     */
+    private _generateCnonce(): string {
+        const randomBytes = new Uint8Array(16)
+        crypto.getRandomValues(randomBytes)
+        return btoa(String.fromCharCode(...randomBytes))
+    }
+
+    /**
+     * Compute digest response
+     * @param method HTTP method
+     * @param uri Request URI
+     * @param body Request body (for qop=auth-int)
+     * @returns Computed digest response
+     */
+    private _computeDigestResponse(method: string, uri: string, body?: string): string {
+        if (!this._digestAuth) {
+            throw new Error('Digest auth not initialized')
+        }
+
+        const { username, password, realm, nonce, algorithm, qop, nc } = this._digestAuth
+
+        // Compute HA1 = H(username:realm:password)
+        const ha1 = this._digestHash(algorithm, `${username}:${realm}:${password}`)
+
+        // Compute HA2
+        let ha2: string
+        if (qop === 'auth-int' && body) {
+            // HA2 = H(method:uri:H(body))
+            const bodyHash = this._digestHash(algorithm, body)
+            ha2 = this._digestHash(algorithm, `${method}:${uri}:${bodyHash}`)
+        } else {
+            // HA2 = H(method:uri)
+            ha2 = this._digestHash(algorithm, `${method}:${uri}`)
+        }
+
+        // Compute response
+        let response: string
+        if (qop) {
+            // Generate cnonce
+            const cnonce = this._generateCnonce()
+            const ncHex = nc.toString(16).padStart(8, '0')
+
+            // response = H(HA1:nonce:nc:cnonce:qop:HA2)
+            response = this._digestHash(
+                algorithm,
+                `${ha1}:${nonce}:${ncHex}:${cnonce}:${qop}:${ha2}`
+            )
+
+            // Store cnonce for header building
+            ;(this._digestAuth as any).cnonce = cnonce
+        } else {
+            // response = H(HA1:nonce:HA2)
+            response = this._digestHash(algorithm, `${ha1}:${nonce}:${ha2}`)
+        }
+
+        return response
+    }
+
+    /**
+     * Build Authorization header for digest authentication
+     * @param method HTTP method
+     * @param uri Request URI
+     * @param body Request body
+     * @returns Authorization header value
+     */
+    private _buildDigestAuthHeader(method: string, uri: string, body?: string): string {
+        if (!this._digestAuth) {
+            throw new Error('Digest auth not initialized')
+        }
+
+        const response = this._computeDigestResponse(method, uri, body)
+        const { username, realm, nonce, algorithm, qop, opaque, nc } = this._digestAuth
+        const cnonce = (this._digestAuth as any).cnonce
+
+        let header = `Digest username="${username}"`
+        header += `, realm="${realm}"`
+        header += `, nonce="${nonce}"`
+        header += `, uri="${uri}"`
+        header += `, response="${response}"`
+
+        if (algorithm && algorithm !== 'MD5') {
+            header += `, algorithm=${algorithm}`
+        }
+
+        if (qop) {
+            header += `, qop=${qop}`
+            header += `, nc=${nc.toString(16).padStart(8, '0')}`
+            header += `, cnonce="${cnonce}"`
+        }
+
+        if (opaque) {
+            header += `, opaque="${opaque}"`
+        }
+
+        return header
+    }
+
+    /**
+     * Check if digest auth can be reused for this URI
+     * @param uri Request URI
+     * @returns True if nonce can be reused
+     */
+    private _canReuseDigestAuth(uri: string): boolean {
+        if (!this._digestAuth) {
+            return false
+        }
+
+        // Reuse nonce if it's the same URI or no URI was stored yet
+        return !this._digestAuth.lastUri || this._digestAuth.lastUri === uri
+    }
+
+    /**
      * Perform HTTP request
      */
     private async _performRequest(data: any[]): Promise<void> {
         if (!this._uri) return
 
+        // Set default User-Agent if not already set
+        if (!this._headers['User-Agent'] && !this._headers['user-agent']) {
+            this._headers['User-Agent'] = 'Embedthis-http'
+        }
+
         const fetchOptions: RequestInit = {
             method: this._method,
             headers: this._headers,
-            redirect: this._followRedirects ? 'follow' : 'manual'
+            redirect: this._followRedirects ? 'follow' : 'manual',
+            cache: this._cache ? 'default' : 'no-store'  // Control HTTP caching
         }
 
         // Set timeout if configured
@@ -420,20 +679,103 @@ export class Http extends Stream {
     private async _performFetchRequest(fetchOptions: RequestInit, data: any[]): Promise<void> {
         if (!this._uri) return
 
-        if (data.length > 0 && ['POST', 'PUT', 'PATCH'].includes(this._method)) {
-            fetchOptions.body = this._formatData(data)
-        }
+        // Handle request body - prioritize accumulated stream from write() calls
+        if (this._requestStream) {
+            fetchOptions.body = this._requestStream
+            ;(fetchOptions as any).duplex = 'half'  // Required for streaming request bodies
+        } else if (data.length > 0 && ['POST', 'PUT', 'PATCH'].includes(this._method)) {
+            const formattedData = this._formatData(data)
+            fetchOptions.body = formattedData
 
-        if (this.credentials) {
-            const auth = btoa(`${this.credentials.username}:${this.credentials.password}`)
-            this._headers['Authorization'] = `Basic ${auth}`
+            // Add duplex mode if body is a ReadableStream
+            if (formattedData instanceof ReadableStream) {
+                ;(fetchOptions as any).duplex = 'half'
+            }
         }
 
         // Complete partial URLs before passing to fetch
         const url = this._completeUrl(this._uri.toString())
+        const uri = this._uri.toString()
+
+        // Handle authentication
+        if (this.credentials) {
+            if (this.credentials.type === 'digest' || (this.credentials.type === undefined && this._digestAuth)) {
+                // Check if we can reuse digest auth (preemptive authentication)
+                if (this._canReuseDigestAuth(uri)) {
+                    this._digestAuth!.nc++
+                    this._digestAuth!.lastUri = uri
+
+                    const authHeader = this._buildDigestAuthHeader(
+                        this._method,
+                        uri,
+                        typeof fetchOptions.body === 'string' ? fetchOptions.body : undefined
+                    )
+
+                    fetchOptions.headers = {
+                        ...(fetchOptions.headers as Record<string, string>),
+                        'Authorization': authHeader
+                    }
+                }
+            } else if (this.credentials.type === 'basic') {
+                // Explicit basic authentication
+                const auth = btoa(`${this.credentials.username}:${this.credentials.password}`)
+                this._headers['Authorization'] = `Basic ${auth}`
+            }
+            // If type is undefined and no digest state, don't send auth preemptively
+            // Wait for 401 to determine auth type
+        }
 
         try {
-            const response = await fetch(url, fetchOptions)
+            let response = await fetch(url, fetchOptions)
+
+            // Handle 401 Unauthorized - auto-detect auth type from server response
+            if (response.status === 401 && this.credentials) {
+                const wwwAuth = response.headers.get('WWW-Authenticate')
+
+                // Try Digest authentication
+                if (wwwAuth?.startsWith('Digest ')) {
+                    const challenge = this._parseDigestChallenge(wwwAuth)
+
+                    if (challenge) {
+                        // Initialize or update digest auth state
+                        this._digestAuth = {
+                            username: this.credentials.username,
+                            password: this.credentials.password,
+                            realm: challenge.realm,
+                            nonce: challenge.nonce,
+                            algorithm: challenge.algorithm,
+                            qop: challenge.qop,
+                            opaque: challenge.opaque,
+                            nc: 1,
+                            lastUri: uri
+                        }
+
+                        // Build digest authorization header
+                        const authHeader = this._buildDigestAuthHeader(
+                            this._method,
+                            uri,
+                            typeof fetchOptions.body === 'string' ? fetchOptions.body : undefined
+                        )
+
+                        // Retry request with digest auth
+                        fetchOptions.headers = {
+                            ...(fetchOptions.headers as Record<string, string>),
+                            'Authorization': authHeader
+                        }
+
+                        response = await fetch(url, fetchOptions)
+                    }
+                }
+                // Try Basic authentication
+                else if (wwwAuth?.startsWith('Basic ')) {
+                    const auth = btoa(`${this.credentials.username}:${this.credentials.password}`)
+                    fetchOptions.headers = {
+                        ...(fetchOptions.headers as Record<string, string>),
+                        'Authorization': `Basic ${auth}`
+                    }
+                    response = await fetch(url, fetchOptions)
+                }
+            }
 
             this._status = response.status
             this._statusMessage = response.statusText
@@ -441,6 +783,12 @@ export class Http extends Stream {
             response.headers.forEach((value, key) => {
                 this._responseHeaders[key.toLowerCase()] = value
             })
+
+            // If transfer-encoding is chunked, remove any content-length header
+            // as it's invalid per HTTP spec and fetch() may add incorrect values
+            if (this._responseHeaders['transfer-encoding']?.toLowerCase().includes('chunked')) {
+                delete this._responseHeaders['content-length']
+            }
 
             this._response = await response.text()
             this._readPosition = 0
@@ -453,13 +801,16 @@ export class Http extends Stream {
 
     /**
      * Format data for request body
+     * Supports: string, Uint8Array, ReadableStream, or objects (JSON serialized)
      */
-    private _formatData(data: any[]): string | Uint8Array {
+    private _formatData(data: any[]): string | Uint8Array | ReadableStream {
         if (data.length === 1) {
             const item = data[0]
             if (typeof item === 'string') {
                 return item
             } else if (item instanceof Uint8Array) {
+                return item
+            } else if (item instanceof ReadableStream) {
                 return item
             } else {
                 return JSON.stringify(item)
@@ -473,9 +824,9 @@ export class Http extends Stream {
      * POST request with form data
      * @param uri URI
      * @param data Form data object
-     * @returns Promise that resolves to this Http object
+     * @returns This Http object for chaining
      */
-    async form(uri: Uri | string, data: Record<string, any>): Promise<Http> {
+    form(uri: Uri | string, data: Record<string, any>): Http {
         this.setHeader('Content-Type', 'application/x-www-form-urlencoded')
         const encoded = Uri.encodeQuery(data)
         return this.connect('POST', uri, encoded)
@@ -485,9 +836,9 @@ export class Http extends Stream {
      * POST request with JSON data
      * @param uri URI
      * @param ...data Data objects
-     * @returns Promise that resolves to this Http object
+     * @returns This Http object for chaining
      */
-    async jsonForm(uri: Uri | string, ...data: any[]): Promise<Http> {
+    jsonForm(uri: Uri | string, ...data: any[]): Http {
         this.setHeader('Content-Type', 'application/json')
         return this.connect('POST', uri, JSON.stringify(data.length === 1 ? data[0] : data))
     }
@@ -496,18 +847,18 @@ export class Http extends Stream {
      * GET request
      * @param uri URI
      * @param ...data Optional data
-     * @returns Promise that resolves to this Http object
+     * @returns This Http object for chaining
      */
-    async get(uri?: Uri | string | null, ...data: any[]): Promise<Http> {
+    get(uri?: Uri | string | null, ...data: any[]): Http {
         return this.connect('GET', uri, ...data)
     }
 
     /**
      * HEAD request
      * @param uri URI
-     * @returns Promise that resolves to this Http object
+     * @returns This Http object for chaining
      */
-    async head(uri?: Uri | string | null): Promise<Http> {
+    head(uri?: Uri | string | null): Http {
         return this.connect('HEAD', uri)
     }
 
@@ -515,9 +866,9 @@ export class Http extends Stream {
      * POST request
      * @param uri URI
      * @param ...data Data to post
-     * @returns Promise that resolves to this Http object
+     * @returns This Http object for chaining
      */
-    async post(uri?: Uri | string | null, ...data: any[]): Promise<Http> {
+    post(uri?: Uri | string | null, ...data: any[]): Http {
         return this.connect('POST', uri, ...data)
     }
 
@@ -525,18 +876,18 @@ export class Http extends Stream {
      * PUT request
      * @param uri URI
      * @param ...data Data to put
-     * @returns Promise that resolves to this Http object
+     * @returns This Http object for chaining
      */
-    async put(uri?: Uri | string | null, ...data: any[]): Promise<Http> {
+    put(uri?: Uri | string | null, ...data: any[]): Http {
         return this.connect('PUT', uri, ...data)
     }
 
     /**
      * DELETE request
      * @param uri URI
-     * @returns Promise that resolves to this Http object
+     * @returns This Http object for chaining
      */
-    async del(uri?: Uri | string | null): Promise<Http> {
+    del(uri?: Uri | string | null): Http {
         return this.connect('DELETE', uri)
     }
 
@@ -589,17 +940,68 @@ export class Http extends Stream {
         this._method = name
     }
 
-    read(_buffer: Uint8Array, _offset: number = 0, _count: number = -1): number | null {
-        // Simplified - would need streaming implementation
-        return null
+    read(buffer: Uint8Array, offset: number = 0, count: number = -1): number | null {
+        if (this._pendingRequest) {
+            throw new Error('Response not ready - use await http.finalize() or await http.wait() first')
+        }
+
+        if (this._readPosition >= this._response.length) {
+            return null
+        }
+
+        const remaining = this._response.length - this._readPosition
+
+        // If buffer is a ByteArray, reset writePosition first for reusable buffer pattern
+        if (buffer instanceof ByteArray) {
+            buffer.writePosition = offset
+        }
+
+        // If buffer is a ByteArray and count is -1, limit to buffer's available room
+        // This prevents overflow errors when ByteArray can't grow
+        let toRead: number
+        if (buffer instanceof ByteArray && count === -1) {
+            // Read up to the buffer's available room, or remaining data, whichever is smaller
+            const bufferRoom = (buffer as any)._size - buffer.writePosition
+            toRead = Math.min(remaining, bufferRoom)
+        } else {
+            toRead = count === -1 ? remaining : Math.min(count, remaining)
+        }
+
+        if (toRead === 0) {
+            return null
+        }
+
+        // Convert response string to bytes
+        const chunk = this._response.substring(this._readPosition, this._readPosition + toRead)
+        const encoder = new TextEncoder()
+        const bytes = encoder.encode(chunk)
+
+        // If buffer is a ByteArray, use its write method
+        if (buffer instanceof ByteArray) {
+            // Write the bytes (writePosition already set above)
+            buffer.write(bytes)
+            this._readPosition += toRead
+            return bytes.length
+        } else {
+            // For regular Uint8Array, just copy bytes
+            for (let i = 0; i < bytes.length; i++) {
+                buffer[offset + i] = bytes[i]
+            }
+            this._readPosition += toRead
+            return bytes.length
+        }
     }
 
     /**
      * Read response as string
+     * If request is still pending, throws error (use finalize/wait first)
      * @param count Number of characters to read
      * @returns Response string
      */
     readString(count: number = -1): string | null {
+        if (this._pendingRequest) {
+            throw new Error('Response not ready - use await http.finalize() or await http.wait() first')
+        }
         if (count === -1) {
             const result = this._response.substring(this._readPosition)
             this._readPosition = this._response.length
@@ -612,11 +1014,21 @@ export class Http extends Stream {
 
     /**
      * Read response as lines
+     * If request is still pending, throws error (use finalize/wait first)
      * @param count Number of lines
      * @returns Array of lines
      */
     readLines(count: number = -1): string[] | null {
+        if (this._pendingRequest) {
+            throw new Error('Response not ready - use await http.finalize() or await http.wait() first')
+        }
         const lines = this._response.split(/\r?\n/)
+
+        // Remove trailing empty line if response ends with newline
+        if (lines.length > 0 && lines[lines.length - 1] === '') {
+            lines.pop()
+        }
+
         return count === -1 ? lines : lines.slice(0, count)
     }
 
@@ -639,12 +1051,19 @@ export class Http extends Stream {
         this._responseHeaders = {}
         this._finalized = false
         this._readPosition = 0
+        this._digestAuth = undefined
+        this._requestStream = undefined
+        this._streamController = undefined
     }
 
     /**
      * Get response body
+     * If request is still pending, waits for completion first
      */
     get response(): string {
+        if (this._pendingRequest) {
+            throw new Error('Response not ready - use await http.finalize() or await http.wait() first')
+        }
         return this._response
     }
 
@@ -684,18 +1103,42 @@ export class Http extends Stream {
     }
 
     /**
-     * Set credentials
-     * @param username Username
-     * @param password Password
-     * @param type Auth type (basic or digest)
+     * Set authentication credentials
+     * @param username Username (null to clear credentials)
+     * @param password Password (null to clear credentials)
+     * @param type Authentication type: 'basic', 'digest', or undefined for auto-detection
+     *
+     * If type is not specified, the Http client automatically detects the auth type
+     * from the server's WWW-Authenticate header when a 401 response is received.
+     * This provides maximum flexibility - the same code works with both Basic and
+     * Digest authentication servers.
+     *
+     * When Digest auth is used (either explicitly or auto-detected), the client
+     * handles RFC 2617/7616 digest authentication challenge-response workflow,
+     * supporting MD5, SHA-256, and SHA-512-256 algorithms.
+     *
+     * @example
+     * // Auto-detect auth type (recommended - works with any server)
+     * http.setCredentials('user', 'pass')
+     * await http.get('/protected')  // Server determines auth type via 401 response
+     *
+     * @example
+     * // Explicit basic authentication
+     * http.setCredentials('user', 'pass', 'basic')
+     *
+     * @example
+     * // Explicit digest authentication
+     * http.setCredentials('user', 'pass', 'digest')
      */
     setCredentials(username: string | null, password: string | null, type: string | null = null): void {
         if (username === null || password === null) {
             this.credentials = undefined
+            this._digestAuth = undefined
             // Clear the Authorization header when credentials are removed
             delete this._headers['Authorization']
         } else {
             this.credentials = { username, password, type: type || undefined }
+            this._digestAuth = undefined  // Clear old digest state
         }
     }
 
@@ -705,11 +1148,12 @@ export class Http extends Stream {
      * @param value Header value
      * @param overwrite Overwrite existing header
      */
-    setHeader(key: string, value: string, overwrite: boolean = true): void {
+    setHeader(key: string, value: string | number, overwrite: boolean = true): void {
+        const stringValue = typeof value === 'number' ? String(value) : value
         if (overwrite || !(key in this._headers)) {
-            this._headers[key] = value
+            this._headers[key] = stringValue
         } else {
-            this._headers[key] += ', ' + value
+            this._headers[key] += ', ' + stringValue
         }
     }
 
@@ -719,7 +1163,7 @@ export class Http extends Stream {
      * @param value Header value
      * @param overwrite Overwrite existing header (default true)
      */
-    addHeader(key: string, value: string, overwrite: boolean = true): void {
+    addHeader(key: string, value: string | number, overwrite: boolean = true): void {
         this.setHeader(key, value, overwrite)
     }
 
@@ -728,7 +1172,7 @@ export class Http extends Stream {
      * @param headers Headers object
      * @param overwrite Overwrite existing headers
      */
-    setHeaders(headers: Record<string, string>, overwrite: boolean = true): void {
+    setHeaders(headers: Record<string, string | number>, overwrite: boolean = true): void {
         for (const [key, value] of Object.entries(headers)) {
             this.setHeader(key, value, overwrite)
         }
@@ -744,8 +1188,12 @@ export class Http extends Stream {
 
     /**
      * Get HTTP status code
+     * If request is still pending, waits for completion first
      */
     get status(): number | null {
+        if (this._pendingRequest) {
+            throw new Error('Status not ready - use await http.finalize() or await http.wait() first')
+        }
         return this._status
     }
 
@@ -776,9 +1224,9 @@ export class Http extends Stream {
      * @param uri URI
      * @param files Files to upload
      * @param fields Form fields
-     * @returns Promise that resolves to this Http object
+     * @returns This Http object for chaining
      */
-    async upload(uri: string | Uri, files: any, fields?: Record<string, any>): Promise<Http> {
+    upload(uri: string | Uri, files: any, fields?: Record<string, any>): Http {
         // Simplified multipart upload
         const boundary = '----FormBoundary' + Math.random().toString(36)
         this.setHeader('Content-Type', `multipart/form-data; boundary=${boundary}`)
@@ -847,17 +1295,91 @@ export class Http extends Stream {
 
     /**
      * Wait for request to complete
-     * @param timeout Timeout in milliseconds
-     * @returns True if completed successfully
+     * @param timeout Timeout in milliseconds (-1 for infinite)
+     * @returns Promise that resolves to true if completed, false if timeout
      */
-    wait(_timeout: number = -1): boolean {
-        // Would implement async waiting
-        return this._status !== null
+    async wait(timeout: number = -1): Promise<boolean> {
+        if (!this._pendingRequest) {
+            // No pending request - start one now if method and URI are set
+            if (this._method && this._uri) {
+                this._pendingRequest = this._performRequest([])
+            } else {
+                // No pending request and can't start one - return current status
+                return this._status !== null
+            }
+        }
+
+        if (timeout === -1) {
+            // Wait indefinitely
+            await this._pendingRequest
+            this._pendingRequest = undefined
+            return this._status !== null
+        }
+
+        // Wait with timeout
+        try {
+            await Promise.race([
+                this._pendingRequest,
+                new Promise<void>((_, reject) =>
+                    setTimeout(() => reject(new Error('timeout')), timeout)
+                )
+            ])
+            this._pendingRequest = undefined
+            return this._status !== null
+        } catch (error) {
+            if ((error as Error).message === 'timeout') {
+                return false
+            }
+            throw error
+        }
     }
 
-    write(..._data: any[]): number {
-        // HTTP write would buffer data for sending
-        return 0
+    /**
+     * Write data to request body for streaming uploads
+     * @param data Data to write (string, Uint8Array, or any serializable object)
+     * @returns Number of bytes written
+     *
+     * Use this method to build up a request body incrementally:
+     * @example
+     * http.connect('POST', uri)  // Set up POST request (non-blocking)
+     * http.write('chunk1')
+     * http.write('chunk2')
+     * await http.finalize()  // Close stream and send request
+     */
+    write(...data: any[]): number {
+        if (!this._streamController) {
+            // Create a new ReadableStream on first write
+            this._requestStream = new ReadableStream({
+                start: (controller) => {
+                    this._streamController = controller
+                }
+            })
+
+            // Start the request now that we have a stream to send
+            if (!this._pendingRequest) {
+                this._pendingRequest = this._performRequest([])
+            }
+        }
+
+        let bytesWritten = 0
+        for (const item of data) {
+            if (typeof item === 'string') {
+                const encoded = new TextEncoder().encode(item)
+                this._streamController.enqueue(encoded)
+                bytesWritten += encoded.length
+            } else if (item instanceof Uint8Array) {
+                this._streamController.enqueue(item)
+                bytesWritten += item.length
+            } else {
+                // Serialize objects as JSON
+                const json = JSON.stringify(item)
+                const encoded = new TextEncoder().encode(json)
+                this._streamController.enqueue(encoded)
+                bytesWritten += encoded.length
+            }
+        }
+
+        return bytesWritten
     }
 
     on(name: string, observer: Function): this {

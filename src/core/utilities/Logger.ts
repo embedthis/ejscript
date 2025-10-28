@@ -40,6 +40,8 @@ export class Logger {
     private _level: number
     private _location: any
     private _outStream: any
+    private _fileOpenPromise: Promise<any> | null = null
+    private _pendingWrites: Promise<any>[] = []
     private _filter?: (log: Logger, name: string, level: number, kind: string, msg: string) => boolean
     private _pattern?: RegExp
     private _app: AppInstance | null = null
@@ -97,8 +99,14 @@ export class Logger {
             } else if (path === 'stderr') {
                 this._outStream = this._app?.errorStream ?? process.stderr
             } else {
-                // Open file for appending
-                this._outStream = new File(path).open('wa+')
+                // Open file for appending - handle async open
+                const file = new File(path)
+                this._outStream = file
+                // Open the file asynchronously and store the promise
+                this._fileOpenPromise = file.open('wa+').catch((err: any) => {
+                    console.error(`Failed to open log file ${path}:`, err)
+                    throw err
+                })
             }
             this._location = location
         }
@@ -117,10 +125,27 @@ export class Logger {
 
     /**
      * Close the logger
+     * Returns a Promise if the underlying stream requires async close (File),
+     * otherwise returns void for synchronous close
      */
-    close(): void {
-        if (this._outStream && typeof this._outStream.close === 'function') {
-            this._outStream.close()
+    close(): void | Promise<void> {
+        // Wait for pending writes before closing
+        if (this._pendingWrites.length > 0 || (this._outStream && typeof this._outStream.close === 'function')) {
+            return Promise.all(this._pendingWrites).then(() => {
+                this._pendingWrites = []
+                if (this._outStream && typeof this._outStream.close === 'function') {
+                    const result = this._outStream.close()
+                    if (result instanceof Promise) {
+                        return result.catch(() => {
+                            // Silently ignore close errors
+                        })
+                    }
+                }
+            }).catch(() => {
+                // Silently ignore errors
+            }).finally(() => {
+                this._outStream = null
+            })
         }
         this._outStream = null
     }
@@ -276,7 +301,33 @@ export class Logger {
     write(...data: any[]): number {
         try {
             if (this._outStream) {
-                return this._outStream.write(data.join(' '))
+                // If file is being opened, wait for it first
+                if (this._fileOpenPromise) {
+                    const writePromise = this._fileOpenPromise.then(() => {
+                        const result = this._outStream.write(data.join(' '))
+                        if (result instanceof Promise) {
+                            return result.catch(() => {
+                                // Silently ignore write errors
+                            })
+                        }
+                        return result
+                    }).catch(() => {
+                        // File open failed, silently ignore
+                    })
+                    this._pendingWrites.push(writePromise)
+                    return 0
+                }
+
+                const result = this._outStream.write(data.join(' '))
+                // Handle async File writes
+                if (result instanceof Promise) {
+                    const writePromise = result.catch(() => {
+                        // Silently ignore write errors per method contract
+                    })
+                    this._pendingWrites.push(writePromise)
+                    return 0 // Return 0 for async writes since we don't know the result yet
+                }
+                return result
             }
             return 0
         } catch {

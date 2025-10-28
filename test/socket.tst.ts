@@ -78,94 +78,129 @@ await describe('Socket', async () => {
         })
 
         it('writes and reads data', async () => {
-            await new Promise<void>((resolve) => {
-                server = new Socket()
-                server.listen(TEST_PORT)
-    
-                // Client connects first
-                setTimeout(() => {
-                    client = new Socket()
-                    client.connect(TEST_PORT)
-    
-                    const sent = client.write('Hello Server')
-                    expect(sent).toBeGreaterThan(0)
-                }, 50)
-    
-                // Server accepts and echoes
-                setTimeout(() => {
-                    const conn = server!.accept()
-                    const buffer = new ByteArray(1024)
-    
-                    setTimeout(() => {
-                        const bytesRead = conn.read(buffer)
-                        if (bytesRead && bytesRead > 0) {
-                            conn.write(buffer.toString())
-                        }
-                        conn.close()
-                    }, 50)
-                }, 150)
-    
-                // Client reads echo
-                setTimeout(() => {
-                    const buffer = new ByteArray(1024)
-                    const bytesRead = client!.read(buffer)
-    
-                    if (bytesRead && bytesRead > 0) {
-                        expect(buffer.toString()).toBe('Hello Server')
-                    }
-                    resolve()
-                }, 300)
-            })
+            // Wait for previous test's port to be released
+            await Bun.sleep(200)
+
+            server = new Socket()
+            server.listen(TEST_PORT)
+
+            // Give server time to start listening
+            await Bun.sleep(100)
+
+            // Client connects
+            client = new Socket()
+            client.connect(TEST_PORT)
+
+            // Poll for connection to be queued (max 1 second)
+            let serverConn: Socket | null = null
+            for (let i = 0; i < 100; i++) {
+                try {
+                    serverConn = server.accept()
+                    break
+                } catch (e) {
+                    await Bun.sleep(10)
+                }
+            }
+
+            if (!serverConn) {
+                throw new Error('Server failed to accept connection within timeout')
+            }
+
+            // Client writes
+            const sent = await client.write('Hello Server')
+            expect(sent).toBeGreaterThan(0)
+
+            // Wait for data to arrive at server
+            await Bun.sleep(100)
+
+            // Server reads
+            const serverBuffer = new ByteArray(1024)
+            const bytesRead = await serverConn.read(serverBuffer)
+            expect(bytesRead).toBeGreaterThan(0)
+
+            // Server echoes back
+            await serverConn.write(serverBuffer.toString())
+
+            // Wait for echo to arrive at client
+            await Bun.sleep(100)
+
+            // Client reads echo
+            const clientBuffer = new ByteArray(1024)
+            const clientBytesRead = await client.read(clientBuffer)
+            expect(clientBytesRead).toBeGreaterThan(0)
+            expect(clientBuffer.toString()).toBe('Hello Server')
+
+            // Cleanup
+            serverConn.close()
         })
 
         it('handles multiple writes', async () => {
-            await new Promise<void>((resolve) => {
-                server = new Socket()
-                server.listen(TEST_PORT)
-    
-                // Client connects and writes
-                setTimeout(() => {
-                    client = new Socket()
-                    client.connect(TEST_PORT)
-    
-                    client.write('Part1 ')
-                    client.write('Part2 ')
-                    client.write('Part3 ')
-                    client.write('END')
-                }, 50)
-    
-                // Server accepts and echoes
-                setTimeout(() => {
-                    const conn = server!.accept()
-                    const buffer = new ByteArray(1024)
-    
-                    setTimeout(() => {
-                        // Read all data
-                        let totalRead = 0
-                        while (true) {
-                            const bytesRead = conn.read(buffer)
-                            if (!bytesRead || bytesRead === 0) break
-                            totalRead += bytesRead
-                            if (buffer.toString().includes('END')) break
-                        }
-    
-                        conn.write(buffer.toString())
-                        conn.close()
-                    }, 50)
-                }, 150)
-    
-                // Client reads response
-                setTimeout(() => {
-                    const buffer = new ByteArray(1024)
-                    const bytesRead = client!.read(buffer)
-                    if (bytesRead && bytesRead > 0) {
-                        expect(buffer.toString()).toContain('Part1')
-                        expect(buffer.toString()).toContain('Part2')
-                        expect(buffer.toString()).toContain('Part3')
-                    }
-                    resolve()
-                }, 400)
-            })
+            // Wait for previous test's port to be released
+            await Bun.sleep(200)
+
+            server = new Socket()
+            server.listen(TEST_PORT)
+
+            // Give server time to start listening
+            await Bun.sleep(100)
+
+            // Client connects
+            client = new Socket()
+            client.connect(TEST_PORT)
+
+            // Poll for connection to be queued
+            let serverConn: Socket | null = null
+            for (let i = 0; i < 100; i++) {
+                try {
+                    serverConn = server.accept()
+                    break
+                } catch (e) {
+                    await Bun.sleep(10)
+                }
+            }
+
+            if (!serverConn) {
+                throw new Error('Server failed to accept connection within timeout')
+            }
+
+            // Client writes multiple parts
+            await client.write('Part1 ')
+            await client.write('Part2 ')
+            await client.write('Part3 ')
+            await client.write('END')
+
+            // Wait for all data to arrive
+            await Bun.sleep(200)
+
+            // Server reads all data
+            const buffer = new ByteArray(1024)
+            const bytesRead = await serverConn.read(buffer)
+            expect(bytesRead).toBeGreaterThan(0)
+
+            const received = buffer.toString()
+            expect(received).toContain('Part1')
+            expect(received).toContain('Part2')
+            expect(received).toContain('Part3')
+            expect(received).toContain('END')
+
+            // Server echoes back
+            await serverConn.write(received)
+
+            // Wait for echo to arrive
+            await Bun.sleep(100)
+
+            // Client reads echo
+            const clientBuffer = new ByteArray(1024)
+            const clientBytesRead = await client.read(clientBuffer)
+            expect(clientBytesRead).toBeGreaterThan(0)
+
+            const echo = clientBuffer.toString()
+            expect(echo).toContain('Part1')
+            expect(echo).toContain('Part2')
+            expect(echo).toContain('Part3')
+
+            // Cleanup
+            serverConn.close()
         })
 
         it('detects EOF when connection closes', async () => {
@@ -310,32 +345,32 @@ await describe('Socket', async () => {
                 }, 50)
     
                 // Server accepts and writes
-                setTimeout(() => {
+                setTimeout(async () => {
                     const conn = server!.accept()
-                    conn.write('Test Data')
+                    await conn.write('Test Data')
                     conn.close()
-                }, 150)
+                }, 200)
     
                 // Client reads
-                setTimeout(() => {
+                setTimeout(async () => {
                     const buffer = new ByteArray(1024)
-                    const bytesRead = client!.read(buffer)
-    
+                    const bytesRead = await client!.read(buffer)
+
                     expect(bytesRead).toBeGreaterThan(0)
                     expect(buffer.toString()).toBe('Test Data')
                     resolve()
-                }, 300)
+                }, 400)
             })
         })
 
-        it('implements write method', () => {
+        it('implements write method', async () => {
             server = new Socket()
             server.listen(TEST_PORT)
 
             client = new Socket()
             client.connect(TEST_PORT)
 
-            const written = client.write('Hello')
+            const written = await client.write('Hello')
             expect(written).toBeGreaterThan(0)
         })
 
@@ -427,86 +462,113 @@ await describe('Socket', async () => {
         })
 
         it('handles large data writes', async () => {
-            await new Promise<void>((resolve) => {
-                server = new Socket()
-                server.listen(TEST_PORT)
-    
-                const largeData = 'X'.repeat(10000)
-    
-                // Client connects and writes
-                setTimeout(() => {
-                    client = new Socket()
-                    client.connect(TEST_PORT)
-    
-                    const written = client.write(largeData)
-                    expect(written).toBeGreaterThan(0)
-                }, 50)
-    
-                // Server accepts and reads
-                setTimeout(() => {
-                    const conn = server!.accept()
-                    const buffer = new ByteArray(20000)
-    
-                    setTimeout(() => {
-                        let totalRead = 0
-                        while (totalRead < largeData.length) {
-                            const bytesRead = conn.read(buffer)
-                            if (!bytesRead || bytesRead === 0) break
-                            totalRead += bytesRead
-                        }
-    
-                        conn.write(`Received ${totalRead} bytes`)
-                        conn.close()
-                    }, 50)
-                }, 150)
-    
-                // Client reads response
-                setTimeout(() => {
-                    const buffer = new ByteArray(1024)
-                    client!.read(buffer)
-                    expect(buffer.toString()).toContain('Received')
-                    resolve()
-                }, 400)
-            })
+            // Wait for previous test's port to be released
+            await Bun.sleep(200)
+
+            server = new Socket()
+            server.listen(TEST_PORT)
+
+            // Give server time to start
+            await Bun.sleep(100)
+
+            const largeData = 'X'.repeat(10000)
+
+            // Client connects
+            client = new Socket()
+            client.connect(TEST_PORT)
+
+            // Poll for connection
+            let serverConn: Socket | null = null
+            for (let i = 0; i < 100; i++) {
+                try {
+                    serverConn = server.accept()
+                    break
+                } catch (e) {
+                    await Bun.sleep(10)
+                }
+            }
+
+            if (!serverConn) {
+                throw new Error('Server failed to accept connection within timeout')
+            }
+
+            // Client writes large data
+            const written = await client.write(largeData)
+            expect(written).toBeGreaterThan(0)
+
+            // Wait for data to arrive
+            await Bun.sleep(300)
+
+            // Server reads all data
+            const buffer = new ByteArray(20000)
+            const bytesRead = await serverConn.read(buffer)
+            expect(bytesRead).toBe(largeData.length)
+
+            // Server sends response
+            await serverConn.write(`Received ${bytesRead} bytes`)
+            serverConn.close()
+
+            // Wait for response
+            await Bun.sleep(100)
+
+            // Client reads response
+            const responseBuffer = new ByteArray(1024)
+            await client.read(responseBuffer)
+            expect(responseBuffer.toString()).toContain('Received')
+            expect(responseBuffer.toString()).toContain('10000')
         })
     })
 
     await describe('Connection Lifecycle', async () => {
         it('closes cleanly after communication', async () => {
-            await new Promise<void>((resolve) => {
-                const server = new Socket()
-                server.listen(9882)
-    
-                // Client connects and writes
-                let client: Socket
-                setTimeout(() => {
-                    client = new Socket()
-                    client.connect(9882)
-                    client.write('Hello')
-                }, 50)
-    
-                // Server accepts and responds
-                setTimeout(() => {
-                    const conn = server.accept()
-                    setTimeout(() => {
-                        const buffer = new ByteArray(1024)
-                        conn.read(buffer)
-                        conn.write('OK')
-                        conn.close()
-                        expect(conn.isEof).toBe(true)
-                    }, 50)
-                }, 150)
-    
-                // Client reads and closes
-                setTimeout(() => {
-                    const buffer = new ByteArray(1024)
-                    client.read(buffer)
-                    client.close()
-                    expect(client.isEof).toBe(true)
-                    server.close()
-                    resolve()
-                }, 400)
-            })
+            const server = new Socket()
+            server.listen(9882)
+
+            // Give server time to start
+            await Bun.sleep(100)
+
+            // Client connects
+            const client = new Socket()
+            client.connect(9882)
+
+            // Poll for connection
+            let serverConn: Socket | null = null
+            for (let i = 0; i < 100; i++) {
+                try {
+                    serverConn = server.accept()
+                    break
+                } catch (e) {
+                    await Bun.sleep(10)
+                }
+            }
+
+            if (!serverConn) {
+                throw new Error('Server failed to accept connection within timeout')
+            }
+
+            // Client writes
+            await client.write('Hello')
+
+            // Wait for data
+            await Bun.sleep(100)
+
+            // Server reads and responds
+            const buffer = new ByteArray(1024)
+            await serverConn.read(buffer)
+            await serverConn.write('OK')
+            serverConn.close()
+            expect(serverConn.isEof).toBe(true)
+
+            // Wait for response
+            await Bun.sleep(100)
+
+            // Client reads and closes
+            const clientBuffer = new ByteArray(1024)
+            await client.read(clientBuffer)
+            client.close()
+            expect(client.isEof).toBe(true)
+
+            server.close()
         })
 
         it('handles rapid connect/disconnect', () => {

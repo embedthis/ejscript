@@ -399,7 +399,7 @@ Follow **Semantic Versioning** (MAJOR.MINOR.PATCH):
 
 2. **Update CHANGELOG**:
    ```bash
-   vim .agent/logs/CHANGELOG.md
+   vim AI/logs/CHANGELOG.md
    # Add new version section with changes
    ```
 
@@ -412,7 +412,7 @@ Follow **Semantic Versioning** (MAJOR.MINOR.PATCH):
 
 4. **Commit changes**:
    ```bash
-   git add package.json .agent/logs/CHANGELOG.md
+   git add package.json AI/logs/CHANGELOG.md
    git commit -m "Release v0.2.0"
    git tag v0.2.0
    ```

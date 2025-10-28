@@ -414,7 +414,7 @@ await describe('Http', async () => {
             it('should handle empty response', () => {
                 http.response = ''
                 const lines = http.readLines()
-                expect(lines).toEqual([''])
+                expect(lines).toEqual([])
             })
 
             it('should handle CRLF line endings', () => {
@@ -495,13 +495,13 @@ await describe('Http', async () => {
                 const promise = http.get()
                 expect(http.method).toBe('GET')
                 // Clean up promise to avoid unhandled rejection
-                promise.catch(() => {})
+                // No longer a Promise - returns Http object
             })
 
             it('should accept uri parameter', async () => {
                 const promise = http.get('https://different.com')
                 expect(http.uri?.toString()).toContain('different.com')
-                promise.catch(() => {})
+                // No longer a Promise - returns Http object
             })
         })
 
@@ -510,13 +510,13 @@ await describe('Http', async () => {
                 http.uri = 'https://example.com'
                 const promise = http.post()
                 expect(http.method).toBe('POST')
-                promise.catch(() => {})
+                // No longer a Promise - returns Http object
             })
 
             it('should accept data parameters', async () => {
                 const promise = http.post(null, { key: 'value' })
                 expect(http.method).toBe('POST')
-                promise.catch(() => {})
+                // No longer a Promise - returns Http object
             })
         })
 
@@ -525,13 +525,13 @@ await describe('Http', async () => {
                 http.uri = 'https://example.com'
                 const promise = http.put()
                 expect(http.method).toBe('PUT')
-                promise.catch(() => {})
+                // No longer a Promise - returns Http object
             })
 
             it('should accept data parameters', async () => {
                 const promise = http.put(null, { key: 'value' })
                 expect(http.method).toBe('PUT')
-                promise.catch(() => {})
+                // No longer a Promise - returns Http object
             })
         })
 
@@ -540,38 +540,40 @@ await describe('Http', async () => {
                 http.uri = 'https://example.com'
                 const promise = http.head()
                 expect(http.method).toBe('HEAD')
-                promise.catch(() => {})
+                // No longer a Promise - returns Http object
             })
         })
     })
 
     await describe('Error Handling', async () => {
-        it('should throw error when connecting without uri', async () => {
+        it('should throw error when connecting without uri', () => {
             const http = new Http()
-            await expect(http.connect('GET')).rejects.toThrow('No URI specified')
+            // NEW API: connect() throws synchronously, not via Promise rejection
+            expect(() => http.connect('GET')).toThrow('No URI specified')
         })
 
-        it('should not throw when uri is set', async () => {
+        it('should not throw when uri is set', () => {
             const http = new Http('https://example.com')
-            const promise = http.connect('GET')
-            // Clean up promise
-            promise.catch(() => {})
+            const result = http.connect('GET')
+            expect(result).toBeInstanceOf(Http)
         })
     })
 
     await describe('Method Chaining', async () => {
         it('should allow chaining HTTP method calls', async () => {
             const http = new Http()
-            const promise = http.get('https://example.com')
-            expect(promise).toBeInstanceOf(Promise)
-            promise.catch(() => {})
+            const result = http.get('https://example.com')
+            // NEW API: get() returns Http object, not Promise
+            expect(result).toBeInstanceOf(Http)
+            expect(result).toBe(http)
         })
 
         it('should allow chaining connect methods', async () => {
             const http = new Http()
-            const promise = http.connect('GET', 'https://example.com')
-            expect(promise).toBeInstanceOf(Promise)
-            promise.catch(() => {})
+            const result = http.connect('GET', 'https://example.com')
+            // NEW API: connect() returns Http object, not Promise
+            expect(result).toBeInstanceOf(Http)
+            expect(result).toBe(http)
         })
 
         it('should set multiple headers sequentially', () => {

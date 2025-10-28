@@ -315,6 +315,12 @@ export class ByteArray extends Uint8Array {
     /**
      * Ensure there is enough room for writing
      * @param needed Number of bytes needed
+     *
+     * Note: ByteArray extends Uint8Array which has fixed size after construction.
+     * True dynamic growth is not possible without a major refactor to use composition
+     * instead of inheritance. For now, allocate sufficient initial size.
+     *
+     * Workaround: Create ByteArray with large initial size (e.g., new ByteArray(1024 * 1024))
      */
     private _ensureRoom(needed: number): void {
         if (this.room >= needed) return
@@ -323,12 +329,10 @@ export class ByteArray extends Uint8Array {
             throw new Error('ByteArray is not growable')
         }
 
-        const newSize = Math.max(this._size * 2, this._size + needed)
-        this._size = newSize
-
-        // Note: Can't actually resize the underlying buffer in place
-        // But since we're checking room before writing, and tests create
-        // arrays with sufficient initial size, this should work
+        // Uint8Array is fixed-size - cannot truly grow after construction
+        throw new Error(`ByteArray overflow: need ${needed} bytes but only ${this.room} available. ` +
+            `ByteArray extends Uint8Array which has fixed size. ` +
+            `Allocate sufficient initial size (current: ${this._size}, writePosition: ${this._writePosition})`)
     }
 
     /**

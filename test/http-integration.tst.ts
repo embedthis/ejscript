@@ -21,7 +21,8 @@ await describe('Http Integration Tests', async () => {
     await describe('GET Requests', async () => {
         it('performs simple GET request', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/index.html`)
+            http.get(`${baseUrl}/index.html`)
+            await http.wait()
 
             expect(http.status).toBe(200)
             expect(http.response).toContain('Hello /index.html')
@@ -31,7 +32,8 @@ await describe('Http Integration Tests', async () => {
 
         it('gets text response', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/text`)
+            http.get(`${baseUrl}/text`)
+            await http.finalize()
 
             expect(http.status).toBe(200)
             expect(http.response).toBe('Plain text response')
@@ -40,7 +42,8 @@ await describe('Http Integration Tests', async () => {
 
         it('gets JSON response', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/json`)
+            http.get(`${baseUrl}/json`)
+            await http.finalize()
 
             expect(http.status).toBe(200)
             const data = JSON.parse(http.response)
@@ -51,7 +54,8 @@ await describe('Http Integration Tests', async () => {
 
         it('handles query parameters', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/query?foo=bar&num=42`)
+            http.get(`${baseUrl}/query?foo=bar&num=42`)
+            await http.finalize()
 
             expect(http.status).toBe(200)
             const data = JSON.parse(http.response)
@@ -62,7 +66,8 @@ await describe('Http Integration Tests', async () => {
 
         it('reads response in chunks', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/index.html`)
+            http.get(`${baseUrl}/index.html`)
+            await http.finalize()
 
             expect(http.status).toBe(200)
             const chunk1 = http.readString(6)
@@ -75,7 +80,8 @@ await describe('Http Integration Tests', async () => {
 
         it('handles large responses', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/large`)
+            http.get(`${baseUrl}/large`)
+            await http.finalize()
 
             expect(http.status).toBe(200)
             expect(http.response.length).toBeGreaterThan(100000)
@@ -86,10 +92,12 @@ await describe('Http Integration Tests', async () => {
     await describe('POST Requests', async () => {
         it('posts data to server', async () => {
             const http = new Http()
-            await http.post(`${baseUrl}/echo`, 'Test data')
+            http.post(`${baseUrl}/echo`, 'Test data')
+            await http.finalize()
 
             expect(http.status).toBe(200)
-            expect(http.response).toBe('Test data')
+            const response = JSON.parse(http.response)
+            expect(response.body).toBe('Test data')
             http.close()
         })
 
@@ -97,7 +105,8 @@ await describe('Http Integration Tests', async () => {
             const http = new Http()
             const data = { name: 'test', value: 123 }
             http.contentType = 'application/json'
-            await http.post(`${baseUrl}/json`, JSON.stringify(data))
+            http.post(`${baseUrl}/json`, JSON.stringify(data))
+            await http.finalize()
 
             expect(http.status).toBe(200)
             const response = JSON.parse(http.response)
@@ -108,7 +117,8 @@ await describe('Http Integration Tests', async () => {
 
         it('posts form data', async () => {
             const http = new Http()
-            await http.form(`${baseUrl}/form`, { field1: 'value1', field2: 'value2' })
+            http.form(`${baseUrl}/form`, { field1: 'value1', field2: 'value2' })
+            await http.finalize()
 
             expect(http.status).toBe(200)
             const response = JSON.parse(http.response)
@@ -122,7 +132,8 @@ await describe('Http Integration Tests', async () => {
             const buffer = new ByteArray(100)
             buffer.write('Binary data test')
 
-            await http.post(`${baseUrl}/echo`, buffer)
+            http.post(`${baseUrl}/echo`, buffer)
+            await http.finalize()
             expect(http.status).toBe(200)
             expect(http.response).toContain('Binary data test')
             http.close()
@@ -132,7 +143,8 @@ await describe('Http Integration Tests', async () => {
     await describe('PUT Requests', async () => {
         it('sends PUT request', async () => {
             const http = new Http()
-            await http.put(`${baseUrl}/resource`, 'Updated content')
+            http.put(`${baseUrl}/resource`, 'Updated content')
+            await http.finalize()
 
             expect(http.status).toBe(200)
             expect(http.response).toBe('Resource updated')
@@ -143,7 +155,8 @@ await describe('Http Integration Tests', async () => {
     await describe('DELETE Requests', async () => {
         it('sends DELETE request', async () => {
             const http = new Http()
-            await http.del(`${baseUrl}/resource`)
+            http.del(`${baseUrl}/resource`)
+            await http.finalize()
 
             expect(http.status).toBe(200)
             expect(http.response).toBe('Resource deleted')
@@ -155,7 +168,8 @@ await describe('Http Integration Tests', async () => {
         it('sends custom headers', async () => {
             const http = new Http()
             http.setHeader('X-Custom-Header', 'TestValue')
-            await http.get(`${baseUrl}/headers`)
+            http.get(`${baseUrl}/headers`)
+            await http.finalize()
 
             expect(http.status).toBe(200)
             const headers = JSON.parse(http.response)
@@ -165,7 +179,8 @@ await describe('Http Integration Tests', async () => {
 
         it('reads response headers', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/index.html`)
+            http.get(`${baseUrl}/index.html`)
+            await http.finalize()
 
             expect(http.status).toBe(200)
             expect(http.contentType).toContain('text/html')
@@ -177,7 +192,8 @@ await describe('Http Integration Tests', async () => {
 
         it('handles case-insensitive header names', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/index.html`)
+            http.get(`${baseUrl}/index.html`)
+            await http.finalize()
 
             const lower = http.header('content-type')
             const upper = http.header('Content-Type')
@@ -192,36 +208,59 @@ await describe('Http Integration Tests', async () => {
     await describe('HTTP Status Codes', async () => {
         it('handles 200 OK', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/status/200`)
+            http.get(`${baseUrl}/status/200`)
+            await http.finalize()
             expect(http.status).toBe(200)
             http.close()
         })
 
         it('handles 404 Not Found', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/nonexistent`)
+            http.get(`${baseUrl}/nonexistent`)
+            await http.finalize()
             expect(http.status).toBe(404)
             http.close()
         })
 
         it('handles 201 Created', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/status/201`)
+            http.get(`${baseUrl}/status/201`)
+            await http.finalize()
             expect(http.status).toBe(201)
             http.close()
         })
 
         it('handles 400 Bad Request', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/status/400`)
+            http.get(`${baseUrl}/status/400`)
+            await http.finalize()
             expect(http.status).toBe(400)
             http.close()
         })
 
         it('handles 500 Internal Server Error', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/status/500`)
+            http.get(`${baseUrl}/status/500`)
+            await http.finalize()
             expect(http.status).toBe(500)
+            http.close()
+        })
+
+        it('finalize() returns HTTP status code', async () => {
+            const http = new Http()
+            http.get(`${baseUrl}/status/200`)
+            const status = await http.finalize()
+            expect(status).toBe(200)
+            expect(http.status).toBe(200)
+            http.close()
+        })
+
+        it('finalize() returns status for error codes', async () => {
+            const http = new Http()
+            http.get(`${baseUrl}/nonexistent`)
+            const status = await http.finalize()
+            expect(status).toBe(404)
+            expect(http.status).toBe(404)
             http.close()
         })
     })
@@ -230,7 +269,8 @@ await describe('Http Integration Tests', async () => {
         it('follows redirects when enabled', async () => {
             const http = new Http()
             http.followRedirects = true
-            await http.get(`${baseUrl}/redirect`)
+            http.get(`${baseUrl}/redirect`)
+            await http.finalize()
 
             expect(http.status).toBe(200)
             expect(http.response).toContain('Redirected successfully')
@@ -239,7 +279,8 @@ await describe('Http Integration Tests', async () => {
 
         it('does not follow redirects by default', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/redirect`)
+            http.get(`${baseUrl}/redirect`)
+            await http.finalize()
 
             expect(http.status).toBe(302)
             http.close()
@@ -249,7 +290,8 @@ await describe('Http Integration Tests', async () => {
     await describe('Cookies', async () => {
         it('receives cookies from server', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/cookie`)
+            http.get(`${baseUrl}/cookie`)
+            await http.finalize()
 
             expect(http.status).toBe(200)
             const setCookie = http.header('set-cookie')
@@ -262,7 +304,8 @@ await describe('Http Integration Tests', async () => {
         it('sends basic authentication', async () => {
             const http = new Http()
             http.setCredentials('user', 'pass')
-            await http.get(`${baseUrl}/auth`)
+            http.get(`${baseUrl}/auth`)
+            await http.finalize()
 
             expect(http.status).toBe(200)
             expect(http.response).toBe('Authenticated')
@@ -272,7 +315,8 @@ await describe('Http Integration Tests', async () => {
         it('handles authentication failure', async () => {
             const http = new Http()
             http.setCredentials('wrong', 'credentials')
-            await http.get(`${baseUrl}/auth`)
+            http.get(`${baseUrl}/auth`)
+            await http.finalize()
 
             expect(http.status).toBe(403)
             http.close()
@@ -280,7 +324,8 @@ await describe('Http Integration Tests', async () => {
 
         it('returns 401 without credentials', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/auth`)
+            http.get(`${baseUrl}/auth`)
+            await http.finalize()
 
             expect(http.status).toBe(401)
             http.close()
@@ -291,13 +336,16 @@ await describe('Http Integration Tests', async () => {
         it('reuses Http object for multiple requests', async () => {
             const http = new Http()
 
-            await http.get(`${baseUrl}/index.html`)
+            http.get(`${baseUrl}/index.html`)
+            await http.finalize()
             expect(http.status).toBe(200)
 
-            await http.get(`${baseUrl}/text`)
+            http.get(`${baseUrl}/text`)
+            await http.finalize()
             expect(http.status).toBe(200)
 
-            await http.get(`${baseUrl}/json`)
+            http.get(`${baseUrl}/json`)
+            await http.finalize()
             expect(http.status).toBe(200)
 
             http.close()
@@ -306,7 +354,8 @@ await describe('Http Integration Tests', async () => {
         it('sets uri property', async () => {
             const http = new Http()
             http.uri = `${baseUrl}/index.html`
-            await http.get()
+            http.get()
+            await http.finalize()
 
             expect(http.status).toBe(200)
             expect(http.uri?.toString()).toContain('/index.html')
@@ -316,7 +365,8 @@ await describe('Http Integration Tests', async () => {
         it('uses Uri object', async () => {
             const uri = new Uri(`${baseUrl}/index.html`)
             const http = new Http(uri)
-            await http.get()
+            http.get()
+            await http.finalize()
 
             expect(http.status).toBe(200)
             http.close()
@@ -326,7 +376,8 @@ await describe('Http Integration Tests', async () => {
     await describe('Method Variations', async () => {
         it('uses connectAsync() with GET', async () => {
             const http = new Http()
-            const result = await http.connect('GET', `${baseUrl}/index.html`)
+            const result = http.connect('GET', `${baseUrl}/index.html`)
+            await http.wait()
 
             expect(result).toBe(http)
             expect(http.status).toBe(200)
@@ -335,16 +386,19 @@ await describe('Http Integration Tests', async () => {
 
         it('uses connectAsync() with POST', async () => {
             const http = new Http()
-            await http.connect('POST', `${baseUrl}/echo`, 'Test data')
+            http.connect('POST', `${baseUrl}/echo`, 'Test data')
+            await http.wait()
 
             expect(http.status).toBe(200)
-            expect(http.response).toBe('Test data')
+            const response = JSON.parse(http.response)
+            expect(response.body).toBe('Test data')
             http.close()
         })
 
         it('uses connectAsync() with PUT', async () => {
             const http = new Http()
-            await http.connect('PUT', `${baseUrl}/resource`, 'Updated')
+            http.connect('PUT', `${baseUrl}/resource`, 'Updated')
+            await http.wait()
 
             expect(http.status).toBe(200)
             http.close()
@@ -352,7 +406,8 @@ await describe('Http Integration Tests', async () => {
 
         it('uses connectAsync() with DELETE', async () => {
             const http = new Http()
-            await http.connect('DELETE', `${baseUrl}/resource`)
+            http.connect('DELETE', `${baseUrl}/resource`)
+            await http.wait()
 
             expect(http.status).toBe(200)
             http.close()
@@ -362,7 +417,8 @@ await describe('Http Integration Tests', async () => {
     await describe('Response Reading', async () => {
         it('reads response as string', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/text`)
+            http.get(`${baseUrl}/text`)
+            await http.finalize()
 
             const response = http.readString()
             expect(response).toBe('Plain text response')
@@ -371,7 +427,8 @@ await describe('Http Integration Tests', async () => {
 
         it('reads response in chunks with readString()', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/text`)
+            http.get(`${baseUrl}/text`)
+            await http.finalize()
 
             const chunk1 = http.readString(5)
             const chunk2 = http.readString(5)
@@ -383,7 +440,8 @@ await describe('Http Integration Tests', async () => {
 
         it('gets full response property', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/text`)
+            http.get(`${baseUrl}/text`)
+            await http.finalize()
 
             expect(http.response).toBe('Plain text response')
             expect(http.response.length).toBe(19)
@@ -392,7 +450,8 @@ await describe('Http Integration Tests', async () => {
 
         it('checks available property', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/text`)
+            http.get(`${baseUrl}/text`)
+            await http.finalize()
 
             expect(http.available).toBeGreaterThan(0)
             http.readString(5)
@@ -405,7 +464,8 @@ await describe('Http Integration Tests', async () => {
         it('sets content-type for POST', async () => {
             const http = new Http()
             http.contentType = 'application/json'
-            await http.post(`${baseUrl}/echo`, '{"test": true}')
+            http.post(`${baseUrl}/echo`, '{"test": true}')
+            await http.finalize()
 
             expect(http.status).toBe(200)
             http.close()
@@ -413,7 +473,8 @@ await describe('Http Integration Tests', async () => {
 
         it('detects JSON content type', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/json`)
+            http.get(`${baseUrl}/json`)
+            await http.finalize()
 
             expect(http.contentType).toContain('application/json')
             http.close()
@@ -421,7 +482,8 @@ await describe('Http Integration Tests', async () => {
 
         it('detects HTML content type', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/index.html`)
+            http.get(`${baseUrl}/index.html`)
+            await http.finalize()
 
             expect(http.contentType).toContain('text/html')
             http.close()
@@ -433,7 +495,8 @@ await describe('Http Integration Tests', async () => {
             const http = new Http()
             http.setLimits({ requestTimeout: 2 })  // 2 second timeout
             try {
-                await http.get('http://invalid-host-that-does-not-exist.local/')
+                http.get('http://invalid-host-that-does-not-exist.local/')
+                await http.finalize()
                 // If we get here, request failed but didn't throw
                 expect(http.status).not.toBe(200)
             } catch (e) {
@@ -447,7 +510,8 @@ await describe('Http Integration Tests', async () => {
     await describe('Protocol Detection', async () => {
         it('detects non-secure connection', async () => {
             const http = new Http()
-            await http.get(`${baseUrl}/index.html`)
+            http.get(`${baseUrl}/index.html`)
+            await http.finalize()
 
             expect(http.isSecure).toBe(false)
             http.close()

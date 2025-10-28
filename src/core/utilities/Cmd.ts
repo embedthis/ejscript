@@ -41,8 +41,8 @@ export class Cmd extends Emitter {
     private _process: Subprocess | null = null
     private _pid: number | null = null
     private _status: number | null = null
-    private _stdoutData: ByteArray = new ByteArray()
-    private _stderrData: ByteArray = new ByteArray()
+    private _stdoutData: ByteArray = new ByteArray(1024 * 1024) // 1MB initial size for command output
+    private _stderrData: ByteArray = new ByteArray(64 * 1024) // 64KB for stderr
     private _stdoutStream: any = null
     private _stderrStream: any = null
     private _finalized: boolean = false
@@ -56,6 +56,11 @@ export class Cmd extends Emitter {
      * Create a Cmd object
      * @param command Optional command line to initialize with
      * @param options Command options
+     *
+     * Execution mode:
+     * - detach=true: Async execution (use start())
+     * - exceptions=false: Async execution (use start() + wait())
+     * - No options or other options: Sync execution for backward compatibility (use spawnSync)
      */
     constructor(command: string | string[] | null = null, options: CmdOptions = {}) {
         super()
@@ -63,8 +68,48 @@ export class Cmd extends Emitter {
             this._timeout = options.timeout
         }
         if (command) {
-            this.start(command, options)
+            // Use async mode if explicitly requested via detach or exceptions=false
+            // Otherwise use sync mode for backward compatibility
+            if (options.detach || options.exceptions === false) {
+                this.start(command, options)
+            } else {
+                this._startSync(command, options)
+            }
         }
+    }
+
+    /**
+     * Start command synchronously using Bun.spawnSync
+     * This is used when the constructor is called with a command (non-detached mode)
+     */
+    private _startSync(cmdline: string | string[], options: CmdOptions): void {
+        const cwd = options.dir ? (options.dir instanceof Path ? options.dir.name : options.dir) : undefined
+
+        // Parse command line
+        let cmd: string
+        let args: string[] = []
+
+        if (typeof cmdline === 'string') {
+            cmd = '/bin/sh'
+            args = ['-c', cmdline]
+        } else {
+            cmd = cmdline[0]
+            args = cmdline.slice(1)
+        }
+
+        // Use Bun.spawnSync for synchronous execution
+        const result = Bun.spawnSync([cmd, ...args], {
+            cwd,
+            env: this._env ? { ...process.env, ...this._env } : process.env,
+            stdin: 'inherit',
+            stdout: 'pipe',
+            stderr: 'pipe',
+        })
+
+        this._status = result.exitCode
+        this._stdoutData.write(result.stdout)
+        this._stderrData.write(result.stderr)
+        this._pid = -1 // spawnSync doesn't provide PID after completion
     }
 
     /**
@@ -178,7 +223,12 @@ export class Cmd extends Emitter {
      * @param count Number of bytes to read
      * @returns Number of bytes read or null if no data
      */
-    read(buffer: ByteArray, offset: number = 0, count: number = -1): number | null {
+    async read(buffer: ByteArray, offset: number = 0, count: number = -1): Promise<number | null> {
+        // If we're still reading streams, wait for them to complete
+        if (this._readingStreams && this._stdoutPromise) {
+            await this._stdoutPromise
+        }
+
         const data = this._stdoutData
         if (data.length === 0) return null
 
@@ -191,10 +241,17 @@ export class Cmd extends Emitter {
         }
 
         // Remove read data from buffer
-        const remaining = data.slice(bytesRead)
-        const newBuffer = new ByteArray(remaining.length)
-        newBuffer.write(remaining)
-        this._stdoutData = newBuffer
+        if (bytesRead < data.length) {
+            const remaining = data.slice(bytesRead)
+            const newBuffer = new ByteArray(remaining.length)
+            for (let i = 0; i < remaining.length; i++) {
+                newBuffer[i] = remaining[i]
+            }
+            this._stdoutData = newBuffer
+        } else {
+            // All data was read, clear the buffer
+            this._stdoutData = new ByteArray()
+        }
 
         return bytesRead
     }
@@ -204,7 +261,12 @@ export class Cmd extends Emitter {
      * @param count Number of bytes to read (-1 for all)
      * @returns String data
      */
-    readString(count: number = -1): string | null {
+    async readString(count: number = -1): Promise<string | null> {
+        // If we're still reading streams, wait for them to complete
+        if (this._readingStreams && this._stdoutPromise) {
+            await this._stdoutPromise
+        }
+
         const data = this._stdoutData.toString()
         if (count === -1) {
             this._stdoutData = new ByteArray()
@@ -223,19 +285,28 @@ export class Cmd extends Emitter {
      * @param count Number of lines to read (-1 for all)
      * @returns Array of lines
      */
-    readLines(count: number = -1): string[] | null {
+    async readLines(count: number = -1): Promise<string[] | null> {
+        // If we're still reading streams, wait for them to complete
+        if (this._readingStreams && this._stdoutPromise) {
+            await this._stdoutPromise
+        }
+
         const stream = new TextStream(this as any)
         return stream.readLines()
     }
 
     /**
      * Command output data as a string (cached)
+     * Note: This is now async - use await cmd.response or preferably await cmd.readString()
      */
-    get response(): string | null {
+    get response(): Promise<string | null> {
         if (!this._response) {
-            this._response = this.readString()
+            return this.readString().then(result => {
+                this._response = result
+                return result
+            })
         }
-        return this._response
+        return Promise.resolve(this._response)
     }
 
     /**
@@ -323,17 +394,13 @@ export class Cmd extends Emitter {
     }
 
     /**
-     * Get the command exit status (blocks until complete)
+     * Get the command exit status
      * @returns Exit status code
+     *
+     * Note: If the command was started in the constructor (non-detached mode),
+     * the status will already be available. For detached commands, use await cmd.wait() first.
      */
     get status(): number {
-        if (this._status === null && this._process) {
-            // Block until complete - not ideal but matches ejscript API
-            // In real usage, use wait() instead
-            while (this._status === null) {
-                // Busy wait (not ideal, but matches synchronous API)
-            }
-        }
         return this._status || 0
     }
 
@@ -474,13 +541,13 @@ export class Cmd extends Emitter {
      * @param cmdline Command line
      * @param options Command options
      */
-    static exec(cmdline: string | null = null, options: CmdOptions = {}): void {
+    static async exec(cmdline: string | null = null, options: CmdOptions = {}): Promise<void> {
         if (!cmdline) {
             throw new Error('Command line required')
         }
         // Note: This cannot truly replace the process in Bun like it can in C
         // We'll simulate by running and exiting
-        const result = Cmd.run(cmdline, options)
+        const result = await Cmd.run(cmdline, options)
         console.log(result)
         process.exit(0)
     }
@@ -507,20 +574,10 @@ export class Cmd extends Emitter {
      * @param data Optional data to write to stdin
      * @returns Command output
      */
-    static run(command: string | string[], options: CmdOptions = {}, data: any = null): string | null {
+    static async run(command: string | string[], options: CmdOptions = {}, data: any = null): Promise<string | null> {
         const cmd = new Cmd()
-        const results = new ByteArray()
 
-        cmd.on('readable', (event: string, c: Cmd) => {
-            const buf = new ByteArray()
-            c.read(buf, 0, -1)
-            if (options.stream) {
-                process.stdout.write(buf.toString())
-            }
-            results.write(buf as Uint8Array)
-        })
-
-        cmd.start(command, { ...options, detach: true })
+        cmd.start(command, { ...options, detach: true, exceptions: false })
 
         if (options.detach) {
             return null
@@ -531,10 +588,18 @@ export class Cmd extends Emitter {
         }
 
         cmd.finalize()
-        // Note: wait is async, but run should be sync - this is a limitation
-        // In practice, use async version or instance methods
 
-        return results.toString()
+        // Wait for command to complete
+        await cmd.wait()
+
+        // Read all output
+        const result = await cmd.readString()
+
+        if (options.stream && result) {
+            process.stdout.write(result)
+        }
+
+        return result
     }
 
     /**
@@ -544,7 +609,7 @@ export class Cmd extends Emitter {
      * @param data Optional data to write to stdin
      * @returns Command output
      */
-    static sh(command: string | string[], options: CmdOptions = {}, data: any = null): string {
+    static async sh(command: string | string[], options: CmdOptions = {}, data: any = null): Promise<string> {
         const shell = Cmd.locate('sh') || new Path('/bin/sh')
 
         if (Array.isArray(command)) {
@@ -556,9 +621,11 @@ export class Cmd extends Emitter {
                 }
                 return s
             })
-            return Cmd.run([shell.name, '-c', quotedArgs.join(' ')], options, data)?.trimEnd() || ''
+            const result = await Cmd.run([shell.name, '-c', quotedArgs.join(' ')], options, data)
+            return result?.trimEnd() || ''
         }
 
-        return Cmd.run([shell.name, '-c', String(command).trimEnd()], options, data)?.trimEnd() || ''
+        const result = await Cmd.run([shell.name, '-c', String(command).trimEnd()], options, data)
+        return result?.trimEnd() || ''
     }
 }

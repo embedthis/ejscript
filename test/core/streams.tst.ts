@@ -158,13 +158,13 @@ await describe('ByteArray', async () => {
 
     test('read large amount of data', () => {
       const size = 4096
-      const b = new ByteArray()
+      const b = new ByteArray(size) // Allocate sufficient initial size
 
       for (let i = 0; i < size; i++) {
         b.writeByte(i % 256)
       }
 
-      const check = new ByteArray(b.length, false)
+      const check = new ByteArray(size, false)
       b.read(check)
       expect(check.length).toBe(size)
 
@@ -352,11 +352,11 @@ await describe('TextStream', async () => {
   })
 
   describe('Write Operations', () => {
-    test('writeLine writes with newlines', () => {
+    test('writeLine writes with newlines', async () => {
       const b = new ByteArray(1000)
       const t = new TextStream(b)
 
-      t.writeLine('line 1', 'line 2', 'line 3')
+      await t.writeLine('line 1', 'line 2', 'line 3')
 
       const result = b.toString()
       // Accept either \r\n or \n
@@ -365,44 +365,44 @@ await describe('TextStream', async () => {
       ).toBe(true)
     })
 
-    test('write string without newline', () => {
+    test('write string without newline', async () => {
       const b = new ByteArray(1000)
       const t = new TextStream(b)
 
-      t.write('Hello', ' ', 'World')
+      await t.write('Hello', ' ', 'World')
       expect(b.toString()).toBe('Hello World')
     })
   })
 
   describe('Read Operations', () => {
-    test('read from TextStream', () => {
+    test('read from TextStream', async () => {
       const b = new ByteArray(1000)
       const t = new TextStream(b)
 
       b.writeData('Line one\nLine 2\nLine 3')
       const dest = new ByteArray(1000)
-      const count = t.read(dest)
+      const count = await t.read(dest)
 
       expect(count).toBe(22)
       expect(dest.readString()).toBe('Line one\nLine 2\nLine 3')
     })
 
-    test('readLine reads single line', () => {
+    test('readLine reads single line', async () => {
       const b = new ByteArray(1000)
       const t = new TextStream(b)
 
       b.writeData('Line 1\nLine 2\nLine 3')
-      expect(t.readLine()).toBe('Line 1')
-      expect(t.readLine()).toBe('Line 2')
-      expect(t.readLine()).toBe('Line 3')
+      expect(await t.readLine()).toBe('Line 1')
+      expect(await t.readLine()).toBe('Line 2')
+      expect(await t.readLine()).toBe('Line 3')
     })
 
-    test('readLines reads all lines', () => {
+    test('readLines reads all lines', async () => {
       const b = new ByteArray(1000)
       const t = new TextStream(b)
 
       b.writeData('Line one\nLine two\nLine three')
-      const lines = t.readLines()
+      const lines = await t.readLines()
 
       expect(lines).toHaveLength(3)
       expect(lines[0]).toBe('Line one')
@@ -412,42 +412,42 @@ await describe('TextStream', async () => {
   })
 
   describe('File Integration', () => {
-    test('openTextStream for writing', () => {
+    test('openTextStream for writing', async () => {
       const file = randomTestPath('textstream', '.tmp')
-      const s = file.openTextStream('wt')
+      const s = await file.openTextStream('wt')
 
-      s.writeLine('Hello')
-      s.writeLine('World')
-      s.close()
+      await s.writeLine('Hello')
+      await s.writeLine('World')
+      await s.close()
 
       expect(file.exists).toBe(true)
 
       cleanupTestFile(file)
     })
 
-    test('openTextStream for reading', () => {
-      const file = createTestFile('/tmp/textstream-read.tmp', 'Hello\nWorld')
-      const s = file.openTextStream('rt')
+    test('openTextStream for reading', async () => {
+      const file = await createTestFile('/tmp/textstream-read.tmp', 'Hello\nWorld')
+      const s = await file.openTextStream('rt')
 
-      expect(s.readLine()).toBe('Hello')
-      expect(s.readLine()).toBe('World')
+      expect(await s.readLine()).toBe('Hello')
+      expect(await s.readLine()).toBe('World')
 
-      s.close()
+      await s.close()
       cleanupTestFile(file)
     })
 
-    test('round-trip write and read', () => {
+    test('round-trip write and read', async () => {
       const file = randomTestPath('textstream-roundtrip', '.tmp')
 
-      const ws = file.openTextStream('wt')
-      ws.writeLine('First line')
-      ws.writeLine('Second line')
-      ws.close()
+      const ws = await file.openTextStream('wt')
+      await ws.writeLine('First line')
+      await ws.writeLine('Second line')
+      await ws.close()
 
-      const rs = file.openTextStream('rt')
-      expect(rs.readLine()).toBe('First line')
-      expect(rs.readLine()).toBe('Second line')
-      rs.close()
+      const rs = await file.openTextStream('rt')
+      expect(await rs.readLine()).toBe('First line')
+      expect(await rs.readLine()).toBe('Second line')
+      await rs.close()
 
       cleanupTestFile(file)
     })
@@ -464,40 +464,40 @@ await describe('BinaryStream', async () => {
   })
 
   describe('Integer Operations', () => {
-    test('writeInteger32 and readInteger32', () => {
+    test('writeInteger32 and readInteger32', async () => {
       const ba = new ByteArray()
       const s = new BinaryStream(ba)
 
-      s.writeInteger32(4000)
+      await s.writeInteger32(4000)
       expect(ba.length).toBe(4)
 
-      const v = s.readInteger32()
+      const v = await s.readInteger32()
       expect(v).toBe(4000)
     })
 
-    test('write and read multiple integers', () => {
+    test('write and read multiple integers', async () => {
       const ba = new ByteArray()
       const s = new BinaryStream(ba)
 
       for (let i = 0; i < 100; i++) {
-        s.writeInteger32(i)
+        await s.writeInteger32(i)
       }
 
       for (let i = 0; i < 100; i++) {
-        expect(s.readInteger32()).toBe(i)
+        expect(await s.readInteger32()).toBe(i)
       }
     })
   })
 
   describe('Endianness', () => {
-    test('BigEndian encoding', () => {
+    test('BigEndian encoding', async () => {
       const ba = new ByteArray()
       const s = new BinaryStream(ba)
 
       s.endian = BinaryStream.BigEndian
       expect(s.endian).toBe(Endian.BigEndian)
 
-      s.writeInteger32(0x12345678)
+      await s.writeInteger32(0x12345678)
 
       // Check byte order for big endian
       expect(ba[0]).toBe(0x12)
@@ -506,14 +506,14 @@ await describe('BinaryStream', async () => {
       expect(ba[3]).toBe(0x78)
     })
 
-    test('LittleEndian encoding', () => {
+    test('LittleEndian encoding', async () => {
       const ba = new ByteArray()
       const s = new BinaryStream(ba)
 
       s.endian = BinaryStream.LittleEndian
       expect(s.endian).toBe(Endian.LittleEndian)
 
-      s.writeInteger32(0x12345678)
+      await s.writeInteger32(0x12345678)
 
       // Check byte order for little endian
       expect(ba[0]).toBe(0x78)
@@ -524,65 +524,65 @@ await describe('BinaryStream', async () => {
   })
 
   describe('Mixed Types', () => {
-    test('read and write various types', () => {
+    test('read and write various types', async () => {
       const ba = new ByteArray()
       const s = new BinaryStream(ba)
 
-      s.writeByte(42)
-      s.writeShort(1000)
-      s.writeInteger32(100000)
-      s.writeDouble(3.14159)
+      await s.writeByte(42)
+      await s.writeShort(1000)
+      await s.writeInteger32(100000)
+      await s.writeDouble(3.14159)
 
-      expect(s.readByte()).toBe(42)
-      expect(s.readShort()).toBe(1000)
-      expect(s.readInteger32()).toBe(100000)
-      expect(s.readDouble()).toBeCloseTo(3.14159, 5)
+      expect(await s.readByte()).toBe(42)
+      expect(await s.readShort()).toBe(1000)
+      expect(await s.readInteger32()).toBe(100000)
+      expect(await s.readDouble()).toBeCloseTo(3.14159, 5)
     })
   })
 
   describe('String Operations', () => {
-    test('readString reads specified bytes', () => {
+    test('readString reads specified bytes', async () => {
       const ba = new ByteArray()
       ba.writeData('1234567890')
 
       const s = new BinaryStream(ba)
-      expect(s.readString(5)).toBe('12345')
-      expect(s.readString(5)).toBe('67890')
+      expect(await s.readString(5)).toBe('12345')
+      expect(await s.readString(5)).toBe('67890')
     })
 
-    test('write and read strings', () => {
+    test('write and read strings', async () => {
       const ba = new ByteArray()
       const s = new BinaryStream(ba)
 
-      s.write('Hello world')
-      expect(s.readString(11)).toBe('Hello world')
+      await s.write('Hello world')
+      expect(await s.readString(11)).toBe('Hello world')
     })
   })
 
   describe('File Integration', () => {
-    test('openBinaryStream for writing', () => {
+    test('openBinaryStream for writing', async () => {
       const file = randomTestPath('binarystream', '.dat')
-      const bs = file.openBinaryStream('w')
+      const bs = await file.openBinaryStream('w')
 
-      bs.write('Hello world')
+      await bs.write('Hello world')
       bs.flush()
-      bs.close()
+      await bs.close()
 
       expect(file.size).toBe(11)
 
       cleanupTestFile(file)
     })
 
-    test('openBinaryStream for reading', () => {
-      const file = createTestFile('/tmp/binarystream-read.dat', '1234567890 test data')
-      const bs = file.openBinaryStream('r')
+    test('openBinaryStream for reading', async () => {
+      const file = await createTestFile('/tmp/binarystream-read.dat', '1234567890 test data')
+      const bs = await file.openBinaryStream('r')
 
-      expect(bs.readString(5)).toBe('12345')
-      expect(String.fromCharCode(bs.readByte()!)).toBe('6')
-      expect(String.fromCharCode(bs.readByte()!)).toBe('7')
-      expect(String.fromCharCode(bs.readByte()!)).toBe('8')
+      expect(await bs.readString(5)).toBe('12345')
+      expect(String.fromCharCode((await bs.readByte())!)).toBe('6')
+      expect(String.fromCharCode((await bs.readByte())!)).toBe('7')
+      expect(String.fromCharCode((await bs.readByte())!)).toBe('8')
 
-      bs.close()
+      await bs.close()
       cleanupTestFile(file)
     })
   })

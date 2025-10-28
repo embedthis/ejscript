@@ -12,17 +12,17 @@ await describe('Path', async () => {
   let testFile: Path
   let testDir: Path
 
-  beforeAll(() => {
+  beforeAll(async () => {
     // Create test fixtures
-    testFile = createTestFile('/tmp/ejscript-path-test.dat', 'test data content')
+    testFile = await createTestFile('/tmp/ejscript-path-test.dat', 'test data content')
     testDir = new Path('/tmp/ejscript-path-test-dir')
-    testDir.makeDir()
+    await testDir.makeDir()
   })
 
-  afterAll(() => {
+  afterAll(async () => {
     // Cleanup
-    cleanupTestFile(testFile)
-    cleanupTestFile(testDir)
+    await cleanupTestFile(testFile)
+    await cleanupTestFile(testDir)
   })
 
   describe('Constructor', () => {
@@ -207,129 +207,133 @@ await describe('Path', async () => {
   })
 
   describe('File Operations', () => {
-    test('copy copies file', () => {
-      const src = createTestFile('/tmp/copy-source.txt', 'copy test')
-      const dest = new Path('/tmp/copy-dest.txt')
+    test('copy copies file', async () => {
+      const src = randomTestPath('copy-source')
+      await src.write('copy test')
+      const dest = randomTestPath('copy-dest')
 
-      src.copy(dest)
+      await src.copy(dest)
       expect(dest.exists).toBe(true)
-      expect(dest.readString()).toBe('copy test')
+      expect(await dest.readString()).toBe('copy test')
 
-      cleanupTestFile(src)
-      cleanupTestFile(dest)
+      await cleanupTestFile(src)
+      await cleanupTestFile(dest)
     })
 
-    test('rename moves file', () => {
-      const src = createTestFile('/tmp/rename-source.txt', 'rename test')
-      const dest = new Path('/tmp/rename-dest.txt')
+    test('rename moves file', async () => {
+      const src = randomTestPath('rename-source')
+      await src.write('rename test')
+      const dest = randomTestPath('rename-dest')
 
-      src.rename(dest)
+      await src.rename(dest)
       expect(src.exists).toBe(false)
       expect(dest.exists).toBe(true)
 
-      cleanupTestFile(dest)
+      await cleanupTestFile(dest)
     })
 
-    test('remove deletes file', () => {
-      const file = createTestFile('/tmp/remove-test.txt', 'remove me')
+    test('remove deletes file', async () => {
+      const file = randomTestPath('remove-test')
+      await file.write('remove me')
       expect(file.exists).toBe(true)
 
-      const result = file.remove()
+      const result = await file.remove()
       expect(result).toBe(true)
       expect(file.exists).toBe(false)
     })
 
-    test('removeAll deletes directory tree', () => {
-      const dir = new Path('/tmp/removeall-test')
-      dir.makeDir()
-      dir.join('subdir').makeDir()
-      dir.join('file.txt').write('test')
+    test('removeAll deletes directory tree', async () => {
+      const dir = randomTestPath('removeall-test')
+      await dir.makeDir()
+      await dir.join('subdir').makeDir()
+      await dir.join('file.txt').write('test')
 
-      const result = dir.removeAll()
+      const result = await dir.removeAll()
       expect(result).toBe(true)
       expect(dir.exists).toBe(false)
     })
 
-    test('makeDir creates directory', () => {
-      const dir = new Path('/tmp/makedir-test')
-      const result = dir.makeDir()
+    test('makeDir creates directory', async () => {
+      const dir = randomTestPath('makedir-test')
+      const result = await dir.makeDir()
       expect(result).toBe(true)
       expect(dir.exists).toBe(true)
       expect(dir.isDir).toBe(true)
 
-      cleanupTestFile(dir)
+      await cleanupTestFile(dir)
     })
 
-    test('makeDir creates intermediate directories', () => {
-      const dir = new Path('/tmp/makedir-test/sub1/sub2')
-      const result = dir.makeDir()
+    test('makeDir creates intermediate directories', async () => {
+      const basedir = randomTestPath('makedir-base')
+      const dir = basedir.join('sub1').join('sub2')
+      const result = await dir.makeDir()
       expect(result).toBe(true)
       expect(dir.exists).toBe(true)
 
-      cleanupTestFile(new Path('/tmp/makedir-test'))
+      await cleanupTestFile(basedir)
     })
   })
 
   describe('File Content Operations', () => {
-    test('write writes string to file', () => {
+    test('write writes string to file', async () => {
       const file = randomTestPath('write')
-      file.write('Hello World')
+      await file.write('Hello World')
 
       expect(file.exists).toBe(true)
-      expect(file.readString()).toBe('Hello World')
+      expect(await file.readString()).toBe('Hello World')
 
-      cleanupTestFile(file)
+      await cleanupTestFile(file)
     })
 
-    test('append appends to file', () => {
+    test('append appends to file', async () => {
       const file = randomTestPath('append')
-      file.write('Line 1\n')
-      file.append('Line 2\n')
+      await file.write('Line 1\n')
+      await file.append('Line 2\n')
 
-      expect(file.readString()).toBe('Line 1\nLine 2\n')
+      expect(await file.readString()).toBe('Line 1\nLine 2\n')
 
-      cleanupTestFile(file)
+      await cleanupTestFile(file)
     })
 
-    test('readString reads file content', () => {
-      const file = createTestFile('/tmp/read-test.txt', 'Read this content')
-      const content = file.readString()
+    test('readString reads file content', async () => {
+      const file = await createTestFile('/tmp/read-test.txt', 'Read this content')
+      const content = await file.readString()
 
       expect(content).toBe('Read this content')
 
-      cleanupTestFile(file)
+      await cleanupTestFile(file)
     })
 
-    test('readBytes reads binary data', () => {
-      const file = createTestFile('/tmp/readbytes-test.dat', 'Binary data')
-      const bytes = file.readBytes()
+    test('readBytes reads binary data', async () => {
+      const file = await createTestFile('/tmp/readbytes-test.dat', 'Binary data')
+      const bytes = await file.readBytes()
 
       expect(bytes).toBeInstanceOf(Uint8Array)
       expect(bytes!.length).toBeGreaterThan(0)
 
-      cleanupTestFile(file)
+      await cleanupTestFile(file)
     })
 
-    test('readLines reads file as lines', () => {
-      const file = createTestFile('/tmp/readlines-test.txt', 'Line 1\nLine 2\nLine 3')
-      const lines = file.readLines()
+    test('readLines reads file as lines', async () => {
+      const file = await createTestFile('/tmp/readlines-test.txt', 'Line 1\nLine 2\nLine 3')
+      const lines = await file.readLines()
 
       expect(lines).toHaveLength(3)
       expect(lines![0]).toBe('Line 1')
       expect(lines![1]).toBe('Line 2')
       expect(lines![2]).toBe('Line 3')
 
-      cleanupTestFile(file)
+      await cleanupTestFile(file)
     })
 
-    test('readJSON parses JSON file', () => {
-      const file = createTestFile('/tmp/readjson-test.json', '{"name":"test","value":42}')
-      const data = file.readJSON()
+    test('readJSON parses JSON file', async () => {
+      const file = await createTestFile('/tmp/readjson-test.json', '{"name":"test","value":42}')
+      const data = await file.readJSON()
 
       expect(data.name).toBe('test')
       expect(data.value).toBe(42)
 
-      cleanupTestFile(file)
+      await cleanupTestFile(file)
     })
   })
 
@@ -412,16 +416,16 @@ await describe('Path', async () => {
   })
 
   describe('Iterator', () => {
-    test('iterates directory entries', () => {
-      const dir = new Path('/tmp/iter-test')
-      dir.makeDir()
-      dir.join('file1.txt').write('test1')
-      dir.join('file2.txt').write('test2')
+    test('iterates directory entries', async () => {
+      const dir = randomTestPath('iter-test')
+      await dir.makeDir()
+      await dir.join('file1.txt').write('test1')
+      await dir.join('file2.txt').write('test2')
 
       const entries = Array.from(dir)
       expect(entries.length).toBe(2)
 
-      cleanupTestFile(dir)
+      await cleanupTestFile(dir)
     })
   })
 })

@@ -23,7 +23,8 @@ test: build
 
 install: build
 	@echo Installing via bun link
-	bun link ejscript
+	bun link
+	pak cache 
 
 clean: tidy
 

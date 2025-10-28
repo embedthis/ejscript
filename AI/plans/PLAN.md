@@ -274,12 +274,12 @@ Create a production-ready TypeScript implementation of the Ejscript core API for
 - ✅ Comprehensive documentation
   - README.md
   - CLAUDE.md
-  - .agent/designs/DESIGN.md
-  - .agent/plans/PLAN.md (this file)
-  - .agent/procedures/PROCEDURES.md
-  - .agent/logs/CHANGELOG.md
-  - .agent/context/CURRENT.md
-  - .agent/references/REFERENCES.md
+  - AI/designs/DESIGN.md
+  - AI/plans/PLAN.md (this file)
+  - AI/procedures/PROCEDURES.md
+  - AI/logs/CHANGELOG.md
+  - AI/context/CURRENT.md
+  - AI/references/REFERENCES.md
 
 **Lines of Code**: ~500 lines tests + documentation
 

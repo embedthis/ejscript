@@ -38,9 +38,9 @@ await describe('Cmd', async () => {
             await new Promise<void>((resolve) => {
                 cmd = new Cmd('echo test')
                 expect(cmd).not.toBeNull()
-    
-                setTimeout(() => {
-                    expect(cmd!.response).toContain('test')
+
+                setTimeout(async () => {
+                    expect(await cmd!.response).toContain('test')
                     resolve()
                 }, 500)
             })
@@ -50,9 +50,9 @@ await describe('Cmd', async () => {
             await new Promise<void>((resolve) => {
                 cmd = new Cmd(['echo', 'hello'])
                 expect(cmd).not.toBeNull()
-    
-                setTimeout(() => {
-                    expect(cmd!.response).toContain('hello')
+
+                setTimeout(async () => {
+                    expect(await cmd!.response).toContain('hello')
                     resolve()
                 }, 500)
             })
@@ -109,9 +109,9 @@ await describe('Cmd', async () => {
             await new Promise<void>((resolve) => {
                 cmd = new Cmd()
                 cmd.start('echo "Hello World"')
-    
-                setTimeout(() => {
-                    const output = cmd!.response
+
+                setTimeout(async () => {
+                    const output = await cmd!.response
                     expect(output).toContain('Hello World')
                     resolve()
                 }, 500)
@@ -122,9 +122,9 @@ await describe('Cmd', async () => {
             await new Promise<void>((resolve) => {
                 cmd = new Cmd()
                 cmd.start(['echo', 'array', 'test'])
-    
-                setTimeout(() => {
-                    const output = cmd!.response
+
+                setTimeout(async () => {
+                    const output = await cmd!.response
                     expect(output).toContain('array')
                     expect(output).toContain('test')
                     resolve()
@@ -135,9 +135,9 @@ await describe('Cmd', async () => {
         it('captures stdout', async () => {
             await new Promise<void>((resolve) => {
                 cmd = new Cmd('echo stdout test')
-    
-                setTimeout(() => {
-                    expect(cmd!.response).toContain('stdout test')
+
+                setTimeout(async () => {
+                    expect(await cmd!.response).toContain('stdout test')
                     resolve()
                 }, 500)
             })
@@ -146,7 +146,7 @@ await describe('Cmd', async () => {
         it('captures stderr', async () => {
             await new Promise<void>((resolve) => {
                 cmd = new Cmd('>&2 echo stderr test')
-    
+
                 setTimeout(() => {
                     expect(cmd!.error).toContain('stderr test')
                     resolve()
@@ -182,9 +182,9 @@ await describe('Cmd', async () => {
         it('has readString method', async () => {
             await new Promise<void>((resolve) => {
                 cmd = new Cmd('echo test123')
-    
-                setTimeout(() => {
-                    const output = cmd!.response
+
+                setTimeout(async () => {
+                    const output = await cmd!.response
                     expect(output).not.toBeNull()
                     resolve()
                 }, 500)
@@ -208,9 +208,9 @@ await describe('Cmd', async () => {
                 cmd = new Cmd()
                 cmd.env = { MY_TEST_VAR: 'hello123' }
                 cmd.start('echo $MY_TEST_VAR')
-    
-                setTimeout(() => {
-                    expect(cmd!.response).toContain('hello123')
+
+                setTimeout(async () => {
+                    expect(await cmd!.response).toContain('hello123')
                     resolve()
                 }, 500)
             })
@@ -221,10 +221,11 @@ await describe('Cmd', async () => {
                 cmd = new Cmd()
                 cmd.env = { ADDITIONAL_VAR: 'extra' }
                 cmd.start('echo $PATH') // PATH should still exist
-    
-                setTimeout(() => {
-                    expect(cmd!.response).toBeTruthy()
-                    expect(cmd!.response!.length).toBeGreaterThan(0)
+
+                setTimeout(async () => {
+                    const response = await cmd!.response
+                    expect(response).toBeTruthy()
+                    expect(response!.length).toBeGreaterThan(0)
                     resolve()
                 }, 500)
             })
@@ -236,9 +237,9 @@ await describe('Cmd', async () => {
             await new Promise<void>((resolve) => {
                 cmd = new Cmd()
                 cmd.start('pwd', { dir: '/tmp' })
-    
-                setTimeout(() => {
-                    expect(cmd!.response).toContain('/tmp')
+
+                setTimeout(async () => {
+                    expect(await cmd!.response).toContain('/tmp')
                     resolve()
                 }, 500)
             })
@@ -249,9 +250,9 @@ await describe('Cmd', async () => {
                 cmd = new Cmd()
                 const dir = new Path('/tmp')
                 cmd.start('pwd', { dir })
-    
-                setTimeout(() => {
-                    expect(cmd!.response).toContain('/tmp')
+
+                setTimeout(async () => {
+                    expect(await cmd!.response).toContain('/tmp')
                     resolve()
                 }, 500)
             })
@@ -427,10 +428,8 @@ await describe('Cmd', async () => {
         })
 
         await describe('sh', async () => {
-            it.skip('runs command via shell (sync limitation)', () => {
-                // Note: Cmd.sh() is synchronous but command execution is async
-                // This is a known limitation in the Bun/Node.js environment
-                const result = Cmd.sh('echo shell test')
+            it('runs command via shell', async () => {
+                const result = await Cmd.sh('echo shell test')
                 expect(result).toContain('shell test')
             })
 
@@ -522,8 +521,8 @@ await describe('Cmd', async () => {
     })
 
     await describe('Complex Commands', async () => {
-        it.skip('handles pipes (sync limitation)', () => {
-            const result = Cmd.sh('echo "hello world" | grep hello')
+        it('handles pipes', async () => {
+            const result = await Cmd.sh('echo "hello world" | grep hello')
             expect(result).toContain('hello')
         })
 

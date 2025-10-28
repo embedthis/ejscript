@@ -107,7 +107,7 @@ Completed comprehensive audit of all Ejscript core type extensions and documente
 
 ### 7. Documentation Created
 
-**File**: `.agent/designs/API_COMPATIBILITY.md` (300+ lines)
+**File**: `AI/designs/API_COMPATIBILITY.md` (300+ lines)
 
 **Sections**:
 1. **Overview** - Summary of compatibility categories
@@ -188,13 +188,13 @@ arr.unique()            // more concise than [...new Set(arr)]
 ## Files Modified
 
 ### Created
-- `.agent/designs/API_COMPATIBILITY.md` - Comprehensive compatibility guide (300+ lines)
-- `.agent/logs/SESSION_2025-10-17_API_AUDIT.md` - This session log
+- `AI/designs/API_COMPATIBILITY.md` - Comprehensive compatibility guide (300+ lines)
+- `AI/logs/SESSION_2025-10-17_API_AUDIT.md` - This session log
 - `.debug-tests/` - Directory for temporary debug tests (18 files moved)
 
 ### Modified
-- `.agent/plans/PLAN.md` - Marked API audit complete
-- `.agent/designs/DESIGN.md` - Added reference to compatibility guide
+- `AI/plans/PLAN.md` - Marked API audit complete
+- `AI/designs/DESIGN.md` - Added reference to compatibility guide
 - `README.md` - Added compatibility guide to documentation section
 - `.gitignore` - Added debug test directories
 

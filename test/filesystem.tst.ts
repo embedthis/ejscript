@@ -6,16 +6,16 @@ await describe('FileSystem', async () => {
     let testDir: Path
     let testFile: Path
 
-    beforeAll(() => {
+    beforeAll(async () => {
         testDir = new Path(`/tmp/ejsx-fs-test-${process.pid}`)
-        testDir.makeDir()
+        await testDir.makeDir()
         testFile = testDir.join('test.txt')
-        testFile.write('test content')
+        await testFile.write('test content')
     })
 
-    afterAll(() => {
+    afterAll(async () => {
         if (testDir.exists) {
-            testDir.removeAll()
+            await testDir.removeAll()
         }
     })
 
@@ -217,94 +217,94 @@ await describe('FileSystem', async () => {
     })
 
     await describe('createDirectory()', async () => {
-        it('creates a new directory', () => {
+        it('creates a new directory', async () => {
             const newDir = testDir.join(`newdir-${Date.now()}`)
             const fs = new FileSystem(newDir)
 
             expect(fs.exists()).toBe(false)
-            const result = fs.createDirectory()
+            const result = await fs.createDirectory()
             expect(result).toBe(true)
             expect(fs.exists()).toBe(true)
             expect(newDir.isDir).toBe(true)
 
-            newDir.remove()
+            await newDir.remove()
         })
 
-        it('creates directory with default permissions', () => {
+        it('creates directory with default permissions', async () => {
             const newDir = testDir.join(`permdir-${Date.now()}`)
             const fs = new FileSystem(newDir)
 
-            fs.createDirectory()
+            await fs.createDirectory()
             expect(fs.exists()).toBe(true)
 
-            newDir.remove()
+            await newDir.remove()
         })
 
-        it('succeeds even if directory already exists', () => {
+        it('succeeds even if directory already exists', async () => {
             const fs = new FileSystem(testDir)
             expect(fs.exists()).toBe(true)
-            const result = fs.createDirectory()
+            const result = await fs.createDirectory()
             // makeDir returns true even if dir exists (idempotent)
             expect(result).toBe(true)
         })
     })
 
     await describe('remove()', async () => {
-        it('removes a file', () => {
+        it('removes a file', async () => {
             const tempFile = testDir.join(`removeme-${Date.now()}.txt`)
-            tempFile.write('delete me')
+            await tempFile.write('delete me')
             expect(tempFile.exists).toBe(true)
 
             const fs = new FileSystem(tempFile)
-            const result = fs.remove()
+            const result = await fs.remove()
             expect(result).toBe(true)
             expect(tempFile.exists).toBe(false)
         })
 
-        it('removes an empty directory', () => {
+        it('removes an empty directory', async () => {
             const tempDir = testDir.join(`removedir-${Date.now()}`)
-            tempDir.makeDir()
+            await tempDir.makeDir()
             expect(tempDir.exists).toBe(true)
 
             const fs = new FileSystem(tempDir)
-            const result = fs.remove()
+            const result = await fs.remove()
             expect(result).toBe(true)
             expect(tempDir.exists).toBe(false)
         })
 
-        it('succeeds even for non-existent path', () => {
+        it('succeeds even for non-existent path', async () => {
             const nonExistent = testDir.join('does-not-exist')
             const fs = new FileSystem(nonExistent)
-            const result = fs.remove()
+            const result = await fs.remove()
             // Path.remove() returns true even if path doesn't exist (idempotent)
             expect(result).toBe(true)
         })
     })
 
     await describe('removeAll()', async () => {
-        it('removes directory with contents', () => {
+        it('removes directory with contents', async () => {
             const tempDir = testDir.join(`removeall-${Date.now()}`)
-            tempDir.makeDir()
-            tempDir.join('file1.txt').write('content')
-            tempDir.join('file2.txt').write('content')
-            tempDir.join('subdir').makeDir()
-            tempDir.join('subdir/file3.txt').write('content')
+            await tempDir.makeDir()
+            await tempDir.join('file1.txt').write('content')
+            await tempDir.join('file2.txt').write('content')
+            await tempDir.join('subdir').makeDir()
+            await tempDir.join('subdir/file3.txt').write('content')
 
             expect(tempDir.exists).toBe(true)
 
             const fs = new FileSystem(tempDir)
-            const result = fs.removeAll()
+            const result = await fs.removeAll()
             expect(result).toBe(true)
             expect(tempDir.exists).toBe(false)
         })
 
-        it('removes single file', () => {
+        it('removes single file', async () => {
             const tempFile = testDir.join(`removeallfile-${Date.now()}.txt`)
-            tempFile.write('delete me')
+            await tempFile.write('delete me')
             expect(tempFile.exists).toBe(true)
 
             const fs = new FileSystem(tempFile)
-            const result = fs.removeAll()
+            const result = await fs.removeAll()
             expect(result).toBe(true)
             expect(tempFile.exists).toBe(false)
         })
@@ -359,7 +359,7 @@ await describe('FileSystem', async () => {
     })
 
     await describe('Integration', async () => {
-        it('can check and modify filesystem', () => {
+        it('can check and modify filesystem', async () => {
             const tempFile = testDir.join(`integration-${Date.now()}.txt`)
             const fs = new FileSystem(tempFile)
 
@@ -367,7 +367,7 @@ await describe('FileSystem', async () => {
             expect(fs.exists()).toBe(false)
 
             // Create it via Path
-            tempFile.write('test')
+            await tempFile.write('test')
             expect(fs.exists()).toBe(true)
             expect(fs.readable).toBe(true)
             expect(fs.writable).toBe(true)
@@ -378,20 +378,20 @@ await describe('FileSystem', async () => {
             expect(metadata.size).toBeGreaterThan(0)
 
             // Remove it
-            fs.remove()
+            await fs.remove()
             expect(fs.exists()).toBe(false)
         })
 
-        it('works with nested directories', () => {
+        it('works with nested directories', async () => {
             const nestedDir = testDir.join('level1/level2/level3')
             const fs = new FileSystem(nestedDir)
 
             expect(fs.exists()).toBe(false)
-            nestedDir.makeDir({ recursive: true })
+            await nestedDir.makeDir({ recursive: true })
             expect(fs.exists()).toBe(true)
             expect(fs.readable).toBe(true)
 
-            testDir.join('level1').removeAll()
+            await testDir.join('level1').removeAll()
         })
     })
 

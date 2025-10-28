@@ -34,8 +34,11 @@ export class TextStream extends Stream {
         this.stream.async = enable
     }
 
-    close(): void {
-        this.stream.close()
+    async close(): Promise<void> {
+        const result = this.stream.close()
+        if (result instanceof Promise) {
+            await result
+        }
     }
 
     flush(dir: number = Stream.WRITE): void {
@@ -49,22 +52,23 @@ export class TextStream extends Stream {
      * @param count Number of bytes to read
      * @returns Number of bytes read, or null on EOF
      */
-    read(buffer: Uint8Array, offset: number = 0, count: number = -1): number | null {
-        return this.stream.read(buffer, offset, count)
+    async read(buffer: Uint8Array, offset: number = 0, count: number = -1): Promise<number | null> {
+        const result = this.stream.read(buffer, offset, count)
+        return result instanceof Promise ? await result : result
     }
 
     /**
      * Read a single line of text
      * @returns Line of text without newline, or null on EOF
      */
-    readLine(): string | null {
+    async readLine(): Promise<string | null> {
         const buffer = new ByteArray(1024)
         let line = ''
         let byte: number | null
 
         while (true) {
             const tempBuffer = new Uint8Array(1)
-            const bytesRead = this.stream.read(tempBuffer, 0, 1)
+            const bytesRead = await this.read(tempBuffer, 0, 1)
 
             if (bytesRead === null || bytesRead === 0) {
                 return line.length > 0 ? line : null
@@ -79,7 +83,7 @@ export class TextStream extends Stream {
             if (byte === 0x0D) { // \r
                 // Peek ahead for \n
                 const nextBuffer = new Uint8Array(1)
-                const nextRead = this.stream.read(nextBuffer, 0, 1)
+                const nextRead = await this.read(nextBuffer, 0, 1)
                 if (nextRead && nextBuffer[0] !== 0x0A) {
                     // Not a \r\n pair, this is unusual but handle it
                     line += String.fromCharCode(byte)
@@ -98,11 +102,11 @@ export class TextStream extends Stream {
      * Read all lines from the stream
      * @returns Array of lines
      */
-    readLines(): string[] {
+    async readLines(): Promise<string[]> {
         const lines: string[] = []
         let line: string | null
 
-        while ((line = this.readLine()) !== null) {
+        while ((line = await this.readLine()) !== null) {
             lines.push(line)
         }
 
@@ -114,11 +118,11 @@ export class TextStream extends Stream {
      * @param count Number of characters to read (-1 for all)
      * @returns String read from stream, or null on EOF
      */
-    readString(count: number = -1): string | null {
+    async readString(count: number = -1): Promise<string | null> {
         if (count === 0) return ''
 
         const buffer = new ByteArray(count > 0 ? count : 4096)
-        const bytesRead = this.stream.read(buffer as Uint8Array, 0, count)
+        const bytesRead = await this.read(buffer as Uint8Array, 0, count)
 
         if (bytesRead === null || bytesRead === 0) {
             return null
@@ -133,7 +137,7 @@ export class TextStream extends Stream {
      * @param ...args Data items to write (converted to strings)
      * @returns Number of bytes written
      */
-    write(...args: any[]): number {
+    async write(...args: any[]): Promise<number> {
         let totalWritten = 0
 
         for (const arg of args) {
@@ -141,7 +145,8 @@ export class TextStream extends Stream {
             const encoder = new TextEncoder()
             const bytes = encoder.encode(str)
 
-            const written = this.stream.write(bytes)
+            const result = this.stream.write(bytes)
+            const written = result instanceof Promise ? await result : result
             totalWritten += written
         }
 
@@ -153,12 +158,12 @@ export class TextStream extends Stream {
      * @param ...args Data items to write (each followed by newline)
      * @returns Number of bytes written
      */
-    writeLine(...args: any[]): number {
+    async writeLine(...args: any[]): Promise<number> {
         let totalWritten = 0
 
         for (const arg of args) {
-            totalWritten += this.write(arg)
-            totalWritten += this.write('\n')
+            totalWritten += await this.write(arg)
+            totalWritten += await this.write('\n')
         }
 
         return totalWritten

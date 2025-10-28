@@ -134,18 +134,19 @@ export class Path {
      * @param destination New file location
      * @param options Options object (permissions, user, group)
      */
-    copy(destination: Path | string, options?: { permissions?: number; user?: string; group?: string }): void {
+    async copy(destination: Path | string, options?: { permissions?: number; user?: string; group?: string }): Promise<void> {
         const dest = destination instanceof Path ? destination.name : destination
+        const fsPromises = await import('fs/promises')
 
         // If destination ends with separator or is a directory, append basename
         if (dest.endsWith(path.sep) || (fs.existsSync(dest) && statSync(dest).isDirectory())) {
             const fullDest = path.join(dest, this.basename.name)
-            fs.copyFileSync(this._path, fullDest)
+            await fsPromises.copyFile(this._path, fullDest)
             if (options) {
                 new Path(fullDest).setAttributes(options)
             }
         } else {
-            fs.copyFileSync(this._path, dest)
+            await fsPromises.copyFile(this._path, dest)
             if (options) {
                 new Path(dest).setAttributes(options)
             }
@@ -399,10 +400,11 @@ export class Path {
      * @param options Options (permissions, user, group)
      * @returns True if successful or already exists
      */
-    makeDir(options?: { permissions?: number; user?: string; group?: string }): boolean {
+    async makeDir(options?: { permissions?: number; user?: string; group?: string }): Promise<boolean> {
         try {
             const mode = options?.permissions ?? 0o755
-            fs.mkdirSync(this._path, { recursive: true, mode })
+            const fsPromises = await import('fs/promises')
+            await fsPromises.mkdir(this._path, { recursive: true, mode })
 
             if (options?.user || options?.group) {
                 this.setAttributes(options)
@@ -546,16 +548,17 @@ export class Path {
      * Remove the file or empty directory
      * @returns True if successful or doesn't exist
      */
-    remove(): boolean {
+    async remove(): Promise<boolean> {
         try {
             if (!this.exists) {
                 return true
             }
 
+            const fsPromises = await import('fs/promises')
             if (this.isDir) {
-                fs.rmdirSync(this._path)
+                await fsPromises.rmdir(this._path)
             } else {
-                fs.unlinkSync(this._path)
+                await fsPromises.unlink(this._path)
             }
             return true
         } catch {
@@ -567,7 +570,7 @@ export class Path {
      * Remove directory and all its contents recursively
      * @returns True if successful
      */
-    removeAll(): boolean {
+    async removeAll(): Promise<boolean> {
         try {
             if (!this.exists) {
                 return true
@@ -577,7 +580,8 @@ export class Path {
                 throw new Error('Cannot removeAll on root directory')
             }
 
-            fs.rmSync(this._path, { recursive: true, force: true })
+            const fsPromises = await import('fs/promises')
+            await fsPromises.rm(this._path, { recursive: true, force: true })
             return true
         } catch {
             return false
@@ -588,15 +592,16 @@ export class Path {
      * Rename/move the file
      * @param target New path
      */
-    rename(target: Path | string): void {
+    async rename(target: Path | string): Promise<void> {
         const targetPath = target instanceof Path ? target.name : target
+        const fsPromises = await import('fs/promises')
 
         // Remove target if it exists
         if (fs.existsSync(targetPath)) {
-            fs.unlinkSync(targetPath)
+            await fsPromises.unlink(targetPath)
         }
 
-        fs.renameSync(this._path, targetPath)
+        await fsPromises.rename(this._path, targetPath)
     }
 
     /**
@@ -752,8 +757,9 @@ export class Path {
      * Truncate the file to specified size
      * @param size New file size
      */
-    truncate(size: number): void {
-        fs.truncateSync(this._path, size)
+    async truncate(size: number): Promise<void> {
+        const fsPromises = await import('fs/promises')
+        await fsPromises.truncate(this._path, size)
     }
 
     /**
@@ -772,15 +778,24 @@ export class Path {
      * @param data Data to append
      * @param options File open options
      */
-    append(data: string | Uint8Array, _options: string = 'atw'): void {
-        fs.appendFileSync(this._path, data)
+    async append(data: string | Uint8Array, _options: string = 'atw'): Promise<void> {
+        const file = Bun.file(this._path)
+        const existing = await file.exists() ? await file.arrayBuffer() : new ArrayBuffer(0)
+        const existingBytes = new Uint8Array(existing)
+
+        const newData = typeof data === 'string' ? new TextEncoder().encode(data) : data
+        const combined = new Uint8Array(existingBytes.length + newData.length)
+        combined.set(existingBytes)
+        combined.set(newData, existingBytes.length)
+
+        await Bun.write(this._path, combined)
     }
 
     /**
      * Write data to file (overwrites existing content)
      * @param ...args Data to write
      */
-    write(...args: any[]): void {
+    async write(...args: any[]): Promise<void> {
         const content = args.map(arg => {
             if (typeof arg === 'string') {
                 return arg
@@ -791,16 +806,18 @@ export class Path {
             }
         }).join('')
 
-        fs.writeFileSync(this._path, content, { mode: 0o644 })
+        await Bun.write(this._path, content)
     }
 
     /**
      * Read file contents as a ByteArray
      * @returns ByteArray containing file data
      */
-    readBytes(): Uint8Array | null {
+    async readBytes(): Promise<Uint8Array | null> {
         try {
-            return fs.readFileSync(this._path)
+            const file = Bun.file(this._path)
+            const arrayBuffer = await file.arrayBuffer()
+            return new Uint8Array(arrayBuffer)
         } catch {
             return null
         }
@@ -810,9 +827,10 @@ export class Path {
      * Read file contents as a string
      * @returns File contents as string
      */
-    readString(): string | null {
+    async readString(): Promise<string | null> {
         try {
-            return fs.readFileSync(this._path, 'utf-8')
+            const file = Bun.file(this._path)
+            return await file.text()
         } catch {
             return null
         }
@@ -822,17 +840,21 @@ export class Path {
      * Read file as JSON and deserialize
      * @returns Parsed JSON object
      */
-    readJSON(): any {
-        const content = this.readString()
-        return content ? JSON.parse(content) : null
+    async readJSON(): Promise<any> {
+        try {
+            const file = Bun.file(this._path)
+            return await file.json()
+        } catch {
+            return null
+        }
     }
 
     /**
      * Read file as array of lines
      * @returns Array of lines
      */
-    readLines(): string[] | null {
-        const content = this.readString()
+    async readLines(): Promise<string[] | null> {
+        const content = await this.readString()
         if (!content) return null
 
         const lines = content.split(/\r?\n/)
@@ -847,128 +869,26 @@ export class Path {
      * Read file as XML
      * @returns XML object (simplified - returns parsed structure)
      */
-    readXML(): any {
+    async readXML(): Promise<any> {
         // Simplified - would need XML parser
-        const content = this.readString()
+        const content = await this.readString()
         return content
     }
 
     /**
      * Open a file and return a File object
-     * @param options Open options
+     * @param options Open options (mode, permissions, etc.)
      * @returns File object
+     * @example
+     * const file = await new Path('/tmp/test.txt').open({ mode: 'w' })
+     * await file.write('Hello World')
+     * await file.close()
      */
-    open(_options?: any): any {
-        // Will be implemented when File class is created
-        throw new Error('File class not yet implemented')
-    }
-
-    /**
-     * Open a binary stream for reading or writing
-     * @param mode File mode: 'r' (read), 'w' (write), 'a' (append)
-     * @returns BinaryStream instance
-     */
-    openBinaryStream(mode: string): any {
-        const { BinaryStream } = require('./streams/BinaryStream')
-        const { ByteArray } = require('./streams/ByteArray')
-
-        if (mode === 'r') {
-            // Read mode: load file into ByteArray
-            const content = fs.readFileSync(this._path)
-            const ba = new ByteArray(content.length, false)
-            ba.set(content)
-            ba.writePosition = content.length
-            return new BinaryStream(ba)
-        } else if (mode === 'w' || mode === 'a') {
-            // Write/append mode: create empty ByteArray, save on close
-            const ba = new ByteArray(4096, true)
-            const stream = new BinaryStream(ba)
-
-            if (mode === 'a' && this.exists) {
-                // Append mode: load existing content first
-                const content = fs.readFileSync(this._path)
-                ba.write(content)
-            }
-
-            // Override close to save to file
-            const filePath = this._path
-
-            // Save function that writes current buffer to file
-            const saveToFile = () => {
-                const data = ba.toArray()
-                fs.writeFileSync(filePath, data)
-            }
-            const originalClose = stream.close
-            stream.close = function(this: any) {
-                saveToFile()  // Save before closing
-                if (originalClose) originalClose.call(this)
-            }
-
-            // Override flush to save to file
-            const originalFlush = stream.flush
-            stream.flush = function(this: any, dir?: number) {
-                saveToFile()  // Save before flushing
-                // Don't call originalFlush as it would reset the ByteArray buffer
-            }
-
-            return stream
-        } else {
-            throw new Error(`Invalid mode: ${mode}. Use 'r', 'w', or 'a'`)
-        }
-    }
-
-    /**
-     * Open a text stream for reading or writing
-     * @param mode File mode: 'rt' (read text), 'wt' (write text), 'at' (append text)
-     * @returns TextStream instance
-     */
-    openTextStream(mode: string): any {
-        const { TextStream } = require('./streams/TextStream')
-        const { ByteArray } = require('./streams/ByteArray')
-
-        if (mode === 'rt') {
-            // Read mode: load file into ByteArray
-            const content = fs.readFileSync(this._path)
-            const ba = new ByteArray(content.length, false)
-            ba.set(content)
-            ba.writePosition = content.length
-            return new TextStream(ba)
-        } else if (mode === 'wt' || mode === 'at') {
-            // Write/append mode: create empty ByteArray, save on close
-            const ba = new ByteArray(4096, true)
-            const stream = new TextStream(ba)
-
-            if (mode === 'at' && this.exists) {
-                // Append mode: load existing content first
-                const content = fs.readFileSync(this._path)
-                ba.write(content)
-            }
-
-            // Override close to save to file
-            const filePath = this._path
-
-            // Save function that writes current buffer to file
-            const saveToFile = () => {
-                const data = ba.toArray()
-                fs.writeFileSync(filePath, data)
-            }
-            const originalClose = stream.close
-            stream.close = function(this: any) {
-                saveToFile()  // Save before closing
-                if (originalClose) originalClose.call(this)
-            }
-
-            // Override flush to save to file
-            const originalFlush = stream.flush
-            stream.flush = function(this: any, dir?: number) {
-                saveToFile()  // Save before flushing
-                // Don't call originalFlush as it would reset the ByteArray buffer
-            }
-
-            return stream
-        } else {
-            throw new Error(`Invalid mode: ${mode}. Use 'rt', 'wt', or 'at'`)
-        }
+    async open(options?: any): Promise<any> {
+        const { File } = require('./File')
+        const file = new File(this, options)
+        await file.open()
+        return file
     }
 
     /**
@@ -1097,5 +1017,33 @@ export class Path {
                 yield new Path(path.join(this._path, entry))
             }
         }
+    }
+
+    /**
+     * Open a text stream for reading or writing
+     * @param mode Mode: 'r', 'w', 'a', 'rt', 'wt', 'at'
+     * @returns TextStream instance
+     */
+    async openTextStream(mode: string = 'r'): Promise<any> {
+        const { File } = require('./File')
+        const { TextStream } = require('./streams/TextStream')
+
+        const file = new File(this, { mode: mode.replace('t', '') })
+        await file.open()
+        return new TextStream(file)
+    }
+
+    /**
+     * Open a binary stream for reading or writing
+     * @param mode Mode: 'r', 'w', 'a'
+     * @returns BinaryStream instance
+     */
+    async openBinaryStream(mode: string = 'r'): Promise<any> {
+        const { File } = require('./File')
+        const { BinaryStream } = require('./streams/BinaryStream')
+
+        const file = new File(this, { mode })
+        await file.open()
+        return new BinaryStream(file)
     }
 }

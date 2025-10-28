@@ -18,7 +18,7 @@
 
 ### 1. Comprehensive API Audit ✅
 
-**Document Created:** [.agent/designs/API_AUDIT_2025-10-17.md](.agent/designs/API_AUDIT_2025-10-17.md)
+**Document Created:** [AI/designs/API_AUDIT_2025-10-17.md](AI/designs/API_AUDIT_2025-10-17.md)
 
 **Audit Findings:**
 - **Total Ejscript Core Files:** 50 classes
@@ -297,15 +297,15 @@ Ran 680 tests across 12 files. [426ms]
 ## Files Created/Modified
 
 ### Created:
-1. `.agent/designs/API_AUDIT_2025-10-17.md` - Comprehensive API audit
-2. `.agent/logs/SESSION_2025-10-17-PART2.md` - Detailed session log
-3. `.agent/logs/FINAL_SESSION_SUMMARY_2025-10-17-PART2.md` - This file
+1. `AI/designs/API_AUDIT_2025-10-17.md` - Comprehensive API audit
+2. `AI/logs/SESSION_2025-10-17-PART2.md` - Detailed session log
+3. `AI/logs/FINAL_SESSION_SUMMARY_2025-10-17-PART2.md` - This file
 
 ### Modified:
 1. `src/core/utilities/Uri.ts` - Complete expansion (+450 lines)
 2. `src/core/utilities/Global.ts` - Major expansion (+230 lines)
 3. `src/index.ts` - Updated exports (+25 new exports)
-4. `.agent/designs/API_AUDIT_2025-10-17.md` - Updated with completion status
+4. `AI/designs/API_AUDIT_2025-10-17.md` - Updated with completion status
 
 ---
 
