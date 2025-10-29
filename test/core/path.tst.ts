@@ -386,8 +386,9 @@ await describe('Path', async () => {
       expect(p2.separator).toBe('\\')
     })
 
-    test('perms gets/sets permissions', () => {
-      const file = createTestFile('/tmp/perms-test.txt', 'perms')
+    test('perms gets/sets permissions', async () => {
+      const file = randomTestPath('perms-test')
+      await file.write('perms')
 
       // Get permissions
       const perms = file.perms
@@ -397,7 +398,7 @@ await describe('Path', async () => {
       file.perms = 0o644
       expect(file.perms).toBe(0o644)
 
-      cleanupTestFile(file)
+      await cleanupTestFile(file)
     })
   })
 
