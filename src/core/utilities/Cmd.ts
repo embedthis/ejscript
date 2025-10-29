@@ -342,15 +342,29 @@ export class Cmd extends Emitter {
             cmd = cmdline[0]
             args = cmdline.slice(1)
         }
-
         // Spawn process
-        this._process = Bun.spawn(typeof cmdline === 'string' ? ['/bin/sh', '-c', cmd] : [cmd, ...args], {
+        // On Windows, use bash from Git for Windows if available, otherwise cmd.exe
+        // On Unix-like systems, use /bin/sh
+        let shell;
+        if (Config.OS === 'win32' || Config.OS === 'windows' || Config.OS === 'cygwin') {
+            // Try bash first (from Git for Windows), fall back to cmd.exe
+            const bashPath = Cmd.locate('bash');
+            if (bashPath) {
+                shell = [bashPath.toString(), '-c'];
+            } else {
+                shell = ['cmd.exe', '/c'];
+            }
+        } else {
+            shell = ['/bin/sh', '-c'];
+        }
+        // Spawn process
+        this._process = Bun.spawn(typeof cmdline === 'string' ? [...shell, cmd] : [cmd, ...args], {
             cwd,
             env: this._env ? { ...process.env, ...this._env } : process.env,
             stdin: detach ? 'pipe' : 'inherit',
             stdout: 'pipe',
             stderr: 'pipe',
-        })
+        });
 
         this._pid = this._process.pid
 
@@ -511,7 +525,7 @@ export class Cmd extends Emitter {
      * @returns Located path or null
      */
     static locate(program: Path | string, search: string[] = []): Path | null {
-        const searchPaths = [...search, ...(App.getenv('PATH') || '').split(Config.OS === 'windows' ? ';' : ':')]
+        const searchPaths = [...search, ...(App.getenv('PATH') || '').split(Config.OS === 'win32' || Config.OS === 'windows' ? ';' : ':')]
 
         for (const dir of searchPaths) {
             const path = new Path(dir).join(program instanceof Path ? program.name : program)
@@ -521,7 +535,7 @@ export class Cmd extends Emitter {
         }
 
         // Windows extensions
-        if (Config.OS === 'windows' || Config.OS === 'cygwin') {
+        if (Config.OS === 'win32' || Config.OS === 'windows' || Config.OS === 'cygwin') {
             const prog = program instanceof Path ? program : new Path(program)
             if (!prog.extension) {
                 for (const ext of ['exe', 'bat', 'cmd']) {
