@@ -79,6 +79,16 @@ else
     fi
 fi
 
+if [ -d "test" ]; then
+    (cd test && bun link testme) || {
+        echo "WARNING: Failed to add testme in test directory"
+        exit 1
+    }
+else
+    echo "WARNING: test directory not found"
+    exit 1
+fi
+
 if [ $HAS_WARNING -eq 1 ]; then
     echo ""
     echo "Some prerequisites are missing. Please install them before running tests."

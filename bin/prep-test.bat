@@ -57,6 +57,15 @@ echo WARNING: bash.exe not found. Please install Git for Windows.
 echo Download from: https://git-scm.com/download/win
 exit /b 1
 
+cd test
+bun link testme
+if %errorlevel% neq 0 (
+    echo WARNING: Failed to link testme in test directory
+    cd ..
+    exit /b 1
+)
+cd ..
+
 :finish
 if defined HAS_WARNING (
     echo Some prerequisites are missing. Please install them before running tests.
