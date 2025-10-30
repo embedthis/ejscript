@@ -21,18 +21,10 @@ await describe('Cmd', async () => {
     afterEach(async () => {
         if (cmd) {
             try {
-                // Get references before closing
-                const proc = (cmd as any)._process
-
                 // Close the command (kills process, cancels readers)
                 cmd.close()
 
-                // Wait for process to actually exit if it exists
-                if (proc) {
-                    await proc.exited.catch(() => {})
-                }
-
-                // Small wait for cleanup
+                // Small wait for cleanup - don't wait for process.exited as it may hang with stream readers
                 await new Promise(resolve => setTimeout(resolve, 50))
             } catch {}
             cmd = null
@@ -111,7 +103,7 @@ await describe('Cmd', async () => {
 
         it('throws if accessing pid before start', () => {
             expect(() => {
-                const p = cmd!.pid
+                cmd!.pid
             }).toThrow('Command not started')
         })
     })
@@ -305,6 +297,11 @@ await describe('Cmd', async () => {
                 cmd.on('readable', () => {
                     emitted = true
                     if (timer) clearTimeout(timer)
+                })
+
+                cmd.on('complete', async () => {
+                    // Wait for stream reading to complete
+                    await cmd!.readString()
                     resolve()
                 })
 
@@ -330,9 +327,11 @@ await describe('Cmd', async () => {
                 let completed = false
                 let timer: Timer | null = null
 
-                cmd.on('complete', () => {
+                cmd.on('complete', async () => {
                     completed = true
                     if (timer) clearTimeout(timer)
+                    // Wait for streams to finish
+                    await cmd!.readString()
                     resolve()
                 })
 
@@ -361,6 +360,11 @@ await describe('Cmd', async () => {
                 cmd.on('error', () => {
                     errorEmitted = true
                     if (timer) clearTimeout(timer)
+                })
+
+                cmd.on('complete', async () => {
+                    // Wait for streams to finish
+                    await cmd!.readString()
                     resolve()
                 })
 
