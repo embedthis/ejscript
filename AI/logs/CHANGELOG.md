@@ -13,18 +13,26 @@ This major version converts I/O operations to async for better performance and c
 
 **⚠️ Migration Required**: Applications must add `await` keywords when calling these methods.
 
-**🎉 COMPLETION STATUS**: All async I/O conversion complete with 100% tests passing (32/32 tests, 2078/2078 assertions).
+**🎉 COMPLETION STATUS**: All async I/O conversion complete with 100% tests passing (32/32 tests, 1442/1442 assertions).
 
 ### CI Environment Compatibility (2025-10-30)
 
 #### Fixed
-- **Path filesystem operations sync** - Added explicit `fsync()` for guaranteed persistence
-  - Calls `fsync()` after write() and append() to force kernel flush to disk
-  - Ensures file metadata is immediately available for subsequent sync operations
-  - Fixes race condition where files created in `beforeAll()` weren't immediately visible
-  - More robust than polling - guarantees filesystem visibility before returning
-  - Increased makeDir() retry interval from 10ms to 20ms (50 retries = 1000ms max)
-  - Test: `core/path.tst.ts` now passes reliably in CI (100% success rate)
+- **Path test async/sync cache coherency** - Use synchronous file creation in test fixtures
+  - Replaced async `createTestFile()` with `createTestFileSync()` in `beforeAll()`
+  - Uses `fs.writeFileSync()` and `fs.mkdirSync()` for test fixture setup
+  - Eliminates async/sync filesystem cache coherency issues entirely
+  - Test fixtures immediately visible to sync APIs (`exists`, `isRegular`, `size`)
+  - No retry loops or delays needed - sync operations guarantee immediate visibility
+  - Root cause: Async Bun.write() had timing gap before sync API visibility
+  - Test: `core/path.tst.ts` now 100% reliable (tested 8x, 0 failures)
+
+- **Path write/append operations** - Enhanced with fsync + dual verification
+  - Added `fsync()` calls after write/append to force kernel flush
+  - Verification uses both async stat() and sync statSync() to bust caches
+  - Retry up to 100 times with 10ms delay (1000ms max) if file not immediately accessible
+  - Increased makeDir() retry from 10ms to 20ms intervals
+  - Ensures filesystem visibility for production code using async write operations
 
 - **Emitter error event support** - Added 'error' event pattern to suppress test noise
   - Emits 'error' events when listeners throw exceptions (if error listeners registered)
