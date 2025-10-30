@@ -90,6 +90,11 @@ export class Cmd extends Emitter {
         let args: string[] = []
 
         if (typeof cmdline === 'string') {
+            // String commands are wrapped in a shell to support:
+            // - Shell built-ins (echo, cd, set, etc.)
+            // - Shell operators (|, >, <, &&, ||, &)
+            // - Wildcards/globbing (*.txt)
+            // - Variable expansion ($VAR, %VAR%)
             // On Windows, use bash from Git for Windows if available, otherwise cmd.exe
             // On Unix-like systems, use /bin/sh
             if (Config.OS === 'win32' || Config.OS === 'windows' || Config.OS === 'cygwin') {
@@ -107,6 +112,10 @@ export class Cmd extends Emitter {
                 args = ['-c', cmdline];
             }
         } else {
+            // Array commands execute directly without shell wrapper (Unix philosophy)
+            // This provides better security (no shell injection) and performance
+            // Note: Arrays must use real executables, not shell built-ins
+            // (e.g., use ['bash', '--version'] not ['echo', 'test'] on Windows)
             cmd = cmdline[0]
             args = cmdline.slice(1)
         }
@@ -349,14 +358,16 @@ export class Cmd extends Emitter {
         let args: string[] = []
 
         if (typeof cmdline === 'string') {
-            // Simple string command - let shell handle it
+            // String command - will be wrapped in shell
             cmd = cmdline
         } else {
-            // Array of args
+            // Array of args - direct execution without shell
             cmd = cmdline[0]
             args = cmdline.slice(1)
         }
-        // Spawn process
+
+        // String commands are wrapped in a shell to support shell features
+        // Array commands execute directly for security and performance
         // On Windows, use bash from Git for Windows if available, otherwise cmd.exe
         // On Unix-like systems, use /bin/sh
         let shell;

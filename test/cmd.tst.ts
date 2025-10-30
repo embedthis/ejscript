@@ -59,11 +59,12 @@ await describe('Cmd', async () => {
 
         it('creates Cmd with command array', async () => {
             await new Promise<void>((resolve) => {
-                cmd = new Cmd(['echo', 'hello'])
+                // Use bash --version as it's a real executable on all platforms (including Windows via Git)
+                cmd = new Cmd(['bash', '--version'])
                 expect(cmd).not.toBeNull()
 
                 setTimeout(async () => {
-                    expect(await cmd!.response).toContain('hello')
+                    expect(await cmd!.response).toContain('bash')
                     resolve()
                 }, 500)
             })
@@ -132,12 +133,13 @@ await describe('Cmd', async () => {
         it('executes command with array', async () => {
             await new Promise<void>((resolve) => {
                 cmd = new Cmd()
-                cmd.start(['echo', 'array', 'test'])
+                // Use git --version as a portable command with predictable output
+                cmd.start(['git', '--version'])
 
                 setTimeout(async () => {
                     const output = await cmd!.response
-                    expect(output).toContain('array')
-                    expect(output).toContain('test')
+                    expect(output).toContain('git')
+                    expect(output).toContain('version')
                     resolve()
                 }, 500)
             })

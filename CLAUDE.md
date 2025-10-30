@@ -334,7 +334,12 @@ All comprehensive project documentation is organized under `AI/`:
 - Ejscript types are not like typescript types that have no runtime impact. Ejscript will case parameters to the required argument type and cast return values to the required function return type if possible.
 - In Ejscript, a type defined with a trailing ? means can be nullable. A trailing ! means not nullable.
 - In API doc, do not being multi-line comments with "*"
-- 
+- **Cmd class usage:**
+  - **String commands** (e.g., `new Cmd("echo hello | grep h")`) are wrapped in a shell (bash/sh/cmd.exe) to support shell features (pipes, redirects, built-ins, wildcards)
+  - **Array commands** (e.g., `new Cmd(['git', '--version'])`) execute directly without shell wrapper for better security and performance
+  - Array commands must use real executables, not shell built-ins (use `['bash', '--version']` not `['echo', 'test']` on Windows)
+  - For multiple arguments, prefer array syntax on Windows to avoid shell parsing issues: `new Cmd([program, arg1, arg2])` instead of `new Cmd(program + ' ' + arg1 + ' ' + arg2)`
+-
 
 
 ## Project Documentation
