@@ -33,7 +33,10 @@
       "Bash(for i in 1 2 3)",
       "Bash(do echo \"=== Run $i ===\")",
       "Bash(done)",
-      "Bash(make install:*)"
+      "Bash(make install:*)",
+      "Bash(make test:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nFIX: Add filesystem sync delay for CI environment compatibility\n\nIn GitHub Actions runners, filesystem operations may have additional\nlatency before metadata becomes available. After write(), append(), \nand makeDir() operations, add a small retry loop to ensure the file \nor directory exists before returning from the async function.\n\nThis fixes test failures in CI where exists/isRegular/isDir checks\nimmediately after file creation returned false, even though the\nunderlying write operation had completed successfully.\n\nThe fix adds up to 100ms of retry logic (10 retries × 10ms) that\nonly triggers if the file doesn''t immediately exist, ensuring\ntests are reliable across all environments.\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []
