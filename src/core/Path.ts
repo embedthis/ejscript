@@ -410,6 +410,13 @@ export class Path {
                 this.setAttributes(options)
             }
 
+            // Ensure directory metadata is available (important for CI environments)
+            let retries = 10
+            while (retries > 0 && !this.exists) {
+                await new Promise(resolve => setTimeout(resolve, 10))
+                retries--
+            }
+
             return true
         } catch {
             return false
@@ -789,6 +796,13 @@ export class Path {
         combined.set(newData, existingBytes.length)
 
         await Bun.write(this._path, combined)
+
+        // Ensure file metadata is available (important for CI environments)
+        let retries = 10
+        while (retries > 0 && !this.exists) {
+            await new Promise(resolve => setTimeout(resolve, 10))
+            retries--
+        }
     }
 
     /**
@@ -807,6 +821,14 @@ export class Path {
         }).join('')
 
         await Bun.write(this._path, content)
+
+        // Ensure file metadata is available (important for CI environments)
+        // Wait for the file to be accessible before returning
+        let retries = 10
+        while (retries > 0 && !this.exists) {
+            await new Promise(resolve => setTimeout(resolve, 10))
+            retries--
+        }
     }
 
     /**
