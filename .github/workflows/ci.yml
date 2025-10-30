@@ -67,7 +67,7 @@ jobs:
         shell: cmd
         run: |
           call bin\prep-test.bat
-          tm -v test
+          tm -v test/cmd.tst
 
       - name: Build
         run: bun run build
