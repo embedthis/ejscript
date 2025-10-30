@@ -17,6 +17,19 @@ await describe('Path', async () => {
     testFile = await createTestFile(`/tmp/ejscript-path-test-${process.pid}.dat`, 'test data content')
     testDir = new Path(`/tmp/ejscript-path-test-dir-${process.pid}`)
     await testDir.makeDir()
+
+    // CRITICAL: Wait for filesystem to fully stabilize and retry exists check
+    // CI environments can have significant filesystem cache coherency delays
+    let retries = 200
+    while (retries > 0 && (!testFile.exists || !testDir.exists)) {
+      await new Promise(resolve => setTimeout(resolve, 10))
+      retries--
+    }
+
+    // Final verification that files are truly visible
+    if (!testFile.exists || !testDir.exists) {
+      throw new Error(`Test fixtures not accessible after ${2000}ms: testFile.exists=${testFile.exists}, testDir.exists=${testDir.exists}`)
+    }
   })
 
   afterAll(async () => {

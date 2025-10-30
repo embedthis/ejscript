@@ -814,13 +814,16 @@ export class Path {
         }
 
         // Additional verification: ensure file is accessible after sync
+        // Use both async and sync checks to ensure cache coherency
         let retries = 100
         while (retries > 0) {
             try {
                 await fsPromises.stat(this._path)
+                // Also verify with sync stat to bust any caching between async/sync APIs
+                statSync(this._path)
                 break
             } catch {
-                await new Promise(resolve => setTimeout(resolve, 5))
+                await new Promise(resolve => setTimeout(resolve, 10))
                 retries--
             }
         }
@@ -855,13 +858,16 @@ export class Path {
 
         // Additional verification: ensure file is accessible after sync
         // This handles edge cases where filesystem cache hasn't updated
+        // Use both async and sync checks to ensure cache coherency
         let retries = 100
         while (retries > 0) {
             try {
                 await fsPromises.stat(this._path)
-                break // File is accessible
+                // Also verify with sync stat to bust any caching between async/sync APIs
+                statSync(this._path)
+                break // File is accessible via both methods
             } catch {
-                await new Promise(resolve => setTimeout(resolve, 5))
+                await new Promise(resolve => setTimeout(resolve, 10))
                 retries--
             }
         }
