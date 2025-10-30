@@ -4,6 +4,7 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'testme'
 import { Http } from '../src/core/Http'
+import * as fs from 'fs'
 
 // Use port 0 to let OS auto-assign an available port (avoids conflicts)
 let TEST_PORT: number
@@ -11,6 +12,11 @@ let server: ReturnType<typeof Bun.serve>
 
 await describe('Http Streaming Integration', async () => {
     beforeAll(async () => {
+        // Create .test directory if it doesn't exist
+        if (!fs.existsSync('.test')) {
+            fs.mkdirSync('.test', { recursive: true })
+        }
+
         // Create a simple test server
         try {
             server = Bun.serve({

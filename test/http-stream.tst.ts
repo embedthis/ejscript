@@ -5,12 +5,18 @@
 import { describe, it, expect, beforeAll, afterAll } from 'testme'
 import { Http } from '../src/core/Http'
 import { TestServer } from './helpers/test-server'
+import * as fs from 'fs'
 
 // Use port 0 to let OS auto-assign an available port (avoids conflicts)
 let server: TestServer
 
 await describe('Http Streaming', async () => {
     beforeAll(async () => {
+        // Create .test directory if it doesn't exist
+        if (!fs.existsSync('.test')) {
+            fs.mkdirSync('.test', { recursive: true })
+        }
+
         // Start test server using TestServer class with auto-assigned port
         server = new TestServer({ port: 0 })
         await server.start()
