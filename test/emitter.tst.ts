@@ -277,6 +277,14 @@ await describe('Emitter', async () => {
 
         it('should handle errors in listeners gracefully', () => {
             let called = false
+            let errorCaught = false
+
+            // Register error handler to suppress console output
+            emitter.on('error', (error: Error) => {
+                errorCaught = true
+                expect(error.message).toBe('test error')
+            })
+
             emitter.on('test', () => { throw new Error('test error') })
             emitter.on('test', () => { called = true })
 
@@ -286,6 +294,7 @@ await describe('Emitter', async () => {
             }).not.toThrow()
 
             expect(called).toBe(true)
+            expect(errorCaught).toBe(true)
         })
 
         it('should emit to copy of listeners array', () => {

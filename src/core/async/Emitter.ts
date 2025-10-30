@@ -104,7 +104,14 @@ export class Emitter {
             try {
                 listener(...args)
             } catch (error) {
-                console.error(`Error in event listener for "${eventName}":`, error)
+                // Emit 'error' event if there are listeners, otherwise log to console
+                // Don't emit 'error' for errors in 'error' listeners to avoid infinite loops
+                if (eventName !== 'error' && this.events.has('error') && this.events.get('error')!.length > 0) {
+                    this.emit('error', error, eventName)
+                } else {
+                    // Only log to console if no error listeners are registered or if in error listener
+                    console.error(`Error in event listener for "${eventName}":`, error)
+                }
             }
         }
 
@@ -168,7 +175,14 @@ export class Emitter {
             try {
                 listener.apply(thisObj, args)
             } catch (error) {
-                console.error(`Error in event listener for "${eventName}":`, error)
+                // Emit 'error' event if there are listeners, otherwise log to console
+                // Don't emit 'error' for errors in 'error' listeners to avoid infinite loops
+                if (eventName !== 'error' && this.events.has('error') && this.events.get('error')!.length > 0) {
+                    this.emit('error', error, eventName)
+                } else {
+                    // Only log to console if no error listeners are registered or if in error listener
+                    console.error(`Error in event listener for "${eventName}":`, error)
+                }
             }
         }
     }
