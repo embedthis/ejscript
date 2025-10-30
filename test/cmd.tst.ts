@@ -1,10 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'testme'
 import { Cmd } from '../src/core/utilities/Cmd'
 import { Path } from '../src/core/Path'
-import { ByteArray } from '../src/core/streams/ByteArray'
-import { print } from '../src/Globals'
 import { TestConfig } from './config'
-import { Config } from '../src/core/Config'
 
 await describe('Cmd', async () => {
     let cmd: Cmd | null = null
@@ -244,8 +241,9 @@ await describe('Cmd', async () => {
                     await testDir.makeDir()
                 }
 
-                // Use platform-appropriate command to print working directory
-                const pwdCmd = Config.OS === 'win32' ? 'cd' : 'pwd'
+                // Use pwd command - works in bash (Git for Windows) and Unix shells
+                // Note: 'cd' without args doesn't print in bash, so we always use 'pwd'
+                const pwdCmd = 'pwd'
                 cmd.start(pwdCmd, { dir: testDir.toString() })
 
                 setTimeout(async () => {
@@ -268,8 +266,9 @@ await describe('Cmd', async () => {
                     await testDir.makeDir()
                 }
 
-                // Use platform-appropriate command to print working directory
-                const pwdCmd = Config.OS === 'win32' ? 'cd' : 'pwd'
+                // Use pwd command - works in bash (Git for Windows) and Unix shells
+                // Note: 'cd' without args doesn't print in bash, so we always use 'pwd'
+                const pwdCmd = 'pwd'
                 cmd.start(pwdCmd, { dir: testDir })
 
                 setTimeout(async () => {
