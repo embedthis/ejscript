@@ -236,12 +236,12 @@ await describe('Cmd', async () => {
 
     await describe('Working Directory', async () => {
         it('executes in specified directory', async () => {
-            await new Promise<void>((resolve) => {
+            await new Promise<void>(async (resolve) => {
                 cmd = new Cmd()
                 const testDir = TestConfig.tmpDir
                 // Ensure test directory exists
                 if (!testDir.exists) {
-                    testDir.makeDir()
+                    await testDir.makeDir()
                 }
 
                 // Use platform-appropriate command to print working directory
@@ -260,12 +260,12 @@ await describe('Cmd', async () => {
         })
 
         it('accepts Path for directory', async () => {
-            await new Promise<void>((resolve) => {
+            await new Promise<void>(async (resolve) => {
                 cmd = new Cmd()
                 const testDir = TestConfig.tmpDir
                 // Ensure test directory exists
                 if (!testDir.exists) {
-                    testDir.makeDir()
+                    await testDir.makeDir()
                 }
 
                 // Use platform-appropriate command to print working directory
