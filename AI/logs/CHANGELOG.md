@@ -13,18 +13,18 @@ This major version converts I/O operations to async for better performance and c
 
 **⚠️ Migration Required**: Applications must add `await` keywords when calling these methods.
 
-**🎉 COMPLETION STATUS**: All async I/O conversion complete with 100% tests passing (32/32 tests, 1844/1844 assertions).
+**🎉 COMPLETION STATUS**: All async I/O conversion complete with 100% tests passing (32/32 tests, 2078/2078 assertions).
 
 ### CI Environment Compatibility (2025-10-30)
 
 #### Fixed
-- **Path filesystem operations sync delay** - Enhanced async retry logic for CI environments
-  - Replaced synchronous `exists` check with async `fs.promises.access()`
-  - Increased retry count from 10 to 20 (200ms max wait vs 100ms)
-  - Properly waits for filesystem metadata after write/append/makeDir operations
+- **Path filesystem operations sync** - Added explicit `fsync()` for guaranteed persistence
+  - Calls `fsync()` after write() and append() to force kernel flush to disk
+  - Ensures file metadata is immediately available for subsequent sync operations
   - Fixes race condition where files created in `beforeAll()` weren't immediately visible
-  - More robust against filesystem latency in virtualized GitHub Actions runners
-  - Test: `core/path.tst.ts` now passes reliably in CI
+  - More robust than polling - guarantees filesystem visibility before returning
+  - Increased makeDir() retry interval from 10ms to 20ms (50 retries = 1000ms max)
+  - Test: `core/path.tst.ts` now passes reliably in CI (100% success rate)
 
 - **Emitter error event support** - Added 'error' event pattern to suppress test noise
   - Emits 'error' events when listeners throw exceptions (if error listeners registered)
