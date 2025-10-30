@@ -384,15 +384,20 @@ await describe('Timer', async () => {
     await describe('Error Handling', async () => {
         it('catches errors in callback', async () => {
             await new Promise<void>((resolve) => {
+                // Mock console.error to suppress expected error output
+                const originalError = console.error
+                console.error = () => {}
+
                 timer = new Timer(50, () => {
                     throw new Error('Test error')
                 })
-    
+
                 // Should not crash
                 timer.start()
-    
+
                 setTimeout(() => {
                     // Timer should have fired and handled error
+                    console.error = originalError
                     resolve()
                 }, 100)
             })
@@ -404,13 +409,13 @@ await describe('Timer', async () => {
                 timer = new Timer(50, () => {
                     throw new Error('Test error')
                 })
-    
+
                 timer.onerror = (err: Error) => {
                     errorCaught = err
                 }
-    
+
                 timer.start()
-    
+
                 setTimeout(() => {
                     expect(errorCaught).not.toBeNull()
                     expect(errorCaught?.message).toBe('Test error')
@@ -421,18 +426,23 @@ await describe('Timer', async () => {
 
         it('handles error in onerror handler', async () => {
             await new Promise<void>((resolve) => {
+                // Mock console.error to suppress expected error output
+                const originalError = console.error
+                console.error = () => {}
+
                 timer = new Timer(50, () => {
                     throw new Error('Callback error')
                 })
-    
+
                 timer.onerror = (_err: Error) => {
                     throw new Error('Error handler error')
                 }
-    
+
                 // Should not crash
                 timer.start()
-    
+
                 setTimeout(() => {
+                    console.error = originalError
                     resolve()
                 }, 100)
             })

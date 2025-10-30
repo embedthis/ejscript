@@ -2,6 +2,18 @@ import { describe, it, expect, beforeEach, afterEach } from 'testme'
 import { Cmd } from '../src/core/utilities/Cmd'
 import { Path } from '../src/core/Path'
 import { TestConfig } from './config'
+import { Config } from '../src/core/Config'
+
+// Helper: Cross-platform sleep command
+// Git Bash on Windows supports 'sleep', but we use a more portable approach
+function sleepCmd(seconds: number): string {
+    if (Config.OS === 'win32' || Config.OS === 'windows' || Config.OS === 'cygwin') {
+        // Use timeout on Windows - works in both cmd.exe and Git Bash
+        // timeout /t <seconds> /nobreak > nul 2>&1
+        return `timeout /t ${seconds} /nobreak >nul 2>&1`
+    }
+    return `sleep ${seconds}`
+}
 
 await describe('Cmd', async () => {
     let cmd: Cmd | null = null
@@ -307,15 +319,21 @@ await describe('Cmd', async () => {
             await new Promise<void>((resolve) => {
                 cmd = new Cmd()
                 let completed = false
-    
+                let timer: Timer | null = null
+
                 cmd.on('complete', () => {
                     completed = true
+                    if (timer) clearTimeout(timer)
                     resolve()
                 })
-    
+
                 cmd.start('echo complete')
-    
-                // Don't need timeout, complete event will trigger resolve()
+
+                // Safety timeout in case complete event doesn't fire
+                timer = setTimeout(() => {
+                    expect(completed).toBe(true)
+                    resolve()
+                }, 2000)
             })
         })
 
@@ -343,13 +361,13 @@ await describe('Cmd', async () => {
 
     await describe('Wait', async () => {
         it('waits for command completion', async () => {
-            cmd = new Cmd('sleep 0.1; echo done', { exceptions: false })
+            cmd = new Cmd(`${sleepCmd(1)} && echo done`, { exceptions: false })
             const result = await cmd.wait()
             expect(result).toBe(true)
         })
 
         it('times out if command takes too long', async () => {
-            cmd = new Cmd('sleep 10', { exceptions: false })
+            cmd = new Cmd(sleepCmd(10), { exceptions: false })
             const result = await cmd.wait(100)
             expect(result).toBe(false)
         })
@@ -364,7 +382,7 @@ await describe('Cmd', async () => {
     await describe('Stop', async () => {
         it('stops running command', async () => {
             await new Promise<void>((resolve) => {
-                cmd = new Cmd('sleep 10', { exceptions: false })
+                cmd = new Cmd(sleepCmd(10), { exceptions: false })
                 let timer: Timer | null = null
 
                 // Listen for completion to resolve early
@@ -392,7 +410,7 @@ await describe('Cmd', async () => {
     await describe('Close', async () => {
         it('closes and cleans up', async () => {
             await new Promise<void>((resolve) => {
-                cmd = new Cmd('sleep 1', { exceptions: false })
+                cmd = new Cmd(sleepCmd(1), { exceptions: false })
     
                 setTimeout(() => {
                     cmd!.close()
@@ -462,7 +480,7 @@ await describe('Cmd', async () => {
 
         await describe('daemon', async () => {
             it('starts command as daemon', () => {
-                const pid = Cmd.daemon('sleep 0.1', { exceptions: false })
+                const pid = Cmd.daemon(sleepCmd(1), { exceptions: false })
                 expect(pid).toBeGreaterThan(0)
             })
 
@@ -476,7 +494,7 @@ await describe('Cmd', async () => {
         await describe('kill', async () => {
             it.skip('kills process by PID (causes async exception)', async () => {
                 // Skipping - killing a process causes async exception even with exceptions: false
-                const pid = Cmd.daemon('sleep 10', { exceptions: false })
+                const pid = Cmd.daemon(sleepCmd(10), { exceptions: false })
                 await new Promise(resolve => setTimeout(resolve, 100))
 
                 const result = Cmd.kill(pid)
