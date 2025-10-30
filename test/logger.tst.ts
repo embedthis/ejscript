@@ -17,6 +17,10 @@ await describe('Logger', async () => {
         if (!testDir.exists) {
             throw new Error(`Failed to create test directory: ${testDir}`)
         }
+        // Increase max listeners to prevent warnings when multiple tests redirect to stderr
+        if (process.stderr.setMaxListeners) {
+            process.stderr.setMaxListeners(20)
+        }
     })
 
     afterEach(async () => {
@@ -56,9 +60,11 @@ await describe('Logger', async () => {
             expect(logger.location).toBe('stdout')
         })
 
-        it('creates logger with file output', () => {
+        it('creates logger with file output', async () => {
             logger = new Logger('test', testFile.toString())
             expect(logger.location).toBe(testFile.toString())
+            // Wait for file to open to avoid race condition with afterEach cleanup
+            await new Promise(resolve => setTimeout(resolve, 50))
         })
 
         it('creates hierarchical logger', () => {
@@ -105,16 +111,20 @@ await describe('Logger', async () => {
             expect(logger.location).toBe('stderr')
         })
 
-        it('redirects to file', () => {
+        it('redirects to file', async () => {
             logger = new Logger('test')
             logger.redirect(testFile.toString())
             expect(logger.location).toBe(testFile.toString())
+            // Wait for file to open to avoid race condition with afterEach cleanup
+            await new Promise(resolve => setTimeout(resolve, 50))
         })
 
-        it('redirects with level in location string', () => {
+        it('redirects with level in location string', async () => {
             logger = new Logger('test')
             logger.redirect(testFile.toString() + ':5')
             expect(logger.level).toBe(5)
+            // Wait for file to open to avoid race condition with afterEach cleanup
+            await new Promise(resolve => setTimeout(resolve, 50))
         })
 
         it('redirects to ByteArray stream', () => {
@@ -494,6 +504,8 @@ await describe('Logger', async () => {
     await describe('Close', async () => {
         it('closes output stream', async () => {
             logger = new Logger('test', testFile.toString())
+            // Wait for file to open before closing
+            await new Promise(resolve => setTimeout(resolve, 50))
             await logger.close()
             expect(logger.outStream).toBeNull()
         })

@@ -3,7 +3,7 @@
 #
 MFLAGS := --no-print-directory
 
-all: build tidy
+all: install tidy
 
 #
 #  Install required dependencies
