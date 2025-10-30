@@ -4,6 +4,7 @@
  */
 
 import { test, expect, describe, beforeAll, afterAll } from 'testme'
+import { tmpdir } from 'os'
 import { File } from '../../src/core/File'
 import { Path } from '../../src/core/Path'
 import { ByteArray } from '../../src/core/streams/ByteArray'
@@ -129,7 +130,7 @@ await describe('File', async () => {
     })
 
     test('readString reads text content', async () => {
-      const file = createTestFileSync('/tmp/readstring-test.txt', 'Hello World')
+      const file = createTestFileSync(new Path(tmpdir()).join('readstring-test.txt').name, 'Hello World')
       const f = new File(file.name)
       await f.open('r')
 
@@ -141,7 +142,7 @@ await describe('File', async () => {
     })
 
     test('readString with count limits bytes', async () => {
-      const file = createTestFileSync('/tmp/readcount-test.txt', 'Hello World')
+      const file = createTestFileSync(new Path(tmpdir()).join('readcount-test.txt').name, 'Hello World')
       const f = new File(file.name)
       await f.open('r')
 
@@ -153,7 +154,7 @@ await describe('File', async () => {
     })
 
     test('readLines reads file as lines', async () => {
-      const file = createTestFileSync('/tmp/readlines-test.txt', 'Line 1\nLine 2\nLine 3')
+      const file = createTestFileSync(new Path(tmpdir()).join('readlines-test.txt').name, 'Line 1\nLine 2\nLine 3')
       const f = new File(file.name)
       await f.open('r')
 
@@ -189,7 +190,7 @@ await describe('File', async () => {
     })
 
     test('iterator yields positions', async () => {
-      const file = createTestFileSync('/tmp/iter-test.dat', '0123456789')
+      const file = createTestFileSync(new Path(tmpdir()).join('iter-test.dat').name, '0123456789')
       const f = new File(file.name)
       await f.open('r')
 
@@ -333,7 +334,7 @@ await describe('File', async () => {
     })
 
     test('seek moves position', async () => {
-      const file = createTestFileSync('/tmp/seek-test.txt', '0123456789')
+      const file = createTestFileSync(new Path(tmpdir()).join('seek-test.txt').name, '0123456789')
       const f = new File(file.name)
       await f.open('r')
 
@@ -365,7 +366,7 @@ await describe('File', async () => {
     })
 
     test('truncate on open file', async () => {
-      const file = createTestFileSync('/tmp/trunc-open-test.txt', 'Hello World')
+      const file = createTestFileSync(new Path(tmpdir()).join('trunc-open-test.txt').name, 'Hello World')
       const f = new File(file.name)
       await f.open('w')
 
@@ -380,7 +381,7 @@ await describe('File', async () => {
 
   describe('File Remove', () => {
     test('remove deletes file', async () => {
-      const file = createTestFileSync('/tmp/remove-test.txt', 'test content')
+      const file = createTestFileSync(new Path(tmpdir()).join('remove-test.txt').name, 'test content')
       const f = new File(file.name)
       await f.open('r')
       await f.close()
@@ -392,7 +393,7 @@ await describe('File', async () => {
     })
 
     test('remove through path property', async () => {
-      const file = createTestFileSync('/tmp/remove-path-test.txt', 'test')
+      const file = createTestFileSync(new Path(tmpdir()).join('remove-path-test.txt').name, 'test')
       const f = new File(file.name)
 
       expect(f.path.exists).toBe(true)

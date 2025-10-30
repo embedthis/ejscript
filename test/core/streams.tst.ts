@@ -4,6 +4,7 @@
  */
 
 import { test, expect, describe, beforeAll, afterAll } from 'testme'
+import { tmpdir } from 'os'
 import { ByteArray } from '../../src/core/streams/ByteArray'
 import { TextStream } from '../../src/core/streams/TextStream'
 import { BinaryStream, Endian } from '../../src/core/streams/BinaryStream'
@@ -426,7 +427,7 @@ await describe('TextStream', async () => {
     })
 
     test('openTextStream for reading', async () => {
-      const file = await createTestFile('/tmp/textstream-read.tmp', 'Hello\nWorld')
+      const file = await createTestFile(new Path(tmpdir()).join('textstream-read.tmp').name, 'Hello\nWorld')
       const s = await file.openTextStream('rt')
 
       expect(await s.readLine()).toBe('Hello')
@@ -574,7 +575,7 @@ await describe('BinaryStream', async () => {
     })
 
     test('openBinaryStream for reading', async () => {
-      const file = await createTestFile('/tmp/binarystream-read.dat', '1234567890 test data')
+      const file = await createTestFile(new Path(tmpdir()).join('binarystream-read.dat').name, '1234567890 test data')
       const bs = await file.openBinaryStream('r')
 
       expect(await bs.readString(5)).toBe('12345')

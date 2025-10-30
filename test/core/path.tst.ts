@@ -4,6 +4,7 @@
  */
 
 import { test, expect, describe, beforeAll, afterAll } from 'testme'
+import { tmpdir } from 'os'
 import { Path } from '../../src/core/Path'
 import { assert, createTestFile, createTestFileSync, cleanupTestFile, randomTestPath, Platform } from '../helpers'
 import { TestConfig } from '../config'
@@ -17,8 +18,8 @@ await describe('Path', async () => {
     // Use SYNC operations to avoid async/sync cache coherency issues
     const fs = require('fs')
 
-    testFile = createTestFileSync(`/tmp/ejscript-path-test-${process.pid}.dat`, 'test data content')
-    testDir = new Path(`/tmp/ejscript-path-test-dir-${process.pid}`)
+    testFile = createTestFileSync(new Path(tmpdir()).join(`ejscript-path-test-${process.pid}.dat`).name, 'test data content')
+    testDir = new Path(tmpdir()).join(`ejscript-path-test-dir-${process.pid}`)
     fs.mkdirSync(testDir.name, { recursive: true })
 
     // Verify fixtures are immediately accessible (no retry needed with sync operations)
@@ -305,7 +306,7 @@ await describe('Path', async () => {
 
     test('readString reads file content', async () => {
       const unique = `${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}`
-      const file = await createTestFile(`/tmp/read-test-${unique}.txt`, 'Read this content')
+      const file = await createTestFile(new Path(tmpdir()).join(`read-test-${unique}.txt`).name, 'Read this content')
       const content = await file.readString()
 
       expect(content).toBe('Read this content')
@@ -315,7 +316,7 @@ await describe('Path', async () => {
 
     test('readBytes reads binary data', async () => {
       const unique = `${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}`
-      const file = await createTestFile(`/tmp/readbytes-test-${unique}.dat`, 'Binary data')
+      const file = await createTestFile(new Path(tmpdir()).join(`readbytes-test-${unique}.dat`).name, 'Binary data')
       const bytes = await file.readBytes()
 
       expect(bytes).toBeInstanceOf(Uint8Array)
@@ -326,7 +327,7 @@ await describe('Path', async () => {
 
     test('readLines reads file as lines', async () => {
       const unique = `${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}`
-      const file = await createTestFile(`/tmp/readlines-test-${unique}.txt`, 'Line 1\nLine 2\nLine 3')
+      const file = await createTestFile(new Path(tmpdir()).join(`readlines-test-${unique}.txt`).name, 'Line 1\nLine 2\nLine 3')
       const lines = await file.readLines()
 
       expect(lines).toHaveLength(3)
@@ -339,7 +340,7 @@ await describe('Path', async () => {
 
     test('readJSON parses JSON file', async () => {
       const unique = `${process.pid}-${Date.now()}-${Math.random().toString(36).slice(2)}`
-      const file = await createTestFile(`/tmp/readjson-test-${unique}.json`, '{"name":"test","value":42}')
+      const file = await createTestFile(new Path(tmpdir()).join(`readjson-test-${unique}.json`).name, '{"name":"test","value":42}')
       const data = await file.readJSON()
 
       expect(data.name).toBe('test')
@@ -351,9 +352,9 @@ await describe('Path', async () => {
 
   describe('Path Comparison', () => {
     test('same compares paths', () => {
-      const p1 = new Path('/tmp/test.txt')
-      const p2 = new Path('/tmp/test.txt')
-      const p3 = new Path('/tmp/other.txt')
+      const p1 = new Path(tmpdir()).join('test.txt')
+      const p2 = new Path(tmpdir()).join('test.txt')
+      const p3 = new Path(tmpdir()).join('other.txt')
 
       expect(p1.same(p2)).toBe(true)
       expect(p1.same(p3)).toBe(false)

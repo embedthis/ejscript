@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'testme'
+import { tmpdir } from 'os'
 import { FileSystem } from '../src/core/FileSystem'
 import { Path } from '../src/core/Path'
 
@@ -7,7 +8,7 @@ await describe('FileSystem', async () => {
     let testFile: Path
 
     beforeAll(async () => {
-        testDir = new Path(`/tmp/ejsx-fs-test-${process.pid}`)
+        testDir = new Path(tmpdir()).join(`ejsx-fs-test-${process.pid}`)
         await testDir.makeDir()
         testFile = testDir.join('test.txt')
         await testFile.write('test content')

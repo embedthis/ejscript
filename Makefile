@@ -23,7 +23,7 @@ test: build
 
 install: build
 	@echo Installing via bun link
-	bun link
+	bun --silent link
 	pak cache 
 
 clean: tidy

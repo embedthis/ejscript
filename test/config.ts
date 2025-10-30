@@ -4,6 +4,7 @@
  * Provides configuration and test data paths
  */
 
+import { tmpdir } from 'os'
 import { Path } from '../src/core/Path'
 import { Config } from '../src/core/Config'
 
@@ -16,7 +17,7 @@ export const TestConfig = {
   /**
    * Temporary test directory
    */
-  tmpDir: new Path('/tmp/ejscript-bun-tests'),
+  tmpDir: new Path(tmpdir()).join('ejscript-bun-tests'),
 
   /**
    * Test file paths

@@ -5,6 +5,7 @@
  */
 
 import { expect } from 'bun:test'
+import { tmpdir } from 'os'
 import { Path } from '../src/core/Path'
 
 /**
@@ -66,7 +67,7 @@ export async function cleanupTestFile(path: string | Path): Promise<void> {
  */
 export function randomTestPath(prefix: string = 'test', suffix: string = '.tmp'): Path {
   const random = Math.random().toString(36).substring(7)
-  return new Path(`/tmp/${prefix}-${random}${suffix}`)
+  return new Path(tmpdir()).join(`${prefix}-${random}${suffix}`)
 }
 
 /**
@@ -126,8 +127,8 @@ export function skipIf(condition: boolean, message: string = 'Test skipped'): vo
  */
 export const TestConstants = {
   TestLength: 500,
-  TestPath: '/tmp/ejscript-test-file.dat',
-  TestDir: '/tmp/ejscript-test-dir',
+  TestPath: new Path(tmpdir()).join('ejscript-test-file.dat').name,
+  TestDir: new Path(tmpdir()).join('ejscript-test-dir').name,
   ShortDelay: 100,
   MediumDelay: 500,
   LongDelay: 1000
