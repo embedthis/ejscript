@@ -3,6 +3,8 @@ import { Cmd } from '../src/core/utilities/Cmd'
 import { Path } from '../src/core/Path'
 import { ByteArray } from '../src/core/streams/ByteArray'
 import { print } from '../src/Globals'
+import { TestConfig } from './config'
+import { Config } from '../src/core/Config'
 
 await describe('Cmd', async () => {
     let cmd: Cmd | null = null
@@ -236,10 +238,22 @@ await describe('Cmd', async () => {
         it('executes in specified directory', async () => {
             await new Promise<void>((resolve) => {
                 cmd = new Cmd()
-                cmd.start('pwd', { dir: '/tmp' })
+                const testDir = TestConfig.tmpDir
+                // Ensure test directory exists
+                if (!testDir.exists) {
+                    testDir.makeDir()
+                }
+
+                // Use platform-appropriate command to print working directory
+                const pwdCmd = Config.OS === 'win32' ? 'cd' : 'pwd'
+                cmd.start(pwdCmd, { dir: testDir.toString() })
 
                 setTimeout(async () => {
-                    expect(await cmd!.response).toContain('/tmp')
+                    const response = await cmd!.response
+                    // Normalize paths for comparison (handle forward/backslashes)
+                    const normalizedResponse = response?.replace(/\\/g, '/').toLowerCase()
+                    const normalizedTestDir = testDir.toString().replace(/\\/g, '/').toLowerCase()
+                    expect(normalizedResponse).toContain(normalizedTestDir)
                     resolve()
                 }, 500)
             })
@@ -248,11 +262,22 @@ await describe('Cmd', async () => {
         it('accepts Path for directory', async () => {
             await new Promise<void>((resolve) => {
                 cmd = new Cmd()
-                const dir = new Path('/tmp')
-                cmd.start('pwd', { dir })
+                const testDir = TestConfig.tmpDir
+                // Ensure test directory exists
+                if (!testDir.exists) {
+                    testDir.makeDir()
+                }
+
+                // Use platform-appropriate command to print working directory
+                const pwdCmd = Config.OS === 'win32' ? 'cd' : 'pwd'
+                cmd.start(pwdCmd, { dir: testDir })
 
                 setTimeout(async () => {
-                    expect(await cmd!.response).toContain('/tmp')
+                    const response = await cmd!.response
+                    // Normalize paths for comparison (handle forward/backslashes)
+                    const normalizedResponse = response?.replace(/\\/g, '/').toLowerCase()
+                    const normalizedTestDir = testDir.toString().replace(/\\/g, '/').toLowerCase()
+                    expect(normalizedResponse).toContain(normalizedTestDir)
                     resolve()
                 }, 500)
             })
