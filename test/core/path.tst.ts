@@ -5,30 +5,25 @@
 
 import { test, expect, describe, beforeAll, afterAll } from 'testme'
 import { Path } from '../../src/core/Path'
-import { assert, createTestFile, cleanupTestFile, randomTestPath, Platform } from '../helpers'
+import { assert, createTestFile, createTestFileSync, cleanupTestFile, randomTestPath, Platform } from '../helpers'
 import { TestConfig } from '../config'
 
 await describe('Path', async () => {
   let testFile: Path
   let testDir: Path
 
-  beforeAll(async () => {
+  beforeAll(() => {
     // Create test fixtures with unique names to avoid parallel test conflicts
-    testFile = await createTestFile(`/tmp/ejscript-path-test-${process.pid}.dat`, 'test data content')
+    // Use SYNC operations to avoid async/sync cache coherency issues
+    const fs = require('fs')
+
+    testFile = createTestFileSync(`/tmp/ejscript-path-test-${process.pid}.dat`, 'test data content')
     testDir = new Path(`/tmp/ejscript-path-test-dir-${process.pid}`)
-    await testDir.makeDir()
+    fs.mkdirSync(testDir.name, { recursive: true })
 
-    // CRITICAL: Wait for filesystem to fully stabilize and retry exists check
-    // CI environments can have significant filesystem cache coherency delays
-    let retries = 200
-    while (retries > 0 && (!testFile.exists || !testDir.exists)) {
-      await new Promise(resolve => setTimeout(resolve, 10))
-      retries--
-    }
-
-    // Final verification that files are truly visible
+    // Verify fixtures are immediately accessible (no retry needed with sync operations)
     if (!testFile.exists || !testDir.exists) {
-      throw new Error(`Test fixtures not accessible after ${2000}ms: testFile.exists=${testFile.exists}, testDir.exists=${testDir.exists}`)
+      throw new Error(`Test fixtures not accessible: testFile.exists=${testFile.exists}, testDir.exists=${testDir.exists}`)
     }
   })
 
