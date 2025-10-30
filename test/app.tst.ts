@@ -2,6 +2,7 @@ import { describe, it, expect, beforeAll } from 'testme'
 import { App } from '../src/core/App'
 import { Path } from '../src/core/Path'
 import { Emitter } from '../src/core/async/Emitter'
+import { Platform } from './helpers'
 
 await describe('App', async () => {
     beforeAll(() => {
@@ -421,7 +422,9 @@ await describe('App', async () => {
             })
 
             it('should handle commands with multiple words', () => {
-                const result = App.run('echo "hello world"')
+                // On Windows cmd.exe, echo includes quotes in output. On Unix bash, quotes are stripped.
+                // Use a command without quotes to avoid platform differences.
+                const result = App.run('echo hello world')
                 expect(result.trim()).toBe('hello world')
             })
         })

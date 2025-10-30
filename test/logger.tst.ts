@@ -399,6 +399,8 @@ await describe('Logger', async () => {
         it('writes to file', async () => {
             logger = new Logger('test', testFile.toString(), Logger.Info)
             logger.info('File test')
+            // Use setImmediate to ensure write is queued before close
+            await new Promise(resolve => setImmediate(resolve))
             await logger.close()
 
             expect(testFile.exists).toBe(true)
@@ -411,6 +413,8 @@ await describe('Logger', async () => {
 
             logger = new Logger('test', testFile.toString(), Logger.Info)
             logger.info('Appended')
+            // Use setImmediate to ensure write is queued before close
+            await new Promise(resolve => setImmediate(resolve))
             await logger.close()
 
             const content = await testFile.readString()
