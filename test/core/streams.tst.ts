@@ -9,7 +9,7 @@ import { ByteArray } from '../../src/core/streams/ByteArray'
 import { TextStream } from '../../src/core/streams/TextStream'
 import { BinaryStream, Endian } from '../../src/core/streams/BinaryStream'
 import { Path } from '../../src/core/Path'
-import { assert, createTestFile, cleanupTestFile, randomTestPath } from '../helpers'
+import { assert, createTestFile, createTestFileSync, cleanupTestFile, randomTestPath } from '../helpers'
 
 await describe('ByteArray', async () => {
   describe('Construction', () => {
@@ -575,7 +575,7 @@ await describe('BinaryStream', async () => {
     })
 
     test('openBinaryStream for reading', async () => {
-      const file = await createTestFile(new Path(tmpdir()).join('binarystream-read.dat').name, '1234567890 test data')
+      const file = createTestFileSync(new Path(tmpdir()).join('binarystream-read.dat').name, '1234567890 test data')
       const bs = await file.openBinaryStream('r')
 
       expect(await bs.readString(5)).toBe('12345')
