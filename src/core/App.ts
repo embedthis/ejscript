@@ -300,12 +300,8 @@ export class App {
      * Get user's home directory
      */
     static get home(): Path {
-        return new Path(
-            this.getenv('HOME') ||
-            this.getenv('HOMEPATH') ||
-            this.getenv('USERPROFILE') ||
-            '.'
-        )
+        const { homedir } = require('os')
+        return new Path(homedir())
     }
 
     /**

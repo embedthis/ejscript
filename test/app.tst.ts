@@ -132,14 +132,23 @@ await describe('App', async () => {
             it('should return user id', () => {
                 const uid = App.uid
                 expect(typeof uid).toBe('number')
-                // On Windows, uid is typically 0
-                expect(uid).toBeGreaterThanOrEqual(0)
+                // On Windows, uid returns -1 (not supported)
+                if (process.platform === 'win32') {
+                    expect(uid).toBe(-1)
+                } else {
+                    expect(uid).toBeGreaterThanOrEqual(0)
+                }
             })
 
             it('should return group id', () => {
                 const gid = App.gid
                 expect(typeof gid).toBe('number')
-                expect(gid).toBeGreaterThanOrEqual(0)
+                // On Windows, gid returns -1 (not supported)
+                if (process.platform === 'win32') {
+                    expect(gid).toBe(-1)
+                } else {
+                    expect(gid).toBeGreaterThanOrEqual(0)
+                }
             })
         })
     })
