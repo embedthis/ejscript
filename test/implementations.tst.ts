@@ -2,16 +2,37 @@
  * Test newly implemented methods
  */
 
-import { describe, it, expect } from 'testme'
+import { describe, it, expect, beforeAll, afterAll } from 'testme'
 import { Path } from '../src/core/Path'
 import { File } from '../src/core/File'
 import { ByteArray } from '../src/core/streams/ByteArray'
 import * as fs from 'fs'
 
 await describe('Newly Implemented Methods', async () => {
+    const testId = `${process.pid}-${Math.random().toString(36).substring(7)}`
+
+    beforeAll(() => {
+        // Create .test directory if it doesn't exist
+        if (!fs.existsSync('.test')) {
+            fs.mkdirSync('.test', { recursive: true })
+        }
+    })
+
+    afterAll(() => {
+        // Clean up test files (but not entire .test dir in case of parallel tests)
+        const files = fs.readdirSync('.test').filter(f => f.includes(testId.split('-')[0]))
+        files.forEach(f => {
+            try {
+                fs.unlinkSync(`.test/${f}`)
+            } catch (e) {
+                // Ignore errors during cleanup
+            }
+        })
+    })
+
     await describe('Path.open()', async () => {
         it('should return a File object', async () => {
-            const testFile = `.test/path-open-${process.pid}.txt`
+            const testFile = `.test/path-open-${testId}.txt`
             const path = new Path(testFile)
 
             const file = await path.open({ mode: 'w' })
@@ -27,7 +48,7 @@ await describe('Newly Implemented Methods', async () => {
         })
 
         it('should create file for writing', async () => {
-            const testFile = `.test/path-open-write-${process.pid}.txt`
+            const testFile = `.test/path-open-write-${testId}.txt`
             const path = new Path(testFile)
 
             const file = await path.open({ mode: 'w' })
@@ -42,7 +63,7 @@ await describe('Newly Implemented Methods', async () => {
         })
 
         it('should open file for reading', async () => {
-            const testFile = `.test/path-open-read-${process.pid}.txt`
+            const testFile = `.test/path-open-read-${testId}.txt`
             await Bun.write(testFile, 'Read this content')
 
             const path = new Path(testFile)
@@ -91,7 +112,7 @@ await describe('Newly Implemented Methods', async () => {
         })
 
         it('should write with ASCII encoding', async () => {
-            const testFile = `.test/encoding-ascii-${process.pid}.txt`
+            const testFile = `.test/encoding-ascii-${testId}.txt`
             const file = new File(testFile, { mode: 'w' })
             await file.open()
 
@@ -107,7 +128,7 @@ await describe('Newly Implemented Methods', async () => {
         })
 
         it('should read with specified encoding', async () => {
-            const testFile = `.test/encoding-read-${process.pid}.txt`
+            const testFile = `.test/encoding-read-${testId}.txt`
             await Bun.write(testFile, 'Test content')
 
             const file = new File(testFile, { mode: 'r' })
@@ -208,7 +229,7 @@ await describe('Newly Implemented Methods', async () => {
 
     await describe('Integration: All three features together', async () => {
         it('should use Path.open() with File.encoding on large content', async () => {
-            const testFile = `.test/integration-${process.pid}.txt`
+            const testFile = `.test/integration-${testId}.txt`
             const path = new Path(testFile)
 
             // Write with File opened via Path.open()
