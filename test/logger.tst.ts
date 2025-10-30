@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'testme'
+import { tmpdir } from 'os'
 import { Logger } from '../src/core/utilities/Logger'
 import { Path } from '../src/core/Path'
 import { ByteArray } from '../src/core/streams/ByteArray'
@@ -9,9 +10,13 @@ await describe('Logger', async () => {
     let testFile: Path
 
     beforeEach(async () => {
-        testDir = new Path('.test/logger')
+        testDir = new Path(tmpdir()).join(`logger-test-${process.pid}-${Date.now()}`)
         testFile = testDir.join('test.log')
         await testDir.makeDir()
+        // Verify directory was created successfully
+        if (!testDir.exists) {
+            throw new Error(`Failed to create test directory: ${testDir}`)
+        }
     })
 
     afterEach(async () => {
