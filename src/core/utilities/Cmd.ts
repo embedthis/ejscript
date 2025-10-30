@@ -649,7 +649,23 @@ export class Cmd extends Emitter {
      * @returns Command output
      */
     static async sh(command: string | string[], options: CmdOptions = {}, data: any = null): Promise<string> {
-        const shell = Cmd.locate('sh') || new Path('/bin/sh')
+        // On Windows, try bash first (from Git for Windows), fall back to cmd.exe
+        // On Unix-like systems, use sh
+        let shell: Path | null
+        let shellArgs: string[]
+
+        if (Config.OS === 'win32' || Config.OS === 'windows' || Config.OS === 'cygwin') {
+            shell = Cmd.locate('bash')
+            if (shell) {
+                shellArgs = ['-c']
+            } else {
+                shell = new Path('cmd.exe')
+                shellArgs = ['/c']
+            }
+        } else {
+            shell = Cmd.locate('sh') || new Path('/bin/sh')
+            shellArgs = ['-c']
+        }
 
         if (Array.isArray(command)) {
             // Quote arguments with spaces
@@ -660,11 +676,11 @@ export class Cmd extends Emitter {
                 }
                 return s
             })
-            const result = await Cmd.run([shell.name, '-c', quotedArgs.join(' ')], options, data)
+            const result = await Cmd.run([shell.name, ...shellArgs, quotedArgs.join(' ')], options, data)
             return result?.trimEnd() || ''
         }
 
-        const result = await Cmd.run([shell.name, '-c', String(command).trimEnd()], options, data)
+        const result = await Cmd.run([shell.name, ...shellArgs, String(command).trimEnd()], options, data)
         return result?.trimEnd() || ''
     }
 }

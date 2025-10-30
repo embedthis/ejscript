@@ -812,6 +812,18 @@ export class Path {
         } finally {
             await fh.close()
         }
+
+        // Additional verification: ensure file is accessible after sync
+        let retries = 100
+        while (retries > 0) {
+            try {
+                await fsPromises.stat(this._path)
+                break
+            } catch {
+                await new Promise(resolve => setTimeout(resolve, 5))
+                retries--
+            }
+        }
     }
 
     /**
@@ -839,6 +851,19 @@ export class Path {
             await fh.sync() // Force kernel to flush to disk
         } finally {
             await fh.close()
+        }
+
+        // Additional verification: ensure file is accessible after sync
+        // This handles edge cases where filesystem cache hasn't updated
+        let retries = 100
+        while (retries > 0) {
+            try {
+                await fsPromises.stat(this._path)
+                break // File is accessible
+            } catch {
+                await new Promise(resolve => setTimeout(resolve, 5))
+                retries--
+            }
         }
     }
 
