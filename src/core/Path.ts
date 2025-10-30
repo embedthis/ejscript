@@ -412,14 +412,14 @@ export class Path {
 
             // Ensure directory metadata is available (important for CI environments)
             // Use async access check with retry to wait for filesystem sync
-            let retries = 20
+            let retries = 50
             while (retries > 0) {
                 try {
                     await fsPromises.access(this._path, fs.constants.F_OK)
                     break // Directory exists, we can return
                 } catch {
                     // Directory not yet accessible, wait and retry
-                    await new Promise(resolve => setTimeout(resolve, 10))
+                    await new Promise(resolve => setTimeout(resolve, 20))
                     retries--
                 }
             }
@@ -804,19 +804,13 @@ export class Path {
 
         await Bun.write(this._path, combined)
 
-        // Ensure file metadata is available (important for CI environments)
-        // Use async access check with retry to wait for filesystem sync
+        // CRITICAL: Force filesystem sync
         const fsPromises = await import('fs/promises')
-        let retries = 20
-        while (retries > 0) {
-            try {
-                await fsPromises.access(this._path, fs.constants.F_OK)
-                break // File exists, we can return
-            } catch {
-                // File not yet accessible, wait and retry
-                await new Promise(resolve => setTimeout(resolve, 10))
-                retries--
-            }
+        const fh = await fsPromises.open(this._path, 'r+')
+        try {
+            await fh.sync()
+        } finally {
+            await fh.close()
         }
     }
 
@@ -837,19 +831,14 @@ export class Path {
 
         await Bun.write(this._path, content)
 
-        // Ensure file metadata is available (important for CI environments)
-        // Use async access check with retry to wait for filesystem sync
+        // CRITICAL: Force filesystem sync by opening file descriptor and calling fsync
+        // This ensures file is truly persisted before returning
         const fsPromises = await import('fs/promises')
-        let retries = 20
-        while (retries > 0) {
-            try {
-                await fsPromises.access(this._path, fs.constants.F_OK)
-                break // File exists, we can return
-            } catch {
-                // File not yet accessible, wait and retry
-                await new Promise(resolve => setTimeout(resolve, 10))
-                retries--
-            }
+        const fh = await fsPromises.open(this._path, 'r+')
+        try {
+            await fh.sync() // Force kernel to flush to disk
+        } finally {
+            await fh.close()
         }
     }
 

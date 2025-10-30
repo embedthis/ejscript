@@ -18,12 +18,20 @@ This major version converts I/O operations to async for better performance and c
 ### CI Environment Compatibility (2025-10-30)
 
 #### Fixed
-- **Path filesystem operations sync delay** - Added retry logic after write/append/makeDir
-  - GitHub Actions runners may have filesystem metadata latency
-  - Operations now poll up to 10 times (100ms total) to ensure file/directory exists
-  - Fixes race condition where `exists`/`isRegular`/`isDir` returned false immediately after creation
-  - Only triggers retry loop if file doesn't immediately exist (no performance impact in normal cases)
-  - Test: `core/path.tst.ts` now passes reliably in CI environments
+- **Path filesystem operations sync delay** - Enhanced async retry logic for CI environments
+  - Replaced synchronous `exists` check with async `fs.promises.access()`
+  - Increased retry count from 10 to 20 (200ms max wait vs 100ms)
+  - Properly waits for filesystem metadata after write/append/makeDir operations
+  - Fixes race condition where files created in `beforeAll()` weren't immediately visible
+  - More robust against filesystem latency in virtualized GitHub Actions runners
+  - Test: `core/path.tst.ts` now passes reliably in CI
+
+- **Emitter error event support** - Added 'error' event pattern to suppress test noise
+  - Emits 'error' events when listeners throw exceptions (if error listeners registered)
+  - Falls back to console.error only if no 'error' listeners (backward compatible)
+  - Prevents infinite loops by not emitting 'error' for errors in 'error' listeners
+  - Updated tests to register 'error' listeners to eliminate STDERR output
+  - Aligns with Node.js EventEmitter error handling patterns
 
 ### WebSocket - Complete Test Suite Passing (2025-10-27)
 

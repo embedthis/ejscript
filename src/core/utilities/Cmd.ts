@@ -90,8 +90,22 @@ export class Cmd extends Emitter {
         let args: string[] = []
 
         if (typeof cmdline === 'string') {
-            cmd = '/bin/sh'
-            args = ['-c', cmdline]
+            // On Windows, use bash from Git for Windows if available, otherwise cmd.exe
+            // On Unix-like systems, use /bin/sh
+            if (Config.OS === 'win32' || Config.OS === 'windows' || Config.OS === 'cygwin') {
+                // Try bash first (from Git for Windows), fall back to cmd.exe
+                const bashPath = Cmd.locate('bash');
+                if (bashPath) {
+                    cmd = bashPath.toString();
+                    args = ['-c', cmdline];
+                } else {
+                    cmd = 'cmd.exe';
+                    args = ['/c', cmdline];
+                }
+            } else {
+                cmd = '/bin/sh';
+                args = ['-c', cmdline];
+            }
         } else {
             cmd = cmdline[0]
             args = cmdline.slice(1)

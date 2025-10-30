@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(for i in 1 2 3 4 5)",
+      "Bash(for i in 1 2 3 4 5 6 7 8 9 10)",
+      "Bash(do tm:*)"
     ],
     "deny": [],
     "ask": []
