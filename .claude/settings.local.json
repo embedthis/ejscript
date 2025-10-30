@@ -9,7 +9,10 @@
       "Bash(tm:*)",
       "Bash(node -e:*)",
       "Bash(git add:*)",
-      "Bash(bun test:*)"
+      "Bash(bun test:*)",
+      "Bash(echo:*)",
+      "Bash(bun run:*)",
+      "Bash(bun -e:*)"
     ],
     "deny": [],
     "ask": []
