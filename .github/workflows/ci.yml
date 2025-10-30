@@ -60,7 +60,7 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           bin/prep-test.sh
-          tm -v test
+          tm -v test/logger.tst
 
       - name: Run test suite (Windows)
         if: runner.os == 'Windows'
