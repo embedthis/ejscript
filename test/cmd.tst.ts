@@ -397,8 +397,14 @@ await describe('Cmd', async () => {
         })
 
         it('times out if command takes too long', async () => {
-            cmd = new Cmd(sleepCmd(10), { exceptions: false })
-            const result = await cmd.wait(100)
+            // Use a very long sleep (60s) and short wait (200ms) to ensure timeout
+            // On Windows, the timeout command may have different behavior, so we
+            // use a longer sleep to ensure the command doesn't complete in the wait period
+            const longSleep = (Config.OS === 'win32' || Config.OS === 'windows' || Config.OS === 'cygwin')
+                ? 'timeout /t 60 /nobreak >nul 2>&1'  // 60 second sleep on Windows
+                : 'sleep 60'  // 60 second sleep on Unix
+            cmd = new Cmd(longSleep, { exceptions: false })
+            const result = await cmd.wait(200)
             expect(result).toBe(false)
         })
 
