@@ -5,13 +5,9 @@ import { TestConfig } from './config'
 import { Config } from '../src/core/Config'
 
 // Helper: Cross-platform sleep command
-// Git Bash on Windows supports 'sleep', but we use a more portable approach
+// Git Bash on Windows supports 'sleep' command just like Unix
+// String commands are wrapped in bash by Cmd, so 'sleep' works everywhere
 function sleepCmd(seconds: number): string {
-    if (Config.OS === 'win32' || Config.OS === 'windows' || Config.OS === 'cygwin') {
-        // Use timeout on Windows - works in both cmd.exe and Git Bash
-        // timeout /t <seconds> /nobreak > nul 2>&1
-        return `timeout /t ${seconds} /nobreak >nul 2>&1`
-    }
     return `sleep ${seconds}`
 }
 
@@ -397,14 +393,8 @@ await describe('Cmd', async () => {
         })
 
         it('times out if command takes too long', async () => {
-            // Use a very long sleep (60s) and short wait (200ms) to ensure timeout
-            // On Windows, the timeout command may have different behavior, so we
-            // use a longer sleep to ensure the command doesn't complete in the wait period
-            const longSleep = (Config.OS === 'win32' || Config.OS === 'windows' || Config.OS === 'cygwin')
-                ? 'timeout /t 60 /nobreak >nul 2>&1'  // 60 second sleep on Windows
-                : 'sleep 60'  // 60 second sleep on Unix
-            cmd = new Cmd(longSleep, { exceptions: false })
-            const result = await cmd.wait(200)
+            cmd = new Cmd(sleepCmd(10), { exceptions: false })
+            const result = await cmd.wait(100)
             expect(result).toBe(false)
         })
 
@@ -566,7 +556,7 @@ await describe('Cmd', async () => {
             // The exceptions option exists but has async timing issues
             cmd = new Cmd()
             expect(() => {
-                cmd.start('echo test', { exceptions: false })
+                cmd!.start('echo test', { exceptions: false })
             }).not.toThrow()
         })
     })
