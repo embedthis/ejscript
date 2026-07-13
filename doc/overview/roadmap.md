@@ -274,12 +274,12 @@ Create a production-ready TypeScript implementation of the Ejscript core API for
 - ✅ Comprehensive documentation
   - README.md
   - CLAUDE.md
-  - AI/designs/DESIGN.md
-  - AI/plans/PLAN.md (this file)
-  - AI/procedures/PROCEDURES.md
-  - AI/logs/CHANGELOG.md
-  - AI/context/CURRENT.md
-  - AI/references/REFERENCES.md
+  - doc/architecture/system.md
+  - doc/overview/roadmap.md (this file)
+  - doc/operations/PROCEDURES.md
+  - doc/sessions/CHANGELOG.md
+  - doc/MAP.md
+  - doc/references/REFERENCES.md
 
 **Lines of Code**: ~500 lines tests + documentation
 
@@ -559,6 +559,6 @@ Create separate npm packages:
 
 ## References
 
-- [DESIGN.md](../designs/DESIGN.md) - Architecture and design decisions
-- [PROCEDURES.md](../procedures/PROCEDURES.md) - Development procedures
-- [CHANGELOG.md](../logs/CHANGELOG.md) - Change history
+- [system.md](../architecture/system.md) - Architecture and design decisions
+- [PROCEDURES.md](../operations/PROCEDURES.md) - Development procedures
+- [CHANGELOG.md](../sessions/CHANGELOG.md) - Change history

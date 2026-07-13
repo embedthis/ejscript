@@ -243,7 +243,7 @@ See [README.md](../../README.md) for complete v1.x → v2.0 migration guide.
 
 ### Additional Design Documents
 
-- **[API_COMPATIBILITY.md](./API_COMPATIBILITY.md)** - Comprehensive guide to Ejscript type extensions and ES6 compatibility
+- **[api-compatibility.md](components/api-compatibility.md)** - Comprehensive guide to Ejscript type extensions and ES6 compatibility
   - String, Array, Date, Object, Number extensions
   - ES6 equivalents and migration strategies
   - Performance considerations

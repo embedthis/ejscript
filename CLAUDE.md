@@ -274,18 +274,22 @@ Type extensions are in `src/core/types/`. They augment native JavaScript types:
 
 ### Root Level
 - [README.md](README.md) - Project overview and quick start
-- [QUICK_START.md](QUICK_START.md) - Getting started guide
+- [docs/](docs/) - User-facing guides and compatibility reference
 - JSDoc comments in source files provide API documentation
 
-### AI/ Directory Structure
-All comprehensive project documentation is organized under `AI/`:
-- [AI/designs/DESIGN.md](AI/designs/DESIGN.md) - Architecture and design decisions
-- [AI/plans/PLAN.md](AI/plans/PLAN.md) - Project roadmap and future plans
-- [AI/procedures/PROCEDURES.md](AI/procedures/PROCEDURES.md) - Development procedures
-- [AI/logs/CHANGELOG.md](AI/logs/CHANGELOG.md) - Complete change history
-- [AI/context/CURRENT.md](AI/context/CURRENT.md) - Current project state
-- [AI/references/REFERENCES.md](AI/references/REFERENCES.md) - External resources
-- [AI/README.md](AI/README.md) - Documentation structure overview
+### doc/ Directory Structure
+All comprehensive project documentation is organized under `doc/`. Start at
+[doc/MAP.md](doc/MAP.md) - the navigation entry point.
+- [doc/overview/product.md](doc/overview/product.md) - What the system is and does
+- [doc/overview/roadmap.md](doc/overview/roadmap.md) - Project roadmap and future plans
+- [doc/architecture/system.md](doc/architecture/system.md) - Architecture and design decisions
+- [doc/architecture/components/](doc/architecture/components/) - API compatibility and type system
+- [doc/features/INDEX.md](doc/features/INDEX.md) - Feature index
+- [doc/operations/PROCEDURES.md](doc/operations/PROCEDURES.md) - Development procedures
+- [doc/engineering/](doc/engineering/) - Test coverage analysis
+- [doc/sessions/CHANGELOG.md](doc/sessions/CHANGELOG.md) - Complete change history
+- [doc/references/REFERENCES.md](doc/references/REFERENCES.md) - External resources
+- [doc/archive/](doc/archive/) - Superseded and historical documents
 
 ## Performance Considerations
 
@@ -344,25 +348,28 @@ All comprehensive project documentation is organized under `AI/`:
 
 ## Project Documentation
 
-This module maintains structured documentation in the `AI/` directory to assist Claude Code and developers:
+This module maintains structured documentation in the `doc/` directory to assist Claude Code and
+developers. It follows the standard layout in `~/dev/doc/DIRECTORIES.md`:
 
-- **AI/designs/** - Architectural and design documentation
-- **AI/context/** - Current status and progress (CONTEXT.md)
-- **AI/plans/** - Implementation plans and roadmaps
-- **AI/procedures/** - Testing and development procedures
-- **AI/logs/** - Change logs and session activity logs
-- **AI/references/** - External documentation and resources
-- **AI/releases/** - Version release notes
-- **AI/agents/** - Claude sub-agent definitions
-- **AI/skills/** - Claude skill definitions
-- **AI/prompts/** - Reusable prompts
-- **AI/workflows/** - Development workflows
-- **AI/commands/** - Custom commands
+- **doc/MAP.md** - AI navigation entry point; start here
+- **doc/overview/** - Product overview and roadmap
+- **doc/requirements/** - System, use-case, security, and regulatory requirements
+- **doc/architecture/** - System design and component designs
+- **doc/features/** - Feature-centric implementation units (see `INDEX.md`)
+- **doc/engineering/** - Development standards, tooling, and coverage analysis
+- **doc/security/** - Security practices and advisories
+- **doc/operations/** - Development, build, test, and release procedures
+- **doc/issues/** - Issue tickets (`tickets/NNNN.md`, managed by the `tickets` CLI)
+- **doc/compliance/** - CRA and traceability documentation
+- **doc/releases/** - Per-release artifacts
+- **doc/sessions/** - Changelog and session logs
+- **doc/references/** - External documentation and resources
+- **doc/archive/** - Superseded and historical documents
 
-See `AI/README.md` for detailed information about the documentation structure.
+Claude Code capabilities (commands, skills, agents, workflows, prompts) live under `.claude/`.
 
 ## Additional Resources
 
 - **Parent Project**: See `../CLAUDE.md` for general build commands, testing procedures, and overall EmbedThis architecture
-- **API Documentation**: Generated via `make doc` → `doc/index.html`
-- **Project Documentation**: See `AI/` directory for designs, plans, procedures, and context
+- **API Documentation**: JSDoc comments in `src/`; user-facing guides in `docs/`
+- **Project Documentation**: See `doc/` for architecture, roadmap, procedures, and context

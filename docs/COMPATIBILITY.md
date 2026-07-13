@@ -965,7 +965,7 @@ file.close()
 
 ## Type Extensions Compatibility
 
-See [AI/designs/API_COMPATIBILITY.md](../AI/designs/API_COMPATIBILITY.md) for detailed type extensions compatibility.
+See [api-compatibility.md](../doc/architecture/components/api-compatibility.md) for detailed type extensions compatibility.
 
 ### Quick Summary
 
@@ -1135,9 +1135,9 @@ Most tests are direct ports from original Ejscript test suite, ensuring API comp
 If you encounter compatibility issues:
 
 1. Check this document
-2. Review [API_COMPATIBILITY.md](../AI/designs/API_COMPATIBILITY.md)
+2. Review [api-compatibility.md](../doc/architecture/components/api-compatibility.md)
 3. Search test suite for examples
-4. Check [CHANGELOG.md](../AI/logs/CHANGELOG.md)
+4. Check [CHANGELOG.md](../doc/sessions/CHANGELOG.md)
 
 ---
 

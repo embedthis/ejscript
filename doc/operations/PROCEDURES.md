@@ -399,7 +399,7 @@ Follow **Semantic Versioning** (MAJOR.MINOR.PATCH):
 
 2. **Update CHANGELOG**:
    ```bash
-   vim AI/logs/CHANGELOG.md
+   vim doc/sessions/CHANGELOG.md
    # Add new version section with changes
    ```
 
@@ -412,7 +412,7 @@ Follow **Semantic Versioning** (MAJOR.MINOR.PATCH):
 
 4. **Commit changes**:
    ```bash
-   git add package.json AI/logs/CHANGELOG.md
+   git add package.json doc/sessions/CHANGELOG.md
    git commit -m "Release v0.2.0"
    git tag v0.2.0
    ```
@@ -539,5 +539,5 @@ rm -rf node_modules dist && bun install  # Clean install
 
 - [Bun Documentation](https://bun.sh/docs)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
-- [DESIGN.md](../designs/DESIGN.md) - Architecture details
-- [PLAN.md](../plans/PLAN.md) - Project roadmap
+- [system.md](../architecture/system.md) - Architecture details
+- [roadmap.md](../overview/roadmap.md) - Project roadmap

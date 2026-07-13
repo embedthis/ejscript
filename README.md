@@ -227,8 +227,8 @@ ejsx/
 │   └── types/         # Type extensions
 ├── test/              # Unit tests
 ├── examples/          # Example code
-├── AI/            # Project documentation
-└── docs/              # Additional documentation
+├── doc/               # Project documentation (architecture, roadmap, procedures)
+└── docs/              # User-facing guides (API, examples)
 ```
 
 ## Migration from v1.x to v2.0
@@ -357,15 +357,16 @@ Migrating from native Ejscript to Ejscript for Bun?
 ### 🔧 Development Documentation
 
 - **[CLAUDE.md](CLAUDE.md)** - AI assistant guidance and quick reference
-- **[AI/](AI/)** - Comprehensive project documentation
-  - [designs/DESIGN.md](AI/designs/DESIGN.md) - Architecture and design decisions
-  - [plans/PLAN.md](AI/plans/PLAN.md) - Project roadmap and future plans
-  - [procedures/PROCEDURES.md](AI/procedures/PROCEDURES.md) - Development procedures
-  - [logs/CHANGELOG.md](AI/logs/CHANGELOG.md) - Complete change history
-  - [context/CURRENT.md](AI/context/CURRENT.md) - Current project state
-  - [references/REFERENCES.md](AI/references/REFERENCES.md) - External resources
+- **[doc/](doc/)** - Comprehensive project documentation
+  - [MAP.md](doc/MAP.md) - Documentation entry point and navigation
+  - [overview/product.md](doc/overview/product.md) - What the system is and does
+  - [architecture/system.md](doc/architecture/system.md) - Architecture and design decisions
+  - [overview/roadmap.md](doc/overview/roadmap.md) - Project roadmap and future plans
+  - [operations/PROCEDURES.md](doc/operations/PROCEDURES.md) - Development procedures
+  - [sessions/CHANGELOG.md](doc/sessions/CHANGELOG.md) - Complete change history
+  - [references/REFERENCES.md](doc/references/REFERENCES.md) - External resources
 
-See [AI/README.md](AI/README.md) for full documentation structure.
+See [doc/MAP.md](doc/MAP.md) for full documentation structure.
 
 ## Testing
 
@@ -379,7 +380,7 @@ bun test
   - ✅ Well tested: Path, File, Streams, All type extensions (String, Array, Date, Number, Object), Http, App, Emitter
   - ⚠️ Not tested yet: Uri, Cache, Logger, Timer, Socket, WebSocket, Worker, Config, System, FileSystem, and 12+ other classes
 
-See [AI/designs/TEST_COVERAGE.md](AI/designs/TEST_COVERAGE.md) for detailed coverage analysis and [AI/plans/PLAN.md](AI/plans/PLAN.md) for roadmap.
+See [doc/engineering/coverage-analysis-2025-10-27.md](doc/engineering/coverage-analysis-2025-10-27.md) for detailed coverage analysis and [doc/overview/roadmap.md](doc/overview/roadmap.md) for roadmap.
 
 ## Performance
 
@@ -430,7 +431,7 @@ Ported to Bun with full API compatibility.
 - ❌ File.openBinaryStream(), File.openTextStream() (not implemented)
 - ⚠️ Utilities and networking (implemented, not tested)
 
-See [AI/designs/IMPLEMENTATION_ISSUES.md](AI/designs/IMPLEMENTATION_ISSUES.md) for complete issue tracking.
+See [doc/archive/architecture/historical/IMPLEMENTATION_ISSUES.md](doc/archive/architecture/historical/IMPLEMENTATION_ISSUES.md) for the historical issue record.
 
 ---
 

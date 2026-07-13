@@ -13,7 +13,7 @@ This document catalogs all Ejscript type extensions added to JavaScript core typ
 
 ## String Extensions
 
-Source: [src/core/types/StringExtensions.ts](../../src/core/types/StringExtensions.ts)
+Source: [src/core/types/StringExtensions.ts](../../../src/core/types/StringExtensions.ts)
 
 ### Methods
 
@@ -60,7 +60,7 @@ Template variable expansion:
 
 ## Array Extensions
 
-Source: [src/core/types/ArrayExtensions.ts](../../src/core/types/ArrayExtensions.ts)
+Source: [src/core/types/ArrayExtensions.ts](../../../src/core/types/ArrayExtensions.ts)
 
 ### Methods
 
@@ -116,7 +116,7 @@ Identical functionality, different name:
 
 ## Date Extensions
 
-Source: [src/core/types/DateExtensions.ts](../../src/core/types/DateExtensions.ts)
+Source: [src/core/types/DateExtensions.ts](../../../src/core/types/DateExtensions.ts)
 
 ### Properties
 
@@ -175,7 +175,7 @@ const later = new Date(now.getTime() + 3600000)
 
 ## Object Extensions
 
-Source: [src/core/types/ObjectExtensions.ts](../../src/core/types/ObjectExtensions.ts)
+Source: [src/core/types/ObjectExtensions.ts](../../../src/core/types/ObjectExtensions.ts)
 
 ### Static Methods
 
@@ -230,7 +230,7 @@ Object.getName(fn)    // fn.name (for functions)
 
 ## Number Extensions
 
-Source: [src/core/types/NumberExtensions.ts](../../src/core/types/NumberExtensions.ts)
+Source: [src/core/types/NumberExtensions.ts](../../../src/core/types/NumberExtensions.ts)
 
 ### Methods
 
@@ -330,11 +330,11 @@ new Date().format('yyyy-MM-dd')
 ## Testing
 
 All extensions have comprehensive test coverage:
-- [test/string-extensions.test.ts](../../test/string-extensions.test.ts)
-- [test/array-extensions.test.ts](../../test/array-extensions.test.ts)
-- [test/date-extensions.test.ts](../../test/date-extensions.test.ts)
-- [test/object-extensions.test.ts](../../test/object-extensions.test.ts)
-- [test/number-extensions.test.ts](../../test/number-extensions.test.ts)
+- [test/string-extensions.tst.ts](../../../test/string-extensions.tst.ts)
+- [test/array-extensions.tst.ts](../../../test/array-extensions.tst.ts)
+- [test/date-extensions.tst.ts](../../../test/date-extensions.tst.ts)
+- [test/object-extensions.tst.ts](../../../test/object-extensions.tst.ts)
+- [test/number-extensions.tst.ts](../../../test/number-extensions.tst.ts)
 
 Run tests with:
 ```bash
@@ -374,6 +374,6 @@ Ejscript provides a comprehensive set of type extensions that bridge Ejscript an
 - ✅ Compatible with ES6+ when possible
 
 For questions or issues, refer to:
-- [DESIGN.md](./DESIGN.md) - Architecture overview
-- [PLAN.md](../plans/PLAN.md) - Project roadmap
-- [README.md](../../README.md) - Getting started guide
+- [system.md](../system.md) - Architecture overview
+- [roadmap.md](../../overview/roadmap.md) - Project roadmap
+- [README.md](../../../README.md) - Getting started guide

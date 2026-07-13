@@ -168,16 +168,16 @@
 ### Internal Documentation
 - [README.md](../../README.md) - Project overview
 - [CLAUDE.md](../../CLAUDE.md) - AI assistant guidance
-- [DESIGN.md](../designs/DESIGN.md) - Architecture and design
-- [PLAN.md](../plans/PLAN.md) - Project roadmap
-- [PROCEDURES.md](../procedures/PROCEDURES.md) - Development procedures
-- [CHANGELOG.md](../logs/CHANGELOG.md) - Change history
+- [system.md](../architecture/system.md) - Architecture and design
+- [roadmap.md](../overview/roadmap.md) - Project roadmap
+- [PROCEDURES.md](../operations/PROCEDURES.md) - Development procedures
+- [CHANGELOG.md](../sessions/CHANGELOG.md) - Change history
 
 ### Implementation Notes
-- [IMPLEMENTATION.md](../../IMPLEMENTATION.md) - Implementation details
-- [PROJECT_SUMMARY.md](../../PROJECT_SUMMARY.md) - Complete feature overview
-- [STATUS.md](../../STATUS.md) - Current status
-- [QUICK_START.md](../../QUICK_START.md) - Quick start guide
+- [IMPLEMENTATION-original.md](../archive/IMPLEMENTATION-original.md) - Implementation details
+- [PROJECT_SUMMARY-original.md](../archive/PROJECT_SUMMARY-original.md) - Complete feature overview
+- [STATUS-original.md](../archive/STATUS-original.md) - Current status
+- [QUICK_START-original.md](../archive/QUICK_START-original.md) - Quick start guide
 
 ## External Code References
 

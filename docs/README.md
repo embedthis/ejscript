@@ -52,9 +52,9 @@ Comprehensive documentation for Ejscript for Bun - a complete TypeScript impleme
 
 ### Reference
 
-- **[Architecture](../AI/designs/DESIGN.md)** - System architecture and design
-- **[Changelog](../AI/logs/CHANGELOG.md)** - Version history and changes
-- **[Project Context](../AI/context/CURRENT.md)** - Current project status
+- **[Architecture](../doc/architecture/system.md)** - System architecture and design
+- **[Changelog](../doc/sessions/CHANGELOG.md)** - Version history and changes
+- **[Project Map](../doc/MAP.md)** - Documentation entry point and current status
 
 ---
 
@@ -180,11 +180,13 @@ ejs/
 │   ├── README.md         # This file
 │   ├── API.md            # API reference
 │   └── EXAMPLES.md       # Code examples
-└── AI/                    # Project documentation
-    ├── designs/           # Design docs
-    ├── plans/             # Plans
-    ├── logs/              # Changelog
-    └── context/           # Current status
+└── doc/                   # Project documentation
+    ├── MAP.md             # Navigation entry point
+    ├── overview/          # Product overview and roadmap
+    ├── architecture/      # Design docs
+    ├── features/          # Feature units
+    ├── operations/        # Development procedures
+    └── sessions/          # Changelog and session logs
 ```
 
 ---
@@ -234,7 +236,7 @@ To improve documentation:
 - **Source Code**: `src/` directory
 - **Tests**: `test/` directory - comprehensive test coverage
 - **Examples**: `examples/` directory - working code samples
-- **Design Docs**: `AI/designs/` - architecture documentation
+- **Design Docs**: `doc/architecture/` - architecture documentation
 
 ### External Resources
 
@@ -247,7 +249,7 @@ To improve documentation:
 1. Check [API Reference](API.md) for method documentation
 2. Review [Examples](EXAMPLES.md) for usage patterns
 3. Search test suite for edge cases
-4. Check [Changelog](../AI/logs/CHANGELOG.md) for recent changes
+4. Check [Changelog](../doc/sessions/CHANGELOG.md) for recent changes
 
 ---
 
@@ -259,7 +261,7 @@ To improve documentation:
   - HTTP streaming support
   - All unimplemented methods completed
 
-See [CHANGELOG.md](../AI/logs/CHANGELOG.md) for detailed version history.
+See [CHANGELOG.md](../doc/sessions/CHANGELOG.md) for detailed version history.
 
 ---
 
