@@ -1,18 +1,17 @@
-Embedthis Ejscript Licenses
+Embedthis Ejscript License
 ===
 
-This software is distributed under two licenses:
+This software is distributed under the [GNU General Public License, version 2](http://www.gnu.org/licenses/gpl-2.0.html) (`GPL-2.0-only`).
 
-* [GPL License](http://www.gnu.org/licenses/gpl-2.0.html)
-* [Embedthis Commercial License](https://www.embedthis.com/about/terms/)
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; version 2 of the License.
 
-The GPL License does not generally permit incorporating this software into non-open source programs. Commercial licenses for this software and support services are available from Embedthis Software.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-The commercial license enables you to embed the software and distribute and sell your products containing the software. With a paid-up subscription you can incorporate new releases, updates and patches for the software into your products. If you do not have an active subscription, you cannot apply commercial patches for the software to your products.
+You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-Please read the following document for more information or contact [sales@embedthis.com](mailto:sales@embedthis.com) if you have questions.
+The complete corresponding source code for this software accompanies the distributed package under `src/`.
 
-- [Embedthis License Plans](https://www.embedthis.com/builder/doc/plans/overview/)
+Contact [sales@embedthis.com](mailto:sales@embedthis.com) if you have questions.
 
 
 Trademarks and Copyrights

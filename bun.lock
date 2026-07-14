@@ -1,8 +1,9 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
-      "name": "ejscript",
+      "name": "@embedthis/ejscript",
       "devDependencies": {
         "@embedthis/testme": "^0.8.19",
         "@types/bun": "latest",
