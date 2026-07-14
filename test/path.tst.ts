@@ -2,7 +2,7 @@
  * Path class tests
  */
 
-import { test, expect, describe } from 'testme'
+import { test, expect, describe } from '@embedthis/testme'
 import { Path } from '../src/core/Path'
 
 await describe('Path', async () => {

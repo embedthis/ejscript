@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'testme'
+import { describe, it, expect } from '@embedthis/testme'
 import '../src/core/types/ObjectExtensions'
 
 await describe('Object Extensions', async () => {

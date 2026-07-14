@@ -2,7 +2,7 @@
  * Test newly implemented methods
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'testme'
+import { describe, it, expect, beforeAll, afterAll } from '@embedthis/testme'
 import { Path } from '../src/core/Path'
 import { File } from '../src/core/File'
 import { ByteArray } from '../src/core/streams/ByteArray'

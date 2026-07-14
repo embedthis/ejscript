@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'testme'
+import { describe, it, expect, beforeEach, afterEach } from '@embedthis/testme'
 import { tmpdir } from 'os'
 import { Logger } from '../src/core/utilities/Logger'
 import { Path } from '../src/core/Path'

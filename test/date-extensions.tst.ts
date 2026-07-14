@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'testme'
+import { describe, it, expect, beforeEach } from '@embedthis/testme'
 import '../src/core/types/DateExtensions'
 
 await describe('Date Extensions', async () => {

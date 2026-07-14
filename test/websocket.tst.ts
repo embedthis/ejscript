@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'testme'
+import { describe, it, expect, beforeEach, afterEach } from '@embedthis/testme'
 import { WebSocket } from '../src/core/WebSocket'
 
 await describe('WebSocket', async () => {

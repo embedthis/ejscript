@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'testme'
+import { describe, it, expect, beforeEach, afterEach } from '@embedthis/testme'
 import { Worker } from '../src/core/async/Worker'
 import * as fs from 'fs'
 import * as path from 'path'

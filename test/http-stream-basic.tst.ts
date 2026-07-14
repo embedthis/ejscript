@@ -3,7 +3,7 @@
  * Tests internal streaming mechanisms without requiring a server
  */
 
-import { describe, it, expect } from 'testme'
+import { describe, it, expect } from '@embedthis/testme'
 import { Http } from '../src/core/Http'
 
 await describe('Http Streaming - Basic Unit Tests', async () => {

@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'testme'
+import { describe, it, expect } from '@embedthis/testme'
 import { System } from '../src/core/System'
 import { Path } from '../src/core/Path'
 

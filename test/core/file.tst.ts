@@ -3,7 +3,7 @@
  * Migrated from src/core/test/file/*.tst
  */
 
-import { test, expect, describe, beforeAll, afterAll } from 'testme'
+import { test, expect, describe, beforeAll, afterAll } from '@embedthis/testme'
 import { File } from '../../src/core/File'
 import { Path } from '../../src/core/Path'
 import { ByteArray } from '../../src/core/streams/ByteArray'

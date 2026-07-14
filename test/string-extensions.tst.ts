@@ -2,7 +2,7 @@
  * String extensions tests - Complete Ejscript API coverage
  */
 
-import { test, expect, describe } from 'testme'
+import { test, expect, describe } from '@embedthis/testme'
 import '../src/core/types/StringExtensions'
 
 await describe('String Extensions', async () => {

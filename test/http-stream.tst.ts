@@ -2,7 +2,7 @@
  * Test streaming POST/PUT operations in Http
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'testme'
+import { describe, it, expect, beforeAll, afterAll } from '@embedthis/testme'
 import { Http } from '../src/core/Http'
 import { TestServer } from './helpers/test-server'
 import * as fs from 'fs'

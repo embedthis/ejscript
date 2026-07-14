@@ -31,11 +31,12 @@ export class Worker extends Emitter {
             this.emit('message', data)
         })
 
-        this.worker.on('error', (error) => {
+        this.worker.on('error', (error: unknown) => {
+            const err = error instanceof Error ? error : new Error(String(error))
             if (this._onerror) {
-                this._onerror(error)
+                this._onerror(err)
             }
-            this.emit('error', error)
+            this.emit('error', err)
         })
 
         this.worker.on('exit', (code) => {

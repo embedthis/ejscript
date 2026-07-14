@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from 'testme'
+import { describe, it, expect, beforeAll } from '@embedthis/testme'
 import { App } from '../src/core/App'
 import { Path } from '../src/core/Path'
 import { Emitter } from '../src/core/async/Emitter'

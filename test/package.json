@@ -5,8 +5,7 @@
   "private": true,
   "version": "0.0.1",
   "devDependencies": {
-    "@types/bun": "latest",
-    "testme": "link:testme"
+    "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5"

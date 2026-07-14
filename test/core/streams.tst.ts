@@ -3,7 +3,7 @@
  * Migrated from src/core/test/bytearray/*.tst, textstream/*.tst, binarystream/*.tst
  */
 
-import { test, expect, describe, beforeAll, afterAll } from 'testme'
+import { test, expect, describe, beforeAll, afterAll } from '@embedthis/testme'
 import { ByteArray } from '../../src/core/streams/ByteArray'
 import { TextStream } from '../../src/core/streams/TextStream'
 import { BinaryStream, Endian } from '../../src/core/streams/BinaryStream'

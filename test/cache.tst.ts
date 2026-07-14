@@ -3,7 +3,7 @@
  * Based on ejscript test suite: cache/*.tst
  */
 
-import { describe, it, expect, beforeEach } from 'testme'
+import { describe, it, expect, beforeEach } from '@embedthis/testme'
 import { Cache } from '../src/core/utilities/Cache'
 import { LocalCache } from '../src/core/utilities/LocalCache'
 

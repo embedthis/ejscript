@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'testme'
+import { describe, it, expect } from '@embedthis/testme'
 import { Http } from '../src/core/Http'
 
 await describe('Http Digest Authentication', async () => {

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'testme'
+import { describe, it, expect, beforeEach } from '@embedthis/testme'
 import { Emitter } from '../src/core/async/Emitter'
 
 await describe('Emitter', async () => {

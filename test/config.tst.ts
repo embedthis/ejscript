@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'testme'
+import { describe, it, expect } from '@embedthis/testme'
 import { Config } from '../src/core/Config'
 
 await describe('Config', async () => {

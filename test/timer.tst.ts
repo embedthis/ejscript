@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'testme'
+import { describe, it, expect, beforeEach, afterEach } from '@embedthis/testme'
 import { Timer } from '../src/core/utilities/Timer'
 
 await describe('Timer', async () => {

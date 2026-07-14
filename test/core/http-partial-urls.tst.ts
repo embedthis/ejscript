@@ -1,7 +1,7 @@
 /**
  * Test partial URL completion in Http class
  */
-import { describe, it, expect, beforeAll, afterAll } from 'testme'
+import { describe, it, expect, beforeAll, afterAll } from '@embedthis/testme'
 import { Http } from '../../src/core/Http'
 
 await describe('Http partial URL completion', async () => {

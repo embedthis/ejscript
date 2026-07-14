@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll } from 'testme'
+import { describe, it, expect, beforeAll, afterAll } from '@embedthis/testme'
 import { Http } from '../src/core/Http'
 import { TestServer } from './helpers/test-server'
 

@@ -3,7 +3,7 @@
  * Migrated from src/core/test/path/*.tst
  */
 
-import { test, expect, describe, beforeAll, afterAll } from 'testme'
+import { test, expect, describe, beforeAll, afterAll } from '@embedthis/testme'
 import { tmpdir } from 'os'
 import { Path } from '../../src/core/Path'
 import { assert, createTestFile, createTestFileSync, cleanupTestFile, randomTestPath, Platform } from '../helpers'

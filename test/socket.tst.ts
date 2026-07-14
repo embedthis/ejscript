@@ -3,7 +3,7 @@
  * Based on ejscript test suite: socket/*.tst
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'testme'
+import { describe, it, expect, beforeEach, afterEach } from '@embedthis/testme'
 import { Socket } from '../src/core/Socket'
 import { ByteArray } from '../src/core/streams/ByteArray'
 

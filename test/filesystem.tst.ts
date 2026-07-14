@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll } from 'testme'
+import { describe, it, expect, beforeAll, afterAll } from '@embedthis/testme'
 import { tmpdir } from 'os'
 import { FileSystem } from '../src/core/FileSystem'
 import { Path } from '../src/core/Path'

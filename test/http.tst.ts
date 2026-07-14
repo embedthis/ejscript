@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'testme'
+import { describe, it, expect, beforeEach } from '@embedthis/testme'
 import { Http } from '../src/core/Http'
 import { Uri } from '../src/core/utilities/Uri'
 

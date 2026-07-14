@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'testme'
+import { describe, it, expect, beforeEach, afterEach } from '@embedthis/testme'
 import { Cmd } from '../src/core/utilities/Cmd'
 import { Path } from '../src/core/Path'
 import { TestConfig } from './config'

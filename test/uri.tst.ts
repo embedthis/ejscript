@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'testme'
+import { describe, it, expect } from '@embedthis/testme'
 import { Uri } from '../src/core/utilities/Uri'
 import { Path } from '../src/core/Path'
 

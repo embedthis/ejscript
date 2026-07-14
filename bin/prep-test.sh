@@ -79,12 +79,7 @@ else
     fi
 fi
 
-if [ -d "test" ]; then
-    (cd test && bun link testme) || {
-        echo "WARNING: Failed to add testme in test directory"
-        exit 1
-    }
-else
+if [ ! -d "test" ]; then
     echo "WARNING: test directory not found"
     exit 1
 fi

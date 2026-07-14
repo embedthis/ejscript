@@ -3,7 +3,7 @@
  * Based on Ejscript Args.es specification
  */
 
-import { describe, it, expect } from 'testme'
+import { describe, it, expect } from '@embedthis/testme'
 import { Args } from '../src/core/Args'
 import { Path } from '../src/core/Path'
 

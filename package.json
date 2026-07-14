@@ -57,9 +57,9 @@
         "access": "public"
     },
     "devDependencies": {
-        "@embedthis/testme": "^0.8.19",
+        "@embedthis/testme": "^0.8.32",
         "@types/bun": "latest",
-        "typescript": "^5.3.0"
+        "typescript": "^7.0.2"
     },
     "engines": {
         "bun": ">=1.0.0"

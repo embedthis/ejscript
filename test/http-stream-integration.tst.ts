@@ -2,7 +2,7 @@
  * Integration tests for HTTP streaming with a real server
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'testme'
+import { describe, it, expect, beforeAll, afterAll } from '@embedthis/testme'
 import { Http } from '../src/core/Http'
 import * as fs from 'fs'
 

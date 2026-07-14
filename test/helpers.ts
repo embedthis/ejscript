@@ -4,7 +4,7 @@
  * Shared helpers for the TestMe (.tst.ts) suite.
  */
 
-import { expect } from 'testme'
+import { expect } from '@embedthis/testme'
 import { writeFileSync } from 'fs'
 import { tmpdir } from 'os'
 import { Path } from '../src/core/Path'
