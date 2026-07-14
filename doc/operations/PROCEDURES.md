@@ -30,7 +30,8 @@
 
 1. **Clone the repository**:
 ```bash
-cd /Users/mob/c/ejsx
+git clone https://github.com/embedthis/ejs
+cd ejs
 ```
 
 2. **Install dependencies**:
@@ -44,10 +45,10 @@ bun install
 bun run typecheck
 
 # Run tests
-bun test
+make test
 
 # Run example
-bun examples/basic.ts
+bun docs/examples/basic.ts
 ```
 
 ### IDE Configuration
@@ -100,9 +101,12 @@ bun run dev
 
 **All tests**:
 ```bash
-tm                    # Run all tests (from test/ directory)
-bun test             # Alternative: run via npm script
+make test            # Run prerequisites check, then the full suite
+tm                   # Run all tests (from the test/ directory)
 ```
+
+Do NOT use `bun test`. Bun's runner only matches `*.test.ts` and will silently
+skip the entire `.tst.ts` suite.
 
 **Specific test file**:
 ```bash
@@ -118,10 +122,10 @@ tm test/core/http-partial-urls.tst.ts  # Run specific core test
 
 **Test file structure**:
 ```typescript
-import { describe, test, expect } from '@embedthis/testme'
+import { describe, test, expect } from 'testme'
 import { Path } from '../../src/core/Path'
 
-describe('Path', () => {
+await describe('Path', async () => {
     test('should create absolute paths', () => {
         const p = new Path('/tmp/test')
         expect(p.isAbsolute).toBe(true)
@@ -136,6 +140,9 @@ describe('Path', () => {
 })
 ```
 
+Import from the bare `testme` specifier (linked by `bin/prep-test.sh`), not
+`@embedthis/testme`. Each `describe` block must be awaited.
+
 **TestMe Best Practices**:
 - Use `describe()` for test groups
 - Use `test()` for individual tests (not `it()`)
@@ -146,22 +153,21 @@ describe('Path', () => {
 - Tests must be portable (Windows, macOS, Linux)
 - Tests must run in parallel safely
 
-**Note**: While this project currently uses Bun's test runner, the parent project standards require TestMe for unit testing. Future test development should use TestMe with Jest-style expect API.
+**Note**: The migration to TestMe is complete. All tests use TestMe with the
+Jest-style expect API, per the parent project standards.
 
 ### Test Organization
 
 - Place tests in `test/` directory
-- Mirror source structure: `src/core/Path.ts` → `test/core/path.test.ts`
+- Mirror source structure: `src/core/Path.ts` → `test/core/path.tst.ts`
 - Use descriptive test names
 - Group related tests with `describe` blocks
 - Clean up resources (files, sockets) in `afterEach`
 
 ### Test Coverage
 
-**Running coverage** (future):
-```bash
-bun test --coverage
-```
+TestMe does not currently report code coverage, so there is no coverage gate in
+CI. Coverage is tracked by hand in `doc/engineering/`.
 
 **Coverage goals**:
 - Core classes: 90%+
@@ -183,7 +189,7 @@ bun test --coverage
    touch src/core/NewClass.ts
 
    # Create test file
-   touch test/core/newclass.test.ts
+   touch test/core/newclass.tst.ts
    ```
 
 3. **Class structure**:
@@ -223,11 +229,11 @@ bun test --coverage
 
 5. **Write tests**:
    ```typescript
-   // test/core/newclass.test.ts
-   import { describe, it, expect } from 'bun:test'
+   // test/core/newclass.tst.ts
+   import { describe, it, expect } from 'testme'
    import { NewClass } from '../../src/core/NewClass'
 
-   describe('NewClass', () => {
+   await describe('NewClass', async () => {
        it('should work as expected', () => {
            const instance = new NewClass('test')
            expect(instance.someMethod()).toBe('test')
@@ -238,7 +244,7 @@ bun test --coverage
 6. **Verify**:
    ```bash
    bun run typecheck
-   bun test test/core/newclass.test.ts
+   tm test/core/newclass.tst
    bun run build
    ```
 
@@ -274,10 +280,10 @@ bun test --coverage
 
 3. **Write tests**:
    ```typescript
-   import { describe, it, expect } from 'bun:test'
+   import { describe, it, expect } from 'testme'
    import '../../src/core/types/NewTypeExtensions'
 
-   describe('String extensions', () => {
+   await describe('String extensions', async () => {
        it('should have newMethod', () => {
            expect('hello'.newMethod()).toBe('HELLO')
        })
@@ -297,7 +303,7 @@ bun test --coverage
 
 **Self-review checklist**:
 - [ ] Code compiles without errors: `bun run typecheck`
-- [ ] All tests pass: `bun test`
+- [ ] All tests pass: `make test`
 - [ ] New tests written for new functionality
 - [ ] JSDoc comments added for public APIs
 - [ ] No console.log or debug code
@@ -406,8 +412,8 @@ Follow **Semantic Versioning** (MAJOR.MINOR.PATCH):
 3. **Build and test**:
    ```bash
    bun run build
-   bun test
-   bun examples/basic.ts
+   make test
+   bun docs/examples/basic.ts
    ```
 
 4. **Commit changes**:
@@ -454,7 +460,7 @@ const result = someFunction() as ExpectedType
 # Clean build
 rm -rf dist node_modules
 bun install
-bun test
+make test
 ```
 
 **Tests pass locally but fail in CI**:
@@ -519,16 +525,16 @@ bun install
 # Development
 bun run typecheck        # Type check
 bun run dev             # Watch mode
-bun test                # Run tests
-bun examples/basic.ts   # Run example
+make test               # Run tests
+bun docs/examples/basic.ts   # Run example
 
 # Building
 bun run build           # Production build
 
 # Testing
-bun test                           # All tests
-bun test test/core/path.test.ts   # Specific test
-bun test --watch                   # Watch mode
+make test                          # All tests
+tm test/core/path.tst             # Specific test
+tm -v test                         # Verbose output
 
 # Maintenance
 bun update              # Update dependencies

@@ -18,15 +18,36 @@ bun run typecheck
 # Build (compile TypeScript to JavaScript with type definitions)
 bun run build
 
-# Run all tests
-bun test
+# Run all tests (TestMe)
+make test
 
 # Run a specific test file
-bun test <path-to-test-file>
+tm test/path.tst
 
 # Run examples
-bun examples/basic.ts
+bun docs/examples/basic.ts
+
+# Publish to npm (manual, explicit — see Publishing below)
+make promote
 ```
+
+Tests run under TestMe (`tm`), not `bun test`. See Testing Strategy below.
+
+## Publishing
+
+Publishing to npm is a **manual, explicit step**. It is never done by CI/CD.
+
+```bash
+make promote        # build -> prep-test -> tm test -> npm publish
+```
+
+`make promote` depends on `test`, so the suite must pass before the upload.
+Public access comes from `publishConfig` in package.json; `prepublishOnly` runs
+typecheck and build.
+
+The GitHub `Release` workflow verifies the tree and cuts a tagged GitHub release
+with the tarball attached, but it deliberately does **not** publish to npm, and
+requires no npm credentials. Do not add an npm publish job to any workflow.
 
 ## Architecture
 
@@ -76,31 +97,35 @@ src/
 ## Testing Strategy
 
 ### Test Location and Naming
-- Tests are located in `test/` directory
-- Test files use `.test.ts` extension
+- Tests are located in the `test/` directory
+- Test files use the `.tst.ts` extension and are run by TestMe (`tm`)
 - Core class tests are in `test/core/`
-- Integration tests are in `test/integration/`
+- Shared helpers are in `test/helpers.ts` and `test/config.ts`
+
+Do NOT use `bun test` or the `.test.ts` extension. Bun's runner does not match
+`.tst.ts`, so a `.test.ts` file silently never runs as part of the suite.
 
 ### Running Tests
 ```bash
 # Run all tests
-bun test
+make test
 
 # Run specific test file
-bun test test/core/path.test.ts
+tm test/path.tst
 
-# Run tests in watch mode
-bun test --watch
+# Verbose output
+tm -v test
 ```
 
 ### Test Structure
-Tests use Bun's built-in test runner with `describe`, `it`, and `expect` assertions:
+Tests use TestMe with `describe`, `it`/`test`, and `expect` assertions. Import from
+`testme`, and `await` each `describe` block:
 
 ```typescript
-import { describe, it, expect } from 'bun:test'
+import { describe, it, expect } from 'testme'
 import { Path } from '../src/core/Path'
 
-describe('Path', () => {
+await describe('Path', async () => {
     it('should create absolute paths', () => {
         const p = new Path('/tmp/test')
         expect(p.isAbsolute).toBe(true)
@@ -137,7 +162,7 @@ This implementation maintains strong API compatibility with native Ejscript, but
 
 1. **ES6 Imports Required**
    - All classes must be explicitly imported using ES6 import syntax
-   - Example: `import { Path, File, Http, Socket } from 'ejscript'`
+   - Example: `import { Path, File, Http, Socket } from '@embedthis/ejscript'`
 
 2. **For-In Loop with Numbers** ⚠️ SYNTAX DIFFERENCE
    - **Ejscript**: `for (let i in N)` iterates from 0 to N-1
@@ -197,20 +222,20 @@ This implementation maintains strong API compatibility with native Ejscript, but
 
 ```typescript
 // v1.x - Synchronous (NO LONGER WORKS in v2.0.0)
-import { File } from 'ejscript'
+import { File } from '@embedthis/ejscript'
 const file = new File('/tmp/test.txt', 'r')  // Auto-opened
 const content = file.readString()
 file.close()
 
 // v2.0.0 - Asynchronous (REQUIRED)
-import { File } from 'ejscript'
+import { File } from '@embedthis/ejscript'
 const file = new File('/tmp/test.txt')
 await file.open('r')  // Must explicitly open
 const content = await file.readString()
 await file.close()
 
 // v2.0.0 - Simplified with Path.open() (RECOMMENDED)
-import { Path } from 'ejscript'
+import { Path } from '@embedthis/ejscript'
 const file = await new Path('/tmp/test.txt').open('r')
 const content = await file.readString()
 await file.close()
@@ -318,7 +343,7 @@ All comprehensive project documentation is organized under `doc/`. Start at
 - **BREAKING**: Path.open(), openTextStream(), openBinaryStream() are async
 - Improved: Better concurrency support
 - Improved: Non-blocking I/O operations
-- Fixed: All 1374 test assertions passing
+- Fixed: All test assertions passing (1468 across 33 test files)
 
 ### v1.x - Synchronous I/O
 - Original synchronous file operations
