@@ -3,12 +3,12 @@
  * Based on Ejscript Args.es specification
  */
 
-import { describe, it, expect } from 'bun:test'
+import { describe, it, expect } from 'testme'
 import { Args } from '../src/core/Args'
 import { Path } from '../src/core/Path'
 
-describe('Args', () => {
-    describe('Basic Parsing', () => {
+await describe('Args', async () => {
+    await describe('Basic Parsing', async () => {
         it('parses simple flags', () => {
             const args = new Args({
                 options: {
@@ -71,7 +71,7 @@ describe('Args', () => {
         })
     })
 
-    describe('Type Validation', () => {
+    await describe('Type Validation', async () => {
         it('validates Number range', () => {
             const args = new Args({
                 options: {
@@ -158,7 +158,7 @@ describe('Args', () => {
         })
     })
 
-    describe('Default Values', () => {
+    await describe('Default Values', async () => {
         it('uses default value when option not specified', () => {
             const args = new Args({
                 options: {
@@ -180,7 +180,7 @@ describe('Args', () => {
         })
     })
 
-    describe('Aliases', () => {
+    await describe('Aliases', async () => {
         it('maps alias to full option name', () => {
             const args = new Args({
                 options: {
@@ -209,7 +209,7 @@ describe('Args', () => {
         })
     })
 
-    describe('Separator (Multiple Values)', () => {
+    await describe('Separator (Multiple Values)', async () => {
         it('concatenates multiple values with string separator', () => {
             const args = new Args({
                 options: {
@@ -241,7 +241,7 @@ describe('Args', () => {
         })
     })
 
-    describe('Error Handling', () => {
+    await describe('Error Handling', async () => {
         it('throws on undefined option when onerror is throw', () => {
             expect(() => {
                 new Args({
@@ -264,7 +264,7 @@ describe('Args', () => {
 
         it('calls usage function on help flag', () => {
             let usageCalled = false
-            const args = new Args({
+            new Args({
                 options: {},
                 usage: () => { usageCalled = true }
             }, ['program', '-?'])
@@ -274,7 +274,7 @@ describe('Args', () => {
 
         it('supports unknown callback for custom handling', () => {
             let unknownArg = ''
-            const args = new Args({
+            new Args({
                 options: {},
                 unknown: (argv, i) => {
                     unknownArg = argv[i]
@@ -286,7 +286,7 @@ describe('Args', () => {
         })
     })
 
-    describe('Complete Example', () => {
+    await describe('Complete Example', async () => {
         it('parses complex command line', () => {
             const args = new Args({
                 options: {

@@ -1,23 +1,23 @@
 /**
  * Test Helpers and Utilities
  *
- * Provides helper functions for migrating Ejscript tests to Bun
+ * Shared helpers for the TestMe (.tst.ts) suite.
  */
 
-import { expect } from 'bun:test'
+import { expect } from 'testme'
+import { writeFileSync } from 'fs'
 import { tmpdir } from 'os'
 import { Path } from '../src/core/Path'
 
 /**
  * Assert function for Ejscript compatibility
- * Maps to expect().toBeTruthy()
+ * Maps to expect().toBeTruthy(), reporting message on failure
  */
 export function assert(condition: any, message?: string): void {
-  if (message) {
-    expect(condition).withContext(message).toBeTruthy()
-  } else {
-    expect(condition).toBeTruthy()
+  if (!condition && message) {
+    throw new Error(`Assertion failed: ${message}`)
   }
+  expect(condition).toBeTruthy()
 }
 
 /**
@@ -33,19 +33,8 @@ export async function createTestFile(path: string, content: string = 'test data'
  * Create test file synchronously (for non-async tests)
  */
 export function createTestFileSync(path: string, content: string = 'test data'): Path {
-  const p = new Path(path)
-  const fs = require('fs')
-  fs.writeFileSync(path, content)
-  return p
-}
-
-/**
- * Create temporary directory
- */
-export async function createTestDir(path: string): Promise<Path> {
-  const p = new Path(path)
-  await p.makeDir()
-  return p
+  writeFileSync(path, content)
+  return new Path(path)
 }
 
 /**
@@ -68,70 +57,6 @@ export async function cleanupTestFile(path: string | Path): Promise<void> {
 export function randomTestPath(prefix: string = 'test', suffix: string = '.tmp'): Path {
   const random = Math.random().toString(36).substring(7)
   return new Path(tmpdir()).join(`${prefix}-${random}${suffix}`)
-}
-
-/**
- * Measure execution time
- */
-export async function measureTime(fn: () => void | Promise<void>): Promise<number> {
-  const start = performance.now()
-  await fn()
-  return performance.now() - start
-}
-
-/**
- * Wait for condition to be true
- */
-export async function waitFor(
-  condition: () => boolean,
-  timeout: number = 5000,
-  interval: number = 100
-): Promise<boolean> {
-  const start = Date.now()
-
-  while (Date.now() - start < timeout) {
-    if (condition()) {
-      return true
-    }
-    await new Promise(resolve => setTimeout(resolve, interval))
-  }
-
-  return false
-}
-
-/**
- * Compare arrays for equality
- */
-export function arrayEquals<T>(a: T[], b: T[]): boolean {
-  if (a.length !== b.length) return false
-
-  for (let i = 0; i < a.length; i++) {
-    if (a[i] !== b[i]) return false
-  }
-
-  return true
-}
-
-/**
- * Skip test if condition is true
- */
-export function skipIf(condition: boolean, message: string = 'Test skipped'): void {
-  if (condition) {
-    console.log(`⊘ SKIP: ${message}`)
-    // Bun test skip is handled by test.skipIf()
-  }
-}
-
-/**
- * Test data constants
- */
-export const TestConstants = {
-  TestLength: 500,
-  TestPath: new Path(tmpdir()).join('ejscript-test-file.dat').name,
-  TestDir: new Path(tmpdir()).join('ejscript-test-dir').name,
-  ShortDelay: 100,
-  MediumDelay: 500,
-  LongDelay: 1000
 }
 
 /**
