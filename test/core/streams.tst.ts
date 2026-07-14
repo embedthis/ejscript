@@ -4,7 +4,6 @@
  */
 
 import { test, expect, describe, beforeAll, afterAll } from 'testme'
-import { tmpdir } from 'os'
 import { ByteArray } from '../../src/core/streams/ByteArray'
 import { TextStream } from '../../src/core/streams/TextStream'
 import { BinaryStream, Endian } from '../../src/core/streams/BinaryStream'
@@ -12,7 +11,7 @@ import { Path } from '../../src/core/Path'
 import { assert, createTestFile, createTestFileSync, cleanupTestFile, randomTestPath } from '../helpers'
 
 await describe('ByteArray', async () => {
-  describe('Construction', () => {
+  await describe('Construction', () => {
     test('creates ByteArray with size', () => {
       const b = new ByteArray(200)
       expect(b).not.toBeNull()
@@ -30,7 +29,7 @@ await describe('ByteArray', async () => {
     })
   })
 
-  describe('Basic Read/Write', () => {
+  await describe('Basic Read/Write', () => {
     test('writeByte and readByte', () => {
       const b = new ByteArray(200)
       b.writeByte(110)
@@ -64,7 +63,7 @@ await describe('ByteArray', async () => {
     })
   })
 
-  describe('Indexing', () => {
+  await describe('Indexing', () => {
     test('index access reads bytes', () => {
       const b = new ByteArray(200)
       b.writeData('Sunny')
@@ -91,7 +90,7 @@ await describe('ByteArray', async () => {
     })
   })
 
-  describe('Iteration', () => {
+  await describe('Iteration', () => {
     test('iterates over available data', () => {
       const b = new ByteArray(200)
       b.writeData('Sunny')
@@ -116,7 +115,7 @@ await describe('ByteArray', async () => {
     })
   })
 
-  describe('Flush', () => {
+  await describe('Flush', () => {
     test('flush resets positions', () => {
       const b = new ByteArray(200)
       expect(b.size).toBe(200)
@@ -134,7 +133,7 @@ await describe('ByteArray', async () => {
     })
   })
 
-  describe('Read Position', () => {
+  await describe('Read Position', () => {
     test('readPosition can be moved', () => {
       const b = new ByteArray(200)
       b.writeData('Sunny Day')
@@ -143,7 +142,7 @@ await describe('ByteArray', async () => {
     })
   })
 
-  describe('Read Method', () => {
+  await describe('Read Method', () => {
     test('read into another ByteArray', () => {
       const b = new ByteArray(200)
       b.writeByte(1)
@@ -176,7 +175,7 @@ await describe('ByteArray', async () => {
     })
   })
 
-  describe('Primitive Types', () => {
+  await describe('Primitive Types', () => {
     test('read and write primitives', () => {
       const b = new ByteArray()
       b.writeByte(1)
@@ -193,7 +192,7 @@ await describe('ByteArray', async () => {
     })
   })
 
-  describe('Events', () => {
+  await describe('Events', () => {
     test('readable event fires on flush', () => {
       const b = new ByteArray(200)
       let saveData: string | null = null
@@ -217,7 +216,7 @@ await describe('ByteArray', async () => {
     })
   })
 
-  describe('Copy Operations', () => {
+  await describe('Copy Operations', () => {
     test('copyIn copies from another ByteArray', () => {
       const source = new ByteArray(200)
       source.writeData('Hello')
@@ -245,7 +244,7 @@ await describe('ByteArray', async () => {
     })
   })
 
-  describe('New API Methods (Phase 5)', () => {
+  await describe('New API Methods (Phase 5)', () => {
     test('input/output aliases for read/write positions', () => {
       const b = new ByteArray(200)
       b.writeData('Hello World')
@@ -344,7 +343,7 @@ await describe('ByteArray', async () => {
 })
 
 await describe('TextStream', async () => {
-  describe('Construction', () => {
+  await describe('Construction', () => {
     test('creates TextStream from ByteArray', () => {
       const b = new ByteArray(1000)
       const t = new TextStream(b)
@@ -352,7 +351,7 @@ await describe('TextStream', async () => {
     })
   })
 
-  describe('Write Operations', () => {
+  await describe('Write Operations', () => {
     test('writeLine writes with newlines', async () => {
       const b = new ByteArray(1000)
       const t = new TextStream(b)
@@ -375,7 +374,7 @@ await describe('TextStream', async () => {
     })
   })
 
-  describe('Read Operations', () => {
+  await describe('Read Operations', () => {
     test('read from TextStream', async () => {
       const b = new ByteArray(1000)
       const t = new TextStream(b)
@@ -412,7 +411,7 @@ await describe('TextStream', async () => {
     })
   })
 
-  describe('File Integration', () => {
+  await describe('File Integration', () => {
     test('openTextStream for writing', async () => {
       const file = randomTestPath('textstream', '.tmp')
       const s = await file.openTextStream('wt')
@@ -427,7 +426,7 @@ await describe('TextStream', async () => {
     })
 
     test('openTextStream for reading', async () => {
-      const file = await createTestFile(new Path(tmpdir()).join('textstream-read.tmp').name, 'Hello\nWorld')
+      const file = await createTestFile(randomTestPath('textstream-read', '.tmp').name, 'Hello\nWorld')
       const s = await file.openTextStream('rt')
 
       expect(await s.readLine()).toBe('Hello')
@@ -456,7 +455,7 @@ await describe('TextStream', async () => {
 })
 
 await describe('BinaryStream', async () => {
-  describe('Construction', () => {
+  await describe('Construction', () => {
     test('creates BinaryStream from ByteArray', () => {
       const ba = new ByteArray()
       const s = new BinaryStream(ba)
@@ -464,7 +463,7 @@ await describe('BinaryStream', async () => {
     })
   })
 
-  describe('Integer Operations', () => {
+  await describe('Integer Operations', () => {
     test('writeInteger32 and readInteger32', async () => {
       const ba = new ByteArray()
       const s = new BinaryStream(ba)
@@ -490,7 +489,7 @@ await describe('BinaryStream', async () => {
     })
   })
 
-  describe('Endianness', () => {
+  await describe('Endianness', () => {
     test('BigEndian encoding', async () => {
       const ba = new ByteArray()
       const s = new BinaryStream(ba)
@@ -524,7 +523,7 @@ await describe('BinaryStream', async () => {
     })
   })
 
-  describe('Mixed Types', () => {
+  await describe('Mixed Types', () => {
     test('read and write various types', async () => {
       const ba = new ByteArray()
       const s = new BinaryStream(ba)
@@ -541,7 +540,7 @@ await describe('BinaryStream', async () => {
     })
   })
 
-  describe('String Operations', () => {
+  await describe('String Operations', () => {
     test('readString reads specified bytes', async () => {
       const ba = new ByteArray()
       ba.writeData('1234567890')
@@ -560,7 +559,7 @@ await describe('BinaryStream', async () => {
     })
   })
 
-  describe('File Integration', () => {
+  await describe('File Integration', () => {
     test('openBinaryStream for writing', async () => {
       const file = randomTestPath('binarystream', '.dat')
       const bs = await file.openBinaryStream('w')
@@ -575,7 +574,7 @@ await describe('BinaryStream', async () => {
     })
 
     test('openBinaryStream for reading', async () => {
-      const file = createTestFileSync(new Path(tmpdir()).join('binarystream-read.dat').name, '1234567890 test data')
+      const file = createTestFileSync(randomTestPath('binarystream-read', '.dat').name, '1234567890 test data')
       const bs = await file.openBinaryStream('r')
 
       expect(await bs.readString(5)).toBe('12345')

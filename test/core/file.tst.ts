@@ -4,7 +4,6 @@
  */
 
 import { test, expect, describe, beforeAll, afterAll } from 'testme'
-import { tmpdir } from 'os'
 import { File } from '../../src/core/File'
 import { Path } from '../../src/core/Path'
 import { ByteArray } from '../../src/core/streams/ByteArray'
@@ -20,7 +19,7 @@ await describe('File', async () => {
     testFile = TestConfig.files.testDat
   })
 
-  describe('File Open and Properties', () => {
+  await describe('File Open and Properties', () => {
     test('open file for reading', async () => {
       const f = new File(testFile.name)
       await f.open('r')
@@ -104,7 +103,7 @@ await describe('File', async () => {
     })
   })
 
-  describe('File Reading', () => {
+  await describe('File Reading', () => {
     test('readBytes reads data', async () => {
       const f = new File(testFile.name)
       await f.open('r')
@@ -130,7 +129,7 @@ await describe('File', async () => {
     })
 
     test('readString reads text content', async () => {
-      const file = createTestFileSync(new Path(tmpdir()).join('readstring-test.txt').name, 'Hello World')
+      const file = createTestFileSync(randomTestPath('readstring-test', '.txt').name, 'Hello World')
       const f = new File(file.name)
       await f.open('r')
 
@@ -142,7 +141,7 @@ await describe('File', async () => {
     })
 
     test('readString with count limits bytes', async () => {
-      const file = createTestFileSync(new Path(tmpdir()).join('readcount-test.txt').name, 'Hello World')
+      const file = createTestFileSync(randomTestPath('readcount-test', '.txt').name, 'Hello World')
       const f = new File(file.name)
       await f.open('r')
 
@@ -154,7 +153,7 @@ await describe('File', async () => {
     })
 
     test('readLines reads file as lines', async () => {
-      const file = createTestFileSync(new Path(tmpdir()).join('readlines-test.txt').name, 'Line 1\nLine 2\nLine 3')
+      const file = createTestFileSync(randomTestPath('readlines-test', '.txt').name, 'Line 1\nLine 2\nLine 3')
       const f = new File(file.name)
       await f.open('r')
 
@@ -190,7 +189,7 @@ await describe('File', async () => {
     })
 
     test('iterator yields positions', async () => {
-      const file = createTestFileSync(new Path(tmpdir()).join('iter-test.dat').name, '0123456789')
+      const file = createTestFileSync(randomTestPath('iter-test', '.dat').name, '0123456789')
       const f = new File(file.name)
       await f.open('r')
 
@@ -208,7 +207,7 @@ await describe('File', async () => {
     })
   })
 
-  describe('File Writing', () => {
+  await describe('File Writing', () => {
     test('write string to file', async () => {
       const file = randomTestPath('write-test', '.txt')
       const f = new File(file.name, { mode: 'w' })
@@ -305,7 +304,7 @@ await describe('File', async () => {
     })
   })
 
-  describe('File Position', () => {
+  await describe('File Position', () => {
     test('position gets current position', async () => {
       const f = new File(testFile.name)
       await f.open('r')
@@ -334,7 +333,7 @@ await describe('File', async () => {
     })
 
     test('seek moves position', async () => {
-      const file = createTestFileSync(new Path(tmpdir()).join('seek-test.txt').name, '0123456789')
+      const file = createTestFileSync(randomTestPath('seek-test', '.txt').name, '0123456789')
       const f = new File(file.name)
       await f.open('r')
 
@@ -349,7 +348,7 @@ await describe('File', async () => {
     })
   })
 
-  describe('File Truncate', () => {
+  await describe('File Truncate', () => {
     test('truncate reduces file size', async () => {
       const file = randomTestPath('truncate-test', '.txt')
       await testFile.copy(file)
@@ -366,7 +365,7 @@ await describe('File', async () => {
     })
 
     test('truncate on open file', async () => {
-      const file = createTestFileSync(new Path(tmpdir()).join('trunc-open-test.txt').name, 'Hello World')
+      const file = createTestFileSync(randomTestPath('trunc-open-test', '.txt').name, 'Hello World')
       const f = new File(file.name)
       await f.open('w')
 
@@ -379,9 +378,9 @@ await describe('File', async () => {
     })
   })
 
-  describe('File Remove', () => {
+  await describe('File Remove', () => {
     test('remove deletes file', async () => {
-      const file = createTestFileSync(new Path(tmpdir()).join('remove-test.txt').name, 'test content')
+      const file = createTestFileSync(randomTestPath('remove-test', '.txt').name, 'test content')
       const f = new File(file.name)
       await f.open('r')
       await f.close()
@@ -393,7 +392,7 @@ await describe('File', async () => {
     })
 
     test('remove through path property', async () => {
-      const file = createTestFileSync(new Path(tmpdir()).join('remove-path-test.txt').name, 'test')
+      const file = createTestFileSync(randomTestPath('remove-path-test', '.txt').name, 'test')
       const f = new File(file.name)
 
       expect(f.path.exists).toBe(true)
@@ -402,7 +401,7 @@ await describe('File', async () => {
     })
   })
 
-  describe('File Options', () => {
+  await describe('File Options', () => {
     test('options.mode reflects open mode', async () => {
       const file = randomTestPath('mode-test', '.txt')
 
@@ -438,7 +437,7 @@ await describe('File', async () => {
     })
   })
 
-  describe('File Flush', () => {
+  await describe('File Flush', () => {
     test('flush writes buffered data', async () => {
       const file = randomTestPath('flush-test', '.txt')
       const f = new File(file.name, { mode: 'w' })
@@ -455,7 +454,7 @@ await describe('File', async () => {
     })
   })
 
-  describe('File Close', () => {
+  await describe('File Close', () => {
     test('close closes file', async () => {
       const file = randomTestPath('close-test', '.txt')
       const f = new File(file.name, { mode: 'w' })

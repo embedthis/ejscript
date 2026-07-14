@@ -34,7 +34,7 @@ await describe('Path', async () => {
     await cleanupTestFile(testDir)
   })
 
-  describe('Constructor', () => {
+  await describe('Constructor', () => {
     test('creates path from string', () => {
       const p = new Path('/a/b/c')
       expect(p.name).toBe('/a/b/c')
@@ -57,7 +57,7 @@ await describe('Path', async () => {
     })
   })
 
-  describe('Basic Properties', () => {
+  await describe('Basic Properties', () => {
     test('exists checks file existence', () => {
       expect(testFile.exists).toBe(true)
       expect(new Path('/nonexistent/file').exists).toBe(false)
@@ -105,7 +105,7 @@ await describe('Path', async () => {
     })
   })
 
-  describe('Path Components', () => {
+  await describe('Path Components', () => {
     test('basename returns file name', () => {
       expect(new Path('/a/b/c.dat').basename.name).toBe('c.dat')
       expect(new Path('/a/b/c').basename.name).toBe('c')
@@ -133,7 +133,7 @@ await describe('Path', async () => {
     })
   })
 
-  describe('Path Conversions', () => {
+  await describe('Path Conversions', () => {
     test('absolute returns absolute path', () => {
       const p = new Path('test.txt')
       const abs = p.absolute
@@ -163,7 +163,7 @@ await describe('Path', async () => {
     })
   })
 
-  describe('Path Operations', () => {
+  await describe('Path Operations', () => {
     test('join combines paths', () => {
       const p = new Path('/tmp')
       const joined = p.join('subdir', 'file.txt')
@@ -215,7 +215,7 @@ await describe('Path', async () => {
     })
   })
 
-  describe('File Operations', () => {
+  await describe('File Operations', () => {
     test('copy copies file', async () => {
       const src = randomTestPath('copy-source')
       await src.write('copy test')
@@ -283,7 +283,7 @@ await describe('Path', async () => {
     })
   })
 
-  describe('File Content Operations', () => {
+  await describe('File Content Operations', () => {
     test('write writes string to file', async () => {
       const file = randomTestPath('write')
       await file.write('Hello World')
@@ -350,7 +350,7 @@ await describe('Path', async () => {
     })
   })
 
-  describe('Path Comparison', () => {
+  await describe('Path Comparison', () => {
     test('same compares paths', () => {
       const p1 = new Path(tmpdir()).join('test.txt')
       const p2 = new Path(tmpdir()).join('test.txt')
@@ -379,7 +379,7 @@ await describe('Path', async () => {
     })
   })
 
-  describe('Path Attributes', () => {
+  await describe('Path Attributes', () => {
     test('mimeType returns MIME type', () => {
       expect(new Path('file.html').mimeType).toBe('text/html')
       expect(new Path('file.json').mimeType).toBe('application/json')
@@ -411,7 +411,7 @@ await describe('Path', async () => {
     })
   })
 
-  describe('toString and Conversion', () => {
+  await describe('toString and Conversion', () => {
     test('toString returns path string', () => {
       const p = new Path('/a/b/c')
       expect(p.toString()).toBe('/a/b/c')
@@ -429,7 +429,7 @@ await describe('Path', async () => {
     })
   })
 
-  describe('Iterator', () => {
+  await describe('Iterator', () => {
     test('iterates directory entries', async () => {
       const dir = randomTestPath('iter-test')
       await dir.makeDir()
