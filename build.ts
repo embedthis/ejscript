@@ -24,10 +24,3 @@ try {
     console.error('✗ TypeScript compilation failed')
     process.exit(1)
 }
-
-/*
-console.log('Build complete!')
-console.log('\nYou can now:')
-console.log('  - Run tests: bun test')
-console.log('  - Try examples: bun examples/basic.ts')
-*/
