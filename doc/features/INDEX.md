@@ -10,7 +10,8 @@ directory and is never copied here.
 
 The v1.x and v2.0.0 work predates the feature-centric layout. That history is recorded in
 [../overview/roadmap.md](../overview/roadmap.md) (phases and future work),
-[../sessions/CHANGELOG.md](../sessions/CHANGELOG.md), and the `../sessions/SESSION-*.md` logs.
+[../sessions/CHANGELOG.md](../sessions/CHANGELOG.md), and the archived per-session logs in
+[../archive/sessions/](../archive/sessions/).
 Archived plans from that era are in [../archive/features/](../archive/features/).
 
 New work should be created as a feature directory containing `feature.md` and `plan.md` at

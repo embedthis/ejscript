@@ -1,6 +1,6 @@
 # MAP.md — Project Navigation
 
-**Project**: Ejscript for Bun (`ejslib`)
+**Project**: Ejscript for Bun (`ejscript`)
 **Version**: 2.0.0
 **Status**: Production ready — async I/O complete
 **Last Updated**: 2026-07-14
@@ -66,8 +66,8 @@ See [features/INDEX.md](features/INDEX.md).
 - **Architecture decisions?** See [architecture/](architecture/).
 - **Planning future work?** See [overview/roadmap.md](overview/roadmap.md).
 - **Setting up or releasing?** See [operations/PROCEDURES.md](operations/PROCEDURES.md).
-- **What changed recently?** See [sessions/CHANGELOG.md](sessions/CHANGELOG.md) and the
-  `sessions/SESSION-*.md` logs.
+- **What changed recently?** See [sessions/CHANGELOG.md](sessions/CHANGELOG.md). Historical
+  per-session logs are archived under [archive/sessions/](archive/sessions/).
 - **Historical documents?** See [archive/](archive/).
 
 ---
@@ -80,5 +80,5 @@ bun run typecheck    # Type check
 bun run build        # Build to dist/
 tm                   # Run all tests (TestMe, from test/)
 tm path.tst.ts       # Run a single test
-bun examples/basic.ts
+bun docs/examples/basic.ts
 ```
