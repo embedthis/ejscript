@@ -1,7 +1,7 @@
 # MAP.md — Project Navigation
 
-**Project**: Ejscript for Bun (`ejscript`)
-**Version**: 2.0.0
+**Project**: Ejscript for Bun (`@embedthis/ejscript`)
+**Version**: 2.1.0 (released to npm 2026-07-14) · 2.1.1 in development
 **Status**: Production ready — async I/O complete
 **Last Updated**: 2026-07-14
 
@@ -53,6 +53,8 @@ See [features/INDEX.md](features/INDEX.md).
 | Test coverage analysis | [engineering/coverage-analysis-2025-10-27.md](engineering/coverage-analysis-2025-10-27.md) | v2.0.0 coverage analysis and recommendations |
 | Feature index | [features/INDEX.md](features/INDEX.md) | All features and their status |
 | Changelog | [sessions/CHANGELOG.md](sessions/CHANGELOG.md) | Change history |
+| Releases | [releases/](releases/) | Per-release artifacts (notes, test report, SBOM, checksums) |
+| Latest release | [releases/2.1.0/release-notes.md](releases/2.1.0/release-notes.md) | 2.1.0 — first npm release |
 | External references | [references/REFERENCES.md](references/REFERENCES.md) | Links and resources |
 
 ---
@@ -65,7 +67,9 @@ See [features/INDEX.md](features/INDEX.md).
 - **Filing a bug?** Use the `tickets` CLI; ticket files live in `issues/tickets/NNNN.md`.
 - **Architecture decisions?** See [architecture/](architecture/).
 - **Planning future work?** See [overview/roadmap.md](overview/roadmap.md).
-- **Setting up or releasing?** See [operations/PROCEDURES.md](operations/PROCEDURES.md).
+- **Setting up or releasing?** See [operations/PROCEDURES.md](operations/PROCEDURES.md). Per-release
+  artifacts (release notes, test report, vulnerability disposition, SBOM, `SHA256SUMS`) live under
+  [releases/](releases/), one directory per published version.
 - **What changed recently?** See [sessions/CHANGELOG.md](sessions/CHANGELOG.md). Historical
   per-session logs are archived under [archive/sessions/](archive/sessions/).
 - **Historical documents?** See [archive/](archive/).

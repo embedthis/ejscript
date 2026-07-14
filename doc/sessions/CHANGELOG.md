@@ -5,7 +5,47 @@ All notable changes to the Ejscript (Ejscript for Bun) project will be documente
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0] - 2025-10-27 ✅ RELEASED
+## [2.1.0] - 2026-07-14 ✅ RELEASED (first npm release)
+
+First version published to npm. Packaging, licensing, and test-infrastructure release; no API changes
+relative to the 2.0.0 development milestone. Release artifacts: [../releases/2.1.0/](../releases/2.1.0/).
+
+### Fixed
+
+- **ESM-invalid import specifiers in the published package** - the build emitted extensionless relative
+  import specifiers, which Node/Bun ESM resolution rejects, so consumers could not resolve the package's
+  internal modules. The build now emits fully-specified `.js` specifiers.
+- **Nested `describe` blocks silently dropped tests** - `describe()` is async and mutates a single global
+  test context, so un-awaited nested blocks trampled each other: earlier sibling blocks were reported as
+  passing while never executing. All nested blocks are now awaited. This corrected the assertion count
+  from an inflated 1442 to a trustworthy 1430.
+- **Windows compatibility** - temp-directory resolution, `App.home`, uid/gid, `Cmd` working-directory
+  tests, and synchronous fixture creation for `BinaryStream` and `Path` tests.
+- **CI filesystem timing flakiness** - fixtures use synchronous creation, closing the async/sync cache
+  coherency gap that caused intermittent failures.
+
+### Changed
+
+- Published as `@embedthis/ejscript` under **GPL-2.0-only**.
+- `pak.json` merged into `package.json` under a `pak` block.
+- Publishing is manual and explicit via `make promote` (build → prep-test → test → publish). CI never
+  publishes and holds no npm credentials.
+- Package contents narrowed to `dist/`, `src/`, `README.md`, `LICENSE.md`.
+- CI matrix runs Linux, macOS, and Windows; dropped the deprecated Node 20 action runtime and triggers
+  for the nonexistent `develop` branch.
+- Args tests migrated to TestMe; orphan `Args` placeholder and dead build code removed.
+
+### Documentation
+
+- Migrated the legacy `AI/` tree to the standard `doc/` structure.
+- Rewrote `README.md` around the current state; fixed stale links.
+- Moved examples under `docs/`; refreshed user guides. Archived historical session logs.
+
+## [2.0.0] - 2025-10-27 (development milestone — never published)
+
+⚠️ **Not released.** 2.0.0 was the async I/O conversion milestone. It was never published to npm and was
+never tagged; the first version consumers can install is 2.1.0. This section is retained as the record
+of the async breaking changes, which reached users via 2.1.0.
 
 ### BREAKING CHANGES - Async I/O Conversion
 

@@ -1,0 +1,148 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.5.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:65eff210-f745-4ef1-aa68-1c6bbb0b8135",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-07-14T02:24:42Z",
+    "tools": {
+      "components": [
+        {
+          "type": "application",
+          "name": "bun",
+          "version": "1.x"
+        }
+      ]
+    },
+    "component": {
+      "bom-ref": "pkg:npm/%40embedthis/ejscript@2.1.0",
+      "type": "library",
+      "name": "@embedthis/ejscript",
+      "version": "2.1.0",
+      "description": "Ejscript core API implementation for the Bun runtime",
+      "supplier": {
+        "name": "EmbedThis Software",
+        "url": ["https://www.embedthis.com"],
+        "contact": [
+          {
+            "name": "EmbedThis Security",
+            "email": "security@embedthis.com"
+          }
+        ]
+      },
+      "author": "EmbedThis Software",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-2.0-only"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40embedthis/ejscript@2.1.0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7ba453a6392f868b5d47c3de5f63272acf752b398c49a95a2b5c72e4e67dec00"
+        },
+        {
+          "alg": "SHA-1",
+          "content": "f90ec1d93c17d684c2537a1bd871bccfa96bc9e9"
+        }
+      ],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@embedthis/ejscript/-/ejscript-2.1.0.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/embedthis/ejscript"
+        },
+        {
+          "type": "website",
+          "url": "https://www.embedthis.com"
+        }
+      ]
+    },
+    "manufacture": {
+      "name": "EmbedThis Software",
+      "url": ["https://www.embedthis.com"]
+    },
+    "properties": [
+      {
+        "name": "embedthis:release:commit",
+        "value": "adb7533"
+      },
+      {
+        "name": "embedthis:runtime:requirement",
+        "value": "bun>=1.0.0"
+      },
+      {
+        "name": "embedthis:runtime:dependencies",
+        "value": "0"
+      }
+    ]
+  },
+  "components": [
+    {
+      "bom-ref": "pkg:npm/%40embedthis/testme@0.8.19",
+      "type": "library",
+      "name": "@embedthis/testme",
+      "version": "0.8.19",
+      "description": "TestMe unit test runner. Test-time only; not distributed in the published artifact.",
+      "scope": "excluded",
+      "purl": "pkg:npm/%40embedthis/testme@0.8.19",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/embedthis/testme"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/typescript@5.9.3",
+      "type": "library",
+      "name": "typescript",
+      "version": "5.9.3",
+      "description": "TypeScript compiler. Build-time only; not distributed in the published artifact.",
+      "scope": "excluded",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:npm/typescript@5.9.3",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/microsoft/TypeScript"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:npm/%40types/bun@1.3.0",
+      "type": "library",
+      "name": "@types/bun",
+      "version": "1.3.0",
+      "description": "Bun type definitions. Build-time only; erased at compile time and not distributed.",
+      "scope": "excluded",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40types/bun@1.3.0"
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "pkg:npm/%40embedthis/ejscript@2.1.0",
+      "dependsOn": []
+    }
+  ]
+}

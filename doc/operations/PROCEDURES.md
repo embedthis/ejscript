@@ -387,53 +387,84 @@ Follow **Semantic Versioning** (MAJOR.MINOR.PATCH):
 
 ### Pre-Release Checklist
 
-- [ ] All tests passing
-- [ ] TypeScript compilation successful
+- [ ] All tests passing (`make test`)
+- [ ] TypeScript compilation clean (`bun run typecheck`)
 - [ ] Examples running correctly
 - [ ] Documentation updated
-- [ ] CHANGELOG.md updated
-- [ ] Version bumped in package.json
+- [ ] `doc/sessions/CHANGELOG.md` updated with the new version section
+- [ ] Version bumped in `package.json`
+- [ ] Release directory drafted at `doc/releases/N.N.N/` (see below)
+
+### Release Artifacts
+
+**Every published version must have a `doc/releases/N.N.N/` directory.** It is part of the release, not
+paperwork done afterwards — the SBOM and checksums cannot be reconstructed accurately once the tarball
+is superseded. Use `doc/releases/2.1.0/` as the reference example.
+
+| File | Contents |
+|------|----------|
+| `release-notes.md` | What changed, distribution details, artifact digests, upgrade notes |
+| `test-report.md` | Test results, platform matrix, exit criteria, gaps |
+| `vulnerability-disposition.md` | Disposition of every scan finding (required even when zero) |
+| `user-information.md` | CRA Annex II user information package |
+| `sbom.json` | CycloneDX SBOM snapshot, including the artifact hash |
+| `SHA256SUMS` | SHA-256 of the published tarball, in `shasum -c` format |
+
+Templates: `~/dev/doc/templates/releases/` and `~/dev/doc/templates/compliance/sbom/`.
 
 ### Release Process
 
-1. **Update version**:
-   ```bash
-   # Edit package.json
-   vim package.json
-   # Change version number
-   ```
+1. **Bump the version** in `package.json`.
 
-2. **Update CHANGELOG**:
-   ```bash
-   vim doc/sessions/CHANGELOG.md
-   # Add new version section with changes
-   ```
+2. **Update the changelog** — add a `## [N.N.N] - YYYY-MM-DD` section to
+   `doc/sessions/CHANGELOG.md`. Mark it `Unreleased` until the publish actually succeeds.
 
-3. **Build and test**:
+3. **Draft the release directory** — create `doc/releases/N.N.N/` with the artifacts above. The
+   `SHA256SUMS` and the `hashes` block in `sbom.json` cannot be filled until step 5; leave them pending.
+
+4. **Verify**:
    ```bash
+   bun run typecheck
    bun run build
    make test
    bun docs/examples/basic.ts
    ```
 
-4. **Commit changes**:
+5. **Publish**:
    ```bash
-   git add package.json doc/sessions/CHANGELOG.md
-   git commit -m "Release v0.2.0"
-   git tag v0.2.0
+   make promote          # build -> prep-test -> tm test -> npm publish
    ```
 
-5. **Publish** (if public):
+   Publishing is **manual and explicit**. Never add an npm publish job to CI — no workflow holds npm
+   credentials. `make promote` depends on `test`, so a failing suite blocks the upload.
+
+6. **Record the artifact digests** — the tarball only exists once published:
    ```bash
-   npm publish
+   V=N.N.N
+   curl -sO https://registry.npmjs.org/@embedthis/ejscript/-/ejscript-$V.tgz
+   shasum -a 256 ejscript-$V.tgz > doc/releases/$V/SHA256SUMS
+   curl -s https://registry.npmjs.org/@embedthis/ejscript | \
+       python3 -c "import json,sys; d=json.load(sys.stdin); print(d['versions']['$V']['dist'])"
    ```
+   Copy the SHA-256 into the `hashes` block of `sbom.json`, and flip the changelog section from
+   `Unreleased` to the publish date.
+
+7. **Tag and commit**:
+   ```bash
+   git add package.json doc/sessions/CHANGELOG.md doc/releases/N.N.N
+   git commit -m "DOC: release N.N.N"
+   git tag vN.N.N && git push --tags
+   ```
+
+   The GitHub `Release` workflow verifies the tree and cuts a tagged GitHub release with the tarball
+   attached. It deliberately does **not** publish to npm.
 
 ### Post-Release
 
-- Update documentation site (if any)
-- Announce release (GitHub, social media, etc.)
+- Update `doc/MAP.md` — the version header and the "Latest release" link
+- Announce the release (GitHub, etc.)
 - Monitor for issues
-- Plan next release
+- Plan the next release
 
 ## Troubleshooting
 
