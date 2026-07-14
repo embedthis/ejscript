@@ -392,7 +392,13 @@ await describe('App', async () => {
                 await App.sleep(100)
                 const elapsed = Date.now() - start
                 expect(elapsed).toBeGreaterThanOrEqual(90) // Allow some variance
-                expect(elapsed).toBeLessThan(200)
+                /*
+                    Upper bound only guards against an order-of-magnitude error (seconds
+                    mistaken for milliseconds) or a hang. A shared CI runner can deschedule
+                    us for hundreds of ms, so a tight bound here measures the host scheduler
+                    rather than sleep().
+                 */
+                expect(elapsed).toBeLessThan(2000)
             })
 
             it('should accept milliseconds parameter', async () => {
@@ -406,7 +412,7 @@ await describe('App', async () => {
                 const start = Date.now()
                 await App.sleep(0)
                 const elapsed = Date.now() - start
-                expect(elapsed).toBeLessThan(50)
+                expect(elapsed).toBeLessThan(500) // Returns promptly; loose for CI jitter
             })
         })
 

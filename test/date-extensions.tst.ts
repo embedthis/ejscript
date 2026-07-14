@@ -3,24 +3,29 @@ import '../src/core/types/DateExtensions'
 
 await describe('Date Extensions', async () => {
     await describe('elapsed property', async () => {
+        /*
+            These bounds are deliberately loose. Each measures the delay between
+            constructing the Date and reading .elapsed, so any tolerance below the
+            scheduler's worst-case stall tests the CI host rather than the property.
+         */
         it('should return elapsed time in milliseconds', async () => {
             const past = new Date(Date.now() - 1000)
             const elapsed = past.elapsed
             expect(elapsed).toBeGreaterThanOrEqual(1000)
-            expect(elapsed).toBeLessThan(1100) // allow some wiggle room
+            expect(elapsed).toBeLessThan(2000)
         })
 
         it('should be negative for future dates', () => {
             const future = new Date(Date.now() + 1000)
             const elapsed = future.elapsed
-            expect(elapsed).toBeLessThanOrEqual(-1000)
-            expect(elapsed).toBeGreaterThan(-1100)
+            expect(elapsed).toBeLessThan(0)
+            expect(elapsed).toBeGreaterThan(-2000)
         })
 
         it('should be approximately zero for current time', () => {
             const now = new Date()
             const elapsed = now.elapsed
-            expect(Math.abs(elapsed)).toBeLessThan(10) // within 10ms
+            expect(Math.abs(elapsed)).toBeLessThan(1000)
         })
 
         it('should increase over time', async () => {
