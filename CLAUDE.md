@@ -119,19 +119,31 @@ tm -v test
 
 ### Test Structure
 Tests use TestMe with `describe`, `it`/`test`, and `expect` assertions. Import from
-`testme`, and `await` each `describe` block:
+`testme`, and `await` **every** `describe` block — nested ones included:
 
 ```typescript
 import { describe, it, expect } from 'testme'
 import { Path } from '../src/core/Path'
 
 await describe('Path', async () => {
-    it('should create absolute paths', () => {
-        const p = new Path('/tmp/test')
-        expect(p.isAbsolute).toBe(true)
+    await describe('Construction', () => {
+        it('should create absolute paths', () => {
+            const p = new Path('/tmp/test')
+            expect(p.isAbsolute).toBe(true)
+        })
     })
 })
 ```
+
+`describe()` is async and mutates a single global test context. An un-awaited nested
+`describe()` yields after overwriting that context, so sibling blocks trample each
+other: only the last block's tests run, they run repeatedly, and every earlier block
+is **silently dropped — reported as passing while never executing**. Every enclosing
+callback must therefore be `async`. If a file reports far fewer unique test names than
+it declares, suspect a missing `await`.
+
+Use `randomTestPath()` from `test/helpers.ts` for temp files. TestMe runs test files in
+parallel, so fixed names in the shared temp dir race.
 
 ## Development Conventions
 
@@ -347,7 +359,7 @@ All comprehensive project documentation is organized under `doc/`. Start at
 - **BREAKING**: Path.open(), openTextStream(), openBinaryStream() are async
 - Improved: Better concurrency support
 - Improved: Non-blocking I/O operations
-- Fixed: All test assertions passing (1468 across 33 test files)
+- Fixed: All test assertions passing (1430 across 33 test files)
 
 ### v1.x - Synchronous I/O
 - Original synchronous file operations
