@@ -4,7 +4,7 @@
  * Demonstrates how Ejscript-style partial URLs are automatically
  * completed before making HTTP requests.
  */
-import { Http } from '../src/core/Http'
+import { Http } from '../../src/core/Http'
 
 // Start a test server
 const server = Bun.serve({

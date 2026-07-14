@@ -5,12 +5,12 @@
  * Demonstrates command-line argument parsing with the Args class
  *
  * Usage:
- *   bun examples/args-demo.ts --verbose --port 8080 --mode production file1.txt file2.txt
- *   bun examples/args-demo.ts -v --log stdout:3 --include lib --include src
- *   bun examples/args-demo.ts -?
+ *   bun docs/examples/args-demo.ts --verbose --port 8080 --mode production file1.txt file2.txt
+ *   bun docs/examples/args-demo.ts -v --log stdout:3 --include lib --include src
+ *   bun docs/examples/args-demo.ts -?
  */
 
-import { Args } from '../src/core/Args'
+import { Args } from '../../src/core/Args'
 
 function usage() {
     console.log(`

@@ -257,7 +257,7 @@ sleep(ms: number): void             // Sleep milliseconds
 #### Examples
 
 ```typescript
-import { App } from 'ejscript'
+import { App } from '@embedthis/ejscript'
 
 // Access arguments
 console.log('Args:', App.args)
@@ -412,7 +412,7 @@ readLines(count?: number): string[] | null
 #### Examples
 
 ```typescript
-import { Http } from 'ejscript'
+import { Http } from '@embedthis/ejscript'
 
 // Simple GET (method chaining pattern)
 const http = new Http()
@@ -544,7 +544,7 @@ uncompress(): ByteArray             // Gzip uncompress
 #### Examples
 
 ```typescript
-import { ByteArray } from 'ejscript'
+import { ByteArray } from '@embedthis/ejscript'
 
 // Create and write
 const ba = new ByteArray(1024)
@@ -589,7 +589,7 @@ write(...data: any[]): number
 #### Examples
 
 ```typescript
-import { TextStream, File } from 'ejscript'
+import { TextStream, File } from '@embedthis/ejscript'
 
 const file = new File('/tmp/data.txt', 'r')
 const stream = new TextStream(file)
@@ -669,7 +669,7 @@ trace(message: string, ...args: any[]): void
 #### Examples
 
 ```typescript
-import { Logger } from 'ejscript'
+import { Logger } from '@embedthis/ejscript'
 
 const log = new Logger('MyApp')
 log.level = Logger.DEBUG
@@ -707,7 +707,7 @@ expire(key: string): void            // Mark as expired
 #### Examples
 
 ```typescript
-import { Cache } from 'ejscript'
+import { Cache } from '@embedthis/ejscript'
 
 const cache = new Cache({ lifespan: 60000 })  // 60 second TTL
 
@@ -739,7 +739,7 @@ restart(period?: number): void       // Restart with new period
 #### Examples
 
 ```typescript
-import { Timer } from 'ejscript'
+import { Timer } from '@embedthis/ejscript'
 
 // One-shot timer
 const timer = new Timer(1000, () => {
@@ -803,7 +803,7 @@ static sh(script: string): string     // Run shell script
 #### Examples
 
 ```typescript
-import { Cmd } from 'ejscript'
+import { Cmd } from '@embedthis/ejscript'
 
 // Simple command
 const cmd = new Cmd('ls -la')
@@ -855,7 +855,7 @@ static decodeQuery(query: string): Record<string, string>
 #### Examples
 
 ```typescript
-import { Uri } from 'ejscript'
+import { Uri } from '@embedthis/ejscript'
 
 const uri = new Uri('https://example.com:8080/path?key=value#section')
 console.log(uri.scheme)    // 'https'
@@ -917,7 +917,7 @@ close(code?: number, reason?: string): void
 #### Examples
 
 ```typescript
-import { WebSocket } from 'ejscript'
+import { WebSocket } from '@embedthis/ejscript'
 
 const ws = new WebSocket('wss://echo.websocket.org')
 
@@ -1114,7 +1114,7 @@ let path = new Path('/tmp/test.txt')
 
 **After (Ejscript for Bun):**
 ```typescript
-import { Path } from 'ejscript'
+import { Path } from '@embedthis/ejscript'
 let path = new Path('/tmp/test.txt')
 ```
 
@@ -1143,7 +1143,7 @@ All APIs remain compatible!
 ## See Also
 
 - [README.md](../README.md) - Project overview and quick start
-- [Examples](../examples/) - Example code
+- [Examples](examples/) - Example code
 - [Tests](../test/) - Comprehensive test suite
 
 ---

@@ -1,6 +1,6 @@
 # Product Overview
 
-**Project**: Ejscript for Bun (`ejslib`)
+**Project**: Ejscript for Bun (`ejscript`)
 **Version**: 2.0.0
 **Status**: Production ready
 
@@ -8,7 +8,7 @@
 
 ## What It Is
 
-`ejslib` is a complete TypeScript implementation of the Ejscript core API targeting the Bun
+`ejscript` is a complete TypeScript implementation of the Ejscript core API targeting the Bun
 runtime. It reimplements 35+ core Ejscript classes — `Path`, `File`, `Http`, `Socket`,
 `WebSocket`, `ByteArray`, `App`, `Logger`, `Cmd`, `Timer`, `Uri` and others — on top of Bun's
 native APIs, so that existing Ejscript applications can run on a modern JavaScript runtime.

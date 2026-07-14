@@ -6,7 +6,7 @@
  * automatically handles 401 challenges and digest response computation.
  */
 
-import { Http } from '../src/core/Http'
+import { Http } from '../../src/core/Http'
 
 console.log('=== HTTP Digest Authentication Example ===\n')
 

@@ -29,13 +29,13 @@ In your other project directory:
 
 ```bash
 cd /path/to/your/project
-bun link ejscript
+bun link @embedthis/ejscript
 ```
 
 Then in your TypeScript/JavaScript files:
 
 ```typescript
-import { Path, File, Http } from 'ejscript'
+import { Path, File, Http } from '@embedthis/ejscript'
 
 // Use the classes
 const path = new Path('/tmp/test.txt')
@@ -82,7 +82,7 @@ You can test changes in two ways:
 1. **In this package**:
    ```bash
    bun test
-   bun examples/basic.ts
+   bun docs/examples/basic.ts
    ```
 
 2. **In a consuming project**:
@@ -139,12 +139,12 @@ Create a new test project:
 mkdir /tmp/test-ejscript
 cd /tmp/test-ejscript
 bun init -y
-bun link ejscript
+bun link @embedthis/ejscript
 ```
 
 Create `index.ts`:
 ```typescript
-import { Http, Path } from 'ejscript'
+import { Http, Path } from '@embedthis/ejscript'
 
 // Test partial URL completion
 const http = new Http()

@@ -64,7 +64,7 @@ let http = new Http()
 **Ejscript for Bun**:
 ```typescript
 // ES6 imports required
-import { Path, Http } from 'ejscript'
+import { Path, Http } from '@embedthis/ejscript'
 
 let path = new Path('/tmp/test.txt')
 let http = new Http()
@@ -87,7 +87,7 @@ console.log(http.response)
 
 **Ejscript for Bun**:
 ```typescript
-import { Http } from 'ejscript'
+import { Http } from '@embedthis/ejscript'
 
 let http = new Http()
 http.get('https://example.com')  // Returns Http object for chaining
@@ -141,7 +141,7 @@ socket.read(response, -1)  // Synchronous, blocks until data arrives
 
 **Ejscript for Bun**:
 ```typescript
-import { Socket, ByteArray } from 'ejscript'
+import { Socket, ByteArray } from '@embedthis/ejscript'
 
 let socket = new Socket()
 socket.connect('localhost:8080')
@@ -173,22 +173,22 @@ All classes must be imported:
 
 ```typescript
 // Core classes
-import { Path, File, App, Http } from 'ejscript'
+import { Path, File, App, Http } from '@embedthis/ejscript'
 
 // Streams
-import { ByteArray, TextStream, BinaryStream, Stream } from 'ejscript'
+import { ByteArray, TextStream, BinaryStream, Stream } from '@embedthis/ejscript'
 
 // Utilities
-import { Logger, Cache, Timer, Cmd, Uri } from 'ejscript'
+import { Logger, Cache, Timer, Cmd, Uri } from '@embedthis/ejscript'
 
 // Networking
-import { Socket, WebSocket } from 'ejscript'
+import { Socket, WebSocket } from '@embedthis/ejscript'
 
 // Config & System
-import { Config, System, FileSystem } from 'ejscript'
+import { Config, System, FileSystem } from '@embedthis/ejscript'
 
 // Async
-import { Emitter, Worker } from 'ejscript'
+import { Emitter, Worker } from '@embedthis/ejscript'
 ```
 
 ### No Global Namespace
@@ -203,7 +203,7 @@ let p = new Path('/tmp')
 
 **Correct**:
 ```typescript
-import { Path } from 'ejscript'
+import { Path } from '@embedthis/ejscript'
 let p = new Path('/tmp')
 ```
 
@@ -351,7 +351,7 @@ let xml = new XML('<root><item>value</item></root>')
 
 **What Works** - JSON5 Input/Parsing:
 ```typescript
-import { JSON } from 'ejscript'
+import { JSON } from '@embedthis/ejscript'
 
 // ✅ Can parse JSON5 input (comments, trailing commas, unquoted keys, etc.)
 const config = JSON.parse(`{
@@ -819,7 +819,7 @@ http.header('content-type')  // Might be different or undefined
 
 **Ejscript for Bun**:
 ```typescript
-import { Http } from 'ejscript'
+import { Http } from '@embedthis/ejscript'
 
 let http = new Http()
 http.setHeader('Content-Type', 'application/json')
@@ -894,7 +894,7 @@ http.get('https://example.com/api/data')
 
 **Ejscript for Bun**:
 ```typescript
-import { Http } from 'ejscript'
+import { Http } from '@embedthis/ejscript'
 
 // Default: Caching enabled (respects HTTP cache headers)
 let http = new Http()
@@ -1029,7 +1029,7 @@ function fetchData(url) {
 
 **After (Ejscript for Bun)**:
 ```typescript
-import { Http } from 'ejscript'
+import { Http } from '@embedthis/ejscript'
 
 async function fetchData(url) {
     let http = new Http()
@@ -1052,7 +1052,7 @@ http.get(url)
 process(http.response)
 
 // After
-import { Http } from 'ejscript'
+import { Http } from '@embedthis/ejscript'
 let http = new Http()
 http.get(url)
 await http.wait()
@@ -1066,7 +1066,7 @@ let path = new Path('/tmp/data.txt')
 let content = path.readString()
 
 // After
-import { Path } from 'ejscript'
+import { Path } from '@embedthis/ejscript'
 let path = new Path('/tmp/data.txt')
 let content = path.readString()  // No change - still sync
 ```
@@ -1078,7 +1078,7 @@ let cmd = new Cmd('ls -la')
 print(cmd.response)
 
 // After
-import { Cmd } from 'ejscript'
+import { Cmd } from '@embedthis/ejscript'
 let cmd = new Cmd('ls -la')
 print(cmd.response)  // No change - still sync
 ```

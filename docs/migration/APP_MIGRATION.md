@@ -41,7 +41,7 @@ let http = new Http()
 
 **AFTER (Ejscript for Bun)**:
 ```typescript
-import { Path, Http } from 'ejscript'
+import { Path, Http } from '@embedthis/ejscript'
 
 let path = new Path('/tmp/file.txt')
 let http = new Http()
@@ -50,13 +50,13 @@ let http = new Http()
 **All Classes Need Imports**:
 ```typescript
 // Core classes
-import { Path, File, App, Http, Socket } from 'ejscript'
+import { Path, File, App, Http, Socket } from '@embedthis/ejscript'
 
 // Streams
-import { ByteArray, TextStream, BinaryStream } from 'ejscript'
+import { ByteArray, TextStream, BinaryStream } from '@embedthis/ejscript'
 
 // Utilities
-import { Logger, Cache, Timer, Cmd, Uri } from 'ejscript'
+import { Logger, Cache, Timer, Cmd, Uri } from '@embedthis/ejscript'
 ```
 
 ### Step 2: Update to Async Patterns (v2.0.0)
@@ -72,7 +72,7 @@ console.log(http.status)  // Available right away
 
 **AFTER (v2.0.0 - Async)**:
 ```typescript
-import { Http } from 'ejscript'
+import { Http } from '@embedthis/ejscript'
 
 let http = new Http()
 http.get('https://example.com')       // Start request
@@ -98,7 +98,7 @@ socket.read(buf, -1)                 // Synchronous (blocks)
 
 **AFTER (v2.0.0)**:
 ```typescript
-import { Socket, ByteArray } from 'ejscript'
+import { Socket, ByteArray } from '@embedthis/ejscript'
 
 let socket = new Socket()
 socket.connect('localhost:8080')
@@ -119,7 +119,7 @@ file.close()                         // Synchronous
 
 **AFTER (v2.0.0)**:
 ```typescript
-import { File } from 'ejscript'
+import { File } from '@embedthis/ejscript'
 
 // Must explicitly open
 let file = new File('/tmp/test.txt', 'r')
@@ -139,7 +139,7 @@ path.remove()                        // Synchronous
 
 **AFTER (v2.0.0)**:
 ```typescript
-import { Path } from 'ejscript'
+import { Path } from '@embedthis/ejscript'
 
 let path = new Path('/tmp/data.json')
 let data = await path.readString()   // Async
@@ -253,7 +253,7 @@ function fetchData(url) {
 
 **AFTER**:
 ```typescript
-import { Http } from 'ejscript'
+import { Http } from '@embedthis/ejscript'
 
 async function fetchData(url: string): Promise<string | null> {
     let http = new Http()
@@ -277,7 +277,7 @@ function processFile(filename) {
 
 **AFTER**:
 ```typescript
-import { Path } from 'ejscript'
+import { Path } from '@embedthis/ejscript'
 
 async function processFile(filename: string): Promise<void> {
     let path = new Path(filename)
@@ -304,7 +304,7 @@ while (true) {
 
 **AFTER**:
 ```typescript
-import { Socket, ByteArray } from 'ejscript'
+import { Socket, ByteArray } from '@embedthis/ejscript'
 
 async function runServer(): Promise<void> {
     let server = new Socket()
@@ -328,7 +328,7 @@ async function runServer(): Promise<void> {
 **1. Add imports to files without them**:
 ```bash
 # Add to top of each .js/.es file:
-# import { Path, File, Http, App } from 'ejscript'
+# import { Path, File, Http, App } from '@embedthis/ejscript'
 ```
 
 **2. Convert for each loops**:
@@ -470,7 +470,7 @@ await file.open()  // ← Add this
 
 ### Common Issues
 - Check [../COMPATIBILITY.md](../COMPATIBILITY.md) for API differences
-- See examples in `examples/` directory
+- See examples in [../examples/](../examples/) directory
 - Review test files in `test/` for patterns
 
 ---

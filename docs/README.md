@@ -73,7 +73,7 @@ Comprehensive documentation for Ejscript for Bun - a complete TypeScript impleme
 
 ```typescript
 // Import what you need
-import { Path, File, Http, App, Logger } from 'ejscript'
+import { Path, File, Http, App, Logger } from '@embedthis/ejscript'
 
 // File I/O
 const content = new Path('/tmp/file.txt').readString()
@@ -115,7 +115,7 @@ http.get('https://example.com')
 
 ```typescript
 // Add ES6 imports
-import { Path, Http } from 'ejscript'
+import { Path, Http } from '@embedthis/ejscript'
 
 let path = new Path('/tmp/test.txt')
 path.write('Hello')
@@ -175,11 +175,11 @@ ejs/
 │   │   └── types/         # Type extensions
 │   └── ...
 ├── test/                  # Test suite
-├── examples/              # Example code
 ├── docs/                  # This documentation
 │   ├── README.md         # This file
 │   ├── API.md            # API reference
-│   └── EXAMPLES.md       # Code examples
+│   ├── EXAMPLES.md       # Code examples
+│   └── examples/         # Example code
 └── doc/                   # Project documentation
     ├── MAP.md             # Navigation entry point
     ├── overview/          # Product overview and roadmap
@@ -235,7 +235,7 @@ To improve documentation:
 
 - **Source Code**: `src/` directory
 - **Tests**: `test/` directory - comprehensive test coverage
-- **Examples**: `examples/` directory - working code samples
+- **Examples**: `docs/examples/` directory - working code samples
 - **Design Docs**: `doc/architecture/` - architecture documentation
 
 ### External Resources

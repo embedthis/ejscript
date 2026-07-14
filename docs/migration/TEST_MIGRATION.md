@@ -44,7 +44,7 @@ This guide helps you migrate Ejscript test suites written for the legacy TestMe 
 **NEW (Ejscript for Bun):**
 ```typescript
 import {ttrue, tget, tskip} from 'testme'
-import {Http, Path, File, Socket, Uri, App} from 'ejscript'
+import {Http, Path, File, Socket, Uri, App} from '@embedthis/ejscript'
 ```
 
 **Key Changes**:
@@ -326,7 +326,7 @@ echo "Fixed Uri constructors in all test files"
 **Before**:
 ```typescript
 import {ttrue, tget} from 'testme'
-import {Http} from 'ejscript'
+import {Http} from '@embedthis/ejscript'
 
 const HTTP = tget('TM_HTTP') || "127.0.0.1:4100"
 let http: Http = new Http
@@ -339,7 +339,7 @@ http.close()
 **After**:
 ```typescript
 import {ttrue, tget} from 'testme'
-import {Http, Uri} from 'ejscript'
+import {Http, Uri} from '@embedthis/ejscript'
 
 const HTTP = new Uri(tget('TM_HTTP') || "127.0.0.1:4100")
 let http = new Http
@@ -728,7 +728,7 @@ The v2.0.0 async patterns have minimal overhead:
 ### Import Pattern
 ```typescript
 import {ttrue, tget} from 'testme'
-import {Http, Uri, Path, File, Socket} from 'ejscript'
+import {Http, Uri, Path, File, Socket} from '@embedthis/ejscript'
 ```
 
 ### HTTP Pattern

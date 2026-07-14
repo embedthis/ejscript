@@ -5,7 +5,7 @@
  * Pattern: connect() -> write() -> finalize() -> access response
  */
 
-import { Http } from '../src/core/Http'
+import { Http } from '../../src/core/Http'
 
 console.log('=== HTTP Streaming Examples (New Pattern) ===\n')
 

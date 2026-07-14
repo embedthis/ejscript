@@ -4,7 +4,7 @@
  * Demonstrates core functionality with async I/O (v2.0.0)
  */
 
-import { Path, File, App, Http, System } from '../src/index'
+import { Path, File, App, Http, System } from '../../src/index'
 
 async function main() {
     console.log('=== Ejscript for Bun - Basic Example (v2.0.0) ===\n')

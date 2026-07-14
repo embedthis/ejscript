@@ -7,7 +7,7 @@
  * the HTTP status code directly.
  */
 
-import { Http } from '../src/core/Http'
+import { Http } from '../../src/core/Http'
 
 async function main() {
     console.log('Http.finalize() Status Return Example\n')

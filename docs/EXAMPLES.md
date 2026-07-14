@@ -18,7 +18,7 @@ Practical examples demonstrating common use cases with Ejscript for Bun.
 ### Reading Files
 
 ```typescript
-import { Path } from 'ejscript'
+import { Path } from '@embedthis/ejscript'
 
 // Read entire file
 const content = new Path('/tmp/data.txt').readString()
@@ -34,7 +34,7 @@ const data = new Path('/tmp/config.json').readJSON()
 console.log(data.setting)
 
 // Read with File class
-import { File } from 'ejscript'
+import { File } from '@embedthis/ejscript'
 const file = new File('/tmp/data.txt', 'r')
 const chunk = file.readString(1024)  // Read 1KB
 file.close()
@@ -43,7 +43,7 @@ file.close()
 ### Writing Files
 
 ```typescript
-import { Path } from 'ejscript'
+import { Path } from '@embedthis/ejscript'
 
 // Write string
 new Path('/tmp/output.txt').write('Hello World')
@@ -63,7 +63,7 @@ const data = { name: 'John', age: 30 }
 new Path('/tmp/data.json').write(JSON.stringify(data, null, 2))
 
 // Write with File class
-import { File } from 'ejscript'
+import { File } from '@embedthis/ejscript'
 const file = new File('/tmp/output.txt', 'w')
 file.encoding = 'utf-8'
 file.write('Line 1\n')
@@ -74,7 +74,7 @@ file.close()
 ### File Management
 
 ```typescript
-import { Path } from 'ejscript'
+import { Path } from '@embedthis/ejscript'
 
 const source = new Path('/tmp/source.txt')
 const dest = new Path('/tmp/backup')
@@ -103,7 +103,7 @@ console.log('Created:', file.created)
 ### Directory Operations
 
 ```typescript
-import { Path } from 'ejscript'
+import { Path } from '@embedthis/ejscript'
 
 // Create directory
 new Path('/tmp/mydir').makeDir()
@@ -134,7 +134,7 @@ for (const file of dir.files()) {
 ### Path Manipulation
 
 ```typescript
-import { Path } from 'ejscript'
+import { Path } from '@embedthis/ejscript'
 
 const p = new Path('/usr/local/bin/node')
 
@@ -163,7 +163,7 @@ const rel = new Path('/usr/local/bin').relative(new Path('/usr/local'))
 ### Basic Requests
 
 ```typescript
-import { Http } from 'ejscript'
+import { Http } from '@embedthis/ejscript'
 
 // GET request
 const http = new Http()
@@ -188,7 +188,7 @@ console.log(response)
 ### JSON API Calls
 
 ```typescript
-import { Http } from 'ejscript'
+import { Http } from '@embedthis/ejscript'
 
 // POST JSON data
 const http = new Http()
@@ -214,7 +214,7 @@ await http.wait()
 ### Authentication
 
 ```typescript
-import { Http } from 'ejscript'
+import { Http } from '@embedthis/ejscript'
 
 // Basic auth
 const http = new Http()
@@ -237,7 +237,7 @@ await http.wait()
 ### File Upload
 
 ```typescript
-import { Http } from 'ejscript'
+import { Http } from '@embedthis/ejscript'
 
 // Upload single file
 const http = new Http()
@@ -265,7 +265,7 @@ await http.wait()
 ### Advanced HTTP
 
 ```typescript
-import { Http } from 'ejscript'
+import { Http } from '@embedthis/ejscript'
 
 const http = new Http()
 
@@ -299,7 +299,7 @@ const rateLimit = http.header('X-RateLimit-Remaining')
 ### Streaming POST
 
 ```typescript
-import { Http } from 'ejscript'
+import { Http } from '@embedthis/ejscript'
 
 // Stream data incrementally
 const http = new Http()
@@ -325,7 +325,7 @@ console.log('Status:', http.status)
 ### Simple Commands
 
 ```typescript
-import { Cmd } from 'ejscript'
+import { Cmd } from '@embedthis/ejscript'
 
 // Execute and wait
 const cmd = new Cmd('ls -la /tmp')
@@ -352,7 +352,7 @@ if (git.status !== 0) {
 ### Working with Processes
 
 ```typescript
-import { Cmd } from 'ejscript'
+import { Cmd } from '@embedthis/ejscript'
 
 // Set working directory
 const cmd = new Cmd('npm install', { dir: '/tmp/myproject' })
@@ -372,7 +372,7 @@ server.kill()
 ### Finding Programs
 
 ```typescript
-import { Cmd } from 'ejscript'
+import { Cmd } from '@embedthis/ejscript'
 
 // Locate program in PATH
 const node = Cmd.locate('node')
@@ -395,7 +395,7 @@ for (const prog of programs) {
 ### Pipelines
 
 ```typescript
-import { Cmd } from 'ejscript'
+import { Cmd } from '@embedthis/ejscript'
 
 // Execute pipeline
 const result = Cmd.sh('cat /tmp/data.txt | grep "error" | wc -l')
@@ -421,7 +421,7 @@ console.log(output)
 ### JSON Processing
 
 ```typescript
-import { Path } from 'ejscript'
+import { Path } from '@embedthis/ejscript'
 
 // Load and process JSON
 const data = new Path('/tmp/users.json').readJSON()
@@ -446,7 +446,7 @@ new Path('/tmp/merged-config.json')
 ### CSV Processing
 
 ```typescript
-import { Path } from 'ejscript'
+import { Path } from '@embedthis/ejscript'
 
 // Read CSV
 const lines = new Path('/tmp/data.csv').readLines()
@@ -472,7 +472,7 @@ new Path('/tmp/filtered.csv').writeLines(output)
 ### Log File Analysis
 
 ```typescript
-import { Path } from 'ejscript'
+import { Path } from '@embedthis/ejscript'
 
 // Analyze log file
 const logFile = new Path('/var/log/app.log')
@@ -509,7 +509,7 @@ new Path('/tmp/error-report.txt').writeLines([
 ### Basic Logging
 
 ```typescript
-import { Logger } from 'ejscript'
+import { Logger } from '@embedthis/ejscript'
 
 // Create logger
 const log = new Logger('MyApp')
@@ -530,7 +530,7 @@ if (log.level >= Logger.DEBUG) {
 ### Application Logging
 
 ```typescript
-import { Logger, Path } from 'ejscript'
+import { Logger, Path } from '@embedthis/ejscript'
 
 class Application {
     private log: Logger
@@ -569,7 +569,7 @@ await app.start()
 ### Debug Tracing
 
 ```typescript
-import { Logger } from 'ejscript'
+import { Logger } from '@embedthis/ejscript'
 
 function processData(data: any[]) {
     const log = new Logger('DataProcessor')
@@ -596,7 +596,7 @@ function processData(data: any[]) {
 ### Caching
 
 ```typescript
-import { Cache, Http } from 'ejscript'
+import { Cache, Http } from '@embedthis/ejscript'
 
 // Create cache with 5-minute TTL
 const cache = new Cache({ lifespan: 300000 })
@@ -630,7 +630,7 @@ console.log(user)
 ### Rate Limiting
 
 ```typescript
-import { Timer } from 'ejscript'
+import { Timer } from '@embedthis/ejscript'
 
 class RateLimiter {
     private queue: Function[] = []
@@ -676,7 +676,7 @@ for (let i = 0; i < 100; i++) {
 ### File Watcher Pattern
 
 ```typescript
-import { Path, Timer } from 'ejscript'
+import { Path, Timer } from '@embedthis/ejscript'
 
 class FileWatcher {
     private file: Path
@@ -715,7 +715,7 @@ const watcher = new FileWatcher('/etc/app/config.json', (content) => {
 ### Batch Processing
 
 ```typescript
-import { Path, Logger } from 'ejscript'
+import { Path, Logger } from '@embedthis/ejscript'
 
 async function processBatch(files: Path[], batchSize: number) {
     const log = new Logger('BatchProcessor')
@@ -753,7 +753,7 @@ await processBatch(files, 10)
 ### Configuration Management
 
 ```typescript
-import { Path, App } from 'ejscript'
+import { Path, App } from '@embedthis/ejscript'
 
 class Config {
     private data: any
@@ -806,7 +806,7 @@ config.set('maxConnections', 200)
 
 ## More Examples
 
-See the [examples/](../examples/) directory for additional code samples:
+See the [examples/](examples/) directory for additional code samples:
 
 - `basic.ts` - Core features demonstration
 - `http-streaming.ts` - HTTP streaming examples

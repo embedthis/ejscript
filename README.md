@@ -1,10 +1,18 @@
 # Ejscript for Bun
 
-A complete TypeScript implementation of the Ejscript core API for the Bun runtime, with async I/O
-throughout.
+A Bun port of the [Ejscript](https://github.com/embedthis/ejscript-native) library.
 
-**Status**: Production ready (2.x) — 35+ core classes, 99%+ API compatibility, 32/32 tests passing
-(1442 assertions), zero runtime dependencies.
+Ejscript was an ES4-era JavaScript environment with its own native compiler and virtual machine.
+This package carries its core API forward onto [Bun](https://bun.sh): the same 35+ classes — `Path`,
+`File`, `Http`, `App`, `Socket`, and the rest — reimplemented in TypeScript on top of Bun's native
+APIs, with async I/O throughout. There is no custom VM here; your code runs on Bun.
+
+The original native C implementation lives at
+[embedthis/ejscript-native](https://github.com/embedthis/ejscript-native) and is now an archived
+educational project.
+
+**Status**: Production ready (2.x) — 35+ core classes, 99%+ API compatibility, 33/33 tests passing
+(1468 assertions), zero runtime dependencies.
 
 Existing Ejscript code usually needs only ES6 `import` statements and `await` on I/O to run here.
 See [Migration](#migration) below.
@@ -21,14 +29,14 @@ See [Migration](#migration) below.
 ## Installation
 
 ```bash
-bun add ejscript
+bun add @embedthis/ejscript
 ```
 
 For local development against a checkout:
 
 ```bash
 bun run build && bun link          # in this directory
-bun link ejscript                  # in your project
+bun link @embedthis/ejscript       # in your project
 ```
 
 See [docs/LINKING.md](docs/LINKING.md) for details.
@@ -36,7 +44,7 @@ See [docs/LINKING.md](docs/LINKING.md) for details.
 ## Quick Start
 
 ```typescript
-import { Path, File, Http, App } from 'ejscript'
+import { Path, File, Http, App } from '@embedthis/ejscript'
 
 // Path operations (async)
 const path = new Path('/tmp/test.txt')
@@ -62,8 +70,8 @@ console.log('Arguments:', App.args)
 Run the examples:
 
 ```bash
-bun examples/basic.ts
-bun examples/http-streaming.ts
+bun docs/examples/basic.ts
+bun docs/examples/http-streaming.ts
 ```
 
 ## Core APIs
@@ -111,7 +119,7 @@ functions `async`. The same applies to `openTextStream()` and `openBinaryStream(
 ### From native Ejscript
 
 ```typescript
-import { Path, Http } from 'ejscript'      // imports are required
+import { Path, Http } from '@embedthis/ejscript'   // imports are required
 
 const path = new Path('/tmp/test.txt')
 await path.write('data')                   // I/O is async
@@ -132,7 +140,7 @@ Full guides: [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) for the API referenc
 ## Project Structure
 
 ```
-ejslib/
+ejscript/
 ├── src/
 │   ├── core/          # Core classes (Path, File, Http, etc.)
 │   ├── streams/       # Stream infrastructure
@@ -140,9 +148,9 @@ ejslib/
 │   ├── async/         # Async/concurrency
 │   └── types/         # Type extensions
 ├── test/              # Unit tests (TestMe, *.tst.ts)
-├── examples/          # Example code
 ├── doc/               # Project documentation (architecture, roadmap, procedures)
-└── docs/              # User-facing guides (API, examples, migration)
+└── docs/              # User-facing guides (API, migration)
+    └── examples/      # Example code
 ```
 
 ## Testing
@@ -155,7 +163,7 @@ cd test && tm          # Same, directly
 cd test && tm path     # A single test
 ```
 
-Current: 32/32 tests passing, 1442/1442 assertions. See
+Current: 33/33 tests passing, 1468/1468 assertions. See
 [doc/engineering/coverage-analysis-2025-10-27.md](doc/engineering/coverage-analysis-2025-10-27.md)
 for coverage analysis.
 
@@ -176,7 +184,9 @@ Bun 1.0+, TypeScript 5.0+, on macOS, Linux, and Windows.
 
 ## Credits
 
-Based on Embedthis Ejscript, the original native ES4 implementation, which is now an archived
-educational project. This package carries its core API forward onto Bun.
+Based on Embedthis Ejscript, the original native ES4 implementation, now archived at
+[embedthis/ejscript-native](https://github.com/embedthis/ejscript-native).
 
-See LICENSE.md (follows original Ejscript licensing).
+## License
+
+GPL-2.0-only. See [LICENSE.md](LICENSE.md).
