@@ -6,51 +6,51 @@
  */
 
 // Core application and environment
-export { App } from './core/App'
-export { System } from './core/System'
-export { Config } from './core/Config'
-export { Args } from './core/Args'
-export { JSON } from './core/JSON'
+export { App } from './core/App.js'
+export { System } from './core/System.js'
+export { Config } from './core/Config.js'
+export { Args } from './core/Args.js'
+export { JSON } from './core/JSON.js'
 
 // File system and I/O
-export { Path } from './core/Path'
-export { File } from './core/File'
-export { FileSystem } from './core/FileSystem'
+export { Path } from './core/Path.js'
+export { File } from './core/File.js'
+export { FileSystem } from './core/FileSystem.js'
 
 // Streams
-export { Stream } from './core/streams/Stream'
-export { TextStream } from './core/streams/TextStream'
-export { BinaryStream } from './core/streams/BinaryStream'
-export { ByteArray } from './core/streams/ByteArray'
+export { Stream } from './core/streams/Stream.js'
+export { TextStream } from './core/streams/TextStream.js'
+export { BinaryStream } from './core/streams/BinaryStream.js'
+export { ByteArray } from './core/streams/ByteArray.js'
 
 // Networking
-export { Http } from './core/Http'
-export { Socket } from './core/Socket'
-export { WebSocket } from './core/WebSocket'
-export { WebSocket as EjsWebSocket } from './core/WebSocket'
-export { Uri } from './core/utilities/Uri'
+export { Http } from './core/Http.js'
+export { Socket } from './core/Socket.js'
+export { WebSocket } from './core/WebSocket.js'
+export { WebSocket as EjsWebSocket } from './core/WebSocket.js'
+export { Uri } from './core/utilities/Uri.js'
 
 // Utilities
-export { Logger } from './core/utilities/Logger'
-export { MprLog } from './core/utilities/MprLog'
-export { Timer } from './core/utilities/Timer'
-export { Cmd } from './core/utilities/Cmd'
-export { Cache } from './core/utilities/Cache'
-export { LocalCache } from './core/utilities/LocalCache'
-export { Memory } from './core/utilities/Memory'
-export { GC } from './core/utilities/GC'
-export { Inflector } from './core/utilities/Inflector'
+export { Logger } from './core/utilities/Logger.js'
+export { MprLog } from './core/utilities/MprLog.js'
+export { Timer } from './core/utilities/Timer.js'
+export { Cmd } from './core/utilities/Cmd.js'
+export { Cache } from './core/utilities/Cache.js'
+export { LocalCache } from './core/utilities/LocalCache.js'
+export { Memory } from './core/utilities/Memory.js'
+export { GC } from './core/utilities/GC.js'
+export { Inflector } from './core/utilities/Inflector.js'
 
 // Async/Concurrency
-export { Worker } from './core/async/Worker'
-export { Emitter } from './core/async/Emitter'
+export { Worker } from './core/async/Worker.js'
+export { Emitter } from './core/async/Emitter.js'
 
 // Type extensions
-export * from './core/types/StringExtensions'
-export * from './core/types/ArrayExtensions'
-export * from './core/types/ObjectExtensions'
-export * from './core/types/DateExtensions'
-export * from './core/types/NumberExtensions'
+export * from './core/types/StringExtensions.js'
+export * from './core/types/ArrayExtensions.js'
+export * from './core/types/ObjectExtensions.js'
+export * from './core/types/DateExtensions.js'
+export * from './core/types/NumberExtensions.js'
 
 // Global functions
 export {
@@ -82,10 +82,10 @@ export {
     clearIntervalTimer,
     setTimeoutTimer,
     clearTimeoutTimer
-} from './core/utilities/Global'
+} from './core/utilities/Global.js'
 
 // JSON serialization (exported from JSON class as well)
-export { serialize, deserialize } from './core/JSON'
+export { serialize, deserialize } from './core/JSON.js'
 
 // Re-export the ejs namespace
-export { ejs } from './globals'
+export { ejs } from './globals.js'

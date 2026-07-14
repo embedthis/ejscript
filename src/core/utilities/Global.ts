@@ -6,8 +6,8 @@
  * @spec ejs
  */
 
-import { App } from '../App'
-import { serialize } from '../JSON'
+import { App } from '../App.js'
+import { serialize } from '../JSON.js'
 
 /**
  * Blend objects together
@@ -361,7 +361,7 @@ export async function load(file: string): Promise<any> {
 }
 
 // Timer utility functions (matching ejscript global API)
-import { Timer } from './Timer'
+import { Timer } from './Timer.js'
 
 /**
  * Create an interval timer that repeats

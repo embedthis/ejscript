@@ -6,7 +6,7 @@
  * @stability evolving
  */
 
-import { Cache, CacheOptions } from './Cache'
+import { Cache, CacheOptions } from './Cache.js'
 
 export class LocalCache extends Cache {
     /**

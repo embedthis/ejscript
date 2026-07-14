@@ -6,7 +6,7 @@
  * @stability evolving
  */
 
-import { Emitter } from '../async/Emitter'
+import { Emitter } from '../async/Emitter.js'
 
 export class Timer extends Emitter {
     private _period: number

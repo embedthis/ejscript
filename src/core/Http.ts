@@ -6,11 +6,11 @@
  * @stability evolving
  */
 
-import { Stream } from './streams/Stream'
-import { Uri } from './utilities/Uri'
-import { Path } from './Path'
-import { Emitter } from './async/Emitter'
-import { ByteArray } from './streams/ByteArray'
+import { Stream } from './streams/Stream.js'
+import { Uri } from './utilities/Uri.js'
+import { Path } from './Path.js'
+import { Emitter } from './async/Emitter.js'
+import { ByteArray } from './streams/ByteArray.js'
 import { createHash } from 'crypto'
 
 export class Http extends Stream {

@@ -6,14 +6,14 @@
  * @stability evolving
  */
 
-import { Path } from './Path'
-import { TextStream } from './streams/TextStream'
-import { Stream } from './streams/Stream'
-import { Logger } from './utilities/Logger'
-import { MprLog } from './utilities/MprLog'
-import { Emitter } from './async/Emitter'
-import { Cache } from './utilities/Cache'
-import { Config } from './Config'
+import { Path } from './Path.js'
+import { TextStream } from './streams/TextStream.js'
+import { Stream } from './streams/Stream.js'
+import { Logger } from './utilities/Logger.js'
+import { MprLog } from './utilities/MprLog.js'
+import { Emitter } from './async/Emitter.js'
+import { Cache } from './utilities/Cache.js'
+import { Config } from './Config.js'
 import * as _fs from 'fs'
 
 /**

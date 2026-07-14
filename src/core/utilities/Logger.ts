@@ -7,7 +7,7 @@
  * @stability evolving
  */
 
-import { File } from '../File'
+import { File } from '../File.js'
 
 // Type for App to avoid circular dependency
 type AppInstance = {

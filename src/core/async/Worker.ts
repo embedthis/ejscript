@@ -6,7 +6,7 @@
  * @stability evolving
  */
 
-import { Emitter } from './Emitter'
+import { Emitter } from './Emitter.js'
 import { Worker as BunWorker } from 'worker_threads'
 
 export class Worker extends Emitter {

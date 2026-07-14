@@ -6,8 +6,8 @@
  * @stability evolving
  */
 
-import { Stream } from './Stream'
-import { ByteArray } from './ByteArray'
+import { Stream } from './Stream.js'
+import { ByteArray } from './ByteArray.js'
 
 export class TextStream extends Stream {
     private stream: Stream

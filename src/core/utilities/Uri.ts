@@ -6,7 +6,7 @@
  * @stability evolving
  */
 
-import { Path } from '../Path'
+import { Path } from '../Path.js'
 import * as path from 'path'
 
 export class Uri {

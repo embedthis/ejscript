@@ -7,12 +7,12 @@
  * @stability evolving
  */
 
-import { App } from '../App'
-import { Path } from '../Path'
-import { Config } from '../Config'
-import { ByteArray } from '../streams/ByteArray'
-import { TextStream } from '../streams/TextStream'
-import { Emitter } from '../async/Emitter'
+import { App } from '../App.js'
+import { Path } from '../Path.js'
+import { Config } from '../Config.js'
+import { ByteArray } from '../streams/ByteArray.js'
+import { TextStream } from '../streams/TextStream.js'
+import { Emitter } from '../async/Emitter.js'
 import type { Subprocess } from 'bun'
 
 export interface CmdOptions {

@@ -8,12 +8,12 @@
     "types": "./dist/index.d.ts",
     "exports": {
         ".": {
-            "import": "./dist/index.js",
-            "types": "./dist/index.d.ts"
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js"
         },
         "./globals": {
-            "import": "./dist/globals.js",
-            "types": "./dist/globals.d.ts"
+            "types": "./dist/globals.d.ts",
+            "import": "./dist/globals.js"
         }
     },
     "files": [

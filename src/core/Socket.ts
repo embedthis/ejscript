@@ -6,7 +6,7 @@
  * @stability evolving
  */
 
-import { Emitter } from './async/Emitter'
+import { Emitter } from './async/Emitter.js'
 import * as net from 'net'
 import * as dgram from 'dgram'
 

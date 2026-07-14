@@ -2,8 +2,8 @@
  * Global namespace and variables for Ejscript compatibility
  */
 
-import { App } from './core/App'
-import type { TextStream } from './core/streams/TextStream'
+import { App } from './core/App.js'
+import type { TextStream } from './core/streams/TextStream.js'
 
 /**
  * Product singleton object

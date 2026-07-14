@@ -6,7 +6,7 @@
  * @stability evolving
  */
 
-import { Path } from '../Path'
+import { Path } from '../Path.js'
 
 export class MprLog {
     private _level: number = 0

@@ -6,9 +6,9 @@
  * @stability evolving
  */
 
-import { Stream } from './streams/Stream'
-import { Path } from './Path'
-import { ByteArray } from './streams/ByteArray'
+import { Stream } from './streams/Stream.js'
+import { Path } from './Path.js'
+import { ByteArray } from './streams/ByteArray.js'
 import * as fs from 'fs'
 import type { FileHandle } from 'fs/promises'
 

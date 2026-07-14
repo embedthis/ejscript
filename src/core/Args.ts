@@ -39,8 +39,8 @@
  * ```
  */
 
-import { Path } from './Path'
-import { App } from './App'
+import { Path } from './Path.js'
+import { App } from './App.js'
 
 /**
  * Option specification for a command-line flag
