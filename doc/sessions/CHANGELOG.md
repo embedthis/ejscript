@@ -5,6 +5,35 @@ All notable changes to the Ejscript (Ejscript for Bun) project will be documente
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - Unreleased
+
+Not yet published to npm. Version bumped in `package.json`; release artifacts will be recorded under
+`doc/releases/2.1.1/` when it ships.
+
+### Fixed
+
+- **Http.upload() uploaded the string `[object Promise]` instead of the file** - `upload()` built the
+  multipart body with `body += filePath.readString()`, but `Path.readString()` is async, so the
+  pending promise was coerced to a string. Every uploaded file arrived at the server as the 16-byte
+  text `[object Promise]`. Uploads are now built with `FormData` and a lazy `Bun.file()` reference,
+  which fetch streams verbatim, so binary content is preserved byte for byte. `upload()` remains
+  synchronous, so the `upload()` then `await wait()` calling pattern is unchanged.
+
+- **Http.verify was ignored** - `verify` and `verifyIssuer` set `_verify`, but nothing ever read it,
+  so no TLS option reached fetch and peer verification could not be disabled. Connecting to a host
+  with a self-signed certificate always failed with `self signed certificate`, even after setting
+  `http.verify = false`. HTTPS requests now pass `tls: {rejectUnauthorized: verify}` to fetch. The
+  default is unchanged (`verify` defaults to true, so certificates are still verified by default).
+
+- **FormData and Blob request bodies were JSON-stringified** - `_formatData()` fell through to
+  `JSON.stringify()` for any body that was not a string, `Uint8Array` or `ReadableStream`, turning a
+  `FormData` body into `{}`. Both types are now passed through to fetch unchanged.
+
+### Added
+
+- Upload integration tests covering multipart body generation, file content fidelity and form fields
+  alongside files. The library previously had no upload coverage.
+
 ## [2.1.0] - 2026-07-14 ✅ RELEASED (first npm release)
 
 First version published to npm. Packaging, licensing, and test-infrastructure release; no API changes

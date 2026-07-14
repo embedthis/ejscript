@@ -697,6 +697,14 @@ export class Http extends Stream {
         const url = this._completeUrl(this._uri.toString())
         const uri = this._uri.toString()
 
+        /*
+            Peer verification applies to TLS connections only. Honour verify == false so that
+            self-signed development certificates can be accepted.
+         */
+        if (url.startsWith('https:')) {
+            ;(fetchOptions as any).tls = {rejectUnauthorized: this._verify}
+        }
+
         // Handle authentication
         if (this.credentials) {
             if (this.credentials.type === 'digest' || (this.credentials.type === undefined && this._digestAuth)) {
@@ -803,7 +811,7 @@ export class Http extends Stream {
      * Format data for request body
      * Supports: string, Uint8Array, ReadableStream, or objects (JSON serialized)
      */
-    private _formatData(data: any[]): string | Uint8Array | ReadableStream {
+    private _formatData(data: any[]): string | Uint8Array | ReadableStream | FormData | Blob {
         if (data.length === 1) {
             const item = data[0]
             if (typeof item === 'string') {
@@ -811,6 +819,8 @@ export class Http extends Stream {
             } else if (item instanceof Uint8Array) {
                 return item
             } else if (item instanceof ReadableStream) {
+                return item
+            } else if (item instanceof FormData || item instanceof Blob) {
                 return item
             } else {
                 return JSON.stringify(item)
@@ -1227,36 +1237,33 @@ export class Http extends Stream {
      * @returns This Http object for chaining
      */
     upload(uri: string | Uri, files: any, fields?: Record<string, any>): Http {
-        // Simplified multipart upload
-        const boundary = '----FormBoundary' + Math.random().toString(36)
-        this.setHeader('Content-Type', `multipart/form-data; boundary=${boundary}`)
+        const form = new FormData()
 
-        let body = ''
-
-        // Add fields
         if (fields) {
             for (const [key, value] of Object.entries(fields)) {
-                body += `--${boundary}\r\n`
-                body += `Content-Disposition: form-data; name="${key}"\r\n\r\n`
-                body += `${value}\r\n`
+                form.append(key, String(value))
             }
         }
 
-        // Add files (simplified)
-        if (typeof files === 'object') {
+        /*
+            Append each file as a lazy Bun.file() reference. Fetch streams the file contents
+            verbatim, so binary uploads are preserved byte for byte.
+         */
+        if (files && typeof files === 'object') {
             for (const [key, file] of Object.entries(files)) {
                 const filePath = new Path(String(file))
-                body += `--${boundary}\r\n`
-                body += `Content-Disposition: form-data; name="${key}"; filename="${filePath.basename}"\r\n`
-                body += `Content-Type: ${filePath.mimeType}\r\n\r\n`
-                body += filePath.readString() || ''
-                body += '\r\n'
+                form.append(key, Bun.file(filePath.toString()), String(filePath.basename))
             }
         }
 
-        body += `--${boundary}--\r\n`
+        /*
+            Fetch generates the multipart Content-Type so that the boundary matches the body.
+            Any Content-Type left over from a prior request on this object must not override it.
+         */
+        delete this._headers['Content-Type']
+        delete this._headers['content-type']
 
-        return this.connect('POST', uri, body)
+        return this.connect('POST', uri, form)
     }
 
     /**

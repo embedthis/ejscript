@@ -1,7 +1,7 @@
 {
     "name": "@embedthis/ejscript",
     "owner": "embedthis",
-    "version": "2.1.0",
+    "version": "2.1.1",
     "description": "Ejscript core API implementation for Bun runtime",
     "type": "module",
     "main": "./dist/index.js",

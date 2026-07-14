@@ -140,6 +140,35 @@ await describe('Http Integration Tests', async () => {
         })
     })
 
+    await describe('File Uploads', async () => {
+        const fixture = `${import.meta.dir}/fixtures/file.dat`
+
+        it('uploads file contents verbatim', async () => {
+            const http = new Http()
+            http.upload(`${baseUrl}/echo`, { myfile: fixture })
+            await http.finalize()
+
+            expect(http.status).toBe(200)
+            const echoed = JSON.parse(http.response)
+            expect(echoed.contentType).toContain('multipart/form-data; boundary=')
+            expect(echoed.body).toContain('filename="file.dat"')
+            expect(echoed.body).toContain('End of test data file.')
+            expect(echoed.body).not.toContain('[object Promise]')
+            http.close()
+        })
+
+        it('uploads files with form fields', async () => {
+            const http = new Http()
+            http.upload(`${baseUrl}/form`, { myfile: fixture }, { name: 'John Smith' })
+            await http.finalize()
+
+            expect(http.status).toBe(200)
+            const response = JSON.parse(http.response)
+            expect(response.name).toBe('John Smith')
+            http.close()
+        })
+    })
+
     await describe('PUT Requests', async () => {
         it('sends PUT request', async () => {
             const http = new Http()
