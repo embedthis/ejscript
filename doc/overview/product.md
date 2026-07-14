@@ -52,7 +52,7 @@ potential separate packages in [roadmap.md](roadmap.md).
 | Core classes | 35+ implemented |
 | API compatibility | 99%+ |
 | Async I/O conversion | Complete (v2.0.0) |
-| Tests | 32/32 passing, 1402/1402 assertions (TestMe) |
+| Tests | 33/33 passing, 1468/1468 assertions (TestMe) |
 | Runtime dependencies | None (Bun native only) |
 | Untested legacy classes | GC, Memory, MprLog, Inflector (optional/legacy) |
 

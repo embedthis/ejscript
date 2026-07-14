@@ -336,7 +336,11 @@ All comprehensive project documentation is organized under `doc/`. Start at
 
 ## Version History
 
-### v2.0.0 (Current) - Async I/O Conversion
+### v2.1.0 (Current, unreleased)
+- package.json is at 2.1.0; not yet tagged or published to npm
+- Packaged as `@embedthis/ejscript` under GPL-2.0-only
+
+### v2.0.0 - Async I/O Conversion
 - **BREAKING**: File I/O operations are now asynchronous
 - **BREAKING**: File constructor no longer auto-opens files
 - **BREAKING**: Stream read/write methods are async

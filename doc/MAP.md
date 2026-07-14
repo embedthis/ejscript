@@ -26,7 +26,7 @@ converted methods, and the root [README.md](../README.md) for the v1.x → v2.0.
 | Language | TypeScript 5.0+, strict mode |
 | API compatibility | 99%+ with native Ejscript core |
 | Tests | TestMe framework (`.tst.ts`), run with `tm` |
-| Test status | 32/32 tests, 1402/1402 assertions passing |
+| Test status | 33/33 tests, 1468/1468 assertions passing |
 
 ---
 
