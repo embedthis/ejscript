@@ -186,6 +186,6 @@ The linked package includes all ejscript features:
 ## Support
 
 For issues or questions:
-- Check the main [README.md](README.md)
-- Review [CLAUDE.md](CLAUDE.md) for project details
+- Check the main [README.md](../README.md)
+- Review [CLAUDE.md](../CLAUDE.md) for project details
 - Run tests: `bun test`

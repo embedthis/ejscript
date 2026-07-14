@@ -1142,8 +1142,7 @@ All APIs remain compatible!
 
 ## See Also
 
-- [README.md](../README.md) - Project overview
-- [QUICK_START.md](../QUICK_START.md) - Getting started guide
+- [README.md](../README.md) - Project overview and quick start
 - [Examples](../examples/) - Example code
 - [Tests](../test/) - Comprehensive test suite
 

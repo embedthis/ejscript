@@ -776,7 +776,7 @@ await path.remove()
 
 ## Related Documentation
 
-- [TESTME_MIGRATION_GUIDE.md](./TESTME_MIGRATION_GUIDE.md) - TestMe import/API migration
+- [APP_MIGRATION.md](./APP_MIGRATION.md) - Migrating applications (rather than test suites)
 - [api-compatibility.md](../../doc/architecture/components/api-compatibility.md) - Ejscript API compatibility
 - [ASYNC_IO_METHODS.md](../../doc/archive/architecture/2025-10-27/ASYNC_IO_METHODS.md) - v2.0.0 async design
 - [CHANGELOG.md](../../doc/sessions/CHANGELOG.md) - Project change history

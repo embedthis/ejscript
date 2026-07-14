@@ -1,441 +1,182 @@
 # Ejscript for Bun
 
-✅ **Status: Production Ready - Version 2.0.0**
+A complete TypeScript implementation of the Ejscript core API for the Bun runtime, with async I/O
+throughout.
 
-A complete TypeScript implementation of the Ejscript core API for the Bun runtime with **full async I/O support**.
+**Status**: Production ready (2.x) — 35+ core classes, 99%+ API compatibility, 32/32 tests passing
+(1442 assertions), zero runtime dependencies.
 
-## Project Status
-
-**📊 Test Status: 29/32 tests passing, 1374/1374 assertions (100% assertions)** 🎉
-
-**Current State (v2.0.0)**:
-- ✅ **1374 assertions passing** across **32 comprehensive test files** - PRODUCTION READY! 🎯
-- ✅ **Async I/O Complete** - File, TextStream, BinaryStream all fully async
-- ✅ **Type Extensions: 100% complete** - String, Array, Date, Number, Object all fully implemented
-- ✅ **Core Classes: 100% complete** - Path, File, Streams, Http, App, Emitter all fully working
-- ✅ **Networking: 100% complete** - Http (async), Socket, WebSocket all tested
-- ✅ **Utilities: 100% complete** - Logger, Timer, Cache, Cmd, Uri, Global, Config, System, FileSystem
-- ✅ **API Compatibility: 99%+ complete** - All tested classes 100% working
-- ✅ **File Coverage: 76%** - 25 of 33 source files have comprehensive tests
-- ✅ **TypeScript compiles cleanly**
-- ✅ **Documentation complete and up-to-date**
-
-**Recent Major Achievements** (v2.0.0 - 2025-10-27):
-1. ✅ **Async I/O Conversion** - Complete async/await support (BREAKING CHANGE)
-   - File class now uses fs.promises with FileHandle objects
-   - All File I/O methods return Promises
-   - TextStream and BinaryStream fully async
-   - Path.open(), openTextStream(), openBinaryStream() now async
-   - File constructor no longer auto-opens (must call await file.open())
-   - 100% of assertions passing (1374/1374)
-
-2. ✅ **Non-Blocking I/O** - Better concurrency support
-   - Multiple file operations can run concurrently
-   - No blocking on I/O operations
-   - Improved performance for I/O-heavy applications
-
-3. ✅ **Previous Achievements** (v1.x):
-   - HTTP Digest Authentication (RFC 2617/7616)
-   - Complete Test Coverage (1257 tests)
-   - HTTP Async Implementation
-   - Production Ready Status
-
-**v2.0.0 Breaking Changes**:
-- ⚠️ File I/O methods now async - must use `await`
-- ⚠️ File constructor no longer auto-opens - must call `await file.open()`
-- ⚠️ Stream read/write methods now async
-- ⚠️ Path.open() and stream opening methods now async
-- 📖 See [Migration Guide](#migration-from-v1x-to-v20) below for details
+Existing Ejscript code usually needs only ES6 `import` statements and `await` on I/O to run here.
+See [Migration](#migration) below.
 
 ## Features
 
-- ✅ **Async I/O Throughout** - File, TextStream, BinaryStream all use async/await
-- ✅ **All Core Classes Implemented** - Path, File, Http, App, Emitter, Socket, WebSocket, Worker
-- ✅ **All Utilities Implemented** - Logger, Timer, Cache, Cmd, Uri, Global, Config, System, FileSystem
-- ✅ **Type Extensions: 100% Complete** - String, Array, Date, Number, Object all fully Ejscript compatible
-- ✅ **HTTP & Socket Async Support** - Full async implementation with timeout and chunked reading
-- ✅ **Full TypeScript Support** - Type-safe development with strict typing
-- ✅ **Bun Optimized** - Uses native Bun APIs (fs.promises, fetch) for maximum performance
-- ✅ **Stream API Complete** - ByteArray, TextStream, BinaryStream with async compatibility
-- ✅ **9,000+ Lines** - Comprehensive, well-tested, production-ready codebase
-- ✅ **1374 Assertions Passing** - 100% assertion pass rate! 🎉
-- ✅ **Production Ready** - Ready for v2.0.0 release
+- **Async I/O throughout** — `File`, `Path`, `TextStream`, `BinaryStream`, and `Cmd` all use async/await
+- **Complete core API** — Path, File, Http, App, Emitter, Socket, WebSocket, Worker, and the stream classes
+- **Type extensions** — String, Array, Date, Number, and Object extensions, Ejscript compatible
+- **Full TypeScript support** — strict typing across every public API
+- **Bun optimized** — built on Bun native APIs (`fs.promises`, `fetch`, `Bun.spawn`)
+- **Zero runtime dependencies**
 
 ## Installation
 
 ```bash
-cd ejsx
-bun install
+bun add ejscript
 ```
 
-## Quick Start
-
-### Running Examples
+For local development against a checkout:
 
 ```bash
-# Basic example demonstrating core features
-bun examples/basic.ts
-
-# Run tests
-bun test
-
-# Type check
-bun run typecheck
-
-# Build the project
-bun run build
+bun run build && bun link          # in this directory
+bun link ejscript                  # in your project
 ```
 
-### Using in Your Code
+See [docs/LINKING.md](docs/LINKING.md) for details.
+
+## Quick Start
 
 ```typescript
 import { Path, File, Http, App } from 'ejscript'
 
-// Path operations (async in v2.0.0)
-const file = new Path('/tmp/test.txt')
-await file.write('Hello from Ejscript on Bun!')
+// Path operations (async)
+const path = new Path('/tmp/test.txt')
+await path.write('Hello from Ejscript on Bun!')
+console.log(await path.readString())
+
+// File handles, when you need more control
+const file = await new Path('/tmp/test.txt').open('r')
 console.log(await file.readString())
+await file.close()
 
-// Or using Path.open() for more control
-const f = await new Path('/tmp/test.txt').open('w')
-await f.write('Hello!')
-await f.close()
-
-// HTTP requests (method chaining pattern)
+// HTTP — issue the request, then await completion
 const http = new Http()
 http.get('https://api.github.com')
-await http.wait()  // Wait for request to complete
-console.log(http.status, http.statusMessage)
-
-// HTTP with Authentication (auto-detects Basic or Digest)
-const httpAuth = new Http()
-httpAuth.setCredentials('user', 'password')  // No auth type needed!
-httpAuth.get('http://example.com/api/protected')
-await httpAuth.wait()  // Wait for completion
-console.log(httpAuth.response)  // Server determines auth type via 401 response
-
-// HTTP Streaming (large uploads without memory overhead)
-const stream = new ReadableStream({
-    start(controller) {
-        controller.enqueue(new TextEncoder().encode('chunk1'))
-        controller.enqueue(new TextEncoder().encode('chunk2'))
-        controller.close()
-    }
-})
-http.post('https://api.example.com/upload', stream)
-await http.wait()  // Wait for upload to complete
+await http.wait()
+console.log(http.status, http.response)
 
 // Application info
 console.log('Working directory:', App.dir.name)
 console.log('Arguments:', App.args)
 ```
 
-### Using as a Dependency
-
-**For local development** (recommended):
+Run the examples:
 
 ```bash
-# In this package directory - publish locally
-bun run build
-bun link
-
-# In your project directory - link to the local package
-cd /path/to/your/project
-bun link ejscript
-
-# Import in your code
-import { Path, Http, File } from 'ejscript'
+bun examples/basic.ts
+bun examples/http-streaming.ts
 ```
-
-**For production** (when published to npm):
-
-```bash
-# Add from npm registry
-bun add ejscript
-```
-
-**Alternative - file path reference**:
-
-```bash
-# Add from local file path
-bun add file:../ejs
-```
-
-See [docs/LINKING.md](docs/LINKING.md) for detailed instructions on local development setup.
 
 ## Core APIs
 
-### File System & I/O
-- **Path** - Path manipulation (80+ methods)
-- **File** - File I/O with Stream interface
-- **FileSystem** - File system operations
-- **ByteArray** - Growable byte buffer
-- **TextStream** / **BinaryStream** - Stream wrappers
+**File system and I/O** — `Path` (80+ methods), `File`, `FileSystem`, `ByteArray`, `TextStream`,
+`BinaryStream`
 
-### Application Framework
-- **App** - Application singleton (args, env, I/O)
-- **Config** - Platform configuration
-- **System** - System information
-- **Args** - Argument parsing
+**Application** — `App` (args, env, standard I/O), `Config`, `System`, `Args`
 
-### Networking
-- **Http** - Full HTTP/HTTPS client (40+ methods)
-  - Partial URL support: `'4100/path'` → `'http://127.0.0.1:4100/path'`
-  - All HTTP methods (GET, POST, PUT, DELETE, etc.)
-  - Authentication: Basic and Digest (RFC 2617/7616)
-    - **Auto-detection**: Server determines auth type (just call setCredentials())
-    - Transparent digest auth with MD5, SHA-256, SHA-512-256
-    - Automatic nonce reuse for performance
-  - **Streaming Support**: POST/PUT with ReadableStream or incremental write()
-    - Pass ReadableStream directly: `http.post(uri, stream)`
-    - Incremental writes: `http.write(data1); http.write(data2); http.finalize()`
-    - File streaming: `http.post(uri, Bun.file(path).stream())`
-    - Large data uploads without memory overhead
-  - SSL/TLS, file upload
-- **Socket** - TCP/UDP sockets
-- **WebSocket** - WebSocket client
-- **Uri** - URI parsing and manipulation
+**Networking**
+- `Http` — full HTTP/HTTPS client (40+ methods): all methods, SSL/TLS, cookies, file upload
+  - Partial URLs, Ejscript style: `'4100/path'` → `'http://127.0.0.1:4100/path'`
+  - Basic and Digest auth (RFC 2617/7616), auto-detected — just call `setCredentials()`
+  - Streaming uploads: pass a `ReadableStream` to `post()`, or write incrementally then `finalize()`
+- `Socket` — TCP/UDP; `WebSocket` — WebSocket client; `Uri` — URI parsing
 
-### Utilities
-- **Logger** - Multi-level logging
-- **Cache** - In-memory caching with TTL
-- **Timer** - Timers with callbacks
-- **Cmd** - Command execution
-- **Memory** / **GC** - Memory management
-- **Inflector** - String inflection
+**Utilities** — `Logger`, `Cache`, `Timer`, `Cmd`, `Memory`, `GC`, `Inflector`
 
-### Concurrency
-- **Emitter** - Event emitter pattern
-- **Worker** - Worker thread support
+**Concurrency** — `Emitter` (events), `Worker` (worker threads)
 
-### Type Extensions
-- **String** - Enhanced methods (toPascal, toCamel, expand, etc.)
-- **Array** - Enhanced methods (unique, contains, clone, etc.)
-- **Object** - Utilities (blend, clone, getType, etc.)
-- **Date** - Enhanced methods (format, elapsed, future, etc.)
-- **Number** - Formatting options
+**Type extensions** — `String` (toPascal, toCamel, expand…), `Array` (unique, contains, clone…),
+`Object` (blend, clone, getType…), `Date` (format, elapsed, future…), `Number` (format)
+
+## Migration
+
+### From v1.x
+
+v2.0.0 made all file I/O asynchronous, and the `File` constructor no longer auto-opens:
+
+```typescript
+// v1.x — no longer works
+const file = new File('/tmp/test.txt', 'r')   // auto-opened
+const content = file.readString()
+file.close()
+
+// v2.x
+const file = await new Path('/tmp/test.txt').open('r')
+const content = await file.readString()
+await file.close()
+```
+
+Add `await` to every `File`/`Path`/stream read, write, open, and close call, and make the enclosing
+functions `async`. The same applies to `openTextStream()` and `openBinaryStream()`.
+
+### From native Ejscript
+
+```typescript
+import { Path, Http } from 'ejscript'      // imports are required
+
+const path = new Path('/tmp/test.txt')
+await path.write('data')                   // I/O is async
+
+const http = new Http()
+http.get('https://api.example.com')
+await http.wait()                          // wait for completion
+print(http.response)
+```
+
+Sockets, WebSockets, and the type extensions are unchanged. One syntax difference to watch: Ejscript's
+`for (let i in 10)` iterates 0-9, which JavaScript does not do — use a counted `for` loop.
+
+Full guides: [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) for the API reference,
+[docs/migration/APP_MIGRATION.md](docs/migration/APP_MIGRATION.md) for applications, and
+[docs/migration/TEST_MIGRATION.md](docs/migration/TEST_MIGRATION.md) for test suites.
 
 ## Project Structure
 
 ```
-ejsx/
+ejslib/
 ├── src/
 │   ├── core/          # Core classes (Path, File, Http, etc.)
 │   ├── streams/       # Stream infrastructure
 │   ├── utilities/     # Utility classes
 │   ├── async/         # Async/concurrency
 │   └── types/         # Type extensions
-├── test/              # Unit tests
+├── test/              # Unit tests (TestMe, *.tst.ts)
 ├── examples/          # Example code
 ├── doc/               # Project documentation (architecture, roadmap, procedures)
-└── docs/              # User-facing guides (API, examples)
+└── docs/              # User-facing guides (API, examples, migration)
 ```
-
-## Migration from v1.x to v2.0
-
-**⚠️ BREAKING CHANGES in v2.0.0** - File I/O is now fully async
-
-### File I/O Changes
-
-**v1.x Code (NO LONGER WORKS):**
-```typescript
-import { File } from 'ejscript'
-
-// File auto-opened in constructor
-const file = new File('/tmp/test.txt', 'r')
-const content = file.readString()  // Synchronous
-file.close()  // Synchronous
-```
-
-**v2.0.0 Code (REQUIRED):**
-```typescript
-import { File, Path } from 'ejscript'
-
-// Option 1: Manual open (more control)
-const file = new File('/tmp/test.txt')
-await file.open('r')  // Must explicitly open
-const content = await file.readString()  // Async
-await file.close()  // Async
-
-// Option 2: Path.open() (recommended - cleaner)
-const file = await new Path('/tmp/test.txt').open('r')
-const content = await file.readString()
-await file.close()
-```
-
-### Stream Changes
-
-**v1.x Streams (NO LONGER WORKS):**
-```typescript
-const stream = file.openTextStream('r')
-const line = stream.readLine()  // Synchronous
-stream.close()
-```
-
-**v2.0.0 Streams (REQUIRED):**
-```typescript
-const stream = await file.openTextStream('r')
-const line = await stream.readLine()  // Async
-await stream.close()  // Async
-```
-
-### Quick Migration Checklist
-
-1. ✅ Add `await` to all `File.open()` calls
-2. ✅ Add `await` to all `file.read*()` and `file.write*()` calls
-3. ✅ Add `await` to all `file.close()` calls
-4. ✅ Add `await` to `Path.open()`, `openTextStream()`, `openBinaryStream()`
-5. ✅ Add `await` to all Stream read/write methods
-6. ✅ Make all functions using File/Streams `async`
-
-## Migration from Native Ejscript
-
-**Quick Summary**: ES6 imports required, File I/O is async, HTTP methods are async.
-
-**Before (Native Ejscript):**
-```javascript
-let path = new Path('/tmp/test.txt')
-path.write('data')
-
-let http = new Http()
-http.get('https://api.example.com')
-print(http.response)
-```
-
-**After (Ejscript for Bun v2.0):**
-```typescript
-import { Path, Http } from 'ejscript'
-
-let path = new Path('/tmp/test.txt')
-await path.write('data')  // Now async
-
-let http = new Http()
-http.get('https://api.example.com')  // Returns Http object
-await http.wait()  // ⚠️ Wait for request to complete
-print(http.response)
-```
-
-**Key Changes**:
-- ⚠️ **HTTP is async** - Use method chaining: `http.get(url); await http.wait()`
-- ⚠️ **Imports required** - Must import classes from `'ejscript'`
-- ✅ **File I/O is async** - Use `await` for all file operations
-- ✅ **Sockets/WebSockets** - Event-driven (no changes)
-- ✅ **Type extensions** - All methods same (no changes)
-
-**See Also**:
-- [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) - Complete compatibility guide
-- [docs/migration/](docs/migration/) - Test migration guides
-
-## Migration Guides
-
-Migrating from native Ejscript to Ejscript for Bun?
-
-### 📖 Two Migration Scenarios
-
-**Use Case 1: Migrating Applications**
-- **Guide**: [APP_MIGRATION.md](docs/migration/APP_MIGRATION.md)
-- **For**: Ejscript applications (not tests)
-- **Changes**: Imports + async patterns + syntax
-- **Effort**: ~1-2 hours per 1000 lines
-
-**Use Case 2: Migrating Test Suites**
-- **Guide**: [TEST_MIGRATION.md](docs/migration/TEST_MIGRATION.md)
-- **For**: Ejscript test suites using legacy TestMe
-- **Changes**: Imports + async patterns + TestMe updates
-- **Effort**: ~1-2 hours per 20 test files
-
-**See**: [docs/migration/](docs/migration/) for complete migration documentation
-
-## Documentation
-
-### 📚 API Documentation
-
-- **[docs/API.md](docs/API.md)** - **Complete API Reference** - All classes, methods, and properties
-- **[docs/EXAMPLES.md](docs/EXAMPLES.md)** - **Practical Examples** - Common patterns and use cases
-- **[docs/README.md](docs/README.md)** - **Documentation Index** - Start here for all documentation
-
-### 🔧 Development Documentation
-
-- **[CLAUDE.md](CLAUDE.md)** - AI assistant guidance and quick reference
-- **[doc/](doc/)** - Comprehensive project documentation
-  - [MAP.md](doc/MAP.md) - Documentation entry point and navigation
-  - [overview/product.md](doc/overview/product.md) - What the system is and does
-  - [architecture/system.md](doc/architecture/system.md) - Architecture and design decisions
-  - [overview/roadmap.md](doc/overview/roadmap.md) - Project roadmap and future plans
-  - [operations/PROCEDURES.md](doc/operations/PROCEDURES.md) - Development procedures
-  - [sessions/CHANGELOG.md](doc/sessions/CHANGELOG.md) - Complete change history
-  - [references/REFERENCES.md](doc/references/REFERENCES.md) - External resources
-
-See [doc/MAP.md](doc/MAP.md) for full documentation structure.
 
 ## Testing
 
+Tests use the [TestMe](https://github.com/embedthis/testme) framework:
+
 ```bash
-bun test
+make test              # Full suite
+cd test && tm          # Same, directly
+cd test && tm path     # A single test
 ```
 
-**Current Status**:
-- ✅ **528/549 tests passing (96.2% pass rate)** - up from 137 tests (+285%)!
-- ✅ **Test Coverage: 36%** - 12 of 33 source files have tests (was 15%)
-  - ✅ Well tested: Path, File, Streams, All type extensions (String, Array, Date, Number, Object), Http, App, Emitter
-  - ⚠️ Not tested yet: Uri, Cache, Logger, Timer, Socket, WebSocket, Worker, Config, System, FileSystem, and 12+ other classes
+Current: 32/32 tests passing, 1442/1442 assertions. See
+[doc/engineering/coverage-analysis-2025-10-27.md](doc/engineering/coverage-analysis-2025-10-27.md)
+for coverage analysis.
 
-See [doc/engineering/coverage-analysis-2025-10-27.md](doc/engineering/coverage-analysis-2025-10-27.md) for detailed coverage analysis and [doc/overview/roadmap.md](doc/overview/roadmap.md) for roadmap.
+## Documentation
 
-## Performance
+**Users** — [docs/API.md](docs/API.md) (complete API reference),
+[docs/EXAMPLES.md](docs/EXAMPLES.md) (common patterns),
+[docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) (compatibility guide)
 
-This implementation leverages Bun's performance advantages:
-- Fast file I/O using Bun's native APIs
-- Efficient HTTP with fetch()
-- Optimized process spawning
-- Native TypeScript support
+**Developers** — [doc/MAP.md](doc/MAP.md) is the entry point, covering
+[architecture](doc/architecture/system.md), [roadmap](doc/overview/roadmap.md),
+[procedures](doc/operations/PROCEDURES.md), and the
+[changelog](doc/sessions/CHANGELOG.md). [CLAUDE.md](CLAUDE.md) holds AI assistant guidance.
 
 ## Compatibility
 
-- ✅ Bun 1.0+
-- ✅ TypeScript 5.0+
-- ✅ All major platforms (macOS, Linux, Windows)
-
-## License
-
-See LICENSE.md (follows original Ejscript licensing)
-
-## Contributing
-
-This is an archived educational project. The implementation is complete and functional.
+Bun 1.0+, TypeScript 5.0+, on macOS, Linux, and Windows.
 
 ## Credits
 
-Based on the Embedthis Ejscript project.
-Ported to Bun with full API compatibility.
+Based on Embedthis Ejscript, the original native ES4 implementation, which is now an archived
+educational project. This package carries its core API forward onto Bun.
 
-## Current Status
-
-**⚠️ IN DEVELOPMENT - NOT PRODUCTION READY**
-
-- ⚠️ Most core features implemented
-- ❌ Critical test failures in stream classes
-- ⚠️ Basic example works, streams need fixes
-- ✅ Documentation complete
-- ✅ Type-safe TypeScript
-
-**What Works**:
-- ✅ Path operations
-- ✅ Basic File I/O
-- ✅ String and Array extensions
-- ✅ App, Config, System classes
-
-**What Needs Work**:
-- ❌ ByteArray (needs API refactoring)
-- ❌ TextStream, BinaryStream (need fixes)
-- ❌ File.openBinaryStream(), File.openTextStream() (not implemented)
-- ⚠️ Utilities and networking (implemented, not tested)
-
-See [doc/archive/architecture/historical/IMPLEMENTATION_ISSUES.md](doc/archive/architecture/historical/IMPLEMENTATION_ISSUES.md) for the historical issue record.
-
----
-
-**Version**: 0.1.0-alpha
-**Lines of Code**: 5,939
-**Classes**: 35+ (partial implementation)
-**Tests**: 103/138 passing (34 failing)
+See LICENSE.md (follows original Ejscript licensing).

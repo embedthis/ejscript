@@ -56,8 +56,8 @@ What are you migrating?
 ## Additional Resources
 
 - [../COMPATIBILITY.md](../COMPATIBILITY.md) - Complete API compatibility reference
-- [../README.md](../README.md) - Project overview
-- [../QUICK_START.md](../QUICK_START.md) - Getting started with Ejscript for Bun
+- [../README.md](../README.md) - Documentation index
+- [../../README.md](../../README.md) - Project overview and getting started
 
 ---
 
