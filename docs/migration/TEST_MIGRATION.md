@@ -43,12 +43,12 @@ This guide helps you migrate Ejscript test suites written for the legacy TestMe 
 
 **NEW (Ejscript for Bun):**
 ```typescript
-import {ttrue, tget, tskip} from 'testme'
+import {ttrue, tget, tskip} from '@embedthis/testme'
 import {Http, Path, File, Socket, Uri, App} from '@embedthis/ejscript'
 ```
 
 **Key Changes**:
-- All TestMe functions must be imported from `'testme'`
+- All TestMe functions must be imported from `'@embedthis/testme'`
 - All Ejscript classes must be imported from `'ejscript'`
 - Use ES6 `import` syntax
 
@@ -325,7 +325,7 @@ echo "Fixed Uri constructors in all test files"
 
 **Before**:
 ```typescript
-import {ttrue, tget} from 'testme'
+import {ttrue, tget} from '@embedthis/testme'
 import {Http} from '@embedthis/ejscript'
 
 const HTTP = tget('TM_HTTP') || "127.0.0.1:4100"
@@ -338,7 +338,7 @@ http.close()
 
 **After**:
 ```typescript
-import {ttrue, tget} from 'testme'
+import {ttrue, tget} from '@embedthis/testme'
 import {Http, Uri} from '@embedthis/ejscript'
 
 const HTTP = new Uri(tget('TM_HTTP') || "127.0.0.1:4100")
@@ -483,7 +483,7 @@ await http.finalize()  // Then finalize
 All TestMe assertions work unchanged:
 
 ```typescript
-import {ttrue, tfalse, tmatch, tcontains, tget, tskip} from 'testme'
+import {ttrue, tfalse, tmatch, tcontains, tget, tskip} from '@embedthis/testme'
 
 // Boolean assertions
 ttrue(condition)
@@ -727,7 +727,7 @@ The v2.0.0 async patterns have minimal overhead:
 
 ### Import Pattern
 ```typescript
-import {ttrue, tget} from 'testme'
+import {ttrue, tget} from '@embedthis/testme'
 import {Http, Uri, Path, File, Socket} from '@embedthis/ejscript'
 ```
 

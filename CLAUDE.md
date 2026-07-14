@@ -122,7 +122,7 @@ Tests use TestMe with `describe`, `it`/`test`, and `expect` assertions. Import f
 `testme`, and `await` **every** `describe` block — nested ones included:
 
 ```typescript
-import { describe, it, expect } from 'testme'
+import { describe, it, expect } from '@embedthis/testme'
 import { Path } from '../src/core/Path'
 
 await describe('Path', async () => {

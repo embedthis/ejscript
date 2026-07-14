@@ -122,7 +122,7 @@ tm test/core/http-partial-urls.tst.ts  # Run specific core test
 
 **Test file structure**:
 ```typescript
-import { describe, test, expect } from 'testme'
+import { describe, test, expect } from '@embedthis/testme'
 import { Path } from '../../src/core/Path'
 
 await describe('Path', async () => {
@@ -230,7 +230,7 @@ CI. Coverage is tracked by hand in `doc/engineering/`.
 5. **Write tests**:
    ```typescript
    // test/core/newclass.tst.ts
-   import { describe, it, expect } from 'testme'
+   import { describe, it, expect } from '@embedthis/testme'
    import { NewClass } from '../../src/core/NewClass'
 
    await describe('NewClass', async () => {
@@ -280,7 +280,7 @@ CI. Coverage is tracked by hand in `doc/engineering/`.
 
 3. **Write tests**:
    ```typescript
-   import { describe, it, expect } from 'testme'
+   import { describe, it, expect } from '@embedthis/testme'
    import '../../src/core/types/NewTypeExtensions'
 
    await describe('String extensions', async () => {
