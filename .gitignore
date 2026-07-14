@@ -17,5 +17,10 @@ coverage/
 .testme/
 test.backup/
 
+# Dependencies are installed with bun; bun.lock is the only tracked lockfile
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
 # Local Claude Code settings
 .claude/settings.local.json
