@@ -11,9 +11,11 @@ dist/
 coverage/
 .env
 .env.local
-.debug-tests/
 .test/
 
 # TestMe artifacts
 .testme/
 test.backup/
+
+# Local Claude Code settings
+.claude/settings.local.json
