@@ -17,7 +17,8 @@ await describe('Config', async () => {
         it('has OS property', () => {
             expect(Config.OS).toBeDefined()
             expect(typeof Config.OS).toBe('string')
-            expect(['linux', 'darwin', 'win32', 'freebsd', 'openbsd', 'sunos', 'aix']).toContain(Config.OS)
+            //  "windows", not process.platform's "win32" - Config.OS normalises it
+            expect(['linux', 'darwin', 'windows', 'freebsd', 'openbsd', 'sunos', 'aix']).toContain(Config.OS)
         })
 
         it('has CPU property', () => {
@@ -114,8 +115,8 @@ await describe('Config', async () => {
                 expect(os).toBe('darwin')
             } else if (os === 'linux') {
                 expect(os).toBe('linux')
-            } else if (os === 'win32') {
-                expect(os).toBe('win32')
+            } else if (os === 'windows') {
+                expect(os).toBe('windows')
             }
         })
 

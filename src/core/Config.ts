@@ -20,8 +20,12 @@ export class Config {
     /**
      * Operating system name
      * Values: linux, darwin, windows, freebsd, etc.
+     *
+     * Normalised from process.platform, which reports "win32" on Windows - on 64-bit Windows too.
+     * Callers compare against the documented "windows", so returning the raw value made every such
+     * comparison silently false and quietly disabled their Windows-specific code paths.
      */
-    static readonly OS: string = process.platform
+    static readonly OS: string = process.platform === 'win32' ? 'windows' : process.platform
 
     /**
      * CPU architecture
