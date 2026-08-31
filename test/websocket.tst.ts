@@ -222,6 +222,37 @@ await describe('WebSocket', async () => {
             const result = await ws!.wait(WebSocket.OPEN, 100)
             expect(result).toBe(false)
         })
+
+        /*
+            wait(CLOSED) used to accept CLOSING for every close, so it returned true while the
+            close handshake was still in flight and the caller's state check then saw CLOSING.
+            The handshake takes about 25ms on Linux and usually less on macOS, which is why this
+            surfaced as a platform difference rather than as a failure everywhere.
+         */
+        it('wait does not treat an in-flight close as CLOSED', async () => {
+            Object.defineProperty(ws!, 'readyState', {
+                get: () => WebSocket.CLOSING,
+                configurable: true
+            })
+
+            const result = await ws!.wait(WebSocket.CLOSED, 100)
+            expect(result).toBe(false)
+        })
+
+        /*
+            The exception it was written for: Bun leaves a socket closed during CONNECTING stuck in
+            CLOSING and never fires onclose, so waiting for CLOSED would hang out the timeout.
+         */
+        it('wait accepts CLOSING as closed when the socket was closed while connecting', async () => {
+            ws!.close()
+            Object.defineProperty(ws!, 'readyState', {
+                get: () => WebSocket.CLOSING,
+                configurable: true
+            })
+
+            const result = await ws!.wait(WebSocket.CLOSED, 100)
+            expect(result).toBe(true)
+        })
     })
 
     await describe('URL Handling', async () => {

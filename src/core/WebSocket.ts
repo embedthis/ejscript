@@ -15,6 +15,7 @@ export class WebSocket extends Emitter {
     private _protocols?: string | string[]
     private _options?: any
     private _frameProcessingPromise?: Promise<void>  // Track async frame processing
+    private _closedWhileConnecting = false           // close() was called before the socket opened
 
     /**
      * Create a WebSocket client
@@ -169,6 +170,14 @@ export class WebSocket extends Emitter {
      */
     close(code?: number, reason?: string): void {
         if (this.ws) {
+            /*
+                Bun leaves a socket closed during CONNECTING stuck in CLOSING and never fires
+                onclose. Record that here so wait(CLOSED) can accept CLOSING for that case only --
+                see wait().
+             */
+            if (this.ws.readyState === WebSocket.CONNECTING) {
+                this._closedWhileConnecting = true
+            }
             this.ws.close(code, reason)
         }
     }
@@ -277,9 +286,19 @@ export class WebSocket extends Emitter {
             if (this.readyState === state) {
                 return true
             }
-            // Bun WebSocket quirk: When closing during CONNECTING, it stays in CLOSING
-            // and never fires onclose. Treat CLOSING as CLOSED for wait(CLOSED).
-            if (state === WebSocket.CLOSED && this.readyState === WebSocket.CLOSING) {
+            /*
+                Bun WebSocket quirk: a socket closed while still CONNECTING stays in CLOSING and
+                never fires onclose, so wait(CLOSED) would hang out its whole timeout. Accept
+                CLOSING as terminal for that case -- and only that case.
+
+                This used to accept CLOSING for every close, which made wait(CLOSED) return
+                immediately on an ordinary close that was still in flight. The caller was then told
+                the socket had closed when it had not: on Linux the close handshake takes about
+                25ms, so the state check after the wait saw CLOSING and failed, while on macOS it
+                usually completed first and passed. The waiter must wait.
+             */
+            if (state === WebSocket.CLOSED && this.readyState === WebSocket.CLOSING &&
+                    this._closedWhileConnecting) {
                 return true
             }
             return false
